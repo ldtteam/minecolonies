@@ -101,6 +101,11 @@ public final class Settings
         this.rotation = rotation;
     }
 
+    public void setStructureName(final String structureName)
+    {
+        this.structureName = structureName;
+    }
+
     /**
      * @return the structure name currently used.
      */

@@ -3,6 +3,7 @@ package com.minecolonies.coremod.client.gui;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.client.gui.WindowStructureNameEntry;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.lib.Constants;
@@ -105,6 +106,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     private static final String BUTTON_RIGHT = "right";
 
     /**
+     * Rename the custom structure.
+     */
+    private static final String BUTTON_RENAME = "rename";
+
+    /**
      * Resource suffix.
      */
     private static final String BUILD_TOOL_RESOURCE_SUFFIX = ":gui/windowbuilldtool.xml";
@@ -183,6 +189,8 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private int rotation = 0;
 
+    final Button renameButton;
+
     /**
      * Creates a window build tool.
      * This requires X, Y and Z coordinates.
@@ -222,6 +230,8 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         registerButton(BUTTON_DOWN, WindowBuildTool::moveDownClicked);
         registerButton(BUTTON_ROTATE_RIGHT, this::rotateRightClicked);
         registerButton(BUTTON_ROTATE_LEFT, this::rotateLeftClicked);
+        registerButton(BUTTON_RENAME, this::renameClicked);
+        renameButton = findPaneOfTypeByID(BUTTON_RENAME, Button.class);
     }
 
     private void init()
@@ -555,24 +565,39 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     }
 
     /**
+     * Action performed when rename button is clicked.
+     */
+    private void renameClicked()
+    {
+        final Structures.StructureName structureName = new Structures.StructureName(getSchematicName());
+        @NotNull final WindowStructureNameEntry window = new WindowStructureNameEntry(structureName);
+        window.open();
+    }
+
+    /**
      * Set the current section and update styles.
      */
     public void setSection(int index)
     {
         sectionIndex = index;
         String name = getSectionName();
-        if (Structures.SCHEMATICS_DECORATIONS.equals(name))
-        {
-            name = LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.decorations");
-        }
-        else if (Structures.SCHEMATICS_CUSTOM.equals(name))
+        if (Structures.SCHEMATICS_CUSTOM.equals(name))
         {
             name = LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.custom");
+            renameButton.setEnabled(true);
         }
         else
         {
-            //should be a hut
-            name = LanguageHandler.format("tile.minecolonies.blockHut" + name + ".name");
+            renameButton.setEnabled(false);
+            if (Structures.SCHEMATICS_DECORATIONS.equals(name))
+            {
+                name = LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.decorations");
+            }
+            else
+            {
+                //should be a hut
+                name = LanguageHandler.format("tile.minecolonies.blockHut" + name + ".name");
+            }
         }
 
         findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(name);

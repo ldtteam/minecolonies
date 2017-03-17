@@ -267,6 +267,53 @@ public final class Structures
     }
 
     /**
+     * rename a custom structure.
+     * rename the file and the md5 entry
+     * @param structureName the structure to add
+     */
+    @SideOnly(Side.CLIENT)
+    public static Structures.StructureName renameCustomStructure(@NotNull final StructureName structureName, @NotNull final String name)
+    {
+        Log.getLogger().warn("renameCustomStructure(" + structureName + ", " + name + ")");
+        if (!SCHEMATICS_CUSTOM.equals(structureName.getPrefix()))
+        {
+            Log.getLogger().warn("Renamed failed: Invalid name " + structureName);
+            return null;
+        }
+
+        if (!hasMD5(structureName))
+        {
+            Log.getLogger().warn("Renamed failed: No MD5 hash found for " + structureName);
+            return null;
+        }
+
+        final StructureName newStructureName = new StructureName(SCHEMATICS_CUSTOM + '/' + name);
+
+        if (!hasMD5(structureName))
+        {
+            Log.getLogger().warn("Renamed failed: File already exist " + newStructureName);
+            return null;
+        }
+
+        final File structureFile = Structure.getClientSchematicsFolder().toPath().resolve(structureName.toString()+SCHEMATIC_EXTENSION).toFile();
+        final File newStructureFile = Structure.getClientSchematicsFolder().toPath().resolve(newStructureName.toString()+SCHEMATIC_EXTENSION).toFile();
+        checkDirectory(newStructureFile.getParentFile());
+        if (structureFile.renameTo(newStructureFile))
+        {
+            final String md5 = getMD5(structureName);
+            md5Map.put(newStructureName.toString(), md5);
+            md5Map.remove(structureName.toString());
+            return newStructureName;
+        }
+        else
+        {
+            Log.getLogger().warn("Failed to rename structure from " + structureName + " to " + newStructureName);
+            Log.getLogger().warn("Failed to rename structure from " + structureFile + " to " + newStructureFile);
+        }
+        return null;
+    }
+
+    /**
      * check/create a directory and its parents.
      * @param directory to be created
      */

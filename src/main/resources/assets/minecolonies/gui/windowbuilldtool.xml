@@ -19,4 +19,5 @@
     <button id="buildingType" size="200 15" pos="100 170"/>
     <button id="style" size="200 15" pos="100 190"/>
     <button id="schematic" size="200 15" pos="100 210"/>
+    <button id="rename" size="15 15" pos="315 210"/>
 </window>
