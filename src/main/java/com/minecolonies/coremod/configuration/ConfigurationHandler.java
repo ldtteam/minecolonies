@@ -61,6 +61,8 @@ public final class ConfigurationHandler
 
             allowPlayerSchematics = config.get(CATEGORY_GAMEPLAY, "allowPlayerSchematics", allowPlayerSchematics,
                     "Allow player to use their own schematics (in MP)").getBoolean();
+            maxCachedSchematics = config.get(CATEGORY_GAMEPLAY, "maxCachedSchematics", maxCachedSchematics,
+                    "How many chached schematics the server can store before deleting them").getInt();
 
             /* Configs for commands */
             teleportBuffer = config.get(CATEGORY_GAMEPLAY, "timeBetweenTeleport", teleportBuffer,

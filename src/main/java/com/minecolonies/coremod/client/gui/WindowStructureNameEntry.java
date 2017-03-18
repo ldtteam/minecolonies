@@ -56,7 +56,7 @@ public class WindowStructureNameEntry extends Window implements Button.Handler
                 }
             }
         }
-        else if (!button.getID().equals(BUTTON_DELETE))
+        else if (button.getID().equals(BUTTON_DELETE))
         {
             final String name = inputName.getText();
             if (!name.isEmpty())

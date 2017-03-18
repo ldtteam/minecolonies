@@ -2,6 +2,8 @@ package com.minecolonies.coremod.colony;
 
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.util.LanguageHandler;
@@ -306,6 +308,7 @@ public final class Structures
             final String md5 = getMD5(structureName);
             md5Map.put(newStructureName.toString(), md5);
             md5Map.remove(structureName.toString());
+            Log.getLogger().info("Structure " + structureName + " have been renamed " + newStructureName);
             return newStructureName;
         }
         else
@@ -342,6 +345,7 @@ public final class Structures
         if (structureFile.delete())
         {
             md5Map.remove(structureName.toString());
+            Log.getLogger().info("Structures: " + structureName + " deleted successfully");
             return true;
         }
         else
@@ -689,6 +693,117 @@ public final class Structures
     }
 
     /**
+     * get the set of cached schematic.
+     */
+    private static Set<String> getCachedMD5s()
+    {
+        final Set<String> md5Set =  new HashSet<>();
+        for (Map.Entry<String, String> md5 : md5Map.entrySet())
+        {
+            final StructureName sn = new StructureName(md5.getKey());
+            if (sn.getSection().equals(SCHEMATICS_CACHE))
+            {
+                md5Set.add(md5.getKey());
+            }
+        }
+        return md5Set;
+    }
+
+    /**
+     * delete a custom structure.
+     * delete the file and the md5 entry
+     * @param structureName the structure to delete
+     * @return True if the structure have been deleted, False otherwise
+     */
+    private static boolean deleteCachedStructure(@NotNull final StructureName structureName)
+    {
+        Log.getLogger().warn("deleteCustomStructure(" + structureName + ")");
+        if (!SCHEMATICS_CACHE.equals(structureName.getPrefix()))
+        {
+            Log.getLogger().warn("Delete failed: Invalid name " + structureName);
+            return false;
+        }
+
+        if (!hasMD5(structureName))
+        {
+            Log.getLogger().warn("Delete failed: No MD5 hash found for " + structureName);
+            return false;
+        }
+
+        final File structureFile = Structure.getSchematicsFolder().toPath().resolve(structureName.toString()+SCHEMATIC_EXTENSION).toFile();
+        if (structureFile.delete())
+        {
+            md5Map.remove(structureName.toString());
+            return true;
+        }
+        else
+        {
+            Log.getLogger().warn("Failed to delete structure " + structureName);
+        }
+        return false;
+    }
+
+    /**
+     * check that we can store the schematic.
+     * According to the total number of schematic allowed on the server
+     * @return true if we can store more schematics
+     */
+    private static boolean canStoreNewSchematic()
+    {
+        if (MineColonies.isClient())
+        {
+            return true;
+        }
+        if (!Configurations.allowPlayerSchematics)
+        {
+            return false;
+        }
+
+        final Set<String> md5Set = getCachedMD5s();
+        Log.getLogger().info("Server has " + md5Set.size() + " cached schematics");
+        if (md5Set.size() < Configurations.maxCachedSchematics)
+        {
+            return true;
+        }
+
+
+        int countInUseStructures = 0;
+        for(final Colony c : ColonyManager.getColonies())
+        {
+            Log.getLogger().info("Looking a workorder in Colony " + c.getName());
+	        for(final AbstractWorkOrder workOrder : c.getWorkManager().getWorkOrders().values())
+            {
+                if (workOrder instanceof WorkOrderBuildDecoration)
+                {
+                    final String schematicName = ((WorkOrderBuildDecoration)workOrder).getStructureName();
+                    Log.getLogger().info("Looking a workorder with structure " + schematicName);
+                    if (md5Set.contains(schematicName))
+                    {
+                        Log.getLogger().info("Colony " + c.getName() + " use cached schematic " + schematicName);
+                        md5Set.remove(schematicName);
+                        countInUseStructures++;
+                    }
+                }
+            }
+        }
+        Log.getLogger().info("Server has " + countInUseStructures + " used cached schematics ");
+        Log.getLogger().info("Server has " + md5Set.size() + " not used cached schematics ");
+        //md5Set containd only the unused one
+        Iterator<String> iterator = md5Set.iterator();
+        while(iterator.hasNext() && md5Set.size() + countInUseStructures >= Configurations.maxCachedSchematics)
+        {
+            final StructureName sn = new StructureName(iterator.next());
+            if (deleteCachedStructure(sn))
+            {
+                Log.getLogger().info("Removinf cached schematic " + sn);
+                iterator.remove();
+            }
+        }
+
+        return md5Set.size() + countInUseStructures < Configurations.maxCachedSchematics;
+    }
+
+    /**
      * Save a schematic in the cache.
      * This method is valid on the client and server
      * @param bytes representing the schematic
@@ -697,6 +812,12 @@ public final class Structures
     {
         final File schematicsFolder = Structure.getCachedSchematicsFolder();
         final String md5 = Structure.calculateMD5(bytes);
+
+        if (!canStoreNewSchematic())
+        {
+            Log.getLogger().warn("Could not store schematic in cache");
+            return;
+        }
 
         if (md5 != null)
         {

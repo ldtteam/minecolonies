@@ -372,6 +372,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         }
 
 
+        Settings.instance.setStructureName(structureName.toString());
         Settings.instance.setActiveSchematic(structure);
 
         if (Settings.instance.pos == null)
