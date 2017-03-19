@@ -695,14 +695,11 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             slot = worker.findFirstSlotInInventoryWith(block, block.getMetaFromState(metadata));
         }
 
-        if (slot != -1)
+        if (slot != -1 && getInventory().extractItem(slot, 1, false) != null)
         {
-            if (getInventory().extractItem(slot, 1, false) != null)
-            {
-                //Flag 1+2 is needed for updates
-                world.setBlockState(location, metadata, 3);
-                return true;
-            }
+            //Flag 1+2 is needed for updates
+            world.setBlockState(location, metadata, 3);
+            return true;
         }
 
         return false;

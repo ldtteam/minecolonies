@@ -15,10 +15,8 @@ import com.minecolonies.coremod.network.messages.MarkBuildingDirtyMessage;
 import com.minecolonies.coremod.network.messages.TransferItemsRequestMessage;
 import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.Log;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 import org.jetbrains.annotations.NotNull;
 

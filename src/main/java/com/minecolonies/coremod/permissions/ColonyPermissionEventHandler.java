@@ -190,8 +190,9 @@ public class ColonyPermissionEventHandler
             }
 
             if(Configurations.enableColonyProtection && (event.getWorld().getBlockState(event.getPos()).getBlock() instanceof BlockContainer
-                                                           || event.getWorld().getTileEntity(event.getPos()) != null || (event.getItemStack() != null && event.getItemStack()
-                                                                                                                                                           .getItem() instanceof ItemPotion)))
+                                                           || event.getWorld().getTileEntity(event.getPos()) != null
+                                                           || (event.getItemStack() != null
+                                                                 && event.getItemStack().getItem() instanceof ItemPotion)))
             {
                 final Permissions.Rank rank = colony.getPermissions().getRank(event.getEntityPlayer());
 

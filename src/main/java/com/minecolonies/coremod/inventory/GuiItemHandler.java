@@ -8,6 +8,8 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.awt.*;
+
 @SideOnly(Side.CLIENT)
 public class GuiItemHandler extends GuiContainer
 {
@@ -17,7 +19,7 @@ public class GuiItemHandler extends GuiContainer
 
     public GuiItemHandler(IInteractiveItemHandler handler)
     {
-        super(new ContainerItemHandler(Minecraft.getMinecraft().thePlayer.inventory, handler, Minecraft.getMinecraft().thePlayer));
+        super(new ContainerItemHandler(Minecraft.getMinecraft().thePlayer.inventory, handler));
         this.handler = handler;
         this.allowUserInput = false;
         this.inventoryRows = handler.getSlots() / 9;
@@ -37,7 +39,7 @@ public class GuiItemHandler extends GuiContainer
      */
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
     {
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.color(Color.WHITE.getRed(), Color.WHITE.getGreen(), Color.WHITE.getBlue(), Color.WHITE.getAlpha());
         this.mc.getTextureManager().bindTexture(TEXTURE);
         int i = (this.width - this.xSize) / 2;
         int j = (this.height - this.ySize) / 2;

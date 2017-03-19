@@ -673,7 +673,7 @@ public class InventoryUtils
     }
 
     /**
-     * Method used to open a GUI for a given TileEntity (in this case a ICapabilityProvider)
+     * Method used to open a GUI for a given TileEntity (in this case a ICapabilityProvider).
      * @param player The player to open the GUI for.
      * @param provider The capability provider to open the GUI from.
      */

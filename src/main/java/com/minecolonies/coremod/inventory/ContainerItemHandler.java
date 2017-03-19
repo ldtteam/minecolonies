@@ -17,52 +17,59 @@ public class ContainerItemHandler extends Container {
     private final IItemHandler handler;
     private final int numRows;
 
-    final int CONSTANT_INVENTORY_ROWS_PLAYER = 3;
-    final int CONSTANT_INVENTORY_COLUMNS     = 9;
+    private static final int INVENTORYROWSPLAYER = 3;
+    private static final int INVENTORYCOLUMNS    = 9;
 
-    public ContainerItemHandler(IInventory playerInventory, IItemHandler chestInventory, EntityPlayer player)
+    private static final int SLOTSIZE = 18;
+
+    private static final int SLOTXOFFSET = 8;
+    private static final int SLOTYOFFSET = 8;
+
+    private static final int PLAYERSLOTINDEXOFFSET   = 9;
+    private static final int PLAYERSLOTYOFFSET       = 103;
+    private static final int PLAYERHOTBARYOFFSET     = 161;
+    private static final int PLAYERINVENTORYROWCOUNT = 4;
+
+    /**
+     * Constructor for a Container that wraps an IItemHandler.
+     *
+     * @param playerInventory The inventory of the player opening the container.
+     * @param chestInventory  The IItemHandler that this container wraps.
+     */
+    public ContainerItemHandler(IInventory playerInventory, IItemHandler chestInventory)
     {
-        final int SLOT_SIZE = 18;
-
-        final int SLOT_X_OFFSET = 8;
-        final int SLOT_Y_OFFSET = 8;
-
-        final int PLAYER_SLOT_INDEX_OFFSET = 9;
-        final int PLAYER_SLOT_Y_OFFSET = 103;
-        final int PLAYER_HOTBAR_Y_OFFSET = 161;
-
-
+        super();
         this.handler = chestInventory;
-        this.numRows = chestInventory.getSlots() / CONSTANT_INVENTORY_COLUMNS;
-        int i = (this.numRows - 4) * 18;
+        this.numRows = chestInventory.getSlots() / INVENTORYCOLUMNS;
+        final int playerInventoryYOffset = (this.numRows - PLAYERINVENTORYROWCOUNT) * SLOTSIZE;
 
-        for (int j = 0; j < this.numRows; ++j)
+        for (int chestRowIndex = 0; chestRowIndex < this.numRows; ++chestRowIndex)
         {
-            for (int k = 0; k < CONSTANT_INVENTORY_COLUMNS; ++k)
+            for (int chestColumnIndex = 0; chestColumnIndex < INVENTORYCOLUMNS; ++chestColumnIndex)
             {
                 this.addSlotToContainer(new SlotItemHandler(chestInventory,
-                                                             k + j * CONSTANT_INVENTORY_COLUMNS,
-                                                             SLOT_X_OFFSET + k * SLOT_SIZE,
-                                                             SLOT_Y_OFFSET + j * SLOT_SIZE));
+                                                             chestColumnIndex + chestRowIndex * INVENTORYCOLUMNS,
+                                                             SLOTXOFFSET + chestColumnIndex * SLOTSIZE,
+                                                             SLOTYOFFSET + chestRowIndex * SLOTSIZE));
             }
         }
 
-        for (int l = 0; l < CONSTANT_INVENTORY_ROWS_PLAYER; ++l)
+        for (int playerRowIndex = 0; playerRowIndex < INVENTORYROWSPLAYER; ++playerRowIndex)
         {
-            for (int j1 = 0; j1 < CONSTANT_INVENTORY_COLUMNS; ++j1)
+            for (int playerColumnIndex = 0; playerColumnIndex < INVENTORYCOLUMNS; ++playerColumnIndex)
             {
                 this.addSlotToContainer(new Slot(playerInventory,
-                                                  j1 + l * CONSTANT_INVENTORY_COLUMNS + PLAYER_SLOT_INDEX_OFFSET,
-                                                  SLOT_X_OFFSET + j1 * SLOT_SIZE,
-                                                  PLAYER_SLOT_Y_OFFSET + l * SLOT_SIZE + i));
+                                                  playerColumnIndex + playerRowIndex * INVENTORYCOLUMNS + PLAYERSLOTINDEXOFFSET,
+                                                  SLOTXOFFSET + playerColumnIndex * SLOTSIZE,
+                                                  PLAYERSLOTYOFFSET + playerRowIndex * SLOTSIZE + playerInventoryYOffset));
             }
         }
 
-        for (int i1 = 0; i1 < CONSTANT_INVENTORY_COLUMNS; ++i1)
+        for (int playerHotBarColumnIndex = 0; playerHotBarColumnIndex < INVENTORYCOLUMNS; ++playerHotBarColumnIndex)
         {
-            this.addSlotToContainer(new Slot(playerInventory, i1,
-                                              SLOT_X_OFFSET + i1 * SLOT_SIZE,
-                                              PLAYER_HOTBAR_Y_OFFSET + i));
+            this.addSlotToContainer(new Slot(playerInventory, playerHotBarColumnIndex,
+                                              SLOTXOFFSET + playerHotBarColumnIndex * SLOTSIZE,
+                                              PLAYERHOTBARYOFFSET + playerInventoryYOffset));
         }
     }
 
@@ -76,24 +83,25 @@ public class ContainerItemHandler extends Container {
      * Take a stack from the specified inventory slot.
      */
     @Nullable
+    @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index)
     {
         ItemStack itemstack = null;
-        Slot slot = (Slot)this.inventorySlots.get(index);
+        final Slot slot = this.inventorySlots.get(index);
 
         if (slot != null && slot.getHasStack())
         {
             final ItemStack stackInSlot = slot.getStack();
             itemstack = stackInSlot.copy();
 
-            if (index < this.numRows * CONSTANT_INVENTORY_COLUMNS)
+            if (index < this.numRows * INVENTORYCOLUMNS)
             {
-                if (!this.mergeItemStack(stackInSlot, this.numRows * CONSTANT_INVENTORY_COLUMNS, this.inventorySlots.size(), true))
+                if (!this.mergeItemStack(stackInSlot, this.numRows * INVENTORYCOLUMNS, this.inventorySlots.size(), true))
                 {
                     return null;
                 }
             }
-            else if (!this.mergeItemStack(stackInSlot, 0, this.numRows * CONSTANT_INVENTORY_COLUMNS, false))
+            else if (!this.mergeItemStack(stackInSlot, 0, this.numRows * INVENTORYCOLUMNS, false))
             {
                 return null;
             }

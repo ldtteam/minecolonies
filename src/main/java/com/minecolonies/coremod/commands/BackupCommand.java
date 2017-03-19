@@ -31,14 +31,18 @@ public class BackupCommand extends AbstractSingleCommand {
         super(parents);
     }
 
+    /**
+     * Method used to execute this command.
+     *
+     * @param server the server this is executed on.
+     * @param sender this commands executor.
+     * @param args   leftover args stripped from parents.
+     * @throws CommandException Thrown when the execution fails.
+     */
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        if (!sender.canCommandSenderUseCommand(PERMNUM, "minecolonies backup"))
-        {
-            sender.addChatMessage(new TextComponentString(NO_PERMISSION_MESSAGE));
-        }
-        else
+        if (sender.canCommandSenderUseCommand(PERMNUM, "minecolonies backup"))
         {
             server.addScheduledTask(() ->
             {
@@ -52,8 +56,20 @@ public class BackupCommand extends AbstractSingleCommand {
                 }
             });
         }
+        else
+        {
+            sender.addChatMessage(new TextComponentString(NO_PERMISSION_MESSAGE));
+        }
     }
 
+    /**
+     * Method used to get the tab completion options for this command.
+     * @param server the server this is executed on.
+     * @param sender this commands executor.
+     * @param args   leftover args stripped from parents.
+     * @param pos    the block where this is called.
+     * @return A list of strings used for tab completion.
+     */
     @NotNull
     @Override
     public List<String> getTabCompletionOptions(
@@ -65,6 +81,13 @@ public class BackupCommand extends AbstractSingleCommand {
         return Collections.emptyList();
     }
 
+    /**
+     * Return whether the specified command parameter index is a username parameter.
+     *
+     * @param args  leftover args stripped from parents.
+     * @param index the argument index offset by stripped parents.
+     * @return true if this place is a username.
+     */
     @Override
     public boolean isUsernameIndex(@NotNull final String[] args, final int index)
     {

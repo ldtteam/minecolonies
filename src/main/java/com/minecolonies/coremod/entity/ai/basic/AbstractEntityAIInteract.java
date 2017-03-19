@@ -127,7 +127,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         //add the drops to the citizen
         for (final ItemStack item : items)
         {
-            ItemStack itemRemaining = ItemHandlerHelper.insertItemStacked(worker.getInventoryCitizen(), item, false);
+            final ItemStack itemRemaining = ItemHandlerHelper.insertItemStacked(worker.getInventoryCitizen(), item, false);
             if (itemRemaining != null)
             {
                 InventoryHelper.spawnItemStack(world, worker.posX, worker.posY, worker.posZ, itemRemaining);

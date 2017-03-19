@@ -528,6 +528,11 @@ public final class ColonyManager
         saveNeeded = false;
     }
 
+    /**
+     * Static method to backup the colony data.
+     *
+     * @return Backup if it was successful.
+     */
     public static boolean backupColonyData()
     {
         if (numWorldsLoaded > 0 && saveNeeded)
@@ -552,7 +557,7 @@ public final class ColonyManager
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            Log.getLogger().error("Error while trying to create the Backup", e);
             return false;
         }
 
