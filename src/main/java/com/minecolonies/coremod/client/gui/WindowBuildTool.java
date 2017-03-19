@@ -111,6 +111,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     private static final String BUTTON_RENAME = "rename";
 
     /**
+     * Delete the custom structure.
+     */
+    private static final String BUTTON_DELETE = "delete";
+
+    /**
      * Resource suffix.
      */
     private static final String BUILD_TOOL_RESOURCE_SUFFIX = ":gui/windowbuilldtool.xml";
@@ -190,6 +195,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     private int rotation = 0;
 
     final Button renameButton;
+    final Button deleteButton;
 
     /**
      * Creates a window build tool.
@@ -217,9 +223,15 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         }
 
         //Register all necessary buttons with the window.
+        registerButton("previousSection", this::previousSection);
         registerButton(BUTTON_TYPE_ID, this::nextSection);
+        registerButton("nextSection", this::nextSection);
+        registerButton("previousStyle", this::previousStyle);
         registerButton(BUTTON_STYLE_ID, this::nextStyle);
+        registerButton("nextStyle", this::nextStyle);
+        registerButton("previousSchematic", this::previousSchematic);
         registerButton(BUTTON_SCHEMATIC_ID, this::nextSchematic);
+        registerButton("nextSchematic", this::nextSchematic);
         registerButton(BUTTON_CONFIRM, this::confirmClicked);
         registerButton(BUTTON_CANCEL, this::cancelClicked);
         registerButton(BUTTON_LEFT, this::moveLeftClicked);
@@ -231,7 +243,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         registerButton(BUTTON_ROTATE_RIGHT, this::rotateRightClicked);
         registerButton(BUTTON_ROTATE_LEFT, this::rotateLeftClicked);
         registerButton(BUTTON_RENAME, this::renameClicked);
+        registerButton(BUTTON_DELETE, this::deleteClicked);
         renameButton = findPaneOfTypeByID(BUTTON_RENAME, Button.class);
+        deleteButton = findPaneOfTypeByID(BUTTON_DELETE, Button.class);
     }
 
     private void init()
@@ -566,6 +580,22 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     }
 
     /**
+     * Change to the previous section, Builder, Citizen ... Decorations and Custom.
+     */
+    public void previousSection()
+    {
+        if (sections.size() == 0)
+        {
+            setSection(0);
+        }
+        else
+        {
+            Log.getLogger().info("previousSection =>" +((sectionIndex - 1) % sections.size())+"("+sections.size()+")");
+            setSection((sectionIndex + sections.size() - 1 ) % sections.size());
+        }
+    }
+
+    /**
      * Action performed when rename button is clicked.
      */
     private void renameClicked()
@@ -573,6 +603,37 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         final Structures.StructureName structureName = new Structures.StructureName(getSchematicName());
         @NotNull final WindowStructureNameEntry window = new WindowStructureNameEntry(structureName);
         window.open();
+    }
+
+    /**
+     * Action performed when rename button is clicked.
+     */
+    private void deleteClicked()
+    {
+        final Structures.StructureName structureName = new Structures.StructureName(getSchematicName());
+        if (Structures.SCHEMATICS_CUSTOM.equals(structureName.getPrefix()))
+        {
+            if (Structures.deleteCustomStructure(structureName))
+            {
+                Structures.loadCustomStyleMaps();
+                if (schematics.size() <= 1)
+                {
+                    if (styles.size() <= 1)
+                    {
+                        nextSection();
+                    }
+                    else
+                    {
+                        nextStyle();
+                    }
+                }
+                else
+                {
+                    nextSchematic();
+                    setStyle(styleIndex);
+                }
+            }
+        }
     }
 
     /**
@@ -586,10 +647,12 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         {
             name = LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.custom");
             renameButton.setEnabled(true);
+            deleteButton.setEnabled(true);
         }
         else
         {
             renameButton.setEnabled(false);
+            deleteButton.setEnabled(false);
             if (Structures.SCHEMATICS_DECORATIONS.equals(name))
             {
                 name = LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.decorations");
@@ -631,7 +694,21 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         {
             setStyle((styleIndex + 1) % styles.size());
         }
+    }
 
+    /**
+     * Change to the previous style.
+     */
+    public void previousStyle()
+    {
+        if (styles.size() == 0)
+        {
+            setStyle(0);
+        }
+        else
+        {
+            setStyle((styleIndex + styles.size() - 1) % styles.size());
+        }
     }
 
     /**
@@ -686,6 +763,21 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         else
         {
             setSchematic((schematicIndex + 1) % schematics.size());
+        }
+    }
+
+    /**
+     * Go to the previous schematic.
+     */
+    public void previousSchematic()
+    {
+        if (schematics.size() == 0)
+        {
+            setSchematic(0);
+        }
+        else
+        {
+            setSchematic((schematicIndex + schematics.size() - 1) % schematics.size());
         }
     }
 

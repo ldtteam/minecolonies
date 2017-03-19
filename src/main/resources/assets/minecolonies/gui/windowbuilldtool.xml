@@ -16,8 +16,18 @@
     <buttonimage id="forward" source="minecolonies:textures/gui/up.png" size="32" pos="210 140"/>
     <buttonimage id="back" source="minecolonies:textures/gui/down.png" size="32" pos="250 140"/>
 
+    <button id="previousSection" size="15 15" pos="85 170" label="&lt;"/>
     <button id="buildingType" size="200 15" pos="100 170"/>
+    <button id="nextSection" size="15 15" pos="300 170" label="&gt;"/>
+
+    <button id="previousStyle" size="15 15" pos="85 190" label="&lt;"/>
     <button id="style" size="200 15" pos="100 190"/>
+    <button id="nextStyle" size="15 15" pos="300 190" label="&gt;"/>
+
+    <button id="previousSchematic" size="15 15" pos="85 210" label="&lt;"/>
     <button id="schematic" size="200 15" pos="100 210"/>
-    <button id="rename" size="15 15" pos="315 210"/>
+    <button id="nextSchematic" size="15 15" pos="300 210" label="&gt;"/>
+
+    <button id="rename" size="15 15" pos="320 210" label="R"/>
+    <button id="delete" size="15 15" pos="335 210" label="D"/>
 </window>

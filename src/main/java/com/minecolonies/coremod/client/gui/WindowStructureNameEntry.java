@@ -14,8 +14,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class WindowStructureNameEntry extends Window implements Button.Handler
 {
-    private static final String BUTTON_RENAME                 = "rename";
-    private static final String BUTTON_DELETE                 = "delete";
+    private static final String BUTTON_DONE                   = "done";
     private static final String BUTTON_CANCEL                 = "cancel";
     private static final String INPUT_NAME                    = "name";
     private static final String STRUCTURE_NAME_RESOURCE_SUFFIX = ":gui/windowstructurenameentry.xml";
@@ -44,7 +43,7 @@ public class WindowStructureNameEntry extends Window implements Button.Handler
     @Override
     public void onButtonClicked(@NotNull final Button button)
     {
-        if (button.getID().equals(BUTTON_RENAME))
+        if (button.getID().equals(BUTTON_DONE))
         {
             final String name = inputName.getText();
             if (!name.isEmpty())
@@ -54,14 +53,6 @@ public class WindowStructureNameEntry extends Window implements Button.Handler
                 {
                     Settings.instance.setStructureName(newStructureName.toString());
                 }
-            }
-        }
-        else if (button.getID().equals(BUTTON_DELETE))
-        {
-            final String name = inputName.getText();
-            if (!name.isEmpty())
-            {
-                Structures.deleteCustomStructure(structureName);
             }
         }
         else if (!button.getID().equals(BUTTON_CANCEL))
