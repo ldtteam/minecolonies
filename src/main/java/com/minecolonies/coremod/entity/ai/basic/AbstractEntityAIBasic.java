@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
+import com.minecolonies.compatibility.Compatibility;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
@@ -56,6 +57,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Hit a block every x ticks when mining.
      */
     private static final int             HIT_EVERY_X_TICKS       = 5;
+    /**
+     * Diamond pickaxe level.
+     */
+    private static final int DIAMOND_LEVEL                       = 3;
     /**
      * The list of all items and their quantity that were requested by the worker.
      * Warning: This list does not change, if you need to see what is currently missing,
@@ -178,7 +183,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
             // fix for printing the actual exception
             e.printStackTrace();
-        }catch (RuntimeException exp){
+        }
+        catch (RuntimeException exp)
+        {
             Log.getLogger().error("Welp reporting crashed:");
             exp.printStackTrace();
             Log.getLogger().error("Caused by ai exception:");
@@ -1238,7 +1245,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 checkForPickaxe(required);
                 break;
             default:
-                Log.getLogger().error("Invalid tool " + tool + " not implemented as tool!");
+                checkForPickaxe(DIAMOND_LEVEL);
+                Log.getLogger().error("Invalid tool " + tool + " not implemented as tool will require pickaxe level 4 instead.");
         }
     }
 
@@ -1251,8 +1259,18 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private int getMostEfficientTool(@NotNull final Block target)
     {
-        final String tool = target.getHarvestTool(target.getDefaultState());
-        final int required = target.getHarvestLevel(target.getDefaultState());
+        final String tool;
+        final int required;
+        if (Compatibility.isSlimeBlock(target) || Compatibility.isSlimeLeaf(target))
+        {
+            tool = "axe";
+            required = 0;
+        }
+        else
+        {
+            tool = target.getHarvestTool(target.getDefaultState());
+            required = target.getHarvestLevel(target.getDefaultState());
+        }
         int bestSlot = -1;
         int bestLevel = Integer.MAX_VALUE;
         @NotNull final InventoryCitizen inventory = worker.getInventoryCitizen();
@@ -1263,13 +1281,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             final ItemStack item = inventory.getStackInSlot(i);
             final int level = Utils.getMiningLevel(item, tool);
 
-            if (level >= required && level < bestLevel)
+            if ((level >= required && level < bestLevel) && (tool == null || InventoryUtils.verifyToolLevel(item, level, hutLevel)))
             {
-                if (tool == null || InventoryUtils.verifyToolLevel(item, level, hutLevel))
-                {
-                    bestSlot = i;
-                    bestLevel = level;
-                }
+                bestSlot = i;
+                bestLevel = level;
             }
         }
 

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockHutTownHall;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -20,6 +21,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -44,6 +46,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
     private int      rotation;
     private BlockPos pos;
     private boolean  isHut;
+    private boolean  mirror;
 
     /**
      * Empty constructor used when registering the message.
@@ -62,8 +65,9 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
      * @param pos      BlockPos
      * @param rotation int representation of the rotation
      * @param isHut    true if hut, false if decoration
+     * @param mirror   the mirror of the building or decoration.
      */
-    public BuildToolPlaceMessage(final String hutDec, final String style, final BlockPos pos, final int rotation, final boolean isHut)
+    public BuildToolPlaceMessage(final String hutDec, final String style, final BlockPos pos, final int rotation, final boolean isHut, final Mirror mirror)
     {
         super();
         this.hutDec = hutDec;
@@ -71,6 +75,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
         this.pos = pos;
         this.rotation = rotation;
         this.isHut = isHut;
+        this.mirror = mirror == Mirror.FRONT_BACK;
     }
 
     /**
@@ -89,6 +94,8 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
         rotation = buf.readInt();
 
         isHut = buf.readBoolean();
+
+        mirror = buf.readBoolean();
     }
 
     /**
@@ -109,6 +116,8 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
         buf.writeInt(rotation);
 
         buf.writeBoolean(isHut);
+
+        buf.writeBoolean(mirror);
     }
 
     @Override
@@ -117,11 +126,11 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
         final World world = player.worldObj;
         if (message.isHut)
         {
-            handleHut(world, player, message.hutDec, message.style, message.rotation, message.pos);
+            handleHut(world, player, message.hutDec, message.style, message.rotation, message.pos, message.mirror);
         }
         else
         {
-            handleDecoration(world, player, message.hutDec, message.style, message.rotation, message.pos);
+            handleDecoration(world, player, message.hutDec, message.style, message.rotation, message.pos, message.mirror);
         }
     }
 
@@ -136,8 +145,8 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
      * @param buildPos The location the hut is being placed.
      */
     private static void handleHut(
-                                   @NotNull final World world, @NotNull final EntityPlayer player,
-                                   final String hut, final String style, final int rotation, @NotNull final BlockPos buildPos)
+                                   @NotNull final World world, @NotNull final EntityPlayer player, final String hut,
+                                            final String style, final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
     {
         if (Structures.getStylesForHut(hut) == null)
         {
@@ -159,10 +168,9 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
         {
             if (EventHandler.onBlockHutPlaced(world, player, block, buildPos))
             {
-
                 world.destroyBlock(buildPos, true);
                 world.setBlockState(buildPos, block.getDefaultState().withRotation(BlockUtils.getRotation(rotation)));
-                block.onBlockPlacedBy(world, buildPos, world.getBlockState(buildPos), player, null);
+                ((AbstractBlockHut) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror);
 
                 player.inventory.clearMatchingItems(Item.getItemFromBlock(block), -1, 1, null);
 
@@ -188,6 +196,10 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
                     }
                     building.setStyle(style);
                     building.setRotation(rotation);
+                    if(mirror)
+                    {
+                        building.setMirror();
+                    }
                 }
             }
         }
@@ -208,8 +220,8 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
      * @param buildPos   The location the decoration will be built.
      */
     private static void handleDecoration(
-                                          @NotNull final World world, @NotNull final EntityPlayer player,
-                                          final String decoration, final String style, final int rotation, @NotNull final BlockPos buildPos)
+                                          @NotNull final World world, @NotNull final EntityPlayer player, final String decoration,
+                                                   final String style, final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
     {
         if (Structures.getStylesForDecoration(decoration) == null)
         {
@@ -220,7 +232,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
         @Nullable final Colony colony = ColonyManager.getColony(world, buildPos);
         if (colony != null && colony.getPermissions().hasPermission(player, Permissions.Action.PLACE_HUTS))
         {
-            colony.getWorkManager().addWorkOrder(new WorkOrderBuildDecoration(style, decoration, rotation, buildPos));
+            colony.getWorkManager().addWorkOrder(new WorkOrderBuildDecoration(style, decoration, rotation, buildPos, mirror));
         }
     }
 }

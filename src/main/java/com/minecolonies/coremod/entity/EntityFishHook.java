@@ -9,6 +9,7 @@ import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -97,7 +98,7 @@ public final class EntityFishHook extends Entity
     /**
      * Chance to get rare drops while fishing. Higher value leads to a lower chance.
      */
-    private static final double INCREASE_RARENESS_MODIFIER = 5.0;
+    private static final int INCREASE_RARENESS_MODIFIER = 200;
 
     /**
      * The citizen who threw this rod.
@@ -702,48 +703,39 @@ public final class EntityFishHook extends Entity
     private ItemStack getFishingLoot(final EntityCitizen citizen)
     {
         //Reduce random to get more fish drops
-        double random = this.worldObj.rand.nextDouble() / INCREASE_RARENESS_MODIFIER;
-        double speedBonus = 0.18 - fishingSpeedEnchantment * 0.025 - fishingLootEnchantment * 0.01;
-        double lootBonus = 0.09 + fishingSpeedEnchantment * 0.01 - fishingLootEnchantment * 0.01;
-        //clamp_float gives the values an upper limit
-        speedBonus = MathHelper.clamp_float((float) speedBonus, 0.0F, 1.0F);
-        lootBonus = MathHelper.clamp_float((float) lootBonus, 0.0F, 1.0F);
+        final int random = this.worldObj.rand.nextInt(INCREASE_RARENESS_MODIFIER);
         final int buildingLevel = citizen.getWorkBuilding().getBuildingLevel();
+        //Cut to minimum value of 0.
+        final int lootBonus = MathHelper.clamp_int(fishingLootEnchantment- fishingSpeedEnchantment,0,Integer.MAX_VALUE);
 
-        if (random < speedBonus || buildingLevel == 1)
+        if (random >= buildingLevel * (lootBonus + 1) || buildingLevel == 1)
         {
-            final LootContext.Builder lootContextBuilder = new LootContext.Builder((WorldServer) this.worldObj);
-            for (final ItemStack itemstack : this.worldObj.getLootTableManager()
-                                               .getLootTableFromLocation(LootTableList.GAMEPLAY_FISHING_FISH)
-                                               .generateLootForPools(this.rand, lootContextBuilder.build()))
+            if (random >= INCREASE_RARENESS_MODIFIER - buildingLevel * (lootBonus + 1) && buildingLevel >= 2)
             {
-                return itemstack;
+                return getLootForLootTable(LootTableList.GAMEPLAY_FISHING_JUNK);
             }
+
+            return getLootForLootTable(LootTableList.GAMEPLAY_FISHING_FISH);
         }
         else
         {
-            random -= speedBonus;
+            return getLootForLootTable(LootTableList.GAMEPLAY_FISHING_TREASURE);
+        }
+    }
 
-            if (random < lootBonus || buildingLevel == 2)
-            {
-                final LootContext.Builder lootContextBuilder = new LootContext.Builder((WorldServer) this.worldObj);
-                for (final ItemStack itemstack : this.worldObj.getLootTableManager()
-                                                   .getLootTableFromLocation(LootTableList.GAMEPLAY_FISHING_JUNK)
-                                                   .generateLootForPools(this.rand, lootContextBuilder.build()))
-                {
-                    return itemstack;
-                }
-            }
-            else
-            {
-                final LootContext.Builder lootContextBuilder = new LootContext.Builder((WorldServer) this.worldObj);
-                for (final ItemStack itemstack : this.worldObj.getLootTableManager()
-                                                   .getLootTableFromLocation(LootTableList.GAMEPLAY_FISHING_TREASURE)
-                                                   .generateLootForPools(this.rand, lootContextBuilder.build()))
-                {
-                    return itemstack;
-                }
-            }
+    /**
+     * Return some random loot of a defined lootTable.
+     * @param lootTable the lootTable.
+     * @return the ItemStack of the loot.
+     */
+    private ItemStack getLootForLootTable(ResourceLocation lootTable)
+    {
+        final LootContext.Builder lootContextBuilder = new LootContext.Builder((WorldServer) this.worldObj);
+        for (final ItemStack itemstack : this.worldObj.getLootTableManager()
+                .getLootTableFromLocation(lootTable)
+                .generateLootForPools(this.rand, lootContextBuilder.build()))
+        {
+            return itemstack;
         }
         return null;
     }

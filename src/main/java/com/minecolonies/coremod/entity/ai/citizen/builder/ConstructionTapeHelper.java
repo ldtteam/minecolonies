@@ -14,6 +14,7 @@ import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -97,7 +98,7 @@ public final class ConstructionTapeHelper
      */
     public static void placeConstructionTape(@NotNull AbstractBuilding building, @NotNull World world)
     {
-            placeConstructionTape(new WorkOrderBuild(building, 1), world);
+        placeConstructionTape(new WorkOrderBuild(building, 1), world);
     }
 
     /**
@@ -129,8 +130,9 @@ public final class ConstructionTapeHelper
                 tempRotation = workOrder.getRotation();
             }
 
-            wrapper.rotate(tempRotation, world, workOrder.getBuildingLocation());
+            wrapper.rotate(tempRotation, world, workOrder.getBuildingLocation(), workOrder.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE);
             wrapper.setPosition(pos);
+
             final int x1 = wrapper.getPosition().getX() - wrapper.getOffset().getX() - 1;
             final int z1 = wrapper.getPosition().getZ() - wrapper.getOffset().getZ() - 1;
             final int x3 = wrapper.getPosition().getX() + (wrapper.getWidth() - wrapper.getOffset().getX());
@@ -234,7 +236,7 @@ public final class ConstructionTapeHelper
         {
             tempRotation = workOrder.getRotation();
         }
-        wrapper.rotate(tempRotation, world, workOrder.getBuildingLocation());
+        wrapper.rotate(tempRotation, world, workOrder.getBuildingLocation(), workOrder.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE);
         wrapper.setPosition(pos);
         final int x1 = wrapper.getPosition().getX() - wrapper.getOffset().getX() - 1;
         final int z1 = wrapper.getPosition().getZ() - wrapper.getOffset().getZ() - 1;

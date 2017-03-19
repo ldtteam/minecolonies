@@ -16,6 +16,7 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -204,16 +205,16 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         switch (direction)
         {
             case SOUTH:
-                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(-11, -2, 5), 3);
+                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(-11, -2, 5), 3, Mirror.NONE);
                 break;
             case NORTH:
-                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(-20, -2, -21), 1);
+                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(-20, -2, -21), 1, Mirror.NONE);
                 break;
             case EAST:
-                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(5, -2, -20), 2);
+                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(5, -2, -20), 2, Mirror.NONE);
                 break;
             case WEST:
-                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(-21, -2, -11), 0);
+                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(-21, -2, -11), 0, Mirror.NONE);
                 break;
             default:
                 break;

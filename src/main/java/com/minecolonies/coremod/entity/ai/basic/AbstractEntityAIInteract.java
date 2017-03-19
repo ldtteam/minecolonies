@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
+import com.minecolonies.compatibility.Compatibility;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.util.*;
@@ -44,7 +45,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     /**
      * The minimum range the builder has to reach in order to construct or clear.
      */
-    private static final int    MIN_WORKING_RANGE             = 12;
+    private static final int    MIN_WORKING_RANGE    = 12;
 
     /**
      * Creates the abstract part of the AI.
@@ -117,6 +118,9 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         //get all item drops
         final List<ItemStack> items = BlockPosUtil.getBlockDrops(world, blockToMine, fortune);
 
+        //if block in statistic then increment that statistic.
+        triggerMinedBlock(blockToMine);
+
         //Break the block
         worker.breakBlockWithToolInHand(blockToMine);
 
@@ -130,9 +134,42 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
             }
         }
 
+        if(tool != null)
+        {
+            tool.getItem().onUpdate(tool, world, worker, worker.findFirstSlotInInventoryWith(tool.getItem(), tool.getItemDamage()), true);
+        }
         worker.addExperience(XP_PER_BLOCK);
         this.incrementActionsDone();
         return true;
+    }
+
+    private void triggerMinedBlock(@NotNull final BlockPos blockToMine)
+    {
+        if (world.getBlockState(blockToMine).getBlock() == (Blocks.COAL_ORE)
+              || world.getBlockState(blockToMine).getBlock() == (Blocks.IRON_ORE)
+              || world.getBlockState(blockToMine).getBlock() == (Blocks.LAPIS_ORE)
+              || world.getBlockState(blockToMine).getBlock() == (Blocks.GOLD_ORE)
+              || world.getBlockState(blockToMine).getBlock() == (Blocks.REDSTONE_ORE)
+              || world.getBlockState(blockToMine).getBlock() == (Blocks.EMERALD_ORE))
+        {
+            this.getOwnBuilding().getColony().incrementStatistic("ores");
+        }
+        if (world.getBlockState(blockToMine).getBlock().equals(Blocks.DIAMOND_ORE))
+        {
+            this.getOwnBuilding().getColony().incrementStatistic("diamonds");
+        }
+        if (world.getBlockState(blockToMine).getBlock().equals(Blocks.CARROTS))
+        {
+            this.getOwnBuilding().getColony().incrementStatistic("carrots");
+        }
+        if (world.getBlockState(blockToMine).getBlock().equals(Blocks.POTATOES))
+        {
+            this.getOwnBuilding().getColony().incrementStatistic("potatoes");
+        }
+        if (world.getBlockState(blockToMine).getBlock().equals(Blocks.WHEAT))
+        {
+            this.getOwnBuilding().getColony().incrementStatistic("wheat");
+        }
     }
 
     /**
@@ -153,7 +190,10 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
 
         final ItemStack tool = worker.getHeldItemMainhand();
 
-        if (tool != null && !ForgeHooks.canToolHarvestBlock(world, blockToMine, tool) && curBlock != Blocks.BEDROCK)
+        if (tool != null && !ForgeHooks.canToolHarvestBlock(world, blockToMine, tool)
+              && curBlock != Blocks.BEDROCK
+              && !Compatibility.isSlimeBlock(curBlock)
+              && !Compatibility.isSlimeLeaf(curBlock))
         {
             Log.getLogger().info(String.format(
               "ForgeHook not in sync with EfficientTool for %s and %s\n"

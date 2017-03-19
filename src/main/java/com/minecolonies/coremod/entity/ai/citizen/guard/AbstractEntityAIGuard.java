@@ -524,7 +524,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     protected void onKilledEntity(final EntityLivingBase killedEntity)
     {
         final Colony colony = this.getOwnBuilding().getColony();
-        colony.incrementMobsKilled();
+        colony.incrementStatistic("mobs");
         incrementActionsDone();
         worker.getNavigator().clearPathEntity();
     }

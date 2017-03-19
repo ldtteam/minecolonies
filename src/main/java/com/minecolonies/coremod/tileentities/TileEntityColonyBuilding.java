@@ -29,6 +29,7 @@ public class TileEntityColonyBuilding extends TileEntity implements ITickable
      * NBT tag definitions.
      */
     private static final String TAG_COLONY = "colony";
+    private static final String TAG_MIRROR = "mirror";
     private static final String TAG_CUSTOM_NAME = "CustomName";
     private static final String TAG_INVENTORY = "inventory";
 
@@ -66,6 +67,11 @@ public class TileEntityColonyBuilding extends TileEntity implements ITickable
      * The building the tileEntity belongs to.
      */
     private AbstractBuilding building;
+
+    /**
+     * Check if the building has a mirror.
+     */
+    private boolean mirror;
 
     /**
      * Empty standard constructor.
@@ -290,6 +296,7 @@ public class TileEntityColonyBuilding extends TileEntity implements ITickable
             customName = null;
         }
         updateColonyReferences();
+        mirror = compound.getBoolean(TAG_MIRROR);
     }
 
     @NotNull
@@ -309,6 +316,7 @@ public class TileEntityColonyBuilding extends TileEntity implements ITickable
             compound.setString(TAG_CUSTOM_NAME, customName);
         }
         compound.setInteger(TAG_COLONY, colonyId);
+        compound.setBoolean(TAG_MIRROR, mirror);
         return compound;
     }
 
@@ -371,5 +379,23 @@ public class TileEntityColonyBuilding extends TileEntity implements ITickable
 
     public IItemHandler getItemHandler() {
         return itemHandler;
+    }
+
+    /**
+     * Set if the entity is mirrored.
+     * @param mirror true if so.
+     */
+    public void setMirror(final boolean mirror)
+    {
+        this.mirror = mirror;
+    }
+
+    /**
+     * Check if building is mirrored.
+     * @return true if so.
+     */
+    public boolean isMirrored()
+    {
+        return mirror;
     }
 }
