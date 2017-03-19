@@ -47,7 +47,7 @@ public class RenderEventHandler
             }
 
             final BlockPos offset = Settings.instance.getOffset(
-                    new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())).setMirror(Settings.instance.getMirror()));
+              new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())).setMirror(Settings.instance.getMirror()));
 
             if (offset.equals(new BlockPos(0, 0, 0)))
             {

@@ -9,8 +9,7 @@ import slimeknights.tconstruct.world.TinkerWorld;
 /**
  * This class is to store a check to see if a tree is a slime tree.
  */
-public final class SlimeTreeCheck extends SlimeTreeProxy
-{
+public final class SlimeTreeCheck extends SlimeTreeProxy {
 
     /**
      * Check if block is slime block.

@@ -184,13 +184,14 @@ public class ColonyPermissionEventHandler
             final Block block = event.getWorld().getBlockState(event.getPos()).getBlock();
             // Huts
             if (block instanceof AbstractBlockHut
-                    && !colony.getPermissions().hasPermission(event.getEntityPlayer(), Permissions.Action.ACCESS_HUTS))
+                  && !colony.getPermissions().hasPermission(event.getEntityPlayer(), Permissions.Action.ACCESS_HUTS))
             {
                 cancelEvent(event);
             }
 
             if(Configurations.enableColonyProtection && (event.getWorld().getBlockState(event.getPos()).getBlock() instanceof BlockContainer
-                    || event.getWorld().getTileEntity(event.getPos()) != null || (event.getItemStack() != null && event.getItemStack().getItem() instanceof ItemPotion)))
+                                                           || event.getWorld().getTileEntity(event.getPos()) != null || (event.getItemStack() != null && event.getItemStack()
+                                                                                                                                                           .getItem() instanceof ItemPotion)))
             {
                 final Permissions.Rank rank = colony.getPermissions().getRank(event.getEntityPlayer());
 
@@ -203,8 +204,8 @@ public class ColonyPermissionEventHandler
             @NotNull final EntityPlayer player = EntityUtils.getPlayerOfFakePlayer(event.getEntityPlayer(), event.getWorld());
 
             if(event.getItemStack() != null
-                    && event.getItemStack().getItem() instanceof ItemMonsterPlacer
-                    && !colony.getPermissions().hasPermission(player, Permissions.Action.PLACE_HUTS))
+                 && event.getItemStack().getItem() instanceof ItemMonsterPlacer
+                 && !colony.getPermissions().hasPermission(player, Permissions.Action.PLACE_HUTS))
             {
                 cancelEvent(event);
             }
@@ -213,10 +214,11 @@ public class ColonyPermissionEventHandler
 
     /**
      * Check if the event should be canceled for a given player and minimum rank.
-     * @param rankIn the minimum rank.
+     *
+     * @param rankIn   the minimum rank.
      * @param playerIn the player.
-     * @param world the world.
-     * @param event the event.
+     * @param world    the world.
+     * @param event    the event.
      */
     private void checkEventCancelation(final Permissions.Rank rankIn, @NotNull final EntityPlayer playerIn, @NotNull final World world, @NotNull final Event event)
     {
@@ -343,7 +345,7 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final AttackEntityEvent event)
     {
-        if(event.getEntity() instanceof EntityMob)
+        if (event.getEntity() instanceof EntityMob)
         {
             return;
         }

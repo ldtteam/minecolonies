@@ -627,8 +627,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
     /**
      * Trigger the corresponding death achievement.
-     * @param source    The damage source.
-     * @param job       The job of the citizen.
+     *
+     * @param source The damage source.
+     * @param job    The job of the citizen.
      */
     public void triggerDeathAchievement(final DamageSource source, final AbstractJob job)
     {
@@ -651,7 +652,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         {
             this.getColony().triggerAchievement(ModAchievements.achievementFisherDeathGuardian);
         }
-        if(job instanceof JobGuard && source.getEntity() instanceof EntityEnderman)
+        if (job instanceof JobGuard && source.getEntity() instanceof EntityEnderman)
         {
             this.getColony().triggerAchievement(ModAchievements.achievementGuardDeathEnderman);
         }
@@ -670,7 +671,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         if (colony != null)
         {
-            triggerDeathAchievement(par1DamageSource,getColonyJob());
+            triggerDeathAchievement(par1DamageSource, getColonyJob());
             if (getColonyJob() instanceof JobGuard)
             {
                 LanguageHandler.sendPlayersMessage(

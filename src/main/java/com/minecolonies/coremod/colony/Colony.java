@@ -542,6 +542,7 @@ public class Colony implements IColony
 
     /**
      * increment statistic amount.
+     *
      * @param statistic the statistic.
      */
     private void incrementStatisticAmount(@NotNull String statistic)
@@ -583,9 +584,9 @@ public class Colony implements IColony
         }
     }
 
-
     /**
      * Increment the statistic amount and trigger achievement.
+     *
      * @param statistic the statistic.
      */
     public void incrementStatistic(@NotNull String statistic)
@@ -1286,7 +1287,7 @@ public class Colony implements IColony
               getID(),
               tileEntity.getBlockType().getClass(),
               tileEntity.getPosition()));
-            if(tileEntity.isMirrored())
+            if (tileEntity.isMirrored())
             {
                 building.setMirror();
             }

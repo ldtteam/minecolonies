@@ -28,10 +28,10 @@ public class TileEntityColonyBuilding extends TileEntity implements ITickable
     /**
      * NBT tag definitions.
      */
-    private static final String TAG_COLONY = "colony";
-    private static final String TAG_MIRROR = "mirror";
+    private static final String TAG_COLONY      = "colony";
+    private static final String TAG_MIRROR      = "mirror";
     private static final String TAG_CUSTOM_NAME = "CustomName";
-    private static final String TAG_INVENTORY = "inventory";
+    private static final String TAG_INVENTORY   = "inventory";
 
     /**
      * The item handler.
@@ -383,6 +383,7 @@ public class TileEntityColonyBuilding extends TileEntity implements ITickable
 
     /**
      * Set if the entity is mirrored.
+     *
      * @param mirror true if so.
      */
     public void setMirror(final boolean mirror)
@@ -392,6 +393,7 @@ public class TileEntityColonyBuilding extends TileEntity implements ITickable
 
     /**
      * Check if building is mirrored.
+     *
      * @return true if so.
      */
     public boolean isMirrored()

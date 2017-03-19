@@ -24,8 +24,7 @@ import static org.mockito.Mockito.when;
  * <p>Created by Colton on 2/28/17.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ColonyListTest
-{
+public class ColonyListTest {
     @Mock
     private Colony colony1;
 
@@ -242,7 +241,8 @@ public class ColonyListTest
 
         int count = 0;
 
-        while(itr.hasNext()) {
+        while (itr.hasNext())
+        {
             count++;
             itr.next();
         }

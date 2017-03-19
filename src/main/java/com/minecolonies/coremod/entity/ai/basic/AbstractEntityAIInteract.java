@@ -134,7 +134,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
             }
         }
 
-        if(tool != null)
+        if (tool != null)
         {
             tool.getItem().onUpdate(tool, world, worker, worker.findFirstSlotInInventoryWith(tool.getItem(), tool.getItemDamage()), true);
         }

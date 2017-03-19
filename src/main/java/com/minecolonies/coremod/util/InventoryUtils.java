@@ -637,7 +637,7 @@ public class InventoryUtils
     /**
      * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#addItemStackToInventory(ItemStack)}.
      *
-     * @param inventory Inventory to add itemstack to.
+     * @param handler Inventory to add itemstack to.
      * @param itemStack ItemStack to add.
      * @param building the building.
      * @return itemStack which has been replaced.
