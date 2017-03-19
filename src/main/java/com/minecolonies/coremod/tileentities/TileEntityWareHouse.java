@@ -266,7 +266,9 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             {
                 final TileEntity entity = worldObj.getTileEntity(pos);
                 if (entity instanceof TileEntityChest
-                        && ((minLevel != -1 && InventoryUtils.isPickaxeInTileEntity(entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), minLevel, requestingBuilding.getBuildingLevel()))
+                      && ((minLevel != -1 && InventoryUtils.isPickaxeInTileEntity(entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null),
+                  minLevel,
+                  requestingBuilding.getBuildingLevel()))
                               || InventoryUtils.isToolInTileEntity(entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null),
                   tool,
                   requestingBuilding.getBuildingLevel())))

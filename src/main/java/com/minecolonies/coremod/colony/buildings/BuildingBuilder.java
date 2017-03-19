@@ -306,7 +306,9 @@ public class BuildingBuilder extends AbstractBuildingWorker
                     final TileEntity entity = builder.worldObj.getTileEntity(pos);
                     if(entity instanceof TileEntityChest)
                     {
-                        resource.addAvailable(InventoryUtils.getItemCountInInventory(entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), resource.getItem(), resource.getDamageValue()));
+                        resource.addAvailable(InventoryUtils.getItemCountInInventory(entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null),
+                          resource.getItem(),
+                          resource.getDamageValue()));
                     }
                 }
             }

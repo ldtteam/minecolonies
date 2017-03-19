@@ -62,6 +62,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     private static final int DUMP_AND_GATHER_DELAY = 10;
 
     /**
+     * Constant for the max stack size.
+     */
+    private static final int MAX_STACK_SIZE = 64;
+
+    /**
      * Warehouse the deliveryman is assigned to.
      */
     private BuildingWareHouse wareHouse = null;
@@ -318,7 +323,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
                     if (buildingToDeliver.transferStack(stack, world))
                     {
-                        workerInventory.extractItem(i, 64, false);
+                        workerInventory.extractItem(i, MAX_STACK_SIZE, false);
                     }
                     else
                     {
@@ -469,7 +474,9 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockType());
             }
 
-            if (itemsToDeliver.isEmpty() && !isToolInHandler(tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), buildingToDeliver.getRequiredTool(), buildingToDeliver.getBuildingLevel()))
+            if (itemsToDeliver.isEmpty() && !isToolInHandler(tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null),
+              buildingToDeliver.getRequiredTool(),
+              buildingToDeliver.getBuildingLevel()))
             {
                 return false;
             }

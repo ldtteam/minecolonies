@@ -2,24 +2,16 @@ package com.minecolonies.coremod.inventory;
 
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import net.minecraft.crash.CrashReport;
-import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ReportedException;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Basic inventory for the citizens.
@@ -227,6 +219,7 @@ public class InventoryCitizen extends ItemStackHandler implements IInteractiveIt
      * @return the name of the inventory.
      */
     @NotNull
+    @Override
     public String getName()
     {
         return this.hasCustomName() ? this.customName : "citizen.inventory";
@@ -302,6 +295,7 @@ public class InventoryCitizen extends ItemStackHandler implements IInteractiveIt
      * @param player the player acessing the inventory.
      * @return if the player is allowed to access.
      */
+    @Override
     public boolean isUseableByPlayer(@NotNull final EntityPlayer player)
     {
         return this.citizen.getColony().getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS);
@@ -319,9 +313,10 @@ public class InventoryCitizen extends ItemStackHandler implements IInteractiveIt
     /**
      * Used to store variables.
      */
+    @Override
     public NBTTagCompound serializeNBT()
     {
-        NBTTagCompound compound = super.serializeNBT();
+        final NBTTagCompound compound = super.serializeNBT();
         if (this.hasCustomName())
         {
             compound.setString(TAG_CUSTOM_NAME, this.customName);

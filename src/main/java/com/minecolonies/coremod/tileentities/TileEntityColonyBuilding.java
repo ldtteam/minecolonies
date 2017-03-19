@@ -5,10 +5,9 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.permissions.Permissions;
-import com.minecolonies.coremod.inventory.InteractiveItemStackHandler;
+import com.minecolonies.coremod.inventory.AbstractInteractiveItemStackHandler;
 import com.minecolonies.coremod.util.Log;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -36,7 +35,7 @@ public class TileEntityColonyBuilding extends TileEntity implements ITickable
     /**
      * The item handler.
      */
-    private final ItemStackHandler itemHandler = new InteractiveItemStackHandler(27) {
+    private final ItemStackHandler itemHandler = new AbstractInteractiveItemStackHandler(27) {
         @Override
         public boolean isUseableByPlayer(EntityPlayer player) {
             return TileEntityColonyBuilding.this.isUseableByPlayer(player);

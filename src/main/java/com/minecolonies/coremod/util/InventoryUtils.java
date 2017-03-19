@@ -384,8 +384,8 @@ public class InventoryUtils
         {
             // gets itemstack in slot, and decreases stacksize
             @Nullable ItemStack stack = sendingInv.extractItem(slotID, takeAll ? 64 : amount, true);
-            @Nullable ItemStack leftover = ItemHandlerHelper.insertItemStacked(receivingInv, stack, true);
-            int sizeToSend = stack.stackSize - (leftover != null ? leftover.stackSize : 0);
+            @Nullable final ItemStack leftover = ItemHandlerHelper.insertItemStacked(receivingInv, stack, true);
+            final int sizeToSend = stack.stackSize - (leftover != null ? leftover.stackSize : 0);
             if (sizeToSend < amount)
             {
                 return false;
@@ -527,6 +527,13 @@ public class InventoryUtils
         return -1;
     }
 
+    /**
+     * Method used to add a given stack to a inventory.
+     *
+     * @param inventory The IItemHandler to add the stack to.
+     * @param itemStack The stack to add.
+     * @return True when the addition was successful, false when not.
+     */
     public static boolean addItemStackToInventory(@NotNull final IItemHandler inventory, @Nullable final ItemStack itemStack)
     {
         if (ItemHandlerHelper.insertItemStacked(inventory, itemStack, true) != null)
@@ -666,27 +673,41 @@ public class InventoryUtils
     }
 
     /**
-     * Allows opening inventories.
+     * Method used to open a GUI for a given TileEntity (in this case a ICapabilityProvider)
+     * @param player The player to open the GUI for.
+     * @param provider The capability provider to open the GUI from.
      */
-    public static void openGui(EntityPlayer player, ICapabilityProvider provider) {
-        if (provider instanceof TileEntity) {
+    public static void openGui(EntityPlayer player, ICapabilityProvider provider)
+    {
+        if (provider instanceof TileEntity)
+        {
             player.openGui(MineColonies.instance, 1, ((TileEntity) provider).getWorld(),
-                    ((TileEntity) provider).getPos().getX(),
-                    ((TileEntity) provider).getPos().getY(),
-                    ((TileEntity) provider).getPos().getZ());
-        } else if (provider instanceof Entity) {
+              ((TileEntity) provider).getPos().getX(),
+              ((TileEntity) provider).getPos().getY(),
+              ((TileEntity) provider).getPos().getZ());
+        }
+        else if (provider instanceof Entity)
+        {
             player.openGui(MineColonies.instance, 2, ((Entity) provider).getEntityWorld(),
-                    ((Entity) provider).getEntityId(),
-                    0,
-                    0);
+              ((Entity) provider).getEntityId(),
+              0,
+              0);
         }
     }
 
+    /**
+     * Method used to drop all items in a IItemHandler.
+     * @param worldIn The world to drop the items in.
+     * @param x The x-Coord to drop the items at.
+     * @param y The y-Coord to drop the items at.
+     * @param z The z-Coord to drop the items at.
+     * @param inventory The inventory to drop the items from.
+     */
     public static void dropItemHandlerItems(World worldIn, double x, double y, double z, IItemHandler inventory)
     {
         for (int i = 0; i < inventory.getSlots(); i++)
         {
-            ItemStack itemstack = inventory.getStackInSlot(i);
+            final ItemStack itemstack = inventory.getStackInSlot(i);
 
             if (itemstack != null)
             {

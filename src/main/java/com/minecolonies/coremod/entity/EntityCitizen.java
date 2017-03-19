@@ -45,6 +45,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -822,7 +823,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             compound.setInteger(TAG_CITIZEN, citizenData.getId());
         }
 
-        NBTTagCompound inv = inventory.serializeNBT();
+        final NBTTagCompound inv = inventory.serializeNBT();
         compound.setTag(TAG_INVENTORY, inv);
         compound.setInteger(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot());
         compound.setString(TAG_LAST_JOB, lastJob);
@@ -842,9 +843,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
             updateColonyServer();
         }
 
-        if (compound.hasKey(TAG_INVENTORY, 10)) {
+        if (compound.hasKey(TAG_INVENTORY, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND))
+        {
             inventory.deserializeNBT(compound.getCompoundTag(TAG_INVENTORY));
-        } else {
+        }
+        else
+        {
             // Compatibility code
             inventory.deserializeNBT(compound);
         }
@@ -1484,7 +1488,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             final int i = itemStack.stackSize;
             if (i <= 0 || ItemHandlerHelper.insertItemStacked(this.getInventoryCitizen(), itemStack, true) == null)
             {
-                ItemStack result = ItemHandlerHelper.insertItemStacked(this.getInventoryCitizen(), itemStack, false);
+                final ItemStack result = ItemHandlerHelper.insertItemStacked(this.getInventoryCitizen(), itemStack, false);
                 this.worldObj.playSound((EntityPlayer) null,
                   this.getPosition(),
                   SoundEvents.ENTITY_ITEM_PICKUP,
@@ -1678,17 +1682,24 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     @Override
-    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, net.minecraft.util.EnumFacing facing)
+    public boolean hasCapability(Capability<?> capability, EnumFacing facing)
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+        {
             return true;
+        }
+
         return super.hasCapability(capability, facing);
     }
 
-    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing)
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+        {
             return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(inventory);
+        }
+
         return super.getCapability(capability, facing);
     }
 

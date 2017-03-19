@@ -207,11 +207,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
             final TileEntityColonyBuilding chest = workBuilding.getTileEntity();
             final IItemHandler handler = chest.getItemHandler();
 
-            if (!(handler instanceof ItemStackHandler))
-            {
-                MineColonies.getLogger().error("TileEntityColonyBuilding handler is no longer ItemStackHandler - please rewrite goToBuilding");
-            }
-            else
+            if (handler instanceof ItemStackHandler)
             {
                 for (int i = 0; i < handler.getSlots(); i++)
                 {
@@ -228,6 +224,10 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
                     }
                     dumpAfterActions = DUMP_BASE * workBuilding.getBuildingLevel();
                 }
+            }
+            else
+            {
+                MineColonies.getLogger().error("TileEntityColonyBuilding handler is no longer ItemStackHandler - please rewrite goToBuilding");
             }
         }
         attacksExecuted = 0;

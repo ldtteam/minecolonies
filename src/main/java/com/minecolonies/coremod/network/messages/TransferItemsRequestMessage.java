@@ -17,7 +17,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -116,7 +115,9 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
         }
 
         final Item item = message.itemStack.getItem();
-        final int amountToTake = Math.min(message.quantity, InventoryUtils.getItemCountInInventory(new PlayerMainInvWrapper(player.inventory), item, message.itemStack.getItemDamage()));
+        final int amountToTake = Math.min(message.quantity, InventoryUtils.getItemCountInInventory(new PlayerMainInvWrapper(player.inventory),
+          item,
+          message.itemStack.getItemDamage()));
         final ItemStack itemStackToTake = new ItemStack(item, amountToTake, message.itemStack.getItemDamage());
 
         ItemStack remainingItemStack = InventoryUtils.setOverSizedStack(building.getTileItemHandler(), itemStackToTake);

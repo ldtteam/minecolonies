@@ -20,7 +20,6 @@ import java.util.stream.StreamSupport;
  * Data structure for storing colonies, optimized for performance.
  *
  * @param <T> Type of IColony (Colony or ColonyView)
- * @author Colton
  */
 public final class ColonyList<T extends IColony> implements Iterable<T> {
     @VisibleForTesting
