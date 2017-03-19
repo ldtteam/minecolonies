@@ -1448,16 +1448,16 @@ public class EntityCitizen extends EntityAgeable implements INpc
             final int i = itemStack.stackSize;
             if (i <= 0 || ItemHandlerHelper.insertItemStacked(this.getInventoryCitizen(), itemStack, true) == null)
             {
-                ItemHandlerHelper.insertItemStacked(this.getInventoryCitizen(), itemStack, false);
+                ItemStack result = ItemHandlerHelper.insertItemStacked(this.getInventoryCitizen(), itemStack, false);
                 this.worldObj.playSound((EntityPlayer) null,
                   this.getPosition(),
                   SoundEvents.ENTITY_ITEM_PICKUP,
                   SoundCategory.AMBIENT,
                   0.2F,
                   (float) ((this.rand.nextGaussian() * 0.7D + 1.0D) * 2.0D));
-                this.onItemPickup(this, i);
+                this.onItemPickup(entityItem, i);
 
-                if (itemStack.stackSize <= 0)
+                if (result == null || result.stackSize <= 0)
                 {
                     entityItem.setDead();
                 }
