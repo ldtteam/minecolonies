@@ -72,32 +72,6 @@ public final class ClientStructureWrapper
     }
 
 
-    /**
-     * Creates the scan directories for the scanTool.
-     *
-     * @param world the worldIn.
-     */
-    private static void createScanDirectory(@NotNull final World world)
-    {
-        final File minecolonies;
-        if (world.isRemote)
-        {
-            minecolonies = new File(Minecraft.getMinecraft().mcDataDir, "minecolonies/");
-        }
-        else
-        {
-            final MinecraftServer server = world.getMinecraftServer();
-            if (server == null)
-            {
-                return;
-            }
-            minecolonies = server.getFile("minecolonies/");
-        }
-        checkDirectory(minecolonies);
-
-        @NotNull final File scans = new File(minecolonies, "scans/");
-        checkDirectory(scans);
-    }
 
     /**
      * Checks if directory exists, else creates it.
@@ -111,4 +85,5 @@ public final class ClientStructureWrapper
             Log.getLogger().error("Directory doesn't exist and failed to be created: " + directory.toString());
         }
     }
+
 }
