@@ -11,15 +11,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-
 
 import java.io.IOException;
 
@@ -95,17 +95,35 @@ public class SchematicSaveMessage implements IMessage, IMessageHandler<Schematic
     {
         if (!MineColonies.isClient() && !Configurations.allowPlayerSchematics)
         {
-            Log.getLogger().info("SchematicSaveMessage: custom schematic is not allowed on this server()");
+            Log.getLogger().info("SchematicSaveMessage: custom schematic is not allowed on this server.");
+            if (ctx.side.isServer())
+            {
+                ctx.getServerHandler().playerEntity.sendMessage(new TextComponentString("The server does not allow custom schematic!"));
+            }
             return null;
         }
 
+        boolean schematicSent=false;
         if (message.bytes == null)
         {
             Log.getLogger().error("Received empty schematic file");
+            schematicSent = false;
         }
         else
         {
-            Structures.handleSaveSchematicMessage(message.bytes);
+            schematicSent = Structures.handleSaveSchematicMessage(message.bytes);
+        }
+
+        if (ctx.side.isServer())
+        {
+            if (schematicSent)
+            {
+                ctx.getServerHandler().playerEntity.sendMessage(new TextComponentString("Schematic successfully sent!"));
+            }
+            else
+            {
+                ctx.getServerHandler().playerEntity.sendMessage(new TextComponentString("Failed to send the Schematic!"));
+            }
         }
         return null;
     }

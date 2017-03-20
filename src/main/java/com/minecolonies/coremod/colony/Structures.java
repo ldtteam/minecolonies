@@ -795,7 +795,7 @@ public final class Structures
             final StructureName sn = new StructureName(iterator.next());
             if (deleteCachedStructure(sn))
             {
-                Log.getLogger().info("Removinf cached schematic " + sn);
+                Log.getLogger().info("Removing cached schematic " + sn);
                 iterator.remove();
             }
         }
@@ -808,7 +808,7 @@ public final class Structures
      * This method is valid on the client and server
      * @param bytes representing the schematic
      */
-    public static void handleSaveSchematicMessage(final byte[] bytes)
+    public static boolean handleSaveSchematicMessage(final byte[] bytes)
     {
         final File schematicsFolder = Structure.getCachedSchematicsFolder();
         final String md5 = Structure.calculateMD5(bytes);
@@ -816,7 +816,7 @@ public final class Structures
         if (!canStoreNewSchematic())
         {
             Log.getLogger().warn("Could not store schematic in cache");
-            return;
+            return false;
         }
 
         if (md5 != null)
@@ -832,17 +832,18 @@ public final class Structures
             catch (final IOException e)
             {
                 Log.getLogger().warn("Exception while trying to save a schematic.", e);
-                return;
+                return false;
             }
         }
         else
         {
            Log.getLogger().info("Structures.handleSaveSchematicMessage: Could not calculate the MD5 hash");
-           return;
+           return false ;
         }
 
         //Let the gui know we just save a schematic
         ColonyManager.setSchematicDownloaded(true);
+        return true;
     }
 
 
