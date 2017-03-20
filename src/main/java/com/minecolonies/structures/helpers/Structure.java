@@ -147,6 +147,18 @@ public class Structure
             }
         }
 
+        if (MineColonies.isClient())
+        {
+            // if the schematic folder contains huts or decorations we use that
+            // Otherwise we use minecraft directory
+            final File worldHutsFolder = new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + "/schematics/" + Structures.SCHEMATICS_HUTS);
+            final File worldDecorationsFolder = new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + "/schematics/" + Structures.SCHEMATICS_DECORATIONS);
+            if (worldHutsFolder.exists() || worldDecorationsFolder.exists())
+            {
+                return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + "/schematics/");
+            }
+        }
+
         return new File(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
                         + "/" + Constants.MOD_ID + "/schematics/");
     }
@@ -157,7 +169,21 @@ public class Structure
      */
     public static File getCachedSchematicsFolder()
     {
-        return getSchematicsFolder().toPath().resolve(Structures.SCHEMATICS_CACHE).toFile();
+        if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
+        {
+            if (ColonyManager.getServerUUID()!=null)
+            {
+                return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + "/" + ColonyManager.getServerUUID()+"/schematics/" + Structures.SCHEMATICS_CACHE + '/');
+            }
+            else
+            {
+                Log.getLogger().error("ColonyManager.getServerUUID() => null this should not happen");
+                return null;
+            }
+        }
+
+        return new File(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
+                        + "/" + Constants.MOD_ID + "/schematics/" + Structures.SCHEMATICS_CACHE + '/');
     }
 
     /**
@@ -182,7 +208,7 @@ public class Structure
      */
     public static InputStream getStream(final String structureName)
     {
-        Structures.StructureName sn = new Structures.StructureName(structureName);
+        final Structures.StructureName sn = new Structures.StructureName(structureName);
         InputStream inputstream = Structure.getStreamFromFolder(Structure.getSchematicsFolder(), structureName);
 
         if (inputstream == null && sn.getPrefix().equals(Structures.SCHEMATICS_CUSTOM))

@@ -114,15 +114,23 @@ public final class Structures
             Log.getLogger().warn("loadStyleMaps: Could not load the schematics from the jar");
         }
 
-        File schematicsFolder = Structure.getSchematicsFolder();
+        final File schematicsFolder = Structure.getSchematicsFolder();
         if (schematicsFolder != null)
         {
+            Log.getLogger().info("Load additionnal huts from " + schematicsFolder + '/' + SCHEMATICS_HUTS);
             checkDirectory(schematicsFolder.toPath().resolve(SCHEMATICS_HUTS).toFile());
             loadSchematicsForSection(schematicsFolder.toPath(), SCHEMATICS_HUTS);
+            Log.getLogger().info("Load additionnal decorations from " + schematicsFolder + '/' + SCHEMATICS_DECORATIONS);
             checkDirectory(schematicsFolder.toPath().resolve(SCHEMATICS_DECORATIONS).toFile());
             loadSchematicsForSection(schematicsFolder.toPath(), SCHEMATICS_DECORATIONS);
-            checkDirectory(schematicsFolder.toPath().resolve(SCHEMATICS_CACHE).toFile());
-            loadSchematicsForSection(schematicsFolder.toPath(), SCHEMATICS_CACHE);
+        }
+
+        final File cacheSchematicFolder = Structure.getCachedSchematicsFolder();
+        if (cacheSchematicFolder != null)
+        {
+            checkDirectory(cacheSchematicFolder);
+            Log.getLogger().info("Load cached schematic from " + cacheSchematicFolder);
+            loadSchematicsForSection(cacheSchematicFolder.getParentFile().toPath(), SCHEMATICS_CACHE);
         }
 
         if (md5Map.size()==0)
@@ -179,7 +187,7 @@ public final class Structures
                     final String md5 = Structure.calculateMD5(Structure.getStream(relativePath));
                     if (md5Map.containsKey(structureName.toString()))
                     {
-                        Log.getLogger().info("Override " + structureName + " md5:" + md5 + " (was " + md5Map.containsKey(structureName.toString()) + ")");
+                        Log.getLogger().info("Override " + structureName + " md5:" + md5);
                     }
                     else
                     {
