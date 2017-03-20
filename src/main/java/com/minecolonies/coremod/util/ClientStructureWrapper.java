@@ -42,9 +42,7 @@ public final class ClientStructureWrapper
     public static void handleSaveScanMessage(final NBTTagCompound nbttagcompound, final long currentMillis)
     {
         final Structures.StructureName structureName = new Structures.StructureName(Structures.SCHEMATICS_CUSTOM, "scans",  LanguageHandler.format("item.scepterSteel.scanFormat", currentMillis));
-        final String fileName = "/minecolonies/schematics/" + structureName.toString() + Structures.SCHEMATIC_EXTENSION;
-
-        final File file = new File(Minecraft.getMinecraft().mcDataDir, fileName);
+        final File file = new File(Structure.getClientSchematicsFolder(), structureName.toString() + Structures.SCHEMATIC_EXTENSION);
         checkDirectory(file.getParentFile());
 
         try (OutputStream outputstream = new FileOutputStream(file))
@@ -58,7 +56,7 @@ public final class ClientStructureWrapper
             return;
         }
 
-        LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player,"item.scepterSteel.scanSuccess", fileName);
+        LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player,"item.scepterSteel.scanSuccess", file);
         Settings.instance.setStructureName(structureName.toString());
     }
 
