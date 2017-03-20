@@ -160,6 +160,10 @@ public class WorkOrderBuild extends AbstractWorkOrder
             compound.setInteger(TAG_UPGRADE_LEVEL, upgradeLevel);
             compound.setString(TAG_UPGRADE_NAME, upgradeName);
         }
+        if (workOrderName!=null)
+        {
+            compound.setString(TAG_WORKORDER_NAME, workOrderName);
+        }
         compound.setBoolean(TAG_IS_CLEARED, cleared);
         if (md5 != null)
         {
