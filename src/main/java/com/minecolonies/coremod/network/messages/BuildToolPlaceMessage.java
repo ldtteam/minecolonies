@@ -22,6 +22,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -116,13 +117,19 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
     public void messageOnServerThread(final BuildToolPlaceMessage message, final EntityPlayerMP player)
     {
         final World world = player.world;
+        final Structures.StructureName sn = new Structures.StructureName(message.structureName);
+        if (!Structures.hasMD5(sn))
+        {
+            player.sendMessage(new TextComponentString("Can not build " + message.workOrderName + ": schematic missing!"));
+            return;
+        }
         if (message.isHut)
         {
-            handleHut(world, player, message.structureName, message.workOrderName, message.rotation, message.pos);
+            handleHut(world, player, sn, message.workOrderName, message.rotation, message.pos);
         }
         else
         {
-            handleDecoration(world, player, message.structureName, message.workOrderName, message.rotation, message.pos);
+            handleDecoration(world, player, sn, message.workOrderName, message.rotation, message.pos);
         }
     }
 
@@ -138,9 +145,8 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
      */
     private static void handleHut(
                                    @NotNull final World world, @NotNull final EntityPlayer player,
-                                   final String structureName, final String workOrderName, final int rotation, @NotNull final BlockPos buildPos)
+                                   final Structures.StructureName sn, final String workOrderName, final int rotation, @NotNull final BlockPos buildPos)
     {
-        final Structures.StructureName sn = new Structures.StructureName(structureName);
         final String hut = sn.getSection();
         final Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
         final Colony tempColony = ColonyManager.getClosestColony(world, buildPos);
@@ -206,22 +212,16 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
      */
     private static void handleDecoration(
                                           @NotNull final World world, @NotNull final EntityPlayer player,
-                                          final String structureName, final String workOrderName, final int rotation, @NotNull final BlockPos buildPos)
+                                          final Structures.StructureName sn, final String workOrderName, final int rotation, @NotNull final BlockPos buildPos)
     {
-        final Structures.StructureName sn = new Structures.StructureName(structureName);
-        if (Structures.hasMD5(sn))
-        {
-            Log.getLogger().error("handleDecoration: " + structureName + " => " + Structures.getMD5(sn));
-        }
-
         @Nullable final Colony colony = ColonyManager.getColony(world, buildPos);
         if (colony != null && colony.getPermissions().hasPermission(player, Permissions.Action.PLACE_HUTS))
         {
-            colony.getWorkManager().addWorkOrder(new WorkOrderBuildDecoration(structureName, workOrderName, rotation, buildPos));
+            colony.getWorkManager().addWorkOrder(new WorkOrderBuildDecoration(sn.toString(), workOrderName, rotation, buildPos));
         }
         else
         {
-            Log.getLogger().error("handleDecoration: Could not build "+structureName);
+            Log.getLogger().error("handleDecoration: Could not build " + sn);
         }
     }
 }
