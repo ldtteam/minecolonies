@@ -303,14 +303,15 @@ public class PermissionsMessage
                 return;
             }
 
-            if(colony.getPermissions().hasPermission(player, Permissions.Action.EDIT_PERMISSIONS)
-                    && colony.getPermissions().getRank(player).ordinal() < colony.getPermissions().getRank(message.playerID).ordinal())
+            if(colony.getPermissions().hasPermission(player, Permissions.Action.EDIT_PERMISSIONS))
             {
-                if (message.type == Type.PROMOTE)
+                if (message.type == Type.PROMOTE && colony.getPermissions().getRank(player).ordinal() < colony.getPermissions().getRank(message.playerID).ordinal())
                 {
                     colony.getPermissions().setPlayerRank(message.playerID, Permissions.getPromotionRank(colony.getPermissions().getRank(message.playerID)), colony.getWorld());
                 }
-                else if (message.type == Type.DEMOTE)
+                else if (message.type == Type.DEMOTE
+                        && (colony.getPermissions().getRank(player).ordinal() < colony.getPermissions().getRank(message.playerID).ordinal()
+                        || player.getUniqueID().equals(message.playerID)))
                 {
                     colony.getPermissions().setPlayerRank(message.playerID, Permissions.getDemotionRank(colony.getPermissions().getRank(message.playerID)), colony.getWorld());
                 }
@@ -374,8 +375,10 @@ public class PermissionsMessage
 
             final Permissions.Player permissionsPlayer = colony.getPermissions().getPlayers().get(message.playerID);
             if ((permissionsPlayer.getRank() == Permissions.Rank.HOSTILE && colony.getPermissions().hasPermission(player, Permissions.Action.EDIT_PERMISSIONS))
-                  || (permissionsPlayer.getRank() != Permissions.Rank.HOSTILE && colony.getPermissions().hasPermission(player, Permissions.Action.EDIT_PERMISSIONS)
-                    && colony.getPermissions().getRank(player).ordinal() < colony.getPermissions().getRank(message.playerID).ordinal()))
+                    || (permissionsPlayer.getRank() != Permissions.Rank.HOSTILE
+                    && colony.getPermissions().hasPermission(player, Permissions.Action.EDIT_PERMISSIONS)
+                    && colony.getPermissions().getRank(player).ordinal() < colony.getPermissions().getRank(message.playerID).ordinal())
+                    || player.getUniqueID().equals(message.playerID))
             {
                 colony.getPermissions().removePlayer(message.playerID);
             }
