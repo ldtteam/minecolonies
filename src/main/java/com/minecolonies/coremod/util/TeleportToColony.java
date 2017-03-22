@@ -21,14 +21,14 @@ public final class TeleportToColony
     /**
      * Private constructor to hide the implicit public one.
      */
-    private TeleportToColony(@NotNull final String... parents)
+    public TeleportToColony(@NotNull final String... parents)
     {
 
     }
 
     /**
-     * colonyTeleport is used with Home and Colony to teleport people to either there home
-     * or to another colony, when you specified a colonyID
+     * colonyTeleport is used with Home and Colony to teleport people to either there home.
+     * or to another colony, when you specified a colonyID.
      * @param server the server instance.
      * @param sender the player that is initiating the command.
      * @param args this is the colony ID that the player wishes to TP to.

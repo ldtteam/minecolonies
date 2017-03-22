@@ -42,14 +42,14 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand
     {
 
         //see if player is allowed to use in the configs
-        if (!canCommandSenderUseCommand(COLONYTP))
-        {
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString("This is not allowed on this server."));
-        }
-        else
+        if (canCommandSenderUseCommand(COLONYTP))
         {
             //send the info to the Colony TP utils
             TeleportToColony.colonyTeleport(server,sender,args[0]);
+        }
+        else
+        {
+            sender.getCommandSenderEntity().addChatMessage(new TextComponentString("This is not allowed on this server."));
         }
     }
 
