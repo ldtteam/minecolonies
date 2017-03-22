@@ -2,6 +2,7 @@ package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.controls.Button;
+import com.minecolonies.blockout.View;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.WindowStructureNameEntry;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -34,6 +35,8 @@ import java.util.stream.Collectors;
 import java.io.InputStream;
 
 import net.minecraftforge.fml.common.FMLCommonHandler;
+
+import org.lwjgl.input.Keyboard;
 
 /**
  * BuildTool window.
@@ -196,6 +199,8 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
     final Button renameButton;
     final Button deleteButton;
+    final View deleteView;
+
 
     /**
      * Creates a window build tool.
@@ -244,8 +249,13 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         registerButton(BUTTON_ROTATE_LEFT, this::rotateLeftClicked);
         registerButton(BUTTON_RENAME, this::renameClicked);
         registerButton(BUTTON_DELETE, this::deleteClicked);
+        registerButton("deleteDone", this::deleteDoneClicked);
+        registerButton("deleteCancel", this::deleteCancelClicked);
         renameButton = findPaneOfTypeByID(BUTTON_RENAME, Button.class);
         deleteButton = findPaneOfTypeByID(BUTTON_DELETE, Button.class);
+
+        deleteView = findPaneOfTypeByID("deleteView", View.class);
+        deleteView.setVisible(false);
     }
 
     private void init()
@@ -264,6 +274,18 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         }
 
         setStructureName(Settings.instance.getStructureName());
+    }
+
+    @Override
+    public boolean onKeyTyped(final char ch, final int key)
+    {
+        if (deleteView.isVisible() && key == Keyboard.KEY_ESCAPE)
+        {
+            deleteView.setVisible(false);
+            return true;
+        }
+
+        return super.onKeyTyped(ch, key);
     }
 
     /**
@@ -369,6 +391,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
                                    new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())));
 
         final String md5 = Structures.getMD5(structureName);
+        Log.getLogger().info("Loading structure md5:" + md5);
 
         if (structure.isTemplateMissing() || !structure.isCorrectMD5(md5))
         {
@@ -382,7 +405,14 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             }
 
             Log.getLogger().info("Request To Server for structure " + structureName);
-            MineColonies.getNetwork().sendToServer(new SchematicRequestMessage(structureName.toString()));
+            if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
+            {
+                MineColonies.getNetwork().sendToServer(new SchematicRequestMessage(structureName.toString()));
+            }
+            else
+            {
+                Log.getLogger().error("WindowBuildTool: Need to download schematic on a standalone client/server. This should never happen");
+            }
         }
 
 
@@ -610,6 +640,13 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void deleteClicked()
     {
+        deleteView.setVisible(true);
+    }
+
+    private void deleteDoneClicked()
+    {
+        deleteView.setVisible(false);
+
         final Structures.StructureName structureName = new Structures.StructureName(getSchematicName());
         if (Structures.SCHEMATICS_CUSTOM.equals(structureName.getPrefix()))
         {
@@ -634,6 +671,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton
                 }
             }
         }
+    }
+
+    private void deleteCancelClicked()
+    {
+        deleteView.setVisible(false);
     }
 
     /**

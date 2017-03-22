@@ -29,5 +29,13 @@
     <button id="nextSchematic" size="15 15" pos="300 210" label="&gt;"/>
 
     <button id="rename" size="15 15" pos="320 210" label="R"/>
-    <button id="delete" size="15 15" pos="335 210" label="D"/>
+    <button id="delete" size="15 15" pos="335 210" label="§n§4X"/>
+
+    <!--pseudo dialog box for delete confirmation -->
+    <view id="deleteView" size="100% 100%" pos="0 0">
+        <image source="minecolonies:textures/gui/test.png" size="200px 100%" y="-5"/>
+        <label id="deletemsg" size="100% 11" pos="0 100" textalign="TOP_MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.structure.delete.title)"/>
+        <button id="deleteDone" size="200 20" pos="110 170" label="$(gui.done)"/>
+        <button id="deleteCancel" size="200 20" pos="110 194" label="$(gui.cancel)"/>
+    </view>
 </window>
