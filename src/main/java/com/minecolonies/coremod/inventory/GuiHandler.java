@@ -27,41 +27,31 @@ public class GuiHandler implements IGuiHandler
         {
             case 1:
             {
-                final ContainerItemHandler container = getServerElementForCapabilityProvider(player, world.getTileEntity(new BlockPos(x, y, z)));
-                if (container != null)
-                {
-                    return container;
-                }
-
-                break;
-                }
+                return getServerElementForCapabilityProvider(player, world.getTileEntity(new BlockPos(x, y, z)));
+            }
             case 2:
             {
-                final ContainerItemHandler container = getServerElementForCapabilityProvider(player, world.getEntityByID(x));
-                if (container != null)
-                {
-                    return container;
-                }
-
-                break;
-                }
+                return getServerElementForCapabilityProvider(player, world.getEntityByID(x));
+            }
             case SCARECROW:
             {
-                final BlockPos pos = new BlockPos(x, y, z);
-                final ScarecrowTileEntity tileEntity = (ScarecrowTileEntity) world.getTileEntity(pos);
-                return new Field(tileEntity, player.inventory, world, pos);
-            }
-            default:
-            {
-                return null;
+                return getServerScarecrowElement(player, world, x, y, z);
             }
         }
 
         return null;
     }
 
+    @NotNull
+    private static Field getServerScarecrowElement(final EntityPlayer player, final World world, final int x, final int y, final int z)
+    {
+        final BlockPos pos = new BlockPos(x, y, z);
+        final ScarecrowTileEntity tileEntity = (ScarecrowTileEntity) world.getTileEntity(pos);
+        return new Field(tileEntity, player.inventory, world, pos);
+    }
+
     @Nullable
-    private ContainerItemHandler getServerElementForCapabilityProvider(@NotNull final EntityPlayer player, @Nullable ICapabilityProvider provider)
+    private static ContainerItemHandler getServerElementForCapabilityProvider(@NotNull final EntityPlayer player, @Nullable ICapabilityProvider provider)
     {
         if (provider != null && provider.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null))
         {
@@ -77,38 +67,15 @@ public class GuiHandler implements IGuiHandler
         {
             case 1:
             {
-                final GuiItemHandler gui = getClientlementForCapabilityProvider(player, world.getTileEntity(new BlockPos(x, y, z)));
-                if (gui != null)
-                {
-                    return gui;
-                }
-
-                break;
+                return getClientElementForCapabilityProvider(player, world.getTileEntity(new BlockPos(x, y, z)));
             }
             case 2:
             {
-                final GuiItemHandler gui = getClientlementForCapabilityProvider(player, world.getEntityByID(x));
-                if (gui != null)
-                {
-                    return gui;
-                }
-
-                break;
+                return getClientElementForCapabilityProvider(player, world.getEntityByID(x));
             }
             case SCARECROW:
             {
-                final BlockPos pos = new BlockPos(x, y, z);
-                final ScarecrowTileEntity tileEntity = (ScarecrowTileEntity) world.getTileEntity(pos);
-                if (tileEntity != null)
-                {
-                    return new GuiField(player.inventory, tileEntity, world, pos);
-                }
-
-                break;
-            }
-            default:
-            {
-                return null;
+                return getClientScarecrowElement(player, world, x, y, z);
             }
         }
 
@@ -116,7 +83,20 @@ public class GuiHandler implements IGuiHandler
     }
 
     @Nullable
-    private GuiItemHandler getClientlementForCapabilityProvider(@NotNull final EntityPlayer player, @Nullable ICapabilityProvider provider)
+    private static GuiField getClientScarecrowElement(final EntityPlayer player, final World world, final int x, final int y, final int z)
+    {
+        final BlockPos pos = new BlockPos(x, y, z);
+        final ScarecrowTileEntity tileEntity = (ScarecrowTileEntity) world.getTileEntity(pos);
+        if (tileEntity != null)
+        {
+            return new GuiField(player.inventory, tileEntity, world, pos);
+        }
+
+        return null;
+    }
+
+    @Nullable
+    private static GuiItemHandler getClientElementForCapabilityProvider(@NotNull final EntityPlayer player, @Nullable ICapabilityProvider provider)
     {
         if (provider != null && provider.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null))
         {
