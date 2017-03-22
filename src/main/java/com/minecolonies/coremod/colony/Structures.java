@@ -100,6 +100,7 @@ public final class Structures
      */
     private static void loadStyleMaps()
     {
+        Structure.printFolders();
         try
         {
             @NotNull final URI uri = ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI();

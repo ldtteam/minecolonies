@@ -101,12 +101,6 @@ public class Structure
 
         InputStream inputStream = Structure.getStream(structureName);
 
-        if (inputStream == null && Structures.hasMD5(sn))
-        {
-            Log.getLogger().info("Trying to load from cache :" + Structures.getMD5(sn));
-            inputStream = Structure.getStream(Structures.SCHEMATICS_CACHE + '/' +Structures.getMD5(sn));
-        }
-
         if (inputStream == null)
         {
             Log.getLogger().warn(String.format("Failed to load template %s", structureName));
@@ -147,16 +141,16 @@ public class Structure
             }
         }
 
-        if (MineColonies.isClient())
+        // if the world schematics folder contains huts or decorations subfolder
+        // then we use it as the schematic folder
+        // otherwise we use the minecraft folder  /minecolonies/schematics
+        final File worldHutsFolder = new File(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
+                    + "/" + Constants.MOD_ID + "/schematics/" + Structures.SCHEMATICS_HUTS);
+        final File worldDecorationsFolder = new File(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
+                    + "/" + Constants.MOD_ID + "/schematics/" + Structures.SCHEMATICS_DECORATIONS);
+        if (!worldHutsFolder.exists() && !worldDecorationsFolder.exists())
         {
-            // if the schematic folder contains huts or decorations we use that
-            // Otherwise we use minecraft directory
-            final File worldHutsFolder = new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + "/schematics/" + Structures.SCHEMATICS_HUTS);
-            final File worldDecorationsFolder = new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + "/schematics/" + Structures.SCHEMATICS_DECORATIONS);
-            if (worldHutsFolder.exists() || worldDecorationsFolder.exists())
-            {
-                return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + "/schematics/");
-            }
+            return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + "/schematics/");
         }
 
         return new File(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
@@ -181,7 +175,8 @@ public class Structure
                 return null;
             }
         }
-
+        Log.getLogger().info("getCachedSchematicsFolder:"  + FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
+                        + "/" + Constants.MOD_ID + "/schematics/" + Structures.SCHEMATICS_CACHE + '/');
         return new File(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
                         + "/" + Constants.MOD_ID + "/schematics/" + Structures.SCHEMATICS_CACHE + '/');
     }
@@ -206,19 +201,37 @@ public class Structure
      * @param structureName name of the structure to load
      * @return the input stream or null
      */
+    public static void printFolders()
+    {
+        Log.getLogger().info("printFolders:");
+        if (MineColonies.isClient())
+        {
+            Log.getLogger().info("Client: " + Structure.getClientSchematicsFolder());
+        }
+        Log.getLogger().info("Cache:" + Structure.getCachedSchematicsFolder());
+        Log.getLogger().info("Schematics: " + Structure.getSchematicsFolder());
+    }
+
     public static InputStream getStream(final String structureName)
     {
+        Log.getLogger().info("getStream: "+ structureName);
+        printFolders();
         final Structures.StructureName sn = new Structures.StructureName(structureName);
         InputStream inputstream = Structure.getStreamFromFolder(Structure.getSchematicsFolder(), structureName);
 
         if (inputstream == null && sn.getPrefix().equals(Structures.SCHEMATICS_CUSTOM))
         {
-            inputstream = Structure.getStreamFromFolder(Structure.getClientSchematicsFolder(), structureName);
+            return Structure.getStreamFromFolder(Structure.getClientSchematicsFolder(), structureName);
         }
 
         if (inputstream == null && Structures.hasMD5(sn))
         {
             inputstream = Structure.getStreamFromFolder(Structure.getCachedSchematicsFolder(), Structures.getMD5(sn));
+        }
+
+        if (inputstream == null && FMLCommonHandler.instance().getMinecraftServerInstance() != null)
+        {
+            inputstream = Structure.getStreamFromFolder(Structure.getSchematicsFolder(), structureName);
         }
 
         if (inputstream == null)
