@@ -964,10 +964,10 @@ public final class ColonyManager
                 final long dist = c.getDistanceSquared(pos);
                 if (dist < (Configurations.workingRangeTownHall + Configurations.townHallPadding + BUFFER))
                 {
-                    return false;
+                    return true;
                 }
             }
         }
-        return true;
+        return false;
     }
 }
