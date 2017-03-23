@@ -42,14 +42,6 @@ public class GuiHandler implements IGuiHandler
         return null;
     }
 
-    @NotNull
-    private static Field getServerScarecrowElement(final EntityPlayer player, final World world, final int x, final int y, final int z)
-    {
-        final BlockPos pos = new BlockPos(x, y, z);
-        final ScarecrowTileEntity tileEntity = (ScarecrowTileEntity) world.getTileEntity(pos);
-        return new Field(tileEntity, player.inventory, world, pos);
-    }
-
     @Nullable
     private static ContainerItemHandler getServerElementForCapabilityProvider(@NotNull final EntityPlayer player, @Nullable ICapabilityProvider provider)
     {
@@ -58,6 +50,14 @@ public class GuiHandler implements IGuiHandler
             return new ContainerItemHandler(player.inventory, provider.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null));
         }
         return null;
+    }
+
+    @NotNull
+    private static Field getServerScarecrowElement(final EntityPlayer player, final World world, final int x, final int y, final int z)
+    {
+        final BlockPos pos = new BlockPos(x, y, z);
+        final ScarecrowTileEntity tileEntity = (ScarecrowTileEntity) world.getTileEntity(pos);
+        return new Field(tileEntity, player.inventory, world, pos);
     }
 
     @Override
@@ -83,19 +83,6 @@ public class GuiHandler implements IGuiHandler
     }
 
     @Nullable
-    private static GuiField getClientScarecrowElement(final EntityPlayer player, final World world, final int x, final int y, final int z)
-    {
-        final BlockPos pos = new BlockPos(x, y, z);
-        final ScarecrowTileEntity tileEntity = (ScarecrowTileEntity) world.getTileEntity(pos);
-        if (tileEntity != null)
-        {
-            return new GuiField(player.inventory, tileEntity, world, pos);
-        }
-
-        return null;
-    }
-
-    @Nullable
     private static GuiItemHandler getClientElementForCapabilityProvider(@NotNull final EntityPlayer player, @Nullable ICapabilityProvider provider)
     {
         if (provider != null && provider.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null))
@@ -110,6 +97,19 @@ public class GuiHandler implements IGuiHandler
                 MineColonies.getLogger().warn("Tried to create GUI for non-IInteractiveItemHandler - report to developers!");
                 return null;
             }
+        }
+
+        return null;
+    }
+
+    @Nullable
+    private static GuiField getClientScarecrowElement(final EntityPlayer player, final World world, final int x, final int y, final int z)
+    {
+        final BlockPos pos = new BlockPos(x, y, z);
+        final ScarecrowTileEntity tileEntity = (ScarecrowTileEntity) world.getTileEntity(pos);
+        if (tileEntity != null)
+        {
+            return new GuiField(player.inventory, tileEntity, world, pos);
         }
 
         return null;
