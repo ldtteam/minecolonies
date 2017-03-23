@@ -48,22 +48,22 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand
     public void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender, @NotNull String... args) throws CommandException
     {
         //see if player is allowed to use in the configs
-        if (sender instanceof EntityPlayer  && args.length == 1 && (canCommandSenderUseCommand(COLONYTP) || isPlayerOpped(sender, String.valueOf(COLONYTP))))
+        if (sender instanceof EntityPlayer && args.length == 1)
         {
             final int colonyID = getIthArgument(args, 0, -1);
-            if (colonyID != -1)
+            if (colonyID != -1 && canPlayerUseCommand((EntityPlayer) sender, COLONYTP, colonyID))
             {
-                final Colony colony = ColonyManager.getColony(colonyID);
-                if (isPlayerOpped(sender, String.valueOf(COLONYTP))
-                        || colony.getPermissions().hasPermission((EntityPlayer) sender, Permissions.Action.TELEPORT_TO_COLONY))
-                {
-                    TeleportToColony.colonyTeleport(server, sender, args);
-                    return;
-                }
+                TeleportToColony.colonyTeleport(server, sender, args);
+                return;
             }
         }
-
         sender.getCommandSenderEntity().addChatMessage(new TextComponentString("You are not allowed to do this"));
+    }
+
+    @Override
+    public boolean canRankUseCommand(@NotNull final Colony colony, @NotNull final EntityPlayer player)
+    {
+        return colony.getPermissions().hasPermission(player, Permissions.Action.TELEPORT_TO_COLONY);
     }
 
     @NotNull
