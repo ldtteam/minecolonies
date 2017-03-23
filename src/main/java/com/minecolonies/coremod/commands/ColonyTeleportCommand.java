@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.commands;
 
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.util.TeleportToColony;
 import net.minecraft.command.CommandException;
