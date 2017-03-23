@@ -346,7 +346,8 @@ public class TileEntityColonyBuilding extends TileEntity implements ITickable
     public boolean isUseableByPlayer(@NotNull final EntityPlayer player)
     {
 
-        return this.worldObj.getTileEntity(this.pos) != this &&
+        return this.worldObj.getTileEntity(this.pos) != this
+                 &&
                  player.getDistanceSq((double) this.pos.getX() + CONSTANT_HALFBLOCK, (double) this.pos.getY() + CONSTANT_HALFBLOCK, (double) this.pos.getZ() + CONSTANT_HALFBLOCK)
                    <= CONSTANT_MAXINTERACTIONRANGE
                  && this.hasAccessPermission(player);

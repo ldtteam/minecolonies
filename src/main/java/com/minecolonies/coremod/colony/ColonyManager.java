@@ -542,13 +542,13 @@ public final class ColonyManager
 
         @NotNull final File file = getSaveLocation();
         @NotNull final File targetFile = getBackupSaveLocation(new Date());
-        if (!file.exists())
-        {
-            return true;
-        }
-        else if (targetFile.exists())
+        if (targetFile.exists())
         {
             return false;
+        }
+        else if (!file.exists())
+        {
+            return true;
         }
 
         try

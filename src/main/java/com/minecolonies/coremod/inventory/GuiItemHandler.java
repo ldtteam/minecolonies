@@ -11,7 +11,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.awt.*;
 
 /**
- * Gui for a ItemHandler
+ * Gui for a ItemHandler.
  */
 @SideOnly(Side.CLIENT)
 public class GuiItemHandler extends GuiContainer
@@ -20,18 +20,18 @@ public class GuiItemHandler extends GuiContainer
     private final IInteractiveItemHandler handler;
     private final int                     inventoryRows;
 
-    final static int CONSTANT_HANDLERNAMELEFTOFFSET      = 8;
-    final static int CONSTANT_HANDLERNAMETOPOFFSET       = 6;
-    final static int CONSTANT_HANDLERNAMEFOREGROUNDCOLOR = 4_210_752;
+    private static final int CONSTANT_HANDLERNAMELEFTOFFSET      = 8;
+    private static final int CONSTANT_HANDLERNAMETOPOFFSET       = 6;
+    private static final int CONSTANT_HANDLERNAMEFOREGROUNDCOLOR = 4_210_752;
 
-    final static int CONSTANT_PLAYERCOLUMNCOUNT = 9;
+    private static final int CONSTANT_PLAYERCOLUMNCOUNT = 9;
 
-    final static int CONSTANT_INVENTORYOFFSET       = 114;
-    final static int CONSTANT_INVENTORYSLOTSYOFFSET = 126;
-    final static int CONSTANT_INVENTORYHEIGHT       = 96;
-    final static int CONSTANT_SLOTSIZE              = 18;
+    private static final int CONSTANT_INVENTORYOFFSET       = 114;
+    private static final int CONSTANT_INVENTORYSLOTSYOFFSET = 126;
+    private static final int CONSTANT_INVENTORYHEIGHT       = 96;
+    private static final int CONSTANT_SLOTSIZE              = 18;
 
-    final static int CONSTANT_SLOTXOFFSET = 17;
+    private static final int CONSTANT_SLOTXOFFSET = 17;
 
     /**
      * Constructor to create a GUI for a ItemHandler.
@@ -48,7 +48,9 @@ public class GuiItemHandler extends GuiContainer
     }
 
     /**
-     * Draw the foreground layer for the GuiContainer (everything in front of the items)
+     * Draw the foreground layer for the GuiContainer (everything in front of the items).
+     * @param mouseX The x-Coord of the mouse.
+     * @param mouseY The y-Coord of the mouse.
      */
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY)
@@ -61,6 +63,9 @@ public class GuiItemHandler extends GuiContainer
 
     /**
      * Draws the background layer of this container (behind the items).
+     * @param partialTicks The relative progression of time between two ticks.
+     * @param mouseX The x-Coord of the mouse.
+     * @param mouseY The y-Coord of the mouse.
      */
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
