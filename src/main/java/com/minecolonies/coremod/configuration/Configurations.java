@@ -28,7 +28,8 @@ public class Configurations
     public static boolean canPlayerUseKillCitizensCommand = true;
     public static boolean canPlayerUseAddOfficerCommand = true;
     public static boolean canPlayerUseDeleteColonyCommand = true;
-    public static boolean canPlayerUseRefreshColonyCommand;
+    public static boolean canPlayerUseRefreshColonyCommand = false;
+    public static boolean canPlayerUseBackupCommand = false;
 
 
     /* Colony TP configs */
@@ -36,6 +37,7 @@ public class Configurations
     public static int maxDistanceFromWorldSpawn = 8000;
     public static int minDistanceFromWorldSpawn = 512;
 
+    public static boolean canPlayerUseHomeTPCommand = true;
     //TODO change to false when material handling is implemented
     public static boolean deliverymanInfiniteResources = false;
 

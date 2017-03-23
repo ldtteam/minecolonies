@@ -27,13 +27,9 @@ import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.C
  */
 public class RandomTeleportCommand extends AbstractSingleCommand
 {
-    public static final  String DESC             = "rtp";
-    private static final int    ATTEMPTS         = Configurations.numberOfAttemptsForSafeTP;
-    private static final int    UPPER_BOUNDS     = Configurations.maxDistanceFromWorldSpawn * 2;
-    private static final int    LOWER_BOUNDS     = Configurations.maxDistanceFromWorldSpawn;
-    private static final int    SPAWN_NO_TP      = Configurations.minDistanceFromWorldSpawn;
-    private static final int    STARTING_Y       = 250;
-    private static final double SAFETY_DROP      = 5;
+    public static final String DESC = "rtp";
+    private static final int STARTING_Y = 250;
+    private static final double SAFETY_DROP = 4;
     private static final String CANT_FIND_PLAYER = "No player found for teleport, please define one.";
 
     /**
@@ -56,7 +52,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender, @NotNull String... args) throws CommandException
     {
-        if (SPAWN_NO_TP >= LOWER_BOUNDS)
+        if (Configurations.minDistanceFromWorldSpawn >= Configurations.maxDistanceFromWorldSpawn)
         {
             sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Please have an admin raise the maxDistanceFromWorldSpawn number in config."));
             return;
@@ -64,6 +60,12 @@ public class RandomTeleportCommand extends AbstractSingleCommand
         if (!canCommandSenderUseCommand(COLONYTP))
         {
             sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, ask an OP to TP you."));
+            return;
+        }
+
+        if (!MinecoloniesCommand.canExecuteCommand((EntityPlayer) sender))
+        {
+            sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Please wait at least " + Configurations.teleportBuffer + " seconds to teleport again"));
             return;
         }
 
@@ -96,18 +98,19 @@ public class RandomTeleportCommand extends AbstractSingleCommand
 
     /**
      * Get a random coordinate to teleport to.
+     *
      * @return
      */
     private static int getRandCoordinate()
     {
         final Random rnd = new Random();
 
-        int x = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
+        int x = rnd.nextInt(Configurations.maxDistanceFromWorldSpawn * 2) - Configurations.maxDistanceFromWorldSpawn;
 
         /* keeping X out of the spawn radius */
-        while (x > -SPAWN_NO_TP && x < SPAWN_NO_TP)
+        while (x > -Configurations.minDistanceFromWorldSpawn && x < Configurations.minDistanceFromWorldSpawn)
         {
-            x = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
+            x = rnd.nextInt(Configurations.maxDistanceFromWorldSpawn * 2) - Configurations.maxDistanceFromWorldSpawn;
         }
 
         return x;
@@ -123,24 +126,16 @@ public class RandomTeleportCommand extends AbstractSingleCommand
     {
         //Now the position will be calculated, we will try up to 4 times to find a save position.
         int attCounter = 0;
-        while (attCounter <= ATTEMPTS)
+        while (attCounter <= Configurations.numberOfAttemptsForSafeTP)
         {
             attCounter++;
             /* this math is to get negative numbers */
             final int x = getRandCoordinate();
             final int z = getRandCoordinate();
-
-            /* Check for a close by colony*/
-            if (ColonyManager.getColony(sender.getEntityWorld(), new BlockPos(x, STARTING_Y, z)) != null)
-            {
-                continue;
-            }
-
             /*Search for a ground position*/
             final BlockPos groundPosition = BlockPosUtil.findLand(new BlockPos(x, STARTING_Y, z), sender.getEntityWorld());
-
-            /*If no position found*/
-            if (groundPosition == null)
+            /* Check for a close by colony*/
+            if (ColonyManager.getColony(sender.getEntityWorld(), new BlockPos(x, STARTING_Y, z)) != null || (groundPosition == null))
             {
                 continue;
             }
@@ -149,15 +144,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand
 
             if (foundPosition)
             {
-                if(MinecoloniesCommand.canExecuteCommand((EntityPlayer) sender))
-                {
                     playerToTeleport.setPositionAndUpdate(groundPosition.getX(), groundPosition.getY() + SAFETY_DROP, groundPosition.getZ());
-                }
-                else
-                {
-                    sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Please wait at least " + Configurations.teleportBuffer + " seconds to teleport again"));
-                }
-                return;
             }
         }
         playerToTeleport.getCommandSenderEntity().addChatMessage(new TextComponentString("Couldn't find a safe spot.  Try again in a moment."));
@@ -180,6 +167,3 @@ public class RandomTeleportCommand extends AbstractSingleCommand
         return index == 0;
     }
 }
-
-
-
