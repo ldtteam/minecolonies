@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.network.PacketUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -29,14 +30,13 @@ public class ServerUUIDMessage implements IMessage, IMessageHandler<ServerUUIDMe
     @Override
     public void fromBytes(@NotNull final ByteBuf buf)
     {
-        serverUUID = new UUID(buf.readLong(), buf.readLong());
+        serverUUID = PacketUtils.readUUID(buf);
     }
 
     @Override
     public void toBytes(@NotNull final ByteBuf buf)
     {
-        buf.writeLong(ColonyManager.getServerUUID().getMostSignificantBits());
-        buf.writeLong(ColonyManager.getServerUUID().getLeastSignificantBits());
+        PacketUtils.writeUUID(buf, ColonyManager.getServerUUID());
     }
 
     /**
