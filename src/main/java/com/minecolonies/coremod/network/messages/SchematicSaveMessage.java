@@ -21,22 +21,20 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import com.minecolonies.structures.helpers.Structure;
+import java.util.zip.*;
 
 /**
  * Save Schematic Message.
  */
 public class SchematicSaveMessage implements IMessage, IMessageHandler<SchematicSaveMessage, IMessage>
 {
-    private byte [] bytes;
+    private byte [] data = null;
+    final private int MAX_TOTAL_SIZE = 32767;
+
 
     /**
      * Public standard constructor.
@@ -49,16 +47,46 @@ public class SchematicSaveMessage implements IMessage, IMessageHandler<Schematic
     /**
      * Send a schematic compound to the client.
      *
-     * @param bytes byte array of the schematic.
+     * @param data byte array of the schematic.
      * @param name name of the schematic ex: huts/stone/builder1.
      */
-    public SchematicSaveMessage(final byte[] bytes)
+    public SchematicSaveMessage(final byte[] data)
     {
-        final int MAX_TOTAL_SIZE = 32767;
+            this.data = data;
+    }
+
+    @Override
+    public void fromBytes(@NotNull final ByteBuf buf)
+    {
+        Log.getLogger().info("fromBytes: maxCapacity=" + buf.maxCapacity());
+        Log.getLogger().info("fromBytes: readableBytes=" + buf.readableBytes());
+        int length = buf.readInt();
+        Log.getLogger().info("fromBytes: length = " + length);
+        final byte[] compressedData = new byte [length];
+        Log.getLogger().info("fromBytes: compressedData.length = " + compressedData.length);
+        buf.readBytes(compressedData);
+        data = uncompress(compressedData);
+        Log.getLogger().info("fromBytes: data.length = " + data.length);
+    }
+
+    @Override
+    public void toBytes(@NotNull final ByteBuf buf)
+    {
+        Log.getLogger().info("toBytes: maxCapacity=" + buf.maxCapacity());
+        Log.getLogger().info("toBytes: capacity=" + buf.capacity());
+        Log.getLogger().info("toBytes: writableBytes=" + buf.writableBytes());
+        Log.getLogger().info("toBytes: data.length=" + data.length);
+        Log.getLogger().info("toBytes: buf.writerIndex=" + buf.writerIndex());
+
+        final byte[] compressedData = compress(data);
+        Log.getLogger().info("toBytes: compressedData.length=" + compressedData.length);
+        Log.getLogger().info("toBytes: buf.writerIndex=" + buf.writerIndex());
+        buf.capacity(compressedData.length + buf.writerIndex());
+        Log.getLogger().info("toBytes: buf.capacity()" + buf.capacity());
         final int MAX_SIZE = MAX_TOTAL_SIZE - Integer.SIZE / Byte.SIZE;
-        if (bytes.length > MAX_SIZE)
+        if (compressedData.length > MAX_SIZE)
         {
-            this.bytes = new byte[0];
+            buf.writeInt(0);
             if (MineColonies.isClient())
             {
                 ClientStructureWrapper.sendMessageSchematicTooBig(MAX_SIZE);
@@ -70,24 +98,85 @@ public class SchematicSaveMessage implements IMessage, IMessageHandler<Schematic
         }
         else
         {
-            this.bytes = bytes;
+            buf.writeInt(compressedData.length);
+            buf.writeBytes(compressedData);
         }
     }
 
-    @Override
-    public void fromBytes(@NotNull final ByteBuf buf)
+    public static byte[] compress(final byte[] data)
     {
-        final int length = buf.readInt();
-        bytes = new byte [length];
-        buf.readBytes(bytes);
+        try
+        {
+             final ByteArrayOutputStream byteStream = new ByteArrayOutputStream(data.length);
+             try
+             {
+                 GZIPOutputStream zipStream = new GZIPOutputStream(byteStream);
+                 try
+                 {
+                     zipStream.write(data);
+                 }
+                 finally
+                 {
+                     zipStream.close();
+                 }
+            }
+            finally
+            {
+                byteStream.close();
+            }
+
+            byte[] compressedData = byteStream.toByteArray();
+            return compressedData;
+
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    @Override
-    public void toBytes(@NotNull final ByteBuf buf)
+    public static byte[] uncompress(final byte[] data)
     {
-        buf.writeInt(bytes.length);
-        buf.writeBytes(bytes);
+        byte[] buffer = new byte[1024];
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        try
+        {
+             final ByteArrayInputStream byteStream = new ByteArrayInputStream(data);
+             try
+             {
+                 GZIPInputStream zipStream = new GZIPInputStream(byteStream);
+                 try
+                 {
+                     int len;
+                     while ((len = zipStream.read(buffer)) > 0)
+                     {
+                         out.write(buffer, 0, len);
+                     }
+                 }
+                 finally
+                 {
+                     zipStream.close();
+                 }
+            }
+            finally
+            {
+                byteStream.close();
+            }
+
+            byte[] uncompressedData = out.toByteArray();
+            return uncompressedData;
+
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+        return null;
     }
+
+
 
     @Nullable
     @Override
@@ -104,14 +193,14 @@ public class SchematicSaveMessage implements IMessage, IMessageHandler<Schematic
         }
 
         boolean schematicSent=false;
-        if (message.bytes == null)
+        if (message.data == null)
         {
             Log.getLogger().error("Received empty schematic file");
             schematicSent = false;
         }
         else
         {
-            schematicSent = Structures.handleSaveSchematicMessage(message.bytes);
+            schematicSent = Structures.handleSaveSchematicMessage(message.data);
         }
 
         if (ctx.side.isServer())
