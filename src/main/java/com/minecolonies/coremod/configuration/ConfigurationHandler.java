@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.configuration;
 
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.config.Configuration;
 
 import java.io.File;
@@ -63,6 +64,8 @@ public final class ConfigurationHandler
                     "Turn off explosions inside the colonies radius?").getBoolean();
 
             /* Configs for commands */
+            opLevelForServer = config.get(CATEGORY_GAMEPLAY, "opLevelForServer", opLevelForServer,
+                    "Required Op level to execute commands").getInt();
             teleportBuffer = config.get(CATEGORY_GAMEPLAY, "timeBetweenTeleport", teleportBuffer,
                     "Time until the next teleport in seconds").getInt();
             canPlayerUseCitizenInfoCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseCitizenInfoCommand", canPlayerUseCitizenInfoCommand,
@@ -139,6 +142,6 @@ public final class ConfigurationHandler
     private static int getClampedInt(final Configuration config, final String category, final String key,
                                      final int defaultValue, final int min, final int max, final String comment)
     {
-        return config.get(category, key, defaultValue, String.format(FORMAT_RANGE, comment, min, max, defaultValue), min, max).getInt();
+        return MathHelper.clamp_int(config.get(category, key, defaultValue, String.format(FORMAT_RANGE, comment, min, max, defaultValue), min, max).getInt(), min, max);
     }
 }

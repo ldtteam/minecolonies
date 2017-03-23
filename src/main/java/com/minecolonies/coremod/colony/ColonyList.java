@@ -45,7 +45,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
     @SuppressWarnings("unchecked")
     public T get(int index)
     {
-        if (index < 1 || index > list.length)
+        if (index < 1 || index >= list.length)
         {
             return null;
         }
@@ -96,6 +96,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
         }
 
         size++;
+        topID++;
 
         list[colony.getID()] = colony;
     }
@@ -133,7 +134,6 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
     {
         if (nullIndices.isEmpty())
         {
-
             return ++topID;
         }
 

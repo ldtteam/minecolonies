@@ -904,10 +904,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
                     stuckTime = 0;
                     return;
                 }
-
+                final BlockPos destination = BlockPosUtil.getFloor(newNavigator.getDestination(), worldObj);
                 @Nullable final BlockPos spawnPoint =
                         Utils.scanForBlockNearPoint
-                                (worldObj, newNavigator.getDestination(), 1, 0, 1, 2,
+                                (worldObj, destination, 1, 1, 1, 3,
                                         Blocks.AIR,
                                         Blocks.SNOW_LAYER,
                                         Blocks.TALLGRASS,
