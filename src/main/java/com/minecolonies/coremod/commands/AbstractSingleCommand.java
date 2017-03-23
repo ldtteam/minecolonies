@@ -6,6 +6,7 @@ import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.configuration.Configurations;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,10 +18,9 @@ public abstract class AbstractSingleCommand implements ISubCommand
 
     private final String[] parents;
     public static final String NOT_PERMITTED = "You are not allowed to do that!";
-    public static final Integer PERMNUM = Configurations.opLevelForServer;
     enum Commands
     {
-        CITIZENINFO, COLONYTP, DELETECOLONY, KILLCITIZENS, LISTCITIZENS, RESPAWNCITIZENS, SHOWCOLONYINFO, ADDOFFICER, CHANGE_COLONY_OWNER, REFRESH_COLONY
+        CITIZENINFO, COLONYTP, RTP, DELETECOLONY, KILLCITIZENS, LISTCITIZENS, RESPAWNCITIZENS, SHOWCOLONYINFO, ADDOFFICER, CHANGE_COLONY_OWNER, REFRESH_COLONY, HOMETP, MC_BACKUP
     }
 
     /**
@@ -76,7 +76,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
      * @param player the players/senders name.
      * @param theCommand which command to check if the player can use it.
      * @param colonyId the id of the colony.
-     * @return boolean
+     * @return boolean.
      */
 
     public boolean canPlayerUseCommand(final EntityPlayer player, final Commands theCommand, final int colonyId)
@@ -117,12 +117,16 @@ public abstract class AbstractSingleCommand implements ISubCommand
     {
         switch (theCommand)
         {
-            case CITIZENINFO:
-                return Configurations.canPlayerUseCitizenInfoCommand;
+            case HOMETP:
+                return Configurations.canPlayerUseHomeTPCommand;
             case COLONYTP:
+                return Configurations.canPlayerUseColonyTPCommand;
+            case RTP:
                 return Configurations.canPlayerUseRTPCommand;
             case KILLCITIZENS:
                 return Configurations.canPlayerUseKillCitizensCommand;
+            case CITIZENINFO:
+                return Configurations.canPlayerUseCitizenInfoCommand;
             case LISTCITIZENS:
                 return Configurations.canPlayerUseListCitizensCommand;
             case RESPAWNCITIZENS:
@@ -135,9 +139,11 @@ public abstract class AbstractSingleCommand implements ISubCommand
                 return Configurations.canPlayerUseDeleteColonyCommand;
             case REFRESH_COLONY:
                 return Configurations.canPlayerUseRefreshColonyCommand;
+            case MC_BACKUP:
+                return Configurations.canPlayerUseBackupCommand;
+            default:
+                return false;
         }
-
-        return false;
     }
 
     /**
@@ -150,15 +156,9 @@ public abstract class AbstractSingleCommand implements ISubCommand
     @NotNull
     public boolean isPlayerOpped(@NotNull final ICommandSender sender, String cmdName)
     {
-        int requiredOpLevel = PERMNUM;
-        if (PERMNUM < 1)
-        {
-            requiredOpLevel = 1;
-        }
-        if (PERMNUM > 4)
-        {
-            requiredOpLevel = 4;
-        }
+        int requiredOpLevel = Configurations.opLevelForServer;
+
+        requiredOpLevel = MathHelper.clamp_int(requiredOpLevel, 1,4);
 
         return FMLCommonHandler.instance().getMinecraftServerInstance().canCommandSenderUseCommand(requiredOpLevel,cmdName);
     }

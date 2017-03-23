@@ -28,7 +28,6 @@ public class AddOfficerCommand extends AbstractSingleCommand
     private static final String       SUCCESS_MESSAGE = "Succesfully added Player %s to colony %d";
     private static final String       COLONY_NULL     = "Couldn't find colony %d.";
     private static final String       NO_ARGUMENTS    = "Please define a colony or player";
-    private static final String       NO_PLAYER       = "Can't find player to add";
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -72,7 +71,7 @@ public class AddOfficerCommand extends AbstractSingleCommand
 
         if (colony == null)
         {
-            sender.addChatMessage(new TextComponentString(String.format(COLONY_NULL, colonyId, colonyId)));
+            sender.addChatMessage(new TextComponentString(String.format(COLONY_NULL, colonyId)));
             return;
         }
 
@@ -95,12 +94,6 @@ public class AddOfficerCommand extends AbstractSingleCommand
         if(playerName == null || playerName.isEmpty())
         {
             playerName = sender.getName();
-        }
-
-        if(playerName == null)
-        {
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_PLAYER));
-            return;
         }
 
         colony.getPermissions().addPlayer(playerName, Permissions.Rank.OFFICER, colony.getWorld());

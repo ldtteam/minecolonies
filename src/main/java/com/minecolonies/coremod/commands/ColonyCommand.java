@@ -21,6 +21,7 @@ public class ColonyCommand extends AbstractSplitCommand
         .put(AddOfficerCommand.DESC, new AddOfficerCommand(MinecoloniesCommand.DESC, ColonyCommand.DESC, AddOfficerCommand.DESC))
         .put(RefreshColonyCommand.DESC, new RefreshColonyCommand(MinecoloniesCommand.DESC, ColonyCommand.DESC, RefreshColonyCommand.DESC))
         .put(ChangeColonyOwnerCommand.DESC, new ChangeColonyOwnerCommand(MinecoloniesCommand.DESC, ColonyCommand.DESC, ChangeColonyOwnerCommand.DESC))
+        .put(ColonyTeleportCommand.DESC, new ColonyTeleportCommand(MinecoloniesCommand.DESC, ColonyCommand.DESC, ColonyTeleportCommand.DESC))
               .build();
 
     /**

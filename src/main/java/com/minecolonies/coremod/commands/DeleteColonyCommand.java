@@ -50,13 +50,8 @@ public class DeleteColonyCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        if(args.length == 0)
-        {
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_ARGUMENTS));
-            return;
-        }
-
         final int colonyId;
+
         if(args.length == 0)
         {
             IColony colony = null;
