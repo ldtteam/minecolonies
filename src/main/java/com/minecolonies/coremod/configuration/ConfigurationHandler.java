@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.configuration;
 
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.config.Configuration;
 
 import java.io.File;
@@ -135,6 +136,6 @@ public final class ConfigurationHandler
     private static int getClampedInt(final Configuration config, final String category, final String key,
                                      final int defaultValue, final int min, final int max, final String comment)
     {
-        return config.get(category, key, defaultValue, String.format(FORMAT_RANGE, comment, min, max, defaultValue), min, max).getInt();
+        return MathHelper.clamp_int(config.get(category, key, defaultValue, String.format(FORMAT_RANGE, comment, min, max, defaultValue), min, max).getInt(), min, max);
     }
 }
