@@ -1,8 +1,11 @@
 package com.minecolonies.coremod.commands;
 
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.util.TeleportToColony;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
@@ -18,7 +21,10 @@ import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.C
  */
 public final class ColonyTeleportCommand extends AbstractSingleCommand
 {
-    public static final  String DESC             = "colonytp";
+    /**
+     * The description.
+     */
+    public static final String DESC = "teleport";
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -40,22 +46,31 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender, @NotNull String... args) throws CommandException
     {
-
         //see if player is allowed to use in the configs
-        if (canCommandSenderUseCommand(COLONYTP))
+        if (canCommandSenderUseCommand(COLONYTP) && args.length == 1)
         {
+            final int colonyID = getIthArgument(args, 0, -1);
+            if(colonyID != -1)
+            {
+                final Colony colony = ColonyManager.getColony(colonyID);
+                if(sender instanceof EntityPlayer)
+                {
+                    if (isPlayerOpped(sender, String.valueOf(COLONYTP)) || colony.getPermissions().hasPermission((EntityPlayer) sender), Action.TELEPORT)
+                    {
+                        TeleportToColony.colonyTeleport(server, sender, args);
+                        return;
+                    }
+                }
+            }
             //send the info to the Colony TP utils
-            TeleportToColony.colonyTeleport(server,sender,args[0]);
         }
-        else
-        {
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString("This is not allowed on this server."));
-        }
+
+        sender.getCommandSenderEntity().addChatMessage(new TextComponentString("You are not allowed to do this"));
     }
 
     @NotNull
     @Override
-    public List<String> getTabCompletionOptions (
+    public List<String> getTabCompletionOptions(
             @NotNull final MinecraftServer server,
             @NotNull final ICommandSender sender,
             @NotNull final String[] args,

@@ -1,8 +1,10 @@
 package com.minecolonies.coremod.commands;
 
+import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.util.TeleportToColony;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
@@ -18,7 +20,10 @@ import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.H
  */
 public class HomeTeleportCommand extends AbstractSingleCommand
 {
-    public static final  String DESC             = "home";
+    /**
+     * The description.
+     */
+    public static final String DESC = "home";
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -40,28 +45,25 @@ public class HomeTeleportCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender, @NotNull String... args) throws CommandException
     {
-
         //see if player is allowed to use in the configs
-            if (canCommandSenderUseCommand(HOMETP))
-            {
-                //send the info to the Colony TP utils
-                final String homeID = "99999";
-                TeleportToColony.colonyTeleport(server, sender, homeID);
-
-            }
-            else
-            {
-                sender.getCommandSenderEntity().addChatMessage(new TextComponentString("This is not allowed on this server."));
-            }
+        if (canCommandSenderUseCommand(HOMETP))
+        {
+            TeleportToColony.colonyTeleport(server, sender);
+            return;
+        }
+        else
+        {
+            sender.getCommandSenderEntity().addChatMessage(new TextComponentString("This is not allowed on this server."));
+        }
     }
 
     @NotNull
     @Override
-    public List<String> getTabCompletionOptions (
-    @NotNull final MinecraftServer server,
-    @NotNull final ICommandSender sender,
-    @NotNull final String[] args,
-    final BlockPos pos)
+    public List<String> getTabCompletionOptions(
+            @NotNull final MinecraftServer server,
+            @NotNull final ICommandSender sender,
+            @NotNull final String[] args,
+            final BlockPos pos)
     {
         return Collections.emptyList();
     }
