@@ -2,6 +2,7 @@ package com.minecolonies.coremod.commands;
 
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.util.TeleportToColony;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -50,19 +51,17 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand
         if (canCommandSenderUseCommand(COLONYTP) && args.length == 1)
         {
             final int colonyID = getIthArgument(args, 0, -1);
-            if(colonyID != -1)
+            if (colonyID != -1)
             {
                 final Colony colony = ColonyManager.getColony(colonyID);
-                if(sender instanceof EntityPlayer)
+                if (sender instanceof EntityPlayer
+                        && (isPlayerOpped(sender, String.valueOf(COLONYTP))
+                        || colony.getPermissions().hasPermission((EntityPlayer) sender, Permissions.Action.TELEPORT_TO_COLONY)))
                 {
-                    if (isPlayerOpped(sender, String.valueOf(COLONYTP)) || colony.getPermissions().hasPermission((EntityPlayer) sender), Action.TELEPORT)
-                    {
-                        TeleportToColony.colonyTeleport(server, sender, args);
-                        return;
-                    }
+                    TeleportToColony.colonyTeleport(server, sender, args);
+                    return;
                 }
             }
-            //send the info to the Colony TP utils
         }
 
         sender.getCommandSenderEntity().addChatMessage(new TextComponentString("You are not allowed to do this"));
