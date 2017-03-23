@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.util;
 
 import com.minecolonies.coremod.entity.EntityCitizen;
+import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -289,7 +290,7 @@ public final class EntityUtils
     {
         for (int i = 1; i < AIR_SPACE_ABOVE_TO_CHECK; i++)
         {
-            if (solidOrLiquid(world, groundPosition.up(i)))
+            if (solidOrLiquid(world, groundPosition.up(i)) || world.getBlockState(groundPosition.up(i)).getBlock() instanceof BlockLeaves)
             {
                 return false;
             }

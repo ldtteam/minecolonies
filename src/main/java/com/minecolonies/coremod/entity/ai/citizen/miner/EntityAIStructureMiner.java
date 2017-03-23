@@ -17,6 +17,8 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.geom.Point2D;
+
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 /**
@@ -24,6 +26,11 @@ import static com.minecolonies.coremod.entity.ai.util.AIState.*;
  */
 public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 {
+    /**
+     * Lead the miner to the other side of the shaft.
+     */
+    private static final int OTHER_SIDE_OF_SHAFT = 6;
+
     private static final String RENDER_META_TORCH   = "Torch";
     private static final int    NODE_DISTANCE       = 7;
     /**
@@ -732,5 +739,47 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         {
             return pos.getY() - 1;
         }
+    }
+
+    /**
+     * Calculates the working position.
+     * <p>
+     * Takes a min distance from width and length.
+     * <p>
+     * Then finds the floor level at that distance and then check if it does contain two air levels.
+     * @param targetPosition the position to work at.
+     * @return BlockPos position to work from.
+     */
+    @Override
+    public BlockPos getWorkingPosition(BlockPos targetPosition)
+    {
+        return getNodeMiningPosition(targetPosition);
+    }
+
+    /**
+     * Create a save mining position for the miner.
+     *
+     * @param blockToMine block which should be mined or placed.
+     * @return the save position.
+     */
+    private BlockPos getNodeMiningPosition(BlockPos blockToMine)
+    {
+        final BuildingMiner buildingMiner = getOwnBuilding();
+        if (buildingMiner.getCurrentLevel() == null || buildingMiner.getCurrentLevel().getRandomNode() == null)
+        {
+            return blockToMine;
+        }
+        final Point2D parentPos = buildingMiner.getCurrentLevel().getRandomNode().getParent();
+        if (parentPos != null && buildingMiner.getCurrentLevel().getNode(parentPos) != null
+                && buildingMiner.getCurrentLevel().getNode(parentPos).getStyle() == Node.NodeType.SHAFT)
+        {
+            final BlockPos ladderPos = buildingMiner.getLadderLocation();
+            return new BlockPos(
+                    ladderPos.getX() + buildingMiner.getVectorX() * OTHER_SIDE_OF_SHAFT,
+                    buildingMiner.getCurrentLevel().getDepth(),
+                    ladderPos.getZ() + buildingMiner.getVectorZ() * OTHER_SIDE_OF_SHAFT);
+        }
+        final Point2D pos = buildingMiner.getCurrentLevel().getRandomNode().getParent();
+        return new BlockPos(pos.getX(), buildingMiner.getCurrentLevel().getDepth(), pos.getY());
     }
 }

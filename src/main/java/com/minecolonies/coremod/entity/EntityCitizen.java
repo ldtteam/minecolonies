@@ -860,6 +860,71 @@ public class EntityCitizen extends EntityAgeable implements INpc
         super.onLivingUpdate();
     }
 
+    private void checkIfStuck()
+    {
+        if(this.currentPosition == null)
+        {
+            this.currentPosition = this.getPosition();
+            return;
+        }
+
+        if(this.currentPosition.equals(this.getPosition()) && newNavigator != null && newNavigator.getDestination() != null)
+        {
+            stuckTime++;
+            if(stuckTime >= MAX_STUCK_TIME)
+            {
+                if (newNavigator.getDestination().distanceSq(posX, posY, posZ) < MOVE_AWAY_RANGE)
+                {
+                    stuckTime = 0;
+                    return;
+                }
+                final BlockPos destination = BlockPosUtil.getFloor(newNavigator.getDestination(), worldObj);
+                @Nullable final BlockPos spawnPoint =
+                        Utils.scanForBlockNearPoint
+                                (worldObj, destination, 1, 1, 1, 3,
+                                        Blocks.AIR,
+                                        Blocks.SNOW_LAYER,
+                                        Blocks.TALLGRASS,
+                                        Blocks.RED_FLOWER,
+                                        Blocks.YELLOW_FLOWER,
+                                        Blocks.CARPET);
+
+                EntityUtils.setSpawnPoint(spawnPoint, this);
+                if (colony != null)
+                {
+                    Log.getLogger().info("Teleported stuck citizen " + this.getName() + " from colony: " + colony.getID() + " to target location");
+                }
+                stuckTime = 0;
+            }
+        }
+        else
+        {
+            stuckTime = 0;
+            this.currentPosition = this.getPosition();
+        }
+
+        this.currentPosition = this.getPosition();
+    }
+
+    /**
+     * Sets the last job of the citizen.
+     * @param jobName the job he last had.
+     */
+    public void setLastJob(@NotNull String jobName)
+    {
+        this.lastJob = jobName;
+    }
+
+    /**
+     * Getter for the last job.
+     * @return the last job he had.
+     */
+    @NotNull
+    public String getLastJob()
+    {
+        return this.lastJob;
+    }
+
     private void updateColonyClient()
     {
         if (dataManager.isDirty())
