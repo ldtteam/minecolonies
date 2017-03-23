@@ -110,7 +110,7 @@ public class ListColoniesCommand extends AbstractSingleCommand
 
             final ITextComponent teleport = new TextComponentString(COORDINATES_TEXT + String.format(COORDINATES_XYZ, center.getX(), center.getY(), center.getZ()))
                     .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
-                    new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED + prevPage)
+                    new ClickEvent(ClickEvent.Action.RUN_COMMAND, TELEPORT_COMMAND + colony.getID())
             ));
 
             sender.addChatMessage(teleport);

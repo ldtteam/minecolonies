@@ -48,15 +48,14 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand
     public void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender, @NotNull String... args) throws CommandException
     {
         //see if player is allowed to use in the configs
-        if (canCommandSenderUseCommand(COLONYTP) && args.length == 1)
+        if (sender instanceof EntityPlayer  && args.length == 1 && (canCommandSenderUseCommand(COLONYTP) || isPlayerOpped(sender, String.valueOf(COLONYTP))))
         {
             final int colonyID = getIthArgument(args, 0, -1);
             if (colonyID != -1)
             {
                 final Colony colony = ColonyManager.getColony(colonyID);
-                if (sender instanceof EntityPlayer
-                        && (isPlayerOpped(sender, String.valueOf(COLONYTP))
-                        || colony.getPermissions().hasPermission((EntityPlayer) sender, Permissions.Action.TELEPORT_TO_COLONY)))
+                if (isPlayerOpped(sender, String.valueOf(COLONYTP))
+                        || colony.getPermissions().hasPermission((EntityPlayer) sender, Permissions.Action.TELEPORT_TO_COLONY))
                 {
                     TeleportToColony.colonyTeleport(server, sender, args);
                     return;
