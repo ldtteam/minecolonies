@@ -2,6 +2,7 @@ package com.minecolonies.coremod.items;
 
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.blocks.ModBlocks;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.util.BlockUtils;
@@ -246,7 +247,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         for (int i = DISTANCE; i < WIDTH; i++)
         {
             final int j = k * i;
-            if (!checkIfWater(world, pos.add(j, 0, 0), pos.add(j, 0, spaceRightK), pos.add(j, 0, -spaceLeftK)))
+            if (!checkIfWaterAndNotInColony(world, pos.add(j, 0, 0), pos.add(j, 0, spaceRightK), pos.add(j, 0, -spaceLeftK)))
             {
                 return false;
             }
@@ -257,7 +258,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
 
         for (int i = 0; i < LENGTH; i++)
         {
-            if (!checkIfWater(world, pos.add(DISTANCE * k, 0, -horizontalX + i), pos.add(widthKHalf, 0, -horizontalX + i), pos.add(widthK, 0, -horizontalX + i)))
+            if (!checkIfWaterAndNotInColony(world, pos.add(DISTANCE * k, 0, -horizontalX + i), pos.add(widthKHalf, 0, -horizontalX + i), pos.add(widthK, 0, -horizontalX + i)))
             {
                 return false;
             }
@@ -289,7 +290,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         for (int i = DISTANCE; i < WIDTH; i++)
         {
             final int j = k * i;
-            if (!checkIfWater(world, pos.add(0, 0, j), pos.add(-spaceRightK, 0, j), pos.add(spaceLeftK, 0, j)))
+            if (!checkIfWaterAndNotInColony(world, pos.add(0, 0, j), pos.add(-spaceRightK, 0, j), pos.add(spaceLeftK, 0, j)))
             {
                 return false;
             }
@@ -299,7 +300,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
 
         for (int i = 0; i < LENGTH; i++)
         {
-            if (!checkIfWater(world, pos.add(-horizontalZ + i, 0, DISTANCE * k), pos.add(-horizontalZ + i, 0, DISTANCE * k), pos.add(-horizontalZ + i, 0, widthK)))
+            if (!checkIfWaterAndNotInColony(world, pos.add(-horizontalZ + i, 0, DISTANCE * k), pos.add(-horizontalZ + i, 0, DISTANCE * k), pos.add(-horizontalZ + i, 0, widthK)))
             {
                 return false;
             }
@@ -316,8 +317,22 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @param pos3  the third position.
      * @return true if is water
      */
-    private static boolean checkIfWater(final World world, final BlockPos pos1, final BlockPos pos2, final BlockPos pos3)
+    private static boolean checkIfWaterAndNotInColony(final World world, final BlockPos pos1, final BlockPos pos2, final BlockPos pos3)
     {
-        return BlockUtils.isWater(world.getBlockState(pos1)) && BlockUtils.isWater(world.getBlockState(pos2)) && BlockUtils.isWater(world.getBlockState(pos3));
+        return BlockUtils.isWater(world.getBlockState(pos1)) && BlockUtils.isWater(world.getBlockState(pos2)) && BlockUtils.isWater(world.getBlockState(pos3))
+                && notInAnyColony(world, pos1, pos2, pos3);
+    }
+
+    /**
+     * Check if any of the coordinates is in any colony.
+     * @param world the world to check in.
+     * @param pos1 the first position.
+     * @param pos2 the second position.
+     * @param pos3 the third position.
+     * @return true if no colony found.
+     */
+    private static boolean notInAnyColony(final World world, final BlockPos pos1, final BlockPos pos2, final BlockPos pos3)
+    {
+        return !ColonyManager.isCoordinateInAnyColony(world, pos1) && !ColonyManager.isCoordinateInAnyColony(world, pos2) && !ColonyManager.isCoordinateInAnyColony(world, pos3) ;
     }
 }
