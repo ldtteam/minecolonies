@@ -64,6 +64,8 @@ public final class ConfigurationHandler
                     "Turn off explosions inside the colonies radius?").getBoolean();
 
             /* Configs for commands */
+            opLevelForServer = config.get(CATEGORY_GAMEPLAY, "opLevelForServer", opLevelForServer,
+              "Required Op level to execute commands").getInt();
             teleportBuffer = config.get(CATEGORY_GAMEPLAY, "timeBetweenTeleport", teleportBuffer,
                     "Time until the next teleport in seconds").getInt();
             canPlayerUseCitizenInfoCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseCitizenInfoCommand", canPlayerUseCitizenInfoCommand,
@@ -115,6 +117,9 @@ public final class ConfigurationHandler
                     "Female First Names").getStringList();
             lastNames = config.get(CATEGORY_NAMES, "lastNames", lastNames,
                     "Last Names").getStringList();
+
+            freeToInteractBlocks = config.get(CATEGORY_NAMES, "freeToInteractBlocks", freeToInteractBlocks,
+              "Blocks players should be able to interact with inside any colony.").getStringList();
         }
         finally
         {

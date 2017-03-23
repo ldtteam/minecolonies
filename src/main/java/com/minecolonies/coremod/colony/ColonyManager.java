@@ -75,6 +75,12 @@ public final class ColonyManager
      */
     @NotNull
     private static final ColonyList<ColonyView>     colonyViews           = new ColonyList<>();
+
+    /**
+     * A buffer value to be sure to be outside of the colony.
+     */
+    private static final int BUFFER = 10;
+
     /**
      * Amount of worlds loaded.
      */
@@ -946,5 +952,28 @@ public final class ColonyManager
         }
 
         return null;
+    }
+
+    /**
+     * Check if a given coordinate is inside any other colony.
+     *
+     * @param world the world to check in.
+     * @param pos   the position to check.
+     * @return true if a colony has been found.
+     */
+    public static boolean isCoordinateInAnyColony(@NotNull final World world, final BlockPos pos)
+    {
+        for (@NotNull final ColonyView c : colonyViews)
+        {
+            if (c.getDimension() == world.provider.getDimension())
+            {
+                final long dist = c.getDistanceSquared(pos);
+                if (dist < (Configurations.workingRangeTownHall + Configurations.townHallPadding + BUFFER))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

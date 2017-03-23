@@ -3,10 +3,8 @@ package com.minecolonies.coremod.entity.ai.basic;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.buildings.BuildingMiner;
-import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
@@ -15,7 +13,6 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
-import com.minecolonies.coremod.entity.ai.citizen.miner.Node;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.ai.util.Structure;
@@ -48,7 +45,6 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -71,10 +67,6 @@ import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends AbstractEntityAIInteract<J>
 {
     /**
-     * Lead the miner to the other side of the shaft.
-     */
-    private static final int OTHER_SIDE_OF_SHAFT = 6;
-    /**
      * Amount of xp the builder gains each building (Will increase by attribute modifiers additionally).
      */
     private static final double XP_EACH_BUILDING              = 2.5;
@@ -86,10 +78,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * The minimum range to keep from the current building place.
      */
     private static final int    MIN_ADDITIONAL_RANGE_TO_BUILD = 3;
-    /**
-     * The maximum range to keep from the current building place.
-     */
-    private static final int    MAX_ADDITIONAL_RANGE_TO_BUILD = 25;
     /**
      * The amount of ticks to wait when not needing any tools to break blocks.
      */
@@ -676,7 +664,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             }
             else
             {
-                if (!mineBlock(currentBlock.blockPosition, workFrom == null ? getWorkingPosition() : workFrom))
+                if (!mineBlock(currentBlock.blockPosition, workFrom == null ? getWorkingPosition(currentStructure.getCurrentBlockPosition()) : workFrom))
                 {
                     return false;
                 }
@@ -684,63 +672,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
 
         return true;
-    }
-
-    /**
-     * Gets a floorPosition in a particular direction.
-     *
-     * @param facing   the direction.
-     * @param distance the distance.
-     * @return a BlockPos position.
-     */
-    @NotNull
-    private BlockPos getPositionInDirection(final EnumFacing facing, final int distance)
-    {
-        return getFloor(currentStructure.getCurrentBlockPosition().offset(facing, distance));
-    }
-
-    /**
-     * Calculates the floor level.
-     *
-     * @param position input position.
-     * @return returns BlockPos position with air above.
-     */
-    @NotNull
-    private BlockPos getFloor(@NotNull BlockPos position)
-    {
-        final BlockPos floor = getFloor(position, 0);
-        if (floor == null)
-        {
-            return position;
-        }
-        return floor;
-    }
-
-    /**
-     * Calculates the floor level.
-     *
-     * @param position input position.
-     * @param depth    the iteration depth.
-     * @return returns BlockPos position with air above.
-     */
-    @Nullable
-    private BlockPos getFloor(@NotNull BlockPos position, int depth)
-    {
-        if (depth > 50)
-        {
-            return null;
-        }
-        //If the position is floating in Air go downwards
-        if (!EntityUtils.solidOrLiquid(world, position))
-        {
-            return getFloor(position.down(), depth + 1);
-        }
-        //If there is no air above the block go upwards
-        if (!EntityUtils.solidOrLiquid(world, position.up()))
-        {
-            return position;
-        }
-        return getFloor(position.up(), depth + 1);
     }
 
     /**
@@ -764,65 +695,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     {
         if (workFrom == null)
         {
-            workFrom = getWorkingPosition();
+            workFrom = getWorkingPosition(currentStructure.getCurrentBlockPosition());
         }
 
         //The miner shouldn't search for a save position. Just let him build from where he currently is.
         return worker.isWorkerAtSiteWithMove(workFrom, STANDARD_WORKING_RANGE) || MathUtils.twoDimDistance(worker.getPosition(), workFrom) < MIN_WORKING_RANGE;
-    }
-
-    /**
-     * Calculates the working position.
-     * <p>
-     * Takes a min distance from width and length.
-     * <p>
-     * Then finds the floor level at that distance and then check if it does contain two air levels.
-     *
-     * @return BlockPos position to work from.
-     */
-    private BlockPos getWorkingPosition()
-    {
-        if (job instanceof JobMiner)
-        {
-            return getNodeMiningPosition(currentStructure.getCurrentBlockPosition());
-        }
-        return getWorkingPosition(0);
-    }
-
-    /**
-     * Calculates the working position.
-     * <p>
-     * Takes a min distance from width and length.
-     * <p>
-     * Then finds the floor level at that distance and then check if it does contain two air levels.
-     *
-     * @param offset the extra distance to apply away from the building.
-     * @return BlockPos position to work from.
-     */
-    private BlockPos getWorkingPosition(final int offset)
-    {
-        if (offset > MAX_ADDITIONAL_RANGE_TO_BUILD)
-        {
-            return currentStructure.getCurrentBlockPosition();
-        }
-        //get length or width either is larger.
-        final int length = currentStructure.getLength();
-        final int width = currentStructure.getWidth();
-        final int distance = Math.max(width, length) + MIN_ADDITIONAL_RANGE_TO_BUILD + offset;
-        @NotNull final EnumFacing[] directions = {EnumFacing.EAST, EnumFacing.WEST, EnumFacing.NORTH, EnumFacing.SOUTH};
-
-        //then get a solid place with two air spaces above it in any direction.
-        for (final EnumFacing direction : directions)
-        {
-            @NotNull final BlockPos positionInDirection = getPositionInDirection(direction, distance);
-            if (EntityUtils.checkForFreeSpace(world, positionInDirection))
-            {
-                return positionInDirection;
-            }
-        }
-
-        //if necessary we can could implement calling getWorkingPosition recursively and add some "offset" to the sides.
-        return getWorkingPosition(offset + 1);
     }
 
     /**
@@ -891,14 +768,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * @return the new stack with the correct amount.
      */
     @Nullable
-    private ItemStack getTotalAmount(@Nullable final ItemStack stack)
+    public ItemStack getTotalAmount(@Nullable final ItemStack stack)
     {
-        final AbstractBuildingWorker buildingWorker = getOwnBuilding();
-        if (buildingWorker instanceof BuildingBuilder)
-        {
-            final BuildingBuilderResource resource = ((BuildingBuilder) buildingWorker).getNeededResources().get(stack.getUnlocalizedName());
-            return resource == null ? stack : new ItemStack(resource.getItem(), resource.getAmount(), resource.getDamageValue());
-        }
         return stack;
     }
 
@@ -1224,6 +1095,27 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     }
 
     /**
+     * Calculates the working position.
+     * <p>
+     * Takes a min distance from width and length.
+     * <p>
+     * Then finds the floor level at that distance and then check if it does contain two air levels.
+     *
+     * @param targetPosition the position to work at.
+     * @return BlockPos position to work from.
+     */
+    @Override
+    public BlockPos getWorkingPosition(final BlockPos targetPosition)
+    {
+        //get length or width either is larger.
+        final int length = currentStructure.getLength();
+        final int width = currentStructure.getWidth();
+        final int distance = Math.max(width, length) + MIN_ADDITIONAL_RANGE_TO_BUILD;
+
+        return getWorkingPosition(distance, targetPosition, 0);
+    }
+
+    /**
      * Checks if a certain entity is in the world at a certain position already.
      * @param entity the entity.
      * @param world the world.
@@ -1237,36 +1129,5 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
 
         return true;
-    }
-
-    /**
-     * Create a save mining position for the miner.
-     *
-     * @param blockToMine block which should be mined or placed.
-     * @return the save position.
-     */
-    private BlockPos getNodeMiningPosition(BlockPos blockToMine)
-    {
-        if (getOwnBuilding() instanceof BuildingMiner)
-        {
-            BuildingMiner buildingMiner = (BuildingMiner) getOwnBuilding();
-            if (buildingMiner.getCurrentLevel() == null || buildingMiner.getCurrentLevel().getRandomNode() == null)
-            {
-                return blockToMine;
-            }
-            final Point2D parentPos = buildingMiner.getCurrentLevel().getRandomNode().getParent();
-            if(parentPos != null && buildingMiner.getCurrentLevel().getNode(parentPos) != null
-                    && buildingMiner.getCurrentLevel().getNode(parentPos).getStyle() == Node.NodeType.SHAFT)
-            {
-                final BlockPos ladderPos = buildingMiner.getLadderLocation();
-                return new BlockPos(
-                        ladderPos.getX() + buildingMiner.getVectorX() * OTHER_SIDE_OF_SHAFT,
-                        buildingMiner.getCurrentLevel().getDepth(),
-                        ladderPos.getZ() + buildingMiner.getVectorZ() * OTHER_SIDE_OF_SHAFT);
-            }
-            final Point2D pos = buildingMiner.getCurrentLevel().getRandomNode().getParent();
-            return new BlockPos(pos.getX(), buildingMiner.getCurrentLevel().getDepth(), pos.getY());
-        }
-        return blockToMine;
     }
 }

@@ -12,6 +12,8 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
+import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.MC_BACKUP;
+
 /**
  * Created by asie on 2/16/17.
  */
@@ -43,7 +45,7 @@ public class BackupCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        if (sender.canCommandSenderUseCommand(PERMNUM, "minecolonies backup"))
+        if (isPlayerOpped(sender, String.valueOf(MC_BACKUP)))
         {
             server.addScheduledTask(() ->
             {
