@@ -21,36 +21,15 @@ import java.util.stream.StreamSupport;
  *
  * @param <T> Type of IColony (Colony or ColonyView)
  */
-public final class ColonyList<T extends IColony> implements Iterable<T> {
+public final class ColonyList<T extends IColony> implements Iterable<T>
+{
     @VisibleForTesting
-    static final int INITIAL_SIZE = 16;
-
-    private IColony[] list = new IColony[INITIAL_SIZE];
-
-    private final List<Integer> nullIndices = new ArrayList<>();
-
-    private int topID = 0;
+    static final  int           INITIAL_SIZE = 16;
+    private final List<Integer> nullIndices  = new ArrayList<>();
+    private       IColony[]     list         = new IColony[INITIAL_SIZE];
+    private       int           topID        = 0;
 
     private int size = 0;
-
-    /**
-     * Get the Colony with the provided colony id.
-     *
-     * @param index colony id.
-     * @return The Colony associated with the provided id.
-     */
-    @Nullable
-    // no way to remove this, java does it too
-    @SuppressWarnings("unchecked")
-    public T get(int index)
-    {
-        if (index < 1 || index >= list.length)
-        {
-            return null;
-        }
-
-        return (T) list[index];
-    }
 
     /**
      * Creates a new Colony, adds it to the list, and returns it.
@@ -72,6 +51,23 @@ public final class ColonyList<T extends IColony> implements Iterable<T> {
         size++;
         list[colony.getID()] = colony;
         return colony;
+    }
+
+    private int getNextColonyID()
+    {
+        if (nullIndices.isEmpty())
+        {
+            return ++topID;
+        }
+
+        return nullIndices.remove(0);
+    }
+
+    private void expandList()
+    {
+        final IColony[] newList = new IColony[list.length * 2];
+        System.arraycopy(list, 0, newList, 0, list.length);
+        list = newList;
     }
 
     /**
@@ -103,6 +99,25 @@ public final class ColonyList<T extends IColony> implements Iterable<T> {
     }
 
     /**
+     * Get the Colony with the provided colony id.
+     *
+     * @param index colony id.
+     * @return The Colony associated with the provided id.
+     */
+    @Nullable
+    // no way to remove this, java does it too
+    @SuppressWarnings("unchecked")
+    public T get(int index)
+    {
+        if (index < 1 || index >= list.length)
+        {
+            return null;
+        }
+
+        return (T) list[index];
+    }
+
+    /**
      * Remove the Colony from the list.
      *
      * @param colony the Colony to remove.
@@ -131,23 +146,6 @@ public final class ColonyList<T extends IColony> implements Iterable<T> {
         {
             nullIndices.add(id);
         }
-    }
-
-    private int getNextColonyID()
-    {
-        if (nullIndices.isEmpty())
-        {
-            return ++topID;
-        }
-
-        return nullIndices.remove(0);
-    }
-
-    private void expandList()
-    {
-        final IColony[] newList = new IColony[list.length * 2];
-        System.arraycopy(list, 0, newList, 0, list.length);
-        list = newList;
     }
 
     /**
@@ -212,7 +210,8 @@ public final class ColonyList<T extends IColony> implements Iterable<T> {
     @Override
     public Iterator<T> iterator()
     {
-        return new Iterator<T>() {
+        return new Iterator<T>()
+        {
             private int nextIndex = getNextIndex(0);
 
             @Override

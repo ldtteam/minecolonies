@@ -21,25 +21,19 @@ public class GuiHandler implements IGuiHandler
     public static final int SCARECROW = 3;
 
     @Override
-    public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
+    public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z)
     {
-        switch (ID)
+        switch (id)
         {
             case 1:
-            {
                 return getServerElementForCapabilityProvider(player, world.getTileEntity(new BlockPos(x, y, z)));
-            }
             case 2:
-            {
                 return getServerElementForCapabilityProvider(player, world.getEntityByID(x));
-            }
             case SCARECROW:
-            {
                 return getServerScarecrowElement(player, world, x, y, z);
-            }
+            default:
+                return null;
         }
-
-        return null;
     }
 
     @Nullable
@@ -61,25 +55,19 @@ public class GuiHandler implements IGuiHandler
     }
 
     @Override
-    public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
+    public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z)
     {
-        switch (ID)
+        switch (id)
         {
             case 1:
-            {
                 return getClientElementForCapabilityProvider(player, world.getTileEntity(new BlockPos(x, y, z)));
-            }
             case 2:
-            {
                 return getClientElementForCapabilityProvider(player, world.getEntityByID(x));
-            }
             case SCARECROW:
-            {
                 return getClientScarecrowElement(player, world, x, y, z);
-            }
+            default:
+                return null;
         }
-
-        return null;
     }
 
     @Nullable

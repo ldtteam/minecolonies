@@ -14,6 +14,7 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -32,41 +33,41 @@ public class TileEntityColonyBuilding extends TileEntity implements ITickable
     private static final String TAG_CUSTOM_NAME = "CustomName";
     private static final String TAG_INVENTORY   = "inventory";
 
-    /**
-     * The item handler.
-     */
-    private final ItemStackHandler itemHandler = new AbstractInteractiveItemStackHandler(27) {
-        @Override
-        public boolean isUseableByPlayer(EntityPlayer player) {
-            return TileEntityColonyBuilding.this.isUseableByPlayer(player);
-        }
-
-        @Override
-        public String getName() {
-            return TileEntityColonyBuilding.this.getName();
-        }
-    };
-
+    private static final Double CONSTANT_HALFBLOCK           = 0.5D;
+    private static final Double CONSTANT_MAXINTERACTIONRANGE = 64.0D;
     /**
      * The colony id.
      */
-    private int colonyId = 0;
-
+    private              int    colonyId                     = 0;
     /**
      * The colony.
      */
     private Colony colony;
-
     /**
      * The custom name.
      */
     private String customName;
-
     /**
      * The building the tileEntity belongs to.
      */
     private AbstractBuilding building;
+    /**
+     * The item handler.
+     */
+    private final ItemStackHandler itemHandler = new AbstractInteractiveItemStackHandler(27)
+    {
+        @Override
+        public boolean isUseableByPlayer(EntityPlayer player)
+        {
+            return TileEntityColonyBuilding.this.isUseableByPlayer(player);
+        }
 
+        @Override
+        public String getName()
+        {
+            return TileEntityColonyBuilding.this.getName();
+        }
+    };
     /**
      * Check if the building has a mirror.
      */
@@ -78,51 +79,6 @@ public class TileEntityColonyBuilding extends TileEntity implements ITickable
     public TileEntityColonyBuilding()
     {
         super();
-    }
-
-    @Override
-    public SPacketUpdateTileEntity getUpdatePacket()
-    {
-        final NBTTagCompound compound = new NBTTagCompound();
-        compound.setInteger(TAG_COLONY, colonyId);
-        if (customName != null)
-        {
-            compound.setString(TAG_CUSTOM_NAME, customName);
-        }
-        return new SPacketUpdateTileEntity(this.getPosition(), 0, compound);
-    }
-
-    @NotNull
-    @Override
-    public NBTTagCompound getUpdateTag()
-    {
-        return writeToNBT(new NBTTagCompound());
-    }
-
-    @Override
-    public void onDataPacket(final NetworkManager net, final SPacketUpdateTileEntity packet)
-    {
-        final NBTTagCompound compound = packet.getNbtCompound();
-        colonyId = compound.getInteger(TAG_COLONY);
-    }
-
-    @Override
-    public void onChunkUnload()
-    {
-        if (building != null)
-        {
-            building.setTileEntity(null);
-        }
-    }
-
-    /**
-     * Returns the position of the tile entity.
-     *
-     * @return Block Coordinates of the tile entity.
-     */
-    public BlockPos getPosition()
-    {
-        return pos;
     }
 
     /**
@@ -194,6 +150,18 @@ public class TileEntityColonyBuilding extends TileEntity implements ITickable
         }
     }
 
+    /**
+     * Sets the colony of the tile entity.
+     *
+     * @param c Colony to set in references.
+     */
+    public void setColony(final Colony c)
+    {
+        colony = c;
+        colonyId = c.getID();
+        markDirty();
+    }
+
     @Override
     public void update()
     {
@@ -205,18 +173,6 @@ public class TileEntityColonyBuilding extends TileEntity implements ITickable
                 colonyId = tempColony.getID();
             }
         }
-    }
-
-    /**
-     * Sets the colony of the tile entity.
-     *
-     * @param c Colony to set in references.
-     */
-    public void setColony(final Colony c)
-    {
-        colony = c;
-        colonyId = c.getID();
-        markDirty();
     }
 
     /**
@@ -243,17 +199,6 @@ public class TileEntityColonyBuilding extends TileEntity implements ITickable
         building = b;
     }
 
-    @Override
-    public void markDirty()
-    {
-        super.markDirty();
-        if (building!=null)
-        {
-            building.markDirty();
-        }
-    }
-
-
     /**
      * Returns the view of the building associated with the tile entity.
      *
@@ -265,8 +210,6 @@ public class TileEntityColonyBuilding extends TileEntity implements ITickable
         return c == null ? null : c.getBuilding(getPosition());
     }
 
-
-
     @Override
     public void readFromNBT(final NBTTagCompound compound)
     {
@@ -276,7 +219,7 @@ public class TileEntityColonyBuilding extends TileEntity implements ITickable
             colonyId = compound.getInteger(TAG_COLONY);
         }
 
-        if (compound.hasKey(TAG_INVENTORY, 10))
+        if (compound.hasKey(TAG_INVENTORY, Constants.NBT.TAG_COMPOUND))
         {
             itemHandler.deserializeNBT(compound.getCompoundTag(TAG_INVENTORY));
         }
@@ -286,7 +229,7 @@ public class TileEntityColonyBuilding extends TileEntity implements ITickable
             itemHandler.deserializeNBT(compound);
         }
 
-        if (compound.hasKey(TAG_CUSTOM_NAME, 8))
+        if (compound.hasKey(TAG_CUSTOM_NAME, Constants.NBT.TAG_STRING))
         {
             customName = compound.getString(TAG_CUSTOM_NAME);
         }
@@ -319,40 +262,58 @@ public class TileEntityColonyBuilding extends TileEntity implements ITickable
         return compound;
     }
 
-    public boolean isUseableByPlayer(@NotNull final EntityPlayer player)
+    @Override
+    public void markDirty()
     {
-        return this.worldObj.getTileEntity(this.pos) != this
-                ? false
-                : (player.getDistanceSq((double)this.pos.getX() + 0.5D, (double)this.pos.getY() + 0.5D, (double)this.pos.getZ() + 0.5D) <= 64.0D
-                    && this.hasAccessPermission(player));
+        super.markDirty();
+        if (building != null)
+        {
+            building.markDirty();
+        }
     }
 
-    /**
-     * Get the name of this object. For players this returns their username
-     */
-    public String getName()
+    @Override
+    public SPacketUpdateTileEntity getUpdatePacket()
     {
-        return this.hasCustomName() ? this.customName : "container.chest";
+        final NBTTagCompound compound = new NBTTagCompound();
+        compound.setInteger(TAG_COLONY, colonyId);
+        if (customName != null)
+        {
+            compound.setString(TAG_CUSTOM_NAME, customName);
+        }
+        return new SPacketUpdateTileEntity(this.getPosition(), 0, compound);
     }
 
-    /**
-     * Returns true if this thing is named
-     */
-    public boolean hasCustomName()
+    @NotNull
+    @Override
+    public NBTTagCompound getUpdateTag()
     {
-        return this.customName != null && !this.customName.isEmpty();
+        return writeToNBT(new NBTTagCompound());
     }
 
-    public void setCustomName(String name)
+    @Override
+    public void onDataPacket(final NetworkManager net, final SPacketUpdateTileEntity packet)
     {
-        this.customName = name;
+        final NBTTagCompound compound = packet.getNbtCompound();
+        colonyId = compound.getInteger(TAG_COLONY);
+    }
+
+    @Override
+    public void onChunkUnload()
+    {
+        if (building != null)
+        {
+            building.setTileEntity(null);
+        }
     }
 
     @Override
     public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, net.minecraft.util.EnumFacing facing)
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+        {
             return true;
+        }
         return super.hasCapability(capability, facing);
     }
 
@@ -360,8 +321,35 @@ public class TileEntityColonyBuilding extends TileEntity implements ITickable
     public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing)
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+        {
             return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandler);
+        }
         return super.getCapability(capability, facing);
+    }
+
+    /**
+     * Returns the position of the tile entity.
+     *
+     * @return Block Coordinates of the tile entity.
+     */
+    public BlockPos getPosition()
+    {
+        return pos;
+    }
+
+    /**
+     * Method to check if can access this TileEntity.
+     *
+     * @param player The player to check.
+     * @return True when the player can interact with this TileEntity, false when not.
+     */
+    public boolean isUseableByPlayer(@NotNull final EntityPlayer player)
+    {
+
+        return this.worldObj.getTileEntity(this.pos) != this &&
+                 player.getDistanceSq((double) this.pos.getX() + CONSTANT_HALFBLOCK, (double) this.pos.getY() + CONSTANT_HALFBLOCK, (double) this.pos.getZ() + CONSTANT_HALFBLOCK)
+                   <= CONSTANT_MAXINTERACTIONRANGE
+                 && this.hasAccessPermission(player);
     }
 
     /**
@@ -376,7 +364,31 @@ public class TileEntityColonyBuilding extends TileEntity implements ITickable
         return building == null || building.getColony().getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS);
     }
 
-    public IItemHandler getItemHandler() {
+    /**
+     * Get the name of this object. For players this returns their username.
+     */
+    public String getName()
+    {
+        return this.hasCustomName() ? this.customName : "container.chest";
+    }
+
+    /**
+     * Returns true if this thing is named.
+     *
+     * @return True when this tile entity has a custom name.
+     */
+    public boolean hasCustomName()
+    {
+        return this.customName != null && !this.customName.isEmpty();
+    }
+
+    public void setCustomName(String name)
+    {
+        this.customName = name;
+    }
+
+    public IItemHandler getItemHandler()
+    {
         return itemHandler;
     }
 

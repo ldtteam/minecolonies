@@ -13,22 +13,19 @@ import javax.annotation.Nullable;
 /**
  * Created by asie on 2/16/17.
  */
-public class ContainerItemHandler extends Container {
-    private final IItemHandler handler;
-    private final int numRows;
-
+public class ContainerItemHandler extends Container
+{
     private static final int INVENTORYROWSPLAYER = 3;
     private static final int INVENTORYCOLUMNS    = 9;
-
     private static final int SLOTSIZE = 18;
-
     private static final int SLOTXOFFSET = 8;
     private static final int SLOTYOFFSET = 8;
-
     private static final int PLAYERSLOTINDEXOFFSET   = 9;
     private static final int PLAYERSLOTYOFFSET       = 103;
     private static final int PLAYERHOTBARYOFFSET     = 161;
     private static final int PLAYERINVENTORYROWCOUNT = 4;
+    private final IItemHandler handler;
+    private final int          numRows;
 
     /**
      * Constructor for a Container that wraps an IItemHandler.
@@ -73,12 +70,6 @@ public class ContainerItemHandler extends Container {
         }
     }
 
-    @Override
-    public boolean canInteractWith(EntityPlayer playerIn)
-    {
-        return this.handler instanceof IInteractiveItemHandler && ((IInteractiveItemHandler) this.handler).isUseableByPlayer(playerIn);
-    }
-
     /**
      * Take a stack from the specified inventory slot.
      */
@@ -108,7 +99,7 @@ public class ContainerItemHandler extends Container {
 
             if (stackInSlot.stackSize == 0)
             {
-                slot.putStack((ItemStack)null);
+                slot.putStack((ItemStack) null);
             }
             else
             {
@@ -117,6 +108,12 @@ public class ContainerItemHandler extends Container {
         }
 
         return itemstack;
+    }
+
+    @Override
+    public boolean canInteractWith(EntityPlayer playerIn)
+    {
+        return this.handler instanceof IInteractiveItemHandler && ((IInteractiveItemHandler) this.handler).isUseableByPlayer(playerIn);
     }
 
     public IItemHandler getHandler()

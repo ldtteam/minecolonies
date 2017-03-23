@@ -6,7 +6,8 @@ import org.jetbrains.annotations.NotNull;
 /**
  * This is the fallback for when tinkers is not present!
  */
-public class SlimeTreeProxy {
+public class SlimeTreeProxy
+{
     /**
      * This is the fallback for when tinkers is not present!
      *

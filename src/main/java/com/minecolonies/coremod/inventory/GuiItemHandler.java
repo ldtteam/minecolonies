@@ -10,40 +10,66 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.awt.*;
 
+/**
+ * Gui for a ItemHandler
+ */
 @SideOnly(Side.CLIENT)
 public class GuiItemHandler extends GuiContainer
 {
     private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/container/generic_54.png");
     private final IInteractiveItemHandler handler;
-    private final int inventoryRows;
+    private final int                     inventoryRows;
 
+    final static int CONSTANT_HANDLERNAMELEFTOFFSET      = 8;
+    final static int CONSTANT_HANDLERNAMETOPOFFSET       = 6;
+    final static int CONSTANT_HANDLERNAMEFOREGROUNDCOLOR = 4_210_752;
+
+    final static int CONSTANT_PLAYERCOLUMNCOUNT = 9;
+
+    final static int CONSTANT_INVENTORYOFFSET       = 114;
+    final static int CONSTANT_INVENTORYSLOTSYOFFSET = 126;
+    final static int CONSTANT_INVENTORYHEIGHT       = 96;
+    final static int CONSTANT_SLOTSIZE              = 18;
+
+    final static int CONSTANT_SLOTXOFFSET = 17;
+
+    /**
+     * Constructor to create a GUI for a ItemHandler.
+     *
+     * @param handler The handler to create a gui for.
+     */
     public GuiItemHandler(IInteractiveItemHandler handler)
     {
         super(new ContainerItemHandler(Minecraft.getMinecraft().thePlayer.inventory, handler));
         this.handler = handler;
         this.allowUserInput = false;
-        this.inventoryRows = handler.getSlots() / 9;
-        this.ySize = 114 + this.inventoryRows * 18;
+        this.inventoryRows = handler.getSlots() / CONSTANT_PLAYERCOLUMNCOUNT;
+        this.ySize = CONSTANT_INVENTORYOFFSET + this.inventoryRows * CONSTANT_SLOTSIZE;
     }
 
     /**
      * Draw the foreground layer for the GuiContainer (everything in front of the items)
      */
+    @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY)
     {
-        this.fontRendererObj.drawString(new TextComponentTranslation(this.handler.getName()).getUnformattedText(), 8, 6, 4210752);
+        this.fontRendererObj.drawString(new TextComponentTranslation(this.handler.getName()).getUnformattedText(),
+          CONSTANT_HANDLERNAMELEFTOFFSET,
+          CONSTANT_HANDLERNAMETOPOFFSET,
+          CONSTANT_HANDLERNAMEFOREGROUNDCOLOR);
     }
 
     /**
      * Draws the background layer of this container (behind the items).
      */
+    @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
     {
         GlStateManager.color(Color.WHITE.getRed(), Color.WHITE.getGreen(), Color.WHITE.getBlue(), Color.WHITE.getAlpha());
         this.mc.getTextureManager().bindTexture(TEXTURE);
-        int i = (this.width - this.xSize) / 2;
-        int j = (this.height - this.ySize) / 2;
-        this.drawTexturedModalRect(i, j, 0, 0, this.xSize, this.inventoryRows * 18 + 17);
-        this.drawTexturedModalRect(i, j + this.inventoryRows * 18 + 17, 0, 126, this.xSize, 96);
+        final int i = (this.width - this.xSize) / 2;
+        final int j = (this.height - this.ySize) / 2;
+        this.drawTexturedModalRect(i, j, 0, 0, this.xSize, this.inventoryRows * CONSTANT_SLOTSIZE + CONSTANT_SLOTXOFFSET);
+        this.drawTexturedModalRect(i, j + this.inventoryRows * CONSTANT_SLOTSIZE + CONSTANT_SLOTXOFFSET, 0, CONSTANT_INVENTORYSLOTSYOFFSET, this.xSize, CONSTANT_INVENTORYHEIGHT);
     }
 }

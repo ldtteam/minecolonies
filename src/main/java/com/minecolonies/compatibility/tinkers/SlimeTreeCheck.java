@@ -9,7 +9,8 @@ import slimeknights.tconstruct.world.TinkerWorld;
 /**
  * This class is to store a check to see if a tree is a slime tree.
  */
-public final class SlimeTreeCheck extends SlimeTreeProxy {
+public final class SlimeTreeCheck extends SlimeTreeProxy
+{
 
     /**
      * Check if block is slime block.
@@ -20,28 +21,6 @@ public final class SlimeTreeCheck extends SlimeTreeProxy {
     public static boolean isSlimeBlock(@NotNull final Block block)
     {
         return new SlimeTreeCheck().checkForTinkersSlimeBlock(block);
-    }
-
-    /**
-     * Check if block is slime leaf.
-     *
-     * @param block the block.
-     * @return if the block is a slime leaf.
-     */
-    public static boolean isSlimeLeaf(@NotNull final Block block)
-    {
-        return new SlimeTreeCheck().checkForTinkersSlimeLeaves(block);
-    }
-
-    /**
-     * Check if block is slime sapling.
-     *
-     * @param block the block.
-     * @return if the block is a slime sapling.
-     */
-    public static boolean isSlimeSapling(@NotNull final Block block)
-    {
-        return new SlimeTreeCheck().checkForTinkersSlimeSapling(block);
     }
 
     /**
@@ -81,5 +60,27 @@ public final class SlimeTreeCheck extends SlimeTreeProxy {
     public boolean checkForTinkersSlimeSapling(@NotNull final Block block)
     {
         return block == TinkerWorld.slimeSapling;
+    }
+
+    /**
+     * Check if block is slime leaf.
+     *
+     * @param block the block.
+     * @return if the block is a slime leaf.
+     */
+    public static boolean isSlimeLeaf(@NotNull final Block block)
+    {
+        return new SlimeTreeCheck().checkForTinkersSlimeLeaves(block);
+    }
+
+    /**
+     * Check if block is slime sapling.
+     *
+     * @param block the block.
+     * @return if the block is a slime sapling.
+     */
+    public static boolean isSlimeSapling(@NotNull final Block block)
+    {
+        return new SlimeTreeCheck().checkForTinkersSlimeSapling(block);
     }
 }

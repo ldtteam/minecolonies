@@ -15,7 +15,8 @@ import java.util.List;
 /**
  * Created by asie on 2/16/17.
  */
-public class BackupCommand extends AbstractSingleCommand {
+public class BackupCommand extends AbstractSingleCommand
+{
     public static final String DESC                   = "backup";
     public static final String NO_PERMISSION_MESSAGE  = "You do not have permission to backup colony data!";
     public static final String BACKUP_SUCCESS_MESSAGE = "Successfully backed up colony data!";
@@ -64,6 +65,7 @@ public class BackupCommand extends AbstractSingleCommand {
 
     /**
      * Method used to get the tab completion options for this command.
+     *
      * @param server the server this is executed on.
      * @param sender this commands executor.
      * @param args   leftover args stripped from parents.

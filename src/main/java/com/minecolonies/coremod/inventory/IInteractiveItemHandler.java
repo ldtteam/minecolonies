@@ -6,7 +6,8 @@ import net.minecraftforge.items.IItemHandler;
 /**
  * Interface describing a IItemHandler that can control who interacts with it.
  */
-public interface IInteractiveItemHandler extends IItemHandler {
+public interface IInteractiveItemHandler extends IItemHandler
+{
     /**
      * Method used to check if the current IItemHandler can be used by a given player.
      *
@@ -17,6 +18,7 @@ public interface IInteractiveItemHandler extends IItemHandler {
 
     /**
      * Method used to get the name of a IItemHandler.
+     *
      * @return The name of the IItemHandler.
      */
     String getName();

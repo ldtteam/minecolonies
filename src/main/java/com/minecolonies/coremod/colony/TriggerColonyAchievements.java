@@ -6,7 +6,8 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Trigger the corresponding colony achievement.
  */
-public final class TriggerColonyAchievements {
+public final class TriggerColonyAchievements
+{
     private static final String TAG_LUMBERJACK_SAPLINGS = "saplings";
     private static final String TAG_LUMBERJACK_TREES    = "trees";
     private static final String TAG_FISHERMAN_FISH      = "fish";
