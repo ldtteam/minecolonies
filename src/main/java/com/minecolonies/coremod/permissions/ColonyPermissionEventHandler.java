@@ -245,6 +245,7 @@ public class ColonyPermissionEventHandler
                 {
                     cancelEvent(event, event.getEntityPlayer());
                 }
+            }
         }
     }
 
@@ -256,7 +257,6 @@ public class ColonyPermissionEventHandler
      * @param world    the world.
      * @param event    the event.
      */
-
     private void checkEventCancelation(final Permissions.Action action, @NotNull final EntityPlayer playerIn, @NotNull final World world, @NotNull final Event event)
     {
         @NotNull final EntityPlayer player = EntityUtils.getPlayerOfFakePlayer(playerIn, world);
