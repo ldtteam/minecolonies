@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
-import com.minecolonies.compatibility.Compatibility;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.util.*;
@@ -144,7 +143,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
               || world.getBlockState(blockToMine).getBlock() == (Blocks.LAPIS_ORE)
               || world.getBlockState(blockToMine).getBlock() == (Blocks.GOLD_ORE)
               || world.getBlockState(blockToMine).getBlock() == (Blocks.REDSTONE_ORE)
-              || world.getBlockState(blockToMine).getBlock() == (Blocks.EMERALD_ORE))
+              || world.getBlockState(blockToMine).getBlock() ==(Blocks.EMERALD_ORE))
         {
             this.getOwnBuilding().getColony().incrementStatistic("ores");
         }
@@ -166,6 +165,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         }
     }
 
+
     /**
      * Checks for the right tools and waits for an appropriate delay.
      *
@@ -184,10 +184,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
 
         final ItemStack tool = worker.getHeldItemMainhand();
 
-        if (tool != null && !ForgeHooks.canToolHarvestBlock(world, blockToMine, tool)
-              && curBlock != Blocks.BEDROCK
-              && !Compatibility.isSlimeBlock(curBlock)
-              && !Compatibility.isSlimeLeaf(curBlock))
+        if (tool != null && !ForgeHooks.canToolHarvestBlock(world, blockToMine, tool) && curBlock != Blocks.BEDROCK)
         {
             Log.getLogger().info(String.format(
               "ForgeHook not in sync with EfficientTool for %s and %s\n"

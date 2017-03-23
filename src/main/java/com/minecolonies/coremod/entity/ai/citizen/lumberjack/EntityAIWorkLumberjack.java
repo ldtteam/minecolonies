@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
-import com.minecolonies.compatibility.Compatibility;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.util.AIState;
@@ -180,8 +179,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private int searchIncrement = 0;
 
-    private boolean isSlimeTree = false;
-
     /**
      * Create a new LumberjackAI.
      *
@@ -259,8 +256,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         {
             return findTree();
         }
-        final Block block = world.getBlockState(job.tree.getLocation()).getBlock();
-        isSlimeTree = Compatibility.isSlimeBlock(block);
         return LUMBERJACK_CHOP_TREE;
     }
 
@@ -380,7 +375,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             return getState();
         }
 
-        if (!job.tree.hasLogs() && (!isSlimeTree || !job.tree.hasLeaves()))
+        if (!job.tree.hasLogs())
         {
             if (hasNotDelayed(WAIT_BEFORE_SAPLING))
             {
@@ -408,24 +403,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
 
         if (job.tree.hasLogs())
         {
-            //take first log from queue
-            final BlockPos log = job.tree.peekNextLog();
-            if (!mineBlock(log))
-            {
-                return getState();
-            }
-            job.tree.pollNextLog();
+            return getState();
         }
-        else if (job.tree.hasLeaves() && isSlimeTree)
-        {
-            //take first leaf from queue
-            final BlockPos leaf = job.tree.peekNextLeaf();
-            if (!mineBlock(leaf))
-            {
-                return getState();
-            }
-            job.tree.pollNextLeaf();
-        }
+        job.tree.pollNextLog();
         return getState();
     }
 
@@ -619,14 +599,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private boolean isCorrectSapling(final ItemStack stack)
     {
-        if (isSlimeTree)
-        {
-            return isStackSapling(stack) && Compatibility.isSlimeSapling(((ItemBlock) stack.getItem()).getBlock());
-        }
-        else
-        {
-            return isStackSapling(stack) && job.tree.getVariant() == ((ItemBlock) stack.getItem()).getBlock().getStateFromMeta(stack.getMetadata()).getValue(BlockSapling.TYPE);
-        }
+        return isStackSapling(stack) && job.tree.getVariant() == ((ItemBlock) stack.getItem()).getBlock().getStateFromMeta(stack.getMetadata()).getValue(BlockSapling.TYPE);
     }
 
     /**
