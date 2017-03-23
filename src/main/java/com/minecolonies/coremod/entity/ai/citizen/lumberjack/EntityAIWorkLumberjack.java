@@ -400,8 +400,10 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             EntityUtils.setSpawnPoint(spawnPoint, worker);
 
         }
-
-        if (job.tree.hasLogs())
+        
+        //take first log from queue
+        final BlockPos log = job.tree.peekNextLog();
+        if (!mineBlock(log))
         {
             return getState();
         }
