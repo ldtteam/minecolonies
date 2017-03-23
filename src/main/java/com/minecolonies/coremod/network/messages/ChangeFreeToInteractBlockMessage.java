@@ -68,7 +68,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
      * @param block the blockState.
      * @param type the type of message.
      */
-    public ChangeFreeToInteractBlockMessage(@NotNull final ColonyView colony, @Nullable final Block block, @NotNull final MessageType type)
+    public ChangeFreeToInteractBlockMessage(@NotNull final ColonyView colony, @NotNull final Block block, @NotNull final MessageType type)
     {
         super();
         this.colonyId = colony.getID();
@@ -84,7 +84,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
      * @param pos the position.
      * @param type the type of message.
      */
-    public ChangeFreeToInteractBlockMessage(@NotNull final ColonyView colony, @Nullable final BlockPos pos, @NotNull final MessageType type)
+    public ChangeFreeToInteractBlockMessage(@NotNull final ColonyView colony, @NotNull final BlockPos pos, @NotNull final MessageType type)
     {
         super();
         this.colonyId = colony.getID();
@@ -125,29 +125,26 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
 
             if(message.type == MessageType.ADD_BLOCK)
             {
-                if (message.block != Blocks.DIRT)
-                {
-                    colony.addFreeBlock(message.block);
-                }
-
                 if (!(message.pos.getX() == 0 && message.pos.getZ() == 0 && message.pos.getY() == 0))
                 {
                     colony.addFreePosition(message.pos);
                 }
+                else
+                {
+                    colony.addFreeBlock(message.block);
+                }
             }
             else
             {
-                if (message.block != Blocks.DIRT)
-                {
-                    colony.removeFreeBlock(message.block);
-                }
-
                 if (!(message.pos.getX() == 0 && message.pos.getZ() == 0 && message.pos.getY() == 0))
                 {
                     colony.removeFreePosition(message.pos);
                 }
+                else
+                {
+                    colony.removeFreeBlock(message.block);
+                }
             }
-
         }
     }
 }
