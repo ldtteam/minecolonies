@@ -3,10 +3,8 @@ package com.minecolonies.coremod.entity.ai.basic;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.buildings.BuildingMiner;
-import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
@@ -768,14 +766,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * @return the new stack with the correct amount.
      */
     @Nullable
-    private ItemStack getTotalAmount(@Nullable final ItemStack stack)
+    public ItemStack getTotalAmount(@Nullable final ItemStack stack)
     {
-        final AbstractBuildingWorker buildingWorker = getOwnBuilding();
-        if (buildingWorker instanceof BuildingBuilder)
-        {
-            final BuildingBuilderResource resource = ((BuildingBuilder) buildingWorker).getNeededResources().get(stack.getUnlocalizedName());
-            return resource == null ? stack : new ItemStack(resource.getItem(), resource.getAmount(), resource.getDamageValue());
-        }
         return stack;
     }
 

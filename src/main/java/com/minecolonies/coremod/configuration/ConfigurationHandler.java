@@ -117,6 +117,9 @@ public final class ConfigurationHandler
                     "Female First Names").getStringList();
             lastNames = config.get(CATEGORY_NAMES, "lastNames", lastNames,
                     "Last Names").getStringList();
+
+            freeToInteractBlocks = config.get(CATEGORY_NAMES, "freeToInteractBlocks", freeToInteractBlocks,
+                    "Blocks players should be able to interact with inside any colony.").getStringList();
         }
         finally
         {
