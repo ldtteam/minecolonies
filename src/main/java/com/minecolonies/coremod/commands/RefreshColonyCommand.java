@@ -72,7 +72,7 @@ public class RefreshColonyCommand extends AbstractSingleCommand
 
             if (!canPlayerUseCommand(player, Commands.REFRESH_COLONY, colonyId))
             {
-                sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NOT_PERMITTED));
+                sender.getCommandSenderEntity().sendMessage(new TextComponentString(NOT_PERMITTED));
                 return;
             }
         }
@@ -81,11 +81,11 @@ public class RefreshColonyCommand extends AbstractSingleCommand
         {
             if (colonyId == -1 && args.length != 0)
             {
-                sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE, args[0])));
+                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE, args[0])));
             }
             else
             {
-                sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE_ID, colonyId)));
+                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE_ID, colonyId)));
             }
             return;
         }
@@ -97,7 +97,7 @@ public class RefreshColonyCommand extends AbstractSingleCommand
             return;
         }
 
-        sender.getCommandSenderEntity().addChatMessage(new TextComponentString(REFRESH));
+        sender.getCommandSenderEntity().sendMessage(new TextComponentString(REFRESH));
         colony.getPermissions().restoreOwnerIfNull();
     }
 

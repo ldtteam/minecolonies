@@ -768,7 +768,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             return false;
         }
 
-        if (worldObj.isRemote)
+        if (world.isRemote)
         {
             final CitizenDataView citizenDataView = getCitizenDataView();
             if (citizenDataView != null)
