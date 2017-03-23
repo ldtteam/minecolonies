@@ -1,10 +1,8 @@
 package com.minecolonies.coremod.commands;
 
-import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.util.TeleportToColony;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
