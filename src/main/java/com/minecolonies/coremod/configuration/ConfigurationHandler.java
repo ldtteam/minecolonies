@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.configuration;
 
-import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraft.util.math.MathHelper;
 
 import java.io.File;
 
