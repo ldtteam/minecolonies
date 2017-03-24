@@ -121,6 +121,8 @@ public class Permissions implements IPermissions
         this.setPermission(Rank.OWNER, Action.ATTACK_CITIZEN);
         this.setPermission(Rank.OWNER, Action.ATTACK_ENTITY);
         this.setPermission(Rank.OWNER, Action.ACCESS_FREE_BLOCKS);
+        this.setPermission(Rank.OWNER, Action.TELEPORT_TO_COLONY);
+
 
         //Officer
         permissionMap.put(Rank.OFFICER, 0);
@@ -146,6 +148,8 @@ public class Permissions implements IPermissions
         this.setPermission(Rank.OFFICER, Action.ATTACK_CITIZEN);
         this.setPermission(Rank.OFFICER, Action.ATTACK_ENTITY);
         this.setPermission(Rank.OFFICER, Action.ACCESS_FREE_BLOCKS);
+        this.setPermission(Rank.OFFICER, Action.TELEPORT_TO_COLONY);
+
 
         //Friend
         permissionMap.put(Rank.FRIEND, 0);
@@ -160,6 +164,8 @@ public class Permissions implements IPermissions
         this.setPermission(Rank.FRIEND, Action.ATTACK_CITIZEN);
         this.setPermission(Rank.FRIEND, Action.ATTACK_ENTITY);
         this.setPermission(Rank.FRIEND, Action.ACCESS_FREE_BLOCKS);
+        this.setPermission(Rank.FRIEND, Action.TELEPORT_TO_COLONY);
+
 
         //Neutral
         permissionMap.put(Rank.NEUTRAL, 0);
@@ -213,6 +219,7 @@ public class Permissions implements IPermissions
         this.setPermission(Rank.OWNER, Action.ATTACK_CITIZEN);
         this.setPermission(Rank.OWNER, Action.ATTACK_ENTITY);
         this.setPermission(Rank.OWNER, Action.ACCESS_FREE_BLOCKS);
+        this.setPermission(Rank.OWNER, Action.TELEPORT_TO_COLONY);
 
         this.setPermission(Rank.OFFICER, Action.MANAGE_HUTS);
         this.setPermission(Rank.OFFICER, Action.RECEIVE_MESSAGES);
@@ -230,6 +237,7 @@ public class Permissions implements IPermissions
         this.setPermission(Rank.OFFICER, Action.ATTACK_CITIZEN);
         this.setPermission(Rank.OFFICER, Action.ATTACK_ENTITY);
         this.setPermission(Rank.OFFICER, Action.ACCESS_FREE_BLOCKS);
+        this.setPermission(Rank.OFFICER, Action.TELEPORT_TO_COLONY);
 
         this.setPermission(Rank.FRIEND, Action.ACCESS_HUTS);
         this.setPermission(Rank.FRIEND, Action.USE_SCAN_TOOL);
@@ -242,6 +250,7 @@ public class Permissions implements IPermissions
         this.setPermission(Rank.FRIEND, Action.ATTACK_CITIZEN);
         this.setPermission(Rank.FRIEND, Action.ATTACK_ENTITY);
         this.setPermission(Rank.FRIEND, Action.ACCESS_FREE_BLOCKS);
+        this.setPermission(Rank.FRIEND, Action.TELEPORT_TO_COLONY);
 
         this.setPermission(Rank.NEUTRAL, Action.ACCESS_FREE_BLOCKS);
 
@@ -884,7 +893,8 @@ public class Permissions implements IPermissions
         ATTACK_CITIZEN(21),
         ATTACK_ENTITY(22),
         //has access to allowed list, "hostile+" or "neutral+"
-        ACCESS_FREE_BLOCKS(23);
+        ACCESS_FREE_BLOCKS(23),
+        TELEPORT_TO_COLONY(24);
 
         //todo have permissions lang strings which these but readable, build string with "coremod.stuff." + action.toString "
 

@@ -137,8 +137,8 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
 
     /**
      * Citizen commands have to overwrite this to handle their specialized code.
-     * @param colonyId
-     * @param citizenId
+     * @param colonyId  the id for the colony
+     * @param citizenId  the id for the citizen
      */
     abstract void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final Colony colonyId, final int citizenId);
 
