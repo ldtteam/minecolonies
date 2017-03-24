@@ -20,12 +20,12 @@ import net.minecraftforge.fml.client.config.IConfigElement;
 public class ConfigGUI extends GuiConfig {
 
 	public ConfigGUI(GuiScreen parentScreen) {
-		super(parentScreen, 										/* parentScreen */
-				getConfigElement(), 								/* configElements */ 
-				Constants.MOD_ID,  									/* modID */
-				true,  												/* allRequireWorldRestart */
-				false,  											/* allRequireMcRestart */
-				I18n.format("com.minecolonies.configgui.title")); 	/* title */
+		super(parentScreen,                                         /* parentScreen */
+				getConfigElement(),                                 /* configElements */ 
+				Constants.MOD_ID,                                   /* modID */
+				true,                                               /* allRequireWorldRestart */
+				false,                                              /* allRequireMcRestart */
+				I18n.format("com.minecolonies.configgui.title"));   /* title */
 	}
 	
 	/** Compiles a list of config elements */
