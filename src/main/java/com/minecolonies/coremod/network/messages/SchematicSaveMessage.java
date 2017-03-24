@@ -5,6 +5,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.util.*;
+import com.minecolonies.structures.helpers.Structure;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import net.minecraft.client.Minecraft;
@@ -24,8 +25,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
-import com.minecolonies.structures.helpers.Structure;
-import java.util.zip.*;
 
 /**
  * Save Schematic Message.
@@ -65,7 +64,7 @@ public class SchematicSaveMessage implements IMessage, IMessageHandler<Schematic
         final byte[] compressedData = new byte [length];
         Log.getLogger().info("fromBytes: compressedData.length = " + compressedData.length);
         buf.readBytes(compressedData);
-        data = uncompress(compressedData);
+        data = Structure.uncompress(compressedData);
         Log.getLogger().info("fromBytes: data.length = " + data.length);
     }
 
@@ -78,7 +77,7 @@ public class SchematicSaveMessage implements IMessage, IMessageHandler<Schematic
         Log.getLogger().info("toBytes: data.length=" + data.length);
         Log.getLogger().info("toBytes: buf.writerIndex=" + buf.writerIndex());
 
-        final byte[] compressedData = compress(data);
+        final byte[] compressedData = Structure.compress(data);
         Log.getLogger().info("toBytes: compressedData.length=" + compressedData.length);
         Log.getLogger().info("toBytes: buf.writerIndex=" + buf.writerIndex());
         buf.capacity(compressedData.length + buf.writerIndex());
@@ -102,81 +101,6 @@ public class SchematicSaveMessage implements IMessage, IMessageHandler<Schematic
             buf.writeBytes(compressedData);
         }
     }
-
-    public static byte[] compress(final byte[] data)
-    {
-        try
-        {
-             final ByteArrayOutputStream byteStream = new ByteArrayOutputStream(data.length);
-             try
-             {
-                 GZIPOutputStream zipStream = new GZIPOutputStream(byteStream);
-                 try
-                 {
-                     zipStream.write(data);
-                 }
-                 finally
-                 {
-                     zipStream.close();
-                 }
-            }
-            finally
-            {
-                byteStream.close();
-            }
-
-            byte[] compressedData = byteStream.toByteArray();
-            return compressedData;
-
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public static byte[] uncompress(final byte[] data)
-    {
-        byte[] buffer = new byte[1024];
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-        try
-        {
-             final ByteArrayInputStream byteStream = new ByteArrayInputStream(data);
-             try
-             {
-                 GZIPInputStream zipStream = new GZIPInputStream(byteStream);
-                 try
-                 {
-                     int len;
-                     while ((len = zipStream.read(buffer)) > 0)
-                     {
-                         out.write(buffer, 0, len);
-                     }
-                 }
-                 finally
-                 {
-                     zipStream.close();
-                 }
-            }
-            finally
-            {
-                byteStream.close();
-            }
-
-            byte[] uncompressedData = out.toByteArray();
-            return uncompressedData;
-
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-
 
     @Nullable
     @Override

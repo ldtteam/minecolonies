@@ -47,6 +47,7 @@ import java.net.URISyntaxException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.zip.*;
 import javax.xml.bind.DatatypeConverter;
 
 /**
@@ -386,6 +387,80 @@ public class Structure
         }
         return md5.compareTo(otherMD5)==0;
     }
+
+    public static byte[] compress(final byte[] data)
+    {
+        try
+        {
+             final ByteArrayOutputStream byteStream = new ByteArrayOutputStream(data.length);
+             try
+             {
+                 GZIPOutputStream zipStream = new GZIPOutputStream(byteStream);
+                 try
+                 {
+                     zipStream.write(data);
+                 }
+                 finally
+                 {
+                     zipStream.close();
+                 }
+            }
+            finally
+            {
+                byteStream.close();
+            }
+
+            byte[] compressedData = byteStream.toByteArray();
+            return compressedData;
+
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static byte[] uncompress(final byte[] data)
+    {
+        byte[] buffer = new byte[1024];
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        try
+        {
+             final ByteArrayInputStream byteStream = new ByteArrayInputStream(data);
+             try
+             {
+                 GZIPInputStream zipStream = new GZIPInputStream(byteStream);
+                 try
+                 {
+                     int len;
+                     while ((len = zipStream.read(buffer)) > 0)
+                     {
+                         out.write(buffer, 0, len);
+                     }
+                 }
+                 finally
+                 {
+                     zipStream.close();
+                 }
+            }
+            finally
+            {
+                byteStream.close();
+            }
+
+            byte[] uncompressedData = out.toByteArray();
+            return uncompressedData;
+
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
     /**
      * Reads a template from an inputstream.

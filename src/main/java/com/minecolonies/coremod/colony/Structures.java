@@ -201,7 +201,7 @@ public final class Structures
                     final int MAX_TOTAL_SIZE = 32767;
                     final int MAX_SIZE = MAX_TOTAL_SIZE - Integer.SIZE / Byte.SIZE;
                     final byte[] data = Structure.getStreamAsByteArray(Structure.getStream(structureName.toString()));
-                    final byte[] compressed = SchematicSaveMessage.compress(data);
+                    final byte[] compressed = Structure.compress(data);
 
                     if (compressed.length > MAX_SIZE)
                     {
