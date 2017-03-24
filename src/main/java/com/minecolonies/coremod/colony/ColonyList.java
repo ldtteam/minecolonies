@@ -95,8 +95,15 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
             expandList();
         }
 
+        int emptyIds = colony.getID() - 1;
+        while(list[emptyIds] == null)
+        {
+            emptyIds--;
+            nullIndices.add(emptyIds);
+        }
+
         size++;
-        topID++;
+        topID = colony.getID();
 
         list[colony.getID()] = colony;
     }
