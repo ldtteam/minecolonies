@@ -214,8 +214,6 @@ public class Structure
 
     public static InputStream getStream(final String structureName)
     {
-        Log.getLogger().info("getStream: "+ structureName);
-        printFolders();
         final Structures.StructureName sn = new Structures.StructureName(structureName);
         InputStream inputstream = Structure.getStreamFromFolder(Structure.getSchematicsFolder(), structureName);
 

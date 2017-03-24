@@ -28,6 +28,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import java.util.stream.Collectors;
 
+import com.minecolonies.coremod.network.messages.SchematicSaveMessage;
+
 
 /**
  * StructureProxy class.
@@ -146,6 +148,7 @@ public final class Structures
     @SideOnly(Side.CLIENT)
     public static void loadCustomStyleMaps()
     {
+        Structure.printFolders();
         if (!allowPlayerSchematics && FMLCommonHandler.instance().getMinecraftServerInstance() == null)
         {
             return;
@@ -195,6 +198,15 @@ public final class Structures
                         Log.getLogger().info("Add " + structureName + " md5:" + md5);
                     }
                     md5Map.put(structureName.toString(), md5);
+                    final int MAX_TOTAL_SIZE = 32767;
+                    final int MAX_SIZE = MAX_TOTAL_SIZE - Integer.SIZE / Byte.SIZE;
+                    final byte[] data = Structure.getStreamAsByteArray(Structure.getStream(structureName.toString()));
+                    final byte[] compressed = SchematicSaveMessage.compress(data);
+
+                    if (compressed.length > MAX_SIZE)
+                    {
+                        Log.getLogger().warn("Struvture " + structureName + " is " + compressed.length + " bytes when compress, maximum allower is " + MAX_SIZE + " bytes.");
+                    }
 
                     if (MineColonies.isClient())
                     {
