@@ -24,7 +24,7 @@ public class ConfigGUI extends GuiConfig {
 				getConfigElement(),                                 /* configElements */ 
 				Constants.MOD_ID,                                   /* modID */
 				true,                                               /* allRequireWorldRestart */
-				false,                                              /* allRequireMcRestart */
+				true,                                               /* allRequireMcRestart */
 				I18n.format("com.minecolonies.configgui.title"));   /* title */
 	}
 	
