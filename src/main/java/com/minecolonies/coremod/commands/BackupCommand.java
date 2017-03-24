@@ -14,9 +14,6 @@ import java.util.List;
 
 import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.MC_BACKUP;
 
-/**
- * Created by asie on 2/16/17.
- */
 public class BackupCommand extends AbstractSingleCommand
 {
     public static final String DESC = "backup";
