@@ -1,9 +1,10 @@
 package com.minecolonies.coremod.configuration;
 
-import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
+import net.minecraft.util.math.MathHelper;
 
 import java.io.File;
 
