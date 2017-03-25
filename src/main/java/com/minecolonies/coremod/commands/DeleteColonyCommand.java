@@ -72,11 +72,14 @@ public class DeleteColonyCommand extends AbstractSingleCommand
             colonyId = getIthArgument(args, 0, -1);
         }
 
-        final EntityPlayer player = (EntityPlayer) sender;
-        if (!canPlayerUseCommand (player, Commands.valueOf("DELETECOLONY"), colonyId))
+        if(sender instanceof EntityPlayer)
         {
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NOT_PERMITTED));
-            return;
+            final EntityPlayer player = (EntityPlayer) sender;
+            if (!canPlayerUseCommand(player, Commands.valueOf("DELETECOLONY"), colonyId))
+            {
+                sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NOT_PERMITTED));
+                return;
+            }
         }
 
         final Colony colony = ColonyManager.getColony(colonyId);
