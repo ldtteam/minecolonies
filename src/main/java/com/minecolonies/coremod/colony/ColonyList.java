@@ -68,6 +68,14 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
             expandList();
         }
 
+        if(list[colonyID] != null)
+        {
+            throw new IllegalArgumentException(
+                    String.format("Already a colony registered to id=%d, colony=%s, not creating new colony",
+                            colonyID,
+                            list[colonyID].getName()));
+        }
+
         final Colony colony = new Colony(colonyID, world, position);
         size++;
         list[colony.getID()] = colony;
@@ -96,11 +104,10 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
         }
 
         int emptyIds = colony.getID() - 1;
-        while(emptyIds
-                > 0  && list[emptyIds] == null)
+        while(emptyIds > 0  && list[emptyIds] == null)
         {
-            emptyIds--;
             nullIndices.add(emptyIds);
+            emptyIds--;
         }
 
         size++;
