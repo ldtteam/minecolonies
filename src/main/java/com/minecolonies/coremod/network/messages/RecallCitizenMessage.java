@@ -87,6 +87,11 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
                         colony.spawnCitizen(citizenData);
                         citizen = citizenData.getCitizenEntity();
                     }
+                    else
+                    {
+                        Log.getLogger().warn("Citizen is AWOL and citizenData is null!");
+                        return;
+                    }
                 }
                 final BlockPos loc = building.getLocation();
                 if (!TeleportHelper.teleportCitizen(citizen, colony.getWorld(), loc))
