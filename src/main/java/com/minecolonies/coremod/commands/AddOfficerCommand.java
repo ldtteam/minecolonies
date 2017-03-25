@@ -71,7 +71,7 @@ public class AddOfficerCommand extends AbstractSingleCommand
 
         if (colony == null)
         {
-            sender.addChatMessage(new TextComponentString(String.format(COLONY_NULL, colonyId)));
+            sender.sendMessage(new TextComponentString(String.format(COLONY_NULL, colonyId)));
             return;
         }
 

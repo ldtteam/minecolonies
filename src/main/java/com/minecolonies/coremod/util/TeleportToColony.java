@@ -55,7 +55,7 @@ public final class TeleportToColony
             if (args.length == 0)
             {
                 playerToTeleport = (EntityPlayer) sender;
-                colony = ColonyManager.getIColonyByOwner(((EntityPlayer) sender).worldObj, (EntityPlayer) sender);
+                colony = ColonyManager.getIColonyByOwner(((EntityPlayer) sender).world, (EntityPlayer) sender);
                 colonyId = colony.getID();
             }
             else
@@ -68,7 +68,7 @@ public final class TeleportToColony
         }
         else
         {
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString(CANT_FIND_PLAYER));
+            sender.getCommandSenderEntity().sendMessage(new TextComponentString(CANT_FIND_PLAYER));
             return;
         }
 
@@ -77,7 +77,7 @@ public final class TeleportToColony
             teleportPlayer(playerToTeleport, colonyId, sender);
             return;
         }
-        sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Please wait at least " + Configurations.teleportBuffer + " seconds to teleport again"));
+        sender.getCommandSenderEntity().sendMessage(new TextComponentString("Please wait at least " + Configurations.teleportBuffer + " seconds to teleport again"));
 
     }
 
@@ -94,11 +94,11 @@ public final class TeleportToColony
 
         if(townHall == null)
         {
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_TOWNHALL));
+            sender.getCommandSenderEntity().sendMessage(new TextComponentString(NO_TOWNHALL));
             return;
         }
 
-        playerToTeleport.getCommandSenderEntity().addChatMessage(new TextComponentString("We got places to go, kid..."));
+        playerToTeleport.getCommandSenderEntity().sendMessage(new TextComponentString("We got places to go, kid..."));
 
         final BlockPos position = townHall.getLocation();
 
@@ -108,7 +108,7 @@ public final class TeleportToColony
         }
         else
         {
-            playerToTeleport.getCommandSenderEntity().addChatMessage(new TextComponentString(CANT_FIND_COLONY));
+            playerToTeleport.getCommandSenderEntity().sendMessage(new TextComponentString(CANT_FIND_COLONY));
         }
     }
 }

@@ -56,7 +56,7 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand
                 return;
             }
         }
-        sender.getCommandSenderEntity().addChatMessage(new TextComponentString("You are not allowed to do this"));
+        sender.getCommandSenderEntity().sendMessage(new TextComponentString("You are not allowed to do this"));
     }
 
     @Override

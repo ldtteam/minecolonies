@@ -158,7 +158,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
     {
         int requiredOpLevel = Configurations.opLevelForServer;
 
-        requiredOpLevel = MathHelper.clamp_int(requiredOpLevel, 1,4);
+        requiredOpLevel = MathHelper.clamp(requiredOpLevel, 1,4);
 
         return FMLCommonHandler.instance().getMinecraftServerInstance().canUseCommand(requiredOpLevel,cmdName);
     }
