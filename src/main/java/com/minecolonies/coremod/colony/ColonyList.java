@@ -96,8 +96,8 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
         }
 
         int emptyIds = colony.getID() - 1;
-        while(emptyIdsit
-                != 0  && list[emptyIds] == null)
+        while(emptyIds
+                > 0  && list[emptyIds] == null)
         {
             emptyIds--;
             nullIndices.add(emptyIds);
