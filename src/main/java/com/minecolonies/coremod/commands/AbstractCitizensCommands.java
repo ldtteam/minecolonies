@@ -91,7 +91,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
 
         final int citizenId = getValidCitizenId(colony, firstArgumentColonyId, args);
 
-        if(citizenId == -1)
+        if(citizenId == -1 || colony.getCitizen(citizenId) == null)
         {
             sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_ARGUMENTS));
             return;
