@@ -95,6 +95,9 @@ achievement.upgrade.townhall.first.desc=Build a townhall!
 tile.minecolonies.blockHutGuardTower.name=GuardTower
 tile.blockHutTownHall.messageGuardDead=The guard %s has died at %d %d %d!
 item.minecolonies.scepterGuard.name=Guard-scepter
+
+com.minecolonies.configgui.title=MineColonies Config
+
 com.minecolonies.coremod.gui.townHall.rename=Rename Colony
 com.minecolonies.coremod.gui.workerHuts.minerMineNode=Mine Level
 com.minecolonies.coremod.gui.workerHuts.buildType=Build Type:

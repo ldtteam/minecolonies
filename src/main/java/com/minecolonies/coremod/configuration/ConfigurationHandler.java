@@ -2,8 +2,12 @@ package com.minecolonies.coremod.configuration;
 
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.io.File;
+
+import com.minecolonies.coremod.lib.Constants;
 
 import static com.minecolonies.coremod.configuration.Configurations.*;
 
@@ -14,31 +18,39 @@ import static com.minecolonies.coremod.configuration.Configurations.*;
  */
 public final class ConfigurationHandler
 {
-    private static final String CATEGORY_GAMEPLAY    = "gameplay";
-    private static final String CATEGORY_PATHFINDING = "pathfinding";
-    private static final String CATEGORY_NAMES       = "names";
+    private static Configuration config;
+    
+    public static final String CATEGORY_GAMEPLAY    = "gameplay";
+    public static final String CATEGORY_PATHFINDING = "pathfinding";
+    public static final String CATEGORY_NAMES       = "names";
 
     private static final String FORMAT_RANGE = "%s (range: %s ~ %s, default: %s)";
 
-    private ConfigurationHandler()
+    public ConfigurationHandler()
     {
-        //Hides default constructor
+        // Only used for registering the event
     }
 
     /**
      * Initializes the configuration.
-     * Reads all options from the file, and sets those parameters, and saves those in {@link Configurations}.
-     * Saves file after reading.
-     *
+     * 
      * @param file File to read input from.
      */
     public static synchronized void init(final File file)
     {
-        final Configuration config = new Configuration(file);
-
+        config = new Configuration(file);
+        
+        loadConfiguration();
+    }
+    
+    /**
+     * Reads all options from the file, and sets those parameters, and saves those in {@link Configurations}.
+     * Saves file after reading.
+     */
+    private static void loadConfiguration() 
+    {
         try
         {
-            config.load();
             builderPlaceConstructionTape = config.get(CATEGORY_GAMEPLAY, "placeConstructionTape", builderPlaceConstructionTape,
                     "Should builder place construction tape").getBoolean();
             workingRangeTownHall = config.get(CATEGORY_GAMEPLAY, "workingRangeTownHall", workingRangeTownHall,
@@ -123,7 +135,22 @@ public final class ConfigurationHandler
         }
         finally
         {
-            config.save();
+            if(config.hasChanged())
+                config.save();
+        }
+    }
+    
+    /**
+     * This event will be called when the config gets changed through
+     * the in-game GUI.
+     */
+    @SubscribeEvent
+    public void onConfigChanged(OnConfigChangedEvent eventArgs) 
+    {
+        if(eventArgs.getModID().equalsIgnoreCase(Constants.MOD_ID)) 
+        {
+            // resync configs
+            loadConfiguration();
         }
     }
 
@@ -144,4 +171,10 @@ public final class ConfigurationHandler
     {
         return MathHelper.clamp_int(config.get(category, key, defaultValue, String.format(FORMAT_RANGE, comment, min, max, defaultValue), min, max).getInt(), min, max);
     }
+    
+    public static Configuration getConfiguration() 
+    {
+        return config;
+    }
+
 }
