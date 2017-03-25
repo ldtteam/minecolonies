@@ -50,9 +50,15 @@ public class RespawnCitizenCommand extends AbstractCitizensCommands
         final CitizenData citizenData = colony.getCitizen(citizenId);
         final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
         sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, citizenData.getId(), citizenData.getName())));
+
+        if (entityCitizen == null)
+        {
+            colony.spawnCitizen(citizenData);
+            return;
+        }
+
         final BlockPos position = entityCitizen.getPosition();
         sender.sendMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
-
         sender.sendMessage(new TextComponentString(REMOVED_MESSAGE));
 
         Log.getLogger().info("client? " + sender.getEntityWorld().isRemote);
