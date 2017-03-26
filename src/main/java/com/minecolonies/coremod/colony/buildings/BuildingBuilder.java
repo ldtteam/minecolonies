@@ -20,6 +20,7 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -287,7 +288,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
             if (builderInventory!=null)
             {
-                resource.addAvailable(InventoryUtils.getItemCountInItemHandler(builderInventory, resource.getItem(), resource.getDamageValue()));
+                resource.addAvailable(InventoryUtils.getItemCountInItemHandler(new InvWrapper(builderInventory), resource.getItem(), resource.getDamageValue()));
             }
 
             final TileEntity chestInventory = this.getTileEntity();

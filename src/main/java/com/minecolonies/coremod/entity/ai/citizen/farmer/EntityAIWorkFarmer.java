@@ -18,6 +18,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -587,7 +588,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         {
             @NotNull final IPlantable seed = (IPlantable) item.getItem();
             world.setBlockState(position.up(), seed.getPlant(world, position));
-            getInventory().extractItem(slot, 1, false);
+            new InvWrapper(getInventory()).extractItem(slot, 1, false);
             requestSeeds = false;
             //Flag 1+2 is needed for updates
             return true;
@@ -624,7 +625,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private int getHoeSlot()
     {
-        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), Utils.HOE);
+        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), Utils.HOE);
     }
 
     /**

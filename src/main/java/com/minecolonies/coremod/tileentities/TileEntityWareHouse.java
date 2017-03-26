@@ -16,6 +16,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -369,7 +370,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      */
     public void dumpInventoryIntoWareHouse(@NotNull final InventoryCitizen inventoryCitizen)
     {
-        for(int i = 0; i < inventoryCitizen.getSlots(); i++)
+        for (int i = 0; i < new InvWrapper(inventoryCitizen).getSlots(); i++)
         {
             final ItemStack stack = inventoryCitizen.getStackInSlot(i);
 
@@ -384,7 +385,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                 return;
             }
             InventoryUtils.addItemStackToProvider(chest, stack);
-            inventoryCitizen.extractItem(i, Integer.MAX_VALUE, false);
+            new InvWrapper(inventoryCitizen).extractItem(i, Integer.MAX_VALUE, false);
         }
 
     }

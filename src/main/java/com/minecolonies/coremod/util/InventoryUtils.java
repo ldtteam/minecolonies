@@ -381,8 +381,6 @@ public class InventoryUtils
      */
     public static boolean addItemStackToItemHandler(@NotNull final IItemHandler itemHandler, @Nullable ItemStack itemStack)
     {
-        itemStack = itemStack.copy();
-
         if (!isItemStackEmpty(itemStack))
         {
             int slot;
@@ -1469,6 +1467,31 @@ public class InventoryUtils
     public static boolean transferItemStackIntoNextFreeSlotInProvider(@NotNull final IItemHandler sourceHandler, @NotNull int sourceIndex, @NotNull ICapabilityProvider targetProvider){
         for(IItemHandler handler : getItemHandlersFromProvider(targetProvider)) {
             if (transferItemStackIntoNextFreeSlotInItemHandlers(sourceHandler, sourceIndex, handler)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Method to swap the ItemStacks from the given source {@link ICapabilityProvider} to the given target {@link IItemHandler}.
+     * First free slot is found by calling: {@link #getFirstFillablePositionInItemHandler(IItemHandler, ItemStack)}
+     *
+     * @param sourceProvider The {@link ICapabilityProvider} that works as Source.
+     * @param sourceIndex    The index of the slot that is being extracted from.
+     * @param targetHandler  The {@link IItemHandler} that works as Target.
+     * @return True when the swap was successful, false when not.
+     */
+    public static boolean transferItemStackIntoNextFreeSlotFromProvider(
+                                                                         @NotNull final ICapabilityProvider sourceProvider,
+                                                                         @NotNull int sourceIndex,
+                                                                         @NotNull IItemHandler targetHandler)
+    {
+        for (IItemHandler handler : getItemHandlersFromProvider(sourceProvider))
+        {
+            if (transferItemStackIntoNextFreeSlotInItemHandlers(handler, sourceIndex, targetHandler))
+            {
                 return true;
             }
         }
