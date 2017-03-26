@@ -26,18 +26,24 @@ public class ConfigGUI extends GuiConfig
      */
     public ConfigGUI(GuiScreen parentScreen) 
     {
-        super(parentScreen,                                         /* The parentScreen. */
-                getConfigElement(),                                 /* The configElements. */ 
-                Constants.MOD_ID,                                   /* The modID. */
-                true,                                               /* The allRequireWorldRestart argument. */
-                true,                                               /* The allRequireMcRestart argument. */
-                I18n.format("com.minecolonies.configgui.title"));   /* The title of the GUI. */
+        /* The parentScreen. */
+        super(parentScreen,
+                /* The configElements. */ 
+                getConfigElement(),
+                /* The modID. */
+                Constants.MOD_ID,
+                /* The allRequireWorldRestart argument. */
+                true,
+                /* The allRequireMcRestart argument. */
+                true,
+                /* The title of the GUI. */
+                I18n.format("com.minecolonies.configgui.title"));
     }
     
     /** Compiles a list of config elements. */
     private static List<IConfigElement> getConfigElement() 
     {
-        final List<IConfigElement> list = new ArrayList<IConfigElement>();
+        final List<IConfigElement> list = new ArrayList<>();
         
         // category, name, tooltip (same as the comment found in the config file itself)
         list.add(categoryElement(ConfigurationHandler.CATEGORY_GAMEPLAY, "gameplay", ""));
