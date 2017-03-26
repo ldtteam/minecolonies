@@ -137,13 +137,17 @@ public final class ConfigurationHandler
         finally
         {
             if(config.hasChanged())
+            {
                 config.save();
+            }
         }
     }
     
     /**
      * This event will be called when the config gets changed through
      * the in-game GUI.
+     * 
+     * @param eventArgs An instance to the event. 
      */
     @SubscribeEvent
     public void onConfigChanged(OnConfigChangedEvent eventArgs) 

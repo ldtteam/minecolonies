@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
+import java.util.Collections;
 import java.util.Set;
 
 import net.minecraft.client.Minecraft;
@@ -13,7 +14,9 @@ public class GuiFactory implements IModGuiFactory
 {
     @Override
     public void initialize(Minecraft minecraftInstance) 
-    { }
+    { 
+        // We don't need this method for our purpose.
+    }
     
     @Override
     public Class<? extends GuiScreen> mainConfigGuiClass() 
@@ -24,7 +27,7 @@ public class GuiFactory implements IModGuiFactory
     @Override
     public Set<RuntimeOptionCategoryElement> runtimeGuiCategories() 
     {
-        return null;
+        return Collections.emptySet();
     }
     
     @Override
