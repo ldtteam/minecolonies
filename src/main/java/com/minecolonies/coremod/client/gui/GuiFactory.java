@@ -30,8 +30,10 @@ public class GuiFactory implements IModGuiFactory
         return Collections.emptySet();
     }
     
+    /**
+     * @deprecated This was never fully implemented and will be removed in the future.
+     */
     @Override
-    @SuppressWarnings("deprecation")
     public RuntimeOptionGuiHandler getHandlerFor(RuntimeOptionCategoryElement element) 
     {
         return null;
