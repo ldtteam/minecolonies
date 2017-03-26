@@ -14,10 +14,14 @@ import javax.annotation.Nullable;
  */
 public class IItemHandlerToIInventoryWrapper implements IInventory
 {
-    private final IItemHandlerModifiable wrapped;
+    private static final int CONSTANT_MAX_STACKSIZE = 64;
+
+    private final IItemHandlerModifiable   wrapped;
     private final IWorldNameableModifyable named;
 
-    public IItemHandlerToIInventoryWrapper(final IItemHandlerModifiable wrapped, final IWorldNameableModifyable named) {this.wrapped = wrapped;
+    public IItemHandlerToIInventoryWrapper(final IItemHandlerModifiable wrapped, final IWorldNameableModifyable named)
+    {
+        this.wrapped = wrapped;
         this.named = named;
     }
 
@@ -75,7 +79,7 @@ public class IItemHandlerToIInventoryWrapper implements IInventory
     @Override
     public int getInventoryStackLimit()
     {
-        return 64;
+        return CONSTANT_MAX_STACKSIZE;
     }
 
     /**
@@ -85,11 +89,11 @@ public class IItemHandlerToIInventoryWrapper implements IInventory
     @Override
     public void markDirty()
     {
-
+        //IItemHandler mark themselves dirty when changed.
     }
 
     /**
-     * Don't rename this method to canInteractWith due to conflicts with Container
+     * Don't rename this method to canInteractWith due to conflicts with Container.
      */
     @Override
     public boolean isUseableByPlayer(final EntityPlayer player)
@@ -100,13 +104,13 @@ public class IItemHandlerToIInventoryWrapper implements IInventory
     @Override
     public void openInventory(final EntityPlayer player)
     {
-
+        //IItemHandlers do not track which player opens or closes it as they are targeted at automating
     }
 
     @Override
     public void closeInventory(final EntityPlayer player)
     {
-
+        //IItemHandlers do not track which player opens or closes it as they are targeted at automating
     }
 
     /**
@@ -128,7 +132,7 @@ public class IItemHandlerToIInventoryWrapper implements IInventory
     @Override
     public void setField(final int id, final int value)
     {
-
+        //IItemHandlers do not have fields. So no setting of the value is possible. Discarding.
     }
 
     @Override
@@ -144,7 +148,7 @@ public class IItemHandlerToIInventoryWrapper implements IInventory
     }
 
     /**
-     * Get the name of this object. For players this returns their username
+     * Get the name of this object. For players this returns their username.
      */
     @Override
     public String getName()
@@ -153,7 +157,7 @@ public class IItemHandlerToIInventoryWrapper implements IInventory
     }
 
     /**
-     * Returns true if this thing is named
+     * Returns true if this thing is named.
      */
     @Override
     public boolean hasCustomName()
@@ -162,7 +166,7 @@ public class IItemHandlerToIInventoryWrapper implements IInventory
     }
 
     /**
-     * Get the formatted ChatComponent that will be used for the sender's username in chat
+     * Get the formatted ChatComponent that will be used for the sender's username in chat.
      */
     @Override
     public ITextComponent getDisplayName()
