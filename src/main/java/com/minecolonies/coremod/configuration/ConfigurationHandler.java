@@ -48,7 +48,7 @@ public final class ConfigurationHandler
      * Reads all options from the file, and sets those parameters, and saves those in {@link Configurations}.
      * Saves file after reading.
      */
-    private static void loadConfiguration() 
+    private static synchronized void loadConfiguration() 
     {
         try
         {
