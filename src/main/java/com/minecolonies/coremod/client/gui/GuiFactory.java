@@ -34,6 +34,7 @@ public class GuiFactory implements IModGuiFactory
      * @deprecated This was never fully implemented and will be removed in the future.
      */
     @Override
+    @Deprecated
     public RuntimeOptionGuiHandler getHandlerFor(RuntimeOptionCategoryElement element) 
     {
         return null;
