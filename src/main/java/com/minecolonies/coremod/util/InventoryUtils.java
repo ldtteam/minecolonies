@@ -36,7 +36,7 @@ public class InventoryUtils
      * Variable representing the empty itemstack in 1.10.
      * Used for easy updating to 1.11
      */
-    public static ItemStack EMPTY = null;
+    public static final ItemStack EMPTY = null;
 
     /**
      * Private constructor to hide the implicit one.
@@ -401,16 +401,19 @@ public class InventoryUtils
             }
             else
             {
-                slot = getFirstFillablePositionInItemHandler(itemHandler, itemStack);
-                while(!isItemStackEmpty(itemStack) && slot != -1) {
-                    itemStack = itemHandler.insertItem(slot, itemStack, false);
-                    if (!isItemStackEmpty(itemStack)) {
-                        slot = getFirstFillablePositionInItemHandler(itemHandler, itemStack);
+                ItemStack resultStack = itemStack;
+                slot = getFirstFillablePositionInItemHandler(itemHandler, resultStack);
+                while (!isItemStackEmpty(resultStack) && slot != -1)
+                {
+                    resultStack = itemHandler.insertItem(slot, resultStack, false);
+                    if (!isItemStackEmpty(resultStack))
+                    {
+                        slot = getFirstFillablePositionInItemHandler(itemHandler, resultStack);
                     }
                 }
 
 
-                return isItemStackEmpty(itemStack);
+                return isItemStackEmpty(resultStack);
             }
         }
         else
@@ -428,8 +431,6 @@ public class InventoryUtils
      */
     public static ItemStack addItemStackToItemHandlerWithResult(@NotNull final IItemHandler itemHandler, @Nullable ItemStack itemStack)
     {
-        itemStack = itemStack.copy();
-
         if (!isItemStackEmpty(itemStack))
         {
             int slot;
@@ -450,16 +451,18 @@ public class InventoryUtils
             }
             else
             {
-                slot = getFirstFillablePositionInItemHandler(itemHandler, itemStack);
-                while(!isItemStackEmpty(itemStack) && slot != -1) {
-                    itemStack = itemHandler.insertItem(slot, itemStack, false);
-                    if (!isItemStackEmpty(itemStack)) {
-                        slot = getFirstFillablePositionInItemHandler(itemHandler, itemStack);
+                ItemStack resultStack = itemStack;
+                slot = getFirstFillablePositionInItemHandler(itemHandler, resultStack);
+                while (!isItemStackEmpty(resultStack) && slot != -1)
+                {
+                    resultStack = itemHandler.insertItem(slot, resultStack, false);
+                    if (!isItemStackEmpty(resultStack))
+                    {
+                        slot = getFirstFillablePositionInItemHandler(itemHandler, resultStack);
                     }
                 }
 
-
-                return itemStack;
+                return resultStack;
             }
         }
         else
@@ -849,16 +852,18 @@ public class InventoryUtils
      */
     public static ItemStack addItemStackToProviderWithResult(@NotNull final ICapabilityProvider provider, @Nullable ItemStack itemStack)
     {
-        for(IItemHandler handler : getItemHandlersFromProvider(provider)) {
-            if (isItemStackEmpty(itemStack))
-            {
-                return EMPTY;
-            }
+        ItemStack activeStack = itemStack;
 
-            itemStack = addItemStackToItemHandlerWithResult(handler, itemStack);
+        if (isItemStackEmpty(activeStack))
+        {
+            return EMPTY;
         }
 
-        return itemStack;
+        for(IItemHandler handler : getItemHandlersFromProvider(provider)) {
+            activeStack = addItemStackToItemHandlerWithResult(handler, activeStack);
+        }
+
+        return activeStack;
     }
 
     /**
@@ -1366,17 +1371,13 @@ public class InventoryUtils
      */
     public static boolean verifyToolLevel(@NotNull final ItemStack itemStack, int toolLevel, final int minimalLevel)
     {
-        if (isItemStackEmpty(itemStack) || minimalLevel > FREE_TOOL_CHOICE_LEVEL)
+        if (isItemStackEmpty(itemStack) || minimalLevel > FREE_TOOL_CHOICE_LEVEL || minimalLevel >= toolLevel)
         {
             return true;
         }
         else if (itemStack.isItemEnchanted() && minimalLevel <= EFFECT_TOOL_CHOICE_LEVEL)
         {
             return false;
-        }
-        else if (minimalLevel >= toolLevel)
-        {
-            return true;
         }
 
         return false;
