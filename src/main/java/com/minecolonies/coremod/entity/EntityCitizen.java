@@ -46,7 +46,9 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.items.CapabilityItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -86,6 +88,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     private static final String TAG_COLONY_ID      = "colony";
     private static final String TAG_CITIZEN        = "citizen";
+    private static final String TAG_INVENTORY      = "inventory";
     private static final String TAG_HELD_ITEM_SLOT = "HeldItemSlot";
     private static final String TAG_STATUS         = "status";
     private static final String TAG_LAST_JOB           = "lastJob";
@@ -822,8 +825,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             compound.setInteger(TAG_CITIZEN, citizenData.getId());
         }
 
-        inventory.writeToNBT(compound);
-        compound.setInteger(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot());
+        compound.setTag(TAG_INVENTORY, inventory.serializeNBT());
         compound.setString(TAG_LAST_JOB, lastJob);
     }
 
@@ -840,9 +842,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
         {
             updateColonyServer();
         }
-        inventory.readFromNBT(compound);
 
-        inventory.setHeldItem(compound.getInteger(TAG_HELD_ITEM_SLOT));
+        if (compound.hasKey(TAG_INVENTORY))
+        {
+            inventory.deserializeNBT(compound.getCompoundTag(TAG_INVENTORY));
+        }
+
         lastJob = compound.getString(TAG_LAST_JOB);
     }
 
@@ -1223,7 +1228,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     protected void dropEquipment(final boolean par1, final int par2)
     {
         //Drop actual inventory
-        for (int i = 0; i < inventory.getSizeInventory(); i++)
+        for (int i = 0; i < inventory.getSlots(); i++)
         {
             final ItemStack itemstack = inventory.getStackInSlot(i);
             if (itemstack != null && itemstack.stackSize > 0)
@@ -1317,7 +1322,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
     public boolean isInventoryFull()
     {
-        return InventoryUtils.isInventoryFull(getInventoryCitizen());
+        return InventoryUtils.isProviderFull(this);
     }
 
     /**
@@ -1395,7 +1400,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public int findFirstSlotInInventoryWith(final Item targetItem, int itemDamage)
     {
-        return InventoryUtils.findFirstSlotInInventoryWith(getInventoryCitizen(), targetItem, itemDamage);
+        return InventoryUtils.findFirstSlotInItemHandlerWith(getInventoryCitizen(), targetItem, itemDamage);
     }
 
     /**
@@ -1407,7 +1412,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public int findFirstSlotInInventoryWith(final Block block, int itemDamage)
     {
-        return InventoryUtils.findFirstSlotInInventoryWith(getInventoryCitizen(), block, itemDamage);
+        return InventoryUtils.findFirstSlotInItemHandlerWith(getInventoryCitizen(), block, itemDamage);
     }
 
     /**
@@ -1419,7 +1424,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public int getItemCountInInventory(final Block block, int itemDamage)
     {
-        return InventoryUtils.getItemCountInInventory(getInventoryCitizen(), block, itemDamage);
+        return InventoryUtils.getItemCountInItemHandler(getInventoryCitizen(), block, itemDamage);
     }
 
     /**
@@ -1431,7 +1436,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public int getItemCountInInventory(final Item targetItem, int itemDamage)
     {
-        return InventoryUtils.getItemCountInInventory(getInventoryCitizen(), targetItem, itemDamage);
+        return InventoryUtils.getItemCountInItemHandler(getInventoryCitizen(), targetItem, itemDamage);
     }
 
     /**
@@ -1443,7 +1448,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public boolean hasItemInInventory(final Block block, int itemDamage)
     {
-        return InventoryUtils.hasitemInInventory(getInventoryCitizen(), block, itemDamage);
+        return InventoryUtils.hasItemInItemHandler(getInventoryCitizen(), block, itemDamage);
     }
 
     /**
@@ -1455,7 +1460,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public boolean hasItemInInventory(final Item item, int itemDamage)
     {
-        return InventoryUtils.hasitemInInventory(getInventoryCitizen(), item, itemDamage);
+        return InventoryUtils.hasItemInItemHandler(getInventoryCitizen(), item, itemDamage);
     }
 
     /**
@@ -1475,7 +1480,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             final ItemStack itemStack = entityItem.getEntityItem();
 
             final int i = itemStack.stackSize;
-            if (i <= 0 || InventoryUtils.addItemStackToInventory(this.getInventoryCitizen(), itemStack))
+            if (i <= 0 || InventoryUtils.addItemStackToItemHandler(this.getInventoryCitizen(), itemStack))
             {
                 this.worldObj.playSound((EntityPlayer) null,
                   this.getPosition(),
@@ -1508,7 +1513,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public void setHeldItem(final int slot)
     {
-        inventory.setHeldItem(slot);
+        inventory.switchItemStackInSlotToHotbar(slot);
         setItemStackToSlot(EntityEquipmentSlot.MAINHAND, inventory.getStackInSlot(slot));
     }
 
@@ -1594,7 +1599,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public void damageItemInHand(final int damage)
     {
-        final ItemStack heldItem = inventory.getHeldItemMainhand();
+        final ItemStack heldItem = inventory.getHotbarHandler().getStackInSlot(0);
         //If we hit with bare hands, ignore
         if (heldItem == null)
         {
@@ -1605,7 +1610,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         //check if tool breaks
         if (heldItem.stackSize < 1)
         {
-            getInventoryCitizen().setInventorySlotContents(getInventoryCitizen().getHeldItemSlot(), null);
+            getInventoryCitizen().getHotbarHandler().setStackInSlot(0, null);
             this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, null);
         }
     }
@@ -1738,6 +1743,24 @@ public class EntityCitizen extends EntityAgeable implements INpc
         {
             ((BuildingFarmer) this.getWorkBuilding()).resetFields();
         }
+    }
+
+    @Override
+    public <T> T getCapability(final Capability<T> capability, final EnumFacing facing)
+    {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+            return (T) inventory;
+
+        return super.getCapability(capability, facing);
+    }
+
+    @Override
+    public boolean hasCapability(final Capability<?> capability, final EnumFacing facing)
+    {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+            return true;
+
+        return super.hasCapability(capability, facing);
     }
 
     /**

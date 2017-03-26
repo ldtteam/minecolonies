@@ -12,6 +12,7 @@ import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.BlockPosUtil;
+import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Log;
 import net.minecraft.entity.Entity;
@@ -213,11 +214,11 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
 
                 if (stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).armorType) == null)
                 {
-                    final int emptySlot = worker.getInventoryCitizen().getFirstEmptySlot();
+                    final int emptySlot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), (ItemStack testStack) -> InventoryUtils.isItemStackEmpty(testStack));
 
                     if (emptySlot != -1)
                     {
-                        worker.getInventoryCitizen().setInventorySlotContents(emptySlot, stack);
+                        worker.getInventoryCitizen().insertItem(emptySlot, stack, false);
                         chest.setInventorySlotContents(i, null);
                     }
                 }
@@ -255,13 +256,13 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
         worker.setItemStackToSlot(EntityEquipmentSlot.HEAD, null);
         worker.setItemStackToSlot(EntityEquipmentSlot.LEGS, null);
 
-        for (int i = 0; i < worker.getInventoryCitizen().getSizeInventory(); i++)
+        for (int i = 0; i < worker.getInventoryCitizen().getSlots(); i++)
         {
             final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(i);
 
             if (stack == null || stack.stackSize == 0)
             {
-                worker.getInventoryCitizen().setInventorySlotContents(i, null);
+                worker.getInventoryCitizen().extractItem(i, Integer.MAX_VALUE, false);
                 continue;
             }
 

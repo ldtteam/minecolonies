@@ -8,6 +8,7 @@ import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.inventory.InventoryField;
 import com.minecolonies.coremod.util.BlockPosUtil;
+import com.minecolonies.coremod.util.IItemHandlerToIInventoryWrapper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntityChest;
@@ -158,9 +159,9 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
         {
             if (!StringUtils.isNullOrEmpty(message.name))
             {
-                citizen.getInventoryCitizen().setCustomName(message.name);
+                citizen.getInventoryCitizen().setName(message.name);
             }
-            player.displayGUIChest(citizen.getInventoryCitizen());
+            player.displayGUIChest(new IItemHandlerToIInventoryWrapper(citizen.getInventoryCitizen(), citizen.getInventoryCitizen()));
         }
     }
 

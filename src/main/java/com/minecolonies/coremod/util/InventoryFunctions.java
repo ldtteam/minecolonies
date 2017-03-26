@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.util;
 
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Tuple;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,16 +32,16 @@ public class InventoryFunctions
     /**
      * Search for a stack in an Inventory matching the predicate.
      *
-     * @param inventory the inventory to search in
+     * @param provider the provider to search in
      * @param tester    the function to use for testing slots
      * @param action    the function to use if a slot matches
      * @return true if it found a stack
      */
-    public static boolean matchFirstInInventory(
-                                                 final IInventory inventory, @NotNull final Predicate<ItemStack> tester,
+    public static boolean matchFirstInProvider(
+                                                 final ICapabilityProvider provider, @NotNull final Predicate<ItemStack> tester,
                                                  @NotNull final Consumer<Integer> action)
     {
-        return matchFirstInInventory(inventory, inv -> slot -> stack ->
+        return matchFirstInProvider(provider, inv -> slot -> stack ->
         {
             if (tester.test(stack))
             {
@@ -55,20 +55,20 @@ public class InventoryFunctions
     /**
      * Search for a stack in an Inventory matching the predicate.
      *
-     * @param inventory the inventory to search in
+     * @param provider the provider to search in
      * @param tester    the function to use for testing slots
      * @param action    the function to use if a slot matches
      * @return true if it found a stack
      */
-    public static boolean matchFirstInInventoryWithInventory(
-            final IInventory inventory, @NotNull final Predicate<ItemStack> tester,
-            @NotNull final Consumer<Tuple<Integer, IInventory>> action)
+    public static boolean matchFirstInProviderWithAction(
+            final ICapabilityProvider provider, @NotNull final Predicate<ItemStack> tester,
+            @NotNull final IMatchActionResult action)
     {
-        return matchFirstInInventory(inventory, inv -> slot -> stack ->
+        return matchFirstInProvider(provider, inv -> slot -> stack ->
         {
             if (tester.test(stack))
             {
-                action.accept(new Tuple<>(slot, inventory));
+                action.accept(provider, slot);
                 return true;
             }
             return false;
@@ -78,51 +78,56 @@ public class InventoryFunctions
     /**
      * Topmost matchFirst function, will stop after it finds the first itemstack.
      *
-     * @param inventory the inventory to search in
+     * @param provider the provider to search in
      * @param tester    the function to use for testing slots
      * @return true if it found a stack
      */
-    private static boolean matchFirstInInventory(
-                                                  final IInventory inventory, @NotNull final Function<IInventory, Function<Integer,
+    private static boolean matchFirstInProvider(
+                                                  final ICapabilityProvider provider, @NotNull final Function<ICapabilityProvider, Function<Integer,
                                                                                                                             Predicate<ItemStack>>> tester)
     {
-        return matchInInventory(inventory, tester, true);
+        return matchInProvider(provider, tester, true);
     }
 
     /**
-     * Topmost function to actually loop over the inventory.
+     * Topmost function to actually loop over the provider.
      * Will return if it found something.
      *
-     * @param inventory      the inventory to loop over
+     * @param provider      the provider to loop over
      * @param tester         the function to use for testing slots
      * @param stopAfterFirst if it should stop executing after finding one stack that applies
      * @return true if it found a stack
      */
-    private static boolean matchInInventory(
-                                             @Nullable final IInventory inventory,
-                                             @NotNull final Function<IInventory, Function<Integer,
+    private static boolean matchInProvider(
+                                             @Nullable final ICapabilityProvider provider,
+                                             @NotNull final Function<ICapabilityProvider, Function<Integer,
                                                                                            Predicate<ItemStack>>> tester,
                                              final boolean stopAfterFirst)
     {
-        if (inventory == null)
+        if (provider == null)
         {
             return false;
         }
-        final int size = inventory.getSizeInventory();
+
         boolean foundOne = false;
-        for (int slot = 0; slot < size; slot++)
-        {
-            final ItemStack stack = inventory.getStackInSlot(slot);
-            //Unchain the function and apply it
-            if (tester.apply(inventory).apply(slot).test(stack))
+        for(IItemHandler handler : InventoryUtils.getItemHandlersFromProvider(provider)) {
+            final int size = handler.getSlots();
+            for (int slot = 0; slot < size; slot++)
             {
-                foundOne = true;
-                if (stopAfterFirst)
+                final ItemStack stack = handler.getStackInSlot(slot);
+                //Unchain the function and apply it
+                if (tester.apply(provider).apply(slot).test(stack))
                 {
-                    return true;
+                    foundOne = true;
+                    if (stopAfterFirst)
+                    {
+                        return true;
+                    }
                 }
             }
+            return foundOne;
         }
+
         return foundOne;
     }
 
@@ -134,8 +139,13 @@ public class InventoryFunctions
      * @param tester    the function to use for testing slots
      * @return true if it found a stack
      */
-    public static boolean matchFirstInInventory(final IInventory inventory, @NotNull final BiPredicate<Integer, ItemStack> tester)
+    public static boolean matchFirstInProvider(final ICapabilityProvider inventory, @NotNull final BiPredicate<Integer, ItemStack> tester)
     {
-        return matchFirstInInventory(inventory, inv -> slot -> stack -> tester.test(slot, stack));
+        return matchFirstInProvider(inventory, inv -> slot -> stack -> tester.test(slot, stack));
+    }
+
+    @FunctionalInterface
+    public interface IMatchActionResult {
+        void accept(ICapabilityProvider provider, int slotIndex);
     }
 }

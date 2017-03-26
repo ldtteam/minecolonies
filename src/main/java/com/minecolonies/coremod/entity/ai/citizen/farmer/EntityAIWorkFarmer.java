@@ -587,7 +587,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         {
             @NotNull final IPlantable seed = (IPlantable) item.getItem();
             world.setBlockState(position.up(), seed.getPlant(world, position));
-            getInventory().decrStackSize(slot, 1);
+            getInventory().extractItem(slot, 1, false);
             requestSeeds = false;
             //Flag 1+2 is needed for updates
             return true;
@@ -624,7 +624,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private int getHoeSlot()
     {
-        return InventoryUtils.getFirstSlotContainingTool(getInventory(), Utils.HOE);
+        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), Utils.HOE);
     }
 
     /**

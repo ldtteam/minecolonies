@@ -577,7 +577,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
 
     private int findSaplingSlot()
     {
-        for (int slot = 0; slot < getInventory().getSizeInventory(); slot++)
+        for (int slot = 0; slot < getInventory().getSlots(); slot++)
         {
             final ItemStack stack = getInventory().getStackInSlot(slot);
             if (isCorrectSapling(stack))
@@ -600,7 +600,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
                     || Objects.equals(world.getBlockState(pos), block.getStateFromMeta(stack.getMetadata())))
             {
 
-                getInventory().decrStackSize(saplingSlot, 1);
+                getInventory().extractItem(saplingSlot, 1, false);
                 job.tree.removeStump(pos);
             }
             else
@@ -767,7 +767,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private boolean hasLogs()
     {
-        for (int i = 0; i < getInventory().getSizeInventory(); i++)
+        for (int i = 0; i < getInventory().getSlots(); i++)
         {
             if (isStackLog(getInventory().getStackInSlot(i)))
             {

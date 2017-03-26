@@ -276,7 +276,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private boolean hasFish()
     {
-        return InventoryUtils.hasitemInInventory(getInventory(), Items.FISH, -1);
+        return InventoryUtils.hasItemInItemHandler(getInventory(), Items.FISH, -1);
     }
 
     /**
@@ -589,7 +589,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private int getRodSlot()
     {
-        return InventoryUtils.getFirstSlotContainingTool(getInventory(), TOOL_TYPE_ROD);
+        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), TOOL_TYPE_ROD);
     }
 
     /**

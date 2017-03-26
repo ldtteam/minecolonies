@@ -1,10 +1,8 @@
 package com.minecolonies.coremod.util;
 
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
-import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import net.minecraft.block.Block;
-import net.minecraft.inventory.IInventory;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
@@ -18,10 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -36,6 +31,12 @@ public class InventoryUtils
 
     public static final int FREE_TOOL_CHOICE_LEVEL   = 4;
     public static final int EFFECT_TOOL_CHOICE_LEVEL = 2;
+
+    /**
+     * Variable representing the empty itemstack in 1.10.
+     * Used for easy updating to 1.11
+     */
+    public static ItemStack EMPTY = null;
 
     /**
      * Private constructor to hide the implicit one.
@@ -255,7 +256,12 @@ public class InventoryUtils
      */
     public static int getFirstOpenSlotFromItemHandler(@NotNull final IItemHandler itemHandler)
     {
-        return IntStream.range(0, itemHandler.getSlots()).filter(slot -> isItemStackEmpty(itemHandler.getStackInSlot(slot))).findFirst().orElse(-1);
+        //Test with two different ItemStacks to insert in simulation mode.
+        return IntStream.range(0, itemHandler.getSlots())
+                 .filter(slot -> isItemStackEmpty(itemHandler.insertItem(slot, new ItemStack(Blocks.BEDROCK), true)))
+                 .filter(slot -> isItemStackEmpty(itemHandler.insertItem(slot, new ItemStack(Items.IRON_INGOT), true)))
+                 .findFirst()
+                 .orElse(-1);
     }
 
 
@@ -366,6 +372,144 @@ public class InventoryUtils
         ).findFirst().orElse(-1);
     }
 
+    /**
+     * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#addItemStackToInventory(ItemStack)}.
+     *
+     * @param itemHandler {@link IItemHandler} to add itemstack to.
+     * @param itemStack ItemStack to add.
+     * @return True if successful, otherwise false.
+     */
+    public static boolean addItemStackToItemHandler(@NotNull final IItemHandler itemHandler, @Nullable ItemStack itemStack)
+    {
+        itemStack = itemStack.copy();
+
+        if (!isItemStackEmpty(itemStack))
+        {
+            int slot;
+
+            if (itemStack.isItemDamaged())
+            {
+                slot = getFirstOpenSlotFromItemHandler(itemHandler);
+
+                if (slot >= 0)
+                {
+                    itemHandler.insertItem(slot, itemStack, false);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                slot = getFirstFillablePositionInItemHandler(itemHandler, itemStack);
+                while(!isItemStackEmpty(itemStack) && slot != -1) {
+                    itemStack = itemHandler.insertItem(slot, itemStack, false);
+                    if (!isItemStackEmpty(itemStack)) {
+                        slot = getFirstFillablePositionInItemHandler(itemHandler, itemStack);
+                    }
+                }
+
+
+                return isItemStackEmpty(itemStack);
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    /**
+     * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#addItemStackToInventory(ItemStack)}.
+     *
+     * @param itemHandler {@link IItemHandler} to add itemstack to.
+     * @param itemStack ItemStack to add.
+     * @return True if successful, otherwise false.
+     */
+    public static ItemStack addItemStackToItemHandlerWithResult(@NotNull final IItemHandler itemHandler, @Nullable ItemStack itemStack)
+    {
+        itemStack = itemStack.copy();
+
+        if (!isItemStackEmpty(itemStack))
+        {
+            int slot;
+
+            if (itemStack.isItemDamaged())
+            {
+                slot = getFirstOpenSlotFromItemHandler(itemHandler);
+
+                if (slot >= 0)
+                {
+                    itemHandler.insertItem(slot, itemStack, false);
+                    return EMPTY;
+                }
+                else
+                {
+                    return itemStack;
+                }
+            }
+            else
+            {
+                slot = getFirstFillablePositionInItemHandler(itemHandler, itemStack);
+                while(!isItemStackEmpty(itemStack) && slot != -1) {
+                    itemStack = itemHandler.insertItem(slot, itemStack, false);
+                    if (!isItemStackEmpty(itemStack)) {
+                        slot = getFirstFillablePositionInItemHandler(itemHandler, itemStack);
+                    }
+                }
+
+
+                return itemStack;
+            }
+        }
+        else
+        {
+            return itemStack;
+        }
+    }
+
+    /**
+     * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#addItemStackToInventory(ItemStack)}.
+     *
+     * @param itemHandler {@link IItemHandler} to add itemstack to.
+     * @param itemStack ItemStack to add.
+     * @return itemStack which has been replaced, null if none has been replaced.
+     */
+    @Nullable
+    public static ItemStack forceItemStackToItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final ItemStack itemStack, @NotNull final Predicate<ItemStack> itemStackToKeepPredicate)
+    {
+        if (!InventoryUtils.addItemStackToItemHandler(itemHandler, itemStack))
+        {
+            for (int i = 0; i < itemHandler.getSlots(); i++)
+            {
+                final ItemStack localStack = itemHandler.getStackInSlot(i);
+                if (!itemStackToKeepPredicate.test(localStack))
+                {
+                    final ItemStack removedStack = itemHandler.extractItem(i, Integer.MAX_VALUE, false);
+                    if (isItemStackEmpty(itemHandler.insertItem(i, itemStack, true))) {
+                        itemHandler.insertItem(i, itemStack, false);
+                        return removedStack.copy();
+                    }
+                }
+            }
+        }
+        return InventoryUtils.EMPTY;
+    }
+
+    /**
+     * Returns the amount of item stacks in an inventory.
+     * This equals {@link #getItemHandlerAsList(IItemHandler)}<code>.length();</code>.
+     *
+     * @param itemHandler {@link IItemHandler} to count item stacks of.
+     * @return Amount of item stacks in the {@link IItemHandler}.
+     */
+    public static int getAmountOfStacksInItemHandler(@NotNull final IItemHandler itemHandler)
+    {
+        return getItemHandlerAsList(itemHandler).size();
+    }
+
     /*
     ###################################################################END: IItemHandler Interaction###################################################################
      */
@@ -385,7 +529,7 @@ public class InventoryUtils
      * @return List of item stacks.
      */
     @NotNull
-    public static List<ItemStack> getInventoryAsListFromProvider(@NotNull final ICapabilityProvider provider)
+    public static List<ItemStack> getProviderAsList(@NotNull final ICapabilityProvider provider)
     {
         return filterProvider(provider, (ItemStack stack) -> true);
     }
@@ -685,6 +829,78 @@ public class InventoryUtils
                  .findFirst()
                  .orElse(-1);
     }
+
+    /**
+     * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#addItemStackToInventory(ItemStack)}.
+     *
+     * @param provider {@link ICapabilityProvider} to add itemstack to.
+     * @param itemStack ItemStack to add.
+     * @return True if successful, otherwise false.
+     */
+    public static boolean addItemStackToProvider(@NotNull final ICapabilityProvider provider, @Nullable ItemStack itemStack)
+    {
+        return getItemHandlersFromProvider(provider).stream().anyMatch(handler -> addItemStackToItemHandler(handler, itemStack));
+    }
+
+    /**
+     * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#addItemStackToInventory(ItemStack)}.
+     *
+     * @param provider {@link ICapabilityProvider} to add itemstack to.
+     * @param itemStack ItemStack to add.
+     * @return True if successful, otherwise false.
+     */
+    public static ItemStack addItemStackToProviderWithResult(@NotNull final ICapabilityProvider provider, @Nullable ItemStack itemStack)
+    {
+        for(IItemHandler handler : getItemHandlersFromProvider(provider)) {
+            if (isItemStackEmpty(itemStack))
+            {
+                return EMPTY;
+            }
+
+            itemStack = addItemStackToItemHandlerWithResult(handler, itemStack);
+        }
+
+        return itemStack;
+    }
+
+    /**
+     * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#addItemStackToInventory(ItemStack)}.
+     *
+     * @param provider {@link ICapabilityProvider} to add itemstack to.
+     * @param itemStack ItemStack to add.
+     * @return itemStack which has been replaced.
+     */
+    @Nullable
+    public static ItemStack forceItemStackToProvider(@NotNull final ICapabilityProvider provider, @NotNull final ItemStack itemStack, @NotNull final Predicate<ItemStack> itemStackToKeepPredicate)
+    {
+        if (!addItemStackToProvider(provider, itemStack))
+        {
+            return getItemHandlersFromProvider(provider).stream()
+                     .map(handler -> forceItemStackToItemHandler(handler, itemStack, itemStackToKeepPredicate))
+                     .filter(Objects::nonNull)
+                     .findFirst()
+                     .orElse(EMPTY);
+        }
+
+        return EMPTY;
+    }
+
+    /**
+     * Returns the amount of item stacks in an inventory.
+     * This equals {@link #getProviderAsList(ICapabilityProvider)}<code>.length();</code>.
+     *
+     * @param provider {@link ICapabilityProvider} to count item stacks of.
+     * @return Amount of item stacks in the {@link ICapabilityProvider}.
+     */
+    public static int getAmountOfStacksInProvider(@NotNull final ICapabilityProvider provider)
+    {
+        return getProviderAsList(provider).size();
+    }
+
+
+
+
+
 
 
 
@@ -1168,250 +1384,125 @@ public class InventoryUtils
         return false;
     }
 
-
     /**
-     * Transfers a single Item (An ItemStack with stacksize 1) from the given sender to the given receiver.
-     * Swapping the ItemStacks if their is already a stack in the receiver.
+     * Clears an entire {@link IItemHandler}.
      *
-     * @param sendingHandler   {@link IItemHandler} of sender
-     * @param receivingHandler {@link IItemHandler} of receiver
-     * @param slotIndex       Slot ID to take from
-     * @return True if item is swapped, otherwise false
+     * @param itemHandler {@link IItemHandler} to clear.
      */
-    public static boolean transferSingleItemFromItemHandlerToItemHandler(@NotNull final IItemHandler sendingHandler, @NotNull final IItemHandler receivingHandler, final int slotIndex)
+    public static void clearItemHandler(@NotNull final IItemHandler itemHandler)
     {
-        return takeStackInSlot(sendingHandler, receivingHandler, slotIndex, 1, true);
-    }
-
-    /**
-     * Transfers an ItemStack from the given sender to the given receiver.
-     * If <code>takeAll</code> is true, the entire slot will we transferred.
-     * This only applied when at least <code>amount</code> can be taken.
-     *
-     * @param sendingHandler   {@link IItemHandler} of sender
-     * @param receivingHandler {@link IItemHandler} of receiver
-     * @param slotIndex       Slot ID to take from
-     * @param amount       Amount to swap
-     * @param takeAll      Whether or not the entire stack of the sender should be emptied if possible
-     *                     Only applies when <code>amount</code> is sufficient
-     * @return True if item is swapped, otherwise false
-     */
-    public static boolean transferStackFromItemHandlerToItemHandler(
-                                           @NotNull final IItemHandler sendingHandler, @NotNull final IItemHandler receivingHandler,
-                                           final int slotIndex, final int amount, final boolean takeAll)
-    {
-        if (slotIndex >= 0 && amount > 0)
+        for (int slotIndex = 0; slotIndex < itemHandler.getSlots(); slotIndex++)
         {
-            // gets itemstack in slot, and decreases stacksize
-            @Nullable ItemStack stack = sendingHandler.extractItem(slotIndex, amount, false);
-            // stack is null if no itemstack was in slot
-            if (!isItemStackEmpty(stack))
-            {
-                // puts stack in receiving inventory
-                stack = setStack(receivingInv, stack);
-                // checks for leftovers
-                if (stack == null)
-                {
-                    if (takeAll)
-                    {
-                        // gets itemstack in slot
-                        stack = sendingInv.getStackInSlot(slotIndex);
-                        // checks if itemstack is still in slot
-                        if (stack != null)
-                        {
-                            stack = sendingInv.decrStackSize(slotIndex, stack.stackSize);
-                            stack = setStack(receivingInv, stack);
-                            setStack(sendingInv, stack);
-                        }
-                    }
-
-                    // puts leftovers back in sending inventory
-                    return true;
-                }
-                setStack(sendingInv, stack);
-                return false;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Tries to put an item into an {@link IItemHandler}.
-     *
-     * @param itemHandler The {@link IItemHandler} to set the stack in.
-     * @param stack     Item stack with items to be transferred
-     * @return returns null if successful, or stack of remaining items
-     */
-    @Nullable
-    public static ItemStack transferStackToItemHandler(@NotNull final IItemHandler itemHandler, @Nullable ItemStack stack)
-    {
-        if (!isItemStackEmpty(stack) && stack.stackSize > stack.getMaxStackSize())
-        {
-            Log.getLogger().warn("InventoryUtils.setStack: stack size bigger than the max stack size. Please contact a minecolonnies developer.");
-        }
-
-        if (!isItemStackEmpty(stack))
-        {
-            int slot;
-            while ((slot = getFirstFillablePositionInItemHandler(itemHandler, stack)) != -1 && stack != null)
-            {
-                stack = itemHandler.insertItem(slot, stack, false);
-            }
-
-            while ((slot = getFirstOpenSlotFromItemHandler(itemHandler)) != -1 && stack != null)
-            {
-                stack = itemHandler.insertItem(slot, stack, false);
-            }
-            return stack;
-        }
-        return null;
-    }
-
-
-
-    /**
-     * {@link #setStack(IInventory, ItemStack)}.
-     * Tries to put an itemStack into Inventory, unlike setStack, allow to use a ItemStack bigger than the maximum stack size allowed for the item
-     *
-     * @param inventory the inventory to set the stack in.
-     * @param stack     Item stack with items to be transferred, the stack can be bigger than allowed
-     * @return returns null if successful, or stack of remaining items, BE AWARE that the remaining stack can be bigger than the maximum stack size
-     */
-    @Nullable
-    public static ItemStack setOverSizedStack(@NotNull final IInventory inventory, @Nullable final ItemStack stack)
-    {
-        int stackSize = stack.stackSize;
-        while (stackSize > 0)
-        {
-            final int itemCount = Math.min(stackSize, stack.getMaxStackSize());
-            final ItemStack items = new ItemStack(stack.getItem(), itemCount, stack.getItemDamage());
-            stackSize -= itemCount;
-            final ItemStack remainingItems = setStack(inventory, items);
-            if (remainingItems != null)
-            {
-                stackSize += remainingItems.stackSize;
-                if (items.stackSize == remainingItems.stackSize)
-                {
-                    break;
-                }
-            }
-        }
-        return new ItemStack(stack.getItem(), stackSize, stack.getItemDamage());
-    }
-
-    /**
-     * {@link #takeStackInSlot(IInventory, IInventory, int, int, boolean)}.
-     * Default:
-     * takeAll: false
-     *
-     * @param sendingInv   Inventory of sender
-     * @param receivingInv Inventory of receiver
-     * @param slotID       Slot ID to take from
-     * @param amount       Amount to swap
-     * @return True if item is swapped, otherwise false
-     */
-    public static boolean takeStackInSlot(final IInventory sendingInv, final IInventory receivingInv, final int slotID, final int amount)
-    {
-        return takeStackInSlot(sendingInv, receivingInv, slotID, amount, false);
-    }
-
-    /**
-     * Returns all <code>ItemStack</code>s in an inventory.
-     * Stores this in an array.
-     *
-     * @param inventory Inventory to return all item stacks from.
-     * @return Array of item stacks.
-     */
-    @NotNull
-    public static ItemStack[] getAllItemStacks(@NotNull final IInventory inventory)
-    {
-        @NotNull final ItemStack[] itemStack = new ItemStack[inventory.getSizeInventory()];
-        for (int i = 0; i < inventory.getSizeInventory(); i++)
-        {
-            itemStack[i] = inventory.getStackInSlot(i);
-        }
-        return itemStack;
-    }
-
-    /**
-     * Returns the amount of item stacks in an inventory.
-     * This equals {@link #getAllItemStacks(IInventory)}<code>.length();</code>.
-     *
-     * @param inventory Inventory to count item stacks of.
-     * @return Amount of item stacks in inventory.
-     */
-    public static int getAmountOfStacks(@NotNull final IInventory inventory)
-    {
-        int count = 0;
-        for (int i = 0; i < inventory.getSizeInventory(); i++)
-        {
-            final ItemStack is = inventory.getStackInSlot(i);
-
-            if (is != null)
-            {
-                count++;
-            }
-        }
-        return count;
-    }
-
-    /**
-     * Clears an entire inventory.
-     *
-     * @param inventory Inventory to clear.
-     */
-    public static void clear(@NotNull final IInventory inventory)
-    {
-        for (int slot = 0; slot < inventory.getSizeInventory(); slot++)
-        {
-            inventory.setInventorySlotContents(slot, null);
+            itemHandler.extractItem(slotIndex, Integer.MAX_VALUE, false);
         }
     }
 
     /**
-     * Returns a slot number if an inventory contains given tool type.
+     * Returns a slot number if an {@link IItemHandler} contains given tool type.
      *
-     * @param inventory the inventory to get the slot from.
+     * @param itemHandler the {@link IItemHandler} to get the slot from.
      * @param tool      the tool type to look for.
      * @return slot number if found, -1 if not found.
      */
-    public static int getFirstSlotContainingTool(@NotNull final IInventory inventory, @NotNull final String tool)
+    public static int getFirstSlotOfItemHandlerContainingTool(@NotNull final IItemHandler itemHandler, @NotNull final String tool)
     {
-        for (int i = 0; i < inventory.getSizeInventory(); i++)
-        {
-            final ItemStack item = inventory.getStackInSlot(i);
-            //Only classic fishingRod recognized as a fishingTool
-            if (item != null && (item.getItem().getToolClasses(item).contains(tool) || ("hoe".equals(tool) && item.getUnlocalizedName().contains("hoe"))
-                                   || ("rod".equals(tool) && item.getUnlocalizedName().contains("fishingRod"))))
-            {
-                return i;
-            }
-        }
-        return -1;
+        return findFirstSlotInItemHandlerWith(itemHandler,
+          (ItemStack stack) -> (stack.getItem().getToolClasses(stack).contains(tool) || ("hoe".equals(tool) && stack.getUnlocalizedName().contains("hoe"))
+                                  || ("rod".equals(tool) && stack.getUnlocalizedName().contains("fishingRod"))));
     }
 
     /**
      * Verifies if there is one tool with an acceptable level
      * in a worker's inventory.
      *
-     * @param tool      the type of tool needed
-     * @param inventory the worker's inventory
-     * @param hutLevel  the worker's hut level
+     * @param toolTypeName      the type of tool needed
+     * @param itemHandler the worker's inventory
+     * @param requiredLevel  the worker's hut level
      * @return true if tool is acceptable
      */
-    public static boolean hasToolLevel(final String tool, @NotNull final IInventory inventory, final int hutLevel)
+    public static boolean hasItemHandlerToolWithLevel(@NotNull final IItemHandler itemHandler, final String toolTypeName, final int requiredLevel)
     {
-        for (int i = 0; i < inventory.getSizeInventory(); i++)
-        {
-            final ItemStack item = inventory.getStackInSlot(i);
-            final int level = Utils.getMiningLevel(item, tool);
+        return findFirstSlotInItemHandlerWith(itemHandler,
+          (ItemStack stack) -> Utils.isTool(stack, toolTypeName) && verifyToolLevel(stack, Utils.getMiningLevel(stack, toolTypeName), requiredLevel)) > -1;
+    }
 
-            if (Utils.isTool(item, tool) && verifyToolLevel(item, level, hutLevel))
-            {
+    /**
+     * Method to swap the ItemStacks from the given source {@link IItemHandler} to the given target {@link IItemHandler}.
+     * First free slot is found by calling: {@link #getFirstFillablePositionInItemHandler(IItemHandler, ItemStack)}
+     *
+     * @param sourceHandler The {@link IItemHandler} that works as Source.
+     * @param sourceIndex The index of the slot that is being extracted from.
+     * @param targetHandler The {@link IItemHandler} that works as Target.
+     * @return True when the swap was successful, false when not.
+     */
+    public static boolean transferItemStackIntoNextFreeSlotInItemHandlers(@NotNull final IItemHandler sourceHandler, @NotNull int sourceIndex, @NotNull IItemHandler targetHandler){
+        final ItemStack sourceStack = sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, true);
+
+        final int targetIndex = getFirstFillablePositionInItemHandler(targetHandler, sourceStack);
+        ItemStack targetStack = targetHandler.extractItem(targetIndex, Integer.MAX_VALUE, true);
+
+
+        ItemStack resultSourceSimulationInsertion = targetHandler.insertItem(targetIndex, sourceStack, true);
+        if(isItemStackEmpty(resultSourceSimulationInsertion) || isItemStackEmpty(targetStack)) {
+            targetHandler.insertItem(targetIndex, sourceStack, false);
+            sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, false);
+
+            return true;
+        }
+        else
+        {
+            targetHandler.insertItem(targetIndex, targetStack, false);
+
+            return false;
+        }
+    }
+
+    /**
+     * Method to swap the ItemStacks from the given source {@link IItemHandler} to the given target {@link ICapabilityProvider}.
+     * First free slot is found by calling: {@link #getFirstFillablePositionInItemHandler(IItemHandler, ItemStack)}
+     *
+     * @param sourceHandler The {@link IItemHandler} that works as Source.
+     * @param sourceIndex The index of the slot that is being extracted from.
+     * @param targetProvider The {@link ICapabilityProvider} that works as Target.
+     * @return True when the swap was successful, false when not.
+     */
+    public static boolean transferItemStackIntoNextFreeSlotInProvider(@NotNull final IItemHandler sourceHandler, @NotNull int sourceIndex, @NotNull ICapabilityProvider targetProvider){
+        for(IItemHandler handler : getItemHandlersFromProvider(targetProvider)) {
+            if (transferItemStackIntoNextFreeSlotInItemHandlers(sourceHandler, sourceIndex, handler)) {
                 return true;
             }
         }
+
         return false;
+    }
+
+    /**
+     * Method to swap the ItemStacks from the given source {@link IItemHandler} to the given target {@link IItemHandler}.
+     *
+     * @param sourceHandler The {@link IItemHandler} that works as Source.
+     * @param sourceIndex The index of the slot that is being extracted from.
+     * @param targetHandler The {@link IItemHandler} that works as Target.
+     * @param targetIndex The index of the slot that is being inserted into.
+     * @return True when the swap was successful, false when not.
+     */
+    public static boolean swapItemStacksInItemHandlers(@NotNull final IItemHandler sourceHandler, @NotNull int sourceIndex, @NotNull IItemHandler targetHandler, @NotNull int targetIndex){
+        ItemStack targetStack = targetHandler.extractItem(targetIndex, Integer.MAX_VALUE, false);
+        ItemStack sourceStack = sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, true);
+
+        ItemStack resultSourceSimulationInsertion = targetHandler.insertItem(targetIndex, sourceStack, true);
+        if(isItemStackEmpty(resultSourceSimulationInsertion) || isItemStackEmpty(targetStack)) {
+            targetHandler.insertItem(targetIndex, sourceStack, false);
+            sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, false);
+            sourceHandler.insertItem(sourceIndex, targetStack, false);
+
+            return true;
+        }
+        else
+        {
+            targetHandler.insertItem(targetIndex, targetStack, false);
+
+            return false;
+        }
     }
 
     /**
@@ -1438,198 +1529,54 @@ public class InventoryUtils
     }
 
     /**
-     * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#addItemStackToInventory(ItemStack)}.
-     *
-     * @param inventory Inventory to add itemstack to.
-     * @param itemStack ItemStack to add.
-     * @param building  the building.
-     * @return itemStack which has been replaced.
-     */
-    @Nullable
-    public static ItemStack forceItemStackToInventory(@NotNull final IInventory inventory, @NotNull final ItemStack itemStack, @NotNull final AbstractBuilding building)
-    {
-        if (!addItemStackToInventory(inventory, itemStack))
-        {
-            final List<ItemStorage> localAlreadyKept = new ArrayList<>();
-            for (int i = 0; i < inventory.getSizeInventory(); i++)
-            {
-                final ItemStack localStack = inventory.getStackInSlot(i);
-                if (!EntityAIWorkDeliveryman.workerRequiresItem(building, localStack, localAlreadyKept))
-                {
-                    final ItemStack removedStack = inventory.removeStackFromSlot(i);
-                    inventory.setInventorySlotContents(i, itemStack.copy());
-                    return removedStack.copy();
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#addItemStackToInventory(ItemStack)}.
-     *
-     * @param inventory Inventory to add itemstack to.
-     * @param itemStack ItemStack to add.
-     * @return True if successful, otherwise false.
-     */
-    public static boolean addItemStackToInventory(@NotNull final IInventory inventory, @Nullable final ItemStack itemStack)
-    {
-        if (itemStack != null && itemStack.stackSize != 0 && itemStack.getItem() != null)
-        {
-            int stackSize;
-
-            if (itemStack.isItemDamaged())
-            {
-                stackSize = getOpenSlot(inventory);
-
-                if (stackSize >= 0)
-                {
-                    final ItemStack copy = ItemStack.copyItemStack(itemStack);
-                    copy.animationsToGo = 5;
-                    inventory.setInventorySlotContents(stackSize, copy);
-
-                    itemStack.stackSize = 0;
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                do
-                {
-                    stackSize = itemStack.stackSize;
-                    itemStack.stackSize = storePartialItemStack(inventory, itemStack);
-                }
-                while (itemStack.stackSize > 0 && itemStack.stackSize < stackSize);
-
-
-                return itemStack.stackSize < stackSize;
-            }
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    /**
      * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#storePartialItemStack(ItemStack)}.
      * <p>
      * This function stores as many items of an ItemStack as possible in a matching slot and returns the quantity of
      * left over items.
      *
-     * @param inventory Inventory to add stack to.
+     * @param itemHandler {@link IItemHandler} to add stack to.
      * @param itemStack Item stack to store in inventory.
      * @return Leftover items in itemstack.
      */
-    private static int storePartialItemStack(@NotNull final IInventory inventory, @NotNull final ItemStack itemStack)
+    private static ItemStack storePartialItemStack(@NotNull final IItemHandler itemHandler, @NotNull ItemStack itemStack)
     {
-        final Item item = itemStack.getItem();
-        int stackSize = itemStack.stackSize;
-        int slot;
+        itemStack = itemStack.copy();
 
-        if (itemStack.getMaxStackSize() == 1)
+        if (!isItemStackEmpty(itemStack))
         {
-            slot = getOpenSlot(inventory);
+            int slot;
 
-            if (slot < 0)
+            if (itemStack.isItemDamaged())
             {
-                return stackSize;
+                slot = getFirstOpenSlotFromItemHandler(itemHandler);
+
+                if (slot >= 0)
+                {
+                    return itemHandler.insertItem(slot, itemStack, false);
+                }
+                else
+                {
+                    return EMPTY;
+                }
             }
             else
             {
-                if (inventory.getStackInSlot(slot) == null)
-                {
-                    inventory.setInventorySlotContents(slot, ItemStack.copyItemStack(itemStack));
+                slot = getFirstFillablePositionInItemHandler(itemHandler, itemStack);
+                while(!isItemStackEmpty(itemStack) && slot != -1) {
+                    itemStack = itemHandler.insertItem(slot, itemStack, false);
+                    if (!isItemStackEmpty(itemStack)) {
+                        slot = getFirstFillablePositionInItemHandler(itemHandler, itemStack);
+                    }
                 }
 
-                return 0;
+
+                return itemStack;
             }
         }
         else
         {
-            slot = findSlotForItemStack(inventory, itemStack);
-
-            if (slot < 0)
-            {
-                slot = getOpenSlot(inventory);
-            }
-
-            if (slot < 0)
-            {
-                return stackSize;
-            }
-            else
-            {
-                ItemStack stack = inventory.getStackInSlot(slot);
-                if (stack == null)
-                {
-                    stack = new ItemStack(item, 0, itemStack.getItemDamage());
-
-                    if (itemStack.hasTagCompound())
-                    {
-                        stack.setTagCompound(itemStack.getTagCompound().copy());
-                    }
-                }
-
-                int inventoryStackSpace = stackSize;
-
-                if (stackSize > stack.getMaxStackSize() - stack.stackSize)
-                {
-                    inventoryStackSpace = stack.getMaxStackSize() - stack.stackSize;
-                }
-
-                if (inventoryStackSpace > inventory.getInventoryStackLimit() - stack.stackSize)
-                {
-                    inventoryStackSpace = inventory.getInventoryStackLimit() - stack.stackSize;
-                }
-
-                if (inventoryStackSpace == 0)
-                {
-                    return stackSize;
-                }
-                else
-                {
-                    stackSize -= inventoryStackSpace;
-                    stack.stackSize += inventoryStackSpace;
-                    stack.animationsToGo = 5;
-                    inventory.setInventorySlotContents(slot, stack);
-                    return stackSize;
-                }
-            }
+            return EMPTY;
         }
-    }
-
-    /**
-     * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#storeItemStack(ItemStack)}.
-     * <p>
-     * find a slot to store an ItemStack in.
-     *
-     * @param inventory Inventory to look in.
-     * @param itemStack Item Stack to look for.
-     * @return Index of the item stack. If not found, returns -1.
-     */
-    private static int findSlotForItemStack(@NotNull final IInventory inventory, @NotNull final ItemStack itemStack)
-    {
-        for (int i = 0; i < inventory.getSizeInventory(); i++)
-        {
-            final ItemStack inventoryItem = inventory.getStackInSlot(i);
-            if (inventoryItem != null
-                  && inventoryItem.getItem() == itemStack.getItem()
-                  && inventoryItem.isStackable()
-                  && inventoryItem.stackSize < inventoryItem.getMaxStackSize()
-                  && inventoryItem.stackSize < inventory.getInventoryStackLimit()
-                  && (!inventoryItem.getHasSubtypes() || inventoryItem.getItemDamage() == itemStack.getItemDamage())
-                  && ItemStack.areItemStackTagsEqual(inventoryItem, itemStack))
-            {
-                return i;
-            }
-        }
-
-        return -1;
     }
 
     /**
@@ -1642,7 +1589,7 @@ public class InventoryUtils
     @NotNull
     public static Boolean isItemStackEmpty(@Nullable ItemStack stack)
     {
-        return !(stack != null && stack.getItem() != null && stack.stackSize > 0);
+        return !(stack != EMPTY && stack.getItem() != null && stack.stackSize > 0);
     }
 
     /**
@@ -1690,5 +1637,4 @@ public class InventoryUtils
         
         return existingStack.getMaxStackSize() >= (existingStack.stackSize + mergingStack.stackSize);
     }
-
 }

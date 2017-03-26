@@ -165,7 +165,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         {
             return false;
         }
-        return InventoryUtils.getAmountOfStacks(worker.getInventoryCitizen()) >= Math.pow(2, getOwnBuilding().getBuildingLevel() - 1.0D);
+        return InventoryUtils.getAmountOfStacksInItemHandler(worker.getInventoryCitizen()) >= Math.pow(2, getOwnBuilding().getBuildingLevel() - 1.0D);
     }
 
     /**
@@ -187,7 +187,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return false;
         }
 
-        worker.getInventoryCitizen().addItemStackToInventory(building.getTileEntity().removeStackFromSlot(currentSlot));
+        InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandlers(building.getTileEntity().getSingleChestHandler(), currentSlot, worker.getInventoryCitizen());
         building.markDirty();
         setDelay(DUMP_AND_GATHER_DELAY);
         return false;
@@ -297,7 +297,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 }
 
                 final InventoryCitizen workerInventory = worker.getInventoryCitizen();
-                for (int i = 0; i < workerInventory.getSizeInventory(); i++)
+                for (int i = 0; i < workerInventory.getSlots(); i++)
                 {
                     final ItemStack stack = workerInventory.getStackInSlot(i);
                     if (stack == null)
@@ -307,7 +307,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
                     if (buildingToDeliver.transferStack(stack, world))
                     {
-                        workerInventory.removeStackFromSlot(i);
+                        workerInventory.extractItem(i, Integer.MAX_VALUE, false);
                     }
                     else
                     {
@@ -319,7 +319,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                         }
                         else
                         {
-                            workerInventory.addItemStackToInventory(tempStack);
+                            InventoryUtils.addItemStackToItemHandler(workerInventory, tempStack);
                         }
                     }
                 }
@@ -401,9 +401,9 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         if (requiredTool.equals(Utils.PICKAXE))
         {
-            return InventoryUtils.isPickaxeInTileEntity(worker.getInventoryCitizen(), buildingToDeliver.getNeededPickaxeLevel(), buildingToDeliver.getBuildingLevel());
+            return InventoryUtils.isPickaxeInItemHandler(worker.getInventoryCitizen(), buildingToDeliver.getNeededPickaxeLevel(), buildingToDeliver.getBuildingLevel());
         }
-        return InventoryUtils.isToolInTileEntity(worker.getInventoryCitizen(), requiredTool, buildingToDeliver.getBuildingLevel());
+        return InventoryUtils.isToolInItemHandler(worker.getInventoryCitizen(), requiredTool, buildingToDeliver.getBuildingLevel());
     }
 
     /**

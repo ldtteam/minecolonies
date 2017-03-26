@@ -867,7 +867,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             final List<ItemStack> items = BlockPosUtil.getBlockDrops(world, pos, 0);
             for (final ItemStack item : items)
             {
-                InventoryUtils.setStack(worker.getInventoryCitizen(), item);
+                InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), item);
             }
         }
 
@@ -961,7 +961,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 final int slot = worker.findFirstSlotInInventoryWith(tempStack.getItem(), tempStack.getItemDamage());
                 if (slot != -1)
                 {
-                    getInventory().decrStackSize(slot, 1);
+                    getInventory().extractItem(slot, 1, false);
                     reduceNeededResources(tempStack);
                 }
             }
@@ -1066,7 +1066,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                         final int slot = worker.findFirstSlotInInventoryWith(stack.getItem(), stack.getItemDamage());
                         if (slot != -1)
                         {
-                            getInventory().decrStackSize(slot, 1);
+                            getInventory().extractItem(slot, 1, false);
                             reduceNeededResources(stack);
                         }
                     }
