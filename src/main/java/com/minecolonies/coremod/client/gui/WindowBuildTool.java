@@ -2,6 +2,7 @@ package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.controls.Button;
+import com.minecolonies.blockout.controls.Text;
 import com.minecolonies.blockout.View;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.WindowStructureNameEntry;
@@ -200,6 +201,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     final Button renameButton;
     final Button deleteButton;
     final View deleteView;
+    final Text deleteMessage;
 
 
     /**
@@ -256,6 +258,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
         deleteView = findPaneOfTypeByID("deleteView", View.class);
         deleteView.setVisible(false);
+        deleteMessage = findPaneOfTypeByID("deleteMessage", Text.class);
     }
 
     private void init()
@@ -640,6 +643,8 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void deleteClicked()
     {
+        final Structures.StructureName structureName = new Structures.StructureName(getSchematicName());
+        deleteMessage.setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.structure.delete.body", structureName.toString()));
         deleteView.setVisible(true);
     }
 
