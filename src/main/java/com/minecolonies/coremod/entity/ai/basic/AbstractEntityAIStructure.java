@@ -26,6 +26,7 @@ import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemDoor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -40,6 +41,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.template.Template;
+import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -179,13 +181,13 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 }
                 else
                 {
-                        if (wo instanceof WorkOrderBuildDecoration)
+                    if (wo instanceof WorkOrderBuildDecoration)
+                    {
+                        if (structureName.contains(WAYPOINT_STRING))
                         {
-                            if (structureName.contains(WAYPOINT_STRING))
-                            {
-                                worker.getColony().addWayPoint(wo.getBuildingLocation(), world.getBlockState(wo.getBuildingLocation()));
-                            }
+                            worker.getColony().addWayPoint(wo.getBuildingLocation(), world.getBlockState(wo.getBuildingLocation()));
                         }
+                    }
                     else
                     {
                         final AbstractBuilding building = job.getColony().getBuilding(wo.getBuildingLocation());
@@ -867,7 +869,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             final List<ItemStack> items = BlockPosUtil.getBlockDrops(world, pos, 0);
             for (final ItemStack item : items)
             {
-                InventoryUtils.setStack(worker.getInventoryCitizen(), item);
+                final ItemStack itemRemaining = ItemHandlerHelper.insertItemStacked(worker.getInventoryCitizen(), item, false);
+                if (itemRemaining != null)
+                {
+                    InventoryHelper.spawnItemStack(world, worker.posX, worker.posY, worker.posZ, itemRemaining);
+                }
             }
         }
 
@@ -959,10 +965,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             if (tempStack != null)
             {
                 final int slot = worker.findFirstSlotInInventoryWith(tempStack.getItem(), tempStack.getItemDamage());
-                if (slot != -1)
+                final ItemStack stackExtracted = getInventory().extractItem(slot, 1, false);
+                if (slot != -1 && stackExtracted != null)
                 {
-                    getInventory().decrStackSize(slot, 1);
-                    reduceNeededResources(tempStack);
+                    reduceNeededResources(stackExtracted);
                 }
             }
         }
@@ -1064,10 +1070,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                             continue;
                         }
                         final int slot = worker.findFirstSlotInInventoryWith(stack.getItem(), stack.getItemDamage());
-                        if (slot != -1)
+                        final ItemStack stackExtracted = getInventory().extractItem(slot, 1, false);
+                        if (slot != -1 && stackExtracted != null)
                         {
-                            getInventory().decrStackSize(slot, 1);
-                            reduceNeededResources(stack);
+                            reduceNeededResources(stackExtracted);
                         }
                     }
                 }
@@ -1094,6 +1100,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * Takes a min distance from width and length.
      * <p>
      * Then finds the floor level at that distance and then check if it does contain two air levels.
+     *
      * @param targetPosition the position to work at.
      * @return BlockPos position to work from.
      */

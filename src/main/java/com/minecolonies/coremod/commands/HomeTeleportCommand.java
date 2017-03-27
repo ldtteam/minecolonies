@@ -58,10 +58,10 @@ public class HomeTeleportCommand extends AbstractSingleCommand
     @NotNull
     @Override
     public List<String> getTabCompletionOptions(
-            @NotNull final MinecraftServer server,
-            @NotNull final ICommandSender sender,
-            @NotNull final String[] args,
-            final BlockPos pos)
+                                                 @NotNull final MinecraftServer server,
+                                                 @NotNull final ICommandSender sender,
+                                                 @NotNull final String[] args,
+                                                 final BlockPos pos)
     {
         return Collections.emptyList();
     }

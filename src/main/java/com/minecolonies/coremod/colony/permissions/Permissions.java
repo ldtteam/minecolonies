@@ -373,7 +373,7 @@ public class Permissions implements IPermissions
 
         this.updatedPermissionAlready = compound.getBoolean(TAG_UPDATE);
 
-        if(!updatedPermissionAlready)
+        if (!updatedPermissionAlready)
         {
             updateNewPermissions();
         }

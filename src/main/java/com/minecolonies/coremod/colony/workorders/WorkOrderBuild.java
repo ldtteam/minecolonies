@@ -330,6 +330,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
 
     /**
      * Check if the workOrder should be built isMirrored.
+     *
      * @return true if so.
      */
     public boolean isMirrored()

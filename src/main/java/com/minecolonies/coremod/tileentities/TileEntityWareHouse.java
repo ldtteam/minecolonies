@@ -10,13 +10,14 @@ import com.minecolonies.coremod.util.InventoryFunctions;
 import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Utils;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -194,15 +195,15 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         @Nullable final AbstractBuilding building = getBuilding();
         if(building != null)
         {
-            if(isInTileEntity(building.getTileEntity(), is))
+            if(isInItemHandler(building.getTileItemHandler(), is))
             {
                 return true;
             }
 
-            for(final BlockPos pos : building.getAdditionalCountainers())
+            for(final BlockPos pos : building.getAdditionalContainers())
             {
                 @Nullable final TileEntity entity = worldObj.getTileEntity(pos);
-                if(entity instanceof TileEntityChest && isInTileEntity((TileEntityChest) entity, is))
+                if(entity instanceof TileEntityChest && isInItemHandler(entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), is))
                 {
                     return true;
                 }
@@ -224,15 +225,15 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
 
         if(building != null)
         {
-            if(isInTileEntity(building.getTileEntity(), stack))
+            if(isInItemHandler(building.getTileItemHandler(), stack))
             {
                 return building.getLocation();
             }
 
-            for(final BlockPos pos : building.getAdditionalCountainers())
+            for(final BlockPos pos : building.getAdditionalContainers())
             {
                 final TileEntity entity = worldObj.getTileEntity(pos);
-                if(entity instanceof TileEntityChest && isInTileEntity((TileEntityChest) entity, stack))
+                if(entity instanceof TileEntityChest && isInItemHandler(entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), stack))
                 {
                     return pos;
                 }
@@ -255,18 +256,22 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         if(building != null)
         {
             if((minLevel != -1
-                    && InventoryUtils.isPickaxeInTileEntity(building.getTileEntity(), minLevel, requestingBuilding.getBuildingLevel()))
-                    || InventoryUtils.isToolInTileEntity(building.getTileEntity(), tool, requestingBuilding.getBuildingLevel()))
+                    && InventoryUtils.isPickaxeInTileEntity(building.getTileItemHandler(), minLevel, requestingBuilding.getBuildingLevel()))
+                    || InventoryUtils.isToolInTileEntity(building.getTileItemHandler(), tool, requestingBuilding.getBuildingLevel()))
             {
                 return building.getLocation();
             }
 
-            for(@NotNull final BlockPos pos : building.getAdditionalCountainers())
+            for(@NotNull final BlockPos pos : building.getAdditionalContainers())
             {
                 final TileEntity entity = worldObj.getTileEntity(pos);
                 if (entity instanceof TileEntityChest
-                        && ((minLevel != -1 && InventoryUtils.isPickaxeInTileEntity((TileEntityChest) entity, minLevel, requestingBuilding.getBuildingLevel()))
-                        || InventoryUtils.isToolInTileEntity((TileEntityChest) entity, tool, requestingBuilding.getBuildingLevel())))
+                      && ((minLevel != -1 && InventoryUtils.isPickaxeInTileEntity(entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null),
+                  minLevel,
+                  requestingBuilding.getBuildingLevel()))
+                              || InventoryUtils.isToolInTileEntity(entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null),
+                  tool,
+                  requestingBuilding.getBuildingLevel())))
                 {
                     return pos;
                 }
@@ -290,11 +295,15 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         {
             if(tool.equals(Utils.PICKAXE))
             {
-                hasItem = InventoryUtils.isPickaxeInTileEntity(building.getTileEntity(), requestingBuilding.getNeededPickaxeLevel(), requestingBuilding.getBuildingLevel());
+                hasItem = InventoryUtils.isPickaxeInTileEntity(building.getTileItemHandler(),
+                  requestingBuilding.getNeededPickaxeLevel(),
+                  requestingBuilding.getBuildingLevel());
             }
             else
             {
-                hasItem = InventoryUtils.isToolInTileEntity(building.getTileEntity(), tool, requestingBuilding.getBuildingLevel());
+                hasItem = InventoryUtils.isToolInTileEntity(building.getTileItemHandler(),
+                  tool,
+                  requestingBuilding.getBuildingLevel());
             }
 
             if(hasItem)
@@ -302,18 +311,22 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                 return true;
             }
 
-            for(final BlockPos pos : building.getAdditionalCountainers())
+            for(final BlockPos pos : building.getAdditionalContainers())
             {
                 @Nullable final TileEntity entity = worldObj.getTileEntity(pos);
                 if(entity instanceof TileEntityChest)
                 {
                     if(tool.equals(Utils.PICKAXE))
                     {
-                        hasItem = InventoryUtils.isPickaxeInTileEntity((TileEntityChest) entity, requestingBuilding.getNeededPickaxeLevel(), requestingBuilding.getBuildingLevel());
+                        hasItem = InventoryUtils.isPickaxeInTileEntity(entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null),
+                          requestingBuilding.getNeededPickaxeLevel(),
+                          requestingBuilding.getBuildingLevel());
                     }
                     else
                     {
-                        hasItem = InventoryUtils.isToolInTileEntity((TileEntityChest) entity, tool, requestingBuilding.getBuildingLevel());
+                        hasItem = InventoryUtils.isToolInTileEntity(entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null),
+                          tool,
+                          requestingBuilding.getBuildingLevel());
                     }
 
                     if(hasItem)
@@ -334,16 +347,16 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      * It will be taken from the chest and placed in the workers inventory.
      * Make sure that the worker stands next the chest to not break immersion.
      * Also make sure to have inventory space for the stack.
-     * @param entity the tileEntity chest or building.
+     * @param handler the IItemHandler.
      * @param is the itemStack.
      * @return true if found the stack.
      */
-    public boolean isInTileEntity(TileEntityChest entity, ItemStack is)
+    public boolean isInItemHandler(IItemHandler handler, ItemStack is)
     {
         return is != null
                 && InventoryFunctions
                 .matchFirstInInventoryWithInventory(
-                        entity,
+                        handler,
                         stack -> stack != null && is.isItemEqual(stack),
                         InventoryFunctions::doNothing
                 );
@@ -370,7 +383,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      */
     public void dumpInventoryIntoWareHouse(@NotNull final InventoryCitizen inventoryCitizen)
     {
-        for(int i = 0; i < inventoryCitizen.getSizeInventory(); i++)
+        for(int i = 0; i < inventoryCitizen.getSlots(); i++)
         {
             final ItemStack stack = inventoryCitizen.getStackInSlot(i);
 
@@ -378,14 +391,18 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             {
                 continue;
             }
-            @Nullable final TileEntityChest chest = searchRightChestForStack(stack);
-            if(chest == null)
+            @Nullable final IItemHandler handler = searchRightItemHandler(stack);
+            if(handler == null)
             {
                 LanguageHandler.sendPlayersMessage(getColony().getMessageEntityPlayers(), "com.minecolonies.coremod.wareHouse.full");
                 return;
             }
-            InventoryUtils.addItemStackToInventory(chest, stack);
-            inventoryCitizen.removeStackFromSlot(i);
+            final ItemStack extractedStack = inventoryCitizen.extractItem(i, stack.stackSize, true);
+            if (extractedStack != null)
+            {
+                InventoryUtils.addItemStackToInventory(handler, extractedStack);
+                inventoryCitizen.extractItem(i, extractedStack.stackSize, false);
+            }
         }
 
     }
@@ -396,26 +413,30 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      * @return the tile entity of the chest
      */
     @Nullable
-    private TileEntityChest searchRightChestForStack(@NotNull final ItemStack stack)
+    private IItemHandler searchRightItemHandler(@NotNull final ItemStack stack)
     {
-        if(InventoryUtils.findFirstSlotInInventoryWith(this, stack.getItem(), stack.getItemDamage()) != -1 && InventoryUtils.getOpenSlot(this) != -1)
+        if (InventoryUtils.findFirstSlotInInventoryWith(this.getItemHandler(), stack.getItem(),
+          stack.getItemDamage()) != -1 && InventoryUtils.getOpenSlot(this.getItemHandler()) != -1)
         {
-            return this;
+            return this.getItemHandler();
         }
 
-        for(@NotNull final BlockPos pos : getBuilding().getAdditionalCountainers())
+        for(@NotNull final BlockPos pos : getBuilding().getAdditionalContainers())
         {
             final TileEntity entity = worldObj.getTileEntity(pos);
-            if(entity instanceof TileEntityChest
-                    && InventoryUtils.findFirstSlotInInventoryWith((TileEntityChest) entity, stack.getItem(), stack.getItemDamage()) != -1
-                    && InventoryUtils.getOpenSlot((TileEntityChest) entity) != -1)
+            if(entity instanceof TileEntityChest)
             {
-                return (TileEntityChest) entity;
+                final IItemHandler handler = entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+                if (InventoryUtils.findFirstSlotInInventoryWith(handler, stack.getItem(), stack.getItemDamage()) != -1
+                        && InventoryUtils.getOpenSlot(this.getItemHandler()) != -1)
+                {
+                    return handler;
+                }
             }
         }
 
-        @Nullable final TileEntityChest chest = searchChestWithSimilarItem(stack);
-        return chest == null ? searchMostEmptySlot() : chest;
+        @Nullable final IItemHandler handler = searchItemHandlerWithSimilarItem(stack);
+        return handler == null ? searchMostEmptySlot() : handler;
     }
 
     /**
@@ -424,16 +445,19 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      * @return the entity of the chest.
      */
     @Nullable
-    private TileEntityChest searchChestWithSimilarItem(final ItemStack stack)
+    private IItemHandler searchItemHandlerWithSimilarItem(final ItemStack stack)
     {
-        for(@NotNull final BlockPos pos : getBuilding().getAdditionalCountainers())
+        for(@NotNull final BlockPos pos : getBuilding().getAdditionalContainers())
         {
             final TileEntity entity = worldObj.getTileEntity(pos);
-            if(entity instanceof TileEntityChest
-                    && InventoryUtils.findFirstSlotInInventoryWith((TileEntityChest) entity, stack.getItem(), -1) != -1
-                    && InventoryUtils.getOpenSlot((TileEntityChest)entity) != -1)
+            if(entity instanceof TileEntityChest)
             {
-                return (TileEntityChest) entity;
+                final IItemHandler handler = entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+                if (handler != null && InventoryUtils.findFirstSlotInInventoryWith(handler, stack.getItem(), -1) != -1
+                        && InventoryUtils.getOpenSlot(this.getItemHandler()) != -1)
+                {
+                    return handler;
+                }
             }
         }
         return null;
@@ -444,11 +468,11 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      * @return the tileEntity of this chest.
      */
     @Nullable
-    private TileEntityChest searchMostEmptySlot()
+    private IItemHandler searchMostEmptySlot()
     {
         int freeSlots = 0;
-        TileEntityChest emptiestChest = null;
-        for(@NotNull final BlockPos pos : getBuilding().getAdditionalCountainers())
+        IItemHandler emptiestHandler = null;
+        for(@NotNull final BlockPos pos : getBuilding().getAdditionalContainers())
         {
             final TileEntity entity = worldObj.getTileEntity(pos);
             if(entity == null)
@@ -456,17 +480,21 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                 getBuilding().removeContainerPosition(pos);
                 continue;
             }
-            if(entity instanceof TileEntityChest && InventoryUtils.getOpenSlot((IInventory) entity) != -1)
+            if(entity instanceof TileEntityChest)
             {
-                final int tempFreeSlots = ((TileEntityChest) entity).getSizeInventory() - InventoryUtils.getAmountOfStacks((IInventory) entity);
-                if(freeSlots < tempFreeSlots)
+                final IItemHandler handler = entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+                if (handler != null && InventoryUtils.getOpenSlot(handler) != -1)
                 {
-                    freeSlots = tempFreeSlots;
-                    emptiestChest = (TileEntityChest) entity;
+                    final int tempFreeSlots = handler.getSlots() - InventoryUtils.getAmountOfStacks(handler);
+                    if(freeSlots < tempFreeSlots)
+                    {
+                        freeSlots = tempFreeSlots;
+                        emptiestHandler = handler;
+                    }
                 }
             }
         }
 
-        return emptiestChest;
+        return emptiestHandler;
     }
 }

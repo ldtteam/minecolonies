@@ -192,16 +192,16 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
 
         super(job);
         super.registerTargets(
-                new AITarget(IDLE, START_WORKING),
-                new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
-                new AITarget(PREPARING, this::prepareForWoodcutting),
-                new AITarget(LUMBERJACK_SEARCHING_TREE, this::findTrees),
-                new AITarget(LUMBERJACK_CHOP_TREE, this::chopWood),
-                new AITarget(LUMBERJACK_GATHERING, this::gathering),
-                new AITarget(LUMBERJACK_NO_TREES_FOUND, this::waitBeforeCheckingAgain)
+          new AITarget(IDLE, START_WORKING),
+          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
+          new AITarget(PREPARING, this::prepareForWoodcutting),
+          new AITarget(LUMBERJACK_SEARCHING_TREE, this::findTrees),
+          new AITarget(LUMBERJACK_CHOP_TREE, this::chopWood),
+          new AITarget(LUMBERJACK_GATHERING, this::gathering),
+          new AITarget(LUMBERJACK_NO_TREES_FOUND, this::waitBeforeCheckingAgain)
         );
         worker.setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
-                + CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma());
+                                  + CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma());
     }
 
     /**
@@ -395,15 +395,14 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         if (isOnSapling())
         {
             @Nullable final BlockPos spawnPoint =
-                    Utils.scanForBlockNearPoint
-                            (world, workFrom, 1, 1, 1, 3,
-                                    Blocks.AIR,
-                                    Blocks.SNOW_LAYER,
-                                    Blocks.TALLGRASS,
-                                    Blocks.RED_FLOWER,
-                                    Blocks.YELLOW_FLOWER);
+              Utils.scanForBlockNearPoint
+                      (world, workFrom, 1, 1, 1, 3,
+                        Blocks.AIR,
+                        Blocks.SNOW_LAYER,
+                        Blocks.TALLGRASS,
+                        Blocks.RED_FLOWER,
+                        Blocks.YELLOW_FLOWER);
             EntityUtils.setSpawnPoint(spawnPoint, worker);
-
         }
 
         if (job.tree.hasLogs())
@@ -437,8 +436,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     private boolean isOnSapling()
     {
         return world.getBlockState(worker.getPosition()).getBlock() == Blocks.SAPLING
-                || world.getBlockState(worker.getPosition().up()).getBlock() == Blocks.SAPLING
-                || world.getBlockState(worker.getPosition().down()).getBlock() == Blocks.SAPLING;
+                 || world.getBlockState(worker.getPosition().up()).getBlock() == Blocks.SAPLING
+                 || world.getBlockState(worker.getPosition().down()).getBlock() == Blocks.SAPLING;
     }
 
     /**
@@ -526,11 +525,11 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             placeSaplings(saplingSlot, stack, block);
             final SoundType soundType = block.getSoundType(world.getBlockState(location), world, location, worker);
             world.playSound(null,
-                    this.worker.getPosition(),
-                    soundType.getPlaceSound(),
-                    SoundCategory.BLOCKS,
-                    soundType.getVolume(),
-                    soundType.getPitch());
+              this.worker.getPosition(),
+              soundType.getPlaceSound(),
+              SoundCategory.BLOCKS,
+              soundType.getVolume(),
+              soundType.getPitch());
             worker.swingArm(worker.getActiveHand());
             this.getOwnBuilding().getColony().incrementStatistic("saplings");
         }
@@ -577,7 +576,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
 
     private int findSaplingSlot()
     {
-        for (int slot = 0; slot < getInventory().getSizeInventory(); slot++)
+        for (int slot = 0; slot < getInventory().getSlots(); slot++)
         {
             final ItemStack stack = getInventory().getStackInSlot(slot);
             if (isCorrectSapling(stack))
@@ -596,16 +595,18 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         {
             final BlockPos pos = job.tree.getStumpLocations().get(0);
 
-            if ((BlockPosUtil.setBlock(world, pos, block.getStateFromMeta(stack.getMetadata()), 0x02) && getInventory().getStackInSlot(saplingSlot) != null)
-                    || Objects.equals(world.getBlockState(pos), block.getStateFromMeta(stack.getMetadata())))
+            if (getInventory().extractItem(saplingSlot, 1, true) != null)
             {
-
-                getInventory().decrStackSize(saplingSlot, 1);
-                job.tree.removeStump(pos);
-            }
-            else
-            {
-                return;
+                if ((BlockPosUtil.setBlock(world, pos, block.getStateFromMeta(stack.getMetadata()), 0x02) && getInventory().getStackInSlot(saplingSlot) != null)
+                        || Objects.equals(world.getBlockState(pos), block.getStateFromMeta(stack.getMetadata())))
+                {
+                    getInventory().extractItem(saplingSlot, 1, false);
+                    job.tree.removeStump(pos);
+                }
+                else
+                {
+                    return;
+                }
             }
         }
     }
@@ -671,10 +672,10 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
 
         //TODO check if sapling or apple (currently picks up all items, which may be okay)
         items = world.getEntitiesWithinAABB(EntityItem.class, worker.getEntityBoundingBox().expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP))
-                .stream()
-                .filter(item -> item != null && !item.isDead)
-                .map(BlockPosUtil::fromEntity)
-                .collect(Collectors.toList());
+                  .stream()
+                  .filter(item -> item != null && !item.isDead)
+                  .map(BlockPosUtil::fromEntity)
+                  .collect(Collectors.toList());
     }
 
     /**
@@ -767,7 +768,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private boolean hasLogs()
     {
-        for (int i = 0; i < getInventory().getSizeInventory(); i++)
+        for (int i = 0; i < getInventory().getSlots(); i++)
         {
             if (isStackLog(getInventory().getStackInSlot(i)))
             {

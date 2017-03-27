@@ -20,7 +20,19 @@ public abstract class AbstractSingleCommand implements ISubCommand
     public static final String NOT_PERMITTED = "You are not allowed to do that!";
     enum Commands
     {
-        CITIZENINFO, COLONYTP, RTP, DELETECOLONY, KILLCITIZENS, LISTCITIZENS, RESPAWNCITIZENS, SHOWCOLONYINFO, ADDOFFICER, CHANGE_COLONY_OWNER, REFRESH_COLONY, HOMETP, MC_BACKUP
+        CITIZENINFO,
+        COLONYTP,
+        RTP,
+        DELETECOLONY,
+        KILLCITIZENS,
+        LISTCITIZENS,
+        RESPAWNCITIZENS,
+        SHOWCOLONYINFO,
+        ADDOFFICER,
+        CHANGE_COLONY_OWNER,
+        REFRESH_COLONY,
+        HOMETP,
+        MC_BACKUP
     }
 
     /**
@@ -158,7 +170,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
     {
         int requiredOpLevel = Configurations.opLevelForServer;
 
-        requiredOpLevel = MathHelper.clamp_int(requiredOpLevel, 1,4);
+        requiredOpLevel = MathHelper.clamp_int(requiredOpLevel, 1, 4);
 
         return FMLCommonHandler.instance().getMinecraftServerInstance().canCommandSenderUseCommand(requiredOpLevel,cmdName);
     }

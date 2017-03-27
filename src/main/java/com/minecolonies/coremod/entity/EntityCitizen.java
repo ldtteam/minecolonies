@@ -46,7 +46,10 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -87,8 +90,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private static final String TAG_COLONY_ID      = "colony";
     private static final String TAG_CITIZEN        = "citizen";
     private static final String TAG_HELD_ITEM_SLOT = "HeldItemSlot";
+    private static final String TAG_INVENTORY      = "inventory";
     private static final String TAG_STATUS         = "status";
-    private static final String TAG_LAST_JOB           = "lastJob";
+    private static final String TAG_LAST_JOB       = "lastJob";
 
 
     /**
@@ -362,10 +366,13 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public void onInventoryChanged()
     {
-        final AbstractBuildingWorker building = citizenData.getWorkBuilding();
-        if (building!=null)
+        if (!worldObj.isRemote)
         {
-            building.markDirty();
+            final AbstractBuildingWorker building = citizenData.getWorkBuilding();
+            if (building != null)
+            {
+                building.markDirty();
+            }
         }
     }
 
@@ -622,8 +629,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
     /**
      * Trigger the corresponding death achievement.
-     * @param source    The damage source.
-     * @param job       The job of the citizen.
+     *
+     * @param source The damage source.
+     * @param job    The job of the citizen.
      */
     public void triggerDeathAchievement(final DamageSource source, final AbstractJob job)
     {
@@ -646,7 +654,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         {
             this.getColony().triggerAchievement(ModAchievements.achievementFisherDeathGuardian);
         }
-        if(job instanceof JobGuard && source.getEntity() instanceof EntityEnderman)
+        if (job instanceof JobGuard && source.getEntity() instanceof EntityEnderman)
         {
             this.getColony().triggerAchievement(ModAchievements.achievementGuardDeathEnderman);
         }
@@ -665,7 +673,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         if (colony != null)
         {
-            triggerDeathAchievement(par1DamageSource,getColonyJob());
+            triggerDeathAchievement(par1DamageSource, getColonyJob());
             if (getColonyJob() instanceof JobGuard)
             {
                 LanguageHandler.sendPlayersMessage(
@@ -781,8 +789,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @Override
     public boolean processInteract(@NotNull final EntityPlayer player, final EnumHand hand, @Nullable final ItemStack stack)
     {
-        final ColonyView colonyView =  ColonyManager.getColonyView(colonyId);
-        if(colonyView != null && !colonyView.getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS))
+        final ColonyView colonyView = ColonyManager.getColonyView(colonyId);
+        if (colonyView != null && !colonyView.getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS))
         {
             return false;
         }
@@ -822,7 +830,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
             compound.setInteger(TAG_CITIZEN, citizenData.getId());
         }
 
-        inventory.writeToNBT(compound);
+        final NBTTagCompound inv = inventory.serializeNBT();
+        compound.setTag(TAG_INVENTORY, inv);
         compound.setInteger(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot());
         compound.setString(TAG_LAST_JOB, lastJob);
     }
@@ -840,7 +849,16 @@ public class EntityCitizen extends EntityAgeable implements INpc
         {
             updateColonyServer();
         }
-        inventory.readFromNBT(compound);
+
+        if (compound.hasKey(TAG_INVENTORY, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND))
+        {
+            inventory.deserializeNBT(compound.getCompoundTag(TAG_INVENTORY));
+        }
+        else
+        {
+            // Compatibility code
+            inventory.deserializeNBT(compound);
+        }
 
         inventory.setHeldItem(compound.getInteger(TAG_HELD_ITEM_SLOT));
         lastJob = compound.getString(TAG_LAST_JOB);
@@ -1223,7 +1241,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     protected void dropEquipment(final boolean par1, final int par2)
     {
         //Drop actual inventory
-        for (int i = 0; i < inventory.getSizeInventory(); i++)
+        for (int i = 0; i < inventory.getSlots(); i++)
         {
             final ItemStack itemstack = inventory.getStackInSlot(i);
             if (itemstack != null && itemstack.stackSize > 0)
@@ -1443,7 +1461,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public boolean hasItemInInventory(final Block block, int itemDamage)
     {
-        return InventoryUtils.hasitemInInventory(getInventoryCitizen(), block, itemDamage);
+        return InventoryUtils.hasItemInInventory(getInventoryCitizen(), block, itemDamage);
     }
 
     /**
@@ -1455,7 +1473,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public boolean hasItemInInventory(final Item item, int itemDamage)
     {
-        return InventoryUtils.hasitemInInventory(getInventoryCitizen(), item, itemDamage);
+        return InventoryUtils.hasItemInInventory(getInventoryCitizen(), item, itemDamage);
     }
 
     /**
@@ -1475,17 +1493,18 @@ public class EntityCitizen extends EntityAgeable implements INpc
             final ItemStack itemStack = entityItem.getEntityItem();
 
             final int i = itemStack.stackSize;
-            if (i <= 0 || InventoryUtils.addItemStackToInventory(this.getInventoryCitizen(), itemStack))
+            if (i <= 0 || ItemHandlerHelper.insertItemStacked(this.getInventoryCitizen(), itemStack, true) == null)
             {
+                final ItemStack result = ItemHandlerHelper.insertItemStacked(this.getInventoryCitizen(), itemStack, false);
                 this.worldObj.playSound((EntityPlayer) null,
                   this.getPosition(),
                   SoundEvents.ENTITY_ITEM_PICKUP,
                   SoundCategory.AMBIENT,
                   0.2F,
                   (float) ((this.rand.nextGaussian() * 0.7D + 1.0D) * 2.0D));
-                this.onItemPickup(this, i);
+                this.onItemPickup(entityItem, i);
 
-                if (itemStack.stackSize <= 0)
+                if (result == null || result.stackSize <= 0)
                 {
                     entityItem.setDead();
                 }
@@ -1605,7 +1624,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         //check if tool breaks
         if (heldItem.stackSize < 1)
         {
-            getInventoryCitizen().setInventorySlotContents(getInventoryCitizen().getHeldItemSlot(), null);
+            getInventoryCitizen().setStackInSlot(getInventoryCitizen().getHeldItemSlot(), null);
             this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, null);
         }
     }
@@ -1667,6 +1686,28 @@ public class EntityCitizen extends EntityAgeable implements INpc
         final TextComponentString colonyDescription = new TextComponentString(" at " + this.getColony().getName() + ":");
 
         LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),  this.getColonyJob().getName(), colonyDescription, citizenDescription, requiredItem);
+    }
+
+    @Override
+    public boolean hasCapability(Capability<?> capability, EnumFacing facing)
+    {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+        {
+            return true;
+        }
+
+        return super.hasCapability(capability, facing);
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing)
+    {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+        {
+            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(inventory);
+        }
+
+        return super.getCapability(capability, facing);
     }
 
     /**

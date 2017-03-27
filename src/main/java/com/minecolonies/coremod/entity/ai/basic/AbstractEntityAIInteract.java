@@ -7,9 +7,11 @@ import com.minecolonies.coremod.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -125,10 +127,14 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         //add the drops to the citizen
         for (final ItemStack item : items)
         {
-            InventoryUtils.setStack(worker.getInventoryCitizen(), item);
+            final ItemStack itemRemaining = ItemHandlerHelper.insertItemStacked(worker.getInventoryCitizen(), item, false);
+            if (itemRemaining != null)
+            {
+                InventoryHelper.spawnItemStack(world, worker.posX, worker.posY, worker.posZ, itemRemaining);
+            }
         }
 
-        if(tool != null)
+        if (tool != null)
         {
             tool.getItem().onUpdate(tool, world, worker, worker.findFirstSlotInInventoryWith(tool.getItem(), tool.getItemDamage()), true);
         }

@@ -141,6 +141,7 @@ public final class BlockPosUtil
 
     /**
      * Try to parse a blockPos of an input string.
+     *
      * @param inputText the string to parse.
      * @return the blockPos if able to.
      */
@@ -149,7 +150,7 @@ public final class BlockPosUtil
     {
         final String[] strings = inputText.split(" ");
 
-        if(strings.length == BLOCKPOS_LENGTH)
+        if (strings.length == BLOCKPOS_LENGTH)
         {
             try
             {

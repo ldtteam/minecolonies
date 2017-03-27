@@ -21,6 +21,9 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentBase;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,7 +42,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * The maximum range to keep from the current building place.
      */
-    private static final int    MAX_ADDITIONAL_RANGE_TO_BUILD = 25;
+    private static final int             MAX_ADDITIONAL_RANGE_TO_BUILD = 25;
     /**
      * Timout until the next exception can be thrown.
      */
@@ -63,7 +66,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Diamond pickaxe level.
      */
-    private static final int DIAMOND_LEVEL                       = 3;
+    private static final int             DIAMOND_LEVEL           = 3;
     /**
      * The list of all items and their quantity that were requested by the worker.
      * Warning: This list does not change, if you need to see what is currently missing,
@@ -434,19 +437,19 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         boolean hasItem;
         if (building != null)
         {
-            hasItem = isInTileEntity(building.getTileEntity(), is);
+            hasItem = isInItemHandler(building.getTileItemHandler(), is);
 
             if (hasItem)
             {
                 return true;
             }
 
-            for (final BlockPos pos : building.getAdditionalCountainers())
+            for (final BlockPos pos : building.getAdditionalContainers())
             {
                 final TileEntity entity = world.getTileEntity(pos);
                 if (entity instanceof TileEntityChest)
                 {
-                    hasItem = isInTileEntity((TileEntityChest) entity, is);
+                    hasItem = isInItemHandler(entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), is);
 
                     if (hasItem)
                     {
@@ -472,19 +475,19 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         boolean hasItem;
         if (building != null)
         {
-            hasItem = isToolInTileEntity(building.getTileEntity(), tool);
+            hasItem = isToolInHandler(building.getTileItemHandler(), tool);
 
             if (hasItem)
             {
                 return true;
             }
 
-            for (final BlockPos pos : building.getAdditionalCountainers())
+            for (final BlockPos pos : building.getAdditionalContainers())
             {
                 final TileEntity entity = world.getTileEntity(pos);
                 if (entity instanceof TileEntityChest)
                 {
-                    hasItem = isToolInTileEntity((TileEntityChest) entity, tool);
+                    hasItem = isToolInHandler(entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), tool);
 
                     if (hasItem)
                     {
@@ -503,14 +506,14 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Make sure that the worker stands next the chest to not break immersion.
      * Also make sure to have inventory space for the stack.
      *
-     * @param entity the tileEntity chest or building.
+     * @param handler the IItemHandler.
      * @param tool   the tool.
      * @return true if found the tool.
      */
-    public boolean isToolInTileEntity(TileEntityChest entity, final String tool)
+    public boolean isToolInHandler(IItemHandler handler, final String tool)
     {
         return InventoryFunctions.matchFirstInInventoryWithInventory(
-          entity,
+          handler,
           stack -> Utils.isTool(stack, tool),
           this::takeItemStackFromChest
         );
@@ -522,15 +525,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Make sure that the worker stands next the chest to not break immersion.
      * Also make sure to have inventory space for the stack.
      *
-     * @param entity    the tileEntity chest or building.
+     * @param handler the IItemHandler.
      * @param tool      the tool.
      * @param toolLevel the min tool level.
      * @return true if found the tool.
      */
-    public boolean isToolInTileEntity(TileEntityChest entity, final String tool, int toolLevel)
+    public boolean isToolInHandler(IItemHandler handler, final String tool, int toolLevel)
     {
         return InventoryFunctions.matchFirstInInventoryWithInventory(
-          entity,
+          handler,
           stack -> Utils.isTool(stack, tool) && InventoryUtils.hasToolLevel(tool, stack, toolLevel),
           this::takeItemStackFromChest
         );
@@ -542,16 +545,16 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Make sure that the worker stands next the chest to not break immersion.
      * Also make sure to have inventory space for the stack.
      *
-     * @param entity the tileEntity chest or building.
+     * @param handler the IItemHandler.
      * @param is     the itemStack.
      * @return true if found the stack.
      */
-    public boolean isInTileEntity(TileEntityChest entity, ItemStack is)
+    public boolean isInItemHandler(IItemHandler handler, ItemStack is)
     {
         return is != null
                  && InventoryFunctions
                       .matchFirstInInventoryWithInventory(
-                        entity,
+                        handler,
                         stack -> stack != null && is.isItemEqual(stack),
                         this::takeItemStackFromChest
                       );
@@ -631,7 +634,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @param tuple tuple from slot and chest to take it from.
      */
-    public void takeItemStackFromChest(@NotNull final Tuple<Integer, IInventory> tuple)
+    public void takeItemStackFromChest(@NotNull final Tuple<Integer, IItemHandler> tuple)
     {
         InventoryUtils.takeStackInSlot(tuple.getSecond(), worker.getInventoryCitizen(), tuple.getFirst());
     }
@@ -840,7 +843,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
         return buildingWorker != null
                  && InventoryFunctions.matchFirstInInventoryWithInventory(
-          buildingWorker.getTileEntity(),
+          buildingWorker.getTileItemHandler(),
           stack -> Utils.checkIfPickaxeQualifies(
             minlevel,
             Utils.getMiningLevel(stack, Utils.PICKAXE)
@@ -911,7 +914,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
         return buildingWorker != null
                  && InventoryFunctions.matchFirstInInventoryWithInventory(
-          buildingWorker.getTileEntity(),
+          buildingWorker.getTileItemHandler(),
           stack -> stack != null && (Utils.doesItemServeAsWeapon(stack)),
           this::takeItemStackFromChest
         );
@@ -963,7 +966,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
         return InventoryUtils.isInventoryFull(worker.getInventoryCitizen())
                  && (buildingWorker != null
-                       && InventoryUtils.isInventoryFull(buildingWorker.getTileEntity()));
+                       && InventoryUtils.isInventoryFull(buildingWorker.getTileItemHandler()));
     }
 
     /**
@@ -1026,7 +1029,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         int amountToKeep = 0;
         if (keptEnough(alreadyKept, shouldKeep, stack))
         {
-            returnStack = InventoryUtils.setStack(buildingWorker.getTileEntity(), stack);
+            returnStack = ItemHandlerHelper.insertItemStacked(buildingWorker.getTileItemHandler(), stack, false);
         }
         else
         {
@@ -1037,16 +1040,25 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 return false;
             }
             amountToKeep = stack.stackSize - tempStorage.getAmount();
-            returnStack = InventoryUtils.setStack(buildingWorker.getTileEntity(), tempStack);
+            returnStack = ItemHandlerHelper.insertItemStacked(buildingWorker.getTileItemHandler(), tempStack, false);
         }
+        // TODO: Perform checks on extractItem
         if (returnStack == null)
         {
-            worker.getInventoryCitizen().decrStackSize(i, stack.stackSize - amountToKeep);
+            worker.getInventoryCitizen().extractItem(i, stack.stackSize - amountToKeep, false);
             return amountToKeep == 0;
         }
-        worker.getInventoryCitizen().decrStackSize(i, stack.stackSize - returnStack.stackSize - amountToKeep);
-        //Check that we are not inserting into a full inventory.
-        return stack.stackSize != returnStack.stackSize;
+        else if (stack.stackSize - returnStack.stackSize - amountToKeep > 0)
+        {
+            worker.getInventoryCitizen().extractItem(i, stack.stackSize - returnStack.stackSize - amountToKeep, false);
+            //Check that we are not inserting into a full inventory.
+            return stack.stackSize != returnStack.stackSize;
+        }
+        else
+        {
+            // TODO: Is this correct?
+            return false;
+        }
     }
 
     /**
@@ -1270,7 +1282,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         @NotNull final InventoryCitizen inventory = worker.getInventoryCitizen();
         final int hutLevel = worker.getWorkBuilding().getBuildingLevel();
 
-        for (int i = 0; i < inventory.getSizeInventory(); i++)
+        for (int i = 0; i < inventory.getSlots(); i++)
         {
             final ItemStack item = inventory.getStackInSlot(i);
             final int level = Utils.getMiningLevel(item, tool);
@@ -1325,6 +1337,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Takes a min distance from width and length.
      * <p>
      * Then finds the floor level at that distance and then check if it does contain two air levels.
+     *
      * @param targetPosition the position to work at.
      * @return BlockPos position to work from.
      */
@@ -1340,9 +1353,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * <p>
      * Then finds the floor level at that distance and then check if it does contain two air levels.
      *
-     * @param distance the extra distance to apply away from the building.
+     * @param distance  the extra distance to apply away from the building.
      * @param targetPos the target position which needs to be worked.
-     * @param offset an additional offset
+     * @param offset    an additional offset
      * @return BlockPos position to work from.
      */
     public BlockPos getWorkingPosition(final int distance, final BlockPos targetPos, final int offset)
@@ -1359,7 +1372,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             @NotNull final BlockPos positionInDirection = getPositionInDirection(direction, distance + offset, targetPos);
             if (EntityUtils.checkForFreeSpace(world, positionInDirection)
-                    && world.getBlockState(positionInDirection.up()).getBlock() != Blocks.SAPLING)
+                  && world.getBlockState(positionInDirection.up()).getBlock() != Blocks.SAPLING)
             {
                 return positionInDirection;
             }
@@ -1372,8 +1385,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Gets a floorPosition in a particular direction.
      *
-     * @param facing   the direction.
-     * @param distance the distance.
+     * @param facing    the direction.
+     * @param distance  the distance.
      * @param targetPos the position to work at.
      * @return a BlockPos position.
      */

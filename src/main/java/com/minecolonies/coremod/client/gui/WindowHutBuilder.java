@@ -15,8 +15,9 @@ import com.minecolonies.coremod.network.messages.MarkBuildingDirtyMessage;
 import com.minecolonies.coremod.network.messages.TransferItemsRequestMessage;
 import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.Log;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -79,7 +80,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         if (newView instanceof BuildingBuilderView)
         {
             final BuildingBuilderView updatedView = (BuildingBuilderView) newView;
-            final InventoryPlayer inventory = this.mc.thePlayer.inventory;
+            final IItemHandler inventory = new PlayerMainInvWrapper(this.mc.thePlayer.inventory);
 
             resources.clear();
             resources.addAll(updatedView.getResources().values());

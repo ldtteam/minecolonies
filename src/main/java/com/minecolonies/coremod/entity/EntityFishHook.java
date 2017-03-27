@@ -706,7 +706,7 @@ public final class EntityFishHook extends Entity
         final int random = this.worldObj.rand.nextInt(INCREASE_RARENESS_MODIFIER);
         final int buildingLevel = citizen.getWorkBuilding().getBuildingLevel();
         //Cut to minimum value of 0.
-        final int lootBonus = MathHelper.clamp_int(fishingLootEnchantment- fishingSpeedEnchantment,0,Integer.MAX_VALUE);
+        final int lootBonus = MathHelper.clamp_int(fishingLootEnchantment - fishingSpeedEnchantment, 0, Integer.MAX_VALUE);
 
         if (random >= buildingLevel * (lootBonus + 1) || buildingLevel == 1)
         {
@@ -725,6 +725,7 @@ public final class EntityFishHook extends Entity
 
     /**
      * Return some random loot of a defined lootTable.
+     *
      * @param lootTable the lootTable.
      * @return the ItemStack of the loot.
      */
@@ -732,8 +733,8 @@ public final class EntityFishHook extends Entity
     {
         final LootContext.Builder lootContextBuilder = new LootContext.Builder((WorldServer) this.worldObj);
         for (final ItemStack itemstack : this.worldObj.getLootTableManager()
-                .getLootTableFromLocation(lootTable)
-                .generateLootForPools(this.rand, lootContextBuilder.build()))
+                                           .getLootTableFromLocation(lootTable)
+                                           .generateLootForPools(this.rand, lootContextBuilder.build()))
         {
             return itemstack;
         }

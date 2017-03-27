@@ -129,8 +129,9 @@ public final class StructureWrapper
      * @param rotations number of times rotated
      * @param mirror    the mirror used.
      */
-    public static void loadAndPlaceStructureWithRotation(final World worldObj, @NotNull final String name,
-            @NotNull final BlockPos pos, final int rotations, @NotNull final Mirror mirror)
+    public static void loadAndPlaceStructureWithRotation(
+                                                          final World worldObj, @NotNull final String name,
+                                                          @NotNull final BlockPos pos, final int rotations, @NotNull final Mirror mirror)
     {
         try
         {

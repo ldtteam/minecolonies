@@ -277,8 +277,9 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
      * @param mirror  the mirror used.
      * @see Block#onBlockPlacedBy(World, BlockPos, IBlockState, EntityLivingBase, ItemStack)
      */
-    public void onBlockPlacedByBuildTool(@NotNull final World worldIn, @NotNull final BlockPos pos,
-                                                  final IBlockState state, final EntityLivingBase placer, final ItemStack stack, final boolean mirror)
+    public void onBlockPlacedByBuildTool(
+                                          @NotNull final World worldIn, @NotNull final BlockPos pos,
+                                          final IBlockState state, final EntityLivingBase placer, final ItemStack stack, final boolean mirror)
     {
         final TileEntity tileEntity = worldIn.getTileEntity(pos);
         if (tileEntity instanceof TileEntityColonyBuilding)

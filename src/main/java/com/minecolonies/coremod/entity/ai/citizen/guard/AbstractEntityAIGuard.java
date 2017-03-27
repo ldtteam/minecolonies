@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
@@ -25,6 +26,9 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -201,27 +205,29 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
         if (workBuilding != null)
         {
             final TileEntityColonyBuilding chest = workBuilding.getTileEntity();
+            final IItemHandler handler = chest.getItemHandler();
 
-            for (int i = 0; i < workBuilding.getTileEntity().getSizeInventory(); i++)
+            if (handler instanceof ItemStackHandler)
             {
-                final ItemStack stack = chest.getStackInSlot(i);
-
-                if (stack == null)
+                for (int i = 0; i < handler.getSlots(); i++)
                 {
-                    continue;
-                }
+                    final ItemStack stack = handler.getStackInSlot(i);
 
-                if (stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).armorType) == null)
-                {
-                    final int emptySlot = worker.getInventoryCitizen().getFirstEmptySlot();
-
-                    if (emptySlot != -1)
+                    if (stack == null)
                     {
-                        worker.getInventoryCitizen().setInventorySlotContents(emptySlot, stack);
-                        chest.setInventorySlotContents(i, null);
+                        continue;
                     }
+
+                    if (stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).armorType) == null)
+                    {
+                        ((ItemStackHandler) handler).setStackInSlot(i, ItemHandlerHelper.insertItem(worker.getInventoryCitizen(), stack, false));
+                    }
+                    dumpAfterActions = DUMP_BASE * workBuilding.getBuildingLevel();
                 }
-                dumpAfterActions = DUMP_BASE * workBuilding.getBuildingLevel();
+            }
+            else
+            {
+                MineColonies.getLogger().error("TileEntityColonyBuilding handler is no longer ItemStackHandler - please rewrite goToBuilding");
             }
         }
         attacksExecuted = 0;
@@ -255,15 +261,9 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
         worker.setItemStackToSlot(EntityEquipmentSlot.HEAD, null);
         worker.setItemStackToSlot(EntityEquipmentSlot.LEGS, null);
 
-        for (int i = 0; i < worker.getInventoryCitizen().getSizeInventory(); i++)
+        for (int i = 0; i < worker.getInventoryCitizen().getSlots(); i++)
         {
             final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(i);
-
-            if (stack == null || stack.stackSize == 0)
-            {
-                worker.getInventoryCitizen().setInventorySlotContents(i, null);
-                continue;
-            }
 
             if (stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).armorType) == null)
             {

@@ -14,8 +14,6 @@ import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.*;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -26,6 +24,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -543,11 +544,21 @@ public abstract class AbstractBuilding
 
         if(tileEntityNew != null)
         {
-            InventoryHelper.dropInventoryItems(world, this.location, (IInventory) tileEntityNew);
+            InventoryUtils.dropItemHandlerItems(world, this.location.getX(), this.location.getY(), this.location.getZ(), tileEntityNew.getItemHandler());
             world.updateComparatorOutputLevel(this.location, block);
             ConstructionTapeHelper.removeConstructionTape(this, world);
         }
         ConstructionTapeHelper.removeConstructionTape(this, world);
+    }
+
+    /**
+     * Returns the item handler that belongs to the colony building.
+     *
+     * @return {@link IItemHandler} item handler of the building.
+     */
+    public IItemHandler getTileItemHandler()
+    {
+        return getTileEntity().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
     }
 
     /**
@@ -859,7 +870,7 @@ public abstract class AbstractBuilding
      * Get all additional containers which belong to the building.
      * @return a copy of the list to avoid currentModification exception.
      */
-    public List<BlockPos> getAdditionalCountainers()
+    public List<BlockPos> getAdditionalContainers()
     {
         return new ArrayList<>(containerList);
     }
@@ -1116,22 +1127,38 @@ public abstract class AbstractBuilding
      */
     public boolean transferStack(@NotNull final ItemStack stack, @NotNull final World world)
     {
-        if(tileEntity == null || InventoryUtils.isInventoryFull(tileEntity))
+        if (transferStackInternal(stack, world, true) != null)
+        {
+            return false;
+        }
+
+        transferStackInternal(stack, world, false);
+        return true;
+    }
+
+    private ItemStack transferStackInternal(@NotNull final ItemStack stack, @NotNull final World world, boolean simulate)
+    {
+        ItemStack stackInserted = ItemHandlerHelper.insertItemStacked(tileEntity.getItemHandler(), stack, simulate);
+        if (stackInserted != null)
         {
             for(final BlockPos pos: containerList)
             {
                 final TileEntity tempTileEntity = world.getTileEntity(pos);
-                if(tempTileEntity instanceof TileEntityChest && !InventoryUtils.isInventoryFull((IInventory) tempTileEntity))
+                if (tempTileEntity instanceof TileEntityChest && tempTileEntity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null))
                 {
-                    return InventoryUtils.addItemStackToInventory((IInventory) tempTileEntity, stack);
+                    final IItemHandler handler = tempTileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+                    if (handler != null)
+                    {
+                        stackInserted = ItemHandlerHelper.insertItemStacked(handler, stack, simulate);
+                        if (stackInserted == null)
+                        {
+                            break;
+                        }
+                    }
                 }
             }
         }
-        else
-        {
-            return InventoryUtils.addItemStackToInventory(tileEntity, stack);
-        }
-        return false;
+        return stackInserted;
     }
 
     /**
@@ -1148,15 +1175,15 @@ public abstract class AbstractBuilding
             for(final BlockPos pos: containerList)
             {
                 final TileEntity tempTileEntity = world.getTileEntity(pos);
-                if(tempTileEntity instanceof TileEntityChest && !InventoryUtils.isInventoryFull((IInventory) tempTileEntity))
+                if(tempTileEntity instanceof TileEntityChest && !InventoryUtils.isInventoryFull(tempTileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)))
                 {
-                    return InventoryUtils.forceItemStackToInventory((IInventory) tempTileEntity, stack, this);
+                    return InventoryUtils.forceItemStackToInventory(tempTileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), stack, this);
                 }
             }
         }
         else
         {
-            return InventoryUtils.forceItemStackToInventory(tileEntity, stack, this);
+            return InventoryUtils.forceItemStackToInventory(tileEntity.getItemHandler(), stack, this);
         }
         return null;
     }

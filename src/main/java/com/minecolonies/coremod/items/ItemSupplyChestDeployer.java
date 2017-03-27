@@ -335,19 +335,20 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     private static boolean checkIfWaterAndNotInColony(final World world, final BlockPos pos1, final BlockPos pos2, final BlockPos pos3)
     {
         return BlockUtils.isWater(world.getBlockState(pos1)) && BlockUtils.isWater(world.getBlockState(pos2)) && BlockUtils.isWater(world.getBlockState(pos3))
-                && notInAnyColony(world, pos1, pos2, pos3);
+                 && notInAnyColony(world, pos1, pos2, pos3);
     }
 
     /**
      * Check if any of the coordinates is in any colony.
+     *
      * @param world the world to check in.
-     * @param pos1 the first position.
-     * @param pos2 the second position.
-     * @param pos3 the third position.
+     * @param pos1  the first position.
+     * @param pos2  the second position.
+     * @param pos3  the third position.
      * @return true if no colony found.
      */
     private static boolean notInAnyColony(final World world, final BlockPos pos1, final BlockPos pos2, final BlockPos pos3)
     {
-        return !ColonyManager.isCoordinateInAnyColony(world, pos1) && !ColonyManager.isCoordinateInAnyColony(world, pos2) && !ColonyManager.isCoordinateInAnyColony(world, pos3) ;
+        return !ColonyManager.isCoordinateInAnyColony(world, pos1) && !ColonyManager.isCoordinateInAnyColony(world, pos2) && !ColonyManager.isCoordinateInAnyColony(world, pos3);
     }
 }

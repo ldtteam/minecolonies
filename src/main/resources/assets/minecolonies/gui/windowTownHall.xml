@@ -98,14 +98,14 @@
             <switch id="permPages" size="100% 200px" pos="0 7">
                 <view id="pageAddPlayer">
                     <list id="users" size="140 150" pos="15 30">
-                         <box size="100% 30" linewidth="2">
-                         <label id="name" size="100 12" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
-                         <button id="removePlayer" size="12 12" pos="5 2" align="TOP_RIGHT" label="X"/>
+                        <box size="100% 30" linewidth="2">
+                            <label id="name" size="100 12" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
+                            <button id="removePlayer" size="12 12" pos="5 2" align="TOP_RIGHT" label="X"/>
 
-                          <button id="demote" size="12 12" pos="5 16" label="-"/>
-                          <button id="promote" size="12 12" pos="20 16" label="+"/>
-                          <label id="rank" size="50 12" pos="35 16" textalign="MIDDLE_LEFT" color="black"/>
-                      </box>
+                            <button id="demote" size="12 12" pos="5 16" label="-"/>
+                            <button id="promote" size="12 12" pos="20 16" label="+"/>
+                            <label id="rank" size="50 12" pos="35 16" textalign="MIDDLE_LEFT" color="black"/>
+                        </box>
                     </list>
 
                     <label size="100 11" pos="15 170" textalign="TOP_LEFT" color="black" label="$(com.minecolonies.coremod.gui.townHall.addPlayer)"/>
@@ -119,7 +119,7 @@
                                 <box size="100% 20" linewidth="2">
                                     <label id="name" size="60 12" textscale="0.7" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
                                     <button id="trigger" size="20 16" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOff)"/>
-                                    <label id="index" pos = "100 100"></label>
+                                    <label id="index" pos="100 100"></label>
                                 </box>
                             </list>
                         </view>
@@ -128,7 +128,7 @@
                                 <box size="100% 20" linewidth="2">
                                     <label id="name" size="60 12" textscale="0.7" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
                                     <button id="trigger" size="20 16" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOff)"/>
-                                    <label id="index" pos = "100 100"></label>
+                                    <label id="index" pos="100 100"></label>
                                 </box>
                             </list>
                         </view>
@@ -137,7 +137,7 @@
                                 <box size="100% 20" linewidth="2">
                                     <label id="name" size="60 12" textscale="0.7" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
                                     <button id="trigger" size="20 16" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOff)"/>
-                                    <label id="index" pos = "100 100"></label>
+                                    <label id="index" pos="100 100"></label>
                                 </box>
                             </list>
                         </view>
@@ -146,15 +146,15 @@
                                 <box size="100% 20" linewidth="2">
                                     <label id="name" size="60 12" textscale="0.7" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
                                     <button id="trigger" size="20 16" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOff)"/>
-                                    <label id="index" pos = "100 100"></label>
+                                    <label id="index" pos="100 100"></label>
                                 </box>
                             </list>
                         </view>
                     </switch>
-                    <button id="officerPage"  size="42 15" pos="10 50" label="Officer"/>
-                    <button id="friendPage"   size="42 15" pos="10 70" label="Friend"/>
-                    <button id="neutralPage"  size="42 15" pos="10 90" label="Neutral"/>
-                    <button id="hostilePage"  size="42 15" pos="10 110" label="Hostile"/>
+                    <button id="officerPage" size="42 15" pos="10 50" label="Officer"/>
+                    <button id="friendPage" size="42 15" pos="10 70" label="Friend"/>
+                    <button id="neutralPage" size="42 15" pos="10 90" label="Neutral"/>
+                    <button id="hostilePage" size="42 15" pos="10 110" label="Hostile"/>
                 </view>
 
                 <!--TODO Make this list work! -->

@@ -58,10 +58,10 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
         colonyId = getIthArgument(args, 0, -1);
         IColony tempColony = ColonyManager.getColony(colonyId);
 
-        if(colonyId == -1 && args.length >= 1)
+        if (colonyId == -1 && args.length >= 1)
         {
             final EntityPlayer player = server.getEntityWorld().getPlayerEntityByName(args[0]);
-            if(player != null)
+            if (player != null)
             {
                 tempColony = ColonyManager.getIColonyByOwner(server.getEntityWorld(), player);
             }

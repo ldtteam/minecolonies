@@ -16,6 +16,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,6 +60,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      * Delay in ticks between every inventory operation.
      */
     private static final int DUMP_AND_GATHER_DELAY = 10;
+
+    /**
+     * Constant for the max stack size.
+     */
+    private static final int MAX_STACK_SIZE = 64;
 
     /**
      * Warehouse the deliveryman is assigned to.
@@ -176,20 +183,29 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private boolean gatherFromBuilding(@NotNull final AbstractBuilding building)
     {
-        if (currentSlot >= building.getTileEntity().getSizeInventory())
+        if (currentSlot >= building.getTileItemHandler().getSlots())
         {
             return true;
         }
 
-        final ItemStack stack = building.getTileEntity().getStackInSlot(currentSlot);
+        final ItemStack stack = building.getTileItemHandler().extractItem(currentSlot, 1, true);
         if (stack == null || workerRequiresItem(building, stack, alreadyKept))
         {
             return false;
         }
 
-        worker.getInventoryCitizen().addItemStackToInventory(building.getTileEntity().removeStackFromSlot(currentSlot));
-        building.markDirty();
-        setDelay(DUMP_AND_GATHER_DELAY);
+        final ItemStack stackTestInserted = ItemHandlerHelper.insertItemStacked(worker.getInventoryCitizen(), stack, true);
+        if (stackTestInserted != null)
+        {
+            final ItemStack stackExtracted = building.getTileItemHandler().extractItem(currentSlot, stackTestInserted.stackSize, false);
+            if (stackExtracted != null)
+            {
+                ItemHandlerHelper.insertItemStacked(worker.getInventoryCitizen(), stackExtracted, false);
+                building.markDirty();
+                setDelay(DUMP_AND_GATHER_DELAY);
+            }
+        }
+
         return false;
     }
 
@@ -297,7 +313,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 }
 
                 final InventoryCitizen workerInventory = worker.getInventoryCitizen();
-                for (int i = 0; i < workerInventory.getSizeInventory(); i++)
+                for (int i = 0; i < workerInventory.getSlots(); i++)
                 {
                     final ItemStack stack = workerInventory.getStackInSlot(i);
                     if (stack == null)
@@ -307,7 +323,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
                     if (buildingToDeliver.transferStack(stack, world))
                     {
-                        workerInventory.removeStackFromSlot(i);
+                        workerInventory.extractItem(i, MAX_STACK_SIZE, false);
                     }
                     else
                     {
@@ -319,7 +335,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                         }
                         else
                         {
-                            workerInventory.addItemStackToInventory(tempStack);
+                            ItemHandlerHelper.insertItemStacked(workerInventory, tempStack, false);
                         }
                     }
                 }
@@ -458,14 +474,16 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockType());
             }
 
-            if (itemsToDeliver.isEmpty() && !isToolInTileEntity((TileEntityChest) tileEntity, buildingToDeliver.getRequiredTool(), buildingToDeliver.getBuildingLevel()))
+            if (itemsToDeliver.isEmpty() && !isToolInHandler(tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null),
+              buildingToDeliver.getRequiredTool(),
+              buildingToDeliver.getBuildingLevel()))
             {
                 return false;
             }
             else if(!itemsToDeliver.isEmpty())
             {
                 final ItemStack stack = itemsToDeliver.get(0);
-                if (isInTileEntity((TileEntityChest) tileEntity, stack))
+                if (isInItemHandler(tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), stack))
                 {
                     itemsToDeliver.remove(0);
                     return true;

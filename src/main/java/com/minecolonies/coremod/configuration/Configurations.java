@@ -18,20 +18,20 @@ public class Configurations
     public static boolean turnOffExplosionsInColonies = true;
 
     /* Command configs */
-    public static int teleportBuffer = 120;
-    public static int opLevelForServer = 3;
-    public static boolean canPlayerUseRTPCommand = true;
-    public static boolean canPlayerUseColonyTPCommand = false;
-    public static boolean canPlayerUseHomeTPCommand = true;
-    public static boolean canPlayerUseCitizenInfoCommand = true;
-    public static boolean canPlayerUseListCitizensCommand = true;
-    public static boolean canPlayerRespawnCitizensCommand = true;
+    public static int     teleportBuffer                    = 120;
+    public static int     opLevelForServer                  = 3;
+    public static boolean canPlayerUseRTPCommand            = true;
+    public static boolean canPlayerUseColonyTPCommand       = false;
+    public static boolean canPlayerUseHomeTPCommand         = true;
+    public static boolean canPlayerUseCitizenInfoCommand    = true;
+    public static boolean canPlayerUseListCitizensCommand   = true;
+    public static boolean canPlayerRespawnCitizensCommand   = true;
     public static boolean canPlayerUseShowColonyInfoCommand = true;
-    public static boolean canPlayerUseKillCitizensCommand = true;
-    public static boolean canPlayerUseAddOfficerCommand = true;
-    public static boolean canPlayerUseDeleteColonyCommand = true;
-    public static boolean canPlayerUseRefreshColonyCommand = false;
-    public static boolean canPlayerUseBackupCommand = false;
+    public static boolean canPlayerUseKillCitizensCommand   = true;
+    public static boolean canPlayerUseAddOfficerCommand     = true;
+    public static boolean canPlayerUseDeleteColonyCommand   = true;
+    public static boolean canPlayerUseRefreshColonyCommand  = false;
+    public static boolean canPlayerUseBackupCommand         = false;
 
 
     /* Colony TP configs */
@@ -58,10 +58,10 @@ public class Configurations
     public static int     pathfindingMaxThreadCount = 2;
 
     public static String[] freeToInteractBlocks = new String[]
-            {
-                "block:dirt",
-                "0 0 0"
-            };
+                                                    {
+                                                      "block:dirt",
+                                                      "0 0 0"
+                                                    };
 
     public static String[] maleFirstNames = new String[]
             {

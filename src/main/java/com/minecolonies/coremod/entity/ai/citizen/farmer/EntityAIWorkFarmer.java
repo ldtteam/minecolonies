@@ -579,18 +579,25 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     private boolean plantCrop(final ItemStack item, @NotNull final BlockPos position)
     {
         final int slot = worker.findFirstSlotInInventoryWith(item.getItem(), item.getItemDamage());
-        if (slot == -1)
+        if (slot == -1 || getInventory().extractItem(slot, 1, true) == null)
         {
             return false;
         }
         else
         {
-            @NotNull final IPlantable seed = (IPlantable) item.getItem();
-            world.setBlockState(position.up(), seed.getPlant(world, position));
-            getInventory().decrStackSize(slot, 1);
-            requestSeeds = false;
-            //Flag 1+2 is needed for updates
-            return true;
+            final ItemStack stackExtracted = getInventory().extractItem(slot, 1, false);
+            if (stackExtracted == null)
+            {
+                return false;
+            }
+            else
+            {
+                @NotNull final IPlantable seed = (IPlantable) stackExtracted.getItem();
+                world.setBlockState(position.up(), seed.getPlant(world, position));
+                requestSeeds = false;
+                //Flag 1+2 is needed for updates
+                return true;
+            }
         }
     }
 

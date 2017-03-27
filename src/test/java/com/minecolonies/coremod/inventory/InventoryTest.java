@@ -5,6 +5,8 @@ import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,7 +20,7 @@ import static org.mockito.Mockito.mock;
 @RunWith(MockitoJUnitRunner.class)
 public class InventoryTest
 {
-    private IInventory inventory;
+    private ItemStackHandler inventory;
 
     @Mock
     private AbstractBuilding building;
@@ -28,13 +30,13 @@ public class InventoryTest
     {
         final TileEntityColonyBuilding buildingTileEntity = new TileEntityColonyBuilding();
         buildingTileEntity.setBuilding(building);
-        this.inventory = buildingTileEntity;
+        this.inventory = (ItemStackHandler) buildingTileEntity.getItemHandler();
     }
 
     @Test
     public void testEmptyInventory()
     {
-        for (int i = 0; i < inventory.getSizeInventory(); i++)
+        for (int i = 0; i < inventory.getSlots(); i++)
         {
             assertNull("Inventory space wasn't empty", inventory.getStackInSlot(i));
         }
@@ -45,7 +47,7 @@ public class InventoryTest
     {
         final Item testItem = mock(Item.class);
         final ItemStack stuff = new ItemStack(testItem, 3);
-        inventory.setInventorySlotContents(0, stuff);
+        inventory.setStackInSlot(0, stuff);
         assertSame("Unexpected ItemStack in inventory", inventory.getStackInSlot(0), stuff);
     }
 }

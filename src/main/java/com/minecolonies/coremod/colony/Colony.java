@@ -180,13 +180,13 @@ public class Colony implements IColony
         // Register a new event handler
         MinecraftForge.EVENT_BUS.register(new ColonyPermissionEventHandler(this));
 
-        for(final String s: Configurations.freeToInteractBlocks)
+        for (final String s : Configurations.freeToInteractBlocks)
         {
             final Block block = Block.getBlockFromName(s);
-            if(block == null)
+            if (block == null)
             {
                 final BlockPos pos = BlockPosUtil.getBlockPosOfString(s);
-                if(pos != null)
+                if (pos != null)
                 {
                     freePositions.add(pos);
                 }
@@ -466,7 +466,7 @@ public class Colony implements IColony
 
         // Free positions
         @NotNull final NBTTagList freePositionsTagList = new NBTTagList();
-        for (@NotNull final BlockPos pos: freePositions)
+        for (@NotNull final BlockPos pos : freePositions)
         {
             @NotNull final NBTTagCompound wayPointCompound = new NBTTagCompound();
             BlockPosUtil.writeToNBT(wayPointCompound, TAG_FREE_POSITIONS, pos);
@@ -608,6 +608,7 @@ public class Colony implements IColony
 
     /**
      * increment statistic amount.
+     *
      * @param statistic the statistic.
      */
     private void incrementStatisticAmount(@NotNull String statistic)
@@ -649,9 +650,9 @@ public class Colony implements IColony
         }
     }
 
-
     /**
      * Increment the statistic amount and trigger achievement.
+     *
      * @param statistic the statistic.
      */
     public void incrementStatistic(@NotNull String statistic)
@@ -968,6 +969,7 @@ public class Colony implements IColony
 
     /**
      * Get a copy of the freePositions list.
+     *
      * @return the list of free to interact positions.
      */
     public Set<BlockPos> getFreePositions()
@@ -977,6 +979,7 @@ public class Colony implements IColony
 
     /**
      * Get a copy of the freeBlocks list.
+     *
      * @return the list of free to interact blocks.
      */
     public Set<Block> getFreeBlocks()
@@ -986,6 +989,7 @@ public class Colony implements IColony
 
     /**
      * Add a new free to interact position.
+     *
      * @param pos position to add.
      */
     public void addFreePosition(@NotNull final BlockPos pos)
@@ -996,6 +1000,7 @@ public class Colony implements IColony
 
     /**
      * Add a new free to interact block.
+     *
      * @param block block to add.
      */
     public void addFreeBlock(@NotNull final Block block)
@@ -1006,6 +1011,7 @@ public class Colony implements IColony
 
     /**
      * Remove a free to interact position.
+     *
      * @param pos position to remove.
      */
     public void removeFreePosition(@NotNull final BlockPos pos)
@@ -1016,6 +1022,7 @@ public class Colony implements IColony
 
     /**
      * Remove a free to interact block.
+     *
      * @param block state to remove.
      */
     public void removeFreeBlock(@NotNull final Block block)
@@ -1410,7 +1417,7 @@ public class Colony implements IColony
               getID(),
               tileEntity.getBlockType().getClass(),
               tileEntity.getPosition()));
-            if(tileEntity.isMirrored())
+            if (tileEntity.isMirrored())
             {
                 building.setMirror();
             }

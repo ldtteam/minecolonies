@@ -595,7 +595,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     /**
      * Initiates structure loading.
      * @param mineNode the node to load it for.
-     * @param direction the direction it faces.
      */
     private void initStructure(final Node mineNode, final int rotateTimes, BlockPos structurePos)
     {
@@ -691,7 +690,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         setBlockFromInventory(location, block, block.getDefaultState());
     }
 
-    private void setBlockFromInventory(@NotNull final BlockPos location, final Block block, final IBlockState metadata)
+    private boolean setBlockFromInventory(@NotNull final BlockPos location, final Block block, final IBlockState metadata)
     {
         final int slot;
         if(block instanceof BlockLadder)
@@ -702,12 +701,15 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         {
             slot = worker.findFirstSlotInInventoryWith(block, block.getMetaFromState(metadata));
         }
-        if (slot != -1)
+
+        if (slot != -1 && getInventory().extractItem(slot, 1, false) != null)
         {
-            getInventory().decrStackSize(slot, 1);
             //Flag 1+2 is needed for updates
             world.setBlockState(location, metadata, 3);
+            return true;
         }
+
+        return false;
     }
 
     private Block getBlock(@NotNull final BlockPos loc)
@@ -745,6 +747,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
      * Takes a min distance from width and length.
      * <p>
      * Then finds the floor level at that distance and then check if it does contain two air levels.
+     *
      * @param targetPosition the position to work at.
      * @return BlockPos position to work from.
      */
@@ -769,13 +772,13 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         }
         final Point2D parentPos = buildingMiner.getCurrentLevel().getRandomNode().getParent();
         if (parentPos != null && buildingMiner.getCurrentLevel().getNode(parentPos) != null
-                && buildingMiner.getCurrentLevel().getNode(parentPos).getStyle() == Node.NodeType.SHAFT)
+              && buildingMiner.getCurrentLevel().getNode(parentPos).getStyle() == Node.NodeType.SHAFT)
         {
             final BlockPos ladderPos = buildingMiner.getLadderLocation();
             return new BlockPos(
-                    ladderPos.getX() + buildingMiner.getVectorX() * OTHER_SIDE_OF_SHAFT,
-                    buildingMiner.getCurrentLevel().getDepth(),
-                    ladderPos.getZ() + buildingMiner.getVectorZ() * OTHER_SIDE_OF_SHAFT);
+                                 ladderPos.getX() + buildingMiner.getVectorX() * OTHER_SIDE_OF_SHAFT,
+                                 buildingMiner.getCurrentLevel().getDepth(),
+                                 ladderPos.getZ() + buildingMiner.getVectorZ() * OTHER_SIDE_OF_SHAFT);
         }
         final Point2D pos = buildingMiner.getCurrentLevel().getRandomNode().getParent();
         return new BlockPos(pos.getX(), buildingMiner.getCurrentLevel().getDepth(), pos.getY());

@@ -152,7 +152,7 @@ public class Structure
             {
                 return true;
             }
-            else if((structureBlock == Blocks.DIRT || structureBlock == Blocks.GRASS) && (worldBlock == Blocks.DIRT || worldBlock == Blocks.GRASS))
+            else if ((structureBlock == Blocks.DIRT || structureBlock == Blocks.GRASS) && (worldBlock == Blocks.DIRT || worldBlock == Blocks.GRASS))
             {
                 return true;
             }
@@ -183,7 +183,7 @@ public class Structure
      * @throws StructureException when there is an error loading the structure file
      */
     public Structure(final World targetWorld, final BlockPos buildingLocation, final String schematicFileName, final int rotation, @NotNull final Mirror mirror)
-            throws StructureException
+      throws StructureException
     {
         this(targetWorld, buildingLocation, schematicFileName, rotation, Stage.CLEAR, null, mirror);
     }
@@ -206,8 +206,8 @@ public class Structure
             final String structureFileName,
             final int rotation,
             final Stage stageProgress,
-            final BlockPos blockProgress,
-            final Mirror mirror) throws StructureException
+                      final BlockPos blockProgress,
+                      final Mirror mirror) throws StructureException
     {
         this.structure = loadStructure(targetWorld, buildingLocation, structureFileName, rotation, stageProgress, blockProgress, mirror);
         this.stage = stageProgress;
@@ -247,8 +247,8 @@ public class Structure
             @Nullable final String schematicFileName,
             final int rotation,
             final Stage stageProgress,
-            @Nullable final BlockPos blockProgress,
-            @NotNull final Mirror mirror)
+                                                   @Nullable final BlockPos blockProgress,
+                                                   @NotNull final Mirror mirror)
             throws StructureException
     {
         if (targetWorld == null || buildingLocation == null || schematicFileName == null)

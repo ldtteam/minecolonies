@@ -17,7 +17,7 @@ import java.util.UUID;
  */
 public class MinecoloniesCommand extends AbstractSplitCommand
 {
-    public static final String DESC = "minecolonies";
+    public static final  String             DESC              = "minecolonies";
     private static final Map<UUID, Instant> commandExecutions = new HashMap<>();
 
     private final ImmutableMap<String, ISubCommand> subCommands =

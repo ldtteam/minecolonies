@@ -102,13 +102,13 @@ public final class ColonyView implements IColony
         final Set<BlockPos> freePos = colony.getFreePositions();
 
         buf.writeInt(freeBlocks.size());
-        for(final Block block : freeBlocks)
+        for (final Block block : freeBlocks)
         {
             ByteBufUtils.writeUTF8String(buf, block.getRegistryName().toString());
         }
 
         buf.writeInt(freePos.size());
-        for(final BlockPos block : freePos)
+        for (final BlockPos block : freePos)
         {
             BlockPosUtil.writeToByteBuf(buf, block);
         }
@@ -118,6 +118,7 @@ public final class ColonyView implements IColony
 
     /**
      * Get a copy of the freePositions list.
+     *
      * @return the list of free to interact positions.
      */
     public List<BlockPos> getFreePositions()
@@ -127,6 +128,7 @@ public final class ColonyView implements IColony
 
     /**
      * Get a copy of the freeBlocks list.
+     *
      * @return the list of free to interact blocks.
      */
     public List<Block> getFreeBlocks()
@@ -136,6 +138,7 @@ public final class ColonyView implements IColony
 
     /**
      * Add a new free to interact position.
+     *
      * @param pos position to add.
      */
     public void addFreePosition(@NotNull final BlockPos pos)
@@ -145,6 +148,7 @@ public final class ColonyView implements IColony
 
     /**
      * Add a new free to interact block.
+     *
      * @param block block to add.
      */
     public void addFreeBlock(@NotNull final Block block)
@@ -154,6 +158,7 @@ public final class ColonyView implements IColony
 
     /**
      * Remove a free to interact position.
+     *
      * @param pos position to remove.
      */
     public void removeFreePosition(@NotNull final BlockPos pos)
@@ -163,6 +168,7 @@ public final class ColonyView implements IColony
 
     /**
      * Remove a free to interact block.
+     *
      * @param block state to remove.
      */
     public void removeFreeBlock(@NotNull final Block block)
@@ -356,13 +362,13 @@ public final class ColonyView implements IColony
         freeBlocks = new HashSet<>();
 
         final int blockListSize = buf.readInt();
-        for(int i = 0; i < blockListSize; i++)
+        for (int i = 0; i < blockListSize; i++)
         {
             freeBlocks.add(Block.getBlockFromName(ByteBufUtils.readUTF8String(buf)));
         }
 
         final int posListSize = buf.readInt();
-        for(int i = 0; i < posListSize; i++)
+        for (int i = 0; i < posListSize; i++)
         {
             freePositions.add(BlockPosUtil.readFromByteBuf(buf));
         }

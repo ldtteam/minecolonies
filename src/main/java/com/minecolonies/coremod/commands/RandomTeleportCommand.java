@@ -95,7 +95,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand
 
         teleportPlayer(sender, playerToTeleport);
         //.fallDistance is used to cancel out fall damage  basically if you have -5 it will reduce fall damage by 2.5 hearts
-        playerToTeleport.fallDistance=FALL_DISTANCE;
+        playerToTeleport.fallDistance = FALL_DISTANCE;
     }
 
     /**

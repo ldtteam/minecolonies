@@ -8,9 +8,9 @@ import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.inventory.InventoryField;
 import com.minecolonies.coremod.util.BlockPosUtil;
+import com.minecolonies.coremod.util.InventoryUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -160,21 +160,16 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
             {
                 citizen.getInventoryCitizen().setCustomName(message.name);
             }
-            player.displayGUIChest(citizen.getInventoryCitizen());
+
+            InventoryUtils.openGui(player, citizen);
         }
     }
 
     private static void doHutInventory(final OpenInventoryMessage message, final EntityPlayerMP player)
     {
-
         if (checkPermissions(ColonyManager.getClosestColony(player.getEntityWorld(), message.tePos), player))
         {
-            @NotNull final TileEntityChest chest = (TileEntityChest) BlockPosUtil.getTileEntity(player.worldObj, message.tePos);
-            if (!StringUtils.isNullOrEmpty(message.name))
-            {
-                chest.setCustomName(message.name);
-            }
-            player.displayGUIChest(chest);
+            InventoryUtils.openGui(player, BlockPosUtil.getTileEntity(player.worldObj, message.tePos));
         }
     }
 

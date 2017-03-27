@@ -64,22 +64,22 @@ public final class ColonyManager
      * The list of all colonies.
      */
     @NotNull
-    private static final ColonyList<Colony>         colonies        = new ColonyList<>();
+    private static final ColonyList<Colony>         colonies              = new ColonyList<>();
     /**
      * The list of all colonies by world.
      */
     @NotNull
-    private static final Map<Integer, List<Colony>> coloniesByWorld = new HashMap<>();
+    private static final Map<Integer, List<Colony>> coloniesByWorld       = new HashMap<>();
     /**
      * The list of colony views.
      */
     @NotNull
-    private static final ColonyList<ColonyView>     colonyViews     = new ColonyList<>();
+    private static final ColonyList<ColonyView>     colonyViews           = new ColonyList<>();
 
     /**
      * A buffer value to be sure to be outside of the colony.
      */
-    private static final int BUFFER                                 = 10;
+    private static final int BUFFER = 10;
 
     /**
      * Amount of worlds loaded.
@@ -534,6 +534,11 @@ public final class ColonyManager
         saveNeeded = false;
     }
 
+    /**
+     * Static method to backup the colony data.
+     *
+     * @return Backup if it was successful.
+     */
     public static boolean backupColonyData()
     {
         if (numWorldsLoaded > 0 && saveNeeded)
@@ -543,13 +548,13 @@ public final class ColonyManager
 
         @NotNull final File file = getSaveLocation();
         @NotNull final File targetFile = getBackupSaveLocation(new Date());
-        if (!file.exists())
-        {
-            return true;
-        }
-        else if (targetFile.exists())
+        if (targetFile.exists())
         {
             return false;
+        }
+        else if (!file.exists())
+        {
+            return true;
         }
 
         try
@@ -558,7 +563,7 @@ public final class ColonyManager
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            Log.getLogger().error("Error while trying to create the Backup", e);
             return false;
         }
 
@@ -951,8 +956,9 @@ public final class ColonyManager
 
     /**
      * Check if a given coordinate is inside any other colony.
+     *
      * @param world the world to check in.
-     * @param pos the position to check.
+     * @param pos   the position to check.
      * @return true if a colony has been found.
      */
     public static boolean isCoordinateInAnyColony(@NotNull final World world, final BlockPos pos)

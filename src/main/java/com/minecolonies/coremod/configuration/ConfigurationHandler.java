@@ -65,7 +65,7 @@ public final class ConfigurationHandler
 
             /* Configs for commands */
             opLevelForServer = config.get(CATEGORY_GAMEPLAY, "opLevelForServer", opLevelForServer,
-                    "Required Op level to execute commands").getInt();
+              "Required Op level to execute commands").getInt();
             teleportBuffer = config.get(CATEGORY_GAMEPLAY, "timeBetweenTeleport", teleportBuffer,
                     "Time until the next teleport in seconds").getInt();
             canPlayerUseCitizenInfoCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseCitizenInfoCommand", canPlayerUseCitizenInfoCommand,
@@ -119,7 +119,7 @@ public final class ConfigurationHandler
                     "Last Names").getStringList();
 
             freeToInteractBlocks = config.get(CATEGORY_NAMES, "freeToInteractBlocks", freeToInteractBlocks,
-                    "Blocks players should be able to interact with inside any colony.").getStringList();
+              "Blocks players should be able to interact with inside any colony.").getStringList();
         }
         finally
         {

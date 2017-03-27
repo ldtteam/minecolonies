@@ -323,7 +323,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * Ignored index starts at this line, ignore this amount after this index.
      */
-    private static final int IGNORE_INDEX     = 3;
+    private static final int IGNORE_INDEX = 3;
 
     /**
      * Button clicked to add a block to the colony to be freely interacted with.
@@ -445,17 +445,17 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             @NotNull final List<Block> freeBlocks = townHall.getColony().getFreeBlocks();
             @NotNull final List<BlockPos> freePositions = townHall.getColony().getFreePositions();
 
-            if(row < freeBlocks.size())
+            if (row < freeBlocks.size())
             {
                 MineColonies.getNetwork().sendToServer(
-                        new ChangeFreeToInteractBlockMessage(townHall.getColony(), freeBlocks.get(row), ChangeFreeToInteractBlockMessage.MessageType.REMOVE_BLOCK));
+                  new ChangeFreeToInteractBlockMessage(townHall.getColony(), freeBlocks.get(row), ChangeFreeToInteractBlockMessage.MessageType.REMOVE_BLOCK));
                 townHall.getColony().removeFreeBlock(freeBlocks.get(row));
             }
-            else if(row < freeBlocks.size() + freePositions.size())
+            else if (row < freeBlocks.size() + freePositions.size())
             {
                 final BlockPos freePos = freePositions.get(row - freeBlocks.size());
                 MineColonies.getNetwork().sendToServer(
-                        new ChangeFreeToInteractBlockMessage(townHall.getColony(), freePos, ChangeFreeToInteractBlockMessage.MessageType.REMOVE_BLOCK));
+                  new ChangeFreeToInteractBlockMessage(townHall.getColony(), freePos, ChangeFreeToInteractBlockMessage.MessageType.REMOVE_BLOCK));
                 townHall.getColony().removeFreePosition(freePos);
             }
             fillFreeBlockList();
@@ -473,7 +473,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
 
         final Block block = Block.getBlockFromName(inputText);
 
-        if(block != null)
+        if (block != null)
         {
             townHall.getColony().addFreeBlock(block);
             MineColonies.getNetwork().sendToServer(new ChangeFreeToInteractBlockMessage(townHall.getColony(), block, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK));
@@ -481,7 +481,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
 
         final BlockPos pos = BlockPosUtil.getBlockPosOfString(inputText);
 
-        if(pos != null)
+        if (pos != null)
         {
             MineColonies.getNetwork().sendToServer(new ChangeFreeToInteractBlockMessage(townHall.getColony(), pos, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK));
             townHall.getColony().addFreePosition(pos);
@@ -493,13 +493,14 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
 
     /**
      * Called when the permission button has been triggered.
+     *
      * @param button the triggered button.
      */
     private void trigger(@NotNull final Button button)
     {
         @NotNull final Pane pane = button.getParent().getChildren().get(2);
         int index = 0;
-        if(pane instanceof Label)
+        if (pane instanceof Label)
         {
             index = Integer.valueOf(((Label) pane).getLabelText());
         }
@@ -510,7 +511,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         MineColonies.getNetwork().sendToServer(new PermissionsMessage.Permission(townHall.getColony(), PermissionsMessage.MessageType.TOGGLE_PERMISSION, rank, action));
         townHall.getColony().getPermissions().togglePermission(rank, action);
 
-        if(trigger)
+        if (trigger)
         {
             button.setLabel(LanguageHandler.format(OFF));
         }
@@ -525,7 +526,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      */
     private void switchPage(@NotNull final Button button)
     {
-        if(button.getID().equals(BUTTON_PREV_PAGE_PERM))
+        if (button.getID().equals(BUTTON_PREV_PAGE_PERM))
         {
             findPaneOfTypeByID(VIEW_PERM_PAGES, SwitchView.class).previousView();
 
@@ -540,7 +541,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             findPaneOfTypeByID(BUTTON_NEXT_PAGE_PERM, Button.class).setEnabled(false);
         }
 
-        if(findPaneOfTypeByID(VIEW_PERM_PAGES, SwitchView.class).getCurrentView().getID().equals(PERMISSION_VIEW))
+        if (findPaneOfTypeByID(VIEW_PERM_PAGES, SwitchView.class).getCurrentView().getID().equals(PERMISSION_VIEW))
         {
             findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class).setEnabled(true);
             findPaneOfTypeByID(BUTTON_NEXT_PAGE_PERM, Button.class).setEnabled(true);
@@ -794,7 +795,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 final Permissions.Action action = Permissions.Action.values()[actionIndex];
                 final String name = LanguageHandler.format(KEY_TO_PERMISSIONS + action.toString().toLowerCase());
 
-                if(name.contains(KEY_TO_PERMISSIONS))
+                if (name.contains(KEY_TO_PERMISSIONS))
                 {
                     return;
                 }
@@ -802,8 +803,8 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(name);
                 final boolean isTriggered = townHall.getColony().getPermissions().hasPermission(Permissions.Rank.valueOf(actionsList.getParent().getID().toUpperCase()), action);
                 rowPane.findPaneOfTypeByID("trigger", Button.class)
-                        .setLabel(isTriggered ? LanguageHandler.format(ON)
-                                : LanguageHandler.format(OFF));
+                  .setLabel(isTriggered ? LanguageHandler.format(ON)
+                              : LanguageHandler.format(OFF));
                 rowPane.findPaneOfTypeByID("index", Label.class).setLabelText(Integer.toString(actionIndex));
             }
         });
@@ -829,7 +830,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                if(index < freeBlocks.size())
+                if (index < freeBlocks.size())
                 {
                     rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(freeBlocks.get(index).getRegistryName().toString());
                 }

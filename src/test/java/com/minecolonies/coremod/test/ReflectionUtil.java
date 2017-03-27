@@ -7,10 +7,9 @@ import java.lang.reflect.Modifier;
  * Methods to simplify the use of reflection.
  * <p>Created by Colton on 3/2/17.
  */
-public class ReflectionUtil
-{
+public class ReflectionUtil {
     public static void setFinalField(Object object, String fieldName, Object newValue)
-            throws NoSuchFieldException, IllegalAccessException
+      throws NoSuchFieldException, IllegalAccessException
     {
         Field field = object.getClass().getField(fieldName);
         field.setAccessible(true);
@@ -23,7 +22,7 @@ public class ReflectionUtil
     }
 
     public static void setStaticFinalField(Class clazz, String fieldName, Object newValue)
-            throws NoSuchFieldException, IllegalAccessException
+      throws NoSuchFieldException, IllegalAccessException
     {
         Field field = clazz.getField(fieldName);
         field.setAccessible(true);
