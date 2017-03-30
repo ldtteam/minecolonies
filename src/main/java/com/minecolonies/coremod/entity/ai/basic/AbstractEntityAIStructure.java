@@ -135,15 +135,15 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 /**
                  * Build the structure and foundation of the building.
                  */
-                new AITarget(BUILDING_STEP, generateStructureGenerator(this::structureStep, AIState.DECORATION_STEP)),
-                /**
-                 * Decorate the AbstractBuilding with torches etc.
-                 */
-                new AITarget(DECORATION_STEP, generateStructureGenerator(this::decorationStep, AIState.SPAWN_STEP)),
+                new AITarget(BUILDING_STEP, generateStructureGenerator(this::structureStep, AIState.SPAWN_STEP)),
                 /**
                  * Spawn entities on the structure.
                  */
-                new AITarget(SPAWN_STEP, generateStructureGenerator(this::spawnEntity, AIState.COMPLETE_BUILD)),
+                new AITarget(SPAWN_STEP, generateStructureGenerator(this::spawnEntity, AIState.DECORATION_STEP)),
+                /**
+                 * Decorate the AbstractBuilding with torches etc.
+                 */
+                new AITarget(DECORATION_STEP, generateStructureGenerator(this::decorationStep, AIState.COMPLETE_BUILD)),
                 /**
                  * Finalize the building and give back control to the ai.
                  */

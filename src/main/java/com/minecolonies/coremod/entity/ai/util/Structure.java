@@ -334,13 +334,13 @@ public class Structure
                 return advanceBlocks(this.structure::incrementBlock, structureBlock -> structureBlock.doesStructureBlockEqualWorldBlock()
                         && structureBlock.block == Blocks.AIR
                         && !structureBlock.metadata.getMaterial().isSolid());
-            case DECORATE:
+            case SPAWN:
                 return advanceBlocks(this.structure::decrementBlock, structureBlock ->
+                        structureBlock.entity == null);
+            case DECORATE:
+                return advanceBlocks(this.structure::incrementBlock, structureBlock ->
                         structureBlock.doesStructureBlockEqualWorldBlock()
                                 || structureBlock.metadata.getMaterial().isSolid());
-            case SPAWN:
-                return advanceBlocks(this.structure::incrementBlock, structureBlock ->
-                        structureBlock.entity == null);
             default:
                 return Result.NEW_BLOCK;
         }
