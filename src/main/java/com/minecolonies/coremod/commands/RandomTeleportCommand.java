@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Random;
 
 import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.COLONYTP;
+import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.RTP;
 
 /**
  * this command is made to TP a player to a safe random spot that is not to close to another colony.
@@ -62,7 +63,8 @@ public class RandomTeleportCommand extends AbstractSingleCommand
             sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Please have an admin raise the maxDistanceFromWorldSpawn number in config."));
             return;
         }
-        if (!canCommandSenderUseCommand(COLONYTP))
+
+        if (!canCommandSenderUseCommand(RTP))
         {
             sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, ask an OP to TP you."));
             return;
