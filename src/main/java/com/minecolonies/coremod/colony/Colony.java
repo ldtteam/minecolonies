@@ -1414,6 +1414,10 @@ public class Colony implements IColony
             {
                 building.setMirror();
             }
+            if(!tileEntity.getStyle().isEmpty())
+            {
+                building.setStyle(tileEntity.getStyle());
+            }
             ConstructionTapeHelper.placeConstructionTape(building, world);
         }
         else
