@@ -170,7 +170,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
             {
                 world.destroyBlock(buildPos, true);
                 world.setBlockState(buildPos, block.getDefaultState().withRotation(BlockUtils.getRotation(rotation)));
-                ((AbstractBlockHut) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror);
+                ((AbstractBlockHut) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror, style);
 
                 player.inventory.clearMatchingItems(Item.getItemFromBlock(block), -1, 1, null);
 
