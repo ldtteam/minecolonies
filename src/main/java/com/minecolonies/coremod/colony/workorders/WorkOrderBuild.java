@@ -73,7 +73,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
             this.structureName = DEFAULT_STYLE + '/' + this.getUpgradeName();
             return;
         }
-        this.structureName = building.getStyle() + '/' + this.getUpgradeName();
+        this.structureName = building.getTileEntity().getStyle() + '/' + this.getUpgradeName();
     }
 
     /**

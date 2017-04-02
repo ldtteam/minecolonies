@@ -18,6 +18,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemPotion;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.player.*;
 import net.minecraftforge.event.world.BlockEvent;
@@ -113,7 +114,7 @@ public class ColonyPermissionEventHandler
         {
             event.setCanceled(true);
 
-            if(player == null)
+            if(player == null || player instanceof FakePlayer)
             {
                 return;
             }
