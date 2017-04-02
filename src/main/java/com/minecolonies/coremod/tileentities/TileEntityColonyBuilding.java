@@ -49,7 +49,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
     /**
      * The style of the building.
      */
-    private String style;
+    private String style = "";
 
     /**
      * Empty standard constructor.
