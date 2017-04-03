@@ -42,6 +42,15 @@ public class ScrollingView extends View
         scrollbar.putInside(this);
     }
 
+    @Override
+    public void setSize(final int w, final int h)
+    {
+        super.setSize(w,h);
+        container.setSize(getInteriorWidth() - scrollbarWidth, getInteriorHeight());
+        scrollbar.setPosition(getInteriorWidth() - scrollbarWidth, 0);
+        scrollbar.setSize(scrollbarWidth, getInteriorHeight());
+    }
+
     @NotNull
     protected ScrollingContainer createScrollingContainer()
     {
@@ -94,4 +103,10 @@ public class ScrollingView extends View
     {
         container.setScrollY(offset);
     }
+
+    public int getContentHeight()
+    {
+        return container.getContentHeight();
+    }
+
 }
