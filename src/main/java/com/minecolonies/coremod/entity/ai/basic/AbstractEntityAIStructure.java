@@ -113,38 +113,38 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         super(job);
         this.registerTargets(
 
-          /**
-           * Check if tasks should be executed.
-           */
-          new AITarget(this::checkIfCanceled, IDLE),
-          /**
-           * Select the appropriate State to do next.
-           */
-          new AITarget(START_BUILDING, this::startBuilding),
-          /**
-           * Check if we have to build something.
-           */
-          new AITarget(IDLE, this::isThereAStructureToBuild, () -> AIState.START_BUILDING),
-          /**
-           * Clear out the building area.
-           */
-          new AITarget(CLEAR_STEP, generateStructureGenerator(this::clearStep, AIState.BUILDING_STEP)),
-          /**
-           * Build the structure and foundation of the building.
-           */
-          new AITarget(BUILDING_STEP, generateStructureGenerator(this::structureStep, AIState.DECORATION_STEP)),
-          /**
-           * Decorate the AbstractBuilding with torches etc.
-           */
-          new AITarget(DECORATION_STEP, generateStructureGenerator(this::decorationStep, AIState.SPAWN_STEP)),
-          /**
-           * Spawn entities on the structure.
-           */
-          new AITarget(SPAWN_STEP, generateStructureGenerator(this::spawnEntity, AIState.COMPLETE_BUILD)),
-          /**
-           * Finalize the building and give back control to the ai.
-           */
-          new AITarget(COMPLETE_BUILD, this::completeBuild)
+                /**
+                 * Check if tasks should be executed.
+                 */
+                new AITarget(this::checkIfCanceled, IDLE),
+                /**
+                 * Select the appropriate State to do next.
+                 */
+                new AITarget(START_BUILDING, this::startBuilding),
+                /**
+                 * Check if we have to build something.
+                 */
+                new AITarget(IDLE, this::isThereAStructureToBuild, () -> AIState.START_BUILDING),
+                /**
+                 * Clear out the building area.
+                 */
+                new AITarget(CLEAR_STEP, generateStructureGenerator(this::clearStep, AIState.BUILDING_STEP)),
+                /**
+                 * Build the structure and foundation of the building.
+                 */
+                new AITarget(BUILDING_STEP, generateStructureGenerator(this::structureStep, AIState.SPAWN_STEP)),
+                /**
+                 * Spawn entities on the structure.
+                 */
+                new AITarget(SPAWN_STEP, generateStructureGenerator(this::spawnEntity, AIState.DECORATION_STEP)),
+                /**
+                 * Decorate the AbstractBuilding with torches etc.
+                 */
+                new AITarget(DECORATION_STEP, generateStructureGenerator(this::decorationStep, AIState.COMPLETE_BUILD)),
+                /**
+                 * Finalize the building and give back control to the ai.
+                 */
+                new AITarget(COMPLETE_BUILD, this::completeBuild)
         );
     }
 
