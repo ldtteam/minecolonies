@@ -59,6 +59,8 @@ public final class ConfigurationHandler
             turnOffExplosionsInColonies = config.get(CATEGORY_GAMEPLAY, "turnOffExplosionsInColonies", turnOffExplosionsInColonies,
                     "Turn off explosions inside the colonies radius?").getBoolean();
 
+            ignoreSchematicsFromJar = config.get(CATEGORY_GAMEPLAY, "ignoreSchematicsFromJar", ignoreSchematicsFromJar,
+                    "Ignore the schematic from the jar file").getBoolean();
             allowPlayerSchematics = config.get(CATEGORY_GAMEPLAY, "allowPlayerSchematics", allowPlayerSchematics,
                     "Allow player to use their own schematics (in MP)").getBoolean();
             maxCachedSchematics = config.get(CATEGORY_GAMEPLAY, "maxCachedSchematics", maxCachedSchematics,

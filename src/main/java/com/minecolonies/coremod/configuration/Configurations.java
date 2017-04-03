@@ -17,6 +17,8 @@ public class Configurations
     public static boolean enableColonyProtection      = true;
     public static boolean turnOffExplosionsInColonies = true;
 
+    /* schematics usage */
+    public static boolean ignoreSchematicsFromJar     = false;
     public static boolean allowPlayerSchematics       = false;
     public static int     maxCachedSchematics         = 100;
 

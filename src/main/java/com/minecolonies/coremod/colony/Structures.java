@@ -103,18 +103,21 @@ public final class Structures
     private static void loadStyleMaps()
     {
         Structure.printFolders();
-        try
+        if (!Configurations.ignoreSchematicsFromJar)
         {
-            @NotNull final URI uri = ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI();
-            final FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
-            final Path basePath = fileSystem.getPath(SCHEMATICS_ASSET_PATH);
-            loadSchematicsForSection(basePath, SCHEMATICS_HUTS);
-            loadSchematicsForSection(basePath, SCHEMATICS_DECORATIONS);
-        }
-        catch (@NotNull IOException | URISyntaxException e)
-        {
-            //Silently ignore
-            Log.getLogger().warn("loadStyleMaps: Could not load the schematics from the jar");
+            try
+            {
+                @NotNull final URI uri = ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI();
+                final FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
+                final Path basePath = fileSystem.getPath(SCHEMATICS_ASSET_PATH);
+                loadSchematicsForSection(basePath, SCHEMATICS_HUTS);
+                loadSchematicsForSection(basePath, SCHEMATICS_DECORATIONS);
+            }
+            catch (@NotNull IOException | URISyntaxException e)
+            {
+                //Silently ignore
+                Log.getLogger().warn("loadStyleMaps: Could not load the schematics from the jar");
+            }
         }
 
         final File schematicsFolder = Structure.getSchematicsFolder();

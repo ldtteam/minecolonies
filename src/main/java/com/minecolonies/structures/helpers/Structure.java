@@ -1,10 +1,10 @@
 package com.minecolonies.structures.helpers;
-
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.Structures;
+import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.util.Log;
-import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.structures.fake.FakeEntity;
 import com.minecolonies.structures.fake.FakeWorld;
 import com.minecolonies.structures.lib.ModelHolder;
@@ -233,7 +233,7 @@ public class Structure
             inputstream = Structure.getStreamFromFolder(Structure.getSchematicsFolder(), structureName);
         }
 
-        if (inputstream == null)
+        if (inputstream == null && !Configurations.ignoreSchematicsFromJar)
         {
             inputstream = Structure.getStreamFromJar(structureName);
         }
