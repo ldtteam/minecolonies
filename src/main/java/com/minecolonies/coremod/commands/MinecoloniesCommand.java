@@ -26,6 +26,7 @@ public class MinecoloniesCommand extends AbstractSplitCommand
         .put(ColonyCommand.DESC, new ColonyCommand(DESC))
         .put(CitizensCommand.DESC, new CitizensCommand(DESC))
         .put(RandomTeleportCommand.DESC, new RandomTeleportCommand(DESC))
+        .put(BackupCommand.DESC, new BackupCommand(DESC))
         .build();
 
     /**
@@ -44,8 +45,8 @@ public class MinecoloniesCommand extends AbstractSplitCommand
 
     /**
      * Check if the player is able to execute a teleport command again.
-     * @param player
-     * @return
+     * @param player the player executing.
+     * @return true if should be able to.
      */
     public static boolean canExecuteCommand(@NotNull EntityPlayer player)
     {

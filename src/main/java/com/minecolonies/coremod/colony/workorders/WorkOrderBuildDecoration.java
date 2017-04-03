@@ -10,7 +10,7 @@ import net.minecraft.util.math.BlockPos;
 public class WorkOrderBuildDecoration extends WorkOrderBuild
 {
     /**
-     * unused constructor for reflection.
+     * Unused constructor for reflection.
      */
     public WorkOrderBuildDecoration()
     {
@@ -24,8 +24,9 @@ public class WorkOrderBuildDecoration extends WorkOrderBuild
      * @param decorationName   The user friendly name of the decoration.
      * @param rotation   The number of times the decoration was rotated.
      * @param location   The location where the decoration should be built.
+     * @param mirror     Is the decoration mirrored?
      */
-    public WorkOrderBuildDecoration(final String structureName, final String workOrderName, final int rotation, final BlockPos location)
+    public WorkOrderBuildDecoration(final String structureName, final String workOrderName, final int rotation, final BlockPos location, final boolean mirror)
     {
         super();
         this.structureName = new Structures.StructureName(structureName);
@@ -33,6 +34,7 @@ public class WorkOrderBuildDecoration extends WorkOrderBuild
         this.buildingRotation = rotation;
         this.buildingLocation = location;
         this.cleared = false;
+        this.isMirrored = mirror;
     }
 
     @Override

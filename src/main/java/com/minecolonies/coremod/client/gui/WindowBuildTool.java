@@ -75,7 +75,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     private static final String BUTTON_CANCEL = "cancel";
 
     /**
-     * This button will rotate the structure counterclockwise.
+     * This button will rotateWithMirror the structure counterclockwise.
      */
     private static final String BUTTON_ROTATE_LEFT = "rotateLeft";
 
@@ -126,6 +126,10 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
     private static final String SECTION = "section";
 
+    /**
+     * Mirror the structure.
+     */
+    private static final String BUTTON_MIRROR = "mirror";
 
     /**
      * Resource suffix.
@@ -143,17 +147,17 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     private static final int POSSIBLE_ROTATIONS = 4;
 
     /**
-     * Rotation to rotate right.
+     * Rotation to rotateWithMirror right.
      */
     private static final int ROTATE_RIGHT = 1;
 
     /**
-     * Rotation to rotate 180 degree.
+     * Rotation to rotateWithMirror 180 degree.
      */
     private static final int ROTATE_180 = 2;
 
     /**
-     * Rotation to rotate left.
+     * Rotation to rotateWithMirror left.
      */
     private static final int ROTATE_LEFT = 3;
 
@@ -249,9 +253,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         registerButton("nextStyle", this::nextStyle);
         registerButton("previousSchematic", this::previousSchematic);
         registerButton("nextSchematic", this::nextSchematic);
+
         registerButton(BUTTON_CONFIRM, this::confirmClicked);
         registerButton(BUTTON_CANCEL, this::cancelClicked);
         registerButton(BUTTON_LEFT, this::moveLeftClicked);
+        registerButton(BUTTON_MIRROR, WindowBuildTool::mirror);
         registerButton(BUTTON_RIGHT, this::moveRightClicked);
         registerButton(BUTTON_BACK, this::moveBackClicked);
         registerButton(BUTTON_FORWARD, this::moveForwardClicked);
@@ -259,6 +265,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         registerButton(BUTTON_DOWN, WindowBuildTool::moveDownClicked);
         registerButton(BUTTON_ROTATE_RIGHT, this::rotateRightClicked);
         registerButton(BUTTON_ROTATE_LEFT, this::rotateLeftClicked);
+
         registerButton(BUTTON_RENAME, this::renameClicked);
         registerButton(BUTTON_DELETE, this::deleteClicked);
         registerButton("deleteDone", this::deleteDoneClicked);
@@ -494,7 +501,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         Log.getLogger().info("Loading structure " + structureName.toString());
         Structure structure = new Structure(null,
                                    structureName.toString(),
-                                   new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())));
+                                   new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())).setMirror(Settings.instance.getMirror()));
 
         final String md5 = Structures.getMD5(structureName);
         Log.getLogger().info("Loading structure md5:" + md5);
@@ -565,7 +572,8 @@ public class WindowBuildTool extends AbstractWindowSkeleton
                                                               structureName.toString(),
                                                               Settings.instance.pos,
                                                               Settings.instance.getRotation(),
-                                                              false));
+                                                              false,
+                                                              Settings.instance.getMirror()));
         }
         else
         {
@@ -592,7 +600,8 @@ public class WindowBuildTool extends AbstractWindowSkeleton
                                                                               structureName.toString(),
                                                                               Settings.instance.pos,
                                                                               Settings.instance.getRotation(),
-                                                                              structureName.isHut()));
+                                                                              structureName.isHut(),
+                                                                              Settings.instance.getMirror()));
         }
 
         Settings.instance.reset();
@@ -1008,5 +1017,13 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         findPaneOfTypeByID(BUTTON_SCHEMATIC_ID, Button.class).setEnabled(enabled);
         findPaneOfTypeByID("nextSchematic", Button.class).setEnabled(enabled);
         setSchematic(newIndex);
+    }
+
+    /**
+     * Rotate the structure counter clockwise.
+     */
+    private static void mirror()
+    {
+        Settings.instance.mirror();
     }
 }

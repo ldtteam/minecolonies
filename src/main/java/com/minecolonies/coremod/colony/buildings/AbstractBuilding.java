@@ -71,6 +71,11 @@ public abstract class AbstractBuilding
     private static final String TAG_SCHEMATIC_MD5 = "schematicMD5";
 
     /**
+     * The tag to store the mirror of the building.
+     */
+    private static final String TAG_MIRROR = "mirror";
+
+    /**
      * The tag to store the style of the building.
      */
     private static final String                  TAG_STYLE                    = "style";
@@ -180,6 +185,11 @@ public abstract class AbstractBuilding
      * The rotation of the building.
      */
     private int rotation = 0;
+
+    /**
+     * The mirror of the building.
+     */
+    private boolean isMirrored = false;
 
     /**
      * The building style.
@@ -347,6 +357,7 @@ public abstract class AbstractBuilding
             final NBTTagCompound containerCompound = containerTagList.getCompoundTagAt(i);
             containerList.add(NBTUtil.getPosFromTag(containerCompound));
         }
+        isMirrored = compound.getBoolean(TAG_MIRROR);
     }
 
     /**
@@ -491,6 +502,7 @@ public abstract class AbstractBuilding
             containerTagList.appendTag(NBTUtil.createPosTag(pos));
         }
         compound.setTag(TAG_CONTAINERS, containerTagList);
+        compound.setBoolean(TAG_MIRROR, isMirrored);
     }
 
     /**
@@ -1180,6 +1192,24 @@ public abstract class AbstractBuilding
             return InventoryUtils.forceItemStackToInventory(tileEntity, stack, this);
         }
         return null;
+    }
+
+    /**
+     * Returns the mirror of the current building.
+     *
+     * @return boolean value of the mirror.
+     */
+    public boolean isMirrored()
+    {
+        return isMirrored;
+    }
+
+    /**
+     * Sets the mirror of the current building.
+     */
+    public void setMirror()
+    {
+        this.isMirrored = !isMirrored;
     }
 
     //------------------------- Ending Required Tools/Item handling -------------------------//

@@ -3,7 +3,7 @@ package com.minecolonies.coremod.event;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.permissions.Permissions;
-import com.minecolonies.coremod.test.AbstractTest;
+import com.minecolonies.coremod.test.AbstractMockStaticsTest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -16,7 +16,8 @@ import static org.mockito.Mockito.never;
 import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
 
-public class TownHallPlacementTest extends AbstractTest
+// TODO make these tests actually test something, now that createColony call is moved...
+public class TownHallPlacementTest extends AbstractMockStaticsTest
 {
     private static final BlockPos PLACE_POS = new BlockPos(0, 0, 0);
     @Mock
@@ -32,12 +33,6 @@ public class TownHallPlacementTest extends AbstractTest
     public void setupColonyPlacement() throws Exception
     {
         when(colony.getCenter()).thenReturn(PLACE_POS);
-    }
-
-    @Override
-    public String getTestName()
-    {
-        return "TownHallPlacementTest";
     }
 
     //first townhall
