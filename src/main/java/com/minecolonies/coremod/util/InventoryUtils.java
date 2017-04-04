@@ -203,7 +203,7 @@ public class InventoryUtils
      */
     public static int getItemCountInItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        return filterItemHandler(itemHandler, itemStackSelectionPredicate).stream().mapToInt(stack -> stack.stackSize).sum();
+        return filterItemHandler(itemHandler, itemStackSelectionPredicate).stream().mapToInt(InventoryUtils::getItemStackSize).sum();
     }
 
 
@@ -668,7 +668,7 @@ public class InventoryUtils
     public static int getItemCountInProvider(@NotNull final ICapabilityProvider provider, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
         return getItemHandlersFromProvider(provider).stream()
-                    .mapToInt(handler -> filterItemHandler(handler, itemStackSelectionPredicate).stream().mapToInt(stack -> stack.stackSize).sum())
+                .mapToInt(handler -> filterItemHandler(handler, itemStackSelectionPredicate).stream().mapToInt(InventoryUtils::getItemStackSize).sum())
                     .sum();
     }
 
@@ -1156,8 +1156,8 @@ public class InventoryUtils
         if (!provider.hasCapability(ITEM_HANDLER_CAPABILITY, facing)) {
             return 0;
         }
-        
-        return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing), itemStackSelectionPredicate).stream().mapToInt(stack -> stack.stackSize).sum();
+
+        return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing), itemStackSelectionPredicate).stream().mapToInt(InventoryUtils::getItemStackSize).sum();
     }
 
     /**
@@ -1609,6 +1609,17 @@ public class InventoryUtils
         }
     }
 
+    //TODO (UPDATE To 1.11): Update next two methods to reflect 1.11 Changes.
+
+    @NotNull
+    public static int getItemStackSize(ItemStack stack) {
+        if (isItemStackEmpty(stack)) {
+            return 0;
+        }
+
+        return stack.stackSize;
+    }
+
     /**
      * Wrapper method to check if a stack is empty.
      * Used for easy updating to 1.11.
@@ -1664,7 +1675,7 @@ public class InventoryUtils
         if (!compareItemStacksIgnoreStackSize(existingStack, mergingStack)) {
             return false;
         }
-        
-        return existingStack.getMaxStackSize() >= (existingStack.stackSize + mergingStack.stackSize);
+
+        return existingStack.getMaxStackSize() >= (getItemStackSize(existingStack) + getItemStackSize(mergingStack));
     }
 }
