@@ -132,8 +132,8 @@ public final class Structures
         if (cacheSchematicFolder != null)
         {
             checkDirectory(cacheSchematicFolder);
-            Log.getLogger().info("Load cached schematic from " + cacheSchematicFolder);
-            loadSchematicsForPrefix(cacheSchematicFolder.getParentFile().toPath(), SCHEMATICS_CACHE);
+            Log.getLogger().info("Load cached schematic from " + cacheSchematicFolder + '/' + SCHEMATICS_CACHE);
+            loadSchematicsForPrefix(cacheSchematicFolder.toPath(), SCHEMATICS_CACHE);
         }
 
         if (md5Map.size()==0)
