@@ -50,7 +50,7 @@ import org.lwjgl.input.Keyboard;
 public class WindowBuildTool extends AbstractWindowSkeleton
 {
     /**
-     * This button is used to set the section either huts (Builder, Town Hall), decorations or custom mode.
+     * This button is used to set the section either huts (Builder, Town Hall), decorations or scan mode.
      */
     private static final String BUTTON_TYPE_ID = "buildingType";
 
@@ -115,12 +115,12 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     private static final String BUTTON_RIGHT = "right";
 
     /**
-     * Rename the custom structure.
+     * Rename the scanned structure.
      */
     private static final String BUTTON_RENAME = "rename";
 
     /**
-     * Delete the custom structure.
+     * Delete the scanned structure.
      */
     private static final String BUTTON_DELETE = "delete";
 
@@ -362,14 +362,14 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
     private void init()
     {
-        Structures.loadCustomStyleMaps();
+        Structures.loadScannedStyleMaps();
 
         sections.clear();
         final InventoryPlayer inventory = this.mc.player.inventory;
         final List<String> allSections = Structures.getSections();
         for(String section: allSections)
         {
-            if (section.equals(Structures.SCHEMATICS_DECORATIONS) || section.equals(Structures.SCHEMATICS_CUSTOM) || inventoryHasHut(inventory, section))
+            if (section.equals(Structures.SCHEMATICS_PREFIX) || section.equals(Structures.SCHEMATICS_SCAN) || inventoryHasHut(inventory, section))
             {
                 sections.add(section);
             }
@@ -538,7 +538,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         }
     }
 
-    private void requestCustomSchematic(@NotNull final Structures.StructureName structureName)
+    private void requestScannedSchematic(@NotNull final Structures.StructureName structureName)
     {
         if (!Structures.isPlayerSchematicsAllowed())
         {
@@ -588,10 +588,10 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     private void confirmClicked()
     {
         Structures.StructureName structureName = new Structures.StructureName(schematics.get(schematicIndex));
-        if (structureName.getPrefix().equals(Structures.SCHEMATICS_CUSTOM) && FMLCommonHandler.instance().getMinecraftServerInstance() == null)
+        if (structureName.getPrefix().equals(Structures.SCHEMATICS_SCAN) && FMLCommonHandler.instance().getMinecraftServerInstance() == null)
         {
             //We need to check that the server hava it too using the md5
-            requestCustomSchematic(structureName);
+            requestScannedSchematic(structureName);
         }
         else
         {
@@ -709,7 +709,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     }
 
     /**
-     * Change to the next section, Builder, Citizen ... Decorations and Custom.
+     * Change to the next section, Builder, Citizen ... Decorations and Scan.
      */
     public void nextSection()
     {
@@ -724,7 +724,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     }
 
     /**
-     * Change to the previous section, Builder, Citizen ... Decorations and Custom.
+     * Change to the previous section, Builder, Citizen ... Decorations and Scan.
      */
     public void previousSection()
     {
@@ -764,11 +764,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         deleteView.setVisible(false);
 
         final Structures.StructureName structureName = new Structures.StructureName(getSchematicName());
-        if (Structures.SCHEMATICS_CUSTOM.equals(structureName.getPrefix()))
+        if (Structures.SCHEMATICS_SCAN.equals(structureName.getPrefix()))
         {
-            if (Structures.deleteCustomStructure(structureName))
+            if (Structures.deleteScannedStructure(structureName))
             {
-                Structures.loadCustomStyleMaps();
+                Structures.loadScannedStyleMaps();
                 if (schematics.size() <= 1)
                 {
                     if (styles.size() <= 1)
@@ -796,11 +796,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
     private String getSectionLocalizedName(final String name)
     {
-        if (Structures.SCHEMATICS_CUSTOM.equals(name))
+        if (Structures.SCHEMATICS_SCAN.equals(name))
         {
-            return LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.custom");
+            return LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.scan");
         }
-        else if (Structures.SCHEMATICS_DECORATIONS.equals(name))
+        else if (Structures.SCHEMATICS_PREFIX.equals(name))
         {
                 return LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.decorations");
         }
@@ -815,9 +815,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     {
         sectionIndex = index;
         String name = getSectionName();
-        if (Structures.SCHEMATICS_CUSTOM.equals(name))
+        if (Structures.SCHEMATICS_SCAN.equals(name))
         {
-            name = LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.custom");
+            name = LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.scan");
             renameButton.setVisible(true);
             deleteButton.setVisible(true);
         }
@@ -825,7 +825,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         {
             renameButton.setVisible(false);
             deleteButton.setVisible(false);
-            if (Structures.SCHEMATICS_DECORATIONS.equals(name))
+            if (Structures.SCHEMATICS_PREFIX.equals(name))
             {
                 name = LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.decorations");
             }

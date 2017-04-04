@@ -41,7 +41,7 @@ public final class ClientStructureWrapper
      */
     public static void handleSaveScanMessage(final NBTTagCompound nbttagcompound, final long currentMillis)
     {
-        final Structures.StructureName structureName = new Structures.StructureName(Structures.SCHEMATICS_CUSTOM, "scans",  LanguageHandler.format("item.scepterSteel.scanFormat", currentMillis));
+        final Structures.StructureName structureName = new Structures.StructureName(Structures.SCHEMATICS_SCAN, "new",  LanguageHandler.format("item.scepterSteel.scanFormat", currentMillis));
         final File file = new File(Structure.getClientSchematicsFolder(), structureName.toString() + Structures.SCHEMATIC_EXTENSION);
         checkDirectory(file.getParentFile());
 

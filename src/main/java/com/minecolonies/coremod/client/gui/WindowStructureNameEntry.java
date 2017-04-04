@@ -48,7 +48,7 @@ public class WindowStructureNameEntry extends Window implements Button.Handler
             final String name = inputName.getText();
             if (!name.isEmpty())
             {
-                final Structures.StructureName newStructureName = Structures.renameCustomStructure(structureName, name);
+                final Structures.StructureName newStructureName = Structures.renameScannedStructure(structureName, name);
                 if (newStructureName!=null)
                 {
                     Settings.instance.setStructureName(newStructureName.toString());

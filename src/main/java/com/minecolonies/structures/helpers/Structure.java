@@ -133,7 +133,7 @@ public class Structure
         {
             if (ColonyManager.getServerUUID()!=null)
             {
-                return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + "/" + ColonyManager.getServerUUID()+"/schematics/");
+                return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + "/" + ColonyManager.getServerUUID()+ '/' + Structures.SCHEMATICS_PREFIX );
             }
             else
             {
@@ -145,17 +145,16 @@ public class Structure
         // if the world schematics folder contains huts or decorations subfolder
         // then we use it as the schematic folder
         // otherwise we use the minecraft folder  /minecolonies/schematics
-        final File worldHutsFolder = new File(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
-                    + "/" + Constants.MOD_ID + "/schematics/" + Structures.SCHEMATICS_HUTS);
-        final File worldDecorationsFolder = new File(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
-                    + "/" + Constants.MOD_ID + "/schematics/" + Structures.SCHEMATICS_DECORATIONS);
-        if (!worldHutsFolder.exists() && !worldDecorationsFolder.exists())
+        final File worldSchematicFolder = new File(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
+                    + "/" + Constants.MOD_ID + '/' + Structures.SCHEMATICS_PREFIX);
+
+        if (!worldSchematicFolder.exists())
         {
-            return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + "/schematics/");
+            return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + '/' + Structures.SCHEMATICS_PREFIX);
         }
 
         return new File(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
-                        + "/" + Constants.MOD_ID + "/schematics/");
+                        + "/" + Constants.MOD_ID + '/' + Structures.SCHEMATICS_PREFIX);
     }
 
     /**
@@ -168,7 +167,7 @@ public class Structure
         {
             if (ColonyManager.getServerUUID()!=null)
             {
-                return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + "/" + ColonyManager.getServerUUID()+"/schematics/" + Structures.SCHEMATICS_CACHE + '/');
+                return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + "/" + ColonyManager.getServerUUID());
             }
             else
             {
@@ -177,9 +176,9 @@ public class Structure
             }
         }
         Log.getLogger().info("getCachedSchematicsFolder:"  + FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
-                        + "/" + Constants.MOD_ID + "/schematics/" + Structures.SCHEMATICS_CACHE + '/');
+                        + "/" + Constants.MOD_ID);
         return new File(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
-                        + "/" + Constants.MOD_ID + "/schematics/" + Structures.SCHEMATICS_CACHE + '/');
+                        + "/" + Constants.MOD_ID);
     }
 
     /**
@@ -187,14 +186,14 @@ public class Structure
      */
     public static File getClientSchematicsFolder()
     {
-        return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + "/schematics/");
+        return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID);
     }
 
     /**
      * get a InputStream for a give structureName.
      *
      * Look into the followinf director (in order):
-     * - custom
+     * - scan
      * - cache
      * - schematics folder
      * - jar
@@ -215,10 +214,45 @@ public class Structure
 
     public static InputStream getStream(final String structureName)
     {
+        Log.getLogger().info("Structure: Loading " + structureName);
+
         final Structures.StructureName sn = new Structures.StructureName(structureName);
+        if (Structures.SCHEMATICS_CACHE.equals(sn.getPrefix()))
+        {
+            Log.getLogger().info("Structure: Loading from cache " + structureName);
+            return Structure.getStreamFromFolder(Structure.getCachedSchematicsFolder(), structureName);
+        }
+        else if (Structures.SCHEMATICS_SCAN.equals(sn.getPrefix()))
+        {
+            Log.getLogger().info("Structure: Loading from scans " + structureName);
+            return Structure.getStreamFromFolder(Structure.getClientSchematicsFolder(), structureName);
+        }
+        else if (!Structures.SCHEMATICS_PREFIX.equals(sn.getPrefix()))
+        {
+            Log.getLogger().info("Structure: |" + Structures.SCHEMATICS_PREFIX + "| != |" + sn.getPrefix() + "|");
+            Log.getLogger().info("Structure: getStream Malformed structure " + structureName);
+            return null;
+        }
+
+        Log.getLogger().info("Structure: Loading schematic " + structureName);
+
+        //Look in the folder first
+        InputStream inputstream = Structure.getStreamFromFolder(Structure.getSchematicsFolder(), structureName);
+        if (inputstream == null && !Configurations.ignoreSchematicsFromJar)
+        {
+            Log.getLogger().info("Structure: Loading schematic from Jar " + structureName);
+            inputstream = Structure.getStreamFromJar(structureName);
+        }
+
+        if (inputstream == null)
+        {
+            Log.getLogger().warn("Structure: Couldn't find any structure with this name " + structureName);
+        }
+/*
+
         InputStream inputstream = Structure.getStreamFromFolder(Structure.getSchematicsFolder(), structureName);
 
-        if (inputstream == null && sn.getPrefix().equals(Structures.SCHEMATICS_CUSTOM))
+        if (inputstream == null && sn.getPrefix().equals(Structures.SCHEMATICS_SCAN))
         {
             return Structure.getStreamFromFolder(Structure.getClientSchematicsFolder(), structureName);
         }
@@ -240,8 +274,9 @@ public class Structure
 
         if (inputstream == null)
         {
-            Log.getLogger().warn("Couldn't find any structure with this name " + structureName);
+            Log.getLogger().warn("Structure: Couldn't find any structure with this name " + structureName);
         }
+*/
 
         return inputstream;
     }
@@ -288,7 +323,7 @@ public class Structure
      */
     private static InputStream getStreamFromJar(final String structureName)
     {
-        return MinecraftServer.class.getResourceAsStream("/assets/" + Constants.MOD_ID + "/schematics/" + structureName + ".nbt");
+        return MinecraftServer.class.getResourceAsStream("/assets/" + Constants.MOD_ID + '/' + structureName + ".nbt");
     }
 
 

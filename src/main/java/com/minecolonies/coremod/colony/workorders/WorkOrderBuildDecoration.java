@@ -29,7 +29,9 @@ public class WorkOrderBuildDecoration extends WorkOrderBuild
     public WorkOrderBuildDecoration(final String structureName, final String workOrderName, final int rotation, final BlockPos location, final boolean mirror)
     {
         super();
-        this.structureName = new Structures.StructureName(structureName);
+        //normalise structure name
+        final  Structures.StructureName sn = new Structures.StructureName(structureName);
+        this.structureName = sn.toString();
         this.workOrderName = workOrderName;
         this.buildingRotation = rotation;
         this.buildingLocation = location;

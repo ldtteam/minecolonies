@@ -39,26 +39,25 @@ public final class Structures
     /**
      * Ignore the styles from the generic folder.
      */
-    private static final String NULL_STYLE = "";
+//    private static final String NULL_STYLE = "";
 
     /**
      * Ignore the styles from the miner folder.
      */
-    private static final String MINER_STYLE = "miner";
+//    private static final String MINER_STYLE = "miner";
 
     public static final String                     SCHEMATIC_EXTENSION        = ".nbt";
-    private static final String                    SCHEMATICS_ASSET_PATH      = "/assets/minecolonies/schematics/";
-    public  static final String                    SCHEMATICS_HUTS            = "huts";
-    public  static final String                    SCHEMATICS_DECORATIONS     = "decorations";
+    private static final String                    SCHEMATICS_ASSET_PATH      = "/assets/minecolonies/";
+    public  static final String                    SCHEMATICS_PREFIX          = "schematics";
     public  static final String                    SCHEMATICS_CACHE           = "cache";
-    public  static final String                    SCHEMATICS_CUSTOM          = "custom";
+    public  static final String                    SCHEMATICS_SCAN            = "scans";
     /**
      * Hut/Decoration, Styles, Levels.
      * This is populated on the client side only
      * Examples:
-     *  - huts/stone/Builder1 => Builder -> stone -> Level 1 , huts/stone/Builder1
-     *  - decorations/walls/stone/Gate => decorations -> walls/stone -> Gate , decorations/walls/stone/Gate
-     *  - custom/scan/458764687564687654 => custom -> scan -> 458764687564687654 , custom/scan/458764687564687654
+     *  - schematics/stone/Builder1 => Builder -> stone -> Level 1 , huts/stone/Builder1
+     *  - schematics/walls/stone/Gate => decorations -> walls/stone -> Gate , decorations/walls/stone/Gate
+     *  - scans/458764687564687654 => scans -> <none> -> 458764687564687654 , scan/458764687564687654
      */
     @NotNull
     private static       Map<String, Map<String, Map<String, String>>> schematicsMap = new HashMap<>();
@@ -66,8 +65,10 @@ public final class Structures
     /**
      * md5 hash for the schematics.
      * format is:
-     * huts/stone/builder1 -> hash
-     * decorations/decoration/Well -> hash
+     * schematics/stone/builder1 -> hash
+     * schematics/decoration/Well -> hash
+     * scans/test/buidling -> hash
+     * cache/458764687564687654 => 458764687564687654
      */
     @NotNull
     private static       Map<String, String>       md5Map                = new HashMap<>();
@@ -110,8 +111,7 @@ public final class Structures
                 @NotNull final URI uri = ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI();
                 final FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
                 final Path basePath = fileSystem.getPath(SCHEMATICS_ASSET_PATH);
-                loadSchematicsForSection(basePath, SCHEMATICS_HUTS);
-                loadSchematicsForSection(basePath, SCHEMATICS_DECORATIONS);
+                loadSchematicsForPrefix(basePath, SCHEMATICS_PREFIX);
             }
             catch (@NotNull IOException | URISyntaxException e)
             {
@@ -123,12 +123,9 @@ public final class Structures
         final File schematicsFolder = Structure.getSchematicsFolder();
         if (schematicsFolder != null)
         {
-            Log.getLogger().info("Load additionnal huts from " + schematicsFolder + '/' + SCHEMATICS_HUTS);
-            checkDirectory(schematicsFolder.toPath().resolve(SCHEMATICS_HUTS).toFile());
-            loadSchematicsForSection(schematicsFolder.toPath(), SCHEMATICS_HUTS);
-            Log.getLogger().info("Load additionnal decorations from " + schematicsFolder + '/' + SCHEMATICS_DECORATIONS);
-            checkDirectory(schematicsFolder.toPath().resolve(SCHEMATICS_DECORATIONS).toFile());
-            loadSchematicsForSection(schematicsFolder.toPath(), SCHEMATICS_DECORATIONS);
+            Log.getLogger().info("Load additionnal huts or decorations from " + schematicsFolder + '/' + SCHEMATICS_PREFIX);
+            checkDirectory(schematicsFolder.toPath().resolve(SCHEMATICS_PREFIX).toFile());
+            loadSchematicsForPrefix(schematicsFolder.toPath(), SCHEMATICS_PREFIX);
         }
 
         final File cacheSchematicFolder = Structure.getCachedSchematicsFolder();
@@ -136,7 +133,7 @@ public final class Structures
         {
             checkDirectory(cacheSchematicFolder);
             Log.getLogger().info("Load cached schematic from " + cacheSchematicFolder);
-            loadSchematicsForSection(cacheSchematicFolder.getParentFile().toPath(), SCHEMATICS_CACHE);
+            loadSchematicsForPrefix(cacheSchematicFolder.getParentFile().toPath(), SCHEMATICS_CACHE);
         }
 
         if (md5Map.size()==0)
@@ -146,10 +143,10 @@ public final class Structures
     }
 
     /**
-     * Load all schematic in the custom folder.
+     * Load all schematic in the scan folder.
      */
     @SideOnly(Side.CLIENT)
-    public static void loadCustomStyleMaps()
+    public static void loadScannedStyleMaps()
     {
         Structure.printFolders();
         if (!allowPlayerSchematics && FMLCommonHandler.instance().getMinecraftServerInstance() == null)
@@ -158,10 +155,10 @@ public final class Structures
         }
 
 
-        schematicsMap.remove(SCHEMATICS_CUSTOM);
+        schematicsMap.remove(SCHEMATICS_SCAN);
         final File schematicsFolder = Structure.getClientSchematicsFolder();
-        checkDirectory(schematicsFolder.toPath().resolve(SCHEMATICS_CUSTOM).toFile());
-        loadSchematicsForSection(schematicsFolder.toPath(), SCHEMATICS_CUSTOM);
+        checkDirectory(schematicsFolder.toPath().resolve(SCHEMATICS_SCAN).toFile());
+        loadSchematicsForPrefix(schematicsFolder.toPath(), SCHEMATICS_SCAN);
     }
 
     /**
@@ -172,9 +169,10 @@ public final class Structures
      * @param section
      * @throws IOException if nothing found.
      */
-    private static void loadSchematicsForSection(@NotNull final Path basePath, @NotNull final String section)
+    private static void loadSchematicsForPrefix(@NotNull final Path basePath, @NotNull final String prefix)
     {
-        try (Stream<Path> walk = Files.walk(basePath.resolve(section)))
+        Log.getLogger().info("Structures: loadSchematicsForPrefix(" + basePath + ", " + prefix + ")");
+        try (Stream<Path> walk = Files.walk(basePath.resolve(prefix)))
         {
             final Iterator<Path> it = walk.iterator();
 
@@ -192,35 +190,44 @@ public final class Structures
 
                     final StructureName structureName = new StructureName(relativePath);
                     final String md5 = Structure.calculateMD5(Structure.getStream(relativePath));
-                    if (md5Map.containsKey(structureName.toString()))
+                    if (md5 == null)
                     {
-                        Log.getLogger().info("Override " + structureName + " md5:" + md5);
+                        Log.getLogger().error("Structures: " + structureName + " with md5:" + md5);
                     }
                     else
                     {
-                        Log.getLogger().info("Add " + structureName + " md5:" + md5);
-                    }
-                    md5Map.put(structureName.toString(), md5);
-                    final int MAX_TOTAL_SIZE = 32767;
-                    final int MAX_SIZE = MAX_TOTAL_SIZE - Integer.SIZE / Byte.SIZE;
-                    final byte[] data = Structure.getStreamAsByteArray(Structure.getStream(structureName.toString()));
-                    final byte[] compressed = Structure.compress(data);
 
-                    if (compressed.length > MAX_SIZE)
-                    {
-                        Log.getLogger().warn("Struvture " + structureName + " is " + compressed.length + " bytes when compress, maximum allower is " + MAX_SIZE + " bytes.");
-                    }
+                        if (md5Map.containsKey(structureName.toString()))
+                        {
+                            Log.getLogger().info("Override " + structureName + " md5:" + md5);
+                        }
+                        else
+                        {
+                            Log.getLogger().info("Add " + structureName + " md5:" + md5);
+                        }
 
-                    if (MineColonies.isClient())
-                    {
-                        addSchematic(structureName);
+                        md5Map.put(structureName.toString(), md5);
+                        final int MAX_TOTAL_SIZE = 32767;
+                        final int MAX_SIZE = MAX_TOTAL_SIZE - Integer.SIZE / Byte.SIZE;
+                        final byte[] data = Structure.getStreamAsByteArray(Structure.getStream(structureName.toString()));
+                        final byte[] compressed = Structure.compress(data);
+
+                        if (compressed.length > MAX_SIZE)
+                        {
+                            Log.getLogger().warn("Structure " + structureName + " is " + compressed.length + " bytes when compress, maximum allower is " + MAX_SIZE + " bytes.");
+                        }
+
+                        if (MineColonies.isClient())
+                        {
+                            addSchematic(structureName);
+                        }
                     }
                 }
             }
         }
         catch (@NotNull IOException e)
         {
-            Log.getLogger().warn("loadSchematicsForSection: Could not load schematics from " + basePath.resolve(section));
+            Log.getLogger().warn("loadSchematicsForPrefix: Could not load schematics from " + basePath.resolve(prefix));
         }
     }
 
@@ -276,6 +283,8 @@ public final class Structures
     @SideOnly(Side.CLIENT)
     private static void addSchematic(@NotNull StructureName structureName)
     {
+//        Log.getLogger().info("addSchematic: section " + structureName.getSection());
+//        Log.getLogger().info("addSchematic: style " + structureName.getStyle());
         if (structureName.getPrefix().equals(SCHEMATICS_CACHE))
         {
             return;
@@ -283,28 +292,31 @@ public final class Structures
 
         if (!schematicsMap.containsKey(structureName.getSection()))
         {
+//            Log.getLogger().info("addSchematic: add section " + structureName.getSection());
             schematicsMap.put(structureName.getSection(), new HashMap<>());
         }
         final Map<String, Map<String, String>> sectionMap = schematicsMap.get(structureName.getSection());
         if (!sectionMap.containsKey(structureName.getStyle()))
         {
+//            Log.getLogger().info("addSchematic: add style " + structureName.getStyle());
             sectionMap.put(structureName.getStyle(), new TreeMap<>());
         }
+        Log.getLogger().info("addSchematic: section:" + structureName.getSection() + " style:" + structureName.getStyle() + " structure:" + structureName.toString());
         final Map<String, String> styleMap = sectionMap.get(structureName.getStyle());
         styleMap.put(structureName.getSchematic(), structureName.toString());
     }
 
     /**
-     * rename a custom structure.
+     * rename a scanned structure.
      * rename the file and the md5 entry
      * @param structureName the structure to add
      * @return the new structureName
      */
     @SideOnly(Side.CLIENT)
-    public static Structures.StructureName renameCustomStructure(@NotNull final StructureName structureName, @NotNull final String name)
+    public static Structures.StructureName renameScannedStructure(@NotNull final StructureName structureName, @NotNull final String name)
     {
-        Log.getLogger().warn("renameCustomStructure(" + structureName + ", " + name + ")");
-        if (!SCHEMATICS_CUSTOM.equals(structureName.getPrefix()))
+        Log.getLogger().warn("renameScannedStructure(" + structureName + ", " + name + ")");
+        if (!SCHEMATICS_SCAN.equals(structureName.getPrefix()))
         {
             Log.getLogger().warn("Renamed failed: Invalid name " + structureName);
             return null;
@@ -316,7 +328,7 @@ public final class Structures
             return null;
         }
 
-        final StructureName newStructureName = new StructureName(SCHEMATICS_CUSTOM + '/' + name);
+        final StructureName newStructureName = new StructureName(SCHEMATICS_SCAN + '/' + name);
 
         if (!hasMD5(structureName))
         {
@@ -344,16 +356,16 @@ public final class Structures
     }
 
     /**
-     * delete a custom structure.
+     * delete a scanned structure.
      * delete the file and the md5 entry
      * @param structureName the structure to delete
      * @return True if the structure have been deleted, False otherwise
      */
     @SideOnly(Side.CLIENT)
-    public static boolean deleteCustomStructure(@NotNull final StructureName structureName)
+    public static boolean deleteScannedStructure(@NotNull final StructureName structureName)
     {
-        Log.getLogger().warn("deleteCustomStructure(" + structureName + ")");
-        if (!SCHEMATICS_CUSTOM.equals(structureName.getPrefix()))
+        Log.getLogger().warn("deleteScannedStructure(" + structureName + ")");
+        if (!SCHEMATICS_SCAN.equals(structureName.getPrefix()))
         {
             Log.getLogger().warn("Delete failed: Invalid name " + structureName);
             return false;
@@ -394,7 +406,7 @@ public final class Structures
 
     /**
      * Get the list of Sections.
-     * Builder, Citizen, Farmer ... + decorations and custom.
+     * Builder, Citizen, Farmer ... + decorations and scans.
      * @return list of sections.
      */
     @NotNull
@@ -456,11 +468,14 @@ public final class Structures
     {
         private final static Pattern levelPattern = Pattern.compile("[^0-9]+([0-9]+)$");
         private final static String LOCALIZED_SCHEMATIC_LEVEL = "com.minecolonies.coremod.gui.buildtool.hut.level";
-        private String section;
-        private String prefix;
-        private String style;
-        private String schematic;
-        private String hut = null;
+        /**
+         * as in Builder, Citizen, TownHall, ... and decorations
+         */
+        private String section   = "";
+        private String prefix    = "";
+        private String style     = "";
+        private String schematic = "";
+        private String hut       = "";
 
         /**
          * Create a StructureName object from a schematic name.
@@ -473,13 +488,13 @@ public final class Structures
 
         /**
          * Create a StructureName
-         * @param section should be huts, decorations, custom of cache.
+         * @param section should be huts, decorations, scan or cache.
          * @param style ex: wood, stone, walls/stone
          * @param schematic as in Builde1, Gate, without the nbt extension.
          */
-        public StructureName(@NotNull final String section, final String style, @NotNull final String schematic)
+        public StructureName(@NotNull final String prefix, final String style, @NotNull final String schematic)
         {
-            String name = section;
+            String name = prefix;
             if (style != null && !style.isEmpty())
             {
                 name = name + '/' + style;
@@ -488,46 +503,68 @@ public final class Structures
             init(name);
         }
 
-
+        /**
+         * fill the StructureName property by parsing the string.
+         */
         private void init(@NotNull final String structureName)
         {
             if (structureName == null || structureName.isEmpty())
             {
                 return;
             }
-            final int firstSeparator = structureName.indexOf('/');
-            final int lastSeparator = structureName.lastIndexOf('/');
-            if (firstSeparator != -1 || lastSeparator != -1)
+
+            String name = structureName;
+
+            // a structure name need to start by scans/, cache, schematics/
+            if (name.startsWith(SCHEMATICS_SCAN+'/'))
             {
-                prefix = structureName.substring(0,firstSeparator);
-                if (firstSeparator == lastSeparator)
-                {
-                    style = "";
-                }
-                else
-                {
-                    style = structureName.substring(firstSeparator+1, lastSeparator);
-                }
-                schematic = structureName.substring(lastSeparator+1);
+                prefix = SCHEMATICS_SCAN;
             }
-
-            if (prefix.equals(SCHEMATICS_HUTS))
+            else if (name.startsWith(SCHEMATICS_CACHE+'/'))
             {
-                final String name = schematic.split("\\d+")[0];
-
-                if (Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + name) != null)
-                {
-                    hut = name;
-                }
-            }
-
-            if (hut == null)
-            {
-                section = prefix;
+                prefix = SCHEMATICS_CACHE;
             }
             else
             {
-                section = hut;
+                if (!name.startsWith(SCHEMATICS_PREFIX+'/'))
+                {
+                    name = SCHEMATICS_PREFIX +'/'+ name;
+                }
+                prefix = SCHEMATICS_PREFIX;
+            }
+            //Log.getLogger().info("StructureName: prefix = "+ prefix);
+
+            name = name.substring(prefix.length()+1);
+            final int lastSeparator = name.lastIndexOf('/');
+            if (lastSeparator == -1)
+            {
+                schematic = name;
+            }
+            else
+            {
+                style = name.substring(0,lastSeparator);
+                schematic = name.substring(lastSeparator+1);
+            }
+
+            //Log.getLogger().info("StructureName: style = "+ style);
+            //Log.getLogger().info("StructureName: schematic = "+ schematic);
+
+
+            //The section is the prefix, except fot hut
+            section = prefix;
+            if (prefix.equals(SCHEMATICS_PREFIX))
+            {
+                hut = schematic.split("\\d+")[0];
+                section = SCHEMATICS_PREFIX;
+
+                if (Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut) != null)
+                {
+                    section = hut;
+                }
+                else
+                {
+                    hut = "";
+                }
             }
 
             if (toString().compareTo(structureName) != 0)
@@ -538,7 +575,7 @@ public final class Structures
                 Log.getLogger().error("prefix = " + prefix);
                 Log.getLogger().error("style = " + style);
                 Log.getLogger().error("schematic = " + schematic);
-                Log.getLogger().error("firstSeparator = " + firstSeparator);
+                Log.getLogger().error("hut = " + hut);
                 Log.getLogger().error("lastSeparator = " + lastSeparator);
 
 
@@ -553,7 +590,7 @@ public final class Structures
          */
         public boolean isHut()
         {
-            return hut != null;
+            return !hut.isEmpty();
         }
 
         /**
@@ -568,7 +605,7 @@ public final class Structures
 
         /**
          * Get the section for the schematic.
-         * it should be huts, custom, the block name (if isHut)
+         * it should be huts, scan, the block name (if isHut)
          * @return the section the schematic belong to.
          */
         public String getSection()
@@ -578,11 +615,11 @@ public final class Structures
 
         /**
          * Get the prefix for the schematics
-         * @return huts, decorations, cache or custom.
+         * @return huts, decorations, cache or scan.
          */
         public String getPrefix()
         {
-            return section;
+            return prefix;
         }
 
         /**
@@ -624,14 +661,31 @@ public final class Structures
         }
 
         /**
+         * get a string to save in the work order.
+         * For combatibility reason the prefix 'schematics' is not stored
+         * schematics/stone/Builder1 will return stone/Builder1
+         * However scans and cache remain identical re
+         * schematics/stone/Builder1 will return stone/Builder1
+         */
+/*        public String getWorkOrder()
+        {
+            if (SCHEMATICS_PREFIX.equals(prefix))
+            {
+                return style + '/' + schematic;
+            }
+            return prefix + '/' + style + '/' + schematic;
+        }
+*/
+
+        /**
          * Get the full name of the scematic.
-         * Examples: huts/stone/Builder4 or custom/test/myown
+         * Examples: huts/stone/Builder4 or scan/test/myown
          * This is what Structure.getStream use as a parameter.
          * @return the full name of the schematics
          */
         public String toString()
         {
-            if (style.isEmpty())
+            if (style == null || style.isEmpty())
             {
                 return prefix + '/' + schematic;
             }
@@ -647,7 +701,12 @@ public final class Structures
      */
     public static boolean hasMD5(@NotNull final StructureName structureName)
     {
-        return md5Map.containsKey(structureName.toString());
+        return hasMD5(structureName.toString());
+    }
+
+    public static boolean hasMD5(@NotNull final String structureName)
+    {
+        return md5Map.containsKey(structureName);
     }
 
 
@@ -672,12 +731,16 @@ public final class Structures
      */
     public static String getMD5(@NotNull final StructureName structureName)
     {
-        if (!md5Map.containsKey(structureName.toString()))
+        return getMD5(structureName.toString());
+    }
+    public static String getMD5(@NotNull final String structureName)
+    {
+        if (!md5Map.containsKey(structureName))
         {
             return null;
         }
 
-        return md5Map.get(structureName.toString());
+        return md5Map.get(structureName);
     }
 
 
@@ -734,14 +797,14 @@ public final class Structures
     }
 
     /**
-     * delete a custom structure.
+     * delete a cached structure.
      * delete the file and the md5 entry
      * @param structureName the structure to delete
      * @return True if the structure have been deleted, False otherwise
      */
     private static boolean deleteCachedStructure(@NotNull final StructureName structureName)
     {
-        Log.getLogger().warn("deleteCustomStructure(" + structureName + ")");
+        Log.getLogger().warn("deleteCachedStructure(" + structureName + ")");
         if (!SCHEMATICS_CACHE.equals(structureName.getPrefix()))
         {
             Log.getLogger().warn("Delete failed: Invalid name " + structureName);
@@ -879,14 +942,14 @@ public final class Structures
     @SideOnly(Side.CLIENT)
     public static void setMD5s(final Map<String, String> md5s)
     {
-        // First clear all section except custom
-        schematicsMap.entrySet().removeIf(entry -> !entry.getKey().equals(SCHEMATICS_CUSTOM));
+        // First clear all section except scan
+        schematicsMap.entrySet().removeIf(entry -> !entry.getKey().equals(SCHEMATICS_SCAN));
 
         // Then we update all mdp hash and fill the schematicsMap
         for (Map.Entry<String, String> md5 : md5s.entrySet())
         {
             final StructureName sn = new StructureName(md5.getKey());
-            if (!sn.getSection().equals(SCHEMATICS_CUSTOM))
+            if (!sn.getSection().equals(SCHEMATICS_SCAN))
             {
                 md5Map.put(md5.getKey(),md5.getValue());
                 addSchematic(sn);
