@@ -1043,12 +1043,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             returnStack = InventoryUtils.addItemStackToProviderWithResult(buildingWorker.getTileEntity(), tempStack);
         }
 
-        new InvWrapper(worker.getInventoryCitizen()).extractItem(slot, stack.stackSize - amountToKeep, false);
-
         if (returnStack == null)
         {
+            new InvWrapper(worker.getInventoryCitizen()).extractItem(slot, stack.stackSize - amountToKeep, false);
             return amountToKeep == 0;
         }
+
+        new InvWrapper(worker.getInventoryCitizen()).extractItem(slot, stack.stackSize - returnStack.stackSize - amountToKeep, false);
 
         //Check that we are not inserting into a full inventory.
         return stack.stackSize != returnStack.stackSize;

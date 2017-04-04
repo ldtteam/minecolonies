@@ -596,6 +596,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     /**
      * Initiates structure loading.
      * @param mineNode the node to load it for.
+     * @param rotateTimes The amount of time to rotate the structure.
+     * @param structurePos The position of the structure.
      */
     private void initStructure(final Node mineNode, final int rotateTimes, BlockPos structurePos)
     {

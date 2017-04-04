@@ -163,18 +163,17 @@ public abstract class AbstractCombinedItemHandler
 
     /**
      * Returns the ItemStack in a given slot.
-     * <p>
+     *
      * The result's stack size may be greater than the itemstacks max size.
-     * <p>
+     *
      * If the result is null, then the slot is empty.
      * If the result is not null but the stack size is zero, then it represents
      * an empty slot that will only accept* a specific itemstack.
-     * <p>
-     * <p/>
+     *
      * IMPORTANT: This ItemStack MUST NOT be modified. This method is not for
      * altering an inventories contents. Any implementers who are able to detect
      * modification through this method should throw an exception.
-     * <p/>
+     *
      * SERIOUSLY: DO NOT MODIFY THE RETURNED ITEMSTACK
      *
      * @param slot Slot to query

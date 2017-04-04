@@ -237,7 +237,7 @@ public class InventoryUtils
 
     /**
      * Checks if a player has an item in the {@link IItemHandler}.
-     * Checked by {@link #getItemCountInItemHandler(IItemHandler, Predicate<ItemStack>)} &gt; 0;
+     * Checked by {@link InventoryUtils#getItemCountInItemHandler(IItemHandler, Predicate<ItemStack>)} &gt; 0;
      *
      * @param itemHandler  {@link IItemHandler} to scan
      * @param itemStackSelectionPredicate The predicate to match the ItemStack to.                    
@@ -702,7 +702,7 @@ public class InventoryUtils
 
     /**
      * Checks if a player has an item in the {@link ICapabilityProvider}.
-     * Checked by {@link #getItemCountInProvider(ICapabilityProvider, Predicate<ItemStack>)} &gt; 0;
+     * Checked by {@link InventoryUtils#getItemCountInProvider(ICapabilityProvider, Predicate<ItemStack>)} &gt; 0;
      *
      * @param Provider  {@link ICapabilityProvider} to scan
      * @param itemStackSelectionPredicate The predicate to match the ItemStack to.                    
@@ -1190,7 +1190,7 @@ public class InventoryUtils
 
     /**
      * Checks if a player has an item in the {@link ICapabilityProvider}, for a given {@link EnumFacing}.
-     * Checked by {@link #getItemCountInProvider(ICapabilityProvider, Predicate<ItemStack>)} &gt; 0;
+     * Checked by {@link InventoryUtils#getItemCountInProvider(ICapabilityProvider, Predicate<ItemStack>)} &gt; 0;
      *
      * @param provider  {@link ICapabilityProvider} to scan
      * @param facing The side to check for.
