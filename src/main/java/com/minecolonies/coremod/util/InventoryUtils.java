@@ -237,7 +237,7 @@ public class InventoryUtils
 
     /**
      * Checks if a player has an item in the {@link IItemHandler}.
-     * Checked by {@link InventoryUtils#getItemCountInItemHandler(IItemHandler, Predicate<ItemStack>)} &gt; 0;
+     * Checked by {@link InventoryUtils#getItemCountInItemHandler(IItemHandler, Predicate)} &gt; 0;
      *
      * @param itemHandler  {@link IItemHandler} to scan
      * @param itemStackSelectionPredicate The predicate to match the ItemStack to.                    
@@ -476,6 +476,7 @@ public class InventoryUtils
      *
      * @param itemHandler {@link IItemHandler} to add itemstack to.
      * @param itemStack ItemStack to add.
+     * @param itemStackToKeepPredicate The {@link Predicate} that determines which ItemStacks to keep in the inventory. Return false to replace.
      * @return itemStack which has been replaced, null if none has been replaced.
      */
     @Nullable
@@ -702,7 +703,7 @@ public class InventoryUtils
 
     /**
      * Checks if a player has an item in the {@link ICapabilityProvider}.
-     * Checked by {@link InventoryUtils#getItemCountInProvider(ICapabilityProvider, Predicate<ItemStack>)} &gt; 0;
+     * Checked by {@link InventoryUtils#getItemCountInProvider(ICapabilityProvider, Predicate)} &gt; 0;
      *
      * @param Provider  {@link ICapabilityProvider} to scan
      * @param itemStackSelectionPredicate The predicate to match the ItemStack to.                    
@@ -871,6 +872,7 @@ public class InventoryUtils
      *
      * @param provider {@link ICapabilityProvider} to add itemstack to.
      * @param itemStack ItemStack to add.
+     * @param itemStackToKeepPredicate The {@link Predicate} that determines which ItemStacks to keep in the inventory. Return false to replace.
      * @return itemStack which has been replaced.
      */
     @Nullable
@@ -1190,7 +1192,7 @@ public class InventoryUtils
 
     /**
      * Checks if a player has an item in the {@link ICapabilityProvider}, for a given {@link EnumFacing}.
-     * Checked by {@link InventoryUtils#getItemCountInProvider(ICapabilityProvider, Predicate<ItemStack>)} &gt; 0;
+     * Checked by {@link InventoryUtils#getItemCountInProvider(ICapabilityProvider, Predicate)} &gt; 0;
      *
      * @param provider  {@link ICapabilityProvider} to scan
      * @param facing The side to check for.
@@ -1257,6 +1259,7 @@ public class InventoryUtils
      * merged.
      *
      * @param provider the {@link ICapabilityProvider} to check.
+     * @param facing The side to get the {@link IItemHandler} in the {@link ICapabilityProvider} from to use.
      * @param block The block to test against.
      * @param itemDamage The item damage of a stack with that block to test against.
      * @return slot number if found, -1 when not found.
@@ -1271,6 +1274,7 @@ public class InventoryUtils
      * merged.
      *
      * @param provider the {@link ICapabilityProvider} to check.
+     * @param facing The side to get the {@link IItemHandler} in the {@link ICapabilityProvider} from to use.
      * @param item The item to test against.
      * @param itemDamage The item damage of a stack with that block to test against.
      * @return slot number if found, -1 when not found.
@@ -1284,6 +1288,7 @@ public class InventoryUtils
      * Returns a slot number if a {@link ICapabilityProvider} contains given ItemStack item that is not fully stack and with which the given stack can be merged.
      *
      * @param provider the {@link ICapabilityProvider} to check.
+     * @param facing The side to get the {@link IItemHandler} in the {@link ICapabilityProvider} from to use.
      * @param stack The stack for which a fillable possition needs to be found.
      * @return slot number if found, -1 when not found.
      */
@@ -1296,6 +1301,7 @@ public class InventoryUtils
      * Returns a slot number if a {@link ICapabilityProvider} contains given ItemStack item that is not fully stacked.
      *
      * @param provider the {@link ICapabilityProvider} to check.
+     * @param facing The side to get the {@link IItemHandler} in the {@link ICapabilityProvider} from to use.
      * @param itemStackMergingPredicate Predicate used to test if a given stack should be merged.
      * @return slot number if found, -1 when not found.
      */
