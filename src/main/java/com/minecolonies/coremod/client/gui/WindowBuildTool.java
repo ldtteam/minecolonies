@@ -362,10 +362,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         //TODO label of the button should not be set here but inside DropDownList
         if (list == sectionsDropDownList)
         {
-            String name = sections.get(sectionsDropDownList.getSelectedIndex());
+            final String name = sections.get(sectionsDropDownList.getSelectedIndex());
             if (Structures.SCHEMATICS_SCAN.equals(name))
             {
-                name = LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.scans");
                 renameButton.setVisible(true);
                 deleteButton.setVisible(true);
             }
@@ -373,18 +372,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
             {
                 renameButton.setVisible(false);
                 deleteButton.setVisible(false);
-                if (Structures.SCHEMATICS_PREFIX.equals(name))
-                {
-                    name = LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.decorations");
-                }
-                else
-                {
-                    //should be a hut
-                    name = LanguageHandler.format("tile.minecolonies.blockHut" + name + ".name");
-                }
             }
-
-            findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(name);
             updateStyles();
 
         }
@@ -724,7 +712,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
     /**
      * Change to the next section, Builder, Citizen ... Decorations and Scan.
      */
-    public void nextSection()
+    private void nextSection()
     {
         sectionsDropDownList.selectNext();
     }
@@ -732,7 +720,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
     /**
      * Change to the previous section, Builder, Citizen ... Decorations and Scan.
      */
-    public void previousSection()
+    private void previousSection()
     {
         sectionsDropDownList.selectPrevious();
     }
@@ -762,7 +750,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
     /**
      * Change to the next style.
      */
-    public void nextStyle()
+    private void nextStyle()
     {
         stylesDropDownList.selectNext();
     }
@@ -770,7 +758,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
     /**
      * Change to the previous style.
      */
-    public void previousStyle()
+    private void previousStyle()
     {
         stylesDropDownList.selectPrevious();
     }
@@ -778,7 +766,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
     /**
      * Update the styles list but try to keep the same one.
      */
-    public void updateStyles()
+    private void updateStyles()
     {
         final String currentStyle = styles.get(stylesDropDownList.getSelectedIndex());
         styles = Structures.getStylesFor(sections.get(sectionsDropDownList.getSelectedIndex()));
@@ -798,7 +786,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
     /**
      * Go to the next schematic.
      */
-    public void nextSchematic()
+    private void nextSchematic()
     {
         schematicsDropDownList.selectNext();
     }
@@ -806,7 +794,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
     /**
      * Go to the previous schematic.
      */
-    public void previousSchematic()
+    private void previousSchematic()
     {
         schematicsDropDownList.selectPrevious();
     }
@@ -814,7 +802,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
     /**
      * Update the list a available schematics.
      */
-    public void updateSchematics()
+    private void updateSchematics()
     {
         final String schematic = schematics.get(schematicsDropDownList.getSelectedIndex());
         final String currentSchematic = (schematic.isEmpty())?"":(new Structures.StructureName(schematic)).getSchematic();
