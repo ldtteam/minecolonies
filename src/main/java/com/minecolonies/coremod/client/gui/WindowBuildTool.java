@@ -47,7 +47,7 @@ import org.lwjgl.input.Keyboard;
 /**
  * BuildTool window.
  */
-public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDoneCancel.Handler
+public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDoneCancel.Handler, DropDownList.Handler
 {
     /**
      * This button is used to set the section either huts (Builder, Town Hall), decorations or scan mode.
@@ -248,6 +248,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         deleteButton = findPaneOfTypeByID(BUTTON_DELETE, Button.class);
 
         sectionsDropDownList = findPaneOfTypeByID("buildingType", DropDownList.class);
+        sectionsDropDownList.setDDHandler(this);
         Log.getLogger().info("sectionsDropDownList="+sectionsDropDownList);
         sectionsDropDownList.setDataProvider(new DropDownList.DataProvider()
         {
@@ -256,12 +257,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
             {
                 return sections.size();
             }
-            //TODO remove this
             @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
-                updateDropDownItem(sectionsDropDownList, rowPane, index, getLabel(index));
-            }
             public String getLabel(final int index)
             {
                 final String name = sections.get(index);
@@ -276,14 +272,10 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
                 //should be a hut
                 return LanguageHandler.format("tile.minecolonies.blockHut" + name + ".name");
             }
-            @Override
-            public void onSelectedItemChanged(final DropDownList list, final int index)
-            {
-		        onItemSelected(list, index);
-            }
         });
 
         stylesDropDownList = findPaneOfTypeByID("style", DropDownList.class);
+        stylesDropDownList.setDDHandler(this);
         stylesDropDownList.setDataProvider(new DropDownList.DataProvider()
         {
             @Override
@@ -291,26 +283,15 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
             {
                 return styles.size();
             }
-            //TODO remove this
             @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
-                updateDropDownItem(stylesDropDownList, rowPane, index, getLabel(index));
-            }
-
             public String getLabel(final int index)
             {
                 return styles.get(index);
             }
-
-            @Override
-            public void onSelectedItemChanged(final DropDownList list, final int index)
-            {
-                onItemSelected(list, index);
-            }
         });
 
         schematicsDropDownList = findPaneOfTypeByID("schematic", DropDownList.class);
+        schematicsDropDownList.setDDHandler(this);
         schematicsDropDownList.setDataProvider(new DropDownList.DataProvider()
         {
             @Override
@@ -318,12 +299,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
             {
                 return schematics.size();
             }
-            //TODO remove this
             @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
-                updateDropDownItem(schematicsDropDownList, rowPane, index, getLabel(index));
-            }
             public String getLabel(final int index)
             {
                 final String name = schematics.get(index);
@@ -331,33 +307,10 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
 
                 return sn.getLocalizedName();
             }
-            @Override
-            public void onSelectedItemChanged(final DropDownList list, final int index)
-            {
-                onItemSelected(list, index);
-            }
         });
     }
 
-    //Should be inside DropDownList
-    public void updateDropDownItem(@NotNull final DropDownList list, @NotNull final Pane rowPane, final int index, final String label)
-    {
-        final Button choiceButton = rowPane.findPaneOfTypeByID("button", Button.class);
-        rowPane.findPaneOfTypeByID("id", Label.class).setLabelText(Integer.toString(index));
-        choiceButton.setLabel(label);
-        choiceButton.setHandler(new Button.Handler()
-        {
-            public void onButtonClicked(@NotNull final Button button)
-            {
-                @NotNull final Label idLabel = button.getParent().findPaneOfTypeByID("id", Label.class);;
-                final int index = Integer.parseInt(idLabel.getLabelText());
-                list.setSelectedIndex(index);
-                list.close();
-            }
-        });
-    }
-
-    public void onItemSelected(final DropDownList list, final int index)
+    public void onSelectedItemChanged(final DropDownList list, final int index)
     {
         //TODO label of the button should not be set here but inside DropDownList
         if (list == sectionsDropDownList)

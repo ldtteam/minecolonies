@@ -2,6 +2,7 @@ package com.minecolonies.blockout.views;
 
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.ButtonVanilla;
+import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.OverlayView;
 import com.minecolonies.blockout.Pane;
@@ -14,11 +15,13 @@ import java.util.List;
 /**
  * A DropDownList is a Button which when click display a ScrollingList.
  */
+//TODO do not extend ButtonVanilla but extend view
 public class DropDownList extends ButtonVanilla
 {
     protected OverlayView   overlay;
     protected ScrollingList list;
     protected DataProvider  dataProvider;
+    protected Handler  handlerdd;
     /**
      * width of the scrolling list, by default it is the same as the DropDownList width.
      */
@@ -120,13 +123,31 @@ public class DropDownList extends ButtonVanilla
     {
         selectedIndex = index;
         setLabel(dataProvider.getLabel(selectedIndex));
-        dataProvider.onSelectedItemChanged(this,index);
+        if (handlerdd != null)
+        {
+             handlerdd.onSelectedItemChanged(this,index);
+        }
     }
 
     public void setDataProvider(final DataProvider p)
     {
         dataProvider=p;
-        list.setDataProvider(p);
+        final DropDownList ddList = this;
+        list.setDataProvider(new ScrollingList.DataProvider()
+        {
+            @Override
+            public int getElementCount()
+            {
+                return dataProvider.getElementCount();
+            }
+            //TODO remove this
+            @Override
+            public void updateElement(final int index, @NotNull final Pane rowPane)
+            {
+                updateDropDownItem(ddList, rowPane, index, dataProvider.getLabel(index));
+            }
+        });
+
         refreshElementPanes();
     }
 
@@ -167,9 +188,62 @@ public class DropDownList extends ButtonVanilla
     /**
      * Interface for a data provider that updates pane scrolling list pane info.
      */
-    public interface DataProvider extends ScrollingList.DataProvider
+    public interface DataProvider
     {
+        public int getElementCount();
         public String getLabel(final int index);
-        public void onSelectedItemChanged(final DropDownList list, final int index);
+    }
+
+    /*public void onButtonClicked(@NotNull final Button button)
+    {
+        @NotNull final Label idLabel = button.getParent().findPaneOfTypeByID("id", Label.class);;
+        final int index = Integer.parseInt(idLabel.getLabelText());
+        list.setSelectedIndex(index);
+        list.close();
+    }
+*/
+
+    private void updateDropDownItem(@NotNull final DropDownList list, @NotNull final Pane rowPane, final int index, final String label)
+    {
+        final Button choiceButton = rowPane.findPaneOfTypeByID("button", Button.class);
+        rowPane.findPaneOfTypeByID("id", Label.class).setLabelText(Integer.toString(index));
+        choiceButton.setLabel(label);
+        choiceButton.setHandler(new Button.Handler()
+        {
+            public void onButtonClicked(@NotNull final Button button)
+            {
+                @NotNull final Label idLabel = button.getParent().findPaneOfTypeByID("id", Label.class);;
+                final int index = Integer.parseInt(idLabel.getLabelText());
+                list.setSelectedIndex(index);
+                list.close();
+            }
+        });
+    }
+
+
+    /**
+     * Set the button handler for this button.
+     *
+     * @param h The new handler.
+     */
+    //TODO rename to setHandler once we do not extend ButtonVanilla
+    public void setDDHandler(final Handler h)
+    {
+        handlerdd = h;
+    }
+
+    /**
+     * Used for windows that have dialog message.
+     */
+    @FunctionalInterface
+    public interface Handler
+    {
+        /**
+         * Called when a button is clicked.
+         *
+         * @param dialog the dialog that was closed.
+         * @param done whether it is done or cancel.
+         */
+        void onSelectedItemChanged(final DropDownList list, final int index);
     }
 }
