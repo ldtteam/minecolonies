@@ -310,7 +310,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
     private void initStyleNavigation()
     {
         registerButton(BUTTON_PREVIOUS_STYLE_ID, this::previousStyle);
-        registerButton(BUTTON_PREVIOUS_STYLE_ID, this::nextStyle);
+        registerButton(BUTTON_NEXT_STYLE_ID, this::nextStyle);
         stylesDropDownList = findPaneOfTypeByID(DROPDOWN_STYLE_ID, DropDownList.class);
         stylesDropDownList.setDDHandler(this);
         stylesDropDownList.setDataProvider(new DropDownList.DataProvider()
@@ -323,7 +323,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
             @Override
             public String getLabel(final int index)
             {
-                return styles.get(index);
+                if (index >= 0 && index < styles.size())
+                    return styles.get(index);
+                return "";
             }
         });
     }
@@ -345,7 +347,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
             public String getLabel(final int index)
             {
                 final String name = schematics.get(index);
-                final Structures.StructureName sn = new Structures.StructureName(schematics.get(schematicsDropDownList.getSelectedIndex()));
+                final Structures.StructureName sn = new Structures.StructureName(schematics.get(index));
 
                 return sn.getLocalizedName();
             }
@@ -441,7 +443,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
      */
     private void updateStyles()
     {
-        final String currentStyle = styles.get(stylesDropDownList.getSelectedIndex());
+        String currentStyle = "";
+        if (stylesDropDownList.getSelectedIndex()> -1 && stylesDropDownList.getSelectedIndex() < styles.size())
+        {
+            currentStyle = styles.get(stylesDropDownList.getSelectedIndex());
+        }
         styles = Structures.getStylesFor(sections.get(sectionsDropDownList.getSelectedIndex()));
         int newIndex = styles.indexOf(currentStyle);
         if (newIndex == -1)
@@ -477,7 +483,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
      */
     private void updateSchematics()
     {
-        final String schematic = schematics.get(schematicsDropDownList.getSelectedIndex());
+        String schematic = "";
+        if (schematicsDropDownList.getSelectedIndex()>-1 && schematicsDropDownList.getSelectedIndex() < schematics.size())
+        {
+            schematic = schematics.get(schematicsDropDownList.getSelectedIndex());
+        }
         final String currentSchematic = (schematic.isEmpty())?"":(new Structures.StructureName(schematic)).getSchematic();
         String section = sections.get(sectionsDropDownList.getSelectedIndex());
         String style = styles.get(stylesDropDownList.getSelectedIndex());
@@ -849,6 +859,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
     private void deleteClicked()
     {
         confirmDeleteDialog = new DialogDoneCancel(getWindow());
+        confirmDeleteDialog.setHandler(this);
         final Structures.StructureName structureName = new Structures.StructureName(schematics.get(schematicsDropDownList.getSelectedIndex()));
         confirmDeleteDialog.setTitle(LanguageHandler.format("com.minecolonies.coremod.gui.structure.delete.title"));
         confirmDeleteDialog.setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.structure.delete.body", structureName.toString()));

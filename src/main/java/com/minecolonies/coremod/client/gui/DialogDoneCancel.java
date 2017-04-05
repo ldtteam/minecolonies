@@ -17,7 +17,7 @@ import java.util.function.Consumer;
 /**
  * Manage windows and their events.
  */
-public class DialogDoneCancel extends OverlayView
+public class DialogDoneCancel extends OverlayView implements Button.Handler
 {
     public static final int CANCEL = 0;
     public static final int DONE   = 1;
@@ -46,7 +46,11 @@ public class DialogDoneCancel extends OverlayView
         contentText  = findPaneOfTypeByID("textcontent", Text.class);
         doneButton   = findPaneOfTypeByID("done", Button.class);
         cancelButton = findPaneOfTypeByID("cancel", Button.class);
+        doneButton.setHandler(this);
+        cancelButton.setHandler(this);
         this.window  = window;
+        setPosition(0, 0);
+        setVisible(false);
     }
 
     public void setTitle(final String title)
@@ -72,6 +76,11 @@ public class DialogDoneCancel extends OverlayView
     public void onButtonClicked(Button button)
     {
         this.setVisible(false);
+        if (handler == null)
+        {
+            Log.getLogger().error("DialogDoneCancel does not have a handler.");
+            return;
+        }
         if (button == doneButton)
         {
             handler.onDialogClosed(this, DONE);
@@ -85,7 +94,12 @@ public class DialogDoneCancel extends OverlayView
     @Override
     public void setVisible(final boolean visible)
     {
-        this.putInside(window);
+        if (visible)
+        {
+            setSize(window.getInteriorWidth(),window.getInteriorHeight());
+            //Make sure we are on top
+            putInside(window);
+        }
         super.setVisible(visible);
     }
 

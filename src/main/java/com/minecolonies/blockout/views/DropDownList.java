@@ -121,11 +121,13 @@ public class DropDownList extends ButtonVanilla
 
     public void setSelectedIndex(final int index)
     {
+        if (index <0 || index >= dataProvider.getElementCount()) return;
         selectedIndex = index;
+
         setLabel(dataProvider.getLabel(selectedIndex));
         if (handlerdd != null)
         {
-             handlerdd.onSelectedItemChanged(this,index);
+            handlerdd.onSelectedItemChanged(this,index);
         }
     }
 
