@@ -94,7 +94,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
      */
     private static final String BUTTON_NEXT_SCHEMATIC_ID = "nextSchematic";
 
-
     /**
      * This button will send a packet to the server telling it to place this hut/decoration.
      */
@@ -133,7 +132,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
     /**
      * Move the structure preview back.
      */
-    private static final String BUTTON_BACK = "back";
+    private static final String BUTTON_BACKWARD = "backward";
 
     /**
      * Move the structure preview left.
@@ -263,7 +262,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         registerButton(BUTTON_LEFT, this::moveLeftClicked);
         registerButton(BUTTON_MIRROR, WindowBuildTool::mirror);
         registerButton(BUTTON_RIGHT, this::moveRightClicked);
-        registerButton(BUTTON_BACK, this::moveBackClicked);
+        registerButton(BUTTON_BACKWARD, this::moveBackClicked);
         registerButton(BUTTON_FORWARD, this::moveForwardClicked);
         registerButton(BUTTON_UP, WindowBuildTool::moveUpClicked);
         registerButton(BUTTON_DOWN, WindowBuildTool::moveDownClicked);
@@ -353,9 +352,171 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         });
     }
 
+    /**
+     * Called when the window is opened.
+     * Sets up the buttons for either hut mode or decoration mode.
+     */
+    @Override
+    public void onOpened()
+    {
+        Structures.loadScannedStyleMaps();
+
+        sections.clear();
+        final InventoryPlayer inventory = this.mc.player.inventory;
+        final List<String> allSections = Structures.getSections();
+        for(String section: allSections)
+        {
+            if (section.equals(Structures.SCHEMATICS_PREFIX) || section.equals(Structures.SCHEMATICS_SCAN) || inventoryHasHut(inventory, section))
+            {
+                sections.add(section);
+            }
+        }
+
+        setStructureName(Settings.instance.getStructureName());
+    }
+
+    public void onUpdate()
+    {
+        super.onUpdate();
+
+        if (ColonyManager.isSchematicDownloaded())
+        {
+            ColonyManager.setSchematicDownloaded(false);
+            changeSchematic();
+        }
+    }
+
+    /**
+     * Called when the window is closed.
+     * If there is a current structure, its information is stored in {@link Settings}.
+     */
+    @Override
+    public void onClosed()
+    {
+        if (Settings.instance.getActiveStructure() != null)
+        {
+            Settings.instance.setSchematicInfo(schematics.get(schematicsDropDownList.getSelectedIndex()), rotation);
+        }
+    }
+
+
+    /**
+     * ---------------- Schematic Navigation Handling -----------------
+     */
+
+    /**
+     * Change to the next section, Builder, Citizen ... Decorations and Scan.
+     */
+    private void nextSection()
+    {
+        sectionsDropDownList.selectNext();
+    }
+
+    /**
+     * Change to the previous section, Builder, Citizen ... Decorations and Scan.
+     */
+    private void previousSection()
+    {
+        sectionsDropDownList.selectPrevious();
+    }
+
+    /**
+     * Change to the next style.
+     */
+    private void nextStyle()
+    {
+        stylesDropDownList.selectNext();
+    }
+
+    /**
+     * Change to the previous style.
+     */
+    private void previousStyle()
+    {
+        stylesDropDownList.selectPrevious();
+    }
+
+    /**
+     * Update the styles list but try to keep the same one.
+     */
+    private void updateStyles()
+    {
+        final String currentStyle = styles.get(stylesDropDownList.getSelectedIndex());
+        styles = Structures.getStylesFor(sections.get(sectionsDropDownList.getSelectedIndex()));
+        int newIndex = styles.indexOf(currentStyle);
+        if (newIndex == -1)
+        {
+            newIndex = 0;
+        }
+
+        final boolean enabled = styles.size() > 1;
+        findPaneOfTypeByID(BUTTON_PREVIOUS_STYLE_ID, Button.class).setEnabled(enabled);
+        findPaneOfTypeByID(DROPDOWN_STYLE_ID, Button.class).setEnabled(enabled);
+        findPaneOfTypeByID(BUTTON_NEXT_STYLE_ID, Button.class).setEnabled(enabled);
+        stylesDropDownList.setSelectedIndex(newIndex);
+    }
+
+    /**
+     * Go to the next schematic.
+     */
+    private void nextSchematic()
+    {
+        schematicsDropDownList.selectNext();
+    }
+
+    /**
+     * Go to the previous schematic.
+     */
+    private void previousSchematic()
+    {
+        schematicsDropDownList.selectPrevious();
+    }
+
+    /**
+     * Update the list a available schematics.
+     */
+    private void updateSchematics()
+    {
+        final String schematic = schematics.get(schematicsDropDownList.getSelectedIndex());
+        final String currentSchematic = (schematic.isEmpty())?"":(new Structures.StructureName(schematic)).getSchematic();
+        String section = sections.get(sectionsDropDownList.getSelectedIndex());
+        String style = styles.get(stylesDropDownList.getSelectedIndex());
+        schematics = Structures.getSchematicsFor(section, style);
+        int newIndex = -1;
+        for (int i = 0 ; i < schematics.size();i++)
+        {
+            Structures.StructureName sn = new Structures.StructureName(schematics.get(i));
+            if (sn.getSchematic().equals(currentSchematic))
+            {
+                newIndex = i;
+                break;
+            }
+        }
+
+        if (newIndex == -1)
+        {
+            Log.getLogger().info("Can no keep the schematic "+ currentSchematic);
+            newIndex = 0;
+        }
+        else
+        {
+           Log.getLogger().info("Keep the schematic "+ currentSchematic);
+        }
+
+        final boolean enabled = schematics.size() > 1;
+        findPaneOfTypeByID(BUTTON_PREVIOUS_SCHEMATIC_ID, Button.class).setEnabled(enabled);
+        findPaneOfTypeByID(DROPDOWN_SCHEMATIC_ID, Button.class).setEnabled(enabled);
+        findPaneOfTypeByID(BUTTON_NEXT_SCHEMATIC_ID, Button.class).setEnabled(enabled);
+        schematicsDropDownList.setSelectedIndex(newIndex);
+    }
+
+
+
+
+
+
     public void onSelectedItemChanged(final DropDownList list, final int index)
     {
-        //TODO label of the button should not be set here but inside DropDownList
         if (list == sectionsDropDownList)
         {
             final String name = sections.get(sectionsDropDownList.getSelectedIndex());
@@ -430,6 +591,10 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         return inventory.hasItemStack(new ItemStack(Block.getBlockFromName(Constants.MOD_ID + HUT_PREFIX + hut)));
     }
 
+    /*
+     * ---------------- Button Handling -----------------
+     */
+
     /**
      * Move the schematic up.
      */
@@ -447,43 +612,67 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
     }
 
     /**
-     * Called when the window is opened.
-     * Sets up the buttons for either hut mode or decoration mode.
+     * Move the structure left.
      */
-    @Override
-    public void onOpened()
+    private void moveLeftClicked()
     {
-        Structures.loadScannedStyleMaps();
-
-        sections.clear();
-        final InventoryPlayer inventory = this.mc.player.inventory;
-        final List<String> allSections = Structures.getSections();
-        for(String section: allSections)
-        {
-            if (section.equals(Structures.SCHEMATICS_PREFIX) || section.equals(Structures.SCHEMATICS_SCAN) || inventoryHasHut(inventory, section))
-            {
-                sections.add(section);
-            }
-        }
-
-        setStructureName(Settings.instance.getStructureName());
+        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.player.getHorizontalFacing().rotateYCCW()));
     }
 
     /**
-     * Called when the window is closed.
-     * If there is a current structure, its information is stored in {@link Settings}.
+     * Move the structure right.
      */
-    @Override
-    public void onClosed()
+    private void moveRightClicked()
     {
-        if (Settings.instance.getActiveStructure() != null)
-        {
-            Settings.instance.setSchematicInfo(schematics.get(schematicsDropDownList.getSelectedIndex()), rotation);
-        }
+        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.player.getHorizontalFacing().rotateY()));
     }
 
+    /**
+     * Move the structure forward.
+     */
+    private void moveForwardClicked()
+    {
+        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.player.getHorizontalFacing()));
+    }
+
+    /**
+     * Move the structure back.
+     */
+    private void moveBackClicked()
+    {
+        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.player.getHorizontalFacing().getOpposite()));
+    }
+
+
+    /**
+     * Rotate the structure clockwise.
+     */
+    private void rotateRightClicked()
+    {
+        rotation = (rotation + ROTATE_RIGHT) % POSSIBLE_ROTATIONS;
+        updateRotation(rotation);
+    }
+
+    /**
+     * Rotate the structure counter clockwise.
+     */
+    private void rotateLeftClicked()
+    {
+        rotation = (rotation + ROTATE_LEFT) % POSSIBLE_ROTATIONS;
+        updateRotation(rotation);
+    }
+
+    /**
+     * Rotate the structure counter clockwise.
+     */
+    private static void mirror()
+    {
+        Settings.instance.mirror();
+    }
+
+
     /*
-     * ---------------- Button Handling -----------------
+     * Miscellaneous
      */
 
     /**
@@ -615,47 +804,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
     }
 
     /**
-     * Move the structure left.
-     */
-    private void moveLeftClicked()
-    {
-        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.player.getHorizontalFacing().rotateYCCW()));
-    }
-
-    /**
-     * Move the structure right.
-     */
-    private void moveRightClicked()
-    {
-        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.player.getHorizontalFacing().rotateY()));
-    }
-
-    /**
-     * Move the structure forward.
-     */
-    private void moveForwardClicked()
-    {
-        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.player.getHorizontalFacing()));
-    }
-
-    /**
-     * Move the structure back.
-     */
-    private void moveBackClicked()
-    {
-        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.player.getHorizontalFacing().getOpposite()));
-    }
-
-    /**
-     * Rotate the structure clockwise.
-     */
-    private void rotateRightClicked()
-    {
-        rotation = (rotation + ROTATE_RIGHT) % POSSIBLE_ROTATIONS;
-        updateRotation(rotation);
-    }
-
-    /**
      * Updates the rotation of the structure depending on the input.
      *
      * @param rotation the rotation to be set.
@@ -686,42 +834,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
     }
 
     /**
-     * Rotate the structure counter clockwise.
-     */
-    private void rotateLeftClicked()
-    {
-        rotation = (rotation + ROTATE_LEFT) % POSSIBLE_ROTATIONS;
-        updateRotation(rotation);
-    }
-
-    public void onUpdate()
-    {
-        super.onUpdate();
-
-        if (ColonyManager.isSchematicDownloaded())
-        {
-            ColonyManager.setSchematicDownloaded(false);
-            changeSchematic();
-        }
-    }
-
-    /**
-     * Change to the next section, Builder, Citizen ... Decorations and Scan.
-     */
-    private void nextSection()
-    {
-        sectionsDropDownList.selectNext();
-    }
-
-    /**
-     * Change to the previous section, Builder, Citizen ... Decorations and Scan.
-     */
-    private void previousSection()
-    {
-        sectionsDropDownList.selectPrevious();
-    }
-
-    /**
      * Action performed when rename button is clicked.
      */
     private void renameClicked()
@@ -741,104 +853,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         confirmDeleteDialog.setTitle(LanguageHandler.format("com.minecolonies.coremod.gui.structure.delete.title"));
         confirmDeleteDialog.setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.structure.delete.body", structureName.toString()));
         confirmDeleteDialog.open();
-    }
-
-    /**
-     * Change to the next style.
-     */
-    private void nextStyle()
-    {
-        stylesDropDownList.selectNext();
-    }
-
-    /**
-     * Change to the previous style.
-     */
-    private void previousStyle()
-    {
-        stylesDropDownList.selectPrevious();
-    }
-
-    /**
-     * Update the styles list but try to keep the same one.
-     */
-    private void updateStyles()
-    {
-        final String currentStyle = styles.get(stylesDropDownList.getSelectedIndex());
-        styles = Structures.getStylesFor(sections.get(sectionsDropDownList.getSelectedIndex()));
-        int newIndex = styles.indexOf(currentStyle);
-        if (newIndex == -1)
-        {
-            newIndex = 0;
-        }
-
-        final boolean enabled = styles.size() > 1;
-        findPaneOfTypeByID(BUTTON_PREVIOUS_STYLE_ID, Button.class).setEnabled(enabled);
-        findPaneOfTypeByID(DROPDOWN_STYLE_ID, Button.class).setEnabled(enabled);
-        findPaneOfTypeByID(BUTTON_NEXT_STYLE_ID, Button.class).setEnabled(enabled);
-        stylesDropDownList.setSelectedIndex(newIndex);
-    }
-
-    /**
-     * Go to the next schematic.
-     */
-    private void nextSchematic()
-    {
-        schematicsDropDownList.selectNext();
-    }
-
-    /**
-     * Go to the previous schematic.
-     */
-    private void previousSchematic()
-    {
-        schematicsDropDownList.selectPrevious();
-    }
-
-    /**
-     * Update the list a available schematics.
-     */
-    private void updateSchematics()
-    {
-        final String schematic = schematics.get(schematicsDropDownList.getSelectedIndex());
-        final String currentSchematic = (schematic.isEmpty())?"":(new Structures.StructureName(schematic)).getSchematic();
-        String section = sections.get(sectionsDropDownList.getSelectedIndex());
-        String style = styles.get(stylesDropDownList.getSelectedIndex());
-        schematics = Structures.getSchematicsFor(section, style);
-        int newIndex = -1;
-        for (int i = 0 ; i < schematics.size();i++)
-        {
-            Structures.StructureName sn = new Structures.StructureName(schematics.get(i));
-            if (sn.getSchematic().equals(currentSchematic))
-            {
-                newIndex = i;
-                break;
-            }
-        }
-
-        if (newIndex == -1)
-        {
-            Log.getLogger().info("Can no keep the schematic "+ currentSchematic);
-            newIndex = 0;
-        }
-        else
-        {
-           Log.getLogger().info("Keep the schematic "+ currentSchematic);
-        }
-
-        final boolean enabled = schematics.size() > 1;
-        findPaneOfTypeByID(BUTTON_PREVIOUS_SCHEMATIC_ID, Button.class).setEnabled(enabled);
-        findPaneOfTypeByID(DROPDOWN_SCHEMATIC_ID, Button.class).setEnabled(enabled);
-        findPaneOfTypeByID(BUTTON_NEXT_SCHEMATIC_ID, Button.class).setEnabled(enabled);
-        schematicsDropDownList.setSelectedIndex(newIndex);
-    }
-
-    /**
-     * Rotate the structure counter clockwise.
-     */
-    private static void mirror()
-    {
-        Settings.instance.mirror();
     }
 
     public void onDialogClosed(final DialogDoneCancel dialog, final int buttonId)

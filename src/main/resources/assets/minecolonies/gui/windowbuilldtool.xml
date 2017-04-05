@@ -40,7 +40,7 @@
         <buttonimage id="mirror"      source="minecolonies:textures/gui/mirror-20px.png"      size="20" pos="20 20"/>
         <buttonimage id="right"       source="minecolonies:textures/gui/right-20px.png"       size="20" pos="40 20"/>
         <buttonimage id="down"        source="minecolonies:textures/gui/minus-20px.png"       size="20" pos="0 40"/>
-        <buttonimage id="back"        source="minecolonies:textures/gui/down-20px.png"        size="20" pos="20 40"/>
+        <buttonimage id="backward"    source="minecolonies:textures/gui/down-20px.png"        size="20" pos="20 40"/>
         <buttonimage id="up"          source="minecolonies:textures/gui/plus-20px.png"        size="20" pos="40 40"/>
         <buttonimage id="confirm"     source="minecolonies:textures/gui/confirm.png"          size="32" pos="0 60"/>
         <buttonimage id="cancel"      source="minecolonies:textures/gui/cancel.png"           size="32" pos="28 60"/>
