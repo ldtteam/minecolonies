@@ -119,6 +119,7 @@ public class DropDownList extends ButtonVanilla
     public void setSelectedIndex(final int index)
     {
         selectedIndex = index;
+        setLabel(dataProvider.getLabel(selectedIndex));
         dataProvider.onSelectedItemChanged(this,index);
     }
 
@@ -168,6 +169,7 @@ public class DropDownList extends ButtonVanilla
      */
     public interface DataProvider extends ScrollingList.DataProvider
     {
-        void onSelectedItemChanged(final DropDownList list, final int index);
+        public String getLabel(final int index);
+        public void onSelectedItemChanged(final DropDownList list, final int index);
     }
 }

@@ -124,8 +124,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
      */
     private static final String BUTTON_DELETE = "delete";
 
-    private static final String SECTION = "section";
-
     /**
      * Mirror the structure.
      */
@@ -192,12 +190,12 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
     private int rotation = 0;
 
 
-    final DropDownList sectionsDropDownList;
-    final DropDownList stylesDropDownList;
-    final DropDownList schematicsDropDownList;
-    final Button renameButton;
-    final Button deleteButton;
-    DialogDoneCancel confirmDeleteDialog;
+    private final DropDownList sectionsDropDownList;
+    private final DropDownList stylesDropDownList;
+    private final DropDownList schematicsDropDownList;
+    private final Button renameButton;
+    private final Button deleteButton;
+    private DialogDoneCancel confirmDeleteDialog;
 
     /**
      * Creates a window build tool.
@@ -258,10 +256,25 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
             {
                 return sections.size();
             }
+            //TODO remove this
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                updateDropDownItem(sectionsDropDownList, rowPane, index,getSectionLocalizedName(sections.get(index)));
+                updateDropDownItem(sectionsDropDownList, rowPane, index, getLabel(index));
+            }
+            public String getLabel(final int index)
+            {
+                final String name = sections.get(index);
+                if (Structures.SCHEMATICS_SCAN.equals(name))
+                {
+                    return LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.scans");
+                }
+                else if (Structures.SCHEMATICS_PREFIX.equals(name))
+                {
+                    return LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.decorations");
+                }
+                //should be a hut
+                return LanguageHandler.format("tile.minecolonies.blockHut" + name + ".name");
             }
             @Override
             public void onSelectedItemChanged(final DropDownList list, final int index)
@@ -278,11 +291,18 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
             {
                 return styles.size();
             }
+            //TODO remove this
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                updateDropDownItem(stylesDropDownList, rowPane, index,styles.get(index));
+                updateDropDownItem(stylesDropDownList, rowPane, index, getLabel(index));
             }
+
+            public String getLabel(final int index)
+            {
+                return styles.get(index);
+            }
+
             @Override
             public void onSelectedItemChanged(final DropDownList list, final int index)
             {
@@ -298,11 +318,18 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
             {
                 return schematics.size();
             }
+            //TODO remove this
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final Structures.StructureName sn = new Structures.StructureName(schematics.get(index));
-                updateDropDownItem(schematicsDropDownList, rowPane, index, sn.getLocalizedName());
+                updateDropDownItem(schematicsDropDownList, rowPane, index, getLabel(index));
+            }
+            public String getLabel(final int index)
+            {
+                final String name = schematics.get(index);
+                final Structures.StructureName sn = new Structures.StructureName(schematics.get(schematicsDropDownList.getSelectedIndex()));
+
+                return sn.getLocalizedName();
             }
             @Override
             public void onSelectedItemChanged(final DropDownList list, final int index)
@@ -312,6 +339,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         });
     }
 
+    //Should be inside DropDownList
     public void updateDropDownItem(@NotNull final DropDownList list, @NotNull final Pane rowPane, final int index, final String label)
     {
         final Button choiceButton = rowPane.findPaneOfTypeByID("button", Button.class);
@@ -334,7 +362,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         //TODO label of the button should not be set here but inside DropDownList
         if (list == sectionsDropDownList)
         {
-            String name = getSectionName();
+            String name = sections.get(sectionsDropDownList.getSelectedIndex());
             if (Structures.SCHEMATICS_SCAN.equals(name))
             {
                 name = LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.scans");
@@ -362,35 +390,15 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         }
         else if (list == stylesDropDownList)
         {
-            findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).setLabel(getStyleName());
             updateSchematics();
         }
         else if (list == schematicsDropDownList)
         {
-            Structures.StructureName sn = new Structures.StructureName(getSchematicName());
-            findPaneOfTypeByID(BUTTON_SCHEMATIC_ID, Button.class).setLabel(sn.getLocalizedName());
             changeSchematic();
         }
 
     }
 
-    private void init()
-    {
-        Structures.loadScannedStyleMaps();
-
-        sections.clear();
-        final InventoryPlayer inventory = this.mc.player.inventory;
-        final List<String> allSections = Structures.getSections();
-        for(String section: allSections)
-        {
-            if (section.equals(Structures.SCHEMATICS_PREFIX) || section.equals(Structures.SCHEMATICS_SCAN) || inventoryHasHut(inventory, section))
-            {
-                sections.add(section);
-            }
-        }
-
-        setStructureName(Settings.instance.getStructureName());
-    }
 
     /**
      * Set the structure name.
@@ -461,7 +469,20 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
     @Override
     public void onOpened()
     {
-        init();
+        Structures.loadScannedStyleMaps();
+
+        sections.clear();
+        final InventoryPlayer inventory = this.mc.player.inventory;
+        final List<String> allSections = Structures.getSections();
+        for(String section: allSections)
+        {
+            if (section.equals(Structures.SCHEMATICS_PREFIX) || section.equals(Structures.SCHEMATICS_SCAN) || inventoryHasHut(inventory, section))
+            {
+                sections.add(section);
+            }
+        }
+
+        setStructureName(Settings.instance.getStructureName());
     }
 
     /**
@@ -487,9 +508,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
      */
     private void changeSchematic()
     {
-        final String sname= getSchematicName();
+        final String sname = schematics.get(schematicsDropDownList.getSelectedIndex());
         Log.getLogger().info("Loading structure sname:" + sname);
-        final Structures.StructureName structureName = new Structures.StructureName(getSchematicName());
+        final Structures.StructureName structureName = new Structures.StructureName(sname);
         Log.getLogger().info("Loading structure " + structureName.toString());
         Structure structure = new Structure(null,
                                    structureName.toString(),
@@ -540,7 +561,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         if (Structures.hasMD5(structureName))
         {
             final String md5 = Structures.getMD5(structureName);
-            final String serverSideName = "cache/"+md5;
+            final String serverSideName = Structures.SCHEMATICS_CACHE + '/'+ md5;
             if (!Structures.hasMD5(new Structures.StructureName(serverSideName)))
             {
                 final InputStream stream = Structure.getStream(structureName.toString());
@@ -560,7 +581,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
             }
 
             MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(
-                                                              Structures.SCHEMATICS_CACHE + '/' + md5,
+                                                              serverSideName,
                                                               structureName.toString(),
                                                               Settings.instance.pos,
                                                               Settings.instance.getRotation(),
@@ -721,7 +742,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
      */
     private void renameClicked()
     {
-        final Structures.StructureName structureName = new Structures.StructureName(getSchematicName());
+        final Structures.StructureName structureName = new Structures.StructureName(schematics.get(schematicsDropDownList.getSelectedIndex()));
         @NotNull final WindowStructureNameEntry window = new WindowStructureNameEntry(structureName);
         window.open();
     }
@@ -732,37 +753,10 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
     private void deleteClicked()
     {
         confirmDeleteDialog = new DialogDoneCancel(getWindow());
-        final Structures.StructureName structureName = new Structures.StructureName(getSchematicName());
+        final Structures.StructureName structureName = new Structures.StructureName(schematics.get(schematicsDropDownList.getSelectedIndex()));
         confirmDeleteDialog.setTitle(LanguageHandler.format("com.minecolonies.coremod.gui.structure.delete.title"));
         confirmDeleteDialog.setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.structure.delete.body", structureName.toString()));
         confirmDeleteDialog.open();
-    }
-
-    private String getSectionLocalizedName(final String name)
-    {
-        if (Structures.SCHEMATICS_SCAN.equals(name))
-        {
-            return LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.scans");
-        }
-        else if (Structures.SCHEMATICS_PREFIX.equals(name))
-        {
-                return LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.decorations");
-        }
-        //should be a hut
-        return LanguageHandler.format("tile.minecolonies.blockHut" + name + ".name");
-    }
-
-    /**
-     * get the name of the current section as displayed on the button.
-     */
-    public String getSectionName()
-    {
-        if (sectionsDropDownList.getSelectedIndex() <0 || sectionsDropDownList.getSelectedIndex() >= sections.size())
-        {
-            Log.getLogger().error("Could not get section name for index " + sectionsDropDownList.getSelectedIndex() + "(size:" + sections.size() + ")");
-            return "";
-        }
-        return sections.get(sectionsDropDownList.getSelectedIndex());
     }
 
     /**
@@ -782,25 +776,12 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
     }
 
     /**
-     * get the name of the current style as displayed on the button.
-     */
-    public String getStyleName()
-    {
-        if (stylesDropDownList.getSelectedIndex() <0 || stylesDropDownList.getSelectedIndex() >= styles.size())
-        {
-            Log.getLogger().error("Could not get style name for index " + stylesDropDownList.getSelectedIndex() + "(size:" + styles.size() + ")");
-            return "";
-        }
-        return styles.get(stylesDropDownList.getSelectedIndex());
-    }
-
-    /**
      * Update the styles list but try to keep the same one.
      */
     public void updateStyles()
     {
-        final String currentStyle = getStyleName();
-        styles = Structures.getStylesFor(getSectionName());
+        final String currentStyle = styles.get(stylesDropDownList.getSelectedIndex());
+        styles = Structures.getStylesFor(sections.get(sectionsDropDownList.getSelectedIndex()));
         int newIndex = styles.indexOf(currentStyle);
         if (newIndex == -1)
         {
@@ -831,27 +812,14 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
     }
 
     /**
-     * get the name of the schematic as displayed in the button.
-     */
-    public String getSchematicName()
-    {
-        if (schematicsDropDownList.getSelectedIndex() <0 || schematicsDropDownList.getSelectedIndex() >= schematics.size())
-        {
-            Log.getLogger().error("Could not get schematic name for index " + schematicsDropDownList.getSelectedIndex() + "(size:" + schematics.size() + ")");
-            return "";
-        }
-        return schematics.get(schematicsDropDownList.getSelectedIndex());
-    }
-
-    /**
      * Update the list a available schematics.
      */
     public void updateSchematics()
     {
-        final String schematic = getSchematicName();
-        final String currentSchematic = (schematic.isEmpty())?"":(new Structures.StructureName(getSchematicName())).getSchematic();
-        String section = getSectionName();
-        String style = getStyleName();
+        final String schematic = schematics.get(schematicsDropDownList.getSelectedIndex());
+        final String currentSchematic = (schematic.isEmpty())?"":(new Structures.StructureName(schematic)).getSchematic();
+        String section = sections.get(sectionsDropDownList.getSelectedIndex());
+        String style = styles.get(stylesDropDownList.getSelectedIndex());
         schematics = Structures.getSchematicsFor(section, style);
         int newIndex = -1;
         for (int i = 0 ; i < schematics.size();i++)
@@ -893,7 +861,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
     {
         if (dialog == confirmDeleteDialog && buttonId == DialogDoneCancel.DONE)
         {
-            final Structures.StructureName structureName = new Structures.StructureName(getSchematicName());
+            final Structures.StructureName structureName = new Structures.StructureName(schematics.get(schematicsDropDownList.getSelectedIndex()));
             if (Structures.SCHEMATICS_SCAN.equals(structureName.getPrefix()))
             {
                 if (Structures.deleteScannedStructure(structureName))
