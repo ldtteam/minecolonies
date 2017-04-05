@@ -2,14 +2,14 @@
         lightbox="false"
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
 
-    <button id="previousSection" size="15 15" pos="0 0" label="&lt;"/>
+    <button id="previousBuildingType" size="15 15" pos="0 0" label="&lt;"/>
     <dropdown id="buildingType" size="114 15" pos="13 0" dropDownSize="140 75">
         <box size="100% 15" linewidth="0">
             <label id="id" size="100% 100%" label="" pos="0 0"/>
             <button id="button" size="100% 100%" label="" pos="0 0"/>
         </box>
     </dropdown>
-    <button id="nextSection" size="15 15" pos="125 0" label="&gt;"/>
+    <button id="nextBuildingType" size="15 15" pos="125 0" label="&gt;"/>
 
     <button id="previousStyle" size="15 15" pos="140 0" label="&lt;"/>
     <dropdown id="style" size="114 15" pos="153 0" maxContentHeight="75" dropDownSize="140 75">

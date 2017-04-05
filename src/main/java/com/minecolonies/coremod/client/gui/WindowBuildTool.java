@@ -50,19 +50,50 @@ import org.lwjgl.input.Keyboard;
 public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDoneCancel.Handler, DropDownList.Handler
 {
     /**
-     * This button is used to set the section either huts (Builder, Town Hall), decorations or scan mode.
+     * This button is used to set the previous available building type.
      */
-    private static final String BUTTON_TYPE_ID = "buildingType";
+    private static final String BUTTON_PREVIOUS_TYPE_ID = "previousBuildingType";
 
     /**
-     * This button is used to choose which style should be used.
+     * This drop down list is used to set the section either huts (Builder, Town Hall), decorations or scan mode.
      */
-    private static final String BUTTON_STYLE_ID = "style";
+    private static final String DROPDOWN_TYPE_ID = "buildingType";
 
     /**
-     * This button is used to choose which hut or decoration should be built.
+     * This button is used to set the next available building type.
      */
-    private static final String BUTTON_SCHEMATIC_ID = "schematic";
+    private static final String BUTTON_NEXT_TYPE_ID = "nextBuildingType";
+
+    /**
+     * This button is used to set the previous available style.
+     */
+    private static final String BUTTON_PREVIOUS_STYLE_ID = "previousStyle";
+
+    /**
+     * This drop down list is used to choose which style should be used.
+     */
+    private static final String DROPDOWN_STYLE_ID = "style";
+
+    /**
+     * This button is used to set the next available style.
+     */
+    private static final String BUTTON_NEXT_STYLE_ID = "nextStyle";
+
+    /**
+     * This button is used to set the previous available schematic.
+     */
+    private static final String BUTTON_PREVIOUS_SCHEMATIC_ID = "previousSchematic";
+
+    /**
+     * This drop down list is used to set the schematic.
+     */
+    private static final String DROPDOWN_SCHEMATIC_ID = "schematic";
+
+    /**
+     * This button is used to set the next available schematic.
+     */
+    private static final String BUTTON_NEXT_SCHEMATIC_ID = "nextSchematic";
+
 
     /**
      * This button will send a packet to the server telling it to place this hut/decoration.
@@ -190,9 +221,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
     private int rotation = 0;
 
 
-    private final DropDownList sectionsDropDownList;
-    private final DropDownList stylesDropDownList;
-    private final DropDownList schematicsDropDownList;
+    private DropDownList sectionsDropDownList;
+    private DropDownList stylesDropDownList;
+    private DropDownList schematicsDropDownList;
     private final Button renameButton;
     private final Button deleteButton;
     private DialogDoneCancel confirmDeleteDialog;
@@ -222,14 +253,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
             Settings.instance.setRotation(0);
         }
 
-        //Register all necessary buttons with the window.
-        registerButton("previousSection", this::previousSection);
-        registerButton("nextSection", this::nextSection);
-        registerButton("previousStyle", this::previousStyle);
-        registerButton("nextStyle", this::nextStyle);
-        registerButton("previousSchematic", this::previousSchematic);
-        registerButton("nextSchematic", this::nextSchematic);
+        initBuildingTypeNavigation();
+        initStyleNavigation();
+        initSchematicNavigation();
 
+        //Register all necessary buttons with the window.
         registerButton(BUTTON_CONFIRM, this::confirmClicked);
         registerButton(BUTTON_CANCEL, this::cancelClicked);
         registerButton(BUTTON_LEFT, this::moveLeftClicked);
@@ -246,8 +274,13 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         registerButton(BUTTON_DELETE, this::deleteClicked);
         renameButton = findPaneOfTypeByID(BUTTON_RENAME, Button.class);
         deleteButton = findPaneOfTypeByID(BUTTON_DELETE, Button.class);
+    }
 
-        sectionsDropDownList = findPaneOfTypeByID("buildingType", DropDownList.class);
+    private void initBuildingTypeNavigation()
+    {
+        registerButton(BUTTON_PREVIOUS_TYPE_ID, this::previousSection);
+        registerButton(BUTTON_NEXT_TYPE_ID, this::nextSection);
+        sectionsDropDownList = findPaneOfTypeByID(DROPDOWN_TYPE_ID, DropDownList.class);
         sectionsDropDownList.setDDHandler(this);
         Log.getLogger().info("sectionsDropDownList="+sectionsDropDownList);
         sectionsDropDownList.setDataProvider(new DropDownList.DataProvider()
@@ -273,8 +306,13 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
                 return LanguageHandler.format("tile.minecolonies.blockHut" + name + ".name");
             }
         });
+    }
 
-        stylesDropDownList = findPaneOfTypeByID("style", DropDownList.class);
+    private void initStyleNavigation()
+    {
+        registerButton(BUTTON_PREVIOUS_STYLE_ID, this::previousStyle);
+        registerButton(BUTTON_PREVIOUS_STYLE_ID, this::nextStyle);
+        stylesDropDownList = findPaneOfTypeByID(DROPDOWN_STYLE_ID, DropDownList.class);
         stylesDropDownList.setDDHandler(this);
         stylesDropDownList.setDataProvider(new DropDownList.DataProvider()
         {
@@ -289,8 +327,13 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
                 return styles.get(index);
             }
         });
+    }
 
-        schematicsDropDownList = findPaneOfTypeByID("schematic", DropDownList.class);
+    private void initSchematicNavigation()
+    {
+        registerButton(BUTTON_PREVIOUS_SCHEMATIC_ID, this::previousSchematic);
+        registerButton(BUTTON_NEXT_SCHEMATIC_ID, this::nextSchematic);
+        schematicsDropDownList = findPaneOfTypeByID(DROPDOWN_SCHEMATIC_ID, DropDownList.class);
         schematicsDropDownList.setDDHandler(this);
         schematicsDropDownList.setDataProvider(new DropDownList.DataProvider()
         {
@@ -730,9 +773,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         }
 
         final boolean enabled = styles.size() > 1;
-        findPaneOfTypeByID("previousStyle", Button.class).setEnabled(enabled);
-        findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).setEnabled(enabled);
-        findPaneOfTypeByID("nextStyle", Button.class).setEnabled(enabled);
+        findPaneOfTypeByID(BUTTON_PREVIOUS_STYLE_ID, Button.class).setEnabled(enabled);
+        findPaneOfTypeByID(DROPDOWN_STYLE_ID, Button.class).setEnabled(enabled);
+        findPaneOfTypeByID(BUTTON_NEXT_STYLE_ID, Button.class).setEnabled(enabled);
         stylesDropDownList.setSelectedIndex(newIndex);
     }
 
@@ -784,9 +827,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         }
 
         final boolean enabled = schematics.size() > 1;
-        findPaneOfTypeByID("previousSchematic", Button.class).setEnabled(enabled);
-        findPaneOfTypeByID(BUTTON_SCHEMATIC_ID, Button.class).setEnabled(enabled);
-        findPaneOfTypeByID("nextSchematic", Button.class).setEnabled(enabled);
+        findPaneOfTypeByID(BUTTON_PREVIOUS_SCHEMATIC_ID, Button.class).setEnabled(enabled);
+        findPaneOfTypeByID(DROPDOWN_SCHEMATIC_ID, Button.class).setEnabled(enabled);
+        findPaneOfTypeByID(BUTTON_NEXT_SCHEMATIC_ID, Button.class).setEnabled(enabled);
         schematicsDropDownList.setSelectedIndex(newIndex);
     }
 
