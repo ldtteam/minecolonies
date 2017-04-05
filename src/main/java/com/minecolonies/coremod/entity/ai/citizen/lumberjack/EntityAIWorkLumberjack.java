@@ -5,10 +5,7 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.pathfinding.PathJobFindTree;
-import com.minecolonies.coremod.util.BlockPosUtil;
-import com.minecolonies.coremod.util.EntityUtils;
-import com.minecolonies.coremod.util.MathUtils;
-import com.minecolonies.coremod.util.Utils;
+import com.minecolonies.coremod.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSapling;
 import net.minecraft.block.SoundType;
@@ -18,6 +15,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -559,7 +557,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
 
     private int findSaplingSlot()
     {
-        for (int slot = 0; slot < getInventory().getSizeInventory(); slot++)
+        for (int slot = 0; slot < new InvWrapper(getInventory()).getSlots(); slot++)
         {
             final ItemStack stack = getInventory().getStackInSlot(slot);
             if (isCorrectSapling(stack))
@@ -582,7 +580,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
                     || Objects.equals(world.getBlockState(pos), block.getStateFromMeta(stack.getMetadata())))
             {
 
-                getInventory().decrStackSize(saplingSlot, 1);
+                new InvWrapper(getInventory()).extractItem(saplingSlot, 1, false);
                 job.tree.removeStump(pos);
             }
             else
@@ -742,14 +740,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private boolean hasLogs()
     {
-        for (int i = 0; i < getInventory().getSizeInventory(); i++)
-        {
-            if (isStackLog(getInventory().getStackInSlot(i)))
-            {
-                return true;
-            }
-        }
-        return false;
+        return InventoryUtils.hasItemInItemHandler(new InvWrapper(getInventory()), EntityAIWorkLumberjack::isStackLog);
     }
 
     /**

@@ -61,6 +61,9 @@ public class InventoryCitizen implements IInventory
      * The index of the currently held item (0-8).
      */
     public        int                          currentItem;
+
+    private ItemStack itemStack = ItemStack.EMPTY;
+
     /**
      * The inventories custom name. In our case the citizens name.
      */
@@ -73,7 +76,6 @@ public class InventoryCitizen implements IInventory
      * The citizen which owns the inventory.
      */
     private EntityCitizen citizen;
-    private       ItemStack                    itemStack;
 
     /**
      * Creates the inventory of the citizen.
@@ -602,6 +604,7 @@ public class InventoryCitizen implements IInventory
         return 0;
     }
 
+
     /**
      * This may be used to set GUI areas with a certain id and value.
      *
@@ -1076,4 +1079,3 @@ public class InventoryCitizen implements IInventory
 
 
 }
-

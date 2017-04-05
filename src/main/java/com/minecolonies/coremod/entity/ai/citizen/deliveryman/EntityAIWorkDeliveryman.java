@@ -16,6 +16,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -154,30 +155,18 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     }
 
     /**
-     * Gets a random building from his colony.
-     *
-     * @return a random blockPos.
+     * Check if the worker can hold that much items.
+     * It depends on his building level.
+     * Level 1: 1 stack Level 2: 2 stacks, 4 stacks, 8, unlimited.
+     * That's 2^buildingLevel-1.
      */
-    @Nullable
-    private BlockPos getRandomBuilding()
+    private boolean cannotHoldMoreItems()
     {
-        if (worker.getColony() == null || getOwnBuilding() == null)
+        if (getOwnBuilding().getBuildingLevel() >= getOwnBuilding().getMaxBuildingLevel())
         {
-            return null;
+            return false;
         }
-
-        final Collection<AbstractBuilding> buildingList = worker.getColony().getBuildings().values();
-        final Object[] buildingArray = buildingList.toArray();
-
-        final int random = worker.getRandom().nextInt(buildingArray.length);
-        final AbstractBuilding building = (AbstractBuilding) buildingArray[random];
-
-        if (building instanceof BuildingWareHouse || building instanceof BuildingTownHall)
-        {
-            return null;
-        }
-
-        return building.getLocation();
+        return InventoryUtils.getAmountOfStacksInItemHandler(new InvWrapper(worker.getInventoryCitizen())) >= Math.pow(2, getOwnBuilding().getBuildingLevel() - 1.0D);
     }
 
     /**
@@ -199,41 +188,10 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return false;
         }
 
-        worker.getInventoryCitizen().addItemStackToInventory(building.getTileEntity().removeStackFromSlot(currentSlot));
+        InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandlers(building.getTileEntity().getSingleChestHandler(), currentSlot, new InvWrapper(worker.getInventoryCitizen()));
         building.markDirty();
         setDelay(DUMP_AND_GATHER_DELAY);
         return false;
-    }
-
-    /**
-     * Check if the worker can hold that much items.
-     * It depends on his building level.
-     * Level 1: 1 stack Level 2: 2 stacks, 4 stacks, 8, unlimited.
-     * That's 2^buildingLevel-1.
-     */
-    private boolean cannotHoldMoreItems()
-    {
-        if (getOwnBuilding().getBuildingLevel() >= getOwnBuilding().getMaxBuildingLevel())
-        {
-            return false;
-        }
-        return InventoryUtils.getAmountOfStacks(worker.getInventoryCitizen()) >= Math.pow(2, getOwnBuilding().getBuildingLevel() - 1.0D);
-    }
-
-    /**
-     * Check if worker of a certain building requires the item now.
-     * Or the builder for the current task.
-     *
-     * @param building         the building to check for.
-     * @param stack            the stack to stack with.
-     * @param localAlreadyKept already kept resources.
-     * @return true if required.
-     */
-    public static boolean workerRequiresItem(AbstractBuilding building, ItemStack stack, List<ItemStorage> localAlreadyKept)
-    {
-        return (building instanceof BuildingBuilder && ((BuildingBuilder) building).requiresResourceForBuilding(stack))
-                 || (building instanceof AbstractBuildingWorker && ((AbstractBuildingWorker) building).neededForWorker(stack))
-                 || buildingRequiresCertainAmountOfItem(building, stack, localAlreadyKept);
     }
 
     /**
@@ -258,6 +216,46 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             }
         }
         return false;
+    }
+
+    /**
+     * Check if worker of a certain building requires the item now.
+     * Or the builder for the current task.
+     *
+     * @param building         the building to check for.
+     * @param stack            the stack to stack with.
+     * @param localAlreadyKept already kept resources.
+     *
+     * @return true if required.
+     */
+    public static boolean workerRequiresItem(AbstractBuilding building, ItemStack stack, List<ItemStorage> localAlreadyKept) {
+        return (building instanceof BuildingBuilder && ((BuildingBuilder) building).requiresResourceForBuilding(stack))
+                || (building instanceof AbstractBuildingWorker && ((AbstractBuildingWorker) building).neededForWorker(stack))
+                || buildingRequiresCertainAmountOfItem(building, stack, localAlreadyKept);
+    }
+
+    /**
+     * Gets a random building from his colony.
+     *
+     * @return a random blockPos.
+     */
+    @Nullable
+    private BlockPos getRandomBuilding() {
+        if (worker.getColony() == null || getOwnBuilding() == null) {
+            return null;
+        }
+
+        final Collection<AbstractBuilding> buildingList = worker.getColony().getBuildings().values();
+        final Object[] buildingArray = buildingList.toArray();
+
+        final int random = worker.getRandom().nextInt(buildingArray.length);
+        final AbstractBuilding building = (AbstractBuilding) buildingArray[random];
+
+        if (building instanceof BuildingWareHouse || building instanceof BuildingTownHall) {
+            return null;
+        }
+
+        return building.getLocation();
     }
 
     /**
@@ -297,7 +295,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 }
 
                 final InventoryCitizen workerInventory = worker.getInventoryCitizen();
-                for (int i = 0; i < workerInventory.getSizeInventory(); i++)
+                for (int i = 0; i < new InvWrapper(worker.getInventoryCitizen()).getSlots(); i++)
                 {
                     final ItemStack stack = workerInventory.getStackInSlot(i);
                     if (stack == null || stack == ItemStack.EMPTY)
@@ -305,9 +303,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                         continue;
                     }
 
-                    if (buildingToDeliver.transferStack(stack, world))
-                    {
-                        workerInventory.removeStackFromSlot(i);
+                    if (buildingToDeliver.transferStack(stack, world)) {
+                        new InvWrapper(worker.getInventoryCitizen()).extractItem(i, Integer.MAX_VALUE, false);
                     }
                     else
                     {
@@ -316,10 +313,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                         {
                             chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.job.deliveryman.workerChestFull"
                               , new TextComponentString(" :" + buildingToDeliver.getSchematicName()));
-                        }
-                        else
-                        {
-                            workerInventory.addItemStackToInventory(tempStack);
+                        } else {
+                            InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), tempStack);
                         }
                     }
                 }
@@ -399,11 +394,12 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return true;
         }
 
-        if (requiredTool.equals(Utils.PICKAXE))
-        {
-            return InventoryUtils.isPickaxeInTileEntity(worker.getInventoryCitizen(), buildingToDeliver.getNeededPickaxeLevel(), buildingToDeliver.getBuildingLevel());
+        if (requiredTool.equals(Utils.PICKAXE)) {
+            return InventoryUtils.isPickaxeInItemHandler(new InvWrapper(worker.getInventoryCitizen()),
+                    buildingToDeliver.getNeededPickaxeLevel(),
+                    buildingToDeliver.getBuildingLevel());
         }
-        return InventoryUtils.isToolInTileEntity(worker.getInventoryCitizen(), requiredTool, buildingToDeliver.getBuildingLevel());
+        return InventoryUtils.isToolInItemHandler(new InvWrapper(worker.getInventoryCitizen()), requiredTool, buildingToDeliver.getBuildingLevel());
     }
 
     /**

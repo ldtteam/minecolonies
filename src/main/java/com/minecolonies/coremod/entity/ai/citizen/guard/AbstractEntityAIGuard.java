@@ -12,6 +12,7 @@ import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.BlockPosUtil;
+import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Log;
 import net.minecraft.entity.Entity;
@@ -25,6 +26,7 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -206,18 +208,19 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
             {
                 final ItemStack stack = chest.getStackInSlot(i);
 
-                if (stack == null || stack == ItemStack.EMPTY)
+                if (InventoryUtils.isItemStackEmpty(stack))
                 {
                     continue;
                 }
 
                 if (stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).armorType) == null)
                 {
-                    final int emptySlot = worker.getInventoryCitizen().getFirstEmptyStack();
+                    final int emptySlot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(worker.getInventoryCitizen()),
+                            InventoryUtils::isItemStackEmpty);
 
                     if (emptySlot != -1)
                     {
-                        worker.getInventoryCitizen().setInventorySlotContents(emptySlot, stack);
+                        new InvWrapper(worker.getInventoryCitizen()).insertItem(emptySlot, stack, false);
                         chest.setInventorySlotContents(i, ItemStack.EMPTY);
                     }
                 }
@@ -255,13 +258,13 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
         worker.setItemStackToSlot(EntityEquipmentSlot.HEAD, ItemStack.EMPTY);
         worker.setItemStackToSlot(EntityEquipmentSlot.LEGS, ItemStack.EMPTY);
 
-        for (int i = 0; i < worker.getInventoryCitizen().getSizeInventory(); i++)
+        for (int i = 0; i < new InvWrapper(worker.getInventoryCitizen()).getSlots(); i++)
         {
             final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(i);
 
-            if (stack == null || stack.getCount() == 0 || stack == ItemStack.EMPTY)
+            if (InventoryUtils.isItemStackEmpty(stack))
             {
-                worker.getInventoryCitizen().setInventorySlotContents(i, ItemStack.EMPTY);
+                new InvWrapper(worker.getInventoryCitizen()).extractItem(i, Integer.MAX_VALUE, false);
                 continue;
             }
 

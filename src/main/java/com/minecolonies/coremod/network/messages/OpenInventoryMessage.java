@@ -161,6 +161,8 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
             {
                 citizen.getInventoryCitizen().setCustomName(message.name);
             }
+            //TODO(OrionDevelopment): Convert next line to:
+            //player.displayGUIChest(new IItemHandlerToIInventoryWrapper(citizen.getInventoryCitizen(), citizen.getInventoryCitizen()));
             player.displayGUIChest(citizen.getInventoryCitizen());
         }
     }

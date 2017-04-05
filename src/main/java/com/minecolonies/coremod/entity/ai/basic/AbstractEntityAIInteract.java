@@ -9,6 +9,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -124,7 +125,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         //add the drops to the citizen
         for (final ItemStack item : items)
         {
-            InventoryUtils.setStack(worker.getInventoryCitizen(), item);
+            InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), item);
         }
 
         if(tool != null)

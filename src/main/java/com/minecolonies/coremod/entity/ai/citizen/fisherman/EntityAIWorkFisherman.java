@@ -20,6 +20,7 @@ import net.minecraft.item.ItemFishingRod;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -270,7 +271,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private boolean hasFish()
     {
-        return InventoryUtils.hasitemInInventory(getInventory(), Items.FISH, -1);
+        return InventoryUtils.hasItemInItemHandler(new InvWrapper(getInventory()), Items.FISH, -1);
     }
 
     /**
@@ -583,7 +584,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private int getRodSlot()
     {
-        return InventoryUtils.getFirstSlotContainingTool(getInventory(), TOOL_TYPE_ROD);
+        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), TOOL_TYPE_ROD);
     }
 
     /**

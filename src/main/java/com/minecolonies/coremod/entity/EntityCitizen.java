@@ -47,7 +47,10 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -70,18 +73,22 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private static final DataParameter<Integer> DATA_CITIZEN_ID      = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
     private static final DataParameter<String>  DATA_MODEL           = EntityDataManager.<String>createKey(EntityCitizen.class, DataSerializers.STRING);
     private static final DataParameter<String>  DATA_RENDER_METADATA = EntityDataManager.<String>createKey(EntityCitizen.class, DataSerializers.STRING);
+
     /**
      * The movement speed for the citizen to run away.
      */
     private static final int MOVE_AWAY_SPEED = 2;
+
     /**
      * The range for the citizen to move away.
      */
     private static final int MOVE_AWAY_RANGE = 6;
+
     /**
      * Number of ticks to heal the citizens.
      */
     private static final int HEAL_CITIZENS_AFTER = 100;
+
     /**
      * Tag's to save data to NBT.
      */
@@ -89,31 +96,39 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private static final String TAG_CITIZEN        = "citizen";
     private static final String TAG_HELD_ITEM_SLOT = "HeldItemSlot";
     private static final String TAG_STATUS         = "status";
-    private static final String TAG_LAST_JOB       = "lastJob";
+    private static final String TAG_LAST_JOB = "lastJob";
+
+
     /**
      * The delta yaw value for looking at things.
      */
     private static final float FACING_DELTA_YAW = 10F;
+
     /**
      * The range in which we can hear a block break sound.
      */
     private static final double BLOCK_BREAK_SOUND_RANGE = 16.0D;
+
     /**
      * The range in which someone will see the particles from a block breaking.
      */
     private static final double BLOCK_BREAK_PARTICLE_RANGE = 16.0D;
+
     /**
      * Divide experience by a factor to ensure more levels fit in an int.
      */
     private static final double EXP_DIVIDER = 100.0;
+
     /**
      * Chance the citizen will rant about bad weather. 20 ticks per 60 seconds = 5 minutes.
      */
     private static final int RANT_ABOUT_WEATHER_CHANCE = 20 * 60 * 5;
+
     /**
      * Quantity to be moved to rotate without actually moving.
      */
     private static final double MOVE_MINIMAL = 0.001D;
+
     /**
      * Base max health of the citizen.
      */
@@ -141,19 +156,19 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * The speed the citizen has to rotate.
      */
-    private static final double ROTATION_MOVEMENT      = 30;
+    private static final double ROTATION_MOVEMENT = 30;
     /**
      * 20 ticks or also: once a second.
      */
-    private static final int    TICKS_20               = 20;
+    private static final int TICKS_20 = 20;
     /**
      * This times the citizen id is the personal offset of the citizen.
      */
-    private static final int    OFFSET_TICK_MULTIPLIER = 7;
+    private static final int OFFSET_TICK_MULTIPLIER = 7;
     /**
      * Range required for the citizen to be home.
      */
-    private static final double RANGE_TO_BE_HOME       = 16;
+    private static final double RANGE_TO_BE_HOME = 16;
     /**
      * If the entitiy is stuck for 2 minutes do something.
      */
@@ -343,18 +358,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
         return level;
     }
 
-    /**
-     * On Inventory change, mark the building dirty.
-     */
-    public void onInventoryChanged()
-    {
-        final AbstractBuildingWorker building = citizenData.getWorkBuilding();
-        if (building!=null)
-        {
-            building.markDirty();
-        }
-    }
-
     public void setRenderMetadata(final String metadata)
     {
         renderMetadata = metadata;
@@ -395,6 +398,16 @@ public class EntityCitizen extends EntityAgeable implements INpc
     public void setStatus(final Status status)
     {
         this.status = status;
+    }
+
+    /**
+     * On Inventory change, mark the building dirty.
+     */
+    public void onInventoryChanged() {
+        final AbstractBuildingWorker building = citizenData.getWorkBuilding();
+        if (building != null) {
+            building.markDirty();
+        }
     }
 
     /**
@@ -652,7 +665,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         if (colony != null)
         {
-            triggerDeathAchievement(par1DamageSource,getColonyJob());
+            triggerDeathAchievement(par1DamageSource, getColonyJob());
             if (getColonyJob() instanceof JobGuard)
             {
                 LanguageHandler.sendPlayersMessage(
@@ -724,6 +737,29 @@ public class EntityCitizen extends EntityAgeable implements INpc
         return citizenData.getExperience();
     }
 
+    @Nullable
+    public Colony getColony() {
+        return colony;
+    }
+
+    @Override
+    public <T> T getCapability(final Capability<T> capability, final EnumFacing facing) {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            return (T) new InvWrapper(inventory);
+        }
+
+        return super.getCapability(capability, facing);
+    }
+
+    @Override
+    public boolean hasCapability(final Capability<?> capability, final EnumFacing facing) {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            return true;
+        }
+
+        return super.hasCapability(capability, facing);
+    }
+
     /**
      * Updates the armour damage after being hit.
      *
@@ -759,20 +795,23 @@ public class EntityCitizen extends EntityAgeable implements INpc
         return null;
     }
 
+    /**
+     * Called when a player tries to interact with a citizen.
+     *
+     * @param player which interacts with the citizen.
+     *
+     * @return If citizen should interact or not.
+     */
     @Override
-    public boolean processInteract(final EntityPlayer player, final EnumHand hand)
-    {
-        final ColonyView colonyView =  ColonyManager.getColonyView(colonyId);
-        if(colonyView != null && !colonyView.getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS))
-        {
+    public boolean processInteract(final EntityPlayer player, final EnumHand hand) {
+        final ColonyView colonyView = ColonyManager.getColonyView(colonyId);
+        if (colonyView != null && !colonyView.getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS)) {
             return false;
         }
 
-        if (world.isRemote)
-        {
+        if (world.isRemote) {
             final CitizenDataView citizenDataView = getCitizenDataView();
-            if (citizenDataView != null)
-            {
+            if (citizenDataView != null) {
                 MineColonies.proxy.showCitizenWindow(citizenDataView);
             }
         }
@@ -998,7 +1037,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
     }
 
-
     /**
      * Checks the citizens health status and heals the citizen if necessary.
      */
@@ -1208,7 +1246,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     protected void dropEquipment(final boolean par1, final int par2)
     {
         //Drop actual inventory
-        for (int i = 0; i < inventory.getSizeInventory(); i++)
+        for (int i = 0; i < new InvWrapper(getInventoryCitizen()).getSlots(); i++)
         {
             final ItemStack itemstack = inventory.getStackInSlot(i);
             if (itemstack != null && itemstack.getCount() > 0)
@@ -1222,9 +1260,18 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * Returns false if the newer Entity AI code should be run.
      */
     @Override
-    public boolean isAIDisabled()
-    {
+    public boolean isAIDisabled() {
         return false;
+    }
+
+    /**
+     * Return this citizens inventory.
+     *
+     * @return the inventory this citizen has.
+     */
+    @NotNull
+    public InventoryCitizen getInventoryCitizen() {
+        return inventory;
     }
 
     /**
@@ -1294,26 +1341,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
         return null;
     }
 
-    @Nullable
-    public Colony getColony()
-    {
-        return colony;
-    }
-
-    public boolean isInventoryFull()
-    {
-        return InventoryUtils.isInventoryFull(getInventoryCitizen());
-    }
-
-    /**
-     * Return this citizens inventory.
-     *
-     * @return the inventory this citizen has.
-     */
-    @NotNull
-    public InventoryCitizen getInventoryCitizen()
-    {
-        return inventory;
+    public boolean isInventoryFull() {
+        return InventoryUtils.isProviderFull(this);
     }
 
     @NotNull
@@ -1378,21 +1407,19 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param itemDamage the damage value
      * @return the slot.
      */
-    public int findFirstSlotInInventoryWith(final Item targetItem, int itemDamage)
-    {
-        return InventoryUtils.findFirstSlotInInventoryWith(getInventoryCitizen(), targetItem, itemDamage);
+    public int findFirstSlotInInventoryWith(final Item targetItem, int itemDamage) {
+        return InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(getInventoryCitizen()), targetItem, itemDamage);
     }
 
     /**
      * Returns the first slot in the inventory with a specific block.
      *
-     * @param block      the block.
+     * @param block the block.
      * @param itemDamage the damage value
      * @return the slot.
      */
-    public int findFirstSlotInInventoryWith(final Block block, int itemDamage)
-    {
-        return InventoryUtils.findFirstSlotInInventoryWith(getInventoryCitizen(), block, itemDamage);
+    public int findFirstSlotInInventoryWith(final Block block, int itemDamage) {
+        return InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(getInventoryCitizen()), block, itemDamage);
     }
 
     /**
@@ -1402,9 +1429,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param itemDamage the damage value
      * @return the quantity.
      */
-    public int getItemCountInInventory(final Block block, int itemDamage)
-    {
-        return InventoryUtils.getItemCountInInventory(getInventoryCitizen(), block, itemDamage);
+    public int getItemCountInInventory(final Block block, int itemDamage) {
+        return InventoryUtils.getItemCountInItemHandler(new InvWrapper(getInventoryCitizen()), block, itemDamage);
     }
 
     /**
@@ -1414,33 +1440,30 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param itemDamage the damage value.
      * @return the quantity.
      */
-    public int getItemCountInInventory(final Item targetItem, int itemDamage)
-    {
-        return InventoryUtils.getItemCountInInventory(getInventoryCitizen(), targetItem, itemDamage);
+    public int getItemCountInInventory(final Item targetItem, int itemDamage) {
+        return InventoryUtils.getItemCountInItemHandler(new InvWrapper(getInventoryCitizen()), targetItem, itemDamage);
     }
 
     /**
      * Checks if citizen has a certain block in the inventory.
      *
-     * @param block      the block.
+     * @param block the block.
      * @param itemDamage the damage value
      * @return true if so.
      */
-    public boolean hasItemInInventory(final Block block, int itemDamage)
-    {
-        return InventoryUtils.hasitemInInventory(getInventoryCitizen(), block, itemDamage);
+    public boolean hasItemInInventory(final Block block, int itemDamage) {
+        return InventoryUtils.hasItemInItemHandler(new InvWrapper(getInventoryCitizen()), block, itemDamage);
     }
 
     /**
      * Checks if citizen has a certain item in the inventory.
      *
-     * @param item       the item.
+     * @param item the item.
      * @param itemDamage the damage value
      * @return true if so.
      */
-    public boolean hasItemInInventory(final Item item, int itemDamage)
-    {
-        return InventoryUtils.hasitemInInventory(getInventoryCitizen(), item, itemDamage);
+    public boolean hasItemInInventory(final Item item, int itemDamage) {
+        return InventoryUtils.hasItemInItemHandler(new InvWrapper(getInventoryCitizen()), item, itemDamage);
     }
 
     /**
@@ -1459,8 +1482,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
             final ItemStack itemStack = entityItem.getEntityItem();
 
-            final int i = itemStack.getCount();
-            if (i <= 0 || InventoryUtils.addItemStackToInventory(this.getInventoryCitizen(), itemStack))
+            final ItemStack resultStack = InventoryUtils.addItemStackToItemHandlerWithResult(new InvWrapper(getInventoryCitizen()), itemStack.copy());
+            final int resultingStackSize = InventoryUtils.isItemStackEmpty(resultStack) ? 0 : resultStack.getCount();
+            if (InventoryUtils.isItemStackEmpty(resultStack) || InventoryUtils.compareItemStacksIgnoreStackSize(itemStack, resultStack))
             {
                 this.world.playSound((EntityPlayer) null,
                   this.getPosition(),
@@ -1468,9 +1492,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
                   SoundCategory.AMBIENT,
                   0.2F,
                   (float) ((this.rand.nextGaussian() * 0.7D + 1.0D) * 2.0D));
-                this.onItemPickup(this, i);
+                this.onItemPickup(entityItem, itemStack.getCount() - resultingStackSize);
 
-                if (itemStack.getCount() <= 0)
+                if (InventoryUtils.isItemStackEmpty(resultStack))
                 {
                     entityItem.setDead();
                 }

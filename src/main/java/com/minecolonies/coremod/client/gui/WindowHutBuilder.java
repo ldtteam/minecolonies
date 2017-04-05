@@ -17,6 +17,7 @@ import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.Log;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -85,7 +86,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
             resources.addAll(updatedView.getResources().values());
             for (final BuildingBuilderResource resource : resources)
             {
-                resource.setPlayerAmount(InventoryUtils.getItemCountInInventory(inventory, resource.getItem(), resource.getDamageValue()));
+                resource.setPlayerAmount(InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory), resource.getItem(), resource.getDamageValue()));
             }
 
             resources.sort(new BuildingBuilderResource.ResourceComparator());
