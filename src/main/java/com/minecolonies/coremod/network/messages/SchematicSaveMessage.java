@@ -21,7 +21,6 @@ public class SchematicSaveMessage implements IMessage, IMessageHandler<Schematic
     private byte [] data = null;
     final private int MAX_TOTAL_SIZE = 32767;
 
-
     /**
      * Public standard constructor.
      */
@@ -43,31 +42,17 @@ public class SchematicSaveMessage implements IMessage, IMessageHandler<Schematic
     @Override
     public void fromBytes(@NotNull final ByteBuf buf)
     {
-        Log.getLogger().info("fromBytes: maxCapacity=" + buf.maxCapacity());
-        Log.getLogger().info("fromBytes: readableBytes=" + buf.readableBytes());
         int length = buf.readInt();
-        Log.getLogger().info("fromBytes: length = " + length);
         final byte[] compressedData = new byte [length];
-        Log.getLogger().info("fromBytes: compressedData.length = " + compressedData.length);
         buf.readBytes(compressedData);
         data = Structure.uncompress(compressedData);
-        Log.getLogger().info("fromBytes: data.length = " + data.length);
     }
 
     @Override
     public void toBytes(@NotNull final ByteBuf buf)
     {
-        Log.getLogger().info("toBytes: maxCapacity=" + buf.maxCapacity());
-        Log.getLogger().info("toBytes: capacity=" + buf.capacity());
-        Log.getLogger().info("toBytes: writableBytes=" + buf.writableBytes());
-        Log.getLogger().info("toBytes: data.length=" + data.length);
-        Log.getLogger().info("toBytes: buf.writerIndex=" + buf.writerIndex());
-
         final byte[] compressedData = Structure.compress(data);
-        Log.getLogger().info("toBytes: compressedData.length=" + compressedData.length);
-        Log.getLogger().info("toBytes: buf.writerIndex=" + buf.writerIndex());
         buf.capacity(compressedData.length + buf.writerIndex());
-        Log.getLogger().info("toBytes: buf.capacity()" + buf.capacity());
         final int MAX_SIZE = MAX_TOTAL_SIZE - Integer.SIZE / Byte.SIZE;
         if (compressedData.length > MAX_SIZE)
         {

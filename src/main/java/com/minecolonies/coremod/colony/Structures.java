@@ -84,7 +84,6 @@ public final class Structures
      */
     private static void loadStyleMaps()
     {
-        Structure.printFolders();
         if (!Configurations.ignoreSchematicsFromJar)
         {
             try
@@ -129,7 +128,6 @@ public final class Structures
     @SideOnly(Side.CLIENT)
     public static void loadScannedStyleMaps()
     {
-        Structure.printFolders();
         if (!allowPlayerSchematics && FMLCommonHandler.instance().getMinecraftServerInstance() == null)
         {
             return;

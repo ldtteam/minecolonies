@@ -190,26 +190,15 @@ public class Structure
     /**
      * get a InputStream for a give structureName.
      *
-     * Look into the followinf director (in order):
+     * Look into the following director (in order):
      * - scan
      * - cache
      * - schematics folder
      * - jar
-     * It shoud be the exact oppsite that the way used to buikd the list.
+     * It should be the exact oppsite that the way used to buikd the list.
      * @param structureName name of the structure to load
      * @return the input stream or null
      */
-    public static void printFolders()
-    {
-        Log.getLogger().info("printFolders:");
-        if (MineColonies.isClient())
-        {
-            Log.getLogger().info("Client: " + Structure.getClientSchematicsFolder());
-        }
-        Log.getLogger().info("Cache:" + Structure.getCachedSchematicsFolder());
-        Log.getLogger().info("Schematics: " + Structure.getSchematicsFolder());
-    }
-
     public static InputStream getStream(final String structureName)
     {
         Log.getLogger().info("Structure: Loading " + structureName);
@@ -291,7 +280,6 @@ public class Structure
         return MinecraftServer.class.getResourceAsStream("/assets/" + Constants.MOD_ID + '/' + structureName + ".nbt");
     }
 
-
     /**
      * get the Template from the structure.
      *
@@ -301,7 +289,6 @@ public class Structure
     {
         return this.template;
     }
-
 
     /**
      * Convert an InputStream into and array of bytes.
@@ -320,14 +307,12 @@ public class Structure
         {
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
-            int totalRead=0;
             int nRead;
             byte[] data = new byte[16384];
 
             while ((nRead = stream.read(data, 0, data.length)) != -1)
             {
                 buffer.write(data, 0, nRead);
-                totalRead+=nRead;
             }
             return buffer.toByteArray();
         }
@@ -405,7 +390,6 @@ public class Structure
             }
 
             return byteStream.toByteArray();
-
         }
         catch(Exception e)
         {
@@ -421,14 +405,19 @@ public class Structure
 
         try
         {
-            try (ByteArrayInputStream byteStream = new ByteArrayInputStream(data)) {
+            try (ByteArrayInputStream byteStream = new ByteArrayInputStream(data))
+            {
                 GZIPInputStream zipStream = new GZIPInputStream(byteStream);
-                try {
+                try
+                {
                     int len;
-                    while ((len = zipStream.read(buffer)) > 0) {
+                    while ((len = zipStream.read(buffer)) > 0)
+                    {
                         out.write(buffer, 0, len);
                     }
-                } finally {
+                }
+                finally
+                {
                     zipStream.close();
                 }
             }

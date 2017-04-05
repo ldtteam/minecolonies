@@ -27,8 +27,6 @@ public final class Settings
     private             Structure                structure      = null;
     private             int                      rotation       = 0;
     private             String                   structureName  = null;
-
-
     private             boolean                  isPendingReset = false;
 
     private Settings()

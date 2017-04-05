@@ -33,7 +33,7 @@ public class SchematicRequestMessage extends AbstractMessage<SchematicRequestMes
      * Creates a Schematic request message.
      *
      * @param filename of the structure based on schematics folder
-     *        Ex: huts/stone/Builder1.nbt         
+     *        Ex: schematics/stone/Builder1.nbt
      */
     public SchematicRequestMessage(final String filename)
     {
