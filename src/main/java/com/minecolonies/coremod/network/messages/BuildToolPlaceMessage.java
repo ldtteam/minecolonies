@@ -69,7 +69,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
      * @param isHut    true if hut, false if decoration
      * @param mirror   the mirror of the building or decoration.
      */
-    public BuildToolPlaceMessage(final String hutDec, final String style, final BlockPos pos, final int rotation, final boolean isHut, final Mirror mirror)
+    public BuildToolPlaceMessage(final String structureName, final String workOrderName, final BlockPos pos, final int rotation, final boolean isHut, final Mirror mirror)
     {
         super();
         this.structureName = structureName;
