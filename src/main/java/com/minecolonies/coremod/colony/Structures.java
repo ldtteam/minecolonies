@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony;
 
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.configuration.Configurations;
@@ -10,14 +9,11 @@ import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Log;
 import com.minecolonies.structures.helpers.Structure;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.*;
@@ -26,26 +22,12 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
-import java.util.stream.Collectors;
-
-import com.minecolonies.coremod.network.messages.SchematicSaveMessage;
-
 
 /**
  * StructureProxy class.
  */
 public final class Structures
 {
-    /**
-     * Ignore the styles from the generic folder.
-     */
-//    private static final String NULL_STYLE = "";
-
-    /**
-     * Ignore the styles from the miner folder.
-     */
-//    private static final String MINER_STYLE = "miner";
-
     public static final String                     SCHEMATIC_EXTENSION        = ".nbt";
     private static final String                    SCHEMATICS_ASSET_PATH      = "/assets/minecolonies/";
     public  static final String                    SCHEMATICS_PREFIX          = "schematics";
@@ -98,8 +80,7 @@ public final class Structures
 
     /**
      * Loads all styles saved in ["/assets/minecolonies/schematics/"].
-     * Puts these in {@link #hutStyleMap}, with key being the name of the hutDec (E.G. Lumberjack).
-     * and the value is a list of styles. Puts decorations in {@link #decorationStyleMap}.
+     * Puts these in {@link #md5Map}, with key being the fullname of the structure (schematics/stone/Builder1).
      */
     private static void loadStyleMaps()
     {
@@ -163,11 +144,10 @@ public final class Structures
 
     /**
      * Load all style maps from a certain path.
-     * load all the schematics inside the forlder path/section
-     * and add them in the section of schematicsMap
+     * load all the schematics inside the folder path/prefix
+     * and add them in the md5Map
      * @param basePath the base path.
-     * @param section
-     * @throws IOException if nothing found.
+     * @param prefix either schematics, scans, cache
      */
     private static void loadSchematicsForPrefix(@NotNull final Path basePath, @NotNull final String prefix)
     {
@@ -192,7 +172,7 @@ public final class Structures
                     final String md5 = Structure.calculateMD5(Structure.getStream(relativePath));
                     if (md5 == null)
                     {
-                        Log.getLogger().error("Structures: " + structureName + " with md5:" + md5);
+                        Log.getLogger().error("Structures: " + structureName + " with md5 null.");
                     }
                     else
                     {
@@ -212,7 +192,7 @@ public final class Structures
                         final byte[] data = Structure.getStreamAsByteArray(Structure.getStream(structureName.toString()));
                         final byte[] compressed = Structure.compress(data);
 
-                        if (compressed.length > MAX_SIZE)
+                        if (compressed != null && compressed.length > MAX_SIZE)
                         {
                             Log.getLogger().warn("Structure " + structureName + " is " + compressed.length + " bytes when compress, maximum allower is " + MAX_SIZE + " bytes.");
                         }
@@ -508,7 +488,7 @@ public final class Structures
          */
         private void init(@NotNull final String structureName)
         {
-            if (structureName == null || structureName.isEmpty())
+            if (structureName.isEmpty())
             {
                 return;
             }
@@ -661,23 +641,6 @@ public final class Structures
         }
 
         /**
-         * get a string to save in the work order.
-         * For combatibility reason the prefix 'schematics' is not stored
-         * schematics/stone/Builder1 will return stone/Builder1
-         * However scans and cache remain identical re
-         * schematics/stone/Builder1 will return stone/Builder1
-         */
-/*        public String getWorkOrder()
-        {
-            if (SCHEMATICS_PREFIX.equals(prefix))
-            {
-                return style + '/' + schematic;
-            }
-            return prefix + '/' + style + '/' + schematic;
-        }
-*/
-
-        /**
          * Get the full name of the scematic.
          * Examples: huts/stone/Builder4 or scan/test/myown
          * This is what Structure.getStream use as a parameter.
@@ -711,10 +674,9 @@ public final class Structures
 
 
     /**
-     * get the md5 hash for a structure name.
+     * add the md5 as a known structure in cache.
      *
-     * @param structureName name of the structure as 'hut/wooden/Builder1'
-     * @return the md5 hash String or null if not found
+     * @param md5 hash of the structure
      */
     public static void addMD5ToCache(@NotNull String md5)
     {
@@ -769,10 +731,9 @@ public final class Structures
     }
 
     /**
-     * Returns a map of styles for one specific decoration.
+     * Returns a map of all the structures.
      *
-     * @param decoration Decoration to get styles for.
-     * @return List of styles.
+     * @return List of structure with their md5 hash.
      */
     public static Map<String, String> getMD5s()
     {

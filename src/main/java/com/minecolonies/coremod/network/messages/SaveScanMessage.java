@@ -54,7 +54,7 @@ public class SaveScanMessage implements IMessage, IMessageHandler<SaveScanMessag
         if (b0 != 0)
         {
             buffer.readerIndex(i);
-            try (ByteBufInputStream stream = new ByteBufInputStream(buffer);)
+            try (ByteBufInputStream stream = new ByteBufInputStream(buffer))
             {
                 nbttagcompound = CompressedStreamTools.read(stream, NBTSizeTracker.INFINITE);
             }

@@ -8,9 +8,6 @@ import com.minecolonies.blockout.OverlayView;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.PaneParams;
 import org.jetbrains.annotations.NotNull;
-import com.minecolonies.blockout.Log;
-
-import java.util.List;
 
 /**
  * A DropDownList is a Button which when click display a ScrollingList.
@@ -192,8 +189,8 @@ public class DropDownList extends ButtonVanilla
      */
     public interface DataProvider
     {
-        public int getElementCount();
-        public String getLabel(final int index);
+        int getElementCount();
+        String getLabel(final int index);
     }
 
     /*public void onButtonClicked(@NotNull final Button button)
@@ -214,7 +211,7 @@ public class DropDownList extends ButtonVanilla
         {
             public void onButtonClicked(@NotNull final Button button)
             {
-                @NotNull final Label idLabel = button.getParent().findPaneOfTypeByID("id", Label.class);;
+                @NotNull final Label idLabel = button.getParent().findPaneOfTypeByID("id", Label.class);
                 final int index = Integer.parseInt(idLabel.getLabelText());
                 list.setSelectedIndex(index);
                 list.close();
@@ -241,10 +238,10 @@ public class DropDownList extends ButtonVanilla
     public interface Handler
     {
         /**
-         * Called when a button is clicked.
+         * Called when an item is selected.
          *
-         * @param dialog the dialog that was closed.
-         * @param done whether it is done or cancel.
+         * @param list from which the item is selected.
+         * @param index of the selected Item.
          */
         void onSelectedItemChanged(final DropDownList list, final int index);
     }

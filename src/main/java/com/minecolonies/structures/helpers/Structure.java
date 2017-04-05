@@ -42,8 +42,6 @@ import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
 import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -217,33 +215,25 @@ public class Structure
         Log.getLogger().info("Structure: Loading " + structureName);
 
         final Structures.StructureName sn = new Structures.StructureName(structureName);
-        InputStream inputstream = null;
+        InputStream inputstream;
         if (Structures.SCHEMATICS_CACHE.equals(sn.getPrefix()))
         {
-//            Log.getLogger().info("Structure: Loading from cache " + structureName);
             return Structure.getStreamFromFolder(Structure.getCachedSchematicsFolder(), structureName);
         }
         else if (Structures.SCHEMATICS_SCAN.equals(sn.getPrefix()))
         {
-//            Log.getLogger().info("Structure: Loading from scans " + structureName);
             return Structure.getStreamFromFolder(Structure.getClientSchematicsFolder(), structureName);
         }
         else if (!Structures.SCHEMATICS_PREFIX.equals(sn.getPrefix()))
         {
-//            Log.getLogger().info("Structure: |" + Structures.SCHEMATICS_PREFIX + "| != |" + sn.getPrefix() + "|");
-//            Log.getLogger().info("Structure: getStream Malformed structure " + structureName);
             return null;
         }
         else
         {
-
-//            Log.getLogger().info("Structure: Loading schematic " + structureName);
-
             //Look in the folder first
             inputstream = Structure.getStreamFromFolder(Structure.getSchematicsFolder(), structureName);
             if (inputstream == null && !Configurations.ignoreSchematicsFromJar)
             {
-//                Log.getLogger().info("Structure: Loading schematic from Jar " + structureName);
                 inputstream = Structure.getStreamFromJar(structureName);
             }
         }
@@ -405,14 +395,8 @@ public class Structure
              final ByteArrayOutputStream byteStream = new ByteArrayOutputStream(data.length);
              try
              {
-                 GZIPOutputStream zipStream = new GZIPOutputStream(byteStream);
-                 try
-                 {
+                 try (GZIPOutputStream zipStream = new GZIPOutputStream(byteStream)) {
                      zipStream.write(data);
-                 }
-                 finally
-                 {
-                     zipStream.close();
                  }
             }
             finally
@@ -420,8 +404,7 @@ public class Structure
                 byteStream.close();
             }
 
-            byte[] compressedData = byteStream.toByteArray();
-            return compressedData;
+            return byteStream.toByteArray();
 
         }
         catch(Exception e)
@@ -438,31 +421,19 @@ public class Structure
 
         try
         {
-             final ByteArrayInputStream byteStream = new ByteArrayInputStream(data);
-             try
-             {
-                 GZIPInputStream zipStream = new GZIPInputStream(byteStream);
-                 try
-                 {
-                     int len;
-                     while ((len = zipStream.read(buffer)) > 0)
-                     {
-                         out.write(buffer, 0, len);
-                     }
-                 }
-                 finally
-                 {
-                     zipStream.close();
-                 }
-            }
-            finally
-            {
-                byteStream.close();
+            try (ByteArrayInputStream byteStream = new ByteArrayInputStream(data)) {
+                GZIPInputStream zipStream = new GZIPInputStream(byteStream);
+                try {
+                    int len;
+                    while ((len = zipStream.read(buffer)) > 0) {
+                        out.write(buffer, 0, len);
+                    }
+                } finally {
+                    zipStream.close();
+                }
             }
 
-            byte[] uncompressedData = out.toByteArray();
-            return uncompressedData;
-
+            return out.toByteArray();
         }
         catch(Exception e)
         {

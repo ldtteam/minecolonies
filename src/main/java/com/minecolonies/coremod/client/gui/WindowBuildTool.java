@@ -2,14 +2,8 @@ package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.controls.Button;
-import com.minecolonies.blockout.controls.Text;
-import com.minecolonies.blockout.controls.Label;
-import com.minecolonies.blockout.View;
 import com.minecolonies.blockout.views.DropDownList;
-import com.minecolonies.blockout.Pane;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.client.gui.WindowStructureNameEntry;
-import com.minecolonies.coremod.client.gui.DialogDoneCancel;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.lib.Constants;
@@ -21,7 +15,6 @@ import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.structures.helpers.Settings;
 import com.minecolonies.structures.helpers.Structure;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Rotation;
@@ -31,18 +24,9 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.io.InputStream;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.function.Consumer;
 import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.stream.Collectors;
-
-import org.lwjgl.input.Keyboard;
 
 /**
  * BuildTool window.

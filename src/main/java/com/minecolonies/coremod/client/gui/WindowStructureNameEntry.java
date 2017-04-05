@@ -20,12 +20,12 @@ public class WindowStructureNameEntry extends Window implements Button.Handler
     private static final String STRUCTURE_NAME_RESOURCE_SUFFIX = ":gui/windowstructurenameentry.xml";
 
     private final Structures.StructureName structureName;
-    private TextField inputName;
+    private final TextField inputName;
 
     /**
      * Constructor for a structure rename entry window.
      *
-     * @param c {@link ColonyView}
+     * @param s {@link Structures.StructureName}
      */
     public WindowStructureNameEntry(final Structures.StructureName s)
     {

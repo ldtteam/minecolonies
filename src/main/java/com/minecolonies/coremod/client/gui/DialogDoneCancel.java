@@ -8,11 +8,6 @@ import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.blockout.OverlayView;
 import com.minecolonies.coremod.util.Log;
-import org.jetbrains.annotations.NotNull;
-
-
-import java.util.HashMap;
-import java.util.function.Consumer;
 
 /**
  * Manage windows and their events.
@@ -34,9 +29,9 @@ public class DialogDoneCancel extends OverlayView implements Button.Handler
     protected Handler handler;
 
     /**
-     * Constructor for the skeleton class of the windows.
+     * Constructor for the DialogDoneCancel class.
      *
-     * @param resource Resource location string.
+     * @param window in which the dialog will be displayed
      */
     public DialogDoneCancel(final Window window)
     {

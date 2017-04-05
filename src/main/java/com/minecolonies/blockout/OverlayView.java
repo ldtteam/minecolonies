@@ -1,14 +1,5 @@
 package com.minecolonies.blockout;
 
-import com.minecolonies.blockout.views.Window;
-import net.minecraft.client.renderer.GlStateManager;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
-
 import org.lwjgl.input.Keyboard;
 
 /**

@@ -6,12 +6,10 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.colony.Structures;
-import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Log;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -74,7 +72,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
         //normalize the structureName
         final Structures.StructureName sn = new Structures.StructureName(Structures.SCHEMATICS_PREFIX, building.getStyle(), this.getUpgradeName());
         this.structureName = sn.toString();
-        this.workOrderName = this.structureName.toString();
+        this.workOrderName = this.structureName;
         this.md5 = Structures.getMD5(this.structureName);
     }
 
@@ -115,19 +113,16 @@ public class WorkOrderBuild extends AbstractWorkOrder
         cleared = compound.getBoolean(TAG_IS_CLEARED);
 
         md5 = compound.getString(TAG_SCHEMATIC_MD5);
-        if (compound.getString(TAG_SCHEMATIC_NAME)!=null)
+        final Structures.StructureName sn = new Structures.StructureName(compound.getString(TAG_SCHEMATIC_NAME));
+        structureName = sn.toString();
+        if (!Structures.hasMD5(structureName))
         {
-            final Structures.StructureName sn = new Structures.StructureName(compound.getString(TAG_SCHEMATIC_NAME));
-            structureName = sn.toString();
-            if (!Structures.hasMD5(structureName))
-            {
-                // If the schematic move we can use the MD5 hash to find it
-                final Structures.StructureName newSN = Structures.getStructureNameByMD5(md5);
-                Log.getLogger().warn("WorkOrderBuild.readFromNBT: replace " + structureName + " by " + newSN);
-                structureName = newSN.toString();
-            }
+            // If the schematic move we can use the MD5 hash to find it
+            final Structures.StructureName newSN = Structures.getStructureNameByMD5(md5);
+            Log.getLogger().warn("WorkOrderBuild.readFromNBT: replace " + structureName + " by " + newSN);
+            structureName = newSN.toString();
         }
-        Log.getLogger().info("WorkOrderBuild.readFromNBT: structureName = " + structureName);
+
         buildingRotation = compound.getInteger(TAG_BUILDING_ROTATION);
         requested = compound.getBoolean(TAG_IS_REQUESTED);
         isMirrored = compound.getBoolean(TAG_IS_MIRRORED);
@@ -163,7 +158,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
         }
         else
         {
-            compound.setString(TAG_SCHEMATIC_NAME, structureName.toString());
+            compound.setString(TAG_SCHEMATIC_NAME, structureName);
         }
         compound.setInteger(TAG_BUILDING_ROTATION, buildingRotation);
         compound.setBoolean(TAG_IS_REQUESTED, requested);
@@ -316,7 +311,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
      */
     public String getStructureName()
     {
-        return this.structureName.toString();
+        return structureName;
     }
 
 

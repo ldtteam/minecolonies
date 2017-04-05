@@ -1,25 +1,14 @@
 package com.minecolonies.coremod.network.messages;
+
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.permissions.Permissions;
-import com.minecolonies.coremod.network.messages.SchematicSaveMessage;
-import com.minecolonies.coremod.util.BlockPosUtil;
 import com.minecolonies.coremod.util.Log;
+import com.minecolonies.structures.helpers.Structure;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
-
-import com.minecolonies.structures.helpers.StructureProxy;
-
 import java.io.InputStream;
-
-import com.minecolonies.structures.helpers.Structure;
 
 /**
  * Request a schematic from the server.

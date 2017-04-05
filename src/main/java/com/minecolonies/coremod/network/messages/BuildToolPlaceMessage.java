@@ -15,7 +15,6 @@ import com.minecolonies.coremod.util.BlockPosUtil;
 import com.minecolonies.coremod.util.BlockUtils;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Log;
-import com.minecolonies.structures.helpers.Structure;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -62,12 +61,12 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
      * Create the building that was made with the build tool.
      * Item in inventory required
      *
-     * @param hutDec   String representation of sort of hutDec that made the request
-     * @param style    String representation of style that was requested
-     * @param pos      BlockPos
-     * @param rotation int representation of the rotation
-     * @param isHut    true if hut, false if decoration
-     * @param mirror   the mirror of the building or decoration.
+     * @param structureName String representation of a structure
+     * @param workOrderName String name of the work order
+     * @param pos           BlockPos
+     * @param rotation      int representation of the rotation
+     * @param isHut         true if hut, false if decoration
+     * @param mirror        the mirror of the building or decoration.
      */
     public BuildToolPlaceMessage(final String structureName, final String workOrderName, final BlockPos pos, final int rotation, final boolean isHut, final Mirror mirror)
     {

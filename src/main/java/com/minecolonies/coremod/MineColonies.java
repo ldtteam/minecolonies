@@ -1,7 +1,6 @@
 package com.minecolonies.coremod;
 
 import com.minecolonies.coremod.achievements.ModAchievements;
-import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.commands.CommandEntryPoint;
 import com.minecolonies.coremod.configuration.ConfigurationHandler;
 import com.minecolonies.coremod.configuration.Configurations;
