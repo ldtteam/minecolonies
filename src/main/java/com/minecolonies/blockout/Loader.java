@@ -48,6 +48,7 @@ public final class Loader
         register("itemicon", ItemIcon.class);
         register("switch", SwitchView.class);
         register("dropdown", DropDownList.class);
+        register("overlay", OverlayView.class);
     }
     private Loader()
     {

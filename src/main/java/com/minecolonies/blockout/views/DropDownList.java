@@ -18,6 +18,7 @@ public class DropDownList extends ButtonVanilla
 {
     protected OverlayView   overlay;
     protected ScrollingList list;
+    protected DataProvider  dataProvider;
     /**
      * width of the scrolling list, by default it is the same as the DropDownList width.
      */
@@ -26,6 +27,7 @@ public class DropDownList extends ButtonVanilla
      * maximum height of the scrolling list, by default it is the same as the DropDownList width.
      */
     protected int dropDownHeight;
+    protected int selectedIndex = -1;
 
 
     /**
@@ -85,8 +87,44 @@ public class DropDownList extends ButtonVanilla
        });
     }
 
-    public void setDataProvider(final ScrollingList.DataProvider p)
+    public int getSelectedIndex()
     {
+        return selectedIndex;
+    }
+
+    public void selectNext()
+    {
+        if (dataProvider.getElementCount() == 0)
+        {
+            setSelectedIndex(0);
+        }
+        else
+        {
+            setSelectedIndex((selectedIndex + 1) % dataProvider.getElementCount());
+        }
+    }
+
+    public void selectPrevious()
+    {
+        if (dataProvider.getElementCount() == 0)
+        {
+            setSelectedIndex(0);
+        }
+        else
+        {
+            setSelectedIndex((selectedIndex + dataProvider.getElementCount() - 1) % dataProvider.getElementCount());
+        }
+    }
+
+    public void setSelectedIndex(final int index)
+    {
+        selectedIndex = index;
+        dataProvider.onSelectedItemChanged(this,index);
+    }
+
+    public void setDataProvider(final DataProvider p)
+    {
+        dataProvider=p;
         list.setDataProvider(p);
         refreshElementPanes();
     }
@@ -123,5 +161,13 @@ public class DropDownList extends ButtonVanilla
     public void close()
     {
         overlay.setVisible(false);
+    }
+
+    /**
+     * Interface for a data provider that updates pane scrolling list pane info.
+     */
+    public interface DataProvider extends ScrollingList.DataProvider
+    {
+        void onSelectedItemChanged(final DropDownList list, final int index);
     }
 }

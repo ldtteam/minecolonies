@@ -6,10 +6,10 @@ import com.minecolonies.blockout.controls.Text;
 import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.View;
 import com.minecolonies.blockout.views.DropDownList;
-import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.WindowStructureNameEntry;
+import com.minecolonies.coremod.client.gui.DialogDoneCancel;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.lib.Constants;
@@ -47,7 +47,7 @@ import org.lwjgl.input.Keyboard;
 /**
  * BuildTool window.
  */
-public class WindowBuildTool extends AbstractWindowSkeleton
+public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDoneCancel.Handler
 {
     /**
      * This button is used to set the section either huts (Builder, Town Hall), decorations or scan mode.
@@ -162,13 +162,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     private static final int ROTATE_LEFT = 3;
 
     /**
-     * Language key for missing hut message.
-     */
-    private static final String NO_HUT_IN_INVENTORY = "com.minecolonies.coremod.gui.buildtool.nohutininventory";
-
-//    private static final String LIST_CHOICES                     = "choices";
-
-    /**
      * List of section.
      */
     @NotNull
@@ -186,20 +179,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     @NotNull
     private List<String> schematics = new ArrayList<>();
 
-    /**
-     * Index of the section.
-     */
-    private int sectionIndex = 0;
-
-    /**
-     * Index of the current style.
-     */
-    private int styleIndex = 0;
-
-    /**
-     * Index of the rendered hutDec/decoration.
-     */
-    private int schematicIndex = 0;
 
     /**
      * Current position the hut/decoration is rendered at.
@@ -218,8 +197,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     final DropDownList schematicsDropDownList;
     final Button renameButton;
     final Button deleteButton;
-    final View deleteView;
-    final Text deleteMessage;
+    DialogDoneCancel confirmDeleteDialog;
 
     /**
      * Creates a window build tool.
@@ -268,17 +246,12 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
         registerButton(BUTTON_RENAME, this::renameClicked);
         registerButton(BUTTON_DELETE, this::deleteClicked);
-        registerButton("deleteDone", this::deleteDoneClicked);
-        registerButton("deleteCancel", this::deleteCancelClicked);
         renameButton = findPaneOfTypeByID(BUTTON_RENAME, Button.class);
         deleteButton = findPaneOfTypeByID(BUTTON_DELETE, Button.class);
 
-        deleteView = findPaneOfTypeByID("deleteView", View.class);
-        deleteMessage = findPaneOfTypeByID("deleteMessage", Text.class);
-
         sectionsDropDownList = findPaneOfTypeByID("buildingType", DropDownList.class);
         Log.getLogger().info("sectionsDropDownList="+sectionsDropDownList);
-        sectionsDropDownList.setDataProvider(new ScrollingList.DataProvider()
+        sectionsDropDownList.setDataProvider(new DropDownList.DataProvider()
         {
             @Override
             public int getElementCount()
@@ -290,10 +263,15 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             {
                 updateDropDownItem(sectionsDropDownList, rowPane, index,getSectionLocalizedName(sections.get(index)));
             }
+            @Override
+            public void onSelectedItemChanged(final DropDownList list, final int index)
+            {
+		        onItemSelected(list, index);
+            }
         });
 
         stylesDropDownList = findPaneOfTypeByID("style", DropDownList.class);
-        stylesDropDownList.setDataProvider(new ScrollingList.DataProvider()
+        stylesDropDownList.setDataProvider(new DropDownList.DataProvider()
         {
             @Override
             public int getElementCount()
@@ -305,10 +283,15 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             {
                 updateDropDownItem(stylesDropDownList, rowPane, index,styles.get(index));
             }
+            @Override
+            public void onSelectedItemChanged(final DropDownList list, final int index)
+            {
+                onItemSelected(list, index);
+            }
         });
 
         schematicsDropDownList = findPaneOfTypeByID("schematic", DropDownList.class);
-        schematicsDropDownList.setDataProvider(new ScrollingList.DataProvider()
+        schematicsDropDownList.setDataProvider(new DropDownList.DataProvider()
         {
             @Override
             public int getElementCount()
@@ -321,12 +304,16 @@ public class WindowBuildTool extends AbstractWindowSkeleton
                 final Structures.StructureName sn = new Structures.StructureName(schematics.get(index));
                 updateDropDownItem(schematicsDropDownList, rowPane, index, sn.getLocalizedName());
             }
+            @Override
+            public void onSelectedItemChanged(final DropDownList list, final int index)
+            {
+                onItemSelected(list, index);
+            }
         });
     }
 
     public void updateDropDownItem(@NotNull final DropDownList list, @NotNull final Pane rowPane, final int index, final String label)
     {
-        Log.getLogger().info("updateDropDownItem(" + rowPane + ", " + index + ", " + label);
         final Button choiceButton = rowPane.findPaneOfTypeByID("button", Button.class);
         rowPane.findPaneOfTypeByID("id", Label.class).setLabelText(Integer.toString(index));
         choiceButton.setLabel(label);
@@ -334,28 +321,55 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         {
             public void onButtonClicked(@NotNull final Button button)
             {
-                Log.getLogger().info("onButtonClicked "+ button + " => " + button.getLabel());
                 @NotNull final Label idLabel = button.getParent().findPaneOfTypeByID("id", Label.class);;
                 final int index = Integer.parseInt(idLabel.getLabelText());
+                list.setSelectedIndex(index);
                 list.close();
-                onItemSelected(list, index);
             }
         });
     }
 
     public void onItemSelected(final DropDownList list, final int index)
     {
+        //TODO label of the button should not be set here but inside DropDownList
         if (list == sectionsDropDownList)
         {
-            setSection(index);
+            String name = getSectionName();
+            if (Structures.SCHEMATICS_SCAN.equals(name))
+            {
+                name = LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.scans");
+                renameButton.setVisible(true);
+                deleteButton.setVisible(true);
+            }
+            else
+            {
+                renameButton.setVisible(false);
+                deleteButton.setVisible(false);
+                if (Structures.SCHEMATICS_PREFIX.equals(name))
+                {
+                    name = LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.decorations");
+                }
+                else
+                {
+                    //should be a hut
+                    name = LanguageHandler.format("tile.minecolonies.blockHut" + name + ".name");
+                }
+            }
+
+            findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(name);
+            updateStyles();
+
         }
         else if (list == stylesDropDownList)
         {
-            setStyle(index);
+            findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).setLabel(getStyleName());
+            updateSchematics();
         }
         else if (list == schematicsDropDownList)
         {
-            setSchematic(index);
+            Structures.StructureName sn = new Structures.StructureName(getSchematicName());
+            findPaneOfTypeByID(BUTTON_SCHEMATIC_ID, Button.class).setLabel(sn.getLocalizedName());
+            changeSchematic();
         }
 
     }
@@ -378,29 +392,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         setStructureName(Settings.instance.getStructureName());
     }
 
-    @Override
-    public void handleClick(final int mx, final int my)
-    {
-        if (deleteView.isVisible())
-        {
-            deleteView.setVisible(false);
-        }
-
-    }
-
-
-    @Override
-    public boolean onKeyTyped(final char ch, final int key)
-    {
-        if (deleteView.isVisible() && key == Keyboard.KEY_ESCAPE)
-        {
-            deleteView.setVisible(false);
-            return true;
-        }
-
-        return super.onKeyTyped(ch, key);
-    }
-
     /**
      * Set the structure name.
      * @param String structureName name of the structure name
@@ -414,24 +405,25 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             final int sectionIndex = sections.indexOf(sn.getSection());
             if (sectionIndex != -1)
             {
-                setSection(sectionIndex);
+                sectionsDropDownList.setSelectedIndex(sectionIndex);
                 final int styleIndex = styles.indexOf(sn.getStyle());
                 if (styleIndex != -1)
                 {
-                    setStyle(styleIndex);
+                    stylesDropDownList.setSelectedIndex(styleIndex);
                     final int schematicIndex = schematics.indexOf(sn.toString());
                     if (schematicIndex != -1)
                     {
-                        setSchematic(schematicIndex);
+                        schematicsDropDownList.setSelectedIndex(schematicIndex);
                         return;
                     }
                 }
             }
         }
 
-        setSection(sectionIndex);
-        setStyle(styleIndex);
-        setSchematic(schematicIndex);
+        //We did not find the structure, select the first of each
+        sectionsDropDownList.setSelectedIndex(0);
+        stylesDropDownList.setSelectedIndex(0);
+        schematicsDropDownList.setSelectedIndex(0);
     }
 
     /**
@@ -481,7 +473,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     {
         if (Settings.instance.getActiveStructure() != null)
         {
-            Settings.instance.setSchematicInfo(schematics.get(schematicIndex), rotation);
+            Settings.instance.setSchematicInfo(schematics.get(schematicsDropDownList.getSelectedIndex()), rotation);
         }
     }
 
@@ -587,10 +579,10 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void confirmClicked()
     {
-        Structures.StructureName structureName = new Structures.StructureName(schematics.get(schematicIndex));
+        Structures.StructureName structureName = new Structures.StructureName(schematics.get(schematicsDropDownList.getSelectedIndex()));
         if (structureName.getPrefix().equals(Structures.SCHEMATICS_SCAN) && FMLCommonHandler.instance().getMinecraftServerInstance() == null)
         {
-            //We need to check that the server hava it too using the md5
+            //We need to check that the server have it too using the md5
             requestScannedSchematic(structureName);
         }
         else
@@ -713,14 +705,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     public void nextSection()
     {
-        if (sections.size() == 0)
-        {
-            setSection(0);
-        }
-        else
-        {
-            setSection((sectionIndex + 1) % sections.size());
-        }
+        sectionsDropDownList.selectNext();
     }
 
     /**
@@ -728,15 +713,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     public void previousSection()
     {
-        if (sections.size() == 0)
-        {
-            setSection(0);
-        }
-        else
-        {
-            Log.getLogger().info("previousSection =>" +((sectionIndex - 1) % sections.size())+"("+sections.size()+")");
-            setSection((sectionIndex + sections.size() - 1 ) % sections.size());
-        }
+        sectionsDropDownList.selectPrevious();
     }
 
     /**
@@ -754,51 +731,18 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void deleteClicked()
     {
+        confirmDeleteDialog = new DialogDoneCancel(getWindow());
         final Structures.StructureName structureName = new Structures.StructureName(getSchematicName());
-        deleteMessage.setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.structure.delete.body", structureName.toString()));
-        deleteView.setVisible(true);
-    }
-
-    private void deleteDoneClicked()
-    {
-        deleteView.setVisible(false);
-
-        final Structures.StructureName structureName = new Structures.StructureName(getSchematicName());
-        if (Structures.SCHEMATICS_SCAN.equals(structureName.getPrefix()))
-        {
-            if (Structures.deleteScannedStructure(structureName))
-            {
-                Structures.loadScannedStyleMaps();
-                if (schematics.size() <= 1)
-                {
-                    if (styles.size() <= 1)
-                    {
-                        nextSection();
-                    }
-                    else
-                    {
-                        nextStyle();
-                    }
-                }
-                else
-                {
-                    nextSchematic();
-                    setStyle(styleIndex);
-                }
-            }
-        }
-    }
-
-    private void deleteCancelClicked()
-    {
-        deleteView.setVisible(false);
+        confirmDeleteDialog.setTitle(LanguageHandler.format("com.minecolonies.coremod.gui.structure.delete.title"));
+        confirmDeleteDialog.setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.structure.delete.body", structureName.toString()));
+        confirmDeleteDialog.open();
     }
 
     private String getSectionLocalizedName(final String name)
     {
         if (Structures.SCHEMATICS_SCAN.equals(name))
         {
-            return LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.scan");
+            return LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.scans");
         }
         else if (Structures.SCHEMATICS_PREFIX.equals(name))
         {
@@ -809,48 +753,16 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     }
 
     /**
-     * Set the current section and update styles.
-     */
-    public void setSection(int index)
-    {
-        sectionIndex = index;
-        String name = getSectionName();
-        if (Structures.SCHEMATICS_SCAN.equals(name))
-        {
-            name = LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.scan");
-            renameButton.setVisible(true);
-            deleteButton.setVisible(true);
-        }
-        else
-        {
-            renameButton.setVisible(false);
-            deleteButton.setVisible(false);
-            if (Structures.SCHEMATICS_PREFIX.equals(name))
-            {
-                name = LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.decorations");
-            }
-            else
-            {
-                //should be a hut
-                name = LanguageHandler.format("tile.minecolonies.blockHut" + name + ".name");
-            }
-        }
-
-        findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(name);
-        updateStyles();
-    }
-
-    /**
      * get the name of the current section as displayed on the button.
      */
     public String getSectionName()
     {
-        if (sectionIndex <0 || sectionIndex >= sections.size())
+        if (sectionsDropDownList.getSelectedIndex() <0 || sectionsDropDownList.getSelectedIndex() >= sections.size())
         {
-            Log.getLogger().error("Could not get section name for index " + sectionIndex + "(size:" + sections.size() + ")");
+            Log.getLogger().error("Could not get section name for index " + sectionsDropDownList.getSelectedIndex() + "(size:" + sections.size() + ")");
             return "";
         }
-        return sections.get(sectionIndex);
+        return sections.get(sectionsDropDownList.getSelectedIndex());
     }
 
     /**
@@ -858,14 +770,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     public void nextStyle()
     {
-        if (styles.size() == 0)
-        {
-            setStyle(0);
-        }
-        else
-        {
-            setStyle((styleIndex + 1) % styles.size());
-        }
+        stylesDropDownList.selectNext();
     }
 
     /**
@@ -873,24 +778,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     public void previousStyle()
     {
-        if (styles.size() == 0)
-        {
-            setStyle(0);
-        }
-        else
-        {
-            setStyle((styleIndex + styles.size() - 1) % styles.size());
-        }
-    }
-
-    /**
-     * set the current Style and update schematics accordingly.
-     */
-    public void setStyle(int index)
-    {
-        styleIndex = index;
-        findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).setLabel(getStyleName());
-        updateSchematics();
+        stylesDropDownList.selectPrevious();
     }
 
     /**
@@ -898,12 +786,12 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     public String getStyleName()
     {
-        if (styleIndex <0 || styleIndex >= styles.size())
+        if (stylesDropDownList.getSelectedIndex() <0 || stylesDropDownList.getSelectedIndex() >= styles.size())
         {
-            Log.getLogger().error("Could not get style name for index " + styleIndex + "(size:" + styles.size() + ")");
+            Log.getLogger().error("Could not get style name for index " + stylesDropDownList.getSelectedIndex() + "(size:" + styles.size() + ")");
             return "";
         }
-        return styles.get(styleIndex);
+        return styles.get(stylesDropDownList.getSelectedIndex());
     }
 
     /**
@@ -923,7 +811,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         findPaneOfTypeByID("previousStyle", Button.class).setEnabled(enabled);
         findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).setEnabled(enabled);
         findPaneOfTypeByID("nextStyle", Button.class).setEnabled(enabled);
-        setStyle(newIndex);
+        stylesDropDownList.setSelectedIndex(newIndex);
     }
 
     /**
@@ -931,14 +819,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     public void nextSchematic()
     {
-        if (schematics.size() == 0)
-        {
-            setSchematic(0);
-        }
-        else
-        {
-            setSchematic((schematicIndex + 1) % schematics.size());
-        }
+        schematicsDropDownList.selectNext();
     }
 
     /**
@@ -946,25 +827,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     public void previousSchematic()
     {
-        if (schematics.size() == 0)
-        {
-            setSchematic(0);
-        }
-        else
-        {
-            setSchematic((schematicIndex + schematics.size() - 1) % schematics.size());
-        }
-    }
-
-    /**
-     * Set the current schematic.
-     */
-    public void setSchematic(int index)
-    {
-        schematicIndex = index;
-        Structures.StructureName sn = new Structures.StructureName(getSchematicName());
-        findPaneOfTypeByID(BUTTON_SCHEMATIC_ID, Button.class).setLabel(sn.getLocalizedName());
-        changeSchematic();
+        schematicsDropDownList.selectPrevious();
     }
 
     /**
@@ -972,12 +835,12 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     public String getSchematicName()
     {
-        if (schematicIndex <0 || schematicIndex >= schematics.size())
+        if (schematicsDropDownList.getSelectedIndex() <0 || schematicsDropDownList.getSelectedIndex() >= schematics.size())
         {
-            Log.getLogger().error("Could not get schematic name for index " + schematicIndex + "(size:" + schematics.size() + ")");
+            Log.getLogger().error("Could not get schematic name for index " + schematicsDropDownList.getSelectedIndex() + "(size:" + schematics.size() + ")");
             return "";
         }
-        return schematics.get(schematicIndex);
+        return schematics.get(schematicsDropDownList.getSelectedIndex());
     }
 
     /**
@@ -993,7 +856,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         int newIndex = -1;
         for (int i = 0 ; i < schematics.size();i++)
         {
-            Log.getLogger().info("updateSchematics: schematic = " + schematics.get(i));
             Structures.StructureName sn = new Structures.StructureName(schematics.get(i));
             if (sn.getSchematic().equals(currentSchematic))
             {
@@ -1016,7 +878,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         findPaneOfTypeByID("previousSchematic", Button.class).setEnabled(enabled);
         findPaneOfTypeByID(BUTTON_SCHEMATIC_ID, Button.class).setEnabled(enabled);
         findPaneOfTypeByID("nextSchematic", Button.class).setEnabled(enabled);
-        setSchematic(newIndex);
+        schematicsDropDownList.setSelectedIndex(newIndex);
     }
 
     /**
@@ -1025,5 +887,33 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     private static void mirror()
     {
         Settings.instance.mirror();
+    }
+
+    public void onDialogClosed(final DialogDoneCancel dialog, final int buttonId)
+    {
+        if (dialog == confirmDeleteDialog && buttonId == DialogDoneCancel.DONE)
+        {
+            final Structures.StructureName structureName = new Structures.StructureName(getSchematicName());
+            if (Structures.SCHEMATICS_SCAN.equals(structureName.getPrefix()))
+            {
+                if (Structures.deleteScannedStructure(structureName))
+                {
+                    Structures.loadScannedStyleMaps();
+                    if (schematics.size() > 1)
+                    {
+                        schematicsDropDownList.selectNext();
+                        stylesDropDownList.setSelectedIndex(stylesDropDownList.getSelectedIndex());
+                    }
+                    else if (styles.size() > 1)
+                    {
+                        stylesDropDownList.selectNext();
+                    }
+                    else
+                    {
+                        sectionsDropDownList.selectNext();
+                    }
+                }
+            }
+        }
     }
 }
