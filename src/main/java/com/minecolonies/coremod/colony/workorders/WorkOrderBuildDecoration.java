@@ -20,17 +20,17 @@ public class WorkOrderBuildDecoration extends WorkOrderBuild
     /**
      * Create a new work order telling the building to build a decoration.
      *
-     * @param structureName The name of the decoration.
-     * @param decorationName   The user friendly name of the decoration.
-     * @param rotation   The number of times the decoration was rotated.
-     * @param location   The location where the decoration should be built.
-     * @param mirror     Is the decoration mirrored?
+     * @param structureName  The name of the decoration.
+     * @param workOrderName  The user friendly name of the decoration.
+     * @param rotation       The number of times the decoration was rotated.
+     * @param location       The location where the decoration should be built.
+     * @param mirror         Is the decoration mirrored?
      */
     public WorkOrderBuildDecoration(final String structureName, final String workOrderName, final int rotation, final BlockPos location, final boolean mirror)
     {
         super();
         //normalise structure name
-        final  Structures.StructureName sn = new Structures.StructureName(structureName);
+        final Structures.StructureName sn = new Structures.StructureName(structureName);
         this.structureName = sn.toString();
         this.workOrderName = workOrderName;
         this.buildingRotation = rotation;

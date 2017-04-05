@@ -18,17 +18,16 @@ public class DropDownList extends ButtonVanilla
     protected OverlayView   overlay;
     protected ScrollingList list;
     protected DataProvider  dataProvider;
-    protected Handler  handlerdd;
+    protected Handler       handlerdd;
     /**
      * width of the scrolling list, by default it is the same as the DropDownList width.
      */
-    protected int dropDownWidth;
+    protected int           dropDownWidth;
     /**
      * maximum height of the scrolling list, by default it is the same as the DropDownList width.
      */
-    protected int dropDownHeight;
+    protected int           dropDownHeight;
     protected int selectedIndex = -1;
-
 
     /**
      * Default constructor required by Blockout.
@@ -65,26 +64,27 @@ public class DropDownList extends ButtonVanilla
         list = new ScrollingList(params);
 
         list.setSize(dropDownWidth, dropDownHeight);
-        list.setPosition((x+width/2) - dropDownWidth/2, y + height);
+        list.setPosition((x + width / 2) - dropDownWidth / 2, y + height);
         list.putInside(overlay);
         list.parseChildren(params);
 
 
-        setHandler(new Button.Handler(){
+        setHandler(new Button.Handler()
+        {
             public void onButtonClicked(Button button)
             {
-                 if (overlay.isVisible())
-                 {
-                     close();
-                 }
-                 else
-                 {
-                     overlay.setSize(button.getWindow().getInteriorWidth(),button.getWindow().getInteriorHeight());
-                     overlay.putInside(button.getWindow());
-                     open();
-                 }
+                if (overlay.isVisible())
+                {
+                    close();
+                }
+                else
+                {
+                    overlay.setSize(button.getWindow().getInteriorWidth(), button.getWindow().getInteriorHeight());
+                    overlay.putInside(button.getWindow());
+                    open();
+                }
             }
-       });
+        });
     }
 
     public int getSelectedIndex()
@@ -118,19 +118,22 @@ public class DropDownList extends ButtonVanilla
 
     public void setSelectedIndex(final int index)
     {
-        if (index <0 || index >= dataProvider.getElementCount()) return;
+        if (index < 0 || index >= dataProvider.getElementCount())
+        {
+            return;
+        }
         selectedIndex = index;
 
         setLabel(dataProvider.getLabel(selectedIndex));
         if (handlerdd != null)
         {
-            handlerdd.onSelectedItemChanged(this,index);
+            handlerdd.onSelectedItemChanged(this, index);
         }
     }
 
     public void setDataProvider(final DataProvider p)
     {
-        dataProvider=p;
+        dataProvider = p;
         final DropDownList ddList = this;
         list.setDataProvider(new ScrollingList.DataProvider()
         {
@@ -139,6 +142,7 @@ public class DropDownList extends ButtonVanilla
             {
                 return dataProvider.getElementCount();
             }
+
             //TODO remove this
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
@@ -190,6 +194,7 @@ public class DropDownList extends ButtonVanilla
     public interface DataProvider
     {
         int getElementCount();
+
         String getLabel(final int index);
     }
 
@@ -219,7 +224,6 @@ public class DropDownList extends ButtonVanilla
         });
     }
 
-
     /**
      * Set the button handler for this button.
      *
@@ -240,7 +244,7 @@ public class DropDownList extends ButtonVanilla
         /**
          * Called when an item is selected.
          *
-         * @param list from which the item is selected.
+         * @param list  from which the item is selected.
          * @param index of the selected Item.
          */
         void onSelectedItemChanged(final DropDownList list, final int index);

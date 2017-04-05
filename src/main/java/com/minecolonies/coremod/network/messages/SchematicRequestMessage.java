@@ -8,6 +8,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
+
 import java.io.InputStream;
 
 /**
@@ -33,7 +34,7 @@ public class SchematicRequestMessage extends AbstractMessage<SchematicRequestMes
      * Creates a Schematic request message.
      *
      * @param filename of the structure based on schematics folder
-     *        Ex: schematics/stone/Builder1.nbt
+     *                 Ex: schematics/stone/Builder1.nbt
      */
     public SchematicRequestMessage(final String filename)
     {
@@ -65,7 +66,7 @@ public class SchematicRequestMessage extends AbstractMessage<SchematicRequestMes
         else
         {
             Log.getLogger().info("Request Schematic file for " + message.filename + " to player " + player.getName());
-            byte [] schematic = Structure.getStreamAsByteArray(stream);
+            byte[] schematic = Structure.getStreamAsByteArray(stream);
             MineColonies.getNetwork().sendTo(new SchematicSaveMessage(schematic), player);
         }
     }

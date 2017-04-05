@@ -18,8 +18,8 @@ import org.jetbrains.annotations.Nullable;
  */
 public class SchematicSaveMessage implements IMessage, IMessageHandler<SchematicSaveMessage, IMessage>
 {
-    private byte [] data = null;
-    final private int MAX_TOTAL_SIZE = 32767;
+    private       byte[] data           = null;
+    final private int    MAX_TOTAL_SIZE = 32767;
 
     /**
      * Public standard constructor.
@@ -36,14 +36,14 @@ public class SchematicSaveMessage implements IMessage, IMessageHandler<Schematic
      */
     public SchematicSaveMessage(final byte[] data)
     {
-            this.data = data;
+        this.data = data;
     }
 
     @Override
     public void fromBytes(@NotNull final ByteBuf buf)
     {
         int length = buf.readInt();
-        final byte[] compressedData = new byte [length];
+        final byte[] compressedData = new byte[length];
         buf.readBytes(compressedData);
         data = Structure.uncompress(compressedData);
     }
@@ -52,24 +52,27 @@ public class SchematicSaveMessage implements IMessage, IMessageHandler<Schematic
     public void toBytes(@NotNull final ByteBuf buf)
     {
         final byte[] compressedData = Structure.compress(data);
-        buf.capacity(compressedData.length + buf.writerIndex());
-        final int MAX_SIZE = MAX_TOTAL_SIZE - Integer.SIZE / Byte.SIZE;
-        if (compressedData.length > MAX_SIZE)
+        if (compressedData != null)
         {
-            buf.writeInt(0);
-            if (MineColonies.isClient())
+            buf.capacity(compressedData.length + buf.writerIndex());
+            final int MAX_SIZE = MAX_TOTAL_SIZE - Integer.SIZE / Byte.SIZE;
+            if (compressedData.length > MAX_SIZE)
             {
-                ClientStructureWrapper.sendMessageSchematicTooBig(MAX_SIZE);
+                buf.writeInt(0);
+                if (MineColonies.isClient())
+                {
+                    ClientStructureWrapper.sendMessageSchematicTooBig(MAX_SIZE);
+                }
+                else
+                {
+                    Log.getLogger().error("SchematicSaveMessage: schematic size too big, can not be bigger than " + MAX_SIZE + " bytes");
+                }
             }
             else
             {
-                Log.getLogger().error("SchematicSaveMessage: schematic size too big, can not be bigger than " + MAX_SIZE + " bytes");
+                buf.writeInt(compressedData.length);
+                buf.writeBytes(compressedData);
             }
-        }
-        else
-        {
-            buf.writeInt(compressedData.length);
-            buf.writeBytes(compressedData);
         }
     }
 

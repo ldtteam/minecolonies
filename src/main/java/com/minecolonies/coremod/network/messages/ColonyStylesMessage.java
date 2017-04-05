@@ -17,7 +17,7 @@ import java.util.*;
  */
 public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStylesMessage, IMessage>
 {
-    private boolean allowPlayerSchematics;
+    private boolean             allowPlayerSchematics;
     private Map<String, String> md5Map;
 
     /**
@@ -27,8 +27,6 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
     {
         super();
     }
-
-
 
     @Override
     public void fromBytes(@NotNull final ByteBuf buf)
@@ -52,7 +50,6 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
         return map;
     }
 
-
     @Override
     public void toBytes(@NotNull final ByteBuf buf)
     {
@@ -64,7 +61,7 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
     {
         Map<String, String> md5s = Structures.getMD5s();
         buf.writeInt(md5s.size());
-        for(Map.Entry<String,String> entry : md5s.entrySet())
+        for (Map.Entry<String, String> entry : md5s.entrySet())
         {
             ByteBufUtils.writeUTF8String(buf, entry.getKey());
             ByteBufUtils.writeUTF8String(buf, entry.getValue());

@@ -51,8 +51,6 @@ public class OverlayView extends View
         setVisible(false);
     }
 
-
-
     /**
      * Called when a key is pressed.
      * hide the view when ESC is pressed.

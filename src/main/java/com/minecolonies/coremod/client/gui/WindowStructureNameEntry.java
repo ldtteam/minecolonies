@@ -14,13 +14,13 @@ import org.jetbrains.annotations.NotNull;
  */
 public class WindowStructureNameEntry extends Window implements Button.Handler
 {
-    private static final String BUTTON_DONE                   = "done";
-    private static final String BUTTON_CANCEL                 = "cancel";
-    private static final String INPUT_NAME                    = "name";
+    private static final String BUTTON_DONE                    = "done";
+    private static final String BUTTON_CANCEL                  = "cancel";
+    private static final String INPUT_NAME                     = "name";
     private static final String STRUCTURE_NAME_RESOURCE_SUFFIX = ":gui/windowstructurenameentry.xml";
 
     private final Structures.StructureName structureName;
-    private final TextField inputName;
+    private final TextField                inputName;
 
     /**
      * Constructor for a structure rename entry window.
@@ -49,7 +49,7 @@ public class WindowStructureNameEntry extends Window implements Button.Handler
             if (!name.isEmpty())
             {
                 final Structures.StructureName newStructureName = Structures.renameScannedStructure(structureName, name);
-                if (newStructureName!=null)
+                if (newStructureName != null)
                 {
                     Settings.instance.setStructureName(newStructureName.toString());
                 }

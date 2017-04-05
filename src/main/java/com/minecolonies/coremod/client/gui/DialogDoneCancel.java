@@ -22,11 +22,11 @@ public class DialogDoneCancel extends OverlayView implements Button.Handler
      */
     private static final String DIALOG_OK_CANCEL_SUFFIX = ":gui/dialogdonecancel.xml";
 
-    protected final Label titleLabel;
-    protected final Text contentText;
-    protected final Button doneButton;
-    protected final Button cancelButton;
-    protected Handler handler;
+    protected final Label   titleLabel;
+    protected final Text    contentText;
+    protected final Button  doneButton;
+    protected final Button  cancelButton;
+    protected       Handler handler;
 
     /**
      * Constructor for the DialogDoneCancel class.
@@ -37,13 +37,13 @@ public class DialogDoneCancel extends OverlayView implements Button.Handler
     {
         super();
         Loader.createFromXMLFile(Constants.MOD_ID + DIALOG_OK_CANCEL_SUFFIX, this);
-        titleLabel   = findPaneOfTypeByID("title", Label.class);
-        contentText  = findPaneOfTypeByID("textcontent", Text.class);
-        doneButton   = findPaneOfTypeByID("done", Button.class);
+        titleLabel = findPaneOfTypeByID("title", Label.class);
+        contentText = findPaneOfTypeByID("textcontent", Text.class);
+        doneButton = findPaneOfTypeByID("done", Button.class);
         cancelButton = findPaneOfTypeByID("cancel", Button.class);
         doneButton.setHandler(this);
         cancelButton.setHandler(this);
-        this.window  = window;
+        this.window = window;
         setPosition(0, 0);
         setVisible(false);
     }
@@ -91,7 +91,7 @@ public class DialogDoneCancel extends OverlayView implements Button.Handler
     {
         if (visible)
         {
-            setSize(window.getInteriorWidth(),window.getInteriorHeight());
+            setSize(window.getInteriorWidth(), window.getInteriorHeight());
             //Make sure we are on top
             putInside(window);
         }
@@ -125,10 +125,10 @@ public class DialogDoneCancel extends OverlayView implements Button.Handler
     public interface Handler
     {
         /**
-         * Called when a button is clicked.
+         * Called then dialog is close by a button.
          *
          * @param dialog the dialog that was closed.
-         * @param done whether it is done or cancel.
+         * @param buttonId   whether it is {DONE} or {CANCEL}.
          */
         void onDialogClosed(final DialogDoneCancel dialog, final int buttonId);
     }

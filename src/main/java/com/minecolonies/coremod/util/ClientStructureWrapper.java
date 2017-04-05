@@ -36,7 +36,8 @@ public final class ClientStructureWrapper
      */
     public static void handleSaveScanMessage(final NBTTagCompound nbttagcompound, final long currentMillis)
     {
-        final Structures.StructureName structureName = new Structures.StructureName(Structures.SCHEMATICS_SCAN, "new",  LanguageHandler.format("item.scepterSteel.scanFormat", currentMillis));
+        final Structures.StructureName structureName =
+          new Structures.StructureName(Structures.SCHEMATICS_SCAN, "new", LanguageHandler.format("item.scepterSteel.scanFormat", currentMillis));
         final File file = new File(Structure.getClientSchematicsFolder(), structureName.toString() + Structures.SCHEMATIC_EXTENSION);
         checkDirectory(file.getParentFile());
 
@@ -51,20 +52,19 @@ public final class ClientStructureWrapper
             return;
         }
 
-        LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player,"item.scepterSteel.scanSuccess", file);
+        LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "item.scepterSteel.scanSuccess", file);
         Settings.instance.setStructureName(structureName.toString());
     }
 
     /**
      * Send a message to the player informing him that the schematic is too big.
+     *
      * @param maxSize is the maximum size allowed in bytes.
      */
     public static void sendMessageSchematicTooBig(int maxSize)
     {
-	    LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "com.minecolonies.coremod.network.messages.schematicsavemessage.toobig", maxSize);
+        LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "com.minecolonies.coremod.network.messages.schematicsavemessage.toobig", maxSize);
     }
-
-
 
     /**
      * Checks if directory exists, else creates it.
@@ -78,5 +78,4 @@ public final class ClientStructureWrapper
             Log.getLogger().error("Directory doesn't exist and failed to be created: " + directory.toString());
         }
     }
-
 }

@@ -1,4 +1,5 @@
 package com.minecolonies.structures.helpers;
+
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.configuration.Configurations;
@@ -108,7 +109,7 @@ public class Structure
 
         try
         {
-            this.md5      = Structure.calculateMD5(Structure.getStream(structureName));
+            this.md5 = Structure.calculateMD5(Structure.getStream(structureName));
             this.template = readTemplateFromStream(inputStream);
         }
         catch (final IOException e)
@@ -123,13 +124,14 @@ public class Structure
 
     /**
      * Get the file representation of the schematics' folder.
+     *
      * @return the folder for the schematic
      */
     public static File getSchematicsFolder()
     {
         if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
         {
-            if (ColonyManager.getServerUUID()!=null)
+            if (ColonyManager.getServerUUID() != null)
             {
                 return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + "/" + ColonyManager.getServerUUID());
             }
@@ -144,7 +146,7 @@ public class Structure
         // then we use it as the schematic folder
         // otherwise we use the minecraft folder  /minecolonies/schematics
         final File worldSchematicFolder = new File(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
-                    + "/" + Constants.MOD_ID);
+                                                     + "/" + Constants.MOD_ID);
 
         if (!worldSchematicFolder.exists())
         {
@@ -152,18 +154,19 @@ public class Structure
         }
 
         return new File(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
-                        + "/" + Constants.MOD_ID);
+                          + "/" + Constants.MOD_ID);
     }
 
     /**
      * Get the file representation of the cached schematics' folder.
+     *
      * @return the folder for the cached schematics
      */
     public static File getCachedSchematicsFolder()
     {
         if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
         {
-            if (ColonyManager.getServerUUID()!=null)
+            if (ColonyManager.getServerUUID() != null)
             {
                 return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + "/" + ColonyManager.getServerUUID());
             }
@@ -173,10 +176,10 @@ public class Structure
                 return null;
             }
         }
-        Log.getLogger().info("getCachedSchematicsFolder:"  + FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
-                        + "/" + Constants.MOD_ID);
+        Log.getLogger().info("getCachedSchematicsFolder:" + FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
+                               + "/" + Constants.MOD_ID);
         return new File(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
-                        + "/" + Constants.MOD_ID);
+                          + "/" + Constants.MOD_ID);
     }
 
     /**
@@ -189,13 +192,14 @@ public class Structure
 
     /**
      * get a InputStream for a give structureName.
-     *
+     * <p>
      * Look into the following director (in order):
      * - scan
      * - cache
      * - schematics folder
      * - jar
      * It should be the exact oppsite that the way used to buikd the list.
+     *
      * @param structureName name of the structure to load
      * @return the input stream or null
      */
@@ -237,7 +241,8 @@ public class Structure
 
     /**
      * get a input stream for a schematic within a specif folder.
-     * @param folder where to load it from.
+     *
+     * @param folder        where to load it from.
      * @param structureName name of the structure to load.
      * @return the input stream or null
      */
@@ -245,7 +250,7 @@ public class Structure
     {
         try
         {
-            if(folder.exists())
+            if (folder.exists())
             {
                 //We need to check that we stay within the correct folder
                 final File nbtFile = new File(folder.getPath() + "/" + structureName + ".nbt");
@@ -255,7 +260,7 @@ public class Structure
                 }
                 else
                 {
-                    Log.getLogger().error("Structure: Illegal structure name \""+structureName+"\"");
+                    Log.getLogger().error("Structure: Illegal structure name \"" + structureName + "\"");
                 }
             }
             else
@@ -272,7 +277,8 @@ public class Structure
 
     /**
      * get a input stream for a schematic from jar.
-     * @param structureName  name of the structure to load from the jar.
+     *
+     * @param structureName name of the structure to load from the jar.
      * @return the input stream or null
      */
     private static InputStream getStreamFromJar(final String structureName)
@@ -325,6 +331,7 @@ public class Structure
 
     /**
      * Calculate the MD5 hash for a template from an inputstream.
+     *
      * @param stream to which we want the MD5 hash
      * @return the MD5 hash string or null
      */
@@ -340,10 +347,11 @@ public class Structure
 
     /**
      * Calculate the MD5 hash of a byte array
+     *
      * @param bytes array
      * @return the MD5 hash string or null
      */
-    public static String calculateMD5(final byte [] bytes) //throws IOException
+    public static String calculateMD5(final byte[] bytes) //throws IOException
     {
         try
         {
@@ -360,29 +368,31 @@ public class Structure
 
     /**
      * Compare the md5 from the structure with an other md5 hash.
+     *
      * @param otherMD5 to compare with
      * @return whether the otherMD5 match, return false if md5 is null
      */
     public boolean isCorrectMD5(final String otherMD5)
     {
-        Log.getLogger().info("isCorrectMD5: md5:" +  md5 + " other:"+ otherMD5);
+        Log.getLogger().info("isCorrectMD5: md5:" + md5 + " other:" + otherMD5);
         if (md5 == null || otherMD5 == null)
         {
             return false;
         }
-        return md5.compareTo(otherMD5)==0;
+        return md5.compareTo(otherMD5) == 0;
     }
 
     public static byte[] compress(final byte[] data)
     {
         try
         {
-             final ByteArrayOutputStream byteStream = new ByteArrayOutputStream(data.length);
-             try
-             {
-                 try (GZIPOutputStream zipStream = new GZIPOutputStream(byteStream)) {
-                     zipStream.write(data);
-                 }
+            final ByteArrayOutputStream byteStream = new ByteArrayOutputStream(data.length);
+            try
+            {
+                try (GZIPOutputStream zipStream = new GZIPOutputStream(byteStream))
+                {
+                    zipStream.write(data);
+                }
             }
             finally
             {
@@ -391,7 +401,7 @@ public class Structure
 
             return byteStream.toByteArray();
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             e.printStackTrace();
         }
@@ -407,8 +417,7 @@ public class Structure
         {
             try (ByteArrayInputStream byteStream = new ByteArrayInputStream(data))
             {
-                GZIPInputStream zipStream = new GZIPInputStream(byteStream);
-                try
+                try (GZIPInputStream zipStream = new GZIPInputStream(byteStream))
                 {
                     int len;
                     while ((len = zipStream.read(buffer)) > 0)
@@ -416,21 +425,16 @@ public class Structure
                         out.write(buffer, 0, len);
                     }
                 }
-                finally
-                {
-                    zipStream.close();
-                }
             }
 
             return out.toByteArray();
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             e.printStackTrace();
         }
         return null;
     }
-
 
     /**
      * Reads a template from an inputstream.

@@ -19,27 +19,27 @@ import org.jetbrains.annotations.NotNull;
  */
 public class WorkOrderBuild extends AbstractWorkOrder
 {
-    private static final String TAG_BUILDING        = "building";
-    private static final String TAG_UPGRADE_LEVEL   = "upgradeLevel";
-    private static final String TAG_UPGRADE_NAME    = "upgrade";
-    private static final String TAG_WORKORDER_NAME  = "workOrderName";
-    private static final String TAG_IS_CLEARED      = "cleared";
-    private static final String TAG_IS_REQUESTED    = "requested";
-    private static final String TAG_IS_MIRRORED     = "mirrored";
+    private static final String TAG_BUILDING       = "building";
+    private static final String TAG_UPGRADE_LEVEL  = "upgradeLevel";
+    private static final String TAG_UPGRADE_NAME   = "upgrade";
+    private static final String TAG_WORKORDER_NAME = "workOrderName";
+    private static final String TAG_IS_CLEARED     = "cleared";
+    private static final String TAG_IS_REQUESTED   = "requested";
+    private static final String TAG_IS_MIRRORED    = "mirrored";
 
     private static final String TAG_SCHEMATIC_NAME    = "structureName";
     private static final String TAG_SCHEMATIC_MD5     = "schematicMD5";
     private static final String TAG_BUILDING_ROTATION = "buildingRotation";
 
-    protected boolean                  isMirrored;
-    protected BlockPos                 buildingLocation;
-    protected int                      buildingRotation;
-    protected String                   structureName;
-    protected String                   md5;
-    protected boolean                  cleared;
-    private   int                      upgradeLevel;
-    private   String                   upgradeName;
-    protected String                   workOrderName;
+    protected boolean  isMirrored;
+    protected BlockPos buildingLocation;
+    protected int      buildingRotation;
+    protected String   structureName;
+    protected String   md5;
+    protected boolean  cleared;
+    private   int      upgradeLevel;
+    private   String   upgradeName;
+    protected String   workOrderName;
 
     private boolean hasSentMessageForThisWorkOrder = false;
     private boolean requested;
@@ -143,7 +143,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
             compound.setInteger(TAG_UPGRADE_LEVEL, upgradeLevel);
             compound.setString(TAG_UPGRADE_NAME, upgradeName);
         }
-        if (workOrderName!=null)
+        if (workOrderName != null)
         {
             compound.setString(TAG_WORKORDER_NAME, workOrderName);
         }
@@ -243,7 +243,6 @@ public class WorkOrderBuild extends AbstractWorkOrder
         return upgradeName;
     }
 
-
     /**
      * Checks if a builder may accept this workOrder.
      *
@@ -314,7 +313,6 @@ public class WorkOrderBuild extends AbstractWorkOrder
         return structureName;
     }
 
-
     /**
      * Gets how many times this structure should be rotated.
      *
@@ -367,6 +365,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
 
     /**
      * Check if the workOrder should be built isMirrored.
+     *
      * @return true if so.
      */
     public boolean isMirrored()

@@ -191,7 +191,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
     @NotNull
     private List<String> schematics = new ArrayList<>();
 
-
     /**
      * Current position the hut/decoration is rendered at.
      */
@@ -203,13 +202,12 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
      */
     private int rotation = 0;
 
-
-    private DropDownList sectionsDropDownList;
-    private DropDownList stylesDropDownList;
-    private DropDownList schematicsDropDownList;
-    private final Button renameButton;
-    private final Button deleteButton;
-    private DialogDoneCancel confirmDeleteDialog;
+    private       DropDownList     sectionsDropDownList;
+    private       DropDownList     stylesDropDownList;
+    private       DropDownList     schematicsDropDownList;
+    private final Button           renameButton;
+    private final Button           deleteButton;
+    private       DialogDoneCancel confirmDeleteDialog;
 
     /**
      * Creates a window build tool.
@@ -265,7 +263,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         registerButton(BUTTON_NEXT_TYPE_ID, this::nextSection);
         sectionsDropDownList = findPaneOfTypeByID(DROPDOWN_TYPE_ID, DropDownList.class);
         sectionsDropDownList.setDDHandler(this);
-        Log.getLogger().info("sectionsDropDownList="+sectionsDropDownList);
+        Log.getLogger().info("sectionsDropDownList=" + sectionsDropDownList);
         sectionsDropDownList.setDataProvider(new DropDownList.DataProvider()
         {
             @Override
@@ -273,6 +271,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
             {
                 return sections.size();
             }
+
             @Override
             public String getLabel(final int index)
             {
@@ -304,11 +303,14 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
             {
                 return styles.size();
             }
+
             @Override
             public String getLabel(final int index)
             {
                 if (index >= 0 && index < styles.size())
+                {
                     return styles.get(index);
+                }
                 return "";
             }
         });
@@ -327,6 +329,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
             {
                 return schematics.size();
             }
+
             @Override
             public String getLabel(final int index)
             {
@@ -350,7 +353,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         sections.clear();
         final InventoryPlayer inventory = this.mc.player.inventory;
         final List<String> allSections = Structures.getSections();
-        for(String section: allSections)
+        for (String section : allSections)
         {
             if (section.equals(Structures.SCHEMATICS_PREFIX) || section.equals(Structures.SCHEMATICS_SCAN) || inventoryHasHut(inventory, section))
             {
@@ -428,7 +431,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
     private void updateStyles()
     {
         String currentStyle = "";
-        if (stylesDropDownList.getSelectedIndex()> -1 && stylesDropDownList.getSelectedIndex() < styles.size())
+        if (stylesDropDownList.getSelectedIndex() > -1 && stylesDropDownList.getSelectedIndex() < styles.size())
         {
             currentStyle = styles.get(stylesDropDownList.getSelectedIndex());
         }
@@ -468,16 +471,16 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
     private void updateSchematics()
     {
         String schematic = "";
-        if (schematicsDropDownList.getSelectedIndex()>-1 && schematicsDropDownList.getSelectedIndex() < schematics.size())
+        if (schematicsDropDownList.getSelectedIndex() > -1 && schematicsDropDownList.getSelectedIndex() < schematics.size())
         {
             schematic = schematics.get(schematicsDropDownList.getSelectedIndex());
         }
-        final String currentSchematic = (schematic.isEmpty())?"":(new Structures.StructureName(schematic)).getSchematic();
+        final String currentSchematic = (schematic.isEmpty()) ? "" : (new Structures.StructureName(schematic)).getSchematic();
         String section = sections.get(sectionsDropDownList.getSelectedIndex());
         String style = styles.get(stylesDropDownList.getSelectedIndex());
         schematics = Structures.getSchematicsFor(section, style);
         int newIndex = -1;
-        for (int i = 0 ; i < schematics.size();i++)
+        for (int i = 0; i < schematics.size(); i++)
         {
             Structures.StructureName sn = new Structures.StructureName(schematics.get(i));
             if (sn.getSchematic().equals(currentSchematic))
@@ -489,12 +492,12 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
 
         if (newIndex == -1)
         {
-            Log.getLogger().info("Can no keep the schematic "+ currentSchematic);
+            Log.getLogger().info("Can no keep the schematic " + currentSchematic);
             newIndex = 0;
         }
         else
         {
-           Log.getLogger().info("Keep the schematic "+ currentSchematic);
+            Log.getLogger().info("Keep the schematic " + currentSchematic);
         }
 
         final boolean enabled = schematics.size() > 1;
@@ -503,11 +506,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         findPaneOfTypeByID(BUTTON_NEXT_SCHEMATIC_ID, Button.class).setEnabled(enabled);
         schematicsDropDownList.setSelectedIndex(newIndex);
     }
-
-
-
-
-
 
     public void onSelectedItemChanged(final DropDownList list, final int index)
     {
@@ -525,7 +523,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
                 deleteButton.setVisible(false);
             }
             updateStyles();
-
         }
         else if (list == stylesDropDownList)
         {
@@ -535,14 +532,13 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         {
             changeSchematic();
         }
-
     }
-
 
     /**
      * Set the structure name.
-     * @param String structureName name of the structure name
-     * Ex: huts/wooden/Builder2
+     *
+     * @param structureName name of the structure name
+     *               Ex: schematics/wooden/Builder2
      */
     private void setStructureName(final String structureName)
     {
@@ -637,7 +633,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.player.getHorizontalFacing().getOpposite()));
     }
 
-
     /**
      * Rotate the structure clockwise.
      */
@@ -680,8 +675,8 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         final Structures.StructureName structureName = new Structures.StructureName(sname);
         Log.getLogger().info("Loading structure " + structureName.toString());
         Structure structure = new Structure(null,
-                                   structureName.toString(),
-                                   new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())).setMirror(Settings.instance.getMirror()));
+                                             structureName.toString(),
+                                             new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())).setMirror(Settings.instance.getMirror()));
 
         final String md5 = Structures.getMD5(structureName);
         Log.getLogger().info("Loading structure md5:" + md5);
@@ -728,11 +723,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         if (Structures.hasMD5(structureName))
         {
             final String md5 = Structures.getMD5(structureName);
-            final String serverSideName = Structures.SCHEMATICS_CACHE + '/'+ md5;
+            final String serverSideName = Structures.SCHEMATICS_CACHE + '/' + md5;
             if (!Structures.hasMD5(new Structures.StructureName(serverSideName)))
             {
                 final InputStream stream = Structure.getStream(structureName.toString());
-                if (stream!= null)
+                if (stream != null)
                 {
                     Log.getLogger().info("BuilderTool: sending schematic " + structureName + "(md5:" + md5 + ") to the server");
                     MineColonies.getNetwork().sendToServer(new SchematicSaveMessage(Structure.getStreamAsByteArray(stream)));
@@ -748,18 +743,17 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
             }
 
             MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(
-                                                              serverSideName,
-                                                              structureName.toString(),
-                                                              Settings.instance.pos,
-                                                              Settings.instance.getRotation(),
-                                                              false,
-                                                              Settings.instance.getMirror()));
+                                                                              serverSideName,
+                                                                              structureName.toString(),
+                                                                              Settings.instance.pos,
+                                                                              Settings.instance.getRotation(),
+                                                                              false,
+                                                                              Settings.instance.getMirror()));
         }
         else
         {
             Log.getLogger().warn("BuilderTool: Can not send schematic without md5: " + structureName);
         }
-
     }
 
     /**

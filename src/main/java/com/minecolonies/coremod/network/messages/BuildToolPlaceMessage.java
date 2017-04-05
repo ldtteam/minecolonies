@@ -144,17 +144,18 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
     /**
      * Handles the placement of huts.
      *
-     * @param world    World the hut is being placed into.
-     * @param player   Who placed the hut.
-     * @param hut      The hut we are placing.
-     * @param style    The style of the hut.
-     * @param rotation The number of times the structure should be rotated.
-     * @param buildPos The location the hut is being placed.
+     * @param world         World the hut is being placed into.
+     * @param player        Who placed the hut.
+     * @param sn            The name of the structure.
+     * @param workOrderName The name of the work order.
+     * @param rotation      The number of times the structure should be rotated.
+     * @param buildPos      The location the hut is being placed.
+     * @param mirror        Whether or not the strcture is mirrored.
      */
     private static void handleHut(
                                    @NotNull final World world, @NotNull final EntityPlayer player,
-                                            final Structures.StructureName sn, final String workOrderName,
-                                            final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
+                                   final Structures.StructureName sn, final String workOrderName,
+                                   final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
     {
         final String hut = sn.getSection();
         final Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
@@ -199,7 +200,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
                     }
                     building.setStyle(sn.getStyle());
                     building.setRotation(rotation);
-                    if(mirror)
+                    if (mirror)
                     {
                         building.setMirror();
                     }
@@ -215,17 +216,18 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
     /**
      * Creates the {@link WorkOrderBuildDecoration} to start building the decoration.
      *
-     * @param world      The world the decoration is being built in.
-     * @param player     The player who placed the decoration.
-     * @param decoration The name of the decoration.
-     * @param style      The style of the decoration.
-     * @param rotation   The number of times the decoration is rotated.
-     * @param buildPos   The location the decoration will be built.
+     * @param world         The world the decoration is being built in.
+     * @param player        The player who placed the decoration.
+     * @param sn            The name of the structure.
+     * @param workOrderName The style of the decoration.
+     * @param rotation      The number of times the decoration is rotated.
+     * @param buildPos      The location the decoration will be built.
+     * @param mirror        Whether or not the strcture is mirrored.
      */
     private static void handleDecoration(
                                           @NotNull final World world, @NotNull final EntityPlayer player,
-                                                   final Structures.StructureName sn, final String workOrderName,
-                                                   final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
+                                          final Structures.StructureName sn, final String workOrderName,
+                                          final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
     {
         @Nullable final Colony colony = ColonyManager.getColony(world, buildPos);
         if (colony != null && colony.getPermissions().hasPermission(player, Permissions.Action.PLACE_HUTS))
