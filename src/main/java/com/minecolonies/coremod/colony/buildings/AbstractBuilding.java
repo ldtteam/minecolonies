@@ -9,6 +9,7 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
+import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.*;
@@ -24,6 +25,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
@@ -1116,20 +1118,20 @@ public abstract class AbstractBuilding
      */
     public boolean transferStack(@NotNull final ItemStack stack, @NotNull final World world)
     {
-        if(tileEntity == null || InventoryUtils.isInventoryFull(tileEntity))
+        if(tileEntity == null || InventoryUtils.isProviderFull(tileEntity))
         {
             for(final BlockPos pos: containerList)
             {
                 final TileEntity tempTileEntity = world.getTileEntity(pos);
-                if(tempTileEntity instanceof TileEntityChest && !InventoryUtils.isInventoryFull((IInventory) tempTileEntity))
+                if(tempTileEntity instanceof TileEntityChest && !InventoryUtils.isProviderFull(tempTileEntity))
                 {
-                    return InventoryUtils.addItemStackToInventory((IInventory) tempTileEntity, stack);
+                    return InventoryUtils.addItemStackToProvider(tempTileEntity, stack);
                 }
             }
         }
         else
         {
-            return InventoryUtils.addItemStackToInventory(tileEntity, stack);
+            return InventoryUtils.addItemStackToProvider(tileEntity, stack);
         }
         return false;
     }
@@ -1148,15 +1150,15 @@ public abstract class AbstractBuilding
             for(final BlockPos pos: containerList)
             {
                 final TileEntity tempTileEntity = world.getTileEntity(pos);
-                if(tempTileEntity instanceof TileEntityChest && !InventoryUtils.isInventoryFull((IInventory) tempTileEntity))
+                if(tempTileEntity instanceof TileEntityChest && !InventoryUtils.isProviderFull(tempTileEntity))
                 {
-                    return InventoryUtils.forceItemStackToInventory((IInventory) tempTileEntity, stack, this);
+                    return forceItemStackToProvider(tempTileEntity, stack);
                 }
             }
         }
         else
         {
-            return InventoryUtils.forceItemStackToInventory(tileEntity, stack, this);
+            return forceItemStackToProvider(tileEntity, stack);
         }
         return null;
     }
@@ -1180,6 +1182,13 @@ public abstract class AbstractBuilding
     }
 
     //------------------------- Ending Required Tools/Item handling -------------------------//
+
+    @Nullable
+    private ItemStack forceItemStackToProvider(@NotNull final ICapabilityProvider provider, @NotNull final ItemStack itemStack)
+    {
+        final List<ItemStorage> localAlreadyKept = new ArrayList<>();
+        return InventoryUtils.forceItemStackToProvider(provider, itemStack, (ItemStack stack) -> EntityAIWorkDeliveryman.workerRequiresItem(this, stack, localAlreadyKept));
+    }
 
     /**
      * The AbstractBuilding View is the client-side representation of a AbstractBuilding.
