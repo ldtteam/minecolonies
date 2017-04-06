@@ -719,6 +719,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
             if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
             {
                 MineColonies.getNetwork().sendToServer(new SchematicRequestMessage(structureName.toString()));
+                return;
             }
             else
             {

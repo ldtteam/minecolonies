@@ -881,6 +881,7 @@ public final class Structures
     /**
      * Save a schematic in the cache.
      * This method is valid on the client and server
+     * The schematic will be save under the cache directory using is md5 hash as a name.
      *
      * @param bytes representing the schematic
      */
@@ -898,7 +899,7 @@ public final class Structures
         if (md5 != null)
         {
             Log.getLogger().info("Structures.handleSaveSchematicMessage: received new schematic md5:" + md5);
-            final File schematicFile = schematicsFolder.toPath().resolve(md5 + SCHEMATIC_EXTENSION).toFile();
+            final File schematicFile = schematicsFolder.toPath().resolve(SCHEMATICS_CACHE + '/' +md5 + SCHEMATIC_EXTENSION).toFile();
             checkDirectory(schematicFile.getParentFile());
             try (OutputStream outputstream = new FileOutputStream(schematicFile))
             {

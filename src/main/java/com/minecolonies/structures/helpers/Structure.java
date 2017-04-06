@@ -89,7 +89,7 @@ public class Structure
      * @param structureName name of the structure (at stored location).
      * @param settings      it's settings.
      */
-    public Structure(@Nullable final World world, final String structureName, final PlacementSettings settings)
+    public Structure(@Nullable final World world, String structureName, final PlacementSettings settings)
     {
         if (world == null || world.isRemote)
         {
@@ -97,9 +97,21 @@ public class Structure
             this.mc = Minecraft.getMinecraft();
         }
 
-        Structures.StructureName sn = new Structures.StructureName(structureName);
+        InputStream inputStream = null;
+        //Try the cache first
+        if (Structures.hasMD5(structureName))
+        {
+            inputStream = Structure.getStream(Structures.SCHEMATICS_CACHE + '/' + Structures.getMD5(structureName));
+            if (inputStream != null)
+            {
+                structureName = Structures.SCHEMATICS_CACHE + '/' + Structures.getMD5(structureName);
+            }
+        }
 
-        InputStream inputStream = Structure.getStream(structureName);
+        if (inputStream == null)
+        {
+            inputStream = Structure.getStream(structureName);
+        }
 
         if (inputStream == null)
         {
