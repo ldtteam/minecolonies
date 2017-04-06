@@ -1092,10 +1092,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     }
 
     /**
-     * Checks if a certain entity is in the world at a certain position already.
-     * @param entity the entity.
-     * @param world the world.
-     * @return true if there.
+     * Reduce the needed resources by the itemStack.
+     * @param stack stack to reduce.
      */
     public void reduceNeededResources(final ItemStack stack)
     {
