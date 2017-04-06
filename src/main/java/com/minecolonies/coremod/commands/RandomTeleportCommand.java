@@ -33,7 +33,8 @@ public class RandomTeleportCommand extends AbstractSingleCommand
     private static final int    LOWER_BOUNDS     = Configurations.maxDistanceFromWorldSpawn;
     private static final int    SPAWN_NO_TP      = Configurations.minDistanceFromWorldSpawn;
     private static final int    STARTING_Y       = 250;
-    private static final double SAFETY_DROP      = 5;
+    private static final double SAFETY_DROP      = 8;
+    private static final int    FALL_DISTANCE    = 5;
     private static final String CANT_FIND_PLAYER = "No player found for teleport, please define one.";
 
     /**
@@ -92,6 +93,8 @@ public class RandomTeleportCommand extends AbstractSingleCommand
         }
         playerToTeleport.getCommandSenderEntity().sendMessage(new TextComponentString("Buckle up buttercup, this ain't no joy ride!!!"));
         teleportPlayer(sender, playerToTeleport);
+        //.fallDistance is used to cancel out fall damage  basically if you have -5 it will reduce fall damage by 2.5 hearts
+        playerToTeleport.fallDistance=FALL_DISTANCE;
     }
 
     /**
@@ -115,7 +118,6 @@ public class RandomTeleportCommand extends AbstractSingleCommand
 
     /**
      * Method used to teleport the player.
-     *
      * @param sender           the sender to have access to the world.
      * @param playerToTeleport the player which shall be teleported.
      */
@@ -151,6 +153,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand
             {
                 if(MinecoloniesCommand.canExecuteCommand((EntityPlayer) sender))
                 {
+
                     playerToTeleport.setPositionAndUpdate(groundPosition.getX(), groundPosition.getY() + SAFETY_DROP, groundPosition.getZ());
                 }
                 else

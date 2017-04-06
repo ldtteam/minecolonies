@@ -12,6 +12,7 @@ public class Constants
     public static final String MC_VERSION            = "[1.11]";
     public static final String CLIENT_PROXY_LOCATION = "com.minecolonies.coremod.proxy.ClientProxy";
     public static final String SERVER_PROXY_LOCATION = "com.minecolonies.coremod.proxy.ServerProxy";
+    public static final String CONFIG_GUI_LOCATION   = "com.minecolonies.coremod.client.gui.GuiFactory";
     public static final String PLAYER_PROPERTY_NAME  = MOD_ID + ".PlayerProperties";
     public static final int    YELLOW = 4;
 

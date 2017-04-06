@@ -45,7 +45,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
     @SuppressWarnings("unchecked")
     public T get(int index)
     {
-        if (index < 1 || index > list.length)
+        if (index < 1 || index >= list.length)
         {
             return null;
         }
@@ -66,6 +66,14 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
         if (colonyID >= list.length)
         {
             expandList();
+        }
+
+        if(list[colonyID] != null)
+        {
+            throw new IllegalArgumentException(
+                    String.format("Already a colony registered to id=%d, colony=%s, not creating new colony",
+                            colonyID,
+                            list[colonyID].getName()));
         }
 
         final Colony colony = new Colony(colonyID, world, position);
@@ -95,7 +103,15 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
             expandList();
         }
 
+        int emptyIds = colony.getID() - 1;
+        while(emptyIds > 0  && list[emptyIds] == null)
+        {
+            nullIndices.add(emptyIds);
+            emptyIds--;
+        }
+
         size++;
+        topID = colony.getID();
 
         list[colony.getID()] = colony;
     }
@@ -133,7 +149,6 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
     {
         if (nullIndices.isEmpty())
         {
-
             return ++topID;
         }
 
