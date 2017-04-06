@@ -66,27 +66,20 @@ public class DropDownList extends ButtonVanilla implements Button.Handler
     {
         super(params);
         final PaneParams.SizePair dropDownSize = params.getSizePairAttribute("dropDownSize", null, null);
-        if (dropDownSize == null)
-        {
-            dropDownWidth = width;
-            dropDownHeight = width;
-        }
-        else
-        {
-            dropDownWidth = dropDownSize.getX();
-            dropDownHeight = dropDownSize.getY();
-        }
+        dropDownWidth = dropDownSize == null ? width : dropDownSize.getX();
+        //When unknown, we use the same height as it is wide.
+        dropDownHeight = dropDownSize == null ? width : dropDownSize.getY();
 
         overlay = new OverlayView();
         overlay.setVisible(false);
         overlay.setPosition(0, 0);
 
         list = new ScrollingList(params);
-
         list.setSize(dropDownWidth, dropDownHeight);
         list.setPosition((x + width / 2) - dropDownWidth / 2, y + height);
         list.putInside(overlay);
         list.parseChildren(params);
+
         setHandler(this);
     }
 

@@ -14,7 +14,14 @@ import com.minecolonies.coremod.util.Log;
  */
 public class DialogDoneCancel extends OverlayView implements Button.Handler
 {
+    /**
+     * buttonid when cancel is pressed.
+     */
     public static final int CANCEL = 0;
+
+    /**
+     * buttonid when done is pressed.
+     */
     public static final int DONE   = 1;
 
     /**
@@ -22,10 +29,29 @@ public class DialogDoneCancel extends OverlayView implements Button.Handler
      */
     private static final String DIALOG_OK_CANCEL_SUFFIX = ":gui/dialogdonecancel.xml";
 
+    /**
+     * Label for the title of the dialog.
+     */
     protected final Label   titleLabel;
+
+    /**
+     * Text for the text content of the dialog.
+     */
     protected final Text    contentText;
+
+    /**
+     * Done button.
+     */
     protected final Button  doneButton;
+
+    /**
+     * Cancel button.
+     */
     protected final Button  cancelButton;
+
+    /**
+     * Handler for the onCloseDialog event.
+     */
     protected       Handler handler;
 
     /**
@@ -48,26 +74,51 @@ public class DialogDoneCancel extends OverlayView implements Button.Handler
         setVisible(false);
     }
 
+    /**
+     * Set the title of the dialog.
+     *
+     * @param title for the dialog
+     */
     public void setTitle(final String title)
     {
         titleLabel.setLabelText(title);
     }
 
+    /**
+     * Get the title of the dialog.
+     *
+     * @return title for the dialog
+     */
     public String getTitle()
     {
         return titleLabel.getLabelText();
     }
 
+    /**
+     * Set the textual content of the dialog.
+     *
+     * @param content to display in the dialog
+     */
     public void setTextContent(final String content)
     {
         contentText.setTextContent(content);
     }
 
+    /**
+     * Get the textual content of the dialog.
+     *
+     * @return The textual content displayed in the dialog
+     */
     public String getTextContent()
     {
         return contentText.getTextContent();
     }
 
+    /**
+     * When a button have been cicked on.
+     *
+     * @param button which have been clicked on.
+     */
     public void onButtonClicked(Button button)
     {
         this.setVisible(false);
@@ -98,11 +149,17 @@ public class DialogDoneCancel extends OverlayView implements Button.Handler
         super.setVisible(visible);
     }
 
+    /**
+     * Open the dialog.
+     */
     public void open()
     {
         setVisible(true);
     }
 
+    /**
+     * Close the dialog.
+     */
     public void close()
     {
         setVisible(true);

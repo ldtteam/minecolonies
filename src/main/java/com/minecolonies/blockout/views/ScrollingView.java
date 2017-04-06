@@ -104,6 +104,11 @@ public class ScrollingView extends View
         container.setScrollY(offset);
     }
 
+    /**
+     * get the height of the content.
+     *
+     * @return the height of the content.
+     */
     public int getContentHeight()
     {
         return container.getContentHeight();
