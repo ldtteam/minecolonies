@@ -44,13 +44,6 @@ public class OverlayView extends View
         }
     }
 
-    @Override
-    public void handleClick(final int mx, final int my)
-    {
-        Log.getLogger().info("OverlayView::handleClick()");
-        setVisible(false);
-    }
-
     /**
      * Called when a key is pressed.
      * hide the view when ESC is pressed.
