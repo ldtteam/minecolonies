@@ -81,7 +81,7 @@ public class WindowHireWorker extends Window implements Button.Handler
     /**
      * The colony.
      */
-    private final ColonyView            colony;
+    private final ColonyView colony;
     /**
      * Contains all the citizens.
      */
