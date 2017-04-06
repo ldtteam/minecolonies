@@ -10,23 +10,43 @@ import com.minecolonies.blockout.PaneParams;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * A DropDownList is a Button which when click display a ScrollingList.
+ * A DropDownList is a Button which when click display a ScrollingList below it.
  */
 //TODO do not extend ButtonVanilla but extend view
-public class DropDownList extends ButtonVanilla
+public class DropDownList extends ButtonVanilla implements Button.Handler
 {
+    /**
+     * View in which the list will be displayed.
+     */
     protected OverlayView   overlay;
+
+    /**
+     * List to choose from.
+     */
     protected ScrollingList list;
+    /**
+     * date required to fill the list.
+     */
     protected DataProvider  dataProvider;
-    protected Handler       handlerdd;
+
+    /**
+     * handler of the onSelectedItemChanged.
+     */
+    protected Handler       handler;
+
     /**
      * width of the scrolling list, by default it is the same as the DropDownList width.
      */
     protected int           dropDownWidth;
+
     /**
      * maximum height of the scrolling list, by default it is the same as the DropDownList width.
      */
     protected int           dropDownHeight;
+
+    /**
+     * index of the selected item.
+     */
     protected int selectedIndex = -1;
 
     /**
@@ -67,43 +87,87 @@ public class DropDownList extends ButtonVanilla
         list.setPosition((x + width / 2) - dropDownWidth / 2, y + height);
         list.putInside(overlay);
         list.parseChildren(params);
-
-
-        setHandler(new Button.Handler()
-        {
-            public void onButtonClicked(Button button)
-            {
-                if (overlay.isVisible())
-                {
-                    close();
-                }
-                else
-                {
-                    overlay.setSize(button.getWindow().getInteriorWidth(), button.getWindow().getInteriorHeight());
-                    overlay.putInside(button.getWindow());
-                    open();
-                }
-            }
-        });
+        setHandler(this);
     }
 
+
+    /**
+     * handle when the button is clicked on.
+     *
+     * The list is shown or hidden depending of the previous state.
+     * @param button which have been clicked on.
+     */
+    public void onButtonClicked(@NotNull final Button button)
+    {
+        if (button == this)
+        {
+            if (overlay.isVisible())
+            {
+                close();
+            }
+            else
+            {
+                overlay.setSize(button.getWindow().getInteriorWidth(), button.getWindow().getInteriorHeight());
+                overlay.putInside(button.getWindow());
+                open();
+            }
+       }
+       else
+       {
+           onButtonClickedFromList(button);
+       }
+    }
+
+    /**
+     * handle when a button in the list have been clicked on.
+     *
+     * @param button which have been clicked on.
+     */
+    private void onButtonClickedFromList(@NotNull final Button button)
+    {
+        final Label idLabel = button.getParent().findPaneOfTypeByID("id", Label.class);
+        if (idLabel != null)
+        {
+            final int index = Integer.parseInt(idLabel.getLabelText());
+            setSelectedIndex(index);
+            close();
+        }
+    }
+
+
+    /**
+     * get the index of the selected item in the list.
+     *
+     * @return the index of the selected ietem.
+     */
     public int getSelectedIndex()
     {
         return selectedIndex;
     }
 
-    public void selectNext()
+    /**
+     * set the index of the selected item in the list.
+     *
+     * @param index of the selected item
+     */
+    public void setSelectedIndex(final int index)
     {
-        if (dataProvider.getElementCount() == 0)
+        if (index < 0 || index >= dataProvider.getElementCount())
         {
-            setSelectedIndex(0);
+            return;
         }
-        else
+        selectedIndex = index;
+
+        setLabel(dataProvider.getLabel(selectedIndex));
+        if (handler != null)
         {
-            setSelectedIndex((selectedIndex + 1) % dataProvider.getElementCount());
+            handler.onSelectedItemChanged(this, index);
         }
     }
 
+    /**
+     * Select the previous Item in the list.
+     */
     public void selectPrevious()
     {
         if (dataProvider.getElementCount() == 0)
@@ -116,25 +180,29 @@ public class DropDownList extends ButtonVanilla
         }
     }
 
-    public void setSelectedIndex(final int index)
+    /**
+     * Select the next item in the list.
+     */
+    public void selectNext()
     {
-        if (index < 0 || index >= dataProvider.getElementCount())
+        if (dataProvider.getElementCount() == 0)
         {
-            return;
+            setSelectedIndex(0);
         }
-        selectedIndex = index;
-
-        setLabel(dataProvider.getLabel(selectedIndex));
-        if (handlerdd != null)
+        else
         {
-            handlerdd.onSelectedItemChanged(this, index);
+            setSelectedIndex((selectedIndex + 1) % dataProvider.getElementCount());
         }
     }
 
+    /**
+     * Set the data provider to fill the list.
+     *
+     * @param p is the data provider for the list.
+     */
     public void setDataProvider(final DataProvider p)
     {
         dataProvider = p;
-        final DropDownList ddList = this;
         list.setDataProvider(new ScrollingList.DataProvider()
         {
             @Override
@@ -143,11 +211,10 @@ public class DropDownList extends ButtonVanilla
                 return dataProvider.getElementCount();
             }
 
-            //TODO remove this
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                updateDropDownItem(ddList, rowPane, index, dataProvider.getLabel(index));
+                updateDropDownItem(rowPane, index, dataProvider.getLabel(index));
             }
         });
 
@@ -198,30 +265,27 @@ public class DropDownList extends ButtonVanilla
         String getLabel(final int index);
     }
 
-    /*public void onButtonClicked(@NotNull final Button button)
-    {
-        @NotNull final Label idLabel = button.getParent().findPaneOfTypeByID("id", Label.class);;
-        final int index = Integer.parseInt(idLabel.getLabelText());
-        list.setSelectedIndex(index);
-        list.close();
-    }
-*/
-
-    private void updateDropDownItem(@NotNull final DropDownList list, @NotNull final Pane rowPane, final int index, final String label)
+    /**
+     * Update an pane item in the list.
+     *
+     * @param rowPane which need the update
+     * @param index of the item
+     * @param label use for this item
+     */
+    private void updateDropDownItem(@NotNull final Pane rowPane, final int index, final String label)
     {
         final Button choiceButton = rowPane.findPaneOfTypeByID("button", Button.class);
-        rowPane.findPaneOfTypeByID("id", Label.class).setLabelText(Integer.toString(index));
-        choiceButton.setLabel(label);
-        choiceButton.setHandler(new Button.Handler()
+        if (choiceButton != null)
         {
-            public void onButtonClicked(@NotNull final Button button)
+            // is idLabel necessary ?
+            final Label idLabel = rowPane.findPaneOfTypeByID("id", Label.class);
+            if (idLabel != null)
             {
-                @NotNull final Label idLabel = button.getParent().findPaneOfTypeByID("id", Label.class);
-                final int index = Integer.parseInt(idLabel.getLabelText());
-                list.setSelectedIndex(index);
-                list.close();
+                idLabel.setLabelText(Integer.toString(index));
             }
-        });
+            choiceButton.setLabel(label);
+            choiceButton.setHandler(this);
+       }
     }
 
     /**
@@ -229,10 +293,9 @@ public class DropDownList extends ButtonVanilla
      *
      * @param h The new handler.
      */
-    //TODO rename to setHandler once we do not extend ButtonVanilla
-    public void setDDHandler(final Handler h)
+    public void setHandler(final Handler h)
     {
-        handlerdd = h;
+        handler = h;
     }
 
     /**

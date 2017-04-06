@@ -262,7 +262,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         registerButton(BUTTON_PREVIOUS_TYPE_ID, this::previousSection);
         registerButton(BUTTON_NEXT_TYPE_ID, this::nextSection);
         sectionsDropDownList = findPaneOfTypeByID(DROPDOWN_TYPE_ID, DropDownList.class);
-        sectionsDropDownList.setDDHandler(this);
+        sectionsDropDownList.setHandler((DropDownList.Handler)this);
         Log.getLogger().info("sectionsDropDownList=" + sectionsDropDownList);
         sectionsDropDownList.setDataProvider(new DropDownList.DataProvider()
         {
@@ -295,7 +295,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         registerButton(BUTTON_PREVIOUS_STYLE_ID, this::previousStyle);
         registerButton(BUTTON_NEXT_STYLE_ID, this::nextStyle);
         stylesDropDownList = findPaneOfTypeByID(DROPDOWN_STYLE_ID, DropDownList.class);
-        stylesDropDownList.setDDHandler(this);
+        stylesDropDownList.setHandler((DropDownList.Handler)this);
         stylesDropDownList.setDataProvider(new DropDownList.DataProvider()
         {
             @Override
@@ -321,7 +321,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         registerButton(BUTTON_PREVIOUS_SCHEMATIC_ID, this::previousSchematic);
         registerButton(BUTTON_NEXT_SCHEMATIC_ID, this::nextSchematic);
         schematicsDropDownList = findPaneOfTypeByID(DROPDOWN_SCHEMATIC_ID, DropDownList.class);
-        schematicsDropDownList.setDDHandler(this);
+        schematicsDropDownList.setHandler((DropDownList.Handler)this);
         schematicsDropDownList.setDataProvider(new DropDownList.DataProvider()
         {
             @Override
