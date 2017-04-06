@@ -202,11 +202,34 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
      */
     private int rotation = 0;
 
+    /**
+     * Drop down list for section.
+     */
     private       DropDownList     sectionsDropDownList;
+
+    /**
+     * Drop down list for style.
+     */
     private       DropDownList     stylesDropDownList;
+
+    /**
+     * Drop down list for schematic.
+     */
     private       DropDownList     schematicsDropDownList;
+
+    /**
+     * Button to rename a scanned schematic.
+     */
     private final Button           renameButton;
+
+    /**
+     * Button to delete a scanned schematic.
+     */
     private final Button           deleteButton;
+
+    /**
+     * Confirmation dialog when deleting a scanned schematic.
+     */
     private       DialogDoneCancel confirmDeleteDialog;
 
     /**
@@ -257,13 +280,15 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         deleteButton = findPaneOfTypeByID(BUTTON_DELETE, Button.class);
     }
 
+    /**
+     * Initialise the previous/next and drop down list for section.
+     */
     private void initBuildingTypeNavigation()
     {
         registerButton(BUTTON_PREVIOUS_TYPE_ID, this::previousSection);
         registerButton(BUTTON_NEXT_TYPE_ID, this::nextSection);
         sectionsDropDownList = findPaneOfTypeByID(DROPDOWN_TYPE_ID, DropDownList.class);
         sectionsDropDownList.setHandler((DropDownList.Handler)this);
-        Log.getLogger().info("sectionsDropDownList=" + sectionsDropDownList);
         sectionsDropDownList.setDataProvider(new DropDownList.DataProvider()
         {
             @Override
@@ -290,6 +315,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         });
     }
 
+    /**
+     * Initialise the previous/next and drop down list for style.
+     */
     private void initStyleNavigation()
     {
         registerButton(BUTTON_PREVIOUS_STYLE_ID, this::previousStyle);
@@ -316,6 +344,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         });
     }
 
+    /**
+     * Initialise the previous/next and drop down list for schematic.
+     */
     private void initSchematicNavigation()
     {
         registerButton(BUTTON_PREVIOUS_SCHEMATIC_ID, this::previousSchematic);
@@ -364,6 +395,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         setStructureName(Settings.instance.getStructureName());
     }
 
+    @Override
     public void onUpdate()
     {
         super.onUpdate();
@@ -492,12 +524,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
 
         if (newIndex == -1)
         {
-            Log.getLogger().info("Can no keep the schematic " + currentSchematic);
             newIndex = 0;
-        }
-        else
-        {
-            Log.getLogger().info("Keep the schematic " + currentSchematic);
         }
 
         final boolean enabled = schematics.size() > 1;
@@ -671,16 +698,12 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
     private void changeSchematic()
     {
         final String sname = schematics.get(schematicsDropDownList.getSelectedIndex());
-        Log.getLogger().info("Loading structure sname:" + sname);
         final Structures.StructureName structureName = new Structures.StructureName(sname);
-        Log.getLogger().info("Loading structure " + structureName.toString());
         Structure structure = new Structure(null,
                                              structureName.toString(),
                                              new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())).setMirror(Settings.instance.getMirror()));
 
         final String md5 = Structures.getMD5(structureName);
-        Log.getLogger().info("Loading structure md5:" + md5);
-
         if (structure.isTemplateMissing() || !structure.isCorrectMD5(md5))
         {
             if (structure.isTemplateMissing())
@@ -713,6 +736,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         }
     }
 
+    /**
+     * Request to build a player scan.
+     *
+     * @param structureName of the scan to be built.
+     */
     private void requestScannedSchematic(@NotNull final Structures.StructureName structureName)
     {
         if (!Structures.isPlayerSchematicsAllowed())
@@ -844,6 +872,12 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         confirmDeleteDialog.open();
     }
 
+    /**
+     * handle when a dialog is closed.
+     *
+     * @param dialog which is being closed.
+     * @param buttonId is the id of the button used to close the dialog.
+     */
     public void onDialogClosed(final DialogDoneCancel dialog, final int buttonId)
     {
         if (dialog == confirmDeleteDialog && buttonId == DialogDoneCancel.DONE)
