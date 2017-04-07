@@ -723,16 +723,14 @@ public final class Structures
      */
     public static StructureName getStructureNameByMD5(final String md5)
     {
-        if (md5 == null)
+        if (md5 != null)
         {
-            return null;
-        }
-
-        for (Map.Entry<String, String> md5Entry : md5Map.entrySet())
-        {
-            if (md5Entry.getValue().equals(md5))
+            for (Map.Entry<String, String> md5Entry : md5Map.entrySet())
             {
-                return new StructureName(md5Entry.getKey());
+                if (md5Entry.getValue().equals(md5))
+                {
+                    return new StructureName(md5Entry.getKey());
+                }
             }
         }
 

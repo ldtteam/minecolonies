@@ -191,8 +191,6 @@ public class Structure
                 return null;
             }
         }
-        Log.getLogger().info("getCachedSchematicsFolder:" + FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
-                               + "/" + Constants.MOD_ID);
         return new File(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
                           + "/" + Constants.MOD_ID);
     }
@@ -220,8 +218,6 @@ public class Structure
      */
     public static InputStream getStream(final String structureName)
     {
-        Log.getLogger().info("Structure: Loading " + structureName);
-
         final Structures.StructureName sn = new Structures.StructureName(structureName);
         InputStream inputstream;
         if (Structures.SCHEMATICS_CACHE.equals(sn.getPrefix()))
