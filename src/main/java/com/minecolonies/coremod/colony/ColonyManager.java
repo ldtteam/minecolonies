@@ -693,7 +693,7 @@ public final class ColonyManager
                     MineColonies.getLogger().error("Failed to save " + FILENAME_MINECOLONIES + " backup!");
                 }
 
-                //load the structures when we know where the wolrd is
+                //load the structures when we know where the world is
                 Structures.init();
 
                 @NotNull final File file = getSaveLocation();
