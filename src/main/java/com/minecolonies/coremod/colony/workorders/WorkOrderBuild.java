@@ -70,10 +70,16 @@ public class WorkOrderBuild extends AbstractWorkOrder
         this.requested = false;
 
         //normalize the structureName
-        final Structures.StructureName sn = new Structures.StructureName(Structures.SCHEMATICS_PREFIX, building.getStyle(), this.getUpgradeName());
+        Structures.StructureName sn = new Structures.StructureName(Structures.SCHEMATICS_PREFIX, building.getStyle(), this.getUpgradeName());
+        if(building.getTileEntity() != null && !building.getTileEntity().getStyle().isEmpty())
+        {
+            sn = new Structures.StructureName(Structures.SCHEMATICS_PREFIX, building.getTileEntity().getStyle(), this.getUpgradeName());
+        }
+
         this.structureName = sn.toString();
         this.workOrderName = this.structureName;
         this.md5 = Structures.getMD5(this.structureName);
+
     }
 
     /**

@@ -12,6 +12,8 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
+import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.MC_BACKUP;
+
 public class BackupCommand extends AbstractSingleCommand
 {
     public static final String DESC = "backup";
@@ -32,11 +34,8 @@ public class BackupCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        if (!sender.canUseCommand(PERMNUM, "minecolonies backup"))
-        {
-            sender.sendMessage(new TextComponentString(NO_PERMISSION_MESSAGE));
-        }
-        else
+
+        if (isPlayerOpped(sender, String.valueOf(MC_BACKUP)))
         {
             server.addScheduledTask(() -> {
                 if (ColonyManager.backupColonyData())
@@ -48,6 +47,10 @@ public class BackupCommand extends AbstractSingleCommand
                     sender.sendMessage(new TextComponentString(BACKUP_FAILURE_MESSAGE));
                 }
             });
+        }
+        else
+        {
+            sender.sendMessage(new TextComponentString(NO_PERMISSION_MESSAGE));
         }
     }
 
