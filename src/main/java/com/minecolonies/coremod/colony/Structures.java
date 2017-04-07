@@ -568,18 +568,6 @@ public final class Structures
                     hut = "";
                 }
             }
-
-            if (toString().compareTo(structureName) != 0)
-            {
-                Log.getLogger().error("Structure " + structureName + " parsing failed");
-                Log.getLogger().error("=> " + toString());
-                Log.getLogger().error("section = " + section);
-                Log.getLogger().error("prefix = " + prefix);
-                Log.getLogger().error("style = " + style);
-                Log.getLogger().error("schematic = " + schematic);
-                Log.getLogger().error("hut = " + hut);
-                Log.getLogger().error("lastSeparator = " + lastSeparator);
-            }
         }
 
         /**
