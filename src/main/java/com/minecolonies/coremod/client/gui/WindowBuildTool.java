@@ -703,7 +703,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
                                              structureName.toString(),
                                              new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())).setMirror(Settings.instance.getMirror()));
 
-        final String md5 = Structures.getMD5(structureName);
+        final String md5 = Structures.getMD5(structureName.toString());
         if (structure.isTemplateMissing() || !structure.isCorrectMD5(md5))
         {
             if (structure.isTemplateMissing())
@@ -751,7 +751,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
 
         if (Structures.hasMD5(structureName))
         {
-            final String md5 = Structures.getMD5(structureName);
+            final String md5 = Structures.getMD5(structureName.toString());
             final String serverSideName = Structures.SCHEMATICS_CACHE + '/' + md5;
             if (!Structures.hasMD5(new Structures.StructureName(serverSideName)))
             {

@@ -345,7 +345,7 @@ public final class Structures
         checkDirectory(newStructureFile.getParentFile());
         if (structureFile.renameTo(newStructureFile))
         {
-            final String md5 = getMD5(structureName);
+            final String md5 = getMD5(structureName.toString());
             md5Map.put(newStructureName.toString(), md5);
             md5Map.remove(structureName.toString());
             Log.getLogger().info("Structure " + structureName + " have been renamed " + newStructureName);
@@ -705,11 +705,6 @@ public final class Structures
      * @param structureName name of the structure as 'hut/wooden/Builder1'
      * @return the md5 hash String or null if not found
      */
-    public static String getMD5(@NotNull final StructureName structureName)
-    {
-        return getMD5(structureName.toString());
-    }
-
     public static String getMD5(@NotNull final String structureName)
     {
         if (!md5Map.containsKey(structureName))
