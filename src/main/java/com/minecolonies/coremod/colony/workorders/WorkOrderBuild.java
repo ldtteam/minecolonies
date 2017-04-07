@@ -125,8 +125,15 @@ public class WorkOrderBuild extends AbstractWorkOrder
         {
             // If the schematic move we can use the MD5 hash to find it
             final Structures.StructureName newSN = Structures.getStructureNameByMD5(md5);
-            Log.getLogger().warn("WorkOrderBuild.readFromNBT: replace " + structureName + " by " + newSN);
-            structureName = newSN.toString();
+            if (newSN == null)
+            {
+                Log.getLogger().warn("WorkOrderBuild.readFromNBT: replace " + structureName + " by " + newSN);
+                structureName = newSN.toString();
+            }
+            else
+            {
+                Log.getLogger().error("WorkOrderBuild.readFromNBT: Could not find " + structureName);
+            }
         }
 
         buildingRotation = compound.getInteger(TAG_BUILDING_ROTATION);

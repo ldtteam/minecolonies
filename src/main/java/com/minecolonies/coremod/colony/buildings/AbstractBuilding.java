@@ -341,7 +341,11 @@ public abstract class AbstractBuilding
             {
                 //We found the new location for the schematic, update the style accordingly
                 style = newStructureName.getStyle();
-                Log.getLogger().warn("AbstractBuilding.readFromNBT: " + sn + " have been mode to " + newStructureName);
+                Log.getLogger().warn("AbstractBuilding.readFromNBT: " + sn + " have been moved to " + newStructureName);
+            }
+            else
+            {
+                Log.getLogger().error("AbstractBuilding.readFromNBT: Could not find schematic for " + sn);
             }
         }
 
