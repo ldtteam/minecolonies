@@ -163,13 +163,12 @@ public class Structure
         final File worldSchematicFolder = new File(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
                                                      + "/" + Constants.MOD_ID);
 
-        if (!worldSchematicFolder.exists())
+        if (!worldSchematicFolder.exists() && MineColonies.isClient())
         {
             return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID);
         }
 
-        return new File(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
-                          + "/" + Constants.MOD_ID);
+        return worldSchematicFolder;
     }
 
     /**
