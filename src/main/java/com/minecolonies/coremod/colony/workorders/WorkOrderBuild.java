@@ -94,6 +94,8 @@ public class WorkOrderBuild extends AbstractWorkOrder
 
     /**
      * Get the name of the work order.
+     *
+     * @return the work order name
      */
     public String getName()
     {

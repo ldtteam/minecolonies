@@ -197,6 +197,8 @@ public class Structure
 
     /**
      * get the schematic folder for the client.
+     *
+     * @return the client folder.
      */
     public static File getClientSchematicsFolder()
     {

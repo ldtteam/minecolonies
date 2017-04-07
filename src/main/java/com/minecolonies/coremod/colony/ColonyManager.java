@@ -1013,6 +1013,8 @@ public final class ColonyManager
 
     /**
      * Whether or not a new schematic have been downloaded.
+     *
+     * @return True if a new schematic have been received.
      */
     public static boolean isSchematicDownloaded()
     {
@@ -1022,7 +1024,7 @@ public final class ColonyManager
     /**
      * Set the schematic downloaded
      *
-     * @param downloaded
+     * @param downloaded True if a new schematic have been received.
      */
     public static void setSchematicDownloaded(boolean downloaded)
     {

@@ -314,7 +314,8 @@ public final class Structures
      * rename a scanned structure.
      * rename the file and the md5 entry
      *
-     * @param structureName the structure to add
+     * @param structureName the structure to rename
+     * @param name New name for the schematic as in style/schematicname
      * @return the new structureName
      */
     @SideOnly(Side.CLIENT)
@@ -446,7 +447,8 @@ public final class Structures
     /**
      * Get a list of schematics for this section and style.
      *
-     * @param section such as Builder, decorations...
+     * @param section such as Builder, schematics. scans ...
+     * @param style limit the list for schematics to this style.
      * @return the list of schematics
      */
     @NotNull
@@ -638,8 +640,9 @@ public final class Structures
         /**
          * Get the localized name.
          * Examples:
-         * - schematics/stone/Builder1 => Level 1
-         * - schematics/walls/Gate => Gate
+         * - schematics/stone/Builder1 return Level 1
+         * - schematics/walls/Gate return Gate
+         * @return the localized name of the schematic
          */
         public String getLocalizedName()
         {
@@ -864,7 +867,8 @@ public final class Structures
      * This method is valid on the client and server
      * The schematic will be save under the cache directory using is md5 hash as a name.
      *
-     * @param bytes representing the schematic
+     * @param bytes representing the schematic.
+     * @return True is the schematic have been saved successfully.
      */
     public static boolean handleSaveSchematicMessage(final byte[] bytes)
     {
