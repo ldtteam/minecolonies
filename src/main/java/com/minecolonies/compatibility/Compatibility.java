@@ -3,6 +3,7 @@ package com.minecolonies.compatibility;
 import com.minecolonies.compatibility.tinkers.SlimeTreeCheck;
 import com.minecolonies.compatibility.tinkers.ToolBrokenCheck;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -62,5 +63,27 @@ public final class Compatibility
     public static boolean isSlimeSapling(@NotNull final Block block)
     {
         return SlimeTreeCheck.isSlimeSapling(block);
+    }
+
+    /**
+     * This method checks if block is slime dirt.
+     *
+     * @param block the block.
+     * @return if the block is slime dirt.
+     */
+    public static boolean isSlimeDirt(@NotNull final Block block)
+    {
+        return SlimeTreeCheck.isSlimeDirt(block);
+    }
+
+    /**
+     * Get the Slime leaf variant.
+     *
+     * @param leaf the leaf.
+     * @return the variant.
+     */
+    public static int getLeafVariant(@NotNull final IBlockState leaf)
+    {
+        return SlimeTreeCheck.getLeafVariant(leaf);
     }
 }

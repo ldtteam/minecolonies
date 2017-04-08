@@ -1,6 +1,7 @@
 package com.minecolonies.compatibility.tinkers;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -39,5 +40,22 @@ public class SlimeTreeProxy
     protected boolean checkForTinkersSlimeSapling(@NotNull final Block block)
     {
         return false;
+    }
+
+    /**
+     * This is the fallback for when tinkers is not present!
+     *
+     * @param block the block.
+     * @return if the block is a slime sapling.
+     */
+    protected boolean checkForTinkersSlimeDirt(@NotNull final Block block)
+    {
+        return false;
+    }
+
+
+    public int getTinkersLeafVariant(@NotNull final IBlockState leaf)
+    {
+        return 0;
     }
 }
