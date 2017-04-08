@@ -131,17 +131,14 @@ public class Tree
             if (block instanceof BlockOldLog)
             {
                 variantNumber = world.getBlockState(log).getValue(BlockOldLog.VARIANT).getMetadata();
-                Log.getLogger().info(variantNumber);
             }
             else if (block instanceof BlockNewLog)
             {
                 variantNumber = world.getBlockState(log).getValue(BlockNewLog.VARIANT).getMetadata();
-                Log.getLogger().info(variantNumber);
             }
             else if (Compatibility.isSlimeBlock(block))
             {
                 variantNumber = Compatibility.getLeafVariant(world.getBlockState(leaf));
-                Log.getLogger().info(variantNumber);
             }
             else
             {

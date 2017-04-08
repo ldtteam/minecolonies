@@ -71,9 +71,9 @@ public final class Compatibility
      * @param block the block.
      * @return if the block is slime dirt.
      */
-    public static boolean isSlimeDirt(@NotNull final Block block)
+    public static boolean isSlimeDirtOrGrass(@NotNull final Block block)
     {
-        return SlimeTreeCheck.isSlimeDirt(block);
+        return SlimeTreeCheck.isSlimeDirtOrGrass(block);
     }
 
     /**

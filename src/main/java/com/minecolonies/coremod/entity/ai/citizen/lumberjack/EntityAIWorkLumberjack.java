@@ -514,11 +514,11 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         }
 
         final int saplingSlot = findSaplingSlot();
-        final BlockPos dirtLocation = new BlockPos(location.getX(),location.getY()+1,location.getZ());
+        final BlockPos dirtLocation = new BlockPos(location.getX(),location.getY()-1,location.getZ());
         final Block dirt = world.getBlockState(dirtLocation).getBlock();
 
-        if (saplingSlot != -1 && ((isSlimeTree && Compatibility.isSlimeDirt(dirt))
-                                    ||(!isSlimeTree && !Compatibility.isSlimeDirt(dirt))))
+        if (saplingSlot != -1 && ((isSlimeTree && Compatibility.isSlimeDirtOrGrass(dirt))
+                                    ||(!isSlimeTree && !Compatibility.isSlimeDirtOrGrass(dirt))))
         {
             final ItemStack stack = getInventory().getStackInSlot(saplingSlot);
             final Block block = ((ItemBlock) stack.getItem()).getBlock();

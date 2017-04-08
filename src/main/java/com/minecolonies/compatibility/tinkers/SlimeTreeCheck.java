@@ -53,9 +53,9 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
      * @param block the block.
      * @return if the block is a slime sapling.
      */
-    public static boolean isSlimeDirt(@NotNull final Block block)
+    public static boolean isSlimeDirtOrGrass(@NotNull final Block block)
     {
-        return new SlimeTreeCheck().checkForTinkersSlimeDirt(block);
+        return new SlimeTreeCheck().checkForTinkersSlimeDirtOrGrass(block);
     }
 
     /**
@@ -116,9 +116,9 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
      */
     @Override
     @Optional.Method(modid = "tconstruct")
-    public boolean checkForTinkersSlimeDirt(@NotNull final Block block)
+    public boolean checkForTinkersSlimeDirtOrGrass(@NotNull final Block block)
     {
-        return block == TinkerWorld.slimeDirt;
+        return block == TinkerWorld.slimeDirt || block == TinkerWorld.slimeGrass;
     }
 
     /**

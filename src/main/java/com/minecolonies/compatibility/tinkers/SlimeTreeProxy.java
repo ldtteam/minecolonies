@@ -48,7 +48,7 @@ public class SlimeTreeProxy
      * @param block the block.
      * @return if the block is a slime sapling.
      */
-    protected boolean checkForTinkersSlimeDirt(@NotNull final Block block)
+    protected boolean checkForTinkersSlimeDirtOrGrass(@NotNull final Block block)
     {
         return false;
     }
