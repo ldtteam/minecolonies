@@ -31,6 +31,7 @@ sonarqube {
     }
 }
 
+apply plugin: 'idea'
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'checkstyle'
 apply plugin: 'pmd'
@@ -155,7 +156,6 @@ jar {
     }
 }
 
-apply plugin: 'idea'
 idea {
     module {
         inheritOutputDirs = true
