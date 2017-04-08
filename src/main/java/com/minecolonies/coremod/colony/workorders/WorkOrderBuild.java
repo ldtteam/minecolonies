@@ -112,29 +112,30 @@ public class WorkOrderBuild extends AbstractWorkOrder
     {
         super.readFromNBT(compound);
         buildingLocation = BlockPosUtil.readFromNBT(compound, TAG_BUILDING);
+        final Structures.StructureName sn = new Structures.StructureName(compound.getString(TAG_SCHEMATIC_NAME));
+        structureName = sn.toString();
         if (!(this instanceof WorkOrderBuildDecoration))
         {
             upgradeLevel = compound.getInteger(TAG_UPGRADE_LEVEL);
             upgradeName = compound.getString(TAG_UPGRADE_NAME);
         }
+
         workOrderName = compound.getString(TAG_WORKORDER_NAME);
         cleared = compound.getBoolean(TAG_IS_CLEARED);
-
         md5 = compound.getString(TAG_SCHEMATIC_MD5);
-        final Structures.StructureName sn = new Structures.StructureName(compound.getString(TAG_SCHEMATIC_NAME));
-        structureName = sn.toString();
         if (!Structures.hasMD5(structureName))
         {
             // If the schematic move we can use the MD5 hash to find it
             final Structures.StructureName newSN = Structures.getStructureNameByMD5(md5);
             if (newSN == null)
             {
-                Log.getLogger().warn("WorkOrderBuild.readFromNBT: replace " + structureName + " by " + newSN);
-                structureName = newSN.toString();
+                Log.getLogger().error("WorkOrderBuild.readFromNBT: Could not find " + structureName);
             }
             else
             {
-                Log.getLogger().error("WorkOrderBuild.readFromNBT: Could not find " + structureName);
+                Log.getLogger().warn("WorkOrderBuild.readFromNBT: replace " + sn + " by " + newSN);
+                structureName = newSN.toString();
+
             }
         }
 

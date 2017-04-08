@@ -330,7 +330,8 @@ public abstract class AbstractBuilding
 
         final String buildingName = compound.getString(TAG_BUILDING_TYPE);
         final String md5 = compound.getString(TAG_SCHEMATIC_MD5);
-        final Structures.StructureName sn = new Structures.StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + buildingLevel);
+        final int testLevel = buildingLevel == 0 ? 1 : buildingLevel;
+        final Structures.StructureName sn = new Structures.StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + testLevel);
 
         if (!Structures.hasMD5(sn))
         {
@@ -342,10 +343,6 @@ public abstract class AbstractBuilding
                 //We found the new location for the schematic, update the style accordingly
                 style = newStructureName.getStyle();
                 Log.getLogger().warn("AbstractBuilding.readFromNBT: " + sn + " have been moved to " + newStructureName);
-            }
-            else
-            {
-                Log.getLogger().error("AbstractBuilding.readFromNBT: Could not find schematic for " + sn);
             }
         }
 
