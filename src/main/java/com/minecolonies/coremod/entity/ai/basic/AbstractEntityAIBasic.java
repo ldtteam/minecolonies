@@ -12,15 +12,15 @@ import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentBase;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -403,7 +403,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         job.clearItemsNeeded();
         itemsNeeded.forEach(job::addItemNeeded);
-        InventoryUtils.getInventoryAsList(worker.getInventoryCitizen()).forEach(job::removeItemNeeded);
+        InventoryUtils.getItemHandlerAsList(new InvWrapper(worker.getInventoryCitizen())).forEach(job::removeItemNeeded);
         getOwnBuilding().setItemsCurrentlyNeeded(job.getItemsNeeded());
     }
 
@@ -509,10 +509,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     public boolean isToolInTileEntity(TileEntityChest entity, final String tool)
     {
-        return InventoryFunctions.matchFirstInInventoryWithInventory(
+        return InventoryFunctions.matchFirstInProviderWithAction(
           entity,
           stack -> Utils.isTool(stack, tool),
-          this::takeItemStackFromChest
+          this::takeItemStackFromProvider
         );
     }
 
@@ -529,10 +529,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     public boolean isToolInTileEntity(TileEntityChest entity, final String tool, int toolLevel)
     {
-        return InventoryFunctions.matchFirstInInventoryWithInventory(
+        return InventoryFunctions.matchFirstInProviderWithAction(
           entity,
-          stack -> Utils.isTool(stack, tool) && InventoryUtils.hasToolLevel(tool, stack, toolLevel),
-          this::takeItemStackFromChest
+          stack -> Utils.isTool(stack, tool) && InventoryUtils.hasToolLevel(stack, tool, toolLevel),
+          this::takeItemStackFromProvider
         );
     }
 
@@ -550,10 +550,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         return is != null
                  && InventoryFunctions
-                      .matchFirstInInventoryWithInventory(
+                      .matchFirstInProviderWithAction(
                         entity,
                         stack -> stack != null && is.isItemEqual(stack),
-                        this::takeItemStackFromChest
+                        this::takeItemStackFromProvider
                       );
     }
 
@@ -629,11 +629,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * If the inventory is full, only the fitting part will be moved.
      * Beware this method shouldn't be private, because the generic access won't work within a lambda won't work else.
      *
-     * @param tuple tuple from slot and chest to take it from.
+     * @param provider The provider to take from.
+     * @param slotIndex The slot to take.
      */
-    public void takeItemStackFromChest(@NotNull final Tuple<Integer, IInventory> tuple)
+    public void takeItemStackFromProvider(@NotNull ICapabilityProvider provider, int slotIndex)
     {
-        InventoryUtils.takeStackInSlot(tuple.getSecond(), worker.getInventoryCitizen(), tuple.getFirst());
+        InventoryUtils.transferItemStackIntoNextFreeSlotFromProvider(provider, slotIndex, new InvWrapper(worker.getInventoryCitizen()));
     }
 
     /**
@@ -673,15 +674,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private boolean checkForTool(@NotNull String tool)
     {
         final boolean needsTool = !InventoryFunctions
-                                     .matchFirstInInventory(
-                                       worker.getInventoryCitizen(),
+                                     .matchFirstInProvider(
+                                       worker,
                                        stack -> Utils.isTool(stack, tool),
                                        InventoryFunctions::doNothing
                                      );
 
         final int hutLevel = worker.getWorkBuilding().getBuildingLevel();
         final InventoryCitizen inventory = worker.getInventoryCitizen();
-        final boolean isUsable = InventoryUtils.hasToolLevel(tool, inventory, hutLevel);
+        final boolean isUsable = InventoryUtils.isToolInItemHandler(new InvWrapper(inventory), tool, hutLevel);
 
 
         if (!needsTool && isUsable)
@@ -787,8 +788,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         //Check for a pickaxe
         getOwnBuilding().setNeedsPickaxe(!InventoryFunctions
-                                            .matchFirstInInventory(
-                                              worker.getInventoryCitizen(),
+                                            .matchFirstInProvider(
+                                              worker,
                                               stack -> Utils.checkIfPickaxeQualifies(
                                                 minlevel, Utils.getMiningLevel(stack, Utils.PICKAXE)),
                                               InventoryFunctions::doNothing
@@ -798,7 +799,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         final InventoryCitizen inventory = worker.getInventoryCitizen();
         final int hutLevel = worker.getWorkBuilding().getBuildingLevel();
-        final boolean isUsable = InventoryUtils.hasToolLevel(Utils.PICKAXE, inventory, hutLevel);
+        final boolean isUsable = InventoryUtils.isToolInItemHandler(new InvWrapper(inventory), Utils.PICKAXE, hutLevel);
 
         if (!isUsable)
         {
@@ -839,13 +840,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
         return buildingWorker != null
-                 && InventoryFunctions.matchFirstInInventoryWithInventory(
+                 && InventoryFunctions.matchFirstInProviderWithAction(
           buildingWorker.getTileEntity(),
           stack -> Utils.checkIfPickaxeQualifies(
             minlevel,
             Utils.getMiningLevel(stack, Utils.PICKAXE)
           ),
-          this::takeItemStackFromChest
+          this::takeItemStackFromProvider
         );
     }
 
@@ -875,8 +876,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         //Check for a pickaxe
         getOwnBuilding().setNeedsWeapon(!InventoryFunctions
-                                           .matchFirstInInventory(
-                                             worker.getInventoryCitizen(),
+                                           .matchFirstInProvider(
+                                             worker,
                                              stack -> stack != null && Utils.doesItemServeAsWeapon(stack),
                                              InventoryFunctions::doNothing
                                            ));
@@ -910,10 +911,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
         return buildingWorker != null
-                 && InventoryFunctions.matchFirstInInventoryWithInventory(
+                 && InventoryFunctions.matchFirstInProviderWithAction(
           buildingWorker.getTileEntity(),
           stack -> stack != null && (Utils.doesItemServeAsWeapon(stack)),
-          this::takeItemStackFromChest
+          this::takeItemStackFromProvider
         );
     }
 
@@ -961,9 +962,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private boolean isInventoryAndChestFull()
     {
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
-        return InventoryUtils.isInventoryFull(worker.getInventoryCitizen())
+        return InventoryUtils.isProviderFull(worker)
                  && (buildingWorker != null
-                       && InventoryUtils.isInventoryFull(buildingWorker.getTileEntity()));
+                       && InventoryUtils.isProviderFull(buildingWorker.getTileEntity()));
     }
 
     /**
@@ -1004,8 +1005,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         return buildingWorker != null
                  && (walkToBuilding()
-                       || InventoryFunctions.matchFirstInInventory(worker.getInventoryCitizen(),
-          (i, stack) -> !(stack == null || keepIt.test(stack)) && shouldDumpItem(alreadyKept, shouldKeep, buildingWorker, stack, i)));
+                       || InventoryFunctions.matchFirstInProvider(worker,
+          (slot, stack) -> !(InventoryUtils.isItemStackEmpty(stack) || keepIt.test(stack)) && shouldDumpItem(alreadyKept, shouldKeep, buildingWorker, stack, slot)));
     }
 
     /**
@@ -1015,36 +1016,41 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param shouldKeep     items that should be kept.
      * @param buildingWorker the building of the worker.
      * @param stack          the stack being analyzed.
-     * @param i              the iteration inside the inventory.
+     * @param slot            the iteration inside the inventory.
      * @return true if should be dumped.
      */
     private boolean shouldDumpItem(
                                     @NotNull final Map<ItemStorage, Integer> alreadyKept, @NotNull final Map<ItemStorage, Integer> shouldKeep,
-                                    @NotNull final AbstractBuildingWorker buildingWorker, @NotNull final ItemStack stack, final int i)
+                                    @NotNull final AbstractBuildingWorker buildingWorker, @NotNull final ItemStack stack, final int slot)
     {
         @Nullable final ItemStack returnStack;
         int amountToKeep = 0;
+
+
         if (keptEnough(alreadyKept, shouldKeep, stack))
         {
-            returnStack = InventoryUtils.setStack(buildingWorker.getTileEntity(), stack);
+            returnStack = InventoryUtils.addItemStackToProviderWithResult(buildingWorker.getTileEntity(), stack);
         }
         else
         {
             final ItemStorage tempStorage = new ItemStorage(stack.getItem(), stack.getItemDamage(), stack.stackSize, false);
             final ItemStack tempStack = handleKeepX(alreadyKept, shouldKeep, tempStorage);
-            if (tempStack == null || tempStack.stackSize == 0)
+            if (tempStack == null || tempStack.stackSize <= 0)
             {
                 return false;
             }
             amountToKeep = stack.stackSize - tempStorage.getAmount();
-            returnStack = InventoryUtils.setStack(buildingWorker.getTileEntity(), tempStack);
+            returnStack = InventoryUtils.addItemStackToProviderWithResult(buildingWorker.getTileEntity(), tempStack);
         }
+
         if (returnStack == null)
         {
-            worker.getInventoryCitizen().decrStackSize(i, stack.stackSize - amountToKeep);
+            new InvWrapper(worker.getInventoryCitizen()).extractItem(slot, stack.stackSize - amountToKeep, false);
             return amountToKeep == 0;
         }
-        worker.getInventoryCitizen().decrStackSize(i, stack.stackSize - returnStack.stackSize - amountToKeep);
+
+        new InvWrapper(worker.getInventoryCitizen()).extractItem(slot, stack.stackSize - returnStack.stackSize - amountToKeep, false);
+
         //Check that we are not inserting into a full inventory.
         return stack.stackSize != returnStack.stackSize;
     }
@@ -1270,7 +1276,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         @NotNull final InventoryCitizen inventory = worker.getInventoryCitizen();
         final int hutLevel = worker.getWorkBuilding().getBuildingLevel();
 
-        for (int i = 0; i < inventory.getSizeInventory(); i++)
+        for (int i = 0; i < new InvWrapper(worker.getInventoryCitizen()).getSlots(); i++)
         {
             final ItemStack item = inventory.getStackInSlot(i);
             final int level = Utils.getMiningLevel(item, tool);

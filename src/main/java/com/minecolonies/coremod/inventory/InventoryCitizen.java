@@ -64,11 +64,11 @@ public class InventoryCitizen implements IInventory
     /**
      * The inventories custom name. In our case the citizens name.
      */
-    private String        customName;
+    private String customName;
     /**
      * The held item.
      */
-    private int           heldItem;
+    private int    heldItem;
     /**
      * Updated after the inventory has been changed.
      */
@@ -544,7 +544,9 @@ public class InventoryCitizen implements IInventory
         }
 
         this.markDirty();
-    }    /**
+    }
+
+    /**
      * Checks if the inventory is named.
      *
      * @return true if the inventory has a custom name.
@@ -641,7 +643,9 @@ public class InventoryCitizen implements IInventory
     public int getField(final int id)
     {
         return 0;
-    }    /**
+    }
+
+    /**
      * Get the formatted TextComponent that will be used for the sender's username in chat.
      */
     @NotNull
@@ -718,4 +722,3 @@ public class InventoryCitizen implements IInventory
         compound.setTag(TAG_INVENTORY, nbttaglist);
     }
 }
-

@@ -14,6 +14,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -595,7 +596,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     /**
      * Initiates structure loading.
      * @param mineNode the node to load it for.
-     * @param direction the direction it faces.
+     * @param rotateTimes The amount of time to rotate the structure.
+     * @param structurePos The position of the structure.
      */
     private void initStructure(final Node mineNode, final int rotateTimes, BlockPos structurePos)
     {
@@ -704,7 +706,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         }
         if (slot != -1)
         {
-            getInventory().decrStackSize(slot, 1);
+            new InvWrapper(getInventory()).extractItem(slot, 1, false);
             //Flag 1+2 is needed for updates
             world.setBlockState(location, metadata, 3);
         }
