@@ -84,7 +84,15 @@
         <module name="JavadocMethod"/>
         <module name="JavadocType"/>
         <module name="JavadocVariable"/>
-        <module name="JavadocStyle"/>
+        <module name="JavadocStyle">
+            <property name="severity" value="info"/>
+            <property name="checkFirstSentence" value="true"/>
+            <property name="scope" value="private"/>
+            <property name="excludeScope" value="nothing"/>
+            <property name="tokens" value="METHOD_DEF"/>
+            <property name="checkEmptyJavadoc" value="false"/>
+            <property name="checkHtml" value="true"/>
+        </module>
 
 
         <!-- Checks for Naming Conventions.                  -->
@@ -120,11 +128,17 @@
         <!-- Checks for whitespace                               -->
         <!-- See http://checkstyle.sf.net/config_whitespace.html -->
         <module name="EmptyForIteratorPad"/>
-        <module name="GenericWhitespace"/>
+        <module name="GenericWhitespace">
+            <property name="severity" value="info"/>
+        </module>
         <module name="MethodParamPad"/>
         <module name="NoWhitespaceAfter"/>
         <module name="NoWhitespaceBefore"/>
-        <module name="OperatorWrap"/>
+        <module name="OperatorWrap">
+            <property name="severity" value="info"/>
+            <property name="tokens" value="QUESTION,COLON,EQUAL,NOT_EQUAL,DIV,PLUS,MINUS,STAR,MOD,SR,BSR,GE,GT,SL,LE,LT,BXOR,BOR,LOR,BAND,LAND,TYPE_EXTENSION_AND,LITERAL_INSTANCEOF"/>
+            <property name="option" value="nl"/>
+        </module>
         <module name="ParenPad"/>
         <module name="TypecastParenPad"/>
         <module name="WhitespaceAfter"/>
@@ -177,6 +191,25 @@
         <module name="TodoComment"/>
         <module name="UpperEll"/>
 
+        <!-- Additional SonarQube related rules            -->
+        <module name="FileContentsHolder"/>
+        <module name="SuppressWarningsHolder"/>
+        <module name="AnnotationLocation">
+            <property name="severity" value="warning"/>
+            <property name="allowSamelineSingleParameterlessAnnotation" value="true"/>
+            <property name="allowSamelineParameterizedAnnotation" value="false"/>
+            <property name="allowSamelineMultipleAnnotations" value="false"/>
+        </module>
+        <module name="AtclauseOrder">
+            <property name="severity" value="warning"/>
+            <property name="tagOrder" value="@author,@version,@param,@return,@throws,@exception,@see,@since,@serial,@serialField,@serialData,@deprecated"/>
+        </module>
+        <module name="OuterTypeFilename">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="OuterTypeNumber">
+            <property name="severity" value="info"/>
+        </module>
     </module>
 
 </module>
