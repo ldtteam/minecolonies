@@ -10,6 +10,7 @@ buildscript {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
     }
 }
+
 plugins {
     id "org.sonarqube" version "2.3"
 } 
@@ -24,14 +25,37 @@ sonarqube {
     }
 }
 
+apply plugin: 'idea'
 apply plugin: 'net.minecraftforge.gradle.forge'
-
+apply plugin: 'checkstyle'
+apply plugin: 'pmd'
 apply plugin: 'jacoco'
+
+tasks.withType(Checkstyle) {
+    reports {
+        xml.enabled true
+    }
+}
+
+checkstyle {
+    toolVersion ="7.6.1"
+    ignoreFailures = true
+}
+
+pmd {
+    toolVersion = "5.5.5"
+    ruleSetFiles = files("config/PMD/pmd.xml")
+    ignoreFailures = true
+}
+
 jacocoTestReport {
     reports {
         xml.enabled true
     }
 }
+
+
+
 
 dependencies {
     testCompile 'junit:junit:4.11'
@@ -123,7 +147,6 @@ jar {
     }
 }
 
-apply plugin: 'idea'
 idea {
     module {
         inheritOutputDirs = true
