@@ -514,8 +514,11 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         }
 
         final int saplingSlot = findSaplingSlot();
+        final BlockPos dirtLocation = new BlockPos(location.getX(),location.getY()-1,location.getZ());
+        final Block dirt = world.getBlockState(dirtLocation).getBlock();
 
-        if (saplingSlot != -1)
+        if (saplingSlot != -1 && ((isSlimeTree && Compatibility.isSlimeDirtOrGrass(dirt))
+                                    ||(!isSlimeTree && !Compatibility.isSlimeDirtOrGrass(dirt))))
         {
             final ItemStack stack = getInventory().getStackInSlot(saplingSlot);
             final Block block = ((ItemBlock) stack.getItem()).getBlock();
@@ -619,11 +622,11 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     {
         if (isSlimeTree)
         {
-            return isStackSapling(stack) && Compatibility.isSlimeSapling(((ItemBlock) stack.getItem()).getBlock());
+            return isStackSapling(stack) && Compatibility.isSlimeSapling(((ItemBlock) stack.getItem()).getBlock()) && job.tree.getVariant() == stack.getMetadata();
         }
         else
         {
-            return isStackSapling(stack) && job.tree.getVariant() == ((ItemBlock) stack.getItem()).getBlock().getStateFromMeta(stack.getMetadata()).getValue(BlockSapling.TYPE);
+            return isStackSapling(stack) && job.tree.getVariant() == stack.getMetadata();
         }
     }
 

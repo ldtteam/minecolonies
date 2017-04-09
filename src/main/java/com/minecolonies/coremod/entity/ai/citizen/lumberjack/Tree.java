@@ -1,11 +1,9 @@
 package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
+import com.minecolonies.blockout.Log;
 import com.minecolonies.compatibility.Compatibility;
 import com.minecolonies.coremod.util.BlockPosUtil;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockNewLog;
-import net.minecraft.block.BlockOldLog;
-import net.minecraft.block.BlockPlanks;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
@@ -94,9 +92,19 @@ public class Tree
     private ArrayList<BlockPos> stumpLocations;
 
     /**
-     * The wood variant (Oak, jungle, dark oak...).
+     * The wood variant
+     * Oak Sapling         :0
+     * Spruce Sapling      :1
+     * Birch Sapling       :2
+     * Jungle Sapling      :3
+     * Acacia Sapling      :4
+     * Dark Oak Sapling    :5
+     *
+     * Blue Slime Sapling      :0
+     * Purple Slime Sapling    :1
+     * Magma Slime Sapling     :2
      */
-    private BlockPlanks.EnumType variant;
+    private int variantNumber;
 
     /**
      * Private constructor of the tree.
@@ -117,19 +125,24 @@ public class Tree
     public Tree(@NotNull final World world, @NotNull final BlockPos log)
     {
         final Block block = BlockPosUtil.getBlock(world, log);
+        final BlockPos leaf = new BlockPos(log.getX()+1,log.getY()+5,log.getZ());
         if (block.isWood(world, log) || Compatibility.isSlimeBlock(block))
         {
             if (block instanceof BlockOldLog)
             {
-                variant = world.getBlockState(log).getValue(BlockOldLog.VARIANT);
+                variantNumber = world.getBlockState(log).getValue(BlockOldLog.VARIANT).getMetadata();
             }
             else if (block instanceof BlockNewLog)
             {
-                variant = world.getBlockState(log).getValue(BlockNewLog.VARIANT);
+                variantNumber = world.getBlockState(log).getValue(BlockNewLog.VARIANT).getMetadata();
+            }
+            else if (Compatibility.isSlimeBlock(block))
+            {
+                variantNumber = Compatibility.getLeafVariant(world.getBlockState(leaf));
             }
             else
             {
-                variant = BlockPlanks.EnumType.OAK;
+                variantNumber = 0;
             }
 
             woodBlocks = new LinkedList<>();
@@ -514,9 +527,9 @@ public class Tree
      *
      * @return the EnumType variant.
      */
-    public BlockPlanks.EnumType getVariant()
+    public int getVariant()
     {
-        return variant;
+        return variantNumber;
     }
 
     /**
