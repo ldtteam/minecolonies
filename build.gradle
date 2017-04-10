@@ -27,7 +27,7 @@ sonarqube {
         property "sonar.host.url", "http://home.kk-sc.de:9000"
         property "sonar.sourceEncoding", "UTF-8"
         property "sonar.projectName", "Minecolonies"
-        property "sonar.branch", System.getenv()['TEAMCITY_PROJECT_NAME'] != null ? System.getenv()['TEAMCITY_PROJECT_NAME'] : System.getenv()['TRAVIS_BRANCH']
+        property "sonar.branch", System.getenv()['TEAMCITY_BRANCH'] != null ? System.getenv()['TEAMCITY_BRANCH'] : System.getenv()['TRAVIS_BRANCH']
     }
 }
 
