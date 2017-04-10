@@ -21,7 +21,7 @@ sonarqube {
         property "sonar.host.url", "http://home.kk-sc.de:9000"
         property "sonar.sourceEncoding", "UTF-8"
         property "sonar.projectName", "Minecolonies"
-        property "sonar.branch", System.getenv()['TRAVIS_BRANCH'] != null ? System.getenv()['TRAVIS_BRANCH'] : System.getenv()['bamboo_repository_branch_name']
+        property "sonar.branch", System.getenv()['TEAMCITY_BRANCH'] != null ? System.getenv()['TEAMCITY_BRANCH'] : System.getenv()['TRAVIS_BRANCH']
     }
 }
 
@@ -55,8 +55,6 @@ jacocoTestReport {
 }
 
 
-
-
 dependencies {
     testCompile 'junit:junit:4.11'
     testCompile "org.mockito:mockito-core:1.+"
@@ -77,7 +75,7 @@ configFile.withReader {
 }
 
 group = "com.minecolonies"
-config.buildnumber = System.getenv()['TRAVIS_BUILD_NUMBER'] != null ? System.getenv()['TRAVIS_BUILD_NUMBER'] : "${config.minecolonies_build}"
+config.buildnumber = System.getenv()['BUILD_NUMBER'] != null ? System.getenv()['BUILD_NUMBER'] : System.getenv()['TRAVIS_BUILD_NUMBER']
 version = "${config.minecraft_version}-${config.minecolonies_major}.${config.minecolonies_minor}.${config.buildnumber}"
 
 sourceCompatibility = '1.8'
