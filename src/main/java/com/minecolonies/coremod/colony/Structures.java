@@ -186,10 +186,16 @@ public final class Structures
                 if (path.toString().endsWith(SCHEMATIC_EXTENSION))
                 {
                     String relativePath = path.toString().substring(basePath.toString().length()).split("\\" + SCHEMATIC_EXTENSION)[0];
+                    if (!path.getFileSystem().getSeparator().equals("/"))
+                    {
+                        relativePath = relativePath.replace(path.getFileSystem().getSeparator(), "/");
+                    }
                     if (relativePath.startsWith("/"))
                     {
                         relativePath = relativePath.substring(1);
                     }
+
+
 
                     final StructureName structureName = new StructureName(relativePath);
                     final String md5 = Structure.calculateMD5(Structure.getStream(relativePath));
