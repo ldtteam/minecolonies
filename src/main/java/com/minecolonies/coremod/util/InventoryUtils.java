@@ -322,71 +322,6 @@ public class InventoryUtils {
     }
 
     /**
-     * Returns a slot number if a {@link IItemHandler} contains given ItemStack
-     * item that is not fully stacked and with which a stack made of the given
-     * block and itemDamage can be merged.
-     *
-     * @param itemHandler the {@link IItemHandler} to check.
-     * @param block       The block to test against.
-     * @param itemDamage  The item damage of a stack with that block to test
-     *                    against.
-     *
-     * @return slot number if found, -1 when not found.
-     */
-    public static int getFirstFillablePositionInItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final Block block, int itemDamage) {
-        return getFirstFillablePositionInItemHandler(itemHandler, getItemFromBlock(block), itemDamage);
-    }
-
-    /**
-     * Returns a slot number if a {@link IItemHandler} contains given ItemStack
-     * item that is not fully stacke and with which a stack made of the given
-     * item and itemDamage can be merged.
-     *
-     * @param itemHandler the {@link IItemHandler} to check.
-     * @param item        The item to test against.
-     * @param itemDamage  The item damage of a stack with that block to test
-     *                    against.
-     *
-     * @return slot number if found, -1 when not found.
-     */
-    public static int getFirstFillablePositionInItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final Item item, int itemDamage) {
-        return getFirstFillablePositionInItemHandler(itemHandler, new ItemStack(item, 1, itemDamage));
-    }
-
-    /**
-     * Returns a slot number if a {@link IItemHandler} contains given ItemStack
-     * item that is not fully stack and with which the given stack can be
-     * merged.
-     *
-     * @param itemHandler the {@link IItemHandler} to check.
-     * @param stack       The stack for which a fillable possition needs to be
-     *                    found.
-     *
-     * @return slot number if found, -1 when not found.
-     */
-    public static int getFirstFillablePositionInItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final ItemStack stack) {
-        return getFirstFillablePositionInItemHandler(itemHandler, (ItemStack existingStack) -> areItemStacksMergable(existingStack, stack));
-    }
-
-    /**
-     * Returns a slot number if a {@link IItemHandler} contains given ItemStack
-     * item that is not fully stacked.
-     *
-     * @param itemHandler               the {@link IItemHandler} to check.
-     * @param itemStackMergingPredicate Predicate used to test if a given stack
-     *                                  should be merged.
-     *
-     * @return slot number if found, -1 when not found.
-     */
-    public static int getFirstFillablePositionInItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> itemStackMergingPredicate) {
-        return IntStream.range(0, itemHandler.getSlots()).filter((int slot) -> {
-                    final ItemStack testStack = itemHandler.getStackInSlot(slot);
-                    return isItemStackEmpty(testStack) || (!isItemStackEmpty(testStack) && itemStackMergingPredicate.test(testStack));
-                }
-        ).findFirst().orElse(-1);
-    }
-
-    /**
      * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#addItemStackToInventory(ItemStack)}.
      *
      * @param itemHandler {@link IItemHandler} to add itemstack to.
@@ -409,11 +344,11 @@ public class InventoryUtils {
                 }
             } else {
                 ItemStack resultStack = itemStack;
-                slot = getFirstFillablePositionInItemHandler(itemHandler, resultStack);
-                while (!isItemStackEmpty(resultStack) && slot != -1) {
+                slot = itemHandler.getSlots() == 0 ? -1 : 0;
+                while (!isItemStackEmpty(resultStack) && slot != -1 && slot != itemHandler.getSlots()) {
                     resultStack = itemHandler.insertItem(slot, resultStack, false);
                     if (!isItemStackEmpty(resultStack)) {
-                        slot = getFirstFillablePositionInItemHandler(itemHandler, resultStack);
+                        slot++;
                     }
                 }
 
@@ -448,11 +383,11 @@ public class InventoryUtils {
                 }
             } else {
                 ItemStack resultStack = itemStack;
-                slot = getFirstFillablePositionInItemHandler(itemHandler, resultStack);
-                while (!isItemStackEmpty(resultStack) && slot != -1) {
+                slot = itemHandler.getSlots() == 0 ? -1 : 0;
+                while (!isItemStackEmpty(resultStack) && slot != -1 && slot != itemHandler.getSlots()) {
                     resultStack = itemHandler.insertItem(slot, resultStack, false);
                     if (!isItemStackEmpty(resultStack)) {
-                        slot = getFirstFillablePositionInItemHandler(itemHandler, resultStack);
+                        slot++;
                     }
                 }
 
@@ -774,72 +709,6 @@ public class InventoryUtils {
     public static boolean isPickaxeInProvider(ICapabilityProvider provider, final int requiredLevel, final int maximalLevel) {
         return hasItemInProvider(provider, (ItemStack stack) -> Utils.checkIfPickaxeQualifies(requiredLevel, Utils.getMiningLevel(stack, Utils.PICKAXE))
                 && InventoryUtils.hasToolLevel(stack, Utils.PICKAXE, maximalLevel));
-    }
-
-    /**
-     * Returns a slot number if a {@link ICapabilityProvider} contains given
-     * ItemStack item that is not fully stacked and with which a stack made of
-     * the given block and itemDamage can be merged.
-     *
-     * @param provider   the {@link ICapabilityProvider} to check.
-     * @param block      The block to test against.
-     * @param itemDamage The item damage of a stack with that block to test
-     *                   against.
-     *
-     * @return slot number if found, -1 when not found.
-     */
-    public static int getFirstFillablePositionInProvider(@NotNull final ICapabilityProvider provider, @NotNull final Block block, int itemDamage) {
-        return getFirstFillablePositionInProvider(provider, getItemFromBlock(block), itemDamage);
-    }
-
-    /**
-     * Returns a slot number if a {@link ICapabilityProvider} contains given
-     * ItemStack item that is not fully stacke and with which a stack made of
-     * the given item and itemDamage can be merged.
-     *
-     * @param provider   the {@link ICapabilityProvider} to check.
-     * @param item       The item to test against.
-     * @param itemDamage The item damage of a stack with that block to test
-     *                   against.
-     *
-     * @return slot number if found, -1 when not found.
-     */
-    public static int getFirstFillablePositionInProvider(@NotNull final ICapabilityProvider provider, @NotNull final Item item, int itemDamage) {
-        return getFirstFillablePositionInProvider(provider, new ItemStack(item, 1, itemDamage));
-    }
-
-    /**
-     * Returns a slot number if a {@link ICapabilityProvider} contains given
-     * ItemStack item that is not fully stack and with which the given stack can
-     * be merged.
-     *
-     * @param provider the {@link ICapabilityProvider} to check.
-     * @param stack    The stack for which a fillable possition needs to be
-     *                 found.
-     *
-     * @return slot number if found, -1 when not found.
-     */
-    public static int getFirstFillablePositionInProvider(@NotNull final ICapabilityProvider provider, @NotNull final ItemStack stack) {
-        return getFirstFillablePositionInProvider(provider, (ItemStack existingStack) -> areItemStacksMergable(existingStack, stack));
-    }
-
-    /**
-     * Returns a slot number if a {@link ICapabilityProvider} contains given
-     * ItemStack item that is not fully stacked.
-     *
-     * @param provider                  the {@link ICapabilityProvider} to
-     *                                  check.
-     * @param itemStackMergingPredicate Predicate used to test if a given stack
-     *                                  should be merged.
-     *
-     * @return slot number if found, -1 when not found.
-     */
-    public static int getFirstFillablePositionInProvider(@NotNull final ICapabilityProvider provider, @NotNull final Predicate<ItemStack> itemStackMergingPredicate) {
-        return getItemHandlersFromProvider(provider).stream()
-                .mapToInt(handler -> getFirstFillablePositionInItemHandler(handler, itemStackMergingPredicate))
-                .filter(slotIndex -> slotIndex > -1)
-                .findFirst()
-                .orElse(-1);
     }
 
     /**
@@ -1286,81 +1155,6 @@ public class InventoryUtils {
     }
 
     /**
-     * Returns a slot number if a {@link ICapabilityProvider} contains given
-     * ItemStack item that is not fully stacked and with which a stack made of
-     * the given block and itemDamage can be merged.
-     *
-     * @param provider   the {@link ICapabilityProvider} to check.
-     * @param facing     The side to get the {@link IItemHandler} in the {@link
-     *                   ICapabilityProvider} from to use.
-     * @param block      The block to test against.
-     * @param itemDamage The item damage of a stack with that block to test
-     *                   against.
-     *
-     * @return slot number if found, -1 when not found.
-     */
-    public static int getFirstFillablePositionInProviderForSide(@NotNull final ICapabilityProvider provider, @Nullable EnumFacing facing, @NotNull final Block block, int itemDamage) {
-        return getFirstFillablePositionInProviderForSide(provider, facing, getItemFromBlock(block), itemDamage);
-    }
-
-    /**
-     * Returns a slot number if a {@link ICapabilityProvider} contains given
-     * ItemStack item that is not fully stacke and with which a stack made of
-     * the given item and itemDamage can be merged.
-     *
-     * @param provider   the {@link ICapabilityProvider} to check.
-     * @param facing     The side to get the {@link IItemHandler} in the {@link
-     *                   ICapabilityProvider} from to use.
-     * @param item       The item to test against.
-     * @param itemDamage The item damage of a stack with that block to test
-     *                   against.
-     *
-     * @return slot number if found, -1 when not found.
-     */
-    public static int getFirstFillablePositionInProviderForSide(@NotNull final ICapabilityProvider provider, @Nullable EnumFacing facing, @NotNull final Item item, int itemDamage) {
-        return getFirstFillablePositionInProviderForSide(provider, facing, new ItemStack(item, 1, itemDamage));
-    }
-
-    /**
-     * Returns a slot number if a {@link ICapabilityProvider} contains given
-     * ItemStack item that is not fully stack and with which the given stack can
-     * be merged.
-     *
-     * @param provider the {@link ICapabilityProvider} to check.
-     * @param facing   The side to get the {@link IItemHandler} in the {@link
-     *                 ICapabilityProvider} from to use.
-     * @param stack    The stack for which a fillable possition needs to be
-     *                 found.
-     *
-     * @return slot number if found, -1 when not found.
-     */
-    public static int getFirstFillablePositionInProviderForSide(@NotNull final ICapabilityProvider provider, @Nullable EnumFacing facing, @NotNull final ItemStack stack) {
-        return getFirstFillablePositionInProviderForSide(provider, facing, (ItemStack existingStack) -> areItemStacksMergable(existingStack, stack));
-    }
-
-    /**
-     * Returns a slot number if a {@link ICapabilityProvider} contains given
-     * ItemStack item that is not fully stacked.
-     *
-     * @param provider                  the {@link ICapabilityProvider} to
-     *                                  check.
-     * @param facing                    The side to get the {@link IItemHandler}
-     *                                  in the {@link ICapabilityProvider} from
-     *                                  to use.
-     * @param itemStackMergingPredicate Predicate used to test if a given stack
-     *                                  should be merged.
-     *
-     * @return slot number if found, -1 when not found.
-     */
-    public static int getFirstFillablePositionInProviderForSide(@NotNull final ICapabilityProvider provider, @Nullable EnumFacing facing, @NotNull final Predicate<ItemStack> itemStackMergingPredicate) {
-        if (!provider.hasCapability(ITEM_HANDLER_CAPABILITY, facing)) {
-            return -1;
-        }
-
-        return getFirstFillablePositionInItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing), itemStackMergingPredicate);
-    }
-
-    /**
      * Compares whether or not the item in an itemstack is equal to a given
      * item.
      *
@@ -1470,9 +1264,7 @@ public class InventoryUtils {
 
     /**
      * Method to swap the ItemStacks from the given source {@link IItemHandler}
-     * to the given target {@link IItemHandler}. First free slot is found by
-     * calling: {@link #getFirstFillablePositionInItemHandler(IItemHandler,
-     * ItemStack)}
+     * to the given target {@link IItemHandler}.
      *
      * @param sourceHandler The {@link IItemHandler} that works as Source.
      * @param sourceIndex   The index of the slot that is being extracted from.
@@ -1482,29 +1274,21 @@ public class InventoryUtils {
      */
     public static boolean transferItemStackIntoNextFreeSlotInItemHandlers(@NotNull final IItemHandler sourceHandler, @NotNull int sourceIndex, @NotNull IItemHandler targetHandler) {
         final ItemStack sourceStack = sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, true);
+        final ItemStack originalStack = sourceStack.copy();
 
-        final int targetIndex = getFirstFillablePositionInItemHandler(targetHandler, sourceStack);
-        ItemStack targetStack = targetHandler.extractItem(targetIndex, Integer.MAX_VALUE, true);
-
-
-        ItemStack resultSourceSimulationInsertion = targetHandler.insertItem(targetIndex, sourceStack, true);
-        if (isItemStackEmpty(resultSourceSimulationInsertion) || isItemStackEmpty(targetStack)) {
-            targetHandler.insertItem(targetIndex, sourceStack, false);
-            sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, false);
-
-            return true;
-        } else {
-            targetHandler.insertItem(targetIndex, targetStack, false);
-
-            return false;
+        for (int i = 0; i < targetHandler.getSlots(); i++) {
+            ItemStack result = targetHandler.insertItem(i, sourceStack, false);
+            if (isItemStackEmpty(result)) {
+                return true;
+            }
         }
+
+        return !ItemStack.areItemStacksEqual(sourceStack, originalStack);
     }
 
     /**
      * Method to swap the ItemStacks from the given source {@link IItemHandler}
-     * to the given target {@link ICapabilityProvider}. First free slot is found
-     * by calling: {@link #getFirstFillablePositionInItemHandler(IItemHandler,
-     * ItemStack)}
+     * to the given target {@link ICapabilityProvider}.
      *
      * @param sourceHandler  The {@link IItemHandler} that works as Source.
      * @param sourceIndex    The index of the slot that is being extracted
@@ -1526,9 +1310,7 @@ public class InventoryUtils {
 
     /**
      * Method to swap the ItemStacks from the given source {@link
-     * ICapabilityProvider} to the given target {@link IItemHandler}. First free
-     * slot is found by calling: {@link #getFirstFillablePositionInItemHandler(IItemHandler,
-     * ItemStack)}
+     * ICapabilityProvider} to the given target {@link IItemHandler}.
      *
      * @param sourceProvider The {@link ICapabilityProvider} that works as
      *                       Source.
@@ -1628,11 +1410,11 @@ public class InventoryUtils {
                     return EMPTY;
                 }
             } else {
-                slot = getFirstFillablePositionInItemHandler(itemHandler, itemStack);
-                while (!isItemStackEmpty(itemStack) && slot != -1) {
+                slot = itemHandler.getSlots() == 0 ? -1 : 0;
+                while (!isItemStackEmpty(itemStack) && slot != -1 && slot != itemHandler.getSlots()) {
                     itemStack = itemHandler.insertItem(slot, itemStack, false);
                     if (!isItemStackEmpty(itemStack)) {
-                        slot = getFirstFillablePositionInItemHandler(itemHandler, itemStack);
+                        slot++;
                     }
                 }
 
@@ -1679,21 +1461,18 @@ public class InventoryUtils {
     @NotNull
     public static Boolean compareItemStacksIgnoreStackSize(ItemStack itemStack1, ItemStack itemStack2) {
         if (!isItemStackEmpty(itemStack1) && !isItemStackEmpty(itemStack2)) {
-            // Sort on itemID
-            if (Item.getIdFromItem(itemStack1.getItem()) - Item.getIdFromItem(itemStack2.getItem()) == 0) {
-                // Sort on item
-                if (itemStack1.getItem() == itemStack2.getItem()) {
-                    // Then sort on meta
-                    if (itemStack1.getItemDamage() == itemStack2.getItemDamage()) {
-                        // Then sort on NBT
-                        if (itemStack1.hasTagCompound() && itemStack2.hasTagCompound()) {
-                            // Then sort on stack size
-                            if (ItemStack.areItemStackTagsEqual(itemStack1, itemStack2)) {
-                                return true;
-                            }
-                        } else {
+            // Sort on item
+            if (itemStack1.getItem() == itemStack2.getItem()) {
+                // Then sort on meta
+                if (itemStack1.getItemDamage() == itemStack2.getItemDamage()) {
+                    // Then sort on NBT
+                    if (itemStack1.hasTagCompound() && itemStack2.hasTagCompound()) {
+                        // Then sort on stack size
+                        if (ItemStack.areItemStackTagsEqual(itemStack1, itemStack2)) {
                             return true;
                         }
+                    } else {
+                        return true;
                     }
                 }
             }
