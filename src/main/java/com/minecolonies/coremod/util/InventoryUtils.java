@@ -1428,7 +1428,7 @@ public class InventoryUtils
     public static boolean hasItemHandlerToolWithLevel(@NotNull final IItemHandler itemHandler, final String toolTypeName, final int requiredLevel)
     {
         return findFirstSlotInItemHandlerWith(itemHandler,
-          (ItemStack stack) -> Utils.isTool(stack, toolTypeName) && verifyToolLevel(stack, Utils.getMiningLevel(stack, toolTypeName), requiredLevel)) > -1;
+          (ItemStack stack) -> (!isItemStackEmpty(stack) && (Utils.isTool(stack, toolTypeName) && verifyToolLevel(stack, Utils.getMiningLevel(stack, toolTypeName), requiredLevel)))) > -1;
     }
 
     /**
