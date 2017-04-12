@@ -1412,8 +1412,8 @@ public class InventoryUtils
     public static int getFirstSlotOfItemHandlerContainingTool(@NotNull final IItemHandler itemHandler, @NotNull final String tool)
     {
         return findFirstSlotInItemHandlerWith(itemHandler,
-          (ItemStack stack) -> (stack.getItem().getToolClasses(stack).contains(tool) || ("hoe".equals(tool) && stack.getUnlocalizedName().contains("hoe"))
-                                  || ("rod".equals(tool) && stack.getUnlocalizedName().contains("fishingRod"))));
+          (ItemStack stack) ->  (!isItemStackEmpty(stack) && (stack.getItem().getToolClasses(stack).contains(tool) || ("hoe".equals(tool) && stack.getUnlocalizedName().contains("hoe"))
+                                  || ("rod".equals(tool) && stack.getUnlocalizedName().contains("fishingRod")))));
     }
 
     /**
