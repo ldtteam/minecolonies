@@ -258,7 +258,7 @@ public final class StructureWrapper
                     {
                         continue;
                     }
-                    else if(localBlock == ModBlocks.blockSolidSubstitution)
+                    else if(localBlock == ModBlocks.blockSolidSubstitution && !worldState.getMaterial().isSolid())
                     {
                         final IBlockState subBlock = BlockUtils.getSubstitutionBlockAtWorld(world, worldPos);
                         placeBlock(subBlock, subBlock.getBlock(), worldPos);
