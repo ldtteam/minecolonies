@@ -3,6 +3,7 @@ package com.minecolonies.structures.helpers;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -200,11 +201,12 @@ public class StructureProxy
     /**
      * Rotate the structure depending on the direction it's facing.
      *
-     * @param times times to rotate.
-     * @param world the world to rotate it in.
-     * @param rotatePos the pos to rotate it around.
+     * @param times times to rotateWithMirror.
+     * @param world the world to rotateWithMirror it in.
+     * @param rotatePos the pos to rotateWithMirror it around.
+     * @param mirror the mirror
      */
-    public void rotate(final int times, World world, BlockPos rotatePos)
+    public void rotateWithMirror(final int times, World world, BlockPos rotatePos, Mirror mirror)
     {
         final Rotation rotation;
         switch (times)
@@ -221,7 +223,7 @@ public class StructureProxy
             default:
                 rotation = Rotation.NONE;
         }
-        structure.setPlacementSettings(new PlacementSettings().setRotation(rotation));
+        structure.setPlacementSettings(new PlacementSettings().setRotation(rotation).setMirror(mirror));
 
         final BlockPos size = structure.getSize(rotation);
 
@@ -236,7 +238,7 @@ public class StructureProxy
         int minY = 0;
         int minZ = 0;
 
-        for (final Template.BlockInfo info : structure.getBlockInfoWithSettings(new PlacementSettings().setRotation(rotation)))
+        for (final Template.BlockInfo info : structure.getBlockInfoWithSettings(new PlacementSettings().setRotation(rotation).setMirror(mirror)))
         {
             final BlockPos tempPos = info.pos;
             final int x = tempPos.getX();
@@ -262,7 +264,7 @@ public class StructureProxy
         minY = Math.abs(minY);
         minZ = Math.abs(minZ);
         boolean foundHut = false;
-        final PlacementSettings settings = new PlacementSettings().setRotation(rotation);
+        final PlacementSettings settings = new PlacementSettings().setRotation(rotation).setMirror(mirror);
 
         for (final Template.BlockInfo info : structure.getBlockInfoWithSettings(settings))
         {

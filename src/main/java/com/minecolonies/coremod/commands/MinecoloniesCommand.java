@@ -18,7 +18,7 @@ import java.util.UUID;
 public class MinecoloniesCommand extends AbstractSplitCommand
 {
     public static final String DESC = "minecolonies";
-    private static final Map<UUID, Instant> commandExecutions = new HashMap();
+    private static final Map<UUID, Instant> commandExecutions = new HashMap<>();
 
     private final ImmutableMap<String, ISubCommand> subCommands =
       new ImmutableMap.Builder<String, ISubCommand>()
@@ -27,6 +27,7 @@ public class MinecoloniesCommand extends AbstractSplitCommand
         .put(CitizensCommand.DESC, new CitizensCommand(DESC))
         .put(RandomTeleportCommand.DESC, new RandomTeleportCommand(DESC))
         .put(BackupCommand.DESC, new BackupCommand(DESC))
+        .put(HomeTeleportCommand.DESC, new HomeTeleportCommand(DESC))
         .build();
 
     /**
@@ -45,8 +46,8 @@ public class MinecoloniesCommand extends AbstractSplitCommand
 
     /**
      * Check if the player is able to execute a teleport command again.
-     * @param player
-     * @return
+     * @param player the player executing.
+     * @return true if should be able to.
      */
     public static boolean canExecuteCommand(@NotNull EntityPlayer player)
     {

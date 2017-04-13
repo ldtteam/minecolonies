@@ -11,6 +11,7 @@ import net.minecraft.block.BlockStairs;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.template.Template;
@@ -151,6 +152,10 @@ public class Structure
             {
                 return true;
             }
+            else if((structureBlock == Blocks.DIRT || structureBlock == Blocks.GRASS) && (worldBlock == Blocks.DIRT || worldBlock == Blocks.GRASS))
+            {
+                return true;
+            }
 
             return structureBlockState.equals(worldBlockState);
         }
@@ -174,11 +179,13 @@ public class Structure
      * @param buildingLocation  the location where we should build this Structure
      * @param schematicFileName the structure file to load it from
      * @param rotation          the rotation it should have
+     * @param mirror            the mirror.
      * @throws StructureException when there is an error loading the structure file
      */
-    public Structure(final World targetWorld, final BlockPos buildingLocation, final String schematicFileName, final int rotation) throws StructureException
+    public Structure(final World targetWorld, final BlockPos buildingLocation, final String schematicFileName, final int rotation, @NotNull final Mirror mirror)
+            throws StructureException
     {
-        this(targetWorld, buildingLocation, schematicFileName, rotation, Stage.CLEAR, null);
+        this(targetWorld, buildingLocation, schematicFileName, rotation, Stage.CLEAR, null, mirror);
     }
 
     /**
@@ -190,6 +197,7 @@ public class Structure
      * @param rotation          the rotation it should have
      * @param stageProgress     the stage is should start with
      * @param blockProgress     the block it should start with
+     * @param mirror            the mirror.
      * @throws StructureException when there is an error loading the structure file
      */
     public Structure(
@@ -198,9 +206,10 @@ public class Structure
             final String structureFileName,
             final int rotation,
             final Stage stageProgress,
-            final BlockPos blockProgress) throws StructureException
+            final BlockPos blockProgress,
+            final Mirror mirror) throws StructureException
     {
-        this.structure = loadStructure(targetWorld, buildingLocation, structureFileName, rotation, stageProgress, blockProgress);
+        this.structure = loadStructure(targetWorld, buildingLocation, structureFileName, rotation, stageProgress, blockProgress, mirror);
         this.stage = stageProgress;
         this.targetWorld = targetWorld;
     }
@@ -228,6 +237,7 @@ public class Structure
      * @param rotation          The rotation this structure should be in
      * @param stageProgress     the stage we are in
      * @param blockProgress     the progress we have made so far
+     * @param mirror            the mirror.
      * @throws StructureException when there is an error loading the structure file
      */
     @Nullable
@@ -237,7 +247,8 @@ public class Structure
             @Nullable final String schematicFileName,
             final int rotation,
             final Stage stageProgress,
-            @Nullable final BlockPos blockProgress)
+            @Nullable final BlockPos blockProgress,
+            @NotNull final Mirror mirror)
             throws StructureException
     {
         if (targetWorld == null || buildingLocation == null || schematicFileName == null)
@@ -257,7 +268,7 @@ public class Structure
         }
 
         //put the building into place
-        tempSchematic.rotate(rotation, targetWorld, buildingLocation);
+        tempSchematic.rotate(rotation, targetWorld, buildingLocation, mirror);
         tempSchematic.setPosition(buildingLocation);
         if (blockProgress != null)
         {
@@ -323,13 +334,13 @@ public class Structure
                 return advanceBlocks(this.structure::incrementBlock, structureBlock -> structureBlock.doesStructureBlockEqualWorldBlock()
                         && structureBlock.block == Blocks.AIR
                         && !structureBlock.metadata.getMaterial().isSolid());
-            case DECORATE:
+            case SPAWN:
                 return advanceBlocks(this.structure::decrementBlock, structureBlock ->
+                        structureBlock.entity == null);
+            case DECORATE:
+                return advanceBlocks(this.structure::incrementBlock, structureBlock ->
                         structureBlock.doesStructureBlockEqualWorldBlock()
                                 || structureBlock.metadata.getMaterial().isSolid());
-            case SPAWN:
-                return advanceBlocks(this.structure::incrementBlock, structureBlock ->
-                        structureBlock.entity == null);
             default:
                 return Result.NEW_BLOCK;
         }

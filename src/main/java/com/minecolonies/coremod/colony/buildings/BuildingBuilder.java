@@ -11,7 +11,6 @@ import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.Utils;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -21,6 +20,7 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -288,13 +288,13 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
             if (builderInventory!=null)
             {
-                resource.addAvailable(InventoryUtils.getItemCountInInventory(builderInventory, resource.getItem(), resource.getDamageValue()));
+                resource.addAvailable(InventoryUtils.getItemCountInItemHandler(new InvWrapper(builderInventory), resource.getItem(), resource.getDamageValue()));
             }
 
-            final IInventory chestInventory = this.getTileEntity();
+            final TileEntity chestInventory = this.getTileEntity();
             if (chestInventory!=null)
             {
-                resource.addAvailable(InventoryUtils.getItemCountInInventory(chestInventory, resource.getItem(), resource.getDamageValue()));
+                resource.addAvailable(InventoryUtils.getItemCountInProvider(chestInventory, resource.getItem(), resource.getDamageValue()));
             }
 
             //Count in the additional chests as well
@@ -305,7 +305,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
                     final TileEntity entity = builder.worldObj.getTileEntity(pos);
                     if(entity instanceof TileEntityChest)
                     {
-                        resource.addAvailable(InventoryUtils.getItemCountInInventory((TileEntityChest)entity, resource.getItem(), resource.getDamageValue()));
+                        resource.addAvailable(InventoryUtils.getItemCountInProvider(entity, resource.getItem(), resource.getDamageValue()));
                     }
                 }
             }

@@ -10,6 +10,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.util.Mirror;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -126,13 +127,15 @@ public final class StructureWrapper
      * @param name      the structures name
      * @param pos       coordinates
      * @param rotations number of times rotated
+     * @param mirror    the mirror used.
      */
-    public static void loadAndPlaceStructureWithRotation(final World worldObj, @NotNull final String name, @NotNull final BlockPos pos, final int rotations)
+    public static void loadAndPlaceStructureWithRotation(final World worldObj, @NotNull final String name,
+            @NotNull final BlockPos pos, final int rotations, @NotNull final Mirror mirror)
     {
         try
         {
             @NotNull final StructureWrapper structureWrapper = new StructureWrapper(worldObj, name);
-            structureWrapper.rotate(rotations, worldObj, pos);
+            structureWrapper.rotate(rotations, worldObj, pos, mirror);
             structureWrapper.placeStructure(pos);
         }
         catch (final IllegalStateException e)
@@ -144,13 +147,14 @@ public final class StructureWrapper
     /**
      * Rotates the structure x times.
      *
-     * @param times times to rotate.
+     * @param times times to rotateWithMirror.
      * @param world world it's rotating it in.
-     * @param rotatePos position to rotate it around.
+     * @param rotatePos position to rotateWithMirror it around.
+     * @param mirror the mirror to rotate with.
      */
-    public void rotate(final int times, World world, BlockPos rotatePos)
+    public void rotate(final int times, @NotNull final World world, @NotNull final BlockPos rotatePos, @NotNull final Mirror mirror)
     {
-        structure.rotate(times, world, rotatePos);
+        structure.rotateWithMirror(times, world, rotatePos, mirror);
     }
 
     /**

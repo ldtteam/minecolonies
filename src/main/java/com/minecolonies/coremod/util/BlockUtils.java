@@ -74,6 +74,23 @@ public final class BlockUtils
     }
 
     /**
+     * Get the filler block at a certain location.
+     * If block follows gravity laws return dirt.
+     * @param world the world the block is in.
+     * @param location the location it is at.
+     * @return the IBlockState of the filler block.
+     */
+    public static IBlockState getSubstitutionBlockAtWorld(@NotNull final World world, @NotNull final BlockPos location)
+    {
+        final IBlockState filler = world.getBiome(location).fillerBlock;
+        if (filler.getBlock() instanceof BlockFalling)
+        {
+            return Blocks.DIRT.getDefaultState();
+        }
+        return filler;
+    }
+
+    /**
      * Checks if this block type should be destroyed.
      * <p>
      * The builder uses this to check if he should clear this block.

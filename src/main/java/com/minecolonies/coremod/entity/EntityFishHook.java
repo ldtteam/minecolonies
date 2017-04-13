@@ -9,6 +9,7 @@ import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -711,32 +712,30 @@ public final class EntityFishHook extends Entity
         {
             if (random >= INCREASE_RARENESS_MODIFIER - buildingLevel * (lootBonus + 1) && buildingLevel >= 2)
             {
-                final LootContext.Builder lootContextBuilder = new LootContext.Builder((WorldServer) this.worldObj);
-                for (final ItemStack itemstack : this.worldObj.getLootTableManager()
-                        .getLootTableFromLocation(LootTableList.GAMEPLAY_FISHING_JUNK)
-                        .generateLootForPools(this.rand, lootContextBuilder.build()))
-                {
-                    return itemstack;
-                }
+                return getLootForLootTable(LootTableList.GAMEPLAY_FISHING_JUNK);
             }
 
-            final LootContext.Builder lootContextBuilder = new LootContext.Builder((WorldServer) this.worldObj);
-            for (final ItemStack itemstack : this.worldObj.getLootTableManager()
-                    .getLootTableFromLocation(LootTableList.GAMEPLAY_FISHING_FISH)
-                    .generateLootForPools(this.rand, lootContextBuilder.build()))
-            {
-                return itemstack;
-            }
+            return getLootForLootTable(LootTableList.GAMEPLAY_FISHING_FISH);
         }
         else
         {
-            final LootContext.Builder lootContextBuilder = new LootContext.Builder((WorldServer) this.worldObj);
-            for (final ItemStack itemstack : this.worldObj.getLootTableManager()
-                    .getLootTableFromLocation(LootTableList.GAMEPLAY_FISHING_TREASURE)
-                    .generateLootForPools(this.rand, lootContextBuilder.build()))
-            {
-                return itemstack;
-            }
+            return getLootForLootTable(LootTableList.GAMEPLAY_FISHING_TREASURE);
+        }
+    }
+
+    /**
+     * Return some random loot of a defined lootTable.
+     * @param lootTable the lootTable.
+     * @return the ItemStack of the loot.
+     */
+    private ItemStack getLootForLootTable(ResourceLocation lootTable)
+    {
+        final LootContext.Builder lootContextBuilder = new LootContext.Builder((WorldServer) this.worldObj);
+        for (final ItemStack itemstack : this.worldObj.getLootTableManager()
+                .getLootTableFromLocation(lootTable)
+                .generateLootForPools(this.rand, lootContextBuilder.build()))
+        {
+            return itemstack;
         }
         return null;
     }

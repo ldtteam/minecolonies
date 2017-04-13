@@ -1,17 +1,20 @@
 package com.minecolonies.coremod.entity.ai.citizen.builder;
 
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
+import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
+import com.minecolonies.coremod.util.BlockUtils;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Log;
-import net.minecraft.block.BlockFalling;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -64,14 +67,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     }
 
     @Override
-    public IBlockState getSolidSubstitution(BlockPos location)
+    public IBlockState getSolidSubstitution(@NotNull final BlockPos location)
     {
-        final IBlockState filler = world.getBiome(location).fillerBlock;
-        if (filler.getBlock() instanceof BlockFalling)
-        {
-            return Blocks.DIRT.getDefaultState();
-        }
-        return filler;
+        return BlockUtils.getSubstitutionBlockAtWorld(world, location);
     }
 
     private boolean checkIfExecute()
@@ -177,6 +175,23 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
         return START_BUILDING;
     }
+
+    /**
+     * Check how much of a certain stuck is actually required.
+     *
+     * @param stack the stack to check.
+     * @return the new stack with the correct amount.
+     */
+    @Override
+    @Nullable
+    public ItemStack getTotalAmount(@Nullable final ItemStack stack)
+    {
+        final AbstractBuildingWorker buildingWorker = getOwnBuilding();
+
+        final BuildingBuilderResource resource = ((BuildingBuilder) buildingWorker).getNeededResources().get(stack.getUnlocalizedName());
+        return resource == null ? stack : new ItemStack(resource.getItem(), resource.getAmount(), resource.getDamageValue());
+    }
+
 
     /**
      * Calculates after how many actions the ai should dump it's inventory.

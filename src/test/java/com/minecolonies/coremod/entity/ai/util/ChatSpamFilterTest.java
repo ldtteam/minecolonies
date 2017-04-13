@@ -1,8 +1,7 @@
 package com.minecolonies.coremod.entity.ai.util;
 
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.test.AbstractTest;
-import net.minecraft.util.text.TextComponentString;
+import com.minecolonies.coremod.test.AbstractMockStaticsTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -12,7 +11,7 @@ import static com.minecolonies.coremod.entity.ai.util.ChatSpamFilter.MAX_TIMEOUT
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
-public class ChatSpamFilterTest extends AbstractTest
+public class ChatSpamFilterTest extends AbstractMockStaticsTest
 {
     private static final String MESSAGE_1 = "Whatever";
     private static final String MESSAGE_2 = "Whatever2";

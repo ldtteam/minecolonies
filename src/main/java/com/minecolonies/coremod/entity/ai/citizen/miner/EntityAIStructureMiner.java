@@ -14,8 +14,11 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.awt.geom.Point2D;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
@@ -24,6 +27,11 @@ import static com.minecolonies.coremod.entity.ai.util.AIState.*;
  */
 public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 {
+    /**
+     * Lead the miner to the other side of the shaft.
+     */
+    private static final int OTHER_SIDE_OF_SHAFT = 6;
+
     private static final String RENDER_META_TORCH   = "Torch";
     private static final int    NODE_DISTANCE       = 7;
     /**
@@ -588,28 +596,29 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     /**
      * Initiates structure loading.
      * @param mineNode the node to load it for.
-     * @param direction the direction it faces.
+     * @param rotateTimes The amount of time to rotate the structure.
+     * @param structurePos The position of the structure.
      */
     private void initStructure(final Node mineNode, final int rotateTimes, BlockPos structurePos)
     {
         if(mineNode == null)
         {
-            loadStructure("miner/minerMainShaft", getRotationFromVector(), structurePos);
+            loadStructure("miner/minerMainShaft", getRotationFromVector(), structurePos, false);
         }
         else
         {
             //todo we can add other nodeTypes without a problem.
             if (mineNode.getStyle() == Node.NodeType.CROSSROAD)
             {
-                loadStructure("miner/minerX4", rotateTimes, structurePos);
+                loadStructure("miner/minerX4", rotateTimes, structurePos, false);
             }
             if (mineNode.getStyle() == Node.NodeType.BEND)
             {
-                loadStructure("miner/minerX2Right", rotateTimes, structurePos);
+                loadStructure("miner/minerX2Right", rotateTimes, structurePos, false);
             }
             if (mineNode.getStyle() == Node.NodeType.TUNNEL)
             {
-                loadStructure("miner/minerX2Top", rotateTimes, structurePos);
+                loadStructure("miner/minerX2Top", rotateTimes, structurePos, false);
             }
         }
     }
@@ -697,7 +706,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         }
         if (slot != -1)
         {
-            getInventory().decrStackSize(slot, 1);
+            new InvWrapper(getInventory()).extractItem(slot, 1, false);
             //Flag 1+2 is needed for updates
             world.setBlockState(location, metadata, 3);
         }
@@ -730,5 +739,47 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         {
             return pos.getY() - 1;
         }
+    }
+
+    /**
+     * Calculates the working position.
+     * <p>
+     * Takes a min distance from width and length.
+     * <p>
+     * Then finds the floor level at that distance and then check if it does contain two air levels.
+     * @param targetPosition the position to work at.
+     * @return BlockPos position to work from.
+     */
+    @Override
+    public BlockPos getWorkingPosition(BlockPos targetPosition)
+    {
+        return getNodeMiningPosition(targetPosition);
+    }
+
+    /**
+     * Create a save mining position for the miner.
+     *
+     * @param blockToMine block which should be mined or placed.
+     * @return the save position.
+     */
+    private BlockPos getNodeMiningPosition(BlockPos blockToMine)
+    {
+        final BuildingMiner buildingMiner = getOwnBuilding();
+        if (buildingMiner.getCurrentLevel() == null || buildingMiner.getCurrentLevel().getRandomNode() == null)
+        {
+            return blockToMine;
+        }
+        final Point2D parentPos = buildingMiner.getCurrentLevel().getRandomNode().getParent();
+        if (parentPos != null && buildingMiner.getCurrentLevel().getNode(parentPos) != null
+                && buildingMiner.getCurrentLevel().getNode(parentPos).getStyle() == Node.NodeType.SHAFT)
+        {
+            final BlockPos ladderPos = buildingMiner.getLadderLocation();
+            return new BlockPos(
+                    ladderPos.getX() + buildingMiner.getVectorX() * OTHER_SIDE_OF_SHAFT,
+                    buildingMiner.getCurrentLevel().getDepth(),
+                    ladderPos.getZ() + buildingMiner.getVectorZ() * OTHER_SIDE_OF_SHAFT);
+        }
+        final Point2D pos = buildingMiner.getCurrentLevel().getRandomNode().getParent();
+        return new BlockPos(pos.getX(), buildingMiner.getCurrentLevel().getDepth(), pos.getY());
     }
 }

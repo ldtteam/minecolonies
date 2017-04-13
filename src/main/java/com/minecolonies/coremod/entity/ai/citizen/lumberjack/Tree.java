@@ -1,10 +1,9 @@
 package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
+import com.minecolonies.blockout.Log;
+import com.minecolonies.compatibility.Compatibility;
 import com.minecolonies.coremod.util.BlockPosUtil;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockNewLog;
-import net.minecraft.block.BlockOldLog;
-import net.minecraft.block.BlockPlanks;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
@@ -53,6 +52,11 @@ public class Tree
     private static final int NUMBER_OF_LEAVES = 3;
 
     /**
+     * Number of leaves in every direction from the middle of the tree.
+     */
+    private static final int LEAVES_WIDTH = 4;
+
+    /**
      * Max size a tree should have.
      */
     private static final int MAX_TREE_SIZE = 256;
@@ -73,6 +77,11 @@ public class Tree
     private LinkedList<BlockPos> woodBlocks;
 
     /**
+     * All leaves of the tree.
+     */
+    private LinkedList<BlockPos> leaves;
+
+    /**
      * Is the tree a tree?
      */
     private boolean isTree;
@@ -83,9 +92,19 @@ public class Tree
     private ArrayList<BlockPos> stumpLocations;
 
     /**
-     * The wood variant (Oak, jungle, dark oak...).
+     * The wood variant
+     * Oak Sapling         :0
+     * Spruce Sapling      :1
+     * Birch Sapling       :2
+     * Jungle Sapling      :3
+     * Acacia Sapling      :4
+     * Dark Oak Sapling    :5
+     *
+     * Blue Slime Sapling      :0
+     * Purple Slime Sapling    :1
+     * Magma Slime Sapling     :2
      */
-    private BlockPlanks.EnumType variant;
+    private int variantNumber;
 
     /**
      * Private constructor of the tree.
@@ -106,26 +125,33 @@ public class Tree
     public Tree(@NotNull final World world, @NotNull final BlockPos log)
     {
         final Block block = BlockPosUtil.getBlock(world, log);
-        if (block.isWood(world, log))
+        final BlockPos leaf = new BlockPos(log.getX()+1,log.getY()+5,log.getZ());
+        if (block.isWood(world, log) || Compatibility.isSlimeBlock(block))
         {
             if (block instanceof BlockOldLog)
             {
-                variant = world.getBlockState(log).getValue(BlockOldLog.VARIANT);
+                variantNumber = world.getBlockState(log).getValue(BlockOldLog.VARIANT).getMetadata();
             }
             else if (block instanceof BlockNewLog)
             {
-                variant = world.getBlockState(log).getValue(BlockNewLog.VARIANT);
+                variantNumber = world.getBlockState(log).getValue(BlockNewLog.VARIANT).getMetadata();
+            }
+            else if (Compatibility.isSlimeBlock(block))
+            {
+                variantNumber = Compatibility.getLeafVariant(world.getBlockState(leaf));
             }
             else
             {
-                variant = BlockPlanks.EnumType.OAK;
+                variantNumber = 0;
             }
 
             woodBlocks = new LinkedList<>();
+            leaves = new LinkedList<>();
             location = log;
             topLog = log;
 
             addAndSearch(world, log);
+            addAndSearch(world);
 
             checkTree(world, topLog);
             stumpLocations = new ArrayList<>();
@@ -143,7 +169,8 @@ public class Tree
     public static boolean checkTree(@NotNull final IBlockAccess world, final BlockPos pos)
     {
         //Is the first block a log?
-        if (!world.getBlockState(pos).getBlock().isWood(world, pos))
+        final Block block = world.getBlockState(pos).getBlock();
+        if (!block.isWood(world, pos) && !Compatibility.isSlimeBlock(block))
         {
             return false;
         }
@@ -200,7 +227,8 @@ public class Tree
                 for (int z = -1; z <= 1; z++)
                 {
                     final BlockPos temp = log.add(x, y, z);
-                    if (world.getBlockState(temp).getBlock().isWood(null, temp) && !woodenBlocks.contains(temp))
+                    final Block block = world.getBlockState(temp).getBlock();
+                    if ((block.isWood(null, temp) || Compatibility.isSlimeBlock(block)) && !woodenBlocks.contains(temp))
                     {
                         return getBottomAndTopLog(world, temp, woodenBlocks, bottom, top);
                     }
@@ -361,9 +389,51 @@ public class Tree
                 for (int z = -1; z <= 1; z++)
                 {
                     final BlockPos temp = log.add(x, y, z);
-                    if (BlockPosUtil.getBlock(world, temp).isWood(null, temp) && !woodBlocks.contains(temp))
+                    final Block block = BlockPosUtil.getBlock(world, temp);
+                    if ((block.isWood(null, temp) || Compatibility.isSlimeBlock(block)) && !woodBlocks.contains(temp))
                     {
                         addAndSearch(world, temp);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Adds a leaf and searches for further leaves.
+     *
+     * @param world The world the leaf is in.
+     */
+    private void addAndSearch(@NotNull final World world)
+    {
+        int locXMin = location.getX() - LEAVES_WIDTH;
+        int locXMax = location.getX() + LEAVES_WIDTH;
+        final int locYMin = location.getY() + 2;
+        int locZMin = location.getZ() - LEAVES_WIDTH;
+        int locZMax = location.getZ() + LEAVES_WIDTH;
+        int temp;
+        if (locXMin > locXMax)
+        {
+            temp = locXMax;
+            locXMax = locXMin;
+            locXMin = temp;
+        }
+        if (locZMin > locZMax)
+        {
+            temp = locZMax;
+            locZMax = locZMin;
+            locZMin = temp;
+        }
+        for (int locX = locXMin; locX <= locXMax; locX++)
+        {
+            for (int locY = locYMin; locY <= MAX_TREE_SIZE; locY++)
+            {
+                for (int locZ = locZMin; locZ <= locZMax; locZ++)
+                {
+                    final BlockPos leaf = new BlockPos(locX, locY, locZ);
+                    if (world.getBlockState(leaf).getMaterial() == Material.LEAVES)
+                    {
+                        leaves.add(leaf);
                     }
                 }
             }
@@ -381,6 +451,16 @@ public class Tree
     }
 
     /**
+     * Returns the next leaf block.
+     *
+     * @return the position.
+     */
+    public BlockPos pollNextLeaf()
+    {
+        return leaves.pollLast();
+    }
+
+    /**
      * Looks up the next log block.
      *
      * @return the position.
@@ -388,6 +468,26 @@ public class Tree
     public BlockPos peekNextLog()
     {
         return woodBlocks.peekLast();
+    }
+
+    /**
+     * Looks up the next leaf block.
+     *
+     * @return the position.
+     */
+    public BlockPos peekNextLeaf()
+    {
+        return leaves.peekLast();
+    }
+
+    /**
+     * Check if the found tree has any leaves.
+     *
+     * @return true if there are leaves associated with the tree.
+     */
+    public boolean hasLeaves()
+    {
+        return !leaves.isEmpty();
     }
 
     /**
@@ -427,9 +527,9 @@ public class Tree
      *
      * @return the EnumType variant.
      */
-    public BlockPlanks.EnumType getVariant()
+    public int getVariant()
     {
-        return variant;
+        return variantNumber;
     }
 
     /**

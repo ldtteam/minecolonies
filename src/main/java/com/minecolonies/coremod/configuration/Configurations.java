@@ -21,6 +21,8 @@ public class Configurations
     public static int teleportBuffer = 120;
     public static int opLevelForServer = 3;
     public static boolean canPlayerUseRTPCommand = true;
+    public static boolean canPlayerUseColonyTPCommand = false;
+    public static boolean canPlayerUseHomeTPCommand = true;
     public static boolean canPlayerUseCitizenInfoCommand = true;
     public static boolean canPlayerUseListCitizensCommand = true;
     public static boolean canPlayerRespawnCitizensCommand = true;
@@ -28,13 +30,15 @@ public class Configurations
     public static boolean canPlayerUseKillCitizensCommand = true;
     public static boolean canPlayerUseAddOfficerCommand = true;
     public static boolean canPlayerUseDeleteColonyCommand = true;
-    public static boolean canPlayerUseRefreshColonyCommand;
+    public static boolean canPlayerUseRefreshColonyCommand = false;
+    public static boolean canPlayerUseBackupCommand = false;
 
 
     /* Colony TP configs */
     public static int numberOfAttemptsForSafeTP = 4;
     public static int maxDistanceFromWorldSpawn = 8000;
     public static int minDistanceFromWorldSpawn = 512;
+
 
     //TODO change to false when material handling is implemented
     public static boolean deliverymanInfiniteResources = false;
@@ -52,6 +56,12 @@ public class Configurations
     public static boolean pathfindingDebugDraw      = false;
     public static int     pathfindingDebugVerbosity = 0;
     public static int     pathfindingMaxThreadCount = 2;
+
+    public static String[] freeToInteractBlocks = new String[]
+            {
+                "block:dirt",
+                "0 0 0"
+            };
 
     public static String[] maleFirstNames = new String[]
             {

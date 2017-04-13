@@ -24,7 +24,8 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 @Mod(modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION,
-  /*dependencies = Constants.FORGE_VERSION,*/ acceptedMinecraftVersions = Constants.MC_VERSION)
+  /*dependencies = Constants.FORGE_VERSION,*/ acceptedMinecraftVersions = Constants.MC_VERSION,
+  guiFactory = Constants.CONFIG_GUI_LOCATION)
 public class MineColonies
 {
     /**
@@ -148,6 +149,8 @@ public class MineColonies
         getNetwork().registerMessage(RecallTownhallMessage.class, RecallTownhallMessage.class, 34, Side.SERVER);
         getNetwork().registerMessage(TransferItemsRequestMessage.class, TransferItemsRequestMessage.class, 35, Side.SERVER);
         getNetwork().registerMessage(MarkBuildingDirtyMessage.class, MarkBuildingDirtyMessage.class, 36, Side.SERVER);
+        getNetwork().registerMessage(ChangeFreeToInteractBlockMessage.class, ChangeFreeToInteractBlockMessage.class, 37, Side.SERVER);
+
 
         //Client side only
         getNetwork().registerMessage(BlockParticleEffectMessage.class, BlockParticleEffectMessage.class, 50, Side.CLIENT);

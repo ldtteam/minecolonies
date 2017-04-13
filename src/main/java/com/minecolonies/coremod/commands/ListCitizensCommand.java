@@ -32,7 +32,7 @@ public class ListCitizensCommand extends AbstractSingleCommand
     public static final  String DESC                    = "list";
     private static final String CITIZEN_DESCRIPTION     = "§2ID: §f %d §2 Name: §f %s";
     private static final String COORDINATES_XYZ         = "§2Coordinates: §f §4x=§f%s §4y=§f%s §4z=§f%s";
-    private static final String LIST_COMMAND_SUGGESTED  = "/mc citizens list ";
+    private static final String LIST_COMMAND_SUGGESTED  = "/mc citizens list %d %d";
     private static final String COMMAND_CITIZEN_INFO    = "/mc citizens info %s %s";
     private static final String PAGE_TOP                = "§2   ------------------ page %d of %d ------------------";
     private static final String PREV_PAGE               = " <- prev";
@@ -61,10 +61,19 @@ public class ListCitizensCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        final int colonyId = getIthArgument(args, 0, getColonyId(sender));
+        int colonyId = getIthArgument(args, 0, getColonyId(sender));
 
         if(sender instanceof EntityPlayer)
         {
+            if(colonyId == -1)
+            {
+                IColony colony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), (EntityPlayer) sender);
+                if(colony != null)
+                {
+                    colonyId = colony.getID();
+                }
+            }
+
             final EntityPlayer player = (EntityPlayer) sender;
             if (!canPlayerUseCommand(player, LISTCITIZENS, colonyId))
             {
@@ -79,7 +88,7 @@ public class ListCitizensCommand extends AbstractSingleCommand
         final int citizenCount = citizens.size();
 
         // check to see if we have to add one page to show the half page
-        int page = getIthArgument(args, 0, 1);
+        int page = getIthArgument(args, 1, 1);
         final int halfPage = (citizenCount % CITIZENS_ON_PAGE == 0) ? 0 : 1;
         final int pageCount = ((citizenCount) / CITIZENS_ON_PAGE) + halfPage;
 
@@ -118,7 +127,7 @@ public class ListCitizensCommand extends AbstractSingleCommand
                 sender.addChatMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
             }
         }
-        drawPageSwitcher(sender, page, citizenCount, halfPage);
+        drawPageSwitcher(sender, page, citizenCount, halfPage, colonyId);
     }
 
     /**
@@ -150,17 +159,18 @@ public class ListCitizensCommand extends AbstractSingleCommand
      * @param page     the page number.
      * @param count    number of citizens.
      * @param halfPage the halfPage.
+     * @param colonyId the colony id.
      */
-    private static void drawPageSwitcher(@NotNull final ICommandSender sender, final int page, final int count, final int halfPage)
+    private static void drawPageSwitcher(@NotNull final ICommandSender sender, final int page, final int count, final int halfPage, final int colonyId)
     {
         final int prevPage = Math.max(0, page - 1);
         final int nextPage = Math.min(page + 1, (count / CITIZENS_ON_PAGE) + halfPage);
 
         final ITextComponent prevButton = new TextComponentString(PREV_PAGE).setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
-          new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED + prevPage)
+          new ClickEvent(ClickEvent.Action.RUN_COMMAND, String.format(LIST_COMMAND_SUGGESTED, colonyId, prevPage))
         ));
         final ITextComponent nextButton = new TextComponentString(NEXT_PAGE).setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
-          new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED + nextPage)
+          new ClickEvent(ClickEvent.Action.RUN_COMMAND, String.format(LIST_COMMAND_SUGGESTED, colonyId, nextPage))
         ));
 
         final ITextComponent beginLine = new TextComponentString(PAGE_LINE);

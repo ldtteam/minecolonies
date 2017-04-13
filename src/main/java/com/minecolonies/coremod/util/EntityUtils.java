@@ -1,14 +1,17 @@
 package com.minecolonies.coremod.util;
 
 import com.minecolonies.coremod.entity.EntityCitizen;
+import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,6 +43,27 @@ public final class EntityUtils
      */
     private EntityUtils()
     {
+
+    }
+
+    /**
+     * Checks if a player is a fakePlayer and tries to get the owning player if possible.
+     * @param player the incoming player.
+     * @param world the world.
+     * @return the EntityPlayer owner in the best case.
+     */
+    @NotNull
+    public static EntityPlayer getPlayerOfFakePlayer(@NotNull final EntityPlayer player, @NotNull final World world)
+    {
+        if(player instanceof FakePlayer)
+        {
+            final EntityPlayer tempPlayer = world.getPlayerEntityByUUID(player.getUniqueID());
+            if(tempPlayer != null)
+            {
+                return tempPlayer;
+            }
+        }
+        return player;
     }
 
     /**
@@ -266,7 +290,7 @@ public final class EntityUtils
     {
         for (int i = 1; i < AIR_SPACE_ABOVE_TO_CHECK; i++)
         {
-            if (solidOrLiquid(world, groundPosition.up(i)))
+            if (solidOrLiquid(world, groundPosition.up(i)) || world.getBlockState(groundPosition.up(i)).getBlock() instanceof BlockLeaves)
             {
                 return false;
             }

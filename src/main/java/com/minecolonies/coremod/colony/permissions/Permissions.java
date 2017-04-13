@@ -27,6 +27,7 @@ public class Permissions implements IPermissions
     /**
      * All tags to store and retrieve data from nbt.
      */
+    private static final String TAG_UPDATE      = "update";
     private static final String TAG_OWNERS      = "owners";
     private static final String TAG_ID          = "id";
     private static final String TAG_RANK        = "rank";
@@ -84,6 +85,11 @@ public class Permissions implements IPermissions
     private UUID   ownerUUID = null;
 
     /**
+     * Is it an old colony and has the permission been already updated?
+     */
+    private boolean updatedPermissionAlready = false;
+
+    /**
      * Saves the permissionMap with allowed actions.
      *
      * @param colony the colony this permissionMap object belongs to.
@@ -100,6 +106,24 @@ public class Permissions implements IPermissions
         this.setPermission(Rank.OWNER, Action.SEND_MESSAGES);
         this.setPermission(Rank.OWNER, Action.EDIT_PERMISSIONS);
         this.setPermission(Rank.OWNER, Action.MANAGE_HUTS);
+        this.setPermission(Rank.OWNER, Action.RECEIVE_MESSAGES);
+        this.setPermission(Rank.OWNER, Action.USE_SCAN_TOOL);
+        this.setPermission(Rank.OWNER, Action.PLACE_BLOCKS);
+        this.setPermission(Rank.OWNER, Action.BREAK_BLOCKS);
+        this.setPermission(Rank.OWNER, Action.TOSS_ITEM);
+        this.setPermission(Rank.OWNER, Action.PICKUP_ITEM);
+        this.setPermission(Rank.OWNER, Action.FILL_BUCKET);
+        this.setPermission(Rank.OWNER, Action.OPEN_CONTAINER);
+        this.setPermission(Rank.OWNER, Action.RIGHTCLICK_BLOCK);
+        this.setPermission(Rank.OWNER, Action.RIGHTCLICK_ENTITY);
+        this.setPermission(Rank.OWNER, Action.THROW_POTION);
+        this.setPermission(Rank.OWNER, Action.SHOOT_ARROW);
+        this.setPermission(Rank.OWNER, Action.ATTACK_CITIZEN);
+        this.setPermission(Rank.OWNER, Action.ATTACK_ENTITY);
+        this.setPermission(Rank.OWNER, Action.ACCESS_FREE_BLOCKS);
+        this.setPermission(Rank.OWNER, Action.TELEPORT_TO_COLONY);
+
+
         //Officer
         permissionMap.put(Rank.OFFICER, 0);
         this.setPermission(Rank.OFFICER, Action.ACCESS_HUTS);
@@ -109,19 +133,51 @@ public class Permissions implements IPermissions
         this.setPermission(Rank.OFFICER, Action.CAN_DEMOTE);
         this.setPermission(Rank.OFFICER, Action.SEND_MESSAGES);
         this.setPermission(Rank.OFFICER, Action.MANAGE_HUTS);
+        this.setPermission(Rank.OFFICER, Action.RECEIVE_MESSAGES);
+        this.setPermission(Rank.OFFICER, Action.USE_SCAN_TOOL);
+        this.setPermission(Rank.OFFICER, Action.PLACE_BLOCKS);
+        this.setPermission(Rank.OFFICER, Action.BREAK_BLOCKS);
+        this.setPermission(Rank.OFFICER, Action.TOSS_ITEM);
+        this.setPermission(Rank.OFFICER, Action.PICKUP_ITEM);
+        this.setPermission(Rank.OFFICER, Action.FILL_BUCKET);
+        this.setPermission(Rank.OFFICER, Action.OPEN_CONTAINER);
+        this.setPermission(Rank.OFFICER, Action.RIGHTCLICK_BLOCK);
+        this.setPermission(Rank.OFFICER, Action.RIGHTCLICK_ENTITY);
+        this.setPermission(Rank.OFFICER, Action.THROW_POTION);
+        this.setPermission(Rank.OFFICER, Action.SHOOT_ARROW);
+        this.setPermission(Rank.OFFICER, Action.ATTACK_CITIZEN);
+        this.setPermission(Rank.OFFICER, Action.ATTACK_ENTITY);
+        this.setPermission(Rank.OFFICER, Action.ACCESS_FREE_BLOCKS);
+        this.setPermission(Rank.OFFICER, Action.TELEPORT_TO_COLONY);
+
+
         //Friend
         permissionMap.put(Rank.FRIEND, 0);
         this.setPermission(Rank.FRIEND, Action.ACCESS_HUTS);
+        this.setPermission(Rank.FRIEND, Action.USE_SCAN_TOOL);
+        this.setPermission(Rank.FRIEND, Action.TOSS_ITEM);
+        this.setPermission(Rank.FRIEND, Action.PICKUP_ITEM);
+        this.setPermission(Rank.FRIEND, Action.RIGHTCLICK_BLOCK);
+        this.setPermission(Rank.FRIEND, Action.RIGHTCLICK_ENTITY);
+        this.setPermission(Rank.FRIEND, Action.THROW_POTION);
+        this.setPermission(Rank.FRIEND, Action.SHOOT_ARROW);
+        this.setPermission(Rank.FRIEND, Action.ATTACK_CITIZEN);
+        this.setPermission(Rank.FRIEND, Action.ATTACK_ENTITY);
+        this.setPermission(Rank.FRIEND, Action.ACCESS_FREE_BLOCKS);
+        this.setPermission(Rank.FRIEND, Action.TELEPORT_TO_COLONY);
+
+
         //Neutral
         permissionMap.put(Rank.NEUTRAL, 0);
+        this.setPermission(Rank.NEUTRAL, Action.ACCESS_FREE_BLOCKS);
+
         //Hostile
         permissionMap.put(Rank.HOSTILE, 0);
         this.setPermission(Rank.HOSTILE, Action.GUARDS_ATTACK);
 
-        //Add new additional Permissions inside this method.
-        updateNewPermissions();
-
         this.colony = colony;
+
+        updatedPermissionAlready = true;
     }
 
     /**
@@ -148,7 +204,57 @@ public class Permissions implements IPermissions
     private void updateNewPermissions()
     {
         this.setPermission(Rank.OWNER, Action.MANAGE_HUTS);
+        this.setPermission(Rank.OWNER, Action.RECEIVE_MESSAGES);
+        this.setPermission(Rank.OWNER, Action.USE_SCAN_TOOL);
+        this.setPermission(Rank.OWNER, Action.PLACE_BLOCKS);
+        this.setPermission(Rank.OWNER, Action.BREAK_BLOCKS);
+        this.setPermission(Rank.OWNER, Action.TOSS_ITEM);
+        this.setPermission(Rank.OWNER, Action.PICKUP_ITEM);
+        this.setPermission(Rank.OWNER, Action.FILL_BUCKET);
+        this.setPermission(Rank.OWNER, Action.OPEN_CONTAINER);
+        this.setPermission(Rank.OWNER, Action.RIGHTCLICK_BLOCK);
+        this.setPermission(Rank.OWNER, Action.RIGHTCLICK_ENTITY);
+        this.setPermission(Rank.OWNER, Action.THROW_POTION);
+        this.setPermission(Rank.OWNER, Action.SHOOT_ARROW);
+        this.setPermission(Rank.OWNER, Action.ATTACK_CITIZEN);
+        this.setPermission(Rank.OWNER, Action.ATTACK_ENTITY);
+        this.setPermission(Rank.OWNER, Action.ACCESS_FREE_BLOCKS);
+        this.setPermission(Rank.OWNER, Action.TELEPORT_TO_COLONY);
+
         this.setPermission(Rank.OFFICER, Action.MANAGE_HUTS);
+        this.setPermission(Rank.OFFICER, Action.RECEIVE_MESSAGES);
+        this.setPermission(Rank.OFFICER, Action.USE_SCAN_TOOL);
+        this.setPermission(Rank.OFFICER, Action.PLACE_BLOCKS);
+        this.setPermission(Rank.OFFICER, Action.BREAK_BLOCKS);
+        this.setPermission(Rank.OFFICER, Action.TOSS_ITEM);
+        this.setPermission(Rank.OFFICER, Action.PICKUP_ITEM);
+        this.setPermission(Rank.OFFICER, Action.FILL_BUCKET);
+        this.setPermission(Rank.OFFICER, Action.OPEN_CONTAINER);
+        this.setPermission(Rank.OFFICER, Action.RIGHTCLICK_BLOCK);
+        this.setPermission(Rank.OFFICER, Action.RIGHTCLICK_ENTITY);
+        this.setPermission(Rank.OFFICER, Action.THROW_POTION);
+        this.setPermission(Rank.OFFICER, Action.SHOOT_ARROW);
+        this.setPermission(Rank.OFFICER, Action.ATTACK_CITIZEN);
+        this.setPermission(Rank.OFFICER, Action.ATTACK_ENTITY);
+        this.setPermission(Rank.OFFICER, Action.ACCESS_FREE_BLOCKS);
+        this.setPermission(Rank.OFFICER, Action.TELEPORT_TO_COLONY);
+
+        this.setPermission(Rank.FRIEND, Action.ACCESS_HUTS);
+        this.setPermission(Rank.FRIEND, Action.USE_SCAN_TOOL);
+        this.setPermission(Rank.FRIEND, Action.TOSS_ITEM);
+        this.setPermission(Rank.FRIEND, Action.PICKUP_ITEM);
+        this.setPermission(Rank.FRIEND, Action.RIGHTCLICK_BLOCK);
+        this.setPermission(Rank.FRIEND, Action.RIGHTCLICK_ENTITY);
+        this.setPermission(Rank.FRIEND, Action.THROW_POTION);
+        this.setPermission(Rank.FRIEND, Action.SHOOT_ARROW);
+        this.setPermission(Rank.FRIEND, Action.ATTACK_CITIZEN);
+        this.setPermission(Rank.FRIEND, Action.ATTACK_ENTITY);
+        this.setPermission(Rank.FRIEND, Action.ACCESS_FREE_BLOCKS);
+        this.setPermission(Rank.FRIEND, Action.TELEPORT_TO_COLONY);
+
+        this.setPermission(Rank.NEUTRAL, Action.ACCESS_FREE_BLOCKS);
+
+        updatedPermissionAlready = true;
     }
 
     /**
@@ -247,8 +353,6 @@ public class Permissions implements IPermissions
             permissionMap.put(rank, flags);
         }
 
-        updateNewPermissions();
-
         if (compound.hasKey(TAG_OWNER))
         {
             ownerName = compound.getString(TAG_OWNER);
@@ -265,6 +369,13 @@ public class Permissions implements IPermissions
                  * Intentionally left empty. Happens when the UUID hasn't been saved yet.
                  */
             }
+        }
+
+        this.updatedPermissionAlready = compound.getBoolean(TAG_UPDATE);
+
+        if(!updatedPermissionAlready)
+        {
+            updateNewPermissions();
         }
 
         restoreOwnerIfNull();
@@ -373,6 +484,8 @@ public class Permissions implements IPermissions
         {
             compound.setString(TAG_OWNER_ID, ownerUUID.toString());
         }
+
+        compound.setBoolean(TAG_UPDATE, updatedPermissionAlready);
     }
 
     /**
@@ -393,7 +506,7 @@ public class Permissions implements IPermissions
     public Set<UUID> getMessagePlayers()
     {
         return players.values().stream().filter(player ->
-                                                  hasPermission(player.rank, Action.SEND_MESSAGES)).map(player -> player.id).collect(Collectors.toSet());
+                                                  hasPermission(player.rank, Action.RECEIVE_MESSAGES)).map(player -> player.id).collect(Collectors.toSet());
     }
 
     /**
@@ -649,7 +762,9 @@ public class Permissions implements IPermissions
     public boolean isSubscriber(@NotNull final EntityPlayer player)
     {
         return isSubscriber(player.getGameProfile().getId());
-    }    @Override
+    }
+
+    @Override
     public boolean isColonyMember(@NotNull final EntityPlayer player)
     {
         return players.containsKey(player.getGameProfile().getId());
@@ -749,15 +864,38 @@ public class Permissions implements IPermissions
      */
     public enum Action
     {
+        //counts for citizen and huts.
         ACCESS_HUTS(0),
+        //If guards can attack, player can attack back
         GUARDS_ATTACK(1),
         PLACE_HUTS(2),
         BREAK_HUTS(3),
         CAN_PROMOTE(4),
         CAN_DEMOTE(5),
         SEND_MESSAGES(6),
+        //Including promote, demote and remove.
         EDIT_PERMISSIONS(7),
-        MANAGE_HUTS(8);
+        //All GUI button interactions
+        MANAGE_HUTS(8),
+        RECEIVE_MESSAGES(9),
+        USE_SCAN_TOOL(10),
+        PLACE_BLOCKS(11),
+        BREAK_BLOCKS(12),
+        TOSS_ITEM(13),
+        PICKUP_ITEM(14),
+        FILL_BUCKET(15),
+        OPEN_CONTAINER(16),
+        RIGHTCLICK_BLOCK(17),
+        RIGHTCLICK_ENTITY(18),
+        THROW_POTION(19),
+        SHOOT_ARROW(20),
+        ATTACK_CITIZEN(21),
+        ATTACK_ENTITY(22),
+        //has access to allowed list, "hostile+" or "neutral+"
+        ACCESS_FREE_BLOCKS(23),
+        TELEPORT_TO_COLONY(24);
+
+        //todo have permissions lang strings which these but readable, build string with "coremod.stuff." + action.toString "
 
         private final int flag;
 

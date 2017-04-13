@@ -17,12 +17,14 @@ import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.*;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.stats.Achievement;
 import net.minecraft.stats.StatBase;
@@ -57,6 +59,8 @@ public class Colony implements IColony
     private static final String TAG_WORK                       = "work";
     private static final String TAG_MANUAL_HIRING              = "manualHiring";
     private static final String TAG_WAYPOINT                   = "waypoints";
+    private static final String TAG_FREE_BLOCKS                = "freeBlocks";
+    private static final String TAG_FREE_POSITIONS             = "freePositions";
 
     //statistics tags
     private static final String TAG_STATISTICS            = "statistics";
@@ -136,6 +140,16 @@ public class Colony implements IColony
     private int maxCitizens  = Configurations.maxCitizens;
 
     /**
+     * The Positions which players can freely interact.
+     */
+    private final Set<BlockPos> freePositions = new HashSet<>();
+
+    /**
+     * The Blocks which players can freely interact with.
+     */
+    private final Set<Block> freeBlocks = new HashSet<>();
+
+    /**
      * Constructor for a newly created Colony.
      *
      * @param id The id of the colony to create.
@@ -165,6 +179,23 @@ public class Colony implements IColony
 
         // Register a new event handler
         MinecraftForge.EVENT_BUS.register(new ColonyPermissionEventHandler(this));
+
+        for(final String s: Configurations.freeToInteractBlocks)
+        {
+            final Block block = Block.getBlockFromName(s);
+            if(block == null)
+            {
+                final BlockPos pos = BlockPosUtil.getBlockPosOfString(s);
+                if(pos != null)
+                {
+                    freePositions.add(pos);
+                }
+            }
+            else
+            {
+                freeBlocks.add(block);
+            }
+        }
     }
 
     /**
@@ -256,6 +287,7 @@ public class Colony implements IColony
             final IBlockState state = NBTUtil.readBlockState(blockAtPos);
             wayPoints.put(pos, state);
         }
+
         //Statistics
         final NBTTagCompound statisticsCompound = compound.getCompoundTag(TAG_STATISTICS);
         final NBTTagCompound minerStatisticsCompound = statisticsCompound.getCompoundTag(TAG_MINER_STATISTICS);
@@ -274,6 +306,22 @@ public class Colony implements IColony
         caughtFish = fishermanStatisticsCompound.getInteger(TAG_FISHERMAN_FISH);
         felledTrees = lumberjackStatisticsCompound.getInteger(TAG_LUMBERJACK_TREES);
         plantedSaplings = lumberjackStatisticsCompound.getInteger(TAG_LUMBERJACK_SAPLINGS);
+
+        // Free blocks
+        final NBTTagList freeBlockTagList = compound.getTagList(TAG_FREE_BLOCKS, NBT.TAG_STRING);
+        for (int i = 0; i < freeBlockTagList.tagCount(); ++i)
+        {
+            freeBlocks.add(Block.getBlockFromName(freeBlockTagList.getStringTagAt(i)));
+        }
+
+        // Free positions
+        final NBTTagList freePositionTagList = compound.getTagList(TAG_FREE_POSITIONS, NBT.TAG_COMPOUND);
+        for (int i = 0; i < freePositionTagList.tagCount(); ++i)
+        {
+            final NBTTagCompound blockTag = freePositionTagList.getCompoundTagAt(i);
+            final BlockPos block = BlockPosUtil.readFromNBT(blockTag, TAG_FREE_POSITIONS);
+            freePositions.add(block);
+        }
     }
 
     /**
@@ -407,6 +455,24 @@ public class Colony implements IColony
         statisticsCompound.setTag(TAG_LUMBERJACK_STATISTICS, lumberjackStatisticsCompound);
         lumberjackStatisticsCompound.setInteger(TAG_LUMBERJACK_TREES, felledTrees);
         lumberjackStatisticsCompound.setInteger(TAG_LUMBERJACK_SAPLINGS, plantedSaplings);
+
+        // Free blocks
+        @NotNull final NBTTagList freeBlocksTagList = new NBTTagList();
+        for (@NotNull final Block block : freeBlocks)
+        {
+            freeBlocksTagList.appendTag(new NBTTagString(block.getRegistryName().toString()));
+        }
+        compound.setTag(TAG_FREE_BLOCKS, freeBlocksTagList);
+
+        // Free positions
+        @NotNull final NBTTagList freePositionsTagList = new NBTTagList();
+        for (@NotNull final BlockPos pos: freePositions)
+        {
+            @NotNull final NBTTagCompound wayPointCompound = new NBTTagCompound();
+            BlockPosUtil.writeToNBT(wayPointCompound, TAG_FREE_POSITIONS, pos);
+            freePositionsTagList.appendTag(wayPointCompound);
+        }
+        compound.setTag(TAG_FREE_POSITIONS, freePositionsTagList);
     }
 
     /**
@@ -901,6 +967,64 @@ public class Colony implements IColony
     }
 
     /**
+     * Get a copy of the freePositions list.
+     * @return the list of free to interact positions.
+     */
+    public Set<BlockPos> getFreePositions()
+    {
+        return new HashSet<>(freePositions);
+    }
+
+    /**
+     * Get a copy of the freeBlocks list.
+     * @return the list of free to interact blocks.
+     */
+    public Set<Block> getFreeBlocks()
+    {
+        return new HashSet<>(freeBlocks);
+    }
+
+    /**
+     * Add a new free to interact position.
+     * @param pos position to add.
+     */
+    public void addFreePosition(@NotNull final BlockPos pos)
+    {
+        freePositions.add(pos);
+        markDirty();
+    }
+
+    /**
+     * Add a new free to interact block.
+     * @param block block to add.
+     */
+    public void addFreeBlock(@NotNull final Block block)
+    {
+        freeBlocks.add(block);
+        markDirty();
+    }
+
+    /**
+     * Remove a free to interact position.
+     * @param pos position to remove.
+     */
+    public void removeFreePosition(@NotNull final BlockPos pos)
+    {
+        freePositions.remove(pos);
+        markDirty();
+    }
+
+    /**
+     * Remove a free to interact block.
+     * @param block state to remove.
+     */
+    public void removeFreeBlock(@NotNull final Block block)
+    {
+        freeBlocks.remove(block);
+        markDirty();
+    }
+
+    /**
      * Get the Work Manager for the Colony.
      *
      * @return WorkManager for the Colony.
@@ -1276,7 +1400,6 @@ public class Colony implements IColony
     public AbstractBuilding addNewBuilding(@NotNull final TileEntityColonyBuilding tileEntity)
     {
         tileEntity.setColony(this);
-
         @Nullable final AbstractBuilding building = AbstractBuilding.create(this, tileEntity);
         if (building != null)
         {
@@ -1287,6 +1410,14 @@ public class Colony implements IColony
               getID(),
               tileEntity.getBlockType().getClass(),
               tileEntity.getPosition()));
+            if(tileEntity.isMirrored())
+            {
+                building.setMirror();
+            }
+            if(!tileEntity.getStyle().isEmpty())
+            {
+                building.setStyle(tileEntity.getStyle());
+            }
             ConstructionTapeHelper.placeConstructionTape(building, world);
         }
         else
