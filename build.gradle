@@ -45,8 +45,14 @@ tasks.withType(Checkstyle) {
 
 checkstyle {
     toolVersion ="7.6.1"
-    ignoreFailures = true
 }
+
+checkstyleTest.enabled = false
+checkstyleMain.enabled = false
+checkstyleApi.enabled = false
+pmdTest.enabled = false
+pmdMain.enabled = false
+pmdApi.enabled = false
 
 pmd {
     toolVersion = "5.5.5"
@@ -164,4 +170,41 @@ task copyToLib(type: Copy) {
     // into "build/lib"
     into "lib"
     from configurations.runtime
+}
+
+task runCheckStyle(type: Checkstyle) {
+    description 'Runs Checkstyle inspection against Minecolonies sourcesets.'
+    group = 'Code Quality'
+
+    ignoreFailures = true
+    showViolations = false
+
+    source 'src/main/java'
+
+    include '**/*.java'
+
+    exclude '**/com/minecolonies/blockout/**'
+
+    classpath = files()
+}
+
+task runPMD(type: Pmd) {
+    description 'Runs PMD inspection against Minecolonies sourcesets.'
+    group = 'Code Quality'
+
+    ignoreFailures = true
+
+    source 'src/main/java'
+
+    include '**/*.java'
+
+    exclude '**/com/minecolonies/blockout/**'
+
+    classpath = files()
+}
+
+task runSonar() {
+    dependsOn runCheckStyle, runPMD
+    description 'Runs the equivalent of a SonarQube analysis directly in the build process. Calls runCheckStyle and runPMD'
+    group = 'Code Quality'
 }
