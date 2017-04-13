@@ -79,7 +79,7 @@ public class ListCitizensCommand extends AbstractSingleCommand
         final int citizenCount = citizens.size();
 
         // check to see if we have to add one page to show the half page
-        int page = getIthArgument(args, 0, 1);
+        int page = getIthArgument(args, 1, 1);
         final int halfPage = (citizenCount % CITIZENS_ON_PAGE == 0) ? 0 : 1;
         final int pageCount = ((citizenCount) / CITIZENS_ON_PAGE) + halfPage;
 

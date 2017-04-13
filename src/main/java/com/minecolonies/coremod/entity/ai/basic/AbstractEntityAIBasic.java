@@ -8,15 +8,14 @@ import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.pathfinding.WalkToProxy;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
-import com.minecolonies.coremod.util.InventoryFunctions;
-import com.minecolonies.coremod.util.InventoryUtils;
-import com.minecolonies.coremod.util.Log;
-import com.minecolonies.coremod.util.Utils;
+import com.minecolonies.coremod.util.*;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentBase;
@@ -36,7 +35,13 @@ import static com.minecolonies.coremod.entity.ai.util.AIState.*;
  */
 public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends AbstractAISkeleton<J>
 {
-
+    /**
+     * The maximum range to keep from the current building place.
+     */
+    private static final int    MAX_ADDITIONAL_RANGE_TO_BUILD = 25;
+    /**
+     * Timout until the next exception can be thrown.
+     */
     public static final  int             EXCEPTION_TIMEOUT       = 100;
     /**
      * Time in ticks to wait until the next check for items.
@@ -1319,5 +1324,69 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     protected final void incrementActionsDone()
     {
         actionsDone++;
+    }
+
+    /**
+     * Calculates the working position.
+     * <p>
+     * Takes a min distance from width and length.
+     * <p>
+     * Then finds the floor level at that distance and then check if it does contain two air levels.
+     * @param targetPosition the position to work at.
+     * @return BlockPos position to work from.
+     */
+    public BlockPos getWorkingPosition(BlockPos targetPosition)
+    {
+        return targetPosition;
+    }
+
+    /**
+     * Calculates the working position.
+     * <p>
+     * Takes a min distance from width and length.
+     * <p>
+     * Then finds the floor level at that distance and then check if it does contain two air levels.
+     *
+     * @param distance the extra distance to apply away from the building.
+     * @param targetPos the target position which needs to be worked.
+     * @param offset an additional offset
+     * @return BlockPos position to work from.
+     */
+    public BlockPos getWorkingPosition(final int distance, final BlockPos targetPos, final int offset)
+    {
+        if (offset > MAX_ADDITIONAL_RANGE_TO_BUILD)
+        {
+            return targetPos;
+        }
+
+        @NotNull final EnumFacing[] directions = {EnumFacing.EAST, EnumFacing.WEST, EnumFacing.NORTH, EnumFacing.SOUTH};
+
+        //then get a solid place with two air spaces above it in any direction.
+        for (final EnumFacing direction : directions)
+        {
+            @NotNull final BlockPos positionInDirection = getPositionInDirection(direction, distance + offset, targetPos);
+            if (EntityUtils.checkForFreeSpace(world, positionInDirection)
+                    && world.getBlockState(positionInDirection.up()).getBlock() != Blocks.SAPLING)
+            {
+                return positionInDirection;
+            }
+        }
+
+        //if necessary we can could implement calling getWorkingPosition recursively and add some "offset" to the sides.
+        return getWorkingPosition(distance, targetPos, offset + 1);
+    }
+
+    /**
+     * Gets a floorPosition in a particular direction.
+     *
+     * @param facing   the direction.
+     * @param distance the distance.
+     * @param targetPos the position to work at.
+     * @return a BlockPos position.
+     */
+    @NotNull
+    private BlockPos getPositionInDirection(final EnumFacing facing, final int distance, final BlockPos targetPos)
+    {
+        return BlockPosUtil.getFloor(targetPos.offset(facing, distance), world);
     }
 }

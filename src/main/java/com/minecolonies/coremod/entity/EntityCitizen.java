@@ -8,6 +8,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingFarmer;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.*;
+import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.minimal.*;
@@ -513,8 +514,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public void addExperience(final double xp)
     {
-        final double citizenHutLevel = getHomeBuilding() == null ? 0 : getHomeBuilding().getBuildingLevel();
-        final double citizenHutMaxLevel = getHomeBuilding() == null ? 1 : getHomeBuilding().getMaxBuildingLevel();
+        final BuildingHome home = getHomeBuilding();
+        final double citizenHutLevel = home == null ? 0 : home.getBuildingLevel();
+        final double citizenHutMaxLevel = home == null ? 1 : home.getMaxBuildingLevel();
         if (citizenHutLevel < citizenHutMaxLevel
               && Math.pow(2.0, citizenHutLevel + 1.0) < this.getExperienceLevel())
         {
@@ -760,6 +762,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @Override
     public boolean processInteract(final EntityPlayer player, final EnumHand hand)
     {
+        final ColonyView colonyView =  ColonyManager.getColonyView(colonyId);
+        if(colonyView != null && !colonyView.getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS))
+        {
+            return false;
+        }
+
         if (world.isRemote)
         {
             final CitizenDataView citizenDataView = getCitizenDataView();
@@ -860,6 +868,73 @@ public class EntityCitizen extends EntityAgeable implements INpc
         super.onLivingUpdate();
     }
 
+    private void checkIfStuck()
+    {
+        if (this.currentPosition == null)
+        {
+            this.currentPosition = this.getPosition();
+            return;
+        }
+
+        if (this.currentPosition.equals(this.getPosition()) && newNavigator != null && newNavigator.getDestination() != null)
+        {
+            stuckTime++;
+            if (stuckTime >= MAX_STUCK_TIME)
+            {
+                if (newNavigator.getDestination().distanceSq(posX, posY, posZ) < MOVE_AWAY_RANGE)
+                {
+                    stuckTime = 0;
+                    return;
+                }
+                final BlockPos destination = BlockPosUtil.getFloor(newNavigator.getDestination(), world);
+                @Nullable final BlockPos spawnPoint =
+                        Utils.scanForBlockNearPoint
+                                (world, destination, 1, 1, 1, 3,
+                                        Blocks.AIR,
+                                        Blocks.SNOW_LAYER,
+                                        Blocks.TALLGRASS,
+                                        Blocks.RED_FLOWER,
+                                        Blocks.YELLOW_FLOWER,
+                                        Blocks.CARPET);
+
+                EntityUtils.setSpawnPoint(spawnPoint, this);
+                if (colony != null)
+                {
+                    Log.getLogger().info("Teleported stuck citizen " + this.getName() + " from colony: " + colony.getID() + " to target location");
+                }
+                stuckTime = 0;
+            }
+        }
+        else
+        {
+            stuckTime = 0;
+            this.currentPosition = this.getPosition();
+        }
+
+        this.currentPosition = this.getPosition();
+    }
+
+
+
+    /**
+     * Sets the last job of the citizen.
+     * @param jobName the job he last had.
+     */
+    public void setLastJob(@NotNull String jobName)
+    {
+        this.lastJob = jobName;
+    }
+
+    /**
+     * Getter for the last job.
+     * @return the last job he had.
+     */
+    @NotNull
+    public String getLastJob()
+    {
+        return this.lastJob;
+    }
+
     private void updateColonyClient()
     {
         if (dataManager.isDirty())
@@ -923,51 +998,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
     }
 
-    private void checkIfStuck()
-    {
-        if (this.currentPosition == null)
-        {
-            this.currentPosition = this.getPosition();
-            return;
-        }
-
-        if (this.currentPosition.equals(this.getPosition()) && newNavigator != null && newNavigator.getDestination() != null)
-        {
-            stuckTime++;
-            if (stuckTime >= MAX_STUCK_TIME)
-            {
-                if (newNavigator.getDestination().distanceSq(posX, posY, posZ) < MOVE_AWAY_RANGE)
-                {
-                    stuckTime = 0;
-                    return;
-                }
-
-                @Nullable final BlockPos spawnPoint =
-                  Utils.scanForBlockNearPoint
-                          (world, newNavigator.getDestination(), 1, 0, 1, 2,
-                            Blocks.AIR,
-                            Blocks.SNOW_LAYER,
-                            Blocks.TALLGRASS,
-                            Blocks.RED_FLOWER,
-                            Blocks.YELLOW_FLOWER,
-                            Blocks.CARPET);
-
-                EntityUtils.setSpawnPoint(spawnPoint, this);
-                if (colony != null)
-                {
-                    Log.getLogger().info("Teleported stuck citizen " + this.getName() + " from colony: " + colony.getID() + " to target location");
-                }
-                stuckTime = 0;
-            }
-        }
-        else
-        {
-            stuckTime = 0;
-            this.currentPosition = this.getPosition();
-        }
-
-        this.currentPosition = this.getPosition();
-    }
 
     /**
      * Checks the citizens health status and heals the citizen if necessary.
@@ -1137,27 +1167,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
 
         return null;
-    }
-
-    /**
-     * Getter for the last job.
-     *
-     * @return the last job he had.
-     */
-    @NotNull
-    public String getLastJob()
-    {
-        return this.lastJob;
-    }
-
-    /**
-     * Sets the last job of the citizen.
-     *
-     * @param jobName the job he last had.
-     */
-    public void setLastJob(@NotNull String jobName)
-    {
-        this.lastJob = jobName;
     }
 
     /**

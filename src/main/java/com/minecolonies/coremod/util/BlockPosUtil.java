@@ -17,6 +17,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -29,6 +30,16 @@ public final class BlockPosUtil
      * Min distance to availate two positions as close.
      */
     private static final double CLOSE_DISTANCE = 4.84;
+
+    /**
+     * Max depth of the floor check to avoid endless void searching (Stackoverflow).
+     */
+    private static final int MAX_DEPTH = 50;
+
+    /**
+     * Amount of string required to try to calculate a blockpos.
+     */
+    private static final int BLOCKPOS_LENGTH = 3;
 
     private BlockPosUtil()
     {
@@ -126,6 +137,35 @@ public final class BlockPosUtil
         final int y = buf.readInt();
         final int z = buf.readInt();
         return new BlockPos(x, y, z);
+    }
+
+    /**
+     * Try to parse a blockPos of an input string.
+     * @param inputText the string to parse.
+     * @return the blockPos if able to.
+     */
+    @Nullable
+    public static BlockPos getBlockPosOfString(@NotNull final String inputText)
+    {
+        final String[] strings = inputText.split(" ");
+
+        if(strings.length == BLOCKPOS_LENGTH)
+        {
+            try
+            {
+                final int x = Integer.parseInt(strings[0]);
+                final int y = Integer.parseInt(strings[1]);
+                final int z = Integer.parseInt(strings[2]);
+                return new BlockPos(x, y, z);
+            }
+            catch (NumberFormatException e)
+            {
+                /**
+                 * Empty for a purpose.
+                 */
+            }
+        }
+        return null;
     }
 
     /**
@@ -440,5 +480,51 @@ public final class BlockPosUtil
     public static BlockPos fromEntity(@NotNull final Entity entity)
     {
         return new BlockPos(MathHelper.floor(entity.posX), MathHelper.floor(entity.posY), MathHelper.floor(entity.posZ));
+    }
+
+    /**
+     * Calculates the floor level.
+     *
+     * @param position input position.
+     * @param world    the world the position is in.
+     * @return returns BlockPos position with air above.
+     */
+    @NotNull
+    public static BlockPos getFloor(@NotNull BlockPos position, @NotNull final World world)
+    {
+        final BlockPos floor = getFloor(position, 0, world);
+        if (floor == null)
+        {
+            return position;
+        }
+        return floor;
+    }
+
+    /**
+     * Calculates the floor level.
+     *
+     * @param position input position.
+     * @param depth    the iteration depth.
+     * @param world    the world the position is in.
+     * @return returns BlockPos position with air above.
+     */
+    @Nullable
+    private static BlockPos getFloor(@NotNull final BlockPos position, int depth, @NotNull final World world)
+    {
+        if (depth > MAX_DEPTH)
+        {
+            return null;
+        }
+        //If the position is floating in Air go downwards
+        if (!EntityUtils.solidOrLiquid(world, position))
+        {
+            return getFloor(position.down(), depth + 1, world);
+        }
+        //If there is no air above the block go upwards
+        if (!EntityUtils.solidOrLiquid(world, position.up()))
+        {
+            return position;
+        }
+        return getFloor(position.up(), depth + 1, world);
     }
 }

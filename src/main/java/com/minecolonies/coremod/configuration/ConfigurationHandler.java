@@ -1,8 +1,15 @@
 package com.minecolonies.coremod.configuration;
 
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
+import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.common.config.Configuration;
 
 import java.io.File;
+
+import com.minecolonies.coremod.lib.Constants;
 
 import static com.minecolonies.coremod.configuration.Configurations.*;
 
@@ -13,36 +20,47 @@ import static com.minecolonies.coremod.configuration.Configurations.*;
  */
 public final class ConfigurationHandler
 {
-    private static final String CATEGORY_GAMEPLAY    = "gameplay";
-    private static final String CATEGORY_PATHFINDING = "pathfinding";
-    private static final String CATEGORY_NAMES       = "names";
+    private static Configuration config;
+    
+    public static final String CATEGORY_GAMEPLAY    = "gameplay";
+    public static final String CATEGORY_PATHFINDING = "pathfinding";
+    public static final String CATEGORY_NAMES       = "names";
 
     private static final String FORMAT_RANGE = "%s (range: %s ~ %s, default: %s)";
 
-    private ConfigurationHandler()
+    public ConfigurationHandler()
     {
-        //Hides default constructor
+        // Only used for registering the event
     }
 
     /**
      * Initializes the configuration.
-     * Reads all options from the file, and sets those parameters, and saves those in {@link Configurations}.
-     * Saves file after reading.
-     *
+     * 
      * @param file File to read input from.
      */
     public static synchronized void init(final File file)
     {
-        final Configuration config = new Configuration(file);
-
+        config = new Configuration(file);
+        
+        loadConfiguration();
+    }
+    
+    /**
+     * Reads all options from the file, and sets those parameters, and saves those in {@link Configurations}.
+     * Saves file after reading.
+     */
+    private static synchronized void loadConfiguration() 
+    {
         try
         {
-            config.load();
-            builderPlaceConstructionTape = config.get(CATEGORY_GAMEPLAY,
-              "placeConstructionTape", builderPlaceConstructionTape, "Should builder place construction tape").getBoolean();
-            workingRangeTownHall = config.get(CATEGORY_GAMEPLAY, "workingRangeTownHall", workingRangeTownHall, "Colony size (radius)").getInt();
-            townHallPadding = config.get(CATEGORY_GAMEPLAY, "townHallPadding", townHallPadding, "Empty space between town hall boundaries").getInt();
-            supplyChests = config.get(CATEGORY_GAMEPLAY, "supplyChests", supplyChests, "Allow crafting of a Supply Chest").getBoolean();
+            builderPlaceConstructionTape = config.get(CATEGORY_GAMEPLAY, "placeConstructionTape", builderPlaceConstructionTape,
+                    "Should builder place construction tape").getBoolean();
+            workingRangeTownHall = config.get(CATEGORY_GAMEPLAY, "workingRangeTownHall", workingRangeTownHall,
+                    "Colony size (radius)").getInt();
+            townHallPadding = config.get(CATEGORY_GAMEPLAY, "townHallPadding", townHallPadding,
+                    "Empty space between town hall boundaries").getInt();
+            supplyChests = config.get(CATEGORY_GAMEPLAY, "supplyChests", supplyChests,
+                    "Allow crafting of a Supply Chest").getBoolean();
             allowInfiniteSupplyChests = config.get(CATEGORY_GAMEPLAY,
               "allowInfiniteSupplyChests", allowInfiniteSupplyChests, "Allow infinite placing of Supply Chests?").getBoolean();
             citizenRespawnInterval = getClampedInt(config, CATEGORY_GAMEPLAY,
@@ -60,6 +78,8 @@ public final class ConfigurationHandler
                     "Turn off explosions inside the colonies radius?").getBoolean();
 
             /* Configs for commands */
+            opLevelForServer = config.get(CATEGORY_GAMEPLAY, "opLevelForServer", opLevelForServer,
+                    "Required Op level to execute commands").getInt();
             teleportBuffer = config.get(CATEGORY_GAMEPLAY, "timeBetweenTeleport", teleportBuffer,
                     "Time until the next teleport in seconds").getInt();
             canPlayerUseCitizenInfoCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseCitizenInfoCommand", canPlayerUseCitizenInfoCommand,
@@ -111,10 +131,32 @@ public final class ConfigurationHandler
                     "Female First Names").getStringList();
             lastNames = config.get(CATEGORY_NAMES, "lastNames", lastNames,
                     "Last Names").getStringList();
+
+            freeToInteractBlocks = config.get(CATEGORY_NAMES, "freeToInteractBlocks", freeToInteractBlocks,
+                    "Blocks players should be able to interact with inside any colony.").getStringList();
         }
         finally
         {
-            config.save();
+            if(config.hasChanged())
+            {
+                config.save();
+            }
+        }
+    }
+    
+    /**
+     * This event will be called when the config gets changed through
+     * the in-game GUI.
+     * 
+     * @param eventArgs An instance to the event. 
+     */
+    @SubscribeEvent
+    public void onConfigChanged(OnConfigChangedEvent eventArgs) 
+    {
+        if(eventArgs.getModID().equalsIgnoreCase(Constants.MOD_ID)) 
+        {
+            // resync configs
+            loadConfiguration();
         }
     }
 
@@ -133,6 +175,12 @@ public final class ConfigurationHandler
     private static int getClampedInt(final Configuration config, final String category, final String key,
                                      final int defaultValue, final int min, final int max, final String comment)
     {
-        return config.get(category, key, defaultValue, String.format(FORMAT_RANGE, comment, min, max, defaultValue), min, max).getInt();
+        return MathHelper.clamp(config.get(category, key, defaultValue, String.format(FORMAT_RANGE, comment, min, max, defaultValue), min, max).getInt(), min, max);
     }
+    
+    public static Configuration getConfiguration() 
+    {
+        return config;
+    }
+
 }

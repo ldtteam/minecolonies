@@ -11,6 +11,7 @@ import com.minecolonies.coremod.network.messages.TownHallRenameMessage;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import com.minecolonies.coremod.util.MathUtils;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.block.Block;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -47,6 +48,16 @@ public final class ColonyView implements IColony
     @Nullable
     private BuildingTownHall.View townHall;
     private int maxCitizens = 0;
+
+    /**
+     * The Positions which players can freely interact.
+     */
+    private Set<BlockPos> freePositions = new HashSet<>();
+
+    /**
+     * The Blocks which players can freely interact with.
+     */
+    private Set<Block> freeBlocks = new HashSet<>();
 
     /**
      * Base constructor for a colony.
@@ -86,7 +97,77 @@ public final class ColonyView implements IColony
         buf.writeBoolean(colony.isManualHiring());
         //  Citizenry
         buf.writeInt(colony.getMaxCitizens());
+
+        final Set<Block> freeBlocks = colony.getFreeBlocks();
+        final Set<BlockPos> freePos = colony.getFreePositions();
+
+        buf.writeInt(freeBlocks.size());
+        for(final Block block : freeBlocks)
+        {
+            ByteBufUtils.writeUTF8String(buf, block.getRegistryName().toString());
+        }
+
+        buf.writeInt(freePos.size());
+        for(final BlockPos block : freePos)
+        {
+            BlockPosUtil.writeToByteBuf(buf, block);
+        }
+
         //  Citizens are sent as a separate packet
+    }
+
+    /**
+     * Get a copy of the freePositions list.
+     * @return the list of free to interact positions.
+     */
+    public List<BlockPos> getFreePositions()
+    {
+        return new ArrayList<>(freePositions);
+    }
+
+    /**
+     * Get a copy of the freeBlocks list.
+     * @return the list of free to interact blocks.
+     */
+    public List<Block> getFreeBlocks()
+    {
+        return new ArrayList<>(freeBlocks);
+    }
+
+    /**
+     * Add a new free to interact position.
+     * @param pos position to add.
+     */
+    public void addFreePosition(@NotNull final BlockPos pos)
+    {
+        freePositions.add(pos);
+    }
+
+    /**
+     * Add a new free to interact block.
+     * @param block block to add.
+     */
+    public void addFreeBlock(@NotNull final Block block)
+    {
+        freeBlocks.add(block);
+    }
+
+    /**
+     * Remove a free to interact position.
+     * @param pos position to remove.
+     */
+    public void removeFreePosition(@NotNull final BlockPos pos)
+    {
+        freePositions.remove(pos);
+    }
+
+    /**
+     * Remove a free to interact block.
+     * @param block state to remove.
+     */
+    public void removeFreeBlock(@NotNull final Block block)
+    {
+        freeBlocks.remove(block);
     }
 
     /**
@@ -270,6 +351,21 @@ public final class ColonyView implements IColony
             citizens.clear();
             townHall = null;
             buildings.clear();
+        }
+
+        freePositions = new HashSet<>();
+        freeBlocks = new HashSet<>();
+
+        final int blockListSize = buf.readInt();
+        for(int i = 0; i < blockListSize; i++)
+        {
+            freeBlocks.add(Block.getBlockFromName(ByteBufUtils.readUTF8String(buf)));
+        }
+
+        final int posListSize = buf.readInt();
+        for(int i = 0; i < posListSize; i++)
+        {
+            freePositions.add(BlockPosUtil.readFromByteBuf(buf));
         }
 
         return null;

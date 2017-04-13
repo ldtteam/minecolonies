@@ -1,6 +1,8 @@
 package com.minecolonies.structures.helpers;
 
+import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.lib.Constants;
+import com.minecolonies.coremod.util.BlockUtils;
 import com.minecolonies.coremod.util.Log;
 import com.minecolonies.structures.fake.FakeEntity;
 import com.minecolonies.structures.fake.FakeWorld;
@@ -222,8 +224,20 @@ public class Structure
 
         for (final Template.BlockInfo aBlockList : blockList)
         {
-            final Block block = aBlockList.blockState.getBlock();
-            final IBlockState iblockstate = aBlockList.blockState;
+            Block block = aBlockList.blockState.getBlock();
+            IBlockState iblockstate = aBlockList.blockState;
+
+            if(block == ModBlocks.blockSubstitution)
+            {
+                continue;
+            }
+
+            if(block == ModBlocks.blockSolidSubstitution)
+            {
+                iblockstate = BlockUtils.getSubstitutionBlockAtWorld(clientWorld, startingPos);
+                block = iblockstate.getBlock();
+            }
+
             final BlockPos blockpos = aBlockList.pos.add(startingPos);
             final IBlockState iBlockExtendedState = block.getExtendedState(iblockstate, clientWorld, blockpos);
             final IBakedModel ibakedmodel = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(iblockstate);

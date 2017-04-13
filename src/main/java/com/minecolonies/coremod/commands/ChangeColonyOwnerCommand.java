@@ -18,7 +18,7 @@ import java.util.List;
 import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.CHANGE_COLONY_OWNER;
 
 /**
- * List all colonies.
+ * gives ability to change the colony owner.
  */
 public class ChangeColonyOwnerCommand extends AbstractSingleCommand
 {
@@ -62,29 +62,17 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
         }
 
         int colonyId = getIthArgument(args, 0, -1);
-
         if(colonyId == -1)
         {
             final String playerName = args[0];
+
             if(playerName == null || playerName.isEmpty())
             {
                 sender.getCommandSenderEntity().sendMessage(new TextComponentString(NO_PLAYER));
                 return;
             }
-
             final EntityPlayer player = sender.getEntityWorld().getPlayerEntityByName(playerName);
-            if(player == null)
-            {
-                sender.getCommandSenderEntity().sendMessage(new TextComponentString(NO_PLAYER));
-                return;
-            }
-
             final IColony colony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), player.getUniqueID());
-            if(colony == null)
-            {
-                sender.getCommandSenderEntity().sendMessage(new TextComponentString(COLONY_NULL));
-                return;
-            }
             colonyId = colony.getID();
         }
 

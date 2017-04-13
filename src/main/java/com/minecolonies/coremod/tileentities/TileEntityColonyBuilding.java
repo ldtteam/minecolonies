@@ -24,6 +24,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
      */
     private static final String TAG_COLONY = "colony";
     private static final String TAG_MIRROR = "mirror";
+    private static final String TAG_STYLE  = "style";
 
     /**
      * The colony id.
@@ -44,6 +45,11 @@ public class TileEntityColonyBuilding extends TileEntityChest
      * Check if the building has a mirror.
      */
     private boolean mirror;
+
+    /**
+     * The style of the building.
+     */
+    private String style = "";
 
     /**
      * Empty standard constructor.
@@ -232,6 +238,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
 
         updateColonyReferences();
         mirror = compound.getBoolean(TAG_MIRROR);
+        style = compound.getString(TAG_STYLE);
     }
 
     @NotNull
@@ -247,6 +254,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
         */
         compound.setInteger(TAG_COLONY, colonyId);
         compound.setBoolean(TAG_MIRROR, mirror);
+        compound.setString(TAG_STYLE, style);
         return compound;
     }
 
@@ -299,5 +307,23 @@ public class TileEntityColonyBuilding extends TileEntityChest
     public boolean isMirrored()
     {
         return mirror;
+    }
+
+    /**
+     * Set the style of the tileEntity.
+     * @param style the style to set.
+     */
+    public void setStyle(final String style)
+    {
+        this.style = style;
+    }
+
+    /**
+     * Getter for the style.
+     * @return the string of it.
+     */
+    public String getStyle()
+    {
+        return this.style;
     }
 }
