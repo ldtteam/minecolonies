@@ -366,3 +366,5 @@ com.minecolonies.coremod.permission.attack_citizen=Attack citizens
 com.minecolonies.coremod.permission.attack_entity=Attack entities
 com.minecolonies.coremod.permission.access_free_blocks=Access free-blocks
 com.minecolonies.coremod.permission.teleport_to_colony=Teleport to Colony
+
+item.supplyCampDeployer.invalid=Requiring a flat ground of at least 16*17.
