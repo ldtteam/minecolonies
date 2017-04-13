@@ -214,6 +214,11 @@ public final class StructureWrapper
                         return false;
                     }
 
+                    if(worldState.getBlock() == Blocks.BEDROCK)
+                    {
+                        return false;
+                    }
+
                     if(worldPos.getY() > pos.getY() && worldState.getBlock() != Blocks.AIR)
                     {
                         return false;
