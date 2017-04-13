@@ -118,23 +118,32 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
 
         ItemStack remainingItemStack = InventoryUtils.addItemStackToProviderWithResult(building.getTileEntity(), itemStackToTake);
 
-        //If we still have some to drop, let's try the additional chests now
-        if (remainingItemStack.stackSize > 0)
+        if (!InventoryUtils.isItemStackEmpty(remainingItemStack))
         {
-            final World world = colony.getWorld();
-            for(final BlockPos pos : building.getAdditionalCountainers())
+            //If we still have some to drop, let's try the additional chests now
+            if (InventoryUtils.getItemStackSize(remainingItemStack) > 0)
             {
-                final TileEntity entity = world.getTileEntity(pos);
-                remainingItemStack = InventoryUtils.addItemStackToProviderWithResult(entity, remainingItemStack);
+                final World world = colony.getWorld();
+                for(final BlockPos pos : building.getAdditionalCountainers())
+                {
+                    final TileEntity entity = world.getTileEntity(pos);
+                    remainingItemStack = InventoryUtils.addItemStackToProviderWithResult(entity, remainingItemStack);
+
+                    if (InventoryUtils.isItemStackEmpty(remainingItemStack))
+                    {
+                        break;
+                    }
+                }
             }
         }
-        if (remainingItemStack.stackSize != itemStackToTake.stackSize)
+
+        if (InventoryUtils.isItemStackEmpty(remainingItemStack) || remainingItemStack.stackSize != itemStackToTake.stackSize)
         {
             //Only doing this at the moment as the additional chest do not detect new content
             building.getTileEntity().markDirty();
         }
 
-        int amountToRemoveFromPlayer = amountToTake - remainingItemStack.stackSize;
+        int amountToRemoveFromPlayer = amountToTake - (InventoryUtils.isItemStackEmpty(remainingItemStack) ? 0 : InventoryUtils.getItemStackSize(remainingItemStack));
 
         while (amountToRemoveFromPlayer > 0)
         {
