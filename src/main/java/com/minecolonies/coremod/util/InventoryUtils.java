@@ -856,7 +856,7 @@ public class InventoryUtils {
      */
     @NotNull
     public static boolean isProviderSided(@NotNull ICapabilityProvider provider) {
-        return getItemHandlersFromProvider(provider).size() == 1;
+        return getItemHandlersFromProvider(provider).size() > 1;
     }
 
     /**
@@ -1273,17 +1273,24 @@ public class InventoryUtils {
      * @return True when the swap was successful, false when not.
      */
     public static boolean transferItemStackIntoNextFreeSlotInItemHandlers(@NotNull final IItemHandler sourceHandler, @NotNull int sourceIndex, @NotNull IItemHandler targetHandler) {
-        final ItemStack sourceStack = sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, true);
+        ItemStack sourceStack = sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, true);
         final ItemStack originalStack = sourceStack.copy();
 
         for (int i = 0; i < targetHandler.getSlots(); i++) {
-            ItemStack result = targetHandler.insertItem(i, sourceStack, false);
-            if (isItemStackEmpty(result)) {
+            sourceStack = targetHandler.insertItem(i, sourceStack, false);
+            if (isItemStackEmpty(sourceStack)) {
+                sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, false);
                 return true;
             }
         }
 
-        return !ItemStack.areItemStacksEqual(sourceStack, originalStack);
+        if (!ItemStack.areItemStacksEqual(sourceStack, originalStack) && compareItemStacksIgnoreStackSize(sourceStack, originalStack)) {
+            int usedAmount = originalStack.stackSize - originalStack.stackSize;
+            sourceHandler.extractItem(sourceIndex, usedAmount, false);
+            return true;
+        }
+
+        return false;
     }
 
     /**
