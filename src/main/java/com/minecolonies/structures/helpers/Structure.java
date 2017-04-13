@@ -161,14 +161,15 @@ public class Structure
         // then we use it as the schematic folder
         // otherwise we use the minecraft folder  /minecolonies/schematics
         final File worldSchematicFolder = new File(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
-                                                     + "/" + Constants.MOD_ID);
+                                                     + "/" + Constants.MOD_ID + '/' + Structures.SCHEMATICS_PREFIX);
 
-        if (!worldSchematicFolder.exists() && MineColonies.isClient())
+        if (!worldSchematicFolder.exists())
         {
             return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID);
         }
 
-        return worldSchematicFolder;
+        return new File(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
+                                                     + "/" + Constants.MOD_ID);
     }
 
     /**
