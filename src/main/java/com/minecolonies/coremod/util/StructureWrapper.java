@@ -207,13 +207,13 @@ public final class StructureWrapper
                     @NotNull final BlockPos localPos = new BlockPos(i, j, k);
 
                     final BlockPos worldPos = pos.add(localPos);
-                    final IBlockState worldState = world.getBlockState(worldPos);
 
                     if(worldPos.getY() <= pos.getY() && !world.getBlockState(worldPos.down()).getMaterial().isSolid())
                     {
                         return false;
                     }
 
+                    final IBlockState worldState = world.getBlockState(worldPos);
                     if(worldState.getBlock() == Blocks.BEDROCK)
                     {
                         return false;
@@ -258,16 +258,13 @@ public final class StructureWrapper
                     {
                         continue;
                     }
-                    else if(localBlock == ModBlocks.blockSolidSubstitution)
+
+                    if(localBlock == ModBlocks.blockSolidSubstitution)
                     {
                         if( !worldState.getMaterial().isSolid())
                         {
                             final IBlockState subBlock = BlockUtils.getSubstitutionBlockAtWorld(world, worldPos);
                             placeBlock(subBlock, subBlock.getBlock(), worldPos);
-                        }
-                        else
-                        {
-                            continue;
                         }
                     }
                     else if (localBlock == Blocks.AIR && !worldState.getMaterial().isSolid())
@@ -500,7 +497,8 @@ public final class StructureWrapper
 
     private boolean isBlockNonSolid()
     {
-        return getBlock() != null && !getBlockState().getMaterial().isSolid();
+        final IBlockState state = getBlockState();
+        return state != null && !state.getMaterial().isSolid();
     }
 
     /**
@@ -557,7 +555,8 @@ public final class StructureWrapper
 
     private boolean isBlockSolid()
     {
-        return getBlock() != null && (getBlockState().getMaterial().isSolid());
+        final IBlockState state = getBlockState();
+        return state != null && state.getMaterial().isSolid();
     }
 
     /**
