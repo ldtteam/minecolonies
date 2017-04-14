@@ -73,30 +73,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
             return EnumActionResult.FAIL;
         }
 
-        final EnumFacing dir;
-        if(Math.abs(playerIn.posX - pos.getX()) > Math.abs(playerIn.posZ - pos.getZ()))
-        {
-            if(playerIn.posX - pos.getX() > 0)
-            {
-                dir = EnumFacing.WEST;
-            }
-            else
-            {
-                dir = EnumFacing.EAST;
-            }
-        }
-        else
-        {
-            if(playerIn.posZ - pos.getZ() > 0)
-            {
-                dir = EnumFacing.NORTH;
-            }
-            else
-            {
-                dir = EnumFacing.SOUTH;
-            }
-        }
-
+        final EnumFacing dir = playerIn.getHorizontalFacing();
         if (spawnCamp(worldIn, pos, dir))
         {
             worldIn.setBlockState(pos.up(), Blocks.CHEST.getDefaultState().withProperty(BlockChest.FACING, dir));
