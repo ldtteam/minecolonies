@@ -113,7 +113,16 @@ public final class Structures
             try
             {
                 @NotNull final URI uri = ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI();
-                final FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
+                FileSystem fileSystem;
+                try
+                {
+                    fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
+                }
+                catch (@NotNull FileSystemAlreadyExistsException e)
+                {
+                    Log.getLogger().warn("loadStyleMaps: FileSystemAlreadyExistsException");
+                    fileSystem = FileSystems.getFileSystem(uri);
+                }
                 final Path basePath = fileSystem.getPath(SCHEMATICS_ASSET_PATH);
                 loadSchematicsForPrefix(basePath, SCHEMATICS_PREFIX);
             }
