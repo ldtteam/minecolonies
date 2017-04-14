@@ -258,10 +258,17 @@ public final class StructureWrapper
                     {
                         continue;
                     }
-                    else if(localBlock == ModBlocks.blockSolidSubstitution && !worldState.getMaterial().isSolid())
+                    else if(localBlock == ModBlocks.blockSolidSubstitution)
                     {
-                        final IBlockState subBlock = BlockUtils.getSubstitutionBlockAtWorld(world, worldPos);
-                        placeBlock(subBlock, subBlock.getBlock(), worldPos);
+                        if( !worldState.getMaterial().isSolid())
+                        {
+                            final IBlockState subBlock = BlockUtils.getSubstitutionBlockAtWorld(world, worldPos);
+                            placeBlock(subBlock, subBlock.getBlock(), worldPos);
+                        }
+                        else
+                        {
+                            continue;
+                        }
                     }
                     else if (localBlock == Blocks.AIR && !worldState.getMaterial().isSolid())
                     {
