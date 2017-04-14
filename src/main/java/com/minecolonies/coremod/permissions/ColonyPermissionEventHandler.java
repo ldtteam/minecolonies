@@ -251,7 +251,7 @@ public class ColonyPermissionEventHandler
 
     /**
      * Check if the event should be canceled for a given player and minimum rank.
-     * @param rankIn the minimum rank.
+     * @param action the permission action.
      * @param playerIn the player.
      * @param world the world.
      * @param event the event.
