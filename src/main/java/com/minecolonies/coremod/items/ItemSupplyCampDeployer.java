@@ -5,11 +5,11 @@ import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
+import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Log;
 import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.block.BlockChest;
-import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -28,7 +28,35 @@ import org.jetbrains.annotations.Nullable;
  */
 public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
 {
+    /**
+     * The name of the structure
+     */
     private static final String SUPPLY_CAMP_STRUCTURE_NAME = "SupplyCamp";
+
+    /**
+     * Offset south/west of the supply camp.
+     */
+    private static final int OFFSET_SOUTH_WEST = -10;
+
+    /**
+     * Offset south/east of the supply camp.
+     */
+    private static final int OFFSET_SOUTH_EAST = -1;
+
+    /**
+     * Offset north/east of the supply camp.
+     */
+    private static final int OFFSET_NORTH_EAST = -6;
+
+    /**
+     * Offset north/west of the supply camp.
+     */
+    private static final int OFFSET_NORTH_WEST = -14;
+
+    /**
+     * Amount of directions to try to place the supply camp.
+     */
+    private static final int CHECK_X_DIRECTIONS = 4;
 
     /**
      * Creates a new supplychest deployer. The item is not stackable.
@@ -59,15 +87,15 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
     @NotNull
     @Override
     public EnumActionResult onItemUse(
-                                       final ItemStack stack,
-                                       final EntityPlayer playerIn,
-                                       final World worldIn,
-                                       final BlockPos pos,
-                                       final EnumHand hand,
-                                       final EnumFacing facing,
-                                       final float hitX,
-                                       final float hitY,
-                                       final float hitZ)
+            final ItemStack stack,
+            final EntityPlayer playerIn,
+            final World worldIn,
+            final BlockPos pos,
+            final EnumHand hand,
+            final EnumFacing facing,
+            final float hitX,
+            final float hitY,
+            final float hitZ)
     {
         if (worldIn == null || playerIn == null || worldIn.isRemote || stack.stackSize == 0 || !isFirstPlacing(playerIn))
         {
@@ -114,54 +142,51 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
      */
     private boolean spawnCamp(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final EnumFacing chestFacing)
     {
+        if (isInsideAColony(world, pos))
+        {
+            return false;
+        }
         return checkAndPlaceSupplyCamp(world, pos, chestFacing);
     }
 
     private boolean checkAndPlaceSupplyCamp(final World world, @NotNull final BlockPos pos, @NotNull final EnumFacing direction)
     {
-        if(isInsideAColony(world, pos))
-        {
-            return false;
-        }
-
         EnumFacing facing = direction;
-        for(int i = 0; i < 4; i++)
+        for (int i = 0; i < CHECK_X_DIRECTIONS; i++)
         {
             switch (facing)
             {
-                case SOUTH:
-                    if(StructureWrapper.tryToLoadAndPlaceSupplyCampWithRotation(world, SUPPLY_CAMP_STRUCTURE_NAME,
-                            pos.add(-10, 0, -1), 1, Mirror.NONE))
-                    {
-                        return true;
-                    }
-                    facing = EnumFacing.EAST;
-                    break;
                 case NORTH:
-                    if(StructureWrapper.tryToLoadAndPlaceSupplyCampWithRotation(world, SUPPLY_CAMP_STRUCTURE_NAME,
-                            pos.add(-6, 0, -14), 3, Mirror.NONE))
+                    if (StructureWrapper.tryToLoadAndPlaceSupplyCampWithRotation(world, SUPPLY_CAMP_STRUCTURE_NAME,
+                            pos.add(OFFSET_NORTH_EAST, 0, OFFSET_NORTH_WEST), Constants.ROTATE_THREE_TIMES, Mirror.NONE))
                     {
                         return true;
                     }
                     facing = EnumFacing.WEST;
                     break;
                 case EAST:
-                    if(StructureWrapper.tryToLoadAndPlaceSupplyCampWithRotation(world, SUPPLY_CAMP_STRUCTURE_NAME,
-                            pos.add(-1, 0, -6), 0, Mirror.NONE))
+                    if (StructureWrapper.tryToLoadAndPlaceSupplyCampWithRotation(world, SUPPLY_CAMP_STRUCTURE_NAME,
+                            pos.add(OFFSET_SOUTH_EAST, 0, OFFSET_NORTH_EAST), Constants.ROTATE_0_TIMES, Mirror.NONE))
                     {
                         return true;
                     }
                     facing = EnumFacing.NORTH;
                     break;
                 case WEST:
-                    if(StructureWrapper.tryToLoadAndPlaceSupplyCampWithRotation(world, SUPPLY_CAMP_STRUCTURE_NAME, pos.add(-14, 0, -10), 2, Mirror.NONE))
+                    if (StructureWrapper.tryToLoadAndPlaceSupplyCampWithRotation(world, SUPPLY_CAMP_STRUCTURE_NAME,
+                            pos.add(OFFSET_NORTH_WEST, 0, OFFSET_SOUTH_WEST), Constants.ROTATE_TWICE, Mirror.NONE))
                     {
                         return true;
                     }
                     facing = EnumFacing.SOUTH;
                     break;
                 default:
-                    facing = EnumFacing.SOUTH;
+                    if (StructureWrapper.tryToLoadAndPlaceSupplyCampWithRotation(world, SUPPLY_CAMP_STRUCTURE_NAME,
+                            pos.add(OFFSET_SOUTH_WEST, 0, OFFSET_SOUTH_EAST), Constants.ROTATE_ONCE, Mirror.NONE))
+                    {
+                        return true;
+                    }
+                    facing = EnumFacing.EAST;
             }
         }
         return false;
@@ -185,8 +210,9 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
 
     /**
      * Check if any of the coordinates is in any colony.
+     *
      * @param world the world to check in.
-     * @param pos the first position.
+     * @param pos   the first position.
      * @return false if no colony found.
      */
     private static boolean isInsideAColony(final World world, final BlockPos pos)
