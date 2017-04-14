@@ -901,7 +901,18 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             }
         }
 
-        if (block instanceof BlockDoor)
+        if (block instanceof BlockBeetroot)
+        {
+            //We need to do the beetroot first as it use a different property but BlockBeetroot instance of BlockCrops
+            //we don't want fully grown plants
+            world.setBlockState(pos,blockState.withProperty(BlockBeetroot.BEETROOT_AGE,0),0x03);
+        }
+        else if (block instanceof BlockCrops)
+        {
+            //we don't want fully grown plants
+            world.setBlockState(pos,blockState.withProperty(BlockCrops.AGE,0),0x03);
+        }
+        else if (block instanceof BlockDoor)
         {
             if (blockState.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.LOWER))
             {
