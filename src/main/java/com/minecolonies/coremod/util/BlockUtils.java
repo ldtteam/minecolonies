@@ -353,7 +353,7 @@ public final class BlockUtils
         }
 
         Block block = blockState.getBlock();
-        if (item instanceof ItemBlock && !(block instanceof BlockGrassPath))
+        if (item instanceof ItemBlock)
         {
             block = Block.getBlockFromItem(item);
         }
@@ -381,6 +381,10 @@ public final class BlockUtils
         }
         else if (block instanceof BlockDirt)
         {
+            if (blockState.getBlock() instanceof BlockGrassPath)
+            {
+                return Blocks.DIRT.getDefaultState().getValue(BlockDirt.VARIANT).getMetadata();
+            }
             return blockState.getValue(BlockDirt.VARIANT).getMetadata();
         }
         else if (block instanceof BlockDoublePlant
