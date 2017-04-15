@@ -231,7 +231,14 @@ public class EventHandler
         if (colony == null)
         {
             //  Not in a colony
-            LanguageHandler.sendPlayerMessage(player, "tile.blockHut.messageNoTownHall");
+            if (ColonyManager.getIColonyByOwner(world, player) == null)
+            {
+                LanguageHandler.sendPlayerMessage(player, "tile.blockHut.messageNoTownHall");
+            }
+            else
+            {
+                LanguageHandler.sendPlayerMessage(player, "tile.blockHut.messageTooFarFromTownHall");
+            }
             return false;
         }
         else if (!colony.getPermissions().hasPermission(player, Permissions.Action.PLACE_HUTS))
