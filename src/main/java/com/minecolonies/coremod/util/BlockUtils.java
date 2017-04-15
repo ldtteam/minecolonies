@@ -353,7 +353,7 @@ public final class BlockUtils
         }
 
         Block block = blockState.getBlock();
-        if (item instanceof ItemBlock)
+        if (item instanceof ItemBlock && !(block instanceof BlockGrassPath))
         {
             block = Block.getBlockFromItem(item);
         }
