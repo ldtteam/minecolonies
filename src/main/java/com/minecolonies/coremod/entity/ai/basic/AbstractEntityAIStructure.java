@@ -1072,6 +1072,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                         }
                     }
                 }
+                
 
                 entity.setUniqueId(UUID.randomUUID());
                 entity.setLocationAndAngles(

@@ -5,6 +5,7 @@ import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
+import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.util.BlockUtils;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Log;
@@ -52,6 +53,31 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     private static final String SUPPLY_SHIP_STRUCTURE_NAME = "SupplyShip";
 
     /**
+     * Offset south/west of the supply camp.
+     */
+    private static final int OFFSET_SOUTH_WEST = -11;
+
+    /**
+     * Offset south/east of the supply camp.
+     */
+    private static final int OFFSET_SOUTH_EAST = 5;
+
+    /**
+     * Offset north/east of the supply camp.
+     */
+    private static final int OFFSET_NORTH_EAST = -20;
+
+    /**
+     * Offset north/west of the supply camp.
+     */
+    private static final int OFFSET_NORTH_WEST = -21;
+
+    /**
+     * Offset y of the supplyCamp
+     */
+    private static final int OFFSET_Y = -2;
+
+    /**
      * Creates a new supplychest deployer. The item is not stackable.
      */
     public ItemSupplyChestDeployer()
@@ -80,15 +106,15 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     @NotNull
     @Override
     public EnumActionResult onItemUse(
-                                       final ItemStack stack,
-                                       final EntityPlayer playerIn,
-                                       final World worldIn,
-                                       final BlockPos pos,
-                                       final EnumHand hand,
-                                       final EnumFacing facing,
-                                       final float hitX,
-                                       final float hitY,
-                                       final float hitZ)
+            final ItemStack stack,
+            final EntityPlayer playerIn,
+            final World worldIn,
+            final BlockPos pos,
+            final EnumHand hand,
+            final EnumFacing facing,
+            final float hitX,
+            final float hitY,
+            final float hitZ)
     {
         if (worldIn == null || playerIn == null || worldIn.isRemote || stack.stackSize == 0 || !isFirstPlacing(playerIn))
         {
@@ -205,17 +231,22 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     {
         switch (direction)
         {
+
             case SOUTH:
-                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(-11, -2, 5), 3, Mirror.NONE);
+                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(OFFSET_SOUTH_WEST, OFFSET_Y, OFFSET_SOUTH_EAST),
+                        Constants.ROTATE_THREE_TIMES, Mirror.NONE);
                 break;
             case NORTH:
-                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(-20, -2, -21), 1, Mirror.NONE);
+                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(OFFSET_NORTH_EAST, OFFSET_Y, OFFSET_NORTH_WEST),
+                        Constants.ROTATE_ONCE, Mirror.NONE);
                 break;
             case EAST:
-                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(5, -2, -20), 2, Mirror.NONE);
+                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(OFFSET_SOUTH_EAST, OFFSET_Y, OFFSET_NORTH_EAST),
+                        Constants.ROTATE_TWICE, Mirror.NONE);
                 break;
             case WEST:
-                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(-21, -2, -11), 0, Mirror.NONE);
+                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(OFFSET_NORTH_WEST, OFFSET_Y, OFFSET_SOUTH_WEST),
+                        Constants.ROTATE_0_TIMES, Mirror.NONE);
                 break;
             default:
                 break;
@@ -251,13 +282,13 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @return true if it can be placed.
      */
     private static boolean checkX(
-                                   final World world,
-                                   final BlockPos pos,
-                                   final int k,
-                                   final int spaceRightK,
-                                   final int spaceLeftK,
-                                   final int widthK,
-                                   final boolean isCoordPositivelyAdded)
+            final World world,
+            final BlockPos pos,
+            final int k,
+            final int spaceRightK,
+            final int spaceLeftK,
+            final int widthK,
+            final boolean isCoordPositivelyAdded)
     {
         for (int i = DISTANCE; i < WIDTH; i++)
         {
@@ -294,13 +325,13 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @return true if it can be placed.
      */
     private static boolean checkZ(
-                                   final World world,
-                                   final BlockPos pos,
-                                   final int k,
-                                   final int spaceRightK,
-                                   final int spaceLeftK,
-                                   final int widthK,
-                                   final boolean isCoordPositivelyAdded)
+            final World world,
+            final BlockPos pos,
+            final int k,
+            final int spaceRightK,
+            final int spaceLeftK,
+            final int widthK,
+            final boolean isCoordPositivelyAdded)
     {
         for (int i = DISTANCE; i < WIDTH; i++)
         {
@@ -340,14 +371,15 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
 
     /**
      * Check if any of the coordinates is in any colony.
+     *
      * @param world the world to check in.
-     * @param pos1 the first position.
-     * @param pos2 the second position.
-     * @param pos3 the third position.
+     * @param pos1  the first position.
+     * @param pos2  the second position.
+     * @param pos3  the third position.
      * @return true if no colony found.
      */
     private static boolean notInAnyColony(final World world, final BlockPos pos1, final BlockPos pos2, final BlockPos pos3)
     {
-        return !ColonyManager.isCoordinateInAnyColony(world, pos1) && !ColonyManager.isCoordinateInAnyColony(world, pos2) && !ColonyManager.isCoordinateInAnyColony(world, pos3) ;
+        return !ColonyManager.isCoordinateInAnyColony(world, pos1) && !ColonyManager.isCoordinateInAnyColony(world, pos2) && !ColonyManager.isCoordinateInAnyColony(world, pos3);
     }
 }
