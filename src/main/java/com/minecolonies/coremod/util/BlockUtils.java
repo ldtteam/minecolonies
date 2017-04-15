@@ -424,6 +424,6 @@ public final class BlockUtils
      */
     public static boolean isPathBlock(final Block block)
     {
-        return block == Blocks.GRAVEL || block == Blocks.STONEBRICK;
+        return block == Blocks.GRAVEL || block == Blocks.STONEBRICK || block instanceof BlockGrassPath;
     }
 }
