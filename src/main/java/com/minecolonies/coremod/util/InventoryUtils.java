@@ -52,6 +52,11 @@ public final class InventoryUtils
     private static final int DIAMOND_LEVEL = 3;
 
     /**
+     * Wooden or gold tool mining level.
+     */
+    private static final int WOOD_GOLD_LEVEL = 0;
+
+    /**
      * Private constructor to hide the implicit one.
      */
     private InventoryUtils()
@@ -1353,6 +1358,7 @@ public final class InventoryUtils
     public static boolean transferItemStackIntoNextFreeSlotInItemHandlers(@NotNull final IItemHandler sourceHandler, @NotNull int sourceIndex, @NotNull IItemHandler targetHandler)
     {
         ItemStack sourceStack = sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, true);
+        final ItemStack originalStack = sourceStack.copy();
 
         for (int i = 0; i < targetHandler.getSlots(); i++)
         {
@@ -1364,7 +1370,6 @@ public final class InventoryUtils
             }
         }
 
-        final ItemStack originalStack = sourceStack.copy();
         if (!ItemStack.areItemStacksEqual(sourceStack, originalStack) && compareItemStacksIgnoreStackSize(sourceStack, originalStack))
         {
             int usedAmount = originalStack.stackSize - sourceStack.stackSize;
@@ -1475,7 +1480,7 @@ public final class InventoryUtils
     {
         switch (toolGrade)
         {
-            case 0:
+            case WOOD_GOLD_LEVEL:
                 return "Wood or Gold";
             case STONE_LEVEL:
                 return "Stone";
