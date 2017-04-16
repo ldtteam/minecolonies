@@ -151,15 +151,31 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * This times the citizen id is the personal offset of the citizen.
      */
-    private static final int                    OFFSET_TICK_MULTIPLIER     = 7;
+    private static final int                    OFFSET_TICK_MULTIPLIER = 7;
     /**
      * Range required for the citizen to be home.
      */
-    private static final double                 RANGE_TO_BE_HOME           = 16;
+    private static final double                 RANGE_TO_BE_HOME       = 16;
     /**
      * If the entitiy is stuck for 2 minutes do something.
      */
-    private static final int                    MAX_STUCK_TIME             = 20 * 60 * 2;
+    private static final int                    MAX_STUCK_TIME         = 20 * 60 * 2;
+
+    /**
+     * Distance from mobs the entity should hold.
+     */
+    private static final double DISTANCE_OF_ENTITY_AVOID = 8.0D;
+
+    /**
+     * Initital speed while running away from entities.
+     */
+    private static final double INITIAL_RUN_SPEED_AVOID = 1.6D;
+
+    /**
+     * Later run speed while running away from entities.
+     */
+    private static final double LATER_RUN_SPEED_AVOID = 0.6D;
+
     private static Field            navigatorField;
     private final  InventoryCitizen inventory;
     @NotNull
@@ -265,7 +281,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         if (this.getColonyJob() == null || !"com.minecolonies.coremod.job.Guard".equals(this.getColonyJob().getName()))
         {
-            this.tasks.addTask(1, new EntityAICitizenAvoidEntity(this, EntityMob.class, 8.0F, 0.6D, 1.6D));
+            this.tasks.addTask(1, new EntityAICitizenAvoidEntity(this, EntityMob.class, DISTANCE_OF_ENTITY_AVOID, LATER_RUN_SPEED_AVOID, INITIAL_RUN_SPEED_AVOID));
         }
         this.tasks.addTask(2, new EntityAIGoHome(this));
         this.tasks.addTask(3, new EntityAISleep(this));
@@ -516,8 +532,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public void addExperience(final double xp)
     {
-        final double citizenHutLevel = getHomeBuilding() == null ? 0 : getHomeBuilding().getBuildingLevel();
-        final double citizenHutMaxLevel = getHomeBuilding() == null ? 1 : getHomeBuilding().getMaxBuildingLevel();
+        final BuildingHome home = getHomeBuilding();
+
+        final double citizenHutLevel = home == null ? 0 : home.getBuildingLevel();
+        final double citizenHutMaxLevel = home == null ? 1 : home.getMaxBuildingLevel();
         if (citizenHutLevel < citizenHutMaxLevel
               && Math.pow(2.0, citizenHutLevel + 1.0) < this.getExperienceLevel())
         {
@@ -543,6 +561,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         citizenData.markDirty();
     }
 
+    @Nullable
     private BuildingHome getHomeBuilding()
     {
         return (citizenData == null) ? null : citizenData.getHomeBuilding();
@@ -944,7 +963,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
 
         retList.stream()
-          .filter(item -> item != null)
+          .filter(Objects::nonNull)
           .filter(item -> !item.isDead)
           .filter(item -> canPickUpLoot())
           .forEach(this::tryPickupEntityItem);
