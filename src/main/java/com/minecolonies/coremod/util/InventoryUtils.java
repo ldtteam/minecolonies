@@ -49,7 +49,7 @@ public final class InventoryUtils
     /**
      * Mining level of diamond tools.
      */
-    private static final int DIAMOND_LEVEL   = 3;
+    private static final int DIAMOND_LEVEL = 3;
 
     /**
      * Wooden or gold tool mining level.
