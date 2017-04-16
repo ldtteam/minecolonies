@@ -691,9 +691,8 @@ public final class InventoryUtils
             case 2:
                 return "Iron";
             case 3:
-                return "Diamond";
             default:
-                return "";
+                return "Diamond";
         }
     }
 
