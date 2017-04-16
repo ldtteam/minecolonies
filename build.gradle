@@ -1,7 +1,15 @@
 import com.google.common.collect.Maps
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.file.FileTreeElement
+import org.gradle.api.file.FileVisitDetails
+import org.gradle.api.file.FileVisitor
 
 import java.util.Map.Entry
+import java.util.jar.JarOutputStream
+import java.util.zip.ZipEntry
+import java.util.zip.ZipFile
+
+import groovy.util.MapEntry
 
 buildscript {
     repositories {
@@ -260,6 +268,99 @@ class Java8JarSigner extends net.minecraftforge.gradle.tasks.SignJar {
         // write out
         writeOutputJar(signed, output, ignoredStuff);
     }
+
+    private void processInputJar(File inputJar, File toSign, final Map<String, Entry<byte[], Long>> unsigned) throws IOException
+    {
+        final Spec<FileTreeElement> spec = patternSet.getAsSpec();
+
+        toSign.getParentFile().mkdirs();
+        final JarOutputStream outs = new JarOutputStream(new BufferedOutputStream(new FileOutputStream(toSign)));
+
+        getProject().zipTree(inputJar).visit(new FileVisitor() {
+
+            @Override
+            public void visitDir(FileVisitDetails details)
+            {
+                try
+                {
+                    String path = details.getPath();
+                    ZipEntry entry = new ZipEntry(path.endsWith("/") ? path : path + "/");
+                    outs.putNextEntry(entry);
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            @SuppressWarnings("unchecked")
+            public void visitFile(FileVisitDetails details)
+            {
+                try
+                {
+                    if (spec.isSatisfiedBy(details))
+                    {
+                        ZipEntry entry = new ZipEntry(details.getPath());
+                        entry.setTime(details.getLastModified());
+                        outs.putNextEntry(entry);
+                        details.copyTo(outs);
+                        outs.closeEntry();
+                    }
+                    else
+                    {
+                        InputStream stream = details.open();
+                        unsigned.put(details.getPath(), new MapEntry(ByteStreams.toByteArray(stream), details.getLastModified()));
+                        stream.close();
+                    }
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+
+        });
+
+        outs.close();
+    }
+
+    private void writeOutputJar(File signedJar, File outputJar, Map<String, Entry<byte[], Long>> unsigned) throws IOException
+    {
+        outputJar.getParentFile().mkdirs();
+
+        JarOutputStream outs = new JarOutputStream(new BufferedOutputStream(new FileOutputStream(outputJar)));
+
+        ZipFile base = new ZipFile(signedJar);
+        for (ZipEntry e : Collections.list(base.entries()))
+        {
+            if (e.isDirectory())
+            {
+                outs.putNextEntry(e);
+            }
+            else
+            {
+                ZipEntry n = new ZipEntry(e.getName());
+                n.setTime(e.getTime());
+                outs.putNextEntry(n);
+                ByteStreams.copy(base.getInputStream(e), outs);
+                outs.closeEntry();
+            }
+        }
+        base.close();
+
+        for (Map.Entry<String, Map.Entry<byte[], Long>> e : unsigned.entrySet())
+        {
+            ZipEntry n = new ZipEntry(e.getKey());
+            n.setTime(e.getValue().getValue());
+            outs.putNextEntry(n);
+            outs.write(e.getValue().getKey());
+            outs.closeEntry();
+        }
+
+        outs.close();
+    }
+
 }
 
 task signJar(type: Java8JarSigner, dependsOn: reobfJar) {
