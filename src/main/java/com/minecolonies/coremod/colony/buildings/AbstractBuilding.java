@@ -77,76 +77,20 @@ public abstract class AbstractBuilding
     private static final String                  TAG_STYLE                    = "style";
     private static final int                     NO_WORK_ORDER                = 0;
     /**
-     * A list of ItemStacks with needed items and their quantity.
-     * This list is a diff between itemsNeeded in AbstractEntityAiBasic and
-     * the players inventory and their hut combined.
-     * So look here for what is currently still needed
-     * to fulfill the workers needs.
-     * <p>
-     * Will be cleared on restart, be aware!
-     */
-    @NotNull
-    private List<ItemStack> itemsCurrentlyNeeded = new ArrayList<>();
-
-    /**
-     * A list which contains the position of all containers which belong to the
-     * worker building.
-     */
-    private final List<BlockPos> containerList = new ArrayList<>();
-
-    /**
-     * This flag tells if we need a shovel, will be set on tool needs.
-     */
-    private boolean needsShovel = false;
-
-    /**
-     * This flag tells if we need an axe, will be set on tool needs.
-     */
-    private boolean needsAxe = false;
-
-    /**
-     * This flag tells if we need a hoe, will be set on tool needs.
-     */
-    private boolean needsHoe = false;
-
-    /**
-     * This flag tells if we need a pickaxe, will be set on tool needs.
-     */
-    private boolean needsPickaxe = false;
-
-    /**
-     * This flag tells if we need a weapon, will be set on tool needs.
-     */
-    private boolean needsWeapon = false;
-
-    /**
-     * The minimum pickaxe level we need to fulfill the tool request.
-     */
-    private int needsPickaxeLevel = -1;
-
-    /**
-     * Checks if there is a ongoing delivery for the currentItem.
-     */
-    private boolean onGoingDelivery = false;
-
-    /**
      * Map to resolve names to class.
      */
     @NotNull
     private static final Map<String, Class<?>>   nameToClassMap               = new HashMap<>();
-
     /**
      * Map to resolve classes to name.
      */
     @NotNull
     private static final Map<Class<?>, String>   classToNameMap               = new HashMap<>();
-
     /**
      * Map to resolve block to building class.
      */
     @NotNull
     private static final Map<Class<?>, Class<?>> blockClassToBuildingClassMap = new HashMap<>();
-
     /**
      * Map to resolve classNameHash to class.
      */
@@ -171,18 +115,59 @@ public abstract class AbstractBuilding
         addMapping("GuardTower", BuildingGuardTower.class, BuildingGuardTower.View.class, BlockHutGuardTower.class);
         addMapping("WareHouse", BuildingWareHouse.class, BuildingWareHouse.View.class, BlockHutWareHouse.class);
     }
-
+    /**
+     * A list which contains the position of all containers which belong to the
+     * worker building.
+     */
+    private final List<BlockPos> containerList = new ArrayList<>();
     /**
      * The location of the building.
      */
     private final BlockPos location;
-
     /**
      * The colony the building belongs to.
      */
     @NotNull
     private final Colony colony;
-
+    /**
+     * A list of ItemStacks with needed items and their quantity.
+     * This list is a diff between itemsNeeded in AbstractEntityAiBasic and
+     * the players inventory and their hut combined.
+     * So look here for what is currently still needed
+     * to fulfill the workers needs.
+     * <p>
+     * Will be cleared on restart, be aware!
+     */
+    @NotNull
+    private List<ItemStack> itemsCurrentlyNeeded = new ArrayList<>();
+    /**
+     * This flag tells if we need a shovel, will be set on tool needs.
+     */
+    private boolean         needsShovel          = false;
+    /**
+     * This flag tells if we need an axe, will be set on tool needs.
+     */
+    private boolean         needsAxe             = false;
+    /**
+     * This flag tells if we need a hoe, will be set on tool needs.
+     */
+    private boolean         needsHoe             = false;
+    /**
+     * This flag tells if we need a pickaxe, will be set on tool needs.
+     */
+    private boolean         needsPickaxe         = false;
+    /**
+     * This flag tells if we need a weapon, will be set on tool needs.
+     */
+    private boolean         needsWeapon          = false;
+    /**
+     * The minimum pickaxe level we need to fulfill the tool request.
+     */
+    private int             needsPickaxeLevel    = -1;
+    /**
+     * Checks if there is a ongoing delivery for the currentItem.
+     */
+    private boolean         onGoingDelivery      = false;
     /**
      * The tileEntity of the building.
      */
@@ -236,10 +221,10 @@ public abstract class AbstractBuilding
      * @param parentBlock   subclass of Block, located in {@link com.minecolonies.coremod.blocks}.
      */
     private static void addMapping(
-            final String name,
-            @NotNull final Class<? extends AbstractBuilding> buildingClass,
-            @NotNull final Class<? extends AbstractBuilding.View> viewClass,
-            @NotNull final Class<? extends AbstractBlockHut> parentBlock)
+                                          final String name,
+                                          @NotNull final Class<? extends AbstractBuilding> buildingClass,
+                                          @NotNull final Class<? extends AbstractBuilding.View> viewClass,
+                                          @NotNull final Class<? extends AbstractBlockHut> parentBlock)
     {
         final int buildingHashCode = buildingClass.getName().hashCode();
 
@@ -380,11 +365,14 @@ public abstract class AbstractBuilding
             final BlockPos loc = parent.getPosition();
             final Constructor<?> constructor = oclass.getDeclaredConstructor(Colony.class, BlockPos.class);
             building = (AbstractBuilding) constructor.newInstance(colony, loc);
-        } catch (@NotNull NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException exception) {
+        }
+        catch (@NotNull NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException exception)
+        {
             Log.getLogger().error(String.format("Unknown Building type '%s' or missing constructor of proper format.", parent.getClass().getName()), exception);
         }
 
-        if (building != null && parent.getWorld() != null) {
+        if (building != null && parent.getWorld() != null)
+        {
             ConstructionTapeHelper.placeConstructionTape(building, parent.getWorld());
         }
         return building;
@@ -636,34 +624,6 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Get the current level of the work order.
-     *
-     * @return NO_WORK_ORDER if not current work otherwise the level requested.
-     */
-    private int getCurrentWorkOrderLevel()
-    {
-        for (@NotNull final WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
-        {
-            if (o.getBuildingLocation().equals(getID()))
-            {
-                return o.getUpgradeLevel();
-            }
-        }
-
-        return NO_WORK_ORDER;
-    }
-
-    /**
-     * Checks if this building have a work order.
-     *
-     * @return true if the building is building, upgrading or repairing.
-     */
-    public boolean hasWorkOrder()
-    {
-        return getCurrentWorkOrderLevel() != NO_WORK_ORDER;
-    }
-
-    /**
      * Children must return their max building level.
      *
      * @return Max building level.
@@ -702,6 +662,43 @@ public abstract class AbstractBuilding
     }
 
     /**
+     * Marks the instance and the building dirty.
+     */
+    public final void markDirty()
+    {
+        dirty = true;
+        colony.markBuildingsDirty();
+    }
+
+    /**
+     * Checks if this building have a work order.
+     *
+     * @return true if the building is building, upgrading or repairing.
+     */
+    public boolean hasWorkOrder()
+    {
+        return getCurrentWorkOrderLevel() != NO_WORK_ORDER;
+    }
+
+    /**
+     * Get the current level of the work order.
+     *
+     * @return NO_WORK_ORDER if not current work otherwise the level requested.
+     */
+    private int getCurrentWorkOrderLevel()
+    {
+        for (@NotNull final WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
+        {
+            if (o.getBuildingLocation().equals(getID()))
+            {
+                return o.getUpgradeLevel();
+            }
+        }
+
+        return NO_WORK_ORDER;
+    }
+
+    /**
      * Requests a repair for the current building.
      */
     public void requestRepair()
@@ -714,7 +711,7 @@ public abstract class AbstractBuilding
 
     /**
      * Remove the work order for the building.
-     *
+     * <p>
      * Remove either the upgrade or repair work order
      */
     public void removeWorkOrder()
@@ -825,16 +822,8 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Marks the instance and the building dirty.
-     */
-    public final void markDirty()
-    {
-        dirty = true;
-        colony.markBuildingsDirty();
-    }
-
-    /**
      * Add a new container to the building.
+     *
      * @param pos position to add.
      */
     public void addContainerPosition(BlockPos pos)
@@ -844,6 +833,7 @@ public abstract class AbstractBuilding
 
     /**
      * Remove a container from the building.
+     *
      * @param pos position to remove.
      */
     public void removeContainerPosition(BlockPos pos)
@@ -1133,17 +1123,21 @@ public abstract class AbstractBuilding
      * @param world the world to do it in.
      * @return true if was able to.
      */
-    public boolean transferStack(@NotNull final ItemStack stack, @NotNull final World world) {
+    public boolean transferStack(@NotNull final ItemStack stack, @NotNull final World world)
+    {
         if (tileEntity == null || InventoryUtils.isProviderFull(tileEntity))
         {
             for (final BlockPos pos : containerList)
             {
                 final TileEntity tempTileEntity = world.getTileEntity(pos);
-                if (tempTileEntity instanceof TileEntityChest && !InventoryUtils.isProviderFull(tempTileEntity)) {
+                if (tempTileEntity instanceof TileEntityChest && !InventoryUtils.isProviderFull(tempTileEntity))
+                {
                     return InventoryUtils.addItemStackToProvider(tempTileEntity, stack);
                 }
             }
-        } else {
+        }
+        else
+        {
             return InventoryUtils.addItemStackToProvider(tileEntity, stack);
         }
         return false;
@@ -1164,14 +1158,24 @@ public abstract class AbstractBuilding
             for (final BlockPos pos : containerList)
             {
                 final TileEntity tempTileEntity = world.getTileEntity(pos);
-                if (tempTileEntity instanceof TileEntityChest && !InventoryUtils.isProviderFull(tempTileEntity)) {
+                if (tempTileEntity instanceof TileEntityChest && !InventoryUtils.isProviderFull(tempTileEntity))
+                {
                     return forceItemStackToProvider(tempTileEntity, stack);
                 }
             }
-        } else {
+        }
+        else
+        {
             return forceItemStackToProvider(tileEntity, stack);
         }
         return null;
+    }
+
+    @Nullable
+    private ItemStack forceItemStackToProvider(@NotNull final ICapabilityProvider provider, @NotNull final ItemStack itemStack)
+    {
+        final List<ItemStorage> localAlreadyKept = new ArrayList<>();
+        return InventoryUtils.forceItemStackToProvider(provider, itemStack, (ItemStack stack) -> EntityAIWorkDeliveryman.workerRequiresItem(this, stack, localAlreadyKept));
     }
 
     /**
@@ -1184,20 +1188,14 @@ public abstract class AbstractBuilding
         return isMirrored;
     }
 
+    //------------------------- Ending Required Tools/Item handling -------------------------//
+
     /**
      * Sets the mirror of the current building.
      */
     public void setMirror()
     {
         this.isMirrored = !isMirrored;
-    }
-
-    //------------------------- Ending Required Tools/Item handling -------------------------//
-
-    @Nullable
-    private ItemStack forceItemStackToProvider(@NotNull final ICapabilityProvider provider, @NotNull final ItemStack itemStack) {
-        final List<ItemStorage> localAlreadyKept = new ArrayList<>();
-        return InventoryUtils.forceItemStackToProvider(provider, itemStack, (ItemStack stack) -> EntityAIWorkDeliveryman.workerRequiresItem(this, stack, localAlreadyKept));
     }
 
     /**

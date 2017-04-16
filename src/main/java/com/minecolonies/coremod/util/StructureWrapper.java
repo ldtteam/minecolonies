@@ -129,8 +129,9 @@ public final class StructureWrapper
      * @param rotations number of times rotated
      * @param mirror    the mirror used.
      */
-    public static void loadAndPlaceStructureWithRotation(final World worldObj, @NotNull final String name,
-            @NotNull final BlockPos pos, final int rotations, @NotNull final Mirror mirror)
+    public static void loadAndPlaceStructureWithRotation(
+                                                                final World worldObj, @NotNull final String name,
+                                                                @NotNull final BlockPos pos, final int rotations, @NotNull final Mirror mirror)
     {
         try
         {
@@ -147,10 +148,10 @@ public final class StructureWrapper
     /**
      * Rotates the structure x times.
      *
-     * @param times times to rotateWithMirror.
-     * @param world world it's rotating it in.
+     * @param times     times to rotateWithMirror.
+     * @param world     world it's rotating it in.
      * @param rotatePos position to rotateWithMirror it around.
-     * @param mirror the mirror to rotate with.
+     * @param mirror    the mirror to rotate with.
      */
     public void rotate(final int times, @NotNull final World world, @NotNull final BlockPos rotatePos, @NotNull final Mirror mirror)
     {
@@ -597,7 +598,8 @@ public final class StructureWrapper
     }
 
     /**
-     * @return The StructureProxy that houses all the info about what is stored in a structure.
+     * @return The StructureProxy that houses all the info about what is stored
+     * in a structure.
      */
     public StructureProxy structure()
     {

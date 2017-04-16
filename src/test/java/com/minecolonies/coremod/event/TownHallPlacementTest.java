@@ -21,13 +21,13 @@ public class TownHallPlacementTest extends AbstractMockStaticsTest
 {
     private static final BlockPos PLACE_POS = new BlockPos(0, 0, 0);
     @Mock
-    private Colony colony;
+    private Colony       colony;
     @Mock
-    private World world;
+    private World        world;
     @Mock
     private EntityPlayer player;
     @Mock
-    private Permissions permissions;
+    private Permissions  permissions;
 
     @Before
     public void setupColonyPlacement() throws Exception

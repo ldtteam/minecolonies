@@ -80,8 +80,8 @@ public class RandomTeleportCommand extends AbstractSingleCommand
         {
             final World world = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld();
             playerToTeleport =
-                    ServerUtils.getPlayerFromUUID(FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache()
-                            .getGameProfileForUsername(args[0]).getId(), world);
+              ServerUtils.getPlayerFromUUID(FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache()
+                                              .getGameProfileForUsername(args[0]).getId(), world);
 
             sender.getCommandSenderEntity().sendMessage(new TextComponentString("TPin Player: " + playerToTeleport.getName()));
         }
@@ -94,30 +94,12 @@ public class RandomTeleportCommand extends AbstractSingleCommand
         playerToTeleport.getCommandSenderEntity().sendMessage(new TextComponentString("Buckle up buttercup, this ain't no joy ride!!!"));
         teleportPlayer(sender, playerToTeleport);
         //.fallDistance is used to cancel out fall damage  basically if you have -5 it will reduce fall damage by 2.5 hearts
-        playerToTeleport.fallDistance=FALL_DISTANCE;
-    }
-
-    /**
-     * Get a random coordinate to teleport to.
-     * @return
-     */
-    private static int getRandCoordinate()
-    {
-        final Random rnd = new Random();
-
-        int x = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
-
-        /* keeping X out of the spawn radius */
-        while (x > -SPAWN_NO_TP && x < SPAWN_NO_TP)
-        {
-            x = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
-        }
-
-        return x;
+        playerToTeleport.fallDistance = FALL_DISTANCE;
     }
 
     /**
      * Method used to teleport the player.
+     *
      * @param sender           the sender to have access to the world.
      * @param playerToTeleport the player which shall be teleported.
      */
@@ -151,7 +133,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand
 
             if (foundPosition)
             {
-                if(MinecoloniesCommand.canExecuteCommand((EntityPlayer) sender))
+                if (MinecoloniesCommand.canExecuteCommand((EntityPlayer) sender))
                 {
 
                     playerToTeleport.setPositionAndUpdate(groundPosition.getX(), groundPosition.getY() + SAFETY_DROP, groundPosition.getZ());
@@ -166,13 +148,31 @@ public class RandomTeleportCommand extends AbstractSingleCommand
         playerToTeleport.getCommandSenderEntity().sendMessage(new TextComponentString("Couldn't find a safe spot.  Try again in a moment."));
     }
 
+    /**
+     * Get a random coordinate to teleport to.
+     */
+    private static int getRandCoordinate()
+    {
+        final Random rnd = new Random();
+
+        int x = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
+
+        /* keeping X out of the spawn radius */
+        while (x > -SPAWN_NO_TP && x < SPAWN_NO_TP)
+        {
+            x = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
+        }
+
+        return x;
+    }
+
     @NotNull
     @Override
     public List<String> getTabCompletionOptions(
-            @NotNull final MinecraftServer server,
-            @NotNull final ICommandSender sender,
-            @NotNull final String[] args,
-            final BlockPos pos)
+                                                 @NotNull final MinecraftServer server,
+                                                 @NotNull final ICommandSender sender,
+                                                 @NotNull final String[] args,
+                                                 final BlockPos pos)
     {
         return Collections.emptyList();
     }

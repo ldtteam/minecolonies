@@ -40,7 +40,8 @@ public final class MathUtils
     }
 
     /**
-     * Calculates the distance between two points without considering the y-value.
+     * Calculates the distance between two points without considering the
+     * y-value.
      *
      * @param position the start position.
      * @param target   the end position.

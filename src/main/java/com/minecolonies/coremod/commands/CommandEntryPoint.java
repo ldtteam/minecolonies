@@ -21,7 +21,6 @@ public class CommandEntryPoint extends CommandBase
      * private static final int OP_PERMISSION_LEVEL = 3;
      */
 
-
     @NotNull
     private final MinecoloniesCommand root;
 

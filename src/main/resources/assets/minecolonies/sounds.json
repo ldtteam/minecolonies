@@ -362,7 +362,6 @@
       }
     ]
   },
-
   "mob.fisherman.female.generalPhrases": {
     "category": "neutral",
     "sounds": [
@@ -408,7 +407,6 @@
       }
     ]
   },
-
   "mob.fisherman.female.noise": {
     "category": "neutral",
     "sounds": [
@@ -446,7 +444,6 @@
       }
     ]
   },
-
   "mob.fisherman.male.noise": {
     "category": "neutral",
     "sounds": [
@@ -500,7 +497,6 @@
       }
     ]
   },
-
   "mob.fisherman.male.generalPhrases": {
     "category": "neutral",
     "sounds": [
@@ -642,7 +638,6 @@
       }
     ]
   },
-
   "mob.fisherman.female.offToBed": {
     "category": "neutral",
     "sounds": [
@@ -652,7 +647,6 @@
       }
     ]
   },
-
   "mob.fisherman.male.offToBed": {
     "category": "neutral",
     "sounds": [
@@ -662,7 +656,6 @@
       }
     ]
   },
-
   "mob.fisherman.female.needFishingRod": {
     "category": "neutral",
     "sounds": [
@@ -672,7 +665,6 @@
       }
     ]
   },
-
   "mob.fisherman.male.needFishingRod": {
     "category": "neutral",
     "sounds": [
@@ -682,7 +674,6 @@
       }
     ]
   },
-
   "mob.fisherman.female.iGotOne": {
     "category": "neutral",
     "sounds": [
@@ -692,7 +683,6 @@
       }
     ]
   },
-
   "mob.fisherman.male.iGotOne": {
     "category": "neutral",
     "sounds": [
@@ -706,7 +696,6 @@
       }
     ]
   },
-
   "mob.fisherman.male.badWeather": {
     "category": "neutral",
     "sounds": [
@@ -720,7 +709,6 @@
       }
     ]
   },
-
   "mob.fisherman.female.badWeather": {
     "category": "neutral",
     "sounds": [

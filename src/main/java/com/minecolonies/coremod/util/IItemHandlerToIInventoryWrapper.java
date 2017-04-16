@@ -12,10 +12,11 @@ import javax.annotation.Nullable;
 /**
  * Class wrapper for an {@link IItemHandlerModifiable} to an {@link IInventory}.
  */
-public class IItemHandlerToIInventoryWrapper implements IInventory {
+public class IItemHandlerToIInventoryWrapper implements IInventory
+{
     private static final int CONSTANT_MAX_STACKSIZE = 64;
 
-    private final IItemHandlerModifiable wrapped;
+    private final IItemHandlerModifiable   wrapped;
     private final IWorldNameableModifiable named;
 
     /**
@@ -26,7 +27,8 @@ public class IItemHandlerToIInventoryWrapper implements IInventory {
      * @param named   The {@link IWorldNameableModifiable} that represents the
      *                name of this {@link IInventory}.
      */
-    public IItemHandlerToIInventoryWrapper(final IItemHandlerModifiable wrapped, final IWorldNameableModifiable named) {
+    public IItemHandlerToIInventoryWrapper(final IItemHandlerModifiable wrapped, final IWorldNameableModifiable named)
+    {
         this.wrapped = wrapped;
         this.named = named;
     }
@@ -35,12 +37,14 @@ public class IItemHandlerToIInventoryWrapper implements IInventory {
      * Returns the number of slots in the inventory.
      */
     @Override
-    public int getSizeInventory() {
+    public int getSizeInventory()
+    {
         return wrapped.getSlots();
     }
 
     @Override
-    public boolean isEmpty() {
+    public boolean isEmpty()
+    {
         return InventoryUtils.getAmountOfStacksInItemHandler(wrapped) == 0;
     }
 
@@ -49,7 +53,8 @@ public class IItemHandlerToIInventoryWrapper implements IInventory {
      */
     @Nullable
     @Override
-    public ItemStack getStackInSlot(final int index) {
+    public ItemStack getStackInSlot(final int index)
+    {
         return wrapped.getStackInSlot(index);
     }
 
@@ -59,7 +64,8 @@ public class IItemHandlerToIInventoryWrapper implements IInventory {
      */
     @Nullable
     @Override
-    public ItemStack decrStackSize(final int index, final int count) {
+    public ItemStack decrStackSize(final int index, final int count)
+    {
         return wrapped.extractItem(index, count, false);
     }
 
@@ -68,7 +74,8 @@ public class IItemHandlerToIInventoryWrapper implements IInventory {
      */
     @Nullable
     @Override
-    public ItemStack removeStackFromSlot(final int index) {
+    public ItemStack removeStackFromSlot(final int index)
+    {
         return decrStackSize(index, Integer.MAX_VALUE);
     }
 
@@ -77,7 +84,8 @@ public class IItemHandlerToIInventoryWrapper implements IInventory {
      * crafting or armor sections).
      */
     @Override
-    public void setInventorySlotContents(final int index, @Nullable final ItemStack stack) {
+    public void setInventorySlotContents(final int index, @Nullable final ItemStack stack)
+    {
         wrapped.setStackInSlot(index, stack);
     }
 
@@ -86,7 +94,8 @@ public class IItemHandlerToIInventoryWrapper implements IInventory {
      * 64, possibly will be extended.
      */
     @Override
-    public int getInventoryStackLimit() {
+    public int getInventoryStackLimit()
+    {
         return CONSTANT_MAX_STACKSIZE;
     }
 
@@ -95,28 +104,30 @@ public class IItemHandlerToIInventoryWrapper implements IInventory {
      * to disk later - the game won't think it hasn't changed and skip it.
      */
     @Override
-    public void markDirty() {
+    public void markDirty()
+    {
         //IItemHandler mark themselves dirty when changed.
     }
 
     /**
      * Don't rename this method to canInteractWith due to conflicts with
      * Container
-     *
-     * @param player
      */
     @Override
-    public boolean isUsableByPlayer(EntityPlayer player) {
+    public boolean isUsableByPlayer(EntityPlayer player)
+    {
         return true;
     }
 
     @Override
-    public void openInventory(final EntityPlayer player) {
+    public void openInventory(final EntityPlayer player)
+    {
         //IItemHandlers do not track which player opens or closes it as they are targeted at automating
     }
 
     @Override
-    public void closeInventory(final EntityPlayer player) {
+    public void closeInventory(final EntityPlayer player)
+    {
         //IItemHandlers do not track which player opens or closes it as they are targeted at automating
     }
 
@@ -125,27 +136,32 @@ public class IItemHandlerToIInventoryWrapper implements IInventory {
      * stack size) into the given slot. For guis use Slot.isItemValid
      */
     @Override
-    public boolean isItemValidForSlot(final int index, final ItemStack stack) {
+    public boolean isItemValidForSlot(final int index, final ItemStack stack)
+    {
         return wrapped.insertItem(index, stack, true) == InventoryUtils.EMPTY;
     }
 
     @Override
-    public int getField(final int id) {
+    public int getField(final int id)
+    {
         return 0;
     }
 
     @Override
-    public void setField(final int id, final int value) {
+    public void setField(final int id, final int value)
+    {
         //IItemHandlers do not have fields. So no setting of the value is possible. Discarding.
     }
 
     @Override
-    public int getFieldCount() {
+    public int getFieldCount()
+    {
         return 0;
     }
 
     @Override
-    public void clear() {
+    public void clear()
+    {
         InventoryUtils.clearItemHandler(wrapped);
     }
 
@@ -153,7 +169,8 @@ public class IItemHandlerToIInventoryWrapper implements IInventory {
      * Get the name of this object. For players this returns their username.
      */
     @Override
-    public String getName() {
+    public String getName()
+    {
         return named.getName();
     }
 
@@ -161,7 +178,8 @@ public class IItemHandlerToIInventoryWrapper implements IInventory {
      * Returns true if this thing is named.
      */
     @Override
-    public boolean hasCustomName() {
+    public boolean hasCustomName()
+    {
         return named.hasCustomName();
     }
 
@@ -170,7 +188,8 @@ public class IItemHandlerToIInventoryWrapper implements IInventory {
      * username in chat.
      */
     @Override
-    public ITextComponent getDisplayName() {
+    public ITextComponent getDisplayName()
+    {
         return named.getDisplayName();
     }
 }

@@ -59,9 +59,10 @@ public final class Structures
     }
 
     /**
-     * Loads all styles saved in ["/assets/minecolonies/schematics/"].
-     * Puts these in {@link #hutStyleMap}, with key being the name of the hutDec (E.G. Lumberjack).
-     * and the value is a list of styles. Puts decorations in {@link #decorationStyleMap}.
+     * Loads all styles saved in ["/assets/minecolonies/schematics/"]. Puts
+     * these in {@link #hutStyleMap}, with key being the name of the hutDec
+     * (E.G. Lumberjack). and the value is a list of styles. Puts decorations in
+     * {@link #decorationStyleMap}.
      */
     private static void loadStyleMaps()
     {

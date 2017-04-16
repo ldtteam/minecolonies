@@ -128,7 +128,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
             InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), item);
         }
 
-        if(tool != null)
+        if (tool != null)
         {
             tool.getItem().onUpdate(tool, world, worker, worker.findFirstSlotInInventoryWith(tool.getItem(), tool.getItemDamage()), true);
         }
@@ -136,36 +136,6 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         this.incrementActionsDone();
         return true;
     }
-
-    private void triggerMinedBlock(@NotNull final BlockPos blockToMine)
-    {
-        if (world.getBlockState(blockToMine).getBlock() == (Blocks.COAL_ORE)
-              || world.getBlockState(blockToMine).getBlock() == (Blocks.IRON_ORE)
-              || world.getBlockState(blockToMine).getBlock() == (Blocks.LAPIS_ORE)
-              || world.getBlockState(blockToMine).getBlock() == (Blocks.GOLD_ORE)
-              || world.getBlockState(blockToMine).getBlock() == (Blocks.REDSTONE_ORE)
-              || world.getBlockState(blockToMine).getBlock() ==(Blocks.EMERALD_ORE))
-        {
-            this.getOwnBuilding().getColony().incrementStatistic("ores");
-        }
-        if (world.getBlockState(blockToMine).getBlock().equals(Blocks.DIAMOND_ORE))
-        {
-            this.getOwnBuilding().getColony().incrementStatistic("diamonds");
-        }
-        if (world.getBlockState(blockToMine).getBlock().equals(Blocks.CARROTS))
-        {
-            this.getOwnBuilding().getColony().incrementStatistic("carrots");
-        }
-        if (world.getBlockState(blockToMine).getBlock().equals(Blocks.POTATOES))
-        {
-            this.getOwnBuilding().getColony().incrementStatistic("potatoes");
-        }
-        if (world.getBlockState(blockToMine).getBlock().equals(Blocks.WHEAT))
-        {
-            this.getOwnBuilding().getColony().incrementStatistic("wheat");
-        }
-    }
-
 
     /**
      * Checks for the right tools and waits for an appropriate delay.
@@ -203,6 +173,35 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
 
 
         return hasNotDelayed(getBlockMiningDelay(curBlock, blockToMine));
+    }
+
+    private void triggerMinedBlock(@NotNull final BlockPos blockToMine)
+    {
+        if (world.getBlockState(blockToMine).getBlock() == (Blocks.COAL_ORE)
+                || world.getBlockState(blockToMine).getBlock() == (Blocks.IRON_ORE)
+                || world.getBlockState(blockToMine).getBlock() == (Blocks.LAPIS_ORE)
+                || world.getBlockState(blockToMine).getBlock() == (Blocks.GOLD_ORE)
+                || world.getBlockState(blockToMine).getBlock() == (Blocks.REDSTONE_ORE)
+                || world.getBlockState(blockToMine).getBlock() == (Blocks.EMERALD_ORE))
+        {
+            this.getOwnBuilding().getColony().incrementStatistic("ores");
+        }
+        if (world.getBlockState(blockToMine).getBlock().equals(Blocks.DIAMOND_ORE))
+        {
+            this.getOwnBuilding().getColony().incrementStatistic("diamonds");
+        }
+        if (world.getBlockState(blockToMine).getBlock().equals(Blocks.CARROTS))
+        {
+            this.getOwnBuilding().getColony().incrementStatistic("carrots");
+        }
+        if (world.getBlockState(blockToMine).getBlock().equals(Blocks.POTATOES))
+        {
+            this.getOwnBuilding().getColony().incrementStatistic("potatoes");
+        }
+        if (world.getBlockState(blockToMine).getBlock().equals(Blocks.WHEAT))
+        {
+            this.getOwnBuilding().getColony().incrementStatistic("wheat");
+        }
     }
 
     /**

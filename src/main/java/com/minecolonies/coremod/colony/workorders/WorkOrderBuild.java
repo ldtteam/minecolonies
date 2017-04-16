@@ -74,13 +74,13 @@ public class WorkOrderBuild extends AbstractWorkOrder
             return;
         }
 
-        if(building.getTileEntity() == null || building.getTileEntity().getStyle().isEmpty())
+        if (building.getTileEntity() == null || building.getTileEntity().getStyle().isEmpty())
         {
             this.structureName = building.getStyle() + '/' + this.getUpgradeName();
         }
         else
         {
-            this.structureName =building.getTileEntity().getStyle() + '/' + this.getUpgradeName();
+            this.structureName = building.getTileEntity().getStyle() + '/' + this.getUpgradeName();
         }
     }
 
@@ -338,6 +338,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
 
     /**
      * Check if the workOrder should be built isMirrored.
+     *
      * @return true if so.
      */
     public boolean isMirrored()

@@ -30,7 +30,8 @@ import java.util.Map;
 public class CommonProxy implements IProxy
 {
     /**
-     * Used to store IExtendedEntityProperties data temporarily between player death and respawn.
+     * Used to store IExtendedEntityProperties data temporarily between player
+     * death and respawn.
      */
     private static final Map<String, NBTTagCompound> playerPropertiesData = new HashMap<>();
     private              int                         nextEntityId         = 0;
@@ -39,7 +40,8 @@ public class CommonProxy implements IProxy
      * Adds an entity's custom data to the map for temporary storage.
      *
      * @param name     player UUID + Properties name, HashMap key.
-     * @param compound An NBT Tag Compound that stores the IExtendedEntityProperties data only.
+     * @param compound An NBT Tag Compound that stores the IExtendedEntityProperties
+     *                 data only.
      */
     public static void storeEntityData(final String name, final NBTTagCompound compound)
     {
@@ -47,7 +49,8 @@ public class CommonProxy implements IProxy
     }
 
     /**
-     * Removes the compound from the map and returns the NBT tag stored for name or null if none exists.
+     * Removes the compound from the map and returns the NBT tag stored for name
+     * or null if none exists.
      *
      * @param name player UUID + Properties name, HashMap key.
      * @return NBTTagCompound PlayerProperties NBT compound.

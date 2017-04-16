@@ -35,8 +35,8 @@ public class InventoryFunctions
      * @return true if it found a stack
      */
     public static boolean matchFirstInProvider(
-            final ICapabilityProvider provider, @NotNull final Predicate<ItemStack> tester,
-            @NotNull final Consumer<Integer> action)
+                                                      final ICapabilityProvider provider, @NotNull final Predicate<ItemStack> tester,
+                                                      @NotNull final Consumer<Integer> action)
     {
         return matchFirstInProvider(provider, inv -> slot -> stack ->
         {
@@ -50,14 +50,15 @@ public class InventoryFunctions
     }
 
     /**
-     * Topmost matchFirst function, will stop after it finds the first itemstack.
+     * Topmost matchFirst function, will stop after it finds the first
+     * itemstack.
      *
      * @param provider the provider to search in
      * @param tester   the function to use for testing slots
      * @return true if it found a stack
      */
     private static boolean matchFirstInProvider(
-            final ICapabilityProvider provider, @NotNull final Function<ICapabilityProvider, Function<Integer,
+                                                       final ICapabilityProvider provider, @NotNull final Function<ICapabilityProvider, Function<Integer,
             Predicate<ItemStack>>> tester)
     {
         return matchInProvider(provider, tester, true);
@@ -69,14 +70,15 @@ public class InventoryFunctions
      *
      * @param provider       the provider to loop over
      * @param tester         the function to use for testing slots
-     * @param stopAfterFirst if it should stop executing after finding one stack that applies
+     * @param stopAfterFirst if it should stop executing after finding one stack
+     *                       that applies
      * @return true if it found a stack
      */
     private static boolean matchInProvider(
-            @Nullable final ICapabilityProvider provider,
-            @NotNull final Function<ICapabilityProvider, Function<Integer,
-                    Predicate<ItemStack>>> tester,
-            final boolean stopAfterFirst)
+                                                  @Nullable final ICapabilityProvider provider,
+                                                  @NotNull final Function<ICapabilityProvider, Function<Integer,
+                                                          Predicate<ItemStack>>> tester,
+                                                  final boolean stopAfterFirst)
     {
         if (provider == null)
         {
@@ -84,14 +86,18 @@ public class InventoryFunctions
         }
 
         boolean foundOne = false;
-        for (final IItemHandler handler : InventoryUtils.getItemHandlersFromProvider(provider)) {
+        for (final IItemHandler handler : InventoryUtils.getItemHandlersFromProvider(provider))
+        {
             final int size = handler.getSlots();
-            for (int slot = 0; slot < size; slot++) {
+            for (int slot = 0; slot < size; slot++)
+            {
                 final ItemStack stack = handler.getStackInSlot(slot);
                 //Unchain the function and apply it
-                if (tester.apply(provider).apply(slot).test(stack)) {
+                if (tester.apply(provider).apply(slot).test(stack))
+                {
                     foundOne = true;
-                    if (stopAfterFirst) {
+                    if (stopAfterFirst)
+                    {
                         return true;
                     }
                 }
@@ -110,8 +116,8 @@ public class InventoryFunctions
      * @return true if it found a stack
      */
     public static boolean matchFirstInProviderWithAction(
-            final ICapabilityProvider provider, @NotNull final Predicate<ItemStack> tester,
-            @NotNull final IMatchActionResult action)
+                                                                final ICapabilityProvider provider, @NotNull final Predicate<ItemStack> tester,
+                                                                @NotNull final IMatchActionResult action)
     {
         return matchFirstInProvider(provider, inv -> slot -> stack ->
         {
@@ -142,11 +148,13 @@ public class InventoryFunctions
      * (the given ItemStack) is found in the given slot.
      */
     @FunctionalInterface
-    public interface IMatchActionResult extends ObjIntConsumer<ICapabilityProvider> {
+    public interface IMatchActionResult extends ObjIntConsumer<ICapabilityProvider>
+    {
         /**
          * Method executed when a match has been found.
          *
-         * @param provider  The itemstack that matches the predicate for the search.
+         * @param provider  The itemstack that matches the predicate for the
+         *                  search.
          * @param slotIndex The slotindex in which this itemstack was found.
          */
         @Override

@@ -54,6 +54,20 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     }
 
     @Override
+    public void readFromNBT(final NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+    }
+
+    @NotNull
+    @Override
+    public NBTTagCompound writeToNBT(@NotNull final NBTTagCompound compound)
+    {
+        super.writeToNBT(compound);
+        return compound;
+    }
+
+    @Override
     public void update()
     {
         super.update();
@@ -267,26 +281,12 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     public boolean isInTileEntity(TileEntityChest entity, ItemStack is)
     {
         return is != null
-                && InventoryFunctions
-                .matchFirstInProviderWithAction(
+                 && InventoryFunctions
+                      .matchFirstInProviderWithAction(
                         entity,
                         stack -> !InventoryUtils.isItemStackEmpty(stack) && is.isItemEqual(stack),
                         InventoryFunctions::doNothing
                       );
-    }
-
-    @Override
-    public void readFromNBT(final NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
-    }
-
-    @NotNull
-    @Override
-    public NBTTagCompound writeToNBT(@NotNull final NBTTagCompound compound)
-    {
-        super.writeToNBT(compound);
-        return compound;
     }
 
     /**
@@ -349,8 +349,8 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         if (building != null)
         {
             if ((minLevel != -1
-                    && InventoryUtils.isPickaxeInProvider(building.getTileEntity(), minLevel, requestingBuilding.getBuildingLevel()))
-                    || InventoryUtils.isToolInProvider(building.getTileEntity(), tool, requestingBuilding.getBuildingLevel()))
+                   && InventoryUtils.isPickaxeInProvider(building.getTileEntity(), minLevel, requestingBuilding.getBuildingLevel()))
+                  || InventoryUtils.isToolInProvider(building.getTileEntity(), tool, requestingBuilding.getBuildingLevel()))
             {
                 return building.getLocation();
             }
@@ -359,7 +359,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             {
                 final TileEntity entity = world.getTileEntity(pos);
                 if (entity instanceof TileEntityChest && ((minLevel != -1 && InventoryUtils.isPickaxeInProvider(entity, minLevel, requestingBuilding.getBuildingLevel()))
-                        || InventoryUtils.isToolInProvider(entity, tool, requestingBuilding.getBuildingLevel())))
+                                                            || InventoryUtils.isToolInProvider(entity, tool, requestingBuilding.getBuildingLevel())))
                 {
                     return pos;
                 }
@@ -413,8 +413,8 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         {
             final TileEntity entity = world.getTileEntity(pos);
             if (entity instanceof TileEntityChest
-                    && InventoryUtils.findFirstSlotInProviderWith(entity, stack.getItem(), stack.getItemDamage()) != -1
-                    && InventoryUtils.getFirstOpenSlotFromProvider(entity) != -1)
+                  && InventoryUtils.findFirstSlotInProviderWith(entity, stack.getItem(), stack.getItemDamage()) != -1
+                  && InventoryUtils.getFirstOpenSlotFromProvider(entity) != -1)
             {
                 return (TileEntityChest) entity;
             }
@@ -437,8 +437,8 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         {
             final TileEntity entity = world.getTileEntity(pos);
             if (entity instanceof TileEntityChest
-                    && InventoryUtils.findFirstSlotInProviderWith(entity, stack.getItem(), -1) != -1
-                    && InventoryUtils.getFirstOpenSlotFromProvider(entity) != -1)
+                  && InventoryUtils.findFirstSlotInProviderWith(entity, stack.getItem(), -1) != -1
+                  && InventoryUtils.getFirstOpenSlotFromProvider(entity) != -1)
             {
                 return (TileEntityChest) entity;
             }

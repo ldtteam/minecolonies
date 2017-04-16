@@ -62,43 +62,12 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         setMaxStackSize(1);
     }
 
-    @NotNull
-    @Override
-    public EnumActionResult onItemUse(
-                                       final EntityPlayer playerIn,
-                                       final World worldIn,
-                                       final BlockPos pos,
-                                       final EnumHand hand,
-                                       final EnumFacing facing,
-                                       final float hitX,
-                                       final float hitY,
-                                       final float hitZ)
-    {
-        ItemStack stack = playerIn.getHeldItem(hand);
-        if (worldIn.isRemote || stack.getCount() == 0 || !isFirstPlacing(playerIn))
-        {
-            return EnumActionResult.FAIL;
-        }
-
-        @NotNull final EnumFacing enumfacing = canShipBePlaced(worldIn, pos);
-        if (enumfacing != EnumFacing.DOWN)
-        {
-            spawnShip(worldIn, pos, enumfacing);
-            stack.setCount(stack.getCount() - 1);
-
-            playerIn.addStat(ModAchievements.achievementGetSupply);
-
-            return EnumActionResult.SUCCESS;
-        }
-        LanguageHandler.sendPlayerMessage(playerIn, "item.supplyChestDeployer.invalid");
-        return EnumActionResult.FAIL;
-    }
-
     /**
      * Checks if the player already placed a supply chest.
      *
      * @param player the player.
-     * @return boolean, returns true when player hasn't placed before, or when infinite placing is on.
+     * @return boolean, returns true when player hasn't placed before, or when
+     * infinite placing is on.
      */
     private static boolean isFirstPlacing(@NotNull final EntityPlayer player)
     {
@@ -147,27 +116,15 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     }
 
     /**
-     * Spawns the ship and supply chest.
-     *
-     * @param world world obj.
-     * @param pos   coordinate clicked.
-     */
-    private void spawnShip(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final EnumFacing chestFacing)
-    {
-        world.setBlockState(pos.up(), Blocks.CHEST.getDefaultState().withProperty(BlockChest.FACING, chestFacing));
-
-        placeSupplyShip(world, pos, chestFacing);
-
-        fillChest((TileEntityChest) world.getTileEntity(pos.up()));
-    }
-
-    /**
      * Checks the area for the ship to be placed.
      *
      * @param world                  world obj.
      * @param pos                    coordinate clicked.
-     * @param shouldCheckX           boolean whether the x-sides should be checks.
-     * @param isCoordPositivelyAdded boolean whether the x or z side should be check on the positive side (true) or negative  side (false).
+     * @param shouldCheckX           boolean whether the x-sides should be
+     *                               checks.
+     * @param isCoordPositivelyAdded boolean whether the x or z side should be
+     *                               check on the positive side (true) or
+     *                               negative  side (false).
      * @return whether the space in the I shape is free or not.
      */
     private static boolean check(@NotNull final World world, @NotNull final BlockPos pos, final boolean shouldCheckX, final boolean isCoordPositivelyAdded)
@@ -184,27 +141,6 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         }
 
         return checkZ(world, pos, k, spaceRightK, spaceLeftK, widthK, isCoordPositivelyAdded);
-    }
-
-    private void placeSupplyShip(final World world, @NotNull final BlockPos pos, @NotNull final EnumFacing direction)
-    {
-        switch (direction)
-        {
-            case SOUTH:
-                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(-11, -2, 5), 3, Mirror.NONE);
-                break;
-            case NORTH:
-                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(-20, -2, -21), 1, Mirror.NONE);
-                break;
-            case EAST:
-                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(5, -2, -20), 2, Mirror.NONE);
-                break;
-            case WEST:
-                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(-21, -2, -11), 0, Mirror.NONE);
-                break;
-            default:
-                break;
-        }
     }
 
     /**
@@ -320,19 +256,88 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     private static boolean checkIfWaterAndNotInColony(final World world, final BlockPos pos1, final BlockPos pos2, final BlockPos pos3)
     {
         return BlockUtils.isWater(world.getBlockState(pos1)) && BlockUtils.isWater(world.getBlockState(pos2)) && BlockUtils.isWater(world.getBlockState(pos3))
-                && notInAnyColony(world, pos1, pos2, pos3);
+                 && notInAnyColony(world, pos1, pos2, pos3);
     }
 
     /**
      * Check if any of the coordinates is in any colony.
+     *
      * @param world the world to check in.
-     * @param pos1 the first position.
-     * @param pos2 the second position.
-     * @param pos3 the third position.
+     * @param pos1  the first position.
+     * @param pos2  the second position.
+     * @param pos3  the third position.
      * @return true if no colony found.
      */
     private static boolean notInAnyColony(final World world, final BlockPos pos1, final BlockPos pos2, final BlockPos pos3)
     {
-        return !ColonyManager.isCoordinateInAnyColony(world, pos1) && !ColonyManager.isCoordinateInAnyColony(world, pos2) && !ColonyManager.isCoordinateInAnyColony(world, pos3) ;
+        return !ColonyManager.isCoordinateInAnyColony(world, pos1) && !ColonyManager.isCoordinateInAnyColony(world, pos2) && !ColonyManager.isCoordinateInAnyColony(world, pos3);
+    }
+
+    @NotNull
+    @Override
+    public EnumActionResult onItemUse(
+                                       final EntityPlayer playerIn,
+                                       final World worldIn,
+                                       final BlockPos pos,
+                                       final EnumHand hand,
+                                       final EnumFacing facing,
+                                       final float hitX,
+                                       final float hitY,
+                                       final float hitZ)
+    {
+        ItemStack stack = playerIn.getHeldItem(hand);
+        if (worldIn.isRemote || stack.getCount() == 0 || !isFirstPlacing(playerIn))
+        {
+            return EnumActionResult.FAIL;
+        }
+
+        @NotNull final EnumFacing enumfacing = canShipBePlaced(worldIn, pos);
+        if (enumfacing != EnumFacing.DOWN)
+        {
+            spawnShip(worldIn, pos, enumfacing);
+            stack.setCount(stack.getCount() - 1);
+
+            playerIn.addStat(ModAchievements.achievementGetSupply);
+
+            return EnumActionResult.SUCCESS;
+        }
+        LanguageHandler.sendPlayerMessage(playerIn, "item.supplyChestDeployer.invalid");
+        return EnumActionResult.FAIL;
+    }
+
+    /**
+     * Spawns the ship and supply chest.
+     *
+     * @param world world obj.
+     * @param pos   coordinate clicked.
+     */
+    private void spawnShip(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final EnumFacing chestFacing)
+    {
+        world.setBlockState(pos.up(), Blocks.CHEST.getDefaultState().withProperty(BlockChest.FACING, chestFacing));
+
+        placeSupplyShip(world, pos, chestFacing);
+
+        fillChest((TileEntityChest) world.getTileEntity(pos.up()));
+    }
+
+    private void placeSupplyShip(final World world, @NotNull final BlockPos pos, @NotNull final EnumFacing direction)
+    {
+        switch (direction)
+        {
+            case SOUTH:
+                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(-11, -2, 5), 3, Mirror.NONE);
+                break;
+            case NORTH:
+                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(-20, -2, -21), 1, Mirror.NONE);
+                break;
+            case EAST:
+                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(5, -2, -20), 2, Mirror.NONE);
+                break;
+            case WEST:
+                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(-21, -2, -11), 0, Mirror.NONE);
+                break;
+            default:
+                break;
+        }
     }
 }

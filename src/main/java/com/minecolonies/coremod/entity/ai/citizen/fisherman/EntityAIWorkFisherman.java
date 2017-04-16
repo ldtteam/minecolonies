@@ -120,13 +120,13 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     /**
      * Chance to play a specific fisherman sound.
      */
-    private static final int CHANCE_TO_PLAY_SOUND = 20;
+    private static final int    CHANCE_TO_PLAY_SOUND = 20;
     @NotNull
-    private final Random random = new Random();
+    private final        Random random               = new Random();
     /**
      * The number of executed adjusts of the fisherman's rotation.
      */
-    private int executedRotations = 0;
+    private              int    executedRotations    = 0;
     /**
      * The PathResult when the fisherman searches water.
      */

@@ -217,7 +217,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         registerButton(BUTTON_ROTATE_RIGHT, this::rotateRightClicked);
         registerButton(BUTTON_ROTATE_LEFT, this::rotateLeftClicked);
         registerButton(BUTTON_MIRROR, WindowBuildTool::mirror);
-
     }
 
     /**
@@ -246,6 +245,14 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     private static void moveDownClicked()
     {
         Settings.instance.moveTo(new BlockPos(0, -1, 0));
+    }
+
+    /**
+     * Rotate the structure counter clockwise.
+     */
+    private static void mirror()
+    {
+        Settings.instance.mirror();
     }
 
     /**
@@ -374,6 +381,10 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         }
     }
 
+    /*
+     * ---------------- Button Handling -----------------
+     */
+
     /**
      * Change to the next hut/decoration.
      */
@@ -392,10 +403,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
         changeSchematic();
     }
-
-    /*
-     * ---------------- Button Handling -----------------
-     */
 
     /**
      * Get all styles from the folders.
@@ -621,13 +628,5 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     {
         rotation = (rotation + ROTATE_LEFT) % POSSIBLE_ROTATIONS;
         updateRotation(rotation);
-    }
-
-    /**
-     * Rotate the structure counter clockwise.
-     */
-    private static void mirror()
-    {
-        Settings.instance.mirror();
     }
 }

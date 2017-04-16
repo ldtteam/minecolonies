@@ -76,7 +76,8 @@ public final class BlockUtils
     /**
      * Get the filler block at a certain location.
      * If block follows gravity laws return dirt.
-     * @param world the world the block is in.
+     *
+     * @param world    the world the block is in.
      * @param location the location it is at.
      * @return the IBlockState of the filler block.
      */
@@ -362,8 +363,9 @@ public final class BlockUtils
     }
 
     /**
-     * Get the damage value from a block and blockState, where the block is the placeable and obtainable block.
-     * The blockstate might differ from the block.
+     * Get the damage value from a block and blockState, where the block is the
+     * placeable and obtainable block. The blockstate might differ from the
+     * block.
      *
      * @param block      the block.
      * @param blockState the state.

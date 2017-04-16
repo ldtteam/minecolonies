@@ -14,6 +14,5 @@ public class Constants
     public static final String SERVER_PROXY_LOCATION = "com.minecolonies.coremod.proxy.ServerProxy";
     public static final String CONFIG_GUI_LOCATION   = "com.minecolonies.coremod.client.gui.GuiFactory";
     public static final String PLAYER_PROPERTY_NAME  = MOD_ID + ".PlayerProperties";
-    public static final int    YELLOW = 4;
-
+    public static final int    YELLOW                = 4;
 }

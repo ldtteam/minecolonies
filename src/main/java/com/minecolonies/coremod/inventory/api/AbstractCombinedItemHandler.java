@@ -20,18 +20,19 @@ import java.util.Arrays;
  * Abstract class wrapping around multiple IItemHandler.
  */
 public abstract class AbstractCombinedItemHandler
-        implements IItemHandlerModifiable, INBTSerializable<NBTTagCompound>, IWorldNameableModifiable {
+  implements IItemHandlerModifiable, INBTSerializable<NBTTagCompound>, IWorldNameableModifiable
+{
 
     ///NBT Constants
-    private static final String NBT_KEY_HANDLERS = "Handlers";
+    private static final String NBT_KEY_HANDLERS           = "Handlers";
     private static final String NBT_KEY_HANDLERS_INDEXLIST = "Index";
-    private static final String NBT_KEY_NAME = "Name";
+    private static final String NBT_KEY_NAME               = "Name";
 
     private final IItemHandlerModifiable[] handlers;
     @NotNull
-    private final String defaultName;
+    private final String                   defaultName;
     @Nullable
-    private String customName;
+    private       String                   customName;
 
     /**
      * Method to create a new {@link AbstractCombinedItemHandler}.
@@ -39,7 +40,8 @@ public abstract class AbstractCombinedItemHandler
      * @param defaultName The default name of this {@link AbstractCombinedItemHandler}.
      * @param handlers    The combining {@link IItemHandlerModifiable}.
      */
-    protected AbstractCombinedItemHandler(@NotNull final String defaultName, @NotNull final IItemHandlerModifiable... handlers) {
+    protected AbstractCombinedItemHandler(@NotNull final String defaultName, @NotNull final IItemHandlerModifiable... handlers)
+    {
         this.handlers = handlers;
         this.defaultName = defaultName;
     }
@@ -53,21 +55,25 @@ public abstract class AbstractCombinedItemHandler
      *                    AbstractCombinedItemHandler}.
      * @param handlers    The combinging {@link IItemHandlerModifiable}.
      */
-    protected AbstractCombinedItemHandler(@NotNull final String defaultName, @NotNull final String customName, @NotNull final IItemHandlerModifiable... handlers) {
+    protected AbstractCombinedItemHandler(@NotNull final String defaultName, @NotNull final String customName, @NotNull final IItemHandlerModifiable... handlers)
+    {
         this.handlers = handlers;
         this.customName = customName;
         this.defaultName = defaultName;
     }
 
     @Override
-    public NBTTagCompound serializeNBT() {
+    public NBTTagCompound serializeNBT()
+    {
         final NBTTagCompound compound = new NBTTagCompound();
 
         int index = 0;
         final NBTTagList handlerList = new NBTTagList();
         final NBTTagList indexList = new NBTTagList();
-        for (final IItemHandlerModifiable handlerModifiable : handlers) {
-            if (handlerModifiable instanceof INBTSerializable) {
+        for (final IItemHandlerModifiable handlerModifiable : handlers)
+        {
+            if (handlerModifiable instanceof INBTSerializable)
+            {
                 final INBTSerializable serializable = (INBTSerializable) handlerModifiable;
                 handlerList.appendTag(serializable.serializeNBT());
                 indexList.appendTag(new NBTTagInt(index));
@@ -78,7 +84,8 @@ public abstract class AbstractCombinedItemHandler
 
         compound.setTag(NBT_KEY_HANDLERS, handlerList);
 
-        if (hasCustomName()) {
+        if (hasCustomName())
+        {
             compound.setString(NBT_KEY_NAME, customName);
         }
 
@@ -86,15 +93,19 @@ public abstract class AbstractCombinedItemHandler
     }
 
     @Override
-    public void deserializeNBT(final NBTTagCompound nbt) {
+    public void deserializeNBT(final NBTTagCompound nbt)
+    {
         final NBTTagList handlerList = nbt.getTagList(NBT_KEY_NAME, Constants.NBT.TAG_COMPOUND);
         final NBTTagList indexList = nbt.getTagList(NBT_KEY_HANDLERS_INDEXLIST, Constants.NBT.TAG_INT);
 
-        if (handlerList.tagCount() == handlers.length) {
-            for (int i = 0; i < handlerList.tagCount(); i++) {
+        if (handlerList.tagCount() == handlers.length)
+        {
+            for (int i = 0; i < handlerList.tagCount(); i++)
+            {
                 final NBTTagCompound handlerCompound = handlerList.getCompoundTagAt(i);
                 final IItemHandlerModifiable modifiable = handlers[indexList.getIntAt(i)];
-                if (modifiable instanceof INBTSerializable) {
+                if (modifiable instanceof INBTSerializable)
+                {
                     final INBTSerializable serializable = (INBTSerializable) modifiable;
                     serializable.deserializeNBT(handlerCompound);
                 }
@@ -112,16 +123,18 @@ public abstract class AbstractCombinedItemHandler
      *
      * @param slot  Slot to modify
      * @param stack ItemStack to set slot to (may be null)
-     *
      * @throws RuntimeException if the handler is called in a way that the
      *                          handler was not expecting.
      **/
     @Override
-    public void setStackInSlot(int slot, final ItemStack stack) {
+    public void setStackInSlot(int slot, final ItemStack stack)
+    {
         int activeSlot = slot;
 
-        for (final IItemHandlerModifiable modifiable : handlers) {
-            if (activeSlot < modifiable.getSlots()) {
+        for (final IItemHandlerModifiable modifiable : handlers)
+        {
+            if (activeSlot < modifiable.getSlots())
+            {
                 modifiable.setStackInSlot(activeSlot, stack);
                 return;
             }
@@ -131,21 +144,23 @@ public abstract class AbstractCombinedItemHandler
     }
 
     /**
-     * Get the name of this object. For players this returns their username.
-     */
-    @Override
-    public String getName() {
-        return hasCustomName() ? customName : defaultName;
-    }
-
-    /**
      * Returns the number of slots available.
      *
      * @return The number of slots available
      **/
     @Override
-    public int getSlots() {
+    public int getSlots()
+    {
         return Arrays.stream(handlers).mapToInt(IItemHandler::getSlots).sum();
+    }
+
+    /**
+     * Get the name of this object. For players this returns their username.
+     */
+    @Override
+    public String getName()
+    {
+        return hasCustomName() ? customName : defaultName;
     }
 
     /**
@@ -164,15 +179,17 @@ public abstract class AbstractCombinedItemHandler
      * SERIOUSLY: DO NOT MODIFY THE RETURNED ITEMSTACK
      *
      * @param slot Slot to query
-     *
      * @return ItemStack in given slot. May be null.
      **/
     @Override
-    public ItemStack getStackInSlot(int slot) {
+    public ItemStack getStackInSlot(int slot)
+    {
         int activeSlot = slot;
 
-        for (final IItemHandlerModifiable modifiable : handlers) {
-            if (slot < modifiable.getSlots()) {
+        for (final IItemHandlerModifiable modifiable : handlers)
+        {
+            if (slot < modifiable.getSlots())
+            {
                 return modifiable.getStackInSlot(activeSlot);
             }
 
@@ -190,17 +207,19 @@ public abstract class AbstractCombinedItemHandler
      * @param slot     Slot to insert into.
      * @param stack    ItemStack to insert.
      * @param simulate If true, the insertion is only simulated
-     *
      * @return The remaining ItemStack that was not inserted (if the entire
      * stack is accepted, then return null). May be the same as the input
      * ItemStack if unchanged, otherwise a new ItemStack.
      **/
     @Override
-    public ItemStack insertItem(int slot, final ItemStack stack, final boolean simulate) {
+    public ItemStack insertItem(int slot, final ItemStack stack, final boolean simulate)
+    {
         int activeSlot = slot;
 
-        for (final IItemHandlerModifiable modifiable : handlers) {
-            if (activeSlot < modifiable.getSlots()) {
+        for (final IItemHandlerModifiable modifiable : handlers)
+        {
+            if (activeSlot < modifiable.getSlots())
+            {
                 return modifiable.insertItem(activeSlot, stack, simulate);
             }
 
@@ -208,17 +227,6 @@ public abstract class AbstractCombinedItemHandler
         }
 
         return stack;
-    }
-
-    /**
-     * Method to set the name of this {@link IWorldNameable}.
-     *
-     * @param name The new name of this {@link IWorldNameable}, or null to reset
-     *             it to its default.
-     */
-    @Override
-    public void setName(@Nullable final String name) {
-        this.customName = name;
     }
 
     /**
@@ -230,16 +238,18 @@ public abstract class AbstractCombinedItemHandler
      * @param amount   Amount to extract (may be greater than the current stacks
      *                 max limit)
      * @param simulate If true, the extraction is only simulated
-     *
      * @return ItemStack extracted from the slot, must be null, if nothing can
      * be extracted
      **/
     @Override
-    public ItemStack extractItem(int slot, final int amount, final boolean simulate) {
+    public ItemStack extractItem(int slot, final int amount, final boolean simulate)
+    {
         int activeSlot = slot;
 
-        for (final IItemHandlerModifiable modifiable : handlers) {
-            if (activeSlot < modifiable.getSlots()) {
+        for (final IItemHandlerModifiable modifiable : handlers)
+        {
+            if (activeSlot < modifiable.getSlots())
+            {
                 return modifiable.extractItem(slot, amount, simulate);
             }
 
@@ -249,15 +259,29 @@ public abstract class AbstractCombinedItemHandler
         return null;
     }
 
-    protected IItemHandlerModifiable[] getHandlers() {
+    protected IItemHandlerModifiable[] getHandlers()
+    {
         return handlers;
+    }
+
+    /**
+     * Method to set the name of this {@link IWorldNameable}.
+     *
+     * @param name The new name of this {@link IWorldNameable}, or null to reset
+     *             it to its default.
+     */
+    @Override
+    public void setName(@Nullable final String name)
+    {
+        this.customName = name;
     }
 
     /**
      * Returns true if this thing is named.
      */
     @Override
-    public boolean hasCustomName() {
+    public boolean hasCustomName()
+    {
         return customName != null;
     }
 
@@ -266,7 +290,8 @@ public abstract class AbstractCombinedItemHandler
      * username in chat.
      */
     @Override
-    public ITextComponent getDisplayName() {
+    public ITextComponent getDisplayName()
+    {
         return new TextComponentString(getName());
     }
 }

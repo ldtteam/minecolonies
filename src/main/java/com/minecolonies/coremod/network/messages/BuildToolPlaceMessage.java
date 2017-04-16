@@ -146,7 +146,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
      */
     private static void handleHut(
                                    @NotNull final World world, @NotNull final EntityPlayer player, final String hut,
-                                            final String style, final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
+                                   final String style, final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
     {
         if (Structures.getStylesForHut(hut) == null)
         {
@@ -196,7 +196,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
                     }
                     building.setStyle(style);
                     building.setRotation(rotation);
-                    if(mirror)
+                    if (mirror)
                     {
                         building.setMirror();
                     }
@@ -221,7 +221,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
      */
     private static void handleDecoration(
                                           @NotNull final World world, @NotNull final EntityPlayer player, final String decoration,
-                                                   final String style, final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
+                                          final String style, final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
     {
         if (Structures.getStylesForDecoration(decoration) == null)
         {

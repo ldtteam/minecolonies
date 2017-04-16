@@ -107,7 +107,7 @@ public class Structure
                 {
                     decorationFolder = new File(FMLCommonHandler.instance().getMinecraftServerInstance().getDataDirectory(), "minecolonies/");
                 }
-                if(decorationFolder.exists())
+                if (decorationFolder.exists())
                 {
                     inputstream = new FileInputStream(decorationFolder.getPath() + "/" + structureName + ".nbt");
                 }
@@ -227,12 +227,12 @@ public class Structure
             Block block = aBlockList.blockState.getBlock();
             IBlockState iblockstate = aBlockList.blockState;
 
-            if(block == ModBlocks.blockSubstitution)
+            if (block == ModBlocks.blockSubstitution)
             {
                 continue;
             }
 
-            if(block == ModBlocks.blockSolidSubstitution)
+            if (block == ModBlocks.blockSolidSubstitution)
             {
                 iblockstate = BlockUtils.getSubstitutionBlockAtWorld(clientWorld, startingPos);
                 block = iblockstate.getBlock();

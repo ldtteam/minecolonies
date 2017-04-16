@@ -66,12 +66,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         worker.setCanPickUpLoot(true);
     }
 
-    @Override
-    public IBlockState getSolidSubstitution(@NotNull final BlockPos location)
-    {
-        return BlockUtils.getSubstitutionBlockAtWorld(world, location);
-    }
-
     private boolean checkIfExecute()
     {
         setDelay(1);
@@ -116,8 +110,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             if (wo instanceof WorkOrderBuildDecoration)
             {
                 LanguageHandler.sendPlayersMessage(worker.getColony().getMessageEntityPlayers(),
-                        "entity.builder.messageBuildStart",
-                        job.getStructure().getName());
+                  "entity.builder.messageBuildStart",
+                  job.getStructure().getName());
             }
             else
             {
@@ -131,8 +125,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 }
 
                 LanguageHandler.sendPlayersMessage(worker.getColony().getMessageEntityPlayers(),
-                        "entity.builder.messageBuildStart",
-                        job.getStructure().getName());
+                  "entity.builder.messageBuildStart",
+                  job.getStructure().getName());
 
                 //Don't go through the CLEAR stage for repairs and upgrades
                 if (building.getBuildingLevel() > 0)
@@ -140,30 +134,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                     wo.setCleared(true);
                 }
             }
-        }
-    }
-
-    @Override
-    protected boolean checkIfCanceled()
-    {
-        if (job.getWorkOrder() == null)
-        {
-            super.resetTask();
-            workFrom = null;
-            job.setStructure(null);
-            job.setWorkOrder(null);
-            resetCurrentStructure();
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    protected void onStartWithoutStructure()
-    {
-        if(job.getWorkOrder() != null)
-        {
-            loadStructure();
         }
     }
 
@@ -192,6 +162,35 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         return resource == null ? stack : new ItemStack(resource.getItem(), resource.getAmount(), resource.getDamageValue());
     }
 
+    @Override
+    public IBlockState getSolidSubstitution(@NotNull final BlockPos location)
+    {
+        return BlockUtils.getSubstitutionBlockAtWorld(world, location);
+    }
+
+    @Override
+    protected boolean checkIfCanceled()
+    {
+        if (job.getWorkOrder() == null)
+        {
+            super.resetTask();
+            workFrom = null;
+            job.setStructure(null);
+            job.setWorkOrder(null);
+            resetCurrentStructure();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected void onStartWithoutStructure()
+    {
+        if (job.getWorkOrder() != null)
+        {
+            loadStructure();
+        }
+    }
 
     /**
      * Calculates after how many actions the ai should dump it's inventory.

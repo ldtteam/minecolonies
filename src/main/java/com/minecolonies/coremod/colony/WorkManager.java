@@ -70,7 +70,7 @@ public class WorkManager
         colony.removeWorkOrder(orderId);
         if (workOrder instanceof WorkOrderBuild)
         {
-            final WorkOrderBuild wob = (WorkOrderBuild)workOrder;
+            final WorkOrderBuild wob = (WorkOrderBuild) workOrder;
             final AbstractBuilding building = colony.getBuilding(wob.getBuildingLocation());
             ConstructionTapeHelper.removeConstructionTape(wob, colony.getWorld());
             if (building != null)
@@ -86,7 +86,8 @@ public class WorkManager
      * @param id   the id of the work order.
      * @param type the class of the expected type of the work order.
      * @param <W>  the type of work order to return.
-     * @return the work order of the specified id, or null if it was not found or is of an incompatible type.
+     * @return the work order of the specified id, or null if it was not found
+     * or is of an incompatible type.
      */
     @Nullable
     public <W extends AbstractWorkOrder> W getWorkOrder(final int id, @NotNull final Class<W> type)
@@ -119,7 +120,8 @@ public class WorkManager
      *
      * @param type the class of the type of work order to find.
      * @param <W>  the type of work order to return.
-     * @return an unclaimed work order of the given type, or null if no unclaimed work order of the type was found.
+     * @return an unclaimed work order of the given type, or null if no
+     * unclaimed work order of the type was found.
      */
     @Nullable
     public <W extends AbstractWorkOrder> W getUnassignedWorkOrder(@NotNull final Class<W> type)
@@ -159,7 +161,8 @@ public class WorkManager
     }
 
     /**
-     * When a citizen is removed, unclaim any Work Orders that were claimed by that citizen.
+     * When a citizen is removed, unclaim any Work Orders that were claimed by
+     * that citizen.
      *
      * @param citizen Citizen to unclaim work for.
      */

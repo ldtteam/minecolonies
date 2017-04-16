@@ -22,7 +22,6 @@ public final class TeleportToColony
     private static final String CANT_FIND_PLAYER = "No player found for teleport, please define one.";
     private static final String NO_TOWNHALL      = "Target colony has no town hall, can't teleport.";
 
-
     /**
      * Private constructor to hide the implicit public one.
      */
@@ -34,8 +33,8 @@ public final class TeleportToColony
     }
 
     /**
-     * colonyTeleport is used with Home and Colony to teleport people to either there home.
-     * or to another colony, when you specified a colonyID.
+     * colonyTeleport is used with Home and Colony to teleport people to either
+     * there home. or to another colony, when you specified a colonyID.
      *
      * @param server the server instance.
      * @param sender the player that is initiating the command.
@@ -72,13 +71,12 @@ public final class TeleportToColony
             return;
         }
 
-        if(MinecoloniesCommand.canExecuteCommand((EntityPlayer) sender))
+        if (MinecoloniesCommand.canExecuteCommand((EntityPlayer) sender))
         {
             teleportPlayer(playerToTeleport, colonyId, sender);
             return;
         }
         sender.getCommandSenderEntity().sendMessage(new TextComponentString("Please wait at least " + Configurations.teleportBuffer + " seconds to teleport again"));
-
     }
 
     /**
@@ -92,7 +90,7 @@ public final class TeleportToColony
         final Colony colony = ColonyManager.getColony(colID);
         final BuildingTownHall townHall = colony.getTownHall();
 
-        if(townHall == null)
+        if (townHall == null)
         {
             sender.getCommandSenderEntity().sendMessage(new TextComponentString(NO_TOWNHALL));
             return;

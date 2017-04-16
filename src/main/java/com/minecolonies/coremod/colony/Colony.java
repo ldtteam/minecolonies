@@ -41,7 +41,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * This class describes a colony and contains all the data and methods for manipulating a Colony.
+ * This class describes a colony and contains all the data and methods for
+ * manipulating a Colony.
  */
 public class Colony implements IColony
 {
@@ -66,38 +67,27 @@ public class Colony implements IColony
     private static final String TAG_STATISTICS            = "statistics";
     private static final String TAG_MINER_STATISTICS      = "minerStatistics";
     private static final String TAG_MINER_ORES            = "ores";
-    private              int    minedOres                 = 0;
     private static final String TAG_MINER_DIAMONDS        = "diamonds";
-    private              int    minedDiamonds             = 0;
     private static final String TAG_FARMER_STATISTICS     = "farmerStatistics";
     private static final String TAG_FARMER_WHEAT          = "wheat";
-    private              int    harvestedWheat            = 0;
     private static final String TAG_FARMER_POTATOES       = "potatoes";
-    private              int    harvestedPotatoes         = 0;
     private static final String TAG_FARMER_CARROTS        = "carrots";
-    private              int    harvestedCarrots          = 0;
-    private static final String TAG_GUARD_STATISTICS      = "guardStatistics";
-    private static final String TAG_GUARD_MOBS            = "mobs";
-    private              int    killedMobs                = 0;
-    private static final String TAG_BUILDER_STATISTICS    = "builderStatistics";
-    private static final String TAG_BUILDER_HUTS          = "huts";
-    private              int    builtHuts                 = 0;
-    private static final String TAG_FISHERMAN_STATISTICS  = "fishermanStatistics";
-    private static final String TAG_FISHERMAN_FISH        = "fish";
-    private              int    caughtFish                = 0;
-    private static final String TAG_LUMBERJACK_STATISTICS = "lumberjackStatistics";
-    private static final String TAG_LUMBERJACK_TREES      = "trees";
-    private              int    felledTrees               = 0;
-    private static final String TAG_LUMBERJACK_SAPLINGS   = "saplings";
-    private              int    plantedSaplings           = 0;
-    private static final int    NUM_ACHIEVEMENT_FIRST     = 1;
-    private static final int    NUM_ACHIEVEMENT_SECOND    = 25;
-    private static final int    NUM_ACHIEVEMENT_THIRD     = 100;
-    private static final int    NUM_ACHIEVEMENT_FOURTH    = 500;
-    private static final int    NUM_ACHIEVEMENT_FIFTH     = 1000;
-
+    private static final String TAG_GUARD_STATISTICS              = "guardStatistics";
+    private static final String TAG_GUARD_MOBS                    = "mobs";
+    private static final String TAG_BUILDER_STATISTICS            = "builderStatistics";
+    private static final String TAG_BUILDER_HUTS                  = "huts";
+    private static final String TAG_FISHERMAN_STATISTICS          = "fishermanStatistics";
+    private static final String TAG_FISHERMAN_FISH                = "fish";
+    private static final String TAG_LUMBERJACK_STATISTICS         = "lumberjackStatistics";
+    private static final String TAG_LUMBERJACK_TREES              = "trees";
+    private static final String TAG_LUMBERJACK_SAPLINGS           = "saplings";
+    private static final int    NUM_ACHIEVEMENT_FIRST             = 1;
+    private static final int    NUM_ACHIEVEMENT_SECOND            = 25;
+    private static final int    NUM_ACHIEVEMENT_THIRD             = 100;
+    private static final int    NUM_ACHIEVEMENT_FOURTH            = 500;
+    private static final int    NUM_ACHIEVEMENT_FIFTH             = 1000;
     //private int autoHostile = 0;//Off
-    private static final String TAG_FIELDS                  = "fields";
+    private static final String TAG_FIELDS                        = "fields";
     private static final int    CHECK_WAYPOINT_EVERY              = 100;
     private static final double MAX_SQ_DIST_SUBSCRIBER_UPDATE     = MathUtils.square(Configurations.workingRangeTownHall + 16D);
     private static final double MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE = MathUtils.square(Configurations.workingRangeTownHall * 2D);
@@ -108,28 +98,45 @@ public class Colony implements IColony
     private final Map<BlockPos, Field>       fields    = new HashMap<>();
     //Additional Waypoints.
     private final Map<BlockPos, IBlockState> wayPoints = new HashMap<>();
-
     @NotNull
     private final List<Achievement> colonyAchievements;
     //  Workload and Jobs
-    private final WorkManager                     workManager      = new WorkManager(this);
+    private final WorkManager                     workManager       = new WorkManager(this);
     @NotNull
-    private final Map<BlockPos, AbstractBuilding> buildings        = new HashMap<>();
+    private final Map<BlockPos, AbstractBuilding> buildings         = new HashMap<>();
     //  Citizenry
     @NotNull
-    private final Map<Integer, CitizenData>       citizens         = new HashMap<>();
+    private final Map<Integer, CitizenData>       citizens          = new HashMap<>();
+    /**
+     * The Positions which players can freely interact.
+     */
+    private final Set<BlockPos>                   freePositions     = new HashSet<>();
+    /**
+     * The Blocks which players can freely interact with.
+     */
+    private final Set<Block>                      freeBlocks        = new HashSet<>();
+    private       int                             minedOres         = 0;
+    private       int                             minedDiamonds     = 0;
+    private       int                             harvestedWheat    = 0;
+    private       int                             harvestedPotatoes = 0;
+    private       int                             harvestedCarrots  = 0;
+    private       int                             killedMobs        = 0;
+    private       int                             builtHuts         = 0;
+    private       int                             caughtFish        = 0;
+    private       int                             felledTrees       = 0;
+    private       int                             plantedSaplings   = 0;
     //  Runtime Data
     @Nullable
-    private       World                           world            = null;
+    private       World                           world             = null;
     //  Updates and Subscriptions
     @NotNull
-    private       Set<EntityPlayerMP>             subscribers      = new HashSet<>();
-    private       boolean                         isDirty          = false;
-    private       boolean                         isCitizensDirty  = false;
-    private       boolean                         isBuildingsDirty = false;
-    private       boolean                         manualHiring     = false;
-    private       boolean                         isFieldsDirty    = false;
-    private       String                          name             = "ERROR(Wasn't placed by player)";
+    private       Set<EntityPlayerMP>             subscribers       = new HashSet<>();
+    private       boolean                         isDirty           = false;
+    private       boolean                         isCitizensDirty   = false;
+    private       boolean                         isBuildingsDirty  = false;
+    private       boolean                         manualHiring      = false;
+    private       boolean                         isFieldsDirty     = false;
+    private       String                          name              = "ERROR(Wasn't placed by player)";
     private BlockPos         center;
     //  Administration/permissions
     @NotNull
@@ -138,16 +145,6 @@ public class Colony implements IColony
     private BuildingTownHall townHall;
     private int topCitizenId = 0;
     private int maxCitizens  = Configurations.maxCitizens;
-
-    /**
-     * The Positions which players can freely interact.
-     */
-    private final Set<BlockPos> freePositions = new HashSet<>();
-
-    /**
-     * The Blocks which players can freely interact with.
-     */
-    private final Set<Block> freeBlocks = new HashSet<>();
 
     /**
      * Constructor for a newly created Colony.
@@ -180,13 +177,13 @@ public class Colony implements IColony
         // Register a new event handler
         MinecraftForge.EVENT_BUS.register(new ColonyPermissionEventHandler(this));
 
-        for(final String s: Configurations.freeToInteractBlocks)
+        for (final String s : Configurations.freeToInteractBlocks)
         {
             final Block block = Block.getBlockFromName(s);
-            if(block == null)
+            if (block == null)
             {
                 final BlockPos pos = BlockPosUtil.getBlockPosOfString(s);
-                if(pos != null)
+                if (pos != null)
                 {
                     freePositions.add(pos);
                 }
@@ -466,7 +463,7 @@ public class Colony implements IColony
 
         // Free positions
         @NotNull final NBTTagList freePositionsTagList = new NBTTagList();
-        for (@NotNull final BlockPos pos: freePositions)
+        for (@NotNull final BlockPos pos : freePositions)
         {
             @NotNull final NBTTagCompound wayPointCompound = new NBTTagCompound();
             BlockPosUtil.writeToNBT(wayPointCompound, TAG_FREE_POSITIONS, pos);
@@ -486,49 +483,34 @@ public class Colony implements IColony
     }
 
     /**
-     * Sets the name of the colony.
-     * Marks dirty.
+     * Increment the statistic amount and trigger achievement.
      *
-     * @param n new name.
+     * @param statistic the statistic.
      */
-    public void setName(final String n)
+    public void incrementStatistic(@NotNull String statistic)
     {
-        name = n;
-        markDirty();
-    }
-
-    /**
-     * Returns the world the colony is in.
-     *
-     * @return World the colony is in.
-     */
-    @Nullable
-    public World getWorld()
-    {
-        return world;
-    }
-
-    @Override
-    public long getDistanceSquared(@NotNull final BlockPos pos)
-    {
-        return BlockPosUtil.getDistanceSquared2D(center, pos);
-    }
-
-    @Override
-    public boolean hasTownHall()
-    {
-        return townHall != null;
-    }
-
-    /**
-     * Returns the ID of the colony.
-     *
-     * @return Colony ID.
-     */
-    @Override
-    public int getID()
-    {
-        return id;
+        final int statisticAmount = this.getStatisticAmount(statistic);
+        incrementStatisticAmount(statistic);
+        if (statisticAmount >= NUM_ACHIEVEMENT_FIRST)
+        {
+            TriggerColonyAchievements.triggerFirstAchievement(statistic, this);
+        }
+        if (statisticAmount >= NUM_ACHIEVEMENT_SECOND)
+        {
+            TriggerColonyAchievements.triggerSecondAchievement(statistic, this);
+        }
+        if (statisticAmount >= NUM_ACHIEVEMENT_THIRD)
+        {
+            TriggerColonyAchievements.triggerThirdAchievement(statistic, this);
+        }
+        if (statisticAmount >= NUM_ACHIEVEMENT_FOURTH)
+        {
+            TriggerColonyAchievements.triggerFourthAchievement(statistic, this);
+        }
+        if (statisticAmount >= NUM_ACHIEVEMENT_FIFTH)
+        {
+            TriggerColonyAchievements.triggerFifthAchievement(statistic, this);
+        }
     }
 
     /**
@@ -568,6 +550,7 @@ public class Colony implements IColony
 
     /**
      * increment statistic amount.
+     *
      * @param statistic the statistic.
      */
     private void incrementStatisticAmount(@NotNull String statistic)
@@ -607,56 +590,6 @@ public class Colony implements IColony
             default:
                 break;
         }
-    }
-
-
-    /**
-     * Increment the statistic amount and trigger achievement.
-     * @param statistic the statistic.
-     */
-    public void incrementStatistic(@NotNull String statistic)
-    {
-        final int statisticAmount = this.getStatisticAmount(statistic);
-        incrementStatisticAmount(statistic);
-        if (statisticAmount >= NUM_ACHIEVEMENT_FIRST)
-        {
-            TriggerColonyAchievements.triggerFirstAchievement(statistic, this);
-        }
-        if (statisticAmount >= NUM_ACHIEVEMENT_SECOND)
-        {
-            TriggerColonyAchievements.triggerSecondAchievement(statistic, this);
-        }
-        if (statisticAmount >= NUM_ACHIEVEMENT_THIRD)
-        {
-            TriggerColonyAchievements.triggerThirdAchievement(statistic, this);
-        }
-        if (statisticAmount >= NUM_ACHIEVEMENT_FOURTH)
-        {
-            TriggerColonyAchievements.triggerFourthAchievement(statistic, this);
-        }
-        if (statisticAmount >= NUM_ACHIEVEMENT_FIFTH)
-        {
-            TriggerColonyAchievements.triggerFifthAchievement(statistic, this);
-        }
-    }
-
-    /**
-     * Triggers an achievement on this colony.
-     * <p>
-     * Will automatically sync to all players.
-     *
-     * @param achievement The achievement to trigger
-     */
-    public void triggerAchievement(@NotNull final Achievement achievement)
-    {
-        if (this.colonyAchievements.contains(achievement))
-        {
-            return;
-        }
-
-        this.colonyAchievements.add(achievement);
-
-        AchievementUtils.syncAchievements(this);
     }
 
     /**
@@ -894,6 +827,7 @@ public class Colony implements IColony
 
     /**
      * Sends packages to update the fields.
+     *
      * @param hasNewSubscribers the new subscribers.
      */
     private void sendFieldPackets(final boolean hasNewSubscribers)
@@ -911,7 +845,19 @@ public class Colony implements IColony
     }
 
     /**
+     * Get the Work Manager for the Colony.
+     *
+     * @return WorkManager for the Colony.
+     */
+    @NotNull
+    public WorkManager getWorkManager()
+    {
+        return workManager;
+    }
+
+    /**
      * Get a copy of the freePositions list.
+     *
      * @return the list of free to interact positions.
      */
     public Set<BlockPos> getFreePositions()
@@ -921,6 +867,7 @@ public class Colony implements IColony
 
     /**
      * Get a copy of the freeBlocks list.
+     *
      * @return the list of free to interact blocks.
      */
     public Set<Block> getFreeBlocks()
@@ -930,6 +877,7 @@ public class Colony implements IColony
 
     /**
      * Add a new free to interact position.
+     *
      * @param pos position to add.
      */
     public void addFreePosition(@NotNull final BlockPos pos)
@@ -940,6 +888,7 @@ public class Colony implements IColony
 
     /**
      * Add a new free to interact block.
+     *
      * @param block block to add.
      */
     public void addFreeBlock(@NotNull final Block block)
@@ -950,6 +899,7 @@ public class Colony implements IColony
 
     /**
      * Remove a free to interact position.
+     *
      * @param pos position to remove.
      */
     public void removeFreePosition(@NotNull final BlockPos pos)
@@ -960,23 +910,13 @@ public class Colony implements IColony
 
     /**
      * Remove a free to interact block.
+     *
      * @param block state to remove.
      */
     public void removeFreeBlock(@NotNull final Block block)
     {
         freeBlocks.remove(block);
         markDirty();
-    }
-
-    /**
-     * Get the Work Manager for the Colony.
-     *
-     * @return WorkManager for the Colony.
-     */
-    @NotNull
-    public WorkManager getWorkManager()
-    {
-        return workManager;
     }
 
     /**
@@ -1053,6 +993,17 @@ public class Colony implements IColony
         }
 
         workManager.onWorldTick(event);
+    }
+
+    /**
+     * Returns the world the colony is in.
+     *
+     * @return World the colony is in.
+     */
+    @Nullable
+    public World getWorld()
+    {
+        return world;
     }
 
     private boolean areAllColonyChunksLoaded(@NotNull final TickEvent.WorldTickEvent event)
@@ -1137,6 +1088,18 @@ public class Colony implements IColony
     }
 
     /**
+     * Sets the name of the colony.
+     * Marks dirty.
+     *
+     * @param n new name.
+     */
+    public void setName(final String n)
+    {
+        name = n;
+        markDirty();
+    }
+
+    /**
      * Marks the instance dirty.
      */
     private void markDirty()
@@ -1159,26 +1122,35 @@ public class Colony implements IColony
                  && BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ())) <= MathUtils.square(Configurations.workingRangeTownHall);
     }
 
+    @Override
+    public long getDistanceSquared(@NotNull final BlockPos pos)
+    {
+        return BlockPosUtil.getDistanceSquared2D(center, pos);
+    }
+
+    @Override
+    public boolean hasTownHall()
+    {
+        return townHall != null;
+    }
+
+    /**
+     * Returns the ID of the colony.
+     *
+     * @return Colony ID.
+     */
+    @Override
+    public int getID()
+    {
+        return id;
+    }
+
     /**
      * Updates all subscribers of fields etc.
      */
     private void markFieldsDirty()
     {
         isFieldsDirty = true;
-    }
-
-    /**
-     * Spawn citizen if his entity is null.
-     *
-     * @param data his data
-     */
-    private void spawnCitizenIfNull(@NotNull final CitizenData data)
-    {
-        if (data.getCitizenEntity() == null)
-        {
-            Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", this.getID(), data.getId()));
-            spawnCitizen(data);
-        }
     }
 
     /**
@@ -1264,7 +1236,8 @@ public class Colony implements IColony
      * Returns a map of citizens in the colony.
      * The map has ID as key, and citizen data as value.
      *
-     * @return Map of citizens in the colony, with as key the citizen ID, and as value the citizen data.
+     * @return Map of citizens in the colony, with as key the citizen ID, and as
+     * value the citizen data.
      */
     @NotNull
     public Map<Integer, CitizenData> getCitizens()
@@ -1313,6 +1286,39 @@ public class Colony implements IColony
     public void markCitizensDirty()
     {
         isCitizensDirty = true;
+    }
+
+    /**
+     * Triggers an achievement on this colony.
+     * <p>
+     * Will automatically sync to all players.
+     *
+     * @param achievement The achievement to trigger
+     */
+    public void triggerAchievement(@NotNull final Achievement achievement)
+    {
+        if (this.colonyAchievements.contains(achievement))
+        {
+            return;
+        }
+
+        this.colonyAchievements.add(achievement);
+
+        AchievementUtils.syncAchievements(this);
+    }
+
+    /**
+     * Spawn citizen if his entity is null.
+     *
+     * @param data his data
+     */
+    private void spawnCitizenIfNull(@NotNull final CitizenData data)
+    {
+        if (data.getCitizenEntity() == null)
+        {
+            Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", this.getID(), data.getId()));
+            spawnCitizen(data);
+        }
     }
 
     /**
@@ -1382,7 +1388,8 @@ public class Colony implements IColony
     }
 
     /**
-     * Get building in Colony by ID. The building will be casted to the provided type.
+     * Get building in Colony by ID. The building will be casted to the provided
+     * type.
      *
      * @param buildingId ID (coordinates) of the building to get.
      * @param type       Type of building.
@@ -1440,11 +1447,11 @@ public class Colony implements IColony
               getID(),
               tileEntity.getBlockType().getClass(),
               tileEntity.getPosition()));
-            if(tileEntity.isMirrored())
+            if (tileEntity.isMirrored())
             {
                 building.setMirror();
             }
-            if(!tileEntity.getStyle().isEmpty())
+            if (!tileEntity.getStyle().isEmpty())
             {
                 building.setStyle(tileEntity.getStyle());
             }

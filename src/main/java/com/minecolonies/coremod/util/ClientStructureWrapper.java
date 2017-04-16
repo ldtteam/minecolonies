@@ -51,7 +51,7 @@ public final class ClientStructureWrapper
             return;
         }
 
-        LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player,"item.scepterSteel.scanSuccess", fileName);
+        LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "item.scepterSteel.scanSuccess", fileName);
     }
 
     /**

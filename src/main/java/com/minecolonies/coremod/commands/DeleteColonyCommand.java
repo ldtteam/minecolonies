@@ -41,64 +41,6 @@ public class DeleteColonyCommand extends AbstractSingleCommand
     }
 
     @NotNull
-    @Override
-    public String getCommandUsage(@NotNull final ICommandSender sender)
-    {
-        return super.getCommandUsage(sender) + "<ColonyId|OwnerName>";
-    }
-
-    @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
-    {
-        final int colonyId;
-
-        if(args.length == 0)
-        {
-            IColony colony = null;
-            if(sender instanceof EntityPlayer)
-            {
-                colony = ColonyManager.getIColonyByOwner(((EntityPlayer) sender).world, (EntityPlayer) sender);
-            }
-
-            if(colony == null)
-            {
-                sender.getCommandSenderEntity().sendMessage(new TextComponentString(NO_ARGUMENTS));
-                return;
-            }
-            colonyId = colony.getID();
-        }
-        else
-        {
-            colonyId = getIthArgument(args, 0, -1);
-        }
-
-        final Colony colony = ColonyManager.getColony(colonyId);
-        if(colony == null)
-        {
-            sender.getCommandSenderEntity().sendMessage(new TextComponentString(NO_COLONY_FOUND_MESSAGE_ID));
-            return;
-        }
-
-        if(sender instanceof EntityPlayer)
-        {
-            final EntityPlayer player = (EntityPlayer) sender;
-            if (!canPlayerUseCommand(player, DELETECOLONY, colonyId))
-            {
-                sender.getCommandSenderEntity().sendMessage(new TextComponentString(NOT_PERMITTED));
-                return;
-            }
-        }
-
-        server.addScheduledTask(() -> ColonyManager.deleteColony(colony.getID()));
-    }
-
-    @Override
-    public boolean canRankUseCommand(@NotNull final Colony colony, @NotNull final EntityPlayer player)
-    {
-        return colony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER);
-    }
-
-    @NotNull
     private static UUID getUUIDFromName(@NotNull final ICommandSender sender, @NotNull final String... args)
     {
         final MinecraftServer tempServer = sender.getEntityWorld().getMinecraftServer();
@@ -111,6 +53,64 @@ public class DeleteColonyCommand extends AbstractSingleCommand
             }
         }
         return null;
+    }
+
+    @NotNull
+    @Override
+    public String getCommandUsage(@NotNull final ICommandSender sender)
+    {
+        return super.getCommandUsage(sender) + "<ColonyId|OwnerName>";
+    }
+
+    @Override
+    public boolean canRankUseCommand(@NotNull final Colony colony, @NotNull final EntityPlayer player)
+    {
+        return colony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER);
+    }
+
+    @Override
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
+    {
+        final int colonyId;
+
+        if (args.length == 0)
+        {
+            IColony colony = null;
+            if (sender instanceof EntityPlayer)
+            {
+                colony = ColonyManager.getIColonyByOwner(((EntityPlayer) sender).world, (EntityPlayer) sender);
+            }
+
+            if (colony == null)
+            {
+                sender.getCommandSenderEntity().sendMessage(new TextComponentString(NO_ARGUMENTS));
+                return;
+            }
+            colonyId = colony.getID();
+        }
+        else
+        {
+            colonyId = getIthArgument(args, 0, -1);
+        }
+
+        final Colony colony = ColonyManager.getColony(colonyId);
+        if (colony == null)
+        {
+            sender.getCommandSenderEntity().sendMessage(new TextComponentString(NO_COLONY_FOUND_MESSAGE_ID));
+            return;
+        }
+
+        if (sender instanceof EntityPlayer)
+        {
+            final EntityPlayer player = (EntityPlayer) sender;
+            if (!canPlayerUseCommand(player, DELETECOLONY, colonyId))
+            {
+                sender.getCommandSenderEntity().sendMessage(new TextComponentString(NOT_PERMITTED));
+                return;
+            }
+        }
+
+        server.addScheduledTask(() -> ColonyManager.deleteColony(colony.getID()));
     }
 
     @NotNull

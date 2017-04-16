@@ -25,16 +25,17 @@ public final class RecipeHandler
      * Initialize all recipes for minecolonies.
      *
      * @param enableInDevelopmentFeatures if we want development recipes.
-     * @param supplyChests                if we want supply chests or direct town hall crafting.
+     * @param supplyChests                if we want supply chests or direct
+     *                                    town hall crafting.
      */
     public static void init(final boolean enableInDevelopmentFeatures, final boolean supplyChests)
     {
         final String plankWood = "plankWood";
-        
+
         GameRegistry.addRecipe(new ItemStack(ModBlocks.blockConstructionTape, 16), "SWS", "S S", "S S",
           'S', Items.STICK, 'W', new ItemStack(Blocks.WOOL, 1, Constants.YELLOW));
-        GameRegistry.addShapelessRecipe(new ItemStack(ModBlocks.blockConstructionTapeCorner, 1),ModBlocks.blockConstructionTape);
-        GameRegistry.addShapelessRecipe(new ItemStack(ModBlocks.blockConstructionTape, 1),ModBlocks.blockConstructionTapeCorner);
+        GameRegistry.addShapelessRecipe(new ItemStack(ModBlocks.blockConstructionTapeCorner, 1), ModBlocks.blockConstructionTape);
+        GameRegistry.addShapelessRecipe(new ItemStack(ModBlocks.blockConstructionTape, 1), ModBlocks.blockConstructionTapeCorner);
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutMiner, 1), "XXX", "X#X", "XXX", 'X', plankWood, '#', Items.WOODEN_PICKAXE));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutMiner, 2), "XXX", "X#X", "XXX", 'X', plankWood, '#', Items.STONE_PICKAXE));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutLumberjack, 1), "XXX", "X#X", "XXX", 'X', plankWood, '#', Items.WOODEN_AXE));

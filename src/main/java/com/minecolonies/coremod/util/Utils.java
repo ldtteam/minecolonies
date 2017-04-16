@@ -88,7 +88,8 @@ public final class Utils
     }
 
     /**
-     * Checks if the blocks above that point are all of the spezified block types.
+     * Checks if the blocks above that point are all of the spezified block
+     * types.
      *
      * @param world  the world we check on.
      * @param x      the x coordinate.
@@ -289,7 +290,7 @@ public final class Utils
      * Checks if a pickaxe can be used for that mining level.
      *
      * @param requiredLevel the level needs to have.
-     * @param toolLevel    the level it has.
+     * @param toolLevel     the level it has.
      * @return whether the pickaxe qualifies.
      */
     public static boolean checkIfPickaxeQualifies(final int requiredLevel, final int toolLevel)
@@ -303,9 +304,10 @@ public final class Utils
      * with an expensive pickaxe. So set {@code beEfficient} to false.
      * for that if you need it the other way around.
      *
-     * @param requiredLevel    the level needs to have.
-     * @param toolLevel       the level it has.
-     * @param requireEfficientTool if he should stop using diamond picks on stone.
+     * @param requiredLevel        the level needs to have.
+     * @param toolLevel            the level it has.
+     * @param requireEfficientTool if he should stop using diamond picks on
+     *                             stone.
      * @return whether the pickaxe qualifies.
      */
     public static boolean checkIfPickaxeQualifies(final int requiredLevel, final int toolLevel, final boolean requireEfficientTool)
