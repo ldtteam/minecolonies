@@ -697,6 +697,15 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 return false;
             }
 
+            // we need a shovel to transform dirt into grass path
+            if (block instanceof BlockGrassPath)
+            {
+                if (!holdEfficientTool(block))
+                {
+                    return false;
+                }
+            }
+
             placeBlockAt(block, blockState, structureBlock.blockPosition);
         }
         return true;
