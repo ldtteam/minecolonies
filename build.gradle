@@ -1,3 +1,8 @@
+import com.google.common.collect.Maps
+import org.gradle.api.tasks.TaskAction
+
+import java.util.Map.Entry
+
 buildscript {
     repositories {
         jcenter()
@@ -207,7 +212,57 @@ task runSonar() {
     group = 'Code Quality'
 }
 
-task signJar(type: SignJar, dependsOn: reobfJar) {
+class Java8JarSigner extends net.minecraftforge.gradle.tasks.SignJar {
+    public JarSigner() {
+        onlyIf {
+            project.hasProperty('keyStore')
+        }
+
+        exclude '**/api/**'
+
+        alias = project.keyStoreAlias
+        if (project.hasProperty('keyStore')) {
+            storePass = project.keyStorePass
+            keyPass = project.keyStoreKeyPass
+            keyStore = project.keyStore
+        }
+    }
+
+    @TaskAction
+    @Override
+    public void doTask() throws IOException
+    {
+        final Map<String, Entry<byte[], Long>> ignoredStuff = Maps.newHashMap();
+        File input = getInputFile();
+        File toSign = new File(getTemporaryDir(), input.getName() + ".unsigned.tmp");
+        File signed = new File(getTemporaryDir(), input.getName() + ".signed.tmp");
+        File output = getOutputFile();
+
+        // load in input jar, and create temp jar
+        processInputJar(input, toSign, ignoredStuff);
+
+        // SIGN!
+        Map<String, Object> map = Maps.newHashMap();
+        map.put("alias", getAlias());
+        map.put("storePass", getStorePass());
+        map.put("jar", toSign.getAbsolutePath());
+        map.put("signedJar", signed.getAbsolutePath());
+        map.put("sigalg", "SHA1withRSA");
+        map.put("digestalg", "SHA1")
+
+        if (!Strings.isNullOrEmpty(getKeyPass()))
+            map.put("keypass", getKeyPass());
+        if (!Strings.isNullOrEmpty(getKeyStore()))
+            map.put("keyStore", getKeyStore());
+
+        getProject().getAnt().invokeMethod("signjar", map);
+
+        // write out
+        writeOutputJar(signed, output, ignoredStuff);
+    }
+}
+
+task signJar(type: Java8JarSigner, dependsOn: reobfJar) {
     onlyIf { // Skip the task if our secret data isn't available
         project.hasProperty('keyStore')
     }
