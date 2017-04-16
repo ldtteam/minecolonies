@@ -6,7 +6,6 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.network.messages.ChangeFreeToInteractBlockMessage;
 import com.minecolonies.coremod.util.LanguageHandler;
-import com.minecolonies.coremod.util.Log;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,12 +16,10 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
 
 /**
- * Guard Scepter Item class. Used to give tasks to guards.
+ * Permission scepter. used to add free to interact blocks or positions to the colonies permission list
  */
 public class ItemScepterPermission extends AbstractItemMinecolonies
 {
@@ -44,6 +41,20 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
         maxStackSize = 1;
     }
 
+    /**
+     * Used when clicking on block in world.
+     *
+     * @param scepter
+     * @param playerIn
+     * @param worldIn
+     * @param pos
+     * @param hand
+     * @param facing
+     * @param hitX
+     * @param hitY
+     * @param hitZ
+     * @return
+     */
     @Override
     public EnumActionResult onItemUse(ItemStack scepter, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if (!scepter.hasTagCompound())
@@ -63,23 +74,11 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
             return EnumActionResult.FAIL;
         }
 
-        String tagItemMode = compound.getString(TAG_ITEM_MODE);
-
-        switch(tagItemMode) {
-            case TAG_VALUE_MODE_BLOCK:
-                return handleAddBlockType(playerIn, worldIn, pos, colonyView);
-            case TAG_VALUE_MODE_LOCATION:
-                return handleAddLocation(playerIn, worldIn, pos, colonyView);
-            default:
-                // TODO Exception?
-                Log.getLogger().warn("Invalid tag item mode in ItemScepterPermission");
-        }
-
-        return EnumActionResult.FAIL;
+        return handleItemAction(compound, playerIn, worldIn, pos, colonyView);
     }
 
     /**
-     * handles mid air use.
+     * Handles mid air use.
      *
      * @param scepter
      * @param worldIn
@@ -101,12 +100,27 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
         }
         final NBTTagCompound compound = scepter.getTagCompound();
 
-        toggleItemMode(playerIn, compound);
+        EnumActionResult result = toggleItemMode(playerIn, compound);
 
-        return new ActionResult(EnumActionResult.PASS, scepter);
+        return new ActionResult(result, scepter);
     }
 
-    private void toggleItemMode(EntityPlayer playerIn, NBTTagCompound compound)
+    private EnumActionResult handleItemAction(NBTTagCompound compound, EntityPlayer playerIn, World worldIn, BlockPos pos, ColonyView colonyView)
+    {
+        String tagItemMode = compound.getString(TAG_ITEM_MODE);
+
+        switch(tagItemMode) {
+            case TAG_VALUE_MODE_BLOCK:
+                return handleAddBlockType(playerIn, worldIn, pos, colonyView);
+            case TAG_VALUE_MODE_LOCATION:
+                return handleAddLocation(playerIn, worldIn, pos, colonyView);
+            default:
+                toggleItemMode(playerIn, compound);
+                return handleItemAction(compound, playerIn, worldIn, pos, colonyView);
+        }
+    }
+
+    static private EnumActionResult toggleItemMode(EntityPlayer playerIn, NBTTagCompound compound)
     {
         String itemMode = compound.getString(TAG_ITEM_MODE);
 
@@ -115,13 +129,14 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
             case TAG_VALUE_MODE_BLOCK:
                 compound.setString(TAG_ITEM_MODE, TAG_VALUE_MODE_LOCATION);
                 LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.item.permissionscepter.setmode", "location");
-                break;
+
+                return EnumActionResult.SUCCESS;
             case TAG_VALUE_MODE_LOCATION:
+            default:
                 compound.setString(TAG_ITEM_MODE, TAG_VALUE_MODE_BLOCK);
                 LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.item.permissionscepter.setmode", "block");
-                break;
-            default:
-                compound.setString(TAG_ITEM_MODE, TAG_VALUE_MODE_LOCATION);
+
+                return EnumActionResult.SUCCESS;
         }
     }
 
