@@ -743,7 +743,7 @@ public final class Structures
     {
         if (md5 != null)
         {
-            for (Map.Entry<String, String> md5Entry : md5Map.entrySet())
+            for (final Map.Entry<String, String> md5Entry : md5Map.entrySet())
             {
                 if (md5Entry.getValue().equals(md5))
                 {
@@ -771,7 +771,7 @@ public final class Structures
     private static Set<String> getCachedMD5s()
     {
         final Set<String> md5Set = new HashSet<>();
-        for (Map.Entry<String, String> md5 : md5Map.entrySet())
+        for (final Map.Entry<String, String> md5 : md5Map.entrySet())
         {
             final StructureName sn = new StructureName(md5.getKey());
             if (sn.getSection().equals(SCHEMATICS_CACHE))
@@ -935,7 +935,7 @@ public final class Structures
         schematicsMap.entrySet().removeIf(entry -> !entry.getKey().equals(SCHEMATICS_SCAN));
 
         // Then we update all mdp hash and fill the schematicsMap
-        for (Map.Entry<String, String> md5 : md5s.entrySet())
+        for (final Map.Entry<String, String> md5 : md5s.entrySet())
         {
             final StructureName sn = new StructureName(md5.getKey());
             if (!sn.getSection().equals(SCHEMATICS_SCAN))

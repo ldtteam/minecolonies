@@ -688,7 +688,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
 
 
     /*
-     * Miscellaneous
+     * ---------------- Miscellaneous ----------------
      */
 
     /**
@@ -790,7 +790,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
      */
     private void confirmClicked()
     {
-        Structures.StructureName structureName = new Structures.StructureName(schematics.get(schematicsDropDownList.getSelectedIndex()));
+        final Structures.StructureName structureName = new Structures.StructureName(schematics.get(schematicsDropDownList.getSelectedIndex()));
         if (structureName.getPrefix().equals(Structures.SCHEMATICS_SCAN) && FMLCommonHandler.instance().getMinecraftServerInstance() == null)
         {
             //We need to check that the server have it too using the md5
@@ -846,7 +846,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
 
         if (Settings.instance.getActiveStructure() != null)
         {
-            Settings.instance.getActiveStructure().setPlacementSettings(settings);
+            Settings.instance.getActiveStructure().setPlacementSettings(settings.setMirror(Settings.instance.getMirror()));
         }
     }
 
