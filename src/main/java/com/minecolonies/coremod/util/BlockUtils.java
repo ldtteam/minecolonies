@@ -381,6 +381,10 @@ public final class BlockUtils
         }
         else if (block instanceof BlockDirt)
         {
+            if (blockState.getBlock() instanceof BlockGrassPath)
+            {
+                return Blocks.DIRT.getDefaultState().getValue(BlockDirt.VARIANT).getMetadata();
+            }
             return blockState.getValue(BlockDirt.VARIANT).getMetadata();
         }
         else if (block instanceof BlockDoublePlant
@@ -420,6 +424,6 @@ public final class BlockUtils
      */
     public static boolean isPathBlock(final Block block)
     {
-        return block == Blocks.GRAVEL || block == Blocks.STONEBRICK;
+        return block == Blocks.GRAVEL || block == Blocks.STONEBRICK || block instanceof BlockGrassPath;
     }
 }
