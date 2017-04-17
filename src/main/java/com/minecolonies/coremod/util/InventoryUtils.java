@@ -693,7 +693,7 @@ public final class InventoryUtils
             case 3:
                 return "Diamond";
             default:
-                return "";
+                return "Better than Diamond";
         }
     }
 
