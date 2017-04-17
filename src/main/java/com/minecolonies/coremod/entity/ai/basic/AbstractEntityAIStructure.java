@@ -27,6 +27,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemDoor;
+import net.minecraft.item.ItemFlintAndSteel;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -545,7 +546,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             @Nullable final IBlockState blockState = blockInfo.blockState;
             @Nullable final Block block = blockState.getBlock();
 
-            if (builderJob.getStructure().doesStructureBlockEqualWorldBlock()
+            if (builderJob.getStructure().isStructureBlockEqualWorldBlock()
                     || (blockState.getBlock() instanceof BlockBed && blockState.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
                     || (blockState.getBlock() instanceof BlockDoor && blockState.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.UPPER)))
             {
@@ -843,6 +844,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             final ItemStack item = BlockUtils.getItemStackFromBlockState(blockState);
             worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item == null ? null : item);
 
+            if(block == Blocks.FIRE && item != null && item.getItem() instanceof ItemFlintAndSteel)
+            {
+                item.damageItem(1, worker);
+            }
+
             if (!placeBlock(coords, block, blockState))
             {
                 Log.getLogger().error(String.format("Block place failure %s at %s", block.getUnlocalizedName(), coords));
@@ -940,7 +946,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         {
             final BlockPos buildingLocation = ((JobBuilder) job).getWorkOrder().getBuildingLocation();
             final AbstractBuilding building = this.getOwnBuilding().getColony().getBuilding(buildingLocation);
-            building.addContainerPosition(pos);
+
+            if(building != null)
+            {
+                building.addContainerPosition(pos);
+            }
         }
 
         //It will crash at blocks like water which is actually free, we don't have to decrease the stacks we have.

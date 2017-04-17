@@ -197,9 +197,13 @@ public final class BlockUtils
     public static ItemStack getItemStackFromBlockState(@NotNull final IBlockState blockState)
     {
         final Item item = getItem(blockState);
-
         if (item == null)
         {
+            if(blockState.getBlock() instanceof BlockFire)
+            {
+                return new ItemStack(Items.FLINT_AND_STEEL, 1);
+            }
+
             return null;
         }
 

@@ -4,10 +4,7 @@ import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import com.minecolonies.coremod.util.StructureWrapper;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockDoor;
-import net.minecraft.block.BlockOre;
-import net.minecraft.block.BlockStairs;
+import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -141,7 +138,8 @@ public class Structure
             {
                 return structureBlock == worldBlockState.getBlock();
             }
-            else if ((structureBlock instanceof BlockStairs && structureBlockState.equals(worldBlockState)) || isGrassOrDirt(structureBlock, worldBlock))
+            else if ((structureBlock instanceof BlockStairs && structureBlockState.equals(worldBlockState))
+                    || isGrassOrDirt(structureBlock, worldBlock, structureBlockState, worldBlockState))
             {
                 return true;
             }
@@ -155,9 +153,21 @@ public class Structure
                     && worldMetadata.getMaterial().isSolid() && !(worldBlock instanceof BlockOre) && worldBlock != Blocks.AIR);
         }
 
-        private static boolean isGrassOrDirt(@NotNull final Block structureBlock, @NotNull final Block worldBlock)
+        private static boolean isGrassOrDirt(@NotNull final Block structureBlock, @NotNull final Block worldBlock,
+                @NotNull final IBlockState structureMetaData, @NotNull final IBlockState worldMetadata)
         {
-            return (structureBlock == Blocks.DIRT || structureBlock == Blocks.GRASS) && (worldBlock == Blocks.DIRT || worldBlock == Blocks.GRASS);
+            if((structureBlock == Blocks.DIRT || structureBlock == Blocks.GRASS) && (worldBlock == Blocks.DIRT || worldBlock == Blocks.GRASS))
+            {
+                if(structureMetaData.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.COARSE_DIRT
+                        || worldMetadata.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.COARSE_DIRT
+                || structureMetaData.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.PODZOL
+                        || worldMetadata.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.PODZOL)
+                {
+                    return false;
+                }
+                return true;
+            }
+            return  false;
         }
     }
 
