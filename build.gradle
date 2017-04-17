@@ -102,11 +102,14 @@ minecraft {
     runDir = "run"
 	
 	mappings = "${config.minecolonies_mappings}"
-	
-    replace "@VERSION@", project.version
+
     replaceIn "lib/Constants.java"
-    if (project.hasProperty("signature"))
-        replace "@FINGERPRINT@", signature
+    replace "@VERSION@", project.version
+
+    // Set the jar signature in code prior to compilation, if it exists as a build property
+    if (project.hasProperty("signature")) {
+        replace "@FINGERPRINT@", project.signature
+    }
 }
 
 processResources {
@@ -128,11 +131,6 @@ compileJava {
     options.encoding = 'UTF-8'
     options.compilerArgs << "-Xlint"
 }
-
-//task sourceJar(type: Jar) {
-//    from sourceSets.main.allSource
-//    appendix = 'src'
-//}
 
 task deobfJar(type: Jar) {
     from sourceSets.main.output
@@ -208,3 +206,20 @@ task runSonar() {
     description 'Runs the equivalent of a SonarQube analysis directly in the build process. Calls runCheckStyle and runPMD'
     group = 'Code Quality'
 }
+
+task signJar(type: SignJar, dependsOn: reobfJar) {
+    onlyIf { // Skip the task if our secret data isn't available
+        project.hasProperty('keyStore')
+    }
+
+    if (project.hasProperty('keyStore')) {
+        keyStore = project.keyStore // This needs to be a path to the keystore file
+        alias = project.keyStoreAlias
+        storePass = project.keyStorePass
+        keyPass = project.keyStoreKeyPass
+        inputFile = jar.archivePath
+        outputFile = jar.archivePath
+    }
+}
+
+build.dependsOn signJar

@@ -8,14 +8,12 @@ import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.network.messages.*;
 import com.minecolonies.coremod.proxy.IProxy;
+import com.minecolonies.coremod.util.Log;
 import com.minecolonies.coremod.util.RecipeHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
@@ -25,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 
 @Mod(modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION,
   /*dependencies = Constants.FORGE_VERSION,*/ acceptedMinecraftVersions = Constants.MC_VERSION,
-  guiFactory = Constants.CONFIG_GUI_LOCATION)
+  guiFactory = Constants.CONFIG_GUI_LOCATION, certificateFingerprint = Constants.FINGERPRINT)
 public class MineColonies
 {
     /**
@@ -173,5 +171,27 @@ public class MineColonies
     {
         // register server commands
         event.registerServerCommand(new CommandEntryPoint());
+    }
+
+    @Mod.EventHandler
+    public void onFingerprintViolation(FMLFingerprintViolationEvent event) {
+        String warning = "Minecolonies does not run from a verified source. Current Fingerprint" + (event.getFingerprints().size() > 1 ? "s" : "") +  ": ";
+
+        if (event.getFingerprints().size() > 0) {
+            for (String print :
+              event.getFingerprints())
+            {
+                warning += "\n" + "   - " + print;
+            }
+        }
+        else
+        {
+            warning += "\n" + "   - No Fingerprint available on this Minecolonies Jar.";
+        }
+
+        warning += "\n" + "expected: ";
+        warning += "\n" + "   - " + event.getExpectedFingerprint();
+
+        Log.bigWarning(warning);
     }
 }
