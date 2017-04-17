@@ -89,8 +89,15 @@ configFile.withReader {
     ext.config = new ConfigSlurper().parse prop
 }
 
+
+
 group = "com.minecolonies"
 config.buildnumber = System.getenv()['BUILD_NUMBER'] != null ? System.getenv()['BUILD_NUMBER'] : System.getenv()['TRAVIS_BUILD_NUMBER']
+
+if (project.hasProperty("teamcity")) {
+    config.buildnumber = project.teamcity["teamcity.build.id"]
+}
+
 version = "${config.minecraft_version}-${config.minecolonies_major}.${config.minecolonies_minor}.${config.buildnumber}"
 
 sourceCompatibility = '1.8'
