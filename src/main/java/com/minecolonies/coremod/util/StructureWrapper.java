@@ -3,10 +3,7 @@ package com.minecolonies.coremod.util;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.structures.helpers.StructureProxy;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockDoor;
-import net.minecraft.block.BlockFire;
-import net.minecraft.block.BlockStairs;
+import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
@@ -386,7 +383,8 @@ public final class StructureWrapper
         {
             return structureBlock == worldBlockState.getBlock();
         }
-        else if (structureBlock instanceof BlockStairs && structureBlockState == worldBlockState)
+        else if ((structureBlock instanceof BlockStairs && structureBlockState == worldBlockState)
+                || BlockUtils.isGrassOrDirt(structureBlock, worldBlockState.getBlock(), structureBlockState, worldBlockState))
         {
             return true;
         }
@@ -652,11 +650,6 @@ public final class StructureWrapper
         if(stack != null)
         {
             return stack.getItem();
-        }
-
-        if(blockState.getBlock() instanceof BlockFire)
-        {
-            return Items.FLINT_AND_STEEL;
         }
 
         return null;

@@ -751,6 +751,15 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             return true;
         }
 
+        if(block == Blocks.FIRE)
+        {
+            if(checkOrRequestItems(false, new ItemStack(Items.FLINT_AND_STEEL, 1)))
+            {
+                return false;
+            }
+            return true;
+        }
+
         final List<ItemStack> itemList = new ArrayList<>();
         itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
         if (job instanceof JobBuilder && ((JobBuilder) job).getStructure() != null
@@ -844,11 +853,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             final ItemStack item = BlockUtils.getItemStackFromBlockState(blockState);
             worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item == null ? null : item);
 
-            if(block == Blocks.FIRE && item != null && item.getItem() instanceof ItemFlintAndSteel)
-            {
-                item.damageItem(1, worker);
-            }
-
             if (!placeBlock(coords, block, blockState))
             {
                 Log.getLogger().error(String.format("Block place failure %s at %s", block.getUnlocalizedName(), coords));
@@ -932,6 +936,25 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 final TileEntityFlowerPot tileentityflowerpot = (TileEntityFlowerPot) world.getTileEntity(pos);
                 tileentityflowerpot.readFromNBT(((JobBuilder) job).getStructure().getBlockInfo().tileentityData);
                 world.setTileEntity(pos, tileentityflowerpot);
+            }
+        }
+        else if(block == Blocks.FIRE)
+        {
+            final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(worker.getInventoryCitizen()),
+                    itemStack ->  !InventoryUtils.isItemStackEmpty(itemStack) && itemStack.getItem() == Items.FLINT_AND_STEEL);
+
+            if(slot == -1)
+            {
+                return false;
+            }
+
+            final ItemStack item = worker.getInventoryCitizen().getStackInSlot(slot);
+            if(item != null && item.getItem() instanceof ItemFlintAndSteel)
+            {
+                worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item);
+                world.setBlockState(pos, blockState, 0x03);
+                item.damageItem(1, worker);
+                return true;
             }
         }
         else
