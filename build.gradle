@@ -1,29 +1,3 @@
-import java.util.Map.Entry;
-import java.util.jar.JarOutputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
-import org.gradle.api.DefaultTask;
-import org.gradle.api.file.FileTreeElement;
-import org.gradle.api.file.FileVisitDetails;
-import org.gradle.api.file.FileVisitor;
-import org.gradle.api.specs.Spec;
-import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.InputFile;
-import org.gradle.api.tasks.OutputFile;
-import org.gradle.api.tasks.TaskAction;
-import org.gradle.api.tasks.util.PatternFilterable;
-import org.gradle.api.tasks.util.PatternSet;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
-import com.google.common.io.ByteStreams;
-
-import groovy.lang.Closure;
-import groovy.util.MapEntry;
-
-import static net.minecraftforge.gradle.common.Constants.resolveString;
-
 buildscript {
     repositories {
         jcenter()
@@ -128,9 +102,9 @@ minecraft {
     runDir = "run"
 	
 	mappings = "${config.minecolonies_mappings}"
-	
-    replace "@VERSION@", project.version
+
     replaceIn "lib/Constants.java"
+    replace "@VERSION@", project.version
 
     // Set the jar signature in code prior to compilation, if it exists as a build property
     if (project.hasProperty("signature")) {
