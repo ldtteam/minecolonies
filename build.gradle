@@ -22,6 +22,8 @@ import com.google.common.io.ByteStreams;
 import groovy.lang.Closure;
 import groovy.util.MapEntry;
 
+import static net.minecraftforge.gradle.common.Constants.resolveString;
+
 buildscript {
     repositories {
         jcenter()
