@@ -260,7 +260,6 @@ class Java8JarSigner extends DefaultTask implements PatternFilterable {
     }
 
     @TaskAction
-    @Override
     public void doTask() throws IOException
     {
         final Map<String, Entry<byte[], Long>> ignoredStuff = Maps.newHashMap();
