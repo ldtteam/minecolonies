@@ -1,18 +1,26 @@
-import com.google.common.collect.Maps
-import com.google.common.io.ByteStreams
-import groovy.util.MapEntry
-import org.gradle.api.file.FileTreeElement
-import org.gradle.api.file.FileVisitDetails
-import org.gradle.api.file.FileVisitor
-import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.util.PatternFilterable;
+import java.util.Map.Entry;
+import java.util.jar.JarOutputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
-import java.util.Map.Entry
-import java.util.jar.JarOutputStream
-import java.util.zip.ZipEntry
-import java.util.zip.ZipFile
+import org.gradle.api.DefaultTask;
+import org.gradle.api.file.FileTreeElement;
+import org.gradle.api.file.FileVisitDetails;
+import org.gradle.api.file.FileVisitor;
+import org.gradle.api.specs.Spec;
+import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.InputFile;
+import org.gradle.api.tasks.OutputFile;
+import org.gradle.api.tasks.TaskAction;
+import org.gradle.api.tasks.util.PatternFilterable;
+import org.gradle.api.tasks.util.PatternSet;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
+import com.google.common.io.ByteStreams;
 
 import groovy.lang.Closure;
+import groovy.util.MapEntry;
 
 buildscript {
     repositories {
@@ -223,7 +231,19 @@ task runSonar() {
     group = 'Code Quality'
 }
 
-class Java8JarSigner extends net.minecraftforge.gradle.tasks.SignJar {
+class Java8JarSigner extends DefaultTask implements PatternFilterable {
+
+    //@formatter:off
+    @Input      private PatternSet patternSet = new PatternSet();
+    @Input      private Object     alias;
+    @Input      private Object     storePass;
+    @Input      private Object     keyPass;
+    @Input      private Object     keyStore;
+    @InputFile  private Object     inputFile;
+    @OutputFile private Object     outputFile;
+    //@formatter:on
+
+
     public JarSigner() {
         onlyIf {
             project.hasProperty('keyStore')
