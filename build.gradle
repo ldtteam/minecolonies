@@ -287,6 +287,9 @@ class Java8JarSigner extends DefaultTask implements PatternFilterable {
         if (!Strings.isNullOrEmpty(getKeyStore()))
             map.put("keyStore", getKeyStore());
 
+        println "Signing with: " + alias;
+        println "From KeyStore: " + keyStore;
+
         getProject().getAnt().invokeMethod("signjar", map);
 
         // write out
