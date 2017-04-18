@@ -196,11 +196,9 @@ public final class Structures
         try (Stream<Path> walk = Files.walk(basePath.resolve(prefix)))
         {
             final Iterator<Path> it = walk.iterator();
-
             while (it.hasNext())
             {
                 final Path path = it.next();
-
                 if (path.toString().endsWith(SCHEMATIC_EXTENSION))
                 {
                     String relativePath = path.toString().substring(basePath.toString().length()).split("\\" + SCHEMATIC_EXTENSION)[0];
@@ -213,17 +211,14 @@ public final class Structures
                         relativePath = relativePath.substring(1);
                     }
 
-
-
                     final StructureName structureName = new StructureName(relativePath);
                     final String md5 = Structure.calculateMD5(Structure.getStream(relativePath));
                     if (md5 == null)
                     {
                         Log.getLogger().error("Structures: " + structureName + " with md5 null.");
                     }
-                    else
+                    else if (isSchematicSizeValid(structureName.toString()))
                     {
-
                         if (md5Map.containsKey(structureName.toString()))
                         {
                             Log.getLogger().info("Override " + structureName + " md5:" + md5);
@@ -232,17 +227,7 @@ public final class Structures
                         {
                             Log.getLogger().info("Add " + structureName + " md5:" + md5);
                         }
-
                         md5Map.put(structureName.toString(), md5);
-                        final int maxSize = MAX_TOTAL_SIZE - Integer.SIZE / Byte.SIZE;
-                        final byte[] data = Structure.getStreamAsByteArray(Structure.getStream(structureName.toString()));
-                        final byte[] compressed = Structure.compress(data);
-
-                        if (compressed != null && compressed.length > maxSize)
-                        {
-                            Log.getLogger().warn("Structure " + structureName + " is " + compressed.length + " bytes when compress, maximum allower is " + maxSize + " bytes.");
-                        }
-
                         if (MineColonies.isClient())
                         {
                             addSchematic(structureName);
@@ -255,6 +240,26 @@ public final class Structures
         {
             Log.getLogger().warn("loadSchematicsForPrefix: Could not load schematics from " + basePath.resolve(prefix) + " (" + e.getMessage() +  ")");
         }
+    }
+
+    /**
+     * check that a schematic is not too big to be sent.
+     *
+     * @param structureName name of the structure to check for.
+     * @return True when the schematic is not too big.
+     */
+    private static boolean isSchematicSizeValid(@NotNull final String structureName)
+    {
+        final int maxSize = MAX_TOTAL_SIZE - Integer.SIZE / Byte.SIZE;
+        final byte[] data = Structure.getStreamAsByteArray(Structure.getStream(structureName.toString()));
+        final byte[] compressed = Structure.compress(data);
+
+        if (compressed != null && compressed.length > maxSize)
+        {
+            Log.getLogger().warn("Structure " + structureName + " is " + compressed.length + " bytes when compress, maximum allowed is " + maxSize + " bytes.");
+            return false;
+        }
+        return true;
     }
 
     /**
