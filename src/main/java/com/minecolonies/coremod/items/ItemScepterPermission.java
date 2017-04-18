@@ -59,15 +59,15 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
     @Override
     @NotNull
     public EnumActionResult onItemUse(
-            ItemStack scepter,
-            EntityPlayer playerIn,
-            World worldIn,
-            BlockPos pos,
-            EnumHand hand,
-            EnumFacing facing,
-            float hitX,
-            float hitY,
-            float hitZ)
+            final ItemStack scepter,
+            final EntityPlayer playerIn,
+            final World worldIn,
+            final BlockPos pos,
+            final EnumHand hand,
+            final EnumFacing facing,
+            final float hitX,
+            final float hitY,
+            final float hitZ)
     {
         if (!scepter.hasTagCompound())
         {
@@ -75,12 +75,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
         }
         final NBTTagCompound compound = scepter.getTagCompound();
 
-        if (worldIn.isRemote)
-        {
-            return EnumActionResult.SUCCESS;
-        }
-
-        ColonyView colonyView = ColonyManager.getClosestColonyView(worldIn, pos);
+        final ColonyView colonyView = ColonyManager.getClosestColonyView(worldIn, pos);
         if (colonyView == null)
         {
             return EnumActionResult.FAIL;
@@ -101,10 +96,10 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
     @Override
     @NotNull
     public ActionResult<ItemStack> onItemRightClick(
-            @NotNull ItemStack scepter,
-            World worldIn,
-            EntityPlayer playerIn,
-            EnumHand hand)
+            @NotNull final ItemStack scepter,
+            final World worldIn,
+            final EntityPlayer playerIn,
+            final EnumHand hand)
     {
         if (worldIn.isRemote)
         {
@@ -124,15 +119,16 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
 
     @NotNull
     private EnumActionResult handleItemAction(
-            NBTTagCompound compound,
-            EntityPlayer playerIn,
-            World worldIn,
-            BlockPos pos,
-            ColonyView colonyView)
+            final NBTTagCompound compound,
+            final EntityPlayer playerIn,
+            final World worldIn,
+            final BlockPos pos,
+            final ColonyView colonyView)
     {
-        String tagItemMode = compound.getString(TAG_ITEM_MODE);
+        final String tagItemMode = compound.getString(TAG_ITEM_MODE);
 
-        switch(tagItemMode) {
+        switch (tagItemMode)
+         {
             case TAG_VALUE_MODE_BLOCK:
                 return handleAddBlockType(playerIn, worldIn, pos, colonyView);
             case TAG_VALUE_MODE_LOCATION:
@@ -143,10 +139,9 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
         }
     }
 
-    @NotNull
-    static private void toggleItemMode(EntityPlayer playerIn, NBTTagCompound compound)
+    private static void toggleItemMode(final EntityPlayer playerIn, final NBTTagCompound compound)
     {
-        String itemMode = compound.getString(TAG_ITEM_MODE);
+        final String itemMode = compound.getString(TAG_ITEM_MODE);
 
         switch (itemMode)
         {
@@ -161,16 +156,16 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
     }
 
     @NotNull
-    static private EnumActionResult handleAddBlockType(
+    private static EnumActionResult handleAddBlockType(
             final EntityPlayer playerIn,
             final World worldIn,
             final BlockPos pos,
             final ColonyView colonyView)
     {
-        IBlockState blockState = worldIn.getBlockState(pos);
-        Block block = blockState.getBlock();
+        final IBlockState blockState = worldIn.getBlockState(pos);
+        final Block block = blockState.getBlock();
 
-        ChangeFreeToInteractBlockMessage message = new ChangeFreeToInteractBlockMessage(
+        final ChangeFreeToInteractBlockMessage message = new ChangeFreeToInteractBlockMessage(
                 colonyView,
                 block,
                 ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK);
@@ -180,11 +175,11 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
     }
 
     @NotNull
-    static private EnumActionResult handleAddLocation(
-            EntityPlayer playerIn,
-            World worldIn,
-            BlockPos pos,
-            ColonyView colonyView)
+    private static EnumActionResult handleAddLocation(
+            final EntityPlayer playerIn,
+            final World worldIn,
+            final BlockPos pos,
+            final ColonyView colonyView)
     {
         ChangeFreeToInteractBlockMessage message = new ChangeFreeToInteractBlockMessage(colonyView, pos, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK);
         MineColonies.getNetwork().sendToServer(message);
