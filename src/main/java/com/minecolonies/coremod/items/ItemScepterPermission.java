@@ -69,7 +69,8 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
             final float hitY,
             final float hitZ)
     {
-        if (worldIn.isRemote) {
+        if (worldIn.isRemote)
+        {
             return EnumActionResult.PASS;
         }
 
