@@ -362,3 +362,8 @@ com.minecolonies.coremod.permission.shoot_arrow=Shoot arrows
 com.minecolonies.coremod.permission.attack_citizen=Attack citizens
 com.minecolonies.coremod.permission.attack_entity=Attack entities
 com.minecolonies.coremod.permission.access_free_blocks=Access free-blocks
+
+item.supplyCampDeployer.invalid=Requiring a flat ground of at least 16*17.
+item.minecolonies.supplyChestDeployer.name=SupplyShip Chest
+item.minecolonies.supplyCampDeployer.name=SupplyCamp Chest
+com.minecolonies.coremod.error.supplyChestAlreadyPlaced=You have already placed a supply ship or supply camp!
