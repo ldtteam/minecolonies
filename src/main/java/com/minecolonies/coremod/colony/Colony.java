@@ -785,7 +785,7 @@ public class Colony implements IColony
             //schematics
             if (Structures.isDirty())
             {
-                sendSchematicsPackets(oldSubscribers, hasNewSubscribers);
+                sendSchematicsPackets(hasNewSubscribers);
                 Structures.clearDirty();
             }
         }
@@ -902,10 +902,9 @@ public class Colony implements IColony
     /**
      * Sends packages to update the schematics.
      *
-     * @param oldSubscribers    the existing subscribers.
      * @param hasNewSubscribers the new subscribers.
      */
-    private void sendSchematicsPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers)
+    private void sendSchematicsPackets(final boolean hasNewSubscribers)
     {
         if (Structures.isDirty() || hasNewSubscribers)
         {

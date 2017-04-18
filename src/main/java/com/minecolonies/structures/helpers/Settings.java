@@ -21,7 +21,7 @@ public final class Settings
     /**
      * The position of the structure.
      */
-    public              BlockPos                 pos            = null;
+    private             BlockPos                 pos            = null;
     private             boolean                  isMirrored     = false;
     @Nullable
     private             Structure                structure      = null;
@@ -31,6 +31,26 @@ public final class Settings
 
     private Settings()
     {
+    }
+
+    /**
+     * set the position.
+     *
+     * @param position to render
+     */
+    public void setPosition(final BlockPos position)
+    {
+        pos = position;
+    }
+
+    /**
+     * get the position.
+     *
+     * @return the position
+     */
+    public BlockPos getPosition()
+    {
+        return pos;
     }
 
     /**

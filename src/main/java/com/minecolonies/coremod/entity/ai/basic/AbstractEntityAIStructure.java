@@ -246,10 +246,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                     {
                         if (structureName.contains(WAYPOINT_STRING))
                         {
-                            if (structureName.contains(WAYPOINT_STRING))
-                            {
-                                worker.getColony().addWayPoint(wo.getBuildingLocation(), world.getBlockState(wo.getBuildingLocation()));
-                            }
+                            worker.getColony().addWayPoint(wo.getBuildingLocation(), world.getBlockState(wo.getBuildingLocation()));
                         }
                     }
                     else

@@ -328,7 +328,6 @@ public abstract class AbstractBuilding
         rotation = compound.getInteger(TAG_ROTATION);
         style = compound.getString(TAG_STYLE);
 
-        final String buildingName = compound.getString(TAG_BUILDING_TYPE);
         final String md5 = compound.getString(TAG_SCHEMATIC_MD5);
         final int testLevel = buildingLevel == 0 ? 1 : buildingLevel;
         final Structures.StructureName sn = new Structures.StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + testLevel);

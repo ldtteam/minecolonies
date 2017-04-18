@@ -81,6 +81,11 @@ public class Structure
     private static final byte[] NO_DATA = {};
 
     /**
+     * Size of the buffer.
+     */
+    private static final int BUFFER_SIZE = 1024;
+
+    /**
      * Template of the structure.
      */
     private Template          template;
@@ -330,7 +335,7 @@ public class Structure
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
             int nRead;
-            byte[] data = new byte[16384];
+            byte[] data = new byte[BUFFER_SIZE];
 
             while ((nRead = stream.read(data, 0, data.length)) != -1)
             {
@@ -419,14 +424,14 @@ public class Structure
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            Log.getLogger().error("Could not compress the data:" + e.getMessage());
         }
         return NO_DATA.clone();
     }
 
     public static byte[] uncompress(final byte[] data)
     {
-        byte[] buffer = new byte[1024];
+        byte[] buffer = new byte[BUFFER_SIZE];
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         try

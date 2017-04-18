@@ -251,7 +251,7 @@ public final class Structures
     private static boolean isSchematicSizeValid(@NotNull final String structureName)
     {
         final int maxSize = MAX_TOTAL_SIZE - Integer.SIZE / Byte.SIZE;
-        final byte[] data = Structure.getStreamAsByteArray(Structure.getStream(structureName.toString()));
+        final byte[] data = Structure.getStreamAsByteArray(Structure.getStream(structureName));
         final byte[] compressed = Structure.compress(data);
 
         if (compressed != null && compressed.length > maxSize)

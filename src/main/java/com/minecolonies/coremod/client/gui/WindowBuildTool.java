@@ -253,7 +253,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         else if (pos != null)
         {
             this.pos = pos;
-            Settings.instance.pos = pos;
+            Settings.instance.setPosition(pos);
             Settings.instance.setRotation(0);
         }
 
@@ -729,9 +729,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         Settings.instance.setStructureName(structureName.toString());
         Settings.instance.setActiveSchematic(structure);
 
-        if (Settings.instance.pos == null)
+        if (Settings.instance.getPosition() == null)
         {
-            Settings.instance.pos = this.pos;
+            Settings.instance.setPosition(this.pos);
         }
     }
 
@@ -772,7 +772,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
             MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(
                                                                               serverSideName,
                                                                               structureName.toString(),
-                                                                              Settings.instance.pos,
+                                                                              Settings.instance.getPosition(),
                                                                               Settings.instance.getRotation(),
                                                                               false,
                                                                               Settings.instance.getMirror()));
@@ -799,7 +799,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
             MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(
                                                                               structureName.toString(),
                                                                               structureName.toString(),
-                                                                              Settings.instance.pos,
+                                                                              Settings.instance.getPosition(),
                                                                               Settings.instance.getRotation(),
                                                                               structureName.isHut(),
                                                                               Settings.instance.getMirror()));

@@ -132,7 +132,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
         }
         if (message.isHut)
         {
-            handleHut(player.world, player, sn, message.workOrderName, message.rotation, message.pos, message.mirror);
+            handleHut(player.world, player, sn, message.rotation, message.pos, message.mirror);
         }
         else
         {
@@ -153,7 +153,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
      */
     private static void handleHut(
                                    @NotNull final World world, @NotNull final EntityPlayer player,
-                                   final Structures.StructureName sn, final String workOrderName,
+                                   final Structures.StructureName sn,
                                    final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
     {
         final String hut = sn.getSection();
