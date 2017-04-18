@@ -69,6 +69,10 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
             final float hitY,
             final float hitZ)
     {
+        if (!worldIn.isRemote) {
+            return EnumActionResult.PASS;
+        }
+
         if (!scepter.hasTagCompound())
         {
             scepter.setTagCompound(new NBTTagCompound());
