@@ -252,7 +252,8 @@ public class ColonyPermissionEventHandler
                     cancel = true;
                 }
 
-                if (cancel) {
+                if (cancel)
+                {
                     cancelEvent(event, event.getEntityPlayer());
                 }
             }
