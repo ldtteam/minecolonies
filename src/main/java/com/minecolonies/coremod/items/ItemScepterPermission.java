@@ -69,7 +69,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
             final float hitY,
             final float hitZ)
     {
-        if (!worldIn.isRemote) {
+        if (worldIn.isRemote) {
             return EnumActionResult.PASS;
         }
 
@@ -152,10 +152,14 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
             case TAG_VALUE_MODE_BLOCK:
                 compound.setString(TAG_ITEM_MODE, TAG_VALUE_MODE_LOCATION);
                 LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.item.permissionscepter.setmode", "location");
+                return;
+
             case TAG_VALUE_MODE_LOCATION:
             default:
                 compound.setString(TAG_ITEM_MODE, TAG_VALUE_MODE_BLOCK);
                 LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.item.permissionscepter.setmode", "block");
+
+                return;
         }
     }
 
