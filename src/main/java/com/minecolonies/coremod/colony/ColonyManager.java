@@ -107,7 +107,7 @@ public final class ColonyManager
     /**
      * Pseudo unique id for the server
      */
-    private static UUID serverUUID = null;
+    private static volatile UUID serverUUID = null;
 
     private ColonyManager()
     {

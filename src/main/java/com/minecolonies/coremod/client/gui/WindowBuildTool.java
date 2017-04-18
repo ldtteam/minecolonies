@@ -882,24 +882,22 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         if (dialog == confirmDeleteDialog && buttonId == DialogDoneCancel.DONE)
         {
             final Structures.StructureName structureName = new Structures.StructureName(schematics.get(schematicsDropDownList.getSelectedIndex()));
-            if (Structures.SCHEMATICS_SCAN.equals(structureName.getPrefix()))
+            if (Structures.SCHEMATICS_SCAN.equals(structureName.getPrefix())
+                && Structures.deleteScannedStructure(structureName))
             {
-                if (Structures.deleteScannedStructure(structureName))
+                Structures.loadScannedStyleMaps();
+                if (schematics.size() > 1)
                 {
-                    Structures.loadScannedStyleMaps();
-                    if (schematics.size() > 1)
-                    {
-                        schematicsDropDownList.selectNext();
-                        stylesDropDownList.setSelectedIndex(stylesDropDownList.getSelectedIndex());
-                    }
-                    else if (styles.size() > 1)
-                    {
-                        stylesDropDownList.selectNext();
-                    }
-                    else
-                    {
-                        sectionsDropDownList.selectNext();
-                    }
+                    schematicsDropDownList.selectNext();
+                    stylesDropDownList.setSelectedIndex(stylesDropDownList.getSelectedIndex());
+                }
+                else if (styles.size() > 1)
+                {
+                    stylesDropDownList.selectNext();
+                }
+                else
+                {
+                    sectionsDropDownList.selectNext();
                 }
             }
         }
