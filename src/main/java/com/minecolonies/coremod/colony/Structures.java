@@ -204,7 +204,7 @@ public final class Structures
                 if (path.toString().endsWith(SCHEMATIC_EXTENSION))
                 {
                     String relativePath = path.toString().substring(basePath.toString().length()).split("\\" + SCHEMATIC_EXTENSION)[0];
-                    if (!path.getFileSystem().getSeparator().equals(SCHEMATICS_SEPARATOR))
+                    if (!SCHEMATICS_SEPARATOR.equals(path.getFileSystem().getSeparator()))
                     {
                         relativePath = relativePath.replace(path.getFileSystem().getSeparator(), SCHEMATICS_SEPARATOR);
                     }

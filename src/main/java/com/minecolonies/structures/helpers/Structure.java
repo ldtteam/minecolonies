@@ -421,7 +421,7 @@ public class Structure
         {
             e.printStackTrace();
         }
-        return null;
+        return NO_DATA.clone();
     }
 
     public static byte[] uncompress(final byte[] data)
@@ -449,7 +449,7 @@ public class Structure
         {
             Log.getLogger().warn("Could not uncompress data:" + e.getMessage());
         }
-        return NO_DATA;
+        return NO_DATA.clone();
     }
 
     /**
