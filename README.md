@@ -1,7 +1,6 @@
-[![Build Status](https://travis-ci.org/Minecolonies/minecolonies.svg?branch=develop)](https://travis-ci.org/Minecolonies/minecolonies)
+[![Build Status](https://teamcity.minecolonies.com/app/rest/builds/buildType:Minecolonies_StableRelease/statusIcon)](https://teamcity.minecolonies.com/viewType.html?buildTypeId=btN&guest=1)
 [![Quality Gate](https://sonar.minecolonies.com/api/badges/gate?key=Minecolonies%3Adevelop&blinking=true)](https://sonar.minecolonies.com/overview?id=Minecolonies%3Adevelop)
 [![Comment Lines](https://sonar.minecolonies.com/api/badges/measure?key=Minecolonies%3Adevelop&blinking=true&metric=comment_lines_density)](https://sonar.minecolonies.com/overview?id=Minecolonies%3Adevelop)
-[![Public API](https://sonar.minecolonies.com/api/badges/measure?key=Minecolonies%3Adevelop&blinking=true&metric=public_documented_api_density)](https://sonar.minecolonies.com/overview?id=Minecolonies%3Adevelop)
 [![Lines of Code](https://sonar.minecolonies.com/api/badges/measure?key=Minecolonies%3Adevelop&blinking=true&metric=ncloc)](https://sonar.minecolonies.com/overview?id=Minecolonies%3Adevelop)
 [![Stories in Ready](https://badge.waffle.io/Minecolonies/minecolonies.png?label=help%20wanted&title=Help%20Wanted)](http://waffle.io/Minecolonies/minecolonies)
 
