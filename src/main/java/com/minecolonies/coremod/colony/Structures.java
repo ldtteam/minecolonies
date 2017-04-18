@@ -39,6 +39,11 @@ public final class Structures
     private static final String                                        SCHEMATICS_ASSET_PATH = "/assets/minecolonies/";
 
     /**
+     * Schematic's path separator.
+     */
+    private static final String                                        SCHEMATICS_SEPARATOR = "/";
+
+    /**
      * Storage location for the "normal" schematics.
      * In the jar file or on the local hard drive
      */
@@ -136,7 +141,7 @@ public final class Structures
         final File schematicsFolder = Structure.getSchematicsFolder();
         if (schematicsFolder != null)
         {
-            Log.getLogger().info("Load additionnal huts or decorations from " + schematicsFolder + '/' + SCHEMATICS_PREFIX);
+            Log.getLogger().info("Load additionnal huts or decorations from " + schematicsFolder + SCHEMATICS_SEPARATOR + SCHEMATICS_PREFIX);
             checkDirectory(schematicsFolder.toPath().resolve(SCHEMATICS_PREFIX).toFile());
             loadSchematicsForPrefix(schematicsFolder.toPath(), SCHEMATICS_PREFIX);
         }
@@ -145,7 +150,7 @@ public final class Structures
         if (cacheSchematicFolder != null)
         {
             checkDirectory(cacheSchematicFolder);
-            Log.getLogger().info("Load cached schematic from " + cacheSchematicFolder + '/' + SCHEMATICS_CACHE);
+            Log.getLogger().info("Load cached schematic from " + cacheSchematicFolder + SCHEMATICS_SEPARATOR + SCHEMATICS_CACHE);
             loadSchematicsForPrefix(cacheSchematicFolder.toPath(), SCHEMATICS_CACHE);
         }
 
@@ -348,7 +353,7 @@ public final class Structures
             return null;
         }
 
-        final StructureName newStructureName = new StructureName(SCHEMATICS_SCAN + '/' + name);
+        final StructureName newStructureName = new StructureName(SCHEMATICS_SCAN + SCHEMATICS_SEPARATOR + name);
 
         if (!hasMD5(structureName))
         {
@@ -522,9 +527,9 @@ public final class Structures
             String name = prefix;
             if (style != null && !style.isEmpty())
             {
-                name = name + '/' + style;
+                name = name + SCHEMATICS_SEPARATOR + style;
             }
-            name = name + '/' + schematic;
+            name = name + SCHEMATICS_SEPARATOR + schematic;
             init(name);
         }
 
@@ -540,25 +545,25 @@ public final class Structures
 
             String name = structureName;
 
-            if (name.startsWith(SCHEMATICS_SCAN + '/'))
+            if (name.startsWith(SCHEMATICS_SCAN + SCHEMATICS_SEPARATOR))
             {
                 prefix = SCHEMATICS_SCAN;
             }
-            else if (name.startsWith(SCHEMATICS_CACHE + '/'))
+            else if (name.startsWith(SCHEMATICS_CACHE + SCHEMATICS_SEPARATOR))
             {
                 prefix = SCHEMATICS_CACHE;
             }
             else
             {
-                if (!name.startsWith(SCHEMATICS_PREFIX + '/'))
+                if (!name.startsWith(SCHEMATICS_PREFIX + SCHEMATICS_SEPARATOR))
                 {
-                    name = SCHEMATICS_PREFIX + '/' + name;
+                    name = SCHEMATICS_PREFIX + SCHEMATICS_SEPARATOR + name;
                 }
                 prefix = SCHEMATICS_PREFIX;
             }
 
             name = name.substring(prefix.length() + 1);
-            final int lastSeparator = name.lastIndexOf('/');
+            final int lastSeparator = name.lastIndexOf(SCHEMATICS_SEPARATOR);
             if (lastSeparator == -1)
             {
                 schematic = name;
@@ -684,9 +689,9 @@ public final class Structures
         {
             if (style == null || style.isEmpty())
             {
-                return prefix + '/' + schematic;
+                return prefix + SCHEMATICS_SEPARATOR + schematic;
             }
-            return prefix + '/' + style + '/' + schematic;
+            return prefix + SCHEMATICS_SEPARATOR + style + SCHEMATICS_SEPARATOR + schematic;
         }
     }
 
@@ -714,7 +719,7 @@ public final class Structures
     public static void addMD5ToCache(@NotNull String md5)
     {
         markDirty();
-        md5Map.put(Structures.SCHEMATICS_CACHE + '/' + md5, md5);
+        md5Map.put(Structures.SCHEMATICS_CACHE + SCHEMATICS_SEPARATOR + md5, md5);
     }
 
     /**
@@ -899,7 +904,7 @@ public final class Structures
         if (md5 != null)
         {
             Log.getLogger().info("Structures.handleSaveSchematicMessage: received new schematic md5:" + md5);
-            final File schematicFile = schematicsFolder.toPath().resolve(SCHEMATICS_CACHE + '/' +md5 + SCHEMATIC_EXTENSION).toFile();
+            final File schematicFile = schematicsFolder.toPath().resolve(SCHEMATICS_CACHE + SCHEMATICS_SEPARATOR +md5 + SCHEMATIC_EXTENSION).toFile();
             checkDirectory(schematicFile.getParentFile());
             try (OutputStream outputstream = new FileOutputStream(schematicFile))
             {
