@@ -25,13 +25,27 @@ import org.jetbrains.annotations.NotNull;
 public class ItemScepterPermission extends AbstractItemMinecolonies
 {
     /**
+     * The NBT tag of the mode
      */
     private static final String TAG_ITEM_MODE = "scepterMode";
 
+    /**
+     * the scepters block mode tag value
+     */
     private static final String TAG_VALUE_MODE_BLOCK = "modeBlock";
+
+    /**
+     * the scepters location mode tag value
+     */
     private static final String TAG_VALUE_MODE_LOCATION = "modeLocation";
 
     /**
+     * constructor.
+     *
+     * - set the name
+     * - set max damage value
+     * - set creative tab
+     * - set max stack size
      */
     public ItemScepterPermission()
     {
