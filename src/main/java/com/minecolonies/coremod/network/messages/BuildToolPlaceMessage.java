@@ -124,7 +124,6 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
     @Override
     public void messageOnServerThread(final BuildToolPlaceMessage message, final EntityPlayerMP player)
     {
-        final World world = player.world;
         final Structures.StructureName sn = new Structures.StructureName(message.structureName);
         if (!Structures.hasMD5(sn))
         {
@@ -133,11 +132,11 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
         }
         if (message.isHut)
         {
-            handleHut(world, player, sn, message.workOrderName, message.rotation, message.pos, message.mirror);
+            handleHut(player.world, player, sn, message.workOrderName, message.rotation, message.pos, message.mirror);
         }
         else
         {
-            handleDecoration(world, player, sn, message.workOrderName, message.rotation, message.pos, message.mirror);
+            handleDecoration(player.world, player, sn, message.workOrderName, message.rotation, message.pos, message.mirror);
         }
     }
 

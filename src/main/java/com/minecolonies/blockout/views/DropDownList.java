@@ -12,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A DropDownList is a Button which when click display a ScrollingList below it.
  */
-//TODO do not extend ButtonVanilla but extend view
 public class DropDownList extends ButtonVanilla implements Button.Handler
 {
     /**
@@ -107,7 +106,7 @@ public class DropDownList extends ButtonVanilla implements Button.Handler
        }
        else
        {
-           onButtonClickedFromList(button);
+            onButtonClickedFromList(button);
        }
     }
 

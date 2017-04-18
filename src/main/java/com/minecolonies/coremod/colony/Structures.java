@@ -60,6 +60,11 @@ public final class Structures
     public static final  String                                        SCHEMATICS_SCAN       = "scans";
 
     /**
+     * Maximum size for a compressed schematic.
+     */
+    private static final int MAX_TOTAL_SIZE = 32_767;
+
+    /**
      * Hut/Decoration, Styles, Levels.
      * This is populated on the client side only
      * Examples:
@@ -125,7 +130,7 @@ public final class Structures
                 }
                 catch (@NotNull FileSystemAlreadyExistsException e)
                 {
-                    Log.getLogger().warn("loadStyleMaps: FileSystemAlreadyExistsException");
+                    Log.getLogger().warn("loadStyleMaps: " + e .getMessage());
                     fileSystem = FileSystems.getFileSystem(uri);
                 }
                 final Path basePath = fileSystem.getPath(SCHEMATICS_ASSET_PATH);
@@ -133,8 +138,7 @@ public final class Structures
             }
             catch (@NotNull IOException | URISyntaxException e)
             {
-                //Silently ignore
-                Log.getLogger().warn("loadStyleMaps: Could not load the schematics from the jar");
+                Log.getLogger().warn("loadStyleMaps: Could not load the schematics from the jar (" + e.getMessage() + ")");
             }
         }
 
@@ -230,14 +234,13 @@ public final class Structures
                         }
 
                         md5Map.put(structureName.toString(), md5);
-                        final int MAX_TOTAL_SIZE = 32767;
-                        final int MAX_SIZE = MAX_TOTAL_SIZE - Integer.SIZE / Byte.SIZE;
+                        final int maxSize = MAX_TOTAL_SIZE - Integer.SIZE / Byte.SIZE;
                         final byte[] data = Structure.getStreamAsByteArray(Structure.getStream(structureName.toString()));
                         final byte[] compressed = Structure.compress(data);
 
-                        if (compressed != null && compressed.length > MAX_SIZE)
+                        if (compressed != null && compressed.length > maxSize)
                         {
-                            Log.getLogger().warn("Structure " + structureName + " is " + compressed.length + " bytes when compress, maximum allower is " + MAX_SIZE + " bytes.");
+                            Log.getLogger().warn("Structure " + structureName + " is " + compressed.length + " bytes when compress, maximum allower is " + maxSize + " bytes.");
                         }
 
                         if (MineColonies.isClient())
@@ -250,7 +253,7 @@ public final class Structures
         }
         catch (@NotNull IOException e)
         {
-            Log.getLogger().warn("loadSchematicsForPrefix: Could not load schematics from " + basePath.resolve(prefix));
+            Log.getLogger().warn("loadSchematicsForPrefix: Could not load schematics from " + basePath.resolve(prefix) + " (" + e.getMessage() +  ")");
         }
     }
 
@@ -494,8 +497,8 @@ public final class Structures
      */
     public static class StructureName
     {
-        private final static Pattern levelPattern              = Pattern.compile("[^0-9]+([0-9]+)$");
-        private final static String  LOCALIZED_SCHEMATIC_LEVEL = "com.minecolonies.coremod.gui.buildtool.hut.level";
+        private static final Pattern levelPattern              = Pattern.compile("[^0-9]+([0-9]+)$");
+        private static final String  LOCALIZED_SCHEMATIC_LEVEL = "com.minecolonies.coremod.gui.buildtool.hut.level";
         /**
          * as in Builder, Citizen, TownHall, ... and decorations
          */
@@ -892,18 +895,17 @@ public final class Structures
      */
     public static boolean handleSaveSchematicMessage(final byte[] bytes)
     {
-        final File schematicsFolder = Structure.getCachedSchematicsFolder();
-        final String md5 = Structure.calculateMD5(bytes);
-
         if (!canStoreNewSchematic())
         {
             Log.getLogger().warn("Could not store schematic in cache");
             return false;
         }
 
+        final String md5 = Structure.calculateMD5(bytes);
         if (md5 != null)
         {
             Log.getLogger().info("Structures.handleSaveSchematicMessage: received new schematic md5:" + md5);
+            final File schematicsFolder = Structure.getCachedSchematicsFolder();
             final File schematicFile = schematicsFolder.toPath().resolve(SCHEMATICS_CACHE + SCHEMATICS_SEPARATOR +md5 + SCHEMATIC_EXTENSION).toFile();
             checkDirectory(schematicFile.getParentFile());
             try (OutputStream outputstream = new FileOutputStream(schematicFile))

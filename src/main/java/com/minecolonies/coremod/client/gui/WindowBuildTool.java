@@ -364,9 +364,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
             @Override
             public String getLabel(final int index)
             {
-                final String name = schematics.get(index);
                 final Structures.StructureName sn = new Structures.StructureName(schematics.get(index));
-
                 return sn.getLocalizedName();
             }
         });
@@ -507,7 +505,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         {
             schematic = schematics.get(schematicsDropDownList.getSelectedIndex());
         }
-        final String currentSchematic = (schematic.isEmpty()) ? "" : (new Structures.StructureName(schematic)).getSchematic();
+        final String currentSchematic = schematic.isEmpty() ? "" : (new Structures.StructureName(schematic)).getSchematic();
         String section = sections.get(sectionsDropDownList.getSelectedIndex());
         String style = styles.get(stylesDropDownList.getSelectedIndex());
         schematics = Structures.getSchematicsFor(section, style);

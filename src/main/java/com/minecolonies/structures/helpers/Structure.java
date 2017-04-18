@@ -4,7 +4,6 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.lib.Constants;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.util.BlockUtils;
@@ -348,7 +347,7 @@ public class Structure
      * @param stream to which we want the MD5 hash
      * @return the MD5 hash string or null
      */
-    public static String calculateMD5(final InputStream stream) //throws IOException
+    public static String calculateMD5(final InputStream stream)
     {
         if (stream == null)
         {
@@ -444,7 +443,7 @@ public class Structure
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            Log.getLogger().warn("Could not uncompress data:" + e.getMessage());
         }
         return null;
     }

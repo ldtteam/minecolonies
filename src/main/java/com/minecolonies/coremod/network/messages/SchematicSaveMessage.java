@@ -18,8 +18,8 @@ import org.jetbrains.annotations.Nullable;
  */
 public class SchematicSaveMessage implements IMessage, IMessageHandler<SchematicSaveMessage, IMessage>
 {
-    private       byte[] data           = null;
-    final private int    MAX_TOTAL_SIZE = 32767;
+    private byte[] data = null;
+    private static final int MAX_TOTAL_SIZE = 32_767;
 
     /**
      * Public standard constructor.
@@ -36,7 +36,7 @@ public class SchematicSaveMessage implements IMessage, IMessageHandler<Schematic
      */
     public SchematicSaveMessage(final byte[] data)
     {
-        this.data = data;
+        this.data = data.clone();
     }
 
     @Override
@@ -55,17 +55,17 @@ public class SchematicSaveMessage implements IMessage, IMessageHandler<Schematic
         if (compressedData != null)
         {
             buf.capacity(compressedData.length + buf.writerIndex());
-            final int MAX_SIZE = MAX_TOTAL_SIZE - Integer.SIZE / Byte.SIZE;
-            if (compressedData.length > MAX_SIZE)
+            final int maxSize = MAX_TOTAL_SIZE - Integer.SIZE / Byte.SIZE;
+            if (compressedData.length > maxSize)
             {
                 buf.writeInt(0);
                 if (MineColonies.isClient())
                 {
-                    ClientStructureWrapper.sendMessageSchematicTooBig(MAX_SIZE);
+                    ClientStructureWrapper.sendMessageSchematicTooBig(maxSize);
                 }
                 else
                 {
-                    Log.getLogger().error("SchematicSaveMessage: schematic size too big, can not be bigger than " + MAX_SIZE + " bytes");
+                    Log.getLogger().error("SchematicSaveMessage: schematic size too big, can not be bigger than " + maxSize + " bytes");
                 }
             }
             else
