@@ -80,7 +80,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
             return EnumActionResult.SUCCESS;
         }
 
-        ColonyView colonyView = ColonyManager.getClosestColonyView(worldIn, pos);
+        final ColonyView colonyView = ColonyManager.getClosestColonyView(worldIn, pos);
         if (colonyView == null)
         {
             return EnumActionResult.FAIL;
