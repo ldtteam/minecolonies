@@ -14,7 +14,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.*;
 import java.io.*;
