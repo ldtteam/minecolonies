@@ -125,21 +125,7 @@ public final class ConfigurationHandler
             enableInDevelopmentFeatures = config.get(CATEGORY_GAMEPLAY, "development", enableInDevelopmentFeatures,
                     "Display in-development features which do not work and may break your game").getBoolean();
 
-            pathfindingDebugDraw = config.get(CATEGORY_PATHFINDING, "debugDraw", pathfindingDebugDraw,
-                    "Render pathfinding results for debugging purposes (SSP only)").getBoolean();
-            pathfindingDebugVerbosity = config.get(CATEGORY_PATHFINDING, "debugVerbosity", pathfindingDebugVerbosity,
-                    "Debug output verbosity of pathfinding (0=none, 1=results, 2=live work)").getInt();
-            pathfindingMaxThreadCount = config.get(CATEGORY_PATHFINDING, "maxThreads", pathfindingMaxThreadCount,
-                    "Maximum number of threads to use for pathfinding.").getInt();
-
-            maleFirstNames = config.get(CATEGORY_NAMES, "maleFirstNames", maleFirstNames,
-                    "Male First Names").getStringList();
-            femaleFirstNames = config.get(CATEGORY_NAMES, "femaleFirstNames", femaleFirstNames,
-                    "Female First Names").getStringList();
-            lastNames = config.get(CATEGORY_NAMES, "lastNames", lastNames,
-                    "Last Names").getStringList();
-
-            freeToInteractBlocks = config.get(CATEGORY_NAMES, "freeToInteractBlocks", freeToInteractBlocks,
+            freeToInteractBlocks = config.get(CATEGORY_GAMEPLAY, "freeToInteractBlocks", freeToInteractBlocks,
                     "Blocks players should be able to interact with inside any colony.").getStringList();
         }
         finally
@@ -150,7 +136,33 @@ public final class ConfigurationHandler
             }
         }
     }
-    
+
+    /**
+     * load configuration related to Path finding.
+     */
+    private static synchronized void loadPathFindingConfigurations()
+    {
+        pathfindingDebugDraw = config.get(CATEGORY_PATHFINDING, "debugDraw", pathfindingDebugDraw,
+                "Render pathfinding results for debugging purposes (SSP only)").getBoolean();
+        pathfindingDebugVerbosity = config.get(CATEGORY_PATHFINDING, "debugVerbosity", pathfindingDebugVerbosity,
+                "Debug output verbosity of pathfinding (0=none, 1=results, 2=live work)").getInt();
+        pathfindingMaxThreadCount = config.get(CATEGORY_PATHFINDING, "maxThreads", pathfindingMaxThreadCount,
+                "Maximum number of threads to use for pathfinding.").getInt();
+    }
+
+    /**
+     * load configuration related to the citizen's names.
+     */
+    private static synchronized void loadNamesConfigurations()
+    {
+        maleFirstNames = config.get(CATEGORY_NAMES, "maleFirstNames", maleFirstNames,
+                "Male First Names").getStringList();
+        femaleFirstNames = config.get(CATEGORY_NAMES, "femaleFirstNames", femaleFirstNames,
+                "Female First Names").getStringList();
+        lastNames = config.get(CATEGORY_NAMES, "lastNames", lastNames,
+                "Last Names").getStringList();
+    }
+
     /**
      * This event will be called when the config gets changed through
      * the in-game GUI.
