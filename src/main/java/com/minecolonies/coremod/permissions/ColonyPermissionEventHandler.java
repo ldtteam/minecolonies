@@ -219,40 +219,33 @@ public class ColonyPermissionEventHandler
 
             if(Configurations.enableColonyProtection)
             {
-                boolean cancel = false;
-
                 if((event.getWorld().getBlockState(event.getPos()) != null) &&
                         !(event.getItemStack().getItem() instanceof ItemFood) &&
                         !perms.hasPermission(event.getEntityPlayer(), Permissions.Action.RIGHTCLICK_BLOCK))
                 {
-                    cancel = true;
+                    cancelEvent(event, event.getEntityPlayer());
                 }
 
                 if(event.getWorld().getBlockState(event.getPos()).getBlock() instanceof BlockContainer &&
                         !perms.hasPermission(event.getEntityPlayer(), Permissions.Action.OPEN_CONTAINER))
                 {
-                    cancel = true;
+                    cancelEvent(event, event.getEntityPlayer());
                 }
 
                 if(event.getWorld().getTileEntity(event.getPos()) != null &&
                         !perms.hasPermission(event.getEntityPlayer(), Permissions.Action.RIGHTCLICK_ENTITY))
                 {
-                    cancel = true;
+                    cancelEvent(event, event.getEntityPlayer());
                 }
 
                 if(event.getItemStack() != null && event.getItemStack().getItem() instanceof ItemPotion &&
                         !perms.hasPermission(event.getEntityPlayer(), Permissions.Action.THROW_POTION))
                 {
-                    cancel = true;
+                    cancelEvent(event, event.getEntityPlayer());
                 }
 
                 if(event.getItemStack() != null && event.getItemStack().getItem() instanceof ItemScanTool
                         && !perms.hasPermission(event.getEntityPlayer(), Permissions.Action.USE_SCAN_TOOL))
-                {
-                    cancel = true;
-                }
-
-                if (cancel)
                 {
                     cancelEvent(event, event.getEntityPlayer());
                 }
