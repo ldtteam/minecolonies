@@ -120,19 +120,9 @@ public final class Structures
     {
         if (!Configurations.ignoreSchematicsFromJar)
         {
-            try
+            try (FileSystem fileSystem = FileSystems.newFileSystem(ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI(), Collections.emptyMap()))
             {
-                @NotNull final URI uri = ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI();
-                FileSystem fileSystem;
-                try
-                {
-                    fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
-                }
-                catch (@NotNull FileSystemAlreadyExistsException e)
-                {
-                    Log.getLogger().warn("loadStyleMaps: " + e .getMessage());
-                    fileSystem = FileSystems.getFileSystem(uri);
-                }
+
                 final Path basePath = fileSystem.getPath(SCHEMATICS_ASSET_PATH);
                 loadSchematicsForPrefix(basePath, SCHEMATICS_PREFIX);
             }
