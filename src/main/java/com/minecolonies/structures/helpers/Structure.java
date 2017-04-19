@@ -76,11 +76,6 @@ public class Structure
     private static final double SCALE = 1.001;
 
     /**
-     * no data.
-     */
-    private static final byte[] NO_DATA = {};
-
-    /**
      * Size of the buffer.
      */
     private static final int BUFFER_SIZE = 1024;
@@ -372,7 +367,7 @@ public class Structure
      * @param bytes array
      * @return the MD5 hash string or null
      */
-    public static String calculateMD5(final byte[] bytes) //throws IOException
+    public static String calculateMD5(final byte[] bytes)
     {
         try
         {
@@ -405,56 +400,40 @@ public class Structure
 
     public static byte[] compress(final byte[] data)
     {
-        try
-        {
-            final ByteArrayOutputStream byteStream = new ByteArrayOutputStream(data.length);
-            try
-            {
-                try (GZIPOutputStream zipStream = new GZIPOutputStream(byteStream))
-                {
-                    zipStream.write(data);
-                }
-            }
-            finally
-            {
-                byteStream.close();
-            }
-
-            return byteStream.toByteArray();
-        }
-        catch (Exception e)
-        {
+       final ByteArrayOutputStream byteStream = new ByteArrayOutputStream(data.length);
+       try (GZIPOutputStream zipStream = new GZIPOutputStream(byteStream))
+       {
+           zipStream.write(data);
+       }
+       catch (Exception e)
+       {
             Log.getLogger().error("Could not compress the data:" + e.getMessage());
-        }
-        return NO_DATA.clone();
+       }
+
+       return byteStream.toByteArray();
     }
 
     public static byte[] uncompress(final byte[] data)
     {
         byte[] buffer = new byte[BUFFER_SIZE];
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-        try
+        try (ByteArrayInputStream byteStream = new ByteArrayInputStream(data))
         {
-            try (ByteArrayInputStream byteStream = new ByteArrayInputStream(data))
+            try (GZIPInputStream zipStream = new GZIPInputStream(byteStream))
             {
-                try (GZIPInputStream zipStream = new GZIPInputStream(byteStream))
+                int len;
+                while ((len = zipStream.read(buffer)) > 0)
                 {
-                    int len;
-                    while ((len = zipStream.read(buffer)) > 0)
-                    {
-                        out.write(buffer, 0, len);
-                    }
+                    out.write(buffer, 0, len);
                 }
             }
-
-            return out.toByteArray();
         }
         catch (Exception e)
         {
             Log.getLogger().warn("Could not uncompress data:" + e.getMessage());
         }
-        return NO_DATA.clone();
+
+        return out.toByteArray();
     }
 
     /**
