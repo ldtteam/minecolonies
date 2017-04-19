@@ -127,6 +127,9 @@ public final class ConfigurationHandler
 
             freeToInteractBlocks = config.get(CATEGORY_GAMEPLAY, "freeToInteractBlocks", freeToInteractBlocks,
                     "Blocks players should be able to interact with inside any colony.").getStringList();
+
+            loadPathFindingConfigurations();
+            loadNamesConfigurations();
         }
         finally
         {
