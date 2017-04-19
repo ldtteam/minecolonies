@@ -8,6 +8,7 @@ import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.blockout.OverlayView;
 import com.minecolonies.coremod.util.Log;
+import java.util.function.ObjIntConsumer;
 
 /**
  * Manage windows and their events.
@@ -70,8 +71,6 @@ public class DialogDoneCancel extends OverlayView implements Button.Handler
         doneButton.setHandler(this);
         cancelButton.setHandler(this);
         this.window = window;
-        setPosition(0, 0);
-        setVisible(false);
     }
 
     /**
@@ -142,6 +141,7 @@ public class DialogDoneCancel extends OverlayView implements Button.Handler
     {
         if (visible)
         {
+            setPosition(0, 0);
             setSize(window.getInteriorWidth(), window.getInteriorHeight());
             //Make sure we are on top
             putInside(window);
