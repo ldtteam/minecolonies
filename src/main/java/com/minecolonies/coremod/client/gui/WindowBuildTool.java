@@ -34,7 +34,7 @@ import java.util.function.ObjIntConsumer;
 /**
  * BuildTool window.
  */
-public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDoneCancel.Handler, ObjIntConsumer<DropDownList>
+public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDoneCancel.Handler
 {
     /**
      * This button is used to set the previous available building type.
@@ -291,7 +291,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         registerButton(BUTTON_PREVIOUS_TYPE_ID, this::previousSection);
         registerButton(BUTTON_NEXT_TYPE_ID, this::nextSection);
         sectionsDropDownList = findPaneOfTypeByID(DROPDOWN_TYPE_ID, DropDownList.class);
-        sectionsDropDownList.setHandler((ObjIntConsumer<DropDownList>)this);
+        sectionsDropDownList.setHandler((c,i) -> onDropDownListChanged(c,i));
         sectionsDropDownList.setDataProvider(new DropDownList.DataProvider()
         {
             @Override
@@ -326,7 +326,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         registerButton(BUTTON_PREVIOUS_STYLE_ID, this::previousStyle);
         registerButton(BUTTON_NEXT_STYLE_ID, this::nextStyle);
         stylesDropDownList = findPaneOfTypeByID(DROPDOWN_STYLE_ID, DropDownList.class);
-        stylesDropDownList.setHandler((ObjIntConsumer<DropDownList>)this);
+        stylesDropDownList.setHandler((c,i) -> onDropDownListChanged(c,i));
         stylesDropDownList.setDataProvider(new DropDownList.DataProvider()
         {
             @Override
@@ -355,7 +355,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         registerButton(BUTTON_PREVIOUS_SCHEMATIC_ID, this::previousSchematic);
         registerButton(BUTTON_NEXT_SCHEMATIC_ID, this::nextSchematic);
         schematicsDropDownList = findPaneOfTypeByID(DROPDOWN_SCHEMATIC_ID, DropDownList.class);
-        schematicsDropDownList.setHandler((ObjIntConsumer<DropDownList>)this);
+        schematicsDropDownList.setHandler((c,i) -> onDropDownListChanged(c,i));
         schematicsDropDownList.setDataProvider(new DropDownList.DataProvider()
         {
             @Override
@@ -535,7 +535,13 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         schematicsDropDownList.setSelectedIndex(newIndex);
     }
 
-    public void accept(final DropDownList list, final int index)
+    /**
+     * called every time one of the dropdownlist changed.
+     *
+     * @param list the dropdown list which change
+     * @param index is the index selected in the list
+     */
+    private void onDropDownListChanged(final DropDownList list, final int index)
     {
         if (list == sectionsDropDownList)
         {
