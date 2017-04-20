@@ -95,8 +95,9 @@ public class Structure
      * @param structureName name of the structure (at stored location).
      * @param settings      it's settings.
      */
-    public Structure(@Nullable final World world, String structureName, final PlacementSettings settings)
+    public Structure(@Nullable final World world, final String structureName, final PlacementSettings settings)
     {
+        String correctStructureName = structureName;
         if (world == null || world.isRemote)
         {
             this.settings = settings;
@@ -105,34 +106,34 @@ public class Structure
 
         InputStream inputStream = null;
         //Try the cache first
-        if (Structures.hasMD5(structureName))
+        if (Structures.hasMD5(correctStructureName))
         {
-            inputStream = Structure.getStream(Structures.SCHEMATICS_CACHE + '/' + Structures.getMD5(structureName));
+            inputStream = Structure.getStream(Structures.SCHEMATICS_CACHE + '/' + Structures.getMD5(correctStructureName));
             if (inputStream != null)
             {
-                structureName = Structures.SCHEMATICS_CACHE + '/' + Structures.getMD5(structureName);
+                correctStructureName = Structures.SCHEMATICS_CACHE + '/' + Structures.getMD5(correctStructureName);
             }
         }
 
         if (inputStream == null)
         {
-            inputStream = Structure.getStream(structureName);
+            inputStream = Structure.getStream(correctStructureName);
         }
 
         if (inputStream == null)
         {
-            Log.getLogger().warn(String.format("Failed to load template %s", structureName));
+            Log.getLogger().warn(String.format("Failed to load template %s", correctStructureName));
             return;
         }
 
         try
         {
-            this.md5 = Structure.calculateMD5(Structure.getStream(structureName));
+            this.md5 = Structure.calculateMD5(Structure.getStream(correctStructureName));
             this.template = readTemplateFromStream(inputStream);
         }
         catch (final IOException e)
         {
-            Log.getLogger().warn(String.format("Failed to load template %s", structureName), e);
+            Log.getLogger().warn(String.format("Failed to load template %s", correctStructureName), e);
         }
         finally
         {
@@ -264,29 +265,27 @@ public class Structure
      */
     private static InputStream getStreamFromFolder(final File folder, final String structureName)
     {
+        final File nbtFile = new File(folder.getPath() + "/" + structureName + ".nbt");
         try
         {
             if (folder.exists())
             {
                 //We need to check that we stay within the correct folder
-                final File nbtFile = new File(folder.getPath() + "/" + structureName + ".nbt");
-                if (nbtFile.toURI().normalize().getPath().startsWith(folder.toURI().normalize().getPath()))
-                {
-                    return new FileInputStream(folder.getPath() + "/" + structureName + ".nbt");
-                }
-                else
+                if (!nbtFile.toURI().normalize().getPath().startsWith(folder.toURI().normalize().getPath()))
                 {
                     Log.getLogger().error("Structure: Illegal structure name \"" + structureName + "\"");
+                    return null;
                 }
-            }
-            else
-            {
-                throw new FileNotFoundException("Unable to find structure: " + structureName);
+                if (nbtFile.exists())
+                {
+                    return new FileInputStream(nbtFile);
+                }
             }
         }
         catch (final FileNotFoundException e)
         {
-            //Ignore the error
+            //we should will never go here
+            Log.getLogger().error("Structure: getStreamFromFolder, file not found  \"" + nbtFile + "\"");
         }
         return null;
     }
@@ -405,7 +404,7 @@ public class Structure
        {
             zipStream.write(data);
        }
-       catch (Exception e)
+       catch (IOException e)
        {
             Log.getLogger().error("Could not compress the data:" + e.getMessage());
        }
@@ -426,7 +425,7 @@ public class Structure
                 out.write(buffer, 0, len);
             }
         }
-        catch (Exception e)
+        catch (IOException e)
         {
             Log.getLogger().warn("Could not uncompress data:" + e.getMessage());
         }
