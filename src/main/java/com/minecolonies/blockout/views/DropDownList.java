@@ -8,6 +8,7 @@ import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.OverlayView;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.PaneParams;
+import java.util.function.ObjIntConsumer;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -35,9 +36,9 @@ public class DropDownList extends View implements Button.Handler
     protected DataProvider  dataProvider;
 
     /**
-     * handler of the onSelectedItemChanged.
+     * handler for the accept method.
      */
-    protected Handler       handler;
+    protected ObjIntConsumer<DropDownList>       handler;
 
     /**
      * width of the scrolling list, by default it is the same as the DropDownList width.
@@ -161,7 +162,7 @@ public class DropDownList extends View implements Button.Handler
         button.setLabel(dataProvider.getLabel(selectedIndex));
         if (handler != null)
         {
-            handler.onSelectedItemChanged(this, index);
+            handler.accept(this, index);
         }
     }
 
@@ -317,23 +318,8 @@ public class DropDownList extends View implements Button.Handler
      *
      * @param h The new handler.
      */
-    public void setHandler(final Handler h)
+    public void setHandler(final ObjIntConsumer<DropDownList> h)
     {
         handler = h;
-    }
-
-    /**
-     * Used for windows that have dialog message.
-     */
-    @FunctionalInterface
-    public interface Handler
-    {
-        /**
-         * Called when an item is selected.
-         *
-         * @param list  from which the item is selected.
-         * @param index of the selected Item.
-         */
-        void onSelectedItemChanged(final DropDownList list, final int index);
     }
 }
