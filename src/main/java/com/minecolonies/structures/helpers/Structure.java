@@ -403,7 +403,7 @@ public class Structure
        final ByteArrayOutputStream byteStream = new ByteArrayOutputStream(data.length);
        try (GZIPOutputStream zipStream = new GZIPOutputStream(byteStream))
        {
-           zipStream.write(data);
+            zipStream.write(data);
        }
        catch (Exception e)
        {
@@ -417,15 +417,13 @@ public class Structure
     {
         byte[] buffer = new byte[BUFFER_SIZE];
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try (ByteArrayInputStream byteStream = new ByteArrayInputStream(data))
+        try (ByteArrayInputStream byteStream = new ByteArrayInputStream(data);
+             GZIPInputStream zipStream = new GZIPInputStream(byteStream))
         {
-            try (GZIPInputStream zipStream = new GZIPInputStream(byteStream))
+            int len;
+            while ((len = zipStream.read(buffer)) > 0)
             {
-                int len;
-                while ((len = zipStream.read(buffer)) > 0)
-                {
-                    out.write(buffer, 0, len);
-                }
+                out.write(buffer, 0, len);
             }
         }
         catch (Exception e)
