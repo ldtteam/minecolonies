@@ -146,6 +146,7 @@ public class Structure
      *
      * @return the folder for the schematic
      */
+    @Nullable
     public static File getSchematicsFolder()
     {
         if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
@@ -181,6 +182,7 @@ public class Structure
      *
      * @return the folder for the cached schematics
      */
+    @Nullable
     public static File getCachedSchematicsFolder()
     {
         if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
@@ -222,6 +224,7 @@ public class Structure
      * @param structureName name of the structure to load
      * @return the input stream or null
      */
+    @Nullable
     public static InputStream getStream(final String structureName)
     {
         final Structures.StructureName sn = new Structures.StructureName(structureName);
@@ -241,11 +244,7 @@ public class Structure
         else
         {
             //Look in the folder first
-            final File schematicFolder = Structure.getSchematicsFolder();
-            if (schematicFolder != null)
-            {
-                inputstream = Structure.getStreamFromFolder(schematicFolder, structureName);
-            }
+            inputstream = Structure.getStreamFromFolder(Structure.getSchematicsFolder(), structureName);
             if (inputstream == null && !Configurations.ignoreSchematicsFromJar)
             {
                 inputstream = Structure.getStreamFromJar(structureName);
@@ -267,8 +266,13 @@ public class Structure
      * @param structureName name of the structure to load.
      * @return the input stream or null
      */
-    private static InputStream getStreamFromFolder(final File folder, final String structureName)
+    @Nullable
+    private static InputStream getStreamFromFolder(@Nullable final File folder, final String structureName)
     {
+        if (folder == null)
+        {
+            return null;
+        }
         final File nbtFile = new File(folder.getPath() + "/" + structureName + ".nbt");
         try
         {
@@ -300,6 +304,7 @@ public class Structure
      * @param structureName name of the structure to load from the jar.
      * @return the input stream or null
      */
+    @Nullable
     private static InputStream getStreamFromJar(final String structureName)
     {
         return MinecraftServer.class.getResourceAsStream("/assets/" + Constants.MOD_ID + '/' + structureName + ".nbt");
@@ -406,11 +411,11 @@ public class Structure
         final ByteArrayOutputStream byteStream = new ByteArrayOutputStream(data.length);
         try (GZIPOutputStream zipStream = new GZIPOutputStream(byteStream))
         {
-             zipStream.write(data);
+            zipStream.write(data);
         }
         catch (IOException e)
         {
-             Log.getLogger().error("Could not compress the data:" + e.getMessage());
+            Log.getLogger().error("Could not compress the data:" + e.getMessage());
         }
         return byteStream.toByteArray();
     }

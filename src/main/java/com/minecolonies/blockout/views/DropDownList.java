@@ -1,6 +1,5 @@
 package com.minecolonies.blockout.views;
 
-import com.minecolonies.coremod.util.Log;
 import com.minecolonies.blockout.View;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.ButtonVanilla;
@@ -91,12 +90,6 @@ public class DropDownList extends View implements Button.Handler
 
         button.setHandler(this);
     }
-
-    public void click(final int mx, final int my)
-    {
-        button.click(mx, my);
-    }
-
 
     /**
      * handle when the button is clicked on.
@@ -260,6 +253,12 @@ public class DropDownList extends View implements Button.Handler
     protected void drawSelf(final int mx, final int my)
     {
         button.drawSelf(mx,my);
+    }
+
+    @Override
+    public void click(final int mx, final int my)
+    {
+        button.click(mx, my);
     }
 
     /**
