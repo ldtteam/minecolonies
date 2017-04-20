@@ -28,9 +28,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import java.util.function.ObjIntConsumer;
-
-
 /**
  * BuildTool window.
  */
@@ -291,7 +288,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         registerButton(BUTTON_PREVIOUS_TYPE_ID, this::previousSection);
         registerButton(BUTTON_NEXT_TYPE_ID, this::nextSection);
         sectionsDropDownList = findPaneOfTypeByID(DROPDOWN_TYPE_ID, DropDownList.class);
-        sectionsDropDownList.setHandler((c,i) -> onDropDownListChanged(c,i));
+        sectionsDropDownList.setHandler(this::onDropDownListChanged);
         sectionsDropDownList.setDataProvider(new DropDownList.DataProvider()
         {
             @Override
@@ -326,7 +323,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         registerButton(BUTTON_PREVIOUS_STYLE_ID, this::previousStyle);
         registerButton(BUTTON_NEXT_STYLE_ID, this::nextStyle);
         stylesDropDownList = findPaneOfTypeByID(DROPDOWN_STYLE_ID, DropDownList.class);
-        stylesDropDownList.setHandler((c,i) -> onDropDownListChanged(c,i));
+        stylesDropDownList.setHandler(this::onDropDownListChanged);
         stylesDropDownList.setDataProvider(new DropDownList.DataProvider()
         {
             @Override
@@ -355,7 +352,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
         registerButton(BUTTON_PREVIOUS_SCHEMATIC_ID, this::previousSchematic);
         registerButton(BUTTON_NEXT_SCHEMATIC_ID, this::nextSchematic);
         schematicsDropDownList = findPaneOfTypeByID(DROPDOWN_SCHEMATIC_ID, DropDownList.class);
-        schematicsDropDownList.setHandler((c,i) -> onDropDownListChanged(c,i));
+        schematicsDropDownList.setHandler(this::onDropDownListChanged);
         schematicsDropDownList.setDataProvider(new DropDownList.DataProvider()
         {
             @Override
