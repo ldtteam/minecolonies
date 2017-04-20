@@ -19,7 +19,7 @@ public class DropDownList extends View implements Button.Handler
     /**
      * View in which the list will be displayed.
      */
-    protected OverlayView   overlay;
+    protected OverlayView overlay;
 
     /**
      * button to access to the list.
@@ -33,22 +33,22 @@ public class DropDownList extends View implements Button.Handler
     /**
      * date required to fill the list.
      */
-    protected DataProvider  dataProvider;
+    protected DataProvider dataProvider;
 
     /**
      * handler for the accept method.
      */
-    protected ObjIntConsumer<DropDownList>       handler;
+    protected ObjIntConsumer<DropDownList> handler;
 
     /**
      * width of the scrolling list, by default it is the same as the DropDownList width.
      */
-    protected int           dropDownWidth;
+    protected int dropDownWidth;
 
     /**
      * maximum height of the scrolling list, by default it is the same as the DropDownList width.
      */
-    protected int           dropDownHeight;
+    protected int dropDownHeight;
 
     /**
      * index of the selected item.
