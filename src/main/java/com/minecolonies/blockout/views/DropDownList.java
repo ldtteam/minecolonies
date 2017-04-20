@@ -1,5 +1,7 @@
 package com.minecolonies.blockout.views;
 
+import com.minecolonies.coremod.util.Log;
+import com.minecolonies.blockout.View;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.ButtonVanilla;
 import com.minecolonies.blockout.controls.Label;
@@ -12,12 +14,17 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A DropDownList is a Button which when click display a ScrollingList below it.
  */
-public class DropDownList extends ButtonVanilla implements Button.Handler
+public class DropDownList extends View implements Button.Handler
 {
     /**
      * View in which the list will be displayed.
      */
     protected OverlayView   overlay;
+
+    /**
+     * button to access to the list.
+     */
+    protected ButtonVanilla button;
 
     /**
      * List to choose from.
@@ -69,6 +76,9 @@ public class DropDownList extends ButtonVanilla implements Button.Handler
         //When unknown, we use the same height as it is wide.
         dropDownHeight = dropDownSize == null ? width : dropDownSize.getY();
 
+        button = new ButtonVanilla(params);
+        button.putInside(this);
+
         overlay = new OverlayView();
         overlay.setVisible(false);
         overlay.setPosition(0, 0);
@@ -79,7 +89,12 @@ public class DropDownList extends ButtonVanilla implements Button.Handler
         list.putInside(overlay);
         list.parseChildren(params);
 
-        setHandler(this);
+        button.setHandler(this);
+    }
+
+    public void click(final int mx, final int my)
+    {
+        button.click(mx, my);
     }
 
 
@@ -91,7 +106,7 @@ public class DropDownList extends ButtonVanilla implements Button.Handler
      */
     public void onButtonClicked(@NotNull final Button button)
     {
-        if (button == this)
+        if (button == this.button)
         {
             if (overlay.isVisible())
             {
@@ -99,7 +114,7 @@ public class DropDownList extends ButtonVanilla implements Button.Handler
             }
             else
             {
-                overlay.setSize(button.getWindow().getInteriorWidth(), button.getWindow().getInteriorHeight());
+                overlay.setSize(this.getWindow().getInteriorWidth(), this.getWindow().getInteriorHeight());
                 overlay.putInside(button.getWindow());
                 open();
             }
@@ -150,7 +165,7 @@ public class DropDownList extends ButtonVanilla implements Button.Handler
         }
         selectedIndex = index;
 
-        setLabel(dataProvider.getLabel(selectedIndex));
+        button.setLabel(dataProvider.getLabel(selectedIndex));
         if (handler != null)
         {
             handler.onSelectedItemChanged(this, index);
@@ -227,6 +242,24 @@ public class DropDownList extends ButtonVanilla implements Button.Handler
         {
             list.setSize(dropDownWidth, dropDownHeight);
         }
+    }
+
+    @Override
+    public void setEnabled(final boolean e)
+    {
+        button.setEnabled(e);
+    }
+
+    @Override
+    public void setVisible(final boolean v)
+    {
+        button.setVisible(v);
+    }
+
+    @Override
+    protected void drawSelf(final int mx, final int my)
+    {
+        button.drawSelf(mx,my);
     }
 
     /**

@@ -225,7 +225,7 @@ public class Structure
     public static InputStream getStream(final String structureName)
     {
         final Structures.StructureName sn = new Structures.StructureName(structureName);
-        InputStream inputstream;
+        InputStream inputstream = null;
         if (Structures.SCHEMATICS_CACHE.equals(sn.getPrefix()))
         {
             return Structure.getStreamFromFolder(Structure.getCachedSchematicsFolder(), structureName);
@@ -241,7 +241,11 @@ public class Structure
         else
         {
             //Look in the folder first
-            inputstream = Structure.getStreamFromFolder(Structure.getSchematicsFolder(), structureName);
+            final File schematicFolder = Structure.getSchematicsFolder();
+            if (schematicFolder != null)
+            {
+                inputstream = Structure.getStreamFromFolder(schematicFolder, structureName);
+            }
             if (inputstream == null && !Configurations.ignoreSchematicsFromJar)
             {
                 inputstream = Structure.getStreamFromJar(structureName);
@@ -285,7 +289,7 @@ public class Structure
         catch (final FileNotFoundException e)
         {
             //we should will never go here
-            Log.getLogger().error("Structure: getStreamFromFolder, file not found  \"" + nbtFile + "\"");
+            Log.getLogger().error("Structure: getStreamFromFolder, " + e.getMessage());
         }
         return null;
     }
@@ -399,17 +403,16 @@ public class Structure
 
     public static byte[] compress(final byte[] data)
     {
-       final ByteArrayOutputStream byteStream = new ByteArrayOutputStream(data.length);
-       try (GZIPOutputStream zipStream = new GZIPOutputStream(byteStream))
-       {
-            zipStream.write(data);
-       }
-       catch (IOException e)
-       {
-            Log.getLogger().error("Could not compress the data:" + e.getMessage());
-       }
-
-       return byteStream.toByteArray();
+        final ByteArrayOutputStream byteStream = new ByteArrayOutputStream(data.length);
+        try (GZIPOutputStream zipStream = new GZIPOutputStream(byteStream))
+        {
+             zipStream.write(data);
+        }
+        catch (IOException e)
+        {
+             Log.getLogger().error("Could not compress the data:" + e.getMessage());
+        }
+        return byteStream.toByteArray();
     }
 
     public static byte[] uncompress(final byte[] data)

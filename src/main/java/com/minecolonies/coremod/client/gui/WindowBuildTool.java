@@ -474,7 +474,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
 
         final boolean enabled = styles.size() > 1;
         findPaneOfTypeByID(BUTTON_PREVIOUS_STYLE_ID, Button.class).setEnabled(enabled);
-        findPaneOfTypeByID(DROPDOWN_STYLE_ID, Button.class).setEnabled(enabled);
+        findPaneOfTypeByID(DROPDOWN_STYLE_ID, DropDownList.class).setEnabled(enabled);
         findPaneOfTypeByID(BUTTON_NEXT_STYLE_ID, Button.class).setEnabled(enabled);
         stylesDropDownList.setSelectedIndex(newIndex);
     }
@@ -527,7 +527,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
 
         final boolean enabled = schematics.size() > 1;
         findPaneOfTypeByID(BUTTON_PREVIOUS_SCHEMATIC_ID, Button.class).setEnabled(enabled);
-        findPaneOfTypeByID(DROPDOWN_SCHEMATIC_ID, Button.class).setEnabled(enabled);
+        findPaneOfTypeByID(DROPDOWN_SCHEMATIC_ID, DropDownList.class).setEnabled(enabled);
         findPaneOfTypeByID(BUTTON_NEXT_SCHEMATIC_ID, Button.class).setEnabled(enabled);
         schematicsDropDownList.setSelectedIndex(newIndex);
     }
