@@ -73,7 +73,9 @@ public class WorkOrderBuild extends AbstractWorkOrder
         Structures.StructureName sn = new Structures.StructureName(Structures.SCHEMATICS_PREFIX, building.getStyle(), this.getUpgradeName());
         if(building.getTileEntity() != null && !building.getTileEntity().getStyle().isEmpty())
         {
+            final String previousStructureName = sn.toString();
             sn = new Structures.StructureName(Structures.SCHEMATICS_PREFIX, building.getTileEntity().getStyle(), this.getUpgradeName());
+            Log.getLogger().info("WorkOrderBuild at location " + this.buildingLocation + " is using " +  sn + " instead of " + previousStructureName);
         }
 
         this.structureName = sn.toString();
