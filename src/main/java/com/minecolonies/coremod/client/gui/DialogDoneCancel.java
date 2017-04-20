@@ -53,7 +53,7 @@ public class DialogDoneCancel extends OverlayView implements Button.Handler
     /**
      * Handler for the onCloseDialog event.
      */
-    protected       Handler handler;
+    protected ObjIntConsumer<DialogDoneCancel> handler;
 
     /**
      * Constructor for the DialogDoneCancel class.
@@ -128,11 +128,11 @@ public class DialogDoneCancel extends OverlayView implements Button.Handler
         }
         if (button == doneButton)
         {
-            handler.onDialogClosed(this, DONE);
+            handler.accept(this, DONE);
         }
         else
         {
-            handler.onDialogClosed(this, CANCEL);
+            handler.accept(this, CANCEL);
         }
     }
 
@@ -170,23 +170,8 @@ public class DialogDoneCancel extends OverlayView implements Button.Handler
      *
      * @param h The new handler.
      */
-    public void setHandler(final Handler h)
+    public void setHandler(final ObjIntConsumer<DialogDoneCancel> h)
     {
         handler = h;
-    }
-
-    /**
-     * Used for windows that have dialog message.
-     */
-    @FunctionalInterface
-    public interface Handler
-    {
-        /**
-         * Called then dialog is close by a button.
-         *
-         * @param dialog the dialog that was closed.
-         * @param buttonId   whether it is {DONE} or {CANCEL}.
-         */
-        void onDialogClosed(final DialogDoneCancel dialog, final int buttonId);
     }
 }

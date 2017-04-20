@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * BuildTool window.
  */
-public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDoneCancel.Handler
+public class WindowBuildTool extends AbstractWindowSkeleton
 {
     /**
      * This button is used to set the previous available building type.
@@ -870,7 +870,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton implements DialogDon
     private void deleteClicked()
     {
         confirmDeleteDialog = new DialogDoneCancel(getWindow());
-        confirmDeleteDialog.setHandler(this);
+        confirmDeleteDialog.setHandler(this::onDialogClosed);
         final Structures.StructureName structureName = new Structures.StructureName(schematics.get(schematicsDropDownList.getSelectedIndex()));
         confirmDeleteDialog.setTitle(LanguageHandler.format("com.minecolonies.coremod.gui.structure.delete.title"));
         confirmDeleteDialog.setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.structure.delete.body", structureName.toString()));
