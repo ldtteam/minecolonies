@@ -121,7 +121,6 @@ public final class Structures
         {
             try (FileSystem fileSystem = FileSystems.newFileSystem(ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI(), Collections.emptyMap()))
             {
-
                 final Path basePath = fileSystem.getPath(SCHEMATICS_ASSET_PATH);
                 loadSchematicsForPrefix(basePath, SCHEMATICS_PREFIX);
             }
@@ -208,14 +207,6 @@ public final class Structures
                     }
                     else if (isSchematicSizeValid(structureName.toString()))
                     {
-                        if (md5Map.containsKey(structureName.toString()))
-                        {
-                            Log.getLogger().info("Override " + structureName + " md5:" + md5);
-                        }
-                        else
-                        {
-                            Log.getLogger().info("Add " + structureName + " md5:" + md5);
-                        }
                         md5Map.put(structureName.toString(), md5);
                         if (MineColonies.isClient())
                         {

@@ -162,9 +162,8 @@ public class Structure
             }
         }
 
-        // if the world schematics folder contains huts or decorations subfolder
-        // then we use it as the schematic folder
-        // otherwise we use the minecraft folder  /minecolonies/schematics
+        // if the world schematics folder exists we use it
+        // otherwise we use the minecraft folder  /minecolonies/schematics if on the physical client on the logical server
         final File worldSchematicFolder = new File(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
                                                      + "/" + Constants.MOD_ID + '/' + Structures.SCHEMATICS_PREFIX);
 
@@ -173,8 +172,7 @@ public class Structure
             return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID);
         }
 
-        return new File(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
-                                                     + "/" + Constants.MOD_ID);
+        return worldSchematicFolder.getParentFile();
     }
 
     /**
