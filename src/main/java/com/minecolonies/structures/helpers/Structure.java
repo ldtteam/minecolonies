@@ -258,7 +258,7 @@ public class Structure
         catch (final FileNotFoundException e)
         {
             //we should will never go here
-            Log.getLogger().error("Structure: getStreamFromFolder, " + e.getMessage());
+            Log.getLogger().error("Structure.getStreamFromFolder", e);
         }
         return null;
     }
@@ -311,7 +311,7 @@ public class Structure
             }
             return buffer.toByteArray();
         }
-        catch (@NotNull IOException e)
+        catch (@NotNull final IOException e)
         {
             Log.getLogger().trace(e);
         }
@@ -378,9 +378,9 @@ public class Structure
         {
             zipStream.write(data);
         }
-        catch (IOException e)
+        catch (@NotNull final IOException e)
         {
-            Log.getLogger().error("Could not compress the data:" + e.getMessage());
+            Log.getLogger().error("Could not compress the data", e);
         }
         return byteStream.toByteArray();
     }

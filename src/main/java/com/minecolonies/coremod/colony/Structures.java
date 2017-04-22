@@ -124,9 +124,9 @@ public final class Structures
                 final Path basePath = fileSystem.getPath(SCHEMATICS_ASSET_PATH);
                 loadSchematicsForPrefix(basePath, SCHEMATICS_PREFIX);
             }
-            catch (IOException | URISyntaxException e)
+            catch (@NotNull IOException | URISyntaxException e)
             {
-                Log.getLogger().warn("loadStyleMaps: Could not load the schematics from the jar (" + e.getMessage() + ")");
+                Log.getLogger().warn("loadStyleMaps: Could not load the schematics from the jar.", e);
             }
         }
 
@@ -218,7 +218,7 @@ public final class Structures
         }
         catch (@NotNull IOException e)
         {
-            Log.getLogger().warn("loadSchematicsForPrefix: Could not load schematics from " + basePath.resolve(prefix) + " (" + e.getMessage() +  ")");
+            Log.getLogger().warn("loadSchematicsForPrefix: Could not load schematics from " + basePath.resolve(prefix), e);
         }
     }
 
@@ -898,7 +898,7 @@ public final class Structures
                 outputstream.write(bytes);
                 Structures.addMD5ToCache(md5);
             }
-            catch (final IOException e)
+            catch (@NotNull final IOException e)
             {
                 Log.getLogger().warn("Exception while trying to save a schematic.", e);
                 return false;
