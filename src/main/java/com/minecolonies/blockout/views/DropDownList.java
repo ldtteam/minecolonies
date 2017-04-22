@@ -8,7 +8,7 @@ import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.OverlayView;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.PaneParams;
-import java.util.function.ObjIntConsumer;
+import java.util.function.Consumer;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -38,7 +38,7 @@ public class DropDownList extends View implements Button.Handler
     /**
      * handler for the accept method.
      */
-    protected ObjIntConsumer<DropDownList> handler;
+    protected Consumer<DropDownList> handler;
 
     /**
      * width of the scrolling list, by default it is the same as the DropDownList width.
@@ -162,7 +162,7 @@ public class DropDownList extends View implements Button.Handler
         button.setLabel(dataProvider.getLabel(selectedIndex));
         if (handler != null)
         {
-            handler.accept(this, index);
+            handler.accept(this);
         }
     }
 
@@ -318,7 +318,7 @@ public class DropDownList extends View implements Button.Handler
      *
      * @param h The new handler.
      */
-    public void setHandler(final ObjIntConsumer<DropDownList> h)
+    public void setHandler(final Consumer<DropDownList> h)
     {
         handler = h;
     }

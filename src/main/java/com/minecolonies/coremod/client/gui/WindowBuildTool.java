@@ -538,7 +538,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      * @param list the dropdown list which change
      * @param index is the index selected in the list
      */
-    private void onDropDownListChanged(final DropDownList list, final int index)
+    private void onDropDownListChanged(final DropDownList list)
     {
         if (list == sectionsDropDownList)
         {
