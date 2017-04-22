@@ -143,6 +143,7 @@ public final class Structures
         {
             checkDirectory(cacheSchematicFolder);
             Log.getLogger().info("Load cached schematic from " + cacheSchematicFolder + SCHEMATICS_SEPARATOR + SCHEMATICS_CACHE);
+            checkDirectory(cacheSchematicFolder.toPath().resolve(SCHEMATICS_CACHE).toFile());
             loadSchematicsForPrefix(cacheSchematicFolder.toPath(), SCHEMATICS_CACHE);
         }
 
@@ -180,7 +181,6 @@ public final class Structures
      */
     private static void loadSchematicsForPrefix(@NotNull final Path basePath, @NotNull final String prefix)
     {
-        Log.getLogger().info("Structures: loadSchematicsForPrefix(" + basePath + ", " + prefix + ")");
         try (Stream<Path> walk = Files.walk(basePath.resolve(prefix)))
         {
             final Iterator<Path> it = walk.iterator();
