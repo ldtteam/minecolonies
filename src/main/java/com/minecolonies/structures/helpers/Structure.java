@@ -398,7 +398,7 @@ public class Structure
                 out.write(buffer, 0, len);
             }
         }
-        catch (IOException e) 
+        catch (@NotNull IOException e)
         {
             Log.getLogger().warn("Could not uncompress data:" + e.getMessage());
         }

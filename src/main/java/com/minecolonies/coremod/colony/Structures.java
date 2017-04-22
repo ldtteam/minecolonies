@@ -124,7 +124,7 @@ public final class Structures
                 final Path basePath = fileSystem.getPath(SCHEMATICS_ASSET_PATH);
                 loadSchematicsForPrefix(basePath, SCHEMATICS_PREFIX);
             }
-            catch (@NotNull IOException | URISyntaxException e)
+            catch (IOException | URISyntaxException e)
             {
                 Log.getLogger().warn("loadStyleMaps: Could not load the schematics from the jar (" + e.getMessage() + ")");
             }
