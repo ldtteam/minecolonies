@@ -1,5 +1,6 @@
 package com.minecolonies.structures.helpers;
 
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.configuration.Configurations;
@@ -142,40 +143,6 @@ public class Structure
     }
 
     /**
-     * Get the file representation of the schematics' folder.
-     *
-     * @return the folder for the schematic
-     */
-    @Nullable
-    public static File getSchematicsFolder()
-    {
-        if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
-        {
-            if (ColonyManager.getServerUUID() != null)
-            {
-                return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + "/" + ColonyManager.getServerUUID());
-            }
-            else
-            {
-                Log.getLogger().error("ColonyManager.getServerUUID() => null this should not happen");
-                return null;
-            }
-        }
-
-        // if the world schematics folder exists we use it
-        // otherwise we use the minecraft folder  /minecolonies/schematics if on the physical client on the logical server
-        final File worldSchematicFolder = new File(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
-                                                     + "/" + Constants.MOD_ID + '/' + Structures.SCHEMATICS_PREFIX);
-
-        if (!worldSchematicFolder.exists())
-        {
-            return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID);
-        }
-
-        return worldSchematicFolder.getParentFile();
-    }
-
-    /**
      * Get the file representation of the cached schematics' folder.
      *
      * @return the folder for the cached schematics
@@ -242,7 +209,7 @@ public class Structure
         else
         {
             //Look in the folder first
-            inputstream = Structure.getStreamFromFolder(Structure.getSchematicsFolder(), structureName);
+            inputstream = Structure.getStreamFromFolder(MineColonies.proxy.getSchematicsFolder(), structureName);
             if (inputstream == null && !Configurations.ignoreSchematicsFromJar)
             {
                 inputstream = Structure.getStreamFromJar(structureName);

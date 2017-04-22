@@ -130,7 +130,7 @@ public final class Structures
             }
         }
 
-        final File schematicsFolder = Structure.getSchematicsFolder();
+        final File schematicsFolder = MineColonies.proxy.getSchematicsFolder();
         if (schematicsFolder != null)
         {
             Log.getLogger().info("Load additionnal huts or decorations from " + schematicsFolder + SCHEMATICS_SEPARATOR + SCHEMATICS_PREFIX);
@@ -796,7 +796,7 @@ public final class Structures
             return false;
         }
 
-        final File structureFile = Structure.getSchematicsFolder().toPath().resolve(structureName.toString() + SCHEMATIC_EXTENSION).toFile();
+        final File structureFile = MineColonies.proxy.getSchematicsFolder().toPath().resolve(structureName.toString() + SCHEMATIC_EXTENSION).toFile();
         if (structureFile.delete())
         {
             md5Map.remove(structureName.toString());
