@@ -281,6 +281,34 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     }
 
     /**
+     * Drop down class for sections.
+     */
+    private class SectionDropDownList implements DropDownList.DataProvider
+    {
+        @Override
+        public int getElementCount()
+        {
+            return sections.size();
+        }
+
+        @Override
+        public String getLabel(final int index)
+        {
+            final String name = sections.get(index);
+            if (Structures.SCHEMATICS_SCAN.equals(name))
+            {
+                return LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.scans");
+            }
+            else if (Structures.SCHEMATICS_PREFIX.equals(name))
+            {
+                return LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.decorations");
+            }
+            //should be a hut
+            return LanguageHandler.format("tile.minecolonies.blockHut" + name + ".name");
+        }
+    }
+
+    /**
      * Initialise the previous/next and drop down list for section.
      */
     private void initBuildingTypeNavigation()
@@ -289,30 +317,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         registerButton(BUTTON_NEXT_TYPE_ID, this::nextSection);
         sectionsDropDownList = findPaneOfTypeByID(DROPDOWN_TYPE_ID, DropDownList.class);
         sectionsDropDownList.setHandler(this::onDropDownListChanged);
-        sectionsDropDownList.setDataProvider(new DropDownList.DataProvider()
-        {
-            @Override
-            public int getElementCount()
-            {
-                return sections.size();
-            }
-
-            @Override
-            public String getLabel(final int index)
-            {
-                final String name = sections.get(index);
-                if (Structures.SCHEMATICS_SCAN.equals(name))
-                {
-                    return LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.scans");
-                }
-                else if (Structures.SCHEMATICS_PREFIX.equals(name))
-                {
-                    return LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.decorations");
-                }
-                //should be a hut
-                return LanguageHandler.format("tile.minecolonies.blockHut" + name + ".name");
-            }
-        });
+        sectionsDropDownList.setDataProvider(new SectionDropDownList());
     }
 
     /**
