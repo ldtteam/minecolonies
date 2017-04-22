@@ -827,7 +827,6 @@ public final class Structures
         }
 
         final Set<String> md5Set = getCachedMD5s();
-        Log.getLogger().info("Server has " + md5Set.size() + " cached schematics");
         if (md5Set.size() < Configurations.maxCachedSchematics)
         {
             return true;
@@ -837,24 +836,20 @@ public final class Structures
         int countInUseStructures = 0;
         for (final Colony c : ColonyManager.getColonies())
         {
-            Log.getLogger().info("Looking a workorder in Colony " + c.getName());
             for (final AbstractWorkOrder workOrder : c.getWorkManager().getWorkOrders().values())
             {
                 if (workOrder instanceof WorkOrderBuildDecoration)
                 {
                     final String schematicName = ((WorkOrderBuildDecoration) workOrder).getStructureName();
-                    Log.getLogger().info("Looking a workorder with structure " + schematicName);
                     if (md5Set.contains(schematicName))
                     {
-                        Log.getLogger().info("Colony " + c.getName() + " use cached schematic " + schematicName);
                         md5Set.remove(schematicName);
                         countInUseStructures++;
                     }
                 }
             }
         }
-        Log.getLogger().info("Server has " + countInUseStructures + " used cached schematics ");
-        Log.getLogger().info("Server has " + md5Set.size() + " not used cached schematics ");
+
         //md5Set containd only the unused one
         Iterator<String> iterator = md5Set.iterator();
         while (iterator.hasNext() && md5Set.size() + countInUseStructures >= Configurations.maxCachedSchematics)
@@ -862,7 +857,6 @@ public final class Structures
             final StructureName sn = new StructureName(iterator.next());
             if (deleteCachedStructure(sn))
             {
-                Log.getLogger().info("Removing cached schematic " + sn);
                 iterator.remove();
             }
         }
