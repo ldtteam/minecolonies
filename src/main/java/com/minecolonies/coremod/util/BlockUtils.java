@@ -233,19 +233,14 @@ public final class BlockUtils
         {
             if(structureBlock == Blocks.DIRT
                     && (structureMetaData.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.COARSE_DIRT
-                    || worldMetadata.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.PODZOL))
+                    || structureMetaData.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.PODZOL))
             {
                 return false;
             }
 
-            if(worldBlock == Blocks.DIRT
-                    && (structureMetaData.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.COARSE_DIRT
-                    || worldMetadata.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.PODZOL))
-            {
-                return false;
-            }
-
-            return true;
+            return worldBlock != Blocks.DIRT
+                    || (worldMetadata.getValue(BlockDirt.VARIANT) != BlockDirt.DirtType.COARSE_DIRT
+                    && worldMetadata.getValue(BlockDirt.VARIANT) != BlockDirt.DirtType.PODZOL);
         }
         return  false;
     }

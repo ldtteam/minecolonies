@@ -753,11 +753,12 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
         if(block == Blocks.FIRE)
         {
-            if(checkOrRequestItems(false, new ItemStack(Items.FLINT_AND_STEEL, 1)))
-            {
-                return false;
-            }
-            return true;
+            return !checkOrRequestItems(false, new ItemStack(Items.FLINT_AND_STEEL, 1));
+        }
+
+        if(block == Blocks.GRASS)
+        {
+            return ! checkOrRequestItems(new ItemStack(Blocks.DIRT));
         }
 
         final List<ItemStack> itemList = new ArrayList<>();
