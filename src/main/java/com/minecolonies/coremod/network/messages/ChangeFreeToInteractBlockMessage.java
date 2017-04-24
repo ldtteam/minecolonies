@@ -61,7 +61,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
     }
 
     /**
-     * Message creation to add a new freely interactable block to the colony.
+     * Message creation to add or remove a freely interactable block to the colony.
      *
      * @param colony Colony the block can be interacted with in.
      * @param block the blockState.
@@ -77,7 +77,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
     }
 
     /**
-     * Message creation to add a new freely interactable position to the colony.
+     * Message creation to add or remove a freely interactable position to the colony.
      *
      * @param colony Colony the position can be interacted with in.
      * @param pos the position.
@@ -126,22 +126,22 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
             {
                 if (!(message.pos.getX() == 0 && message.pos.getZ() == 0 && message.pos.getY() == 0))
                 {
-                    colony.addFreePosition(message.pos);
+                    colony.addFreeBlock(message.block);
                 }
                 else
                 {
-                    colony.addFreeBlock(message.block);
+                    colony.addFreePosition(message.pos);
                 }
             }
             else
             {
                 if (!(message.pos.getX() == 0 && message.pos.getZ() == 0 && message.pos.getY() == 0))
                 {
-                    colony.removeFreePosition(message.pos);
+                    colony.removeFreeBlock(message.block);
                 }
                 else
                 {
-                    colony.removeFreeBlock(message.block);
+                    colony.removeFreePosition(message.pos);
                 }
             }
         }
