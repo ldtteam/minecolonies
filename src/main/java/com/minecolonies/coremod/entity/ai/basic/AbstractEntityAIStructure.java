@@ -833,9 +833,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 || BlockUtils.isWater(block.getDefaultState())
                 || block.equals(Blocks.LEAVES)
                 || block.equals(Blocks.LEAVES2)
-                || (block.equals(Blocks.DOUBLE_PLANT) && Utils.testFlag(metadata, 0x08))
-                || block.equals(Blocks.GRASS)
-                || block.equals(ModBlocks.blockSolidSubstitution);
+                || (block.equals(Blocks.DOUBLE_PLANT) && Utils.testFlag(metadata, 0x08));
     }
 
     private void placeBlockAt(@NotNull final Block block, @NotNull final IBlockState blockState, @NotNull final BlockPos coords)
@@ -967,7 +965,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             {
                 return false;
             }
-            blockToPlace = Blocks.GRASS;
+            blockToPlace = Blocks.DIRT;
             stateToPlace = blockToPlace.getDefaultState();
         }
         else
