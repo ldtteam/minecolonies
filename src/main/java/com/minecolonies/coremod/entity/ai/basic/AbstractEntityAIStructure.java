@@ -267,8 +267,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     /**
      * Check if a solid substitution block should be overwritten in a specific case.
      *
-     * @param block         the block.
-     * @param blockState    the blockstate.
      * @param worldBlock    the worldblock.
      * @param worldMetadata the world metadata.
      */
@@ -399,9 +397,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * @return true if reset to idle.
      */
     protected abstract boolean checkIfCanceled();
-
+    
     /**
      * Let childs overwrite this if necessary.
+     * @return true if so.
      */
     protected boolean isAlreadyCleared()
     {
@@ -562,9 +561,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         return true;
     }
 
-    /**
+
+    /*
      * Get specific data of a tileEntity.
      * Workers should implement this correctly if they require this behavior.
+     * @return list of items of the tile.
      */
     public List<ItemStack> getItemsFromTileEntity()
     {
@@ -964,6 +965,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
     /**
      * Get the rotation of the current build.
+     * @return the rotation
      */
     public int getRotation()
     {
