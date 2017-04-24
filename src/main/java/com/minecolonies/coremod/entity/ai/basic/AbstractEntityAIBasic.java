@@ -552,7 +552,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                  && InventoryFunctions
                       .matchFirstInProviderWithAction(
                         entity,
-                        stack -> stack != null && is.isItemEqual(stack),
+                        stack -> stack != null && is.isItemEqualIgnoreDurability(stack),
                         this::takeItemStackFromProvider
                       );
     }

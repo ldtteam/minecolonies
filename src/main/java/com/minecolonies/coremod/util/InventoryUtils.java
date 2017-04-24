@@ -1237,7 +1237,7 @@ public final class InventoryUtils
      * @param itemDamage the item damage value.
      * @return True when item in item stack is equal to target item.
      */
-    private static boolean compareItems(@Nullable final ItemStack itemStack, final Item targetItem, int itemDamage)
+    public static boolean compareItems(@Nullable final ItemStack itemStack, final Item targetItem, int itemDamage)
     {
         return !isItemStackEmpty(itemStack) && itemStack.getItem() == targetItem && (itemStack.getItemDamage() == itemDamage || itemDamage == -1);
     }
