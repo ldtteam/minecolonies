@@ -15,9 +15,17 @@ import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Log;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityFlowerPot;
+import net.minecraft.tileentity.TileEntityLockable;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
@@ -174,6 +182,44 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             return getState();
         }
         return START_BUILDING;
+    }
+
+    @Override
+    public List<ItemStack> getItemsFromTileEntity()
+    {
+        if (job.getStructure() != null && job.getStructure().getBlockInfo() != null && job.getStructure().getBlockInfo().tileentityData != null)
+        {
+            return getItemStacksOfTileEntity(job.getStructure().getBlockInfo().tileentityData);
+        }
+        return Collections.emptyList();
+    }
+
+    /**
+     * Get itemStack of tileEntityData. Retrieve the data from the tileEntity.
+     *
+     * @param compound the tileEntity stored in a compound.
+     * @return the list of itemstacks.
+     */
+    private List<ItemStack> getItemStacksOfTileEntity(NBTTagCompound compound)
+    {
+        final List<ItemStack> items = new ArrayList<>();
+        final TileEntity tileEntity = TileEntity.create(world, compound);
+        if (tileEntity instanceof TileEntityFlowerPot)
+        {
+            items.add(((TileEntityFlowerPot) tileEntity).getFlowerItemStack());
+        }
+        else if (tileEntity instanceof TileEntityLockable)
+        {
+            for (int i = 0; i < ((TileEntityLockable) tileEntity).getSizeInventory(); i++)
+            {
+                final ItemStack stack = ((TileEntityLockable) tileEntity).getStackInSlot(i);
+                if (stack != null)
+                {
+                    items.add(stack);
+                }
+            }
+        }
+        return items;
     }
 
     /**

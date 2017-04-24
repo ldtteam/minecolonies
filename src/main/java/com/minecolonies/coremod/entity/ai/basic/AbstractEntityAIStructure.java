@@ -29,10 +29,7 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemDoor;
 import net.minecraft.item.ItemFlintAndSteel;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFlowerPot;
-import net.minecraft.tileentity.TileEntityLockable;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -46,6 +43,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
@@ -340,12 +338,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             }
 
             // we need a shovel to transform dirt into grass path
-            if (block instanceof BlockGrassPath)
+            if (block instanceof BlockGrassPath && !holdEfficientTool(block))
             {
-                if (!holdEfficientTool(block))
-                {
-                    return false;
-                }
+                return false;
             }
 
             placeBlockAt(block, blockState, structureBlock.blockPosition);
@@ -582,7 +577,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         if (((JobBuilder) job).getStructure().getBlockInfo().tileentityData != null)
         {
             final List<ItemStack> itemList = new ArrayList<>();
-            itemList.addAll(getItemStacksOfTileEntity(((JobBuilder) job).getStructure().getBlockInfo().tileentityData));
+            itemList.addAll(getItemsFromTileEntity());
 
             for (final ItemStack stack : itemList)
             {
@@ -673,7 +668,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             }
             else
             {
-                if (!mineBlock(currentBlock.blockPosition, workFrom == null ? getWorkingPosition(currentStructure.getCurrentBlockPosition()) : workFrom))
+                if (!mineBlock(currentBlock.blockPosition, getCurrentWorkingPosition()))
                 {
                     return false;
                 }
@@ -681,6 +676,15 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
 
         return true;
+    }
+
+    /**
+     * Get the current working position for the worker. If workFrom is null calculate a new one.
+     * @return
+     */
+    private BlockPos getCurrentWorkingPosition()
+    {
+        return workFrom == null ? getWorkingPosition(currentStructure.getCurrentBlockPosition()) : workFrom;
     }
 
     /**
@@ -726,23 +730,35 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             onStartWithoutStructure();
             return AIState.IDLE;
         }
+        final AIState nextState;
         switch (currentStructure.getStage())
         {
             case CLEAR:
-                return AIState.CLEAR_STEP;
+                nextState = AIState.CLEAR_STEP;
+                break;
             case BUILD:
-                return AIState.BUILDING_STEP;
+                nextState = AIState.BUILDING_STEP;
+                break;
             case DECORATE:
-                return AIState.DECORATION_STEP;
+                nextState = AIState.DECORATION_STEP;
+                break;
             case SPAWN:
-                return AIState.SPAWN_STEP;
+                nextState = AIState.SPAWN_STEP;
+                break;
             default:
-                return AIState.COMPLETE_BUILD;
+                nextState = AIState.COMPLETE_BUILD;
         }
+        return nextState;
     }
 
     protected abstract void onStartWithoutStructure();
 
+    /**
+     * Check if the required block is available to place it.
+     * @param block the block.
+     * @param blockState its state.
+     * @return true if so.
+     */
     private boolean handleMaterials(@NotNull final Block block, @NotNull final IBlockState blockState)
     {
         //Breaking blocks doesn't require taking materials from the citizens inventory
@@ -751,23 +767,14 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             return true;
         }
 
-        if(block == Blocks.FIRE)
+        if(block == Blocks.FIRE || block == Blocks.GRASS)
         {
-            return !checkOrRequestItems(false, new ItemStack(Items.FLINT_AND_STEEL, 1));
-        }
-
-        if(block == Blocks.GRASS)
-        {
-            return ! checkOrRequestItems(new ItemStack(Blocks.DIRT));
+            return handleSpecificMaterial( block);
         }
 
         final List<ItemStack> itemList = new ArrayList<>();
         itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
-        if (job instanceof JobBuilder && ((JobBuilder) job).getStructure() != null
-                && ((JobBuilder) job).getStructure().getBlockInfo() != null && ((JobBuilder) job).getStructure().getBlockInfo().tileentityData != null)
-        {
-            itemList.addAll(getItemStacksOfTileEntity(((JobBuilder) job).getStructure().getBlockInfo().tileentityData));
-        }
+        itemList.addAll(getItemsFromTileEntity());
 
         for (final ItemStack stack : itemList)
         {
@@ -781,6 +788,30 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     }
 
     /**
+     * Get specific data of a tileEntity.
+     * Workers should implement this correctly if they require this behavior.
+     * @return
+     */
+    public List<ItemStack> getItemsFromTileEntity()
+    {
+        return Collections.emptyList();
+    }
+
+    public boolean handleSpecificMaterial(@NotNull final Block block)
+    {
+        if(block == Blocks.FIRE)
+        {
+            return !checkOrRequestItems(false, new ItemStack(Items.FLINT_AND_STEEL, 1));
+        }
+
+        if(block == Blocks.GRASS)
+        {
+            return !checkOrRequestItems(new ItemStack(Blocks.DIRT));
+        }
+        return true;
+    }
+
+    /**
      * Check how much of a certain stuck is actually required.
      *
      * @param stack the stack to check.
@@ -790,34 +821,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     public ItemStack getTotalAmount(@Nullable final ItemStack stack)
     {
         return stack;
-    }
-
-    /**
-     * Get itemStack of tileEntityData. Retrieve the data from the tileEntity.
-     *
-     * @param compound the tileEntity stored in a compound.
-     * @return the list of itemstacks.
-     */
-    private List<ItemStack> getItemStacksOfTileEntity(NBTTagCompound compound)
-    {
-        final List<ItemStack> items = new ArrayList<>();
-        final TileEntity tileEntity = TileEntity.create(world, compound);
-        if (tileEntity instanceof TileEntityFlowerPot)
-        {
-            items.add(((TileEntityFlowerPot) tileEntity).getFlowerItemStack());
-        }
-        else if (tileEntity instanceof TileEntityLockable)
-        {
-            for (int i = 0; i < ((TileEntityLockable) tileEntity).getSizeInventory(); i++)
-            {
-                final ItemStack stack = ((TileEntityLockable) tileEntity).getStackInSlot(i);
-                if (stack != null)
-                {
-                    items.add(stack);
-                }
-            }
-        }
-        return items;
     }
 
     /**
@@ -1002,11 +1005,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
         final List<ItemStack> itemList = new ArrayList<>();
         itemList.add(stack);
-        if (job instanceof JobBuilder && ((JobBuilder) job).getStructure() != null
-                && ((JobBuilder) job).getStructure().getBlockInfo() != null && ((JobBuilder) job).getStructure().getBlockInfo().tileentityData != null)
-        {
-            itemList.addAll(getItemStacksOfTileEntity(((JobBuilder) job).getStructure().getBlockInfo().tileentityData));
-        }
+        itemList.addAll(getItemsFromTileEntity());
 
         for (final ItemStack tempStack : itemList)
         {
