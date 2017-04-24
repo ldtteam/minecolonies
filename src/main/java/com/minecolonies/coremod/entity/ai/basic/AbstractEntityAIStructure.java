@@ -862,8 +862,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
     }
 
-    private boolean placeBlock(@NotNull final BlockPos pos, final Block block, @NotNull final IBlockState blockState)
+    private boolean placeBlock(@NotNull final BlockPos pos, final Block block, @NotNull final IBlockState state)
     {
+        @NotNull IBlockState stateToPlace = state;
+
         //Move out of the way when placing blocks
         if (MathHelper.floor_double(worker.posX) == pos.getX()
                 && MathHelper.abs_int(pos.getY() - (int) worker.posY) <= 1
@@ -874,10 +876,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
 
         //Workaround as long as we didn't rescan all of our buildings since BlockStairs now have different metadata values.
-        if (blockState.getBlock() instanceof BlockStairs
+        if (stateToPlace.getBlock() instanceof BlockStairs
                 && world.getBlockState(pos).getBlock() instanceof BlockStairs
-                && world.getBlockState(pos).getValue(BlockStairs.FACING) == blockState.getValue(BlockStairs.FACING)
-                && blockState.getBlock() == world.getBlockState(pos).getBlock())
+                && world.getBlockState(pos).getValue(BlockStairs.FACING) == stateToPlace.getValue(BlockStairs.FACING)
+                && stateToPlace.getBlock() == world.getBlockState(pos).getBlock())
         {
             return true;
         }
@@ -892,41 +894,42 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             }
         }
 
-        if (block instanceof BlockDoor)
+        @NotNull Block blockToPlace = block;
+        if (blockToPlace instanceof BlockDoor)
         {
-            if (blockState.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.LOWER))
+            if (stateToPlace.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.LOWER))
             {
-                ItemDoor.placeDoor(world, pos, blockState.getValue(BlockDoor.FACING), block, false);
+                ItemDoor.placeDoor(world, pos, stateToPlace.getValue(BlockDoor.FACING), blockToPlace, false);
             }
         }
-        else if (block instanceof BlockBed)
+        else if (blockToPlace instanceof BlockBed)
         {
-            final EnumFacing facing = blockState.getValue(BlockBed.FACING);
+            final EnumFacing facing = stateToPlace.getValue(BlockBed.FACING);
 
             //Set other part of the bed, to the opposite PartType
-            if (blockState.getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT)
+            if (stateToPlace.getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT)
             {
                 //pos.offset(facing) will get the other part of the bed
-                world.setBlockState(pos.offset(facing), blockState.withProperty(BlockBed.PART, BlockBed.EnumPartType.HEAD), 0x03);
-                world.setBlockState(pos, blockState.withProperty(BlockBed.PART, BlockBed.EnumPartType.FOOT), 0x03);
+                world.setBlockState(pos.offset(facing), stateToPlace.withProperty(BlockBed.PART, BlockBed.EnumPartType.HEAD), 0x03);
+                world.setBlockState(pos, stateToPlace.withProperty(BlockBed.PART, BlockBed.EnumPartType.FOOT), 0x03);
             }
             else
             {
                 return true;
             }
         }
-        else if (block instanceof BlockDoublePlant)
+        else if (blockToPlace instanceof BlockDoublePlant)
         {
-            world.setBlockState(pos, blockState.withProperty(BlockDoublePlant.HALF, BlockDoublePlant.EnumBlockHalf.LOWER), 0x03);
-            world.setBlockState(pos.up(), blockState.withProperty(BlockDoublePlant.HALF, BlockDoublePlant.EnumBlockHalf.UPPER), 0x03);
+            world.setBlockState(pos, stateToPlace.withProperty(BlockDoublePlant.HALF, BlockDoublePlant.EnumBlockHalf.LOWER), 0x03);
+            world.setBlockState(pos.up(), stateToPlace.withProperty(BlockDoublePlant.HALF, BlockDoublePlant.EnumBlockHalf.UPPER), 0x03);
         }
-        else if (block instanceof BlockEndPortal || block instanceof BlockMobSpawner || block instanceof BlockDragonEgg || block instanceof BlockPortal)
+        else if (blockToPlace instanceof BlockEndPortal || blockToPlace instanceof BlockMobSpawner || blockToPlace instanceof BlockDragonEgg || blockToPlace instanceof BlockPortal)
         {
             return true;
         }
-        else if (block instanceof BlockFlowerPot)
+        else if (blockToPlace instanceof BlockFlowerPot)
         {
-            if (!world.setBlockState(pos, blockState, 0x03))
+            if (!world.setBlockState(pos, stateToPlace, 0x03))
             {
                 return false;
             }
@@ -939,7 +942,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 world.setTileEntity(pos, tileentityflowerpot);
             }
         }
-        else if(block == Blocks.FIRE)
+        else if(blockToPlace == Blocks.FIRE)
         {
             final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(worker.getInventoryCitizen()),
                     itemStack ->  !InventoryUtils.isItemStackEmpty(itemStack) && itemStack.getItem() == Items.FLINT_AND_STEEL);
@@ -953,20 +956,29 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             if(item != null && item.getItem() instanceof ItemFlintAndSteel)
             {
                 worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item);
-                world.setBlockState(pos, blockState, 0x03);
+                world.setBlockState(pos, stateToPlace, 0x03);
                 item.damageItem(1, worker);
                 return true;
             }
         }
+        else if(blockToPlace == Blocks.GRASS)
+        {
+            if (!world.setBlockState(pos, Blocks.DIRT.getDefaultState(), 0x03))
+            {
+                return false;
+            }
+            blockToPlace = Blocks.GRASS;
+            stateToPlace = blockToPlace.getDefaultState();
+        }
         else
         {
-            if (!world.setBlockState(pos, blockState, 0x03))
+            if (!world.setBlockState(pos, stateToPlace, 0x03))
             {
                 return false;
             }
         }
 
-        if(block instanceof BlockChest && job instanceof JobBuilder)
+        if(blockToPlace instanceof BlockChest && job instanceof JobBuilder)
         {
             final BlockPos buildingLocation = ((JobBuilder) job).getWorkOrder().getBuildingLocation();
             final AbstractBuilding building = this.getOwnBuilding().getColony().getBuilding(buildingLocation);
@@ -978,15 +990,15 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
 
         //It will crash at blocks like water which is actually free, we don't have to decrease the stacks we have.
-        if (isBlockFree(block, block.getMetaFromState(blockState)))
+        if (isBlockFree(blockToPlace, blockToPlace.getMetaFromState(stateToPlace)))
         {
             return true;
         }
 
-        @Nullable final ItemStack stack = BlockUtils.getItemStackFromBlockState(blockState);
+        @Nullable final ItemStack stack = BlockUtils.getItemStackFromBlockState(stateToPlace);
         if (stack == null)
         {
-            Log.getLogger().error("Block causes NPE: " + blockState.getBlock());
+            Log.getLogger().error("Block causes NPE: " + stateToPlace.getBlock());
             return false;
         }
 
@@ -1011,7 +1023,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             }
         }
 
-        if (Configurations.builderBuildBlockDelay > 0 && block != Blocks.AIR)
+        if (Configurations.builderBuildBlockDelay > 0 && blockToPlace != Blocks.AIR)
         {
             setDelay(Configurations.builderBuildBlockDelay);
         }
