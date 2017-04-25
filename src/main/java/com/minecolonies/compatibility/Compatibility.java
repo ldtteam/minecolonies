@@ -96,7 +96,7 @@ public final class Compatibility
      */
     public static boolean isTinkersWeapon(@NotNull final ItemStack stack)
     {
-        return TinkersWeaponHelper.isTinkersWeapon(stack);
+        return TinkersWeaponHelper.isTinkersSword(stack);
     }
 
     /**
@@ -104,8 +104,8 @@ public final class Compatibility
      * @param stack the stack.
      * @return the attack damage.
      */
-    public static double getAttackDamage(final ItemStack stack)
+    public static double getAttackDamage(@NotNull final ItemStack stack)
     {
-        return TinkersWeaponHelper.getAttackDamage(stack);
+        return TinkersWeaponHelper.getDamage(stack);
     }
 }
