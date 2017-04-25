@@ -609,6 +609,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @Override
     public boolean attackEntityFrom(@NotNull final DamageSource damageSource, final float damage)
     {
+        setLastAttacker(damageSource.getEntity());
+
         final Entity sourceEntity = damageSource.getEntity();
         if (sourceEntity instanceof EntityCitizen && ((EntityCitizen) sourceEntity).colonyId == this.colonyId)
         {
