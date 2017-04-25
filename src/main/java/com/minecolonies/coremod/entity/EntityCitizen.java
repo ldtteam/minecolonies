@@ -39,6 +39,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -92,6 +94,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private static final String                 TAG_HELD_ITEM_SLOT         = "HeldItemSlot";
     private static final String                 TAG_STATUS                 = "status";
     private static final String                 TAG_LAST_JOB               = "lastJob";
+
+    /**
+     * The middle saturation point. smaller than this = bad and bigger than this = good.
+     */
+    private static final int AVERAGE_SATURATION = 5;
+
     /**
      * The delta yaw value for looking at things.
      */
@@ -175,6 +183,51 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * Later run speed while running away from entities.
      */
     private static final double LATER_RUN_SPEED_AVOID = 0.6D;
+
+    /**
+     * Happiness penalty for citizen death.
+     */
+    private static final double CITIZEN_DEATH_PENALTY = 0.2;
+
+    /**
+     * Happiness penalty for citizen kill.
+     */
+    private static final double CITIZEN_KILL_PENALTY = 0.2;
+
+    /**
+     * Lower than this is low saturation.
+     */
+    private static final int LOW_SATURATION          = 3;
+
+    /**
+     * Higher than this is high saturation.
+     */
+    private static final int HIGH_SATURATION         = 7;
+
+    /**
+     * Full saturation amount.
+     */
+    private static final double FULL_SATURATION = 10;
+
+    /**
+     * Big multiplier in extreme saturation situations.
+     */
+    private static final double BIG_SATURATION_FACTOR   = 0.25;
+
+    /**
+     * Small multiplier in average saturation situation.s
+     */
+    private static final double LOW_SATURATION_FACTOR   = 0.1;
+
+    /**
+     * Decrease by this * buildingLevel each new night.
+     */
+    private static final double SATURATION_DECREASE_FACTOR = 0.2;
+
+    /**
+     * Full saturation amount.
+     */
+    private static final double FULL_SATURATION = 10;
 
     private static Field            navigatorField;
     private final  InventoryCitizen inventory;
@@ -277,20 +330,21 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     private void initTasks()
     {
-        this.tasks.addTask(0, new EntityAISwimming(this));
+        int priority = 0;
+        this.tasks.addTask(priority, new EntityAISwimming(this));
 
         if (this.getColonyJob() == null || !"com.minecolonies.coremod.job.Guard".equals(this.getColonyJob().getName()))
         {
-            this.tasks.addTask(1, new EntityAICitizenAvoidEntity(this, EntityMob.class, DISTANCE_OF_ENTITY_AVOID, LATER_RUN_SPEED_AVOID, INITIAL_RUN_SPEED_AVOID));
+            this.tasks.addTask(++priority, new EntityAICitizenAvoidEntity(this, EntityMob.class, DISTANCE_OF_ENTITY_AVOID, LATER_RUN_SPEED_AVOID, INITIAL_RUN_SPEED_AVOID));
         }
-        this.tasks.addTask(2, new EntityAIGoHome(this));
-        this.tasks.addTask(3, new EntityAISleep(this));
-        this.tasks.addTask(4, new EntityAIOpenDoor(this, true));
-        this.tasks.addTask(4, new EntityAIOpenFenceGate(this, true));
-        this.tasks.addTask(5, new EntityAIWatchClosest2(this, EntityPlayer.class, 3.0F, 1.0F));
-        this.tasks.addTask(6, new EntityAIWatchClosest2(this, EntityCitizen.class, 5.0F, 0.02F));
-        this.tasks.addTask(7, new EntityAICitizenWander(this, 0.6D));
-        this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityLiving.class, 6.0F));
+        this.tasks.addTask(++priority, new EntityAIGoHome(this));
+        this.tasks.addTask(++priority, new EntityAISleep(this));
+        this.tasks.addTask(++priority, new EntityAIOpenDoor(this, true));
+        this.tasks.addTask(priority, new EntityAIOpenFenceGate(this, true));
+        this.tasks.addTask(++priority, new EntityAIWatchClosest2(this, EntityPlayer.class, 3.0F, 1.0F));
+        this.tasks.addTask(++priority, new EntityAIWatchClosest2(this, EntityCitizen.class, 5.0F, 0.02F));
+        this.tasks.addTask(++priority, new EntityAICitizenWander(this, 0.6D));
+        this.tasks.addTask(++priority, new EntityAIWatchClosest(this, EntityLiving.class, 6.0F));
 
         onJobChanged(getColonyJob());
     }
@@ -547,6 +601,36 @@ public class EntityCitizen extends EntityAgeable implements INpc
         final double workBuildingLevel = getWorkBuilding() == null ? 0 : getWorkBuilding().getBuildingLevel();
         final double bonusXp = workBuildingLevel * (1 + citizenHutLevel) / Math.log(this.getExperienceLevel() + 2.0D);
         localXp = localXp * bonusXp;
+        final double saturation = citizenData.getSaturation();
+
+        if(saturation < AVERAGE_SATURATION)
+        {
+            if(saturation <= 0)
+            {
+                return;
+            }
+
+            if(saturation < LOW_SATURATION)
+            {
+                localXp -= localXp * BIG_SATURATION_FACTOR * saturation;
+            }
+            else
+            {
+                localXp -= localXp * LOW_SATURATION_FACTOR * saturation;
+            }
+        }
+        else if(saturation > AVERAGE_SATURATION)
+        {
+            if(saturation > HIGH_SATURATION)
+            {
+                localXp += localXp * BIG_SATURATION_FACTOR * saturation;
+            }
+            else
+            {
+                localXp += localXp * LOW_SATURATION_FACTOR * saturation;
+            }
+        }
+
         if (localXp > maxValue)
         {
             localXp = maxValue;
@@ -635,11 +719,25 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @Override
     public void onDeath(final DamageSource par1DamageSource)
     {
+        double penalty = CITIZEN_DEATH_PENALTY;
+        if(par1DamageSource.getEntity() instanceof EntityPlayer)
+        {
+            for (Permissions.Player player : PermissionUtils.getPlayersWithAtLeastRank(colony, Permissions.Rank.OFFICER))
+            {
+                if(player.getID().equals(par1DamageSource.getEntity().getUniqueID()))
+                {
+                    penalty = CITIZEN_KILL_PENALTY;
+                    break;
+                }
+            }
+        }
+
         dropExperience();
         this.setDead();
 
         if (colony != null)
         {
+            colony.decreaseOverallHappiness(penalty);
             triggerDeathAchievement(par1DamageSource, getColonyJob());
             if (getColonyJob() instanceof JobGuard)
             {
@@ -918,6 +1016,18 @@ public class EntityCitizen extends EntityAgeable implements INpc
             getNavigator().moveAwayFromXYZ(this.getPosition(), MOVE_AWAY_RANGE, MOVE_AWAY_SPEED);
         }
 
+        if(citizenData != null)
+        {
+            if (citizenData.getSaturation() <= 0)
+            {
+                this.addPotionEffect(new PotionEffect(Potion.getPotionFromResourceLocation("slowness")));
+            }
+            else
+            {
+                this.removeActivePotionEffect(Potion.getPotionFromResourceLocation("slowness"));
+            }
+        }
+
         checkHeal();
         super.onLivingUpdate();
     }
@@ -1038,7 +1148,17 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         if (citizenData != null && getOffsetTicks() % HEAL_CITIZENS_AFTER == 0 && getHealth() < getMaxHealth())
         {
-            heal(1);
+            int healAmount = 1;
+            if(citizenData.getSaturation() >= FULL_SATURATION)
+            {
+                healAmount+=1;
+            }
+            else if(citizenData.getSaturation() < LOW_SATURATION)
+            {
+                healAmount = 0;
+            }
+
+            heal(healAmount);
             citizenData.markDirty();
         }
     }
@@ -1373,6 +1493,14 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         if (!worldObj.isDaytime())
         {
+            if(getDesiredActivity() != DesiredActivity.SLEEP && citizenData != null)
+            {
+                final AbstractBuildingWorker buildingWorker = getWorkBuilding();
+                final double decreaseBy = buildingWorker == null ? 0 : SATURATION_DECREASE_FACTOR * buildingWorker.getBuildingLevel();
+
+                    citizenData.decreaseSaturation(decreaseBy);
+
+            }
             return DesiredActivity.SLEEP;
         }
         else if (worldObj.isRaining() && !shouldWorkWhileRaining())
