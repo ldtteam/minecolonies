@@ -7,21 +7,15 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockStairs;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.util.Mirror;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.template.Template;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,43 +77,6 @@ public final class StructureWrapper
     }
 
     /**
-     * Generate a resource location from a structures name.
-     *
-     * @param name the structures name
-     * @return the resource location pointing towards the structure
-     */
-    @NotNull
-    private static ResourceLocation getResourceLocation(@NotNull final String name)
-    {
-        return new ResourceLocation("minecolonies:schematics/" + name + ".nbt");
-    }
-
-    /**
-     * Generate the stream from a resource location.
-     *
-     * @param res the location to pull the stream from
-     * @return a stream from this location
-     */
-    public static InputStream getStream(@NotNull final ResourceLocation res)
-    {
-        try
-        {
-            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
-            {
-                return Minecraft.getMinecraft().getResourceManager().getResource(res).getInputStream();
-            }
-            else
-            {
-                return StructureWrapper.class.getResourceAsStream(String.format("/assets/%s/%s", res.getResourceDomain(), res.getResourcePath()));
-            }
-        }
-        catch (final IOException e)
-        {
-            throw new IllegalStateException("Could not load stream!", e);
-        }
-    }
-
-    /**
      * Load a structure into this world
      * and place it in the right position and rotation.
      *
@@ -129,8 +86,9 @@ public final class StructureWrapper
      * @param rotations number of times rotated
      * @param mirror    the mirror used.
      */
-    public static void loadAndPlaceStructureWithRotation(final World worldObj, @NotNull final String name,
-            @NotNull final BlockPos pos, final int rotations, @NotNull final Mirror mirror)
+    public static void loadAndPlaceStructureWithRotation(
+                                                          final World worldObj, @NotNull final String name,
+                                                          @NotNull final BlockPos pos, final int rotations, @NotNull final Mirror mirror)
     {
         try
         {
@@ -179,10 +137,10 @@ public final class StructureWrapper
     /**
      * Rotates the structure x times.
      *
-     * @param times times to rotateWithMirror.
-     * @param world world it's rotating it in.
+     * @param times     times to rotateWithMirror.
+     * @param world     world it's rotating it in.
      * @param rotatePos position to rotateWithMirror it around.
-     * @param mirror the mirror to rotate with.
+     * @param mirror    the mirror to rotate with.
      */
     public void rotate(final int times, @NotNull final World world, @NotNull final BlockPos rotatePos, @NotNull final Mirror mirror)
     {

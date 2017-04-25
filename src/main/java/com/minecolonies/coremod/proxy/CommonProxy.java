@@ -23,6 +23,8 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.io.File;
+
 
 /**
  * CommonProxy of the minecolonies mod (Server and Client).
@@ -154,4 +156,11 @@ public class CommonProxy implements IProxy
     {
         return nextEntityId++;
     }
+
+    @Override
+    public File getSchematicsFolder()
+    {
+        return null;
+    }
+
 }

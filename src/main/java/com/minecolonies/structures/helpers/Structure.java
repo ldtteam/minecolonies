@@ -1,7 +1,11 @@
 package com.minecolonies.structures.helpers;
 
-import com.minecolonies.coremod.blocks.ModBlocks;
+import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.Structures;
+import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.lib.Constants;
+import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.util.BlockUtils;
 import com.minecolonies.coremod.util.Log;
 import com.minecolonies.structures.fake.FakeEntity;
@@ -41,7 +45,11 @@ import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
 import java.io.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.zip.*;
+import javax.xml.bind.DatatypeConverter;
 
 /**
  * Structure class, used to store, create, get structures.
@@ -69,11 +77,17 @@ public class Structure
     private static final double SCALE = 1.001;
 
     /**
+     * Size of the buffer.
+     */
+    private static final int BUFFER_SIZE = 1024;
+
+    /**
      * Template of the structure.
      */
     private Template          template;
     private Minecraft         mc;
     private PlacementSettings settings;
+    private String            md5;
 
     /**
      * Constuctor of Structure, tries to create a new structure.
@@ -84,61 +98,312 @@ public class Structure
      */
     public Structure(@Nullable final World world, final String structureName, final PlacementSettings settings)
     {
-        InputStream inputstream = MinecraftServer.class.getResourceAsStream("/assets/" + Constants.MOD_ID + "/schematics/" + structureName + ".nbt");
-
+        String correctStructureName = structureName;
         if (world == null || world.isRemote)
         {
             this.settings = settings;
             this.mc = Minecraft.getMinecraft();
         }
 
-        //Might be at a different location!
-        if (inputstream == null)
+        InputStream inputStream = null;
+        //Try the cache first
+        if (Structures.hasMD5(correctStructureName))
         {
-            try
+            inputStream = Structure.getStream(Structures.SCHEMATICS_CACHE + '/' + Structures.getMD5(correctStructureName));
+            if (inputStream != null)
             {
-                final File decorationFolder;
-
-                if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
-                {
-                    decorationFolder = new File(Minecraft.getMinecraft().mcDataDir, "minecolonies/");
-                }
-                else
-                {
-                    decorationFolder = new File(FMLCommonHandler.instance().getMinecraftServerInstance().getDataDirectory(), "minecolonies/");
-                }
-                if(decorationFolder.exists())
-                {
-                    inputstream = new FileInputStream(decorationFolder.getPath() + "/" + structureName + ".nbt");
-                }
-                else
-                {
-                    throw new FileNotFoundException("Unable to find structure: " + structureName);
-                }
-            }
-            catch (final FileNotFoundException e)
-            {
-                Log.getLogger().warn("Couldn't find any structure with this name anywhere", e);
+                correctStructureName = Structures.SCHEMATICS_CACHE + '/' + Structures.getMD5(correctStructureName);
             }
         }
 
-        if (inputstream == null)
+        if (inputStream == null)
         {
+            inputStream = Structure.getStream(correctStructureName);
+        }
+
+        if (inputStream == null)
+        {
+            Log.getLogger().warn(String.format("Failed to load template %s", correctStructureName));
             return;
         }
 
         try
         {
-            this.template = readTemplateFromStream(inputstream);
+            this.md5 = Structure.calculateMD5(Structure.getStream(correctStructureName));
+            this.template = readTemplateFromStream(inputStream);
         }
         catch (final IOException e)
         {
-            Log.getLogger().warn(String.format("Failed to load template %s", structureName), e);
+            Log.getLogger().warn(String.format("Failed to load template %s", correctStructureName), e);
         }
         finally
         {
-            IOUtils.closeQuietly(inputstream);
+            IOUtils.closeQuietly(inputStream);
         }
+    }
+
+    /**
+     * Get the file representation of the cached schematics' folder.
+     *
+     * @return the folder for the cached schematics
+     */
+    @Nullable
+    public static File getCachedSchematicsFolder()
+    {
+        if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
+        {
+            if (ColonyManager.getServerUUID() != null)
+            {
+                return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + "/" + ColonyManager.getServerUUID());
+            }
+            else
+            {
+                Log.getLogger().error("ColonyManager.getServerUUID() => null this should not happen");
+                return null;
+            }
+        }
+        return new File(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
+                          + "/" + Constants.MOD_ID);
+    }
+
+    /**
+     * get the schematic folder for the client.
+     *
+     * @return the client folder.
+     */
+    public static File getClientSchematicsFolder()
+    {
+        return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID);
+    }
+
+    /**
+     * get a InputStream for a give structureName.
+     * <p>
+     * Look into the following director (in order):
+     * - scan
+     * - cache
+     * - schematics folder
+     * - jar
+     * It should be the exact oppsite that the way used to buikd the list.
+     *
+     * @param structureName name of the structure to load
+     * @return the input stream or null
+     */
+    @Nullable
+    public static InputStream getStream(final String structureName)
+    {
+        final Structures.StructureName sn = new Structures.StructureName(structureName);
+        InputStream inputstream = null;
+        if (Structures.SCHEMATICS_CACHE.equals(sn.getPrefix()))
+        {
+            return Structure.getStreamFromFolder(Structure.getCachedSchematicsFolder(), structureName);
+        }
+        else if (Structures.SCHEMATICS_SCAN.equals(sn.getPrefix()))
+        {
+            return Structure.getStreamFromFolder(Structure.getClientSchematicsFolder(), structureName);
+        }
+        else if (!Structures.SCHEMATICS_PREFIX.equals(sn.getPrefix()))
+        {
+            return null;
+        }
+        else
+        {
+            //Look in the folder first
+            inputstream = Structure.getStreamFromFolder(MineColonies.proxy.getSchematicsFolder(), structureName);
+            if (inputstream == null && !Configurations.ignoreSchematicsFromJar)
+            {
+                inputstream = Structure.getStreamFromJar(structureName);
+            }
+        }
+
+        if (inputstream == null)
+        {
+            Log.getLogger().warn("Structure: Couldn't find any structure with this name " + structureName);
+        }
+
+        return inputstream;
+    }
+
+    /**
+     * get a input stream for a schematic within a specif folder.
+     *
+     * @param folder        where to load it from.
+     * @param structureName name of the structure to load.
+     * @return the input stream or null
+     */
+    @Nullable
+    private static InputStream getStreamFromFolder(@Nullable final File folder, final String structureName)
+    {
+        if (folder == null)
+        {
+            return null;
+        }
+        final File nbtFile = new File(folder.getPath() + "/" + structureName + ".nbt");
+        try
+        {
+            if (folder.exists())
+            {
+                //We need to check that we stay within the correct folder
+                if (!nbtFile.toURI().normalize().getPath().startsWith(folder.toURI().normalize().getPath()))
+                {
+                    Log.getLogger().error("Structure: Illegal structure name \"" + structureName + "\"");
+                    return null;
+                }
+                if (nbtFile.exists())
+                {
+                    return new FileInputStream(nbtFile);
+                }
+            }
+        }
+        catch (final FileNotFoundException e)
+        {
+            //we should will never go here
+            Log.getLogger().error("Structure.getStreamFromFolder", e);
+        }
+        return null;
+    }
+
+    /**
+     * get a input stream for a schematic from jar.
+     *
+     * @param structureName name of the structure to load from the jar.
+     * @return the input stream or null
+     */
+    @Nullable
+    private static InputStream getStreamFromJar(final String structureName)
+    {
+        return MinecraftServer.class.getResourceAsStream("/assets/" + Constants.MOD_ID + '/' + structureName + ".nbt");
+    }
+
+    /**
+     * get the Template from the structure.
+     *
+     * @return The templae for the structure
+     */
+    public Template getTemplate()
+    {
+        return this.template;
+    }
+
+    /**
+     * Convert an InputStream into and array of bytes.
+     *
+     * @param stream to be converted to bytes array
+     * @return the array of bytes, array is size 0 when the stream is null
+     */
+    public static byte[] getStreamAsByteArray(final InputStream stream)
+    {
+        if (stream == null)
+        {
+            Log.getLogger().info("Structure.getStreamAsByteArray: stream is null this should not happen");
+            return new byte[0];
+        }
+        try
+        {
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+
+            int nRead;
+            byte[] data = new byte[BUFFER_SIZE];
+
+            while ((nRead = stream.read(data, 0, data.length)) != -1)
+            {
+                buffer.write(data, 0, nRead);
+            }
+            return buffer.toByteArray();
+        }
+        catch (@NotNull final IOException e)
+        {
+            Log.getLogger().trace(e);
+        }
+        return new byte[0];
+    }
+
+    /**
+     * Calculate the MD5 hash for a template from an inputstream.
+     *
+     * @param stream to which we want the MD5 hash
+     * @return the MD5 hash string or null
+     */
+    public static String calculateMD5(final InputStream stream)
+    {
+        if (stream == null)
+        {
+            Log.getLogger().error("Structure.calculateMD5: stream is null, this should not happen");
+            return null;
+        }
+        return calculateMD5(getStreamAsByteArray(stream));
+    }
+
+    /**
+     * Calculate the MD5 hash of a byte array
+     *
+     * @param bytes array
+     * @return the MD5 hash string or null
+     */
+    public static String calculateMD5(final byte[] bytes)
+    {
+        try
+        {
+            final MessageDigest md = MessageDigest.getInstance("MD5");
+            return DatatypeConverter.printHexBinary(md.digest(bytes));
+        }
+        catch (@NotNull NoSuchAlgorithmException e)
+        {
+            Log.getLogger().trace(e);
+        }
+
+        return null;
+    }
+
+    /**
+     * Compare the md5 from the structure with an other md5 hash.
+     *
+     * @param otherMD5 to compare with
+     * @return whether the otherMD5 match, return false if md5 is null
+     */
+    public boolean isCorrectMD5(final String otherMD5)
+    {
+        Log.getLogger().info("isCorrectMD5: md5:" + md5 + " other:" + otherMD5);
+        if (md5 == null || otherMD5 == null)
+        {
+            return false;
+        }
+        return md5.compareTo(otherMD5) == 0;
+    }
+
+    public static byte[] compress(final byte[] data)
+    {
+        final ByteArrayOutputStream byteStream = new ByteArrayOutputStream(data.length);
+        try (GZIPOutputStream zipStream = new GZIPOutputStream(byteStream))
+        {
+            zipStream.write(data);
+        }
+        catch (@NotNull final IOException e)
+        {
+            Log.getLogger().error("Could not compress the data", e);
+        }
+        return byteStream.toByteArray();
+    }
+
+    public static byte[] uncompress(final byte[] data)
+    {
+        byte[] buffer = new byte[BUFFER_SIZE];
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try (ByteArrayInputStream byteStream = new ByteArrayInputStream(data);
+             GZIPInputStream zipStream = new GZIPInputStream(byteStream))
+        {
+            int len;
+            while ((len = zipStream.read(buffer)) > 0)
+            {
+                out.write(buffer, 0, len);
+            }
+        }
+        catch (@NotNull final IOException e)
+        {
+            Log.getLogger().warn("Could not uncompress data", e);
+        }
+
+        return out.toByteArray();
     }
 
     /**

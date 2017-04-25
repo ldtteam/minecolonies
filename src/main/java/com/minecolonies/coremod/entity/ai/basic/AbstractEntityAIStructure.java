@@ -226,14 +226,12 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             if (job instanceof JobBuilder && ((JobBuilder) job).getStructure() != null)
             {
                 final String structureName = ((AbstractJobStructure) job).getStructure().getName();
-                LanguageHandler.sendPlayersMessage(worker.getColony().getMessageEntityPlayers(),
-                        "entity.builder.messageBuildComplete",
-                        structureName);
-
-
                 final WorkOrderBuild wo = ((JobBuilder) job).getWorkOrder();
                 if (wo == null)
                 {
+                    LanguageHandler.sendPlayersMessage(worker.getColony().getMessageEntityPlayers(),
+                        "entity.builder.messageBuildComplete",
+                        structureName);
                     Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing work order(%d)",
                       worker.getColony().getID(),
                       worker.getCitizenData().getId(),
@@ -241,13 +239,16 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 }
                 else
                 {
-                        if (wo instanceof WorkOrderBuildDecoration)
+                    LanguageHandler.sendPlayersMessage(worker.getColony().getMessageEntityPlayers(),
+                        "entity.builder.messageBuildComplete",
+                        wo.getName());
+                    if (wo instanceof WorkOrderBuildDecoration)
+                    {
+                        if (structureName.contains(WAYPOINT_STRING))
                         {
-                            if (structureName.contains(WAYPOINT_STRING))
-                            {
-                                worker.getColony().addWayPoint(wo.getBuildingLocation(), world.getBlockState(wo.getBuildingLocation()));
-                            }
+                            worker.getColony().addWayPoint(wo.getBuildingLocation(), world.getBlockState(wo.getBuildingLocation()));
                         }
+                    }
                     else
                     {
                         final AbstractBuilding building = job.getColony().getBuilding(wo.getBuildingLocation());
@@ -906,7 +907,18 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             }
         }
 
-        if (block instanceof BlockDoor)
+        if (block instanceof BlockBeetroot)
+        {
+            //We need to do the beetroot first as it use a different property but BlockBeetroot instance of BlockCrops
+            //we don't want fully grown plants
+            world.setBlockState(pos,blockState.withProperty(BlockBeetroot.BEETROOT_AGE,0),0x03);
+        }
+        else if (block instanceof BlockCrops)
+        {
+            //we don't want fully grown plants
+            world.setBlockState(pos,blockState.withProperty(BlockCrops.AGE,0),0x03);
+        }
+        else if (block instanceof BlockDoor)
         {
             if (blockState.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.LOWER))
             {
@@ -996,7 +1008,15 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 final int slot = worker.findFirstSlotInInventoryWith(tempStack.getItem(), tempStack.getItemDamage());
                 if (slot != -1)
                 {
-                    getInventory().decrStackSize(slot, 1);
+                    if (tempStack.getItem() == Items.LAVA_BUCKET)
+                    {
+                        getInventory().removeStackFromSlot(slot);
+                        getInventory().setInventorySlotContents(slot, new ItemStack(Items.BUCKET));
+                    }
+                    else
+                    {
+                        getInventory().decrStackSize(slot, 1);
+                    }
                     reduceNeededResources(tempStack);
                 }
             }

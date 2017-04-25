@@ -3,6 +3,7 @@ package com.minecolonies.coremod.items;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.lib.Constants;
@@ -50,7 +51,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      */
     private static final int DISTANCE    = 4;
 
-    private static final String SUPPLY_SHIP_STRUCTURE_NAME = "SupplyShip";
+    private static final String SUPPLY_SHIP_STRUCTURE_NAME = Structures.SCHEMATICS_PREFIX + "/SupplyShip";
 
     /**
      * Offset south/west of the supply camp.
