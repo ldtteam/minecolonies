@@ -1,11 +1,20 @@
 package com.minecolonies.coremod.proxy;
 
+import com.minecolonies.coremod.lib.Constants;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import java.io.File;
+
 /**
  * Proxy to the server.
  */
 public class ServerProxy extends CommonProxy
 {
-    /*
-     * Not used yet.
-     */
+
+    @Override
+    public File getSchematicsFolder()
+    {
+        return new File(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
+                                                     + "/" + Constants.MOD_ID);
+    }
+
 }
