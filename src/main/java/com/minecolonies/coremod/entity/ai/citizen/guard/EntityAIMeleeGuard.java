@@ -208,7 +208,6 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
             targetEntity.setFire(fireAspectModifier * FIRE_CHANCE_MULTIPLIER);
         }
 
-        worker.addExperience(XP_EACH_HIT);
         boolean killedEnemy = false;
         if (targetEntity.getHealth() <= 0.0F)
         {

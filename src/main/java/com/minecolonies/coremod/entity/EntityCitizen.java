@@ -920,6 +920,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             getNavigator().moveAwayFromXYZ(this.getPosition(), MOVE_AWAY_RANGE, MOVE_AWAY_SPEED);
         }
 
+        gatherXp();
         checkHeal();
         super.onLivingUpdate();
     }
