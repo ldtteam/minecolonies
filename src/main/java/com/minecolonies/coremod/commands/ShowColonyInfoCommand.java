@@ -75,6 +75,11 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
                 tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), mayorID);
             }
 
+            if(tempColony != null)
+            {
+                colonyId = tempColony.getID();
+            }
+
             final EntityPlayer player = (EntityPlayer) sender;
 
             if (!canPlayerUseCommand(player, SHOWCOLONYINFO, colonyId))

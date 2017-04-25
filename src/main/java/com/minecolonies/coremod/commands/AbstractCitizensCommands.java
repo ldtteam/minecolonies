@@ -12,6 +12,7 @@ import net.minecraft.util.text.TextComponentString;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import javax.swing.*;
 import java.util.Collections;
 import java.util.List;
 
@@ -56,6 +57,16 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
             colonyId = getIthArgument(args, 0, -1);
             if(colonyId == -1)
             {
+                final EntityPlayer player = server.getEntityWorld().getPlayerEntityByName(args[0]);
+                if(player != null)
+                {
+                    IColony tempColony = ColonyManager.getIColonyByOwner(server.getEntityWorld(), player);
+                    if(tempColony != null)
+                    {
+                        colonyId = tempColony.getID();
+                    }
+                }
+
                 firstArgumentColonyId = false;
             }
         }
