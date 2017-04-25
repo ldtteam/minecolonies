@@ -2,8 +2,6 @@ package com.minecolonies.compatibility.tinkers;
 
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import slimeknights.tconstruct.library.tools.SwordCore;
-import slimeknights.tconstruct.library.utils.ToolHelper;
 
 /**
  * Class to check if certain tinkers items serve as weapons for the guards.

@@ -8,7 +8,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import slimeknights.tconstruct.library.utils.ToolHelper;
 
 /**
  * This class is to store the methods that call the methods to check for miscellaneous compatibility problems.
