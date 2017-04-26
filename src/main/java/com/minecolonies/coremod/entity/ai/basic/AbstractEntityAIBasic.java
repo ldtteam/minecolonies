@@ -558,6 +558,27 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
+     * Finds the first @see ItemStack the type of {@code is}.
+     * It will be taken from the chest and placed in the workers inventory.
+     * Make sure that the worker stands next the chest to not break immersion.
+     * Also make sure to have inventory space for the stack.
+     *
+     * @param entity the tileEntity chest or building.
+     * @param is     the class.
+     * @return true if found the stack.
+     */
+    public boolean isInTileEntity(TileEntityChest entity, Class is)
+    {
+        return is != null
+                && InventoryFunctions
+                .matchFirstInProviderWithAction(
+                        entity,
+                        stack -> !InventoryUtils.isItemStackEmpty(stack) && stack.getClass().equals(is),
+                        this::takeItemStackFromProvider
+                );
+    }
+
+    /**
      * Request an Item without spamming the chat.
      *
      * @param chat the Item Name

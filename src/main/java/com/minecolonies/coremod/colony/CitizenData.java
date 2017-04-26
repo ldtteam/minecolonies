@@ -707,7 +707,7 @@ public class CitizenData
      */
     public void decreaseSaturation(final double extraSaturation)
     {
-        this.saturation = Math.min(MIN_SATURATION, this.saturation - Math.abs(extraSaturation));
+        this.saturation = Math.max(MIN_SATURATION, this.saturation - Math.abs(extraSaturation));
     }
 
     /**

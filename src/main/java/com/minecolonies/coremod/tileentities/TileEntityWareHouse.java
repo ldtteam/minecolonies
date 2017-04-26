@@ -1,15 +1,13 @@
 package com.minecolonies.coremod.tileentities;
 
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.BuildingDeliveryman;
-import com.minecolonies.coremod.colony.buildings.BuildingWareHouse;
+import com.minecolonies.coremod.colony.buildings.*;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.InventoryFunctions;
 import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Utils;
+import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -81,11 +79,38 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                     {
                         checkInWareHouse((AbstractBuildingWorker) buildingEntry.getValue(), true);
                     }
+                    else if(buildingEntry.getValue() instanceof BuildingHome && ((BuildingHome) buildingEntry.getValue()).isFoodNeeded())
+                    {
+                        checkInWareHouseForFood((BuildingHome) buildingEntry.getValue(), true);
+                    }
                     this.index++;
                 }
                 i++;
             }
         }
+    }
+
+    private boolean checkInWareHouseForFood(final BuildingHome buildingEntry, final boolean addToList)
+    {
+        if (buildingEntry.isFoodNeeded())
+        {
+            if (isInHut(ItemFood.class))
+            {
+                if (addToList)
+                {
+                    buildingEntry.setOnGoingDelivery(true);
+                    list.add(buildingEntry);
+                }
+                return true;
+            }
+
+            if (list.contains(buildingEntry))
+            {
+                list.remove(buildingEntry);
+                buildingEntry.setOnGoingDelivery(false);
+            }
+        }
+        return false;
     }
 
     /**
@@ -213,6 +238,34 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     }
 
     /**
+     * Check all chests in the worker hut for a required item.
+     * @param is the type of item requested (amount is ignored)
+     * @return true if a stack of that type was found
+     */
+    public boolean isInHut(@Nullable final Class is)
+    {
+        @Nullable final AbstractBuilding building = getBuilding();
+        if(building != null)
+        {
+            if(isInTileEntity(building.getTileEntity(), is))
+            {
+                return true;
+            }
+
+            for(final BlockPos pos : building.getAdditionalCountainers())
+            {
+                @Nullable final TileEntity entity = worldObj.getTileEntity(pos);
+                if(entity instanceof TileEntityChest && isInTileEntity((TileEntityChest) entity, is))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Check for a certain item and return the position of the chest containing it.
      * @param stack the stack to search for.
      * @return the position or null.
@@ -233,6 +286,35 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             {
                 final TileEntity entity = worldObj.getTileEntity(pos);
                 if(entity instanceof TileEntityChest && isInTileEntity((TileEntityChest) entity, stack))
+                {
+                    return pos;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Check for a certain item and return the position of the chest containing it.
+     * @param stack the stack to search for.
+     * @return the position or null.
+     */
+    @Nullable
+    public BlockPos getPositionOfChestWithItemStack(final Class is)
+    {
+        @Nullable final AbstractBuilding building = getBuilding();
+
+        if(building != null)
+        {
+            if(isInTileEntity(building.getTileEntity(), is))
+            {
+                return building.getLocation();
+            }
+
+            for(final BlockPos pos : building.getAdditionalCountainers())
+            {
+                final TileEntity entity = worldObj.getTileEntity(pos);
+                if(entity instanceof TileEntityChest && isInTileEntity((TileEntityChest) entity, is))
                 {
                     return pos;
                 }
@@ -327,8 +409,6 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         return false;
     }
 
-
-
     /**
      * Finds the first @see ItemStack the type of {@code is}.
      * It will be taken from the chest and placed in the workers inventory.
@@ -345,6 +425,26 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                 .matchFirstInProviderWithAction(
                         entity,
                         stack -> stack != null && is.isItemEqual(stack),
+                        InventoryFunctions::doNothing
+                );
+    }
+
+    /**
+     * Finds the first @see ItemStack the type of {@code is}.
+     * It will be taken from the chest and placed in the workers inventory.
+     * Make sure that the worker stands next the chest to not break immersion.
+     * Also make sure to have inventory space for the stack.
+     * @param entity the tileEntity chest or building.
+     * @param is the itemStack.
+     * @return true if found the stack.
+     */
+    public boolean isInTileEntity(final TileEntityChest entity, final Class is)
+    {
+        return is != null
+                && InventoryFunctions
+                .matchFirstInProviderWithAction(
+                        entity,
+                        stack -> !InventoryUtils.isItemStackEmpty(stack) && stack.getItem().getClass().equals(is),
                         InventoryFunctions::doNothing
                 );
     }

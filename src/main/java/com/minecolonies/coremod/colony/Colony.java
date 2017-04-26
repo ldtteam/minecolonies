@@ -1181,8 +1181,9 @@ public class Colony implements IColony
         }
         else if(requiredGuardLevels > 0)
         {
-            increaseOverallHappiness(requiredGuardLevels * HAPPINESS_FACTOR);
+            decreaseOverallHappiness(requiredGuardLevels * HAPPINESS_FACTOR);
         }
+        markDirty();
     }
 
     /**
