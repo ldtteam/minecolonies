@@ -326,7 +326,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
     /**
      * Initiates basic citizen tasks.
+     * Ignore warning because we want the ++ without a specified because of readability.
      */
+    @SuppressWarnings("squid:S881")
     private void initTasks()
     {
         int priority = 0;

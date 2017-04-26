@@ -571,7 +571,6 @@ public class CitizenData
      * @return the job this citizen has.
      */
     @Nullable
-    @SuppressWarnings("squid:S1166")
     public <J extends AbstractJob> J getJob(@NotNull final Class<J> type)
     {
         try
