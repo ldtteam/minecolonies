@@ -551,14 +551,17 @@ public class EntityCitizen extends EntityAgeable implements INpc
         {
             localXp = maxValue;
         }
-        citizenData.addExperience(localXp);
-
-        while (ExperienceUtils.getXPNeededForNextLevel(citizenData.getLevel()) < citizenData.getExperience())
+        if(citizenData != null)
         {
-            citizenData.increaseLevel();
+            citizenData.addExperience(localXp);
+
+            while (ExperienceUtils.getXPNeededForNextLevel(citizenData.getLevel()) < citizenData.getExperience())
+            {
+                citizenData.increaseLevel();
+            }
+            this.updateLevel();
+            citizenData.markDirty();
         }
-        this.updateLevel();
-        citizenData.markDirty();
     }
 
     @Nullable
@@ -574,7 +577,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public int getExperienceLevel()
     {
-        return citizenData.getLevel();
+        if(citizenData != null)
+        {
+            return citizenData.getLevel();
+        }
+        return 0;
     }
 
     /**
