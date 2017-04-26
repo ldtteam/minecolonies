@@ -322,19 +322,27 @@ public final class PlacementHandlers
         }
     }
 
-
-
     public static class GeneralBlockPlacementHandler implements IPlacementHandler
     {
         @Override
         public Object handle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
                 @Nullable final AbstractEntityAIStructure placer)
         {
-            if(!Configurations.builderInfiniteResources && !placer.checkOrRequestItems(new ItemStack(Blocks.DIRT)))
+            if(!Configurations.builderInfiniteResources)
             {
-                return ActionProcessingResult.DENY;
+                final List<ItemStack> itemList = new ArrayList<>();
+                itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
+                itemList.addAll(placer.getItemsFromTileEntity());
+
+                for (final ItemStack stack : itemList)
+                {
+                    if (stack != null && placer.checkOrRequestItems(placer.getTotalAmount(stack)))
+                    {
+                        return ActionProcessingResult.DENY;
+                    }
+                }
             }
-            
+
             placer.handleBuildingOverBlock(pos);
             if (!world.setBlockState(pos, blockState, 0x03))
             {
