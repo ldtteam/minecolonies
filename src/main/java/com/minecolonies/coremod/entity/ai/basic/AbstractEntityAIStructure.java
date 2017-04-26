@@ -5,9 +5,12 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.configuration.Configurations;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.ai.util.Structure;
+import com.minecolonies.coremod.placementhandlers.IPlacementHandler;
+import com.minecolonies.coremod.placementhandlers.PlacementHandlers;
 import com.minecolonies.coremod.util.*;
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
@@ -18,10 +21,7 @@ import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.ItemDoor;
-import net.minecraft.item.ItemFlintAndSteel;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -41,6 +41,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.coremod.placementhandlers.IPlacementHandler.ActionProcessingResult.*;
 
 /**
  * This base ai class is used by ai's who need to build entire structures.
@@ -172,9 +173,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
             if (structureBlock.block == null
                     || structureBlock.doesStructureBlockEqualWorldBlock()
-                    || structureBlock.metadata.getMaterial().isSolid()
-                    || (structureBlock.block instanceof BlockBed && structureBlock.metadata.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.HEAD))
-                    || (structureBlock.block instanceof BlockDoor && structureBlock.metadata.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.UPPER)))
+                    || structureBlock.metadata.getMaterial().isSolid())
             {
                 //findNextBlock count was reached and we can ignore this block
                 return true;
@@ -194,13 +193,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
             @Nullable final IBlockState blockState = structureBlock.metadata;
             //We need to deal with materials
-            if (!Configurations.builderInfiniteResources
-                    && !handleMaterials(block, blockState))
-            {
-                return false;
-            }
-
-            placeBlockAt(block, blockState, structureBlock.blockPosition);
+            return placeBlockAt(blockState, structureBlock.blockPosition);
         }
         return true;
     }
@@ -218,9 +211,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
             if (structureBlock.block == null
                     || structureBlock.doesStructureBlockEqualWorldBlock()
-                    || (!structureBlock.metadata.getMaterial().isSolid() && structureBlock.block != Blocks.AIR)
-                    || (structureBlock.block instanceof BlockBed && structureBlock.metadata.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.HEAD))
-                    || (structureBlock.block instanceof BlockDoor && structureBlock.metadata.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.UPPER)))
+                    || (!structureBlock.metadata.getMaterial().isSolid() && structureBlock.block != Blocks.AIR))
             {
                 //findNextBlock count was reached and we can ignore this block
                 return true;
@@ -246,20 +237,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 return true;
             }
 
-            //We need to deal with materials
-            if (!Configurations.builderInfiniteResources
-                    && !handleMaterials(block, blockState))
-            {
-                return false;
-            }
-
-            // we need a shovel to transform dirt into grass path
-            if (block instanceof BlockGrassPath && !holdEfficientTool(block))
-            {
-                return false;
-            }
-
-            placeBlockAt(block, blockState, structureBlock.blockPosition);
+            return placeBlockAt(blockState, structureBlock.blockPosition);
         }
         return true;
     }
@@ -503,64 +481,22 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             onStartWithoutStructure();
             return AIState.IDLE;
         }
-        final AIState nextState;
         switch (currentStructure.getStage())
         {
             case CLEAR:
-                nextState = AIState.CLEAR_STEP;
-                break;
+                return AIState.CLEAR_STEP;
             case BUILD:
-                nextState = AIState.BUILDING_STEP;
-                break;
+                return AIState.BUILDING_STEP;
             case DECORATE:
-                nextState = AIState.DECORATION_STEP;
-                break;
+                return AIState.DECORATION_STEP;
             case SPAWN:
-                nextState = AIState.SPAWN_STEP;
-                break;
+                return AIState.SPAWN_STEP;
             default:
-                nextState = AIState.COMPLETE_BUILD;
+                return AIState.COMPLETE_BUILD;
         }
-        return nextState;
     }
 
     protected abstract void onStartWithoutStructure();
-
-    /**
-     * Check if the required block is available to place it.
-     *
-     * @param block      the block.
-     * @param blockState its state.
-     * @return true if so.
-     */
-    private boolean handleMaterials(@NotNull final Block block, @NotNull final IBlockState blockState)
-    {
-        //Breaking blocks doesn't require taking materials from the citizens inventory
-        if (block == Blocks.AIR)
-        {
-            return true;
-        }
-
-        if (block == Blocks.FIRE || block == Blocks.GRASS)
-        {
-            return handleSpecificMaterial(block);
-        }
-
-        final List<ItemStack> itemList = new ArrayList<>();
-        itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
-        itemList.addAll(getItemsFromTileEntity());
-
-        for (final ItemStack stack : itemList)
-        {
-            if (stack != null && checkOrRequestItems(getTotalAmount(stack)))
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
 
     /*
      * Get specific data of a tileEntity.
@@ -570,20 +506,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     public List<ItemStack> getItemsFromTileEntity()
     {
         return Collections.emptyList();
-    }
-
-    public boolean handleSpecificMaterial(@NotNull final Block block)
-    {
-        if (block == Blocks.FIRE)
-        {
-            return !checkOrRequestItems(false, new ItemStack(Items.FLINT_AND_STEEL, 1));
-        }
-
-        if (block == Blocks.GRASS)
-        {
-            return !checkOrRequestItems(new ItemStack(Blocks.DIRT));
-        }
-        return true;
     }
 
     /**
@@ -614,31 +536,52 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 || (block.equals(Blocks.DOUBLE_PLANT) && Utils.testFlag(metadata, 0x08));
     }
 
-    private void placeBlockAt(@NotNull final Block block, @NotNull final IBlockState blockState, @NotNull final BlockPos coords)
+    private boolean placeBlockAt(@NotNull final IBlockState blockState, @NotNull final BlockPos coords)
     {
-        if (block == Blocks.AIR)
-        {
-            worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, null);
+        final ItemStack item = BlockUtils.getItemStackFromBlockState(blockState);
+        worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item == null ? null : item);
 
-            if (!world.setBlockToAir(coords))
+        final IBlockState decrease;
+        for(IPlacementHandler handlers :PlacementHandlers.handlers)
+        {
+            final Object result = handlers.handle(world, coords, blockState, this);
+            if(result instanceof IPlacementHandler.ActionProcessingResult)
             {
-                Log.getLogger().error(String.format("Block break failure at %s", coords));
+                if(result == ACCEPT)
+                {
+                    return true;
+                }
+
+                if(result == DENY)
+                {
+                    return false;
+                }
+            }
+
+            if(result  instanceof IBlockState)
+            {
+                decrease = (IBlockState) result;
+                decreaseInventory(coords, decrease.getBlock(), decrease);
+                worker.swingArm(worker.getActiveHand());
+
+                return true;
             }
         }
-        else
-        {
-            final ItemStack item = BlockUtils.getItemStackFromBlockState(blockState);
-            worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item == null ? null : item);
 
-            if (!placeBlock(coords, block, blockState))
-            {
-                Log.getLogger().error(String.format("Block place failure %s at %s", block.getUnlocalizedName(), coords));
-            }
-            worker.swingArm(worker.getActiveHand());
+        Log.getLogger().warn("Couldn't handle block: " + blockState.getBlock().getUnlocalizedName());
+        return true;
+    }
+
+    public void handleBuildingOverBlock(@NotNull final BlockPos pos)
+    {
+        final List<ItemStack> items = BlockPosUtil.getBlockDrops(world, pos, 0);
+        for (final ItemStack item : items)
+        {
+            InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), item);
         }
     }
 
-    private boolean placeBlock(@NotNull final BlockPos pos, final Block block, @NotNull final IBlockState state)
+    private boolean decreaseInventory(@NotNull final BlockPos pos, final Block block, @NotNull final IBlockState state)
     {
         @NotNull IBlockState stateToPlace = state;
 
@@ -651,103 +594,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             worker.getNavigator().moveAwayFromXYZ(pos, RUN_AWAY_SPEED, 1.0);
         }
 
-        //Workaround as long as we didn't rescan all of our buildings since BlockStairs now have different metadata values.
-        if (stateToPlace.getBlock() instanceof BlockStairs
-                && world.getBlockState(pos).getBlock() instanceof BlockStairs
-                && world.getBlockState(pos).getValue(BlockStairs.FACING) == stateToPlace.getValue(BlockStairs.FACING)
-                && stateToPlace.getBlock() == world.getBlockState(pos).getBlock())
-        {
-            return true;
-        }
-
-        //We need to deal with materials
-        if (!Configurations.builderInfiniteResources && world.getBlockState(pos).getBlock() != Blocks.AIR)
-        {
-            final List<ItemStack> items = BlockPosUtil.getBlockDrops(world, pos, 0);
-            for (final ItemStack item : items)
-            {
-                InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), item);
-            }
-        }
-
         @NotNull Block blockToPlace = block;
-        if (blockToPlace instanceof BlockDoor)
-        {
-            if (stateToPlace.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.LOWER))
-            {
-                ItemDoor.placeDoor(world, pos, stateToPlace.getValue(BlockDoor.FACING), blockToPlace, false);
-            }
-        }
-        else if (blockToPlace instanceof BlockBed)
-        {
-            final EnumFacing facing = stateToPlace.getValue(BlockBed.FACING);
-
-            //Set other part of the bed, to the opposite PartType
-            if (stateToPlace.getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT)
-            {
-                //pos.offset(facing) will get the other part of the bed
-                world.setBlockState(pos.offset(facing), stateToPlace.withProperty(BlockBed.PART, BlockBed.EnumPartType.HEAD), 0x03);
-                world.setBlockState(pos, stateToPlace.withProperty(BlockBed.PART, BlockBed.EnumPartType.FOOT), 0x03);
-            }
-            else
-            {
-                return true;
-            }
-        }
-        else if (blockToPlace instanceof BlockDoublePlant)
-        {
-            world.setBlockState(pos, stateToPlace.withProperty(BlockDoublePlant.HALF, BlockDoublePlant.EnumBlockHalf.LOWER), 0x03);
-            world.setBlockState(pos.up(), stateToPlace.withProperty(BlockDoublePlant.HALF, BlockDoublePlant.EnumBlockHalf.UPPER), 0x03);
-        }
-        else if (blockToPlace instanceof BlockEndPortal || blockToPlace instanceof BlockMobSpawner || blockToPlace instanceof BlockDragonEgg || blockToPlace instanceof BlockPortal)
-        {
-            return true;
-        }
-        else if (blockToPlace instanceof BlockFlowerPot)
-        {
-            if (!world.setBlockState(pos, stateToPlace, 0x03))
-            {
-                return false;
-            }
-
-            handleFlowerPots(pos);
-            //This creates the flowerPot tileEntity from its BlockInfo to set the required data into the world.
-        }
-        else if (blockToPlace == Blocks.FIRE)
-        {
-            final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(worker.getInventoryCitizen()),
-                    itemStack -> !InventoryUtils.isItemStackEmpty(itemStack) && itemStack.getItem() == Items.FLINT_AND_STEEL);
-
-            if (slot == -1)
-            {
-                return false;
-            }
-
-            final ItemStack item = worker.getInventoryCitizen().getStackInSlot(slot);
-            if (item != null && item.getItem() instanceof ItemFlintAndSteel)
-            {
-                worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item);
-                world.setBlockState(pos, stateToPlace, 0x03);
-                item.damageItem(1, worker);
-                return true;
-            }
-        }
-        else if (blockToPlace == Blocks.GRASS)
-        {
-            if (!world.setBlockState(pos, Blocks.DIRT.getDefaultState(), 0x03))
-            {
-                return false;
-            }
-            blockToPlace = Blocks.DIRT;
-            stateToPlace = blockToPlace.getDefaultState();
-        }
-        else
-        {
-            if (!world.setBlockState(pos, stateToPlace, 0x03))
-            {
-                return false;
-            }
-        }
         if (blockToPlace instanceof BlockContainer)
         {
             connectChestToBuildingIfNecessary(pos);
@@ -823,6 +670,15 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         /**
          * Nothing to be done here. Workers overwrite this if necessary.
          */
+    }
+
+    /**
+     * Get the worker of the AI.
+     * @return the EntityCitizen object.
+     */
+    public EntityCitizen getWorker()
+    {
+        return this.worker;
     }
 
     /**

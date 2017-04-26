@@ -1121,7 +1121,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param items the items needed
      * @return false if they are in inventory
      */
-    protected boolean checkOrRequestItems(@Nullable final ItemStack... items)
+    public boolean checkOrRequestItems(@Nullable final ItemStack... items)
     {
         return checkOrRequestItems(true, items);
     }
@@ -1135,7 +1135,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param items         the items needed
      * @return false if they are in inventory
      */
-    protected boolean checkOrRequestItems(final boolean useItemDamage, @Nullable final ItemStack... items)
+    public boolean checkOrRequestItems(final boolean useItemDamage, @Nullable final ItemStack... items)
     {
         if (items == null)
         {
@@ -1197,7 +1197,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param target the block to mine
      * @return true if we have a tool for the job
      */
-    protected final boolean holdEfficientTool(@NotNull final Block target)
+    public final boolean holdEfficientTool(@NotNull final Block target)
     {
         final int bestSlot = getMostEfficientTool(target);
         if (bestSlot >= 0)
