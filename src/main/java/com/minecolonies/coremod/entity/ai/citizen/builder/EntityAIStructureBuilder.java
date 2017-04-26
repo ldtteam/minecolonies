@@ -117,7 +117,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             {
                 LanguageHandler.sendPlayersMessage(worker.getColony().getMessageEntityPlayers(),
                         "entity.builder.messageBuildStart",
-                        job.getStructure().getName());
+                        wo.getName());
             }
             else
             {

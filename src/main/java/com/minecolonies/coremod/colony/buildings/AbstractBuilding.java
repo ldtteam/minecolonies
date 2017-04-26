@@ -8,6 +8,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
+import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
@@ -67,7 +68,12 @@ public abstract class AbstractBuilding
     private static final String TAG_ROTATION = "rotation";
 
     /**
-     * The tag to store the morror of the building.
+     * The tag to store the md5 hash of the schematic.
+     */
+    private static final String TAG_SCHEMATIC_MD5 = "schematicMD5";
+
+    /**
+     * The tag to store the mirror of the building.
      */
     private static final String TAG_MIRROR = "mirror";
 
@@ -132,7 +138,7 @@ public abstract class AbstractBuilding
      * Map to resolve names to class.
      */
     @NotNull
-    private static final Map<String, Class<?>> nameToClassMap = new HashMap<>();
+    private static final Map<String, Class<?>>   nameToClassMap               = new TreeMap<>();
 
     /**
      * Map to resolve classes to name.
@@ -338,6 +344,24 @@ public abstract class AbstractBuilding
 
         rotation = compound.getInteger(TAG_ROTATION);
         style = compound.getString(TAG_STYLE);
+
+        final String md5 = compound.getString(TAG_SCHEMATIC_MD5);
+        final int testLevel = buildingLevel == 0 ? 1 : buildingLevel;
+        final Structures.StructureName sn = new Structures.StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + testLevel);
+
+        if (!Structures.hasMD5(sn))
+        {
+            final Structures.StructureName newStructureName = Structures.getStructureNameByMD5(md5);
+            if (newStructureName!= null
+                && newStructureName.getPrefix().equals(sn.getPrefix())
+                && newStructureName.getSchematic().equals(sn.getSchematic()))
+            {
+                //We found the new location for the schematic, update the style accordingly
+                style = newStructureName.getStyle();
+                Log.getLogger().warn("AbstractBuilding.readFromNBT: " + sn + " have been moved to " + newStructureName);
+            }
+        }
+
         if (style.isEmpty())
         {
             Log.getLogger().warn("Loaded empty style, setting to wooden");
@@ -480,6 +504,11 @@ public abstract class AbstractBuilding
         {
             compound.setString(TAG_BUILDING_TYPE, s);
             BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
+            final Structures.StructureName  structureName = new Structures.StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + buildingLevel);
+            if (Structures.hasMD5(structureName))
+            {
+                compound.setString(TAG_SCHEMATIC_MD5, Structures.getMD5(structureName.toString()));
+            }
         }
 
         compound.setInteger(TAG_BUILDING_LEVEL, buildingLevel);
