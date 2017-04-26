@@ -201,7 +201,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Higher than this is high saturation.
      */
-    private static final int HIGH_SATURATION = 7;
+    public static final int HIGH_SATURATION = 7;
 
     /**
      * Big multiplier in extreme saturation situations.

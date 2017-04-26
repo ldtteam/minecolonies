@@ -90,7 +90,6 @@ public class EntityAIGoHome extends EntityAIBase
 
         playGoHomeSounds();
         handleSaturation(pos);
-
     }
 
     /**
@@ -99,10 +98,12 @@ public class EntityAIGoHome extends EntityAIBase
      */
     private void handleSaturation(@NotNull final BlockPos pos)
     {
-        if (citizen.isWorkerAtSiteWithMove(pos, 2) && citizen.getColony() != null)
+        if (citizen.isWorkerAtSiteWithMove(pos, 2) && citizen.getColony() != null
+                && citizen.getCitizenData() != null && citizen.getCitizenData().getSaturation() < EntityCitizen.HIGH_SATURATION)
         {
+            boolean tookFood = false;
             final AbstractBuilding home = citizen.getColony().getBuilding(pos);
-            if (home instanceof BuildingHome && citizen.getCitizenData() != null && citizen.getCitizenData().getSaturation() < citizen.FULL_SATURATION)
+            if (home instanceof BuildingHome && citizen.getCitizenData() != null && citizen.getCitizenData().getSaturation() < EntityCitizen.FULL_SATURATION)
             {
                 final int slot = InventoryUtils.findFirstSlotInProviderWith(home.getTileEntity(),
                         itemStack -> !InventoryUtils.isItemStackEmpty(itemStack) && itemStack.getItem() instanceof ItemFood);
@@ -111,11 +112,16 @@ public class EntityAIGoHome extends EntityAIBase
                     final ItemStack stack = home.getTileEntity().getStackInSlot(slot);
                     if(!InventoryUtils.isItemStackEmpty(stack))
                     {
+                        tookFood = true;
                         stack.stackSize--;
                         citizen.getInventoryCitizen().setInventorySlotContents(
                                 InventoryUtils.getFirstOpenSlotFromItemHandler(new InvWrapper(citizen.getInventoryCitizen())), new ItemStack(stack.getItem(), 1));
                     }
-                    InventoryUtils.transferItemStackIntoNextFreeSlotFromProvider(home.getTileEntity(), slot, new InvWrapper(citizen.getInventoryCitizen()));
+                    ((BuildingHome) home).setFoodNeeded(false);
+                }
+                if(!tookFood)
+                {
+                    ((BuildingHome) home).setFoodNeeded(true);
                 }
             }
         }

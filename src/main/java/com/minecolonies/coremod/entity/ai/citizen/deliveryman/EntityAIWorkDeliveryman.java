@@ -424,6 +424,13 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 stack -> !InventoryUtils.isItemStackEmpty(stack) && stack.getItem() instanceof ItemFood) != -1;
     }
 
+    /**
+     * Gather item from chest.
+     * Gathers only one stack of the item.
+     *
+     * @param buildingToDeliver building to deliver to.
+     * @return true if continue, false if not succuesful
+     */
     private boolean tryToGatherItems(@NotNull final AbstractBuilding buildingToDeliver)
     {
         final BlockPos position;
@@ -487,7 +494,10 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
             if(buildingToDeliver instanceof BuildingHome)
             {
-                
+                if (isInTileEntity((TileEntityChest) tileEntity, ItemFood.class))
+                {
+                    return true;
+                }
             }
             else if (itemsToDeliver.isEmpty() && !isToolInTileEntity((TileEntityChest) tileEntity, buildingToDeliver.getRequiredTool(),
                     buildingToDeliver.getBuildingLevel()))
