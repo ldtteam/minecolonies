@@ -148,7 +148,7 @@ public final class Utils
      */
     public static boolean doesItemServeAsWeapon(@NotNull final ItemStack stack)
     {
-        return stack.getItem() instanceof ItemSword || stack.getItem() instanceof ItemTool;
+        return stack.getItem() instanceof ItemSword || stack.getItem() instanceof ItemTool || Compatibility.isTinkersWeapon(stack);
     }
 
     /**

@@ -43,10 +43,6 @@ import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGuard>
 {
     /**
-     * Worker gets this distance times building level away from his building to patrol.
-     */
-    public static final int PATROL_DISTANCE = 40;
-    /**
      * Follow the player if farther than this.
      */
     public static final int FOLLOW_RANGE = 10;
@@ -292,25 +288,33 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
         final BlockPos buildingLocation = getOwnBuilding().getLocation();
 
         //Only attack entities in max patrol distance.
-        if (BlockPosUtil.getDistance2D(entity.getPosition(), buildingLocation) < getPatrolDistance())
+        if (BlockPosUtil.getDistance2D(entity.getPosition(), buildingLocation) < ((BuildingGuardTower) getOwnBuilding()).getPatrolDistance())
         {
-            if (entity instanceof EntityPlayer)
+            if (worker.getEntitySenses().canSee(entity) && (entityList.get(0)).isEntityAlive())
             {
-                if (worker.getColony() != null && worker.getColony().getPermissions().hasPermission((EntityPlayer) entity, Permissions.Action.GUARDS_ATTACK))
+                if (entity instanceof EntityPlayer)
                 {
-                    targetEntity = (EntityLivingBase) entity;
+                    if (worker.getColony() != null && worker.getColony().getPermissions().hasPermission((EntityPlayer) entity, Permissions.Action.GUARDS_ATTACK))
+                    {
+                        targetEntity = (EntityLivingBase) entity;
+                        worker.getNavigator().clearPathEntity();
+                        return AIState.GUARD_HUNT_DOWN_TARGET;
+                    }
+                    entityList.remove(0);
+                    setDelay(BASE_DELAY);
+                    return AIState.GUARD_GET_TARGET;
+                }
+                else
+                {
                     worker.getNavigator().clearPathEntity();
+                    targetEntity = (EntityLivingBase) entity;
                     return AIState.GUARD_HUNT_DOWN_TARGET;
                 }
-                entityList.remove(0);
-                setDelay(BASE_DELAY);
-                return AIState.GUARD_GET_TARGET;
             }
-            else if (worker.getEntitySenses().canSee(entity) && (entityList.get(0)).isEntityAlive())
+
+            if(!(entityList.get(0)).isEntityAlive())
             {
-                worker.getNavigator().clearPathEntity();
-                targetEntity = (EntityLivingBase) entity;
-                return AIState.GUARD_HUNT_DOWN_TARGET;
+                return GUARD_GATHERING;
             }
         }
 
@@ -320,22 +324,19 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     }
 
     /**
-     * Getter for the patrol distance the guard currently has.
-     *
-     * @return the distance in whole numbers.
-     */
-    private int getPatrolDistance()
-    {
-        return this.getOwnBuilding().getBuildingLevel() * PATROL_DISTANCE;
-    }
-
-    /**
      * Searches for the next target.
      *
      * @return the next AIState.
      */
     protected AIState searchTarget()
     {
+        if(this.worker.getLastAttacker() != null && this.worker.getLastAttackerTime() <= worker.ticksExisted - ATTACK_TIME_BUFFER
+                && this.worker.getLastAttacker().isEntityAlive() && this.worker.canEntityBeSeen(this.worker.getLastAttacker()))
+        {
+            targetEntity = this.worker.getLastAttacker();
+            return AIState.GUARD_HUNT_DOWN_TARGET;
+        }
+
         entityList = this.worker.worldObj.getEntitiesWithinAABB(EntityMob.class, this.getTargetableArea(currentSearchDistance));
         entityList.addAll(this.worker.worldObj.getEntitiesWithinAABB(EntitySlime.class, this.getTargetableArea(currentSearchDistance)));
         entityList.addAll(this.worker.worldObj.getEntitiesWithinAABB(EntityPlayer.class, this.getTargetableArea(currentSearchDistance)));
@@ -488,7 +489,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
         final AbstractBuilding building = (AbstractBuilding) buildingArray[random];
 
         if (building instanceof BuildingGuardTower
-              || BlockPosUtil.getDistance2D(building.getLocation(), this.getOwnBuilding().getLocation()) > getPatrolDistance())
+              || BlockPosUtil.getDistance2D(building.getLocation(), this.getOwnBuilding().getLocation()) > ((BuildingGuardTower) getOwnBuilding()).getPatrolDistance())
         {
             return this.getOwnBuilding().getLocation();
         }
@@ -506,17 +507,12 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     public boolean shouldReturnToTarget(final BlockPos target, final double range)
     {
         final AbstractBuilding building = getOwnBuilding();
-
-        if (currentPathTarget == null && building instanceof BuildingGuardTower)
+        if (currentPathTarget == null)
         {
             getNextPatrollingTarget((BuildingGuardTower) building);
         }
 
-        if (building instanceof BuildingGuardTower && BlockPosUtil.getDistance2D(target, currentPathTarget) > range)
-        {
-            return true;
-        }
-        return false;
+        return building instanceof BuildingGuardTower && BlockPosUtil.getDistance2D(target, currentPathTarget) > ((BuildingGuardTower) building).getPatrolDistance() + range;
     }
 
     /**

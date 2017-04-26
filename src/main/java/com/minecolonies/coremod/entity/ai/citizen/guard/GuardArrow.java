@@ -74,4 +74,32 @@ public class GuardArrow extends EntityTippedArrow
             colony.incrementStatistic("mobs");
         }
     }
+
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (!(o instanceof GuardArrow))
+        {
+            return false;
+        }
+        if (!super.equals(o))
+        {
+            return false;
+        }
+
+        final GuardArrow that = (GuardArrow) o;
+        return colony == null ? (that.colony != null) : colony.equals(that.colony);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = super.hashCode();
+        result = 31 * result + (colony != null ? colony.hashCode() : 0);
+        return result;
+    }
 }
