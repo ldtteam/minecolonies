@@ -9,6 +9,7 @@ import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.coremod.util.InventoryFunctions;
 import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.Utils;
 import net.minecraft.item.ItemFood;
@@ -495,11 +496,18 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
             if(buildingToDeliver instanceof BuildingHome)
             {
-                final int slotChest =InventoryUtils.findFirstSlotInProviderWith(tileEntity,
-                        itemStack ->  !InventoryUtils.isItemStackEmpty(itemStack) && itemStack.getItem() instanceof ItemFood);
+                final int slotChest = InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(new InvWrapper(tileEntity),
+                        itemStack ->  !InventoryUtils.isItemStackEmpty(itemStack) && itemStack.getItem() instanceof ItemFood, buildingToDeliver.getBuildingLevel(),
+                        new InvWrapper(worker.getInventoryCitizen()));
 
                 final int slotInv = InventoryUtils.getFirstOpenSlotFromItemHandler(new InvWrapper(worker.getInventoryCitizen()));
 
+                if(slotChest == -1 || slotInv == -1)
+                {
+                    return false;
+                }
+
+                ItemStack stack = ((TileEntityChest) tileEntity).getStackInSlot(slotChest);
 
                 return true;
 

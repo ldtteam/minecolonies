@@ -1347,6 +1347,15 @@ public final class InventoryUtils
                         requiredLevel))) > -1;
     }
 
+    public static boolean transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(@NotNull final IItemHandler sourceHandler,
+            @NotNull final Predicate<ItemStack> itemStackSelectionPredicate,
+            @NotNull int amount, @NotNull IItemHandler targetHandler)
+    {
+        return targetHandler.extractItem(InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(sourceHandler, (ItemStack stack) -> {
+            //predicate to select
+        }, amount, false));
+    }
+
     /**
      * Method to swap the ItemStacks from the given source {@link IItemHandler}
      * to the given target {@link IItemHandler}.
