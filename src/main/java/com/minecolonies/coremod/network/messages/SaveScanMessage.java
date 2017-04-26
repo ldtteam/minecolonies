@@ -37,7 +37,7 @@ public class SaveScanMessage implements IMessage, IMessageHandler<SaveScanMessag
      * Send a scan compound to the client.
      *
      * @param nbttagcompound the stream.
-     * @param storeAt        string describing where to store the scan.
+     * @param currentMillis  long describing the current millis at create time.
      */
     public SaveScanMessage(final NBTTagCompound nbttagcompound, final long currentMillis)
     {
