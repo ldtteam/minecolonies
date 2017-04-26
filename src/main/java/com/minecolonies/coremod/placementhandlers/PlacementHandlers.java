@@ -334,8 +334,9 @@ public final class PlacementHandlers
             {
                 return ActionProcessingResult.DENY;
             }
+            
             placer.handleBuildingOverBlock(pos);
-            if (!world.setBlockState(pos, Blocks.DIRT.getDefaultState(), 0x03))
+            if (!world.setBlockState(pos, blockState, 0x03))
             {
                 return ActionProcessingResult.DENY;
             }
