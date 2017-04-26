@@ -277,6 +277,11 @@ public final class PlacementHandlers
         public Object handle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
                 @Nullable final AbstractEntityAIStructure placer)
         {
+            if (!(blockState.getBlock() instanceof BlockGrassPath))
+            {
+                return ActionProcessingResult.IGNORE;
+            }
+
             if (!world.setBlockState(pos, blockState, 0x03))
             {
                 return ActionProcessingResult.DENY;
