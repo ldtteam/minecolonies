@@ -4,7 +4,6 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityChest;
@@ -1378,9 +1377,15 @@ public final class InventoryUtils
             @NotNull final Predicate<ItemStack> itemStackSelectionPredicate,
             @NotNull int amount, @NotNull IItemHandler targetHandler)
     {
-        return targetHandler.extractItem(InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(sourceHandler, (ItemStack stack) -> {
-            //predicate to select
-        }, amount, false));
+        final int desiredItemSlot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(sourceHandler,
+                itemStackSelectionPredicate::test);
+
+        if(desiredItemSlot == -1)
+        {
+            return false;
+        }
+
+        return InventoryUtils.isItemStackEmpty(targetHandler.extractItem(desiredItemSlot, amount, false));
     }
 
     /**

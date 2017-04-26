@@ -9,7 +9,6 @@ import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.coremod.util.InventoryFunctions;
 import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.Utils;
 import net.minecraft.item.ItemFood;
@@ -18,6 +17,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -496,21 +496,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
             if(buildingToDeliver instanceof BuildingHome)
             {
-                final int slotChest = InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(new InvWrapper(tileEntity),
+                //Tries to extract a certain amount of the item of the chest.
+                return InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
+                        tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null),
                         itemStack ->  !InventoryUtils.isItemStackEmpty(itemStack) && itemStack.getItem() instanceof ItemFood, buildingToDeliver.getBuildingLevel(),
                         new InvWrapper(worker.getInventoryCitizen()));
-
-                final int slotInv = InventoryUtils.getFirstOpenSlotFromItemHandler(new InvWrapper(worker.getInventoryCitizen()));
-
-                if(slotChest == -1 || slotInv == -1)
-                {
-                    return false;
-                }
-
-                ItemStack stack = ((TileEntityChest) tileEntity).getStackInSlot(slotChest);
-
-                return true;
-
             }
             else if (itemsToDeliver.isEmpty() && !isToolInTileEntity((TileEntityChest) tileEntity, buildingToDeliver.getRequiredTool(),
                     buildingToDeliver.getBuildingLevel()))
