@@ -564,16 +564,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Also make sure to have inventory space for the stack.
      *
      * @param entity the tileEntity chest or building.
-     * @param is     the class.
+     * @param itemStackSelectionPredicate the criteria.
      * @return true if found the stack.
      */
-    public boolean isInTileEntity(TileEntityChest entity, Class is)
+    public boolean isInTileEntity(TileEntityChest entity, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        return is != null
-                && InventoryFunctions
+        return InventoryFunctions
                 .matchFirstInProviderWithAction(
                         entity,
-                        stack -> !InventoryUtils.isItemStackEmpty(stack) && stack.getClass().equals(is),
+                        itemStackSelectionPredicate,
                         this::takeItemStackFromProvider
                 );
     }

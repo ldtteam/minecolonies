@@ -20,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Predicate;
 
 /**
  * Class which handles the tileEntity of our colonyBuildings.
@@ -94,7 +95,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     {
         if (buildingEntry.isFoodNeeded())
         {
-            if (isInHut(ItemFood.class))
+            if (isInHut(itemStack -> !InventoryUtils.isItemStackEmpty(itemStack) && itemStack.getItem() instanceof ItemFood))
             {
                 if (addToList)
                 {
@@ -239,15 +240,15 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
 
     /**
      * Check all chests in the worker hut for a required item.
-     * @param is the type of item requested (amount is ignored)
+     * @param itemStackSelectionPredicate the type of item requested (amount is ignored).
      * @return true if a stack of that type was found
      */
-    public boolean isInHut(@Nullable final Class is)
+    public boolean isInHut(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
         @Nullable final AbstractBuilding building = getBuilding();
         if(building != null)
         {
-            if(isInTileEntity(building.getTileEntity(), is))
+            if(isInTileEntity(building.getTileEntity(), itemStackSelectionPredicate))
             {
                 return true;
             }
@@ -255,7 +256,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             for(final BlockPos pos : building.getAdditionalCountainers())
             {
                 @Nullable final TileEntity entity = worldObj.getTileEntity(pos);
-                if(entity instanceof TileEntityChest && isInTileEntity((TileEntityChest) entity, is))
+                if(entity instanceof TileEntityChest && isInTileEntity((TileEntityChest) entity, itemStackSelectionPredicate))
                 {
                     return true;
                 }
@@ -271,7 +272,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      * @return the position or null.
      */
     @Nullable
-    public BlockPos getPositionOfChestWithItemStack(ItemStack stack)
+    public BlockPos getPositionOfChestWithItemStack(@NotNull final ItemStack stack)
     {
         @Nullable final AbstractBuilding building = getBuilding();
 
@@ -296,17 +297,17 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
 
     /**
      * Check for a certain item and return the position of the chest containing it.
-     * @param stack the stack to search for.
+     * @param itemStackSelectionPredicate the stack to search for.
      * @return the position or null.
      */
     @Nullable
-    public BlockPos getPositionOfChestWithItemStack(final Class is)
+    public BlockPos getPositionOfChestWithItemStack(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
         @Nullable final AbstractBuilding building = getBuilding();
 
         if(building != null)
         {
-            if(isInTileEntity(building.getTileEntity(), is))
+            if(isInTileEntity(building.getTileEntity(), itemStackSelectionPredicate))
             {
                 return building.getLocation();
             }
@@ -314,7 +315,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             for(final BlockPos pos : building.getAdditionalCountainers())
             {
                 final TileEntity entity = worldObj.getTileEntity(pos);
-                if(entity instanceof TileEntityChest && isInTileEntity((TileEntityChest) entity, is))
+                if(entity instanceof TileEntityChest && isInTileEntity((TileEntityChest) entity, itemStackSelectionPredicate))
                 {
                     return pos;
                 }
@@ -435,16 +436,15 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      * Make sure that the worker stands next the chest to not break immersion.
      * Also make sure to have inventory space for the stack.
      * @param entity the tileEntity chest or building.
-     * @param is the itemStack.
+     * @param itemStackSelectionPredicate the itemStack predicate.
      * @return true if found the stack.
      */
-    public boolean isInTileEntity(final TileEntityChest entity, final Class is)
+    public boolean isInTileEntity(final TileEntityChest entity, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        return is != null
-                && InventoryFunctions
+        return InventoryFunctions
                 .matchFirstInProviderWithAction(
                         entity,
-                        stack -> !InventoryUtils.isItemStackEmpty(stack) && stack.getItem().getClass().equals(is),
+                       itemStackSelectionPredicate,
                         InventoryFunctions::doNothing
                 );
     }

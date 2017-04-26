@@ -444,7 +444,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
         else if(buildingToDeliver instanceof BuildingHome)
         {
-            position = wareHouse.getTileEntity().getPositionOfChestWithItemStack(ItemFood.class);
+            position = wareHouse.getTileEntity().getPositionOfChestWithItemStack(
+                    itemStack -> !InventoryUtils.isItemStackEmpty(itemStack) && itemStack.getItem() instanceof ItemFood);
         }
         else
         {
@@ -494,7 +495,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
             if(buildingToDeliver instanceof BuildingHome)
             {
-                if (isInTileEntity((TileEntityChest) tileEntity, ItemFood.class))
+                if (isInTileEntity((TileEntityChest) tileEntity, itemStack -> !InventoryUtils.isItemStackEmpty(itemStack) && itemStack.getItem() instanceof ItemFood))
                 {
                     return true;
                 }
