@@ -47,6 +47,8 @@ public final class PlacementHandlers
         handlers.add(new DoublePlantPlacementHandler());
         handlers.add(new SpecialBlockPlacementAttemptHandler());
         handlers.add(new FlowerPotPlacementHandler());
+        handlers.add(new BlockGrassPathPlacementHandler());
+        handlers.add(new StairBlockPlacementHandler());
         handlers.add(new GeneralBlockPlacementHandler());
     }
 
