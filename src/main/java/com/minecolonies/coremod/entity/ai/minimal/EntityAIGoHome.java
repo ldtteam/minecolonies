@@ -55,7 +55,7 @@ public class EntityAIGoHome extends EntityAIBase
     public boolean shouldExecute()
     {
         return citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP
-                && (!citizen.isAtHome() || (citizen.getCitizenData() != null && citizen.getCitizenData().getSaturation() < EntityCitizen.FULL_SATURATION));
+                && (!citizen.isAtHome() || (citizen.getCitizenData() != null && citizen.getCitizenData().getSaturation() <= 0));
     }
 
     /**

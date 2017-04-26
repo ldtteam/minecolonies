@@ -1028,7 +1028,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 this.removeActivePotionEffect(Potion.getPotionFromResourceLocation("slowness"));
             }
 
-            if(citizenData.getSaturation() < FULL_SATURATION)
+            if(citizenData.getSaturation() < HIGH_SATURATION)
             {
                 tryToEat();
             }
