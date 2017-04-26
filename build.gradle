@@ -32,6 +32,11 @@ sonarqube {
     }
 }
 
+versioneye.projectid = "58ec8337d6c98d00417478d1"
+versioneye {
+  dependencies = transitive
+}
+
 apply plugin: 'idea'
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'checkstyle'
