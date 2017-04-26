@@ -495,10 +495,14 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
             if(buildingToDeliver instanceof BuildingHome)
             {
-                if (isInTileEntity((TileEntityChest) tileEntity, itemStack -> !InventoryUtils.isItemStackEmpty(itemStack) && itemStack.getItem() instanceof ItemFood))
-                {
-                    return true;
-                }
+                final int slotChest =InventoryUtils.findFirstSlotInProviderWith(tileEntity,
+                        itemStack ->  !InventoryUtils.isItemStackEmpty(itemStack) && itemStack.getItem() instanceof ItemFood);
+
+                final int slotInv = InventoryUtils.getFirstOpenSlotFromItemHandler(new InvWrapper(worker.getInventoryCitizen()));
+
+
+                return true;
+
             }
             else if (itemsToDeliver.isEmpty() && !isToolInTileEntity((TileEntityChest) tileEntity, buildingToDeliver.getRequiredTool(),
                     buildingToDeliver.getBuildingLevel()))
