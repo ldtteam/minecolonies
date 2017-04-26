@@ -330,11 +330,6 @@ public final class PlacementHandlers
         public Object handle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
                 @Nullable final AbstractEntityAIStructure placer)
         {
-            if (blockState.getBlock() != Blocks.GRASS)
-            {
-                return ActionProcessingResult.IGNORE;
-            }
-
             if(!Configurations.builderInfiniteResources && !placer.checkOrRequestItems(new ItemStack(Blocks.DIRT)))
             {
                 return ActionProcessingResult.DENY;
