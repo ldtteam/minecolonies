@@ -37,6 +37,11 @@ import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends AbstractAISkeleton<J>
 {
     /**
+     * Buffer time in ticks he will accept a last attacker as valid.
+     */
+    protected static final int ATTACK_TIME_BUFFER = 10;
+
+    /**
      * The maximum range to keep from the current building place.
      */
     private static final int    MAX_ADDITIONAL_RANGE_TO_BUILD = 25;
