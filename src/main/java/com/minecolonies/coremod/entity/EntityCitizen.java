@@ -11,7 +11,6 @@ import com.minecolonies.coremod.colony.jobs.*;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
-import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.entity.ai.minimal.*;
 import com.minecolonies.coremod.entity.pathfinding.PathNavigate;
 import com.minecolonies.coremod.entity.pathfinding.WalkToProxy;
@@ -1538,7 +1537,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
             {
                 isDay = false;
                 final AbstractBuildingWorker buildingWorker = getWorkBuilding();
-                final double decreaseBy = buildingWorker == null ? 0 : (SATURATION_DECREASE_FACTOR * buildingWorker.getBuildingLevel());
+                final double decreaseBy = buildingWorker == null || buildingWorker.getBuildingLevel() == 0 ? 0.1
+                        : (SATURATION_DECREASE_FACTOR * Math.pow(2, buildingWorker.getBuildingLevel() - 1.0));
                 citizenData.decreaseSaturation(decreaseBy);
                 citizenData.markDirty();
             }
