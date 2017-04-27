@@ -1807,6 +1807,7 @@ public class Colony implements IColony
     public void increaseOverallHappiness(double amount)
     {
         this.overallHappiness = Math.min(this.overallHappiness + Math.abs(amount), MAX_OVERALL_HAPPINESS);
+        this.markDirty();
     }
 
     /**
@@ -1816,6 +1817,7 @@ public class Colony implements IColony
     public void decreaseOverallHappiness(double amount)
     {
         this.overallHappiness = Math.max(this.overallHappiness - Math.abs(amount), MIN_OVERALL_HAPPINESS);
+        this.markDirty();
     }
 
     /**

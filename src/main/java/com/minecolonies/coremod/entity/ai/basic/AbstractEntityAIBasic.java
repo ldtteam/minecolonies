@@ -39,7 +39,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Buffer time in ticks he will accept a last attacker as valid.
      */
-    protected static final int ATTACK_TIME_BUFFER = 10;
+    protected static final int ATTACK_TIME_BUFFER = 50;
 
     /**
      * The maximum range to keep from the current building place.

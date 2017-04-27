@@ -28,7 +28,6 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import slimeknights.tconstruct.gadgets.entity.ExplosionEFLN;
 
 import java.util.List;
 import java.util.function.Predicate;
