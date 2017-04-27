@@ -180,7 +180,6 @@ public class Colony implements IColony
      * @param w  The world the colony exists in.
      * @param c  The center of the colony (location of Town Hall).
      */
-    //@SuppressWarnings("squid:S2637")
     Colony(final int id, @NotNull final World w, final BlockPos c)
     {
         this(id, w.provider.getDimension());
