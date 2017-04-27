@@ -11,6 +11,7 @@ import com.minecolonies.coremod.colony.jobs.*;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
+import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.entity.ai.minimal.*;
 import com.minecolonies.coremod.entity.pathfinding.PathNavigate;
 import com.minecolonies.coremod.entity.pathfinding.WalkToProxy;
@@ -191,7 +192,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Happiness penalty for citizen kill.
      */
-    private static final double CITIZEN_KILL_PENALTY = 0.2;
+    private static final double CITIZEN_KILL_PENALTY = 9;
 
     /**
      * Lower than this is low saturation.
@@ -701,13 +702,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @Override
     public boolean attackEntityFrom(@NotNull final DamageSource damageSource, final float damage)
     {
-        setLastAttacker(damageSource.getEntity());
-
         final Entity sourceEntity = damageSource.getEntity();
         if (sourceEntity instanceof EntityCitizen && ((EntityCitizen) sourceEntity).colonyId == this.colonyId)
         {
             return false;
         }
+        setLastAttacker(damageSource.getEntity());
 
         final boolean result = super.attackEntityFrom(damageSource, damage);
 
