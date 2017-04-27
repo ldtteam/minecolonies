@@ -99,7 +99,7 @@ public final class PlacementHandlers
                 return ActionProcessingResult.IGNORE;
             }
 
-            if(!Configurations.builderInfiniteResources && placer.checkOrRequestItems(new ItemStack(Blocks.DIRT)))
+            if(!Configurations.builderInfiniteResources && placer.checkOrRequestItems(placer.getTotalAmount(new ItemStack(Blocks.DIRT))))
             {
                 return ActionProcessingResult.DENY;
             }
@@ -124,7 +124,7 @@ public final class PlacementHandlers
                 return ActionProcessingResult.IGNORE;
             }
 
-            if(!Configurations.builderInfiniteResources && placer.checkOrRequestItems(BlockUtils.getItemStackFromBlockState(blockState)))
+            if(!Configurations.builderInfiniteResources && placer.checkOrRequestItems(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState))))
             {
                 return ActionProcessingResult.DENY;
             }
@@ -152,7 +152,7 @@ public final class PlacementHandlers
 
 
             if (!Configurations.builderInfiniteResources && blockState.getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT
-                    && placer.checkOrRequestItems(BlockUtils.getItemStackFromBlockState(blockState)))
+                    && placer.checkOrRequestItems(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState))))
             {
                 return ActionProcessingResult.DENY;
             }
@@ -184,7 +184,7 @@ public final class PlacementHandlers
             }
 
             if (!Configurations.builderInfiniteResources && blockState.getValue(BlockDoublePlant.HALF).equals(BlockDoublePlant.EnumBlockHalf.LOWER)
-                    && placer.checkOrRequestItems(BlockUtils.getItemStackFromBlockState(blockState)))
+                    && placer.checkOrRequestItems(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState))))
             {
                 return ActionProcessingResult.DENY;
             }
@@ -285,7 +285,7 @@ public final class PlacementHandlers
 
             if (!Configurations.builderInfiniteResources)
             {
-                if (!(placer.holdEfficientTool(blockState.getBlock()) || placer.checkOrRequestItems(new ItemStack(Blocks.DIRT,1))))
+                if (!(placer.holdEfficientTool(blockState.getBlock()) || placer.checkOrRequestItems(placer.getTotalAmount(new ItemStack(Blocks.DIRT,1)))))
                 {
                     return ActionProcessingResult.DENY;
                 }
@@ -335,7 +335,7 @@ public final class PlacementHandlers
 
             if(!Configurations.builderInfiniteResources)
             {
-                if(placer.checkOrRequestItems(BlockUtils.getItemStackFromBlockState(newBlockState)))
+                if(placer.checkOrRequestItems(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(newBlockState))))
                 {
                     return ActionProcessingResult.DENY;
                 }

@@ -556,6 +556,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 {
                     return false;
                 }
+                continue;
             }
 
             if(result  instanceof IBlockState)
