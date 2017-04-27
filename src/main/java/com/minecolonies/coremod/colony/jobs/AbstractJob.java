@@ -267,7 +267,7 @@ public abstract class AbstractJob
     {
         for (@NotNull final ItemStack neededItem : itemsNeeded)
         {
-            if ((stack.getItem().isDamageable() && stack.getItem() == neededItem.getItem()) || stack.isItemEqual(neededItem))
+            if (stack.isItemEqualIgnoreDurability(neededItem))
             {
                 neededItem.stackSize += stack.stackSize;
                 return;
@@ -290,7 +290,7 @@ public abstract class AbstractJob
         @NotNull final ItemStack stackCopy = stack.copy();
         for (@NotNull final ItemStack neededItem : itemsNeeded)
         {
-            if ((stack.getItem().isDamageable() && stack.getItem() == neededItem.getItem()) || stack.isItemEqual(neededItem))
+            if (stack.isItemEqualIgnoreDurability(neededItem))
             {
                 final int itemsToRemove = Math.min(neededItem.stackSize, stackCopy.stackSize);
                 neededItem.stackSize -= itemsToRemove;
