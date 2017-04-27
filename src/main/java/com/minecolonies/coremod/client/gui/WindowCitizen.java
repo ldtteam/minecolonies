@@ -7,6 +7,7 @@ import com.minecolonies.blockout.controls.Image;
 import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
@@ -96,7 +97,7 @@ public class WindowCitizen extends Window implements Button.Handler
     /**
      * Y position of the xpLabel.
      */
-    private static final int XP_LABEL_Y                   = 28;
+    private static final int XP_LABEL_Y                   = 38;
 
     /**
      * Row position of the empty heart icon.
@@ -132,21 +133,66 @@ public class WindowCitizen extends Window implements Button.Handler
     private static final int HEART_ICON_POS_Y         = 10;
 
     /**
+     * The position y where the saturation is placed.
+     */
+    private static final int SATURATION_ICON_POS_Y  = 10;
+
+    /**
+     * Column of the saturation icon.
+     */
+    private static final int SATURATION_ICON_COLUMN = 27;
+
+    /**
+     * Dimension of the hearts.
+     */
+    private static final int SATURATION_ICON_HEIGHT_WIDTH  = 9;
+
+    /**
+     * Saturation icon x position.
+     */
+    private static final int SATURATION_ICON_POS_X = 10;
+
+    /**
+     * Saturation item x offset.
+     */
+    private static final int SATURATION_ICON_OFFSET_X = 10;
+
+    /**
      * The label to find name in the gui.
      */
-    private static final String WINDOW_ID_NAME      = "name";
+    private static final String WINDOW_ID_NAME        = "name";
     /**
      * The label to find xpLabel in the gui.
      */
-    private static final String WINDOW_ID_XP        = "xpLabel";
+    private static final String WINDOW_ID_XP          = "xpLabel";
     /**
      * The label to find xpBar in the gui.
      */
-    private static final String WINDOW_ID_XPBAR     = "xpBar";
+    private static final String WINDOW_ID_XPBAR       = "xpBar";
     /**
      * The label to find healthBar in the gui.
      */
-    private static final String WINDOW_ID_HEALTHBAR = "healthBar";
+    private static final String WINDOW_ID_HEALTHBAR   = "healthBar";
+
+    /**
+     * The position of the empty saturation icon.
+     */
+    private static final int EMPTY_SATURATION_ITEM_ROW_POS = 16;
+
+    /**
+     * The position of the full saturation icon.
+     */
+    private static final int FULL_SATURATION_ITEM_ROW_POS = 16 + 36;
+
+    /**
+     * The position of the half saturation icon.
+     */
+    private static final int HALF_SATURATION_ITEM_ROW_POS = 16 + 45;
+
+    /**
+     * The saturation bar of the citizen.
+     */
+    private static final String WINDOW_ID_SATURATION_BAR = "saturationBar";
 
     /**
      * The citizenData.View object.
@@ -173,6 +219,7 @@ public class WindowCitizen extends Window implements Button.Handler
         findPaneOfTypeByID(WINDOW_ID_NAME, Label.class).setLabelText(citizen.getName());
 
         createHealthBar();
+        createSaturationBar();
         createXpBar();
         createSkillContent();
     }
@@ -210,6 +257,43 @@ public class WindowCitizen extends Window implements Button.Handler
             heart.setImage(Gui.ICONS, HALF_HEART_ICON_ROW_POS, HEART_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
             heart.setPosition(heartPos * HEART_ICON_POS_X + HEART_ICON_OFFSET_X, HEART_ICON_POS_Y);
             findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class).addChild(heart);
+        }
+    }
+
+    /**
+     * Creates an health bar according to the citizen maxHealth and currentHealth.
+     */
+    private void createSaturationBar()
+    {
+        findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).setAlignment(Alignment.MIDDLE_RIGHT);
+
+        //Max saturation (Black food items).
+        for (int i = 0; i < CitizenData.MAX_SATURATION; i++)
+        {
+            @NotNull final Image saturation = new Image();
+            saturation.setImage(Gui.ICONS, EMPTY_SATURATION_ITEM_ROW_POS, SATURATION_ICON_COLUMN, SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH);
+
+            saturation.setPosition(i * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y);
+            findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).addChild(saturation);
+        }
+
+        //Current saturation (Full food hearts).
+        int saturationPos;
+        for (saturationPos = 0; saturationPos < ((int) citizen.getSaturation()); saturationPos++)
+        {
+            @NotNull final Image saturation = new Image();
+            saturation.setImage(Gui.ICONS, FULL_SATURATION_ITEM_ROW_POS, SATURATION_ICON_COLUMN, SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH);
+            saturation.setPosition(saturationPos * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y);
+            findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).addChild(saturation);
+        }
+
+        //Half food items.
+        if (citizen.getSaturation() / 2 % 1 > 0)
+        {
+            @NotNull final Image saturation = new Image();
+            saturation.setImage(Gui.ICONS, HALF_SATURATION_ITEM_ROW_POS, SATURATION_ICON_COLUMN, SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH);
+            saturation.setPosition(saturationPos * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y);
+            findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).addChild(saturation);
         }
     }
 

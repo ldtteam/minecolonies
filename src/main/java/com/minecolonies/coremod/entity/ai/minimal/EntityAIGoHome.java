@@ -1,10 +1,17 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.item.ItemFood;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.items.wrapper.InvWrapper;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * EntityCitizen go home AI.
@@ -48,7 +55,7 @@ public class EntityAIGoHome extends EntityAIBase
     public boolean shouldExecute()
     {
         return citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP
-                 && !citizen.isAtHome();
+                && (!citizen.isAtHome() || (citizen.getCitizenData() != null && citizen.getCitizenData().getSaturation() <= 0));
     }
 
     /**
@@ -82,8 +89,42 @@ public class EntityAIGoHome extends EntityAIBase
         }
 
         playGoHomeSounds();
+        handleSaturation(pos);
+    }
 
-        citizen.isWorkerAtSiteWithMove(pos, 2);
+    /**
+     * Handle the saturation of the citizen.
+     * @param pos the position.
+     */
+    private void handleSaturation(@NotNull final BlockPos pos)
+    {
+        if (citizen.isWorkerAtSiteWithMove(pos, 2) && citizen.getColony() != null
+                && citizen.getCitizenData() != null && citizen.getCitizenData().getSaturation() < EntityCitizen.HIGH_SATURATION)
+        {
+            boolean tookFood = false;
+            final AbstractBuilding home = citizen.getColony().getBuilding(pos);
+            if (home instanceof BuildingHome && citizen.getCitizenData() != null && citizen.getCitizenData().getSaturation() < EntityCitizen.FULL_SATURATION)
+            {
+                final int slot = InventoryUtils.findFirstSlotInProviderWith(home.getTileEntity(),
+                        itemStack -> !InventoryUtils.isItemStackEmpty(itemStack) && itemStack.getItem() instanceof ItemFood);
+                if (slot != -1)
+                {
+                    final ItemStack stack = home.getTileEntity().getStackInSlot(slot);
+                    if(!InventoryUtils.isItemStackEmpty(stack))
+                    {
+                        tookFood = true;
+                        stack.stackSize--;
+                        citizen.getInventoryCitizen().setInventorySlotContents(
+                                InventoryUtils.getFirstOpenSlotFromItemHandler(new InvWrapper(citizen.getInventoryCitizen())), new ItemStack(stack.getItem(), 1));
+                    }
+                    ((BuildingHome) home).setFoodNeeded(false);
+                }
+                if(!tookFood)
+                {
+                    ((BuildingHome) home).setFoodNeeded(true);
+                }
+            }
+        }
     }
 
     @Override

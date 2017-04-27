@@ -373,4 +373,5 @@ item.supplyCampDeployer.invalid=Requiring a flat ground of at least 16*17.
 item.minecolonies.supplyChestDeployer.name=SupplyShip Chest
 item.minecolonies.supplyCampDeployer.name=SupplyCamp Chest
 com.minecolonies.coremod.error.supplyChestAlreadyPlaced=You have already placed a supply ship or supply camp!
+com.minecolonies.coremod.gui.townHall.currentHappiness=Overall happiness:
 com.minecolonies.coremod.job.guard.toolClickGuardTooFar=Too far away from guard tower, please upgrade your guardtower.
