@@ -91,7 +91,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         }
     }
 
-    private boolean checkInWareHouseForFood(final BuildingHome buildingEntry, final boolean addToList)
+    public boolean checkInWareHouseForFood(final BuildingHome buildingEntry, final boolean addToList)
     {
         if (buildingEntry.isFoodNeeded())
         {
@@ -161,6 +161,8 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                 buildingEntry.setOnGoingDelivery(false);
             }
         }
+
+
 
         final String tool = buildingEntry.getRequiredTool();
         if(!tool.isEmpty())

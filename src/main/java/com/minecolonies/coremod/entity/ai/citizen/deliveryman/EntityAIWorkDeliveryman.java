@@ -349,7 +349,16 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             final AbstractBuilding buildingToDeliver = ((BuildingDeliveryman) ownBuilding).getBuildingToDeliver();
             if (buildingToDeliver != null)
             {
-                final boolean ableToDeliver = wareHouse.getTileEntity().checkInWareHouse(buildingToDeliver, false);
+                final boolean ableToDeliver;
+                if(buildingToDeliver instanceof BuildingHome)
+                {
+                    ableToDeliver = wareHouse.getTileEntity().checkInWareHouseForFood((BuildingHome) buildingToDeliver, false);
+                }
+                else
+                {
+                    ableToDeliver = wareHouse.getTileEntity().checkInWareHouse(buildingToDeliver, false);
+                }
+                
                 if (!ableToDeliver)
                 {
                     buildingToDeliver.setOnGoingDelivery(false);
