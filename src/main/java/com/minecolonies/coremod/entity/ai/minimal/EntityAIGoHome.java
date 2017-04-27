@@ -147,18 +147,17 @@ public class EntityAIGoHome extends EntityAIBase
                     }
                     ((BuildingHome) home).setFoodNeeded(false);
                 }
-
-                if (!tookFood)
-                {
-                    requestFoodIfRequired(currentSaturation, (BuildingHome) home);
-                }
+            }
+            if (!tookFood)
+            {
+                requestFoodIfRequired(currentSaturation, home);
             }
         }
     }
 
-    private void requestFoodIfRequired(final double currentSaturation, @NotNull final BuildingHome home)
+    private void requestFoodIfRequired(final double currentSaturation, @NotNull final AbstractBuilding home)
     {
-        if (home.isFoodNeeded() && !home.hasOnGoingDelivery())
+        if (!(home instanceof BuildingHome) || (((BuildingHome) home).isFoodNeeded() && !((BuildingHome)home).hasOnGoingDelivery()))
         {
             if (currentSaturation <= 0)
             {
@@ -177,7 +176,11 @@ public class EntityAIGoHome extends EntityAIBase
                 chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.saturation.7");
             }
         }
-        home.setFoodNeeded(true);
+
+        if(home instanceof BuildingHome)
+        {
+            ((BuildingHome)home).setFoodNeeded(true);
+        }
     }
 
     @Override
