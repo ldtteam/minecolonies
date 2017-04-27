@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.builder;
 
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
+import com.minecolonies.coremod.blocks.BlockSolidSubstitution;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
@@ -196,14 +197,20 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
             requestEntityToBuildingIfRequired(entityInfo);
 
-            @Nullable final IBlockState blockState = blockInfo.blockState;
-            @Nullable final Block block = blockState.getBlock();
+            @Nullable IBlockState blockState = blockInfo.blockState;
+            @Nullable Block block = blockState.getBlock();
 
             if (job.getStructure().isStructureBlockEqualWorldBlock()
                     || (blockState.getBlock() instanceof BlockBed && blockState.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
                     || (blockState.getBlock() instanceof BlockDoor && blockState.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.UPPER)))
             {
                 continue;
+            }
+
+            if(block instanceof BlockSolidSubstitution)
+            {
+                blockState = getSolidSubstitution(job.getStructure().getBlockPosition());
+                block = blockState.getBlock();
             }
 
             final Block worldBlock = BlockPosUtil.getBlock(world, job.getStructure().getBlockPosition());

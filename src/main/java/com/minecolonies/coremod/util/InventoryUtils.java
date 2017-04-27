@@ -632,6 +632,28 @@ public final class InventoryUtils
     }
 
     /**
+     * Returns the index of the first occurrence of an ItemStack that matches
+     * the given predicate in the {@link ICapabilityProvider}.
+     *
+     * @param provider                    Provider to check
+     * @param itemStackSelectionPredicate The predicate to match.
+     * @return Index of the first occurrence
+     */
+    public static int findFirstSlotInProviderNotEmptyWith(@NotNull final ICapabilityProvider provider, Predicate<ItemStack> itemStackSelectionPredicate)
+    {
+        for (IItemHandler handler : getItemHandlersFromProvider(provider))
+        {
+            int foundSlot = findFirstSlotInItemHandlerNotEmptyWith(handler, itemStackSelectionPredicate);
+            if (foundSlot > -1)
+            {
+                return foundSlot;
+            }
+        }
+
+        return -1;
+    }
+
+    /**
      * Returns the amount of occurrences in the {@link ICapabilityProvider}.
      *
      * @param provider   {@link ICapabilityProvider} to scan.
