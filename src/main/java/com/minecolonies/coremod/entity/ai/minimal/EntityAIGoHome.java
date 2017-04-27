@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.ai.minimal;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.entity.ai.util.ChatSpamFilter;
 import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.entity.ai.EntityAIBase;
@@ -35,6 +36,12 @@ public class EntityAIGoHome extends EntityAIBase
     private final EntityCitizen citizen;
 
     /**
+     * Filter to allow citizen requesting without spam.
+     */
+    @NotNull
+    protected final ChatSpamFilter chatSpamFilter;
+
+    /**
      * Constructor for the task, creates task.
      *
      * @param citizen the citizen to assign to this task.
@@ -43,6 +50,7 @@ public class EntityAIGoHome extends EntityAIBase
     {
         super();
         this.citizen = citizen;
+        this.chatSpamFilter = new ChatSpamFilter(citizen);
     }
 
     /**
@@ -94,6 +102,7 @@ public class EntityAIGoHome extends EntityAIBase
 
     /**
      * Handle the saturation of the citizen.
+     *
      * @param pos the position.
      */
     private void handleSaturation(@NotNull final BlockPos pos)
@@ -101,16 +110,17 @@ public class EntityAIGoHome extends EntityAIBase
         if (citizen.isWorkerAtSiteWithMove(pos, 2) && citizen.getColony() != null
                 && citizen.getCitizenData() != null && citizen.getCitizenData().getSaturation() < EntityCitizen.HIGH_SATURATION)
         {
+            final double currentSaturation = citizen.getCitizenData().getSaturation();
             boolean tookFood = false;
             final AbstractBuilding home = citizen.getColony().getBuilding(pos);
-            if (home instanceof BuildingHome && citizen.getCitizenData() != null && citizen.getCitizenData().getSaturation() < EntityCitizen.FULL_SATURATION)
+            if (home instanceof BuildingHome && currentSaturation < EntityCitizen.FULL_SATURATION)
             {
                 final int slot = InventoryUtils.findFirstSlotInProviderWith(home.getTileEntity(),
                         itemStack -> !InventoryUtils.isItemStackEmpty(itemStack) && itemStack.getItem() instanceof ItemFood);
                 if (slot != -1)
                 {
                     final ItemStack stack = home.getTileEntity().getStackInSlot(slot);
-                    if(!InventoryUtils.isItemStackEmpty(stack))
+                    if (!InventoryUtils.isItemStackEmpty(stack))
                     {
                         tookFood = true;
                         stack.stackSize--;
@@ -119,12 +129,37 @@ public class EntityAIGoHome extends EntityAIBase
                     }
                     ((BuildingHome) home).setFoodNeeded(false);
                 }
-                if(!tookFood)
+
+                if (!tookFood)
                 {
-                    ((BuildingHome) home).setFoodNeeded(true);
+                    requestFoodIfRequired(currentSaturation, (BuildingHome) home);
                 }
             }
         }
+    }
+
+    private void requestFoodIfRequired(final double currentSaturation, @NotNull final BuildingHome home)
+    {
+        if (home.isFoodNeeded() && !home.hasOnGoingDelivery())
+        {
+            if (currentSaturation <= 0)
+            {
+                chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.saturation.0");
+            }
+            else if (currentSaturation < EntityCitizen.LOW_SATURATION)
+            {
+                chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.saturation.3");
+            }
+            else if (currentSaturation < EntityCitizen.AVERAGE_SATURATION)
+            {
+                chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.saturation.5");
+            }
+            else if (currentSaturation < EntityCitizen.HIGH_SATURATION)
+            {
+                chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.saturation.7");
+            }
+        }
+        home.setFoodNeeded(true);
     }
 
     @Override

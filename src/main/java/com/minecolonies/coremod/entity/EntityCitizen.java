@@ -97,7 +97,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * The middle saturation point. smaller than this = bad and bigger than this = good.
      */
-    private static final int AVERAGE_SATURATION = 5;
+    public static final int AVERAGE_SATURATION = 5;
 
     /**
      * The delta yaw value for looking at things.
@@ -196,7 +196,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Lower than this is low saturation.
      */
-    private static final int LOW_SATURATION = 3;
+    public static final int LOW_SATURATION = 3;
 
     /**
      * Higher than this is high saturation.
