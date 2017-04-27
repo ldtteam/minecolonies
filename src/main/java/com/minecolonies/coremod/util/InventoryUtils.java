@@ -1406,8 +1406,12 @@ public final class InventoryUtils
         {
             return false;
         }
-
-        return InventoryUtils.isItemStackEmpty(targetHandler.extractItem(desiredItemSlot, amount, false));
+        final ItemStack returnStack = sourceHandler.extractItem(desiredItemSlot, amount, false);
+        if(InventoryUtils.isItemStackEmpty(returnStack))
+        {
+            return false;
+        }
+        return InventoryUtils.addItemStackToItemHandler(targetHandler, returnStack);
     }
 
     /**

@@ -225,8 +225,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      * Check if worker of a certain building requires the item now.
      * Or the builder for the current task.
      *
-     * @param building the building to check for.
-     * @param stack    the stack to stack with.
+     * @param building         the building to check for.
+     * @param stack            the stack to stack with.
      * @param localAlreadyKept already kept resources.
      * @return true if required.
      */
@@ -316,7 +316,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                     else
                     {
                         @Nullable final ItemStack tempStack = buildingToDeliver.forceTransferStack(stack, world);
-                        if(tempStack == null)
+                        if (tempStack == null)
                         {
                             chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.job.deliveryman.workerChestFull"
                                     , new TextComponentString(" :" + buildingToDeliver.getSchematicName()));
@@ -330,6 +330,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 worker.addExperience(1.0D);
                 buildingToDeliver.setOnGoingDelivery(false);
                 ((BuildingDeliveryman) ownBuilding).setBuildingToDeliver(null);
+
+                if(buildingToDeliver instanceof BuildingHome)
+                {
+                    ((BuildingHome) buildingToDeliver).setFoodNeeded(false);
+                }
             }
         }
         return START_WORKING;
@@ -350,7 +355,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             if (buildingToDeliver != null)
             {
                 final boolean ableToDeliver;
-                if(buildingToDeliver instanceof BuildingHome)
+                if (buildingToDeliver instanceof BuildingHome)
                 {
                     ableToDeliver = wareHouse.getTileEntity().checkInWareHouseForFood((BuildingHome) buildingToDeliver, false);
                 }
@@ -358,7 +363,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 {
                     ableToDeliver = wareHouse.getTileEntity().checkInWareHouse(buildingToDeliver, false);
                 }
-                
+
                 if (!ableToDeliver)
                 {
                     buildingToDeliver.setOnGoingDelivery(false);
@@ -371,6 +376,17 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         return START_WORKING;
     }
 
+    /**
+     * Check if food has to be delivered to a certain building.
+     *
+     * @param building building to check.
+     * @return true if so.
+     */
+    private boolean needsToDeliverFood(@NotNull final AbstractBuilding building)
+    {
+        return building instanceof BuildingHome && ((BuildingHome) building).isFoodNeeded() && !hasFood();
+    }
+
     private AIState gatherItemsFromWareHouse()
     {
         final AbstractBuildingWorker ownBuilding = getOwnBuilding();
@@ -379,13 +395,12 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             final AbstractBuilding buildingToDeliver = ((BuildingDeliveryman) ownBuilding).getBuildingToDeliver();
             if (buildingToDeliver != null)
             {
-                if ((itemsToDeliver.isEmpty() && hasTools(buildingToDeliver))
-                        || (buildingToDeliver instanceof BuildingHome && ((BuildingHome) buildingToDeliver).isFoodNeeded() && hasFood()))
+                if (itemsToDeliver.isEmpty() && hasTools(buildingToDeliver) && !needsToDeliverFood(buildingToDeliver))
                 {
                     return DELIVERY;
                 }
 
-                if(tryToGatherItems(buildingToDeliver))
+                if (tryToGatherItems(buildingToDeliver))
                 {
                     setDelay(DUMP_AND_GATHER_DELAY);
                     return GATHER_IN_WAREHOUSE;
@@ -416,8 +431,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         if (requiredTool.equals(Utils.PICKAXE))
         {
             return InventoryUtils.isPickaxeInItemHandler(new InvWrapper(worker.getInventoryCitizen()),
-              buildingToDeliver.getNeededPickaxeLevel(),
-              buildingToDeliver.getBuildingLevel());
+                    buildingToDeliver.getNeededPickaxeLevel(),
+                    buildingToDeliver.getBuildingLevel());
         }
         return InventoryUtils.isToolInItemHandler(new InvWrapper(worker.getInventoryCitizen()), requiredTool, buildingToDeliver.getBuildingLevel());
     }
@@ -431,7 +446,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     private boolean hasFood()
     {
         return InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()),
-                stack -> !InventoryUtils.isItemStackEmpty(stack) && stack.getItem() instanceof ItemFood) != -1;
+                stack -> !InventoryUtils.isItemStackEmpty(stack) && stack.getItem() instanceof ItemFood) > 0;
     }
 
     /**
@@ -444,18 +459,19 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     private boolean tryToGatherItems(@NotNull final AbstractBuilding buildingToDeliver)
     {
         final BlockPos position;
-        if (itemsToDeliver.isEmpty())
+
+        if (buildingToDeliver instanceof BuildingHome)
+        {
+            position = wareHouse.getTileEntity().getPositionOfChestWithItemStack(
+                    itemStack -> !InventoryUtils.isItemStackEmpty(itemStack) && itemStack.getItem() instanceof ItemFood);
+        }
+        else if (itemsToDeliver.isEmpty())
         {
             final String tool = buildingToDeliver.getRequiredTool();
             position = wareHouse.getTileEntity()
                     .getPositionOfChestWithTool(tool,
                             Utils.PICKAXE.equals(tool) ? buildingToDeliver.getNeededPickaxeLevel() : buildingToDeliver.getBuildingLevel(),
                             buildingToDeliver);
-        }
-        else if(buildingToDeliver instanceof BuildingHome)
-        {
-            position = wareHouse.getTileEntity().getPositionOfChestWithItemStack(
-                    itemStack -> !InventoryUtils.isItemStackEmpty(itemStack) && itemStack.getItem() instanceof ItemFood);
         }
         else
         {
@@ -488,7 +504,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         final TileEntity tileEntity = world.getTileEntity(position);
         if (tileEntity instanceof TileEntityChest)
         {
-            if(!(tileEntity instanceof TileEntityColonyBuilding))
+            if (!(tileEntity instanceof TileEntityColonyBuilding))
             {
                 if (((TileEntityChest) tileEntity).numPlayersUsing == 0)
                 {
@@ -503,12 +519,12 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockType());
             }
 
-            if(buildingToDeliver instanceof BuildingHome)
+            if (buildingToDeliver instanceof BuildingHome)
             {
                 //Tries to extract a certain amount of the item of the chest.
                 return InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
                         tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null),
-                        itemStack ->  !InventoryUtils.isItemStackEmpty(itemStack) && itemStack.getItem() instanceof ItemFood, buildingToDeliver.getBuildingLevel(),
+                        itemStack -> !InventoryUtils.isItemStackEmpty(itemStack) && itemStack.getItem() instanceof ItemFood, buildingToDeliver.getBuildingLevel(),
                         new InvWrapper(worker.getInventoryCitizen()));
             }
             else if (itemsToDeliver.isEmpty() && !isToolInTileEntity((TileEntityChest) tileEntity, buildingToDeliver.getRequiredTool(),
@@ -516,7 +532,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             {
                 return false;
             }
-            else if(!itemsToDeliver.isEmpty())
+            else if (!itemsToDeliver.isEmpty())
             {
                 final ItemStack stack = itemsToDeliver.get(0);
                 if (isInTileEntity((TileEntityChest) tileEntity, stack))
@@ -576,7 +592,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         final Map<BlockPos, AbstractBuilding> buildings = job.getColony().getBuildings();
         for (final AbstractBuilding building : buildings.values())
         {
-            if(building == null)
+            if (building == null)
             {
                 continue;
             }
