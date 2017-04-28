@@ -25,6 +25,7 @@ public class BuildingHome extends AbstractBuildingHut
     private static final String            CITIZEN       = "Citizen";
     @NotNull
     private final        List<CitizenData> residents     = new ArrayList<>();
+    private boolean isFoodNeeded = false;
 
     /**
      * Instantiates a new citizen hut.
@@ -113,6 +114,24 @@ public class BuildingHome extends AbstractBuildingHut
             // 'Capture' as many citizens into this house as possible
             addHomelessCitizens();
         }
+    }
+
+    /**
+     * Set food requirements for the building.
+     * @param foodNeeded set true if required.
+     */
+    public void setFoodNeeded(final boolean foodNeeded)
+    {
+        isFoodNeeded = foodNeeded;
+    }
+
+    /**
+     * Check food requirements of the building.
+     * @return true of false.
+     */
+    public boolean isFoodNeeded()
+    {
+        return isFoodNeeded;
     }
 
     @Override

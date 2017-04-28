@@ -39,7 +39,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Buffer time in ticks he will accept a last attacker as valid.
      */
-    protected static final int ATTACK_TIME_BUFFER = 10;
+    protected static final int ATTACK_TIME_BUFFER = 50;
 
     /**
      * The maximum range to keep from the current building place.
@@ -560,6 +560,26 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                         stack -> stack != null && is.isItemEqualIgnoreDurability(stack),
                         this::takeItemStackFromProvider
                       );
+    }
+
+    /**
+     * Finds the first @see ItemStack the type of {@code is}.
+     * It will be taken from the chest and placed in the workers inventory.
+     * Make sure that the worker stands next the chest to not break immersion.
+     * Also make sure to have inventory space for the stack.
+     *
+     * @param entity the tileEntity chest or building.
+     * @param itemStackSelectionPredicate the criteria.
+     * @return true if found the stack.
+     */
+    public boolean isInTileEntity(TileEntityChest entity, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    {
+        return InventoryFunctions
+                .matchFirstInProviderWithAction(
+                        entity,
+                        itemStackSelectionPredicate,
+                        this::takeItemStackFromProvider
+                );
     }
 
     /**
