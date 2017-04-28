@@ -35,7 +35,7 @@ public class InventoryUtils
      * Variable representing the empty itemstack in 1.10.
      * Used for easy updating to 1.11
      */
-    public static final ItemStack EMPTY = null;
+    public static final ItemStack EMPTY = ItemStack.EMPTY;
 
     /**
      * Private constructor to hide the implicit one.
