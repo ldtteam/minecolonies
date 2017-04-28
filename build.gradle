@@ -13,6 +13,7 @@ buildscript {
 
 plugins {
     id "org.sonarqube" version "2.3"
+    id "org.standardout.versioneye" version "1.4.0"
 }
 
 repositories {
@@ -29,6 +30,11 @@ sonarqube {
         property "sonar.projectName", "Minecolonies"
         property "sonar.branch", System.getenv()['TEAMCITY_BRANCH'] != null ? System.getenv()['TEAMCITY_BRANCH'] : System.getenv()['TRAVIS_BRANCH']
     }
+}
+
+versioneye {
+  dependencies = transitive
+  exclude project.configurations.findAll { !it.canBeResolved }*.name as String[]
 }
 
 apply plugin: 'idea'
