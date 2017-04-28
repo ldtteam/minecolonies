@@ -62,7 +62,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand
             sender.getCommandSenderEntity().sendMessage(new TextComponentString("Please have an admin raise the maxDistanceFromWorldSpawn number in config."));
             return;
         }
-        if (!canCommandSenderUseCommand(COLONYTP))
+        if (!canCommandSenderUseCommand(RTP))
         {
             sender.getCommandSenderEntity().sendMessage(new TextComponentString("Not happenin bro!!, ask an OP to TP you."));
             return;

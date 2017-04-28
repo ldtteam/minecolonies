@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
-import com.minecolonies.compatibility.Compatibility;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
@@ -186,16 +185,9 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         final ItemStack heldItem = worker.getHeldItem(EnumHand.MAIN_HAND);
         if (heldItem != null)
         {
-            if (Utils.doesItemServeAsWeapon(heldItem))
+            if (Utils.doesItemServeAsWeapon(heldItem) && heldItem.getItem() instanceof ItemSword)
             {
-                if(heldItem.getItem() instanceof ItemSword)
-                {
-                    damgeToBeDealt += ((ItemSword) heldItem.getItem()).getDamageVsEntity();
-                }
-                else
-                {
-                    damgeToBeDealt += Compatibility.getAttackDamage(heldItem);
-                }
+                damgeToBeDealt += ((ItemSword) heldItem.getItem()).getDamageVsEntity();
             }
             damgeToBeDealt += EnchantmentHelper.getModifierForCreature(heldItem, targetEntity.getCreatureAttribute());
         }

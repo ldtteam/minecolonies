@@ -3,8 +3,7 @@ package com.minecolonies.compatibility.tinkers;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Optional;
 import org.jetbrains.annotations.NotNull;
-import slimeknights.tconstruct.library.tools.SwordCore;
-import slimeknights.tconstruct.library.utils.ToolHelper;
+
 
 /**
  * Class to check if certain tinkers items serve as weapons for the guards.
@@ -20,7 +19,7 @@ public final class TinkersWeaponHelper extends TinkersWeaponProxy
     @Optional.Method(modid = "tconstruct")
     public boolean isTinkersWeapon(@NotNull final ItemStack stack)
     {
-        return stack != null && stack.getItem() instanceof SwordCore;
+        return false;
     }
 
     /**
@@ -32,7 +31,7 @@ public final class TinkersWeaponHelper extends TinkersWeaponProxy
     @Optional.Method(modid = "tconstruct")
     public double getAttackDamage(@NotNull final ItemStack stack)
     {
-        return ToolHelper.getActualAttack(stack);
+        return 0;
     }
 
     /**

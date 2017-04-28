@@ -338,9 +338,9 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
             return AIState.GUARD_HUNT_DOWN_TARGET;
         }
 
-        entityList = this.worker.worldObj.getEntitiesWithinAABB(EntityMob.class, this.getTargetableArea(currentSearchDistance));
-        entityList.addAll(this.worker.worldObj.getEntitiesWithinAABB(EntitySlime.class, this.getTargetableArea(currentSearchDistance)));
-        entityList.addAll(this.worker.worldObj.getEntitiesWithinAABB(EntityPlayer.class, this.getTargetableArea(currentSearchDistance)));
+        entityList = this.worker.world.getEntitiesWithinAABB(EntityMob.class, this.getTargetableArea(currentSearchDistance));
+        entityList.addAll(this.worker.world.getEntitiesWithinAABB(EntitySlime.class, this.getTargetableArea(currentSearchDistance)));
+        entityList.addAll(this.worker.world.getEntitiesWithinAABB(EntityPlayer.class, this.getTargetableArea(currentSearchDistance)));
 
         if (targetEntity != null && targetEntity.isEntityAlive() && worker.getEntitySenses().canSee(targetEntity))
         {
