@@ -532,14 +532,17 @@ public class EntityCitizen extends EntityAgeable implements INpc
         {
             localXp = maxValue;
         }
-        citizenData.addExperience(localXp);
-
-        while (ExperienceUtils.getXPNeededForNextLevel(citizenData.getLevel()) < citizenData.getExperience())
+        if(citizenData != null)
         {
-            citizenData.increaseLevel();
+            citizenData.addExperience(localXp);
+
+            while (ExperienceUtils.getXPNeededForNextLevel(citizenData.getLevel()) < citizenData.getExperience())
+            {
+                citizenData.increaseLevel();
+            }
+            this.updateLevel();
+            citizenData.markDirty();
         }
-        this.updateLevel();
-        citizenData.markDirty();
     }
 
     private BuildingHome getHomeBuilding()
@@ -554,7 +557,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public int getExperienceLevel()
     {
-        return citizenData.getLevel();
+        if(citizenData != null)
+        {
+            return citizenData.getLevel();
+        }
+        return 0;
     }
 
     /**
@@ -589,6 +596,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @Override
     public boolean attackEntityFrom(@NotNull final DamageSource damageSource, final float damage)
     {
+        setLastAttacker(damageSource.getEntity());
+
         final Entity sourceEntity = damageSource.getEntity();
         if (sourceEntity instanceof EntityCitizen && ((EntityCitizen) sourceEntity).colonyId == this.colonyId)
         {
@@ -864,6 +873,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             getNavigator().moveAwayFromXYZ(this.getPosition(), MOVE_AWAY_RANGE, MOVE_AWAY_SPEED);
         }
 
+        gatherXp();
         checkHeal();
         super.onLivingUpdate();
     }

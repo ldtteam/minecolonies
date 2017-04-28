@@ -424,7 +424,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     @Nullable
     private AIState doFishing()
     {
-        worker.gatherXp();
         @Nullable final AIState notReadyState = isReadyToFish();
         if (notReadyState != null)
         {
