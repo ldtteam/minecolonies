@@ -497,7 +497,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     @Override
     protected boolean checkIfCanceled()
     {
-       if(!isThereAStructureToBuild())
+        if(!isThereAStructureToBuild())
         {
             switch (getState())
             {
@@ -545,8 +545,10 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         //normal facing +x
         int rotation = 0;
 
-        final int vectorX = workingNode.getX() < workingNode.getParent().getX() ? -1 : (workingNode.getX() > workingNode.getParent().getX() ? 1 : 0);
-        final int vectorZ = workingNode.getZ() < workingNode.getParent().getY() ? -1 : (workingNode.getZ() > workingNode.getParent().getY() ? 1 : 0);
+        final int workingNodeX = workingNode.getX() > workingNode.getParent().getX() ? 1 : 0;
+        final int workingNodeZ = workingNode.getZ() > workingNode.getParent().getY() ? 1 : 0;
+        final int vectorX = workingNode.getX() < workingNode.getParent().getX() ? -1 : workingNodeX;
+        final int vectorZ = workingNode.getZ() < workingNode.getParent().getY() ? -1 : workingNodeZ;
 
         if (vectorX == -1)
         {
@@ -607,7 +609,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         }
         else
         {
-            //todo we can add other nodeTypes without a problem.
             if (mineNode.getStyle() == Node.NodeType.CROSSROAD)
             {
                 loadStructure(Structures.SCHEMATICS_PREFIX + "/miner/minerX4", rotateTimes, structurePos, false);
@@ -709,7 +710,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         {
             getInventory().decrStackSize(slot, 1);
             //Flag 1+2 is needed for updates
-            world.setBlockState(location, metadata, 3);
+            world.setBlockState(location, metadata, 0x03);
         }
     }
 
@@ -757,6 +758,28 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         return getNodeMiningPosition(targetPosition);
     }
 
+    @Override
+    public void executeSpecificCompleteActions()
+    {
+        final BuildingMiner minerBuilding = getOwnBuilding();
+        //If shaft isn't cleared we're in shaft clearing mode.
+        if (minerBuilding.clearedShaft)
+        {
+            minerBuilding.getCurrentLevel().closeNextNode(getRotation());
+        }
+        else
+        {
+            @NotNull final Level currentLevel = new Level(minerBuilding, job.getStructure().getPosition().getY());
+            minerBuilding.addLevel(currentLevel);
+            minerBuilding.setCurrentLevel(minerBuilding.getNumberOfLevels());
+            minerBuilding.resetStartingLevelShaft();
+        }
+        //Send out update to client
+        getOwnBuilding().markDirty();
+
+        job.setStructure(null);
+    }
+
     /**
      * Create a save mining position for the miner.
      *
@@ -782,5 +805,11 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         }
         final Point2D pos = buildingMiner.getCurrentLevel().getRandomNode().getParent();
         return new BlockPos(pos.getX(), buildingMiner.getCurrentLevel().getDepth(), pos.getY());
+    }
+
+    @Override
+    public boolean shallReplaceSolidSubstitutionBlock(final Block worldBlock, final IBlockState worldMetadata)
+    {
+        return worldBlock instanceof BlockOre && worldMetadata.getMaterial().isSolid();
     }
 }
