@@ -325,8 +325,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Initiates basic citizen tasks.
-     * Ignore warning because we want the ++ without a specified because of readability.
+     * Initiates citizen tasks
+     * Suppressing Sonar Rule Squid:S881
+     * The rule thinks we should extract ++priority in a proper statement.
+     * But in this case the rule does not apply because that would remove the readability.
      */
     @SuppressWarnings("squid:S881")
     private void initTasks()

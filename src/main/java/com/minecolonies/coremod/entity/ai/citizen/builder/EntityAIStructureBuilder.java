@@ -180,8 +180,10 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
     /**
      * Iterates through all the required resources and stores them in the building.
+     * Suppressing Sonar Rule Squid:S135
+     * The rule thinks we should have less continue and breaks.
+     * But in this case the rule does not apply because code would become unreadable and uneffective without.
      */
-    //Surpress this warning because refactoring does not make sense in this case.
     @SuppressWarnings("squid:S135")
     private void requestMaterials()
     {

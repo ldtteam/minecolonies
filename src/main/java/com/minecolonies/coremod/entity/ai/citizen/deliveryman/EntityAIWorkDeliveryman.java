@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.ai.citizen.deliveryman;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.*;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.entity.ai.util.AIState;
@@ -384,7 +385,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private boolean needsToDeliverFood(@NotNull final AbstractBuilding building)
     {
-        return building instanceof BuildingHome && ((BuildingHome) building).isFoodNeeded() && !hasFood();
+        return building instanceof BuildingHome && ((BuildingHome) building).isFoodNeeded() && !hasFood(building);
     }
 
     private AIState gatherItemsFromWareHouse()
@@ -443,10 +444,10 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      * @param buildingToDeliver the building to deliver to.
      * @return true if is ready to deliver.
      */
-    private boolean hasFood()
+    private boolean hasFood(AbstractBuilding buildingToDeliver)
     {
         return InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()),
-                stack -> !InventoryUtils.isItemStackEmpty(stack) && stack.getItem() instanceof ItemFood) > 0;
+                stack -> !InventoryUtils.isItemStackEmpty(stack) && stack.getItem() instanceof ItemFood) > buildingToDeliver.getBuildingLevel();
     }
 
     /**
@@ -521,10 +522,13 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
             if (buildingToDeliver instanceof BuildingHome)
             {
+                final int extraFood = worker.getCitizenData().getSaturation() < EntityCitizen.HIGH_SATURATION ? 1 : 0;
+
                 //Tries to extract a certain amount of the item of the chest.
                 return InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
                         tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null),
-                        itemStack -> !InventoryUtils.isItemStackEmpty(itemStack) && itemStack.getItem() instanceof ItemFood, buildingToDeliver.getBuildingLevel(),
+                        itemStack -> !InventoryUtils.isItemStackEmpty(itemStack) && itemStack.getItem() instanceof ItemFood,
+                        buildingToDeliver.getBuildingLevel() + extraFood,
                         new InvWrapper(worker.getInventoryCitizen()));
             }
             else if (itemsToDeliver.isEmpty() && !isToolInTileEntity((TileEntityChest) tileEntity, buildingToDeliver.getRequiredTool(),
