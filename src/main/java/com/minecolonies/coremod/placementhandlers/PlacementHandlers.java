@@ -90,7 +90,8 @@ public final class PlacementHandlers
     public static class GrassPlacementHandler implements IPlacementHandler
     {
         @Override
-        public Object handle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
+        public Object handle(
+                @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
                 @Nullable final AbstractEntityAIStructure placer)
         {
             if (blockState.getBlock() != Blocks.GRASS)
@@ -98,7 +99,7 @@ public final class PlacementHandlers
                 return ActionProcessingResult.IGNORE;
             }
 
-            if(!Configurations.builderInfiniteResources && !placer.checkOrRequestItems(new ItemStack(Blocks.DIRT)))
+            if (!Configurations.builderInfiniteResources && !placer.checkOrRequestItems(new ItemStack(Blocks.DIRT)))
             {
                 return ActionProcessingResult.DENY;
             }
@@ -115,7 +116,8 @@ public final class PlacementHandlers
     public static class DoorPlacementHandler implements IPlacementHandler
     {
         @Override
-        public Object handle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
+        public Object handle(
+                @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
                 @Nullable final AbstractEntityAIStructure placer)
         {
             if (!(blockState.getBlock() instanceof BlockDoor))
@@ -123,7 +125,7 @@ public final class PlacementHandlers
                 return ActionProcessingResult.IGNORE;
             }
 
-            if(!Configurations.builderInfiniteResources && !placer.checkOrRequestItems(BlockUtils.getItemStackFromBlockState(blockState)))
+            if (!Configurations.builderInfiniteResources && !placer.checkOrRequestItems(BlockUtils.getItemStackFromBlockState(blockState)))
             {
                 return ActionProcessingResult.DENY;
             }
@@ -141,7 +143,8 @@ public final class PlacementHandlers
     public static class BedPlacementHandler implements IPlacementHandler
     {
         @Override
-        public Object handle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
+        public Object handle(
+                @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
                 @Nullable final AbstractEntityAIStructure placer)
         {
             if (!(blockState.getBlock() instanceof BlockBed))
@@ -174,7 +177,8 @@ public final class PlacementHandlers
     public static class DoublePlantPlacementHandler implements IPlacementHandler
     {
         @Override
-        public Object handle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
+        public Object handle(
+                @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
                 @Nullable final AbstractEntityAIStructure placer)
         {
             if (!(blockState.getBlock() instanceof BlockDoublePlant))
@@ -202,7 +206,8 @@ public final class PlacementHandlers
     public static class SpecialBlockPlacementAttemptHandler implements IPlacementHandler
     {
         @Override
-        public Object handle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
+        public Object handle(
+                @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
                 @Nullable final AbstractEntityAIStructure placer)
         {
             if (blockState instanceof BlockEndPortal
@@ -226,7 +231,7 @@ public final class PlacementHandlers
                 return ActionProcessingResult.IGNORE;
             }
 
-            if(!Configurations.builderInfiniteResources)
+            if (!Configurations.builderInfiniteResources)
             {
                 final List<ItemStack> itemList = new ArrayList<>();
                 itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
@@ -255,7 +260,8 @@ public final class PlacementHandlers
     public static class AirPlacementHandler implements IPlacementHandler
     {
         @Override
-        public Object handle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
+        public Object handle(
+                @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
                 @Nullable final AbstractEntityAIStructure placer)
         {
             if (blockState.getBlock() instanceof BlockAir)
@@ -274,7 +280,8 @@ public final class PlacementHandlers
     public static class BlockGrassPathPlacementHandler implements IPlacementHandler
     {
         @Override
-        public Object handle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
+        public Object handle(
+                @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
                 @Nullable final AbstractEntityAIStructure placer)
         {
             if (!(blockState.getBlock() instanceof BlockGrassPath))
@@ -287,9 +294,9 @@ public final class PlacementHandlers
                 return ActionProcessingResult.DENY;
             }
 
-            if(!Configurations.builderInfiniteResources)
+            if (!Configurations.builderInfiniteResources)
             {
-                if(!(placer.holdEfficientTool(blockState.getBlock())))
+                if (!(placer.holdEfficientTool(blockState.getBlock())))
                 {
                     return ActionProcessingResult.DENY;
                 }
@@ -306,7 +313,8 @@ public final class PlacementHandlers
     public static class StairBlockPlacementHandler implements IPlacementHandler
     {
         @Override
-        public Object handle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
+        public Object handle(
+                @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
                 @Nullable final AbstractEntityAIStructure placer)
         {
             //Workaround as long as we didn't rescan all of our buildings since BlockStairs now have different metadata values.
@@ -322,13 +330,68 @@ public final class PlacementHandlers
         }
     }
 
+    public static class BeetrootPlacementHandler implements IPlacementHandler
+    {
+        @Override
+        public Object handle(
+                @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
+                @Nullable final AbstractEntityAIStructure placer)
+        {
+            if (!(blockState.getBlock() instanceof BlockBeetroot))
+            {
+                return ActionProcessingResult.IGNORE;
+            }
+
+
+            if (!Configurations.builderInfiniteResources && !placer.checkOrRequestItems(BlockUtils.getItemStackFromBlockState(blockState)))
+            {
+                return ActionProcessingResult.DENY;
+            }
+
+            /*
+             *  We need to do the beetroot first as it use a different property but BlockBeetroot instance of BlockCrops.
+             *  we don't want fully grown plants.
+             */
+
+            placer.handleBuildingOverBlock(pos);
+            world.setBlockState(pos, blockState.withProperty(BlockBeetroot.BEETROOT_AGE, 0), 0x03);
+            return blockState;
+        }
+    }
+
+    public static class BlockCropsPlacementHandler implements IPlacementHandler
+    {
+        @Override
+        public Object handle(
+                @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
+                @Nullable final AbstractEntityAIStructure placer)
+        {
+            if (!(blockState.getBlock() instanceof BlockCrops))
+            {
+                return ActionProcessingResult.IGNORE;
+            }
+
+
+            if (!Configurations.builderInfiniteResources && !placer.checkOrRequestItems(BlockUtils.getItemStackFromBlockState(blockState)))
+            {
+                return ActionProcessingResult.DENY;
+            }
+
+            placer.handleBuildingOverBlock(pos);
+            //we don't want fully grown plants
+            world.setBlockState(pos, blockState.withProperty(BlockCrops.AGE, 0), 0x03);
+            return blockState;
+        }
+    }
+
     public static class GeneralBlockPlacementHandler implements IPlacementHandler
     {
         @Override
-        public Object handle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
+        public Object handle(
+                @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
                 @Nullable final AbstractEntityAIStructure placer)
         {
-            if(!Configurations.builderInfiniteResources)
+            if (!Configurations.builderInfiniteResources)
             {
                 final List<ItemStack> itemList = new ArrayList<>();
                 itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
