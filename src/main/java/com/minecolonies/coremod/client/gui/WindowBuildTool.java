@@ -552,7 +552,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      * called every time one of the dropdownlist changed.
      *
      * @param list the dropdown list which change
-     * @param index is the index selected in the list
      */
     private void onDropDownListChanged(final DropDownList list)
     {
@@ -696,14 +695,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     {
         rotation = (rotation + ROTATE_LEFT) % POSSIBLE_ROTATIONS;
         updateRotation(rotation);
-    }
-
-    /**
-     * Rotate the structure counter clockwise.
-     */
-    private static void mirror()
-    {
-        Settings.instance.mirror();
     }
 
 

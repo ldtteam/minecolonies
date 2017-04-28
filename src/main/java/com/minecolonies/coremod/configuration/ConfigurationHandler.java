@@ -24,7 +24,6 @@ public final class ConfigurationHandler
     public static final String CATEGORY_PATHFINDING = "pathfinding";
     public static final String CATEGORY_NAMES       = "names";
     private static final String FORMAT_RANGE = "%s (range: %s ~ %s, default: %s)";
-    private static Configuration config;
 
     public ConfigurationHandler()
     {
@@ -202,21 +201,5 @@ public final class ConfigurationHandler
     public static Configuration getConfiguration()
     {
         return config;
-    }
-
-    /**
-     * This event will be called when the config gets changed through
-     * the in-game GUI.
-     *
-     * @param eventArgs An instance to the event.
-     */
-    @SubscribeEvent
-    public void onConfigChanged(OnConfigChangedEvent eventArgs)
-    {
-        if (eventArgs.getModID().equalsIgnoreCase(Constants.MOD_ID))
-        {
-            // resync configs
-            loadConfiguration();
-        }
     }
 }
