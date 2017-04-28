@@ -135,3 +135,22 @@ task copyToLib(type: Copy) {
     into "lib"
     from configurations.runtime
 }
+
+curseforge {
+    if (System.getenv().CURSEAPIKEY != null && System.getenv().CURSERELEASETYPE != null)
+    {
+        apiKey = System.getenv().CURSEAPIKEY
+
+        project {
+            id = '245506'
+
+            releaseType = System.getenv().CURSERELEASETYPE
+
+            addArtifact deobfJar
+        }
+    }
+    else
+    {
+        logger.lifecycle("Cannot run the CurseUpload sequence. No API-Key or release type has been provided.")
+    }
+}
