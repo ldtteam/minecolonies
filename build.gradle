@@ -240,7 +240,7 @@ curseforge {
         project {
             id = '245506'
 
-            releaseType = release
+            releaseType = System.getenv().CURSERELEASETYPE
 
             addArtifact devJar
             addArtifact javadocJar
