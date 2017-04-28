@@ -233,7 +233,7 @@ build.dependsOn signJar
 
 
 curseforge {
-    if (System.getenv().CURSEAPIKEY != null || System.getenv().CURSERELEASETYPE != null)
+    if (System.getenv().CURSEAPIKEY != null && System.getenv().CURSERELEASETYPE != null)
     {
         apiKey = System.getenv().CURSEAPIKEY
 
