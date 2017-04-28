@@ -1875,7 +1875,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
         citizenDescription.appendText(this.getCustomNameTag()).appendText(": ");
         final TextComponentString colonyDescription = new TextComponentString(" at " + this.getColony().getName() + ":");
 
-        LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), this.getColonyJob().getName(), colonyDescription, citizenDescription, requiredItem);
+        LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
+                this.getColonyJob() == null ? "" : this.getColonyJob().getName(), colonyDescription, citizenDescription, requiredItem);
     }
 
     /**
