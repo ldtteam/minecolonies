@@ -163,6 +163,7 @@ task copyToLib(type: Copy) {
     from configurations.runtime
 }
 
+
 task runCheckStyle(type: Checkstyle) {
     description 'Runs Checkstyle inspection against Minecolonies sourcesets.'
     group = 'Code Quality'
@@ -198,4 +199,23 @@ task runSonar() {
     dependsOn runCheckStyle, runPMD
     description 'Runs the equivalent of a SonarQube analysis directly in the build process. Calls runCheckStyle and runPMD'
     group = 'Code Quality'
+}
+
+curseforge {
+    if (System.getenv().CURSEAPIKEY != null && System.getenv().CURSERELEASETYPE != null)
+    {
+        apiKey = System.getenv().CURSEAPIKEY
+
+        project {
+            id = '245506'
+
+            releaseType = System.getenv().CURSERELEASETYPE
+
+            addArtifact deobfJar
+        }
+    }
+    else
+    {
+        logger.lifecycle("Cannot run the CurseUpload sequence. No API-Key or release type has been provided.")
+    }
 }
