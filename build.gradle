@@ -242,8 +242,7 @@ curseforge {
 
             releaseType = System.getenv().CURSERELEASETYPE
 
-            addArtifact devJar
-            addArtifact javadocJar
+            addArtifact deobfJar
         }
     }
     else
