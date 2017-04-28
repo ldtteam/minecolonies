@@ -3,8 +3,10 @@ package com.minecolonies.coremod.items;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
+import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.util.BlockUtils;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Log;
@@ -49,7 +51,32 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      */
     private static final int DISTANCE    = 4;
 
-    private static final String SUPPLY_SHIP_STRUCTURE_NAME = "SupplyShip";
+    private static final String SUPPLY_SHIP_STRUCTURE_NAME = Structures.SCHEMATICS_PREFIX + "/SupplyShip";
+
+    /**
+     * Offset south/west of the supply camp.
+     */
+    private static final int OFFSET_SOUTH_WEST = -11;
+
+    /**
+     * Offset south/east of the supply camp.
+     */
+    private static final int OFFSET_SOUTH_EAST = 5;
+
+    /**
+     * Offset north/east of the supply camp.
+     */
+    private static final int OFFSET_NORTH_EAST = -20;
+
+    /**
+     * Offset north/west of the supply camp.
+     */
+    private static final int OFFSET_NORTH_WEST = -21;
+
+    /**
+     * Offset y of the supplyCamp
+     */
+    private static final int OFFSET_Y = -2;
 
     /**
      * Creates a new supplychest deployer. The item is not stackable.
@@ -143,6 +170,32 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         return checkZ(world, pos, k, spaceRightK, spaceLeftK, widthK, isCoordPositivelyAdded);
     }
 
+    private void placeSupplyShip(final World world, @NotNull final BlockPos pos, @NotNull final EnumFacing direction)
+    {
+        switch (direction)
+        {
+
+            case SOUTH:
+                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(OFFSET_SOUTH_WEST, OFFSET_Y, OFFSET_SOUTH_EAST),
+                        Constants.ROTATE_THREE_TIMES, Mirror.NONE);
+                break;
+            case NORTH:
+                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(OFFSET_NORTH_EAST, OFFSET_Y, OFFSET_NORTH_WEST),
+                        Constants.ROTATE_ONCE, Mirror.NONE);
+                break;
+            case EAST:
+                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(OFFSET_SOUTH_EAST, OFFSET_Y, OFFSET_NORTH_EAST),
+                        Constants.ROTATE_TWICE, Mirror.NONE);
+                break;
+            case WEST:
+                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(OFFSET_NORTH_WEST, OFFSET_Y, OFFSET_SOUTH_WEST),
+                        Constants.ROTATE_0_TIMES, Mirror.NONE);
+                break;
+            default:
+                break;
+        }
+    }
+    
     /**
      * Fills the content of the supplychest with the buildTool and townHall.
      *
@@ -172,13 +225,13 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @return true if it can be placed.
      */
     private static boolean checkX(
-                                   final World world,
-                                   final BlockPos pos,
-                                   final int k,
-                                   final int spaceRightK,
-                                   final int spaceLeftK,
-                                   final int widthK,
-                                   final boolean isCoordPositivelyAdded)
+            final World world,
+            final BlockPos pos,
+            final int k,
+            final int spaceRightK,
+            final int spaceLeftK,
+            final int widthK,
+            final boolean isCoordPositivelyAdded)
     {
         for (int i = DISTANCE; i < WIDTH; i++)
         {
@@ -215,13 +268,13 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @return true if it can be placed.
      */
     private static boolean checkZ(
-                                   final World world,
-                                   final BlockPos pos,
-                                   final int k,
-                                   final int spaceRightK,
-                                   final int spaceLeftK,
-                                   final int widthK,
-                                   final boolean isCoordPositivelyAdded)
+            final World world,
+            final BlockPos pos,
+            final int k,
+            final int spaceRightK,
+            final int spaceLeftK,
+            final int widthK,
+            final boolean isCoordPositivelyAdded)
     {
         for (int i = DISTANCE; i < WIDTH; i++)
         {
@@ -271,73 +324,5 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     private static boolean notInAnyColony(final World world, final BlockPos pos1, final BlockPos pos2, final BlockPos pos3)
     {
         return !ColonyManager.isCoordinateInAnyColony(world, pos1) && !ColonyManager.isCoordinateInAnyColony(world, pos2) && !ColonyManager.isCoordinateInAnyColony(world, pos3);
-    }
-
-    @NotNull
-    @Override
-    public EnumActionResult onItemUse(
-                                       final EntityPlayer playerIn,
-                                       final World worldIn,
-                                       final BlockPos pos,
-                                       final EnumHand hand,
-                                       final EnumFacing facing,
-                                       final float hitX,
-                                       final float hitY,
-                                       final float hitZ)
-    {
-        ItemStack stack = playerIn.getHeldItem(hand);
-        if (worldIn.isRemote || stack.getCount() == 0 || !isFirstPlacing(playerIn))
-        {
-            return EnumActionResult.FAIL;
-        }
-
-        @NotNull final EnumFacing enumfacing = canShipBePlaced(worldIn, pos);
-        if (enumfacing != EnumFacing.DOWN)
-        {
-            spawnShip(worldIn, pos, enumfacing);
-            stack.setCount(stack.getCount() - 1);
-
-            playerIn.addStat(ModAchievements.achievementGetSupply);
-
-            return EnumActionResult.SUCCESS;
-        }
-        LanguageHandler.sendPlayerMessage(playerIn, "item.supplyChestDeployer.invalid");
-        return EnumActionResult.FAIL;
-    }
-
-    /**
-     * Spawns the ship and supply chest.
-     *
-     * @param world world obj.
-     * @param pos   coordinate clicked.
-     */
-    private void spawnShip(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final EnumFacing chestFacing)
-    {
-        world.setBlockState(pos.up(), Blocks.CHEST.getDefaultState().withProperty(BlockChest.FACING, chestFacing));
-
-        placeSupplyShip(world, pos, chestFacing);
-
-        fillChest((TileEntityChest) world.getTileEntity(pos.up()));
-    }
-
-    private void placeSupplyShip(final World world, @NotNull final BlockPos pos, @NotNull final EnumFacing direction)
-    {
-        switch (direction)
-        {
-            case SOUTH:
-                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(-11, -2, 5), 3, Mirror.NONE);
-                break;
-            case NORTH:
-                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(-20, -2, -21), 1, Mirror.NONE);
-                break;
-            case EAST:
-                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(5, -2, -20), 2, Mirror.NONE);
-                break;
-            case WEST:
-                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(-21, -2, -11), 0, Mirror.NONE);
-                break;
-            default:
-                break;
-        }
     }
 }

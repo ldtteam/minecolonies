@@ -222,6 +222,15 @@ com.minecolonies.coremod.gui.workerHuts.Deliveryman=Deliveryman
 com.minecolonies.coremod.gui.workerHuts.cancelBuild=Cancel Build
 com.minecolonies.coremod.gui.workerHuts.cancelUpgrade=Cancel Upgrade
 com.minecolonies.coremod.gui.workerHuts.cancelRepair=Cancel Repair
+com.minecolonies.coremod.gui.buildtool.hut.level=Level %s
+com.minecolonies.coremod.network.messages.schematicsavemassage.toobig=Schematic size too big, can not be bigger than %s bytes
+com.minecolonies.coremod.gui.buildtool.decorations=Decorations
+com.minecolonies.coremod.gui.buildtool.scans=My schematics
+com.minecolonies.coremod.gui.structure.edit.title=Edit Structure
+com.minecolonies.coremod.gui.structure.rename=Rename Structure
+com.minecolonies.coremod.gui.structure.delete=Delete Structure
+com.minecolonies.coremod.gui.structure.delete.title=Delete Structure
+com.minecolonies.coremod.gui.structure.delete.body=Do you want to delete %s?
 //death achievements
 achievement.miner.death.lava=Dug too deep.
 achievement.miner.death.fall=It's the stop at the end.
@@ -362,3 +371,8 @@ com.minecolonies.coremod.permission.shoot_arrow=Shoot arrows
 com.minecolonies.coremod.permission.attack_citizen=Attack citizens
 com.minecolonies.coremod.permission.attack_entity=Attack entities
 com.minecolonies.coremod.permission.access_free_blocks=Access free-blocks
+
+item.supplyCampDeployer.invalid=Requiring a flat ground of at least 16*17.
+item.minecolonies.supplyChestDeployer.name=SupplyShip Chest
+item.minecolonies.supplyCampDeployer.name=SupplyCamp Chest
+com.minecolonies.coremod.error.supplyChestAlreadyPlaced=You have already placed a supply ship or supply camp!

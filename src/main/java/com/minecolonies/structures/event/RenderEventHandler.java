@@ -27,7 +27,7 @@ public class RenderEventHandler
         if (structure != null)
         {
             BlockPos size = structure.getSize(BlockUtils.getRotation(Settings.instance.getRotation()));
-            BlockPos position = Settings.instance.pos;
+            BlockPos position = Settings.instance.getPosition();
 
             final int x = size.getX();
             final int z = size.getZ();

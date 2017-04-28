@@ -1,10 +1,11 @@
 package com.minecolonies.coremod.util;
 
+import com.minecolonies.coremod.colony.Structures;
+import com.minecolonies.structures.helpers.Structure;
+import com.minecolonies.structures.helpers.Settings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -35,10 +36,10 @@ public final class ClientStructureWrapper
      */
     public static void handleSaveScanMessage(final NBTTagCompound nbttagcompound, final long currentMillis)
     {
-        final String fileName = "/minecolonies/scans/" + LanguageHandler.format("item.scepterSteel.scanFormat", currentMillis, ".nbt");
-
-        final File file = new File(Minecraft.getMinecraft().mcDataDir, fileName);
-        createScanDirectory(Minecraft.getMinecraft().world);
+        final Structures.StructureName structureName =
+          new Structures.StructureName(Structures.SCHEMATICS_SCAN, "new", LanguageHandler.format("item.scepterSteel.scanFormat", currentMillis));
+        final File file = new File(Structure.getClientSchematicsFolder(), structureName.toString() + Structures.SCHEMATIC_EXTENSION);
+        checkDirectory(file.getParentFile());
 
         try (OutputStream outputstream = new FileOutputStream(file))
         {
@@ -51,34 +52,18 @@ public final class ClientStructureWrapper
             return;
         }
 
-        LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "item.scepterSteel.scanSuccess", fileName);
+        LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "item.scepterSteel.scanSuccess", file);
+        Settings.instance.setStructureName(structureName.toString());
     }
 
     /**
-     * Creates the scan directories for the scanTool.
+     * Send a message to the player informing him that the schematic is too big.
      *
-     * @param world the worldIn.
+     * @param maxSize is the maximum size allowed in bytes.
      */
-    private static void createScanDirectory(@NotNull final World world)
+    public static void sendMessageSchematicTooBig(int maxSize)
     {
-        final File minecolonies;
-        if (world.isRemote)
-        {
-            minecolonies = new File(Minecraft.getMinecraft().mcDataDir, "minecolonies/");
-        }
-        else
-        {
-            final MinecraftServer server = world.getMinecraftServer();
-            if (server == null)
-            {
-                return;
-            }
-            minecolonies = server.getFile("minecolonies/");
-        }
-        checkDirectory(minecolonies);
-
-        @NotNull final File scans = new File(minecolonies, "scans/");
-        checkDirectory(scans);
+        LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "com.minecolonies.coremod.network.messages.schematicsavemessage.toobig", maxSize);
     }
 
     /**

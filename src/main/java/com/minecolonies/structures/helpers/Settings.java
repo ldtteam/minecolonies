@@ -21,19 +21,36 @@ public final class Settings
     /**
      * The position of the structure.
      */
-    public              BlockPos                 pos            = null;
+    private             BlockPos                 pos            = null;
     private             boolean                  isMirrored     = false;
-    private             boolean                  inHutMode      = true;
     @Nullable
     private             Structure                structure      = null;
     private             int                      rotation       = 0;
-    private             String                   hutDec         = "";
-    private             String                   style          = "";
-    private             int                      level          = 0;
+    private             String                   structureName  = null;
     private             boolean                  isPendingReset = false;
 
     private Settings()
     {
+    }
+
+    /**
+     * set the position.
+     *
+     * @param position to render
+     */
+    public void setPosition(final BlockPos position)
+    {
+        pos = position;
+    }
+
+    /**
+     * get the position.
+     *
+     * @return the position
+     */
+    public BlockPos getPosition()
+    {
+        return pos;
     }
 
     /**
@@ -94,59 +111,28 @@ public final class Settings
     }
 
     /**
-     * @return true if the client is in hut mode.
-     */
-    public boolean isInHutMode()
-    {
-        return inHutMode;
-    }
-
-    /**
-     * @param mode true if in hut mode, false if in decoration mode.
-     */
-    public void setInHutMode(final boolean mode)
-    {
-        inHutMode = mode;
-    }
-
-    /**
      * Saves the schematic info when the client closes the build tool window.
      *
-     * @param hutDec   Hut/decoration name.
-     * @param style    AbstractBuilding style.
-     * @param level    AbstractBuilding level.
+     * @param structureName  name of the structure.
      * @param rotation The number of times the building is rotated.
      */
-    public void setSchematicInfo(final String hutDec, final String style, final int level, final int rotation)
+    public void setSchematicInfo(final String structureName, final int rotation)
     {
-        this.hutDec = hutDec;
-        this.style = style;
-        this.level = level;
+        this.structureName = structureName;
         this.rotation = rotation;
     }
 
-    /**
-     * @return The name of the hut/decoration.
-     */
-    public String getHutDec()
+    public void setStructureName(final String structureName)
     {
-        return hutDec;
+        this.structureName = structureName;
     }
 
     /**
-     * @return The name of the style.
+     * @return the structure name currently used.
      */
-    public String getStyle()
+    public String getStructureName()
     {
-        return style;
-    }
-
-    /**
-     * @return The current level (minus 1) of the hut being rendered.
-     */
-    public int getLevel()
-    {
-        return level;
+        return structureName;
     }
 
     /**

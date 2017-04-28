@@ -110,8 +110,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             if (wo instanceof WorkOrderBuildDecoration)
             {
                 LanguageHandler.sendPlayersMessage(worker.getColony().getMessageEntityPlayers(),
-                  "entity.builder.messageBuildStart",
-                  job.getStructure().getName());
+                        "entity.builder.messageBuildStart",
+                        wo.getName());
             }
             else
             {

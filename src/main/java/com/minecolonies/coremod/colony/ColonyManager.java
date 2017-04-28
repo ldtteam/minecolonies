@@ -57,6 +57,11 @@ public final class ColonyManager
      */
     private static final String                     TAG_COLONIES          = "colonies";
     /**
+     * The tag of the pseudo unique identifier
+     */
+    private static final String                     TAG_UUID              = "uuid";
+
+    /**
      * The damage source used to kill citizens.
      */
     private static final DamageSource               CONSOLE_DAMAGE_SOURCE = new DamageSource("Console");
@@ -93,6 +98,16 @@ public final class ColonyManager
      * Whether the colonyManager should persist data.
      */
     private static boolean saveNeeded;
+
+    /**
+     * Indicate if a schematic have just been downloaded.
+     * Client only
+     */
+    private static boolean schematicDownloaded = false;
+    /**
+     * Pseudo unique id for the server
+     */
+    private static volatile UUID serverUUID = null;
 
     private ColonyManager()
     {
@@ -560,6 +575,10 @@ public final class ColonyManager
             colonyTagList.appendTag(colonyTagCompound);
         }
         compound.setTag(TAG_COLONIES, colonyTagList);
+        if (serverUUID != null)
+        {
+            compound.setUniqueId(TAG_UUID, serverUUID);
+        }
     }
 
     /**
@@ -640,11 +659,24 @@ public final class ColonyManager
                     MineColonies.getLogger().error("Failed to save " + FILENAME_MINECOLONIES + " backup!");
                 }
 
+                //load the structures when we know where the world is
+                Structures.init();
+
                 @NotNull final File file = getSaveLocation();
                 @Nullable final NBTTagCompound data = loadNBTFromPath(file);
                 if (data != null)
                 {
                     readFromNBT(data);
+                }
+                if (serverUUID == null)
+                {
+                    serverUUID = UUID.randomUUID();
+                    Log.getLogger().info(String.format("New Server UUID %s", serverUUID));
+                    markDirty();
+                }
+                else
+                {
+                    Log.getLogger().info(String.format("Server UUID %s", serverUUID));
                 }
             }
             ++numWorldsLoaded;
@@ -727,6 +759,11 @@ public final class ColonyManager
             addColonyByWorld(colony);
         }
 
+        if (compound.hasUniqueId(TAG_UUID))
+        {
+            serverUUID = compound.getUniqueId(TAG_UUID);
+        }
+
         Log.getLogger().info(String.format("Loaded %d colonies", colonies.size()));
     }
 
@@ -742,6 +779,27 @@ public final class ColonyManager
         @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
         return new File(saveDir, String.format(FILENAME_MINECOLONIES_BACKUP, new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(date)));
     }
+
+    /**
+     * Set the server UUID.
+     *
+     * @param uuid the universal unique id
+     */
+    public static void setServerUUID(final UUID uuid)
+    {
+        serverUUID = uuid;
+    }
+
+    /**
+     * Get the Universal Unique ID for the server.
+     *
+     * @return the server Universal Unique ID for ther
+     */
+    public static UUID getServerUUID()
+    {
+        return serverUUID;
+    }
+
 
     /**
      * Saves data when world is saved.
@@ -970,6 +1028,26 @@ public final class ColonyManager
         }
 
         return null;
+    }
+
+    /**
+     * Whether or not a new schematic have been downloaded.
+     *
+     * @return True if a new schematic have been received.
+     */
+    public static boolean isSchematicDownloaded()
+    {
+        return schematicDownloaded;
+    }
+
+    /**
+     * Set the schematic downloaded
+     *
+     * @param downloaded True if a new schematic have been received.
+     */
+    public static void setSchematicDownloaded(boolean downloaded)
+    {
+        schematicDownloaded = downloaded;
     }
 
     /**

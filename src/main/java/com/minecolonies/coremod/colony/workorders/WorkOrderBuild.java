@@ -5,40 +5,42 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
-import com.minecolonies.coremod.lib.Constants;
+import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Log;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents one building order to complete.
- * Has his onw structure for the building.
+ * Has his own structure for the building.
  */
 public class WorkOrderBuild extends AbstractWorkOrder
 {
-    private static final String TAG_BUILDING      = "building";
-    private static final String TAG_UPGRADE_LEVEL = "upgradeLevel";
-    private static final String TAG_UPGRADE_NAME  = "upgrade";
-    private static final String TAG_IS_CLEARED    = "cleared";
-    private static final String TAG_IS_REQUESTED  = "requested";
-    private static final String TAG_IS_MIRRORED   = "mirrored";
+    private static final String TAG_BUILDING       = "building";
+    private static final String TAG_UPGRADE_LEVEL  = "upgradeLevel";
+    private static final String TAG_UPGRADE_NAME   = "upgrade";
+    private static final String TAG_WORKORDER_NAME = "workOrderName";
+    private static final String TAG_IS_CLEARED     = "cleared";
+    private static final String TAG_IS_REQUESTED   = "requested";
+    private static final String TAG_IS_MIRRORED    = "mirrored";
 
     private static final String TAG_SCHEMATIC_NAME    = "structureName";
+    private static final String TAG_SCHEMATIC_MD5     = "schematicMD5";
     private static final String TAG_BUILDING_ROTATION = "buildingRotation";
-
-    private static final String DEFAULT_STYLE = "wooden";
 
     protected boolean  isMirrored;
     protected BlockPos buildingLocation;
     protected int      buildingRotation;
     protected String   structureName;
+    protected String   md5;
     protected boolean  cleared;
     private   int      upgradeLevel;
     private   String   upgradeName;
+    protected String   workOrderName;
+
     private boolean hasSentMessageForThisWorkOrder = false;
     private boolean requested;
 
@@ -67,21 +69,19 @@ public class WorkOrderBuild extends AbstractWorkOrder
         this.cleared = level > 1;
         this.requested = false;
 
-        if (MinecraftServer.class.getResourceAsStream("/assets/" + Constants.MOD_ID + "/schematics/" + building.getStyle() + '/' + this.getUpgradeName() + ".nbt") == null)
+        //normalize the structureName
+        Structures.StructureName sn = new Structures.StructureName(Structures.SCHEMATICS_PREFIX, building.getStyle(), this.getUpgradeName());
+        if(building.getTileEntity() != null && !building.getTileEntity().getStyle().isEmpty())
         {
-            Log.getLogger().warn(String.format("StructureProxy in Style (%s) does not exist - switching to default", building.getStyle()));
-            this.structureName = DEFAULT_STYLE + '/' + this.getUpgradeName();
-            return;
+            final String previousStructureName = sn.toString();
+            sn = new Structures.StructureName(Structures.SCHEMATICS_PREFIX, building.getTileEntity().getStyle(), this.getUpgradeName());
+            Log.getLogger().info("WorkOrderBuild at location " + this.buildingLocation + " is using " +  sn + " instead of " + previousStructureName);
         }
 
-        if (building.getTileEntity() == null || building.getTileEntity().getStyle().isEmpty())
-        {
-            this.structureName = building.getStyle() + '/' + this.getUpgradeName();
-        }
-        else
-        {
-            this.structureName = building.getTileEntity().getStyle() + '/' + this.getUpgradeName();
-        }
+
+        this.structureName = sn.toString();
+        this.workOrderName = this.structureName;
+        this.md5 = Structures.getMD5(this.structureName);
     }
 
     /**
@@ -95,6 +95,16 @@ public class WorkOrderBuild extends AbstractWorkOrder
     }
 
     /**
+     * Get the name of the work order.
+     *
+     * @return the work order name
+     */
+    public String getName()
+    {
+        return workOrderName;
+    }
+
+    /**
      * Read the WorkOrder data from the NBTTagCompound.
      *
      * @param compound NBT Tag compound.
@@ -104,13 +114,33 @@ public class WorkOrderBuild extends AbstractWorkOrder
     {
         super.readFromNBT(compound);
         buildingLocation = BlockPosUtil.readFromNBT(compound, TAG_BUILDING);
+        final Structures.StructureName sn = new Structures.StructureName(compound.getString(TAG_SCHEMATIC_NAME));
+        structureName = sn.toString();
         if (!(this instanceof WorkOrderBuildDecoration))
         {
             upgradeLevel = compound.getInteger(TAG_UPGRADE_LEVEL);
             upgradeName = compound.getString(TAG_UPGRADE_NAME);
         }
+
+        workOrderName = compound.getString(TAG_WORKORDER_NAME);
         cleared = compound.getBoolean(TAG_IS_CLEARED);
-        structureName = compound.getString(TAG_SCHEMATIC_NAME);
+        md5 = compound.getString(TAG_SCHEMATIC_MD5);
+        if (!Structures.hasMD5(structureName))
+        {
+            // If the schematic move we can use the MD5 hash to find it
+            final Structures.StructureName newSN = Structures.getStructureNameByMD5(md5);
+            if (newSN == null)
+            {
+                Log.getLogger().error("WorkOrderBuild.readFromNBT: Could not find " + structureName);
+            }
+            else
+            {
+                Log.getLogger().warn("WorkOrderBuild.readFromNBT: replace " + sn + " by " + newSN);
+                structureName = newSN.toString();
+
+            }
+        }
+
         buildingRotation = compound.getInteger(TAG_BUILDING_ROTATION);
         requested = compound.getBoolean(TAG_IS_REQUESTED);
         isMirrored = compound.getBoolean(TAG_IS_MIRRORED);
@@ -131,8 +161,23 @@ public class WorkOrderBuild extends AbstractWorkOrder
             compound.setInteger(TAG_UPGRADE_LEVEL, upgradeLevel);
             compound.setString(TAG_UPGRADE_NAME, upgradeName);
         }
+        if (workOrderName != null)
+        {
+            compound.setString(TAG_WORKORDER_NAME, workOrderName);
+        }
         compound.setBoolean(TAG_IS_CLEARED, cleared);
-        compound.setString(TAG_SCHEMATIC_NAME, structureName);
+        if (md5 != null)
+        {
+            compound.setString(TAG_SCHEMATIC_MD5, md5);
+        }
+        if (structureName == null)
+        {
+            Log.getLogger().error("WorkOrderBuild.writeToNBT: structureName should not be null!!!");
+        }
+        else
+        {
+            compound.setString(TAG_SCHEMATIC_NAME, structureName);
+        }
         compound.setInteger(TAG_BUILDING_ROTATION, buildingRotation);
         compound.setBoolean(TAG_IS_REQUESTED, requested);
         compound.setBoolean(TAG_IS_MIRRORED, isMirrored);
@@ -283,7 +328,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
      */
     public String getStructureName()
     {
-        return this.structureName;
+        return structureName;
     }
 
     /**

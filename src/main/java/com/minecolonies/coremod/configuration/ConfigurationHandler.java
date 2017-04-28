@@ -17,6 +17,9 @@ import static com.minecolonies.coremod.configuration.Configurations.*;
  */
 public final class ConfigurationHandler
 {
+
+    private static Configuration config;
+
     public static final String CATEGORY_GAMEPLAY    = "gameplay";
     public static final String CATEGORY_PATHFINDING = "pathfinding";
     public static final String CATEGORY_NAMES       = "names";
@@ -36,7 +39,6 @@ public final class ConfigurationHandler
     public static synchronized void init(final File file)
     {
         config = new Configuration(file);
-
         loadConfiguration();
     }
 
@@ -71,6 +73,14 @@ public final class ConfigurationHandler
               "Enable the automatic colony protection?").getBoolean();
             turnOffExplosionsInColonies = config.get(CATEGORY_GAMEPLAY, "turnOffExplosionsInColonies", turnOffExplosionsInColonies,
               "Turn off explosions inside the colonies radius?").getBoolean();
+
+            /* schematics usage */
+            ignoreSchematicsFromJar = config.get(CATEGORY_GAMEPLAY, "ignoreSchematicsFromJar", ignoreSchematicsFromJar,
+                    "Ignore the schematic from the jar file").getBoolean();
+            allowPlayerSchematics = config.get(CATEGORY_GAMEPLAY, "allowPlayerSchematics", allowPlayerSchematics,
+                    "Allow player to use their own schematics (in MP)").getBoolean();
+            maxCachedSchematics = config.get(CATEGORY_GAMEPLAY, "maxCachedSchematics", maxCachedSchematics,
+                    "How many chached schematics the server can store before deleting them").getInt();
 
             /* Configs for commands */
             opLevelForServer = config.get(CATEGORY_GAMEPLAY, "opLevelForServer", opLevelForServer,
@@ -113,22 +123,11 @@ public final class ConfigurationHandler
             enableInDevelopmentFeatures = config.get(CATEGORY_GAMEPLAY, "development", enableInDevelopmentFeatures,
               "Display in-development features which do not work and may break your game").getBoolean();
 
-            pathfindingDebugDraw = config.get(CATEGORY_PATHFINDING, "debugDraw", pathfindingDebugDraw,
-              "Render pathfinding results for debugging purposes (SSP only)").getBoolean();
-            pathfindingDebugVerbosity = config.get(CATEGORY_PATHFINDING, "debugVerbosity", pathfindingDebugVerbosity,
-              "Debug output verbosity of pathfinding (0=none, 1=results, 2=live work)").getInt();
-            pathfindingMaxThreadCount = config.get(CATEGORY_PATHFINDING, "maxThreads", pathfindingMaxThreadCount,
-              "Maximum number of threads to use for pathfinding.").getInt();
+            freeToInteractBlocks = config.get(CATEGORY_GAMEPLAY, "freeToInteractBlocks", freeToInteractBlocks,
+                    "Blocks players should be able to interact with inside any colony.").getStringList();
 
-            maleFirstNames = config.get(CATEGORY_NAMES, "maleFirstNames", maleFirstNames,
-              "Male First Names").getStringList();
-            femaleFirstNames = config.get(CATEGORY_NAMES, "femaleFirstNames", femaleFirstNames,
-              "Female First Names").getStringList();
-            lastNames = config.get(CATEGORY_NAMES, "lastNames", lastNames,
-              "Last Names").getStringList();
-
-            freeToInteractBlocks = config.get(CATEGORY_NAMES, "freeToInteractBlocks", freeToInteractBlocks,
-              "Blocks players should be able to interact with inside any colony.").getStringList();
+            loadPathFindingConfigurations();
+            loadNamesConfigurations();
         }
         finally
         {
@@ -136,6 +135,48 @@ public final class ConfigurationHandler
             {
                 config.save();
             }
+        }
+    }
+
+    /**
+     * load configuration related to Path finding.
+     */
+    private static synchronized void loadPathFindingConfigurations()
+    {
+        pathfindingDebugDraw = config.get(CATEGORY_PATHFINDING, "debugDraw", pathfindingDebugDraw,
+                "Render pathfinding results for debugging purposes (SSP only)").getBoolean();
+        pathfindingDebugVerbosity = config.get(CATEGORY_PATHFINDING, "debugVerbosity", pathfindingDebugVerbosity,
+                "Debug output verbosity of pathfinding (0=none, 1=results, 2=live work)").getInt();
+        pathfindingMaxThreadCount = config.get(CATEGORY_PATHFINDING, "maxThreads", pathfindingMaxThreadCount,
+                "Maximum number of threads to use for pathfinding.").getInt();
+    }
+
+    /**
+     * load configuration related to the citizen's names.
+     */
+    private static synchronized void loadNamesConfigurations()
+    {
+        maleFirstNames = config.get(CATEGORY_NAMES, "maleFirstNames", maleFirstNames,
+                "Male First Names").getStringList();
+        femaleFirstNames = config.get(CATEGORY_NAMES, "femaleFirstNames", femaleFirstNames,
+                "Female First Names").getStringList();
+        lastNames = config.get(CATEGORY_NAMES, "lastNames", lastNames,
+                "Last Names").getStringList();
+    }
+
+    /**
+     * This event will be called when the config gets changed through
+     * the in-game GUI.
+     * 
+     * @param eventArgs An instance to the event. 
+     */
+    @SubscribeEvent
+    public void onConfigChanged(OnConfigChangedEvent eventArgs) 
+    {
+        if(eventArgs.getModID().equalsIgnoreCase(Constants.MOD_ID)) 
+        {
+            // resync configs
+            loadConfiguration();
         }
     }
 

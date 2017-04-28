@@ -8,12 +8,16 @@ import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.client.render.RenderFishHook;
 import com.minecolonies.coremod.client.render.TileEntityScarecrowRenderer;
 import com.minecolonies.coremod.colony.CitizenDataView;
+import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
 import com.minecolonies.coremod.event.ClientEventHandler;
 import com.minecolonies.coremod.items.ModItems;
+import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.coremod.util.Log;
 import com.minecolonies.structures.event.RenderEventHandler;
 import com.minecolonies.structures.helpers.Settings;
 import net.minecraft.client.Minecraft;
@@ -24,8 +28,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import java.io.File;
 
 /**
  * Client side proxy.
@@ -119,11 +125,42 @@ public class ClientProxy extends CommonProxy
         itemModelMesher.register(ModItems.scanTool, 0, new ModelResourceLocation(ModItems.scanTool.getRegistryName(), INVENTORY));
         itemModelMesher.register(ModItems.scepterGuard, 0, new ModelResourceLocation(ModItems.scepterGuard.getRegistryName(), INVENTORY));
         itemModelMesher.register(ModItems.supplyChest, 0, new ModelResourceLocation(ModItems.supplyChest.getRegistryName(), INVENTORY));
+        itemModelMesher.register(ModItems.supplyCamp, 0, new ModelResourceLocation(ModItems.supplyCamp.getRegistryName(), INVENTORY));
+
 
         // Achievement proxy Items
         itemModelMesher.register(ModItems.itemAchievementProxySettlement, 0, new ModelResourceLocation(ModItems.itemAchievementProxySettlement.getRegistryName(), INVENTORY));
         itemModelMesher.register(ModItems.itemAchievementProxyTown, 0, new ModelResourceLocation(ModItems.itemAchievementProxyTown.getRegistryName(), INVENTORY));
         itemModelMesher.register(ModItems.itemAchievementProxyCity, 0, new ModelResourceLocation(ModItems.itemAchievementProxyCity.getRegistryName(), INVENTORY));
         itemModelMesher.register(ModItems.itemAchievementProxyMetropolis, 0, new ModelResourceLocation(ModItems.itemAchievementProxyMetropolis.getRegistryName(), INVENTORY));
+    }
+
+    @Override
+    public File getSchematicsFolder()
+    {
+        if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
+        {
+            if (ColonyManager.getServerUUID() != null)
+            {
+                return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + "/" + ColonyManager.getServerUUID());
+            }
+            else
+            {
+                Log.getLogger().error("ColonyManager.getServerUUID() => null this should not happen");
+                return null;
+            }
+        }
+
+        // if the world schematics folder exists we use it
+        // otherwise we use the minecraft folder  /minecolonies/schematics if on the physical client on the logical server
+        final File worldSchematicFolder = new File(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
+                                                     + "/" + Constants.MOD_ID + '/' + Structures.SCHEMATICS_PREFIX);
+
+        if (!worldSchematicFolder.exists())
+        {
+            return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID);
+        }
+
+        return worldSchematicFolder.getParentFile();
     }
 }
