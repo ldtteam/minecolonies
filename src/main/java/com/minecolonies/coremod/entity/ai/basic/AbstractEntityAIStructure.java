@@ -625,7 +625,15 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 final int slot = worker.findFirstSlotInInventoryWith(tempStack.getItem(), tempStack.getItemDamage());
                 if (slot != -1)
                 {
-                    new InvWrapper(getInventory()).extractItem(slot, 1, false);
+                    if (tempStack.getItem() == Items.LAVA_BUCKET)
+                    {
+                        new InvWrapper(getInventory()).extractItem(slot, 1, false);
+                        new InvWrapper(getInventory()).setStackInSlot(slot, new ItemStack(Items.BUCKET));
+                    }
+                    else
+                    {
+                        new InvWrapper(getInventory()).extractItem(slot, 1, false);
+                    }
                     reduceNeededResources(tempStack);
                 }
             }

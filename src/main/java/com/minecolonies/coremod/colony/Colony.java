@@ -860,6 +860,13 @@ public class Colony implements IColony
             {
                 sendFieldPackets(hasNewSubscribers);
             }
+
+            //schematics
+            if (Structures.isDirty())
+            {
+                sendSchematicsPackets(hasNewSubscribers);
+                Structures.clearDirty();
+            }
         }
 
         isFieldsDirty = false;
@@ -969,6 +976,20 @@ public class Colony implements IColony
                       .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewBuildingViewMessage(building), player));
                 }
             }
+        }
+    }
+
+    /**
+     * Sends packages to update the schematics.
+     *
+     * @param hasNewSubscribers the new subscribers.
+     */
+    private void sendSchematicsPackets(final boolean hasNewSubscribers)
+    {
+        if (Structures.isDirty() || hasNewSubscribers)
+        {
+            subscribers.stream()
+                .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyStylesMessage(), player));
         }
     }
 
