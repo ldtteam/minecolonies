@@ -268,7 +268,7 @@ task("createChangelog") {
             for (int i = 0; i < changes.size(); i++) {
                 def changeDetailsURL = teamCityURL + "guestAuth/app/rest/changes/id:" + changes[i].@id.text()
                 def changeDetailsXml = new XmlSlurper().parse(changeDetailsURL)
-                def changeComment = changeDetailsXml.comment.text().trim()
+                def changeComment = changeDetailsXml.comment.text().trim().split("\n")[0]
 
                 out << "* " + changeComment + "\n"
             }
