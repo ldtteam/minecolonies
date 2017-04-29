@@ -2,6 +2,7 @@ package com.minecolonies.coremod.util;
 
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import net.minecraft.block.*;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -248,7 +249,11 @@ public final class BlockUtils
 
     private static Item getItem(@NotNull final IBlockState blockState)
     {
-        if (blockState.getBlock() instanceof BlockBanner)
+        if (blockState.getMaterial().equals(Material.LAVA))
+        {
+            return Items.LAVA_BUCKET;
+        }
+        else if (blockState.getBlock() instanceof BlockBanner)
         {
             return Items.BANNER;
         }

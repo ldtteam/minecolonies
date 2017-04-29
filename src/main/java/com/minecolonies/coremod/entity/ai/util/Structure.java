@@ -253,7 +253,7 @@ public class Structure
             throw new StructureException(String.format("Some parameters were null! (targetWorld: %s), (buildingLocation: %s), (schematicFileName: %s)",
                     targetWorld, buildingLocation, schematicFileName));
         }
-        @Nullable StructureWrapper tempSchematic = null;
+        @Nullable StructureWrapper tempSchematic;
         //failsafe for faulty structure files
         try
         {

@@ -178,8 +178,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private int searchIncrement = 0;
 
-    private boolean isSlimeTree = false;
-
     /**
      * Create a new LumberjackAI.
      *
@@ -257,8 +255,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         {
             return findTree();
         }
-        final Block block = world.getBlockState(job.tree.getLocation()).getBlock();
-        isSlimeTree = Compatibility.isSlimeBlock(block);
         return LUMBERJACK_CHOP_TREE;
     }
 
@@ -378,7 +374,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             return getState();
         }
 
-        if (!job.tree.hasLogs() && (!isSlimeTree || !job.tree.hasLeaves()))
+        if (!job.tree.hasLogs() && (!job.tree.isSlimeTree() || !job.tree.hasLeaves()))
         {
             if (hasNotDelayed(WAIT_BEFORE_SAPLING))
             {
@@ -414,7 +410,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             }
             job.tree.pollNextLog();
         }
-        else if (job.tree.hasLeaves() && isSlimeTree)
+        else if (job.tree.hasLeaves() && job.tree.isSlimeTree())
         {
             //take first leaf from queue
             final BlockPos leaf = job.tree.peekNextLeaf();
@@ -517,8 +513,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         final BlockPos dirtLocation = new BlockPos(location.getX(),location.getY()-1,location.getZ());
         final Block dirt = world.getBlockState(dirtLocation).getBlock();
 
-        if (saplingSlot != -1 && ((isSlimeTree && Compatibility.isSlimeDirtOrGrass(dirt))
-                                    ||(!isSlimeTree && !Compatibility.isSlimeDirtOrGrass(dirt))))
+        if (saplingSlot != -1 && ((job.tree.isSlimeTree() && Compatibility.isSlimeDirtOrGrass(dirt))
+                                    ||(!job.tree.isSlimeTree() && !Compatibility.isSlimeDirtOrGrass(dirt))))
         {
             final ItemStack stack = getInventory().getStackInSlot(saplingSlot);
             final Block block = ((ItemBlock) stack.getItem()).getBlock();
@@ -620,7 +616,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private boolean isCorrectSapling(final ItemStack stack)
     {
-        if (isSlimeTree)
+        if (job.tree.isSlimeTree())
         {
             return isStackSapling(stack) && Compatibility.isSlimeSapling(((ItemBlock) stack.getItem()).getBlock()) && job.tree.getVariant() == stack.getMetadata();
         }

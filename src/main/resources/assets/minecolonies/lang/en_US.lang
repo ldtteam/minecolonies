@@ -227,6 +227,15 @@ com.minecolonies.coremod.gui.workerHuts.Deliveryman=Deliveryman
 com.minecolonies.coremod.gui.workerHuts.cancelBuild=Cancel Build
 com.minecolonies.coremod.gui.workerHuts.cancelUpgrade=Cancel Upgrade
 com.minecolonies.coremod.gui.workerHuts.cancelRepair=Cancel Repair
+com.minecolonies.coremod.gui.buildtool.hut.level=Level %s
+com.minecolonies.coremod.network.messages.schematicsavemassage.toobig=Schematic size too big, can not be bigger than %s bytes
+com.minecolonies.coremod.gui.buildtool.decorations=Decorations
+com.minecolonies.coremod.gui.buildtool.scans=My schematics
+com.minecolonies.coremod.gui.structure.edit.title=Edit Structure
+com.minecolonies.coremod.gui.structure.rename=Rename Structure
+com.minecolonies.coremod.gui.structure.delete=Delete Structure
+com.minecolonies.coremod.gui.structure.delete.title=Delete Structure
+com.minecolonies.coremod.gui.structure.delete.body=Do you want to delete %s?
 //death achievements
 achievement.miner.death.lava=Dug too deep.
 achievement.miner.death.fall=It's the stop at the end.
