@@ -2,10 +2,7 @@ package com.minecolonies.coremod.colony;
 
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.BuildingFarmer;
-import com.minecolonies.coremod.colony.buildings.BuildingHome;
-import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
+import com.minecolonies.coremod.colony.buildings.*;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.configuration.Configurations;
@@ -63,17 +60,17 @@ public class Colony implements IColony
     private static final String TAG_FREE_POSITIONS             = "freePositions";
 
     //statistics tags
-    private static final String TAG_STATISTICS            = "statistics";
-    private static final String TAG_MINER_STATISTICS      = "minerStatistics";
-    private static final String TAG_MINER_ORES            = "ores";
-    private              int    minedOres                 = 0;
-    private static final String TAG_MINER_DIAMONDS        = "diamonds";
-    private              int    minedDiamonds             = 0;
-    private static final String TAG_FARMER_STATISTICS     = "farmerStatistics";
-    private static final String TAG_FARMER_WHEAT          = "wheat";
-    private              int    harvestedWheat            = 0;
-    private static final String TAG_FARMER_POTATOES       = "potatoes";
-    private              int    harvestedPotatoes         = 0;
+    private static final String TAG_STATISTICS        = "statistics";
+    private static final String TAG_MINER_STATISTICS  = "minerStatistics";
+    private static final String TAG_MINER_ORES        = "ores";
+    private              int    minedOres             = 0;
+    private static final String TAG_MINER_DIAMONDS    = "diamonds";
+    private              int    minedDiamonds         = 0;
+    private static final String TAG_FARMER_STATISTICS = "farmerStatistics";
+    private static final String TAG_FARMER_WHEAT      = "wheat";
+    private              int    harvestedWheat        = 0;
+    private static final String TAG_FARMER_POTATOES   = "potatoes";
+    private              int    harvestedPotatoes     = 0;
     private static final String TAG_FARMER_CARROTS        = "carrots";
     private              int    harvestedCarrots          = 0;
     private static final String TAG_GUARD_STATISTICS      = "guardStatistics";
@@ -95,6 +92,31 @@ public class Colony implements IColony
     private static final int    NUM_ACHIEVEMENT_THIRD     = 100;
     private static final int    NUM_ACHIEVEMENT_FOURTH    = 500;
     private static final int    NUM_ACHIEVEMENT_FIFTH     = 1000;
+
+    /**
+     * Bonus happiness each factor added.
+     */
+    private static final double HAPPINESS_FACTOR         = 0.1;
+
+    /**
+     * Saturation at which a citizen starts being happy.
+     */
+    private static final int WELL_SATURATED_LIMIT = 5;
+
+    /**
+     * Variable to determine if its currently day or night.
+     */
+    private boolean isDay = true;
+
+    /**
+     * Max overall happiness.
+     */
+    private static final double MAX_OVERALL_HAPPINESS = 10;
+
+    /**
+     * Min overall happiness.
+     */
+    private static final double MIN_OVERALL_HAPPINESS = 1;
 
     //private int autoHostile = 0;//Off
     private static final String TAG_FIELDS                        = "fields";
@@ -138,6 +160,8 @@ public class Colony implements IColony
     private BuildingTownHall townHall;
     private int topCitizenId = 0;
     private int maxCitizens  = Configurations.maxCitizens;
+
+    private double overallHappiness = 5;
 
     /**
      * The Positions which players can freely interact.
@@ -1090,6 +1114,82 @@ public class Colony implements IColony
             building.onWorldTick(event);
         }
 
+        if(isDay && !world.isDaytime())
+        {
+            isDay = false;
+            updateOverallHappiness();
+        }
+        else if(!isDay && world.isDaytime())
+        {
+            isDay = true;
+        }
+
+        updateWayPoints();
+        workManager.onWorldTick(event);
+    }
+
+    private void updateOverallHappiness()
+    {
+        int requiredGuardLevels = 0;
+        int housing = 0;
+        double saturation = 0;
+        for(final CitizenData citizen: citizens.values())
+        {
+            final AbstractBuildingWorker buildingWorker = citizen.getWorkBuilding();
+            if(buildingWorker != null)
+            {
+                if(buildingWorker instanceof BuildingGuardTower)
+                {
+                    requiredGuardLevels -= buildingWorker.getBuildingLevel();
+                }
+                else
+                {
+                    requiredGuardLevels += buildingWorker.getBuildingLevel();
+                }
+            }
+
+            final BuildingHome home = citizen.getHomeBuilding();
+            if(home != null)
+            {
+                housing = home.getBuildingLevel();
+            }
+
+            saturation += citizen.getSaturation();
+        }
+
+        final int averageHousing = housing/citizens.size();
+
+        if(averageHousing > 1)
+        {
+            increaseOverallHappiness(averageHousing * HAPPINESS_FACTOR);
+        }
+
+        final int averageSaturation = (int) (saturation/citizens.size());
+        if(averageSaturation < WELL_SATURATED_LIMIT)
+        {
+            decreaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * -HAPPINESS_FACTOR);
+        }
+        else if(averageSaturation > WELL_SATURATED_LIMIT)
+        {
+            increaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * HAPPINESS_FACTOR);
+        }
+
+        if(requiredGuardLevels < 0)
+        {
+            increaseOverallHappiness(requiredGuardLevels * -HAPPINESS_FACTOR);
+        }
+        else if(requiredGuardLevels > 0)
+        {
+            decreaseOverallHappiness(requiredGuardLevels * HAPPINESS_FACTOR);
+        }
+        markDirty();
+    }
+
+    /**
+     * Update the waypoints after worldTicks.
+     */
+    private void updateWayPoints()
+    {
         final Random rand = new Random();
         if (rand.nextInt(CHECK_WAYPOINT_EVERY) <= 1 && wayPoints.size() > 0)
         {
@@ -1107,8 +1207,6 @@ public class Colony implements IColony
                 }
             }
         }
-
-        workManager.onWorldTick(event);
     }
 
     private boolean areAllColonyChunksLoaded(@NotNull final TickEvent.WorldTickEvent event)
@@ -1691,6 +1789,35 @@ public class Colony implements IColony
         }
 
         return tempWayPoints;
+    }
+
+    /**
+     * Getter for overall happiness.
+     * @return the overall happiness.
+     */
+    public double getOverallHappiness()
+    {
+        return this.overallHappiness;
+    }
+
+    /**
+     * Increase the overall happiness by an amount, cap at max.
+     * @param amount the amount.
+     */
+    public void increaseOverallHappiness(double amount)
+    {
+        this.overallHappiness = Math.min(this.overallHappiness + Math.abs(amount), MAX_OVERALL_HAPPINESS);
+        this.markDirty();
+    }
+
+    /**
+     * Decrease the overall happiness by an amount, cap at min.
+     * @param amount the amount.
+     */
+    public void decreaseOverallHappiness(double amount)
+    {
+        this.overallHappiness = Math.max(this.overallHappiness - Math.abs(amount), MIN_OVERALL_HAPPINESS);
+        this.markDirty();
     }
 
     /**

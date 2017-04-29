@@ -34,6 +34,7 @@ public class CitizenDataView
     private int    charisma;
     private int    intelligence;
     private int    dexterity;
+    private double saturation;
 
     /**
      * Job identifier.
@@ -181,6 +182,15 @@ public class CitizenDataView
     }
 
     /**
+     * Get the saturation of the citizen.
+     * @return
+     */
+    public double getSaturation()
+    {
+        return saturation;
+    }
+
+    /**
      * Intelligence getter.
      *
      * @return citizen Intelligence value.
@@ -245,6 +255,7 @@ public class CitizenDataView
         charisma = buf.readInt();
         intelligence = buf.readInt();
         dexterity = buf.readInt();
+        saturation = buf.readDouble();
 
         job = ByteBufUtils.readUTF8String(buf);
     }

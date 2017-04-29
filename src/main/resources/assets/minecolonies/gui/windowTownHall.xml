@@ -71,9 +71,9 @@
 
             <group size="100% 22" pos="0 129">
                 <label size="100% 11"
-                       label="$(com.minecolonies.coremod.gui.townHall.currentSpecialization)" color="black"
+                       label="$(com.minecolonies.coremod.gui.townHall.currentHappiness)" color="black"
                        textalign="MIDDLE"/>
-                <label id="currentSpec" size="100% 11"
+                <label id="happiness" size="100% 11"
                        color="black" textalign="MIDDLE"/>
             </group>
 

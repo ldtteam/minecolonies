@@ -174,11 +174,11 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * Id of the workOrder list in the GUI.
      */
-    private static final String LIST_WORKORDER     = "workOrderList";
+    private static final String LIST_WORKORDER  = "workOrderList";
     /**
      * Id of the current specializations label in the GUI.
      */
-    private static final String CURRENT_SPEC_LABEL = "currentSpec";
+    private static final String HAPPYNESS_LABEL = "happiness";
 
     /**
      * Id of the total citizens label in the GUI.
@@ -740,7 +740,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         final String numberOfBuilders = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.builders", builders);
         final String numberOfDeliverymen = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.deliverymen", deliverymen);
 
-        findPaneOfTypeByID(CURRENT_SPEC_LABEL, Label.class).setLabelText("<Industrial>");
+        findPaneOfTypeByID(HAPPYNESS_LABEL, Label.class).setLabelText(Double.toString(building.getColony().getOverallHappiness()));
         findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText(numberOfCitizens);
         findPaneOfTypeByID(UNEMP_CITIZENS_LABEL, Label.class).setLabelText(numberOfUnemployed);
         findPaneOfTypeByID(BUILDERS_LABEL, Label.class).setLabelText(numberOfBuilders);
