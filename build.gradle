@@ -61,7 +61,6 @@ jacocoTestReport {
     }
 }
 
-
 dependencies {
     testCompile 'junit:junit:4.11'
     testCompile "org.mockito:mockito-core:1.+"
@@ -75,7 +74,6 @@ dependencies {
 ext.configFile = file "build.properties"
 
 configFile.withReader {
-
     def prop = new Properties()
     prop.load(it)
     ext.config = new ConfigSlurper().parse prop
@@ -202,6 +200,23 @@ task runSonar() {
     group = 'Code Quality'
 }
 
+task signJar(type: SignJar, dependsOn: reobfJar) {
+    onlyIf { // Skip the task if our secret data isn't available
+        project.hasProperty('keyStore')
+    }
+
+    if (project.hasProperty('keyStore')) {
+        keyStore = project.keyStore // This needs to be a path to the keystore file
+        alias = project.keyStoreAlias
+        storePass = project.keyStorePass
+        keyPass = project.keyStoreKeyPass
+        inputFile = jar.archivePath
+        outputFile = jar.archivePath
+    }
+}
+
+build.dependsOn signJar
+
 curseforge {
     if (System.getenv().CURSEAPIKEY != null && System.getenv().CURSERELEASETYPE != null)
     {
@@ -210,6 +225,8 @@ curseforge {
         project {
             id = '245506'
 
+            changelog = file('build/changelog.md')
+            changelogType = 'markdown'
             releaseType = System.getenv().CURSERELEASETYPE
 
             addArtifact deobfJar
@@ -218,5 +235,36 @@ curseforge {
     else
     {
         logger.lifecycle("Cannot run the CurseUpload sequence. No API-Key or release type has been provided.")
+    }
+}
+
+task("createChangelog") {
+    group = 'upload'
+
+    doLast {
+        def teamCityURL = "http://teamcity.minecolonies.com/"
+        def file = new FileOutputStream("build/changelog.md")
+        def out = new BufferedOutputStream(file)
+        def changesXML = new XmlSlurper().parse(teamCityURL + "guestAuth/app/rest/changes?locator=build:(id:" + teamcity["teamcity.build.id"] + ")")
+
+        def changes = changesXML.change
+        println("createChangelog: Identified " + changes.size() + " changes to be written into the changelog.")
+
+        out << "# Minecolonies Changelog \n"
+        out << "## Version: _" + version + "_ \n"
+
+        if (changes.size() > 0) {
+            for (int i = 0; i < changes.size(); i++) {
+                def changeDetailsURL = teamCityURL + "guestAuth/app/rest/changes/id:" + changes[i].@id.text()
+                def changeDetailsXml = new XmlSlurper().parse(changeDetailsURL)
+                def changeComment = changeDetailsXml.comment.text().trim()
+
+                out << "* " + changeComment + "\n"
+            }
+        } else {
+            out << "No Changes detected!"
+        }
+
+        out.close()
     }
 }
