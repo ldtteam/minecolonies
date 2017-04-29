@@ -55,18 +55,6 @@ public class BuildingBaker extends AbstractBuildingWorker
     }
 
     /**
-     * The name of the baker's job.
-     *
-     * @return The name of the baker's job.
-     */
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return BAKER;
-    }
-
-    /**
      * Create a Baker job.
      *
      * @param citizen the citizen to take the job.
@@ -77,6 +65,18 @@ public class BuildingBaker extends AbstractBuildingWorker
     public AbstractJob createJob(final CitizenData citizen)
     {
         return new JobPlaceholder(citizen); //TODO Implement Later
+    }
+
+    /**
+     * The name of the baker's job.
+     *
+     * @return The name of the baker's job.
+     */
+    @NotNull
+    @Override
+    public String getJobName()
+    {
+        return BAKER;
     }
 
     /**

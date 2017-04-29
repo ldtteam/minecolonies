@@ -29,17 +29,17 @@ import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.L
 public class ListCitizensCommand extends AbstractSingleCommand
 {
 
-    public static final  String DESC                    = "list";
-    private static final String CITIZEN_DESCRIPTION     = "§2ID: §f %d §2 Name: §f %s";
-    private static final String COORDINATES_XYZ         = "§2Coordinates: §f §4x=§f%s §4y=§f%s §4z=§f%s";
-    private static final String LIST_COMMAND_SUGGESTED  = "/mc citizens list ";
-    private static final String COMMAND_CITIZEN_INFO    = "/mc citizens info %s %s";
-    private static final String PAGE_TOP                = "§2   ------------------ page %d of %d ------------------";
-    private static final String PREV_PAGE               = " <- prev";
-    private static final String NEXT_PAGE               = "next -> ";
-    private static final String PAGE_LINE               = "§2 ----------------";
-    private static final String PAGE_LINE_DIVIDER       = "§2 | ";
-    private static final int    CITIZENS_ON_PAGE        = 9;
+    public static final  String DESC                   = "list";
+    private static final String CITIZEN_DESCRIPTION    = "§2ID: §f %d §2 Name: §f %s";
+    private static final String COORDINATES_XYZ        = "§2Coordinates: §f §4x=§f%s §4y=§f%s §4z=§f%s";
+    private static final String LIST_COMMAND_SUGGESTED = "/mc citizens list ";
+    private static final String COMMAND_CITIZEN_INFO   = "/mc citizens info %s %s";
+    private static final String PAGE_TOP               = "§2   ------------------ page %d of %d ------------------";
+    private static final String PREV_PAGE              = " <- prev";
+    private static final String NEXT_PAGE              = "next -> ";
+    private static final String PAGE_LINE              = "§2 ----------------";
+    private static final String PAGE_LINE_DIVIDER      = "§2 | ";
+    private static final int    CITIZENS_ON_PAGE       = 9;
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -63,7 +63,7 @@ public class ListCitizensCommand extends AbstractSingleCommand
     {
         final int colonyId = getIthArgument(args, 0, getColonyId(sender));
 
-        if(sender instanceof EntityPlayer)
+        if (sender instanceof EntityPlayer)
         {
             final EntityPlayer player = (EntityPlayer) sender;
             if (!canPlayerUseCommand(player, LISTCITIZENS, colonyId))

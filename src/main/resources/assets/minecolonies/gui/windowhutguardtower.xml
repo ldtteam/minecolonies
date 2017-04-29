@@ -7,23 +7,32 @@
         <view id="levelActions" size="100% 100%">
 
             <label size="100% 11" pos="0 0"
-                   label="$(com.minecolonies.coremod.gui.workerHuts.guardActions)" color="black" textalign="BOTTOM_MIDDLE"/>
+                   label="$(com.minecolonies.coremod.gui.workerHuts.guardActions)" color="black"
+                   textalign="BOTTOM_MIDDLE"/>
 
             <button id="job" size="50% 15" pos="40 15" label="$(com.minecolonies.coremod.gui.workerHuts.knight)"/>
 
-            <label size="50% 11" pos="40 30" label="$(com.minecolonies.coremod.gui.workerHuts.assign)" color="black" textalign="BOTTOM_MIDDLE"/>
+            <label size="50% 11" pos="40 30" label="$(com.minecolonies.coremod.gui.workerHuts.assign)" color="black"
+                   textalign="BOTTOM_MIDDLE"/>
             <button id="assign" size="50% 12" pos="40 45" label="$(com.minecolonies.coremod.gui.workerHuts.modeA)"/>
-            <label size="50% 11" pos="40 60" label="$(com.minecolonies.coremod.gui.workerHuts.patrol)" color="black" textalign="BOTTOM_MIDDLE"/>
+            <label size="50% 11" pos="40 60" label="$(com.minecolonies.coremod.gui.workerHuts.patrol)" color="black"
+                   textalign="BOTTOM_MIDDLE"/>
             <button id="patrol" size="50% 12" pos="40 75" label="$(com.minecolonies.coremod.gui.workerHuts.modeA)"/>
 
-            <label size="50% 11" pos="40 90" label="$(com.minecolonies.coremod.gui.workerHuts.retrieve)" color="black" textalign="BOTTOM_MIDDLE"/>
-            <button id="retrieve" size="50% 12" pos="40 105" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOff)"/>
+            <label size="50% 11" pos="40 90" label="$(com.minecolonies.coremod.gui.workerHuts.retrieve)" color="black"
+                   textalign="BOTTOM_MIDDLE"/>
+            <button id="retrieve" size="50% 12" pos="40 105"
+                    label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOff)"/>
 
-            <button id="patrolling" size="30% 14" pos="10 125" label="$(com.minecolonies.coremod.gui.workerHuts.task.patrol)"/>
-            <button id="following" size="30% 14" pos="62 125" label="$(com.minecolonies.coremod.gui.workerHuts.task.follow)"/>
-            <button id="guarding" size="30% 14" pos="114 125" label="$(com.minecolonies.coremod.gui.workerHuts.task.guard)"/>
+            <button id="patrolling" size="30% 14" pos="10 125"
+                    label="$(com.minecolonies.coremod.gui.workerHuts.task.patrol)"/>
+            <button id="following" size="30% 14" pos="62 125"
+                    label="$(com.minecolonies.coremod.gui.workerHuts.task.follow)"/>
+            <button id="guarding" size="30% 14" pos="114 125"
+                    label="$(com.minecolonies.coremod.gui.workerHuts.task.guard)"/>
 
-            <button id="setTarget" size="75% 12" pos="25 140" label="$(com.minecolonies.coremod.gui.workerHuts.setTarget)"/>
+            <button id="setTarget" size="75% 12" pos="25 140"
+                    label="$(com.minecolonies.coremod.gui.workerHuts.setTarget)"/>
 
 
             <list id="positions" size="78% 50" pos="30 155">

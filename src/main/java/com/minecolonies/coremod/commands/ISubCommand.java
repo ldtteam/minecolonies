@@ -47,7 +47,8 @@ public interface ISubCommand
     List<String> getTabCompletionOptions(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String[] args, @Nullable final BlockPos pos);
 
     /**
-     * Return whether the specified command parameter index is a username parameter.
+     * Return whether the specified command parameter index is a username
+     * parameter.
      *
      * @param args  leftover args stripped from parents.
      * @param index the argument index offset by stripped parents.

@@ -3,7 +3,6 @@ package com.minecolonies.coremod.test;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Log;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -11,8 +10,6 @@ import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-
-import java.util.Random;
 
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;

@@ -81,7 +81,7 @@ public class WindowHireWorker extends Window implements Button.Handler
     /**
      * The colony.
      */
-    private final ColonyView colony;
+    private final ColonyView            colony;
     /**
      * Contains all the citizens.
      */
@@ -171,8 +171,8 @@ public class WindowHireWorker extends Window implements Button.Handler
                                                         + LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.endurance", citizen.getEndurance()) + " §f ";
 
                     @NotNull final String intelligence = (primary.equals(AbstractBuildingWorker.Skill.INTELLIGENCE) ? GREEN_STRING
-                            : (secondary.equals(AbstractBuildingWorker.Skill.INTELLIGENCE) ? YELLOW_STRING : ""))
-                            +  LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.intelligence", citizen.getIntelligence()) + " §f ";
+                                                            : (secondary.equals(AbstractBuildingWorker.Skill.INTELLIGENCE) ? YELLOW_STRING : ""))
+                                                           + LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.intelligence", citizen.getIntelligence()) + " §f ";
 
                     //Creates the list of attributes for each citizen
                     @NotNull final String attributes = strength + charisma + dexterity + endurance + intelligence;

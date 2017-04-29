@@ -23,12 +23,12 @@ import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.C
 public class ChangeColonyOwnerCommand extends AbstractSingleCommand
 {
 
-    public static final  String       DESC            = "ownerchange";
-    private static final String       SUCCESS_MESSAGE = "Succesfully switched Owner %s to colony %d";
-    private static final String       COLONY_NULL     = "Couldn't find colony %d.";
-    private static final String       NO_ARGUMENTS    = "Please define a colony and player";
-    private static final String       NO_PLAYER       = "Can't find player to add";
-    private static final String HAS_A_COLONY          = "Player %s has a colony already.";
+    public static final  String DESC            = "ownerchange";
+    private static final String SUCCESS_MESSAGE = "Succesfully switched Owner %s to colony %d";
+    private static final String COLONY_NULL     = "Couldn't find colony %d.";
+    private static final String NO_ARGUMENTS    = "Please define a colony and player";
+    private static final String NO_PLAYER       = "Can't find player to add";
+    private static final String HAS_A_COLONY    = "Player %s has a colony already.";
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -50,7 +50,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        if(args.length < 2)
+        if (args.length < 2)
         {
             sender.getCommandSenderEntity().sendMessage(new TextComponentString(NO_ARGUMENTS));
             return;
@@ -62,11 +62,11 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
         }
 
         int colonyId = getIthArgument(args, 0, -1);
-        if(colonyId == -1)
+        if (colonyId == -1)
         {
             final String playerName = args[0];
 
-            if(playerName == null || playerName.isEmpty())
+            if (playerName == null || playerName.isEmpty())
             {
                 sender.getCommandSenderEntity().sendMessage(new TextComponentString(NO_PLAYER));
                 return;
@@ -90,20 +90,20 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
             playerName = args[1];
         }
 
-        if(playerName == null || playerName.isEmpty())
+        if (playerName == null || playerName.isEmpty())
         {
             sender.getCommandSenderEntity().sendMessage(new TextComponentString(NO_PLAYER));
             return;
         }
 
         final EntityPlayer player = sender.getEntityWorld().getPlayerEntityByName(playerName);
-        if(player == null)
+        if (player == null)
         {
             sender.getCommandSenderEntity().sendMessage(new TextComponentString(NO_PLAYER));
             return;
         }
 
-        if(ColonyManager.getIColonyByOwner(sender.getEntityWorld(), player) != null)
+        if (ColonyManager.getIColonyByOwner(sender.getEntityWorld(), player) != null)
         {
             sender.getCommandSenderEntity().sendMessage(new TextComponentString(String.format(HAS_A_COLONY, playerName)));
             return;
@@ -117,10 +117,10 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
     @NotNull
     @Override
     public List<String> getTabCompletionOptions(
-            @NotNull final MinecraftServer server,
-            @NotNull final ICommandSender sender,
-            @NotNull final String[] args,
-            @Nullable final BlockPos pos)
+                                                 @NotNull final MinecraftServer server,
+                                                 @NotNull final ICommandSender sender,
+                                                 @NotNull final String[] args,
+                                                 @Nullable final BlockPos pos)
     {
         return Collections.emptyList();
     }
