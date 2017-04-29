@@ -10,6 +10,7 @@ import com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
+import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.*;
@@ -25,6 +26,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
@@ -81,45 +83,6 @@ public abstract class AbstractBuilding
     private static final String                  TAG_STYLE                    = "style";
     private static final int                     NO_WORK_ORDER                = 0;
     /**
-     * A list of ItemStacks with needed items and their quantity.
-     * This list is a diff between itemsNeeded in AbstractEntityAiBasic and
-     * the players inventory and their hut combined.
-     * So look here for what is currently still needed
-     * to fulfill the workers needs.
-     * <p>
-     * Will be cleared on restart, be aware!
-     */
-    @NotNull
-    private              List<ItemStack>         itemsCurrentlyNeeded         = new ArrayList<>();
-    /**
-     * This flag tells if we need a shovel, will be set on tool needs.
-     */
-    private              boolean                 needsShovel                  = false;
-    /**
-     * This flag tells if we need an axe, will be set on tool needs.
-     */
-    private              boolean                 needsAxe                     = false;
-    /**
-     * This flag tells if we need a hoe, will be set on tool needs.
-     */
-    private              boolean                 needsHoe                     = false;
-    /**
-     * This flag tells if we need a pickaxe, will be set on tool needs.
-     */
-    private              boolean                 needsPickaxe                 = false;
-    /**
-     * This flag tells if we need a weapon, will be set on tool needs.
-     */
-    private              boolean                 needsWeapon                  = false;
-    /**
-     * The minimum pickaxe level we need to fulfill the tool request.
-     */
-    private              int                     needsPickaxeLevel            = -1;
-    /**
-     * Checks if there is a ongoing delivery for the currentItem.
-     */
-    private              boolean                 onGoingDelivery              = false;
-    /**
      * Map to resolve names to class.
      */
     @NotNull
@@ -159,22 +122,62 @@ public abstract class AbstractBuilding
         addMapping("WareHouse", BuildingWareHouse.class, BuildingWareHouse.View.class, BlockHutWareHouse.class);
     }
     /**
-     * A list which contains the position of all containers which belong to the worker building.
+     * A list which contains the position of all containers which belong to the
+     * worker building.
      */
     private final List<BlockPos> containerList = new ArrayList<>();
     /**
      * The location of the building.
      */
-    private final BlockPos                 location;
+    private final BlockPos location;
     /**
      * The colony the building belongs to.
      */
     @NotNull
-    private final Colony                   colony;
+    private final Colony colony;
+    /**
+     * A list of ItemStacks with needed items and their quantity.
+     * This list is a diff between itemsNeeded in AbstractEntityAiBasic and
+     * the players inventory and their hut combined.
+     * So look here for what is currently still needed
+     * to fulfill the workers needs.
+     * <p>
+     * Will be cleared on restart, be aware!
+     */
+    @NotNull
+    private List<ItemStack> itemsCurrentlyNeeded = new ArrayList<>();
+    /**
+     * This flag tells if we need a shovel, will be set on tool needs.
+     */
+    private boolean         needsShovel          = false;
+    /**
+     * This flag tells if we need an axe, will be set on tool needs.
+     */
+    private boolean         needsAxe             = false;
+    /**
+     * This flag tells if we need a hoe, will be set on tool needs.
+     */
+    private boolean         needsHoe             = false;
+    /**
+     * This flag tells if we need a pickaxe, will be set on tool needs.
+     */
+    private boolean         needsPickaxe         = false;
+    /**
+     * This flag tells if we need a weapon, will be set on tool needs.
+     */
+    private boolean         needsWeapon          = false;
+    /**
+     * The minimum pickaxe level we need to fulfill the tool request.
+     */
+    private int             needsPickaxeLevel    = -1;
+    /**
+     * Checks if there is a ongoing delivery for the currentItem.
+     */
+    private boolean         onGoingDelivery      = false;
     /**
      * The tileEntity of the building.
      */
-    private       TileEntityColonyBuilding tileEntity;
+    private TileEntityColonyBuilding tileEntity;
 
     /**
      * The level of the building.
@@ -224,10 +227,10 @@ public abstract class AbstractBuilding
      * @param parentBlock   subclass of Block, located in {@link com.minecolonies.coremod.blocks}.
      */
     private static void addMapping(
-            final String name,
-            @NotNull final Class<? extends AbstractBuilding> buildingClass,
-            @NotNull final Class<? extends AbstractBuilding.View> viewClass,
-            @NotNull final Class<? extends AbstractBlockHut> parentBlock)
+                                          final String name,
+                                          @NotNull final Class<? extends AbstractBuilding> buildingClass,
+                                          @NotNull final Class<? extends AbstractBuilding.View> viewClass,
+                                          @NotNull final Class<? extends AbstractBlockHut> parentBlock)
     {
         final int buildingHashCode = buildingClass.getName().hashCode();
 
@@ -392,6 +395,10 @@ public abstract class AbstractBuilding
             Log.getLogger().error(String.format("Unknown Building type '%s' or missing constructor of proper format.", parent.getClass().getName()), exception);
         }
 
+        if (building != null && parent.getWorld() != null)
+        {
+            ConstructionTapeHelper.placeConstructionTape(building, parent.getWorld());
+        }
         return building;
     }
 
@@ -646,34 +653,6 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Get the current level of the work order.
-     *
-     * @return NO_WORK_ORDER if not current work otherwise the level requested.
-     */
-    private int getCurrentWorkOrderLevel()
-    {
-        for (@NotNull final WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
-        {
-            if (o.getBuildingLocation().equals(getID()))
-            {
-                return o.getUpgradeLevel();
-            }
-        }
-
-        return NO_WORK_ORDER;
-    }
-
-    /**
-     * Checks if this building have a work order.
-     *
-     * @return true if the building is building, upgrading or repairing.
-     */
-    public boolean hasWorkOrder()
-    {
-        return getCurrentWorkOrderLevel() != NO_WORK_ORDER;
-    }
-
-    /**
      * Children must return their max building level.
      *
      * @return Max building level.
@@ -709,6 +688,43 @@ public abstract class AbstractBuilding
     {
         // Location doubles as ID.
         return location;
+    }
+
+    /**
+     * Marks the instance and the building dirty.
+     */
+    public final void markDirty()
+    {
+        dirty = true;
+        colony.markBuildingsDirty();
+    }
+
+    /**
+     * Checks if this building have a work order.
+     *
+     * @return true if the building is building, upgrading or repairing.
+     */
+    public boolean hasWorkOrder()
+    {
+        return getCurrentWorkOrderLevel() != NO_WORK_ORDER;
+    }
+
+    /**
+     * Get the current level of the work order.
+     *
+     * @return NO_WORK_ORDER if not current work otherwise the level requested.
+     */
+    private int getCurrentWorkOrderLevel()
+    {
+        for (@NotNull final WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
+        {
+            if (o.getBuildingLocation().equals(getID()))
+            {
+                return o.getUpgradeLevel();
+            }
+        }
+
+        return NO_WORK_ORDER;
     }
 
     /**
@@ -832,15 +848,6 @@ public abstract class AbstractBuilding
         buildingLevel = level;
         markDirty();
         ColonyManager.markDirty();
-    }
-
-    /**
-     * Marks the instance and the building dirty.
-     */
-    public final void markDirty()
-    {
-        dirty = true;
-        colony.markBuildingsDirty();
     }
 
     /**
@@ -1147,20 +1154,20 @@ public abstract class AbstractBuilding
      */
     public boolean transferStack(@NotNull final ItemStack stack, @NotNull final World world)
     {
-        if (tileEntity == null || InventoryUtils.isInventoryFull(tileEntity))
+        if (tileEntity == null || InventoryUtils.isProviderFull(tileEntity))
         {
             for (final BlockPos pos : containerList)
             {
                 final TileEntity tempTileEntity = world.getTileEntity(pos);
-                if (tempTileEntity instanceof TileEntityChest && !InventoryUtils.isInventoryFull((IInventory) tempTileEntity))
+                if (tempTileEntity instanceof TileEntityChest && !InventoryUtils.isProviderFull(tempTileEntity))
                 {
-                    return InventoryUtils.addItemStackToInventory((IInventory) tempTileEntity, stack);
+                    return InventoryUtils.addItemStackToProvider(tempTileEntity, stack);
                 }
             }
         }
         else
         {
-            return InventoryUtils.addItemStackToInventory(tileEntity, stack);
+            return InventoryUtils.addItemStackToProvider(tileEntity, stack);
         }
         return false;
     }
@@ -1180,17 +1187,24 @@ public abstract class AbstractBuilding
             for (final BlockPos pos : containerList)
             {
                 final TileEntity tempTileEntity = world.getTileEntity(pos);
-                if (tempTileEntity instanceof TileEntityChest && !InventoryUtils.isInventoryFull((IInventory) tempTileEntity))
+                if (tempTileEntity instanceof TileEntityChest && !InventoryUtils.isProviderFull(tempTileEntity))
                 {
-                    return InventoryUtils.forceItemStackToInventory((IInventory) tempTileEntity, stack, this);
+                    return forceItemStackToProvider(tempTileEntity, stack);
                 }
             }
         }
         else
         {
-            return InventoryUtils.forceItemStackToInventory(tileEntity, stack, this);
+            return forceItemStackToProvider(tileEntity, stack);
         }
         return null;
+    }
+
+    @Nullable
+    private ItemStack forceItemStackToProvider(@NotNull final ICapabilityProvider provider, @NotNull final ItemStack itemStack)
+    {
+        final List<ItemStorage> localAlreadyKept = new ArrayList<>();
+        return InventoryUtils.forceItemStackToProvider(provider, itemStack, (ItemStack stack) -> EntityAIWorkDeliveryman.workerRequiresItem(this, stack, localAlreadyKept));
     }
 
     /**
@@ -1203,6 +1217,8 @@ public abstract class AbstractBuilding
         return isMirrored;
     }
 
+    //------------------------- Ending Required Tools/Item handling -------------------------//
+
     /**
      * Sets the mirror of the current building.
      */
@@ -1210,8 +1226,6 @@ public abstract class AbstractBuilding
     {
         this.isMirrored = !isMirrored;
     }
-
-    //------------------------- Ending Required Tools/Item handling -------------------------//
 
     /**
      * The AbstractBuilding View is the client-side representation of a AbstractBuilding.

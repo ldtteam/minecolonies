@@ -24,7 +24,8 @@ public final class AchievementUtils
     }
 
     /**
-     * This method will sync all acquired achievements by this colony to all members with at least rank {@link Permissions.Rank#OFFICER}.
+     * This method will sync all acquired achievements by this colony to all
+     * members with at least rank {@link Permissions.Rank#OFFICER}.
      *
      * @param colony The colony to sync
      */

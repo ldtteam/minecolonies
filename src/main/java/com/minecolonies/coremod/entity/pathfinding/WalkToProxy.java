@@ -244,7 +244,7 @@ public class WalkToProxy
                 }
 
                 proxyList.add(
-                        new BlockPos(
+                  new BlockPos(
                                 ladderPos.getX() + building.getVectorX() * OTHER_SIDE_OF_SHAFT,
                                 level.getDepth(),
                                 ladderPos.getZ() + building.getVectorZ() * OTHER_SIDE_OF_SHAFT));
@@ -266,8 +266,8 @@ public class WalkToProxy
                 proxyList.add(
                   new BlockPos(
                                 ladderPos.getX() + building.getVectorX() * OTHER_SIDE_OF_SHAFT,
-                          level.getDepth(),
-                          ladderPos.getZ() + building.getVectorZ() * OTHER_SIDE_OF_SHAFT));
+                                level.getDepth(),
+                                ladderPos.getZ() + building.getVectorZ() * OTHER_SIDE_OF_SHAFT));
 
                 if (level.getRandomNode() != null && level.getRandomNode().getParent() != null)
                 {

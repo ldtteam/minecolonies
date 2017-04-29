@@ -59,30 +59,25 @@ public class BuildingFarmer extends AbstractBuildingWorker
     /**
      * Flag used to be notified about block updates.
      */
-    private static final int BLOCK_UPDATE_FLAG = 3;
-
+    private static final int                       BLOCK_UPDATE_FLAG = 3;
+    /**
+     * Sets the amount of saplings the lumberjack should keep.
+     */
+    private static final int                       SEEDS_TO_KEEP     = 64;
     /**
      * The list of the fields the farmer manages.
      */
-    private final ArrayList<Field> farmerFields = new ArrayList<>();
-
+    private final        ArrayList<Field>          farmerFields      = new ArrayList<>();
+    private final        Map<ItemStorage, Integer> keepX             = new HashMap<>();
     /**
      * The field the farmer is currently working on.
      */
     @Nullable
     private Field currentField;
-
     /**
      * Fields should be assigned manually to the farmer.
      */
     private boolean assignManually = false;
-
-    /**
-     * Sets the amount of saplings the lumberjack should keep.
-     */
-    private static final int SEEDS_TO_KEEP = 64;
-
-    private final Map<ItemStorage, Integer> keepX = new HashMap<>();
 
     /**
      * Public constructor which instantiates the building.
@@ -102,7 +97,6 @@ public class BuildingFarmer extends AbstractBuildingWorker
         keepX.put(new ItemStorage(stackCarrot.getItem(), stackCarrot.getItemDamage(), 0, false), SEEDS_TO_KEEP);
         keepX.put(new ItemStorage(stackPotatoe.getItem(), stackPotatoe.getItemDamage(), 0, false), SEEDS_TO_KEEP);
         keepX.put(new ItemStorage(stackReed.getItem(), stackReed.getItemDamage(), 0, false), SEEDS_TO_KEEP);
-
     }
 
     /**
@@ -178,19 +172,6 @@ public class BuildingFarmer extends AbstractBuildingWorker
         return null;
     }
 
-    /**
-     * Override this method if you want to keep an amount of items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
-     *
-     * @return a list of objects which should be kept.
-     */
-    @Override
-    public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
-    {
-        return keepX;
-    }
-
     @NotNull
     @Override
     public String getSchematicName()
@@ -219,11 +200,17 @@ public class BuildingFarmer extends AbstractBuildingWorker
         }
     }
 
-    @NotNull
+    /**
+     * Override this method if you want to keep an amount of items in inventory.
+     * When the inventory is full, everything get's dumped into the building chest.
+     * But you can use this method to hold some stacks back.
+     *
+     * @return a list of objects which should be kept.
+     */
     @Override
-    public String getJobName()
+    public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
     {
-        return FARMER;
+        return keepX;
     }
 
     @NotNull
@@ -318,6 +305,13 @@ public class BuildingFarmer extends AbstractBuildingWorker
                 }
             }
         }
+    }
+
+    @NotNull
+    @Override
+    public String getJobName()
+    {
+        return FARMER;
     }
 
     /**

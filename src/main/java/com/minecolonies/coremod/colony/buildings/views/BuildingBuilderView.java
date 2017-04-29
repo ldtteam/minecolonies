@@ -59,24 +59,13 @@ public class BuildingBuilderView extends AbstractBuildingWorker.View
             //final ItemStack itemStack = ByteBufUtils.readItemStack(buf);
             final int itemId = buf.readInt();
             final int damage = buf.readInt();
-            final ItemStack itemStack = new ItemStack(Item.getByNameOrId(Integer.toString(itemId)),1,damage);
+            final ItemStack itemStack = new ItemStack(Item.getByNameOrId(Integer.toString(itemId)), 1, damage);
             final int amountAvailable = buf.readInt();
             final int amountNeeded = buf.readInt();
             final BuildingBuilderResource resource =
-                new BuildingBuilderResource(itemStack.getItem(), itemStack.getItemDamage(), amountNeeded, amountAvailable);
+              new BuildingBuilderResource(itemStack.getItem(), itemStack.getItemDamage(), amountNeeded, amountAvailable);
             resources.put(itemStack.getDisplayName(), resource);
         }
-    }
-
-    /**
-     * Getter for the needed resources.
-     *
-     * @return a copy of the HashMap(String, Object).
-     */
-
-    public Map<String, BuildingBuilderResource> getResources()
-    {
-        return Collections.unmodifiableMap(resources);
     }
 
     @NotNull
@@ -91,6 +80,17 @@ public class BuildingBuilderView extends AbstractBuildingWorker.View
     public AbstractBuildingWorker.Skill getSecondarySkill()
     {
         return AbstractBuildingWorker.Skill.STRENGTH;
+    }
+
+    /**
+     * Getter for the needed resources.
+     *
+     * @return a copy of the HashMap(String, Object).
+     */
+
+    public Map<String, BuildingBuilderResource> getResources()
+    {
+        return Collections.unmodifiableMap(resources);
     }
 }
 

@@ -16,7 +16,7 @@ public class ChatSpamFilterTest extends AbstractMockStaticsTest
     private static final String MESSAGE_1 = "Whatever";
     private static final String MESSAGE_2 = "Whatever2";
     @Mock
-    private EntityCitizen citizen;
+    private EntityCitizen  citizen;
     private ChatSpamFilter filter;
 
     @Before

@@ -15,6 +15,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -97,12 +98,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     {
         //TODO make this more sophisticated
         return block instanceof BlockOre;
-    }
-
-    @Override
-    public IBlockState getSolidSubstitution(BlockPos ignored)
-    {
-        return Blocks.COBBLESTONE.getDefaultState();
     }
 
     //Miner wants to work but is not at building
@@ -494,33 +489,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         return CLEAR_STEP;
     }
 
-    @Override
-    protected boolean checkIfCanceled()
-    {
-       if(!isThereAStructureToBuild())
-        {
-            switch (getState())
-            {
-                case CLEAR_STEP:
-                case BUILDING_STEP:
-                case DECORATION_STEP:
-                case SPAWN_STEP:
-                    return true;
-                default:
-                    return false;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    protected void onStartWithoutStructure()
-    {
-        /**
-         * Nothing to do here.
-         */
-    }
-
     @NotNull
     private AIState executeNodeMining()
     {
@@ -596,8 +564,9 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     /**
      * Initiates structure loading.
      *
-     * @param mineNode  the node to load it for.
-     * @param direction the direction it faces.
+     * @param mineNode     the node to load it for.
+     * @param rotateTimes  The amount of time to rotate the structure.
+     * @param structurePos The position of the structure.
      */
     private void initStructure(final Node mineNode, final int rotateTimes, BlockPos structurePos)
     {
@@ -707,7 +676,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         }
         if (slot != -1)
         {
-            getInventory().decrStackSize(slot, 1);
+            new InvWrapper(getInventory()).extractItem(slot, 1, false);
             //Flag 1+2 is needed for updates
             world.setBlockState(location, metadata, 3);
         }
@@ -748,6 +717,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
      * Takes a min distance from width and length.
      * <p>
      * Then finds the floor level at that distance and then check if it does contain two air levels.
+     *
      * @param targetPosition the position to work at.
      * @return BlockPos position to work from.
      */
@@ -755,6 +725,39 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     public BlockPos getWorkingPosition(BlockPos targetPosition)
     {
         return getNodeMiningPosition(targetPosition);
+    }
+
+    @Override
+    public IBlockState getSolidSubstitution(BlockPos ignored)
+    {
+        return Blocks.COBBLESTONE.getDefaultState();
+    }
+
+    @Override
+    protected boolean checkIfCanceled()
+    {
+        if (!isThereAStructureToBuild())
+        {
+            switch (getState())
+            {
+                case CLEAR_STEP:
+                case BUILDING_STEP:
+                case DECORATION_STEP:
+                case SPAWN_STEP:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    protected void onStartWithoutStructure()
+    {
+        /**
+         * Nothing to do here.
+         */
     }
 
     /**
@@ -772,13 +775,13 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         }
         final Point2D parentPos = buildingMiner.getCurrentLevel().getRandomNode().getParent();
         if (parentPos != null && buildingMiner.getCurrentLevel().getNode(parentPos) != null
-                && buildingMiner.getCurrentLevel().getNode(parentPos).getStyle() == Node.NodeType.SHAFT)
+              && buildingMiner.getCurrentLevel().getNode(parentPos).getStyle() == Node.NodeType.SHAFT)
         {
             final BlockPos ladderPos = buildingMiner.getLadderLocation();
             return new BlockPos(
-                    ladderPos.getX() + buildingMiner.getVectorX() * OTHER_SIDE_OF_SHAFT,
-                    buildingMiner.getCurrentLevel().getDepth(),
-                    ladderPos.getZ() + buildingMiner.getVectorZ() * OTHER_SIDE_OF_SHAFT);
+                                 ladderPos.getX() + buildingMiner.getVectorX() * OTHER_SIDE_OF_SHAFT,
+                                 buildingMiner.getCurrentLevel().getDepth(),
+                                 ladderPos.getZ() + buildingMiner.getVectorZ() * OTHER_SIDE_OF_SHAFT);
         }
         final Point2D pos = buildingMiner.getCurrentLevel().getRandomNode().getParent();
         return new BlockPos(pos.getX(), buildingMiner.getCurrentLevel().getDepth(), pos.getY());

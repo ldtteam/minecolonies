@@ -44,6 +44,12 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand
     }
 
     @Override
+    public boolean canRankUseCommand(@NotNull final Colony colony, @NotNull final EntityPlayer player)
+    {
+        return colony.getPermissions().hasPermission(player, Permissions.Action.TELEPORT_TO_COLONY);
+    }
+
+    @Override
     public void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender, @NotNull String... args) throws CommandException
     {
         //see if player is allowed to use in the configs
@@ -59,19 +65,13 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand
         sender.getCommandSenderEntity().sendMessage(new TextComponentString("You are not allowed to do this"));
     }
 
-    @Override
-    public boolean canRankUseCommand(@NotNull final Colony colony, @NotNull final EntityPlayer player)
-    {
-        return colony.getPermissions().hasPermission(player, Permissions.Action.TELEPORT_TO_COLONY);
-    }
-
     @NotNull
     @Override
     public List<String> getTabCompletionOptions(
-            @NotNull final MinecraftServer server,
-            @NotNull final ICommandSender sender,
-            @NotNull final String[] args,
-            final BlockPos pos)
+                                                 @NotNull final MinecraftServer server,
+                                                 @NotNull final ICommandSender sender,
+                                                 @NotNull final String[] args,
+                                                 final BlockPos pos)
     {
         return Collections.emptyList();
     }
