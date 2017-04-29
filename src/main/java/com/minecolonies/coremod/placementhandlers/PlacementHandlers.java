@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.placementhandlers;
 
+import com.minecolonies.coremod.blocks.BlockSolidSubstitution;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
@@ -49,6 +50,7 @@ public final class PlacementHandlers
         handlers.add(new FlowerPotPlacementHandler());
         handlers.add(new BlockGrassPathPlacementHandler());
         handlers.add(new StairBlockPlacementHandler());
+        handlers.add(new BlockSolidSubstitutionPlacementHandler());
         handlers.add(new GeneralBlockPlacementHandler());
     }
 
@@ -65,14 +67,13 @@ public final class PlacementHandlers
 
             if (!Configurations.builderInfiniteResources)
             {
-                if (!placer.checkOrRequestItems(false, new ItemStack(Items.FLINT_AND_STEEL, 1)))
+                if (placer.checkOrRequestItems(false, new ItemStack(Items.FLINT_AND_STEEL, 1)))
                 {
                     return ActionProcessingResult.DENY;
                 }
 
                 final EntityCitizen citizen = placer.getWorker();
-                final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(new InvWrapper(citizen.getInventoryCitizen()),
-                        itemStack -> itemStack.getItem() == Items.FLINT_AND_STEEL);
+                final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(new InvWrapper(citizen.getInventoryCitizen()), s -> s.getItem() == Items.FLINT_AND_STEEL);
                 final ItemStack item = slot == -1 ? null : citizen.getInventoryCitizen().getStackInSlot(slot);
                 if (item == null || !(item.getItem() instanceof ItemFlintAndSteel))
                 {
@@ -98,7 +99,7 @@ public final class PlacementHandlers
                 return ActionProcessingResult.IGNORE;
             }
 
-            if(!Configurations.builderInfiniteResources && !placer.checkOrRequestItems(new ItemStack(Blocks.DIRT)))
+            if(!Configurations.builderInfiniteResources && placer.checkOrRequestItems(placer.getTotalAmount(new ItemStack(Blocks.DIRT))))
             {
                 return ActionProcessingResult.DENY;
             }
@@ -123,7 +124,7 @@ public final class PlacementHandlers
                 return ActionProcessingResult.IGNORE;
             }
 
-            if(!Configurations.builderInfiniteResources && !placer.checkOrRequestItems(BlockUtils.getItemStackFromBlockState(blockState)))
+            if(!Configurations.builderInfiniteResources && placer.checkOrRequestItems(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState))))
             {
                 return ActionProcessingResult.DENY;
             }
@@ -151,7 +152,7 @@ public final class PlacementHandlers
 
 
             if (!Configurations.builderInfiniteResources && blockState.getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT
-                    && !placer.checkOrRequestItems(BlockUtils.getItemStackFromBlockState(blockState)))
+                    && placer.checkOrRequestItems(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState))))
             {
                 return ActionProcessingResult.DENY;
             }
@@ -183,7 +184,7 @@ public final class PlacementHandlers
             }
 
             if (!Configurations.builderInfiniteResources && blockState.getValue(BlockDoublePlant.HALF).equals(BlockDoublePlant.EnumBlockHalf.LOWER)
-                    && !placer.checkOrRequestItems(BlockUtils.getItemStackFromBlockState(blockState)))
+                    && placer.checkOrRequestItems(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState))))
             {
                 return ActionProcessingResult.DENY;
             }
@@ -282,23 +283,20 @@ public final class PlacementHandlers
                 return ActionProcessingResult.IGNORE;
             }
 
-            if (!world.setBlockState(pos, blockState, 0x03))
+            if (!Configurations.builderInfiniteResources)
             {
-                return ActionProcessingResult.DENY;
-            }
-
-            if(!Configurations.builderInfiniteResources)
-            {
-                if(!(placer.holdEfficientTool(blockState.getBlock())))
+                if (!(placer.holdEfficientTool(blockState.getBlock()) || placer.checkOrRequestItems(placer.getTotalAmount(new ItemStack(Blocks.DIRT,1)))))
                 {
                     return ActionProcessingResult.DENY;
                 }
                 placer.handleBuildingOverBlock(pos);
-                if (!world.setBlockState(pos, Blocks.GRASS_PATH.getDefaultState(), 0x03))
-                {
-                    return ActionProcessingResult.DENY;
-                }
             }
+
+            if (!world.setBlockState(pos, Blocks.GRASS_PATH.getDefaultState(), 0x03))
+            {
+                return ActionProcessingResult.DENY;
+            }
+
             return Blocks.DIRT.getDefaultState();
         }
     }
@@ -319,6 +317,37 @@ public final class PlacementHandlers
             }
 
             return ActionProcessingResult.IGNORE;
+        }
+    }
+
+    public static class BlockSolidSubstitutionPlacementHandler implements IPlacementHandler
+    {
+        @Override
+        public Object handle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
+                @Nullable final AbstractEntityAIStructure placer)
+        {
+            if (!(blockState.getBlock() instanceof BlockSolidSubstitution))
+            {
+                return ActionProcessingResult.IGNORE;
+            }
+
+            final IBlockState newBlockState = BlockUtils.getSubstitutionBlockAtWorld(world, pos);
+
+            if(!Configurations.builderInfiniteResources)
+            {
+                if(placer.checkOrRequestItems(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(newBlockState))))
+                {
+                    return ActionProcessingResult.DENY;
+                }
+                placer.handleBuildingOverBlock(pos);
+            }
+
+            if (!world.setBlockState(pos, newBlockState, 0x03))
+            {
+                return ActionProcessingResult.DENY;
+            }
+
+            return newBlockState;
         }
     }
 
@@ -349,7 +378,7 @@ public final class PlacementHandlers
                 return ActionProcessingResult.DENY;
             }
 
-            return Blocks.DIRT.getDefaultState();
+            return blockState;
         }
     }
 }
