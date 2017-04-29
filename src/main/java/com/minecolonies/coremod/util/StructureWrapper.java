@@ -9,6 +9,7 @@ import net.minecraft.block.BlockStairs;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -280,7 +281,7 @@ public final class StructureWrapper
                 return false;
             }
         }
-        while (doesStructureBlockEqualWorldBlock() && count < Configurations.maxBlocksCheckedByBuilder);
+        while (isStructureBlockEqualWorldBlock() && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
     }
@@ -320,7 +321,7 @@ public final class StructureWrapper
      *
      * @return true if the structure block equals the world block.
      */
-    public boolean doesStructureBlockEqualWorldBlock()
+    public boolean isStructureBlockEqualWorldBlock()
     {
         final IBlockState structureBlockState = structure.getBlockState(this.getLocalPosition());
         final Block structureBlock = structureBlockState.getBlock();
@@ -341,7 +342,8 @@ public final class StructureWrapper
         {
             return structureBlock == worldBlockState.getBlock();
         }
-        else if (structureBlock instanceof BlockStairs && structureBlockState == worldBlockState)
+        else if ((structureBlock instanceof BlockStairs && structureBlockState == worldBlockState)
+                || BlockUtils.isGrassOrDirt(structureBlock, worldBlockState.getBlock(), structureBlockState, worldBlockState))
         {
             return true;
         }
@@ -427,7 +429,7 @@ public final class StructureWrapper
             }
         }
         //Check for air blocks and if blocks below the hut are different from the structure
-        while ((worldBlockAir() || doesStructureBlockEqualWorldBlock()) && count < Configurations.maxBlocksCheckedByBuilder);
+        while ((worldBlockAir() || isStructureBlockEqualWorldBlock()) && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
     }
@@ -448,7 +450,7 @@ public final class StructureWrapper
                 return false;
             }
         }
-        while ((doesStructureBlockEqualWorldBlock() || isBlockNonSolid()) && count < Configurations.maxBlocksCheckedByBuilder);
+        while ((isStructureBlockEqualWorldBlock() || isBlockNonSolid()) && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
     }
@@ -506,7 +508,7 @@ public final class StructureWrapper
                 return false;
             }
         }
-        while ((doesStructureBlockEqualWorldBlock() || isBlockSolid()) && count < Configurations.maxBlocksCheckedByBuilder);
+        while ((isStructureBlockEqualWorldBlock() || isBlockSolid()) && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
     }
@@ -602,7 +604,14 @@ public final class StructureWrapper
             return null;
         }
 
-        return BlockUtils.getItemStackFromBlockState(blockState).getItem();
+        final ItemStack stack = BlockUtils.getItemStackFromBlockState(blockState);
+
+        if(stack != null)
+        {
+            return stack.getItem();
+        }
+
+        return null;
     }
 
     /**

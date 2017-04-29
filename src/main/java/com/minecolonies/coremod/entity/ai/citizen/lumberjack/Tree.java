@@ -1,9 +1,10 @@
 package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
-import com.minecolonies.blockout.Log;
 import com.minecolonies.compatibility.Compatibility;
 import com.minecolonies.coremod.util.BlockPosUtil;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockNewLog;
+import net.minecraft.block.BlockOldLog;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
@@ -45,6 +46,11 @@ public class Tree
      * Tag to store the topLog to NBT.
      */
     private static final String TAG_TOP_LOG = "topLog";
+
+    /**
+     * Tag to store if the Tree is a slime tree to NBT.
+     */
+    private static final String TAG_IS_SLIME_TREE = "isSlimeTree";
 
     /**
      * Number of leaves necessary for a tree to be recognized.
@@ -116,6 +122,11 @@ public class Tree
     }
 
     /**
+     * If the Tree is a Slime Tree.
+     */
+    private boolean isSlimeTree = false;
+
+    /**
      * Creates a new tree Object for the lumberjack.
      * Since the same type of variant of the block old log or new log do not match we have to separate them.
      *
@@ -156,6 +167,8 @@ public class Tree
             checkTree(world, topLog);
             stumpLocations = new ArrayList<>();
             woodBlocks.clear();
+            final Block BottomBlock = world.getBlockState(location).getBlock();
+            isSlimeTree = Compatibility.isSlimeBlock(BottomBlock);
         }
     }
 
@@ -289,6 +302,8 @@ public class Tree
         }
 
         tree.topLog = BlockPosUtil.readFromNBT(compound, TAG_TOP_LOG);
+
+        tree.isSlimeTree = compound.getBoolean(TAG_IS_SLIME_TREE);
 
         return tree;
     }
@@ -501,6 +516,14 @@ public class Tree
     }
 
     /**
+     * @return if tree is slime tree.
+     */
+    public boolean isSlimeTree()
+    {
+        return isSlimeTree;
+    }
+
+    /**
      * All stump positions of a tree (A tree may have been planted with different saplings).
      *
      * @return an Arraylist of the positions.
@@ -605,5 +628,7 @@ public class Tree
         compound.setTag(TAG_STUMPS, stumps);
 
         BlockPosUtil.writeToNBT(compound, TAG_TOP_LOG, topLog);
+
+        compound.setBoolean(TAG_IS_SLIME_TREE, isSlimeTree);
     }
 }

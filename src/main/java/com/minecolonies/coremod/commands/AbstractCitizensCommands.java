@@ -12,7 +12,6 @@ import net.minecraft.util.text.TextComponentString;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import javax.swing.*;
 import java.util.Collections;
 import java.util.List;
 

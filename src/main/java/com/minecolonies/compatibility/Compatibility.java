@@ -1,6 +1,7 @@
 package com.minecolonies.compatibility;
 
 import com.minecolonies.compatibility.tinkers.SlimeTreeCheck;
+import com.minecolonies.compatibility.tinkers.TinkersWeaponHelper;
 import com.minecolonies.compatibility.tinkers.ToolBrokenCheck;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -85,5 +86,25 @@ public final class Compatibility
     public static int getLeafVariant(@NotNull final IBlockState leaf)
     {
         return SlimeTreeCheck.getLeafVariant(leaf);
+    }
+
+    /**
+     * Check if a certain itemstack is a tinkers weapon.
+     * @param stack the stack to check for.
+     * @return true if so.
+     */
+    public static boolean isTinkersWeapon(@NotNull final ItemStack stack)
+    {
+        return TinkersWeaponHelper.isTinkersSword(stack);
+    }
+
+    /**
+     * Calculate the actual attack damage of the tinkers weapon.
+     * @param stack the stack.
+     * @return the attack damage.
+     */
+    public static double getAttackDamage(@NotNull final ItemStack stack)
+    {
+        return TinkersWeaponHelper.getDamage(stack);
     }
 }

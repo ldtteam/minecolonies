@@ -220,7 +220,7 @@ public class ColonyPermissionEventHandler
             if(Configurations.enableColonyProtection)
             {
                 if((event.getWorld().getBlockState(event.getPos()) != null) &&
-                        !(event.getItemStack().getItem() instanceof ItemFood) &&
+                        !(event.getItemStack() != null && event.getItemStack().getItem() instanceof ItemFood) &&
                         !perms.hasPermission(event.getEntityPlayer(), Permissions.Action.RIGHTCLICK_BLOCK))
                 {
                     cancelEvent(event, event.getEntityPlayer());

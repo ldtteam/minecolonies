@@ -18,7 +18,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.COLONYTP;
 import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.RTP;
 
 /**

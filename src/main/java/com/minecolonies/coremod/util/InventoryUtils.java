@@ -187,6 +187,33 @@ public final class InventoryUtils
     }
 
     /**
+     * Returns the index of the first occurrence of an ItemStack that matches
+     * the given predicate in the {@link IItemHandler}.
+     * Also applies the not empty check.
+     *
+     * @param itemHandler                 ItemHandler to check
+     * @param itemStackSelectionPredicate The predicate to match.
+     * @return Index of the first occurrence
+     */
+    public static int findFirstSlotInItemHandlerNotEmptyWith(@NotNull final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    {
+        @NotNull final Predicate<ItemStack> notEmptyPredicate = itemStack -> !InventoryUtils.isItemStackEmpty(itemStack);
+        notEmptyPredicate.and(itemStackSelectionPredicate);
+
+        for (int slot = 0; slot < itemHandler.getSlots(); slot++)
+        {
+            if (notEmptyPredicate.test(itemHandler.getStackInSlot(slot)))
+            {
+                return slot;
+            }
+        }
+
+        return -1;
+        //TODO: Later harden contract to remove compare on slot := -1
+        //throw new IllegalStateException("Item "+targetItem.getUnlocalizedName() + " not found in ItemHandler!");
+    }
+
+    /**
      * Returns the amount of occurrences in the {@link IItemHandler}.
      *
      * @param itemHandler {@link IItemHandler} to scan.
@@ -602,6 +629,28 @@ public final class InventoryUtils
         return -1;
         //TODO: Later harden contract to remove compare on slot := -1
         //throw new IllegalStateException("Item "+targetItem.getUnlocalizedName() + " not found in ItemHandler!");
+    }
+
+    /**
+     * Returns the index of the first occurrence of an ItemStack that matches
+     * the given predicate in the {@link ICapabilityProvider}.
+     *
+     * @param provider                    Provider to check
+     * @param itemStackSelectionPredicate The predicate to match.
+     * @return Index of the first occurrence
+     */
+    public static int findFirstSlotInProviderNotEmptyWith(@NotNull final ICapabilityProvider provider, Predicate<ItemStack> itemStackSelectionPredicate)
+    {
+        for (IItemHandler handler : getItemHandlersFromProvider(provider))
+        {
+            int foundSlot = findFirstSlotInItemHandlerNotEmptyWith(handler, itemStackSelectionPredicate);
+            if (foundSlot > -1)
+            {
+                return foundSlot;
+            }
+        }
+
+        return -1;
     }
 
     /**
@@ -1237,7 +1286,7 @@ public final class InventoryUtils
      * @param itemDamage the item damage value.
      * @return True when item in item stack is equal to target item.
      */
-    private static boolean compareItems(@Nullable final ItemStack itemStack, final Item targetItem, int itemDamage)
+    public static boolean compareItems(@Nullable final ItemStack itemStack, final Item targetItem, int itemDamage)
     {
         return !isItemStackEmpty(itemStack) && itemStack.getItem() == targetItem && (itemStack.getItemDamage() == itemDamage || itemDamage == -1);
     }
@@ -1344,6 +1393,25 @@ public final class InventoryUtils
                 (ItemStack stack) -> !isItemStackEmpty(stack) && (Utils.isTool(stack, toolTypeName) && verifyToolLevel(stack,
                         Utils.getMiningLevel(stack, toolTypeName),
                         requiredLevel))) > -1;
+    }
+
+    public static boolean transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(@NotNull final IItemHandler sourceHandler,
+            @NotNull final Predicate<ItemStack> itemStackSelectionPredicate,
+            @NotNull int amount, @NotNull IItemHandler targetHandler)
+    {
+        final int desiredItemSlot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(sourceHandler,
+                itemStackSelectionPredicate::test);
+
+        if(desiredItemSlot == -1)
+        {
+            return false;
+        }
+        final ItemStack returnStack = sourceHandler.extractItem(desiredItemSlot, amount, false);
+        if(InventoryUtils.isItemStackEmpty(returnStack))
+        {
+            return false;
+        }
+        return InventoryUtils.addItemStackToItemHandler(targetHandler, returnStack);
     }
 
     /**
