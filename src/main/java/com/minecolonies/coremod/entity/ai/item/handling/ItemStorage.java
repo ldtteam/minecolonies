@@ -16,17 +16,15 @@ public class ItemStorage
     /**
      * The damage value.
      */
-    private final int damageValue;
-
-    /**
-     * The amount.
-     */
-    private int amount;
-
+    private final int     damageValue;
     /**
      * Set this to ignore the damage value in comparisons.
      */
     private final boolean ignoreDamageValue;
+    /**
+     * The amount.
+     */
+    private       int     amount;
 
     /**
      * Creates an instance of the storage.
@@ -63,7 +61,6 @@ public class ItemStorage
     {
         this.amount = amount;
     }
-
 
     /**
      * Getter for the ignoreDamageValue.

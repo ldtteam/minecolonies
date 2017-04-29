@@ -20,7 +20,7 @@ import java.util.List;
  */
 public abstract class AbstractCitizensCommands extends AbstractSingleCommand
 {
-    private static final String NO_ARGUMENTS                    = "Please define a valid citizen and/or colony";
+    private static final String NO_ARGUMENTS = "Please define a valid citizen and/or colony";
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -43,7 +43,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        if(args.length == 0)
+        if (args.length == 0)
         {
             sender.getCommandSenderEntity().sendMessage(new TextComponentString(NO_ARGUMENTS));
             return;
@@ -51,17 +51,17 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
 
         boolean firstArgumentColonyId = true;
         int colonyId = -1;
-        if(args.length >= 2)
+        if (args.length >= 2)
         {
             colonyId = getIthArgument(args, 0, -1);
-            if(colonyId == -1)
+            if (colonyId == -1)
             {
                 firstArgumentColonyId = false;
             }
         }
 
         final Colony colony;
-        if(sender instanceof EntityPlayer && colonyId == -1)
+        if (sender instanceof EntityPlayer && colonyId == -1)
         {
             final IColony tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), (EntityPlayer) sender);
             if (tempColony != null)
@@ -73,13 +73,13 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
 
         colony = ColonyManager.getColony(colonyId);
 
-        if(colony == null)
+        if (colony == null)
         {
             sender.getCommandSenderEntity().sendMessage(new TextComponentString(NO_ARGUMENTS));
             return;
         }
 
-        if(sender instanceof EntityPlayer)
+        if (sender instanceof EntityPlayer)
         {
             final EntityPlayer player = (EntityPlayer) sender;
             if (!canPlayerUseCommand(player, getCommand(), colonyId))
@@ -91,7 +91,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
 
         final int citizenId = getValidCitizenId(colony, firstArgumentColonyId, args);
 
-        if(citizenId == -1 || colony.getCitizen(citizenId) == null)
+        if (citizenId == -1 || colony.getCitizen(citizenId) == null)
         {
             sender.getCommandSenderEntity().sendMessage(new TextComponentString(NO_ARGUMENTS));
             return;
@@ -100,25 +100,50 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
         executeSpecializedCode(server, sender, colony, citizenId);
     }
 
+    @NotNull
+    @Override
+    public List<String> getTabCompletionOptions(
+                                                 @NotNull final MinecraftServer server,
+                                                 @NotNull final ICommandSender sender,
+                                                 @NotNull final String[] args,
+                                                 @Nullable final BlockPos pos)
+    {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public boolean isUsernameIndex(@NotNull final String[] args, final int index)
+    {
+        return false;
+    }
+
+    /**
+     * Returns the command enum describing this command.
+     *
+     * @return the command.
+     */
+    abstract Commands getCommand();
+
     /**
      * Get a valid citizenid from the arguments.
-     * @param colony the colony.
+     *
+     * @param colony                the colony.
      * @param firstArgumentColonyId to define the offset.
-     * @param args the arguments.
+     * @param args                  the arguments.
      * @return the valid id or -1 if not found.
      */
-    private static int getValidCitizenId(final Colony colony, final boolean firstArgumentColonyId, final String...args)
+    private static int getValidCitizenId(final Colony colony, final boolean firstArgumentColonyId, final String... args)
     {
         int offset = 0;
-        if(firstArgumentColonyId)
+        if (firstArgumentColonyId)
         {
             offset = 1;
         }
 
         final int citizenId = getIthArgument(args, offset, -1);
-        if(citizenId == -1)
+        if (citizenId == -1)
         {
-            if(args.length >= offset + 2)
+            if (args.length >= offset + 2)
             {
                 final String citizenName = args[offset] + " " + args[offset + 1] + " " + args[offset + 2];
                 for (int i = 1; i <= colony.getCitizens().size(); i++)
@@ -137,31 +162,9 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
 
     /**
      * Citizen commands have to overwrite this to handle their specialized code.
+     *
      * @param colonyId  the id for the colony
-     * @param citizenId  the id for the citizen
+     * @param citizenId the id for the citizen
      */
     abstract void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final Colony colonyId, final int citizenId);
-
-    @NotNull
-    @Override
-    public List<String> getTabCompletionOptions(
-            @NotNull final MinecraftServer server,
-            @NotNull final ICommandSender sender,
-            @NotNull final String[] args,
-            @Nullable final BlockPos pos)
-    {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public boolean isUsernameIndex(@NotNull final String[] args, final int index)
-    {
-        return false;
-    }
-
-    /**
-     * Returns the command enum describing this command.
-     * @return the command.
-     */
-    abstract Commands getCommand();
 }

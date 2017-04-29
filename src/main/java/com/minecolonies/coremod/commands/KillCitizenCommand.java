@@ -25,10 +25,10 @@ import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.K
 public class KillCitizenCommand extends AbstractCitizensCommands
 {
 
-    public static final  String       DESC                            = "kill";
-    private static final String       CITIZEN_DESCRIPTION             = "§2ID: §f %d §2 Name: §f %s";
-    private static final String       REMOVED_MESSAGE                 = "Has been removed";
-    private static final String       COORDINATES_XYZ                 = "§4x=§f%s §4y=§f%s §4z=§f%s";
+    public static final  String DESC                = "kill";
+    private static final String CITIZEN_DESCRIPTION = "§2ID: §f %d §2 Name: §f %s";
+    private static final String REMOVED_MESSAGE     = "Has been removed";
+    private static final String COORDINATES_XYZ     = "§4x=§f%s §4y=§f%s §4z=§f%s";
 
     /**
      * The damage source used to kill citizens.
@@ -64,13 +64,6 @@ public class KillCitizenCommand extends AbstractCitizensCommands
         server.addScheduledTask(() -> entityCitizen.onDeath(CONSOLE_DAMAGE_SOURCE));
     }
 
-    @Override
-    public boolean canPlayerUseCommand(final EntityPlayer player, final Commands theCommand, final int colonyId)
-    {
-        return super.canPlayerUseCommand(player, theCommand, colonyId)
-                && ColonyManager.getColony(colonyId) != null && ColonyManager.getColony(colonyId).getPermissions().getRank(player).equals(Permissions.Rank.OWNER);
-    }
-
     @NotNull
     @Override
     public List<String> getTabCompletionOptions(
@@ -92,5 +85,12 @@ public class KillCitizenCommand extends AbstractCitizensCommands
     public Commands getCommand()
     {
         return KILLCITIZENS;
+    }
+
+    @Override
+    public boolean canPlayerUseCommand(final EntityPlayer player, final Commands theCommand, final int colonyId)
+    {
+        return super.canPlayerUseCommand(player, theCommand, colonyId)
+                 && ColonyManager.getColony(colonyId) != null && ColonyManager.getColony(colonyId).getPermissions().getRank(player).equals(Permissions.Rank.OWNER);
     }
 }

@@ -71,13 +71,6 @@ public class BuildingDeliveryman extends AbstractBuildingWorker
 
     @NotNull
     @Override
-    public String getJobName()
-    {
-        return DELIVERYMAN;
-    }
-
-    @NotNull
-    @Override
     public AbstractJob createJob(final CitizenData citizen)
     {
         return new JobDeliveryman(citizen);
@@ -93,6 +86,13 @@ public class BuildingDeliveryman extends AbstractBuildingWorker
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
+    }
+
+    @NotNull
+    @Override
+    public String getJobName()
+    {
+        return DELIVERYMAN;
     }
 
     @Override

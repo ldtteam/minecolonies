@@ -39,7 +39,8 @@ public final class SoundUtils
     private static final double VOLUME = 0.5D;
 
     /**
-     * in average 1 minute to the next sound which are 20 ticks the second * 60 seconds * 1 minute.
+     * in average 1 minute to the next sound which are 20 ticks the second * 60
+     * seconds * 1 minute.
      */
     private static final int CHANCE_TO_PLAY_SOUND = 20 * 60 * 2;
 

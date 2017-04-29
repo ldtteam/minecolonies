@@ -88,7 +88,8 @@ public final class Utils
     }
 
     /**
-     * Checks if the blocks above that point are all of the spezified block types.
+     * Checks if the blocks above that point are all of the spezified block
+     * types.
      *
      * @param world  the world we check on.
      * @param x      the x coordinate.
@@ -288,13 +289,13 @@ public final class Utils
     /**
      * Checks if a pickaxe can be used for that mining level.
      *
-     * @param minlevel the level needs to have.
-     * @param level    the level it has.
+     * @param requiredLevel the level needs to have.
+     * @param toolLevel     the level it has.
      * @return whether the pickaxe qualifies.
      */
-    public static boolean checkIfPickaxeQualifies(final int minlevel, final int level)
+    public static boolean checkIfPickaxeQualifies(final int requiredLevel, final int toolLevel)
     {
-        return checkIfPickaxeQualifies(minlevel, level, false);
+        return checkIfPickaxeQualifies(requiredLevel, toolLevel, false);
     }
 
     /**
@@ -303,24 +304,25 @@ public final class Utils
      * with an expensive pickaxe. So set {@code beEfficient} to false.
      * for that if you need it the other way around.
      *
-     * @param minlevel    the level needs to have.
-     * @param level       the level it has.
-     * @param beEfficient if he should stop using diamond picks on stone.
+     * @param requiredLevel        the level needs to have.
+     * @param toolLevel            the level it has.
+     * @param requireEfficientTool if he should stop using diamond picks on
+     *                             stone.
      * @return whether the pickaxe qualifies.
      */
-    public static boolean checkIfPickaxeQualifies(final int minlevel, final int level, final boolean beEfficient)
+    public static boolean checkIfPickaxeQualifies(final int requiredLevel, final int toolLevel, final boolean requireEfficientTool)
     {
         //Minecraft handles this as "everything is allowed"
-        if (minlevel < 0)
+        if (requiredLevel < 0)
         {
             return true;
         }
-        if (beEfficient && minlevel == 0)
+        if (requireEfficientTool && requiredLevel == 0)
         {
             //Code to not overuse on high level pickaxes
-            return level >= 0 && level <= 1;
+            return toolLevel >= 0 && toolLevel <= 1;
         }
-        return level >= minlevel;
+        return toolLevel >= requiredLevel;
     }
 
     /**

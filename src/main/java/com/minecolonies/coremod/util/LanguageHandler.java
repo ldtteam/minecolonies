@@ -26,56 +26,13 @@ public final class LanguageHandler
     /**
      * Send a message to the player.
      *
-     * @param player the player to send to.
-     * @param key the key of the message.
+     * @param player  the player to send to.
+     * @param key     the key of the message.
      * @param message the message to send.
      */
     public static void sendPlayerMessage(@NotNull final EntityPlayer player, final String key, final Object... message)
     {
         player.sendMessage(buildChatComponent(key, message));
-    }
-
-    /**
-     * Localize a string and use String.format().
-     *
-     * @param key  translation key.
-     * @param args Objects for String.format().
-     * @return Localized string.
-     */
-    public static String format(final String key, final Object... args)
-    {
-        final String result;
-        if(args.length == 0)
-        {
-            result = new TextComponentTranslation(key).getUnformattedText();
-        }
-        else
-        {
-            result = new TextComponentTranslation(key, args).getUnformattedText();
-        }
-        return result.isEmpty() ? key : result;
-    }
-
-    /**
-     * Send message to a list of players.
-     *
-     * @param players the list of players.
-     * @param key key of the message.
-     * @param message the message.
-     */
-    public static void sendPlayersMessage(@Nullable final List<EntityPlayer> players, final String key, final Object... message)
-    {
-        if (players == null || players.isEmpty())
-        {
-            return;
-        }
-
-        ITextComponent textComponent = buildChatComponent(key, message);
-
-        for (@NotNull final EntityPlayer player : players)
-        {
-            player.sendMessage(textComponent);
-        }
     }
 
     private static ITextComponent buildChatComponent(final String key, final Object... message)
@@ -135,7 +92,7 @@ public final class LanguageHandler
                     }
                 }
 
-                if(!isInArgs)
+                if (!isInArgs)
                 {
                     translation.appendText((String) object);
                 }
@@ -148,5 +105,48 @@ public final class LanguageHandler
         }
 
         return translation;
+    }
+
+    /**
+     * Localize a string and use String.format().
+     *
+     * @param key  translation key.
+     * @param args Objects for String.format().
+     * @return Localized string.
+     */
+    public static String format(final String key, final Object... args)
+    {
+        final String result;
+        if (args.length == 0)
+        {
+            result = new TextComponentTranslation(key).getUnformattedText();
+        }
+        else
+        {
+            result = new TextComponentTranslation(key, args).getUnformattedText();
+        }
+        return result.isEmpty() ? key : result;
+    }
+
+    /**
+     * Send message to a list of players.
+     *
+     * @param players the list of players.
+     * @param key     key of the message.
+     * @param message the message.
+     */
+    public static void sendPlayersMessage(@Nullable final List<EntityPlayer> players, final String key, final Object... message)
+    {
+        if (players == null || players.isEmpty())
+        {
+            return;
+        }
+
+        ITextComponent textComponent = buildChatComponent(key, message);
+
+        for (@NotNull final EntityPlayer player : players)
+        {
+            player.sendMessage(textComponent);
+        }
     }
 }

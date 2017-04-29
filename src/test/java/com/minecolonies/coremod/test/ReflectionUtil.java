@@ -10,7 +10,7 @@ import java.lang.reflect.Modifier;
 public class ReflectionUtil
 {
     public static void setFinalField(Object object, String fieldName, Object newValue)
-            throws NoSuchFieldException, IllegalAccessException
+      throws NoSuchFieldException, IllegalAccessException
     {
         Field field = object.getClass().getField(fieldName);
         field.setAccessible(true);
@@ -23,7 +23,7 @@ public class ReflectionUtil
     }
 
     public static void setStaticFinalField(Class clazz, String fieldName, Object newValue)
-            throws NoSuchFieldException, IllegalAccessException
+      throws NoSuchFieldException, IllegalAccessException
     {
         Field field = clazz.getField(fieldName);
         field.setAccessible(true);

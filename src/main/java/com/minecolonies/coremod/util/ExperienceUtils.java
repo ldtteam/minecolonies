@@ -11,7 +11,8 @@ public final class ExperienceUtils
     private static final double EXPERIENCE_MULTIPLIER = 1D;
 
     /**
-     * The number to create a percentage from another number (ex. 100*0.25 = 25).
+     * The number to create a percentage from another number (ex. 100*0.25 =
+     * 25).
      */
     private static final double PERCENT_MULTIPLIER = 100D;
 

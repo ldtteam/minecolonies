@@ -8,9 +8,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * The CitizenDataView is the client-side representation of a CitizenData.
- * Views contain the CitizenData's data that is relevant to a Client, in a more client-friendly form.
- * Mutable operations on a View result in a message to the server to perform the operation.
+ * The CitizenDataView is the client-side representation of a CitizenData. Views
+ * contain the CitizenData's data that is relevant to a Client, in a more
+ * client-friendly form. Mutable operations on a View result in a message to the
+ * server to perform the operation.
  */
 public class CitizenDataView
 {

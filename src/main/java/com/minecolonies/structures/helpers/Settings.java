@@ -208,6 +208,7 @@ public final class Settings
 
     /**
      * Get the mirror.
+     *
      * @return the mirror object.
      */
     public Mirror getMirror()

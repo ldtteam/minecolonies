@@ -38,22 +38,22 @@ public class Node
     /**
      * Z position of the node.
      */
-    private final double z;
+    private final double     z;
     /**
      * Central position of parent node.
      */
     @Nullable
-    private final Point2D parent;
+    private final Point2D    parent;
     /**
      * Style of the node.
      */
     @NotNull
-    private NodeType style;
+    private       NodeType   style;
     /**
      * Status of the node.
      */
     @NotNull
-    private NodeStatus status;
+    private       NodeStatus status;
 
     /**
      * Initializes the node.

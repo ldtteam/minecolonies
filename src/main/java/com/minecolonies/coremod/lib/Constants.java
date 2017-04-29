@@ -19,6 +19,4 @@ public class Constants
     public static final int ROTATE_ONCE = 1;
     public static final int ROTATE_TWICE = 2;
     public static final int ROTATE_THREE_TIMES = 3;
-
-
 }

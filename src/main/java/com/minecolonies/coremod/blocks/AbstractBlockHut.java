@@ -46,7 +46,8 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     /**
      * Constructor for a block using the minecolonies mod.
      * <p>
-     * Registers the block, sets the creative tab, as well as the resistance and the hardness.
+     * Registers the block, sets the creative tab, as well as the resistance and
+     * the hardness.
      */
     public AbstractBlockHut()
     {
@@ -237,7 +238,8 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
      * @param state   the state the placed block is in.
      * @param placer  the player placing the block.
      * @param stack   the itemstack from where the block was placed.
-     * @see Block#onBlockPlacedBy(World, BlockPos, IBlockState, EntityLivingBase, ItemStack)
+     * @see Block#onBlockPlacedBy(World, BlockPos, IBlockState,
+     * EntityLivingBase, ItemStack)
      */
     @Override
     public void onBlockPlacedBy(@NotNull final World worldIn, @NotNull final BlockPos pos, final IBlockState state, final EntityLivingBase placer, final ItemStack stack)
@@ -265,6 +267,19 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         }
     }
 
+    @NotNull
+    @Override
+    protected BlockStateContainer createBlockState()
+    {
+        return new BlockStateContainer(this, FACING);
+    }
+
+    @Override
+    public boolean doesSideBlockRendering(final IBlockState state, final IBlockAccess world, final BlockPos pos, final EnumFacing face)
+    {
+        return false;
+    }
+
     /**
      * Event-Handler for placement of this block.
      * <p>
@@ -277,10 +292,12 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
      * @param stack   the itemstack from where the block was placed.
      * @param mirror  the mirror used.
      * @param style   the style of the building
-     * @see Block#onBlockPlacedBy(World, BlockPos, IBlockState, EntityLivingBase, ItemStack)
+     * @see Block#onBlockPlacedBy(World, BlockPos, IBlockState,
+     * EntityLivingBase, ItemStack)
      */
-    public void onBlockPlacedByBuildTool(@NotNull final World worldIn, @NotNull final BlockPos pos,
-                                                  final IBlockState state, final EntityLivingBase placer, final ItemStack stack, final boolean mirror, final String style)
+    public void onBlockPlacedByBuildTool(
+                                                @NotNull final World worldIn, @NotNull final BlockPos pos,
+                                                final IBlockState state, final EntityLivingBase placer, final ItemStack stack, final boolean mirror, final String style)
     {
         final TileEntity tileEntity = worldIn.getTileEntity(pos);
         if (tileEntity instanceof TileEntityColonyBuilding)
@@ -290,19 +307,6 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         }
 
         onBlockPlacedBy(worldIn, pos, state, placer, stack);
-    }
-
-    @NotNull
-    @Override
-    protected BlockStateContainer createBlockState()
-    {
-        return new BlockStateContainer(this, FACING);
-    }
-
-    @Override
-    public boolean doesSideBlockRendering(final IBlockState state, final IBlockAccess world, final BlockPos pos, final EnumFacing face)
-    {
-        return false;
     }
 
     // =======================================================================

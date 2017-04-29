@@ -113,18 +113,6 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     }
 
     /**
-     * Getter of the job description.
-     *
-     * @return the description of the lumberjacks job.
-     */
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return LUMBERJACK;
-    }
-
-    /**
      * Create the job for the lumberjack.
      *
      * @param citizen the citizen to take the job.
@@ -149,6 +137,18 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     public boolean neededForWorker(@Nullable final ItemStack stack)
     {
         return Utils.isStackAxe(stack);
+    }
+
+    /**
+     * Getter of the job description.
+     *
+     * @return the description of the lumberjacks job.
+     */
+    @NotNull
+    @Override
+    public String getJobName()
+    {
+        return LUMBERJACK;
     }
 
     /**

@@ -85,6 +85,19 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
     }
 
     @Override
+    public void onUpdate()
+    {
+        super.onUpdate();
+
+        final String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
+        if (currentPage.equals(PAGE_LEVELS))
+        {
+            pullLevelsFromHut();
+            window.findPaneOfTypeByID(LIST_LEVELS, ScrollingList.class).refreshElementPanes();
+        }
+    }
+
+    @Override
     public void onButtonClicked(@NotNull final Button button)
     {
         if (button.getID().equals(BUTTON_CURRENTLEVEL))
@@ -107,19 +120,6 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
     public String getBuildingName()
     {
         return "com.minecolonies.coremod.gui.workerHuts.minerHut";
-    }
-
-    @Override
-    public void onUpdate()
-    {
-        super.onUpdate();
-
-        final String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
-        if (currentPage.equals(PAGE_LEVELS))
-        {
-            pullLevelsFromHut();
-            window.findPaneOfTypeByID(LIST_LEVELS, ScrollingList.class).refreshElementPanes();
-        }
     }
 }
 
