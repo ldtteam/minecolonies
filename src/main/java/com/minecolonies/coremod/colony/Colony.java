@@ -58,6 +58,7 @@ public class Colony implements IColony
     private static final String TAG_WAYPOINT                   = "waypoints";
     private static final String TAG_FREE_BLOCKS                = "freeBlocks";
     private static final String TAG_FREE_POSITIONS             = "freePositions";
+    private static final String TAG_HAPPINESS                  = "happiness";
 
     //statistics tags
     private static final String TAG_STATISTICS        = "statistics";
@@ -97,6 +98,11 @@ public class Colony implements IColony
      * Bonus happiness each factor added.
      */
     private static final double HAPPINESS_FACTOR         = 0.1;
+
+    /**
+     * Average starting happiness.
+     */
+    private static final int AVERAGE_HAPPINESS = 5;
 
     /**
      * Saturation at which a citizen starts being happy.
@@ -161,7 +167,7 @@ public class Colony implements IColony
     private int topCitizenId = 0;
     private int maxCitizens  = Configurations.maxCitizens;
 
-    private double overallHappiness = 5;
+    private double overallHappiness = AVERAGE_HAPPINESS;
 
     /**
      * The Positions which players can freely interact.
@@ -346,6 +352,15 @@ public class Colony implements IColony
             final BlockPos block = BlockPosUtil.readFromNBT(blockTag, TAG_FREE_POSITIONS);
             freePositions.add(block);
         }
+
+        if(compound.hasKey(TAG_HAPPINESS))
+        {
+            this.overallHappiness = compound.getDouble(TAG_HAPPINESS);
+        }
+        else
+        {
+            this.overallHappiness = AVERAGE_HAPPINESS;
+        }
     }
 
     /**
@@ -497,6 +512,8 @@ public class Colony implements IColony
             freePositionsTagList.appendTag(wayPointCompound);
         }
         compound.setTag(TAG_FREE_POSITIONS, freePositionsTagList);
+
+        compound.setDouble(TAG_HAPPINESS, overallHappiness);
     }
 
     /**
@@ -1178,14 +1195,14 @@ public class Colony implements IColony
             saturation += citizen.getSaturation();
         }
 
-        final int averageHousing = housing/citizens.size();
+        final int averageHousing = housing/ Math.max(1, citizens.size());
 
         if(averageHousing > 1)
         {
             increaseOverallHappiness(averageHousing * HAPPINESS_FACTOR);
         }
 
-        final int averageSaturation = (int) (saturation/citizens.size());
+        final int averageSaturation = (int) (saturation/ Math.max(1, citizens.size()));
         if(averageSaturation < WELL_SATURATED_LIMIT)
         {
             decreaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * -HAPPINESS_FACTOR);
