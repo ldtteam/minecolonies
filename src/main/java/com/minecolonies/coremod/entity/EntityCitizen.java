@@ -4,6 +4,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.*;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingFarmer;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
@@ -1045,6 +1046,14 @@ public class EntityCitizen extends EntityAgeable implements INpc
             if(citizenData.getSaturation() < HIGH_SATURATION)
             {
                 tryToEat();
+            }
+            else
+            {
+                final BuildingHome home = getHomeBuilding();
+                if(home != null && home.isFoodNeeded())
+                {
+                    home.setFoodNeeded(false);
+                }
             }
         }
 
