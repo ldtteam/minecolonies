@@ -127,7 +127,8 @@ public class View extends Pane
     }
 
     /**
-     * Return a Pane that will handle a click action at the specified mouse coordinates.
+     * Return a Pane that will handle a click action at the specified mouse
+     * coordinates.
      *
      * @param mx Mouse X, relative to the top-left of this Pane.
      * @param my Mouse Y, relative to the top-left of this Pane.

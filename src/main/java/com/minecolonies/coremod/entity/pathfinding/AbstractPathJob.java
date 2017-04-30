@@ -991,7 +991,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             return SurfaceType.NOT_PASSABLE;
         }
 
-        if(block instanceof BlockConstructionTape || block instanceof BlockConstructionTapeCorner)
+        if (block instanceof BlockConstructionTape || block instanceof BlockConstructionTapeCorner)
         {
             return SurfaceType.DROPABLE;
         }

@@ -54,19 +54,19 @@ public class BuildingBlacksmith extends AbstractBuildingWorker
         return MAX_BUILDING_LEVEL;
     }
 
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return BLACKSMITH;
-    }
-
     //TODO Implement Later
     @NotNull
     @Override
     public AbstractJob createJob(final CitizenData citizen)
     {
         return new JobPlaceholder(citizen);
+    }
+
+    @NotNull
+    @Override
+    public String getJobName()
+    {
+        return BLACKSMITH;
     }
 
     /**

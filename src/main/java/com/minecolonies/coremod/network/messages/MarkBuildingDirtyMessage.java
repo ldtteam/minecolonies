@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author xavierh
  */
-public class MarkBuildingDirtyMessage  extends AbstractMessage<MarkBuildingDirtyMessage, IMessage>
+public class MarkBuildingDirtyMessage extends AbstractMessage<MarkBuildingDirtyMessage, IMessage>
 {
     /**
      * The id of the building.
@@ -44,15 +44,14 @@ public class MarkBuildingDirtyMessage  extends AbstractMessage<MarkBuildingDirty
     public MarkBuildingDirtyMessage(@NotNull final AbstractBuilding.View building)
     {
         super();
-        this.colonyId   = building.getColony().getID();
+        this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
-
     }
 
     @Override
     public void fromBytes(@NotNull final ByteBuf buf)
     {
-        colonyId   = buf.readInt();
+        colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
     }
 

@@ -21,32 +21,17 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
 {
 
     /**
-     * Enums for Message Type for the freeBlock message.
-     * <p>
-     * ADD_BLOCK       Add a block or pos.
-     * REMOVE_BLOCK    Removing a block or pos.
-     */
-    public enum MessageType
-    {
-        REMOVE_BLOCK,
-        ADD_BLOCK,
-    }
-
-    /**
      * The id of the colony.
      */
     private int colonyId;
-
     /**
      * The position of the free to interact block.
      */
-    private BlockPos pos = new BlockPos(0, 0 ,0);
-
+    private BlockPos pos   = new BlockPos(0, 0, 0);
     /**
      * The blockState which can be freely interacted with.
      */
-    private Block block = Blocks.DIRT;
-
+    private Block    block = Blocks.DIRT;
     /**
      * The type of the message.
      */
@@ -64,14 +49,14 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
      * Message creation to add a new freely interactable block to the colony.
      *
      * @param colony Colony the block can be interacted with in.
-     * @param block the blockState.
-     * @param type the type of message.
+     * @param block  the blockState.
+     * @param type   the type of message.
      */
     public ChangeFreeToInteractBlockMessage(@NotNull final ColonyView colony, @NotNull final Block block, @NotNull final MessageType type)
     {
         super();
         this.colonyId = colony.getID();
-        this.pos = new BlockPos(0,0,0);
+        this.pos = new BlockPos(0, 0, 0);
         this.block = block;
         this.type = type;
     }
@@ -80,8 +65,8 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
      * Message creation to add a new freely interactable position to the colony.
      *
      * @param colony Colony the position can be interacted with in.
-     * @param pos the position.
-     * @param type the type of message.
+     * @param pos    the position.
+     * @param type   the type of message.
      */
     public ChangeFreeToInteractBlockMessage(@NotNull final ColonyView colony, @NotNull final BlockPos pos, @NotNull final MessageType type)
     {
@@ -122,7 +107,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
                 return;
             }
 
-            if(message.type == MessageType.ADD_BLOCK)
+            if (message.type == MessageType.ADD_BLOCK)
             {
                 if (!(message.pos.getX() == 0 && message.pos.getZ() == 0 && message.pos.getY() == 0))
                 {
@@ -145,5 +130,17 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
                 }
             }
         }
+    }
+
+    /**
+     * Enums for Message Type for the freeBlock message.
+     * <p>
+     * ADD_BLOCK       Add a block or pos.
+     * REMOVE_BLOCK    Removing a block or pos.
+     */
+    public enum MessageType
+    {
+        REMOVE_BLOCK,
+        ADD_BLOCK,
     }
 }

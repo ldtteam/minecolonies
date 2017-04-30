@@ -8,7 +8,8 @@
 
         <view id="pageFields" size="100% 100%" pos="0 1">
 
-            <label id="AssignmentModeLabel" label="$(com.minecolonies.coremod.gui.workerHuts.farmerHut.AssignmentMode)" pos="20 30"/>
+            <label id="AssignmentModeLabel" label="$(com.minecolonies.coremod.gui.workerHuts.farmerHut.AssignmentMode)"
+                   pos="20 30"/>
             <button id="assignmentMode" size="60 15" label="$(com.minecolonies.coremod.gui.hiring.off)" pos="50 40"/>
 
             <label size="100% 11" pos="0 0" label="Fields:" color="black" textalign="BOTTOM_MIDDLE"/>

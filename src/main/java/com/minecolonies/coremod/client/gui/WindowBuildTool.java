@@ -273,7 +273,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         registerButton(BUTTON_DOWN, WindowBuildTool::moveDownClicked);
         registerButton(BUTTON_ROTATE_RIGHT, this::rotateRightClicked);
         registerButton(BUTTON_ROTATE_LEFT, this::rotateLeftClicked);
-
         registerButton(BUTTON_RENAME, this::renameClicked);
         registerButton(BUTTON_DELETE, this::deleteClicked);
         renameButton = findPaneOfTypeByID(BUTTON_RENAME, Button.class);
@@ -373,6 +372,14 @@ public class WindowBuildTool extends AbstractWindowSkeleton
                 return sn.getLocalizedName();
             }
         });
+    }
+
+    /**
+     * Rotate the structure counter clockwise.
+     */
+    private static void mirror()
+    {
+        Settings.instance.mirror();
     }
 
     /**
@@ -484,6 +491,10 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         stylesDropDownList.setSelectedIndex(newIndex);
     }
 
+    /*
+     * ---------------- Button Handling -----------------
+     */
+
     /**
      * Go to the next schematic.
      */
@@ -491,7 +502,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     {
         schematicsDropDownList.selectNext();
     }
-
+    
     /**
      * Go to the previous schematic.
      */
@@ -499,7 +510,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     {
         schematicsDropDownList.selectPrevious();
     }
-
+    
     /**
      * Update the list a available schematics.
      */
@@ -541,7 +552,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      * called every time one of the dropdownlist changed.
      *
      * @param list the dropdown list which change
-     * @param index is the index selected in the list
      */
     private void onDropDownListChanged(final DropDownList list)
     {
@@ -685,14 +695,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     {
         rotation = (rotation + ROTATE_LEFT) % POSSIBLE_ROTATIONS;
         updateRotation(rotation);
-    }
-
-    /**
-     * Rotate the structure counter clockwise.
-     */
-    private static void mirror()
-    {
-        Settings.instance.mirror();
     }
 
 

@@ -199,65 +199,6 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * This method should be used to update new permissionMap added to the game which old colonies probably don't have yet.
-     */
-    private void updateNewPermissions()
-    {
-        this.setPermission(Rank.OWNER, Action.MANAGE_HUTS);
-        this.setPermission(Rank.OWNER, Action.RECEIVE_MESSAGES);
-        this.setPermission(Rank.OWNER, Action.USE_SCAN_TOOL);
-        this.setPermission(Rank.OWNER, Action.PLACE_BLOCKS);
-        this.setPermission(Rank.OWNER, Action.BREAK_BLOCKS);
-        this.setPermission(Rank.OWNER, Action.TOSS_ITEM);
-        this.setPermission(Rank.OWNER, Action.PICKUP_ITEM);
-        this.setPermission(Rank.OWNER, Action.FILL_BUCKET);
-        this.setPermission(Rank.OWNER, Action.OPEN_CONTAINER);
-        this.setPermission(Rank.OWNER, Action.RIGHTCLICK_BLOCK);
-        this.setPermission(Rank.OWNER, Action.RIGHTCLICK_ENTITY);
-        this.setPermission(Rank.OWNER, Action.THROW_POTION);
-        this.setPermission(Rank.OWNER, Action.SHOOT_ARROW);
-        this.setPermission(Rank.OWNER, Action.ATTACK_CITIZEN);
-        this.setPermission(Rank.OWNER, Action.ATTACK_ENTITY);
-        this.setPermission(Rank.OWNER, Action.ACCESS_FREE_BLOCKS);
-        this.setPermission(Rank.OWNER, Action.TELEPORT_TO_COLONY);
-
-        this.setPermission(Rank.OFFICER, Action.MANAGE_HUTS);
-        this.setPermission(Rank.OFFICER, Action.RECEIVE_MESSAGES);
-        this.setPermission(Rank.OFFICER, Action.USE_SCAN_TOOL);
-        this.setPermission(Rank.OFFICER, Action.PLACE_BLOCKS);
-        this.setPermission(Rank.OFFICER, Action.BREAK_BLOCKS);
-        this.setPermission(Rank.OFFICER, Action.TOSS_ITEM);
-        this.setPermission(Rank.OFFICER, Action.PICKUP_ITEM);
-        this.setPermission(Rank.OFFICER, Action.FILL_BUCKET);
-        this.setPermission(Rank.OFFICER, Action.OPEN_CONTAINER);
-        this.setPermission(Rank.OFFICER, Action.RIGHTCLICK_BLOCK);
-        this.setPermission(Rank.OFFICER, Action.RIGHTCLICK_ENTITY);
-        this.setPermission(Rank.OFFICER, Action.THROW_POTION);
-        this.setPermission(Rank.OFFICER, Action.SHOOT_ARROW);
-        this.setPermission(Rank.OFFICER, Action.ATTACK_CITIZEN);
-        this.setPermission(Rank.OFFICER, Action.ATTACK_ENTITY);
-        this.setPermission(Rank.OFFICER, Action.ACCESS_FREE_BLOCKS);
-        this.setPermission(Rank.OFFICER, Action.TELEPORT_TO_COLONY);
-
-        this.setPermission(Rank.FRIEND, Action.ACCESS_HUTS);
-        this.setPermission(Rank.FRIEND, Action.USE_SCAN_TOOL);
-        this.setPermission(Rank.FRIEND, Action.TOSS_ITEM);
-        this.setPermission(Rank.FRIEND, Action.PICKUP_ITEM);
-        this.setPermission(Rank.FRIEND, Action.RIGHTCLICK_BLOCK);
-        this.setPermission(Rank.FRIEND, Action.RIGHTCLICK_ENTITY);
-        this.setPermission(Rank.FRIEND, Action.THROW_POTION);
-        this.setPermission(Rank.FRIEND, Action.SHOOT_ARROW);
-        this.setPermission(Rank.FRIEND, Action.ATTACK_CITIZEN);
-        this.setPermission(Rank.FRIEND, Action.ATTACK_ENTITY);
-        this.setPermission(Rank.FRIEND, Action.ACCESS_FREE_BLOCKS);
-        this.setPermission(Rank.FRIEND, Action.TELEPORT_TO_COLONY);
-
-        this.setPermission(Rank.NEUTRAL, Action.ACCESS_FREE_BLOCKS);
-
-        updatedPermissionAlready = true;
-    }
-
-    /**
      * Marks instance dirty.
      */
     private void markDirty()
@@ -295,18 +236,6 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * Toggle permission for a specific rank.
-     *
-     * @param rank   Rank to toggle permission.
-     * @param action Action to toggle permission.
-     */
-    public void togglePermission(final Rank rank, @NotNull final Action action)
-    {
-        permissionMap.put(rank, Utils.toggleFlag(permissionMap.get(rank), action.flag));
-        markDirty();
-    }
-
-    /**
      * Returns the demotion rank of a specific rank.
      * E.G.: Neutral will return Hostile.
      *
@@ -321,6 +250,18 @@ public class Permissions implements IPermissions
         }
 
         return rank;
+    }
+
+    /**
+     * Toggle permission for a specific rank.
+     *
+     * @param rank   Rank to toggle permission.
+     * @param action Action to toggle permission.
+     */
+    public void togglePermission(final Rank rank, @NotNull final Action action)
+    {
+        permissionMap.put(rank, Utils.toggleFlag(permissionMap.get(rank), action.flag));
+        markDirty();
     }
 
     /**
@@ -385,7 +326,7 @@ public class Permissions implements IPermissions
 
         this.updatedPermissionAlready = compound.getBoolean(TAG_UPDATE);
 
-        if(!updatedPermissionAlready)
+        if (!updatedPermissionAlready)
         {
             updateNewPermissions();
         }
@@ -394,21 +335,62 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * Change the owner of a colony.
-     * @param player the player to set.
-     * @return true if succesful.
+     * This method should be used to update new permissionMap added to the game which old colonies probably don't have yet.
      */
-    public boolean setOwner(final EntityPlayer player)
+    private void updateNewPermissions()
     {
-        players.remove(getOwner());
+        this.setPermission(Rank.OWNER, Action.MANAGE_HUTS);
+        this.setPermission(Rank.OWNER, Action.RECEIVE_MESSAGES);
+        this.setPermission(Rank.OWNER, Action.USE_SCAN_TOOL);
+        this.setPermission(Rank.OWNER, Action.PLACE_BLOCKS);
+        this.setPermission(Rank.OWNER, Action.BREAK_BLOCKS);
+        this.setPermission(Rank.OWNER, Action.TOSS_ITEM);
+        this.setPermission(Rank.OWNER, Action.PICKUP_ITEM);
+        this.setPermission(Rank.OWNER, Action.FILL_BUCKET);
+        this.setPermission(Rank.OWNER, Action.OPEN_CONTAINER);
+        this.setPermission(Rank.OWNER, Action.RIGHTCLICK_BLOCK);
+        this.setPermission(Rank.OWNER, Action.RIGHTCLICK_ENTITY);
+        this.setPermission(Rank.OWNER, Action.THROW_POTION);
+        this.setPermission(Rank.OWNER, Action.SHOOT_ARROW);
+        this.setPermission(Rank.OWNER, Action.ATTACK_CITIZEN);
+        this.setPermission(Rank.OWNER, Action.ATTACK_ENTITY);
+        this.setPermission(Rank.OWNER, Action.ACCESS_FREE_BLOCKS);
+        this.setPermission(Rank.OWNER, Action.TELEPORT_TO_COLONY);
 
-        ownerName = player.getName();
-        ownerUUID = player.getUniqueID();
+        this.setPermission(Rank.OFFICER, Action.MANAGE_HUTS);
+        this.setPermission(Rank.OFFICER, Action.RECEIVE_MESSAGES);
+        this.setPermission(Rank.OFFICER, Action.USE_SCAN_TOOL);
+        this.setPermission(Rank.OFFICER, Action.PLACE_BLOCKS);
+        this.setPermission(Rank.OFFICER, Action.BREAK_BLOCKS);
+        this.setPermission(Rank.OFFICER, Action.TOSS_ITEM);
+        this.setPermission(Rank.OFFICER, Action.PICKUP_ITEM);
+        this.setPermission(Rank.OFFICER, Action.FILL_BUCKET);
+        this.setPermission(Rank.OFFICER, Action.OPEN_CONTAINER);
+        this.setPermission(Rank.OFFICER, Action.RIGHTCLICK_BLOCK);
+        this.setPermission(Rank.OFFICER, Action.RIGHTCLICK_ENTITY);
+        this.setPermission(Rank.OFFICER, Action.THROW_POTION);
+        this.setPermission(Rank.OFFICER, Action.SHOOT_ARROW);
+        this.setPermission(Rank.OFFICER, Action.ATTACK_CITIZEN);
+        this.setPermission(Rank.OFFICER, Action.ATTACK_ENTITY);
+        this.setPermission(Rank.OFFICER, Action.ACCESS_FREE_BLOCKS);
+        this.setPermission(Rank.OFFICER, Action.TELEPORT_TO_COLONY);
 
-        players.put(ownerUUID, new Player(ownerUUID, player.getName(), Rank.OWNER));
+        this.setPermission(Rank.FRIEND, Action.ACCESS_HUTS);
+        this.setPermission(Rank.FRIEND, Action.USE_SCAN_TOOL);
+        this.setPermission(Rank.FRIEND, Action.TOSS_ITEM);
+        this.setPermission(Rank.FRIEND, Action.PICKUP_ITEM);
+        this.setPermission(Rank.FRIEND, Action.RIGHTCLICK_BLOCK);
+        this.setPermission(Rank.FRIEND, Action.RIGHTCLICK_ENTITY);
+        this.setPermission(Rank.FRIEND, Action.THROW_POTION);
+        this.setPermission(Rank.FRIEND, Action.SHOOT_ARROW);
+        this.setPermission(Rank.FRIEND, Action.ATTACK_CITIZEN);
+        this.setPermission(Rank.FRIEND, Action.ATTACK_ENTITY);
+        this.setPermission(Rank.FRIEND, Action.ACCESS_FREE_BLOCKS);
+        this.setPermission(Rank.FRIEND, Action.TELEPORT_TO_COLONY);
 
-        markDirty();
-        return true;
+        this.setPermission(Rank.NEUTRAL, Action.ACCESS_FREE_BLOCKS);
+
+        updatedPermissionAlready = true;
     }
 
     /**
@@ -447,6 +429,44 @@ public class Permissions implements IPermissions
             }
         }
         return null;
+    }
+
+    /**
+     * Change the owner of a colony.
+     *
+     * @param player the player to set.
+     * @return true if succesful.
+     */
+    public boolean setOwner(final EntityPlayer player)
+    {
+        players.remove(getOwner());
+
+        ownerName = player.getName();
+        ownerUUID = player.getUniqueID();
+
+        players.put(ownerUUID, new Player(ownerUUID, player.getName(), Rank.OWNER));
+
+        markDirty();
+        return true;
+    }
+
+    /**
+     * Returns the owner of this permission instance.
+     *
+     * @return UUID of the owner.
+     */
+    @Nullable
+    public UUID getOwner()
+    {
+        if (ownerUUID == null)
+        {
+            final Map.Entry<UUID, Player> owner = getOwnerEntry();
+            if (owner != null)
+            {
+                ownerUUID = owner.getKey();
+            }
+        }
+        return ownerUUID;
     }
 
     /**
@@ -667,7 +687,7 @@ public class Permissions implements IPermissions
     {
         @NotNull final Player p = new Player(gameprofile.getId(), gameprofile.getName(), rank);
 
-        if(players.containsKey(p.id))
+        if (players.containsKey(p.id))
         {
             players.remove(p.id);
         }
@@ -717,25 +737,6 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * Returns the owner of this permission instance.
-     *
-     * @return UUID of the owner.
-     */
-    @Nullable
-    public UUID getOwner()
-    {
-        if (ownerUUID == null)
-        {
-            final Map.Entry<UUID, Player> owner = getOwnerEntry();
-            if (owner != null)
-            {
-                ownerUUID = owner.getKey();
-            }
-        }
-        return ownerUUID;
-    }
-
-    /**
      * Returns the name of the owner of this permission instance.
      *
      * @return Name of the owner.
@@ -765,12 +766,6 @@ public class Permissions implements IPermissions
         return isSubscriber(player.getGameProfile().getId());
     }
 
-    @Override
-    public boolean isColonyMember(@NotNull final EntityPlayer player)
-    {
-        return players.containsKey(player.getGameProfile().getId());
-    }
-
     /**
      * See {@link #isSubscriber(EntityPlayer)}.
      *
@@ -790,6 +785,12 @@ public class Permissions implements IPermissions
     public boolean isDirty()
     {
         return dirty;
+    }
+
+    @Override
+    public boolean isColonyMember(@NotNull final EntityPlayer player)
+    {
+        return players.containsKey(player.getGameProfile().getId());
     }
 
     /**

@@ -1,15 +1,12 @@
 package com.minecolonies.coremod.configuration;
 
+import com.minecolonies.coremod.lib.Constants;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.common.config.Configuration;
-
 import java.io.File;
-
-import com.minecolonies.coremod.lib.Constants;
 
 import static com.minecolonies.coremod.configuration.Configurations.*;
 
@@ -20,12 +17,12 @@ import static com.minecolonies.coremod.configuration.Configurations.*;
  */
 public final class ConfigurationHandler
 {
+
     private static Configuration config;
 
     public static final String CATEGORY_GAMEPLAY    = "gameplay";
     public static final String CATEGORY_PATHFINDING = "pathfinding";
     public static final String CATEGORY_NAMES       = "names";
-
     private static final String FORMAT_RANGE = "%s (range: %s ~ %s, default: %s)";
 
     public ConfigurationHandler()
@@ -53,28 +50,28 @@ public final class ConfigurationHandler
         try
         {
             builderPlaceConstructionTape = config.get(CATEGORY_GAMEPLAY, "placeConstructionTape", builderPlaceConstructionTape,
-                    "Should builder place construction tape").getBoolean();
+              "Should builder place construction tape").getBoolean();
             workingRangeTownHall = config.get(CATEGORY_GAMEPLAY, "workingRangeTownHall", workingRangeTownHall,
-                    "Colony size (radius)").getInt();
+              "Colony size (radius)").getInt();
             townHallPadding = config.get(CATEGORY_GAMEPLAY, "townHallPadding", townHallPadding,
-                    "Empty space between town hall boundaries").getInt();
+              "Empty space between town hall boundaries").getInt();
             supplyChests = config.get(CATEGORY_GAMEPLAY, "supplyChests", supplyChests,
-                    "Allow crafting of a Supply Chest").getBoolean();
+              "Allow crafting of a Supply Chest").getBoolean();
             allowInfiniteSupplyChests = config.get(CATEGORY_GAMEPLAY,
               "allowInfiniteSupplyChests", allowInfiniteSupplyChests, "Allow infinite placing of Supply Chests?").getBoolean();
             citizenRespawnInterval = getClampedInt(config, CATEGORY_GAMEPLAY,
               "citizenRespawnInterval", citizenRespawnInterval, CITIZEN_RESPAWN_INTERVAL_MIN, CITIZEN_RESPAWN_INTERVAL_MAX,
-                    "Citizen respawn interval in seconds");
+              "Citizen respawn interval in seconds");
             builderInfiniteResources = config.get(CATEGORY_GAMEPLAY, "builderInfiniteResources", builderInfiniteResources,
-                    "Does Builder have infinite resources?").getBoolean();
+              "Does Builder have infinite resources?").getBoolean();
             builderBuildBlockDelay = config.get(CATEGORY_GAMEPLAY, "builderBuildBlockDelay", builderBuildBlockDelay,
-                    "How many tick between placing blocks for the builder?").getInt();
+              "How many tick between placing blocks for the builder?").getInt();
             blockMiningDelayModifier = config.get(CATEGORY_GAMEPLAY, "blockMiningDelayModifier", blockMiningDelayModifier,
-                    "Block mining Delay modifier, taken into account to determine how long a block need to be successfully mined").getInt();
+              "Block mining Delay modifier, taken into account to determine how long a block need to be successfully mined").getInt();
             enableColonyProtection = config.get(CATEGORY_GAMEPLAY, "enableColonyProtection", enableColonyProtection,
-                    "Enable the automatic colony protection?").getBoolean();
+              "Enable the automatic colony protection?").getBoolean();
             turnOffExplosionsInColonies = config.get(CATEGORY_GAMEPLAY, "turnOffExplosionsInColonies", turnOffExplosionsInColonies,
-                    "Turn off explosions inside the colonies radius?").getBoolean();
+              "Turn off explosions inside the colonies radius?").getBoolean();
 
             /* schematics usage */
             ignoreSchematicsFromJar = config.get(CATEGORY_GAMEPLAY, "ignoreSchematicsFromJar", ignoreSchematicsFromJar,
@@ -86,44 +83,44 @@ public final class ConfigurationHandler
 
             /* Configs for commands */
             opLevelForServer = config.get(CATEGORY_GAMEPLAY, "opLevelForServer", opLevelForServer,
-                    "Required Op level to execute commands").getInt();
+              "Required Op level to execute commands").getInt();
             teleportBuffer = config.get(CATEGORY_GAMEPLAY, "timeBetweenTeleport", teleportBuffer,
-                    "Time until the next teleport in seconds").getInt();
+              "Time until the next teleport in seconds").getInt();
             canPlayerUseCitizenInfoCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseCitizenInfoCommand", canPlayerUseCitizenInfoCommand,
-                    "Players get CitizenInfoCommand").getBoolean();
+              "Players get CitizenInfoCommand").getBoolean();
             canPlayerUseRTPCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseCTPCommand", canPlayerUseRTPCommand,
-                    "Players can use the MC TP Command or not").getBoolean();
+              "Players can use the MC TP Command or not").getBoolean();
             canPlayerUseDeleteColonyCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseDeleteColonyCommand", canPlayerUseDeleteColonyCommand,
-                    "Players get DeleteColonyCommand").getBoolean();
+              "Players get DeleteColonyCommand").getBoolean();
             canPlayerUseKillCitizensCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseKillCitizensCommand", canPlayerUseKillCitizensCommand,
-                    "Players get KillCitizensCommand").getBoolean();
+              "Players get KillCitizensCommand").getBoolean();
             canPlayerUseListCitizensCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseListCitizensCommand", canPlayerUseListCitizensCommand,
-                    "Players get ListCitizensCommand").getBoolean();
+              "Players get ListCitizensCommand").getBoolean();
             canPlayerRespawnCitizensCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerRespawnCitizensCommand", canPlayerRespawnCitizensCommand,
-                    "Players get RespawnCitizensCommand").getBoolean();
+              "Players get RespawnCitizensCommand").getBoolean();
             canPlayerUseShowColonyInfoCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseShowColonyInfoCommand", canPlayerUseShowColonyInfoCommand,
-                    "Players get ShowColonyInfoCommand").getBoolean();
+              "Players get ShowColonyInfoCommand").getBoolean();
             canPlayerUseAddOfficerCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseAddOfficerCommand", canPlayerUseAddOfficerCommand,
-                    "Players get AddOfficerCommand").getBoolean();
+              "Players get AddOfficerCommand").getBoolean();
             canPlayerUseRefreshColonyCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseRefreshColonyCommand", canPlayerUseRefreshColonyCommand,
-                    "Players get RefreshColonyCommand").getBoolean();
+              "Players get RefreshColonyCommand").getBoolean();
 
             maxDistanceFromWorldSpawn = config.get(CATEGORY_GAMEPLAY, "maxDistanceFromWorldSpawn", maxDistanceFromWorldSpawn,
-                    "Distance from spawn in all directions").getInt();
+              "Distance from spawn in all directions").getInt();
 
             deliverymanInfiniteResources = config.get(CATEGORY_GAMEPLAY, "deliverymanInfiniteResources", deliverymanInfiniteResources,
-                    "Does Deliveryman have infinite resources?").getBoolean();
+              "Does Deliveryman have infinite resources?").getBoolean();
             maxCitizens = config.get(CATEGORY_GAMEPLAY, "maxCitizens", maxCitizens,
-                    "Maximum number of citizens").getInt();
+              "Maximum number of citizens").getInt();
             alwaysRenderNameTag = config.get(CATEGORY_GAMEPLAY, "alwaysRenderNameTag", alwaysRenderNameTag,
-                    "Always render Citizen's name tag?").getBoolean();
+              "Always render Citizen's name tag?").getBoolean();
             maxBlocksCheckedByBuilder = config.get(CATEGORY_GAMEPLAY, "maxBlocksCheckedByBuilder", maxBlocksCheckedByBuilder,
-                    "Limits the number of checked blocks per builder update").getInt();
+              "Limits the number of checked blocks per builder update").getInt();
             chatFrequency = config.get(CATEGORY_GAMEPLAY, "chatFrequency", chatFrequency,
-                    "Chat Frequency (seconds)").getInt();
+              "Chat Frequency (seconds)").getInt();
 
             enableInDevelopmentFeatures = config.get(CATEGORY_GAMEPLAY, "development", enableInDevelopmentFeatures,
-                    "Display in-development features which do not work and may break your game").getBoolean();
+              "Display in-development features which do not work and may break your game").getBoolean();
 
             freeToInteractBlocks = config.get(CATEGORY_GAMEPLAY, "freeToInteractBlocks", freeToInteractBlocks,
                     "Blocks players should be able to interact with inside any colony.").getStringList();
@@ -133,7 +130,7 @@ public final class ConfigurationHandler
         }
         finally
         {
-            if(config.hasChanged())
+            if (config.hasChanged())
             {
                 config.save();
             }
@@ -194,15 +191,15 @@ public final class ConfigurationHandler
      * @param comment      Comment in config file.
      * @return Value in the configuration file.
      */
-    private static int getClampedInt(final Configuration config, final String category, final String key,
-                                     final int defaultValue, final int min, final int max, final String comment)
+    private static int getClampedInt(
+                                      final Configuration config, final String category, final String key,
+                                      final int defaultValue, final int min, final int max, final String comment)
     {
         return MathHelper.clamp(config.get(category, key, defaultValue, String.format(FORMAT_RANGE, comment, min, max, defaultValue), min, max).getInt(), min, max);
     }
-    
-    public static Configuration getConfiguration() 
+
+    public static Configuration getConfiguration()
     {
         return config;
     }
-
 }

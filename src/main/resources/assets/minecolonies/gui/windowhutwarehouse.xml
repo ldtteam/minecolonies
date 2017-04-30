@@ -13,7 +13,8 @@
             <!-- Blacksmith -->
             <view size="100% 40" pos="0 0">
                 <label size="100% 11" pos="0 0"
-                       label="$(com.minecolonies.coremod.gui.warehouse.toBlacksmith)" color="black" textalign="BOTTOM_MIDDLE"/>
+                       label="$(com.minecolonies.coremod.gui.warehouse.toBlacksmith)" color="black"
+                       textalign="BOTTOM_MIDDLE"/>
 
                 <view size="100% 20" pos="0 16">
                     <itemicon size="20 20" pos="33 2" item="gold_ingot"/>
@@ -26,7 +27,8 @@
             <!-- Stonemason -->
             <view size="100% 64" pos="0 41">
                 <label size="100% 11" pos="0 0"
-                       label="$(com.minecolonies.coremod.gui.warehouse.toStonemason)" color="black" textalign="BOTTOM_MIDDLE"/>
+                       label="$(com.minecolonies.coremod.gui.warehouse.toStonemason)" color="black"
+                       textalign="BOTTOM_MIDDLE"/>
 
                 <view size="100% 20" pos="0 16">
                     <itemicon size="20 20" pos="33 2" item="cobblestone"/>
@@ -46,7 +48,8 @@
             <!-- Guards -->
             <view size="100% 40" pos="0 110">
                 <label size="100% 11" pos="0 0"
-                       label="$(com.minecolonies.coremod.gui.warehouse.toGuards)" color="black" textalign="BOTTOM_MIDDLE"/>
+                       label="$(com.minecolonies.coremod.gui.warehouse.toGuards)" color="black"
+                       textalign="BOTTOM_MIDDLE"/>
 
                 <view size="100% 20" pos="0 16">
                     <itemicon size="20 20" pos="33 2" item="iron_chestplate"/>
@@ -58,7 +61,8 @@
 
             <view size="100% 35" pos="0 155">
                 <label size="100% 11" pos="0 0"
-                       label="$(com.minecolonies.coremod.gui.warehouse.visitCitizenChests)" color="black" textalign="BOTTOM_MIDDLE"/>
+                       label="$(com.minecolonies.coremod.gui.warehouse.visitCitizenChests)" color="black"
+                       textalign="BOTTOM_MIDDLE"/>
                 <button size="30 20" pos="70 12" id="citizenChests"/>
             </view>
         </view>

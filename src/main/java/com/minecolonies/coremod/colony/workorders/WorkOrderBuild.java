@@ -78,10 +78,10 @@ public class WorkOrderBuild extends AbstractWorkOrder
             Log.getLogger().info("WorkOrderBuild at location " + this.buildingLocation + " is using " +  sn + " instead of " + previousStructureName);
         }
 
+
         this.structureName = sn.toString();
         this.workOrderName = this.structureName;
         this.md5 = Structures.getMD5(this.structureName);
-
     }
 
     /**

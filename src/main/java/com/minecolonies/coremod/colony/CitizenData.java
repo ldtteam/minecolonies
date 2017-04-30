@@ -145,7 +145,8 @@ public class CitizenData
     }
 
     /**
-     * Return the entity instance of the citizen data. Respawn the citizen if needed.
+     * Return the entity instance of the citizen data. Respawn the citizen if
+     * needed.
      *
      * @return {@link EntityCitizen} of the citizen data.
      */
@@ -176,26 +177,6 @@ public class CitizenData
     }
 
     /**
-     * Returns the colony of the citizen.
-     *
-     * @return colony of the citizen.
-     */
-    public Colony getColony()
-    {
-        return colony;
-    }
-
-    /**
-     * Returns the id of the citizen.
-     *
-     * @return id of the citizen.
-     */
-    public int getId()
-    {
-        return id;
-    }
-
-    /**
      * Create a CitizenData View given it's saved NBTTagCompound.
      *
      * @param id  The citizen's id.
@@ -219,6 +200,26 @@ public class CitizenData
         }
 
         return citizenDataView;
+    }
+
+    /**
+     * Returns the colony of the citizen.
+     *
+     * @return colony of the citizen.
+     */
+    public Colony getColony()
+    {
+        return colony;
+    }
+
+    /**
+     * Returns the id of the citizen.
+     *
+     * @return id of the citizen.
+     */
+    public int getId()
+    {
+        return id;
     }
 
     /**
@@ -363,8 +364,9 @@ public class CitizenData
     }
 
     /**
-     * When a building is destroyed, inform the citizen so it can do any cleanup of associations that the building's.
-     * own AbstractBuilding.onDestroyed did not do.
+     * When a building is destroyed, inform the citizen so it can do any cleanup
+     * of associations that the building's. own AbstractBuilding.onDestroyed did
+     * not do.
      *
      * @param building building that is destroyed.
      */

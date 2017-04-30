@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<ruleset name="Minecolonies"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
+    <description>
+        The PMD RuleSet for Minecolonies
+    </description>
+
+    <rule ref="rulesets/java/strings.xml/UseStringBufferLength">
+        <priority>4</priority>
+    </rule>
+    <rule ref="rulesets/java/migrating.xml/IntegerInstantiation">
+        <priority>3</priority>
+    </rule>
+    <rule ref="rulesets/java/unusedcode.xml/UnusedModifier">
+        <priority>5</priority>
+    </rule>
+    <rule ref="rulesets/java/basic.xml/AvoidBranchingStatementAsLastInLoop">
+        <priority>3</priority>
+    </rule>
+    <rule ref="rulesets/java/strings.xml/StringInstantiation">
+        <priority>3</priority>
+    </rule>
+    <rule ref="rulesets/java/optimizations.xml/UseStringBufferForStringAppends">
+        <priority>3</priority>
+    </rule>
+    <rule ref="rulesets/java/controversial.xml/CallSuperInConstructor">
+        <priority>4</priority>
+    </rule>
+    <rule ref="rulesets/java/design.xml/OptimizableToArrayCall">
+        <priority>3</priority>
+    </rule>
+    <rule ref="rulesets/java/unnecessary.xml/UnusedNullCheckInEquals">
+        <priority>3</priority>
+    </rule>
+    <rule ref="rulesets/java/design.xml/ImmutableField">
+        <priority>3</priority>
+    </rule>
+    <rule ref="rulesets/java/optimizations.xml/SimplifyStartsWith">
+        <priority>4</priority>
+    </rule>
+    <rule ref="rulesets/java/strings.xml/AppendCharacterWithChar">
+        <priority>4</priority>
+    </rule>
+    <rule ref="rulesets/java/unnecessary.xml/UselessOperationOnImmutable">
+        <priority>2</priority>
+    </rule>
+    <rule ref="rulesets/java/design.xml/SimplifyConditional">
+        <priority>3</priority>
+    </rule>
+    <rule ref="rulesets/java/basic.xml/BooleanInstantiation">
+        <priority>3</priority>
+    </rule>
+    <rule ref="rulesets/java/controversial.xml/AvoidUsingShortType">
+        <priority>3</priority>
+    </rule>
+    <rule ref="rulesets/java/optimizations.xml/LocalVariableCouldBeFinal">
+        <priority>4</priority>
+    </rule>
+    <rule ref="rulesets/java/design.xml/SingularField">
+        <priority>4</priority>
+    </rule>
+    <rule ref="rulesets/java/strings.xml/UseIndexOfChar">
+        <priority>3</priority>
+    </rule>
+    <rule ref="rulesets/java/controversial.xml/AvoidUsingVolatile">
+        <priority>3</priority>
+    </rule>
+    <rule ref="rulesets/java/basic.xml/SimplifiedTernary">
+        <priority>3</priority>
+    </rule>
+    <rule ref="rulesets/java/design.xml/UseVarargs">
+        <priority>3</priority>
+    </rule>
+    <rule ref="rulesets/java/unnecessary.xml/UnnecessaryReturn">
+        <priority>4</priority>
+    </rule>
+    <rule ref="rulesets/java/naming.xml/BooleanGetMethodName">
+        <priority>3</priority>
+        <properties>
+            <property value="false" name="checkParameterizedMethods"/>
+        </properties>
+    </rule>
+    <rule ref="rulesets/java/basic.xml/BigIntegerInstantiation">
+        <priority>3</priority>
+    </rule>
+    <rule ref="rulesets/java/design.xml/ConfusingTernary">
+        <priority>3</priority>
+    </rule>
+    <rule ref="rulesets/java/optimizations.xml/UseArraysAsList">
+        <priority>3</priority>
+    </rule>
+    <rule ref="rulesets/java/strings.xml/ConsecutiveAppendsShouldReuse">
+        <priority>3</priority>
+    </rule>
+    <rule ref="rulesets/java/imports.xml/UnnecessaryFullyQualifiedName">
+        <priority>3</priority>
+    </rule>
+</ruleset>

@@ -182,13 +182,6 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
         window.findPaneOfTypeByID(LIST_FIELDS, ScrollingList.class).refreshElementPanes();
     }
 
-    @NotNull
-    @Override
-    public String getBuildingName()
-    {
-        return "tile.minecolonies.blockHutFarmer.name";
-    }
-
     @Override
     public void onOpened()
     {
@@ -298,6 +291,13 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
             pullLevelsFromHut();
             window.findPaneOfTypeByID(LIST_FIELDS, ScrollingList.class).refreshElementPanes();
         }
+    }
+
+    @NotNull
+    @Override
+    public String getBuildingName()
+    {
+        return "tile.minecolonies.blockHutFarmer.name";
     }
 
     /**

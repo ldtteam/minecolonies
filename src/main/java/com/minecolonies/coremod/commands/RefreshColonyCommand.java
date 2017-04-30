@@ -38,6 +38,21 @@ public class RefreshColonyCommand extends AbstractSingleCommand
     }
 
     @NotNull
+    private static UUID getUUIDFromName(@NotNull final ICommandSender sender, @NotNull final String... args)
+    {
+        final MinecraftServer tempServer = sender.getEntityWorld().getMinecraftServer();
+        if (tempServer != null)
+        {
+            final GameProfile profile = tempServer.getPlayerProfileCache().getGameProfileForUsername(args[0]);
+            if (profile != null)
+            {
+                return profile.getId();
+            }
+        }
+        return null;
+    }
+
+    @NotNull
     @Override
     public String getCommandUsage(@NotNull final ICommandSender sender)
     {
@@ -51,16 +66,16 @@ public class RefreshColonyCommand extends AbstractSingleCommand
         colonyId = getIthArgument(args, 0, -1);
         IColony tempColony = ColonyManager.getColony(colonyId);
 
-        if(colonyId == -1 && args.length >= 1)
+        if (colonyId == -1 && args.length >= 1)
         {
             final EntityPlayer player = server.getEntityWorld().getPlayerEntityByName(args[0]);
-            if(player != null)
+            if (player != null)
             {
                 tempColony = ColonyManager.getIColonyByOwner(server.getEntityWorld(), player);
             }
         }
 
-        if(sender instanceof EntityPlayer)
+        if (sender instanceof EntityPlayer)
         {
             final UUID mayorID = sender.getCommandSenderEntity().getUniqueID();
             if (tempColony == null)
@@ -91,7 +106,7 @@ public class RefreshColonyCommand extends AbstractSingleCommand
         }
 
         final Colony colony = ColonyManager.getColony(tempColony.getID());
-        if(colony == null)
+        if (colony == null)
         {
             sender.getCommandSenderEntity().sendMessage(new TextComponentString(NO_COLONY_FOUND_MESSAGE_ID));
             return;
@@ -99,21 +114,6 @@ public class RefreshColonyCommand extends AbstractSingleCommand
 
         sender.getCommandSenderEntity().sendMessage(new TextComponentString(REFRESH));
         colony.getPermissions().restoreOwnerIfNull();
-    }
-
-    @NotNull
-    private static UUID getUUIDFromName(@NotNull final ICommandSender sender, @NotNull final String... args)
-    {
-        final MinecraftServer tempServer = sender.getEntityWorld().getMinecraftServer();
-        if (tempServer != null)
-        {
-            final GameProfile profile = tempServer.getPlayerProfileCache().getGameProfileForUsername(args[0]);
-            if (profile != null)
-            {
-                return profile.getId();
-            }
-        }
-        return null;
     }
 
     @NotNull

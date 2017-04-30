@@ -45,7 +45,7 @@ public class ItemCaliper extends AbstractItemMinecolonies
         final int distance2 = Math.abs(a2) + 1;
 
         LanguageHandler.sendPlayerMessage(
-                playerIn, ITEM_CALIPER_MESSAGE_SQUARE, Integer.toString(distance1), Integer.toString(distance2));
+          playerIn, ITEM_CALIPER_MESSAGE_SQUARE, Integer.toString(distance1), Integer.toString(distance2));
         return EnumActionResult.SUCCESS;
     }
 
@@ -110,9 +110,9 @@ public class ItemCaliper extends AbstractItemMinecolonies
         final int distance3 = Math.abs(pos.getZ() - startPosition.getZ()) + 1;
 
         LanguageHandler.sendPlayerMessage(
-                playerIn,
-                ITEM_CALIPER_MESSAGE_CUBE,
-                Integer.toString(distance1), Integer.toString(distance2), Integer.toString(distance3));
+          playerIn,
+          ITEM_CALIPER_MESSAGE_CUBE,
+          Integer.toString(distance1), Integer.toString(distance2), Integer.toString(distance3));
         return EnumActionResult.SUCCESS;
     }
 

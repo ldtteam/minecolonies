@@ -146,7 +146,7 @@ public class BlockConstructionTapeCorner extends Block
     /**
      * How much light goes through the block.
      */
-    private static final int LIGHT_OPACITY = 0;
+    private static final int    LIGHT_OPACITY    = 0;
 
     /**
      * Constructor for the Substitution block.
@@ -157,7 +157,6 @@ public class BlockConstructionTapeCorner extends Block
         super(Material.VINE);
         initBlock();
     }
-
 
     /**
      * initialize the block
@@ -174,30 +173,6 @@ public class BlockConstructionTapeCorner extends Block
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);
         setLightOpacity(LIGHT_OPACITY);
-    }
-
-    @Nullable
-    @Override
-    public Item getItemDropped(final IBlockState state, final Random rand, final int fortune)
-    {
-        return null;
-    }
-
-    /**
-     * @deprecated (Remove this as soon as minecraft offers anything better).
-     */
-    @javax.annotation.Nullable
-    @Deprecated
-    @Override
-    public AxisAlignedBB getCollisionBoundingBox(final IBlockState blockState, final IBlockAccess worldIn, final BlockPos pos)
-    {
-        return null;
-    }
-
-    @Override
-    public int getMetaFromState(@NotNull final IBlockState state)
-    {
-        return state.getValue(FACING).getIndex();
     }
 
     /**
@@ -220,40 +195,10 @@ public class BlockConstructionTapeCorner extends Block
         return this.getDefaultState().withProperty(FACING, enumfacing);
     }
 
-    /**
-     * @deprecated (Remove this as soon as minecraft offers anything better).
-     */
-    @SideOnly(Side.CLIENT)
     @Override
-    @Deprecated
-    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
+    public int getMetaFromState(@NotNull final IBlockState state)
     {
-        return true;
-    }
-
-    /**
-     * @deprecated (Remove this as soon as minecraft offers anything better).
-     */
-    @Override
-    @Deprecated
-    public boolean isOpaqueCube(final IBlockState state)
-    {
-        return false;
-    }
-
-    @NotNull
-    @Override
-    protected BlockStateContainer createBlockState()
-    {
-        return new BlockStateContainer(this, FACING);
-    }
-
-    @NotNull
-    @Override
-    @SideOnly(Side.CLIENT)
-    public BlockRenderLayer getBlockLayer()
-    {
-        return BlockRenderLayer.SOLID;
+        return state.getValue(FACING).getIndex();
     }
 
     /**
@@ -317,20 +262,74 @@ public class BlockConstructionTapeCorner extends Block
         }
     }
 
+    /**
+     * @deprecated (Remove this as soon as minecraft offers anything better).
+     */
+    @SideOnly(Side.CLIENT)
+    @Override
+    @Deprecated
+    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
+    {
+        return true;
+    }
+
+    /**
+     * @deprecated (Remove this as soon as minecraft offers anything better).
+     */
+    @javax.annotation.Nullable
+    @Deprecated
+    @Override
+    public AxisAlignedBB getCollisionBoundingBox(final IBlockState blockState, final IBlockAccess worldIn, final BlockPos pos)
+    {
+        return null;
+    }
+
+    /**
+     * @deprecated (Remove this as soon as minecraft offers anything better).
+     */
+    @Override
+    @Deprecated
+    public boolean isOpaqueCube(final IBlockState state)
+    {
+        return false;
+    }
+
+    @Nullable
+    @Override
+    public Item getItemDropped(final IBlockState state, final Random rand, final int fortune)
+    {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    @SideOnly(Side.CLIENT)
+    public BlockRenderLayer getBlockLayer()
+    {
+        return BlockRenderLayer.SOLID;
+    }
+
     @SuppressWarnings("deprecation")
     @NotNull
     @Override
     public IBlockState getStateForPlacement(
-            final World worldIn,
-            final BlockPos pos,
-            final EnumFacing facing,
-            final float hitX,
-            final float hitY,
-            final float hitZ,
-            final int meta,
-            final EntityLivingBase placer)
+                                                   final World worldIn,
+                                                   final BlockPos pos,
+                                                   final EnumFacing facing,
+                                                   final float hitX,
+                                                   final float hitY,
+                                                   final float hitZ,
+                                                   final int meta,
+                                                   final EntityLivingBase placer)
     {
         @NotNull final EnumFacing enumFacing = (placer == null) ? EnumFacing.NORTH : EnumFacing.fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);
+    }
+
+    @NotNull
+    @Override
+    protected BlockStateContainer createBlockState()
+    {
+        return new BlockStateContainer(this, FACING);
     }
 }

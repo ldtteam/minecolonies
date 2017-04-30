@@ -242,7 +242,8 @@ public class ColonyListTest
 
         int count = 0;
 
-        while(itr.hasNext()) {
+        while (itr.hasNext())
+        {
             count++;
             itr.next();
         }
