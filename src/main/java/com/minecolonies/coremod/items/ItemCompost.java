@@ -31,7 +31,8 @@ public class ItemCompost extends AbstractItemMinecolonies
     }
 
     /**
-     * /whenever player right click a block with this "compost item", call this method.
+     * /whenever player right click a block with this "compost item", call this
+     * method.
      *
      * @param stack    the right clicked stack.
      * @param playerIn the player doing it.

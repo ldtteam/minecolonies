@@ -10,6 +10,7 @@ buildscript {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
     }
 }
+
 plugins {
     id "org.sonarqube" version "2.3"
     id "com.matthewprenger.cursegradle" version "1.0.7"
@@ -21,13 +22,39 @@ sonarqube {
         property "sonar.host.url", "http://home.kk-sc.de:9000"
         property "sonar.sourceEncoding", "UTF-8"
         property "sonar.projectName", "Minecolonies"
-        property "sonar.branch", System.getenv()['TRAVIS_BRANCH'] != null ? System.getenv()['TRAVIS_BRANCH'] : System.getenv()['bamboo_repository_branch_name']
+        property "sonar.branch", System.getenv()['TEAMCITY_BRANCH'] != null ? System.getenv()['TEAMCITY_BRANCH'] : System.getenv()['TRAVIS_BRANCH']
     }
 }
 
+apply plugin: 'idea'
 apply plugin: 'net.minecraftforge.gradle.forge'
-
+apply plugin: 'checkstyle'
+apply plugin: 'pmd'
 apply plugin: 'jacoco'
+
+tasks.withType(Checkstyle) {
+    reports {
+        xml.enabled true
+    }
+}
+
+checkstyle {
+    toolVersion ="7.6.1"
+}
+
+checkstyleTest.enabled = false
+checkstyleMain.enabled = false
+checkstyleApi.enabled = false
+pmdTest.enabled = false
+pmdMain.enabled = false
+pmdApi.enabled = false
+
+pmd {
+    toolVersion = "5.5.5"
+    ruleSetFiles = files("config/PMD/pmd.xml")
+    ignoreFailures = true
+}
+
 jacocoTestReport {
     reports {
         xml.enabled true
@@ -47,14 +74,13 @@ dependencies {
 ext.configFile = file "build.properties"
 
 configFile.withReader {
-
     def prop = new Properties()
     prop.load(it)
     ext.config = new ConfigSlurper().parse prop
 }
 
 group = "com.minecolonies"
-config.buildnumber = System.getenv()['TRAVIS_BUILD_NUMBER'] != null ? System.getenv()['TRAVIS_BUILD_NUMBER'] : "${config.minecolonies_build}"
+config.buildnumber = System.getenv()['BUILD_NUMBER'] != null ? System.getenv()['BUILD_NUMBER'] : System.getenv()['TRAVIS_BUILD_NUMBER']
 version = "${config.minecraft_version}-${config.minecolonies_major}.${config.minecolonies_minor}.${config.buildnumber}"
 
 sourceCompatibility = '1.8'
@@ -124,7 +150,6 @@ jar {
     }
 }
 
-apply plugin: 'idea'
 idea {
     module {
         inheritOutputDirs = true
@@ -137,6 +162,61 @@ task copyToLib(type: Copy) {
     from configurations.runtime
 }
 
+
+task runCheckStyle(type: Checkstyle) {
+    description 'Runs Checkstyle inspection against Minecolonies sourcesets.'
+    group = 'Code Quality'
+
+    ignoreFailures = true
+    showViolations = false
+
+    source 'src/main/java'
+
+    include '**/*.java'
+
+    exclude '**/com/minecolonies/blockout/**'
+
+    classpath = files()
+}
+
+task runPMD(type: Pmd) {
+    description 'Runs PMD inspection against Minecolonies sourcesets.'
+    group = 'Code Quality'
+
+    ignoreFailures = true
+
+    source 'src/main/java'
+
+    include '**/*.java'
+
+    exclude '**/com/minecolonies/blockout/**'
+
+    classpath = files()
+}
+
+task runSonar() {
+    dependsOn runCheckStyle, runPMD
+    description 'Runs the equivalent of a SonarQube analysis directly in the build process. Calls runCheckStyle and runPMD'
+    group = 'Code Quality'
+}
+
+task signJar(type: SignJar, dependsOn: reobfJar) {
+    onlyIf { // Skip the task if our secret data isn't available
+        project.hasProperty('keyStore')
+    }
+
+    if (project.hasProperty('keyStore')) {
+        keyStore = project.keyStore // This needs to be a path to the keystore file
+        alias = project.keyStoreAlias
+        storePass = project.keyStorePass
+        keyPass = project.keyStoreKeyPass
+        inputFile = jar.archivePath
+        outputFile = jar.archivePath
+    }
+}
+
+build.dependsOn signJar
+
 curseforge {
     if (System.getenv().CURSEAPIKEY != null && System.getenv().CURSERELEASETYPE != null)
     {
@@ -145,6 +225,8 @@ curseforge {
         project {
             id = '245506'
 
+            changelog = file('build/changelog.md')
+            changelogType = 'markdown'
             releaseType = System.getenv().CURSERELEASETYPE
 
             addArtifact deobfJar
@@ -153,5 +235,36 @@ curseforge {
     else
     {
         logger.lifecycle("Cannot run the CurseUpload sequence. No API-Key or release type has been provided.")
+    }
+}
+
+task("createChangelog") {
+    group = 'upload'
+
+    doLast {
+        def teamCityURL = "http://teamcity.minecolonies.com/"
+        def file = new FileOutputStream("build/changelog.md")
+        def out = new BufferedOutputStream(file)
+        def changesXML = new XmlSlurper().parse(teamCityURL + "guestAuth/app/rest/changes?locator=build:(id:" + teamcity["teamcity.build.id"] + ")")
+
+        def changes = changesXML.change
+        println("createChangelog: Identified " + changes.size() + " changes to be written into the changelog.")
+
+        out << "# Minecolonies Changelog \n"
+        out << "## Version: _" + version + "_ \n"
+
+        if (changes.size() > 0) {
+            for (int i = 0; i < changes.size(); i++) {
+                def changeDetailsURL = teamCityURL + "guestAuth/app/rest/changes/id:" + changes[i].@id.text()
+                def changeDetailsXml = new XmlSlurper().parse(changeDetailsURL)
+                def changeComment = changeDetailsXml.comment.text().trim()
+
+                out << "* " + changeComment + "\n"
+            }
+        } else {
+            out << "No Changes detected!"
+        }
+
+        out.close()
     }
 }

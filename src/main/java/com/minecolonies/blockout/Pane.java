@@ -21,17 +21,17 @@ public class Pane extends Gui
     private static final Deque<ScissorsInfo> scissorsInfoStack = new ConcurrentLinkedDeque<>();
     protected static Pane lastClickedPane;
     protected static Pane focus;
-    protected static     boolean             debugging         = false;
-    protected            Minecraft           mc                = Minecraft.getMinecraft();
+    protected static boolean   debugging = false;
+    protected        Minecraft mc        = Minecraft.getMinecraft();
     //  Attributes
-    protected            String              id                = "";
-    protected            int                 x                 = 0;
-    protected            int                 y                 = 0;
-    protected            int                 width             = 0;
-    protected            int                 height            = 0;
-    protected            Alignment           alignment         = Alignment.TOP_LEFT;
-    protected            boolean             visible           = true;
-    protected            boolean             enabled           = true;
+    protected        String    id        = "";
+    protected        int       x         = 0;
+    protected        int       y         = 0;
+    protected        int       width     = 0;
+    protected        int       height    = 0;
+    protected        Alignment alignment = Alignment.TOP_LEFT;
+    protected        boolean   visible   = true;
+    protected        boolean   enabled   = true;
     //  Runtime
     protected Window window;
     protected View   parent;
@@ -306,7 +306,8 @@ public class Pane extends Gui
     }
 
     /**
-     * Draw self.  The graphics port is already relative to the appropriate location.
+     * Draw self.  The graphics port is already relative to the appropriate
+     * location.
      * <p>
      * Override this to actually draw.
      *
@@ -408,9 +409,11 @@ public class Pane extends Gui
     }
 
     /**
-     * Put this Pane inside a View.  Only Views and subclasses can contain Panes.
+     * Put this Pane inside a View.  Only Views and subclasses can contain
+     * Panes.
      *
-     * @param newParent the View to put this Pane into, or null to remove from Parents.
+     * @param newParent the View to put this Pane into, or null to remove from
+     *                  Parents.
      */
     public void putInside(final View newParent)
     {

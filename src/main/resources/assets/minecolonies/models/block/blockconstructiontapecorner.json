@@ -1,81 +1,361 @@
 {
-    "__comment": "Model generated using MrCrayfish's Model Creator (http://mrcrayfish.com/modelcreator/)",
-    "textures": {
-        "particle": "minecolonies:blocks/constructionTape/constructionTape_south",
-        "0": "minecolonies:blocks/constructionTape/constructionTape_north",
-        "1": "minecolonies:blocks/constructionTape/constructionTape_east-west",
-        "2": "minecolonies:blocks/constructionTape/constructionTape_south",
-        "3": "minecolonies:blocks/constructionTape/constructionTape_up-down",
-        "4": "minecolonies:blocks/constructionTape/constructionTape_corner",
-        "5": "minecolonies:blocks/constructionTape/constructionTape_corner2",
-        "6": "minecolonies:blocks/constructionTape/constructionTapeStudMiddle",
-        "7": "minecolonies:blocks/constructionTape/constructionTapeStudMiddle2"
+  "__comment": "Model generated using MrCrayfish's Model Creator (http://mrcrayfish.com/modelcreator/)",
+  "textures": {
+    "particle": "minecolonies:blocks/constructionTape/constructionTape_south",
+    "0": "minecolonies:blocks/constructionTape/constructionTape_north",
+    "1": "minecolonies:blocks/constructionTape/constructionTape_east-west",
+    "2": "minecolonies:blocks/constructionTape/constructionTape_south",
+    "3": "minecolonies:blocks/constructionTape/constructionTape_up-down",
+    "4": "minecolonies:blocks/constructionTape/constructionTape_corner",
+    "5": "minecolonies:blocks/constructionTape/constructionTape_corner2",
+    "6": "minecolonies:blocks/constructionTape/constructionTapeStudMiddle",
+    "7": "minecolonies:blocks/constructionTape/constructionTapeStudMiddle2"
+  },
+  "elements": [
+    {
+      "name": "StudU",
+      "from": [
+        0.0,
+        0.0,
+        7.0
+      ],
+      "to": [
+        1.0,
+        16.0,
+        9.0
+      ],
+      "faces": {
+        "north": {
+          "texture": "#0",
+          "uv": [
+            0.0,
+            0.0,
+            1.0,
+            16.0
+          ]
+        },
+        "east": {
+          "texture": "#1",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            16.0
+          ]
+        },
+        "south": {
+          "texture": "#4",
+          "uv": [
+            0.0,
+            0.0,
+            0.0,
+            16.0
+          ]
+        },
+        "west": {
+          "texture": "#1",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            16.0
+          ]
+        },
+        "up": {
+          "texture": "#3",
+          "uv": [
+            0.0,
+            0.0,
+            1.0,
+            2.0
+          ]
+        },
+        "down": {
+          "texture": "#3",
+          "uv": [
+            0.0,
+            0.0,
+            1.0,
+            2.0
+          ]
+        }
+      }
     },
-    "elements": [
-        {
-            "name": "StudU",
-            "from": [ 0.0, 0.0, 7.0 ],
-            "to": [ 1.0, 16.0, 9.0 ],
-            "faces": {
-                "north": { "texture": "#0", "uv": [ 0.0, 0.0, 1.0, 16.0 ] },
-                "east": { "texture": "#1", "uv": [ 0.0, 0.0, 2.0, 16.0 ] },
-                "south": { "texture": "#4", "uv": [ 0.0, 0.0, 0.0, 16.0 ] },
-                "west": { "texture": "#1", "uv": [ 0.0, 0.0, 2.0, 16.0 ] },
-                "up": { "texture": "#3", "uv": [ 0.0, 0.0, 1.0, 2.0 ] },
-                "down": { "texture": "#3", "uv": [ 0.0, 0.0, 1.0, 2.0 ] }
-            }
+    {
+      "name": "StudMiddle",
+      "from": [
+        7.0,
+        0.0,
+        7.0
+      ],
+      "to": [
+        9.0,
+        16.0,
+        9.0
+      ],
+      "faces": {
+        "north": {
+          "texture": "#0",
+          "uv": [
+            0.0,
+            0.0,
+            1.0,
+            16.0
+          ]
         },
-      {
-        "name": "StudMiddle",
-        "from": [ 7.0, 0.0, 7.0 ],
-        "to": [ 9.0, 16.0, 9.0 ],
-        "faces": {
-          "north": { "texture": "#0", "uv": [ 0.0, 0.0, 1.0, 16.0 ] },
-          "east": { "texture": "#7", "uv": [ 8.0, 0.0, 10.0, 16.0 ] },
-          "south": { "texture": "#6", "uv": [ 7.0, 0.0, 9.0, 16.0 ] },
-          "west": { "texture": "#1", "uv": [ 0.0, 0.0, 2.0, 16.0 ] },
-          "up": { "texture": "#3", "uv": [ 0.0, 0.0, 1.0, 2.0 ] },
-          "down": { "texture": "#3", "uv": [ 0.0, 0.0, 1.0, 2.0 ] }
+        "east": {
+          "texture": "#7",
+          "uv": [
+            8.0,
+            0.0,
+            10.0,
+            16.0
+          ]
+        },
+        "south": {
+          "texture": "#6",
+          "uv": [
+            7.0,
+            0.0,
+            9.0,
+            16.0
+          ]
+        },
+        "west": {
+          "texture": "#1",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            16.0
+          ]
+        },
+        "up": {
+          "texture": "#3",
+          "uv": [
+            0.0,
+            0.0,
+            1.0,
+            2.0
+          ]
+        },
+        "down": {
+          "texture": "#3",
+          "uv": [
+            0.0,
+            0.0,
+            1.0,
+            2.0
+          ]
         }
-      },
-        {
-            "name": "StudN",
-            "from": [ 7.0, 0.0, 0.0 ], 
-            "to": [ 9.0, 16.0, 1.0 ], 
-            "faces": {
-                "north": { "texture": "#0", "uv": [ 1.0, 0.0, 0.0, 16.0 ] },
-                "east": { "texture": "#2", "uv": [ 15.7, 0.0, 16.0, 16.0 ] },
-                "south": { "texture": "#1", "uv": [ 0.0, 0.0, 2.0, 16.0 ] },
-                "west": { "texture": "#1", "uv": [ 0.0, 0.0, 0.0, 16.0 ] },
-                "up": { "texture": "#3", "uv": [ 0.0, 0.0, 1.0, 2.0 ] },
-                "down": { "texture": "#3", "uv": [ 0.0, 0.0, 1.0, 2.0 ] }
-            }
+      }
+    },
+    {
+      "name": "StudN",
+      "from": [
+        7.0,
+        0.0,
+        0.0
+      ],
+      "to": [
+        9.0,
+        16.0,
+        1.0
+      ],
+      "faces": {
+        "north": {
+          "texture": "#0",
+          "uv": [
+            1.0,
+            0.0,
+            0.0,
+            16.0
+          ]
         },
-        {
-            "name": "BandUnderC",
-            "from": [ 1.0, 12.0, 9.0 ], 
-            "to": [ 7.0, 15.0, 9.0 ],
-            "faces": {
-                "north": { "texture": "#0", "uv": [ 1.0, 1.0, 15.0, 4.0 ] },
-                "east": { "texture": "#1", "uv": [ 0.0, 0.0, 0.0, 3.0 ] },
-                "south": { "texture": "#5", "uv": [ 1.0, 1.0, 7.0, 4.0 ] },
-                "west": { "texture": "#1", "uv": [ 0.0, 0.0, 0.0, 3.0 ] },
-                "up": { "texture": "#1", "uv": [ 0.0, 0.0, 14.0, 0.0 ] },
-                "down": { "texture": "#1", "uv": [ 0.0, 0.0, 14.0, 0.0 ] }
-            }
+        "east": {
+          "texture": "#2",
+          "uv": [
+            15.7,
+            0.0,
+            16.0,
+            16.0
+          ]
         },
-        {
-            "name": "Band-struction",
-            "from": [ 9.0, 12.0, 1.0 ], 
-            "to": [ 9.0, 15.0, 7.0 ],
-            "faces": {
-                "north": { "texture": "#0", "uv": [ 1.0, 1.0, 15.0, 4.0 ] },
-                "east": { "texture": "#5", "uv": [ -6.0, 1.0, 0.0, 4.0 ] },
-                "south": { "texture": "#4", "uv": [ 7.0, 1.0, 9.0, 4.0 ] },
-                "west": { "texture": "#0", "uv": [ 1.0, 1.0, 15.0, 4.0 ] },
-                "up": { "texture": "#1", "uv": [ 0.0, 0.0, 14.0, 0.0 ] },
-                "down": { "texture": "#1", "uv": [ 0.0, 0.0, 14.0, 0.0 ] }
-            }
+        "south": {
+          "texture": "#1",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            16.0
+          ]
+        },
+        "west": {
+          "texture": "#1",
+          "uv": [
+            0.0,
+            0.0,
+            0.0,
+            16.0
+          ]
+        },
+        "up": {
+          "texture": "#3",
+          "uv": [
+            0.0,
+            0.0,
+            1.0,
+            2.0
+          ]
+        },
+        "down": {
+          "texture": "#3",
+          "uv": [
+            0.0,
+            0.0,
+            1.0,
+            2.0
+          ]
         }
-    ]
+      }
+    },
+    {
+      "name": "BandUnderC",
+      "from": [
+        1.0,
+        12.0,
+        9.0
+      ],
+      "to": [
+        7.0,
+        15.0,
+        9.0
+      ],
+      "faces": {
+        "north": {
+          "texture": "#0",
+          "uv": [
+            1.0,
+            1.0,
+            15.0,
+            4.0
+          ]
+        },
+        "east": {
+          "texture": "#1",
+          "uv": [
+            0.0,
+            0.0,
+            0.0,
+            3.0
+          ]
+        },
+        "south": {
+          "texture": "#5",
+          "uv": [
+            1.0,
+            1.0,
+            7.0,
+            4.0
+          ]
+        },
+        "west": {
+          "texture": "#1",
+          "uv": [
+            0.0,
+            0.0,
+            0.0,
+            3.0
+          ]
+        },
+        "up": {
+          "texture": "#1",
+          "uv": [
+            0.0,
+            0.0,
+            14.0,
+            0.0
+          ]
+        },
+        "down": {
+          "texture": "#1",
+          "uv": [
+            0.0,
+            0.0,
+            14.0,
+            0.0
+          ]
+        }
+      }
+    },
+    {
+      "name": "Band-struction",
+      "from": [
+        9.0,
+        12.0,
+        1.0
+      ],
+      "to": [
+        9.0,
+        15.0,
+        7.0
+      ],
+      "faces": {
+        "north": {
+          "texture": "#0",
+          "uv": [
+            1.0,
+            1.0,
+            15.0,
+            4.0
+          ]
+        },
+        "east": {
+          "texture": "#5",
+          "uv": [
+            -6.0,
+            1.0,
+            0.0,
+            4.0
+          ]
+        },
+        "south": {
+          "texture": "#4",
+          "uv": [
+            7.0,
+            1.0,
+            9.0,
+            4.0
+          ]
+        },
+        "west": {
+          "texture": "#0",
+          "uv": [
+            1.0,
+            1.0,
+            15.0,
+            4.0
+          ]
+        },
+        "up": {
+          "texture": "#1",
+          "uv": [
+            0.0,
+            0.0,
+            14.0,
+            0.0
+          ]
+        },
+        "down": {
+          "texture": "#1",
+          "uv": [
+            0.0,
+            0.0,
+            14.0,
+            0.0
+          ]
+        }
+      }
+    }
+  ]
 }

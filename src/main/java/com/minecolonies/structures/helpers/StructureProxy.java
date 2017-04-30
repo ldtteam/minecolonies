@@ -202,10 +202,10 @@ public class StructureProxy
     /**
      * Rotate the structure depending on the direction it's facing.
      *
-     * @param times times to rotateWithMirror.
-     * @param world the world to rotateWithMirror it in.
+     * @param times     times to rotateWithMirror.
+     * @param world     the world to rotateWithMirror it in.
      * @param rotatePos the pos to rotateWithMirror it around.
-     * @param mirror the mirror
+     * @param mirror    the mirror
      */
     public void rotateWithMirror(final int times, World world, BlockPos rotatePos, Mirror mirror)
     {

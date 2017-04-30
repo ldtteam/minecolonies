@@ -52,8 +52,8 @@ public class FMLEventHandler
     }
 
     /**
-     * Called when a player logs in.
-     * If the joining player is a MP-Player, sends all possible styles in a message.
+     * Called when a player logs in. If the joining player is a MP-Player, sends
+     * all possible styles in a message.
      *
      * @param event {@link net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent}
      */
