@@ -187,6 +187,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     @SuppressWarnings("squid:S135")
     private void requestMaterials()
     {
+        if(job.getWorkOrder().isRequested())
+        {
+            return;
+        }
+        
         while (job.getStructure().findNextBlock())
         {
             @Nullable final Template.BlockInfo blockInfo = job.getStructure().getBlockInfo();
