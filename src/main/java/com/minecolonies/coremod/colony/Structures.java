@@ -121,9 +121,9 @@ public final class Structures
         {
             try (FileSystem fileSystem = FileSystems.getFileSystem(ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI()))
             {
-                    final Path basePath = fileSystem.getPath(SCHEMATICS_ASSET_PATH);
-                    Log.getLogger().info("Load huts or decorations from jar");
-                    loadSchematicsForPrefix(basePath, SCHEMATICS_PREFIX);
+                final Path basePath = fileSystem.getPath(SCHEMATICS_ASSET_PATH);
+                Log.getLogger().info("Load huts or decorations from jar");
+                loadSchematicsForPrefix(basePath, SCHEMATICS_PREFIX);
             }
             catch (@NotNull IOException | URISyntaxException | FileSystemNotFoundException e1)
             {
