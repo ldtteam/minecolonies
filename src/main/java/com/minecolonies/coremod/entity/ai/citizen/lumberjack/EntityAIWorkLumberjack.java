@@ -339,7 +339,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             return getState();
         }
 
-        if (!job.tree.hasLogs())
+        if (!job.tree.hasLogs() && (!job.tree.isSlimeTree() || !job.tree.hasLeaves()))
         {
             if (hasNotDelayed(WAIT_BEFORE_SAPLING))
             {
@@ -370,7 +370,16 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         {
             return getState();
         }
-        job.tree.pollNextLog();
+        else if (job.tree.hasLeaves() && job.tree.isSlimeTree())
+        {
+            //take first leaf from queue
+            final BlockPos leaf = job.tree.peekNextLeaf();
+            if (!mineBlock(leaf))
+            {
+                return getState();
+            }
+            job.tree.pollNextLeaf();
+        }
         return getState();
     }
 
@@ -480,7 +489,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
 
         final int saplingSlot = findSaplingSlot();
 
-        if (saplingSlot != -1)
+        if (saplingSlot != -1 && ((job.tree.isSlimeTree() && Compatibility.isSlimeDirtOrGrass(dirt))
+                                    ||(!job.tree.isSlimeTree() && !Compatibility.isSlimeDirtOrGrass(dirt))))
         {
             final ItemStack stack = getInventory().getStackInSlot(saplingSlot);
             final Block block = ((ItemBlock) stack.getItem()).getBlock();
@@ -582,7 +592,14 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private boolean isCorrectSapling(final ItemStack stack)
     {
-        return isStackSapling(stack) && job.tree.getVariant() == ((ItemBlock) stack.getItem()).getBlock().getStateFromMeta(stack.getMetadata()).getValue(BlockSapling.TYPE);
+        if (job.tree.isSlimeTree())
+        {
+            return isStackSapling(stack) && Compatibility.isSlimeSapling(((ItemBlock) stack.getItem()).getBlock()) && job.tree.getVariant() == stack.getMetadata();
+        }
+        else
+        {
+            return isStackSapling(stack) && job.tree.getVariant() == stack.getMetadata();
+        }
     }
 
     /**
