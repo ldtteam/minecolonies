@@ -100,6 +100,11 @@ public class Colony implements IColony
     private static final double HAPPINESS_FACTOR         = 0.1;
 
     /**
+     * Average starting happiness.
+     */
+    private static final int AVERAGE_HAPPINESS = 5;
+
+    /**
      * Saturation at which a citizen starts being happy.
      */
     private static final int WELL_SATURATED_LIMIT = 5;
@@ -162,7 +167,7 @@ public class Colony implements IColony
     private int topCitizenId = 0;
     private int maxCitizens  = Configurations.maxCitizens;
 
-    private double overallHappiness = 5;
+    private double overallHappiness = AVERAGE_HAPPINESS;
 
     /**
      * The Positions which players can freely interact.
@@ -354,7 +359,7 @@ public class Colony implements IColony
         }
         else
         {
-            this.overallHappiness = 5;
+            this.overallHappiness = AVERAGE_HAPPINESS;
         }
     }
 
