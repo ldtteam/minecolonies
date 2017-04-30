@@ -12,6 +12,7 @@ buildscript {
 }
 plugins {
     id "org.sonarqube" version "2.3"
+    id "com.matthewprenger.cursegradle" version "1.0.7"
 } 
 
 
