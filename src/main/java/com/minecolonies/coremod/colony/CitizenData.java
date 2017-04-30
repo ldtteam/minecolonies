@@ -275,16 +275,27 @@ public class CitizenData
         maxHealth = entity.getMaxHealth();
         experience = 0;
         level = 0;
-        saturation = 10;
+        saturation = MAX_SATURATION;
         int levelCap = (int) colony.getOverallHappiness();
         @NotNull final Random random = new Random();
 
+        if(levelCap <= 1)
+        {
+            intelligence = 1;
+            charisma = 1;
+            strength = 1;
+            endurance = 1;
+            dexterity = 1;
+        }
+        else
+        {
+            intelligence = random.nextInt(levelCap - 1) + 1;
+            charisma = random.nextInt(levelCap - 1) + 1;
+            strength = random.nextInt(levelCap - 1) + 1;
+            endurance = random.nextInt(levelCap - 1) + 1;
+            dexterity = random.nextInt(levelCap - 1) + 1;
+        }
         //Initialize the citizen skills and make sure they are never 0
-        intelligence = random.nextInt(levelCap - 1) + 1;
-        charisma = random.nextInt(levelCap - 1) + 1;
-        strength = random.nextInt(levelCap - 1) + 1;
-        endurance = random.nextInt(levelCap - 1) + 1;
-        dexterity = random.nextInt(levelCap - 1) + 1;
 
         markDirty();
     }
