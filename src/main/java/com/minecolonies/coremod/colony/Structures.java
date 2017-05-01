@@ -172,7 +172,7 @@ public final class Structures
                 Log.getLogger().info("Load huts or decorations from jar");
                 loadSchematicsForPrefix(basePath, SCHEMATICS_PREFIX);
             }
-            catch (@NotNull IOException | URISyntaxException | FileSystemNotFoundException e1)
+            catch (@NotNull IOException | FileSystemNotFoundException e1)
             {
                 try (FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap()))
                 {
@@ -180,7 +180,7 @@ public final class Structures
                     Log.getLogger().info("Load huts or decorations from jar");
                     loadSchematicsForPrefix(basePath, SCHEMATICS_PREFIX);
                 }
-                catch (@NotNull IOException | URISyntaxException e2)
+                catch (@NotNull IOException e2)
                 {
                     Log.getLogger().warn("loadStyleMaps: Could not load the schematics from the jar.", e2);
                 }
