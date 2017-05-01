@@ -4,13 +4,14 @@
     <label id="name" size="100% 11" color="black" textalign="BOTTOM_MIDDLE" pos="0 5"/>
     <group size="100% 50%" pos="20 10">
         <view id="healthBar" size="100% 11"/>
+        <view id="saturationBar" size="100% 11"/>
         <view id="xpBar" size="100% 11"/>
         <label id="xpLabel" size="100% 11" color="black" textalign="MIDDLE"/>
     </group>
-    <label id="title" size="100% 11" pos="0 60"
+    <label id="title" size="100% 11" pos="0 70"
            textalign="TOP_MIDDLE" color="black"
            label="$(com.minecolonies.coremod.gui.citizen.skills)"/>
-    <box padding="3" size="100 61" pos="40 70">
+    <box padding="3" size="100 61" pos="40 85">
         <group size="100% 100%">
             <label id="strength" size="100% 11" color="black"/>
             <label id="endurance" size="100% 11" color="black"/>

@@ -13,6 +13,7 @@ buildscript {
 
 plugins {
     id "org.sonarqube" version "2.3"
+    id "com.matthewprenger.cursegradle" version "1.0.7"
 }
 
 repositories {
@@ -66,7 +67,6 @@ jacocoTestReport {
     }
 }
 
-
 dependencies {
     deobfCompile "slimeknights.mantle:Mantle:1.10.2-1.1.5.205"
     deobfCompile "slimeknights:TConstruct:1.10.2-2.6.3.500"
@@ -83,13 +83,10 @@ dependencies {
 ext.configFile = file "build.properties"
 
 configFile.withReader {
-
     def prop = new Properties()
     prop.load(it)
     ext.config = new ConfigSlurper().parse prop
 }
-
-
 
 group = "com.minecolonies"
 config.buildnumber = System.getenv()['BUILD_NUMBER'] != null ? System.getenv()['BUILD_NUMBER'] : System.getenv()['TRAVIS_BUILD_NUMBER']
@@ -231,7 +228,6 @@ task signJar(type: SignJar, dependsOn: reobfJar) {
 
 build.dependsOn signJar
 
-
 curseforge {
     if (System.getenv().CURSEAPIKEY != null && System.getenv().CURSERELEASETYPE != null)
     {
@@ -240,6 +236,8 @@ curseforge {
         project {
             id = '245506'
 
+            changelog = file('build/changelog.md')
+            changelogType = 'markdown'
             releaseType = System.getenv().CURSERELEASETYPE
 
             addArtifact deobfJar
@@ -248,5 +246,36 @@ curseforge {
     else
     {
         logger.lifecycle("Cannot run the CurseUpload sequence. No API-Key or release type has been provided.")
+    }
+}
+
+task("createChangelog") {
+    group = 'upload'
+
+    doLast {
+        def teamCityURL = "http://teamcity.minecolonies.com/"
+        def file = new FileOutputStream("build/changelog.md")
+        def out = new BufferedOutputStream(file)
+        def changesXML = new XmlSlurper().parse(teamCityURL + "guestAuth/app/rest/changes?locator=build:(id:" + teamcity["teamcity.build.id"] + ")")
+
+        def changes = changesXML.change
+        println("createChangelog: Identified " + changes.size() + " changes to be written into the changelog.")
+
+        out << "# Minecolonies Changelog \n"
+        out << "## Version: _" + version + "_ \n"
+
+        if (changes.size() > 0) {
+            for (int i = 0; i < changes.size(); i++) {
+                def changeDetailsURL = teamCityURL + "guestAuth/app/rest/changes/id:" + changes[i].@id.text()
+                def changeDetailsXml = new XmlSlurper().parse(changeDetailsURL)
+                def changeComment = changeDetailsXml.comment.text().trim()
+
+                out << "* " + changeComment + "\n"
+            }
+        } else {
+            out << "No Changes detected!"
+        }
+
+        out.close()
     }
 }
