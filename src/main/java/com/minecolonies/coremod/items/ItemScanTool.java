@@ -126,7 +126,7 @@ public class ItemScanTool extends AbstractItemMinecolonies
         final MinecraftServer minecraftserver = world.getMinecraftServer();
         final TemplateManager templatemanager = worldserver.getStructureTemplateManager();
 
-        final String currentMillis = Long.toString(System.currentTimeMillis());
+        final long currentMillis = System.currentTimeMillis();
         final String fileName = "/minecolonies/scans/" + LanguageHandler.format("item.scepterSteel.scanFormat", "", currentMillis + ".nbt");
 
         final Template template = templatemanager.getTemplate(minecraftserver, new ResourceLocation(fileName));

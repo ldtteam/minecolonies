@@ -556,6 +556,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 {
                     return false;
                 }
+                continue;
             }
 
             if(result  instanceof IBlockState)
@@ -624,7 +625,15 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 final int slot = worker.findFirstSlotInInventoryWith(tempStack.getItem(), tempStack.getItemDamage());
                 if (slot != -1)
                 {
-                    new InvWrapper(getInventory()).extractItem(slot, 1, false);
+                    if (tempStack.getItem() == Items.LAVA_BUCKET)
+                    {
+                        new InvWrapper(getInventory()).extractItem(slot, 1, false);
+                        new InvWrapper(getInventory()).setStackInSlot(slot, new ItemStack(Items.BUCKET));
+                    }
+                    else
+                    {
+                        new InvWrapper(getInventory()).extractItem(slot, 1, false);
+                    }
                     reduceNeededResources(tempStack);
                 }
             }
@@ -709,7 +718,12 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         currentStructure = null;
     }
 
-    //Unable to merge both loops since they rely on the end of the other.
+    /**
+     * Iterates through all entities and spawns them
+     * Suppressing Sonar Rule Squid:S3047
+     * The rule thinks we can merge the two forge loops iterating over resources
+     * But in this case the rule does not apply because that would destroy the logic.
+     */
     @SuppressWarnings("squid:S3047")
     private Boolean spawnEntity(@NotNull final Structure.StructureBlock currentBlock)
     {
@@ -748,7 +762,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             {
                 for (final ItemStack stack : request)
                 {
-                    if (checkOrRequestItems(stack))
+                    if (checkOrRequestItems(getTotalAmount(stack)))
                     {
                         return false;
                     }

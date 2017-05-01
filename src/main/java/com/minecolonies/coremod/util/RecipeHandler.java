@@ -22,7 +22,7 @@ public final class RecipeHandler
     /**
      * Plank wood string description.
      */
-    private static final String PLANK_WOOD = "PLANK_WOOD";
+    private static final String PLANK_WOOD = "plankWood";
 
     /**
      * The amount of items returned by certain crafting recipes

@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.builder;
 
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
+import com.minecolonies.coremod.blocks.BlockSolidSubstitution;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
@@ -179,31 +180,47 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
     /**
      * Iterates through all the required resources and stores them in the building.
+     * Suppressing Sonar Rule Squid:S135
+     * The rule thinks we should have less continue and breaks.
+     * But in this case the rule does not apply because code would become unreadable and uneffective without.
      */
-    //Surpress this warning because refactoring does not make sense in this case.
     @SuppressWarnings("squid:S135")
     private void requestMaterials()
     {
+        if (job.getWorkOrder().isRequested())
+        {
+            return;
+        }
+        
         while (job.getStructure().findNextBlock())
         {
             @Nullable final Template.BlockInfo blockInfo = job.getStructure().getBlockInfo();
             @Nullable final Template.EntityInfo entityInfo = job.getStructure().getEntityinfo();
+
+            if (entityInfo != null)
+            {
+                requestEntityToBuildingIfRequired(entityInfo);
+            }
 
             if (blockInfo == null)
             {
                 continue;
             }
 
-            requestEntityToBuildingIfRequired(entityInfo);
-
-            @Nullable final IBlockState blockState = blockInfo.blockState;
-            @Nullable final Block block = blockState.getBlock();
+            @Nullable IBlockState blockState = blockInfo.blockState;
+            @Nullable Block block = blockState.getBlock();
 
             if (job.getStructure().isStructureBlockEqualWorldBlock()
                     || (blockState.getBlock() instanceof BlockBed && blockState.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
                     || (blockState.getBlock() instanceof BlockDoor && blockState.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.UPPER)))
             {
                 continue;
+            }
+
+            if(block instanceof BlockSolidSubstitution)
+            {
+                blockState = getSolidSubstitution(job.getStructure().getBlockPosition());
+                block = blockState.getBlock();
             }
 
             final Block worldBlock = BlockPosUtil.getBlock(world, job.getStructure().getBlockPosition());
@@ -312,7 +329,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             {
                 LanguageHandler.sendPlayersMessage(worker.getColony().getMessageEntityPlayers(),
                         "entity.builder.messageBuildStart",
-                        job.getStructure().getName());
+                        wo.getName());
             }
             else
             {
