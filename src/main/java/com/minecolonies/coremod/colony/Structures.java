@@ -149,47 +149,51 @@ public final class Structures
     }
 
 
+    /**
+     * load the schematics from the jar
+     */
     private static void loadStyleMapsJar()
     {
+        URI uri = null;
         try
         {
             Log.getLogger().info("loadStyleMaps jar: " + ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI()); 
-            final URI uri = ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI();
-            if ("jar".equals(uri.getScheme()))
+            uri = ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI();
+        }
+        catch (@NotNull URISyntaxException e)
+        {
+            Log.getLogger().error("loadStyleMaps : ",e); 
+            return;
+        }
+
+        if ("jar".equals(uri.getScheme()))
+        {
+            try (FileSystem fileSystem = FileSystems.getFileSystem(ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI()))
             {
-                try (FileSystem fileSystem = FileSystems.getFileSystem(ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI()))
+                final Path basePath = fileSystem.getPath(SCHEMATICS_ASSET_PATH);
+                Log.getLogger().info("Load huts or decorations from jar");
+                loadSchematicsForPrefix(basePath, SCHEMATICS_PREFIX);
+            }
+            catch (@NotNull IOException | URISyntaxException | FileSystemNotFoundException e1)
+            {
+                try (FileSystem fileSystem = FileSystems.newFileSystem(ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI(), Collections.emptyMap()))
                 {
                     final Path basePath = fileSystem.getPath(SCHEMATICS_ASSET_PATH);
                     Log.getLogger().info("Load huts or decorations from jar");
                     loadSchematicsForPrefix(basePath, SCHEMATICS_PREFIX);
                 }
-                catch (@NotNull IOException | URISyntaxException | FileSystemNotFoundException e1)
+                catch (@NotNull IOException | URISyntaxException e2)
                 {
-                    try (FileSystem fileSystem = FileSystems.newFileSystem(ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI(), Collections.emptyMap()))
-                    {
-                        final Path basePath = fileSystem.getPath(SCHEMATICS_ASSET_PATH);
-                        Log.getLogger().info("Load huts or decorations from jar");
-                        loadSchematicsForPrefix(basePath, SCHEMATICS_PREFIX);
-                    }
-                    catch (@NotNull IOException | URISyntaxException e2)
-                    {
-                        Log.getLogger().warn("loadStyleMaps: Could not load the schematics from the jar.", e2);
-                    }
+                    Log.getLogger().warn("loadStyleMaps: Could not load the schematics from the jar.", e2);
                 }
             }
-            else
-            {
-                final Path basePath = Paths.get(uri);
-                Log.getLogger().info("Load huts or decorations from uri");
-                loadSchematicsForPrefix(basePath, SCHEMATICS_PREFIX);
-            }
         }
-        catch (@NotNull URISyntaxException e)
+        else
         {
-            Log.getLogger().error("loadStyleMaps : ",e); 
+            final Path basePath = Paths.get(uri);
+            Log.getLogger().info("Load huts or decorations from uri");
+            loadSchematicsForPrefix(basePath, SCHEMATICS_PREFIX);
         }
-
-
     }
 
     /**
