@@ -126,9 +126,9 @@ public final class Structures
                 loadSchematicsForPrefix(basePath, SCHEMATICS_PREFIX);
             }
             /**
-             *  @Supresswarning("squid:S1166")
              *  The same exception will be triggered in the catch with logging this time.
              */
+            @Supresswarning("squid:S1166")
             catch (@NotNull IOException | URISyntaxException | FileSystemNotFoundException e1)
             {
                 try (FileSystem fileSystem = FileSystems.newFileSystem(ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI(), Collections.emptyMap()))
@@ -182,6 +182,7 @@ public final class Structures
         schematicsMap.remove(SCHEMATICS_SCAN);
         final File schematicsFolder = Structure.getClientSchematicsFolder();
         checkDirectory(schematicsFolder.toPath().resolve(SCHEMATICS_SCAN).toFile());
+        Log.getLogger().info("Load scans from " + schematicsFolder);
         loadSchematicsForPrefix(schematicsFolder.toPath(), SCHEMATICS_SCAN);
     }
 
