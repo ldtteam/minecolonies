@@ -5,6 +5,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.util.BlockPosUtil;
+import com.minecolonies.coremod.util.LanguageHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -33,6 +34,15 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
     }
 
     /**
+     * Enums of modes this message exists.
+     */
+    public enum MessageMode
+    {
+        LOCATION,
+        BLOCK,
+    }
+
+    /**
      * The id of the colony.
      */
     private int colonyId;
@@ -51,6 +61,8 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
      * The type of the message.
      */
     private MessageType type;
+
+    private MessageMode mode;
 
     /**
      * Empty public constructor.
@@ -74,6 +86,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
         this.pos = new BlockPos(0,0,0);
         this.block = block;
         this.type = type;
+        this.mode = MessageMode.BLOCK;
     }
 
     /**
@@ -90,6 +103,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
         this.pos = pos;
         this.block = Blocks.DIRT;
         this.type = type;
+        this.mode = MessageMode.LOCATION;
     }
 
     @Override
@@ -99,6 +113,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
         block = Block.getBlockFromName(ByteBufUtils.readUTF8String(buf));
         pos = BlockPosUtil.readFromByteBuf(buf);
         type = MessageType.values()[buf.readInt()];
+        mode = MessageMode.values()[buf.readInt()];
     }
 
     @Override
@@ -108,6 +123,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
         ByteBufUtils.writeUTF8String(buf, block.getRegistryName().toString());
         BlockPosUtil.writeToByteBuf(buf, pos);
         buf.writeInt(type.ordinal());
+        buf.writeInt(mode.ordinal());
     }
 
     @Override
@@ -119,29 +135,40 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
             //Verify player has permission to change this huts settings
             if (!colony.getPermissions().hasPermission(player, Permissions.Action.EDIT_PERMISSIONS))
             {
+                LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.item.permissionscepter.permission.deny");
                 return;
             }
 
             if(message.type == MessageType.ADD_BLOCK)
             {
-                if (!(message.pos.getX() == 0 && message.pos.getZ() == 0 && message.pos.getY() == 0))
+                switch (message.mode)
                 {
-                    colony.addFreeBlock(message.block);
-                }
-                else
-                {
-                    colony.addFreePosition(message.pos);
+                    case LOCATION:
+                        colony.addFreePosition(message.pos);
+                        LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.item.permissionscepter.addposition.success", message.pos.getX(),message.pos.getY(),message.pos.getZ());
+                        break;
+                    case BLOCK:
+                        colony.addFreeBlock(message.block);
+                        LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.item.permissionscepter.addblock.success", message.block.getRegistryName());
+                        break;
+                    default:
+                        // Error!
                 }
             }
             else
             {
-                if (!(message.pos.getX() == 0 && message.pos.getZ() == 0 && message.pos.getY() == 0))
+                switch (message.mode)
                 {
-                    colony.removeFreeBlock(message.block);
-                }
-                else
-                {
-                    colony.removeFreePosition(message.pos);
+                    case LOCATION:
+                        colony.removeFreePosition(message.pos);
+                        LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.item.permissionscepter.removelocation.success", message.pos.getX(),message.pos.getY(),message.pos.getZ());
+                        break;
+                    case BLOCK:
+                        colony.removeFreeBlock(message.block);
+                        LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.item.permissionscepter.removeblock.success", message.block.getRegistryName());
+                        break;
+                    default:
+                        // Error!
                 }
             }
         }
