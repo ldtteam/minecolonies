@@ -148,41 +148,39 @@ public final class Structures
         }
     }
 
-
     /**
-     * load the schematics from the jar
+     * load the schematics from the jar.
      */
     private static void loadStyleMapsJar()
     {
         URI uri = null;
         try
         {
-            Log.getLogger().info("loadStyleMaps jar: " + ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI()); 
             uri = ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI();
         }
         catch (@NotNull URISyntaxException e)
         {
-            Log.getLogger().error("loadStyleMaps : ",e); 
+            Log.getLogger().error("loadStyleMaps : ",e);
             return;
         }
 
         if ("jar".equals(uri.getScheme()))
         {
-            try (FileSystem fileSystem = FileSystems.getFileSystem(ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI()))
+            try (FileSystem fileSystem = FileSystems.getFileSystem(uri))
             {
                 final Path basePath = fileSystem.getPath(SCHEMATICS_ASSET_PATH);
                 Log.getLogger().info("Load huts or decorations from jar");
                 loadSchematicsForPrefix(basePath, SCHEMATICS_PREFIX);
             }
-            catch (@NotNull IOException | URISyntaxException | FileSystemNotFoundException e1)
+            catch (@NotNull IOException | FileSystemNotFoundException e1)
             {
-                try (FileSystem fileSystem = FileSystems.newFileSystem(ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI(), Collections.emptyMap()))
+                try (FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap()))
                 {
                     final Path basePath = fileSystem.getPath(SCHEMATICS_ASSET_PATH);
                     Log.getLogger().info("Load huts or decorations from jar");
                     loadSchematicsForPrefix(basePath, SCHEMATICS_PREFIX);
                 }
-                catch (@NotNull IOException | URISyntaxException e2)
+                catch (@NotNull IOException e2)
                 {
                     Log.getLogger().warn("loadStyleMaps: Could not load the schematics from the jar.", e2);
                 }
