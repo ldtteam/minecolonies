@@ -135,7 +135,10 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
             //Verify player has permission to change this huts settings
             if (!colony.getPermissions().hasPermission(player, Permissions.Action.EDIT_PERMISSIONS))
             {
-                LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.item.permissionscepter.permission.deny");
+                LanguageHandler.sendPlayerMessage(
+                        player,
+                        "com.minecolonies.coremod.item.permissionscepter.permission.deny"
+                );
                 return;
             }
 
@@ -145,11 +148,21 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
                 {
                     case LOCATION:
                         colony.addFreePosition(message.pos);
-                        LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.item.permissionscepter.addposition.success", message.pos.getX(),message.pos.getY(),message.pos.getZ());
+                        LanguageHandler.sendPlayerMessage(
+                                player,
+                                "com.minecolonies.coremod.item.permissionscepter.addposition.success",
+                                message.pos.getX(),
+                                message.pos.getY(),
+                                message.pos.getZ()
+                        );
                         break;
                     case BLOCK:
                         colony.addFreeBlock(message.block);
-                        LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.item.permissionscepter.addblock.success", message.block.getRegistryName());
+                        LanguageHandler.sendPlayerMessage(
+                                player,
+                                "com.minecolonies.coremod.item.permissionscepter.addblock.success",
+                                message.block.getRegistryName()
+                        );
                         break;
                     default:
                         // Error!
@@ -161,11 +174,20 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
                 {
                     case LOCATION:
                         colony.removeFreePosition(message.pos);
-                        LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.item.permissionscepter.removelocation.success", message.pos.getX(),message.pos.getY(),message.pos.getZ());
+                        LanguageHandler.sendPlayerMessage(
+                                player,
+                                "com.minecolonies.coremod.item.permissionscepter.removelocation.success",
+                                message.pos.getX(),
+                                message.pos.getY(),
+                                message.pos.getZ());
                         break;
                     case BLOCK:
                         colony.removeFreeBlock(message.block);
-                        LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.item.permissionscepter.removeblock.success", message.block.getRegistryName());
+                        LanguageHandler.sendPlayerMessage(
+                                player,
+                                "com.minecolonies.coremod.item.permissionscepter.removeblock.success",
+                                message.block.getRegistryName()
+                        );
                         break;
                     default:
                         // Error!
