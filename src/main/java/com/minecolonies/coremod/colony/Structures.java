@@ -125,12 +125,12 @@ public final class Structures
                 Log.getLogger().info("Load huts or decorations from jar");
                 loadSchematicsForPrefix(basePath, SCHEMATICS_PREFIX);
             }
-            /**
-             *  @Supresswarning("squid:S1166")
-             *  The same exception will be triggered in the catch with logging this time.
-             */
             catch (@NotNull IOException | URISyntaxException | FileSystemNotFoundException e1)
             {
+                /**
+                 *  The same exception will be triggered in the catch with logging this time.
+                 */
+                @SuppressWarnings("squid:S1166")
                 try (FileSystem fileSystem = FileSystems.newFileSystem(ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI(), Collections.emptyMap()))
                 {
                     final Path basePath = fileSystem.getPath(SCHEMATICS_ASSET_PATH);
