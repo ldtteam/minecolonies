@@ -33,9 +33,19 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     private final CopyOnWriteArrayList<AbstractBuilding> list = new CopyOnWriteArrayList<>();
 
     /**
+     * Wait this amount of ticks before checking again.
+     */
+    private static final int WAIT_TICKS = 5;
+
+    /**
      * Index of last controlled building.
      */
     private int index = 1;
+
+    /**
+     * Ticks past since the last check.
+     */
+    private int ticksPassed = 0;
 
     /**
      * Empty standard constructor.
@@ -56,6 +66,13 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     public void update()
     {
         super.update();
+
+        if(ticksPassed != WAIT_TICKS)
+        {
+            ticksPassed++;
+            return;
+        }
+        ticksPassed = 0;
 
         final AbstractBuilding wareHouseBuilding = getBuilding();
         if(getColony() != null
@@ -161,8 +178,6 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                 buildingEntry.setOnGoingDelivery(false);
             }
         }
-
-
 
         final String tool = buildingEntry.getRequiredTool();
         if(!tool.isEmpty())

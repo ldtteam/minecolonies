@@ -9,6 +9,8 @@ import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
+import net.minecraft.item.ItemTool;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -140,10 +142,22 @@ public class EntityAIGoHome extends EntityAIBase
                     final ItemStack stack = home.getTileEntity().getStackInSlot(slot);
                     if (!InventoryUtils.isItemStackEmpty(stack))
                     {
+                        final int slotToSet = InventoryUtils.getFirstOpenSlotFromItemHandler(new InvWrapper(citizen.getInventoryCitizen()));
+
+                        if(slotToSet == -1)
+                        {
+                            InventoryUtils.forceItemStackToItemHandler(
+                                    new InvWrapper(citizen.getInventoryCitizen()),
+                                    new ItemStack(stack.getItem(), 1),
+                                    stack1 -> !InventoryUtils.isItemStackEmpty(stack) && (stack.getItem() instanceof ItemTool
+                                            || stack.getItem() instanceof ItemSword));
+                        }
+                        else
+                        {
+                            citizen.getInventoryCitizen().setInventorySlotContents(slotToSet, new ItemStack(stack.getItem(), 1));
+                        }
                         tookFood = true;
                         stack.stackSize--;
-                        citizen.getInventoryCitizen().setInventorySlotContents(
-                                InventoryUtils.getFirstOpenSlotFromItemHandler(new InvWrapper(citizen.getInventoryCitizen())), new ItemStack(stack.getItem(), 1));
                     }
                     ((BuildingHome) home).setFoodNeeded(false);
                 }
