@@ -115,6 +115,8 @@ public final class Structures
      * Loads all styles saved in ["/assets/minecolonies/schematics/"].
      * Puts these in {@link #md5Map}, with key being the fullname of the structure (schematics/stone/Builder1).
      */
+    // The same exception will be triggered in the 2nd catch with logging this time.
+    @SuppressWarnings("squid:S1166")
     private static void loadStyleMaps()
     {
         if (!Configurations.ignoreSchematicsFromJar)
@@ -125,10 +127,6 @@ public final class Structures
                 Log.getLogger().info("Load huts or decorations from jar");
                 loadSchematicsForPrefix(basePath, SCHEMATICS_PREFIX);
             }
-            /**
-             *  The same exception will be triggered in the catch with logging this time.
-             */
-            @Supresswarning("squid:S1166")
             catch (@NotNull IOException | URISyntaxException | FileSystemNotFoundException e1)
             {
                 try (FileSystem fileSystem = FileSystems.newFileSystem(ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI(), Collections.emptyMap()))
