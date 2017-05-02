@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.blockout.views.Window;
-import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
+import com.minecolonies.coremod.client.gui.WindowHutBaker;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.jobs.JobPlaceholder;
+import com.minecolonies.coremod.colony.jobs.JobBaker;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +18,7 @@ public class BuildingBaker extends AbstractBuildingWorker
     private static final String BAKER          = "Baker";
     private static final String BAKER_HUT_NAME = "bakerHut";
 
-    private static final int BAKER_HUT_MAX_LEVEL = 3;
+    private static final int BAKER_HUT_MAX_LEVEL = 5;
 
     /**
      * Constructor for the baker building.
@@ -76,7 +76,7 @@ public class BuildingBaker extends AbstractBuildingWorker
     @Override
     public AbstractJob createJob(final CitizenData citizen)
     {
-        return new JobPlaceholder(citizen); //TODO Implement Later
+        return new JobBaker(citizen);
     }
 
     /**
@@ -101,9 +101,10 @@ public class BuildingBaker extends AbstractBuildingWorker
          * @return A BlockOut window.
          */
         @NotNull
+        @Override
         public Window getWindow()
         {
-            return new WindowHutWorkerPlaceholder<>(this, BAKER_HUT_NAME);
+            return new WindowHutBaker(this, BAKER_HUT_NAME);
         }
 
         @NotNull
