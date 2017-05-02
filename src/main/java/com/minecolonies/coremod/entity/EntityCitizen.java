@@ -1046,6 +1046,14 @@ public class EntityCitizen extends EntityAgeable implements INpc
             {
                 tryToEat();
             }
+            else
+            {
+                final BuildingHome home = getHomeBuilding();
+                if(home != null && home.isFoodNeeded())
+                {
+                    home.setFoodNeeded(false);
+                }
+            }
         }
 
         checkHeal();
