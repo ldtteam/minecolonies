@@ -59,7 +59,6 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
     /**
      * Used when clicking on block in world.
      *
-     * @param scepter the item stack
      * @param playerIn the player
      * @param worldIn the world
      * @param pos the position
@@ -73,7 +72,6 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
     @Override
     @NotNull
     public EnumActionResult onItemUse(
-            final ItemStack scepter,
             final EntityPlayer playerIn,
             final World worldIn,
             final BlockPos pos,
@@ -83,6 +81,8 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
             final float hitY,
             final float hitZ)
     {
+        ItemStack scepter = playerIn.getHeldItem(hand);
+
         if (worldIn.isRemote)
         {
             return EnumActionResult.SUCCESS;
@@ -106,7 +106,6 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
     /**
      * Handles mid air use.
      *
-     * @param scepter the item stack
      * @param worldIn the world
      * @param playerIn the player
      * @param hand the hand
@@ -115,11 +114,12 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
     @Override
     @NotNull
     public ActionResult<ItemStack> onItemRightClick(
-            @NotNull final ItemStack scepter,
             final World worldIn,
             final EntityPlayer playerIn,
             final EnumHand hand)
     {
+        ItemStack scepter = playerIn.getHeldItem(hand);
+
         if (worldIn.isRemote)
         {
             return new ActionResult(EnumActionResult.SUCCESS, scepter);

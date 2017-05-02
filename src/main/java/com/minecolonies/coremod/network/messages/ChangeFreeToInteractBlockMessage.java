@@ -192,16 +192,4 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
             }
         }
     }
-
-    /**
-     * Enums for Message Type for the freeBlock message.
-     * <p>
-     * ADD_BLOCK       Add a block or pos.
-     * REMOVE_BLOCK    Removing a block or pos.
-     */
-    public enum MessageType
-    {
-        REMOVE_BLOCK,
-        ADD_BLOCK,
-    }
 }
