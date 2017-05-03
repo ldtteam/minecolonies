@@ -1092,6 +1092,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param tempStorage item to analyze.
      * @return InventoryUtils.EMPTY if should be kept entirely, else itemStack with amount which should be dumped.
      */
+    @NotNull
     private static ItemStack handleKeepX(
                                           @NotNull final Map<ItemStorage, Integer> alreadyKept,
                                           @NotNull final Map<ItemStorage, Integer> shouldKeep, @NotNull final ItemStorage tempStorage)
