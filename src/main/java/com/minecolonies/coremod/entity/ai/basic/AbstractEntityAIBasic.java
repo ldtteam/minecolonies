@@ -1090,7 +1090,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param alreadyKept already kept items.
      * @param shouldKeep  to keep items.
      * @param tempStorage item to analyze.
-     * @return null if should be kept entirely, else itemStack with amount which should be dumped.
+     * @return InventoryUtils.EMPTY if should be kept entirely, else itemStack with amount which should be dumped.
      */
     private static ItemStack handleKeepX(
                                           @NotNull final Map<ItemStorage, Integer> alreadyKept,
@@ -1105,7 +1105,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         if (shouldKeep.get(tempStorage) >= (tempStorage.getAmount() + amountKept))
         {
             alreadyKept.put(tempStorage, tempStorage.getAmount() + amountKept);
-            return null;
+            return InventoryUtils.EMPTY;
         }
         alreadyKept.put(tempStorage, shouldKeep.get(tempStorage));
         final int dump = tempStorage.getAmount() + amountKept - shouldKeep.get(tempStorage);
