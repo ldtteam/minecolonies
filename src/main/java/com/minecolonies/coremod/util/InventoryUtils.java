@@ -495,7 +495,7 @@ public final class InventoryUtils
                 if (isItemStackEmpty(localStack) || !itemStackToKeepPredicate.test(localStack))
                 {
                     final ItemStack removedStack = itemHandler.extractItem(i, Integer.MAX_VALUE, false);
-                    if (isItemStackEmpty(itemHandler.insertItem(i, itemStack, true)))
+                    if (!isItemStackEmpty(removedStack))
                     {
                         itemHandler.insertItem(i, itemStack, false);
                         return removedStack.copy();
