@@ -779,9 +779,10 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 
     @Override
     public IBlockState getSolidSubstitution(BlockPos ignored)
-    }
-        return Blocks.COBBLESTONE.getDefaultState();
     {
+        return Blocks.COBBLESTONE.getDefaultState();
+    }
+
     /**
      * Create a save mining position for the miner.
      *

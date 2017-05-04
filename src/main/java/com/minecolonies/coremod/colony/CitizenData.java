@@ -332,12 +332,12 @@ public class CitizenData
         final String firstName;
         if (!female)
         {
-            citizenName = String.format("%s %s. %s", getRandomElement(rand, Configurations.femaleFirstNames), getRandomLetter(rand),
+            firstName = String.format("%s %s. %s", getRandomElement(rand, Configurations.femaleFirstNames), getRandomLetter(rand),
                     getRandomElement(rand, Configurations.lastNames));
         }
         else
         {
-            citizenName = String.format("%s %s. %s", getRandomElement(rand, Configurations.maleFirstNames), getRandomLetter(rand),
+            firstName = String.format("%s %s. %s", getRandomElement(rand, Configurations.maleFirstNames), getRandomLetter(rand),
                     getRandomElement(rand, Configurations.lastNames));
         }
         return String.format("%s %s. %s", firstName, getRandomLetter(rand), getRandomElement(rand, Configurations.lastNames));

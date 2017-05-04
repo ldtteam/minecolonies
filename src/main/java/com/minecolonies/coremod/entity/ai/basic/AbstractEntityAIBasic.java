@@ -536,16 +536,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Request an Item without spamming the chat.
-     *
-     * @param chat the Item Name
-     */
-    private void requestWithoutSpam(@NotNull final String chat)
-    {
-        chatSpamFilter.requestTextStringWithoutSpam(chat);
-    }
-
-    /**
      * Sets the block the AI is currently walking to.
      *
      * @param stand where to walk to
@@ -953,16 +943,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Request an Item without spamming the chat.
-     *
-     * @param chat the Item Name
-     */
-    private void requestWithoutSpam(@NotNull final TextComponentBase chat)
-    {
-        chatSpamFilter.requestTextComponentWithoutSpam(chat);
-    }
-
-    /**
      * Walk to building and dump inventory.
      * If inventory is dumped, continue execution
      * so that the state can be resolved.
@@ -1206,7 +1186,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             }
             if (countOfItem < 1)
             {
-                final int itemsLeft = stack.stackSize - countOfItem;
+                final int itemsLeft = stack.getCount() - countOfItem;
                 @NotNull final ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft, -1);
                 getOwnBuilding().addNeededItems(requiredStack);
                 allClear = false;

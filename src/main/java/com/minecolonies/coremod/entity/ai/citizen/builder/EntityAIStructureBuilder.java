@@ -276,7 +276,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                     final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
                     if (stack != null)
                     {
-                        stack.stackSize = 1;
+                        stack.setCount(1);
                         request.add(stack);
                         request.add(new ItemStack(Items.ITEM_FRAME, 1, stack.getItemDamage()));
                     }
