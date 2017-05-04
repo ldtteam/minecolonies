@@ -125,7 +125,8 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * Checks if the player already placed a supply chest.
      *
      * @param player the player.
-     * @return boolean, returns true when player hasn't placed before, or when infinite placing is on.
+     * @return boolean, returns true when player hasn't placed before, or when
+     * infinite placing is on.
      */
     private static boolean isFirstPlacing(@NotNull final EntityPlayer player)
     {
@@ -135,6 +136,21 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         }
         LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.error.supplyChestAlreadyPlaced");
         return false;
+    }
+
+    /**
+     * Spawns the ship and supply chest.
+     *
+     * @param world world obj.
+     * @param pos   coordinate clicked.
+     */
+    private void spawnShip(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final EnumFacing chestFacing)
+    {
+        world.setBlockState(pos.up(), Blocks.CHEST.getDefaultState().withProperty(BlockChest.FACING, chestFacing));
+
+        placeSupplyShip(world, pos, chestFacing);
+
+        fillChest((TileEntityChest) world.getTileEntity(pos.up()));
     }
 
     /**
@@ -174,27 +190,15 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     }
 
     /**
-     * Spawns the ship and supply chest.
-     *
-     * @param world world obj.
-     * @param pos   coordinate clicked.
-     */
-    private void spawnShip(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final EnumFacing chestFacing)
-    {
-        world.setBlockState(pos.up(), Blocks.CHEST.getDefaultState().withProperty(BlockChest.FACING, chestFacing));
-
-        placeSupplyShip(world, pos, chestFacing);
-
-        fillChest((TileEntityChest) world.getTileEntity(pos.up()));
-    }
-
-    /**
      * Checks the area for the ship to be placed.
      *
      * @param world                  world obj.
      * @param pos                    coordinate clicked.
-     * @param shouldCheckX           boolean whether the x-sides should be checks.
-     * @param isCoordPositivelyAdded boolean whether the x or z side should be check on the positive side (true) or negative  side (false).
+     * @param shouldCheckX           boolean whether the x-sides should be
+     *                               checks.
+     * @param isCoordPositivelyAdded boolean whether the x or z side should be
+     *                               check on the positive side (true) or
+     *                               negative  side (false).
      * @return whether the space in the I shape is free or not.
      */
     private static boolean check(@NotNull final World world, @NotNull final BlockPos pos, final boolean shouldCheckX, final boolean isCoordPositivelyAdded)
@@ -238,7 +242,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
                 break;
         }
     }
-
+    
     /**
      * Fills the content of the supplychest with the buildTool and townHall.
      *
@@ -352,7 +356,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     private static boolean checkIfWaterAndNotInColony(final World world, final BlockPos pos1, final BlockPos pos2, final BlockPos pos3)
     {
         return BlockUtils.isWater(world.getBlockState(pos1)) && BlockUtils.isWater(world.getBlockState(pos2)) && BlockUtils.isWater(world.getBlockState(pos3))
-                && notInAnyColony(world, pos1, pos2, pos3);
+                 && notInAnyColony(world, pos1, pos2, pos3);
     }
 
     /**

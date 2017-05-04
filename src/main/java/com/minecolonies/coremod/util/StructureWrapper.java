@@ -114,6 +114,7 @@ public final class StructureWrapper
      * @param mirror    the mirror used.
      * @return true if succesful.
      */
+
     public static boolean tryToLoadAndPlaceSupplyCampWithRotation(final World worldObj, @NotNull final String name,
             @NotNull final BlockPos pos, final int rotations, @NotNull final Mirror mirror)
     {
@@ -640,7 +641,8 @@ public final class StructureWrapper
     }
 
     /**
-     * @return The StructureProxy that houses all the info about what is stored in a structure.
+     * @return The StructureProxy that houses all the info about what is stored
+     * in a structure.
      */
     public StructureProxy structure()
     {

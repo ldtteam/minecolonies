@@ -21,7 +21,9 @@ tile.blockHutTownHall.messageTooClose=Too close to existing town hall
 tile.blockHutTownHall.messageTooFar=Too far away from your Colony
 tile.blockHut.messageTooFarFromTownHall=You need to be closer to your town hall!
 tile.blockHut.messageNoTownHall=You need to place a town hall first!
-item.minecolonies.supplyChestDeployer.name=Supply Chest
+item.minecolonies.supplyChestDeployer.name=SupplyShip Chest
+item.minecolonies.supplyCampDeployer.name=SupplyCamp Chest
+
 item.minecolonies.scepterGold.name=Building Tool
 item.minecolonies.scepterSteel.name=Scan Tool
 item.minecolonies.caliper.name=Caliper
@@ -95,6 +97,9 @@ achievement.upgrade.townhall.first.desc=Build a townhall!
 tile.minecolonies.blockHutGuardTower.name=GuardTower
 tile.blockHutTownHall.messageGuardDead=The guard %s has died at %d %d %d!
 item.minecolonies.scepterGuard.name=Guard-scepter
+
+com.minecolonies.configgui.title=MineColonies Config
+
 com.minecolonies.coremod.gui.townHall.rename=Rename Colony
 com.minecolonies.coremod.gui.workerHuts.minerMineNode=Mine Level
 com.minecolonies.coremod.gui.workerHuts.buildType=Build Type:
@@ -108,7 +113,7 @@ com.minecolonies.coremod.gui.townHall.population.totalCitizens=Number of Citizen
 com.minecolonies.coremod.gui.citizen.skills.intelligence=Intelligence: %d
 com.minecolonies.coremod.gui.townHall.currTownHallName=Colony Name:
 com.minecolonies.coremod.gui.townHall.citizens=Citizens
-com.minecolonies.coremod.error.supplyChestAlreadyPlaced=You have already placed a supply ship!
+com.minecolonies.coremod.error.supplyChestAlreadyPlaced=You have already placed a supply ship or supply camp!
 com.minecolonies.coremod.gui.citizen.skills.endurance=Endurance: %d
 com.minecolonies.coremod.gui.townHall.rename.title=Rename Your Colony
 com.minecolonies.coremod.gui.workerHuts.information=Information
@@ -376,3 +381,16 @@ item.supplyCampDeployer.invalid=Requiring a flat ground of at least 16*17.
 item.minecolonies.supplyChestDeployer.name=SupplyShip Chest
 item.minecolonies.supplyCampDeployer.name=SupplyCamp Chest
 com.minecolonies.coremod.error.supplyChestAlreadyPlaced=You have already placed a supply ship or supply camp!
+com.minecolonies.coremod.gui.townHall.currentHappiness=Overall happiness:
+com.minecolonies.coremod.job.guard.toolClickGuardTooFar=Too far away from guard tower, please upgrade your guardtower.
+com.minecolonies.coremod.saturation.0=I'm starving, I can't work anymore
+com.minecolonies.coremod.saturation.3=I'm quite hungry, I feel very unproductive
+com.minecolonies.coremod.saturation.5=I'm hungry, I'm not that productive anymore
+com.minecolonies.coremod.saturation.7=I'm quite saturated, but I'll have to eat soon again
+
+com.minecolonies.coremod.item.permissionscepter.setmode=Set to mode '%s'
+com.minecolonies.coremod.item.permissionscepter.permission.deny=You do not have permission to edit blocks with this tool.
+com.minecolonies.coremod.item.permissionscepter.addblock.success=Added block type '%s'
+com.minecolonies.coremod.item.permissionscepter.addposition.success=Added location '%d %d %d'
+com.minecolonies.coremod.item.permissionscepter.removeblock.success=Removed block '%s'
+com.minecolonies.coremod.item.permissionscepter.removelocation.success=Removed location '%d %d %d'

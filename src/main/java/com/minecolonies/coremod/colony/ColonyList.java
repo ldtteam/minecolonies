@@ -15,47 +15,27 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 //TODO extend list/collection
+
 /**
  * Data structure for storing colonies, optimized for performance.
  *
- * @author Colton
- *
  * @param <T> Type of IColony (Colony or ColonyView)
+ * @author Colton
  */
 public final class ColonyList<T extends IColony> implements Iterable<T>
 {
     @VisibleForTesting
-    static final int INITIAL_SIZE = 16;
-
-    private IColony[] list = new IColony[INITIAL_SIZE];
-
-    private final List<Integer> nullIndices = new ArrayList<>();
-
-    private int topID = 0;
+    static final  int           INITIAL_SIZE = 16;
+    private final List<Integer> nullIndices  = new ArrayList<>();
+    private       IColony[]     list         = new IColony[INITIAL_SIZE];
+    private       int           topID        = 0;
 
     private int size = 0;
 
     /**
-     * Get the Colony with the provided colony id.
-     * @param index colony id.
-     * @return The Colony associated with the provided id.
-     */
-    @Nullable
-    // no way to remove this, java does it too
-    @SuppressWarnings("unchecked")
-    public T get(int index)
-    {
-        if (index < 1 || index >= list.length)
-        {
-            return null;
-        }
-
-        return (T) list[index];
-    }
-
-    /**
      * Creates a new Colony, adds it to the list, and returns it.
-     * @param world The world for the Colony.
+     *
+     * @param world    The world for the Colony.
      * @param position The position for the Colony center.
      * @return The newly created Colony.
      */
@@ -68,81 +48,18 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
             expandList();
         }
 
-        if(list[colonyID] != null)
+        if (list[colonyID] != null)
         {
             throw new IllegalArgumentException(
-                    String.format("Already a colony registered to id=%d, colony=%s, not creating new colony",
-                            colonyID,
-                            list[colonyID].getName()));
+                                                      String.format("Already a colony registered to id=%d, colony=%s, not creating new colony",
+                                                              colonyID,
+                                                              list[colonyID].getName()));
         }
 
         final Colony colony = new Colony(colonyID, world, position);
         size++;
         list[colony.getID()] = colony;
         return colony;
-    }
-
-    /**
-     * Add a new Colony to the List.
-     * @param colony colony to add to the list.
-     */
-    public void add(T colony)
-    {
-        final T existingColony = get(colony.getID());
-        if (existingColony != null && existingColony != colony)
-        {
-            throw new IllegalArgumentException(
-                    String.format("Already a colony registered to id=%d, colony=%s, not changing to colony=%s",
-                            colony.getID(),
-                            existingColony.getName(),
-                            colony.getName()));
-        }
-
-        while (colony.getID() >= list.length)
-        {
-            expandList();
-        }
-
-        int emptyIds = colony.getID() - 1;
-        while(emptyIds > 0  && list[emptyIds] == null)
-        {
-            nullIndices.add(emptyIds);
-            emptyIds--;
-        }
-
-        size++;
-        topID = colony.getID();
-
-        list[colony.getID()] = colony;
-    }
-
-    /**
-     * Remove the Colony from the list.
-     * @param colony the Colony to remove.
-     */
-    public void remove(T colony)
-    {
-        remove(colony.getID());
-    }
-
-    /**
-     * Remove the colony with the provided id from the list.
-     * @param id colony id to remove.
-     */
-    public void remove(int id)
-    {
-        if (list[id] == null)
-        {
-            Log.getLogger().warn("Tried to remove colony with id=%d, but it didn't exist.", id);
-        }
-
-        size--;
-        list[id] = null;
-
-        if (!nullIndices.contains(id))
-        {
-            nullIndices.add(id);
-        }
     }
 
     private int getNextColonyID()
@@ -163,6 +80,91 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
     }
 
     /**
+     * Add a new Colony to the List.
+     *
+     * @param colony colony to add to the list.
+     */
+    public void add(T colony)
+    {
+        final T existingColony = get(colony.getID());
+        if (existingColony != null && existingColony != colony)
+        {
+            throw new IllegalArgumentException(
+                                                      String.format("Already a colony registered to id=%d, colony=%s, not changing to colony=%s",
+                                                              colony.getID(),
+                                                              existingColony.getName(),
+                                                              colony.getName()));
+        }
+
+        while (colony.getID() >= list.length)
+        {
+            expandList();
+        }
+
+        int emptyIds = colony.getID() - 1;
+        while (emptyIds > 0 && list[emptyIds] == null)
+        {
+            nullIndices.add(emptyIds);
+            emptyIds--;
+        }
+
+        size++;
+        topID = colony.getID();
+
+        list[colony.getID()] = colony;
+    }
+
+    /**
+     * Get the Colony with the provided colony id.
+     *
+     * @param index colony id.
+     * @return The Colony associated with the provided id.
+     */
+    @Nullable
+    // no way to remove this, java does it too
+    @SuppressWarnings("unchecked")
+    public T get(int index)
+    {
+        if (index < 1 || index >= list.length)
+        {
+            return null;
+        }
+
+        return (T) list[index];
+    }
+
+    /**
+     * Remove the Colony from the list.
+     *
+     * @param colony the Colony to remove.
+     */
+    public void remove(T colony)
+    {
+        remove(colony.getID());
+    }
+
+    /**
+     * Remove the colony with the provided id from the list.
+     *
+     * @param id colony id to remove.
+     */
+    public void remove(int id)
+    {
+        if (list[id] == null)
+        {
+            Log.getLogger().warn("Tried to remove colony with id=%d, but it didn't exist.", id);
+        }
+
+        size--;
+        list[id] = null;
+
+        if (!nullIndices.contains(id))
+        {
+            nullIndices.add(id);
+        }
+    }
+
+    /**
      * Empty the list.
      */
     public void clear()
@@ -180,6 +182,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
 
     /**
      * Return the number of Colonies in the list.
+     *
      * @return number of Colonies in the list.
      */
     public int size()
@@ -189,6 +192,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
 
     /**
      * Checks if there are Colonies in the list.
+     *
      * @return true if there are no Colonies.
      */
     public boolean isEmpty()
@@ -197,8 +201,9 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
     }
 
     /**
-     * Copy all of the colonies to a List. Because this does a copy, it should only
-     * be used when really needed.
+     * Copy all of the colonies to a List. Because this does a copy, it should
+     * only be used when really needed.
+     *
      * @return List of Colonies.
      */
     @NotNull
@@ -215,6 +220,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
 
     /**
      * Makes an iterator for the list.
+     *
      * @return an iterator for the colonies.
      */
     @Override
@@ -262,6 +268,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
 
     /**
      * Create a Stream of Colonies.
+     *
      * @return a Colony Stream.
      */
     public Stream<T> stream()

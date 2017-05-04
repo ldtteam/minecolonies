@@ -12,6 +12,7 @@ import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.BlockPosUtil;
+import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Log;
 import net.minecraft.entity.Entity;
@@ -25,6 +26,7 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,63 +45,63 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     /**
      * Worker gets this distance times building level away from his building to patrol.
      */
-    public static final    int    PATROL_DISTANCE         = 40;
+    public static final    int    PATROL_DISTANCE                  = 40;
     /**
      * Follow the player if farther than this.
      */
-    public static final    int    FOLLOW_RANGE            = 10;
+    public static final    int    FOLLOW_RANGE                     = 10;
     /**
      * Distance the guard starts searching.
      */
-    protected static final int  START_SEARCH_DISTANCE   = 5;
+    protected static final int    START_SEARCH_DISTANCE            = 5;
     /**
      * The start search distance of the guard to track/attack entities may get more depending on the level.
      */
-    private static final double MAX_ATTACK_DISTANCE     = 20.0D;
+    private static final   double MAX_ATTACK_DISTANCE              = 20.0D;
     /**
      * Basic delay after operations.
      */
-    private static final int    BASE_DELAY              = 1;
+    private static final   int    BASE_DELAY                       = 1;
     /**
      * Max amount the guard can shoot arrows before restocking.
      */
-    private static final int    BASE_MAX_ATTACKS        = 25;
+    private static final   int    BASE_MAX_ATTACKS                 = 25;
     /**
      * Y range in which the guard detects other entities.
      */
-    private static final double HEIGHT_DETECTION_RANGE  = 10D;
+    private static final   double HEIGHT_DETECTION_RANGE           = 10D;
     /**
      * Path that close to the patrol target.
      */
-    private static final int    PATH_CLOSE              = 2;
+    private static final   int    PATH_CLOSE                       = 2;
     /**
      * Horizontal range in which the guard picks up items.
      */
-    private static final   double RANGE_HORIZONTAL_PICKUP = 20.0D;
+    private static final   double RANGE_HORIZONTAL_PICKUP          = 20.0D;
     /**
      * Vertical range in which the guard picks up items.
      */
-    private static final   double RANGE_VERTICAL_PICKUP   = 2.0D;
+    private static final   double RANGE_VERTICAL_PICKUP            = 2.0D;
     /**
      * Amount of ticks after which the guard stops trying to gather and tries to get onto another task.
      */
-    private static final int STUCK_WAIT_TICKS                 = 20;
+    private static final   int    STUCK_WAIT_TICKS                 = 20;
     /**
      * The amount of time to wait while walking to items.
      */
-    private static final int WAIT_WHILE_WALKING               = 5;
+    private static final   int    WAIT_WHILE_WALKING               = 5;
     /**
      * The range in which the guard picks up items.
      */
-    private static final int ITEM_PICKUP_RANGE                = 3;
+    private static final   int    ITEM_PICKUP_RANGE                = 3;
     /**
      * The dump base of actions, will increase depending on level.
      */
-    private static final int DUMP_BASE                        = 20;
+    private static final   int    DUMP_BASE                        = 20;
     /**
      * Increases the max attacks by this amount per level.
      */
-    private static final int ADDITIONAL_MAX_ATTACKS_PER_LEVEL = 5;
+    private static final   int    ADDITIONAL_MAX_ATTACKS_PER_LEVEL = 5;
     /**
      * The current target.
      */
@@ -206,18 +208,19 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
             {
                 final ItemStack stack = chest.getStackInSlot(i);
 
-                if (stack == null || stack == ItemStack.EMPTY)
+                if (InventoryUtils.isItemStackEmpty(stack))
                 {
                     continue;
                 }
 
                 if (stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).armorType) == null)
                 {
-                    final int emptySlot = worker.getInventoryCitizen().getFirstEmptyStack();
+                    final int emptySlot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(worker.getInventoryCitizen()),
+                      InventoryUtils::isItemStackEmpty);
 
                     if (emptySlot != -1)
                     {
-                        worker.getInventoryCitizen().setInventorySlotContents(emptySlot, stack);
+                        new InvWrapper(worker.getInventoryCitizen()).insertItem(emptySlot, stack, false);
                         chest.setInventorySlotContents(i, ItemStack.EMPTY);
                     }
                 }
@@ -255,13 +258,13 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
         worker.setItemStackToSlot(EntityEquipmentSlot.HEAD, ItemStack.EMPTY);
         worker.setItemStackToSlot(EntityEquipmentSlot.LEGS, ItemStack.EMPTY);
 
-        for (int i = 0; i < worker.getInventoryCitizen().getSizeInventory(); i++)
+        for (int i = 0; i < new InvWrapper(worker.getInventoryCitizen()).getSlots(); i++)
         {
             final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(i);
 
-            if (stack == null || stack.getCount() == 0 || stack == ItemStack.EMPTY)
+            if (InventoryUtils.isItemStackEmpty(stack))
             {
-                worker.getInventoryCitizen().setInventorySlotContents(i, ItemStack.EMPTY);
+                new InvWrapper(worker.getInventoryCitizen()).extractItem(i, Integer.MAX_VALUE, false);
                 continue;
             }
 

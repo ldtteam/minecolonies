@@ -334,18 +334,6 @@ public class BuildingGuardTower extends AbstractBuildingWorker
     }
 
     /**
-     * The name of the baker's job.
-     *
-     * @return The name of the baker's job.
-     */
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return GUARD_TOWER;
-    }
-
-    /**
      * Create a Guard job.
      *
      * @param citizen the citizen to take the job.
@@ -356,16 +344,6 @@ public class BuildingGuardTower extends AbstractBuildingWorker
     public AbstractJob createJob(final CitizenData citizen)
     {
         return new JobGuard(citizen);
-    }
-
-    @Override
-    public boolean neededForWorker(@Nullable final ItemStack stack)
-    {
-        return stack != null
-                 && (stack.getItem() instanceof ItemArmor
-                       || stack.getItem() instanceof ItemTool
-                       || stack.getItem() instanceof ItemSword
-                       || stack.getItem() instanceof ItemBow);
     }
 
     @Override
@@ -380,6 +358,16 @@ public class BuildingGuardTower extends AbstractBuildingWorker
             citizen.getCitizenEntity().getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH + getBonusHealth());
         }
         super.setWorker(citizen);
+    }
+
+    @Override
+    public boolean neededForWorker(@Nullable final ItemStack stack)
+    {
+        return stack != null
+                 && (stack.getItem() instanceof ItemArmor
+                       || stack.getItem() instanceof ItemTool
+                       || stack.getItem() instanceof ItemSword
+                       || stack.getItem() instanceof ItemBow);
     }
 
     @Override
@@ -426,6 +414,18 @@ public class BuildingGuardTower extends AbstractBuildingWorker
         compound.setTag(TAG_PATROL_TARGETS, wayPointTagList);
 
         BlockPosUtil.writeToNBT(compound, TAG_GUARD, guardPos);
+    }
+
+    /**
+     * The name of the baker's job.
+     *
+     * @return The name of the baker's job.
+     */
+    @NotNull
+    @Override
+    public String getJobName()
+    {
+        return GUARD_TOWER;
     }
 
     @Override

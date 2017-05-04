@@ -117,7 +117,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         {
             return AIState.GUARD_SEARCH_TARGET;
         }
-        InventoryFunctions.matchFirstInInventory(worker.getInventoryCitizen(), stack -> stack != null && Utils.doesItemServeAsWeapon(stack), worker::setHeldItem);
+        InventoryFunctions.matchFirstInProvider(worker, stack -> stack != null && Utils.doesItemServeAsWeapon(stack), worker::setHeldItem);
         return super.searchTarget();
     }
 
