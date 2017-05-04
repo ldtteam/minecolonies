@@ -119,14 +119,28 @@ public final class Structures
     {
         if (!Configurations.ignoreSchematicsFromJar)
         {
-            try (FileSystem fileSystem = FileSystems.newFileSystem(ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI(), Collections.emptyMap()))
+            try (FileSystem fileSystem = FileSystems.getFileSystem(ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI()))
             {
                 final Path basePath = fileSystem.getPath(SCHEMATICS_ASSET_PATH);
+                Log.getLogger().info("Load huts or decorations from jar");
                 loadSchematicsForPrefix(basePath, SCHEMATICS_PREFIX);
             }
-            catch (@NotNull IOException | URISyntaxException e)
+            /**
+             *  @Supresswarning("squid:S1166")
+             *  The same exception will be triggered in the catch with logging this time.
+             */
+            catch (@NotNull IOException | URISyntaxException | FileSystemNotFoundException e1)
             {
-                Log.getLogger().warn("loadStyleMaps: Could not load the schematics from the jar.", e);
+                try (FileSystem fileSystem = FileSystems.newFileSystem(ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI(), Collections.emptyMap()))
+                {
+                    final Path basePath = fileSystem.getPath(SCHEMATICS_ASSET_PATH);
+                    Log.getLogger().info("Load huts or decorations from jar");
+                    loadSchematicsForPrefix(basePath, SCHEMATICS_PREFIX);
+                }
+                catch (@NotNull IOException | URISyntaxException e2)
+                {
+                    Log.getLogger().warn("loadStyleMaps: Could not load the schematics from the jar.", e2);
+                }
             }
         }
 
