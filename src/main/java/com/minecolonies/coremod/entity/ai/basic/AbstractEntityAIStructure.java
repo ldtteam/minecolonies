@@ -969,7 +969,12 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         currentStructure = null;
     }
 
-    //Unable to merge both loops since they rely on the end of the other.
+    /**
+     * Iterates through all entities and spawns them
+     * Suppressing Sonar Rule Squid:S3047
+     * The rule thinks we can merge the two forge loops iterating over resources
+     * But in this case the rule does not apply because that would destroy the logic.
+     */
     @SuppressWarnings("squid:S3047")
     private Boolean spawnEntity(@NotNull final Structure.StructureBlock currentBlock)
     {

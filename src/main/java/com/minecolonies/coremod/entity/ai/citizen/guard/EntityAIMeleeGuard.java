@@ -128,8 +128,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
      */
     protected AIState huntDown()
     {
-        if(this.worker.getLastAttacker() != null && this.worker.getLastAttackerTime() <= worker.ticksExisted - ATTACK_TIME_BUFFER
-                && this.worker.getLastAttacker().isEntityAlive() && this.worker.canEntityBeSeen(this.worker.getLastAttacker()))
+        if(huntDownlastAttacker())
         {
             targetEntity = this.worker.getLastAttacker();
         }

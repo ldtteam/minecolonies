@@ -327,6 +327,17 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
         return AIState.GUARD_GET_TARGET;
     }
 
+    public boolean huntDownlastAttacker()
+    {
+        if(this.worker.getLastAttacker() != null && this.worker.getLastAttackerTime() >= worker.ticksExisted - ATTACK_TIME_BUFFER
+                && this.worker.getLastAttacker().isEntityAlive())
+        {
+            return this.worker.getLastAttacker() != null && this.worker.canEntityBeSeen(this.worker.getLastAttacker());
+        }
+        worker.setLastAttacker(null);
+        return false;
+    }
+
     /**
      * Searches for the next target.
      *
@@ -334,8 +345,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
      */
     protected AIState searchTarget()
     {
-        if(this.worker.getLastAttacker() != null && this.worker.getLastAttackerTime() <= worker.ticksExisted - ATTACK_TIME_BUFFER
-                && this.worker.getLastAttacker().isEntityAlive() && this.worker.canEntityBeSeen(this.worker.getLastAttacker()))
+        if(huntDownlastAttacker())
         {
             targetEntity = this.worker.getLastAttacker();
             return AIState.GUARD_HUNT_DOWN_TARGET;
