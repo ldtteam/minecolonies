@@ -89,6 +89,38 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         setMaxStackSize(1);
     }
 
+    @NotNull
+    @Override
+    public EnumActionResult onItemUse(
+                                       final EntityPlayer playerIn,
+                                       final World worldIn,
+                                       final BlockPos pos,
+                                       final EnumHand hand,
+                                       final EnumFacing facing,
+                                       final float hitX,
+                                       final float hitY,
+                                       final float hitZ)
+    {
+        ItemStack stack = playerIn.getHeldItem(hand);
+        if (worldIn.isRemote || stack.getCount() == 0 || !isFirstPlacing(playerIn))
+        {
+            return EnumActionResult.FAIL;
+        }
+
+        @NotNull final EnumFacing enumfacing = canShipBePlaced(worldIn, pos);
+        if (enumfacing != EnumFacing.DOWN)
+        {
+            spawnShip(worldIn, pos, enumfacing);
+            stack.setCount(stack.getCount() - 1);
+
+            playerIn.addStat(ModAchievements.achievementGetSupply);
+
+            return EnumActionResult.SUCCESS;
+        }
+        LanguageHandler.sendPlayerMessage(playerIn, "item.supplyChestDeployer.invalid");
+        return EnumActionResult.FAIL;
+    }
+
     /**
      * Checks if the player already placed a supply chest.
      *
@@ -104,6 +136,21 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         }
         LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.error.supplyChestAlreadyPlaced");
         return false;
+    }
+
+    /**
+     * Spawns the ship and supply chest.
+     *
+     * @param world world obj.
+     * @param pos   coordinate clicked.
+     */
+    private void spawnShip(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final EnumFacing chestFacing)
+    {
+        world.setBlockState(pos.up(), Blocks.CHEST.getDefaultState().withProperty(BlockChest.FACING, chestFacing));
+
+        placeSupplyShip(world, pos, chestFacing);
+
+        fillChest((TileEntityChest) world.getTileEntity(pos.up()));
     }
 
     /**
