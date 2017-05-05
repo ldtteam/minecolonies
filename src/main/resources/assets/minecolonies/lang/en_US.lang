@@ -382,6 +382,14 @@ item.supplyCampDeployer.invalid=Requiring a flat ground of at least 16*17.
 item.minecolonies.supplyChestDeployer.name=SupplyShip Chest
 item.minecolonies.supplyCampDeployer.name=SupplyCamp Chest
 com.minecolonies.coremod.error.supplyChestAlreadyPlaced=You have already placed a supply ship or supply camp!
+com.minecolonies.coremod.job.guard.toolClickGuardTooFar=Too far away from guard tower, please upgrade your guardtower.
+
+com.minecolonies.coremod.item.permissionscepter.setmode=Set to mode '%s'
+com.minecolonies.coremod.item.permissionscepter.permission.deny=You do not have permission to edit blocks with this tool.
+com.minecolonies.coremod.item.permissionscepter.addblock.success=Added block type '%s'
+com.minecolonies.coremod.item.permissionscepter.addposition.success=Added location '%d %d %d'
+com.minecolonies.coremod.item.permissionscepter.removeblock.success=Removed block '%s'
+com.minecolonies.coremod.item.permissionscepter.removelocation.success=Removed location '%d %d %d'
 com.minecolonies.coremod.gui.townHall.currentHappiness=Overall happiness:
 com.minecolonies.coremod.job.guard.toolClickGuardTooFar=Too far away from guard tower, please upgrade your guardtower.
 com.minecolonies.coremod.saturation.0=I'm starving, I can't work anymore

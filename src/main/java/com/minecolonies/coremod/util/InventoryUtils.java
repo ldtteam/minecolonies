@@ -498,6 +498,11 @@ public final class InventoryUtils
                     if (isItemStackEmpty(itemHandler.insertItem(i, itemStack, true)))
                     {
                         itemHandler.insertItem(i, itemStack, false);
+                        if (isItemStackEmpty(removedStack))
+                        {
+                            return EMPTY;
+                        }
+
                         return removedStack.copy();
                     }
                 }
