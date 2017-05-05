@@ -187,17 +187,25 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     @SuppressWarnings("squid:S135")
     private void requestMaterials()
     {
+        if (job.getWorkOrder().isRequested())
+        {
+            return;
+        }
+        
         while (job.getStructure().findNextBlock())
         {
             @Nullable final Template.BlockInfo blockInfo = job.getStructure().getBlockInfo();
             @Nullable final Template.EntityInfo entityInfo = job.getStructure().getEntityinfo();
 
+            if (entityInfo != null)
+            {
+                requestEntityToBuildingIfRequired(entityInfo);
+            }
+
             if (blockInfo == null)
             {
                 continue;
             }
-
-            requestEntityToBuildingIfRequired(entityInfo);
 
             @Nullable IBlockState blockState = blockInfo.blockState;
             @Nullable Block block = blockState.getBlock();
@@ -430,6 +438,10 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     {
         final AbstractBuildingWorker buildingWorker = getOwnBuilding();
 
+        if(stack == null || stack.getItem() == null)
+        {
+            return null;
+        }
         final BuildingBuilderResource resource = ((BuildingBuilder) buildingWorker).getNeededResources().get(stack.getUnlocalizedName());
         return resource == null ? stack : new ItemStack(resource.getItem(), resource.getAmount(), resource.getDamageValue());
     }

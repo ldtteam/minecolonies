@@ -762,7 +762,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             {
                 for (final ItemStack stack : request)
                 {
-                    if (checkOrRequestItems(stack))
+                    if (checkOrRequestItems(getTotalAmount(stack)))
                     {
                         return false;
                     }

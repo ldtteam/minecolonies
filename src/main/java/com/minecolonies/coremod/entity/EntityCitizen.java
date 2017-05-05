@@ -599,47 +599,48 @@ public class EntityCitizen extends EntityAgeable implements INpc
             return;
         }
 
-        final double maxValue = Integer.MAX_VALUE - citizenData.getExperience();
-        double localXp = xp * skillModifier / EXP_DIVIDER;
-        final double workBuildingLevel = getWorkBuilding() == null ? 0 : getWorkBuilding().getBuildingLevel();
-        final double bonusXp = workBuildingLevel * (1 + citizenHutLevel) / Math.log(this.getExperienceLevel() + 2.0D);
-        localXp = localXp * bonusXp;
-        final double saturation = citizenData.getSaturation();
+        if (citizenData != null)
+        {
+            final double maxValue = Integer.MAX_VALUE - citizenData.getExperience();
+            double localXp = xp * skillModifier / EXP_DIVIDER;
+            final double workBuildingLevel = getWorkBuilding() == null ? 0 : getWorkBuilding().getBuildingLevel();
+            final double bonusXp = workBuildingLevel * (1 + citizenHutLevel) / Math.log(this.getExperienceLevel() + 2.0D);
+            localXp = localXp * bonusXp;
+            final double saturation = citizenData.getSaturation();
 
-        if (saturation < AVERAGE_SATURATION)
-        {
-            if (saturation <= 0)
+            if (saturation < AVERAGE_SATURATION)
             {
-                return;
+                if (saturation <= 0)
+                {
+                    return;
+                }
+
+                if (saturation < LOW_SATURATION)
+                {
+                    localXp -= localXp * BIG_SATURATION_FACTOR * saturation;
+                }
+                else
+                {
+                    localXp -= localXp * LOW_SATURATION_FACTOR * saturation;
+                }
+            }
+            else if (saturation > AVERAGE_SATURATION)
+            {
+                if (saturation > HIGH_SATURATION)
+                {
+                    localXp += localXp * BIG_SATURATION_FACTOR * saturation;
+                }
+                else
+                {
+                    localXp += localXp * LOW_SATURATION_FACTOR * saturation;
+                }
             }
 
-            if (saturation < LOW_SATURATION)
+            if (localXp > maxValue)
             {
-                localXp -= localXp * BIG_SATURATION_FACTOR * saturation;
+                localXp = maxValue;
             }
-            else
-            {
-                localXp -= localXp * LOW_SATURATION_FACTOR * saturation;
-            }
-        }
-        else if (saturation > AVERAGE_SATURATION)
-        {
-            if (saturation > HIGH_SATURATION)
-            {
-                localXp += localXp * BIG_SATURATION_FACTOR * saturation;
-            }
-            else
-            {
-                localXp += localXp * LOW_SATURATION_FACTOR * saturation;
-            }
-        }
 
-        if (localXp > maxValue)
-        {
-            localXp = maxValue;
-        }
-        if(citizenData != null)
-        {
             citizenData.addExperience(localXp);
 
             while (ExperienceUtils.getXPNeededForNextLevel(citizenData.getLevel()) < citizenData.getExperience())
@@ -1044,6 +1045,14 @@ public class EntityCitizen extends EntityAgeable implements INpc
             if(citizenData.getSaturation() < HIGH_SATURATION)
             {
                 tryToEat();
+            }
+            else
+            {
+                final BuildingHome home = getHomeBuilding();
+                if(home != null && home.isFoodNeeded())
+                {
+                    home.setFoodNeeded(false);
+                }
             }
         }
 
