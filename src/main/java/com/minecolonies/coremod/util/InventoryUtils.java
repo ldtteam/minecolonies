@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.util;
 
 import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemPickaxe;
@@ -307,8 +306,7 @@ public final class InventoryUtils
     {
         //Test with two different ItemStacks to insert in simulation mode.
         return IntStream.range(0, itemHandler.getSlots())
-                .filter(slot -> isItemStackEmpty(itemHandler.insertItem(slot, new ItemStack(Blocks.BEDROCK), true)))
-                .filter(slot -> isItemStackEmpty(itemHandler.insertItem(slot, new ItemStack(Items.IRON_INGOT), true)))
+                .filter(slot -> isItemStackEmpty(itemHandler.getStackInSlot(slot)))
                 .findFirst()
                 .orElse(-1);
     }
