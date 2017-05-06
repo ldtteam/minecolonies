@@ -8,7 +8,6 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
-import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.Utils;
@@ -301,33 +300,26 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                     return DELIVERY;
                 }
 
-                final InventoryCitizen workerInventory = worker.getInventoryCitizen();
+                final InvWrapper workerInventory = new InvWrapper(worker.getInventoryCitizen());
                 for (int i = 0; i < new InvWrapper(worker.getInventoryCitizen()).getSlots(); i++)
                 {
-                    final ItemStack stack = workerInventory.getStackInSlot(i);
-                    if (stack == null)
+                    final ItemStack stack = workerInventory.extractItem(i, Integer.MAX_VALUE, false);
+                    if (InventoryUtils.isItemStackEmpty(stack))
                     {
                         continue;
                     }
 
-                    if (buildingToDeliver.transferStack(stack, world))
+                    final ItemStack insertionResultStack = buildingToDeliver.forceTransferStack(stack, world);
+                    if (!InventoryUtils.isItemStackEmpty(insertionResultStack))
                     {
-                        new InvWrapper(worker.getInventoryCitizen()).extractItem(i, Integer.MAX_VALUE, false);
-                    }
-                    else
-                    {
-                        @Nullable final ItemStack tempStack = buildingToDeliver.forceTransferStack(stack, world);
-                        if (tempStack == null)
-                        {
-                            chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.job.deliveryman.workerChestFull"
-                                    , new TextComponentString(" :" + buildingToDeliver.getSchematicName()));
-                        }
-                        else
-                        {
-                            InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), tempStack);
-                        }
+                        chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.job.deliveryman.workerChestFull"
+                          , new TextComponentString(" :" + buildingToDeliver.getSchematicName()));
+
+                        //Insert the result back into the inventory so we do not loose it.
+                        workerInventory.insertItem(i, insertionResultStack, false);
                     }
                 }
+
                 worker.addExperience(1.0D);
                 buildingToDeliver.setOnGoingDelivery(false);
                 ((BuildingDeliveryman) ownBuilding).setBuildingToDeliver(null);
