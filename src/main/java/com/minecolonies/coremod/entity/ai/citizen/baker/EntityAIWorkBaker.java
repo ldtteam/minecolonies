@@ -43,7 +43,8 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         super.registerTargets(
           new AITarget(IDLE, START_WORKING),
           new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
-          new AITarget(PREPARING, this::prepareForBaking)
+          new AITarget(PREPARING, this::prepareForBaking),
+          new AITarget(BAKER_KNEADING, this::kneadTheDough)
         );
         worker.setSkillModifier(
           INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
@@ -52,15 +53,31 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     }
 
     /**
-     * Prepares the fisherman for fishing and
-     * requests fishingRod and checks if the fisherman already had found a pond.
+     * Prepares the baker for baking and requests ingredients.
+     *
+     * @return the next AIState
+     */
+    private AIState kneadTheDough()
+    {
+       startWorkingAtOwnBuilding();
+       worker.hitBlockWithToolInHand(getOwnBuilding().getLocation());
+       return PREPARING;
+    }
+
+    /**
+     * Prepares the baker for baking and requests ingredients.
      *
      * @return the next AIState
      */
     private AIState prepareForBaking()
     {
-       return getState();
+        if(true)
+        {
+            return BAKER_KNEADING;
+        }
+        return getState();
     }
+
 
 
     /**

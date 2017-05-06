@@ -4,8 +4,6 @@ import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.baker.EntityAIWorkBaker;
-//todo WHAAAT?!?!?!
-import com.minecolonies.coremod.sounds.FishermanSounds;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundEvent;
 import org.jetbrains.annotations.NotNull;
@@ -91,15 +89,16 @@ public class JobBaker extends AbstractJob
      * @return soundEvent to be played.
      */
 
-    //todo WHAT?!?!?!
     @Override
     public SoundEvent getBedTimeSound()
     {
-        if (getCitizen() != null)
+       /** if (getCitizen() != null)
         {
-            return getCitizen().isFemale() ? FishermanSounds.Female.offToBed : FishermanSounds.Male.offToBed;
+            return getCitizen().isFemale() ? BakerSounds.Female.offToBed : BakerSounds.Male.offToBed;
         }
+        */
         return null;
+
     }
 
     /**
@@ -107,14 +106,15 @@ public class JobBaker extends AbstractJob
      *
      * @return soundEvent to be played.
      */
-    //todo WHAT?!?!?!
     @Override
     public SoundEvent getBadWeatherSound()
     {
+        /**
         if (getCitizen() != null)
         {
-            return getCitizen().isFemale() ? FishermanSounds.Female.badWeather : FishermanSounds.Male.badWeather;
+            return getCitizen().isFemale() ? BakerSounds.Female.badWeather : BakerSounds.Male.badWeather;
         }
+         */
         return null;
     }
 }

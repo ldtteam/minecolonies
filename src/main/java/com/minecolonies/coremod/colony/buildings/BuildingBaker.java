@@ -104,7 +104,7 @@ public class BuildingBaker extends AbstractBuildingWorker
         @Override
         public Window getWindow()
         {
-            return new WindowHutBaker(this, BAKER_HUT_NAME);
+            return new WindowHutBaker(this);
         }
 
         @NotNull
