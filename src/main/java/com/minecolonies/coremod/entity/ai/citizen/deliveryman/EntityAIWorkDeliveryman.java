@@ -299,7 +299,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 final InvWrapper workerInventory = new InvWrapper(worker.getInventoryCitizen());
                 for (int i = 0; i < new InvWrapper(worker.getInventoryCitizen()).getSlots(); i++)
                 {
-                    final ItemStack stack = workerInventory.extractItem(1, Integer.MAX_VALUE, false);
+                    final ItemStack stack = workerInventory.extractItem(i, Integer.MAX_VALUE, false);
                     if (InventoryUtils.isItemStackEmpty(stack))
                     {
                         continue;
@@ -319,11 +319,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 worker.addExperience(1.0D);
                 buildingToDeliver.setOnGoingDelivery(false);
                 ((BuildingDeliveryman) ownBuilding).setBuildingToDeliver(null);
-
-                if(buildingToDeliver instanceof BuildingHome)
-                {
-                    ((BuildingHome) buildingToDeliver).setFoodNeeded(false);
-                }
             }
         }
         return START_WORKING;

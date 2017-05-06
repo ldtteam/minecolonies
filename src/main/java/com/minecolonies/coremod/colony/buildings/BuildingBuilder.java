@@ -104,18 +104,6 @@ public class BuildingBuilder extends AbstractBuildingWorker
     }
 
     /**
-     * Getter of the job description.
-     *
-     * @return the description of the builder job.
-     */
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return BUILDER;
-    }
-
-    /**
      * Create the job for the builder.
      *
      * @param citizen the citizen to take the job.
