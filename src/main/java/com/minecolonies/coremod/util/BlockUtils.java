@@ -250,6 +250,10 @@ public final class BlockUtils
         {
             return Item.getItemFromBlock(Blocks.DIRT);
         }
+        else if(blockState.getBlock() instanceof BlockFire)
+        {
+            return Items.FLINT_AND_STEEL;
+        }
         else if (blockState.getBlock() instanceof BlockFlowerPot)
         {
             return Items.FLOWER_POT;
