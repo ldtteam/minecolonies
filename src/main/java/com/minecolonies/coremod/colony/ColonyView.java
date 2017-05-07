@@ -59,6 +59,8 @@ public final class ColonyView implements IColony
      */
     private Set<Block> freeBlocks = new HashSet<>();
 
+    private double overallHappiness;
+
     /**
      * Base constructor for a colony.
      *
@@ -112,6 +114,7 @@ public final class ColonyView implements IColony
         {
             BlockPosUtil.writeToByteBuf(buf, block);
         }
+        buf.writeDouble(colony.getOverallHappiness());
 
         //  Citizens are sent as a separate packet
     }
@@ -379,6 +382,7 @@ public final class ColonyView implements IColony
         {
             freePositions.add(BlockPosUtil.readFromByteBuf(buf));
         }
+        this.overallHappiness = buf.readDouble();
 
         return null;
     }
@@ -525,6 +529,15 @@ public final class ColonyView implements IColony
     public void removePlayer(final UUID player)
     {
         MineColonies.getNetwork().sendToServer(new PermissionsMessage.RemovePlayer(this, player));
+    }
+
+    /**
+     * Getter for the overall happiness.
+     * @return the happiness, a double.
+     */
+    public double getOverallHappiness()
+    {
+        return overallHappiness;
     }
 
     @Override

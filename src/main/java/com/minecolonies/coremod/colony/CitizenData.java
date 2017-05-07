@@ -26,7 +26,7 @@ public class CitizenData
     /**
      * Max level of an attribute a citizen may initially have.
      */
-    private static final int    LEVEL_CAP               = 5;
+
     private static final int    LETTERS_IN_THE_ALPHABET = 26;
     /**
      * Tags.
@@ -45,34 +45,88 @@ public class CitizenData
     private static final String TAG_SKILL_SPEED         = "charisma";
     private static final String TAG_SKILL_INTELLIGENCE  = "intelligence";
     private static final String TAG_SKILL_DEXTERITY     = "dexterity";
+    private static final String TAG_SATURATION          = "saturation";
+
+    /**
+     * Minimum saturation of a citizen.
+     */
+    private static final int MIN_SATURATION = 0;
+
+    /**
+     * Maximum saturation of a citizen.
+     */
+    public static final int MAX_SATURATION = 10;
+
     /**
      * The unique citizen id.
      */
-    private final int                    id;
-    private final Colony                 colony;
-    private       String                 name;
-    private       boolean                female;
-    private       int                    textureId;
+    private final int id;
+
+    /**
+     * The name of the citizen.
+     */
+    private String name;
+
+    /**
+     * Boolean gender, true = female, false = male.
+     */
+    private boolean female;
+
+    /**
+     * The id of the citizens texture.
+     */
+    private int textureId;
+
+    /**
+     * The colony the citizen belongs to.
+     */
+    private final Colony colony;
+
+    /**
+     * The home building of the citizen.
+     */
     @Nullable
-    private       BuildingHome           homeBuilding;
+    private BuildingHome homeBuilding;
+
+    /**
+     * The work building of the citizen.
+     */
     @Nullable
-    private       AbstractBuildingWorker workBuilding;
-    private       AbstractJob            job;
-    private       boolean                dirty;
-    //Citizen
+    private AbstractBuildingWorker workBuilding;
+
+    /**
+     * The job of the citizen.
+     */
+    private AbstractJob job;
+
+    /**
+     * If the citizen is dirty (Has to be updated on client side).
+     */
+    private boolean dirty;
+
+    /**
+     * Its entitity.
+     */
     @Nullable
-    private       EntityCitizen          entity;
+    private EntityCitizen entity;
+
     /**
      * Attributes, which influence the workers behaviour.
      * May be added more later.
      */
-    private       int                    strength;
-    private       int                    endurance;
-    private       int                    charisma;
-    private       int                    intelligence;
-    private       int                    dexterity;
-    private       double                 health;
-    private       double                 maxHealth;
+    private int    strength;
+    private int    endurance;
+    private int    charisma;
+    private int    intelligence;
+    private int    dexterity;
+    private double health;
+    private double maxHealth;
+
+    /**
+     * The citizens saturation at the current moment.
+     */
+    private double saturation;
+
     /**
      * The current experience level the citizen is on.
      */
@@ -130,13 +184,13 @@ public class CitizenData
         health = compound.getFloat(TAG_HEALTH);
         maxHealth = compound.getFloat(TAG_MAX_HEALTH);
 
-
         final NBTTagCompound nbtTagSkillsCompound = compound.getCompoundTag("skills");
         strength = nbtTagSkillsCompound.getInteger("strength");
         endurance = nbtTagSkillsCompound.getInteger("endurance");
         charisma = nbtTagSkillsCompound.getInteger("charisma");
         intelligence = nbtTagSkillsCompound.getInteger("intelligence");
         dexterity = nbtTagSkillsCompound.getInteger("dexterity");
+        saturation = compound.getDouble(TAG_SATURATION);
 
         if (compound.hasKey("job"))
         {
@@ -195,7 +249,7 @@ public class CitizenData
         catch (final RuntimeException ex)
         {
             Log.getLogger().error(String.format("A CitizenData.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-              citizenDataView.getID()), ex);
+                    citizenDataView.getID()), ex);
             citizenDataView = null;
         }
 
@@ -242,14 +296,27 @@ public class CitizenData
         maxHealth = entity.getMaxHealth();
         experience = 0;
         level = 0;
+        saturation = MAX_SATURATION;
+        int levelCap = (int) colony.getOverallHappiness();
         @NotNull final Random random = new Random();
 
+        if(levelCap <= 1)
+        {
+            intelligence = 1;
+            charisma = 1;
+            strength = 1;
+            endurance = 1;
+            dexterity = 1;
+        }
+        else
+        {
+            intelligence = random.nextInt(levelCap - 1) + 1;
+            charisma = random.nextInt(levelCap - 1) + 1;
+            strength = random.nextInt(levelCap - 1) + 1;
+            endurance = random.nextInt(levelCap - 1) + 1;
+            dexterity = random.nextInt(levelCap - 1) + 1;
+        }
         //Initialize the citizen skills and make sure they are never 0
-        intelligence = random.nextInt(LEVEL_CAP - 1) + 1;
-        charisma = random.nextInt(LEVEL_CAP - 1) + 1;
-        strength = random.nextInt(LEVEL_CAP - 1) + 1;
-        endurance = random.nextInt(LEVEL_CAP - 1) + 1;
-        dexterity = random.nextInt(LEVEL_CAP - 1) + 1;
 
         markDirty();
     }
@@ -265,11 +332,13 @@ public class CitizenData
         final String firstName;
         if (!female)
         {
-            firstName = getRandomElement(rand, Configurations.maleFirstNames);
+            firstName = String.format("%s %s. %s", getRandomElement(rand, Configurations.femaleFirstNames), getRandomLetter(rand),
+                    getRandomElement(rand, Configurations.lastNames));
         }
         else
         {
-            firstName = getRandomElement(rand, Configurations.femaleFirstNames);
+            firstName = String.format("%s %s. %s", getRandomElement(rand, Configurations.maleFirstNames), getRandomLetter(rand),
+                    getRandomElement(rand, Configurations.lastNames));
         }
         return String.format("%s %s. %s", firstName, getRandomLetter(rand), getRandomElement(rand, Configurations.lastNames));
     }
@@ -546,6 +615,7 @@ public class CitizenData
         nbtTagSkillsCompound.setInteger(TAG_SKILL_INTELLIGENCE, intelligence);
         nbtTagSkillsCompound.setInteger(TAG_SKILL_DEXTERITY, dexterity);
         compound.setTag(TAG_SKILLS, nbtTagSkillsCompound);
+        compound.setDouble(TAG_SATURATION, saturation);
 
         if (job != null)
         {
@@ -600,6 +670,7 @@ public class CitizenData
         buf.writeInt(getCharisma());
         buf.writeInt(getIntelligence());
         buf.writeInt(getDexterity());
+        buf.writeDouble(getSaturation());
 
         ByteBufUtils.writeUTF8String(buf, (job != null) ? job.getName() : "");
     }
@@ -622,6 +693,35 @@ public class CitizenData
     public void setLevel(final int lvl)
     {
         this.level = lvl;
+    }
+
+    /**
+     * Getter for the saturation.
+     *
+     * @param extraSaturation the extra saturation
+     */
+    public void increaseSaturation(final double extraSaturation)
+    {
+        this.saturation = Math.min(MAX_SATURATION, this.saturation + Math.abs(extraSaturation));
+    }
+
+    /**
+     * Getter for the saturation.
+     *
+     * @param extraSaturation the saturation to remove.
+     */
+    public void decreaseSaturation(final double extraSaturation)
+    {
+        this.saturation = Math.max(MIN_SATURATION, this.saturation - Math.abs(extraSaturation));
+    }
+
+    /**
+     * Resets the experience and the experience level of the citizen.
+     */
+    public void resetExperienceAndLevel()
+    {
+        this.level = 0;
+        this.experience = 0;
     }
 
     /**
@@ -685,11 +785,12 @@ public class CitizenData
     }
 
     /**
-     * Resets the experience and the experience level of the citizen.
+     * Getter for the saturation.
+     *
+     * @return the saturation.
      */
-    public void resetExperienceAndLevel()
+    public double getSaturation()
     {
-        this.level = 0;
-        this.experience = 0;
+        return this.saturation;
     }
 }

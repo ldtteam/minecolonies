@@ -267,7 +267,7 @@ public abstract class AbstractJob
     {
         for (@NotNull final ItemStack neededItem : itemsNeeded)
         {
-            if ((stack.getItem().isDamageable() && stack.getItem() == neededItem.getItem()) || stack.isItemEqual(neededItem))
+            if (stack.isItemEqualIgnoreDurability(neededItem))
             {
                 neededItem.setCount(neededItem.getCount() + stack.getCount());
                 return;
@@ -296,7 +296,7 @@ public abstract class AbstractJob
 
         for (@NotNull final ItemStack neededItem : itemsNeeded)
         {
-            if ((stack.getItem().isDamageable() && stack.getItem() == neededItem.getItem()) || stack.isItemEqual(neededItem))
+            if (stack.isItemEqualIgnoreDurability(neededItem))
             {
                 //todo make this sofisticated as soon as material handling has been implemented.
                 //final int itemsToRemove = Math.min(neededItem.getCount(), stackCopy.getCount());

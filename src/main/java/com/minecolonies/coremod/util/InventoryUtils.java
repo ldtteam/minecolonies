@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.util;
 
 import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemPickaxe;
@@ -278,6 +277,21 @@ public class InventoryUtils
     }
 
     /**
+     * Returns the first open slot in the {@link IItemHandler}.
+     *
+     * @param itemHandler The {@link IItemHandler} to check.
+     * @return slot index or -1 if none found.
+     */
+    public static int getFirstOpenSlotFromItemHandler(@NotNull final IItemHandler itemHandler)
+    {
+        //Test with two different ItemStacks to insert in simulation mode.
+        return IntStream.range(0, itemHandler.getSlots())
+                .filter(slot -> isItemStackEmpty(itemHandler.getStackInSlot(slot)))
+                .findFirst()
+                .orElse(-1);
+    }
+
+    /**
      * Returns if the {@link IItemHandler} is full.
      *
      * @param itemHandler The {@link IItemHandler}.
@@ -288,21 +302,7 @@ public class InventoryUtils
         return getFirstOpenSlotFromItemHandler(itemHandler) == -1;
     }
 
-    /**
-     * Returns the first open slot in the {@link IItemHandler}.
-     *
-     * @param itemHandler The {@link IItemHandler} to check.
-     * @return slot index or -1 if none found.
-     */
-    public static int getFirstOpenSlotFromItemHandler(@NotNull final IItemHandler itemHandler)
-    {
-        //Test with two different ItemStacks to insert in simulation mode.
-        return IntStream.range(0, itemHandler.getSlots())
-                 .filter(slot -> isItemStackEmpty(itemHandler.insertItem(slot, new ItemStack(Blocks.BEDROCK), true)))
-                 .filter(slot -> isItemStackEmpty(itemHandler.insertItem(slot, new ItemStack(Items.IRON_INGOT), true)))
-                 .findFirst()
-                 .orElse(-1);
-    }
+
 
     /**
      * Looks for a {@link ItemPickaxe} to mine a block of {@code requiredLevel},
@@ -636,6 +636,55 @@ public class InventoryUtils
             if (foundSlot > -1)
             {
                 return foundSlot;
+            }
+        }
+
+        return -1;
+        //TODO: Later harden contract to remove compare on slot := -1
+        //throw new IllegalStateException("Item "+targetItem.getUnlocalizedName() + " not found in ItemHandler!");
+    }
+
+    /**
+     * Returns the index of the first occurrence of an ItemStack that matches
+     * the given predicate in the {@link ICapabilityProvider}.
+     *
+     * @param provider                    Provider to check
+     * @param itemStackSelectionPredicate The predicate to match.
+     * @return Index of the first occurrence
+     */
+    public static int findFirstSlotInProviderNotEmptyWith(@NotNull final ICapabilityProvider provider, Predicate<ItemStack> itemStackSelectionPredicate)
+    {
+        for (IItemHandler handler : getItemHandlersFromProvider(provider))
+        {
+            int foundSlot = findFirstSlotInItemHandlerNotEmptyWith(handler, itemStackSelectionPredicate);
+            if (foundSlot > -1)
+            {
+                return foundSlot;
+            }
+        }
+
+        return -1;
+    }
+
+    /**
+     * Returns the index of the first occurrence of an ItemStack that matches
+     * the given predicate in the {@link IItemHandler}.
+     * Also applies the not empty check.
+     *
+     * @param itemHandler                 ItemHandler to check
+     * @param itemStackSelectionPredicate The predicate to match.
+     * @return Index of the first occurrence
+     */
+    public static int findFirstSlotInItemHandlerNotEmptyWith(@NotNull final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    {
+        @NotNull final Predicate<ItemStack> notEmptyPredicate = itemStack -> !InventoryUtils.isItemStackEmpty(itemStack);
+        notEmptyPredicate.and(itemStackSelectionPredicate);
+
+        for (int slot = 0; slot < itemHandler.getSlots(); slot++)
+        {
+            if (notEmptyPredicate.test(itemHandler.getStackInSlot(slot)))
+            {
+                return slot;
             }
         }
 
@@ -1365,6 +1414,25 @@ public class InventoryUtils
         }
 
         return false;
+    }
+
+    public static boolean transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(@NotNull final IItemHandler sourceHandler,
+            @NotNull final Predicate<ItemStack> itemStackSelectionPredicate,
+            @NotNull int amount, @NotNull IItemHandler targetHandler)
+    {
+        final int desiredItemSlot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(sourceHandler,
+                itemStackSelectionPredicate::test);
+
+        if(desiredItemSlot == -1)
+        {
+            return false;
+        }
+        final ItemStack returnStack = sourceHandler.extractItem(desiredItemSlot, amount, false);
+        if(InventoryUtils.isItemStackEmpty(returnStack))
+        {
+            return false;
+        }
+        return InventoryUtils.addItemStackToItemHandler(targetHandler, returnStack);
     }
 
     /**

@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.util;
 
 import com.minecolonies.coremod.colony.Structures;
-import com.minecolonies.structures.helpers.Structure;
 import com.minecolonies.structures.helpers.Settings;
+import com.minecolonies.structures.helpers.Structure;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;

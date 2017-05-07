@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.miner;
 
-import com.minecolonies.coremod.colony.buildings.BuildingMiner;
 import com.minecolonies.coremod.colony.Structures;
+import com.minecolonies.coremod.colony.buildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.entity.ai.util.AIState;
@@ -489,6 +489,33 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         return CLEAR_STEP;
     }
 
+    @Override
+    protected boolean checkIfCanceled()
+    {
+        if(!isThereAStructureToBuild())
+        {
+            switch (getState())
+            {
+                case CLEAR_STEP:
+                case BUILDING_STEP:
+                case DECORATION_STEP:
+                case SPAWN_STEP:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    protected void onStartWithoutStructure()
+    {
+        /**
+         * Nothing to do here.
+         */
+    }
+
     @NotNull
     private AIState executeNodeMining()
     {
@@ -513,8 +540,10 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         //normal facing +x
         int rotation = 0;
 
-        final int vectorX = workingNode.getX() < workingNode.getParent().getX() ? -1 : (workingNode.getX() > workingNode.getParent().getX() ? 1 : 0);
-        final int vectorZ = workingNode.getZ() < workingNode.getParent().getY() ? -1 : (workingNode.getZ() > workingNode.getParent().getY() ? 1 : 0);
+        final int workingNodeX = workingNode.getX() > workingNode.getParent().getX() ? 1 : 0;
+        final int workingNodeZ = workingNode.getZ() > workingNode.getParent().getY() ? 1 : 0;
+        final int vectorX = workingNode.getX() < workingNode.getParent().getX() ? -1 : workingNodeX;
+        final int vectorZ = workingNode.getZ() < workingNode.getParent().getY() ? -1 : workingNodeZ;
 
         if (vectorX == -1)
         {
@@ -576,7 +605,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         }
         else
         {
-            //todo we can add other nodeTypes without a problem.
             if (mineNode.getStyle() == Node.NodeType.CROSSROAD)
             {
                 loadStructure(Structures.SCHEMATICS_PREFIX + "/miner/minerX4", rotateTimes, structurePos, false);
@@ -678,7 +706,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         {
             new InvWrapper(getInventory()).extractItem(slot, 1, false);
             //Flag 1+2 is needed for updates
-            world.setBlockState(location, metadata, 3);
+            world.setBlockState(location, metadata, 0x03);
         }
     }
 
@@ -728,36 +756,31 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     }
 
     @Override
+    public void executeSpecificCompleteActions()
+    {
+        final BuildingMiner minerBuilding = getOwnBuilding();
+        //If shaft isn't cleared we're in shaft clearing mode.
+        if (minerBuilding.clearedShaft)
+        {
+            minerBuilding.getCurrentLevel().closeNextNode(getRotation());
+        }
+        else
+        {
+            @NotNull final Level currentLevel = new Level(minerBuilding, job.getStructure().getPosition().getY());
+            minerBuilding.addLevel(currentLevel);
+            minerBuilding.setCurrentLevel(minerBuilding.getNumberOfLevels());
+            minerBuilding.resetStartingLevelShaft();
+        }
+        //Send out update to client
+        getOwnBuilding().markDirty();
+
+        job.setStructure(null);
+    }
+
+    @Override
     public IBlockState getSolidSubstitution(BlockPos ignored)
     {
         return Blocks.COBBLESTONE.getDefaultState();
-    }
-
-    @Override
-    protected boolean checkIfCanceled()
-    {
-        if (!isThereAStructureToBuild())
-        {
-            switch (getState())
-            {
-                case CLEAR_STEP:
-                case BUILDING_STEP:
-                case DECORATION_STEP:
-                case SPAWN_STEP:
-                    return true;
-                default:
-                    return false;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    protected void onStartWithoutStructure()
-    {
-        /**
-         * Nothing to do here.
-         */
     }
 
     /**
@@ -785,5 +808,11 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         }
         final Point2D pos = buildingMiner.getCurrentLevel().getRandomNode().getParent();
         return new BlockPos(pos.getX(), buildingMiner.getCurrentLevel().getDepth(), pos.getY());
+    }
+
+    @Override
+    public boolean shallReplaceSolidSubstitutionBlock(final Block worldBlock, final IBlockState worldMetadata)
+    {
+        return worldBlock instanceof BlockOre && worldMetadata.getMaterial().isSolid();
     }
 }
