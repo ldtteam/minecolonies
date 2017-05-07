@@ -50,6 +50,11 @@ public final class ColonyView implements IColony
     private       int                                  maxCitizens = 0;
 
     /**
+     * Check if the colony has a warehouse.
+     */
+    private boolean hasWarehouse;
+
+    /**
      * The Positions which players can freely interact.
      */
     private Set<BlockPos> freePositions = new HashSet<>();
@@ -115,7 +120,7 @@ public final class ColonyView implements IColony
             BlockPosUtil.writeToByteBuf(buf, block);
         }
         buf.writeDouble(colony.getOverallHappiness());
-
+        buf.writeBoolean(colony.hasWarehouse());
         //  Citizens are sent as a separate packet
     }
 
@@ -370,7 +375,7 @@ public final class ColonyView implements IColony
             freePositions.add(BlockPosUtil.readFromByteBuf(buf));
         }
         this.overallHappiness = buf.readDouble();
-
+        this.hasWarehouse = buf.readBoolean();
         return null;
     }
 
@@ -573,5 +578,11 @@ public final class ColonyView implements IColony
     public int getID()
     {
         return id;
+    }
+
+    @Override
+    public boolean hasWarehouse()
+    {
+        return hasWarehouse;
     }
 }

@@ -40,7 +40,6 @@ public final class TinkersWeaponHelper extends TinkersWeaponProxy
      * @param stack the stack to check for.
      * @return true if so.
      */
-    @Optional.Method(modid = "tconstruct")
     public static boolean isTinkersSword(@NotNull final ItemStack stack)
     {
         return new TinkersWeaponHelper().isTinkersWeapon(stack);
@@ -51,7 +50,6 @@ public final class TinkersWeaponHelper extends TinkersWeaponProxy
      * @param stack the stack.
      * @return the attack damage.
      */
-    @Optional.Method(modid = "tconstruct")
     public static double getDamage(@NotNull final ItemStack stack)
     {
         return new TinkersWeaponHelper().getAttackDamage(stack);

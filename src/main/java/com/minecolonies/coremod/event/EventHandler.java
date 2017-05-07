@@ -2,10 +2,12 @@ package com.minecolonies.coremod.event;
 
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockHutTownHall;
+import com.minecolonies.coremod.blocks.BlockHutWareHouse;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.IColony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Log;
 import com.minecolonies.coremod.util.MathUtils;
@@ -200,10 +202,28 @@ public class EventHandler
         {
             return onTownHallPlaced(world, player, pos);
         }
+        else if(block instanceof BlockHutWareHouse)
+        {
+            return onWareHousePlaced(world, player, pos);
+        }
         else
         {
             return onBlockHutPlaced(world, player, pos);
         }
+    }
+
+    private static boolean onWareHousePlaced(final World world, final EntityPlayer player, final BlockPos pos)
+    {
+        if(onBlockHutPlaced(world, player, pos))
+        {
+            final IColony colony = ColonyManager.getIColonyByOwner(world, player);
+            if(colony != null && (!Configurations.limitToOneWareHousePerColony || !colony.hasWarehouse()))
+            {
+                return true;
+            }
+            LanguageHandler.sendPlayerMessage(player, "tile.blockHut.warehouse.limit");
+        }
+        return false;
     }
 
     static boolean onTownHallPlaced(@NotNull final World world, @NotNull final EntityPlayer player, final BlockPos pos)
