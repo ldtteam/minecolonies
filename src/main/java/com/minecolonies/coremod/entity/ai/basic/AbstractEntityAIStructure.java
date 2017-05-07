@@ -541,7 +541,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     {
         final ItemStack item = BlockUtils.getItemStackFromBlockState(blockState);
         worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item == null ? InventoryUtils.EMPTY : item);
-
         final IBlockState decrease;
         for(IPlacementHandler handlers :PlacementHandlers.handlers)
         {
