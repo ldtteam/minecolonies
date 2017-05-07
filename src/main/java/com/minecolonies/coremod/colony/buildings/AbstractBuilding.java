@@ -1146,26 +1146,31 @@ public abstract class AbstractBuilding
      *
      * @param stack the stack to transfer.
      * @param world the world to do it in.
-     * @return true if was able to.
+     * @return The {@link ItemStack} as that is left over, might be {@link InventoryUtils#EMPTY} if the stack was completely accepted
      */
-    public boolean transferStack(@NotNull final ItemStack stack, @NotNull final World world)
+    public ItemStack transferStack(@NotNull final ItemStack stack, @NotNull final World world)
     {
         if (tileEntity == null || InventoryUtils.isProviderFull(tileEntity))
         {
-            for (final BlockPos pos : containerList)
+            Iterator<BlockPos> posIterator = containerList.iterator();
+            @NotNull ItemStack resultStack = stack.copy();
+
+            while (posIterator.hasNext() && !InventoryUtils.isItemStackEmpty(resultStack))
             {
+                final BlockPos pos = posIterator.next();
                 final TileEntity tempTileEntity = world.getTileEntity(pos);
                 if (tempTileEntity instanceof TileEntityChest && !InventoryUtils.isProviderFull(tempTileEntity))
                 {
-                    return InventoryUtils.addItemStackToProvider(tempTileEntity, stack);
+                    resultStack = InventoryUtils.addItemStackToProviderWithResult(tempTileEntity, stack);
                 }
             }
+
+            return resultStack;
         }
         else
         {
-            return InventoryUtils.addItemStackToProvider(tileEntity, stack);
+            return InventoryUtils.addItemStackToProviderWithResult(tileEntity, stack);
         }
-        return false;
     }
 
     /**

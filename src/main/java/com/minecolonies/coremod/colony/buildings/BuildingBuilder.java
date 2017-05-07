@@ -103,29 +103,6 @@ public class BuildingBuilder extends AbstractBuildingWorker
         }
     }
 
-    @Override
-    public boolean transferStack(@NotNull final ItemStack stack, @NotNull final World world)
-    {
-        if (super.transferStack(stack, world))
-        {
-            this.markDirty();
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public ItemStack forceTransferStack(final ItemStack stack, final World world)
-    {
-        final ItemStack itemStack = super.forceTransferStack(stack, world);
-        if (itemStack != null)
-        {
-            this.markDirty();
-            return itemStack;
-        }
-        return itemStack;
-    }
-
     /**
      * Create the job for the builder.
      *
@@ -345,5 +322,30 @@ public class BuildingBuilder extends AbstractBuildingWorker
     public boolean requiresResourceForBuilding(ItemStack stack)
     {
         return neededResources.containsKey(stack.getUnlocalizedName());
+    }
+
+    @Override
+    public ItemStack transferStack(@NotNull final ItemStack stack, @NotNull final World world)
+    {
+        @NotNull final ItemStack resultStack = super.transferStack(stack, world);
+
+        if (InventoryUtils.isItemStackEmpty(resultStack))
+        {
+            this.markDirty();
+        }
+
+        return resultStack;
+    }
+
+    @Override
+    public ItemStack forceTransferStack(final ItemStack stack, final World world)
+    {
+        final ItemStack itemStack = super.forceTransferStack(stack, world);
+        if (InventoryUtils.isItemStackEmpty(itemStack))
+        {
+            this.markDirty();
+        }
+
+        return itemStack;
     }
 }
