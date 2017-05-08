@@ -715,6 +715,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      */
     public void resetCurrentStructure()
     {
+        workFrom = null;
         currentStructure = null;
     }
 
