@@ -13,10 +13,7 @@ import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
-import com.minecolonies.coremod.util.BlockPosUtil;
-import com.minecolonies.coremod.util.BlockUtils;
-import com.minecolonies.coremod.util.LanguageHandler;
-import com.minecolonies.coremod.util.Log;
+import com.minecolonies.coremod.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockDoor;
@@ -531,6 +528,39 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     protected boolean isAlreadyCleared()
     {
         return job.getWorkOrder() != null && job.getWorkOrder().isCleared();
+    }
+
+    /**
+     * Calculates the working position.
+     * <p>
+     * Takes a min distance from width and length.
+     * <p>
+     * Then finds the floor level at that distance and then check if it does contain two air levels.
+     *
+     * @param targetPosition the position to work at.
+     * @return BlockPos position to work from.
+     */
+    @Override
+    public BlockPos getWorkingPosition(final BlockPos targetPosition)
+    {
+        StructureWrapper wrapper = job.getStructure();
+        final int x1 = wrapper.getPosition().getX() - wrapper.getOffset().getX() - 1;
+        final int z1 = wrapper.getPosition().getZ() - wrapper.getOffset().getZ() - 1;
+        final int x3 = wrapper.getPosition().getX() + (wrapper.getWidth() - wrapper.getOffset().getX());
+        final int z3 = wrapper.getPosition().getZ() + (wrapper.getLength() - wrapper.getOffset().getZ());
+
+        final BlockPos[] edges = new BlockPos[]{new BlockPos(x1, 70, z1), new BlockPos(x3, 70, z1), new BlockPos(x1, 70, z3), new BlockPos(x3, 70, z3)};
+
+        for(final BlockPos pos: edges)
+        {
+            final BlockPos basePos = BlockPosUtil.getFloor(pos, world);
+            if (EntityUtils.checkForFreeSpace(world, basePos)
+                    && world.getBlockState(basePos.up()).getBlock() != Blocks.SAPLING)
+            {
+                return basePos;
+            }
+        }
+        return targetPosition;
     }
 
     /**
