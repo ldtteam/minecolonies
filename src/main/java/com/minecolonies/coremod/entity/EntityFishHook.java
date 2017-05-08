@@ -333,9 +333,9 @@ public final class EntityFishHook extends Entity
             --this.shake;
         }
 
-        if (this.inGround)
+        if (!this.inGround)
         {
-            return true;
+            return false;
         }
 
         this.inGround = false;
