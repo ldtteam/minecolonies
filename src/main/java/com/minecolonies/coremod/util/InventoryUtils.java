@@ -688,12 +688,15 @@ public class InventoryUtils
      */
     public static int findFirstSlotInItemHandlerNotEmptyWith(@NotNull final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        @NotNull Predicate<ItemStack> notEmptyPredicate = itemStack -> !InventoryUtils.isItemStackEmpty(itemStack);
-        notEmptyPredicate = notEmptyPredicate.and(itemStackSelectionPredicate);
+        @NotNull final Predicate<ItemStack> emptyPredicate = InventoryUtils::isItemStackEmpty;
+        @NotNull final Predicate<ItemStack> notEmptyPredicate = emptyPredicate.negate();
+        //todo: extract the first to as static fields
+        
+        @NotNull final Predicate<ItemStack> firstWorthySlotPredicate = notEmptyPredicate.and(itemStackSelectionPredicate);
 
         for (int slot = 0; slot < itemHandler.getSlots(); slot++)
         {
-            if (notEmptyPredicate.test(itemHandler.getStackInSlot(slot)))
+            if (firstWorthySlotPredicate.test(itemHandler.getStackInSlot(slot)))
             {
                 return slot;
             }
