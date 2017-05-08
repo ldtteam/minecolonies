@@ -312,8 +312,17 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                     final ItemStack insertionResultStack = buildingToDeliver.forceTransferStack(stack, world);
                     if (!InventoryUtils.isItemStackEmpty(insertionResultStack))
                     {
-                        chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.job.deliveryman.workerChestFull"
-                          , new TextComponentString(" :" + buildingToDeliver.getSchematicName()));
+                        final AbstractBuildingWorker workerBuilding = (AbstractBuildingWorker) buildingToDeliver;
+                        if (workerBuilding != null && workerBuilding.getWorker() != null)
+                        {
+                            chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.job.deliveryman.namedWorkerChestFull"
+                              , workerBuilding.getWorker().getName(), buildingToDeliver.getSchematicName());
+                        }
+                        else
+                        {
+                            chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.job.deliveryman.workerChestFull"
+                              , new TextComponentString(" :" + buildingToDeliver.getSchematicName()));
+                        }
 
                         //Insert the result back into the inventory so we do not loose it.
                         workerInventory.insertItem(i, insertionResultStack, false);
