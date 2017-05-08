@@ -1056,7 +1056,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         int amountToKeep = 0;
         if (keptEnough(alreadyKept, shouldKeep, stack))
         {
-            returnStack = InventoryUtils.addItemStackToProviderWithResult(buildingWorker.getTileEntity(), stack);
+            returnStack = InventoryUtils.addItemStackToProviderWithResult(buildingWorker.getTileEntity(), stack.copy());
         }
         else
         {
@@ -1069,7 +1069,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             amountToKeep = stack.getCount() - tempStorage.getAmount();
             returnStack = InventoryUtils.addItemStackToProviderWithResult(buildingWorker.getTileEntity(), tempStack);
         }
-        if (returnStack == null)
+        if (InventoryUtils.isItemStackEmpty(returnStack))
         {
             new InvWrapper(worker.getInventoryCitizen()).extractItem(slot, stack.getCount() - amountToKeep, false);
             return amountToKeep == 0;
