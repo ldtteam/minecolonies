@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.util;
 
 import net.minecraft.block.Block;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
@@ -35,6 +34,18 @@ public class InventoryUtils
      * Used for easy updating to 1.11
      */
     public static final ItemStack EMPTY = ItemStack.EMPTY;
+
+    /**
+     * Predicate to check if an itemStack is empty.
+     */
+    @NotNull
+    private static final Predicate<ItemStack> EMPTY_PREDICATE = InventoryUtils::isItemStackEmpty;
+
+    /**
+     * Negation of the itemStack empty predicate (not empty).
+     */
+    @NotNull
+    private static final Predicate<ItemStack> NOT_EMPTY_PREDICATE = EMPTY_PREDICATE.negate();
 
     /**
      * Private constructor to hide the implicit one.
@@ -290,6 +301,8 @@ public class InventoryUtils
                 .findFirst()
                 .orElse(-1);
     }
+
+
 
     /**
      * Returns if the {@link IItemHandler} is full.
@@ -686,12 +699,11 @@ public class InventoryUtils
      */
     public static int findFirstSlotInItemHandlerNotEmptyWith(@NotNull final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        @NotNull final Predicate<ItemStack> notEmptyPredicate = itemStack -> !InventoryUtils.isItemStackEmpty(itemStack);
-        notEmptyPredicate.and(itemStackSelectionPredicate);
+        @NotNull final Predicate<ItemStack> firstWorthySlotPredicate = NOT_EMPTY_PREDICATE.and(itemStackSelectionPredicate);
 
         for (int slot = 0; slot < itemHandler.getSlots(); slot++)
         {
-            if (notEmptyPredicate.test(itemHandler.getStackInSlot(slot)))
+            if (firstWorthySlotPredicate.test(itemHandler.getStackInSlot(slot)))
             {
                 return slot;
             }

@@ -413,7 +413,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             //We need to deal with materials
             if (Configurations.builderInfiniteResources || currentBlock.worldMetadata.getMaterial().isLiquid())
             {
-                worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, null);
+                worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, InventoryUtils.EMPTY);
                 world.setBlockToAir(currentBlock.blockPosition);
                 world.setBlockState(currentBlock.blockPosition, Blocks.AIR.getDefaultState());
                 worker.swingArm(worker.getActiveHand());
@@ -540,8 +540,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     private boolean placeBlockAt(@NotNull final IBlockState blockState, @NotNull final BlockPos coords)
     {
         final ItemStack item = BlockUtils.getItemStackFromBlockState(blockState);
-        worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item == null ? null : item);
-
+        worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item == null ? InventoryUtils.EMPTY : item);
         final IBlockState decrease;
         for(IPlacementHandler handlers :PlacementHandlers.handlers)
         {
@@ -609,7 +608,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
 
         @Nullable final ItemStack stack = BlockUtils.getItemStackFromBlockState(stateToPlace);
-        if (stack == null)
+        if (InventoryUtils.isItemStackEmpty(stack))
         {
             Log.getLogger().error("Block causes NPE: " + stateToPlace.getBlock());
             return false;
@@ -621,7 +620,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
         for (final ItemStack tempStack : itemList)
         {
-            if (tempStack != null)
+            if (!InventoryUtils.isItemStackEmpty(tempStack))
             {
                 final int slot = worker.findFirstSlotInInventoryWith(tempStack.getItem(), tempStack.getItemDamage());
                 if (slot != -1)
@@ -708,6 +707,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      */
     public void resetCurrentStructure()
     {
+        workFrom = null;
         currentStructure = null;
     }
 
