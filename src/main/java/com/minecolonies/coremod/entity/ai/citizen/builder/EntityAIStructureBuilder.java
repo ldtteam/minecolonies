@@ -191,7 +191,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         {
             return;
         }
-        
+
         while (job.getStructure().findNextBlock())
         {
             @Nullable final Template.BlockInfo blockInfo = job.getStructure().getBlockInfo();
@@ -327,9 +327,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
             if (wo instanceof WorkOrderBuildDecoration)
             {
-                LanguageHandler.sendPlayersMessage(worker.getColony().getMessageEntityPlayers(),
-                        "entity.builder.messageBuildStart",
-                        wo.getName());
+		worker.sendLocalizedChat("entity.builder.messageBuildStart", wo.getName());
             }
             else
             {
@@ -342,9 +340,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                     return;
                 }
 
-                LanguageHandler.sendPlayersMessage(worker.getColony().getMessageEntityPlayers(),
-                  "entity.builder.messageBuildStart",
-                  job.getStructure().getName());
+                worker.sendLocalizedChat("entity.builder.messageBuildStart", job.getStructure().getName());
 
                 //Don't go through the CLEAR stage for repairs and upgrades
                 if (building.getBuildingLevel() > 0)
@@ -461,10 +457,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
 
         final String structureName = job.getStructure().getName();
-        LanguageHandler.sendPlayersMessage(worker.getColony().getMessageEntityPlayers(),
-                "entity.builder.messageBuildComplete",
-                structureName);
-
+        worker.sendLocalizedChat("entity.builder.messageBuildComplete", structureName);
 
         final WorkOrderBuild wo = job.getWorkOrder();
         if (wo == null)
