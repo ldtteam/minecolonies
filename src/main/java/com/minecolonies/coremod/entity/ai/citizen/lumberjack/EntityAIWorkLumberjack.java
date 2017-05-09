@@ -366,7 +366,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
 
         //take first log from queue
         final BlockPos log = job.tree.peekNextLog();
-        if (!mineBlock(log))
+        if (!mineBlock(log, workFrom))
         {
             return getState();
         }

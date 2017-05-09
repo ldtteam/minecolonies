@@ -329,18 +329,25 @@ public class CitizenData
      */
     private String generateName(@NotNull final Random rand)
     {
-        final String firstName;
-        if (!female)
+        String citizenName;
+        if (female)
         {
-            firstName = String.format("%s %s. %s", getRandomElement(rand, Configurations.femaleFirstNames), getRandomLetter(rand),
+            citizenName = String.format("%s %s. %s", getRandomElement(rand, Configurations.femaleFirstNames), getRandomLetter(rand),
                     getRandomElement(rand, Configurations.lastNames));
         }
         else
         {
-            firstName = String.format("%s %s. %s", getRandomElement(rand, Configurations.maleFirstNames), getRandomLetter(rand),
+            citizenName = String.format("%s %s. %s", getRandomElement(rand, Configurations.maleFirstNames), getRandomLetter(rand),
                     getRandomElement(rand, Configurations.lastNames));
         }
-        return String.format("%s %s. %s", firstName, getRandomLetter(rand), getRandomElement(rand, Configurations.lastNames));
+        for (int i = 1; i <= this.getColony().getMaxCitizens(); i++)
+        {
+            if (this.getColony().getCitizen(i) != null && this.getColony().getCitizen(i).getName().equals(citizenName))
+            {
+                citizenName = generateName(rand);
+            }
+        }
+        return citizenName;
     }
 
     /**
