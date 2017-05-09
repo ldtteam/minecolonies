@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.placementhandlers;
 
 import com.minecolonies.coremod.blocks.BlockSolidSubstitution;
+import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
@@ -58,7 +59,7 @@ public final class PlacementHandlers
     public static class FireplacementHandler implements IPlacementHandler
     {
         @Override
-        public Object handle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final AbstractEntityAIStructure placer)
+        public Object handle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final AbstractEntityAIStructure<?> placer)
         {
             if (!(blockState.getBlock() instanceof BlockFire))
             {
@@ -93,7 +94,7 @@ public final class PlacementHandlers
         @Override
         public Object handle(
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure placer)
+                @Nullable final AbstractEntityAIStructure<?> placer)
         {
             if (blockState.getBlock() != Blocks.GRASS)
             {
@@ -119,7 +120,7 @@ public final class PlacementHandlers
         @Override
         public Object handle(
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure placer)
+                @Nullable final AbstractEntityAIStructure<?> placer)
         {
             if (!(blockState.getBlock() instanceof BlockDoor))
             {
@@ -146,7 +147,7 @@ public final class PlacementHandlers
         @Override
         public Object handle(
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure placer)
+                @Nullable final AbstractEntityAIStructure<?> placer)
         {
             if (!(blockState.getBlock() instanceof BlockBed))
             {
@@ -180,7 +181,7 @@ public final class PlacementHandlers
         @Override
         public Object handle(
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure placer)
+                @Nullable final AbstractEntityAIStructure<?> placer)
         {
             if (!(blockState.getBlock() instanceof BlockDoublePlant))
             {
@@ -209,7 +210,7 @@ public final class PlacementHandlers
         @Override
         public Object handle(
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure placer)
+                @Nullable final AbstractEntityAIStructure<?> placer)
         {
             if (blockState instanceof BlockEndPortal
                     || blockState instanceof BlockMobSpawner
@@ -225,7 +226,7 @@ public final class PlacementHandlers
     public static class FlowerPotPlacementHandler implements IPlacementHandler
     {
         @Override
-        public Object handle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final AbstractEntityAIStructure placer)
+        public Object handle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final AbstractEntityAIStructure<?> placer)
         {
             if (!(blockState.getBlock() instanceof BlockFlowerPot))
             {
@@ -263,7 +264,7 @@ public final class PlacementHandlers
         @Override
         public Object handle(
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure placer)
+                @Nullable final AbstractEntityAIStructure<?> placer)
         {
             if (blockState.getBlock() instanceof BlockAir)
             {
@@ -283,7 +284,7 @@ public final class PlacementHandlers
         @Override
         public Object handle(
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure placer)
+                @Nullable final AbstractEntityAIStructure<?> placer)
         {
             if (!(blockState.getBlock() instanceof BlockGrassPath))
             {
@@ -313,7 +314,7 @@ public final class PlacementHandlers
         @Override
         public Object handle(
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure placer)
+                @Nullable final AbstractEntityAIStructure<?> placer)
         {
             //Workaround as long as we didn't rescan all of our buildings since BlockStairs now have different metadata values.
             if (blockState.getBlock() instanceof BlockStairs
@@ -332,7 +333,7 @@ public final class PlacementHandlers
     {
         @Override
         public Object handle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure placer)
+                @Nullable final AbstractEntityAIStructure<?> placer)
         {
             if (!(blockState.getBlock() instanceof BlockSolidSubstitution))
             {
@@ -364,7 +365,7 @@ public final class PlacementHandlers
         @Override
         public Object handle(
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure placer)
+                @Nullable final AbstractEntityAIStructure<?> placer)
         {
             if (!Configurations.builderInfiniteResources)
             {
