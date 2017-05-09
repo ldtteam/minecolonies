@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.placementhandlers;
 
+import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
@@ -27,5 +28,5 @@ public interface IPlacementHandler
      * @param placer the placer of the block.
      * @return ACCEPT, DENY or IGNORE.
      */
-    Object handle(@NotNull World world, @NotNull BlockPos pos, @NotNull IBlockState blockState, @Nullable AbstractEntityAIStructure placer);
+    Object handle(@NotNull World world, @NotNull BlockPos pos, @NotNull IBlockState blockState, @Nullable AbstractEntityAIStructure<?> placer);
 }
