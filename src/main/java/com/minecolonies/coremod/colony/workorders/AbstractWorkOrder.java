@@ -30,7 +30,7 @@ public abstract class AbstractWorkOrder
     private static final Map<Class<? extends AbstractWorkOrder>, String> classToNameMap = new HashMap<>();
     static
     {
-        addMapping("build", WorkOrderBuild.class);
+        addMapping("build", WorkOrderBuildHut.class);
         addMapping("decoration", WorkOrderBuildDecoration.class);
     }
 

@@ -2,7 +2,7 @@ package com.minecolonies.coremod.colony;
 
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.util.Log;
 import net.minecraft.nbt.NBTTagCompound;
@@ -68,9 +68,9 @@ public class WorkManager
         final AbstractWorkOrder workOrder = workOrders.get(orderId);
         workOrders.remove(orderId);
         colony.removeWorkOrder(orderId);
-        if (workOrder instanceof WorkOrderBuild)
+        if (workOrder instanceof WorkOrderBuildDecoration)
         {
-            final WorkOrderBuild wob = (WorkOrderBuild) workOrder;
+            final WorkOrderBuildDecoration wob = (WorkOrderBuildDecoration) workOrder;
             final AbstractBuilding building = colony.getBuilding(wob.getBuildingLocation());
             ConstructionTapeHelper.removeConstructionTape(wob, colony.getWorld());
             if (building != null)
@@ -234,9 +234,9 @@ public class WorkManager
             topWorkOrderId++;
             order.setID(topWorkOrderId);
         }
-        if (order instanceof WorkOrderBuild && colony != null && colony.getWorld() != null)
+        if (order instanceof WorkOrderBuildDecoration && colony != null && colony.getWorld() != null)
         {
-            ConstructionTapeHelper.placeConstructionTape((WorkOrderBuild) order, colony.getWorld());
+            ConstructionTapeHelper.placeConstructionTape((WorkOrderBuildDecoration) order, colony.getWorld());
         }
         workOrders.put(order.getID(), order);
     }
