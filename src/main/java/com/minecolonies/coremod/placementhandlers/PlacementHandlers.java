@@ -268,7 +268,7 @@ public final class PlacementHandlers
         {
             if (blockState.getBlock() instanceof BlockAir)
             {
-                placer.getWorker().setItemStackToSlot(EntityEquipmentSlot.MAINHAND, null);
+                placer.getWorker().setItemStackToSlot(EntityEquipmentSlot.MAINHAND, InventoryUtils.EMPTY);
 
                 placer.handleBuildingOverBlock(pos);
                 world.setBlockToAir(pos);
