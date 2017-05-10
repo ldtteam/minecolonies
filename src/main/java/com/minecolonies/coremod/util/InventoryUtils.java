@@ -1505,8 +1505,10 @@ public class InventoryUtils
     @NotNull
     public static Boolean compareItemStacksIgnoreStackSize(ItemStack itemStack1, ItemStack itemStack2)
     {
-        if (!isItemStackEmpty(itemStack1) && !isItemStackEmpty(itemStack2) &&
-           itemStack1.getItem() == itemStack2.getItem() && itemStack1.getItemDamage() == itemStack2.getItemDamage())
+        if (!isItemStackEmpty(itemStack1) &&
+            !isItemStackEmpty(itemStack2) &&
+            itemStack1.getItem() == itemStack2.getItem() &&
+            itemStack1.getItemDamage() == itemStack2.getItemDamage())
         {
             // Then sort on NBT
             if (itemStack1.hasTagCompound() && itemStack2.hasTagCompound())
@@ -1618,59 +1620,6 @@ public class InventoryUtils
                 return "Diamond";
             default:
                 return "Better than Diamond";
-        }
-    }
-
-    /**
-     * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#storePartialItemStack(ItemStack)}.
-     * <p>
-     * This function stores as many items of an ItemStack as possible in a
-     * matching slot and returns the quantity of left over items.
-     *
-     * @param itemHandler {@link IItemHandler} to add stack to.
-     * @param itemStack   Item stack to store in inventory.
-     * @return Leftover items in itemstack.
-     */
-    private static ItemStack storePartialItemStack(@NotNull final IItemHandler itemHandler, @NotNull ItemStack itemStack)
-    {
-        itemStack = itemStack.copy();
-
-        if (!isItemStackEmpty(itemStack))
-        {
-            int slot;
-
-            if (itemStack.isItemDamaged())
-            {
-                slot = getFirstOpenSlotFromItemHandler(itemHandler);
-
-                if (slot >= 0)
-                {
-                    return itemHandler.insertItem(slot, itemStack, false);
-                }
-                else
-                {
-                    return EMPTY;
-                }
-            }
-            else
-            {
-                slot = itemHandler.getSlots() == 0 ? -1 : 0;
-                while (!isItemStackEmpty(itemStack) && slot != -1 && slot != itemHandler.getSlots())
-                {
-                    itemStack = itemHandler.insertItem(slot, itemStack, false);
-                    if (!isItemStackEmpty(itemStack))
-                    {
-                        slot++;
-                    }
-                }
-
-
-                return itemStack;
-            }
-        }
-        else
-        {
-            return EMPTY;
         }
     }
 
