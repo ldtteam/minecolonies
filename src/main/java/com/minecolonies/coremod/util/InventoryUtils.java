@@ -1505,28 +1505,18 @@ public class InventoryUtils
     @NotNull
     public static Boolean compareItemStacksIgnoreStackSize(ItemStack itemStack1, ItemStack itemStack2)
     {
-        if (!isItemStackEmpty(itemStack1) && !isItemStackEmpty(itemStack2))
+        if (!isItemStackEmpty(itemStack1) && !isItemStackEmpty(itemStack2) &&
+           itemStack1.getItem() == itemStack2.getItem() && itemStack1.getItemDamage() == itemStack2.getItemDamage())
         {
-            // Sort on item
-            if (itemStack1.getItem() == itemStack2.getItem())
+            // Then sort on NBT
+            if (itemStack1.hasTagCompound() && itemStack2.hasTagCompound())
             {
-                // Then sort on meta
-                if (itemStack1.getItemDamage() == itemStack2.getItemDamage())
-                {
-                    // Then sort on NBT
-                    if (itemStack1.hasTagCompound() && itemStack2.hasTagCompound())
-                    {
-                        // Then sort on stack size
-                        if (ItemStack.areItemStackTagsEqual(itemStack1, itemStack2))
-                        {
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        return true;
-                    }
-                }
+                // Then sort on stack size
+                return ItemStack.areItemStackTagsEqual(itemStack1, itemStack2);
+            }
+            else
+            {
+                return true;
             }
         }
         return false;
