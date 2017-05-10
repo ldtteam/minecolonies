@@ -1,3 +1,3 @@
 /**
- * Contains the IA for the builder and some helpers.
+ * Contains the AI for the builder and some helpers.
  */

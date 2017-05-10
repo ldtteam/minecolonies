@@ -1,4 +1,4 @@
 /**
- * Contains the IA for the citizens.
+ * Contains the AI for the citizens.
  */
 
