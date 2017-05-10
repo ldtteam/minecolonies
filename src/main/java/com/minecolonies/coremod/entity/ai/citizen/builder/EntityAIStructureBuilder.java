@@ -242,7 +242,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
      */
     private void requestBlockToBuildingIfRequired(BuildingBuilder building, IBlockState blockState)
     {
-        if (((JobBuilder) job).getStructure().getBlockInfo().tileentityData != null)
+        if (job.getStructure().getBlockInfo().tileentityData != null)
         {
             final List<ItemStack> itemList = new ArrayList<>();
             itemList.addAll(getItemsFromTileEntity());
@@ -469,7 +469,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing work order(%d)",
                     worker.getColony().getID(),
                     worker.getCitizenData().getId(),
-                    ((JobBuilder) job).getWorkOrderId()));
+                    job.getWorkOrderId()));
         }
         else
         {
@@ -492,7 +492,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                     building.setBuildingLevel(wo.getUpgradeLevel());
                 }
             }
-            ((JobBuilder) job).complete();
+            job.complete();
         }
 
         final BuildingBuilder workerBuilding = (BuildingBuilder) getOwnBuilding();
@@ -507,7 +507,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         if (job.getStructure().getBlockInfo().tileentityData != null)
         {
             final TileEntityFlowerPot tileentityflowerpot = (TileEntityFlowerPot) world.getTileEntity(pos);
-            tileentityflowerpot.readFromNBT(((JobBuilder) job).getStructure().getBlockInfo().tileentityData);
+            tileentityflowerpot.readFromNBT(job.getStructure().getBlockInfo().tileentityData);
             world.setTileEntity(pos, tileentityflowerpot);
         }
     }
@@ -515,7 +515,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     @Override
     public void connectChestToBuildingIfNecessary(@NotNull final BlockPos pos)
     {
-        final BlockPos buildingLocation = ((JobBuilder) job).getWorkOrder().getBuildingLocation();
+        final BlockPos buildingLocation = job.getWorkOrder().getBuildingLocation();
         final AbstractBuilding building = this.getOwnBuilding().getColony().getBuilding(buildingLocation);
 
         if (building != null)
