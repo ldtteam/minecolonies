@@ -1129,7 +1129,7 @@ public class InventoryUtils
     {
         if (!provider.hasCapability(ITEM_HANDLER_CAPABILITY, facing))
         {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing), itemStackSelectionPredicate);
