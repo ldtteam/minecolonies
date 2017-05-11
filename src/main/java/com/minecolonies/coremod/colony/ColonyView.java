@@ -64,7 +64,7 @@ public final class ColonyView implements IColony
      */
     private Set<Block> freeBlocks = new HashSet<>();
 
-    private double overallHappiness;
+    private double overallHappiness = 5;
 
     /**
      * Base constructor for a colony.
