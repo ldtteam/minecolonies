@@ -457,7 +457,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             stillTicks = 0;
             return;
         }
-        if (!mineBlock(nextLeaves))
+        if (!mineBlock(nextLeaves, workFrom))
         {
             return;
         }
@@ -729,7 +729,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     @Override
     public BlockPos getWorkingPosition(final BlockPos targetPosition)
     {
-        return getWorkingPosition(1, targetPosition, 0);
+        return getWorkingPosition(2, targetPosition, 0);
     }
 
     /**

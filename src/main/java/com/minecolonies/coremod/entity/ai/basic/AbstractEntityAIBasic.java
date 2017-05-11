@@ -1367,7 +1367,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             }
         }
 
-        //if necessary we can could implement calling getWorkingPosition recursively and add some "offset" to the sides.
+        //if necessary we call it recursively and add some "offset" to the sides.
         return getWorkingPosition(distance, targetPos, offset + 1);
     }
 
