@@ -1209,7 +1209,7 @@ public class Colony implements IColony
             final BuildingHome home = citizen.getHomeBuilding();
             if(home != null)
             {
-                housing = home.getBuildingLevel();
+                housing += home.getBuildingLevel();
             }
 
             saturation += citizen.getSaturation();
