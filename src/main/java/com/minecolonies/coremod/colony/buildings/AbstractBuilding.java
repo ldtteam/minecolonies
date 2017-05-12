@@ -1178,7 +1178,7 @@ public abstract class AbstractBuilding
      *
      * @param stack the stack to transfer.
      * @param world the world to do it in.
-     * @return the itemStack which has been replaced
+     * @return the itemStack which has been replaced or the itemStack which could not be transfered
      */
     @Nullable
     public ItemStack forceTransferStack(final ItemStack stack, final World world)
@@ -1198,7 +1198,7 @@ public abstract class AbstractBuilding
         {
             return forceItemStackToProvider(tileEntity, stack);
         }
-        return null;
+        return stack;
     }
 
     @Nullable

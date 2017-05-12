@@ -887,7 +887,7 @@ public class InventoryUtils
      *
      * @param provider  {@link ICapabilityProvider} to add itemstack to.
      * @param itemStack ItemStack to add.
-     * @return True if successful, otherwise false.
+     * @return Empty when successful, otherwise return the itemStack which was supposed to be added.
      */
     public static ItemStack addItemStackToProviderWithResult(@NotNull final ICapabilityProvider provider, @Nullable ItemStack itemStack)
     {
@@ -911,7 +911,7 @@ public class InventoryUtils
      *
      * @param itemHandler {@link IItemHandler} to add itemstack to.
      * @param itemStack   ItemStack to add.
-     * @return True if successful, otherwise false.
+     * @return Empty if successfull, otherwise the itemStask which was supposed to be added.
      */
     public static ItemStack addItemStackToItemHandlerWithResult(@NotNull final IItemHandler itemHandler, @Nullable ItemStack itemStack)
     {
