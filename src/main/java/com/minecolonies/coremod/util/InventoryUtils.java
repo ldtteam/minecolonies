@@ -473,7 +473,7 @@ public class InventoryUtils
                 if (isItemStackEmpty(localStack) || !itemStackToKeepPredicate.test(localStack))
                 {
                     final ItemStack removedStack = itemHandler.extractItem(i, Integer.MAX_VALUE, false);
-                    ItemStack localInsertionResult = itemHandler.insertItem(i, standardInsertionResult, true);
+                    ItemStack localInsertionResult = itemHandler.insertItem(i, standardInsertionResult, false);
 
                     if (isItemStackEmpty(localInsertionResult))
                     {
@@ -887,7 +887,7 @@ public class InventoryUtils
      *
      * @param provider  {@link ICapabilityProvider} to add itemstack to.
      * @param itemStack ItemStack to add.
-     * @return True if successful, otherwise false.
+     * @return Empty when fully transfered without swapping, otherwise return the remain of a partial transfer or the itemStack it has been swapped with.
      */
     public static ItemStack addItemStackToProviderWithResult(@NotNull final ICapabilityProvider provider, @Nullable ItemStack itemStack)
     {
@@ -911,7 +911,7 @@ public class InventoryUtils
      *
      * @param itemHandler {@link IItemHandler} to add itemstack to.
      * @param itemStack   ItemStack to add.
-     * @return True if successful, otherwise false.
+     * @return Empty when fully transfered without swapping, otherwise return the remain of a partial transfer or the itemStack it has been swapped with.
      */
     public static ItemStack addItemStackToItemHandlerWithResult(@NotNull final IItemHandler itemHandler, @Nullable ItemStack itemStack)
     {
