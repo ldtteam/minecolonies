@@ -1014,7 +1014,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
             pickupItems();
             cleanupChatMessages();
             updateColonyServer();
-            checkIfStuck();
+            if(getColonyJob() != null)
+            {
+                checkIfStuck();
+            }
             if (worldObj.isDaytime() && !worldObj.isRaining())
             {
                 SoundUtils.playRandomSound(worldObj, this);
