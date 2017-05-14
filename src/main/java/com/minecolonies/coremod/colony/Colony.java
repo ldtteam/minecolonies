@@ -1188,8 +1188,9 @@ public class Colony implements IColony
 
     private void updateOverallHappiness()
     {
-        int requiredGuardLevels = 0;
+        int guards = 1;
         int housing = 0;
+        int workers = 1;
         double saturation = 0;
         for(final CitizenData citizen: citizens.values())
         {
@@ -1198,11 +1199,11 @@ public class Colony implements IColony
             {
                 if(buildingWorker instanceof BuildingGuardTower)
                 {
-                    requiredGuardLevels -= buildingWorker.getBuildingLevel();
+                    guards += buildingWorker.getBuildingLevel();
                 }
                 else
                 {
-                    requiredGuardLevels += buildingWorker.getBuildingLevel();
+                    workers += buildingWorker.getBuildingLevel();
                 }
             }
 
@@ -1232,13 +1233,11 @@ public class Colony implements IColony
             increaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * HAPPINESS_FACTOR);
         }
 
-        if(requiredGuardLevels < 0)
+        int relation = guards/workers;
+
+        if(relation > 1)
         {
-            increaseOverallHappiness(requiredGuardLevels * -HAPPINESS_FACTOR);
-        }
-        else if(requiredGuardLevels > 0)
-        {
-            decreaseOverallHappiness(requiredGuardLevels * HAPPINESS_FACTOR);
+            decreaseOverallHappiness(relation * HAPPINESS_FACTOR);
         }
         markDirty();
     }
