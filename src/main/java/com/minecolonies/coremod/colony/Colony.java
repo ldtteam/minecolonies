@@ -1215,7 +1215,7 @@ public class Colony implements IColony
             saturation += citizen.getSaturation();
         }
 
-        final int averageHousing = housing/ Math.max(1, citizens.size());
+        final int averageHousing = housing / Math.max(1, citizens.size());
 
         if(averageHousing > 1)
         {
