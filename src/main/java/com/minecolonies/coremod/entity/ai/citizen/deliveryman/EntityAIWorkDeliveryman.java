@@ -312,9 +312,9 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                     final ItemStack insertionResultStack = buildingToDeliver.forceTransferStack(stack, world);
                     if (!InventoryUtils.isItemStackEmpty(insertionResultStack))
                     {
-                        final AbstractBuildingWorker workerBuilding = (AbstractBuildingWorker) buildingToDeliver;
                         if (InventoryUtils.compareItemStacksIgnoreStackSize(insertionResultStack, stack))
                         {
+                            final AbstractBuildingWorker workerBuilding = (AbstractBuildingWorker) buildingToDeliver;
                             //same stack, we could not deliver ?
                             if (workerBuilding != null && workerBuilding.getWorker() != null)
                             {

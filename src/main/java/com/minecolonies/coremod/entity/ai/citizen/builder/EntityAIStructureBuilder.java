@@ -324,7 +324,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
             if (wo instanceof WorkOrderBuildDecoration)
             {
-		worker.sendLocalizedChat("entity.builder.messageBuildStart", wo.getName());
+                worker.sendLocalizedChat("entity.builder.messageBuildStart", wo.getName());
             }
             else
             {

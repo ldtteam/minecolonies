@@ -394,4 +394,3 @@ com.minecolonies.coremod.item.permissionscepter.permission.deny=You do not have 
 com.minecolonies.coremod.item.permissionscepter.addblock.success=Added block type '%s'
 com.minecolonies.coremod.item.permissionscepter.addposition.success=Added location '%d %d %d'
 com.minecolonies.coremod.item.permissionscepter.removeblock.success=Removed block '%s'
-com.minecolonies.coremod.item.permissionscepter.removelocation.success=Removed location '%d %d %d'
