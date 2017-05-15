@@ -278,6 +278,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         wareHouse.getTileEntity().dumpInventoryIntoWareHouse(worker.getInventoryCitizen());
         gatherTarget = null;
+        worker.setHeldItem(0);
 
         return START_WORKING;
     }
@@ -323,7 +324,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                             }
                             else
                             {
-                                chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.job.deliveryman.workerChestFull", 
+                                chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.job.deliveryman.workerChestFull",
                                     new TextComponentString(" :" + buildingToDeliver.getSchematicName()));
                             }
                         }
@@ -334,6 +335,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 }
 
                 worker.addExperience(1.0D);
+                worker.setHeldItem(0);
                 buildingToDeliver.setOnGoingDelivery(false);
                 ((BuildingDeliveryman) ownBuilding).setBuildingToDeliver(null);
 
@@ -444,7 +446,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     }
 
     /**
-     * Check if the deliveryman has all the tools to make the delivery.
+     * Check if the deliveryman has all the foods to make the delivery.
      *
      * @param buildingToDeliver the building to deliver to.
      * @return true if is ready to deliver.
@@ -495,7 +497,9 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return true;
         }
 
-        return gatherItems(buildingToDeliver, position);
+        final boolean didGatherItems = gatherItems(buildingToDeliver, position);
+        worker.setHeldItem(0);
+        return didGatherItems;
     }
 
     /**
