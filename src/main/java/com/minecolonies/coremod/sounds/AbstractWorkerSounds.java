@@ -22,18 +22,6 @@ public abstract class AbstractWorkerSounds
     private static final int BASIC_SOUND_CHANCE = 100;
 
     /**
-     * List of sound handlers.
-     */
-    public static final List<AbstractWorkerSounds> handlers = new ArrayList<>();
-
-    static
-    {
-        handlers.add(new FishermanSounds());
-        handlers.add(new DeliverymanSounds());
-        handlers.add(new CitizenSounds());
-    }
-
-    /**
      * Plays the sounds for a certain worker.
      * @param worldIn  the world to play the sound in.
      * @param position the position to play the sound at.

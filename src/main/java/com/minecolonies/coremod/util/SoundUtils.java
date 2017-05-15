@@ -70,7 +70,7 @@ public final class SoundUtils
                 prefix = citizen.getWorkBuilding().getJobName();
             }
 
-            for (final AbstractWorkerSounds sounds : AbstractWorkerSounds.handlers)
+            for (final AbstractWorkerSounds sounds : ModSoundEvents.handlers)
             {
                 if (sounds.getWorkerString().equals(prefix))
                 {

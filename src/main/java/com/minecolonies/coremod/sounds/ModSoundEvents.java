@@ -5,11 +5,19 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Registering of sound events for our colony.
  */
 public final class ModSoundEvents
 {
+    /**
+     * List of sound handlers.
+     */
+    public static final List<AbstractWorkerSounds> handlers = new ArrayList<>();
+
     /**
      * Private constructor to hide the implicit public one.
      */
@@ -18,6 +26,13 @@ public final class ModSoundEvents
         /*
          * Intentionally left empty.
          */
+    }
+    
+    static
+    {
+        handlers.add(new FishermanSounds());
+        handlers.add(new DeliverymanSounds());
+        handlers.add(new CitizenSounds());
     }
 
     /**
