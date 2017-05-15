@@ -72,7 +72,7 @@ public class WindowHireWorker extends Window implements Button.Handler
      * Contains all the citizens.
      */
     private List<CitizenDataView> citizens = new ArrayList<>();
-
+    /**
      * The view of the current building.
      */
     private final AbstractBuilding.View building;
