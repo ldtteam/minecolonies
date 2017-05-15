@@ -732,7 +732,7 @@
   },
 
   "mob.deliveryman.female.generalPhrases": {
-    "category": "nutral",
+    "category": "neutral",
     "sounds": [
       {
         "name": "minecolonies:mob/deliveryman/female/NotEnoughRoomToLiveHere1",
@@ -906,7 +906,7 @@
   },
 
   "mob.deliveryman.female.noise": {
-    "category": "netral",
+    "category": "neutral",
     "sounds": [
       {
         "name": "minecolonies:mob/deliveryman/female/Whistle1",
