@@ -1058,13 +1058,13 @@ public class Colony implements IColony
             final BuildingHome home = citizen.getHomeBuilding();
             if(home != null)
             {
-                housing = home.getBuildingLevel();
+                housing += home.getBuildingLevel();
             }
 
             saturation += citizen.getSaturation();
         }
 
-        final int averageHousing = housing/citizens.size();
+        final int averageHousing = housing/Math.max(1, citizens.size());
 
         if(averageHousing > 1)
         {
