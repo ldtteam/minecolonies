@@ -171,18 +171,20 @@ public class WindowHireWorker extends Window implements Button.Handler
         });
     }
 
-    private String createColor(final AbstractBuildingWorker.Skill primary, final AbstractBuildingWorker.Skill secondary, final AbstractBuildingWorker.Skill current)
+    private static String createColor(final AbstractBuildingWorker.Skill primary, final AbstractBuildingWorker.Skill secondary, final AbstractBuildingWorker.Skill current)
     {
-        if(primary == current){
+        if (primary == current)
+        {
             return ColorConstants.GREEN;
         }
-        if(secondary == current){
+        if (secondary == current)
+        {
             return ColorConstants.YELLOW;
         }
         return "";
     }
 
-    private String createAttributeText(String color, String text)
+    private static String createAttributeText(String color, String text)
     {
         return color + text + ColorConstants.WHITE;
     }
