@@ -17,6 +17,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -39,6 +40,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 import static com.minecolonies.coremod.placementhandlers.IPlacementHandler.ActionProcessingResult.*;
@@ -112,6 +114,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         this.registerTargets(
 
                 /**
+                 * Pick up stuff which might've been
+                 */
+                new AITarget(PICK_UP_RESIDUALS, this::pickUpResiduals),
+                /**
                  * Check if tasks should be executed.
                  */
                 new AITarget(this::checkIfCanceled, IDLE),
@@ -146,6 +152,51 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         );
     }
 
+    private AIState pickUpResiduals()
+    {
+        final List<BlockPos> items = getItems();
+        if (items == null)
+        {
+            fillItemsList();
+            return getState();
+        }
+
+        if (!items.isEmpty())
+        {
+            gatherItems();
+            return getState();
+        }
+        resetGatheringItems();
+        workFrom = null;
+        currentStructure = null;
+
+        return AIState.IDLE;
+    }
+
+    @Override
+    public List<BlockPos> searchForItems()
+    {
+        if(currentStructure == null)
+        {
+            return Collections.emptyList();
+        }
+
+        final BlockPos centerPos = currentStructure.getCenter();
+        if(centerPos.getY() == 0)
+        {
+            return Collections.emptyList();
+        }
+
+        AxisAlignedBB boundingBox
+                = new AxisAlignedBB(centerPos).expand(currentStructure.getLength()/2, currentStructure.getHeight()/2, currentStructure.getWidth()/2);
+
+        return world.getEntitiesWithinAABB(EntityItem.class, boundingBox)
+                .stream()
+                .filter(item -> item != null && !item.isDead)
+                .map(BlockPosUtil::fromEntity)
+                .collect(Collectors.toList());
+    }
+
     private AIState completeBuild()
     {
         if (job instanceof AbstractJobStructure)
@@ -154,10 +205,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             worker.addExperience(XP_EACH_BUILDING);
         }
 
-        workFrom = null;
-        currentStructure = null;
-
-        return AIState.IDLE;
+        return AIState.PICK_UP_RESIDUALS;
     }
 
     private Boolean decorationStep(final Structure.StructureBlock structureBlock)
