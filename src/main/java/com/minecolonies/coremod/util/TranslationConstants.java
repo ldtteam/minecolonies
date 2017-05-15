@@ -6,10 +6,8 @@ package com.minecolonies.coremod.util;
 public final class TranslationConstants
 {
 
-    private TranslationConstants(){
+    private TranslationConstants()
+    {
         //empty default
     }
-
-
-
 }
