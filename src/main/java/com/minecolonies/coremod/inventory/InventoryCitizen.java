@@ -91,7 +91,7 @@ public class InventoryCitizen implements IInventory
         {
             customName = title;
         }
-        this.allInventories = new ArrayList<NonNullList<ItemStack>>();
+        this.allInventories = new ArrayList<>();
         this.allInventories.add(this.mainInventory);
         this.allInventories.add(this.armorInventory);
         this.allInventories.add(this.offHandInventory);
@@ -111,7 +111,7 @@ public class InventoryCitizen implements IInventory
         {
             customName = title;
         }
-        this.allInventories = new ArrayList<NonNullList<ItemStack>>();
+        this.allInventories = new ArrayList<>();
         this.allInventories.add(this.mainInventory);
         this.allInventories.add(this.armorInventory);
         this.allInventories.add(this.offHandInventory);
@@ -973,7 +973,7 @@ public class InventoryCitizen implements IInventory
         else
         {
             ItemStack itemstack = this.getStackInSlot(this.currentItem);
-            return !itemstack.isEmpty() ? itemstack.canHarvestBlock(state) : false;
+            return !itemstack.isEmpty() && itemstack.canHarvestBlock(state);
         }
     }
 
