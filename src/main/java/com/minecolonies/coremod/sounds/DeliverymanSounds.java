@@ -83,7 +83,10 @@ public final class DeliverymanSounds
 
     /**
      * Plays fisherman sounds.
-     * We ignore the warning since the case integers counts for the amount of different sound events and we don't have to name them.
+     * Suppressing Sonar Rule squid:S109
+     * This rule wants to prevent magic numbers
+     * But in this case the rule does not apply because its not a magic number its a % chance.
+     * For every sound category we have 1 increasing number.
      * @param worldIn  the world to play the sound in.
      * @param position the position to play the sound at.
      * @param isFemale the gender.
