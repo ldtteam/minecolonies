@@ -23,7 +23,7 @@ import java.util.Random;
 
 public class BlockBarrel extends Block
 {
-    private static final int MIN_FULLNESS           = 0;
+    private static final int MIN_FULLNESS = 0;
     private static final int MAX_FULLNESS           = 16;
     private static final int BARRELSTATE_FILLING    = 0;
     private static final int BARRELSTATE_COMPOSTING = 1;
@@ -46,6 +46,7 @@ public class BlockBarrel extends Block
     private static final float                      RESISTANCE     = 1F;
     private static final HashMap<BlockPos, Integer> timers         = new HashMap<>();
     private static final HashMap<BlockPos, Integer> fillings       = new HashMap<>();
+    private static final int                        TIMER_END      = 20;
 
     public BlockBarrel()
     {
@@ -57,10 +58,10 @@ public class BlockBarrel extends Block
     }
 
     //todo: register block with new method
-    @SuppressWarnings("deprecation")
     /**
      * initialize the block
      */
+    @SuppressWarnings("deprecation")
     private void initBlock()
     {
         setRegistryName(BLOCK_NAME);
@@ -179,6 +180,7 @@ public class BlockBarrel extends Block
                 doBarrelCompostTick(worldIn, pos, state);
                 break;
             case BARRELSTATE_DONE:
+            default:
                 break;
         }
     }
@@ -197,7 +199,7 @@ public class BlockBarrel extends Block
     {
         int timer = timers.getOrDefault(pos, 0);
         timer++;
-        if (timer >= 20)
+        if (timer >= TIMER_END)
         {
             world.setBlockState(pos, state.withProperty(BARRELSTATE, BARRELSTATE_DONE));
             timer = 0;

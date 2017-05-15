@@ -1018,9 +1018,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
             {
                 checkIfStuck();
             }
-            if (worldObj.isDaytime() && !worldObj.isRaining())
+            if (worldObj.isDaytime() && !worldObj.isRaining() && citizenData != null)
             {
-                SoundUtils.playRandomSound(worldObj, this);
+                SoundUtils.playRandomSound(worldObj, this, citizenData.getSaturation());
             }
             else if (worldObj.isRaining() && 1 >= rand.nextInt(RANT_ABOUT_WEATHER_CHANCE) && this.getColonyJob() != null)
             {
@@ -1959,6 +1959,18 @@ public class EntityCitizen extends EntityAgeable implements INpc
         if (this.getWorkBuilding() instanceof BuildingFarmer)
         {
             ((BuildingFarmer) this.getWorkBuilding()).resetFields();
+        }
+    }
+
+    /**
+     * Play move away sound when running from an entity.
+     */
+    public void playMoveAwaySound()
+    {
+        if(getColonyJob() != null)
+        {
+            SoundUtils.playSoundAtCitizenWithChance(worldObj, getPosition(),
+                    getColonyJob().getMoveAwaySound(), 1);
         }
     }
 
