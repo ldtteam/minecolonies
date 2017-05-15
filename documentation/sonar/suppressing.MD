@@ -5,7 +5,7 @@ If SonarQube tells you a false positive and you are 100% certain of that, this i
 You will see why this Sonar Rule exists and check if it applies to your case.
 In case it does, consult a Maintainer to accept your exception.
 
-If it was a falso positive, report it to the Sonar team to resolve it eventually.
+If it was a false positive, report it to the Sonar team to resolve it eventually.
 
 In any case, use this code:
 
