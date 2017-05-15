@@ -142,6 +142,6 @@ public final class DeliverymanSounds
         {
             saturationFeedback = Female.saturationHigh;
         }
-        SoundUtils.playSoundAtCitizenWithChance(worldIn, position, saturationFeedback, PHRASE_CHANCE);
+        SoundUtils.playSoundAtCitizenWithChance(worldIn, position, saturationFeedback, BASIC_SOUND_CHANCE);
     }
 }
