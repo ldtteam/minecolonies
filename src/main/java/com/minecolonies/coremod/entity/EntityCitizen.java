@@ -5,7 +5,6 @@ import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.BuildingFarmer;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.*;
 import com.minecolonies.coremod.colony.permissions.Permissions;
@@ -1968,10 +1967,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public void onWakeUp()
     {
-        if (this.getWorkBuilding() instanceof BuildingFarmer)
-        {
-            ((BuildingFarmer) this.getWorkBuilding()).resetFields();
-        }
+        getWorkBuilding().onWakeUp();
     }
 
     /**
