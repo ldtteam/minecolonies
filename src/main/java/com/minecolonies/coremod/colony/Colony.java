@@ -137,6 +137,11 @@ public class Colony implements IColony
     //Additional Waypoints.
     private final Map<BlockPos, IBlockState> wayPoints = new HashMap<>();
 
+    /**
+     * The warehouse building position. Initially null.
+     */
+    private BuildingWareHouse wareHouse = null;
+
     @NotNull
     private final List<Achievement> colonyAchievements;
     //  Workload and Jobs
@@ -378,6 +383,11 @@ public class Colony implements IColony
         {
             townHall = (BuildingTownHall) building;
         }
+
+        if(building instanceof BuildingWareHouse && wareHouse == null)
+        {
+            wareHouse = (BuildingWareHouse) building;
+        }
     }
 
     /**
@@ -599,6 +609,16 @@ public class Colony implements IColony
     public boolean hasTownHall()
     {
         return townHall != null;
+    }
+
+    /**
+     * Check if there is a warehouse in the colony already.
+     * @return true if so.
+     */
+    @Override
+    public boolean hasWarehouse()
+    {
+        return wareHouse != null;
     }
 
     /**
@@ -1189,13 +1209,13 @@ public class Colony implements IColony
             final BuildingHome home = citizen.getHomeBuilding();
             if(home != null)
             {
-                housing = home.getBuildingLevel();
+                housing += home.getBuildingLevel();
             }
 
             saturation += citizen.getSaturation();
         }
 
-        final int averageHousing = housing/ Math.max(1, citizens.size());
+        final int averageHousing = housing / Math.max(1, citizens.size());
 
         if(averageHousing > 1)
         {
@@ -1616,6 +1636,10 @@ public class Colony implements IColony
         if (building instanceof BuildingTownHall)
         {
             townHall = null;
+        }
+        else if(building instanceof BuildingWareHouse)
+        {
+            wareHouse = null;
         }
 
         //Allow Citizens to fix up any data that wasn't fixed up by the AbstractBuilding's own onDestroyed
