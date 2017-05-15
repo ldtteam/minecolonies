@@ -316,7 +316,6 @@ public class BuildingFarmer extends AbstractBuildingWorker
         resetFields();
     }
 
-
     @NotNull
     @Override
     public String getJobName()
