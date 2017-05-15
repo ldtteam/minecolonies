@@ -69,10 +69,9 @@ public class WindowHireWorker extends Window implements Button.Handler
     private static final int CITIZEN_ID_LABEL_POSITION = 3;
 
     /**
-    private List<CitizenDataView> citizens = new ArrayList<>();
-     */
      * Contains all the citizens.
-    /**
+     */
+    private List<CitizenDataView> citizens = new ArrayList<>();
 
      * The view of the current building.
      */
