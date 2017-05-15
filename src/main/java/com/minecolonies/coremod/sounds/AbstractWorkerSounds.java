@@ -3,9 +3,6 @@ package com.minecolonies.coremod.sounds;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * I worker sounds interface which contains all methods worker sounds should have.
  */

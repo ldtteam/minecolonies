@@ -27,7 +27,7 @@ public final class ModSoundEvents
          * Intentionally left empty.
          */
     }
-    
+
     static
     {
         handlers.add(new FishermanSounds());
