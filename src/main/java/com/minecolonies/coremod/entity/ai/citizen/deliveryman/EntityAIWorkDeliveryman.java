@@ -312,19 +312,19 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                     final ItemStack insertionResultStack = buildingToDeliver.forceTransferStack(stack, world);
                     if (!InventoryUtils.isItemStackEmpty(insertionResultStack))
                     {
-                        if (InventoryUtils.areItemsStacksEqual(insertionResultStack, stack))
+                        if (ItemStack.areItemStacksEqual(insertionResultStack, stack))
                         {
                             final AbstractBuildingWorker workerBuilding = (AbstractBuildingWorker) buildingToDeliver;
                             //same stack, we could not deliver ?
                             if (workerBuilding != null && workerBuilding.getWorker() != null)
                             {
-                                chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.job.deliveryman.namedWorkerChestFull", 
+                                chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.job.deliveryman.namedWorkerChestFull",
                                     workerBuilding.getWorker().getName());
                             }
                             else
                             {
-                                chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.job.deliveryman.workerChestFull"
-                                  , new TextComponentString(" :" + buildingToDeliver.getSchematicName()));
+                                chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.job.deliveryman.workerChestFull", 
+                                    new TextComponentString(" :" + buildingToDeliver.getSchematicName()));
                             }
                         }
 
