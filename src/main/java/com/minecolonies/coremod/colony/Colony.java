@@ -976,7 +976,11 @@ public class Colony implements IColony
     {
         if (event.world != getWorld())
         {
-            throw new IllegalStateException("Colony's world does not match the event.");
+            /**
+             * If the event world is not the colony world ignore. This might happen in interactions with other mods.
+             * This should not be a problem for minecolonies as long as we take care to do nothing in that moment.
+             */
+            return;
         }
 
         if (event.phase == TickEvent.Phase.START)
