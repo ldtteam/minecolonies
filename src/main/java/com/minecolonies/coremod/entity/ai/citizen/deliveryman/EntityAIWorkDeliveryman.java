@@ -10,7 +10,6 @@ import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.InventoryUtils;
-import com.minecolonies.coremod.util.Log;
 import com.minecolonies.coremod.util.Utils;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
