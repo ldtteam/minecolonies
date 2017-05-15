@@ -127,10 +127,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
 
         loadStructure(workOrder.getStructureName(), tempRotation, pos, workOrder.isMirrored());
-
         workOrder.setCleared(false);
         workOrder.setRequested(false);
-
+        
         //We need to deal with materials
         requestMaterialsIfRequired();
     }
@@ -187,6 +186,12 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         if (job.getWorkOrder().isRequested())
         {
             return;
+        }
+
+        final AbstractBuildingWorker buildingWorker = getOwnBuilding();
+        if(buildingWorker instanceof BuildingBuilder)
+        {
+            ((BuildingBuilder) buildingWorker).resetNeededResources();
         }
 
         while (job.getStructure().findNextBlock())
