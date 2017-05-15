@@ -13,12 +13,15 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.network.messages.HireFireMessage;
 import com.minecolonies.coremod.util.LanguageHandler;
+import com.minecolonies.coremod.util.constants.ColorConstants;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.minecolonies.coremod.util.constants.TranslationConstants.*;
 
 /**
  * Window for the hiring or firing of a worker.
@@ -65,15 +68,6 @@ public class WindowHireWorker extends Window implements Button.Handler
      */
     private static final int CITIZEN_ID_LABEL_POSITION = 3;
 
-    /**
-     * Colors the following String in green.
-     */
-    private static final String GREEN_STRING = "§2";
-
-    /**
-     * Colors the following string in orange.
-     */
-    private static final String YELLOW_STRING = "§e";
     /**
      * The view of the current building.
      */
@@ -154,25 +148,25 @@ public class WindowHireWorker extends Window implements Button.Handler
                     final AbstractBuildingWorker.Skill primary = ((AbstractBuildingWorker.View) building).getPrimarySkill();
                     final AbstractBuildingWorker.Skill secondary = ((AbstractBuildingWorker.View) building).getSecondarySkill();
 
-                    @NotNull final String strength = (primary.equals(AbstractBuildingWorker.Skill.STRENGTH) ? GREEN_STRING
-                                                        : (secondary.equals(AbstractBuildingWorker.Skill.STRENGTH) ? YELLOW_STRING : ""))
-                                                       + LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.strength", citizen.getStrength()) + " §f ";
+                    @NotNull final String strength = (primary.equals(AbstractBuildingWorker.Skill.STRENGTH) ? ColorConstants.GREEN
+                                                        : (secondary.equals(AbstractBuildingWorker.Skill.STRENGTH) ? ColorConstants.YELLOW : ""))
+                                                       + LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_STRENGTH, citizen.getStrength()) + ColorConstants.WHITE;
 
-                    @NotNull final String charisma = (primary.equals(AbstractBuildingWorker.Skill.CHARISMA) ? GREEN_STRING
-                                                        : (secondary.equals(AbstractBuildingWorker.Skill.CHARISMA) ? YELLOW_STRING : ""))
-                                                       + LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.charisma", citizen.getCharisma()) + " §f ";
+                    @NotNull final String charisma = (primary.equals(AbstractBuildingWorker.Skill.CHARISMA) ? ColorConstants.GREEN
+                                                        : (secondary.equals(AbstractBuildingWorker.Skill.CHARISMA) ? ColorConstants.YELLOW : ""))
+                                                       + LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_CHARISMA, citizen.getCharisma()) + ColorConstants.WHITE;
 
-                    @NotNull final String dexterity = (primary.equals(AbstractBuildingWorker.Skill.DEXTERITY) ? GREEN_STRING
-                                                         : (secondary.equals(AbstractBuildingWorker.Skill.DEXTERITY) ? YELLOW_STRING : ""))
-                                                        + LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.dexterity", citizen.getDexterity()) + " §f ";
+                    @NotNull final String dexterity = (primary.equals(AbstractBuildingWorker.Skill.DEXTERITY) ? ColorConstants.GREEN
+                                                         : (secondary.equals(AbstractBuildingWorker.Skill.DEXTERITY) ? ColorConstants.YELLOW : ""))
+                                                        + LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_DEXTERITY, citizen.getDexterity()) + ColorConstants.WHITE;
 
-                    @NotNull final String endurance = (primary.equals(AbstractBuildingWorker.Skill.ENDURANCE) ? GREEN_STRING
-                                                         : (secondary.equals(AbstractBuildingWorker.Skill.ENDURANCE) ? YELLOW_STRING : ""))
-                                                        + LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.endurance", citizen.getEndurance()) + " §f ";
+                    @NotNull final String endurance = (primary.equals(AbstractBuildingWorker.Skill.ENDURANCE) ? ColorConstants.GREEN
+                                                         : (secondary.equals(AbstractBuildingWorker.Skill.ENDURANCE) ? ColorConstants.YELLOW : ""))
+                                                        + LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_ENDURANCE, citizen.getEndurance()) + ColorConstants.WHITE;
 
-                    @NotNull final String intelligence = (primary.equals(AbstractBuildingWorker.Skill.INTELLIGENCE) ? GREEN_STRING
-                                                            : (secondary.equals(AbstractBuildingWorker.Skill.INTELLIGENCE) ? YELLOW_STRING : ""))
-                                                           + LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.intelligence", citizen.getIntelligence()) + " §f ";
+                    @NotNull final String intelligence = (primary.equals(AbstractBuildingWorker.Skill.INTELLIGENCE) ? ColorConstants.GREEN
+                                                            : (secondary.equals(AbstractBuildingWorker.Skill.INTELLIGENCE) ? ColorConstants.YELLOW : ""))
+                                                           + LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_INTELLIGENCE, citizen.getIntelligence()) + ColorConstants.WHITE;
 
                     //Creates the list of attributes for each citizen
                     @NotNull final String attributes = strength + charisma + dexterity + endurance + intelligence;

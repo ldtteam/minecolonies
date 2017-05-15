@@ -330,8 +330,14 @@ public abstract class AbstractJob
     /**
      * Generate your AI class to register.
      *
+     * Suppressing Sonar Rule squid:S1452
+     * This rule does "Generic wildcard types should not be used in return parameters"
+     * But in this case the rule does not apply because
+     * We are fine with all AbstractJob implementations and need generics only for java
+     *
      * @return your personal AI instance.
      */
+    @SuppressWarnings("squid:S1452")
     public abstract AbstractAISkeleton<? extends AbstractJob> generateAI();
 
     /**
