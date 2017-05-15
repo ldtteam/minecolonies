@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.minimal;
 
 import com.minecolonies.coremod.colony.jobs.JobGuard;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -130,6 +131,9 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     @Override
     public void updateTask()
     {
+        SoundUtils.playSoundAtCitizenWithChance(theEntity.worldObj, theEntity.getPosition(),
+                theEntity.getColonyJob().getMoveAwaySound(), 1);
+
         @Nullable final Entity newClosest = getClosestToAvoid();
         if (newClosest != null && newClosest != closestLivingEntity)
         {

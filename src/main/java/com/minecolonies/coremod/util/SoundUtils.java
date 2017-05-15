@@ -2,6 +2,7 @@ package com.minecolonies.coremod.util;
 
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.sounds.CitizenSounds;
+import com.minecolonies.coremod.sounds.DeliverymanSounds;
 import com.minecolonies.coremod.sounds.FishermanSounds;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.SoundCategory;
@@ -58,8 +59,9 @@ public final class SoundUtils
      *
      * @param worldIn the world to play the sound in.
      * @param citizen the citizen to play the sound for.
+     * @param saturation the saturation of the citizen.
      */
-    public static void playRandomSound(@NotNull final World worldIn, @NotNull final EntityCitizen citizen)
+    public static void playRandomSound(@NotNull final World worldIn, @NotNull final EntityCitizen citizen, final double saturation)
     {
         if (1 >= rand.nextInt(CHANCE_TO_PLAY_SOUND))
         {
@@ -74,6 +76,9 @@ public final class SoundUtils
             {
                 case "Fisherman":
                     FishermanSounds.playFishermanSound(worldIn, citizen.getPosition(), citizen.isFemale());
+                    break;
+                case "Deliveryman":
+                    DeliverymanSounds.playDmanSounds(worldIn, citizen.getPosition(), citizen.isFemale(), saturation);
                     break;
                 default:
                     CitizenSounds.playCitizenSounds(worldIn, citizen.getPosition(), citizen.isFemale());

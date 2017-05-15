@@ -368,4 +368,14 @@ public abstract class AbstractJob
     {
         return null;
     }
+
+    /**
+     * Override this to let the worker return a hostile move away sound.
+     *
+     * @return soundEvent to be played.
+     */
+    public SoundEvent getMoveAwaySound()
+    {
+        return null;
+    }
 }

@@ -40,6 +40,15 @@ public final class ModSoundEvents
         GameRegistry.register(FishermanSounds.Male.generalPhrases);
         GameRegistry.register(FishermanSounds.Male.noises);
 
+        GameRegistry.register(DeliverymanSounds.Female.hostile);
+        GameRegistry.register(DeliverymanSounds.Female.saturationHigh);
+        GameRegistry.register(DeliverymanSounds.Female.saturationLow);
+        GameRegistry.register(DeliverymanSounds.Female.saturationVeryLow);
+        GameRegistry.register(DeliverymanSounds.Female.badWeather);
+        GameRegistry.register(DeliverymanSounds.Female.offToBed);
+        GameRegistry.register(DeliverymanSounds.Female.generalPhrases);
+        GameRegistry.register(DeliverymanSounds.Female.noises);
+
         GameRegistry.register(CitizenSounds.Female.say);
         GameRegistry.register(CitizenSounds.Male.say);
     }
