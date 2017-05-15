@@ -63,23 +63,23 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     private static final int   WAIT_WHILE_WALKING      = 5;
 
     /**
-     * Horizontal range in which the lumberjack picks up items.
+     * Horizontal range in which the worker picks up items.
      */
     private static final float RANGE_HORIZONTAL_PICKUP = 45.0F;
 
     /**
-     * Vertical range in which the lumberjack picks up items.
+     * Vertical range in which the worker picks up items.
      */
     private static final float RANGE_VERTICAL_PICKUP   = 3.0F;
 
     /**
-     * Number of ticks the lumberjack is standing still.
+     * Number of ticks the worker is standing still.
      */
     private              int   stillTicks              = 0;
 
     /**
      * Used to store the path index
-     * to check if the lumberjack is still walking.
+     * to check if the worker is still walking.
      */
     private              int   previousIndex           = 0;
 
@@ -273,13 +273,16 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
                                         block.getDefaultState())));
     }
 
+    /**
+     * Fill the list of the item positions to gather.
+     */
     public void fillItemsList()
     {
         items = searchForItems();
     }
 
     /**
-     * Search for all items around the Lumberjack.
+     * Search for all items around the worker.
      * and store them in the items list.
      */
     public List<BlockPos> searchForItems()
@@ -299,7 +302,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         worker.setCanPickUpLoot(true);
         if (worker.getNavigator().noPath())
         {
-            final BlockPos pos = getAndRemoveClosestItem();
+            final BlockPos pos = getAndRemoveClosestItemPosition();
             worker.isWorkerAtSiteWithMove(pos, ITEM_PICKUP_RANGE);
             return;
         }
@@ -344,7 +347,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      * @return a copy of it.
      */
     @Nullable
-    public List<BlockPos> getItems()
+    public List<BlockPos> getItemsForPickUp()
     {
         return items == null ? null : new ArrayList<>(items);
     }
@@ -354,7 +357,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      *
      * @return the closest item
      */
-    private BlockPos getAndRemoveClosestItem()
+    private BlockPos getAndRemoveClosestItemPosition()
     {
         int index = 0;
         double distance = Double.MAX_VALUE;
