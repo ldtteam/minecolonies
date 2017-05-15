@@ -22,7 +22,13 @@ import java.util.*;
 
 /**
  * Basic job information.
+ * <p>
+ * Suppressing Sonar Rule squid:S2390
+ * This rule does "Classes should not access static members of their own subclasses during initialization"
+ * But in this case the rule does not apply because
+ * We are only mapping classes and that is reasonable
  */
+@SuppressWarnings("squid:S2390")
 public abstract class AbstractJob
 {
     private static final String TAG_TYPE         = "type";
@@ -47,6 +53,7 @@ public abstract class AbstractJob
     private static final Map<String, Class<? extends AbstractJob>> nameToClassMap = new HashMap<>();
     @NotNull
     private static final Map<Class<? extends AbstractJob>, String> classToNameMap = new HashMap<>();
+    //fix for the annotation
     static
     {
         addMapping(MAPPING_PLACEHOLDER, JobPlaceholder.class);
@@ -331,9 +338,15 @@ public abstract class AbstractJob
 
     /**
      * Generate your AI class to register.
+     * <p>
+     * Suppressing Sonar Rule squid:S1452
+     * This rule does "Generic wildcard types should not be used in return parameters"
+     * But in this case the rule does not apply because
+     * We are fine with all AbstractJob implementations and need generics only for java
      *
      * @return your personal AI instance.
      */
+    @SuppressWarnings("squid:S1452")
     public abstract AbstractAISkeleton<? extends AbstractJob> generateAI();
 
     /**
