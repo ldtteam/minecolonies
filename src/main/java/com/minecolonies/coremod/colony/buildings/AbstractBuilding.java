@@ -2,13 +2,9 @@ package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.blocks.*;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
-import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
@@ -1143,33 +1139,38 @@ public abstract class AbstractBuilding
      * Try to transfer a stack to one of the inventories of the building.
      * @param stack the stack to transfer.
      * @param world the world to do it in.
-     * @return true if was able to.
+     * @return The {@link ItemStack} as that is left over, might be {@link InventoryUtils#EMPTY} if the stack was completely accepted
      */
-    public boolean transferStack(@NotNull final ItemStack stack, @NotNull final World world)
+    public ItemStack transferStack(@NotNull final ItemStack stack, @NotNull final World world)
     {
-        if(tileEntity == null || InventoryUtils.isProviderFull(tileEntity))
+        if (tileEntity == null || InventoryUtils.isProviderFull(tileEntity))
         {
-            for(final BlockPos pos: containerList)
+            Iterator<BlockPos> posIterator = containerList.iterator();
+            @NotNull ItemStack resultStack = stack.copy();
+
+            while (posIterator.hasNext() && !InventoryUtils.isItemStackEmpty(resultStack))
             {
+                final BlockPos pos = posIterator.next();
                 final TileEntity tempTileEntity = world.getTileEntity(pos);
-                if(tempTileEntity instanceof TileEntityChest && !InventoryUtils.isProviderFull(tempTileEntity))
+                if (tempTileEntity instanceof TileEntityChest && !InventoryUtils.isProviderFull(tempTileEntity))
                 {
-                    return InventoryUtils.addItemStackToProvider(tempTileEntity, stack);
+                    resultStack = InventoryUtils.addItemStackToProviderWithResult(tempTileEntity, stack);
                 }
             }
+
+            return resultStack;
         }
         else
         {
-            return InventoryUtils.addItemStackToProvider(tileEntity, stack);
+            return InventoryUtils.addItemStackToProviderWithResult(tileEntity, stack);
         }
-        return false;
     }
 
     /**
      * Try to transfer a stack to one of the inventories of the building and force the transfer.
      * @param stack the stack to transfer.
      * @param world the world to do it in.
-     * @return the itemStack which has been replaced
+     * @return the itemStack which has been replaced or the itemStack which could not be transfered
      */
     @Nullable
     public ItemStack forceTransferStack(final ItemStack stack, final World world)
@@ -1189,7 +1190,7 @@ public abstract class AbstractBuilding
         {
             return forceItemStackToProvider(tileEntity, stack);
         }
-        return null;
+        return stack;
     }
 
     /**

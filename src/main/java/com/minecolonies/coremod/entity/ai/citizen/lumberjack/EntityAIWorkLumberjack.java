@@ -335,7 +335,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     @Override
     public BlockPos getWorkingPosition(final BlockPos targetPosition)
     {
-        return getWorkingPosition(1, targetPosition, 0);
+        return getWorkingPosition(2, targetPosition, 0);
     }
 
     /**
@@ -404,7 +404,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         {
             //take first log from queue
             final BlockPos log = job.tree.peekNextLog();
-            if (!mineBlock(log))
+            if (!mineBlock(log, workFrom))
             {
                 return getState();
             }
@@ -414,7 +414,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         {
             //take first leaf from queue
             final BlockPos leaf = job.tree.peekNextLeaf();
-            if (!mineBlock(leaf))
+            if (!mineBlock(leaf, workFrom))
             {
                 return getState();
             }
@@ -488,7 +488,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             stillTicks = 0;
             return;
         }
-        if (!mineBlock(nextLeaves))
+        if (!mineBlock(nextLeaves, workFrom))
         {
             return;
         }
