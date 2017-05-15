@@ -45,7 +45,15 @@ public abstract class AbstractJob
     private static final Map<String, Class<? extends AbstractJob>> nameToClassMap = new HashMap<>();
     @NotNull
     private static final Map<Class<? extends AbstractJob>, String> classToNameMap = new HashMap<>();
-    static
+
+    /*
+     * Suppressing Sonar Rule squid:S2390
+     * This rule does "Classes should not access static members of their own subclasses during initialization"
+     * But in this case the rule does not apply because
+     * We are only mapping classes and that is reasonable
+     */
+    @SuppressWarnings("squid:S2390")
+    private static void updateMapping()
     {
         addMapping(MAPPING_PLACEHOLDER, JobPlaceholder.class);
         addMapping(MAPPING_BUILDER, JobBuilder.class);
@@ -55,6 +63,12 @@ public abstract class AbstractJob
         addMapping(MAPPING_FARMER, JobFarmer.class);
         addMapping(MAPPING_FISHERMAN, JobFisherman.class);
         addMapping(MAPPING_TOWER_GUARD, JobGuard.class);
+    }
+
+    //fix for the annotation
+    static
+    {
+        updateMapping();
     }
 
     private final CitizenData citizen;
