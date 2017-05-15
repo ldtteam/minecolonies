@@ -842,9 +842,17 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             }
             if (!getOwnBuilding().hasOnGoingDelivery())
             {
-                chatSpamFilter.talkWithoutSpam("entity.worker.pickaxeRequest",
-                  InventoryUtils.swapToolGrade(minlevel),
-                  InventoryUtils.swapToolGrade(hutLevel));
+                if (minlevel > hutLevel)
+                {
+                    chatSpamFilter.talkWithoutSpam("entity.worker.betterPickaxeRequest",
+                      InventoryUtils.swapToolGrade(hutLevel));
+                }
+                else
+                {
+                    chatSpamFilter.talkWithoutSpam("entity.worker.pickaxeRequest",
+                      InventoryUtils.swapToolGrade(minlevel),
+                      InventoryUtils.swapToolGrade(hutLevel));
+                }
             }
         }
 
