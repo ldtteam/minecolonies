@@ -74,7 +74,7 @@ public final class RecipeHandler
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutWareHouse, 1), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', "chest")); // check
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutDeliveryman, 1), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', Items.LEATHER_BOOTS));
 
-        enableInDevelopmentFeatures(enableInDevelopmentFeatures);
+        //enableInDevelopmentFeatures(enableInDevelopmentFeatures);
         addSupplyChestRecipes(supplyChests);
     }
 
