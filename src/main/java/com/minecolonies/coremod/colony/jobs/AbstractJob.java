@@ -3,12 +3,14 @@ package com.minecolonies.coremod.colony.jobs;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.util.Log;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -374,5 +376,15 @@ public abstract class AbstractJob
     public SoundEvent getBadWeatherSound()
     {
         return null;
+    }
+
+    /**
+     * Override this to implement Job specific death achievements.
+     *
+     * @param source of the death
+     * @param citizen which just died
+     */
+    public void triggerDeathAchievement(final DamageSource source, final EntityCitizen citizen)
+    {
     }
 }
