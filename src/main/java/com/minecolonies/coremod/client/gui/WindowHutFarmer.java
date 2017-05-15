@@ -18,6 +18,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.minecolonies.coremod.util.constants.TranslationConstants.*;
+
 /**
  * Window for the farmer hut.
  */
@@ -169,24 +171,17 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
      */
     private void assignmentModeClicked(@NotNull final Button button)
     {
-        if (button.getLabel().equals(LanguageHandler.format("com.minecolonies.coremod.gui.hiring.off")))
+        if (button.getLabel().equals(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF)))
         {
-            button.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.hiring.on"));
+            button.setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
             building.setAssignFieldManually(true);
         }
         else
         {
-            button.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.hiring.off"));
+            button.setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF));
             building.setAssignFieldManually(false);
         }
         window.findPaneOfTypeByID(LIST_FIELDS, ScrollingList.class).refreshElementPanes();
-    }
-
-    @NotNull
-    @Override
-    public String getBuildingName()
-    {
-        return "tile.minecolonies.blockHutFarmer.name";
     }
 
     @Override
@@ -196,11 +191,11 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
 
         if (building.assignFieldManually())
         {
-            findPaneOfTypeByID(TAG_BUTTON_ASSIGNMENT_MODE, Button.class).setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.hiring.on"));
+            findPaneOfTypeByID(TAG_BUTTON_ASSIGNMENT_MODE, Button.class).setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
         }
         else
         {
-            findPaneOfTypeByID(TAG_BUTTON_ASSIGNMENT_MODE, Button.class).setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.hiring.off"));
+            findPaneOfTypeByID(TAG_BUTTON_ASSIGNMENT_MODE, Button.class).setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF));
         }
 
         findPaneOfTypeByID(BUTTON_PREV_PAGE, Button.class).setEnabled(false);
@@ -223,7 +218,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
                 @NotNull final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(field.getId(), building.getLocation())));
                 final String direction = calcDirection(building.getLocation(), field.getId());
                 @NotNull final String owner =
-                  field.getOwner().isEmpty() ? ("<" + LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.farmerHut.unused") + ">") : field.getOwner();
+                  field.getOwner().isEmpty() ? ("<" + LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_UNUSED) + ">") : field.getOwner();
 
                 rowPane.findPaneOfTypeByID(TAG_WORKER, Label.class).setLabelText(owner);
                 rowPane.findPaneOfTypeByID(TAG_DISTANCE, Label.class).setLabelText(distance + "m");
@@ -268,20 +263,20 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
 
         if (field.getZ() > building.getZ() + 1)
         {
-            dist = LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.farmerHut.South");
+            dist = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_SOUTH);
         }
         else if (field.getZ() < building.getZ() - 1)
         {
-            dist = LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.farmerHut.North");
+            dist = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_NORTH);
         }
 
         if (field.getX() > building.getX() + 1)
         {
-            dist += LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.farmerHut.East");
+            dist += LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_EAST);
         }
         else if (field.getX() < building.getX() - 1)
         {
-            dist += LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.farmerHut.West");
+            dist += LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_WEST);
         }
 
         return dist;
@@ -298,6 +293,13 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
             pullLevelsFromHut();
             window.findPaneOfTypeByID(LIST_FIELDS, ScrollingList.class).refreshElementPanes();
         }
+    }
+
+    @NotNull
+    @Override
+    public String getBuildingName()
+    {
+        return TILE_MINECOLONIES_BLOCK_HUT_FARMER_NAME;
     }
 
     /**
