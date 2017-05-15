@@ -10,6 +10,7 @@ import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.InventoryUtils;
+import com.minecolonies.coremod.util.Log;
 import com.minecolonies.coremod.util.Utils;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
@@ -86,6 +87,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      * Amount of stacks the worker already kept in the current gathering process.
      */
     private List<ItemStorage> alreadyKept = new ArrayList<>();
+
+    /**
+     * The inventory's slot which is held in hand.
+     */
+    private static final int HAND = 0;
 
     /**
      * Initialize the deliveryman and add all his tasks.
@@ -206,6 +212,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandlers(building.getTileEntity().getSingleChestHandler(), currentSlot, new InvWrapper(worker.getInventoryCitizen()));
         building.markDirty();
         setDelay(DUMP_AND_GATHER_DELAY);
+        worker.setHeldItem(HAND);
         return false;
     }
 
@@ -278,7 +285,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         wareHouse.getTileEntity().dumpInventoryIntoWareHouse(worker.getInventoryCitizen());
         gatherTarget = null;
-        worker.setHeldItem(0);
+        worker.setHeldItem(HAND);
 
         return START_WORKING;
     }
@@ -334,7 +341,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 }
 
                 worker.addExperience(1.0D);
-                worker.setHeldItem(0);
+                worker.setHeldItem(HAND);
                 buildingToDeliver.setOnGoingDelivery(false);
                 ((BuildingDeliveryman) ownBuilding).setBuildingToDeliver(null);
 
@@ -409,6 +416,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
                 if (tryToGatherItems(buildingToDeliver))
                 {
+                    worker.setHeldItem(HAND);
                     setDelay(DUMP_AND_GATHER_DELAY);
                     return GATHER_IN_WAREHOUSE;
                 }
@@ -496,9 +504,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return true;
         }
 
-        final boolean didGatherItems = gatherItems(buildingToDeliver, position);
-        worker.setHeldItem(0);
-        return didGatherItems;
+        return gatherItems(buildingToDeliver, position);
     }
 
     /**

@@ -1944,7 +1944,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public void onWakeUp()
     {
-        getWorkBuilding().onWakeUp();
+        if (this.getWorkBuilding() != null)
+        {
+            this.getWorkBuilding().onWakeUp();
+        }
     }
 
     /**
