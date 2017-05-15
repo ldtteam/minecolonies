@@ -189,7 +189,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
 
         AxisAlignedBB boundingBox
-                = new AxisAlignedBB(centerPos).expand(currentStructure.getLength()/2, currentStructure.getHeight()/2, currentStructure.getWidth()/2);
+                = new AxisAlignedBB(centerPos).expand(currentStructure.getLength() / 2.0, currentStructure.getHeight(), currentStructure.getWidth() / 2.0);
 
         return world.getEntitiesWithinAABB(EntityItem.class, boundingBox)
                 .stream()
