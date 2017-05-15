@@ -101,15 +101,15 @@ public final class DeliverymanSounds
         switch (rand.nextInt(NUMBER_OF_SOUNDS + 1))
         {
             case 1:
-                final SoundEvent generalPhrases = DeliverymanSounds.Female.generalPhrases;
-                SoundUtils.playSoundAtCitizenWithChance(worldIn, position, generalPhrases, PHRASE_CHANCE);
-                break;
-            case 2:
                 final SoundEvent noises = DeliverymanSounds.Female.noises;
                 SoundUtils.playSoundAtCitizenWithChance(worldIn, position, noises, BASIC_SOUND_CHANCE);
                 break;
-            case 3:
+            case 2:
                 playSaturationSound(worldIn, position, isFemale, saturation);
+                break;
+            default:
+                final SoundEvent generalPhrases = DeliverymanSounds.Female.generalPhrases;
+                SoundUtils.playSoundAtCitizenWithChance(worldIn, position, generalPhrases, PHRASE_CHANCE);
                 break;
         }
     }
