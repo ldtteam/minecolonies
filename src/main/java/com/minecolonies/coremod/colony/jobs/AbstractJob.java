@@ -45,26 +45,6 @@ public abstract class AbstractJob
     private static final Map<String, Class<? extends AbstractJob>> nameToClassMap = new HashMap<>();
     @NotNull
     private static final Map<Class<? extends AbstractJob>, String> classToNameMap = new HashMap<>();
-
-    /*
-     * Suppressing Sonar Rule squid:S2390
-     * This rule does "Classes should not access static members of their own subclasses during initialization"
-     * But in this case the rule does not apply because
-     * We are only mapping classes and that is reasonable
-     */
-    @SuppressWarnings("squid:S2390")
-    private static void updateMapping()
-    {
-        addMapping(MAPPING_PLACEHOLDER, JobPlaceholder.class);
-        addMapping(MAPPING_BUILDER, JobBuilder.class);
-        addMapping(MAPPING_DELIVERY, JobDeliveryman.class);
-        addMapping(MAPPING_MINER, JobMiner.class);
-        addMapping(MAPPING_LUMBERJACK, JobLumberjack.class);
-        addMapping(MAPPING_FARMER, JobFarmer.class);
-        addMapping(MAPPING_FISHERMAN, JobFisherman.class);
-        addMapping(MAPPING_TOWER_GUARD, JobGuard.class);
-    }
-
     //fix for the annotation
     static
     {
@@ -84,6 +64,25 @@ public abstract class AbstractJob
     public AbstractJob(final CitizenData entity)
     {
         citizen = entity;
+    }
+
+    /**
+     * Suppressing Sonar Rule squid:S2390
+     * This rule does "Classes should not access static members of their own subclasses during initialization"
+     * But in this case the rule does not apply because
+     * We are only mapping classes and that is reasonable
+     */
+    @SuppressWarnings("squid:S2390")
+    private static void updateMapping()
+    {
+        addMapping(MAPPING_PLACEHOLDER, JobPlaceholder.class);
+        addMapping(MAPPING_BUILDER, JobBuilder.class);
+        addMapping(MAPPING_DELIVERY, JobDeliveryman.class);
+        addMapping(MAPPING_MINER, JobMiner.class);
+        addMapping(MAPPING_LUMBERJACK, JobLumberjack.class);
+        addMapping(MAPPING_FARMER, JobFarmer.class);
+        addMapping(MAPPING_FISHERMAN, JobFisherman.class);
+        addMapping(MAPPING_TOWER_GUARD, JobGuard.class);
     }
 
     /**
@@ -343,7 +342,7 @@ public abstract class AbstractJob
 
     /**
      * Generate your AI class to register.
-     *
+     * <p>
      * Suppressing Sonar Rule squid:S1452
      * This rule does "Generic wildcard types should not be used in return parameters"
      * But in this case the rule does not apply because
