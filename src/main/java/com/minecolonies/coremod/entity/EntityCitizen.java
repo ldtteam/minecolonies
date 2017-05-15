@@ -1963,6 +1963,18 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
+     * Play move away sound when running from an entity.
+     */
+    public void playMoveAwaySound()
+    {
+        if(getColonyJob() != null)
+        {
+            SoundUtils.playSoundAtCitizenWithChance(worldObj, getPosition(),
+                    getColonyJob().getMoveAwaySound(), 1);
+        }
+    }
+
+    /**
      * Enum describing the citizens activity.
      */
     public enum DesiredActivity

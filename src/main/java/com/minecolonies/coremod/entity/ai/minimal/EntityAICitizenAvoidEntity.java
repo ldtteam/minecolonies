@@ -131,8 +131,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     @Override
     public void updateTask()
     {
-        SoundUtils.playSoundAtCitizenWithChance(theEntity.worldObj, theEntity.getPosition(),
-                theEntity.getColonyJob().getMoveAwaySound(), 1);
+        theEntity.playMoveAwaySound();
 
         @Nullable final Entity newClosest = getClosestToAvoid();
         if (newClosest != null && newClosest != closestLivingEntity)
