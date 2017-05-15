@@ -141,32 +141,23 @@ public class WindowHireWorker extends Window implements Button.Handler
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final CitizenDataView citizen = citizens.get(index);
+                @NotNull final CitizenDataView citizen = citizens.get(index);
 
                 if (building instanceof AbstractBuildingWorker.View)
                 {
                     final AbstractBuildingWorker.Skill primary = ((AbstractBuildingWorker.View) building).getPrimarySkill();
                     final AbstractBuildingWorker.Skill secondary = ((AbstractBuildingWorker.View) building).getSecondarySkill();
 
-                    @NotNull final String strength = (primary.equals(AbstractBuildingWorker.Skill.STRENGTH) ? ColorConstants.GREEN
-                                                        : (secondary.equals(AbstractBuildingWorker.Skill.STRENGTH) ? ColorConstants.YELLOW : ""))
-                                                       + LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_STRENGTH, citizen.getStrength()) + ColorConstants.WHITE;
-
-                    @NotNull final String charisma = (primary.equals(AbstractBuildingWorker.Skill.CHARISMA) ? ColorConstants.GREEN
-                                                        : (secondary.equals(AbstractBuildingWorker.Skill.CHARISMA) ? ColorConstants.YELLOW : ""))
-                                                       + LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_CHARISMA, citizen.getCharisma()) + ColorConstants.WHITE;
-
-                    @NotNull final String dexterity = (primary.equals(AbstractBuildingWorker.Skill.DEXTERITY) ? ColorConstants.GREEN
-                                                         : (secondary.equals(AbstractBuildingWorker.Skill.DEXTERITY) ? ColorConstants.YELLOW : ""))
-                                                        + LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_DEXTERITY, citizen.getDexterity()) + ColorConstants.WHITE;
-
-                    @NotNull final String endurance = (primary.equals(AbstractBuildingWorker.Skill.ENDURANCE) ? ColorConstants.GREEN
-                                                         : (secondary.equals(AbstractBuildingWorker.Skill.ENDURANCE) ? ColorConstants.YELLOW : ""))
-                                                        + LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_ENDURANCE, citizen.getEndurance()) + ColorConstants.WHITE;
-
-                    @NotNull final String intelligence = (primary.equals(AbstractBuildingWorker.Skill.INTELLIGENCE) ? ColorConstants.GREEN
-                                                            : (secondary.equals(AbstractBuildingWorker.Skill.INTELLIGENCE) ? ColorConstants.YELLOW : ""))
-                                                           + LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_INTELLIGENCE, citizen.getIntelligence()) + ColorConstants.WHITE;
+                    @NotNull final String strength = createAttributeText(createColor(primary, secondary, AbstractBuildingWorker.Skill.STRENGTH),
+                      LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_STRENGTH, citizen.getStrength()));
+                    @NotNull final String charisma = createAttributeText(createColor(primary, secondary, AbstractBuildingWorker.Skill.CHARISMA),
+                      LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_CHARISMA, citizen.getCharisma()));
+                    @NotNull final String dexterity = createAttributeText(createColor(primary, secondary, AbstractBuildingWorker.Skill.DEXTERITY),
+                      LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_DEXTERITY, citizen.getDexterity()));
+                    @NotNull final String endurance = createAttributeText(createColor(primary, secondary, AbstractBuildingWorker.Skill.ENDURANCE),
+                      LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_ENDURANCE, citizen.getEndurance()));
+                    @NotNull final String intelligence = createAttributeText(createColor(primary, secondary, AbstractBuildingWorker.Skill.INTELLIGENCE),
+                      LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_INTELLIGENCE, citizen.getIntelligence()));
 
                     //Creates the list of attributes for each citizen
                     @NotNull final String attributes = strength + charisma + dexterity + endurance + intelligence;
@@ -178,6 +169,22 @@ public class WindowHireWorker extends Window implements Button.Handler
                 }
             }
         });
+    }
+
+    private String createColor(final AbstractBuildingWorker.Skill primary, final AbstractBuildingWorker.Skill secondary, final AbstractBuildingWorker.Skill current)
+    {
+        if(primary == current){
+            return ColorConstants.GREEN;
+        }
+        if(secondary == current){
+            return ColorConstants.YELLOW;
+        }
+        return "";
+    }
+
+    private String createAttributeText(String color, String text)
+    {
+        return color + text + ColorConstants.WHITE;
     }
 
     @Override
