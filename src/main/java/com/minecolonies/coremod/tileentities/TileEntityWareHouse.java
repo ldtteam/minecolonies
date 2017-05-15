@@ -157,7 +157,9 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         {
             for(final ItemStack stack : buildingEntry.getNeededItems())
             {
-                if(stack == null || (deliveryManHasBuildingAsTask(buildingEntry) && addToList))
+                if(stack == null
+                     || (deliveryManHasBuildingAsTask(buildingEntry)
+                           && addToList))
                 {
                     continue;
                 }

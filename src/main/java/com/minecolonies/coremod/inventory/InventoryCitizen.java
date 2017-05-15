@@ -92,6 +92,12 @@ public class InventoryCitizen implements IInventory
         {
             customName = title;
         }
+        this.allInventories = new ArrayList<>();
+        this.allInventories.add(this.mainInventory);
+        this.allInventories.add(this.armorInventory);
+        this.allInventories.add(this.offHandInventory);
+
+        this.itemStack = ItemStack.EMPTY;
     }
 
     /**
@@ -106,6 +112,11 @@ public class InventoryCitizen implements IInventory
         {
             customName = title;
         }
+        this.allInventories = new ArrayList<>();
+        this.allInventories.add(this.mainInventory);
+        this.allInventories.add(this.armorInventory);
+        this.allInventories.add(this.offHandInventory);
+        this.itemStack = ItemStack.EMPTY;
     }
 
     /**
@@ -721,4 +732,281 @@ public class InventoryCitizen implements IInventory
 
         compound.setTag(TAG_INVENTORY, nbttaglist);
     }
+
+    /**
+     * stores an itemstack in the users inventory
+     */
+    private int storeItemStack(ItemStack itemStackIn)
+    {
+        if (this.canMergeStacks(this.getStackInSlot(this.currentItem), itemStackIn))
+        {
+            return this.currentItem;
+        }
+        else if (this.canMergeStacks(this.getStackInSlot(40), itemStackIn))
+        {
+            return 40;
+        }
+        else
+        {
+            for (int i = 0; i < this.mainInventory.size(); ++i)
+            {
+                if (this.canMergeStacks(this.mainInventory.get(i), itemStackIn))
+                {
+                    return i;
+                }
+            }
+
+            return NO_SLOT;
+        }
+    }
+
+    private boolean canMergeStacks(ItemStack stack1, ItemStack stack2)
+    {
+        return !stack1.isEmpty() && InventoryCitizen.stackEqualExact(stack1, stack2) && stack1.isStackable()
+                 && stack1.getCount() < stack1.getMaxStackSize() && stack1.getCount() < this.getInventoryStackLimit();
+    }
+
+    /**
+     * Delete a certain stack.
+     *
+     * @param stack stack to delete.
+     */
+    public void deleteStack(ItemStack stack)
+    {
+        for (NonNullList<ItemStack> nonnulllist : this.allInventories)
+        {
+            for (int i = 0; i < nonnulllist.size(); ++i)
+            {
+                if (nonnulllist.get(i) == stack)
+                {
+                    nonnulllist.set(i, ItemStack.EMPTY);
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Get the strength against a block.
+     *
+     * @param state the block.
+     * @return the float value.
+     */
+    public float getStrVsBlock(IBlockState state)
+    {
+        float f = 1.0F;
+
+        if (!(this.mainInventory.get(this.currentItem)).isEmpty())
+        {
+            f *= (this.mainInventory.get(this.currentItem)).getStrVsBlock(state);
+        }
+
+        return f;
+    }
+
+    /**
+     * Writes the inventory out as a list of compound tags. This is where the slot indices are used (+100 for armor, +80
+     * for crafting).
+     *
+     * @param nbtTagListIn the taglist in.
+     * @return the filled list.
+     */
+    public NBTTagList writeToNBT(NBTTagList nbtTagListIn)
+    {
+        for (int i = 0; i < this.mainInventory.size(); ++i)
+        {
+            if (!(this.mainInventory.get(i)).isEmpty())
+            {
+                NBTTagCompound nbttagcompound = new NBTTagCompound();
+                nbttagcompound.setByte("Slot", (byte) i);
+                (this.mainInventory.get(i)).writeToNBT(nbttagcompound);
+                nbtTagListIn.appendTag(nbttagcompound);
+            }
+        }
+
+        for (int j = 0; j < this.armorInventory.size(); ++j)
+        {
+            if (!(this.armorInventory.get(j)).isEmpty())
+            {
+                NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+                nbttagcompound1.setByte("Slot", (byte) (j + 100));
+                (this.armorInventory.get(j)).writeToNBT(nbttagcompound1);
+                nbtTagListIn.appendTag(nbttagcompound1);
+            }
+        }
+
+        for (int k = 0; k < this.offHandInventory.size(); ++k)
+        {
+            if (!(this.offHandInventory.get(k)).isEmpty())
+            {
+                NBTTagCompound nbttagcompound2 = new NBTTagCompound();
+                nbttagcompound2.setByte("Slot", (byte) (k + 150));
+                (this.offHandInventory.get(k)).writeToNBT(nbttagcompound2);
+                nbtTagListIn.appendTag(nbttagcompound2);
+            }
+        }
+
+        return nbtTagListIn;
+    }
+
+    /**
+     * Reads from the given tag list and fills the slots in the inventory with the correct items.
+     *
+     * @param nbtTagListIn the tag list.
+     */
+    public void readFromNBT(NBTTagList nbtTagListIn)
+    {
+        this.mainInventory.clear();
+        this.armorInventory.clear();
+        this.offHandInventory.clear();
+
+        for (int i = 0; i < nbtTagListIn.tagCount(); ++i)
+        {
+            NBTTagCompound nbttagcompound = nbtTagListIn.getCompoundTagAt(i);
+            int j = nbttagcompound.getByte("Slot") & 255;
+            ItemStack itemstack = new ItemStack(nbttagcompound);
+
+            if (!itemstack.isEmpty())
+            {
+                if (j >= 0 && j < this.mainInventory.size())
+                {
+                    this.mainInventory.set(j, itemstack);
+                }
+                else if (j >= 100 && j < this.armorInventory.size() + 100)
+                {
+                    this.armorInventory.set(j - 100, itemstack);
+                }
+                else if (j >= 150 && j < this.offHandInventory.size() + 150)
+                {
+                    this.offHandInventory.set(j - 150, itemstack);
+                }
+            }
+        }
+    }
+
+    /**
+     * Checks if the entity can harvest a block.
+     *
+     * @param state the block.
+     * @return true if so.
+     */
+    public boolean canHarvestBlock(IBlockState state)
+    {
+        if (state.getMaterial().isToolNotRequired())
+        {
+            return true;
+        }
+        else
+        {
+            ItemStack itemstack = this.getStackInSlot(this.currentItem);
+            return !itemstack.isEmpty() ? itemstack.canHarvestBlock(state) : false;
+        }
+    }
+
+    /**
+     * returns a player armor item (as itemstack) contained in specified armor slot.
+     *
+     * @param slotIn the slot.
+     * @return the itemStack.
+     */
+    public ItemStack armorItemInSlot(int slotIn)
+    {
+        return this.armorInventory.get(slotIn);
+    }
+
+    /**
+     * Drop all armor and main inventory items.
+     */
+    public void dropAllItems()
+    {
+        for (List<ItemStack> list : this.allInventories)
+        {
+            for (int i = 0; i < list.size(); ++i)
+            {
+                ItemStack itemstack = list.get(i);
+
+                if (!itemstack.isEmpty())
+                {
+                    this.citizen.dropItem(itemstack.getItem(), itemstack.getCount());
+                    list.set(i, ItemStack.EMPTY);
+                }
+            }
+        }
+    }
+
+    /**
+     * Stack helds by mouse, used in GUI and Containers
+     *
+     * @return the hold stack.
+     */
+    public ItemStack getItemStack()
+    {
+        return this.itemStack;
+    }
+
+    /**
+     * Set the stack helds by mouse, used in GUI/Container
+     *
+     * @param itemStackIn the stack to set.
+     */
+    public void setItemStack(ItemStack itemStackIn)
+    {
+        this.itemStack = itemStackIn;
+    }
+
+    /**
+     * Returns true if the specified ItemStack exists in the inventory.
+     *
+     * @param itemStackIn the stack to be searched for.
+     * @return true if it exists.
+     */
+    public boolean hasItemStack(ItemStack itemStackIn)
+    {
+        label19:
+
+        for (List<ItemStack> list : this.allInventories)
+        {
+            Iterator<ItemStack> iterator = list.iterator();
+
+            while (true)
+            {
+                if (!iterator.hasNext())
+                {
+                    continue label19;
+                }
+
+                ItemStack itemstack = iterator.next();
+
+                if (!itemstack.isEmpty() && itemstack.isItemEqual(itemStackIn))
+                {
+                    break;
+                }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Copy the ItemStack contents from another InventoryCitizen instance
+     *
+     * @param inventoryCitizen the citizens inventory to copy.
+     */
+    public void copyInventory(InventoryPlayer inventoryCitizen)
+    {
+        for (int i = 0; i < this.getSizeInventory(); ++i)
+        {
+            this.setInventorySlotContents(i, inventoryCitizen.getStackInSlot(i));
+        }
+
+        this.currentItem = inventoryCitizen.currentItem;
+    }
+
+
+
+
+
+
 }
