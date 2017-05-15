@@ -5,7 +5,7 @@ import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.coremod.colony.permissions.Action;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.inventory.InventoryField;
 import com.minecolonies.coremod.util.BlockPosUtil;
@@ -194,7 +194,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
     private static boolean checkPermissions(final Colony colony, final EntityPlayerMP player)
     {
         //Verify player has permission to change this huts settings
-        return colony.getPermissions().hasPermission(player, Permissions.Action.MANAGE_HUTS);
+        return colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS);
     }
 
     /**

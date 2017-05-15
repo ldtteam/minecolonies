@@ -79,6 +79,7 @@ public class StandardRequestManager implements IRequestManager {
 
     /**
      * The fallback resolver used to resolve directly to the player.
+     * TODO: Assign resolver once implemented.
      */
     @NotNull
     private final IRequestResolver playerResolver = null;
@@ -130,7 +131,6 @@ public class StandardRequestManager implements IRequestManager {
      * @param token The token of the request to assign.
      * @throws IllegalArgumentException when the token is not registered to a request, or is already assigned to a resolver.
      */
-    @NotNull
     @Override
     public void assignRequest(@NotNull IToken token) throws IllegalArgumentException {
         RequestHandler.assignRequest(this, RequestHandler.getRequest(this, token));
@@ -688,7 +688,7 @@ public class StandardRequestManager implements IRequestManager {
             IToken<UUID, NBTTagCompound> token = TokenHandler.generateNewToken(manager);
 
             IFactory<Request, ?> factory = manager.getFactoryController().getFactoryForInput(requestClass);
-            IRequest<Request> constructedRequest = (IRequest<Request>) factory.getNewInstance(request, requester.getLocation(), token);
+            IRequest<Request> constructedRequest = (IRequest<Request>) factory.getNewInstance(request, requester, token);
 
             Log.getLogger().debug("Creating request for: " + request + " with factory: " + factory + ", token: " + token + " and output: " + constructedRequest);
 

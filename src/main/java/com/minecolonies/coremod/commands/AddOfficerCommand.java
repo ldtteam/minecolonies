@@ -3,7 +3,7 @@ package com.minecolonies.coremod.commands;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.IColony;
-import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.coremod.colony.permissions.Rank;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -103,7 +103,7 @@ public class AddOfficerCommand extends AbstractSingleCommand
             return;
         }
 
-        colony.getPermissions().addPlayer(playerName, Permissions.Rank.OFFICER, colony.getWorld());
+        colony.getPermissions().addPlayer(playerName, Rank.OFFICER, colony.getWorld());
         sender.sendMessage(new TextComponentString(String.format(SUCCESS_MESSAGE, playerName, colonyId)));
     }
 

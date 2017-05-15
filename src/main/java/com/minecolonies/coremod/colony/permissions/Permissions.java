@@ -135,9 +135,9 @@ public class Permissions implements IPermissions
         final int flags = permissionMap.get(rank);
 
         //check that flag isn't set
-        if (!Utils.testFlag(flags, action.flag))
+        if (!Utils.testFlag(flags, action.getFlag()))
         {
-            permissionMap.put(rank, Utils.setFlag(flags, action.flag));
+            permissionMap.put(rank, Utils.setFlag(flags, action.getFlag()));
             markDirty();
         }
     }
@@ -196,7 +196,7 @@ public class Permissions implements IPermissions
      */
     public void togglePermission(final Rank rank, @NotNull final Action action)
     {
-        permissionMap.put(rank, Utils.toggleFlag(permissionMap.get(rank), action.flag));
+        permissionMap.put(rank, Utils.toggleFlag(permissionMap.get(rank), action.getFlag()));
         markDirty();
     }
 
@@ -254,7 +254,7 @@ public class Permissions implements IPermissions
             for (int j = 0; j < flagsTagList.tagCount(); ++j)
             {
                 final String flag = flagsTagList.getStringTagAt(j);
-                flags = Utils.setFlag(flags, Action.valueOf(flag).flag);
+                flags = Utils.setFlag(flags, Action.valueOf(flag).getFlag());
             }
             permissionMap.put(rank, flags);
         }
@@ -366,7 +366,7 @@ public class Permissions implements IPermissions
             @NotNull final NBTTagList flagsTagList = new NBTTagList();
             for (@NotNull final Action action : Action.values())
             {
-                if (Utils.testFlag(entry.getValue(), action.flag))
+                if (Utils.testFlag(entry.getValue(), action.getFlag()))
                 {
                     flagsTagList.appendTag(new NBTTagString(action.name()));
                 }
@@ -419,7 +419,7 @@ public class Permissions implements IPermissions
     public boolean hasPermission(final Rank rank, @NotNull final Action action)
     {
         return (rank == Rank.OWNER && action != Action.GUARDS_ATTACK)
-                 || Utils.testFlag(permissionMap.get(rank), action.flag);
+                 || Utils.testFlag(permissionMap.get(rank), action.getFlag());
     }
 
     /**
@@ -463,7 +463,7 @@ public class Permissions implements IPermissions
      * Checks if the player has the permission of an action.
      *
      * @param player {@link EntityPlayer} player.
-     * @param action {@link Permissions.Action} action.
+     * @param action {@link Action} action.
      * @return true if player has permissionMap, otherwise false.
      */
     @Override
@@ -493,9 +493,9 @@ public class Permissions implements IPermissions
     public void removePermission(final Rank rank, @NotNull final Action action)
     {
         final int flags = permissionMap.get(rank);
-        if (Utils.testFlag(flags, action.flag))
+        if (Utils.testFlag(flags, action.getFlag()))
         {
-            permissionMap.put(rank, Utils.unsetFlag(flags, action.flag));
+            permissionMap.put(rank, Utils.unsetFlag(flags, action.getFlag()));
             markDirty();
         }
     }
@@ -691,7 +691,7 @@ public class Permissions implements IPermissions
      * @param buf        {@link ByteBuf} to write to.
      * @param viewerRank Rank of the viewer.
      */
-    public void serializeViewNetworkData(@NotNull final ByteBuf buf, @NotNull final Permissions.Rank viewerRank)
+    public void serializeViewNetworkData(@NotNull final ByteBuf buf, @NotNull final Rank viewerRank)
     {
         ByteBufUtils.writeUTF8String(buf, viewerRank.name());
 
@@ -710,73 +710,6 @@ public class Permissions implements IPermissions
         {
             ByteBufUtils.writeUTF8String(buf, entry.getKey().name());
             buf.writeInt(entry.getValue());
-        }
-    }
-
-    /**
-     * Ranks within a colony.
-     */
-    public enum Rank
-    {
-        OWNER(true),
-        OFFICER(true),
-        FRIEND(true),
-        NEUTRAL(false),
-        HOSTILE(false);
-
-        /**
-         * Is the Rank a subscriber to certain events.
-         */
-        public final boolean isSubscriber;
-
-        /**
-         * Ranks enum constructor.
-         * <p>
-         * Subscribers are receiving events from the colony.
-         * They are either citizens or near enough.
-         * Ranks with true are automatically subscribed to the colony.
-         *
-         * @param isSubscriber boolean whether auto-subscribed to this colony.
-         */
-        Rank(final boolean isSubscriber)
-        {
-            this.isSubscriber = isSubscriber;
-        }
-
-    }
-
-    /**
-     * Actions that can be performed in a colony.
-     */
-    public enum Action
-    {
-        ACCESS_HUTS(0),
-        GUARDS_ATTACK(1),
-        PLACE_HUTS(2),
-        BREAK_HUTS(3),
-        CAN_PROMOTE(4),
-        CAN_DEMOTE(5),
-        SEND_MESSAGES(6),
-        EDIT_PERMISSIONS(7),
-        MANAGE_HUTS(8);
-
-        private final int flag;
-
-        /**
-         * Stores the action as byte.
-         * {@link #ACCESS_HUTS} has value 0000 0000
-         * {@link #SEND_MESSAGES} has value 0100 0000
-         *
-         * @param bit how many bits should be shifted and set
-         */
-        Action(final int bit)
-        {
-            this.flag = 0x1 << bit;
-        }
-
-        public int getFlag()
-        {
-            return flag;
         }
     }
 
@@ -935,7 +868,7 @@ public class Permissions implements IPermissions
         public boolean hasPermission(final Rank rank, @NotNull final Action action)
         {
             return (rank == Rank.OWNER && action != Action.GUARDS_ATTACK)
-                     || Utils.testFlag(permissions.get(rank), action.flag);
+                     || Utils.testFlag(permissions.get(rank), action.getFlag());
         }
 
         /**
@@ -950,9 +883,9 @@ public class Permissions implements IPermissions
             final int flags = permissions.get(rank);
 
             //check that flag isn't set
-            if (!Utils.testFlag(flags, action.flag))
+            if (!Utils.testFlag(flags, action.getFlag()))
             {
-                permissions.put(rank, Utils.setFlag(flags, action.flag));
+                permissions.put(rank, Utils.setFlag(flags, action.getFlag()));
                 return true;
             }
             return false;
@@ -968,9 +901,9 @@ public class Permissions implements IPermissions
         public boolean removePermission(final Rank rank, @NotNull final Action action)
         {
             final int flags = permissions.get(rank);
-            if (Utils.testFlag(flags, action.flag))
+            if (Utils.testFlag(flags, action.getFlag()))
             {
-                permissions.put(rank, Utils.unsetFlag(flags, action.flag));
+                permissions.put(rank, Utils.unsetFlag(flags, action.getFlag()));
                 return true;
             }
             return false;
@@ -984,7 +917,7 @@ public class Permissions implements IPermissions
          */
         public void togglePermission(final Rank rank, @NotNull final Action action)
         {
-            permissions.put(rank, Utils.toggleFlag(permissions.get(rank), action.flag));
+            permissions.put(rank, Utils.toggleFlag(permissions.get(rank), action.getFlag()));
         }
 
         /**

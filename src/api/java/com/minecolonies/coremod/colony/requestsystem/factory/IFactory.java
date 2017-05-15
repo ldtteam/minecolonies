@@ -10,14 +10,14 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface IFactory<Input, Output> {
     /**
-     * Method to get the request type this factory can produce.
+     * Method to get the type this factory can produce.
      * @return The type of request this factory can produce.
      */
     @NotNull
     Class<? extends Output> getFactoryOutputType();
 
     /**
-     * Used to determine which type of request this can produce.
+     * Used to determine which type this can produce.
      * @return The class that represents the Type of Request this can produce.
      */
     @NotNull

@@ -2,6 +2,7 @@ package com.minecolonies.coremod.util;
 
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.coremod.colony.permissions.Rank;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ public final class PermissionUtils
      * @return The list with online players that has the rank or higher
      */
     @NotNull
-    public static List<Permissions.Player> getPlayersWithAtLeastRank(@NotNull final Colony colony, @NotNull final Permissions.Rank rank)
+    public static List<Permissions.Player> getPlayersWithAtLeastRank(@NotNull final Colony colony, @NotNull final Rank rank)
     {
         @NotNull final List<Permissions.Player> playersWithAtLeastRank = new ArrayList<>();
 

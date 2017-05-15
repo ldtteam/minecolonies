@@ -4,7 +4,7 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.coremod.colony.permissions.Action;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import com.minecolonies.coremod.util.LanguageHandler;
@@ -69,7 +69,7 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
         if (colony != null)
         {
             //Verify player has permission to change this huts settings
-            if (!colony.getPermissions().hasPermission(player, Permissions.Action.MANAGE_HUTS))
+            if (!colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
             {
                 return;
             }

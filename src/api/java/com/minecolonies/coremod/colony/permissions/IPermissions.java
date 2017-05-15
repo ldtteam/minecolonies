@@ -14,10 +14,10 @@ public interface IPermissions
      * Returns whether the player has the permission for an action.
      *
      * @param player {@link EntityPlayer} player.
-     * @param action {@link com.minecolonies.coremod.colony.permissions.Permissions.Action} action.
+     * @param action {@link Action} action.
      * @return true if has permission, otherwise false.
      */
-    boolean hasPermission(EntityPlayer player, Permissions.Action action);
+    boolean hasPermission(EntityPlayer player, Action action);
 
     /**
      * Returns whether the player is a member of the colony.
@@ -34,5 +34,5 @@ public interface IPermissions
      * @return Rank of the player.
      */
     @NotNull
-    Permissions.Rank getRank(UUID player);
+    Rank getRank(UUID player);
 }

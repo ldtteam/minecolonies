@@ -5,8 +5,10 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.buildings.IBuilding;
-import com.minecolonies.coremod.colony.requestsystem.IRequestManager;
+import com.minecolonies.coremod.colony.permissions.Action;
 import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.coremod.colony.permissions.Rank;
+import com.minecolonies.coremod.colony.requestsystem.IRequestManager;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
@@ -175,7 +177,7 @@ public final class ColonyView implements IColony
      * @param rank   Rank to get the permission.
      * @param action Permission to get.
      */
-    public void setPermission(final Permissions.Rank rank, @NotNull final Permissions.Action action)
+    public void setPermission(final Rank rank, @NotNull final Action action)
     {
         if (permissions.setPermission(rank, action))
         {
@@ -189,7 +191,7 @@ public final class ColonyView implements IColony
      * @param rank   Rank to remove permission from.
      * @param action Action to remove permission of.
      */
-    public void removePermission(final Permissions.Rank rank, @NotNull final Permissions.Action action)
+    public void removePermission(final Rank rank, @NotNull final Action action)
     {
         if (permissions.removePermission(rank, action))
         {
@@ -203,7 +205,7 @@ public final class ColonyView implements IColony
      * @param rank   Rank to toggle permission of.
      * @param action Action to toggle permission of.
      */
-    public void togglePermission(final Permissions.Rank rank, @NotNull final Permissions.Action action)
+    public void togglePermission(final Rank rank, @NotNull final Action action)
     {
         permissions.togglePermission(rank, action);
         MineColonies.getNetwork().sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.TOGGLE_PERMISSION, rank, action));

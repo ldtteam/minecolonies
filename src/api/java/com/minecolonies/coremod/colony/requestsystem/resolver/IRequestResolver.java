@@ -22,10 +22,9 @@ public interface IRequestResolver<R> extends ILocatable {
     /**
      * Method to get the unique token, used to identify this resolver inside the request
      * management system.
-      * @param <T> The type of token.
      * @return The unique token identifying this resolver.
      */
-    <T extends IToken> T getToken();
+    IToken getToken();
 
     /**
      * Used to determine which type of requests can be resolved by this Resolver.

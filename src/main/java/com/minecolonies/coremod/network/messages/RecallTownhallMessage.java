@@ -4,7 +4,7 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
-import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.coremod.colony.permissions.Action;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
@@ -60,7 +60,7 @@ public class RecallTownhallMessage extends AbstractMessage<RecallTownhallMessage
         if (colony != null)
         {
             //Verify player has permission to change this huts settings
-            if (!colony.getPermissions().hasPermission(player, Permissions.Action.MANAGE_HUTS))
+            if (!colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
             {
                 return;
             }

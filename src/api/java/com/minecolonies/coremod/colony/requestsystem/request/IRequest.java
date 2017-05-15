@@ -3,7 +3,7 @@ package com.minecolonies.coremod.colony.requestsystem.request;
 import com.google.common.collect.ImmutableCollection;
 import com.minecolonies.coremod.colony.requestsystem.IRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.RequestState;
-import com.minecolonies.coremod.colony.requestsystem.location.ILocation;
+import com.minecolonies.coremod.colony.requestsystem.location.ILocatable;
 import com.minecolonies.coremod.colony.requestsystem.token.IToken;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -54,7 +54,7 @@ public interface IRequest<R> {
      * @return The location of requester of this request.
      */
     @NotNull
-    ILocation getRequesterLocation();
+    ILocatable getRequesterLocation();
 
     /**
      * Return the object that is actually requested.

@@ -5,6 +5,7 @@ import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.coremod.colony.permissions.Rank;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.util.AchievementUtils;
@@ -110,7 +111,7 @@ public final class ColonyManager
 
         final String colonyName = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.defaultName", player.getDisplayNameString());
         colony.setName(colonyName);
-        colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Permissions.Rank.OWNER, w);
+        colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Rank.OWNER, w);
 
         colony.triggerAchievement(ModAchievements.achievementGetSupply);
         colony.triggerAchievement(ModAchievements.achievementTownhall);
@@ -469,7 +470,7 @@ public final class ColonyManager
         for (@NotNull final ColonyView c : colonyViews.values())
         {
             final Permissions.Player p = c.getPlayers().get(owner);
-            if (p != null && p.getRank().equals(Permissions.Rank.OWNER))
+            if (p != null && p.getRank().equals(Rank.OWNER))
             {
                 return c;
             }

@@ -8,8 +8,8 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView;
 import com.minecolonies.coremod.colony.requestsystem.request.IRequest;
-import com.minecolonies.coremod.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.colony.requestsystem.requestable.Tool;
+import com.minecolonies.coremod.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
@@ -836,15 +836,6 @@ public abstract class AbstractBuilding implements IBuilding {
      */
     public boolean hasWorkerOpenRequests(CitizenData citizen) {
         return !citizensByRequests.containsKey(citizen.getId()) || citizensByRequests.get(citizen.getId()).isEmpty();
-    }
-
-    @NotNull
-    public ItemStack getFirstUnpickedDelivery(CitizenData citizen)
-    {
-        if (!hasWorkerOpenRequests(citizen))
-        {
-            return ItemStack.EMPTY;
-        }
     }
 
     /**

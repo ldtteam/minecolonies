@@ -11,6 +11,7 @@ import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.WorkOrderView;
 import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.coremod.colony.permissions.Rank;
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.RecallTownhallMessage;
@@ -302,7 +303,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     {
         users.clear();
         users.addAll(townHall.getColony().getPlayers().values());
-        users.sort(Comparator.comparing(Permissions.Player::getRank, Permissions.Rank::compareTo));
+        users.sort(Comparator.comparing(Permissions.Player::getRank, Rank::compareTo));
     }
 
     /**
@@ -653,7 +654,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         if (row >= 0 && row < users.size())
         {
             final Permissions.Player user = users.get(row);
-            if (user.getRank() != Permissions.Rank.OWNER)
+            if (user.getRank() != Rank.OWNER)
             {
                 MineColonies.getNetwork().sendToServer(new PermissionsMessage.RemovePlayer(townHall.getColony(), user.getID()));
             }

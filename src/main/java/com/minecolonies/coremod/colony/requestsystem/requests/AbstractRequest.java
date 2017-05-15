@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.requestsystem.IRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.RequestState;
-import com.minecolonies.coremod.colony.requestsystem.location.ILocation;
+import com.minecolonies.coremod.colony.requestsystem.location.ILocatable;
 import com.minecolonies.coremod.colony.requestsystem.request.IRequest;
 import com.minecolonies.coremod.colony.requestsystem.token.IToken;
 import net.minecraft.item.ItemStack;
@@ -27,17 +27,18 @@ public abstract class AbstractRequest<R> implements IRequest<R> {
     @NotNull
     private RequestState state = RequestState.CREATED;
     @Nullable
-    private R result;
+    private       R                 result;
     @NotNull
-    private final R requested;
+    private final R                 requested;
     @Nullable
-    private IToken parent;
+    private       IToken            parent;
     @NotNull
     private final ArrayList<IToken> children;
     @NotNull
-    private final ILocation requester;
+    private final ILocatable        requester;
 
-    public AbstractRequest(@NotNull ILocation requester, @NotNull IToken token, @NotNull R requested) {
+    public AbstractRequest(@NotNull ILocatable requester, @NotNull IToken token, @NotNull R requested)
+    {
         this.requester = requester;
         this.token = token;
         this.requested = requested;
@@ -45,7 +46,8 @@ public abstract class AbstractRequest<R> implements IRequest<R> {
         children = new ArrayList<>();
     }
 
-    public AbstractRequest(@NotNull ILocation requester, @NotNull IToken token, @NotNull RequestState state, @NotNull R requested) {
+    public AbstractRequest(@NotNull ILocatable requester, @NotNull IToken token, @NotNull RequestState state, @NotNull R requested)
+    {
         this.requester = requester;
         this.token = token;
         this.state = state;
@@ -75,7 +77,8 @@ public abstract class AbstractRequest<R> implements IRequest<R> {
      */
     @NotNull
     @Override
-    public ILocation getRequesterLocation() {
+    public ILocatable getRequesterLocation()
+    {
         return requester;
     }
 
@@ -340,9 +343,9 @@ public abstract class AbstractRequest<R> implements IRequest<R> {
     }
 
     /**
-     * Method to get the ItemStack used for the getDelivery.
+     * Method to get the ItemStack used for the delivery.
      *
-     * @return The ItemStack that the Deliveryman transports around. ItemStack.Empty means no getDelivery possible.
+     * @return The ItemStack that the Deliveryman transports around. ItemStack.Empty means no delivery possible.
      */
     @NotNull
     @Override

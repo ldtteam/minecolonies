@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.colony.requestsystem.requests;
 
 import com.minecolonies.coremod.colony.requestsystem.RequestState;
-import com.minecolonies.coremod.colony.requestsystem.location.ILocation;
+import com.minecolonies.coremod.colony.requestsystem.location.ILocatable;
 import com.minecolonies.coremod.colony.requestsystem.requestable.Delivery;
-import com.minecolonies.coremod.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.colony.requestsystem.requestable.Tool;
+import com.minecolonies.coremod.colony.requestsystem.token.IToken;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,11 +15,13 @@ public final class StandardRequests {
 
     public static class ItemStackRequest extends AbstractRequest<ItemStack> {
 
-        public ItemStackRequest(@NotNull ILocation requester, @NotNull IToken token, @NotNull ItemStack requested) {
+        public ItemStackRequest(@NotNull ILocatable requester, @NotNull IToken token, @NotNull ItemStack requested)
+        {
             super(requester, token, requested);
         }
 
-        public ItemStackRequest(@NotNull ILocation requester, @NotNull IToken token, @NotNull RequestState state, @NotNull ItemStack requested) {
+        public ItemStackRequest(@NotNull ILocatable requester, @NotNull IToken token, @NotNull RequestState state, @NotNull ItemStack requested)
+        {
             super(requester, token, state, requested);
         }
 
@@ -36,18 +38,20 @@ public final class StandardRequests {
 
     public static class DeliveryRequest extends AbstractRequest<Delivery> {
 
-        public DeliveryRequest(@NotNull ILocation requester, @NotNull IToken token, @NotNull Delivery requested) {
+        public DeliveryRequest(@NotNull ILocatable requester, @NotNull IToken token, @NotNull Delivery requested)
+        {
             super(requester, token, requested);
         }
 
-        public DeliveryRequest(@NotNull ILocation requester, @NotNull IToken token, @NotNull RequestState state, @NotNull Delivery requested) {
+        public DeliveryRequest(@NotNull ILocatable requester, @NotNull IToken token, @NotNull RequestState state, @NotNull Delivery requested)
+        {
             super(requester, token, state, requested);
         }
 
         /**
          * Method to get the ItemStack used for the getDelivery.
          *
-         * @return The ItemStack that the Deliveryman transports around. ItemStack.Empty means no getDelivery possible.
+         * @return The ItemStack that the Deliveryman transports around. ItemStack.Empty means no delivery possible.
          */
         @NotNull
         @Override
@@ -61,16 +65,18 @@ public final class StandardRequests {
 
     public static class ToolRequest extends AbstractRequest<Tool> {
 
-        public ToolRequest(@NotNull ILocation requester, @NotNull IToken token, @NotNull Tool requested) {
+        public ToolRequest(@NotNull ILocatable requester, @NotNull IToken token, @NotNull Tool requested)
+        {
             super(requester, token, requested);
         }
 
-        public ToolRequest(@NotNull ILocation requester, @NotNull IToken token, @NotNull RequestState state, @NotNull Tool requested) {
+        public ToolRequest(@NotNull ILocatable requester, @NotNull IToken token, @NotNull RequestState state, @NotNull Tool requested)
+        {
             super(requester, token, state, requested);
         }
 
         /**
-         * Method to get the ItemStack used for the getDelivery.
+         * Method to get the ItemStack used for the delivery.
          *
          * @return The ItemStack that the Deliveryman transports around. ItemStack.Empty means no getDelivery possible.
          */
