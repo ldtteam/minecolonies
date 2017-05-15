@@ -178,6 +178,7 @@ public class BlockBarrel extends Block
                 doBarrelCompostTick(worldIn, pos, state);
                 break;
             case BARRELSTATE_DONE:
+            default:
                 break;
         }
     }
