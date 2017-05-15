@@ -89,6 +89,8 @@ public final class FishermanSounds extends AbstractWorkerSounds
                 final SoundEvent noises = isFemale ? FishermanSounds.Female.noises : FishermanSounds.Male.noises;
                 SoundUtils.playSoundAtCitizenWithChance(worldIn, position, noises, getBasicSoundChance());
                 break;
+            default:
+                break;
         }
     }
 
