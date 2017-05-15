@@ -15,7 +15,7 @@ public final class ModCreativeTabs
         @Override
         public Item getTabIconItem()
         {
-            this.setBackgroundImageName("minecolonies_background.jpg");
+            this.setBackgroundImageName("minecolonies_background.png");
             this.setNoScrollbar();
             return Item.getItemFromBlock(ModBlocks.blockHutTownHall);
         }
