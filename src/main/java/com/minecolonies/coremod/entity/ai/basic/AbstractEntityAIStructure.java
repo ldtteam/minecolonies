@@ -155,7 +155,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
     private AIState pickUpResiduals()
     {
-        final List<BlockPos> items = getItems();
+        final List<BlockPos> items = getItemsForPickUp();
         if (items == null)
         {
             fillItemsList();

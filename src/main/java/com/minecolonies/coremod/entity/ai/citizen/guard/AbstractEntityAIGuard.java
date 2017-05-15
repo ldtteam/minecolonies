@@ -510,12 +510,12 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
      */
     private AIState gathering()
     {
-        if (getItems() == null)
+        if (getItemsForPickUp() == null)
         {
             searchForItems();
             return getState();
         }
-        if (!getItems().isEmpty())
+        if (!getItemsForPickUp().isEmpty())
         {
             gatherItems();
             return getState();
