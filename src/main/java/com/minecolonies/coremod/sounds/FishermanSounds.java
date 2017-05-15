@@ -10,20 +10,13 @@ import java.util.Random;
 /**
  * Class containing the fisherman sounds.
  */
-public final class FishermanSounds implements IWorkerSounds
+public final class FishermanSounds extends AbstractWorkerSounds
 {
     /**
      * Number of different sounds in this class.
      */
     private static final int    NUMBER_OF_SOUNDS   = 2;
-    /**
-     * Chance to say a phrase.
-     */
-    private static final int    PHRASE_CHANCE      = 25;
-    /**
-     * Chance to play a basic sound.
-     */
-    private static final int    BASIC_SOUND_CHANCE = 100;
+
     /**
      * Random generator.
      */
@@ -76,35 +69,32 @@ public final class FishermanSounds implements IWorkerSounds
     }
 
     /**
-     * Private constructor to hide the implicit public one.
-     */
-    private FishermanSounds()
-    {
-        /*
-         * Intentionally left empty.
-         */
-    }
-
-    /**
      * Plays fisherman sounds.
      *
      * @param worldIn  the world to play the sound in.
      * @param position the position to play the sound at.
      * @param isFemale the gender.
      */
-    public void playSound(final World worldIn, final BlockPos position, final boolean isFemale)
+    @Override
+    public void playSound(final World worldIn, final BlockPos position, final boolean isFemale, final double saturation)
     {
         //Leaving it as switch-case we may add further random sound categories here (Whistling, singing, etc).
         switch (rand.nextInt(NUMBER_OF_SOUNDS + 1))
         {
             case 1:
                 final SoundEvent generalPhrases = isFemale ? FishermanSounds.Female.generalPhrases : FishermanSounds.Male.generalPhrases;
-                SoundUtils.playSoundAtCitizenWithChance(worldIn, position, generalPhrases, PHRASE_CHANCE);
+                SoundUtils.playSoundAtCitizenWithChance(worldIn, position, generalPhrases, getPhraseChance());
                 break;
             case 2:
                 final SoundEvent noises = isFemale ? FishermanSounds.Female.noises : FishermanSounds.Male.noises;
-                SoundUtils.playSoundAtCitizenWithChance(worldIn, position, noises, BASIC_SOUND_CHANCE);
+                SoundUtils.playSoundAtCitizenWithChance(worldIn, position, noises, getBasicSoundChance());
                 break;
         }
+    }
+
+    @Override
+    public String getWorkerString()
+    {
+        return "Fisherman";
     }
 }

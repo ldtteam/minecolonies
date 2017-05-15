@@ -1,9 +1,7 @@
 package com.minecolonies.coremod.util;
 
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.sounds.CitizenSounds;
-import com.minecolonies.coremod.sounds.DeliverymanSounds;
-import com.minecolonies.coremod.sounds.FishermanSounds;
+import com.minecolonies.coremod.sounds.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
@@ -57,8 +55,8 @@ public final class SoundUtils
     /**
      * Plays a random sound for a certain citizen.
      *
-     * @param worldIn the world to play the sound in.
-     * @param citizen the citizen to play the sound for.
+     * @param worldIn    the world to play the sound in.
+     * @param citizen    the citizen to play the sound for.
      * @param saturation the saturation of the citizen.
      */
     public static void playRandomSound(@NotNull final World worldIn, @NotNull final EntityCitizen citizen, final double saturation)
@@ -72,17 +70,12 @@ public final class SoundUtils
                 prefix = citizen.getWorkBuilding().getJobName();
             }
 
-            switch (prefix)
+            for (final AbstractWorkerSounds sounds : AbstractWorkerSounds.handlers)
             {
-                case "Fisherman":
-                    FishermanSounds.playSound(worldIn, citizen.getPosition(), citizen.isFemale());
-                    break;
-                case "Deliveryman":
-                    DeliverymanSounds.playDmanSounds(worldIn, citizen.getPosition(), citizen.isFemale(), saturation);
-                    break;
-                default:
-                    CitizenSounds.playCitizenSounds(worldIn, citizen.getPosition(), citizen.isFemale());
-                    break;
+                if (sounds.getWorkerString().equals(prefix))
+                {
+                    sounds.playSound(worldIn, citizen.getPosition(), citizen.isFemale(), saturation);
+                }
             }
         }
     }
@@ -97,11 +90,11 @@ public final class SoundUtils
     public static void playSoundAtCitizen(@NotNull final World worldIn, @NotNull final BlockPos position, @NotNull final SoundEvent event)
     {
         worldIn.playSound((EntityPlayer) null,
-          position,
-          event,
-          SoundCategory.NEUTRAL,
-          (float) VOLUME,
-          (float) PITCH);
+                position,
+                event,
+                SoundCategory.NEUTRAL,
+                (float) VOLUME,
+                (float) PITCH);
     }
 
     /**
@@ -122,11 +115,11 @@ public final class SoundUtils
         if (chance > rand.nextInt(ONE_HUNDRED))
         {
             worldIn.playSound((EntityPlayer) null,
-              position,
-              event,
-              SoundCategory.NEUTRAL,
-              (float) VOLUME,
-              (float) PITCH);
+                    position,
+                    event,
+                    SoundCategory.NEUTRAL,
+                    (float) VOLUME,
+                    (float) PITCH);
         }
     }
 }
