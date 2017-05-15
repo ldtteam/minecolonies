@@ -10,7 +10,7 @@ import java.util.Random;
 /**
  * Class containing the fisherman sounds.
  */
-public final class FishermanSounds
+public final class FishermanSounds implements IWorkerSounds
 {
     /**
      * Number of different sounds in this class.
@@ -92,7 +92,7 @@ public final class FishermanSounds
      * @param position the position to play the sound at.
      * @param isFemale the gender.
      */
-    public static void playFishermanSound(final World worldIn, final BlockPos position, final boolean isFemale)
+    public void playSound(final World worldIn, final BlockPos position, final boolean isFemale)
     {
         //Leaving it as switch-case we may add further random sound categories here (Whistling, singing, etc).
         switch (rand.nextInt(NUMBER_OF_SOUNDS + 1))

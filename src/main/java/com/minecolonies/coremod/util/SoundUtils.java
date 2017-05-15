@@ -75,7 +75,7 @@ public final class SoundUtils
             switch (prefix)
             {
                 case "Fisherman":
-                    FishermanSounds.playFishermanSound(worldIn, citizen.getPosition(), citizen.isFemale());
+                    FishermanSounds.playSound(worldIn, citizen.getPosition(), citizen.isFemale());
                     break;
                 case "Deliveryman":
                     DeliverymanSounds.playDmanSounds(worldIn, citizen.getPosition(), citizen.isFemale(), saturation);
