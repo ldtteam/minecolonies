@@ -58,11 +58,6 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
     private static final double BASIC_VOLUME = 1.0D;
 
     /**
-     * Experience the guard receives each shot arrow.
-     */
-    private static final double XP_EACH_HIT = 0.2;
-
-    /**
      * Base speed of the guard he follows his target.
      */
     private static final int BASE_FOLLOW_SPEED = 1;
