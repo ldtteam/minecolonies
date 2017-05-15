@@ -7,7 +7,7 @@ import com.minecolonies.coremod.colony.buildings.BuildingGuardTower;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.configuration.Configurations;
-import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
+import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
@@ -17,7 +17,6 @@ import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Log;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.entity.player.EntityPlayer;
@@ -30,17 +29,15 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 /**
  * Abstract class which contains all the guard basics let it be range, melee or magic.
  */
-public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGuard>
+public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<JobGuard>
 {
     /**
      * Follow the player if farther than this.
@@ -69,27 +66,8 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     /**
      * Path that close to the patrol target.
      */
-    private static final int    PATH_CLOSE              = 2;
-    /**
-     * Horizontal range in which the guard picks up items.
-     */
-    private static final double RANGE_HORIZONTAL_PICKUP = 20.0D;
-    /**
-     * Vertical range in which the guard picks up items.
-     */
-    private static final double RANGE_VERTICAL_PICKUP   = 2.0D;
-    /**
-     * Amount of ticks after which the guard stops trying to gather and tries to get onto another task.
-     */
-    private static final int STUCK_WAIT_TICKS                 = 20;
-    /**
-     * The amount of time to wait while walking to items.
-     */
-    private static final int WAIT_WHILE_WALKING               = 5;
-    /**
-     * The range in which the guard picks up items.
-     */
-    private static final int ITEM_PICKUP_RANGE                = 3;
+    private static final   int    PATH_CLOSE                       = 2;
+
     /**
      * The dump base of actions, will increase depending on level.
      */
@@ -122,23 +100,6 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
      * Containing all close entities.
      */
     private List<Entity> entityList;
-
-    /**
-     * Positions of all items that have to be collected.
-     */
-    @Nullable
-    private List<BlockPos> items;
-
-    /**
-     * Number of ticks the guard is standing still.
-     */
-    private int stillTicks = 0;
-
-    /**
-     * Used to store the path index
-     * to check if the guard is still walking.
-     */
-    private int previousIndex = 0;
 
     /**
      * Sets up some important skeleton stuff for every ai.
@@ -546,95 +507,16 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
      */
     private AIState gathering()
     {
-        if (items == null)
+        if (getItems() == null)
         {
             searchForItems();
+            return getState();
         }
-        if (!items.isEmpty())
+        if (!getItems().isEmpty())
         {
             gatherItems();
             return getState();
         }
-        items = null;
         return GUARD_PATROL;
-    }
-
-    /**
-     * Search for all items around the Guard.
-     * and store them in the items list
-     */
-    private void searchForItems()
-    {
-        items = new ArrayList<>();
-
-        items = world.getEntitiesWithinAABB(EntityItem.class, worker.getEntityBoundingBox().expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP))
-                  .stream()
-                  .filter(item -> item != null && !item.isDead)
-                  .map(BlockPosUtil::fromEntity)
-                  .collect(Collectors.toList());
-    }
-
-    /**
-     * Collect one item by walking to it.
-     */
-    private void gatherItems()
-    {
-        worker.setCanPickUpLoot(true);
-        if (worker.getNavigator().noPath())
-        {
-            final BlockPos pos = getAndRemoveClosestItem();
-            worker.isWorkerAtSiteWithMove(pos, ITEM_PICKUP_RANGE);
-            return;
-        }
-        if (worker.getNavigator().getPath() == null)
-        {
-            setDelay(WAIT_WHILE_WALKING);
-            return;
-        }
-
-        final int currentIndex = worker.getNavigator().getPath().getCurrentPathIndex();
-        //We moved a bit, not stuck
-        if (currentIndex != previousIndex)
-        {
-            stillTicks = 0;
-            previousIndex = currentIndex;
-            return;
-        }
-
-        stillTicks++;
-        //Stuck for too long
-        if (stillTicks > STUCK_WAIT_TICKS)
-        {
-            //Skip this item
-            worker.getNavigator().clearPathEntity();
-        }
-    }
-
-    /**
-     * Find the closest item and remove it from the list.
-     *
-     * @return the closest item
-     */
-    private BlockPos getAndRemoveClosestItem()
-    {
-        if (items == null)
-        {
-            return worker.getPosition();
-        }
-
-        int index = 0;
-        double distance = Double.MAX_VALUE;
-
-        for (int i = 0; i < items.size(); i++)
-        {
-            final double tempDistance = items.get(i).distanceSq(worker.getPosition());
-            if (tempDistance < distance)
-            {
-                index = i;
-                distance = tempDistance;
-            }
-        }
-
-        return items.remove(index);
     }
 }
