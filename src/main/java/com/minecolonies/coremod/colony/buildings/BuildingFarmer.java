@@ -310,7 +310,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
     @Override
     public void onWakeUp()
     {
-       resetFields();
+        resetFields();
     }
 
 

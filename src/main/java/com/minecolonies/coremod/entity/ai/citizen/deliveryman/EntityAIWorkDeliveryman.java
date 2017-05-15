@@ -317,7 +317,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                         {
                             final AbstractBuildingWorker workerBuilding = (AbstractBuildingWorker) buildingToDeliver;
                             //same stack, we could not deliver ?
-                            if (workerBuilding != null && workerBuilding.getWorker() != null)
+                            if (workerBuilding.getWorker() != null)
                             {
                                 chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.job.deliveryman.namedWorkerChestFull",
                                     workerBuilding.getWorker().getName());
