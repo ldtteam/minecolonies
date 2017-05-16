@@ -38,7 +38,7 @@ public final class RenderUtils
     /**
      * Render all waypoints.
      * @param position the position of the build tool click.
-     * @param theWorld the world.
+     * @param clientWorld the world.
      * @param partialTicks the partial ticks
      */
     public static void renderWayPoints(final BlockPos position, final WorldClient clientWorld, final float partialTicks)
