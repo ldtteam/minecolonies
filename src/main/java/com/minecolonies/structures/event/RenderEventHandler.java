@@ -1,6 +1,8 @@
 package com.minecolonies.structures.event;
 
+import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.util.BlockUtils;
+import com.minecolonies.coremod.util.constants.RenderUtils;
 import com.minecolonies.structures.helpers.Settings;
 import com.minecolonies.structures.helpers.Structure;
 import net.minecraft.client.Minecraft;
@@ -8,6 +10,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
+import java.util.Set;
 
 /**
  * EventHandler used to display the schematics on the client.
@@ -58,6 +62,11 @@ public class RenderEventHandler
                 position = position.subtract(offset);
             }
             structure.renderStructure(position, Minecraft.getMinecraft().theWorld, Minecraft.getMinecraft().thePlayer, event.getPartialTicks());
+
+            if(Settings.instance.getStructureName().contains(AbstractEntityAIStructure.WAYPOINT_STRING))
+            {
+                RenderUtils.renderWayPoints(position, Minecraft.getMinecraft().theWorld, event.getPartialTicks());
+            }
         }
     }
 }
