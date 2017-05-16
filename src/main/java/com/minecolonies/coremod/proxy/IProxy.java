@@ -2,8 +2,9 @@ package com.minecolonies.coremod.proxy;
 
 import com.minecolonies.coremod.colony.CitizenDataView;
 import net.minecraft.util.math.BlockPos;
-import java.io.*;
+
 import javax.annotation.Nullable;
+import java.io.File;
 
 /**
  * Basic proxy interface.

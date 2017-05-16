@@ -1,13 +1,14 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.blockout.Loader;
+import com.minecolonies.blockout.OverlayView;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.controls.Text;
-import com.minecolonies.blockout.Loader;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.lib.Constants;
-import com.minecolonies.blockout.OverlayView;
 import com.minecolonies.coremod.util.Log;
+
 import java.util.function.ObjIntConsumer;
 
 /**

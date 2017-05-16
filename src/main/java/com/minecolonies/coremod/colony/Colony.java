@@ -1237,7 +1237,7 @@ public class Colony implements IColony
             increaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * HAPPINESS_FACTOR);
         }
 
-        int relation = guards/workers;
+        int relation = workers/guards;
 
         if(relation > 1)
         {
