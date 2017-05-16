@@ -1,10 +1,13 @@
 package com.minecolonies.coremod.colony.jobs;
 
+import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.EntityAIWorkLumberjack;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
+import net.minecraft.util.DamageSource;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -100,4 +103,15 @@ public class JobLumberjack extends AbstractJob
     {
         return new EntityAIWorkLumberjack(this);
     }
+
+    @Override
+    public void triggerDeathAchievement(final DamageSource source, final EntityCitizen citizen)
+    {
+        super.triggerDeathAchievement(source, citizen);
+        if (source == DamageSource.inWall)
+        {
+            citizen.getColony().triggerAchievement(ModAchievements.achievementLumberjackDeathTree);
+        }
+    }
+
 }
