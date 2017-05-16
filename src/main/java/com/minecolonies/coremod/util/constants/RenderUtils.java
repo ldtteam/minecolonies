@@ -22,6 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * I need that to calculate the circle, if someone knows a better library tell me.
+ */
 import static sun.awt.geom.Curve.next;
 
 /**
@@ -43,6 +46,11 @@ public final class RenderUtils
      * List of all BlockPos in the colony border.
      */
     public static final List<BlockPos> colonyBorder = new ArrayList<>();
+
+    /**
+     * Degrees of a whole circle.
+     */
+    private static final int WHOLE_CIRCLE = 360;
 
     /**
      * Private constructor to hide the explicit one.
@@ -125,12 +133,11 @@ public final class RenderUtils
         final BlockPos center = colonyView.getCenter();
         final int radius = Configurations.workingRangeTownHall;
 
-        for ( int degrees = 0; degrees < 360; degrees += 1 )
+        for ( int degrees = 0; degrees < WHOLE_CIRCLE; degrees += 1 )
         {
             double rads = next( degrees );
             double x = Math.round( center.getX( ) + radius * Math.sin( rads ) );
             double z = Math.round( center.getZ( ) + radius * Math.cos( rads ) );
-
             colonyBorder.add(BlockPosUtil.getFloor(new BlockPos(x, center.getY(), z), theWorld).up());
         }
     }
