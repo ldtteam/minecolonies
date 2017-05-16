@@ -621,14 +621,12 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private AIState gathering()
     {
-        final List<BlockPos> items = getItemsForPickUp();
-        if (items == null)
+        if (getItemsForPickUp() == null)
         {
-            fillItemsList();
-            return getState();
+            searchForItems();
         }
 
-        if (!items.isEmpty())
+        if (getItemsForPickUp() != null && !getItemsForPickUp().isEmpty())
         {
             gatherItems();
             return getState();
