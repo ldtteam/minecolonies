@@ -39,6 +39,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.coremod.util.constants.TranslationConstants.*;
 
 /**
  * AI class for the builder.
@@ -193,7 +194,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         {
             ((BuildingBuilder) buildingWorker).resetNeededResources();
         }
-        
+
         while (job.getStructure().findNextBlock())
         {
             @Nullable final Template.BlockInfo blockInfo = job.getStructure().getBlockInfo();
@@ -329,9 +330,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
             if (wo instanceof WorkOrderBuildDecoration)
             {
-                LanguageHandler.sendPlayersMessage(worker.getColony().getMessageEntityPlayers(),
-                        "entity.builder.messageBuildStart",
-                        wo.getName());
+                worker.sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART, wo.getName());
             }
             else
             {
@@ -344,9 +343,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                     return;
                 }
 
-                LanguageHandler.sendPlayersMessage(worker.getColony().getMessageEntityPlayers(),
-                  "entity.builder.messageBuildStart",
-                  job.getStructure().getName());
+                worker.sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART, job.getStructure().getName());
 
                 //Don't go through the CLEAR stage for repairs and upgrades
                 if (building.getBuildingLevel() > 0)
@@ -463,10 +460,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
 
         final String structureName = job.getStructure().getName();
-        LanguageHandler.sendPlayersMessage(worker.getColony().getMessageEntityPlayers(),
-                "entity.builder.messageBuildComplete",
-                structureName);
-
+        worker.sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE, structureName);
 
         final WorkOrderBuild wo = job.getWorkOrder();
         if (wo == null)
