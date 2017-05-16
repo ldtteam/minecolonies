@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.coremod.util.constants.TranslationConstants.*;
 
 /**
  * Performs deliveryman work.
@@ -296,9 +297,9 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private AIState deliver()
     {
-        final AbstractBuildingWorker ownBuilding = getOwnBuilding();
-        final AbstractBuilding buildingToDeliver = ((BuildingDeliveryman) ownBuilding).getBuildingToDeliver();
-        if (!(ownBuilding instanceof BuildingDeliveryman) || buildingToDeliver == null)
+        final BuildingDeliveryman deliveryHut = (getOwnBuilding() instanceof BuildingDeliveryman) ? (BuildingDeliveryman) getOwnBuilding() : null;
+        final AbstractBuilding buildingToDeliver = deliveryHut==null ? null : deliveryHut.getBuildingToDeliver();
+        if (deliveryHut == null || buildingToDeliver == null)
         {
             return START_WORKING;
         }
@@ -325,12 +326,12 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                     //same stack, we could not deliver ?
                     if (buildingToDeliver instanceof AbstractBuildingWorker)
                     {
-                        chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.job.deliveryman.namedWorkerChestFull",
+                        chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NAMEDCHESTFULL,
                             ((AbstractBuildingWorker)buildingToDeliver).getWorker().getName());
                     }
                     else
                     {
-                        chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.job.deliveryman.workerChestFull",
+                        chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL,
                             new TextComponentString(" :" + buildingToDeliver.getSchematicName()));
                     }
                 }
@@ -343,7 +344,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         worker.addExperience(1.0D);
         worker.setHeldItem(SLOT_HAND);
         buildingToDeliver.setOnGoingDelivery(false);
-        ((BuildingDeliveryman) ownBuilding).setBuildingToDeliver(null);
+        deliveryHut.setBuildingToDeliver(null);
 
         if(buildingToDeliver instanceof BuildingHome)
         {
@@ -623,7 +624,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             }
         }
 
-        chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.job.deliveryman.noWarehouse");
+        chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NOWAREHOUSE);
         return true;
     }
 }

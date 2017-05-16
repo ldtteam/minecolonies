@@ -1868,7 +1868,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         citizenDescription.appendText(this.getCustomNameTag()).appendText(": ");
         final TextComponentString colonyDescription = new TextComponentString(" at " + this.getColony().getName() + ":");
 
-        List<EntityPlayer> players = colony.getMessageEntityPlayers();
+        List<EntityPlayer> players = new ArrayList<>(colony.getMessageEntityPlayers());
         final EntityPlayer owner = ServerUtils.getPlayerFromUUID(world, this.getColony().getPermissions().getOwner());
         players.remove(owner);
         LanguageHandler.sendPlayerMessage(owner,
