@@ -976,7 +976,11 @@ public class Colony implements IColony
     {
         if (event.world != getWorld())
         {
-            throw new IllegalStateException("Colony's world does not match the event.");
+            /**
+             * If the event world is not the colony world ignore. This might happen in interactions with other mods.
+             * This should not be a problem for minecolonies as long as we take care to do nothing in that moment.
+             */
+            return;
         }
 
         if (event.phase == TickEvent.Phase.START)
@@ -1036,8 +1040,9 @@ public class Colony implements IColony
 
     private void updateOverallHappiness()
     {
-        int requiredGuardLevels = 0;
+        int guards = 1;
         int housing = 0;
+        int workers = 1;
         double saturation = 0;
         for(final CitizenData citizen: citizens.values())
         {
@@ -1046,11 +1051,11 @@ public class Colony implements IColony
             {
                 if(buildingWorker instanceof BuildingGuardTower)
                 {
-                    requiredGuardLevels -= buildingWorker.getBuildingLevel();
+                    guards += buildingWorker.getBuildingLevel();
                 }
                 else
                 {
-                    requiredGuardLevels += buildingWorker.getBuildingLevel();
+                    workers += buildingWorker.getBuildingLevel();
                 }
             }
 
@@ -1080,13 +1085,11 @@ public class Colony implements IColony
             increaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * HAPPINESS_FACTOR);
         }
 
-        if(requiredGuardLevels < 0)
+        int relation = guards/workers;
+
+        if(relation > 1)
         {
-            increaseOverallHappiness(requiredGuardLevels * -HAPPINESS_FACTOR);
-        }
-        else if(requiredGuardLevels > 0)
-        {
-            decreaseOverallHappiness(requiredGuardLevels * HAPPINESS_FACTOR);
+            decreaseOverallHappiness(relation * HAPPINESS_FACTOR);
         }
         markDirty();
     }

@@ -105,6 +105,8 @@ public final class FishermanSounds
                 final SoundEvent noises = isFemale ? FishermanSounds.Female.noises : FishermanSounds.Male.noises;
                 SoundUtils.playSoundAtCitizenWithChance(worldIn, position, noises, BASIC_SOUND_CHANCE);
                 break;
+            default:
+                break;
         }
     }
 }

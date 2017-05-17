@@ -420,6 +420,25 @@ public class Structure
     }
 
     /**
+     * Calculates the height of this structure.
+     *
+     * @return the height as an int
+     */
+    public int getHeight()
+    {
+        return this.structure.getHeight();
+    }
+
+    /**
+     * Get the center position of the structure.
+     * @return the blockPos.
+     */
+    public BlockPos getCenter()
+    {
+        return this.structure.getPosition();
+    }
+
+    /**
      * The different results when advancing the structure.
      */
     public enum Result

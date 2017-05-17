@@ -113,6 +113,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         this.registerTargets(
 
                 /**
+                 * Pick up stuff which might've been
+                 */
+                new AITarget(PICK_UP_RESIDUALS, this::pickUpResiduals),
+                /**
                  * Check if tasks should be executed.
                  */
                 new AITarget(this::checkIfCanceled, IDLE),
@@ -147,6 +151,48 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         );
     }
 
+    private AIState pickUpResiduals()
+    {
+        final List<BlockPos> items = getItemsForPickUp();
+        if (items == null)
+        {
+            fillItemsList();
+            return getState();
+        }
+
+        if (!items.isEmpty())
+        {
+            gatherItems();
+            return getState();
+        }
+        resetGatheringItems();
+        workFrom = null;
+        currentStructure = null;
+
+        return AIState.IDLE;
+    }
+
+
+    /**
+     * Fill the list of the item positions to gather.
+     */
+    @Override
+    public void fillItemsList()
+    {
+        if(currentStructure == null)
+        {
+            return;
+        }
+
+        final BlockPos centerPos = currentStructure.getCenter();
+        if(centerPos.getY() == 0)
+        {
+            return;
+        }
+
+        searchForItems(new AxisAlignedBB(centerPos).expand(currentStructure.getLength() / 2.0, currentStructure.getHeight(), currentStructure.getWidth()));
+    }
+
     private AIState completeBuild()
     {
         if (job instanceof AbstractJobStructure)
@@ -155,10 +201,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             worker.addExperience(XP_EACH_BUILDING);
         }
 
-        workFrom = null;
-        currentStructure = null;
-
-        return AIState.IDLE;
+        return AIState.PICK_UP_RESIDUALS;
     }
 
     private Boolean decorationStep(final Structure.StructureBlock structureBlock)
