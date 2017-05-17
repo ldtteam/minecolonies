@@ -1,13 +1,17 @@
 package com.minecolonies.coremod.colony.jobs;
 
+import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.fisherman.EntityAIWorkFisherman;
 import com.minecolonies.coremod.sounds.FishermanSounds;
 import com.minecolonies.coremod.util.BlockPosUtil;
+import net.minecraft.entity.monster.EntityGuardian;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
@@ -215,6 +219,16 @@ public class JobFisherman extends AbstractJob
     public void removeFromPonds(final BlockPos pond)
     {
         this.ponds.remove(pond);
+    }
+
+    @Override
+    public void triggerDeathAchievement(final DamageSource source, final EntityCitizen citizen)
+    {
+        super.triggerDeathAchievement(source, citizen);
+        if (source.getEntity() instanceof EntityGuardian)
+        {
+            this.getColony().triggerAchievement(ModAchievements.achievementFisherDeathGuardian);
+        }
     }
 }
 

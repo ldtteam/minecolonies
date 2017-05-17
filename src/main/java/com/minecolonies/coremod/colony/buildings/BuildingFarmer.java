@@ -323,6 +323,12 @@ public class BuildingFarmer extends AbstractBuildingWorker
         }
     }
 
+    @Override
+    public void onWakeUp()
+    {
+        resetFields();
+    }
+
     /**
      * Method to serialize data to send it to the view.
      *

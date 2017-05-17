@@ -28,6 +28,7 @@ import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.coremod.util.constants.TranslationConstants.*;
 
 /**
  * This class provides basic ai functionality.
@@ -725,7 +726,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
         if (!getOwnBuilding().hasOnGoingDelivery())
         {
-            chatSpamFilter.talkWithoutSpam("entity.worker.toolRequest", tool, InventoryUtils.swapToolGrade(hutLevel));
+            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_TOOLREQUEST, tool, InventoryUtils.swapToolGrade(hutLevel));
         }
         return true;
     }
@@ -843,9 +844,17 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             }
             if (!getOwnBuilding().hasOnGoingDelivery())
             {
-                chatSpamFilter.talkWithoutSpam("entity.worker.pickaxeRequest",
-                  InventoryUtils.swapToolGrade(minlevel),
-                  InventoryUtils.swapToolGrade(hutLevel));
+                if (minlevel > hutLevel)
+                {
+                    chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUESTBETTERHUT,
+                      InventoryUtils.swapToolGrade(hutLevel));
+                }
+                else
+                {
+                    chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUEST,
+                      InventoryUtils.swapToolGrade(minlevel),
+                      InventoryUtils.swapToolGrade(hutLevel));
+                }
             }
         }
 
@@ -960,7 +969,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
         if (isInventoryAndChestFull())
         {
-            chatSpamFilter.talkWithoutSpam("entity.worker.inventoryFullChestFull");
+            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST);
         }
         //collect items that are nice to have if they are available
         this.itemsNiceToHave().forEach(this::isInHut);
