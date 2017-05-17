@@ -171,6 +171,18 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
         }
     }
 
+    /**
+     * Executed when a work order is completed.
+     *
+     * Override this when something need to be done when the work order is completed
+     */
+    public void onCompleted(final Colony colony)
+    {
+        final BlockPos buildingLocation = getBuildingLocation();
+        final AbstractBuilding building = colony.getBuilding(buildingLocation);
+        colony.onBuildingUpgradeComplete(building, getUpgradeLevel());
+    }
+
     @Override
     public void onRemoved(final Colony colony)
     {

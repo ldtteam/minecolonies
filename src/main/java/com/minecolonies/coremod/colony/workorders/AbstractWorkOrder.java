@@ -350,6 +350,15 @@ public abstract class AbstractWorkOrder
     }
 
     /**
+     * Executed when a work order is completed.
+     *
+     * Override this when something need to be done when the work order is completed
+     */
+    public void onCompleted(final Colony colony)
+    {
+    }
+
+    /**
      * Executed when a work order is removed.
      *
      * Override this when something need to be done when the work order is removed
