@@ -134,9 +134,9 @@ public final class RenderUtils
         final BlockPos center = colonyView.getCenter();
         final int radius = Configurations.workingRangeTownHall;
 
-        for ( int degrees = 0; degrees < WHOLE_CIRCLE; degrees += 1 )
+        for ( double degrees = 0; degrees < WHOLE_CIRCLE; degrees += 1 )
         {
-            double rads = degrees / (HALF_A_CIRCLE * Math.PI);
+            double rads = degrees / HALF_A_CIRCLE * Math.PI;
             double x = Math.round( center.getX( ) + radius * Math.sin( rads ) );
             double z = Math.round( center.getZ( ) + radius * Math.cos( rads ) );
             colonyBorder.add(BlockPosUtil.getFloor(new BlockPos(x, center.getY(), z), theWorld).up());

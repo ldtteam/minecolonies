@@ -51,6 +51,7 @@ public class ClientEventHandler
                     RenderUtils.renderColonyBorder(position, Minecraft.getMinecraft().theWorld, event.getPartialTicks(), Minecraft.getMinecraft().thePlayer, colonyBorder);
                 }
             }
+            return;
         }
         colonyBorder.clear();
     }
