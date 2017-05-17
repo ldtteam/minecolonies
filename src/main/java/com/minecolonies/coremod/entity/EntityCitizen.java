@@ -5,9 +5,9 @@ import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.BuildingFarmer;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
-import com.minecolonies.coremod.colony.jobs.*;
+import com.minecolonies.coremod.colony.jobs.AbstractJob;
+import com.minecolonies.coremod.colony.jobs.JobGuard;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
@@ -25,8 +25,6 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
-import net.minecraft.entity.monster.EntityEnderman;
-import net.minecraft.entity.monster.EntityGuardian;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -813,29 +811,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public void triggerDeathAchievement(final DamageSource source, final AbstractJob job)
     {
-        if (job instanceof JobMiner)
-        {
-            if (source == DamageSource.lava || source == DamageSource.inFire || source == DamageSource.onFire)
-            {
-                this.getColony().triggerAchievement(ModAchievements.achievementMinerDeathLava);
-            }
-            if (source.equals(DamageSource.fall))
-            {
-                this.getColony().triggerAchievement(ModAchievements.achievementMinerDeathFall);
-            }
-        }
-        if (job instanceof JobLumberjack && source == DamageSource.inWall)
-        {
-            this.getColony().triggerAchievement(ModAchievements.achievementLumberjackDeathTree);
-        }
-        if (job instanceof JobFisherman && source.getEntity() instanceof EntityGuardian)
-        {
-            this.getColony().triggerAchievement(ModAchievements.achievementFisherDeathGuardian);
-        }
-        if (job instanceof JobGuard && source.getEntity() instanceof EntityEnderman)
-        {
-            this.getColony().triggerAchievement(ModAchievements.achievementGuardDeathEnderman);
-        }
+        job.triggerDeathAchievement(source, this);
     }
 
     @Nullable
@@ -1014,10 +990,13 @@ public class EntityCitizen extends EntityAgeable implements INpc
             pickupItems();
             cleanupChatMessages();
             updateColonyServer();
-            checkIfStuck();
-            if (worldObj.isDaytime() && !worldObj.isRaining())
+            if(getColonyJob() != null)
             {
-                SoundUtils.playRandomSound(worldObj, this);
+                checkIfStuck();
+            }
+            if (worldObj.isDaytime() && !worldObj.isRaining() && citizenData != null)
+            {
+                SoundUtils.playRandomSound(worldObj, this, citizenData.getSaturation());
             }
             else if (worldObj.isRaining() && 1 >= rand.nextInt(RANT_ABOUT_WEATHER_CHANCE) && this.getColonyJob() != null)
             {
@@ -1884,7 +1863,13 @@ public class EntityCitizen extends EntityAgeable implements INpc
         citizenDescription.appendText(this.getCustomNameTag()).appendText(": ");
         final TextComponentString colonyDescription = new TextComponentString(" at " + this.getColony().getName() + ":");
 
-        LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
+        List<EntityPlayer> players = new ArrayList<>(colony.getMessageEntityPlayers());
+        final EntityPlayer owner = ServerUtils.getPlayerFromUUID(worldObj, this.getColony().getPermissions().getOwner());
+        players.remove(owner);
+        LanguageHandler.sendPlayerMessage(owner,
+                this.getColonyJob() == null ? "" : this.getColonyJob().getName(), citizenDescription, requiredItem);
+
+        LanguageHandler.sendPlayersMessage(players,
                 this.getColonyJob() == null ? "" : this.getColonyJob().getName(), colonyDescription, citizenDescription, requiredItem);
     }
 
@@ -1953,9 +1938,21 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public void onWakeUp()
     {
-        if (this.getWorkBuilding() instanceof BuildingFarmer)
+        if (this.getWorkBuilding() != null)
         {
-            ((BuildingFarmer) this.getWorkBuilding()).resetFields();
+            this.getWorkBuilding().onWakeUp();
+        }
+    }
+
+    /**
+     * Play move away sound when running from an entity.
+     */
+    public void playMoveAwaySound()
+    {
+        if(getColonyJob() != null)
+        {
+            SoundUtils.playSoundAtCitizenWithChance(worldObj, getPosition(),
+                    getColonyJob().getMoveAwaySound(), 1);
         }
     }
 

@@ -122,7 +122,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
     {
         if (worldIn.isRemote)
         {
-            return new ActionResult(EnumActionResult.SUCCESS, scepter);
+            return new ActionResult<>(EnumActionResult.SUCCESS, scepter);
         }
 
         if (!scepter.hasTagCompound())
@@ -133,7 +133,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
 
         toggleItemMode(playerIn, compound);
 
-        return new ActionResult(EnumActionResult.SUCCESS, scepter);
+        return new ActionResult<>(EnumActionResult.SUCCESS, scepter);
     }
 
     @NotNull

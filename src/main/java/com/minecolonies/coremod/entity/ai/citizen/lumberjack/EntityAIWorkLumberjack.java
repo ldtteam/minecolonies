@@ -10,7 +10,6 @@ import com.minecolonies.coremod.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSapling;
 import net.minecraft.block.SoundType;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -20,10 +19,8 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
@@ -105,8 +102,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private static final int   TIMEOUT_DELAY           = 10;
     private static final int   LEAVES_RADIUS           = 3;
-    private static final int   ITEM_PICKUP_RANGE       = 3;
-    private static final int   STUCK_WAIT_TICKS        = 20;
+
     /**
      * Time in ticks to wait before rechecking
      * if there are trees in the
@@ -117,18 +113,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * Time in ticks before incrementing the search radius.
      */
     private static final int   WAIT_BEFORE_INCREMENT   = 20;
-    /**
-     * The amount of time to wait while walking to items.
-     */
-    private static final int   WAIT_WHILE_WALKING      = 5;
-    /**
-     * Horizontal range in which the lumberjack picks up items.
-     */
-    private static final float RANGE_HORIZONTAL_PICKUP = 45.0F;
-    /**
-     * Vertical range in which the lumberjack picks up items.
-     */
-    private static final float RANGE_VERTICAL_PICKUP   = 3.0F;
+
     /**
      * How often should strength factor into the lumberjacks skill modifier.
      */
@@ -155,17 +140,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * to check if the lumberjack is still walking.
      */
     private              int   previousDistance        = 0;
-    /**
-     * Used to store the path index
-     * to check if the lumberjack is still walking.
-     */
-    private              int   previousIndex           = 0;
 
-    /**
-     * Positions of all items that have to be collected.
-     */
-    @Nullable
-    private List<BlockPos> items;
+
 
     /**
      * The active pathfinding job used to walk to trees.
@@ -645,92 +621,20 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private AIState gathering()
     {
+        final List<BlockPos> items = getItemsForPickUp();
         if (items == null)
         {
-            searchForItems();
+            fillItemsList();
+            return getState();
         }
+
         if (!items.isEmpty())
         {
             gatherItems();
             return getState();
         }
-        items = null;
+        resetGatheringItems();
         return LUMBERJACK_SEARCHING_TREE;
-    }
-
-    /**
-     * Search for all items around the Lumberjack.
-     * and store them in the items list.
-     */
-    private void searchForItems()
-    {
-        items = new ArrayList<>();
-
-        //TODO check if sapling or apple (currently picks up all items, which may be okay)
-        items = world.getEntitiesWithinAABB(EntityItem.class, worker.getEntityBoundingBox().expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP))
-                .stream()
-                .filter(item -> item != null && !item.isDead)
-                .map(BlockPosUtil::fromEntity)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Collect one item by walking to it.
-     */
-    private void gatherItems()
-    {
-        worker.setCanPickUpLoot(true);
-        if (worker.getNavigator().noPath())
-        {
-            final BlockPos pos = getAndRemoveClosestItem();
-            worker.isWorkerAtSiteWithMove(pos, ITEM_PICKUP_RANGE);
-            return;
-        }
-        if (worker.getNavigator().getPath() == null)
-        {
-            setDelay(WAIT_WHILE_WALKING);
-            return;
-        }
-
-        final int currentIndex = worker.getNavigator().getPath().getCurrentPathIndex();
-        //We moved a bit, not stuck
-        if (currentIndex != previousIndex)
-        {
-            stillTicks = 0;
-            previousIndex = currentIndex;
-            return;
-        }
-
-        stillTicks++;
-        //Stuck for too long
-        if (stillTicks > STUCK_WAIT_TICKS)
-        {
-            //Skip this item
-            worker.getNavigator().clearPathEntity();
-        }
-    }
-
-    /**
-     * Find the closest item and remove it from the list.
-     *
-     * @return the closest item
-     */
-    private BlockPos getAndRemoveClosestItem()
-    {
-        int index = 0;
-        double distance = Double.MAX_VALUE;
-
-        for (int i = 0; i < items.size(); i++)
-        {
-            final double tempDistance = items.get(i).distanceSq(worker.getPosition());
-            if (tempDistance < distance)
-            {
-                index = i;
-                distance = tempDistance;
-            }
-        }
-
-        return items.remove(index);
     }
 
     /**

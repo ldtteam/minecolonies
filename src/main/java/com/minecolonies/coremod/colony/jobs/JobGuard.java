@@ -1,12 +1,16 @@
 package com.minecolonies.coremod.colony.jobs;
 
+import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingGuardTower;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.guard.EntityAIMeleeGuard;
 import com.minecolonies.coremod.entity.ai.citizen.guard.EntityAIRangeGuard;
+import net.minecraft.entity.monster.EntityEnderman;
+import net.minecraft.util.DamageSource;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
@@ -97,5 +101,15 @@ public class JobGuard extends AbstractJob
             return new EntityAIRangeGuard(this);
         }
         return new EntityAIRangeGuard(this);
+    }
+
+    @Override
+    public void triggerDeathAchievement(final DamageSource source, final EntityCitizen citizen)
+    {
+        super.triggerDeathAchievement(source, citizen);
+        if (source.getEntity() instanceof EntityEnderman)
+        {
+            citizen.getColony().triggerAchievement(ModAchievements.achievementGuardDeathEnderman);
+        }
     }
 }
