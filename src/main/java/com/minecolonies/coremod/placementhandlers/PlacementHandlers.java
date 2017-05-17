@@ -135,7 +135,7 @@ public final class PlacementHandlers
                 ItemDoor.placeDoor(world, pos, blockState.getValue(BlockDoor.FACING), blockState.getBlock(), false);
             }
 
-            return Blocks.GRASS.getDefaultState();
+            return blockState;
         }
     }
 

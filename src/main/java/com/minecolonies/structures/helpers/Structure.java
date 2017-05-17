@@ -1,11 +1,11 @@
 package com.minecolonies.structures.helpers;
 
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.lib.Constants;
-import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.util.BlockUtils;
 import com.minecolonies.coremod.util.Log;
 import com.minecolonies.structures.fake.FakeEntity;
@@ -44,12 +44,13 @@ import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
+import javax.xml.bind.DatatypeConverter;
 import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
-import java.util.zip.*;
-import javax.xml.bind.DatatypeConverter;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * Structure class, used to store, create, get structures.
@@ -645,7 +646,7 @@ public class Structure
         return entityList;
     }
 
-    private static void getQuads(final ModelHolder holder, final List<BakedQuad> quads)
+    public static void getQuads(final ModelHolder holder, final List<BakedQuad> quads)
     {
         if (holder.actualState.getRenderType() == EnumBlockRenderType.MODEL)
         {
@@ -670,7 +671,7 @@ public class Structure
         }
     }
 
-    private void renderGhost(final World world, final ModelHolder holder, final EntityPlayer player, final float partialTicks)
+    public void renderGhost(final World world, final ModelHolder holder, final EntityPlayer player, final float partialTicks)
     {
         final boolean existingModel = !this.mc.theWorld.isAirBlock(holder.pos);
 
