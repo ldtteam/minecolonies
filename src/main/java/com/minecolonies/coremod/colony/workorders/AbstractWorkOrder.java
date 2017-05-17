@@ -353,6 +353,7 @@ public abstract class AbstractWorkOrder
      * Executed when a work order is completed.
      *
      * Override this when something need to be done when the work order is completed
+     * @param colony in which the work order exist
      */
     public void onCompleted(final Colony colony)
     {

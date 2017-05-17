@@ -137,19 +137,13 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
         return upgradeLevel;
     }
 
-    /**
-     * Checks if a builder may accept this workOrder.
-     *
-     * @param builderLevel the builder level.
-     * @return true if he is able to.
-     */
     @Override
-    protected boolean canBuild(@NotNull final CitizenData citizen, @NotNull final Colony colony)
+    protected boolean canBuild(@NotNull final CitizenData citizen)
     {
         final int builderLevel = citizen.getWorkBuilding().getBuildingLevel();
         return builderLevel >= upgradeLevel || builderLevel == BuildingBuilder.MAX_BUILDING_LEVEL
                  || (citizen.getWorkBuilding() != null && citizen.getWorkBuilding().getID().equals(buildingLocation))
-                 || isLocationTownhall(colony, buildingLocation);
+                 || isLocationTownhall(citizen.getColony(), buildingLocation);
     }
 
     @Override

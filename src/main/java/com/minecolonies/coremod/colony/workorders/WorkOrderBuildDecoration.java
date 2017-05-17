@@ -176,7 +176,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
             hasBuilder = true;
 
             // don't send a message if we have a valid worker that is busy.
-            if (canBuild(citizen, colony))
+            if (canBuild(citizen))
             {
                 sendMessage = false;
             }
@@ -190,7 +190,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
             //  - The Builder's Work AbstractBuilding is built
             //  - OR the WorkOrder is for the Builder's Work AbstractBuilding
             //  - OR the WorkOrder is for the TownHall
-            if (canBuild(citizen, colony))
+            if (canBuild(citizen))
             {
                 job.setWorkOrder(this);
                 this.setClaimedBy(citizen);
@@ -219,11 +219,10 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     /**
      * Checks if a builder may accept this workOrder.
      *
-     * @param builderLevel the builder level.
-     *
+     * @param citizen which could build it or not
      * @return true if he is able to.
      */
-    protected boolean canBuild(@NotNull final CitizenData citizen, @NotNull final Colony colony)
+    protected boolean canBuild(@NotNull final CitizenData citizen)
     {
         return true;
     }
@@ -272,6 +271,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     /**
      * Gets how many times this structure should be rotated.
      *
+     * @param world where the decoration is
      * @return building rotation.
      */
     public int getRotation(final World world)
