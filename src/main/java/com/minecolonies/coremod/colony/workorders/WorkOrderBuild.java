@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
  * Represents one building order to complete.
  * Has his own structure for the building.
  */
-public class WorkOrderBuildHut extends WorkOrderBuildDecoration
+public class WorkOrderBuild extends WorkOrderBuildDecoration
 {
     private static final String TAG_UPGRADE_LEVEL  = "upgradeLevel";
     private static final String TAG_UPGRADE_NAME   = "upgrade";
@@ -28,7 +28,7 @@ public class WorkOrderBuildHut extends WorkOrderBuildDecoration
     /**
      * Unused constructor for reflection.
      */
-    public WorkOrderBuildHut()
+    public WorkOrderBuild()
     {
         super();
     }
@@ -39,7 +39,7 @@ public class WorkOrderBuildHut extends WorkOrderBuildDecoration
      * @param building the building to build.
      * @param level    the level it should have.
      */
-    public WorkOrderBuildHut(@NotNull final AbstractBuilding building, final int level)
+    public WorkOrderBuild(@NotNull final AbstractBuilding building, final int level)
     {
         super();
         this.buildingLocation = building.getID();

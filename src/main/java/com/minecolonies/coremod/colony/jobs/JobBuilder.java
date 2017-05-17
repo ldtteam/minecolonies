@@ -5,7 +5,7 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildHut;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.builder.EntityAIStructureBuilder;
 import net.minecraft.nbt.NBTTagCompound;
@@ -119,9 +119,9 @@ public class JobBuilder extends AbstractJobStructure
         final BlockPos buildingLocation = this.getWorkOrder().getBuildingLocation();
         final AbstractBuilding building = this.getCitizen().getColony().getBuilding(buildingLocation);
 
-        if (building != null && this.getWorkOrder() instanceof WorkOrderBuildHut)
+        if (building != null && this.getWorkOrder() instanceof WorkOrderBuild)
         {
-            this.getCitizen().getColony().onBuildingUpgradeComplete(building, ((WorkOrderBuildHut)this.getWorkOrder()).getUpgradeLevel());
+            this.getCitizen().getColony().onBuildingUpgradeComplete(building, ((WorkOrderBuild)this.getWorkOrder()).getUpgradeLevel());
         }
 
         getCitizen().getColony().getWorkManager().removeWorkOrder(workOrderId);

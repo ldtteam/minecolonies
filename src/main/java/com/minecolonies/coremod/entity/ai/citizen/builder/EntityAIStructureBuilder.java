@@ -8,7 +8,7 @@ import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildHut;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.entity.ai.util.AIState;
@@ -107,7 +107,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
 
         final BlockPos pos = workOrder.getBuildingLocation();
-        if (workOrder instanceof WorkOrderBuildHut && worker.getColony().getBuilding(pos) == null)
+        if (workOrder instanceof WorkOrderBuild && worker.getColony().getBuilding(pos) == null)
         {
             Log.getLogger().warn("AbstractBuilding does not exist - removing build request");
             worker.getColony().getWorkManager().removeWorkOrder(workOrder);
@@ -115,7 +115,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
 
         int tempRotation = 0;
-        if (workOrder.getRotation() == 0 && workOrder instanceof WorkOrderBuildHut)
+        if (workOrder.getRotation() == 0 && workOrder instanceof WorkOrderBuild)
         {
             final IBlockState blockState = world.getBlockState(pos);
             if (blockState.getBlock() instanceof AbstractBlockHut)
@@ -153,7 +153,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
         final WorkOrderBuildDecoration wo = job.getWorkOrder();
 
-        if (job.getColony().getBuilding(wo.getBuildingLocation()) == null && wo instanceof WorkOrderBuildHut)
+        if (job.getColony().getBuilding(wo.getBuildingLocation()) == null && wo instanceof WorkOrderBuild)
         {
             job.complete();
             return true;
@@ -468,7 +468,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         worker.sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE, structureName);
 
         final WorkOrderBuildDecoration wo = job.getWorkOrder();
-        final WorkOrderBuildHut woh = (wo instanceof WorkOrderBuildHut)?(WorkOrderBuildHut) wo : null;
+        final WorkOrderBuild woh = (wo instanceof WorkOrderBuild)?(WorkOrderBuild) wo : null;
         if (wo == null)
         {
             Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing work order(%d)",

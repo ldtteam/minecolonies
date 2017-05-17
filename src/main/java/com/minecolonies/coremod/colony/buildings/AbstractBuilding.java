@@ -4,7 +4,7 @@ import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.blocks.*;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildHut;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
@@ -662,7 +662,7 @@ public abstract class AbstractBuilding
      */
     private void requestWorkOrder(final int level)
     {
-        for (@NotNull final WorkOrderBuildHut o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuildHut.class))
+        for (@NotNull final WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
         {
             if (o.getBuildingLocation().equals(getID()))
             {
@@ -670,7 +670,7 @@ public abstract class AbstractBuilding
             }
         }
 
-        colony.getWorkManager().addWorkOrder(new WorkOrderBuildHut(this, level));
+        colony.getWorkManager().addWorkOrder(new WorkOrderBuild(this, level));
         LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.workOrderAdded");
         markDirty();
     }
@@ -712,7 +712,7 @@ public abstract class AbstractBuilding
      */
     private int getCurrentWorkOrderLevel()
     {
-        for (@NotNull final WorkOrderBuildHut o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuildHut.class))
+        for (@NotNull final WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
         {
             if (o.getBuildingLocation().equals(getID()))
             {
@@ -741,7 +741,7 @@ public abstract class AbstractBuilding
      */
     public void removeWorkOrder()
     {
-        for (@NotNull final WorkOrderBuildHut o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuildHut.class))
+        for (@NotNull final WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
         {
             if (o.getBuildingLocation().equals(getID()))
             {
