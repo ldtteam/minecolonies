@@ -321,11 +321,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 return;
             }
 
-            if (wo instanceof WorkOrderBuildDecoration)
-            {
-                worker.sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART, wo.getName());
-            }
-            else
+            if (wo instanceof WorkOrderBuild)
             {
                 final AbstractBuilding building = job.getColony().getBuilding(wo.getBuildingLocation());
                 if (building == null)
@@ -343,6 +339,10 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 {
                     wo.setCleared(true);
                 }
+            }
+            else
+            {
+                worker.sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART, wo.getName());
             }
         }
     }
@@ -456,7 +456,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         worker.sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE, structureName);
 
         final WorkOrderBuildDecoration wo = job.getWorkOrder();
-        final WorkOrderBuild woh = (wo instanceof WorkOrderBuild)?(WorkOrderBuild) wo : null;
         if (wo == null)
         {
             Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing work order(%d)",
@@ -466,6 +465,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
         else
         {
+            final WorkOrderBuild woh = (wo instanceof WorkOrderBuild)?(WorkOrderBuild) wo : null;
             if (woh == null && structureName.contains(WAYPOINT_STRING))
             {
                 worker.getColony().addWayPoint(wo.getBuildingLocation(), world.getBlockState(wo.getBuildingLocation()));
