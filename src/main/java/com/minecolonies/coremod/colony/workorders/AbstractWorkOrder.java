@@ -285,9 +285,13 @@ public abstract class AbstractWorkOrder
     /**
      * Is this WorkOrder still valid?  If not, it will be deleted.
      *
+     * Suppressing Sonar Rule squid:S1172
+     * This rule does " Unused method parameters should be removed"
+     * But in this case extending class may need to use the colony parameter
      * @param colony The colony that owns the Work Order
      * @return True if the WorkOrder is still valid, or False if it should be deleted
      */
+    @SuppressWarnings("squid:S1172")
     public boolean isValid(final Colony colony)
     {
         return true;
@@ -338,4 +342,35 @@ public abstract class AbstractWorkOrder
     {
         BUILD
     }
+
+    /**
+     * Executed when a work order is added.
+     *
+     * Override this when something need to be done when the work order is added
+     * @param colony in which the work order exist
+     */
+    public void onAdded(final Colony colony)
+    {
+    }
+
+    /**
+     * Executed when a work order is completed.
+     *
+     * Override this when something need to be done when the work order is completed
+     * @param colony in which the work order exist
+     */
+    public void onCompleted(final Colony colony)
+    {
+    }
+
+    /**
+     * Executed when a work order is removed.
+     *
+     * Override this when something need to be done when the work order is removed
+     * @param colony in which the work order exist
+     */
+    public void onRemoved(final Colony colony)
+    {
+    }
+
 }
