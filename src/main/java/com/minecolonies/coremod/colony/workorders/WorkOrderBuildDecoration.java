@@ -200,6 +200,17 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         sendBuilderMessage(colony, hasBuilder, sendMessage);
     }
 
+    /**
+     * send a message from the builder.
+     *
+     * Suppressing Sonar Rule squid:S1172
+     * This rule does "Unused method parameters should be removed"
+     * But in this case extending class may need to use the sendMessage parameter
+     * @param colony which the work order belong to
+     * @param hasBuilder true if we have a builder for this work order
+     * @param sendMessage true if we need to send the message
+     */
+    @SuppressWarnings("squid:S1172")
     protected void sendBuilderMessage(@NotNull final Colony colony, final boolean hasBuilder, final boolean sendMessage)
     {
         if (hasSentMessageForThisWorkOrder)
@@ -218,9 +229,13 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     /**
      * Checks if a builder may accept this workOrder.
      *
+     * Suppressing Sonar Rule squid:S1172
+     * This rule does "Unused method parameters should be removed"
+     * But in this case extending class may need to use the citizen parameter
      * @param citizen which could build it or not
      * @return true if he is able to.
      */
+    @SuppressWarnings("squid:S1172")
     protected boolean canBuild(@NotNull final CitizenData citizen)
     {
         return true;
@@ -270,9 +285,13 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     /**
      * Gets how many times this structure should be rotated.
      *
+     * Suppressing Sonar Rule squid:S1172
+     * This rule does "Unused method parameters should be removed"
+     * But in this case extending class may need to use the world parameter
      * @param world where the decoration is
      * @return building rotation.
      */
+    @SuppressWarnings("squid:S1172")
     public int getRotation(final World world)
     {
         return buildingRotation;
