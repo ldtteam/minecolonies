@@ -138,6 +138,11 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
     @Override
     protected boolean canBuild(@NotNull final CitizenData citizen)
     {
+        //  A Build WorkOrder may be fulfilled by a Builder as long as any ONE of the following is true:
+        //  - The Builder's Work AbstractBuilding is built
+        //  - OR the WorkOrder is for the Builder's Work AbstractBuilding
+        //  - OR the WorkOrder is for the TownHall
+
         final int builderLevel = citizen.getWorkBuilding().getBuildingLevel();
         return builderLevel >= upgradeLevel || builderLevel == BuildingBuilder.MAX_BUILDING_LEVEL
                  || (citizen.getWorkBuilding() != null && citizen.getWorkBuilding().getID().equals(buildingLocation))

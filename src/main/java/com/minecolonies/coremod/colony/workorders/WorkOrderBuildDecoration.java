@@ -180,18 +180,11 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
                 sendMessage = false;
             }
 
-            if (!job.hasWorkOrder())
+            if (!job.hasWorkOrder() && canBuild(citizen))
             {
-                //  A Build WorkOrder may be fulfilled by a Builder as long as any ONE of the following is true:
-                //  - The Builder's Work AbstractBuilding is built
-                //  - OR the WorkOrder is for the Builder's Work AbstractBuilding
-                //  - OR the WorkOrder is for the TownHall
-                if (canBuild(citizen))
-                {
-                    job.setWorkOrder(this);
-                    this.setClaimedBy(citizen);
-                    return;
-                }
+                job.setWorkOrder(this);
+                this.setClaimedBy(citizen);
+                return;
             }
         }
 
