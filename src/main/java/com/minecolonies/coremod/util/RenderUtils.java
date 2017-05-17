@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.util.constants;
+package com.minecolonies.coremod.util;
 
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
@@ -18,14 +18,8 @@ import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-/**
- * I need that to calculate the circle, if someone knows a better library tell me.
- */
-import static sun.awt.geom.Curve.next;
 
 /**
  * Used for some rendering purpose like waypoint rendering.
@@ -43,14 +37,14 @@ public final class RenderUtils
     private static final int FIX_POINT_OFFSET = 10;
 
     /**
-     * List of all BlockPos in the colony border.
-     */
-    public static final List<BlockPos> colonyBorder = new ArrayList<>();
-
-    /**
      * Degrees of a whole circle.
      */
-    private static final int WHOLE_CIRCLE = 360;
+    private static final int WHOLE_CIRCLE  = 360;
+
+    /**
+     * Half a circle radius.
+     */
+    private static final int HALF_A_CIRCLE = 180;
 
     /**
      * Private constructor to hide the explicit one.
@@ -96,12 +90,18 @@ public final class RenderUtils
      * @param clientWorld the world.
      * @param partialTicks the partial ticks.
      * @param thePlayer the player clicking.
+     * @param colonyBorder the border of the colony.
      */
-    public static void renderColonyBorder(final BlockPos position, final WorldClient clientWorld, final float partialTicks, final EntityPlayerSP thePlayer)
+    public static void renderColonyBorder(
+            final BlockPos position,
+            final WorldClient clientWorld,
+            final float partialTicks,
+            final EntityPlayerSP thePlayer,
+            final List<BlockPos> colonyBorder)
     {
         if(colonyBorder.isEmpty())
         {
-            calculateColonyBorder(clientWorld, thePlayer);
+            calculateColonyBorder(clientWorld, thePlayer, colonyBorder);
         }
 
         for (final BlockPos pos : colonyBorder)
@@ -122,8 +122,9 @@ public final class RenderUtils
      * Calculate the colony border.
      * @param theWorld in the world.
      * @param thePlayer with the player.
+     * @param colonyBorder the border.
      */
-    private static void calculateColonyBorder(final WorldClient theWorld, final EntityPlayerSP thePlayer)
+    private static void calculateColonyBorder(final WorldClient theWorld, final EntityPlayerSP thePlayer, final List<BlockPos> colonyBorder)
     {
         final ColonyView colonyView = ColonyManager.getClosestColonyView(theWorld, thePlayer.getPosition());
         if(colonyView == null)
@@ -135,7 +136,7 @@ public final class RenderUtils
 
         for ( int degrees = 0; degrees < WHOLE_CIRCLE; degrees += 1 )
         {
-            double rads = next( degrees );
+            double rads = degrees / (HALF_A_CIRCLE * Math.PI);
             double x = Math.round( center.getX( ) + radius * Math.sin( rads ) );
             double z = Math.round( center.getZ( ) + radius * Math.cos( rads ) );
             colonyBorder.add(BlockPosUtil.getFloor(new BlockPos(x, center.getY(), z), theWorld).up());
