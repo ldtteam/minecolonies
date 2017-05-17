@@ -10,6 +10,7 @@ import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Log;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -273,7 +274,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
      *
      * @return building rotation.
      */
-    public int getRotation()
+    public int getRotation(final World world)
     {
         return buildingRotation;
     }

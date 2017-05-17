@@ -114,24 +114,12 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             return;
         }
 
-        int tempRotation = 0;
-        if (workOrder.getRotation() == 0 && workOrder instanceof WorkOrderBuild)
-        {
-            final IBlockState blockState = world.getBlockState(pos);
-            if (blockState.getBlock() instanceof AbstractBlockHut)
-            {
-                tempRotation = BlockUtils.getRotationFromFacing(blockState.getValue(AbstractBlockHut.FACING));
-            }
-        }
-        else
-        {
-            tempRotation = workOrder.getRotation();
-        }
+        final int tempRotation = workOrder.getRotation(world);
 
         loadStructure(workOrder.getStructureName(), tempRotation, pos, workOrder.isMirrored());
         workOrder.setCleared(false);
         workOrder.setRequested(false);
-        
+
         //We need to deal with materials
         requestMaterialsIfRequired();
     }
