@@ -7,8 +7,8 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.entity.ai.util.AIState;
@@ -98,7 +98,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
      */
     private void loadStructure()
     {
-        WorkOrderBuild workOrder = null;
+        WorkOrderBuildDecoration workOrder = null;
         workOrder = job.getWorkOrder();
 
         if (workOrder == null)
@@ -107,26 +107,14 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
 
         final BlockPos pos = workOrder.getBuildingLocation();
-        if (!(workOrder instanceof WorkOrderBuildDecoration) && worker.getColony().getBuilding(pos) == null)
+        if (workOrder instanceof WorkOrderBuild && worker.getColony().getBuilding(pos) == null)
         {
             Log.getLogger().warn("AbstractBuilding does not exist - removing build request");
             worker.getColony().getWorkManager().removeWorkOrder(workOrder);
             return;
         }
 
-        int tempRotation = 0;
-        if (workOrder.getRotation() == 0 && !(workOrder instanceof WorkOrderBuildDecoration))
-        {
-            final IBlockState blockState = world.getBlockState(pos);
-            if (blockState.getBlock() instanceof AbstractBlockHut)
-            {
-                tempRotation = BlockUtils.getRotationFromFacing(blockState.getValue(AbstractBlockHut.FACING));
-            }
-        }
-        else
-        {
-            tempRotation = workOrder.getRotation();
-        }
+        final int tempRotation = workOrder.getRotation(world);
 
         loadStructure(workOrder.getStructureName(), tempRotation, pos, workOrder.isMirrored());
         workOrder.setCleared(false);
@@ -151,9 +139,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             return true;
         }
 
-        final WorkOrderBuild wo = job.getWorkOrder();
+        final WorkOrderBuildDecoration wo = job.getWorkOrder();
 
-        if (job.getColony().getBuilding(wo.getBuildingLocation()) == null && !(wo instanceof WorkOrderBuildDecoration))
+        if (job.getColony().getBuilding(wo.getBuildingLocation()) == null && wo instanceof WorkOrderBuild)
         {
             job.complete();
             return true;
@@ -323,7 +311,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         {
             workFrom = null;
             loadStructure();
-            final WorkOrderBuild wo = job.getWorkOrder();
+            final WorkOrderBuildDecoration wo = job.getWorkOrder();
             if (wo == null)
             {
                 Log.getLogger().error(
@@ -333,11 +321,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 return;
             }
 
-            if (wo instanceof WorkOrderBuildDecoration)
-            {
-                worker.sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART, wo.getName());
-            }
-            else
+            if (wo instanceof WorkOrderBuild)
             {
                 final AbstractBuilding building = job.getColony().getBuilding(wo.getBuildingLocation());
                 if (building == null)
@@ -355,6 +339,10 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 {
                     wo.setCleared(true);
                 }
+            }
+            else
+            {
+                worker.sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART, wo.getName());
             }
         }
     }
@@ -467,7 +455,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         final String structureName = job.getStructure().getName();
         worker.sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE, structureName);
 
-        final WorkOrderBuild wo = job.getWorkOrder();
+        final WorkOrderBuildDecoration wo = job.getWorkOrder();
         if (wo == null)
         {
             Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing work order(%d)",
@@ -477,11 +465,12 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
         else
         {
-            if (wo instanceof WorkOrderBuildDecoration && structureName.contains(WAYPOINT_STRING))
+            final WorkOrderBuild woh = (wo instanceof WorkOrderBuild)?(WorkOrderBuild) wo : null;
+            if (woh == null && structureName.contains(WAYPOINT_STRING))
             {
                 worker.getColony().addWayPoint(wo.getBuildingLocation(), world.getBlockState(wo.getBuildingLocation()));
             }
-            else
+            else if (woh != null)
             {
                 final AbstractBuilding building = job.getColony().getBuilding(wo.getBuildingLocation());
                 if (building == null)
@@ -489,11 +478,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                     Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing building(%s)",
                             worker.getColony().getID(),
                             worker.getCitizenData().getId(),
-                            wo.getBuildingLocation()));
+                            woh.getBuildingLocation()));
                 }
                 else
                 {
-                    building.setBuildingLevel(wo.getUpgradeLevel());
+                    building.setBuildingLevel(woh.getUpgradeLevel());
                 }
             }
             job.complete();
