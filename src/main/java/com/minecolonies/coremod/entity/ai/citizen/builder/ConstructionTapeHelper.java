@@ -60,11 +60,10 @@ public final class ConstructionTapeHelper
         {
             final StructureWrapper wrapper = new StructureWrapper(world, workOrder.getStructureName());
             final BlockPos pos = workOrder.getBuildingLocation();
-            final int tempRotation = workOrder.getRotation(world);
             final IBlockState constructionTape = ModBlocks.blockConstructionTape.getDefaultState();
             final IBlockState constructionTapeCorner = ModBlocks.blockConstructionTapeCorner.getDefaultState();
 
-            wrapper.rotate(tempRotation, world, workOrder.getBuildingLocation(), workOrder.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE);
+            wrapper.rotate(workOrder.getRotation(world), world, workOrder.getBuildingLocation(), workOrder.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE);
             wrapper.setPosition(pos);
 
             final int x1 = wrapper.getPosition().getX() - wrapper.getOffset().getX() - 1;
