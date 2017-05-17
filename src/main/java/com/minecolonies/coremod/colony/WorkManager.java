@@ -2,8 +2,6 @@ package com.minecolonies.coremod.colony;
 
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
-import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.util.Log;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -68,16 +66,7 @@ public class WorkManager
         final AbstractWorkOrder workOrder = workOrders.get(orderId);
         workOrders.remove(orderId);
         colony.removeWorkOrder(orderId);
-        if (workOrder instanceof WorkOrderBuildDecoration)
-        {
-            final WorkOrderBuildDecoration wob = (WorkOrderBuildDecoration) workOrder;
-            final AbstractBuilding building = colony.getBuilding(wob.getBuildingLocation());
-            ConstructionTapeHelper.removeConstructionTape(wob, colony.getWorld());
-            if (building != null)
-            {
-                building.markDirty();
-            }
-        }
+        workOrder.onRemoved(colony);
     }
 
     /**
@@ -234,11 +223,9 @@ public class WorkManager
             topWorkOrderId++;
             order.setID(topWorkOrderId);
         }
-        if (order instanceof WorkOrderBuildDecoration && colony != null && colony.getWorld() != null)
-        {
-            ConstructionTapeHelper.placeConstructionTape((WorkOrderBuildDecoration) order, colony.getWorld());
-        }
+
         workOrders.put(order.getID(), order);
+        order.onAdded(colony);
     }
 
     /**

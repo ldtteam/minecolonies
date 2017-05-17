@@ -338,4 +338,25 @@ public abstract class AbstractWorkOrder
     {
         BUILD
     }
+
+    /**
+     * Executed when a work order is added.
+     *
+     * Override this when something need to be done when the work order is added
+     * @param colony in which the work order exist
+     */
+    public void onAdded(final Colony colony)
+    {
+    }
+
+    /**
+     * Executed when a work order is removed.
+     *
+     * Override this when something need to be done when the work order is removed
+     * @param colony in which the work order exist
+     */
+    public void onRemoved(final Colony colony)
+    {
+    }
+
 }

@@ -4,6 +4,7 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
+import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Log;
@@ -11,6 +12,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 
 /**
  * A work order that the build can take to build decorations.
@@ -326,4 +328,22 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     {
         return isMirrored;
     }
+
+    @Override
+    public void onAdded(final Colony colony)
+    {
+        super.onAdded(colony);
+        if (colony != null && colony.getWorld() != null)
+        {
+            ConstructionTapeHelper.placeConstructionTape(this, colony.getWorld());
+        }
+    }
+
+    @Override
+    public void onRemoved(final Colony colony)
+    {
+        super.onRemoved(colony);
+        ConstructionTapeHelper.removeConstructionTape(this, colony.getWorld());
+    }
+
 }

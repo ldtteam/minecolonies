@@ -171,4 +171,14 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
         }
     }
 
+    @Override
+    public void onRemoved(final Colony colony)
+    {
+        super.onRemoved(colony);
+        final AbstractBuilding building = colony.getBuilding(getBuildingLocation());
+        if (building != null)
+        {
+            building.markDirty();
+        }
+    }
 }
