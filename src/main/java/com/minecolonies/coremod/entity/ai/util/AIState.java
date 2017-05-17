@@ -270,7 +270,12 @@ public enum AIState
     /**
      * Knead the dough.
      */
-    BAKER_KNEADING
+    BAKER_KNEADING,
+
+    /**
+     * Bake the dough.
+     */
+    BAKER_BAKING
 
 
 }
