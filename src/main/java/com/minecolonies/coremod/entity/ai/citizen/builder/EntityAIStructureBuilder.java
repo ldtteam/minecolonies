@@ -178,7 +178,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             return;
         }
 
-	final AbstractBuildingWorker buildingWorker = getOwnBuilding();
+        final AbstractBuildingWorker buildingWorker = getOwnBuilding();
         if(buildingWorker instanceof BuildingBuilder)
         {
             ((BuildingBuilder) buildingWorker).resetNeededResources();

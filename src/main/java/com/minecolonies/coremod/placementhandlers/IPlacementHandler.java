@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.placementhandlers;
 
-import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
