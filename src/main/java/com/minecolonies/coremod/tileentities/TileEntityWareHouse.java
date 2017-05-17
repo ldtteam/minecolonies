@@ -157,7 +157,9 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         {
             for(final ItemStack stack : buildingEntry.getNeededItems())
             {
-                if(stack == null || (deliveryManHasBuildingAsTask(buildingEntry) && addToList))
+                if(stack == null
+                     || (deliveryManHasBuildingAsTask(buildingEntry)
+                           && addToList))
                 {
                     continue;
                 }
@@ -490,8 +492,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         for (int i = 0; i < new InvWrapper(inventoryCitizen).getSlots(); i++)
         {
             final ItemStack stack = inventoryCitizen.getStackInSlot(i);
-
-            if(stack == null || stack.getItem() == null || stack.getCount() == 0)
+            if(InventoryUtils.isItemStackEmpty(stack))
             {
                 continue;
             }
@@ -501,8 +502,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                 LanguageHandler.sendPlayersMessage(getColony().getMessageEntityPlayers(), "com.minecolonies.coremod.wareHouse.full");
                 return;
             }
-            InventoryUtils.addItemStackToProvider(chest, stack);
-            new InvWrapper(inventoryCitizen).extractItem(i, Integer.MAX_VALUE, false);
+            InventoryUtils.transferItemStackIntoNextFreeSlotInProvider(new InvWrapper(inventoryCitizen), i, chest);
         }
 
     }

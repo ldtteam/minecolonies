@@ -336,6 +336,11 @@ public final class StructureWrapper
 
         final IBlockState worldBlockState = world.getBlockState(worldPos);
 
+        if(structureBlock == ModBlocks.blockSolidSubstitution && worldBlockState.getMaterial().isSolid())
+        {
+            return true;
+        }
+
         //list of things to only check block for.
         //For the time being any flower pot is equal to each other.
         if (structureBlock instanceof BlockDoor || structureBlock == Blocks.FLOWER_POT)

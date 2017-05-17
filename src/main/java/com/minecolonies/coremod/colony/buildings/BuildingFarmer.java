@@ -31,6 +31,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+import static com.minecolonies.coremod.util.constants.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER;
+import static com.minecolonies.coremod.util.constants.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER_NOONE;
+
 /**
  * Class which handles the farmer building.
  */
@@ -291,7 +294,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
             {
                 tempField.setTaken(false);
                 tempField.setOwner("");
-                @NotNull final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) getColony().getWorld().getTileEntity(field.getID());
+                final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) getColony().getWorld().getTileEntity(field.getID());
 
                 if (getColony() != null && getColony().getWorld() != null)
                 {
@@ -300,11 +303,17 @@ public class BuildingFarmer extends AbstractBuildingWorker
                         getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
                         getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
                         BLOCK_UPDATE_FLAG);
-                    scarecrowTileEntity.setName(LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user",
-                      LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user.noone")));
+                    scarecrowTileEntity.setName(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER,
+                      LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER_NOONE)));
                 }
             }
         }
+    }
+
+    @Override
+    public void onWakeUp()
+    {
+        resetFields();
     }
 
     @NotNull
@@ -384,7 +393,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
             for (@NotNull final Field field : tempFields)
             {
-                @NotNull final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) world.getTileEntity(field.getID());
+                final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) world.getTileEntity(field.getID());
                 if (scarecrow == null)
                 {
                     farmerFields.remove(field);
@@ -395,7 +404,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
                 }
                 else
                 {
-                    scarecrow.setName(LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user", getWorker().getName()));
+                    scarecrow.setName(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER, getWorker().getName()));
                     getColony().getWorld()
                       .notifyBlockUpdate(scarecrow.getPos(),
                         getColony().getWorld().getBlockState(scarecrow.getPos()),
@@ -450,14 +459,14 @@ public class BuildingFarmer extends AbstractBuildingWorker
             final Field field = getColony().getField(position);
             field.setTaken(false);
             field.setOwner("");
-            @NotNull final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) getColony().getWorld().getTileEntity(field.getID());
+            final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) getColony().getWorld().getTileEntity(field.getID());
             getColony().getWorld()
               .notifyBlockUpdate(scarecrowTileEntity.getPos(),
                 getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
                 getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
                 BLOCK_UPDATE_FLAG);
-            scarecrowTileEntity.setName(LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user",
-              LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user.noone")));
+            scarecrowTileEntity.setName(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER,
+              LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER_NOONE)));
         }
     }
 

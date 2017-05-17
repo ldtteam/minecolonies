@@ -107,35 +107,39 @@ public class Structure
         }
 
         InputStream inputStream = null;
-        //Try the cache first
-        if (Structures.hasMD5(correctStructureName))
-        {
-            inputStream = Structure.getStream(Structures.SCHEMATICS_CACHE + '/' + Structures.getMD5(correctStructureName));
-            if (inputStream != null)
-            {
-                correctStructureName = Structures.SCHEMATICS_CACHE + '/' + Structures.getMD5(correctStructureName);
-            }
-        }
-
-        if (inputStream == null)
-        {
-            inputStream = Structure.getStream(correctStructureName);
-        }
-
-        if (inputStream == null)
-        {
-            Log.getLogger().warn(String.format("Failed to load template %s", correctStructureName));
-            return;
-        }
-
         try
         {
-            this.md5 = Structure.calculateMD5(Structure.getStream(correctStructureName));
-            this.template = readTemplateFromStream(inputStream);
-        }
-        catch (final IOException e)
-        {
-            Log.getLogger().warn(String.format("Failed to load template %s", correctStructureName), e);
+
+            //Try the cache first
+            if (Structures.hasMD5(correctStructureName))
+            {
+                inputStream = Structure.getStream(Structures.SCHEMATICS_CACHE + '/' + Structures.getMD5(correctStructureName));
+                if (inputStream != null)
+                {
+                    correctStructureName = Structures.SCHEMATICS_CACHE + '/' + Structures.getMD5(correctStructureName);
+                }
+            }
+
+            if (inputStream == null)
+            {
+                inputStream = Structure.getStream(correctStructureName);
+            }
+
+            if (inputStream == null)
+            {
+                Log.getLogger().warn(String.format("Failed to load template %s", correctStructureName));
+                return;
+            }
+
+            try
+            {
+                this.md5 = Structure.calculateMD5(Structure.getStream(correctStructureName));
+                this.template = readTemplateFromStream(inputStream);
+            }
+            catch (final IOException e)
+            {
+                Log.getLogger().warn(String.format("Failed to load template %s", correctStructureName), e);
+            }
         }
         finally
         {
@@ -185,11 +189,17 @@ public class Structure
      * - cache
      * - schematics folder
      * - jar
-     * It should be the exact oppsite that the way used to buikd the list.
+     * It should be the exact opposite that the way used to build the list.
+     *
+     * Suppressing Sonar Rule squid:S2095
+     * This rule enforces "Close this InputStream"
+     * But in this case the rule does not apply because
+     * We are returning the stream and that is reasonable
      *
      * @param structureName name of the structure to load
      * @return the input stream or null
      */
+    @SuppressWarnings("squid:S2095")
     @Nullable
     public static InputStream getStream(final String structureName)
     {

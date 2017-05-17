@@ -113,6 +113,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         this.registerTargets(
 
                 /**
+                 * Pick up stuff which might've been
+                 */
+                new AITarget(PICK_UP_RESIDUALS, this::pickUpResiduals),
+                /**
                  * Check if tasks should be executed.
                  */
                 new AITarget(this::checkIfCanceled, IDLE),
@@ -147,6 +151,48 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         );
     }
 
+    private AIState pickUpResiduals()
+    {
+        final List<BlockPos> items = getItemsForPickUp();
+        if (items == null)
+        {
+            fillItemsList();
+            return getState();
+        }
+
+        if (!items.isEmpty())
+        {
+            gatherItems();
+            return getState();
+        }
+        resetGatheringItems();
+        workFrom = null;
+        currentStructure = null;
+
+        return AIState.IDLE;
+    }
+
+
+    /**
+     * Fill the list of the item positions to gather.
+     */
+    @Override
+    public void fillItemsList()
+    {
+        if(currentStructure == null)
+        {
+            return;
+        }
+
+        final BlockPos centerPos = currentStructure.getCenter();
+        if(centerPos.getY() == 0)
+        {
+            return;
+        }
+
+        searchForItems(new AxisAlignedBB(centerPos).expand(currentStructure.getLength() / 2.0, currentStructure.getHeight(), currentStructure.getWidth()));
+    }
+
     private AIState completeBuild()
     {
         if (job instanceof AbstractJobStructure)
@@ -155,10 +201,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             worker.addExperience(XP_EACH_BUILDING);
         }
 
-        workFrom = null;
-        currentStructure = null;
-
-        return AIState.IDLE;
+        return AIState.PICK_UP_RESIDUALS;
     }
 
     private Boolean decorationStep(final Structure.StructureBlock structureBlock)
@@ -413,7 +456,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             //We need to deal with materials
             if (Configurations.builderInfiniteResources || currentBlock.worldMetadata.getMaterial().isLiquid())
             {
-                worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, null);
+                worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, InventoryUtils.EMPTY);
                 world.setBlockToAir(currentBlock.blockPosition);
                 world.setBlockState(currentBlock.blockPosition, Blocks.AIR.getDefaultState());
                 worker.swingArm(worker.getActiveHand());
@@ -540,8 +583,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     private boolean placeBlockAt(@NotNull final IBlockState blockState, @NotNull final BlockPos coords)
     {
         final ItemStack item = BlockUtils.getItemStackFromBlockState(blockState);
-        worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item == null ? null : item);
-
+        worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item == null ? InventoryUtils.EMPTY : item);
         final IBlockState decrease;
         for(IPlacementHandler handlers :PlacementHandlers.handlers)
         {
@@ -609,7 +651,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
 
         @Nullable final ItemStack stack = BlockUtils.getItemStackFromBlockState(stateToPlace);
-        if (stack == null)
+        if (InventoryUtils.isItemStackEmpty(stack))
         {
             Log.getLogger().error("Block causes NPE: " + stateToPlace.getBlock());
             return false;
@@ -621,7 +663,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
         for (final ItemStack tempStack : itemList)
         {
-            if (tempStack != null)
+            if (!InventoryUtils.isItemStackEmpty(tempStack))
             {
                 final int slot = worker.findFirstSlotInInventoryWith(tempStack.getItem(), tempStack.getItemDamage());
                 if (slot != -1)
@@ -708,6 +750,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      */
     public void resetCurrentStructure()
     {
+        workFrom = null;
         currentStructure = null;
     }
 

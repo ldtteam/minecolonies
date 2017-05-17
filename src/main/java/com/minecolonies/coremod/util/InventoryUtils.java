@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.util;
 
 import net.minecraft.block.Block;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
@@ -35,6 +34,18 @@ public class InventoryUtils
      * Used for easy updating to 1.11
      */
     public static final ItemStack EMPTY = ItemStack.EMPTY;
+
+    /**
+     * Predicate to check if an itemStack is empty.
+     */
+    @NotNull
+    private static final Predicate<ItemStack> EMPTY_PREDICATE = InventoryUtils::isItemStackEmpty;
+
+    /**
+     * Negation of the itemStack empty predicate (not empty).
+     */
+    @NotNull
+    private static final Predicate<ItemStack> NOT_EMPTY_PREDICATE = EMPTY_PREDICATE.negate();
 
     /**
      * Private constructor to hide the implicit one.
@@ -291,6 +302,8 @@ public class InventoryUtils
                 .orElse(-1);
     }
 
+
+
     /**
      * Returns if the {@link IItemHandler} is full.
      *
@@ -460,7 +473,7 @@ public class InventoryUtils
                 if (isItemStackEmpty(localStack) || !itemStackToKeepPredicate.test(localStack))
                 {
                     final ItemStack removedStack = itemHandler.extractItem(i, Integer.MAX_VALUE, false);
-                    ItemStack localInsertionResult = itemHandler.insertItem(i, standardInsertionResult, true);
+                    ItemStack localInsertionResult = itemHandler.insertItem(i, standardInsertionResult, false);
 
                     if (isItemStackEmpty(localInsertionResult))
                     {
@@ -686,12 +699,11 @@ public class InventoryUtils
      */
     public static int findFirstSlotInItemHandlerNotEmptyWith(@NotNull final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        @NotNull final Predicate<ItemStack> notEmptyPredicate = itemStack -> !InventoryUtils.isItemStackEmpty(itemStack);
-        notEmptyPredicate.and(itemStackSelectionPredicate);
+        @NotNull final Predicate<ItemStack> firstWorthySlotPredicate = NOT_EMPTY_PREDICATE.and(itemStackSelectionPredicate);
 
         for (int slot = 0; slot < itemHandler.getSlots(); slot++)
         {
-            if (notEmptyPredicate.test(itemHandler.getStackInSlot(slot)))
+            if (firstWorthySlotPredicate.test(itemHandler.getStackInSlot(slot)))
             {
                 return slot;
             }
@@ -875,7 +887,7 @@ public class InventoryUtils
      *
      * @param provider  {@link ICapabilityProvider} to add itemstack to.
      * @param itemStack ItemStack to add.
-     * @return True if successful, otherwise false.
+     * @return Empty when fully transfered without swapping, otherwise return the remain of a partial transfer or the itemStack it has been swapped with.
      */
     public static ItemStack addItemStackToProviderWithResult(@NotNull final ICapabilityProvider provider, @Nullable ItemStack itemStack)
     {
@@ -899,7 +911,7 @@ public class InventoryUtils
      *
      * @param itemHandler {@link IItemHandler} to add itemstack to.
      * @param itemStack   ItemStack to add.
-     * @return True if successful, otherwise false.
+     * @return Empty when fully transfered without swapping, otherwise return the remain of a partial transfer or the itemStack it has been swapped with.
      */
     public static ItemStack addItemStackToItemHandlerWithResult(@NotNull final IItemHandler itemHandler, @Nullable ItemStack itemStack)
     {
@@ -1117,7 +1129,7 @@ public class InventoryUtils
     {
         if (!provider.hasCapability(ITEM_HANDLER_CAPABILITY, facing))
         {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing), itemStackSelectionPredicate);
@@ -1493,28 +1505,20 @@ public class InventoryUtils
     @NotNull
     public static Boolean compareItemStacksIgnoreStackSize(ItemStack itemStack1, ItemStack itemStack2)
     {
-        if (!isItemStackEmpty(itemStack1) && !isItemStackEmpty(itemStack2))
+        if (!isItemStackEmpty(itemStack1) &&
+            !isItemStackEmpty(itemStack2) &&
+            itemStack1.getItem() == itemStack2.getItem() &&
+            itemStack1.getItemDamage() == itemStack2.getItemDamage())
         {
-            // Sort on item
-            if (itemStack1.getItem() == itemStack2.getItem())
+            // Then sort on NBT
+            if (itemStack1.hasTagCompound() && itemStack2.hasTagCompound())
             {
-                // Then sort on meta
-                if (itemStack1.getItemDamage() == itemStack2.getItemDamage())
-                {
-                    // Then sort on NBT
-                    if (itemStack1.hasTagCompound() && itemStack2.hasTagCompound())
-                    {
-                        // Then sort on stack size
-                        if (ItemStack.areItemStackTagsEqual(itemStack1, itemStack2))
-                        {
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        return true;
-                    }
-                }
+                // Then sort on stack size
+                return ItemStack.areItemStackTagsEqual(itemStack1, itemStack2);
+            }
+            else
+            {
+                return true;
             }
         }
         return false;
@@ -1616,59 +1620,6 @@ public class InventoryUtils
                 return "Diamond";
             default:
                 return "Better than Diamond";
-        }
-    }
-
-    /**
-     * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#storePartialItemStack(ItemStack)}.
-     * <p>
-     * This function stores as many items of an ItemStack as possible in a
-     * matching slot and returns the quantity of left over items.
-     *
-     * @param itemHandler {@link IItemHandler} to add stack to.
-     * @param itemStack   Item stack to store in inventory.
-     * @return Leftover items in itemstack.
-     */
-    private static ItemStack storePartialItemStack(@NotNull final IItemHandler itemHandler, @NotNull ItemStack itemStack)
-    {
-        itemStack = itemStack.copy();
-
-        if (!isItemStackEmpty(itemStack))
-        {
-            int slot;
-
-            if (itemStack.isItemDamaged())
-            {
-                slot = getFirstOpenSlotFromItemHandler(itemHandler);
-
-                if (slot >= 0)
-                {
-                    return itemHandler.insertItem(slot, itemStack, false);
-                }
-                else
-                {
-                    return EMPTY;
-                }
-            }
-            else
-            {
-                slot = itemHandler.getSlots() == 0 ? -1 : 0;
-                while (!isItemStackEmpty(itemStack) && slot != -1 && slot != itemHandler.getSlots())
-                {
-                    itemStack = itemHandler.insertItem(slot, itemStack, false);
-                    if (!isItemStackEmpty(itemStack))
-                    {
-                        slot++;
-                    }
-                }
-
-
-                return itemStack;
-            }
-        }
-        else
-        {
-            return EMPTY;
         }
     }
 

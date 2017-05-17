@@ -74,9 +74,10 @@ public final class PlacementHandlers
                 }
 
                 final EntityCitizen citizen = placer.getWorker();
-                final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(new InvWrapper(citizen.getInventoryCitizen()), s -> s.getItem() == Items.FLINT_AND_STEEL);
-                final ItemStack item = slot == -1 ? null : citizen.getInventoryCitizen().getStackInSlot(slot);
-                if (item == null || !(item.getItem() instanceof ItemFlintAndSteel))
+                final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(new InvWrapper(citizen.getInventoryCitizen()), s ->
+                        s.getItem() == Items.FLINT_AND_STEEL);
+                final ItemStack item = slot == -1 ? InventoryUtils.EMPTY : citizen.getInventoryCitizen().getStackInSlot(slot);
+                if (InventoryUtils.isItemStackEmpty(item) || !(item.getItem() instanceof ItemFlintAndSteel))
                 {
                     return ActionProcessingResult.DENY;
                 }
@@ -268,7 +269,7 @@ public final class PlacementHandlers
         {
             if (blockState.getBlock() instanceof BlockAir)
             {
-                placer.getWorker().setItemStackToSlot(EntityEquipmentSlot.MAINHAND, null);
+                placer.getWorker().setItemStackToSlot(EntityEquipmentSlot.MAINHAND, InventoryUtils.EMPTY);
 
                 placer.handleBuildingOverBlock(pos);
                 world.setBlockToAir(pos);

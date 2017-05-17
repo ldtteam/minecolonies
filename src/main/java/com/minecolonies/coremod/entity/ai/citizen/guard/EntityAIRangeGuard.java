@@ -101,11 +101,6 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
     private static final double AIM_HEIGHT = 3.0D;
 
     /**
-     * Experience the guard receives each shot arrow.
-     */
-    private static final double XP_EACH_ARROW = 0.2;
-
-    /**
      * Used to calculate the chance that an arrow hits, if the worker levels is higher than 15 the chance gets worse again.
      * Because of the rising fire speed.
      */
