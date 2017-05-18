@@ -1870,9 +1870,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         List<EntityPlayer> players = new ArrayList<>(colony.getMessageEntityPlayers());
         final EntityPlayer owner = ServerUtils.getPlayerFromUUID(world, this.getColony().getPermissions().getOwner());
-        players.remove(owner);
-        LanguageHandler.sendPlayerMessage(owner,
+        if (owner != null)
+        {
+            players.remove(owner);
+            LanguageHandler.sendPlayerMessage(owner,
                 this.getColonyJob() == null ? "" : this.getColonyJob().getName(), citizenDescription, requiredItem);
+        }
 
         LanguageHandler.sendPlayersMessage(players,
                 this.getColonyJob() == null ? "" : this.getColonyJob().getName(), colonyDescription, citizenDescription, requiredItem);
