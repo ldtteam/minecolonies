@@ -1865,11 +1865,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         List<EntityPlayer> players = new ArrayList<>(colony.getMessageEntityPlayers());
         final EntityPlayer owner = ServerUtils.getPlayerFromUUID(worldObj, this.getColony().getPermissions().getOwner());
-        if (owner == null)
-        {
-            Log.getLogger().error("EntityCitizen.sendChat: colony without an owner ?");
-        }
-        else
+        if (owner != null)
         {
             players.remove(owner);
             LanguageHandler.sendPlayerMessage(owner,
