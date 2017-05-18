@@ -557,7 +557,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 if (isInTileEntity((TileEntityChest) tileEntity, stack))
                 {
                     itemsToDeliver.remove(0);
-                    return true;
+                    return cannotHoldMoreItems();
                 }
                 return false;
             }
