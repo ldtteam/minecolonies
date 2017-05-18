@@ -7,21 +7,16 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockStairs;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Mirror;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.template.Template;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,43 +78,6 @@ public final class StructureWrapper
     }
 
     /**
-     * Generate a resource location from a structures name.
-     *
-     * @param name the structures name
-     * @return the resource location pointing towards the structure
-     */
-    @NotNull
-    private static ResourceLocation getResourceLocation(@NotNull final String name)
-    {
-        return new ResourceLocation("minecolonies:schematics/" + name + ".nbt");
-    }
-
-    /**
-     * Generate the stream from a resource location.
-     *
-     * @param res the location to pull the stream from
-     * @return a stream from this location
-     */
-    public static InputStream getStream(@NotNull final ResourceLocation res)
-    {
-        try
-        {
-            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
-            {
-                return Minecraft.getMinecraft().getResourceManager().getResource(res).getInputStream();
-            }
-            else
-            {
-                return StructureWrapper.class.getResourceAsStream(String.format("/assets/%s/%s", res.getResourceDomain(), res.getResourcePath()));
-            }
-        }
-        catch (final IOException e)
-        {
-            throw new IllegalStateException("Could not load stream!", e);
-        }
-    }
-
-    /**
      * Load a structure into this world
      * and place it in the right position and rotation.
      *
@@ -129,8 +87,9 @@ public final class StructureWrapper
      * @param rotations number of times rotated
      * @param mirror    the mirror used.
      */
-    public static void loadAndPlaceStructureWithRotation(final World worldObj, @NotNull final String name,
-            @NotNull final BlockPos pos, final int rotations, @NotNull final Mirror mirror)
+    public static void loadAndPlaceStructureWithRotation(
+                                                          final World worldObj, @NotNull final String name,
+                                                          @NotNull final BlockPos pos, final int rotations, @NotNull final Mirror mirror)
     {
         try
         {
@@ -145,16 +104,88 @@ public final class StructureWrapper
     }
 
     /**
+     * Load a structure into this world
+     * and place it in the right position and rotation.
+     *
+     * @param worldObj  the world to load it in
+     * @param name      the structures name
+     * @param pos       coordinates
+     * @param rotations number of times rotated
+     * @param mirror    the mirror used.
+     * @return true if succesful.
+     */
+    public static boolean tryToLoadAndPlaceSupplyCampWithRotation(final World worldObj, @NotNull final String name,
+            @NotNull final BlockPos pos, final int rotations, @NotNull final Mirror mirror)
+    {
+        try
+        {
+            @NotNull final StructureWrapper structureWrapper = new StructureWrapper(worldObj, name);
+            structureWrapper.rotate(rotations, worldObj, pos, mirror);
+            if(structureWrapper.checkForFreeSpace(pos))
+            {
+                structureWrapper.placeStructure(pos);
+                return true;
+            }
+            return false;
+        }
+        catch (final IllegalStateException e)
+        {
+            Log.getLogger().warn("Could not load structure!", e);
+        }
+        return false;
+    }
+
+    /**
      * Rotates the structure x times.
      *
-     * @param times times to rotateWithMirror.
-     * @param world world it's rotating it in.
+     * @param times     times to rotateWithMirror.
+     * @param world     world it's rotating it in.
      * @param rotatePos position to rotateWithMirror it around.
-     * @param mirror the mirror to rotate with.
+     * @param mirror    the mirror to rotate with.
      */
     public void rotate(final int times, @NotNull final World world, @NotNull final BlockPos rotatePos, @NotNull final Mirror mirror)
     {
         structure.rotateWithMirror(times, world, rotatePos, mirror);
+    }
+
+    /**
+     * Place a structure into the world.
+     *
+     * @param pos coordinates
+     */
+    private boolean checkForFreeSpace(@NotNull final BlockPos pos)
+    {
+        setLocalPosition(pos);
+        //structure.getBlockInfo()[0].pos
+        for (int j = 0; j < structure.getHeight(); j++)
+        {
+            for (int k = 0; k < structure.getLength(); k++)
+            {
+                for (int i = 0; i < structure.getWidth(); i++)
+                {
+                    @NotNull final BlockPos localPos = new BlockPos(i, j, k);
+
+                    final BlockPos worldPos = pos.add(localPos);
+
+                    if(worldPos.getY() <= pos.getY() && !world.getBlockState(worldPos.down()).getMaterial().isSolid())
+                    {
+                        return false;
+                    }
+
+                    final IBlockState worldState = world.getBlockState(worldPos);
+                    if(worldState.getBlock() == Blocks.BEDROCK)
+                    {
+                        return false;
+                    }
+
+                    if(worldPos.getY() > pos.getY() && worldState.getBlock() != Blocks.AIR)
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -185,6 +216,15 @@ public final class StructureWrapper
                     if (localBlock == ModBlocks.blockSubstitution)
                     {
                         continue;
+                    }
+
+                    if(localBlock == ModBlocks.blockSolidSubstitution)
+                    {
+                        if( !worldState.getMaterial().isSolid())
+                        {
+                            final IBlockState subBlock = BlockUtils.getSubstitutionBlockAtWorld(world, worldPos);
+                            placeBlock(subBlock, subBlock.getBlock(), worldPos);
+                        }
                     }
                     else if (localBlock == Blocks.AIR && !worldState.getMaterial().isSolid())
                     {
@@ -241,7 +281,7 @@ public final class StructureWrapper
                 return false;
             }
         }
-        while (doesStructureBlockEqualWorldBlock() && count < Configurations.maxBlocksCheckedByBuilder);
+        while (isStructureBlockEqualWorldBlock() && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
     }
@@ -281,7 +321,7 @@ public final class StructureWrapper
      *
      * @return true if the structure block equals the world block.
      */
-    public boolean doesStructureBlockEqualWorldBlock()
+    public boolean isStructureBlockEqualWorldBlock()
     {
         final IBlockState structureBlockState = structure.getBlockState(this.getLocalPosition());
         final Block structureBlock = structureBlockState.getBlock();
@@ -302,7 +342,8 @@ public final class StructureWrapper
         {
             return structureBlock == worldBlockState.getBlock();
         }
-        else if (structureBlock instanceof BlockStairs && structureBlockState == worldBlockState)
+        else if ((structureBlock instanceof BlockStairs && structureBlockState == worldBlockState)
+                || BlockUtils.isGrassOrDirt(structureBlock, worldBlockState.getBlock(), structureBlockState, worldBlockState))
         {
             return true;
         }
@@ -388,7 +429,7 @@ public final class StructureWrapper
             }
         }
         //Check for air blocks and if blocks below the hut are different from the structure
-        while ((worldBlockAir() || doesStructureBlockEqualWorldBlock()) && count < Configurations.maxBlocksCheckedByBuilder);
+        while ((worldBlockAir() || isStructureBlockEqualWorldBlock()) && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
     }
@@ -409,14 +450,15 @@ public final class StructureWrapper
                 return false;
             }
         }
-        while ((doesStructureBlockEqualWorldBlock() || isBlockNonSolid()) && count < Configurations.maxBlocksCheckedByBuilder);
+        while ((isStructureBlockEqualWorldBlock() || isBlockNonSolid()) && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
     }
 
     private boolean isBlockNonSolid()
     {
-        return getBlock() != null && !getBlockState().getMaterial().isSolid();
+        final IBlockState state = getBlockState();
+        return state != null && !state.getMaterial().isSolid();
     }
 
     /**
@@ -466,14 +508,15 @@ public final class StructureWrapper
                 return false;
             }
         }
-        while ((doesStructureBlockEqualWorldBlock() || isBlockSolid()) && count < Configurations.maxBlocksCheckedByBuilder);
+        while ((isStructureBlockEqualWorldBlock() || isBlockSolid()) && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
     }
 
     private boolean isBlockSolid()
     {
-        return getBlock() != null && (getBlockState().getMaterial().isSolid());
+        final IBlockState state = getBlockState();
+        return state != null && state.getMaterial().isSolid();
     }
 
     /**
@@ -561,7 +604,14 @@ public final class StructureWrapper
             return null;
         }
 
-        return BlockUtils.getItemStackFromBlockState(blockState).getItem();
+        final ItemStack stack = BlockUtils.getItemStackFromBlockState(blockState);
+
+        if(stack != null)
+        {
+            return stack.getItem();
+        }
+
+        return null;
     }
 
     /**

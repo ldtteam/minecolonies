@@ -2,6 +2,7 @@ package com.minecolonies.coremod.util;
 
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import net.minecraft.block.*;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -184,8 +185,8 @@ public final class BlockUtils
      */
     public static boolean isBlockSeed(@NotNull final World world, @NotNull final BlockPos pos)
     {
-        return BlockUtils.getItemStackFromBlockState(world.getBlockState(pos.up())) != null
-                && BlockUtils.getItemStackFromBlockState(world.getBlockState(pos.up())).getItem() instanceof ItemSeeds;
+        final ItemStack stack = BlockUtils.getItemStackFromBlockState(world.getBlockState(pos.up()));
+        return  stack != null && stack.getItem() instanceof ItemSeeds;
     }
 
     /**
@@ -197,9 +198,13 @@ public final class BlockUtils
     public static ItemStack getItemStackFromBlockState(@NotNull final IBlockState blockState)
     {
         final Item item = getItem(blockState);
-
         if (item == null)
         {
+            if(blockState.getBlock() instanceof BlockFire)
+            {
+                return null;
+            }
+
             return null;
         }
 
@@ -212,9 +217,43 @@ public final class BlockUtils
         return new ItemStack(item, 1, getDamageValue(block, blockState));
     }
 
+    /**
+     * Compares two blocks and checks if they are equally dirt.
+     * Meaning dirt and grass are equal. But podzol and coarse dirt not.
+     *
+     * @param structureBlock the block of the structure.
+     * @param worldBlock the world block.
+     * @param structureMetaData the structure metadata.
+     * @param worldMetadata the world metadata.
+     * @return true if equal.
+     */
+    public static boolean isGrassOrDirt(@NotNull final Block structureBlock, @NotNull final Block worldBlock,
+            @NotNull final IBlockState structureMetaData, @NotNull final IBlockState worldMetadata)
+    {
+        if((structureBlock == Blocks.DIRT || structureBlock == Blocks.GRASS) && (worldBlock == Blocks.DIRT || worldBlock == Blocks.GRASS))
+        {
+            if(structureBlock == Blocks.DIRT
+                    && (structureMetaData.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.COARSE_DIRT
+                    || structureMetaData.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.PODZOL))
+            {
+                return false;
+            }
+
+            return worldBlock != Blocks.DIRT
+                    || (worldMetadata.getValue(BlockDirt.VARIANT) != BlockDirt.DirtType.COARSE_DIRT
+                    && worldMetadata.getValue(BlockDirt.VARIANT) != BlockDirt.DirtType.PODZOL);
+        }
+        return  false;
+    }
+
+
     private static Item getItem(@NotNull final IBlockState blockState)
     {
-        if (blockState.getBlock() instanceof BlockBanner)
+        if (blockState.getMaterial().equals(Material.LAVA))
+        {
+            return Items.LAVA_BUCKET;
+        }
+        else if (blockState.getBlock() instanceof BlockBanner)
         {
             return Items.BANNER;
         }
@@ -377,6 +416,10 @@ public final class BlockUtils
         }
         else if (block instanceof BlockDirt && !(blockState.getBlock() instanceof BlockFarmland))
         {
+            if (blockState.getBlock() instanceof BlockGrassPath)
+            {
+                return Blocks.DIRT.getDefaultState().getValue(BlockDirt.VARIANT).getMetadata();
+            }
             return blockState.getValue(BlockDirt.VARIANT).getMetadata();
         }
         else if (block instanceof BlockDoublePlant
@@ -415,6 +458,6 @@ public final class BlockUtils
      */
     public static boolean isPathBlock(final Block block)
     {
-        return block == Blocks.GRAVEL || block == Blocks.STONEBRICK;
+        return block == Blocks.GRAVEL || block == Blocks.STONEBRICK || block instanceof BlockGrassPath;
     }
 }

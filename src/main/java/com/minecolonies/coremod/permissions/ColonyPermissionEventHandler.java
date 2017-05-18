@@ -15,6 +15,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemPotion;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -218,24 +219,27 @@ public class ColonyPermissionEventHandler
 
             if(Configurations.enableColonyProtection)
             {
-                if(!perms.hasPermission(event.getEntityPlayer(), Permissions.Action.RIGHTCLICK_BLOCK) && event.getWorld().getBlockState(event.getPos()).getBlock() != null)
+                if((event.getWorld().getBlockState(event.getPos()) != null) &&
+                        !(event.getItemStack() != null && event.getItemStack().getItem() instanceof ItemFood) &&
+                        !perms.hasPermission(event.getEntityPlayer(), Permissions.Action.RIGHTCLICK_BLOCK))
                 {
                     cancelEvent(event, event.getEntityPlayer());
                 }
 
-                if(event.getWorld().getBlockState(event.getPos()).getBlock() instanceof BlockContainer && !perms.hasPermission(event.getEntityPlayer(),
-                        Permissions.Action.OPEN_CONTAINER))
+                if(event.getWorld().getBlockState(event.getPos()).getBlock() instanceof BlockContainer &&
+                        !perms.hasPermission(event.getEntityPlayer(), Permissions.Action.OPEN_CONTAINER))
                 {
                     cancelEvent(event, event.getEntityPlayer());
                 }
 
-                if(event.getWorld().getTileEntity(event.getPos()) != null && !perms.hasPermission(event.getEntityPlayer(), Permissions.Action.RIGHTCLICK_ENTITY))
+                if(event.getWorld().getTileEntity(event.getPos()) != null &&
+                        !perms.hasPermission(event.getEntityPlayer(), Permissions.Action.RIGHTCLICK_ENTITY))
                 {
                     cancelEvent(event, event.getEntityPlayer());
                 }
 
-                if(event.getItemStack() != null && event.getItemStack().getItem() instanceof ItemPotion && !perms.hasPermission(event.getEntityPlayer(),
-                        Permissions.Action.THROW_POTION))
+                if(event.getItemStack() != null && event.getItemStack().getItem() instanceof ItemPotion &&
+                        !perms.hasPermission(event.getEntityPlayer(), Permissions.Action.THROW_POTION))
                 {
                     cancelEvent(event, event.getEntityPlayer());
                 }
@@ -251,7 +255,7 @@ public class ColonyPermissionEventHandler
 
     /**
      * Check if the event should be canceled for a given player and minimum rank.
-     * @param rankIn the minimum rank.
+     * @param action the permission action.
      * @param playerIn the player.
      * @param world the world.
      * @param event the event.

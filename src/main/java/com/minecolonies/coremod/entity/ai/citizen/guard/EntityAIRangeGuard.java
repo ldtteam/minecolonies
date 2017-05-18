@@ -181,6 +181,11 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
      */
     protected AIState huntDown()
     {
+        if(huntDownlastAttacker())
+        {
+            targetEntity = this.worker.getLastAttacker();
+        }
+
         if (!targetEntity.isEntityAlive() || checkOrRequestItems(false, new ItemStack(Items.BOW)))
         {
             targetEntity = null;
@@ -235,7 +240,6 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
 
         addEffectsToArrow(arrowEntity, damage);
 
-        worker.addExperience(XP_EACH_ARROW);
         worker.faceEntity(entityToAttack, (float) TURN_AROUND, (float) TURN_AROUND);
         worker.getLookHelper().setLookPositionWithEntity(entityToAttack, (float) TURN_AROUND, (float) TURN_AROUND);
 

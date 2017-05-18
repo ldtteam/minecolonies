@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.ai.util;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.util.BlockPosUtil;
+import com.minecolonies.coremod.util.BlockUtils;
 import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
@@ -100,7 +101,6 @@ public class Structure
 
         /**
          * Create one immutable Block containing all information needed.
-         *
          * @param block         the minecraft block this block has.
          * @param blockPosition the BlockPos this block has.
          * @param metadata      the metadata this block has.
@@ -109,8 +109,7 @@ public class Structure
          * @param worldBlock    the block to be replaced with the structure block
          * @param worldMetadata the metadata of the world block
          */
-        public StructureBlock(
-                final Block block, final BlockPos blockPosition, final IBlockState metadata, final Template.EntityInfo entity,
+        public StructureBlock(final Block block, final BlockPos blockPosition, final IBlockState metadata, final Template.EntityInfo entity,
                 final Item item, final Block worldBlock, final IBlockState worldMetadata)
         {
             this.block = block;
@@ -124,7 +123,6 @@ public class Structure
 
         /**
          * Checks if the structureBlock equals the worldBlock.
-         *
          * @return true if so.
          */
         public boolean doesStructureBlockEqualWorldBlock()
@@ -133,31 +131,30 @@ public class Structure
             final Block structureBlock = structureBlockState.getBlock();
 
             //All worldBlocks are equal the substitution block
-            if (structureBlock == ModBlocks.blockSubstitution
-                    || (structureBlock == ModBlocks.blockSolidSubstitution && worldMetadata.getMaterial().isSolid()
-                    && !(worldBlock instanceof BlockOre) && worldBlock != Blocks.AIR))
+            if (structureBlockEqualsWorldBlock(structureBlock, worldBlock, worldMetadata))
             {
                 return true;
             }
 
             final IBlockState worldBlockState = worldMetadata;
-
-            //list of things to only check block for.
-            //For the time being any flower pot is equal to each other.
+            //list of things to only check block for, for the time being any flower pot is equal to each other.
             if (structureBlock instanceof BlockDoor || structureBlock == Blocks.FLOWER_POT)
             {
                 return structureBlock == worldBlockState.getBlock();
             }
-            else if (structureBlock instanceof BlockStairs && structureBlockState.equals(worldBlockState))
+            else if ((structureBlock instanceof BlockStairs && structureBlockState.equals(worldBlockState))
+                    || BlockUtils.isGrassOrDirt(structureBlock, worldBlock, structureBlockState, worldBlockState))
             {
                 return true;
             }
-            else if((structureBlock == Blocks.DIRT || structureBlock == Blocks.GRASS) && (worldBlock == Blocks.DIRT || worldBlock == Blocks.GRASS))
-            {
-                return true;
-            }
-
             return structureBlockState.equals(worldBlockState);
+        }
+
+        private static boolean structureBlockEqualsWorldBlock(@NotNull final Block structureBlock,
+                @NotNull final Block worldBlock, @NotNull final IBlockState worldMetadata)
+        {
+            return structureBlock == ModBlocks.blockSubstitution || (structureBlock == ModBlocks.blockSolidSubstitution
+                    && worldMetadata.getMaterial().isSolid() && !(worldBlock instanceof BlockOre) && worldBlock != Blocks.AIR);
         }
     }
 
@@ -256,7 +253,7 @@ public class Structure
             throw new StructureException(String.format("Some parameters were null! (targetWorld: %s), (buildingLocation: %s), (schematicFileName: %s)",
                     targetWorld, buildingLocation, schematicFileName));
         }
-        @Nullable StructureWrapper tempSchematic = null;
+        @Nullable StructureWrapper tempSchematic;
         //failsafe for faulty structure files
         try
         {

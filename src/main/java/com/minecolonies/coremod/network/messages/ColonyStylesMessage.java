@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.coremod.colony.Structures;
+import com.minecolonies.coremod.configuration.Configurations;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -10,15 +11,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.function.Function;
 
 /**
  * Class handling the colony styles messages.
  */
 public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStylesMessage, IMessage>
 {
-    private Map<String, List<String>> hutStyleMap;
-    private Map<String, List<String>> decorationStyleMap;
+    private boolean             allowPlayerSchematics;
+    private Map<String, String> md5Map;
 
     /**
      * Empty constructor used when registering the message.
@@ -31,26 +31,21 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
     @Override
     public void fromBytes(@NotNull final ByteBuf buf)
     {
-        hutStyleMap = readStyleMapFromByteBuf(buf);
-        decorationStyleMap = readStyleMapFromByteBuf(buf);
+        allowPlayerSchematics = buf.readBoolean();
+        md5Map = readMD5MapFromByteBuf(buf);
     }
 
     @NotNull
-    private static Map<String, List<String>> readStyleMapFromByteBuf(@NotNull final ByteBuf buf)
+    private static Map<String, String> readMD5MapFromByteBuf(@NotNull final ByteBuf buf)
     {
-        @NotNull final Map<String, List<String>> map = new HashMap<>();
+        @NotNull final Map<String, String> map = new HashMap<>();
 
         final int count = buf.readInt();
         for (int i = 0; i < count; i++)
         {
-            @NotNull final List<String> styles = new ArrayList<>();
-            final int numStyles = buf.readInt();
-            for (int j = 0; j < numStyles; j++)
-            {
-                styles.add(ByteBufUtils.readUTF8String(buf));
-            }
-
-            map.put(ByteBufUtils.readUTF8String(buf), styles);
+            final String filename = ByteBufUtils.readUTF8String(buf);
+            final String md5 = ByteBufUtils.readUTF8String(buf);
+            map.put(filename, md5);
         }
         return map;
     }
@@ -58,24 +53,18 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
     @Override
     public void toBytes(@NotNull final ByteBuf buf)
     {
-        writeStyleMapToByteBuf(buf, Structures.getHuts(), Structures::getStylesForHut);
-        writeStyleMapToByteBuf(buf, Structures.getDecorations(), Structures::getStylesForDecoration);
+        buf.writeBoolean(Configurations.allowPlayerSchematics);
+        writeMD5MapToByteBuf(buf);
     }
 
-    private static void writeStyleMapToByteBuf(@NotNull final ByteBuf buf, @NotNull final Set<String> objects, @NotNull final Function<String, List<String>> getStyles)
+    private static void writeMD5MapToByteBuf(@NotNull final ByteBuf buf)
     {
-        buf.writeInt(objects.size());
-        for (@NotNull final String object : objects)
+        Map<String, String> md5s = Structures.getMD5s();
+        buf.writeInt(md5s.size());
+        for (Map.Entry<String, String> entry : md5s.entrySet())
         {
-            final List<String> styles = getStyles.apply(object);
-
-            buf.writeInt(styles.size());
-            for (@NotNull final String style : styles)
-            {
-                ByteBufUtils.writeUTF8String(buf, style);
-            }
-
-            ByteBufUtils.writeUTF8String(buf, object);
+            ByteBufUtils.writeUTF8String(buf, entry.getKey());
+            ByteBufUtils.writeUTF8String(buf, entry.getValue());
         }
     }
 
@@ -92,7 +81,8 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
     @Override
     public IMessage onMessage(@NotNull final ColonyStylesMessage message, final MessageContext ctx)
     {
-        Structures.setStyles(message.hutStyleMap, message.decorationStyleMap);
+        Structures.setAllowPlayerSchematics(message.allowPlayerSchematics);
+        Structures.setMD5s(message.md5Map);
         return null;
     }
 }

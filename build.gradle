@@ -13,6 +13,7 @@ buildscript {
 
 plugins {
     id "org.sonarqube" version "2.3"
+    id "com.matthewprenger.cursegradle" version "1.0.7"
 }
 
 repositories {
@@ -27,7 +28,7 @@ sonarqube {
         property "sonar.host.url", "http://home.kk-sc.de:9000"
         property "sonar.sourceEncoding", "UTF-8"
         property "sonar.projectName", "Minecolonies"
-        property "sonar.branch", System.getenv()['TRAVIS_BRANCH'] != null ? System.getenv()['TRAVIS_BRANCH'] : System.getenv()['bamboo_repository_branch_name']
+        property "sonar.branch", System.getenv()['TEAMCITY_BRANCH'] != null ? System.getenv()['TEAMCITY_BRANCH'] : System.getenv()['TRAVIS_BRANCH']
     }
 }
 
@@ -45,8 +46,14 @@ tasks.withType(Checkstyle) {
 
 checkstyle {
     toolVersion ="7.6.1"
-    ignoreFailures = true
 }
+
+checkstyleTest.enabled = false
+checkstyleMain.enabled = false
+checkstyleApi.enabled = false
+pmdTest.enabled = false
+pmdMain.enabled = false
+pmdApi.enabled = false
 
 pmd {
     toolVersion = "5.5.5"
@@ -59,9 +66,6 @@ jacocoTestReport {
         xml.enabled true
     }
 }
-
-
-
 
 dependencies {
     deobfCompile "slimeknights.mantle:Mantle:1.10.2-1.1.5.205"
@@ -79,14 +83,18 @@ dependencies {
 ext.configFile = file "build.properties"
 
 configFile.withReader {
-
     def prop = new Properties()
     prop.load(it)
     ext.config = new ConfigSlurper().parse prop
 }
 
 group = "com.minecolonies"
-config.buildnumber = System.getenv()['TRAVIS_BUILD_NUMBER'] != null ? System.getenv()['TRAVIS_BUILD_NUMBER'] : "${config.minecolonies_build}"
+config.buildnumber = System.getenv()['BUILD_NUMBER'] != null ? System.getenv()['BUILD_NUMBER'] : System.getenv()['TRAVIS_BUILD_NUMBER']
+
+if (project.hasProperty("teamcity")) {
+    config.buildnumber = project.teamcity["teamcity.build.id"]
+}
+
 version = "${config.minecraft_version}-${config.minecolonies_major}.${config.minecolonies_minor}.${config.buildnumber}"
 
 sourceCompatibility = '1.8'
@@ -98,11 +106,14 @@ minecraft {
     runDir = "run"
 	
 	mappings = "${config.minecolonies_mappings}"
-	
-    replace "@VERSION@", project.version
+
     replaceIn "lib/Constants.java"
-    if (project.hasProperty("signature"))
-        replace "@FINGERPRINT@", signature
+    replace "@VERSION@", project.version
+
+    // Set the jar signature in code prior to compilation, if it exists as a build property
+    if (project.hasProperty("signature")) {
+        replace "@FINGERPRINT@", project.signature
+    }
 }
 
 processResources {
@@ -124,11 +135,6 @@ compileJava {
     options.encoding = 'UTF-8'
     options.compilerArgs << "-Xlint"
 }
-
-//task sourceJar(type: Jar) {
-//    from sourceSets.main.allSource
-//    appendix = 'src'
-//}
 
 task deobfJar(type: Jar) {
     from sourceSets.main.output
@@ -166,4 +172,110 @@ task copyToLib(type: Copy) {
     // into "build/lib"
     into "lib"
     from configurations.runtime
+}
+
+task runCheckStyle(type: Checkstyle) {
+    description 'Runs Checkstyle inspection against Minecolonies sourcesets.'
+    group = 'Code Quality'
+
+    ignoreFailures = true
+    showViolations = false
+
+    source 'src/main/java'
+
+    include '**/*.java'
+
+    exclude '**/com/minecolonies/blockout/**'
+
+    classpath = files()
+}
+
+task runPMD(type: Pmd) {
+    description 'Runs PMD inspection against Minecolonies sourcesets.'
+    group = 'Code Quality'
+
+    ignoreFailures = true
+
+    source 'src/main/java'
+
+    include '**/*.java'
+
+    exclude '**/com/minecolonies/blockout/**'
+
+    classpath = files()
+}
+
+task runSonar() {
+    dependsOn runCheckStyle, runPMD
+    description 'Runs the equivalent of a SonarQube analysis directly in the build process. Calls runCheckStyle and runPMD'
+    group = 'Code Quality'
+}
+
+task signJar(type: SignJar, dependsOn: reobfJar) {
+    onlyIf { // Skip the task if our secret data isn't available
+        project.hasProperty('keyStore')
+    }
+
+    if (project.hasProperty('keyStore')) {
+        keyStore = project.keyStore // This needs to be a path to the keystore file
+        alias = project.keyStoreAlias
+        storePass = project.keyStorePass
+        keyPass = project.keyStoreKeyPass
+        inputFile = jar.archivePath
+        outputFile = jar.archivePath
+    }
+}
+
+build.dependsOn signJar
+
+curseforge {
+    if (System.getenv().CURSEAPIKEY != null && System.getenv().CURSERELEASETYPE != null)
+    {
+        apiKey = System.getenv().CURSEAPIKEY
+
+        project {
+            id = '245506'
+
+            changelog = file('build/changelog.md')
+            changelogType = 'markdown'
+            releaseType = System.getenv().CURSERELEASETYPE
+
+            addArtifact deobfJar
+        }
+    }
+    else
+    {
+        logger.lifecycle("Cannot run the CurseUpload sequence. No API-Key or release type has been provided.")
+    }
+}
+
+task("createChangelog") {
+    group = 'upload'
+
+    doLast {
+        def teamCityURL = "http://teamcity.minecolonies.com/"
+        def file = new FileOutputStream("build/changelog.md")
+        def out = new BufferedOutputStream(file)
+        def changesXML = new XmlSlurper().parse(teamCityURL + "guestAuth/app/rest/changes?locator=build:(id:" + teamcity["teamcity.build.id"] + ")")
+
+        def changes = changesXML.change
+        println("createChangelog: Identified " + changes.size() + " changes to be written into the changelog.")
+
+        out << "# Minecolonies Changelog \n"
+        out << "## Version: _" + version + "_ \n"
+
+        if (changes.size() > 0) {
+            for (int i = 0; i < changes.size(); i++) {
+                def changeDetailsURL = teamCityURL + "guestAuth/app/rest/changes/id:" + changes[i].@id.text()
+                def changeDetailsXml = new XmlSlurper().parse(changeDetailsURL)
+                def changeComment = changeDetailsXml.comment.text().trim()
+
+                out << "* " + changeComment + "\n"
+            }
+        } else {
+            out << "No Changes detected!"
+        }
+
+        out.close()
+    }
 }

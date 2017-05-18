@@ -26,7 +26,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     private final double                  nearSpeed;
     @Nullable
     private       Entity                  closestLivingEntity;
-    private final float                   distanceFromEntity;
+    private final double                  distanceFromEntity;
     private final Class<? extends Entity> targetEntityClass;
 
     /**
@@ -39,8 +39,8 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
      * @param nearSpeed          how fast we should move when we are close.
      */
     public EntityAICitizenAvoidEntity(
-                                       final EntityCitizen entity, final Class<? extends Entity> targetEntityClass,
-                                       final float distanceFromEntity, final double farSpeed, final double nearSpeed)
+            final EntityCitizen entity, final Class<? extends Entity> targetEntityClass,
+            final double distanceFromEntity, final double farSpeed, final double nearSpeed)
     {
         super();
         this.theEntity = entity;
@@ -75,15 +75,15 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
         else
         {
             final Optional<Entity> entityOptional = theEntity.worldObj.getEntitiesInAABBexcluding(
-              theEntity,
-              theEntity.getEntityBoundingBox().expand(
-                (double) distanceFromEntity,
-                3.0D,
-                (double) distanceFromEntity),
-              target -> target.isEntityAlive() && EntityAICitizenAvoidEntity.this.theEntity.getEntitySenses().canSee(target))
-                                                      .stream()
-                                                      .filter(targetEntityClass::isInstance)
-                                                      .findFirst();
+                    theEntity,
+                    theEntity.getEntityBoundingBox().expand(
+                            (double) distanceFromEntity,
+                            3.0D,
+                            (double) distanceFromEntity),
+                    target -> target.isEntityAlive() && EntityAICitizenAvoidEntity.this.theEntity.getEntitySenses().canSee(target))
+                    .stream()
+                    .filter(targetEntityClass::isInstance)
+                    .findFirst();
 
             return entityOptional.isPresent() ? entityOptional.get() : null;
         }
