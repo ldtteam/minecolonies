@@ -350,7 +350,9 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         {
             ((BuildingHome) buildingToDeliver).setFoodNeeded(false);
         }
-        return START_WORKING;
+
+        gatherTarget = buildingToDeliver.getLocation();
+        return GATHERING;
     }
 
     /**
