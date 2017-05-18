@@ -35,6 +35,28 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
      */
     private static final int DEXTERITY_MULTIPLIER = 1;
 
+    //todo check how many doughs we have
+    //todo check how many furnaces we have
+    //todo check how many baked ones we have
+    //todo add furnace search inside the building!
+    //todo 1 principal "Start working" -> checks what we have now atm (doughs etc) always try to wrap up things
+    //todo check for the furnaces if we're waiting for them in there, if ready progress there, else progress elsewhere
+
+    //todo first step dough: Take the wheat, by chance need between 3-5 (6-building level) so 5,4,3,2,1 (by chance could need only 1 each bread), hit for time depending on level at hut chest with wheat in hand. (Particle effects?)
+
+    //todo second step bring to furnace, will need a fixed time, but can use building level furnaces.
+
+    //todo prepare, hit with bread in hand on hut block for fixed time depending on his level.
+
+    //todo ready, but bread in chest and start over.
+
+    //todo if he has no wheat, request it to dman, always if he can't find wheat in start working and he has nothing to do at the moment
+
+    //todo if he finds stuff for cake, hit a long time on the hut block and then ready, same for cookies. (twice as long as bread)
+    //todo and hit with the ingredients
+
+
+
     /**
      * Constructor for the Fisherman.
      * Defines the tasks the fisherman executes.

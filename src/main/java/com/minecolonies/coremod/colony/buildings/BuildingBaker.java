@@ -10,6 +10,9 @@ import com.minecolonies.coremod.colony.jobs.JobBaker;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Building for the baker.
  */
@@ -19,6 +22,23 @@ public class BuildingBaker extends AbstractBuildingWorker
     private static final String BAKER_HUT_NAME = "bakerHut";
 
     private static final int BAKER_HUT_MAX_LEVEL = 5;
+
+    private final List<BlockPos> furnaces = new ArrayList<>();
+
+    /**
+     * Amounts of dough the Baker left in the oven.
+     */
+    private int breadsInOvens = 0;
+
+    /**
+     * Amount of dough the Baker prepared already.
+     */
+    private int preparedDough = 0;
+
+    /**
+     * Amounts of breads which are baked but need some final preparing.
+     */
+    private int bakedBreads = 0;
 
     /**
      * Constructor for the baker building.
@@ -77,6 +97,95 @@ public class BuildingBaker extends AbstractBuildingWorker
     public AbstractJob createJob(final CitizenData citizen)
     {
         return new JobBaker(citizen);
+    }
+
+    /**
+     * Clear the furnaces list.
+     */
+    public void clearFurnaces()
+    {
+        furnaces.clear();
+    }
+
+    /**
+     * Add a furnace to the building.
+     * @param pos the position of it.
+     */
+    public void addToFurnaces(final BlockPos pos)
+    {
+        furnaces.add(pos);
+    }
+
+    /**
+     * Remove a furnace from the building.
+     * @param pos the position of it.
+     */
+    public void removeFromFurnaces(final BlockPos pos)
+    {
+        furnaces.remove(pos);
+    }
+
+    /**
+     * Return a list of furnaces assigned to this hut.
+     * @return copy of the list
+     */
+    public List<BlockPos> getFurnaces()
+    {
+        return new ArrayList<>(furnaces);
+    }
+
+    /**
+     * Getter for the breads in oven.
+     * @return the amount.
+     */
+    public int getBreadsInOvens()
+    {
+        return breadsInOvens;
+    }
+
+    /**
+     * Setter for the breads in oven.
+     * @param breadsInOvens new amount.
+     */
+    public void setBreadsInOvens(final int breadsInOvens)
+    {
+        this.breadsInOvens = breadsInOvens;
+    }
+
+    /**
+     * Getter for the prepared dough.
+     * @return the amount.
+     */
+    public int getPreparedDough()
+    {
+        return preparedDough;
+    }
+
+    /**
+     * Setter for the prepared dough.
+     * @param preparedDough new amount.
+     */
+    public void setPreparedDough(final int preparedDough)
+    {
+        this.preparedDough = preparedDough;
+    }
+
+    /**
+     * Getter for the baked breads.
+     * @return the amount.
+     */
+    public int getBakedBreads()
+    {
+        return bakedBreads;
+    }
+
+    /**
+     * Setter for the bked breads.
+     * @param bakedBreads the new amount.
+     */
+    public void setBakedBreads(final int bakedBreads)
+    {
+        this.bakedBreads = bakedBreads;
     }
 
     /**
