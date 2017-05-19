@@ -56,6 +56,8 @@ public final class TranslationConstants
     public static final String COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NAMEDCHESTFULL        = "com.minecolonies.coremod.job.deliveryman.namedWorkerChestFull";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NOWAREHOUSE           = "com.minecolonies.coremod.job.deliveryman.noWarehouse";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL                        = "com.minecolonies.coremod.wareHouse.full";
 
     private TranslationConstants()
     {

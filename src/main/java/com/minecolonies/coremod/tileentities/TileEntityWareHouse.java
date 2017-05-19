@@ -22,6 +22,8 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 
+import static com.minecolonies.coremod.util.constants.TranslationConstants.*;
+
 /**
  * Class which handles the tileEntity of our colonyBuildings.
  */
@@ -457,7 +459,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             @Nullable final TileEntityChest chest = searchRightChestForStack(stack);
             if(chest == null)
             {
-                LanguageHandler.sendPlayersMessage(getColony().getMessageEntityPlayers(), "com.minecolonies.coremod.wareHouse.full");
+                LanguageHandler.sendPlayersMessage(getColony().getMessageEntityPlayers(), COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL);
                 return;
             }
             InventoryUtils.transferItemStackIntoNextFreeSlotInProvider(new InvWrapper(inventoryCitizen), i, chest);
