@@ -91,15 +91,9 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             {
                 if (i == index)
                 {
-                    if(buildingEntry.getValue() instanceof AbstractBuildingWorker
-                            && !list.contains(buildingEntry.getValue())
-                            && ((AbstractBuildingWorker) buildingEntry.getValue()).needsAnything())
+                    if(buildingEntry.getValue() instanceof AbstractBuildingWorker)
                     {
                         checkInWareHouse((AbstractBuildingWorker) buildingEntry.getValue(), true);
-                    }
-                    else if(buildingEntry.getValue() instanceof BuildingHome && ((BuildingHome) buildingEntry.getValue()).isFoodNeeded())
-                    {
-                        checkInWareHouseForFood((BuildingHome) buildingEntry.getValue(), true);
                     }
                     this.index++;
                 }
@@ -108,7 +102,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         }
     }
 
-    public boolean checkInWareHouseForFood(final BuildingHome buildingEntry, final boolean addToList)
+    public boolean checkInWareHouse(final BuildingHome buildingEntry, final boolean addToList)
     {
         if (buildingEntry.isFoodNeeded())
         {
@@ -117,7 +111,10 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                 if (addToList)
                 {
                     buildingEntry.setOnGoingDelivery(true);
-                    list.add(buildingEntry);
+                    if (!list.contains(buildingEntry))
+                    {
+                        list.add(buildingEntry);
+                    }
                 }
                 return true;
             }
@@ -169,7 +166,10 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                     if(addToList)
                     {
                         buildingEntry.setOnGoingDelivery(true);
-                        list.add(buildingEntry);
+                        if (!list.contains(buildingEntry))
+                        {
+                            list.add(buildingEntry);
+                        }
                     }
                     return true;
                 }
