@@ -236,25 +236,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      */
     public boolean isInHut(@Nullable final ItemStack is)
     {
-        @Nullable final AbstractBuilding building = getBuilding();
-        if(building != null)
-        {
-            if(isInTileEntity(building.getTileEntity(), is))
-            {
-                return true;
-            }
-
-            for(final BlockPos pos : building.getAdditionalCountainers())
-            {
-                @Nullable final TileEntity entity = world.getTileEntity(pos);
-                if(entity instanceof TileEntityChest && isInTileEntity((TileEntityChest) entity, is))
-                {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        return isInHut(stack -> stack != null && is.isItemEqual(stack));
     }
 
     /**
@@ -291,27 +273,9 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      * @return the position or null.
      */
     @Nullable
-    public BlockPos getPositionOfChestWithItemStack(@NotNull final ItemStack stack)
+    public BlockPos getPositionOfChestWithItemStack(@NotNull final ItemStack is)
     {
-        @Nullable final AbstractBuilding building = getBuilding();
-
-        if(building != null)
-        {
-            if(isInTileEntity(building.getTileEntity(), stack))
-            {
-                return building.getLocation();
-            }
-
-            for(final BlockPos pos : building.getAdditionalCountainers())
-            {
-                final TileEntity entity = world.getTileEntity(pos);
-                if(entity instanceof TileEntityChest && isInTileEntity((TileEntityChest) entity, stack))
-                {
-                    return pos;
-                }
-            }
-        }
-        return null;
+        return getPositionOfChestWithItemStack(stack -> stack != null && is.isItemEqual(stack));
     }
 
     /**
@@ -440,13 +404,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      */
     public boolean isInTileEntity(TileEntityChest entity, ItemStack is)
     {
-        return is != null
-                && InventoryFunctions
-                .matchFirstInProviderWithAction(
-                        entity,
-                        stack -> stack != null && is.isItemEqual(stack),
-                        InventoryFunctions::doNothing
-                );
+        return isInTileEntity(entity, stack -> stack != null && is.isItemEqual(stack));
     }
 
     /**
