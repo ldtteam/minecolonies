@@ -269,7 +269,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
 
     /**
      * Check for a certain item and return the position of the chest containing it.
-     * @param stack the stack to search for.
+     * @param is the stack to search for.
      * @return the position or null.
      */
     @Nullable
