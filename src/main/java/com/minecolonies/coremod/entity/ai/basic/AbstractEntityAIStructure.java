@@ -254,13 +254,21 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             }
 
             if (structureBlock.block == null
-                    || structureBlock.doesStructureBlockEqualWorldBlock()
                     || (!structureBlock.metadata.getMaterial().isSolid() && structureBlock.block != Blocks.AIR))
             {
                 //findNextBlock count was reached and we can ignore this block
                 return true;
             }
 
+            if (structureBlock.doesStructureBlockEqualWorldBlock())
+            {
+                if (structureBlock.block instanceof BlockContainer)
+                {
+                    connectChestToBuildingIfNecessary(structureBlock.blockPosition);
+                }
+                //findNextBlock count was reached and we can ignore this block
+                return true;
+            }
 
             @Nullable Block block = structureBlock.block;
             @Nullable IBlockState blockState = structureBlock.metadata;

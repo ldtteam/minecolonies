@@ -242,8 +242,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     public static boolean workerRequiresItem(AbstractBuilding building, ItemStack stack, List<ItemStorage> localAlreadyKept)
     {
-        return (building instanceof BuildingBuilder && ((BuildingBuilder) building).requiresResourceForBuilding(stack))
-                 || (building instanceof AbstractBuildingWorker && ((AbstractBuildingWorker) building).neededForWorker(stack))
+        return (building instanceof AbstractBuildingWorker && ((AbstractBuildingWorker) building).neededForWorker(stack))
                  || buildingRequiresCertainAmountOfItem(building, stack, localAlreadyKept);
     }
 
@@ -557,7 +556,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 if (isInTileEntity((TileEntityChest) tileEntity, stack))
                 {
                     itemsToDeliver.remove(0);
-                    return cannotHoldMoreItems();
+                    return true;
                 }
                 return false;
             }

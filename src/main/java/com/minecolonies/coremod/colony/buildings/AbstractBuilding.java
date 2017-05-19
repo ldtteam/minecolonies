@@ -853,7 +853,10 @@ public abstract class AbstractBuilding
      */
     public void addContainerPosition(BlockPos pos)
     {
-        containerList.add(pos);
+        if (!containerList.contains(pos))
+        {
+            containerList.add(pos);
+        }
     }
 
     /**
