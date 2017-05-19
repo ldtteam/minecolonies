@@ -12,6 +12,7 @@ import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.*;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockContainer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
@@ -847,11 +848,25 @@ public abstract class AbstractBuilding
     }
 
     /**
+     * register a block and position.
+     *
+     * @param block to be registered
+     * @param pos of the block
+     */
+    public void registerBlockPosition(@NotNull Block block, @NotNull final BlockPos pos)
+    {
+        if (block instanceof BlockContainer)
+        {
+            addContainerPosition(pos);
+        }
+    }
+
+    /**
      * Add a new container to the building.
      *
      * @param pos position to add.
      */
-    public void addContainerPosition(BlockPos pos)
+    public void addContainerPosition(@NotNull final BlockPos pos)
     {
         if (!containerList.contains(pos))
         {
