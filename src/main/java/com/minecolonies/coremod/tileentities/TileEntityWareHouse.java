@@ -19,7 +19,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Predicate;
 
 /**
@@ -28,9 +29,9 @@ import java.util.function.Predicate;
 public class TileEntityWareHouse extends TileEntityColonyBuilding
 {
     /**
-     * List which contains the currentTasks to be executed by the deliveryman.
+     * Queue which contains the currentTasks to be executed by the deliveryman.
      */
-    private final CopyOnWriteArrayList<AbstractBuilding> list = new CopyOnWriteArrayList<>();
+    private final Queue<AbstractBuilding> taskQueue = new ConcurrentLinkedQueue<>();
 
     /**
      * Wait this amount of ticks before checking again.
@@ -92,10 +93,10 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                 if (i == index)
                 {
                     if(buildingEntry.getValue() instanceof AbstractBuildingWorker
-                            && !list.contains(buildingEntry.getValue())
-                            && ((AbstractBuildingWorker) buildingEntry.getValue()).needsAnything())
+                            && !taskQueue.contains(buildingEntry.getValue())
+                            && (buildingEntry.getValue()).needsAnything())
                     {
-                        checkInWareHouse((AbstractBuildingWorker) buildingEntry.getValue(), true);
+                        checkInWareHouse(buildingEntry.getValue(), true);
                     }
                     else if(buildingEntry.getValue() instanceof BuildingHome && ((BuildingHome) buildingEntry.getValue()).isFoodNeeded())
                     {
@@ -117,14 +118,14 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                 if (addToList)
                 {
                     buildingEntry.setOnGoingDelivery(true);
-                    list.add(buildingEntry);
+                    taskQueue.add(buildingEntry);
                 }
                 return true;
             }
 
-            if (list.contains(buildingEntry))
+            if (taskQueue.contains(buildingEntry))
             {
-                list.remove(buildingEntry);
+                taskQueue.remove(buildingEntry);
                 buildingEntry.setOnGoingDelivery(false);
             }
         }
@@ -132,17 +133,13 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     }
 
     /**
-     * Get the first task in the list.
+     * Get the first task in the taskQueue, or null if its empty.
      * @return the building which needs a delivery.
      */
     @Nullable
     public AbstractBuilding getTask()
     {
-        if(list.isEmpty())
-        {
-            return null;
-        }
-        return list.remove(0);
+        return taskQueue.poll();
     }
 
     /**
@@ -155,7 +152,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     {
         if(buildingEntry.areItemsNeeded())
         {
-            for(final ItemStack stack : buildingEntry.getNeededItems())
+            for(final ItemStack stack : buildingEntry.getCopyOfNeededItems())
             {
                 if(stack == null
                      || (deliveryManHasBuildingAsTask(buildingEntry)
@@ -169,14 +166,15 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                     if(addToList)
                     {
                         buildingEntry.setOnGoingDelivery(true);
-                        list.add(buildingEntry);
+                        taskQueue.add(buildingEntry);
                     }
                     return true;
                 }
             }
-            if (list.contains(buildingEntry))
+
+            if (taskQueue.contains(buildingEntry))
             {
-                list.remove(buildingEntry);
+                taskQueue.remove(buildingEntry);
                 buildingEntry.setOnGoingDelivery(false);
             }
         }
@@ -189,13 +187,14 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                 if (addToList)
                 {
                     buildingEntry.setOnGoingDelivery(true);
-                    list.add(buildingEntry);
+                    taskQueue.add(buildingEntry);
                 }
                 return true;
             }
-            if (list.contains(buildingEntry))
+
+            if (taskQueue.contains(buildingEntry))
             {
-                list.remove(buildingEntry);
+                taskQueue.remove(buildingEntry);
                 buildingEntry.setOnGoingDelivery(false);
             }
         }
