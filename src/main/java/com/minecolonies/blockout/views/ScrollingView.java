@@ -45,7 +45,7 @@ public class ScrollingView extends View
     @Override
     public void setSize(final int w, final int h)
     {
-        super.setSize(w,h);
+        super.setSize(w, h);
         container.setSize(getInteriorWidth() - scrollbarWidth, getInteriorHeight());
         scrollbar.setPosition(getInteriorWidth() - scrollbarWidth, 0);
         scrollbar.setSize(scrollbarWidth, getInteriorHeight());

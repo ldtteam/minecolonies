@@ -8,8 +8,8 @@ import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.IColony;
 import com.minecolonies.coremod.colony.requestsystem.factory.IFactory;
 import com.minecolonies.coremod.colony.requestsystem.factory.IFactoryController;
-import com.minecolonies.coremod.colony.requestsystem.location.ILocatable;
 import com.minecolonies.coremod.colony.requestsystem.request.IRequest;
+import com.minecolonies.coremod.colony.requestsystem.requester.IRequester;
 import com.minecolonies.coremod.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolver.IRequestResolverProvider;
 import com.minecolonies.coremod.colony.requestsystem.token.IToken;
@@ -120,7 +120,8 @@ public class StandardRequestManager implements IRequestManager {
      */
     @NotNull
     @Override
-    public <T> IToken createRequest(@NotNull ILocatable requester, @NotNull T object) throws IllegalArgumentException {
+    public <T> IToken createRequest(@NotNull IRequester requester, @NotNull T object) throws IllegalArgumentException
+    {
         IRequest<T> request = RequestHandler.createRequest(this, requester, object);
         return request.getToken();
     }
@@ -146,7 +147,8 @@ public class StandardRequestManager implements IRequestManager {
      */
     @NotNull
     @Override
-    public <T> IToken createAndAssignRequest(@NotNull ILocatable requester, @NotNull T object) throws IllegalArgumentException {
+    public <T> IToken createAndAssignRequest(@NotNull IRequester requester, @NotNull T object) throws IllegalArgumentException
+    {
         IToken token = createRequest(requester, object);
         assignRequest(token);
         return token;
@@ -193,6 +195,9 @@ public class StandardRequestManager implements IRequestManager {
             case OVERRULED:
             case CANCELLED:
                 RequestHandler.onRequestCancelled(this, token);
+                return;
+            case RECEIVED:
+                RequestHandler.onRequestReceivedByRequester(this, token);
                 return;
             default:
                 return;
@@ -682,7 +687,8 @@ public class StandardRequestManager implements IRequestManager {
         }
 
         @SuppressWarnings("unchecked")
-        private static <Request> IRequest<Request> createRequest(StandardRequestManager manager, ILocatable requester, Request request) {
+        private static <Request> IRequest<Request> createRequest(StandardRequestManager manager, IRequester requester, Request request)
+        {
             Class requestClass = request.getClass();
 
             IToken<UUID, NBTTagCompound> token = TokenHandler.generateNewToken(manager);
@@ -804,6 +810,8 @@ public class StandardRequestManager implements IRequestManager {
             IRequest request = getRequest(manager, token);
             IRequestResolver resolver = ResolverHandler.getResolverForRequest(manager, token);
 
+            request.getRequester().onRequestComplete(token);
+
             //Retrieve a followup request.
             IRequest followupRequest = resolver.getFollowupRequestForCompletion(manager, request);
 
@@ -874,6 +882,26 @@ public class StandardRequestManager implements IRequestManager {
             request.setState(new WrappedStaticStateRequestManager(manager), RequestState.IN_PROGRESS);
             resolver.resolve(manager, request);
         }
+
+        /**
+         * Method called when the given manager gets notified of the receiving of a given task by its requester.
+         * All communication with the resolver should be aborted by this time, so overrullings and cancelations need to be processed,
+         * before this method is called.
+         *
+         * @param manager The manager that got notified.
+         * @param token   The token of the request.
+         * @throws IllegalArgumentException Thrown when the token is unknown.
+         */
+        private static void onRequestReceivedByRequester(StandardRequestManager manager, IToken token) throws IllegalArgumentException
+        {
+            IRequest request = getRequest(manager, token);
+
+            Log.getLogger().debug("Removing " + token + " from the Manager as it has been completed and its package has been received by the requester.");
+
+            manager.requestBiMap.remove(token);
+            manager.resolverRequestMap.get(manager.requestResolverMap.get(token)).remove(token);
+            manager.requestResolverMap.remove(token);
+        }
     }
 
     /**
@@ -932,7 +960,8 @@ public class StandardRequestManager implements IRequestManager {
          */
         @NotNull
         @Override
-        public <T> IToken createRequest(@NotNull ILocatable requester, @NotNull T object) throws IllegalArgumentException {
+        public <T> IToken createRequest(@NotNull IRequester requester, @NotNull T object) throws IllegalArgumentException
+        {
             return wrappedManager.createRequest(requester, object);
         }
 
@@ -958,7 +987,8 @@ public class StandardRequestManager implements IRequestManager {
          */
         @NotNull
         @Override
-        public <T> IToken createAndAssignRequest(@NotNull ILocatable requester, @NotNull T object) throws IllegalArgumentException {
+        public <T> IToken createAndAssignRequest(@NotNull IRequester requester, @NotNull T object) throws IllegalArgumentException
+        {
             IToken token = createRequest(requester, object);
             assignRequest(token);
             return token;

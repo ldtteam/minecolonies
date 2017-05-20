@@ -205,32 +205,32 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     /**
      * Drop down list for section.
      */
-    private       DropDownList     sectionsDropDownList;
+    private DropDownList sectionsDropDownList;
 
     /**
      * Drop down list for style.
      */
-    private       DropDownList     stylesDropDownList;
+    private DropDownList stylesDropDownList;
 
     /**
      * Drop down list for schematic.
      */
-    private       DropDownList     schematicsDropDownList;
+    private DropDownList schematicsDropDownList;
 
     /**
      * Button to rename a scanned schematic.
      */
-    private final Button           renameButton;
+    private final Button renameButton;
 
     /**
      * Button to delete a scanned schematic.
      */
-    private final Button           deleteButton;
+    private final Button deleteButton;
 
     /**
      * Confirmation dialog when deleting a scanned schematic.
      */
-    private       DialogDoneCancel confirmDeleteDialog;
+    private DialogDoneCancel confirmDeleteDialog;
 
     /**
      * Creates a window build tool.
@@ -502,7 +502,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     {
         schematicsDropDownList.selectNext();
     }
-    
+
     /**
      * Go to the previous schematic.
      */
@@ -510,7 +510,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     {
         schematicsDropDownList.selectPrevious();
     }
-    
+
     /**
      * Update the list a available schematics.
      */
@@ -887,7 +887,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     /**
      * handle when a dialog is closed.
      *
-     * @param dialog which is being closed.
+     * @param dialog   which is being closed.
      * @param buttonId is the id of the button used to close the dialog.
      */
     public void onDialogClosed(final DialogDoneCancel dialog, final int buttonId)
@@ -896,7 +896,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         {
             final Structures.StructureName structureName = new Structures.StructureName(schematics.get(schematicsDropDownList.getSelectedIndex()));
             if (Structures.SCHEMATICS_SCAN.equals(structureName.getPrefix())
-                && Structures.deleteScannedStructure(structureName))
+                  && Structures.deleteScannedStructure(structureName))
             {
                 Structures.loadScannedStyleMaps();
                 if (schematics.size() > 1)

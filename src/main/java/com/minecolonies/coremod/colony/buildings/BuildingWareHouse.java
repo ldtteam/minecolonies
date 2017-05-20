@@ -6,6 +6,7 @@ import com.minecolonies.coremod.blocks.BlockHutDeliveryman;
 import com.minecolonies.coremod.client.gui.WindowWareHouseBuilding;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import io.netty.buffer.ByteBuf;
@@ -67,7 +68,7 @@ public class BuildingWareHouse extends AbstractBuilding
      */
     public boolean registerWithWareHouse(BuildingDeliveryman buildingWorker)
     {
-        if (registeredDeliverymen.contains(new Vec3d(buildingWorker.getID())))
+        if (registeredDeliverymen.contains(new Vec3d(buildingWorker.getLocation().getInDimensionLocation())))
         {
             return true;
         }
@@ -82,7 +83,7 @@ public class BuildingWareHouse extends AbstractBuilding
             return false;
         }
 
-        registeredDeliverymen.add(new Vec3d(buildingWorker.getID()));
+        registeredDeliverymen.add(new Vec3d(buildingWorker.getLocation().getInDimensionLocation()));
         return true;
     }
 
@@ -111,11 +112,7 @@ public class BuildingWareHouse extends AbstractBuilding
      */
     public boolean canAccessWareHouse(BuildingDeliveryman buildingWorker)
     {
-        if (registeredDeliverymen.contains(new Vec3d(buildingWorker.getID())))
-        {
-            return true;
-        }
-        return false;
+        return registeredDeliverymen.contains(new Vec3d(buildingWorker.getLocation().getInDimensionLocation()));
     }
 
     /**
@@ -173,9 +170,9 @@ public class BuildingWareHouse extends AbstractBuilding
     public TileEntityWareHouse getTileEntity()
     {
         final Colony colony = getColony();
-        if ((tileEntity == null || tileEntity.isInvalid()) && colony != null && colony.getWorld().getBlockState(this.getLocation()).getBlock() != null)
+        if ((tileEntity == null || tileEntity.isInvalid()) && colony != null && colony.getWorld().getBlockState(this.getLocation().getInDimensionLocation()).getBlock() != null)
         {
-            final TileEntity te = getColony().getWorld().getTileEntity(this.getLocation());
+            final TileEntity te = getColony().getWorld().getTileEntity(this.getLocation().getInDimensionLocation());
             if (te instanceof TileEntityWareHouse)
             {
                 tileEntity = (TileEntityWareHouse) te;
@@ -214,9 +211,9 @@ public class BuildingWareHouse extends AbstractBuilding
          * @param c the colonyview to put it in
          * @param l the positon
          */
-        public View(final ColonyView c, final BlockPos l)
+        protected View(final ColonyView c, @NotNull final BlockPos l, @NotNull final IToken id)
         {
-            super(c, l);
+            super(c, l, id);
         }
 
         //todo add specialized view for the warehouse later.

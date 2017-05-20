@@ -24,7 +24,7 @@ public class DialogDoneCancel extends OverlayView implements Button.Handler
     /**
      * buttonid when done is pressed.
      */
-    public static final int DONE   = 1;
+    public static final int DONE = 1;
 
     /**
      * Resource suffix.
@@ -34,22 +34,22 @@ public class DialogDoneCancel extends OverlayView implements Button.Handler
     /**
      * Label for the title of the dialog.
      */
-    protected final Label   titleLabel;
+    protected final Label titleLabel;
 
     /**
      * Text for the text content of the dialog.
      */
-    protected final Text    contentText;
+    protected final Text contentText;
 
     /**
      * Done button.
      */
-    protected final Button  doneButton;
+    protected final Button doneButton;
 
     /**
      * Cancel button.
      */
-    protected final Button  cancelButton;
+    protected final Button cancelButton;
 
     /**
      * Handler for the onCloseDialog event.

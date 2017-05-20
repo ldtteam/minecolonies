@@ -150,7 +150,7 @@ public class Structure
                 return structureBlock == worldBlockState.getBlock();
             }
             else if ((structureBlock instanceof BlockStairs && structureBlockState.equals(worldBlockState))
-                    || BlockUtils.isGrassOrDirt(structureBlock, worldBlock, structureBlockState, worldBlockState))
+                       || BlockUtils.isGrassOrDirt(structureBlock, worldBlock, structureBlockState, worldBlockState))
             {
                 return true;
             }
@@ -162,11 +162,12 @@ public class Structure
             return structureBlockState.equals(worldBlockState);
         }
 
-        private static boolean structureBlockEqualsWorldBlock(@NotNull final Block structureBlock,
-                @NotNull final Block worldBlock, @NotNull final IBlockState worldMetadata)
+        private static boolean structureBlockEqualsWorldBlock(
+                                                               @NotNull final Block structureBlock,
+                                                               @NotNull final Block worldBlock, @NotNull final IBlockState worldMetadata)
         {
             return structureBlock == ModBlocks.blockSubstitution || (structureBlock == ModBlocks.blockSolidSubstitution
-                    && worldMetadata.getMaterial().isSolid() && !(worldBlock instanceof BlockOre) && worldBlock != Blocks.AIR);
+                                                                       && worldMetadata.getMaterial().isSolid() && !(worldBlock instanceof BlockOre) && worldBlock != Blocks.AIR);
         }
     }
 

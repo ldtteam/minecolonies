@@ -2,9 +2,9 @@ package com.minecolonies.coremod.colony.requestsystem.requests;
 
 import com.minecolonies.coremod.colony.requestsystem.RequestState;
 import com.minecolonies.coremod.colony.requestsystem.factory.IFactoryController;
-import com.minecolonies.coremod.colony.requestsystem.location.ILocatable;
 import com.minecolonies.coremod.colony.requestsystem.request.IRequestFactory;
 import com.minecolonies.coremod.colony.requestsystem.requestable.Delivery;
+import com.minecolonies.coremod.colony.requestsystem.requester.IRequester;
 import com.minecolonies.coremod.colony.requestsystem.token.IToken;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -130,7 +130,7 @@ public final class StandardRequestFactories {
          * @return The new output instance for a given input.
          */
         @Override
-        public StandardRequests.ItemStackRequest getNewInstance(@NotNull ItemStack input, @NotNull ILocatable location, @NotNull IToken token, @NotNull RequestState initialState)
+        public StandardRequests.ItemStackRequest getNewInstance(@NotNull ItemStack input, @NotNull IRequester location, @NotNull IToken token, @NotNull RequestState initialState)
         {
             return new StandardRequests.ItemStackRequest(location, token, initialState, input);
         }
@@ -237,7 +237,7 @@ public final class StandardRequestFactories {
          * @return The new output instance for a given input.
          */
         @Override
-        public StandardRequests.DeliveryRequest getNewInstance(@NotNull Delivery input, @NotNull ILocatable location, @NotNull IToken token, @NotNull RequestState initialState)
+        public StandardRequests.DeliveryRequest getNewInstance(@NotNull Delivery input, @NotNull IRequester location, @NotNull IToken token, @NotNull RequestState initialState)
         {
             return new StandardRequests.DeliveryRequest(location, token, initialState, input);
         }

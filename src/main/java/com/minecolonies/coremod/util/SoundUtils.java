@@ -3,7 +3,6 @@ package com.minecolonies.coremod.util;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.sounds.CitizenSounds;
 import com.minecolonies.coremod.sounds.FishermanSounds;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
@@ -92,7 +91,7 @@ public final class SoundUtils
      */
     public static void playSoundAtCitizen(@NotNull final World worldIn, @NotNull final BlockPos position, @NotNull final SoundEvent event)
     {
-        worldIn.playSound((EntityPlayer) null,
+        worldIn.playSound(null,
           position,
           event,
           SoundCategory.NEUTRAL,
@@ -117,7 +116,7 @@ public final class SoundUtils
 
         if (chance > rand.nextInt(ONE_HUNDRED))
         {
-            worldIn.playSound((EntityPlayer) null,
+            worldIn.playSound(null,
               position,
               event,
               SoundCategory.NEUTRAL,

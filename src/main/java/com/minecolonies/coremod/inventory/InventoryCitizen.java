@@ -47,15 +47,15 @@ public class InventoryCitizen implements IInventory
     /**
      * The main inventory.
      */
-    private final        NonNullList<ItemStack> mainInventory    = NonNullList.<ItemStack>withSize(36, ItemStack.EMPTY);
+    private final        NonNullList<ItemStack> mainInventory    = NonNullList.withSize(36, ItemStack.EMPTY);
     /**
      * The armour inventory.
      */
-    private final        NonNullList<ItemStack> armorInventory   = NonNullList.<ItemStack>withSize(4, ItemStack.EMPTY);
+    private final        NonNullList<ItemStack> armorInventory   = NonNullList.withSize(4, ItemStack.EMPTY);
     /**
      * The off-hand inventory.
      */
-    private final        NonNullList<ItemStack> offHandInventory = NonNullList.<ItemStack>withSize(1, ItemStack.EMPTY);
+    private final        NonNullList<ItemStack> offHandInventory = NonNullList.withSize(1, ItemStack.EMPTY);
     private final List<NonNullList<ItemStack>> allInventories;
     /**
      * The index of the currently held item (0-8).

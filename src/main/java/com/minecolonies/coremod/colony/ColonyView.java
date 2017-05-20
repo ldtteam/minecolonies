@@ -1,14 +1,19 @@
 package com.minecolonies.coremod.colony;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.permissions.Action;
 import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.coremod.colony.permissions.Player;
 import com.minecolonies.coremod.colony.permissions.Rank;
 import com.minecolonies.coremod.colony.requestsystem.IRequestManager;
+import com.minecolonies.coremod.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.coremod.colony.requestsystem.factory.IFactoryController;
+import com.minecolonies.coremod.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
@@ -17,6 +22,9 @@ import com.minecolonies.coremod.util.BlockPosUtil;
 import com.minecolonies.coremod.util.MathUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.stats.Achievement;
+import net.minecraft.stats.StatBase;
+import net.minecraft.stats.StatList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -64,7 +72,15 @@ public final class ColonyView implements IColony
      */
     private Set<Block> freeBlocks = new HashSet<>();
 
+    /**
+     * The overall hapiness of the colony
+     */
     private double overallHappiness = 5;
+
+    /**
+     * The achievements that the colony hsa received.
+     */
+    private List<Achievement> colonyAchievements = Lists.newArrayList();
 
     /**
      * Base constructor for a colony.
@@ -120,6 +136,13 @@ public final class ColonyView implements IColony
             BlockPosUtil.writeToByteBuf(buf, block);
         }
         buf.writeDouble(colony.getOverallHappiness());
+
+        List<Achievement> colonyAchievements = colony.getAchievements();
+        buf.writeInt(colonyAchievements.size());
+        colonyAchievements.forEach(a ->
+        {
+            ByteBufUtils.writeUTF8String(buf, a.statId);
+        });
 
         //  Citizens are sent as a separate packet
     }
@@ -255,12 +278,12 @@ public final class ColonyView implements IColony
 
     /**
      * Returns a map of players in the colony. Key is the UUID, value is {@link
-     * com.minecolonies.coremod.colony.permissions.Permissions.Player}
+     * Player}
      *
-     * @return Map of UUID's and {@link com.minecolonies.coremod.colony.permissions.Permissions.Player}
+     * @return Map of UUID's and {@link Player}
      */
     @NotNull
-    public Map<UUID, Permissions.Player> getPlayers()
+    public Map<UUID, Player> getPlayers()
     {
         return permissions.getPlayers();
     }
@@ -343,7 +366,7 @@ public final class ColonyView implements IColony
      * @param id the citizen id.
      * @return CitizenDataView for the citizen.
      */
-    public CitizenDataView getCitizen(final int id)
+    public ICitizenData getCitizen(final int id)
     {
         return citizens.get(id);
     }
@@ -388,6 +411,17 @@ public final class ColonyView implements IColony
             freePositions.add(BlockPosUtil.readFromByteBuf(buf));
         }
         this.overallHappiness = buf.readDouble();
+
+        int achievementCount = buf.readInt();
+        colonyAchievements = new ArrayList<>(achievementCount);
+        for (int i = 0; i < achievementCount; i++)
+        {
+            final StatBase statBase = StatList.getOneShotStat(ByteBufUtils.readUTF8String(buf));
+            if (statBase instanceof Achievement)
+            {
+                colonyAchievements.add((Achievement) statBase);
+            }
+        }
 
         return null;
     }
@@ -495,17 +529,19 @@ public final class ColonyView implements IColony
      * packet. This uses a full-replacement - buildings do not get updated and
      * are instead overwritten.
      *
+     *
+     * @param buildingLocation
      * @param buildingId location of the building.
      * @param buf        buffer containing ColonyBuilding information.
      * @return null == no response.
      */
     @Nullable
-    public IMessage handleColonyBuildingViewMessage(final BlockPos buildingId, @NotNull final ByteBuf buf)
+    public IMessage handleColonyBuildingViewMessage(final BlockPos buildingLocation, final IToken buildingId, @NotNull final ByteBuf buf)
     {
-        @Nullable final AbstractBuilding.View building = AbstractBuilding.createBuildingView(this, buildingId, buf);
+        @Nullable final AbstractBuilding.View building = AbstractBuilding.createBuildingView(this, buildingLocation, buildingId, buf);
         if (building != null)
         {
-            buildings.put(building.getID(), building);
+            buildings.put(building.getLocation().getInDimensionLocation(), building);
 
             if (building instanceof BuildingTownHall.View)
             {
@@ -538,6 +574,7 @@ public final class ColonyView implements IColony
 
     /**
      * Getter for the overall happiness.
+     *
      * @return the happiness, a double.
      */
     public double getOverallHappiness()
@@ -617,6 +654,13 @@ public final class ColonyView implements IColony
         return null;
     }
 
+    @NotNull
+    @Override
+    public List<Achievement> getAchievements()
+    {
+        return null;
+    }
+
     /**
      * Returns the buildings in the colony
      *
@@ -635,7 +679,15 @@ public final class ColonyView implements IColony
      */
     @NotNull
     @Override
-    public IRequestManager getRequestManager() {
-        return null;
+    public IRequestManager getRequestManager()
+    {
+        throw new IllegalStateException("Request system does not exist on the client side yet!");
+    }
+
+    @NotNull
+    @Override
+    public IFactoryController getFactoryController()
+    {
+        return StandardFactoryController.getInstance();
     }
 }

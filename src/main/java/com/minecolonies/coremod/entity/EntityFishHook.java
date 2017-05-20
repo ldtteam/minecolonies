@@ -727,8 +727,8 @@ public final class EntityFishHook extends Entity
     {
         final LootContext.Builder lootContextBuilder = new LootContext.Builder((WorldServer) this.world);
         return this.world.getLootTableManager()
-                .getLootTableFromLocation(lootTable)
-                .generateLootForPools(this.rand, lootContextBuilder.build()).stream().findFirst().orElse(null);
+                 .getLootTableFromLocation(lootTable)
+                 .generateLootForPools(this.rand, lootContextBuilder.build()).stream().findFirst().orElse(null);
     }
 
     /**

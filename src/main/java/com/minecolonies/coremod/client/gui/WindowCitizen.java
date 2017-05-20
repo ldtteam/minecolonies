@@ -135,7 +135,7 @@ public class WindowCitizen extends Window implements Button.Handler
     /**
      * The position y where the saturation is placed.
      */
-    private static final int SATURATION_ICON_POS_Y  = 10;
+    private static final int SATURATION_ICON_POS_Y = 10;
 
     /**
      * Column of the saturation icon.
@@ -145,7 +145,7 @@ public class WindowCitizen extends Window implements Button.Handler
     /**
      * Dimension of the hearts.
      */
-    private static final int SATURATION_ICON_HEIGHT_WIDTH  = 9;
+    private static final int SATURATION_ICON_HEIGHT_WIDTH = 9;
 
     /**
      * Saturation icon x position.
@@ -160,19 +160,19 @@ public class WindowCitizen extends Window implements Button.Handler
     /**
      * The label to find name in the gui.
      */
-    private static final String WINDOW_ID_NAME        = "name";
+    private static final String WINDOW_ID_NAME      = "name";
     /**
      * The label to find xpLabel in the gui.
      */
-    private static final String WINDOW_ID_XP          = "xpLabel";
+    private static final String WINDOW_ID_XP        = "xpLabel";
     /**
      * The label to find xpBar in the gui.
      */
-    private static final String WINDOW_ID_XPBAR       = "xpBar";
+    private static final String WINDOW_ID_XPBAR     = "xpBar";
     /**
      * The label to find healthBar in the gui.
      */
-    private static final String WINDOW_ID_HEALTHBAR   = "healthBar";
+    private static final String WINDOW_ID_HEALTHBAR = "healthBar";
 
     /**
      * The position of the empty saturation icon.

@@ -4,6 +4,7 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
+import com.minecolonies.coremod.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
@@ -133,7 +134,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         if (compound.hasKey(TAG_WORKER))
         {
             // Bypass setWorker, which marks dirty
-            worker = getColony().getCitizen(compound.getInteger(TAG_WORKER));
+            worker = (CitizenData) getColony().getCitizen(compound.getInteger(TAG_WORKER));
             if (worker != null)
             {
                 worker.setWorkBuilding(this);
@@ -263,9 +264,9 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
          * @param c the colony.
          * @param l the location.
          */
-        public View(final ColonyView c, @NotNull final BlockPos l)
+        public View(final ColonyView c, @NotNull final BlockPos l, @NotNull final IToken id)
         {
-            super(c, l);
+            super(c, l, id);
         }
 
         /**

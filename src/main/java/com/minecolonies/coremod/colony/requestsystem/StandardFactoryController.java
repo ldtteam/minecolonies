@@ -62,7 +62,9 @@ public class StandardFactoryController implements IFactoryController {
     @Override
     public <Input> IFactory<Input, ?> getFactoryForInput(@NotNull Class<? extends Input> clazz) throws IllegalArgumentException {
         if (!inputMappings.containsKey(clazz))
-            throw new IllegalArgumentException("The given class(name) has no registered Factory.");
+        {
+            throw new IllegalArgumentException("The given class(name) has no been registered to this Factory.");
+        }
 
         return inputMappings.get(clazz);
     }
@@ -77,7 +79,9 @@ public class StandardFactoryController implements IFactoryController {
     @Override
     public <Output> IFactory<?, Output> getFactoryForOutput(@NotNull Class<? extends Output> clazz) throws IllegalArgumentException {
         if (!inputMappings.containsKey(clazz))
-            throw new IllegalArgumentException("The given class(name) has no registered Factory.");
+        {
+            throw new IllegalArgumentException("The given class(name) has not been registered to this Factory.");
+        }
 
         return outputMappings.get(clazz);
     }
@@ -145,10 +149,12 @@ public class StandardFactoryController implements IFactoryController {
      * @param context The context for the creation.
      * @return The output from the factory, created by the given input and output.
      * @throws IllegalArgumentException thrown when the output and input do not match a factory known to this controller.
+     * @throws ClassCastException thrown when a Factory is known for the given input, but does not produce the given output.
      */
     @Override
     @SuppressWarnings("unchecked")
-    public <Input, Output> Output getNewInstance(@NotNull Input input, @NotNull Object... context) throws IllegalArgumentException {
+    public <Input, Output> Output getNewInstance(@NotNull Input input, @NotNull Object... context) throws IllegalArgumentException, ClassCastException
+    {
         IFactory<Input, Output> factory = (IFactory<Input, Output>) getFactoryForInput((Class<? extends Input>) input.getClass());
 
         return factory.getNewInstance(input, context);

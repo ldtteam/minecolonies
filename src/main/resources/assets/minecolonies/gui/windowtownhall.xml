@@ -119,7 +119,7 @@
                                 <box size="100% 20" linewidth="2">
                                     <label id="name" size="60 12" textscale="0.7" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
                                     <button id="trigger" size="20 16" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOff)"/>
-                                    <label id="index" pos = "100 100"></label>
+                                    <label id="index" pos="100 100"></label>
                                 </box>
                             </list>
                         </view>
@@ -128,7 +128,7 @@
                                 <box size="100% 20" linewidth="2">
                                     <label id="name" size="60 12" textscale="0.7" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
                                     <button id="trigger" size="20 16" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOff)"/>
-                                    <label id="index" pos = "100 100"></label>
+                                    <label id="index" pos="100 100"></label>
                                 </box>
                             </list>
                         </view>
@@ -137,7 +137,7 @@
                                 <box size="100% 20" linewidth="2">
                                     <label id="name" size="60 12" textscale="0.7" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
                                     <button id="trigger" size="20 16" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOff)"/>
-                                    <label id="index" pos = "100 100"></label>
+                                    <label id="index" pos="100 100"></label>
                                 </box>
                             </list>
                         </view>
@@ -146,15 +146,15 @@
                                 <box size="100% 20" linewidth="2">
                                     <label id="name" size="60 12" textscale="0.7" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
                                     <button id="trigger" size="20 16" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOff)"/>
-                                    <label id="index" pos = "100 100"></label>
+                                    <label id="index" pos="100 100"></label>
                                 </box>
                             </list>
                         </view>
                     </switch>
-                    <button id="officerPage"  size="42 15" pos="10 50" label="Officer"/>
-                    <button id="friendPage"   size="42 15" pos="10 70" label="Friend"/>
-                    <button id="neutralPage"  size="42 15" pos="10 90" label="Neutral"/>
-                    <button id="hostilePage"  size="42 15" pos="10 110" label="Hostile"/>
+                    <button id="officerPage" size="42 15" pos="10 50" label="Officer"/>
+                    <button id="friendPage" size="42 15" pos="10 70" label="Friend"/>
+                    <button id="neutralPage" size="42 15" pos="10 90" label="Neutral"/>
+                    <button id="hostilePage" size="42 15" pos="10 110" label="Hostile"/>
                 </view>
 
                 <!--TODO Make this list work! -->

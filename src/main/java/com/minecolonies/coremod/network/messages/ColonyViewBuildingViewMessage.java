@@ -2,10 +2,13 @@ package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.requestsystem.factory.IFactoryController;
+import com.minecolonies.coremod.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -17,9 +20,12 @@ import org.jetbrains.annotations.Nullable;
  */
 public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<ColonyViewBuildingViewMessage, IMessage>
 {
-    private int      colonyId;
-    private BlockPos buildingId;
-    private ByteBuf  buildingData;
+
+    private transient IFactoryController factoryController;
+    private           int                colonyId;
+    private           IToken             buildingId;
+    private           BlockPos           buildingLocation;
+    private           ByteBuf            buildingData;
 
     /**
      * Empty constructor used when registering the message.
@@ -36,8 +42,10 @@ public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<
      */
     public ColonyViewBuildingViewMessage(@NotNull final AbstractBuilding building)
     {
+        this.factoryController = building.getColony().getFactoryController();
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
+        this.buildingLocation = building.getLocation().getInDimensionLocation();
         this.buildingData = Unpooled.buffer();
         building.serializeToView(this.buildingData);
     }
@@ -46,7 +54,10 @@ public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<
     public void fromBytes(@NotNull final ByteBuf buf)
     {
         colonyId = buf.readInt();
-        buildingId = BlockPosUtil.readFromByteBuf(buf);
+        factoryController = ColonyManager.getColonyView(colonyId).getFactoryController();
+
+        buildingId = factoryController.deserialize(ByteBufUtils.readTag(buf));
+        buildingLocation = BlockPosUtil.readFromByteBuf(buf);
         buildingData = Unpooled.buffer(buf.readableBytes());
         buf.readBytes(buildingData, buf.readableBytes());
     }
@@ -55,7 +66,8 @@ public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<
     public void toBytes(@NotNull final ByteBuf buf)
     {
         buf.writeInt(colonyId);
-        BlockPosUtil.writeToByteBuf(buf, buildingId);
+        ByteBufUtils.writeTag(buf, factoryController.serialize(buildingId));
+        BlockPosUtil.writeToByteBuf(buf, buildingLocation);
         buf.writeBytes(buildingData);
     }
 
@@ -63,6 +75,6 @@ public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<
     @Override
     public IMessage onMessage(@NotNull final ColonyViewBuildingViewMessage message, final MessageContext ctx)
     {
-        return ColonyManager.handleColonyBuildingViewMessage(message.colonyId, message.buildingId, message.buildingData);
+        return ColonyManager.handleColonyBuildingViewMessage(message.colonyId, message.buildingLocation, message.buildingId, message.buildingData);
     }
 }

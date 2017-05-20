@@ -124,7 +124,7 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
             if (InventoryUtils.getItemStackSize(remainingItemStack) > 0)
             {
                 final World world = colony.getWorld();
-                for (final BlockPos pos : building.getAdditionalCountainers())
+                for (final BlockPos pos : building.getAdditionalContainers())
                 {
                     final TileEntity entity = world.getTileEntity(pos);
                     remainingItemStack = InventoryUtils.addItemStackToProviderWithResult(entity, remainingItemStack);
@@ -149,7 +149,7 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
         {
             final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory), item, message.itemStack.getItemDamage());
             final ItemStack itemsTaken = player.inventory.decrStackSize(slot, amountToRemoveFromPlayer);
-            amountToRemoveFromPlayer-=InventoryUtils.getItemStackSize(itemsTaken);
+            amountToRemoveFromPlayer -= InventoryUtils.getItemStackSize(itemsTaken);
         }
 
     }

@@ -29,7 +29,8 @@ public class StaticLocation implements ILocation {
      */
     @NotNull
     @Override
-    public BlockPos getLocation() {
+    public BlockPos getInDimensionLocation()
+    {
         return pos;
     }
 
@@ -98,7 +99,7 @@ public class StaticLocation implements ILocation {
         @Override
         public NBTTagCompound serialize(@NotNull IFactoryController controller, @NotNull StaticLocation request) {
             NBTTagCompound compound = new NBTTagCompound();
-            compound.setLong(NBT_POS, request.getLocation().toLong());
+            compound.setLong(NBT_POS, request.getInDimensionLocation().toLong());
             compound.setInteger(NBT_DIM, request.getDimension());
             return compound;
         }
@@ -127,7 +128,7 @@ public class StaticLocation implements ILocation {
         @NotNull
         @Override
         public StaticLocation getNewInstance(@NotNull StaticLocation input) {
-            return new StaticLocation(input.getLocation(), input.getDimension());
+            return new StaticLocation(input.getInDimensionLocation(), input.getDimension());
         }
     }
 }

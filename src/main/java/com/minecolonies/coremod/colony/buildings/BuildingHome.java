@@ -6,6 +6,7 @@ import com.minecolonies.coremod.client.gui.WindowHomeBuilding;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.requestsystem.token.IToken;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
@@ -25,7 +26,7 @@ public class BuildingHome extends AbstractBuildingHut
     private static final String            CITIZEN       = "Citizen";
     @NotNull
     private final        List<CitizenData> residents     = new ArrayList<>();
-    private boolean isFoodNeeded = false;
+    private              boolean           isFoodNeeded  = false;
 
     /**
      * Instantiates a new citizen hut.
@@ -48,7 +49,7 @@ public class BuildingHome extends AbstractBuildingHut
         final int[] residentIds = compound.getIntArray(TAG_RESIDENTS);
         for (final int citizenId : residentIds)
         {
-            final CitizenData citizen = getColony().getCitizen(citizenId);
+            final CitizenData citizen = (CitizenData) getColony().getCitizen(citizenId);
             if (citizen != null)
             {
                 // Bypass addResident (which marks dirty)
@@ -118,6 +119,7 @@ public class BuildingHome extends AbstractBuildingHut
 
     /**
      * Set food requirements for the building.
+     *
      * @param foodNeeded set true if required.
      */
     public void setFoodNeeded(final boolean foodNeeded)
@@ -127,6 +129,7 @@ public class BuildingHome extends AbstractBuildingHut
 
     /**
      * Check food requirements of the building.
+     *
      * @return true of false.
      */
     public boolean isFoodNeeded()
@@ -244,9 +247,9 @@ public class BuildingHome extends AbstractBuildingHut
          * @param c the colonyView.
          * @param l the position the hut is at.
          */
-        public View(final ColonyView c, final BlockPos l)
+        public View(final ColonyView c, @NotNull final BlockPos l, @NotNull final IToken id)
         {
-            super(c, l);
+            super(c, l, id);
         }
 
         @NotNull

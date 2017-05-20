@@ -32,14 +32,14 @@ public class MineColonies
      * Forge created instance of the Mod.
      */
     @Mod.Instance(Constants.MOD_ID)
-    public static  MineColonies         instance;
+    public static MineColonies instance;
     /**
      * Access to the proxy associated with your current side. Variable updated
      * by forge.
      */
     @SidedProxy(clientSide = Constants.CLIENT_PROXY_LOCATION, serverSide = Constants.SERVER_PROXY_LOCATION)
 
-    public static  IProxy               proxy;
+    public static IProxy       proxy;
 
     private static SimpleNetworkWrapper network;
 

@@ -13,7 +13,7 @@ public interface ILocation {
      * @return The location.
      */
     @NotNull
-    BlockPos getLocation();
+    BlockPos getInDimensionLocation();
 
     /**
      * Method to get the dimension of the location.

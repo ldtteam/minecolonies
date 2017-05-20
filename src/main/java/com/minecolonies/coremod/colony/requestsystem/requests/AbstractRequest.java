@@ -5,8 +5,8 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.requestsystem.IRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.RequestState;
-import com.minecolonies.coremod.colony.requestsystem.location.ILocatable;
 import com.minecolonies.coremod.colony.requestsystem.request.IRequest;
+import com.minecolonies.coremod.colony.requestsystem.requester.IRequester;
 import com.minecolonies.coremod.colony.requestsystem.token.IToken;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -35,9 +35,9 @@ public abstract class AbstractRequest<R> implements IRequest<R> {
     @NotNull
     private final ArrayList<IToken> children;
     @NotNull
-    private final ILocatable        requester;
+    private final IRequester        requester;
 
-    public AbstractRequest(@NotNull ILocatable requester, @NotNull IToken token, @NotNull R requested)
+    public AbstractRequest(@NotNull IRequester requester, @NotNull IToken token, @NotNull R requested)
     {
         this.requester = requester;
         this.token = token;
@@ -46,7 +46,7 @@ public abstract class AbstractRequest<R> implements IRequest<R> {
         children = new ArrayList<>();
     }
 
-    public AbstractRequest(@NotNull ILocatable requester, @NotNull IToken token, @NotNull RequestState state, @NotNull R requested)
+    public AbstractRequest(@NotNull IRequester requester, @NotNull IToken token, @NotNull RequestState state, @NotNull R requested)
     {
         this.requester = requester;
         this.token = token;
@@ -77,7 +77,7 @@ public abstract class AbstractRequest<R> implements IRequest<R> {
      */
     @NotNull
     @Override
-    public ILocatable getRequesterLocation()
+    public IRequester getRequester()
     {
         return requester;
     }

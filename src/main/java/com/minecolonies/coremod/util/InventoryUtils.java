@@ -297,12 +297,10 @@ public class InventoryUtils
     {
         //Test with two different ItemStacks to insert in simulation mode.
         return IntStream.range(0, itemHandler.getSlots())
-                .filter(slot -> isItemStackEmpty(itemHandler.getStackInSlot(slot)))
-                .findFirst()
-                .orElse(-1);
+                 .filter(slot -> isItemStackEmpty(itemHandler.getStackInSlot(slot)))
+                 .findFirst()
+                 .orElse(-1);
     }
-
-
 
     /**
      * Returns if the {@link IItemHandler} is full.
@@ -314,8 +312,6 @@ public class InventoryUtils
     {
         return getFirstOpenSlotFromItemHandler(itemHandler) == -1;
     }
-
-
 
     /**
      * Looks for a {@link ItemPickaxe} to mine a block of {@code requiredLevel},
@@ -365,12 +361,7 @@ public class InventoryUtils
         }
 
         final int level = Utils.getMiningLevel(stack, toolName);
-        if (Utils.isTool(stack, toolName) && verifyToolLevel(stack, level, minimalLevel))
-        {
-            return true;
-        }
-
-        return false;
+        return Utils.isTool(stack, toolName) && verifyToolLevel(stack, level, minimalLevel);
     }
 
     /**
@@ -1442,19 +1433,20 @@ public class InventoryUtils
         return false;
     }
 
-    public static boolean transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(@NotNull final IItemHandler sourceHandler,
-            @NotNull final Predicate<ItemStack> itemStackSelectionPredicate,
-            @NotNull int amount, @NotNull IItemHandler targetHandler)
+    public static boolean transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
+                                                                                           @NotNull final IItemHandler sourceHandler,
+                                                                                           @NotNull final Predicate<ItemStack> itemStackSelectionPredicate,
+                                                                                           @NotNull int amount, @NotNull IItemHandler targetHandler)
     {
         final int desiredItemSlot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(sourceHandler,
-                itemStackSelectionPredicate::test);
+          itemStackSelectionPredicate::test);
 
-        if(desiredItemSlot == -1)
+        if (desiredItemSlot == -1)
         {
             return false;
         }
         final ItemStack returnStack = sourceHandler.extractItem(desiredItemSlot, amount, false);
-        if(InventoryUtils.isItemStackEmpty(returnStack))
+        if (InventoryUtils.isItemStackEmpty(returnStack))
         {
             return false;
         }
@@ -1506,9 +1498,9 @@ public class InventoryUtils
     public static Boolean compareItemStacksIgnoreStackSize(ItemStack itemStack1, ItemStack itemStack2)
     {
         if (!isItemStackEmpty(itemStack1) &&
-            !isItemStackEmpty(itemStack2) &&
-            itemStack1.getItem() == itemStack2.getItem() &&
-            itemStack1.getItemDamage() == itemStack2.getItemDamage())
+              !isItemStackEmpty(itemStack2) &&
+              itemStack1.getItem() == itemStack2.getItem() &&
+              itemStack1.getItemDamage() == itemStack2.getItemDamage())
         {
             // Then sort on NBT
             if (itemStack1.hasTagCompound() && itemStack2.hasTagCompound())

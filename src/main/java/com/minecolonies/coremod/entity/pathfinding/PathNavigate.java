@@ -408,7 +408,7 @@ public class PathNavigate extends PathNavigateGround
     {
         @NotNull final BlockPos start = AbstractPathJob.prepareStart(entity);
         return (PathJobFindTree.TreePathResult) setPathJob(
-          new PathJobFindTree(entity.world, start, ((EntityCitizen) entity).getWorkBuilding().getLocation(), range), null, speed);
+          new PathJobFindTree(entity.world, start, ((EntityCitizen) entity).getWorkBuilding().getLocation().getInDimensionLocation(), range), null, speed);
     }
 
     /**
@@ -424,7 +424,7 @@ public class PathNavigate extends PathNavigateGround
     {
         @NotNull final BlockPos start = AbstractPathJob.prepareStart(entity);
         return (PathJobFindWater.WaterPathResult) setPathJob(
-          new PathJobFindWater(entity.world, start, ((EntityCitizen) entity).getWorkBuilding().getLocation(), range, ponds), null, speed);
+          new PathJobFindWater(entity.world, start, ((EntityCitizen) entity).getWorkBuilding().getLocation().getInDimensionLocation(), range, ponds), null, speed);
     }
 
     /**

@@ -6,6 +6,7 @@ import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
+import com.minecolonies.coremod.colony.workorder.WorkOrderType;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Log;
@@ -61,7 +62,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
     public WorkOrderBuild(@NotNull final AbstractBuilding building, final int level)
     {
         super();
-        this.buildingLocation = building.getID();
+        this.buildingLocation = building.getLocation().getInDimensionLocation();
         this.upgradeLevel = level;
         this.upgradeName = building.getSchematicName() + level;
         this.buildingRotation = building.getRotation();
@@ -71,11 +72,11 @@ public class WorkOrderBuild extends AbstractWorkOrder
 
         //normalize the structureName
         Structures.StructureName sn = new Structures.StructureName(Structures.SCHEMATICS_PREFIX, building.getStyle(), this.getUpgradeName());
-        if(building.getTileEntity() != null && !building.getTileEntity().getStyle().isEmpty())
+        if (building.getTileEntity() != null && !building.getTileEntity().getStyle().isEmpty())
         {
             final String previousStructureName = sn.toString();
             sn = new Structures.StructureName(Structures.SCHEMATICS_PREFIX, building.getTileEntity().getStyle(), this.getUpgradeName());
-            Log.getLogger().info("WorkOrderBuild at location " + this.buildingLocation + " is using " +  sn + " instead of " + previousStructureName);
+            Log.getLogger().info("WorkOrderBuild at location " + this.buildingLocation + " is using " + sn + " instead of " + previousStructureName);
         }
 
 
@@ -137,7 +138,6 @@ public class WorkOrderBuild extends AbstractWorkOrder
             {
                 Log.getLogger().warn("WorkOrderBuild.readFromNBT: replace " + sn + " by " + newSN);
                 structureName = newSN.toString();
-
             }
         }
 

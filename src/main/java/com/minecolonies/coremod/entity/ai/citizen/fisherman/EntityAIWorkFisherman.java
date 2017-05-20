@@ -12,7 +12,6 @@ import com.minecolonies.coremod.sounds.FishermanSounds;
 import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.SoundUtils;
 import com.minecolonies.coremod.util.Utils;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
@@ -494,7 +493,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         if (!world.isRemote)
         {
             worker.faceBlock(job.getWater());
-            world.playSound((EntityPlayer) null,
+            world.playSound(null,
               this.worker.getPosition(),
               SoundEvents.ENTITY_BOBBER_THROW,
               SoundCategory.NEUTRAL,

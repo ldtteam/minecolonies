@@ -94,7 +94,7 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
         // Or that we are on the correct page
         if (switchView == null || switchView.getCurrentView().getID().equals(PAGE_ACTIONS))
         {
-            final AbstractBuilding.View buildingView = building.getColony().getBuilding(building.getID());
+            final AbstractBuilding.View buildingView = building.getColony().getBuilding(building.getLocation().getInDimensionLocation());
 
             if (buttonPrevPage != null)
             {

@@ -33,7 +33,7 @@ public class DropDownList extends View implements Button.Handler
     /**
      * date required to fill the list.
      */
-    protected DataProvider dataProvider;
+    protected DataProvider  dataProvider;
 
     /**
      * handler for the accept method.
@@ -94,8 +94,9 @@ public class DropDownList extends View implements Button.Handler
 
     /**
      * handle when the button is clicked on.
-     *
+     * <p>
      * The list is shown or hidden depending of the previous state.
+     *
      * @param button which have been clicked on.
      */
     public void onButtonClicked(@NotNull final Button button)
@@ -112,11 +113,11 @@ public class DropDownList extends View implements Button.Handler
                 overlay.putInside(button.getWindow());
                 open();
             }
-       }
-       else
-       {
+        }
+        else
+        {
             onButtonClickedFromList(button);
-       }
+        }
     }
 
     /**
@@ -134,7 +135,6 @@ public class DropDownList extends View implements Button.Handler
             close();
         }
     }
-
 
     /**
      * get the index of the selected item in the list.
@@ -253,7 +253,7 @@ public class DropDownList extends View implements Button.Handler
     @Override
     protected void drawSelf(final int mx, final int my)
     {
-        button.drawSelf(mx,my);
+        button.drawSelf(mx, my);
     }
 
     @Override
@@ -294,8 +294,8 @@ public class DropDownList extends View implements Button.Handler
      * Update an pane item in the list.
      *
      * @param rowPane which need the update
-     * @param index of the item
-     * @param label use for this item
+     * @param index   of the item
+     * @param label   use for this item
      */
     private void updateDropDownItem(@NotNull final Pane rowPane, final int index, final String label)
     {
@@ -310,7 +310,7 @@ public class DropDownList extends View implements Button.Handler
             }
             choiceButton.setLabel(label);
             choiceButton.setHandler(this);
-       }
+        }
     }
 
     /**

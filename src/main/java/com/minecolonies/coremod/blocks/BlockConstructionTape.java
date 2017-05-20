@@ -256,14 +256,14 @@ public class BlockConstructionTape extends Block
     @NotNull
     @Override
     public IBlockState getStateForPlacement(
-                                                   final World worldIn,
-                                                   final BlockPos pos,
-                                                   final EnumFacing facing,
-                                                   final float hitX,
-                                                   final float hitY,
-                                                   final float hitZ,
-                                                   final int meta,
-                                                   final EntityLivingBase placer)
+                                             final World worldIn,
+                                             final BlockPos pos,
+                                             final EnumFacing facing,
+                                             final float hitX,
+                                             final float hitY,
+                                             final float hitZ,
+                                             final int meta,
+                                             final EntityLivingBase placer)
     {
         @NotNull final EnumFacing enumFacing = (placer == null) ? EnumFacing.NORTH : EnumFacing.fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);

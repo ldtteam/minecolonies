@@ -56,7 +56,7 @@ public class CitizenInfoCommand extends AbstractCitizensCommands
     @Override
     void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final Colony colony, final int citizenId)
     {
-        final CitizenData citizenData = colony.getCitizen(citizenId);
+        final CitizenData citizenData = (CitizenData) colony.getCitizen(citizenId);
         final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
         sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION,
           citizenData.getId(),
@@ -83,7 +83,7 @@ public class CitizenInfoCommand extends AbstractCitizensCommands
         }
         else
         {
-            final BlockPos workingPosition = entityCitizen.getWorkBuilding().getLocation();
+            final BlockPos workingPosition = entityCitizen.getWorkBuilding().getLocation().getInDimensionLocation();
             sender.sendMessage(new TextComponentString(String.format(CITIZEN_WORK_POSITION,
               workingPosition.getX(),
               workingPosition.getY(),

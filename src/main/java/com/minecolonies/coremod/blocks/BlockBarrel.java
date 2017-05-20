@@ -22,7 +22,7 @@ import java.util.Random;
 
 public class BlockBarrel extends Block
 {
-    private static final int MIN_FULLNESS = 0;
+    private static final int MIN_FULLNESS           = 0;
     private static final int MAX_FULLNESS           = 16;
     private static final int BARRELSTATE_FILLING    = 0;
     private static final int BARRELSTATE_COMPOSTING = 1;

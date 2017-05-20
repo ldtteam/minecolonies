@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.permissions;
 import net.minecraft.entity.player.EntityPlayer;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -26,6 +27,9 @@ public interface IPermissions
      * @return true if the player is a member of the colony.
      */
     boolean isColonyMember(EntityPlayer player);
+
+    @NotNull
+    Map<UUID, Player> getPlayers();
 
     /**
      * Get the rank of a UUID.

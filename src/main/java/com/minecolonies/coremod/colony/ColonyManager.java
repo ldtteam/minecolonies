@@ -5,8 +5,9 @@ import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.IBuilding;
-import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.coremod.colony.permissions.Player;
 import com.minecolonies.coremod.colony.permissions.Rank;
+import com.minecolonies.coremod.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.util.AchievementUtils;
@@ -57,11 +58,11 @@ public final class ColonyManager
     /**
      * The tag of the colonies.
      */
-    private static final String                     TAG_COLONIES          = "colonies";
+    private static final String TAG_COLONIES = "colonies";
     /**
      * The tag of the pseudo unique identifier
      */
-    private static final String                     TAG_UUID              = "uuid";
+    private static final String TAG_UUID     = "uuid";
 
     /**
      * The damage source used to kill citizens.
@@ -105,11 +106,11 @@ public final class ColonyManager
      * Indicate if a schematic have just been downloaded.
      * Client only
      */
-    private static boolean schematicDownloaded = false;
+    private static          boolean schematicDownloaded = false;
     /**
      * Pseudo unique id for the server
      */
-    private static volatile UUID serverUUID = null;
+    private static volatile UUID    serverUUID          = null;
 
     private ColonyManager()
     {
@@ -189,7 +190,7 @@ public final class ColonyManager
             {
                 AbstractBuilding building = (AbstractBuilding) buildingCore;
 
-                final BlockPos location = building.getLocation();
+                final BlockPos location = building.getLocation().getInDimensionLocation();
                 Log.getLogger().info("Delete Building at " + location);
                 building.destroy();
                 for (final World world : colonyWorlds)
@@ -488,7 +489,7 @@ public final class ColonyManager
     {
         for (@NotNull final ColonyView c : colonyViews)
         {
-            final Permissions.Player p = c.getPlayers().get(owner);
+            final Player p = c.getPlayers().get(owner);
             if (p != null && p.getRank().equals(Rank.OWNER))
             {
                 return c;
@@ -963,22 +964,25 @@ public final class ColonyManager
     }
 
     /**
-     * Returns result of {@link ColonyView#handleColonyBuildingViewMessage(BlockPos,
-     * ByteBuf)} if {@link #getColonyView(int)} gives a not-null result. If
-     * {@link #getColonyView(int)} is null, returns null.
+     * Returns result of {@link ColonyView#handleColonyBuildingViewMessage(BlockPos, IToken, ByteBuf)} if {@link #getColonyView(int)} gives a not-null result.
+     * If {@link #getColonyView(int)} is null, returns null.
      *
      * @param colonyId   ID of the colony.
+     * @param buildingLocation The location of the building.
      * @param buildingId ID of the building.
      * @param buf        {@link ByteBuf} with colony data.
-     * @return result of {@link ColonyView#handleColonyBuildingViewMessage(BlockPos,
-     * ByteBuf)} or null.
+     * @return result of {@link ColonyView#handleColonyBuildingViewMessage(BlockPos, IToken, ByteBuf)} or null.
      */
-    public static IMessage handleColonyBuildingViewMessage(final int colonyId, final BlockPos buildingId, @NotNull final ByteBuf buf)
+    public static IMessage handleColonyBuildingViewMessage(
+                                                            final int colonyId,
+                                                            final BlockPos buildingLocation,
+                                                            final IToken buildingId,
+                                                            @NotNull final ByteBuf buf)
     {
         final ColonyView view = getColonyView(colonyId);
         if (view != null)
         {
-            return view.handleColonyBuildingViewMessage(buildingId, buf);
+            return view.handleColonyBuildingViewMessage(buildingLocation, buildingId, buf);
         }
         else
         {

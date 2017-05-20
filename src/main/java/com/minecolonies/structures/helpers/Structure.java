@@ -190,7 +190,7 @@ public class Structure
      * - schematics folder
      * - jar
      * It should be the exact opposite that the way used to build the list.
-     *
+     * <p>
      * Suppressing Sonar Rule squid:S2095
      * This rule enforces "Close this InputStream"
      * But in this case the rule does not apply because

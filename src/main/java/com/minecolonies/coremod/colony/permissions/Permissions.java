@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.permissions;
 
-import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.IColony;
 import com.minecolonies.coremod.network.PacketUtils;
 import com.minecolonies.coremod.util.AchievementUtils;
 import com.minecolonies.coremod.util.Utils;
@@ -18,6 +18,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.minecolonies.coremod.colony.permissions.Action.*;
+import static com.minecolonies.coremod.colony.permissions.Rank.*;
 
 /**
  * Colony Permissions System.
@@ -46,17 +49,17 @@ public class Permissions implements IPermissions
      */
     static
     {
-        setPromotionRanks(Rank.OFFICER, Rank.OFFICER, Rank.FRIEND);
-        setPromotionRanks(Rank.FRIEND, Rank.OFFICER, Rank.NEUTRAL);
-        setPromotionRanks(Rank.NEUTRAL, Rank.FRIEND, Rank.HOSTILE);
-        setPromotionRanks(Rank.HOSTILE, Rank.NEUTRAL, Rank.HOSTILE);
+        setPromotionRanks(OFFICER, OFFICER, FRIEND);
+        setPromotionRanks(FRIEND, OFFICER, NEUTRAL);
+        setPromotionRanks(NEUTRAL, FRIEND, HOSTILE);
+        setPromotionRanks(HOSTILE, NEUTRAL, HOSTILE);
     }
 
     /**
      * The colony the permissions belong to.
      */
     @NotNull
-    private final Colony colony;
+    private final IColony colony;
 
     /**
      * Players registered to the colony.
@@ -94,86 +97,86 @@ public class Permissions implements IPermissions
      *
      * @param colony the colony this permissionMap object belongs to.
      */
-    public Permissions(@NotNull final Colony colony)
+    public Permissions(@NotNull final IColony colony)
     {
         //Owner
-        permissionMap.put(Rank.OWNER, 0);
-        this.setPermission(Rank.OWNER, Action.ACCESS_HUTS);
-        this.setPermission(Rank.OWNER, Action.PLACE_HUTS);
-        this.setPermission(Rank.OWNER, Action.BREAK_HUTS);
-        this.setPermission(Rank.OWNER, Action.CAN_PROMOTE);
-        this.setPermission(Rank.OWNER, Action.CAN_DEMOTE);
-        this.setPermission(Rank.OWNER, Action.SEND_MESSAGES);
-        this.setPermission(Rank.OWNER, Action.EDIT_PERMISSIONS);
-        this.setPermission(Rank.OWNER, Action.MANAGE_HUTS);
-        this.setPermission(Rank.OWNER, Action.RECEIVE_MESSAGES);
-        this.setPermission(Rank.OWNER, Action.USE_SCAN_TOOL);
-        this.setPermission(Rank.OWNER, Action.PLACE_BLOCKS);
-        this.setPermission(Rank.OWNER, Action.BREAK_BLOCKS);
-        this.setPermission(Rank.OWNER, Action.TOSS_ITEM);
-        this.setPermission(Rank.OWNER, Action.PICKUP_ITEM);
-        this.setPermission(Rank.OWNER, Action.FILL_BUCKET);
-        this.setPermission(Rank.OWNER, Action.OPEN_CONTAINER);
-        this.setPermission(Rank.OWNER, Action.RIGHTCLICK_BLOCK);
-        this.setPermission(Rank.OWNER, Action.RIGHTCLICK_ENTITY);
-        this.setPermission(Rank.OWNER, Action.THROW_POTION);
-        this.setPermission(Rank.OWNER, Action.SHOOT_ARROW);
-        this.setPermission(Rank.OWNER, Action.ATTACK_CITIZEN);
-        this.setPermission(Rank.OWNER, Action.ATTACK_ENTITY);
-        this.setPermission(Rank.OWNER, Action.ACCESS_FREE_BLOCKS);
-        this.setPermission(Rank.OWNER, Action.TELEPORT_TO_COLONY);
+        permissionMap.put(OWNER, 0);
+        this.setPermission(OWNER, ACCESS_HUTS);
+        this.setPermission(OWNER, PLACE_HUTS);
+        this.setPermission(OWNER, BREAK_HUTS);
+        this.setPermission(OWNER, CAN_PROMOTE);
+        this.setPermission(OWNER, CAN_DEMOTE);
+        this.setPermission(OWNER, SEND_MESSAGES);
+        this.setPermission(OWNER, EDIT_PERMISSIONS);
+        this.setPermission(OWNER, MANAGE_HUTS);
+        this.setPermission(OWNER, RECEIVE_MESSAGES);
+        this.setPermission(OWNER, USE_SCAN_TOOL);
+        this.setPermission(OWNER, PLACE_BLOCKS);
+        this.setPermission(OWNER, BREAK_BLOCKS);
+        this.setPermission(OWNER, TOSS_ITEM);
+        this.setPermission(OWNER, PICKUP_ITEM);
+        this.setPermission(OWNER, FILL_BUCKET);
+        this.setPermission(OWNER, OPEN_CONTAINER);
+        this.setPermission(OWNER, RIGHTCLICK_BLOCK);
+        this.setPermission(OWNER, RIGHTCLICK_ENTITY);
+        this.setPermission(OWNER, THROW_POTION);
+        this.setPermission(OWNER, SHOOT_ARROW);
+        this.setPermission(OWNER, ATTACK_CITIZEN);
+        this.setPermission(OWNER, ATTACK_ENTITY);
+        this.setPermission(OWNER, ACCESS_FREE_BLOCKS);
+        this.setPermission(OWNER, TELEPORT_TO_COLONY);
 
 
         //Officer
-        permissionMap.put(Rank.OFFICER, 0);
-        this.setPermission(Rank.OFFICER, Action.ACCESS_HUTS);
-        this.setPermission(Rank.OFFICER, Action.PLACE_HUTS);
-        this.setPermission(Rank.OFFICER, Action.BREAK_HUTS);
-        this.setPermission(Rank.OFFICER, Action.CAN_PROMOTE);
-        this.setPermission(Rank.OFFICER, Action.CAN_DEMOTE);
-        this.setPermission(Rank.OFFICER, Action.SEND_MESSAGES);
-        this.setPermission(Rank.OFFICER, Action.MANAGE_HUTS);
-        this.setPermission(Rank.OFFICER, Action.RECEIVE_MESSAGES);
-        this.setPermission(Rank.OFFICER, Action.USE_SCAN_TOOL);
-        this.setPermission(Rank.OFFICER, Action.PLACE_BLOCKS);
-        this.setPermission(Rank.OFFICER, Action.BREAK_BLOCKS);
-        this.setPermission(Rank.OFFICER, Action.TOSS_ITEM);
-        this.setPermission(Rank.OFFICER, Action.PICKUP_ITEM);
-        this.setPermission(Rank.OFFICER, Action.FILL_BUCKET);
-        this.setPermission(Rank.OFFICER, Action.OPEN_CONTAINER);
-        this.setPermission(Rank.OFFICER, Action.RIGHTCLICK_BLOCK);
-        this.setPermission(Rank.OFFICER, Action.RIGHTCLICK_ENTITY);
-        this.setPermission(Rank.OFFICER, Action.THROW_POTION);
-        this.setPermission(Rank.OFFICER, Action.SHOOT_ARROW);
-        this.setPermission(Rank.OFFICER, Action.ATTACK_CITIZEN);
-        this.setPermission(Rank.OFFICER, Action.ATTACK_ENTITY);
-        this.setPermission(Rank.OFFICER, Action.ACCESS_FREE_BLOCKS);
-        this.setPermission(Rank.OFFICER, Action.TELEPORT_TO_COLONY);
+        permissionMap.put(OFFICER, 0);
+        this.setPermission(OFFICER, ACCESS_HUTS);
+        this.setPermission(OFFICER, PLACE_HUTS);
+        this.setPermission(OFFICER, BREAK_HUTS);
+        this.setPermission(OFFICER, CAN_PROMOTE);
+        this.setPermission(OFFICER, CAN_DEMOTE);
+        this.setPermission(OFFICER, SEND_MESSAGES);
+        this.setPermission(OFFICER, MANAGE_HUTS);
+        this.setPermission(OFFICER, RECEIVE_MESSAGES);
+        this.setPermission(OFFICER, USE_SCAN_TOOL);
+        this.setPermission(OFFICER, PLACE_BLOCKS);
+        this.setPermission(OFFICER, BREAK_BLOCKS);
+        this.setPermission(OFFICER, TOSS_ITEM);
+        this.setPermission(OFFICER, PICKUP_ITEM);
+        this.setPermission(OFFICER, FILL_BUCKET);
+        this.setPermission(OFFICER, OPEN_CONTAINER);
+        this.setPermission(OFFICER, RIGHTCLICK_BLOCK);
+        this.setPermission(OFFICER, RIGHTCLICK_ENTITY);
+        this.setPermission(OFFICER, THROW_POTION);
+        this.setPermission(OFFICER, SHOOT_ARROW);
+        this.setPermission(OFFICER, ATTACK_CITIZEN);
+        this.setPermission(OFFICER, ATTACK_ENTITY);
+        this.setPermission(OFFICER, ACCESS_FREE_BLOCKS);
+        this.setPermission(OFFICER, TELEPORT_TO_COLONY);
 
 
         //Friend
-        permissionMap.put(Rank.FRIEND, 0);
-        this.setPermission(Rank.FRIEND, Action.ACCESS_HUTS);
-        this.setPermission(Rank.FRIEND, Action.USE_SCAN_TOOL);
-        this.setPermission(Rank.FRIEND, Action.TOSS_ITEM);
-        this.setPermission(Rank.FRIEND, Action.PICKUP_ITEM);
-        this.setPermission(Rank.FRIEND, Action.RIGHTCLICK_BLOCK);
-        this.setPermission(Rank.FRIEND, Action.RIGHTCLICK_ENTITY);
-        this.setPermission(Rank.FRIEND, Action.THROW_POTION);
-        this.setPermission(Rank.FRIEND, Action.SHOOT_ARROW);
-        this.setPermission(Rank.FRIEND, Action.ATTACK_CITIZEN);
-        this.setPermission(Rank.FRIEND, Action.ATTACK_ENTITY);
-        this.setPermission(Rank.FRIEND, Action.ACCESS_FREE_BLOCKS);
-        this.setPermission(Rank.FRIEND, Action.TELEPORT_TO_COLONY);
+        permissionMap.put(FRIEND, 0);
+        this.setPermission(FRIEND, ACCESS_HUTS);
+        this.setPermission(FRIEND, USE_SCAN_TOOL);
+        this.setPermission(FRIEND, TOSS_ITEM);
+        this.setPermission(FRIEND, PICKUP_ITEM);
+        this.setPermission(FRIEND, RIGHTCLICK_BLOCK);
+        this.setPermission(FRIEND, RIGHTCLICK_ENTITY);
+        this.setPermission(FRIEND, THROW_POTION);
+        this.setPermission(FRIEND, SHOOT_ARROW);
+        this.setPermission(FRIEND, ATTACK_CITIZEN);
+        this.setPermission(FRIEND, ATTACK_ENTITY);
+        this.setPermission(FRIEND, ACCESS_FREE_BLOCKS);
+        this.setPermission(FRIEND, TELEPORT_TO_COLONY);
 
 
         //Neutral
-        permissionMap.put(Rank.NEUTRAL, 0);
-        this.setPermission(Rank.NEUTRAL, Action.ACCESS_FREE_BLOCKS);
+        permissionMap.put(NEUTRAL, 0);
+        this.setPermission(NEUTRAL, ACCESS_FREE_BLOCKS);
 
         //Hostile
-        permissionMap.put(Rank.HOSTILE, 0);
-        this.setPermission(Rank.HOSTILE, Action.GUARDS_ATTACK);
+        permissionMap.put(HOSTILE, 0);
+        this.setPermission(HOSTILE, GUARDS_ATTACK);
 
         this.colony = colony;
 
@@ -191,9 +194,9 @@ public class Permissions implements IPermissions
         final int flags = permissionMap.get(rank);
 
         //check that flag isn't set
-        if (!Utils.testFlag(flags, action.flag))
+        if (!Utils.testFlag(flags, action.getFlag()))
         {
-            permissionMap.put(rank, Utils.setFlag(flags, action.flag));
+            permissionMap.put(rank, Utils.setFlag(flags, action.getFlag()));
             markDirty();
         }
     }
@@ -260,7 +263,7 @@ public class Permissions implements IPermissions
      */
     public void togglePermission(final Rank rank, @NotNull final Action action)
     {
-        permissionMap.put(rank, Utils.toggleFlag(permissionMap.get(rank), action.flag));
+        permissionMap.put(rank, Utils.toggleFlag(permissionMap.get(rank), action.getFlag()));
         markDirty();
     }
 
@@ -301,7 +304,7 @@ public class Permissions implements IPermissions
             for (int j = 0; j < flagsTagList.tagCount(); ++j)
             {
                 final String flag = flagsTagList.getStringTagAt(j);
-                flags = Utils.setFlag(flags, Action.valueOf(flag).flag);
+                flags = Utils.setFlag(flags, Action.valueOf(flag).getFlag());
             }
             permissionMap.put(rank, flags);
         }
@@ -339,56 +342,56 @@ public class Permissions implements IPermissions
      */
     private void updateNewPermissions()
     {
-        this.setPermission(Rank.OWNER, Action.MANAGE_HUTS);
-        this.setPermission(Rank.OWNER, Action.RECEIVE_MESSAGES);
-        this.setPermission(Rank.OWNER, Action.USE_SCAN_TOOL);
-        this.setPermission(Rank.OWNER, Action.PLACE_BLOCKS);
-        this.setPermission(Rank.OWNER, Action.BREAK_BLOCKS);
-        this.setPermission(Rank.OWNER, Action.TOSS_ITEM);
-        this.setPermission(Rank.OWNER, Action.PICKUP_ITEM);
-        this.setPermission(Rank.OWNER, Action.FILL_BUCKET);
-        this.setPermission(Rank.OWNER, Action.OPEN_CONTAINER);
-        this.setPermission(Rank.OWNER, Action.RIGHTCLICK_BLOCK);
-        this.setPermission(Rank.OWNER, Action.RIGHTCLICK_ENTITY);
-        this.setPermission(Rank.OWNER, Action.THROW_POTION);
-        this.setPermission(Rank.OWNER, Action.SHOOT_ARROW);
-        this.setPermission(Rank.OWNER, Action.ATTACK_CITIZEN);
-        this.setPermission(Rank.OWNER, Action.ATTACK_ENTITY);
-        this.setPermission(Rank.OWNER, Action.ACCESS_FREE_BLOCKS);
-        this.setPermission(Rank.OWNER, Action.TELEPORT_TO_COLONY);
+        this.setPermission(OWNER, MANAGE_HUTS);
+        this.setPermission(OWNER, RECEIVE_MESSAGES);
+        this.setPermission(OWNER, USE_SCAN_TOOL);
+        this.setPermission(OWNER, PLACE_BLOCKS);
+        this.setPermission(OWNER, BREAK_BLOCKS);
+        this.setPermission(OWNER, TOSS_ITEM);
+        this.setPermission(OWNER, PICKUP_ITEM);
+        this.setPermission(OWNER, FILL_BUCKET);
+        this.setPermission(OWNER, OPEN_CONTAINER);
+        this.setPermission(OWNER, RIGHTCLICK_BLOCK);
+        this.setPermission(OWNER, RIGHTCLICK_ENTITY);
+        this.setPermission(OWNER, THROW_POTION);
+        this.setPermission(OWNER, SHOOT_ARROW);
+        this.setPermission(OWNER, ATTACK_CITIZEN);
+        this.setPermission(OWNER, ATTACK_ENTITY);
+        this.setPermission(OWNER, ACCESS_FREE_BLOCKS);
+        this.setPermission(OWNER, TELEPORT_TO_COLONY);
 
-        this.setPermission(Rank.OFFICER, Action.MANAGE_HUTS);
-        this.setPermission(Rank.OFFICER, Action.RECEIVE_MESSAGES);
-        this.setPermission(Rank.OFFICER, Action.USE_SCAN_TOOL);
-        this.setPermission(Rank.OFFICER, Action.PLACE_BLOCKS);
-        this.setPermission(Rank.OFFICER, Action.BREAK_BLOCKS);
-        this.setPermission(Rank.OFFICER, Action.TOSS_ITEM);
-        this.setPermission(Rank.OFFICER, Action.PICKUP_ITEM);
-        this.setPermission(Rank.OFFICER, Action.FILL_BUCKET);
-        this.setPermission(Rank.OFFICER, Action.OPEN_CONTAINER);
-        this.setPermission(Rank.OFFICER, Action.RIGHTCLICK_BLOCK);
-        this.setPermission(Rank.OFFICER, Action.RIGHTCLICK_ENTITY);
-        this.setPermission(Rank.OFFICER, Action.THROW_POTION);
-        this.setPermission(Rank.OFFICER, Action.SHOOT_ARROW);
-        this.setPermission(Rank.OFFICER, Action.ATTACK_CITIZEN);
-        this.setPermission(Rank.OFFICER, Action.ATTACK_ENTITY);
-        this.setPermission(Rank.OFFICER, Action.ACCESS_FREE_BLOCKS);
-        this.setPermission(Rank.OFFICER, Action.TELEPORT_TO_COLONY);
+        this.setPermission(OFFICER, MANAGE_HUTS);
+        this.setPermission(OFFICER, RECEIVE_MESSAGES);
+        this.setPermission(OFFICER, USE_SCAN_TOOL);
+        this.setPermission(OFFICER, PLACE_BLOCKS);
+        this.setPermission(OFFICER, BREAK_BLOCKS);
+        this.setPermission(OFFICER, TOSS_ITEM);
+        this.setPermission(OFFICER, PICKUP_ITEM);
+        this.setPermission(OFFICER, FILL_BUCKET);
+        this.setPermission(OFFICER, OPEN_CONTAINER);
+        this.setPermission(OFFICER, RIGHTCLICK_BLOCK);
+        this.setPermission(OFFICER, RIGHTCLICK_ENTITY);
+        this.setPermission(OFFICER, THROW_POTION);
+        this.setPermission(OFFICER, SHOOT_ARROW);
+        this.setPermission(OFFICER, ATTACK_CITIZEN);
+        this.setPermission(OFFICER, ATTACK_ENTITY);
+        this.setPermission(OFFICER, ACCESS_FREE_BLOCKS);
+        this.setPermission(OFFICER, TELEPORT_TO_COLONY);
 
-        this.setPermission(Rank.FRIEND, Action.ACCESS_HUTS);
-        this.setPermission(Rank.FRIEND, Action.USE_SCAN_TOOL);
-        this.setPermission(Rank.FRIEND, Action.TOSS_ITEM);
-        this.setPermission(Rank.FRIEND, Action.PICKUP_ITEM);
-        this.setPermission(Rank.FRIEND, Action.RIGHTCLICK_BLOCK);
-        this.setPermission(Rank.FRIEND, Action.RIGHTCLICK_ENTITY);
-        this.setPermission(Rank.FRIEND, Action.THROW_POTION);
-        this.setPermission(Rank.FRIEND, Action.SHOOT_ARROW);
-        this.setPermission(Rank.FRIEND, Action.ATTACK_CITIZEN);
-        this.setPermission(Rank.FRIEND, Action.ATTACK_ENTITY);
-        this.setPermission(Rank.FRIEND, Action.ACCESS_FREE_BLOCKS);
-        this.setPermission(Rank.FRIEND, Action.TELEPORT_TO_COLONY);
+        this.setPermission(FRIEND, ACCESS_HUTS);
+        this.setPermission(FRIEND, USE_SCAN_TOOL);
+        this.setPermission(FRIEND, TOSS_ITEM);
+        this.setPermission(FRIEND, PICKUP_ITEM);
+        this.setPermission(FRIEND, RIGHTCLICK_BLOCK);
+        this.setPermission(FRIEND, RIGHTCLICK_ENTITY);
+        this.setPermission(FRIEND, THROW_POTION);
+        this.setPermission(FRIEND, SHOOT_ARROW);
+        this.setPermission(FRIEND, ATTACK_CITIZEN);
+        this.setPermission(FRIEND, ATTACK_ENTITY);
+        this.setPermission(FRIEND, ACCESS_FREE_BLOCKS);
+        this.setPermission(FRIEND, TELEPORT_TO_COLONY);
 
-        this.setPermission(Rank.NEUTRAL, Action.ACCESS_FREE_BLOCKS);
+        this.setPermission(NEUTRAL, ACCESS_FREE_BLOCKS);
 
         updatedPermissionAlready = true;
     }
@@ -405,7 +408,7 @@ public class Permissions implements IPermissions
 
             if (player != null)
             {
-                players.put(ownerUUID, new Player(ownerUUID, player.getName(), Rank.OWNER));
+                players.put(ownerUUID, new Player(ownerUUID, player.getName(), OWNER));
             }
         }
         markDirty();
@@ -423,7 +426,7 @@ public class Permissions implements IPermissions
     {
         for (@NotNull final Map.Entry<UUID, Player> entry : players.entrySet())
         {
-            if (entry.getValue().rank.equals(Rank.OWNER))
+            if (entry.getValue().getRank().equals(OWNER))
             {
                 return entry;
             }
@@ -444,7 +447,7 @@ public class Permissions implements IPermissions
         ownerName = player.getName();
         ownerUUID = player.getUniqueID();
 
-        players.put(ownerUUID, new Player(ownerUUID, player.getName(), Rank.OWNER));
+        players.put(ownerUUID, new Player(ownerUUID, player.getName(), OWNER));
 
         markDirty();
         return true;
@@ -481,8 +484,8 @@ public class Permissions implements IPermissions
         for (@NotNull final Player player : players.values())
         {
             @NotNull final NBTTagCompound ownersCompound = new NBTTagCompound();
-            ownersCompound.setString(TAG_ID, player.id.toString());
-            ownersCompound.setString(TAG_RANK, player.rank.name());
+            ownersCompound.setString(TAG_ID, player.getID().toString());
+            ownersCompound.setString(TAG_RANK, player.getRank().name());
             ownerTagList.appendTag(ownersCompound);
         }
         compound.setTag(TAG_OWNERS, ownerTagList);
@@ -497,7 +500,7 @@ public class Permissions implements IPermissions
             @NotNull final NBTTagList flagsTagList = new NBTTagList();
             for (@NotNull final Action action : Action.values())
             {
-                if (Utils.testFlag(entry.getValue(), action.flag))
+                if (Utils.testFlag(entry.getValue(), action.getFlag()))
                 {
                     flagsTagList.appendTag(new NBTTagString(action.name()));
                 }
@@ -539,7 +542,7 @@ public class Permissions implements IPermissions
     public Set<UUID> getMessagePlayers()
     {
         return players.values().stream().filter(player ->
-                                                  hasPermission(player.rank, Action.RECEIVE_MESSAGES)).map(player -> player.id).collect(Collectors.toSet());
+                                                  hasPermission(player.getRank(), RECEIVE_MESSAGES)).map(player -> player.getID()).collect(Collectors.toSet());
     }
 
     /**
@@ -551,8 +554,8 @@ public class Permissions implements IPermissions
      */
     public boolean hasPermission(final Rank rank, @NotNull final Action action)
     {
-        return (rank == Rank.OWNER && action != Action.GUARDS_ATTACK)
-                 || Utils.testFlag(permissionMap.get(rank), action.flag);
+        return (rank == OWNER && action != GUARDS_ATTACK)
+                 || Utils.testFlag(permissionMap.get(rank), action.getFlag());
     }
 
     /**
@@ -564,7 +567,7 @@ public class Permissions implements IPermissions
     public Set<Player> getPlayersByRank(final Rank rank)
     {
         return this.players.values().stream()
-                 .filter(player -> player.rank.equals(rank))
+                 .filter(player -> player.getRank().equals(rank))
                  .collect(Collectors.toSet());
     }
 
@@ -577,7 +580,7 @@ public class Permissions implements IPermissions
     public Set<Player> getPlayersByRank(@NotNull final Set<Rank> ranks)
     {
         return this.players.values().stream()
-                 .filter(player -> ranks.contains(player.rank))
+                 .filter(player -> ranks.contains(player.getRank()))
                  .collect(Collectors.toSet());
     }
 
@@ -596,7 +599,7 @@ public class Permissions implements IPermissions
      * Checks if the player has the permission of an action.
      *
      * @param player {@link EntityPlayer} player.
-     * @param action {@link Permissions.Action} action.
+     * @param action {@link Action} action.
      * @return true if player has permissionMap, otherwise false.
      */
     @Override
@@ -626,9 +629,9 @@ public class Permissions implements IPermissions
     public void removePermission(final Rank rank, @NotNull final Action action)
     {
         final int flags = permissionMap.get(rank);
-        if (Utils.testFlag(flags, action.flag))
+        if (Utils.testFlag(flags, action.getFlag()))
         {
-            permissionMap.put(rank, Utils.unsetFlag(flags, action.flag));
+            permissionMap.put(rank, Utils.unsetFlag(flags, action.getFlag()));
             markDirty();
         }
     }
@@ -644,7 +647,7 @@ public class Permissions implements IPermissions
     public Rank getRank(final UUID id)
     {
         final Player player = players.get(id);
-        return player != null ? player.rank : Rank.NEUTRAL;
+        return player != null ? player.getRank() : NEUTRAL;
     }
 
     /**
@@ -661,7 +664,7 @@ public class Permissions implements IPermissions
 
         if (player != null)
         {
-            player.rank = rank;
+            player.setRank(rank);
             markDirty();
             AchievementUtils.syncAchievements(colony);
         }
@@ -687,11 +690,11 @@ public class Permissions implements IPermissions
     {
         @NotNull final Player p = new Player(gameprofile.getId(), gameprofile.getName(), rank);
 
-        if (players.containsKey(p.id))
+        if (players.containsKey(p.getID()))
         {
-            players.remove(p.id);
+            players.remove(p.getID());
         }
-        players.put(p.id, p);
+        players.put(p.getID(), p);
 
         markDirty();
         AchievementUtils.syncAchievements(colony);
@@ -727,7 +730,7 @@ public class Permissions implements IPermissions
     {
         final Player player = players.get(id);
         AchievementUtils.syncAchievements(colony);
-        if (player != null && player.getRank() != Rank.OWNER && players.remove(id) != null)
+        if (player != null && player.getRank() != OWNER && players.remove(id) != null)
         {
             markDirty();
             return true;
@@ -807,7 +810,7 @@ public class Permissions implements IPermissions
      * @param buf        {@link ByteBuf} to write to.
      * @param viewerRank Rank of the viewer.
      */
-    public void serializeViewNetworkData(@NotNull final ByteBuf buf, @NotNull final Permissions.Rank viewerRank)
+    public void serializeViewNetworkData(@NotNull final ByteBuf buf, @NotNull final Rank viewerRank)
     {
         ByteBufUtils.writeUTF8String(buf, viewerRank.name());
 
@@ -816,8 +819,8 @@ public class Permissions implements IPermissions
         for (@NotNull final Map.Entry<UUID, Player> player : players.entrySet())
         {
             PacketUtils.writeUUID(buf, player.getKey());
-            ByteBufUtils.writeUTF8String(buf, player.getValue().name);
-            ByteBufUtils.writeUTF8String(buf, player.getValue().rank.name());
+            ByteBufUtils.writeUTF8String(buf, player.getValue().getName());
+            ByteBufUtils.writeUTF8String(buf, player.getValue().getRank().name());
         }
 
         // Permissions
@@ -826,144 +829,6 @@ public class Permissions implements IPermissions
         {
             ByteBufUtils.writeUTF8String(buf, entry.getKey().name());
             buf.writeInt(entry.getValue());
-        }
-    }
-
-    /**
-     * Ranks within a colony.
-     */
-    public enum Rank
-    {
-        OWNER(true),
-        OFFICER(true),
-        FRIEND(true),
-        NEUTRAL(false),
-        HOSTILE(false);
-
-        /**
-         * Is the Rank a subscriber to certain events.
-         */
-        public final boolean isSubscriber;
-
-        /**
-         * Ranks enum constructor.
-         * <p>
-         * Subscribers are receiving events from the colony.
-         * They are either citizens or near enough.
-         * Ranks with true are automatically subscribed to the colony.
-         *
-         * @param isSubscriber boolean whether auto-subscribed to this colony.
-         */
-        Rank(final boolean isSubscriber)
-        {
-            this.isSubscriber = isSubscriber;
-        }
-
-    }
-
-    /**
-     * Actions that can be performed in a colony.
-     */
-    public enum Action
-    {
-        //counts for citizen and huts.
-        ACCESS_HUTS(0),
-        //If guards can attack, player can attack back
-        GUARDS_ATTACK(1),
-        PLACE_HUTS(2),
-        BREAK_HUTS(3),
-        CAN_PROMOTE(4),
-        CAN_DEMOTE(5),
-        SEND_MESSAGES(6),
-        //Including promote, demote and remove.
-        EDIT_PERMISSIONS(7),
-        //All GUI button interactions
-        MANAGE_HUTS(8),
-        RECEIVE_MESSAGES(9),
-        USE_SCAN_TOOL(10),
-        PLACE_BLOCKS(11),
-        BREAK_BLOCKS(12),
-        TOSS_ITEM(13),
-        PICKUP_ITEM(14),
-        FILL_BUCKET(15),
-        OPEN_CONTAINER(16),
-        RIGHTCLICK_BLOCK(17),
-        RIGHTCLICK_ENTITY(18),
-        THROW_POTION(19),
-        SHOOT_ARROW(20),
-        ATTACK_CITIZEN(21),
-        ATTACK_ENTITY(22),
-        //has access to allowed list, "hostile+" or "neutral+"
-        ACCESS_FREE_BLOCKS(23),
-        TELEPORT_TO_COLONY(24);
-
-        //todo have permissions lang strings which these but readable, build string with "coremod.stuff." + action.toString "
-
-        private final int flag;
-
-        /**
-         * Stores the action as byte.
-         * {@link #ACCESS_HUTS} has value 0000 0000
-         * {@link #SEND_MESSAGES} has value 0100 0000
-         *
-         * @param bit how many bits should be shifted and set
-         */
-        Action(final int bit)
-        {
-            this.flag = 0x1 << bit;
-        }
-
-        public int getFlag()
-        {
-            return flag;
-        }
-    }
-
-    /**
-     * Player within a colony.
-     */
-    public static class Player
-    {
-        private final UUID   id;
-        private final String name;
-        private       Rank   rank;
-
-        /**
-         * Instantiates our own player object.
-         *
-         * @param id   id of the player.
-         * @param name name of the player
-         * @param rank rank of the player.
-         */
-        public Player(final UUID id, final String name, final Rank rank)
-        {
-            this.id = id;
-            this.name = name;
-            this.rank = rank;
-        }
-
-        /**
-         * @return The UUID of the player.
-         */
-        public UUID getID()
-        {
-            return id;
-        }
-
-        /**
-         * @return The player's current name.
-         */
-        public String getName()
-        {
-            return name;
-        }
-
-        /**
-         * @return The player's current rank.
-         */
-        public Rank getRank()
-        {
-            return rank;
         }
     }
 
@@ -1001,13 +866,14 @@ public class Permissions implements IPermissions
         private final Map<UUID, Player>  players     = new HashMap<>();
         @NotNull
         private final Map<Rank, Integer> permissions = new EnumMap<>(Rank.class);
-        private       Rank               userRank    = Rank.NEUTRAL;
+        private       Rank               userRank    = NEUTRAL;
 
         public Rank getUserRank()
         {
             return userRank;
         }
 
+        @Override
         @NotNull
         public Map<UUID, Player> getPlayers()
         {
@@ -1026,7 +892,7 @@ public class Permissions implements IPermissions
             return Collections.unmodifiableSet(
               this.players.values()
                 .stream()
-                .filter(player -> player.rank == rank)
+                .filter(player -> player.getRank() == rank)
                 .collect(Collectors.toSet()));
         }
 
@@ -1042,7 +908,7 @@ public class Permissions implements IPermissions
             return Collections.unmodifiableSet(
               this.players.values()
                 .stream()
-                .filter(player -> ranks.contains(player.rank))
+                .filter(player -> ranks.contains(player.getRank()))
                 .collect(Collectors.toSet()));
         }
 
@@ -1073,8 +939,8 @@ public class Permissions implements IPermissions
          */
         public boolean hasPermission(final Rank rank, @NotNull final Action action)
         {
-            return (rank == Rank.OWNER && action != Action.GUARDS_ATTACK)
-                     || Utils.testFlag(permissions.get(rank), action.flag);
+            return (rank == OWNER && action != GUARDS_ATTACK)
+                     || Utils.testFlag(permissions.get(rank), action.getFlag());
         }
 
         /**
@@ -1089,9 +955,9 @@ public class Permissions implements IPermissions
             final int flags = permissions.get(rank);
 
             //check that flag isn't set
-            if (!Utils.testFlag(flags, action.flag))
+            if (!Utils.testFlag(flags, action.getFlag()))
             {
-                permissions.put(rank, Utils.setFlag(flags, action.flag));
+                permissions.put(rank, Utils.setFlag(flags, action.getFlag()));
                 return true;
             }
             return false;
@@ -1107,9 +973,9 @@ public class Permissions implements IPermissions
         public boolean removePermission(final Rank rank, @NotNull final Action action)
         {
             final int flags = permissions.get(rank);
-            if (Utils.testFlag(flags, action.flag))
+            if (Utils.testFlag(flags, action.getFlag()))
             {
-                permissions.put(rank, Utils.unsetFlag(flags, action.flag));
+                permissions.put(rank, Utils.unsetFlag(flags, action.getFlag()));
                 return true;
             }
             return false;
@@ -1123,7 +989,7 @@ public class Permissions implements IPermissions
          */
         public void togglePermission(final Rank rank, @NotNull final Action action)
         {
-            permissions.put(rank, Utils.toggleFlag(permissions.get(rank), action.flag));
+            permissions.put(rank, Utils.toggleFlag(permissions.get(rank), action.getFlag()));
         }
 
         /**
@@ -1175,7 +1041,7 @@ public class Permissions implements IPermissions
         public Rank getRank(final UUID id)
         {
             final Player player = players.get(id);
-            return player == null ? Rank.NEUTRAL : player.rank;
+            return player == null ? NEUTRAL : player.getRank();
         }
 
         @Override

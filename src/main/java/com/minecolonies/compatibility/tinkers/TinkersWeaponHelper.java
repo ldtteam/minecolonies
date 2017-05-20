@@ -4,7 +4,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Optional;
 import org.jetbrains.annotations.NotNull;
 
-
 /**
  * Class to check if certain tinkers items serve as weapons for the guards.
  */
@@ -12,6 +11,7 @@ public final class TinkersWeaponHelper extends TinkersWeaponProxy
 {
     /**
      * Check if a certain itemstack is a tinkers weapon.
+     *
      * @param stack the stack to check for.
      * @return true if so.
      */
@@ -24,6 +24,7 @@ public final class TinkersWeaponHelper extends TinkersWeaponProxy
 
     /**
      * Calculate the actual attack damage of the tinkers weapon.
+     *
      * @param stack the stack.
      * @return the attack damage.
      */
@@ -36,6 +37,7 @@ public final class TinkersWeaponHelper extends TinkersWeaponProxy
 
     /**
      * Check if a certain itemstack is a tinkers weapon.
+     *
      * @param stack the stack to check for.
      * @return true if so.
      */
@@ -46,6 +48,7 @@ public final class TinkersWeaponHelper extends TinkersWeaponProxy
 
     /**
      * Calculate the actual attack damage of the tinkers weapon.
+     *
      * @param stack the stack.
      * @return the attack damage.
      */

@@ -1,8 +1,11 @@
 package com.minecolonies.coremod.colony.requestsystem.requester;
 
+import com.minecolonies.coremod.colony.requestsystem.factory.IFactory;
+
 /**
- * ----------------------- Not Documented Object ---------------------
+ * Interface describing objects that can construct IRequester objects.
  */
-public class IRequesterFactory
+public interface IRequesterFactory<Input, Output extends IRequester> extends IFactory<Input, Output>
 {
+
 }

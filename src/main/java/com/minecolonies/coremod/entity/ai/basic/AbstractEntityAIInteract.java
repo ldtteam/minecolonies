@@ -178,11 +178,11 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     private void triggerMinedBlock(@NotNull final BlockPos blockToMine)
     {
         if (world.getBlockState(blockToMine).getBlock() == (Blocks.COAL_ORE)
-                || world.getBlockState(blockToMine).getBlock() == (Blocks.IRON_ORE)
-                || world.getBlockState(blockToMine).getBlock() == (Blocks.LAPIS_ORE)
-                || world.getBlockState(blockToMine).getBlock() == (Blocks.GOLD_ORE)
-                || world.getBlockState(blockToMine).getBlock() == (Blocks.REDSTONE_ORE)
-                || world.getBlockState(blockToMine).getBlock() == (Blocks.EMERALD_ORE))
+              || world.getBlockState(blockToMine).getBlock() == (Blocks.IRON_ORE)
+              || world.getBlockState(blockToMine).getBlock() == (Blocks.LAPIS_ORE)
+              || world.getBlockState(blockToMine).getBlock() == (Blocks.GOLD_ORE)
+              || world.getBlockState(blockToMine).getBlock() == (Blocks.REDSTONE_ORE)
+              || world.getBlockState(blockToMine).getBlock() == (Blocks.EMERALD_ORE))
         {
             this.getOwnBuilding().getColony().incrementStatistic("ores");
         }

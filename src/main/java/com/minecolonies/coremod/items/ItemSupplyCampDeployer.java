@@ -72,16 +72,16 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
 
     @Override
     public EnumActionResult onItemUse(
-            final EntityPlayer player,
-            final World worldIn,
-            final BlockPos pos,
-            final EnumHand hand,
-            final EnumFacing facing,
-            final float hitX,
-            final float hitY,
-            final float hitZ)
+                                       final EntityPlayer player,
+                                       final World worldIn,
+                                       final BlockPos pos,
+                                       final EnumHand hand,
+                                       final EnumFacing facing,
+                                       final float hitX,
+                                       final float hitY,
+                                       final float hitZ)
     {
-        if(worldIn == null || player == null)
+        if (worldIn == null || player == null)
         {
             return EnumActionResult.FAIL;
         }
@@ -99,7 +99,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
 
             fillChest((TileEntityChest) worldIn.getTileEntity(pos.up()));
 
-            stack.setCount(stack.getCount()-1);
+            stack.setCount(stack.getCount() - 1);
             player.addStat(ModAchievements.achievementGetSupply);
 
             return EnumActionResult.SUCCESS;
@@ -148,7 +148,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
             {
                 case NORTH:
                     if (StructureWrapper.tryToLoadAndPlaceSupplyCampWithRotation(world, SUPPLY_CAMP_STRUCTURE_NAME,
-                            pos.add(OFFSET_NORTH_EAST, 0, OFFSET_NORTH_WEST), Constants.ROTATE_THREE_TIMES, Mirror.NONE))
+                      pos.add(OFFSET_NORTH_EAST, 0, OFFSET_NORTH_WEST), Constants.ROTATE_THREE_TIMES, Mirror.NONE))
                     {
                         return true;
                     }
@@ -156,7 +156,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
                     break;
                 case EAST:
                     if (StructureWrapper.tryToLoadAndPlaceSupplyCampWithRotation(world, SUPPLY_CAMP_STRUCTURE_NAME,
-                            pos.add(OFFSET_SOUTH_EAST, 0, OFFSET_NORTH_EAST), Constants.ROTATE_0_TIMES, Mirror.NONE))
+                      pos.add(OFFSET_SOUTH_EAST, 0, OFFSET_NORTH_EAST), Constants.ROTATE_0_TIMES, Mirror.NONE))
                     {
                         return true;
                     }
@@ -164,7 +164,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
                     break;
                 case WEST:
                     if (StructureWrapper.tryToLoadAndPlaceSupplyCampWithRotation(world, SUPPLY_CAMP_STRUCTURE_NAME,
-                            pos.add(OFFSET_NORTH_WEST, 0, OFFSET_SOUTH_WEST), Constants.ROTATE_TWICE, Mirror.NONE))
+                      pos.add(OFFSET_NORTH_WEST, 0, OFFSET_SOUTH_WEST), Constants.ROTATE_TWICE, Mirror.NONE))
                     {
                         return true;
                     }
@@ -172,7 +172,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
                     break;
                 default:
                     if (StructureWrapper.tryToLoadAndPlaceSupplyCampWithRotation(world, SUPPLY_CAMP_STRUCTURE_NAME,
-                            pos.add(OFFSET_SOUTH_WEST, 0, OFFSET_SOUTH_EAST), Constants.ROTATE_ONCE, Mirror.NONE))
+                      pos.add(OFFSET_SOUTH_WEST, 0, OFFSET_SOUTH_EAST), Constants.ROTATE_ONCE, Mirror.NONE))
                     {
                         return true;
                     }

@@ -3,7 +3,7 @@ package com.minecolonies.coremod.colony.requestsystem.request;
 import com.google.common.collect.ImmutableCollection;
 import com.minecolonies.coremod.colony.requestsystem.IRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.RequestState;
-import com.minecolonies.coremod.colony.requestsystem.location.ILocatable;
+import com.minecolonies.coremod.colony.requestsystem.requester.IRequester;
 import com.minecolonies.coremod.colony.requestsystem.token.IToken;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -49,12 +49,11 @@ public interface IRequest<R> {
     void setState(@NotNull IRequestManager manager, @NotNull RequestState state);
 
     /**
-     * The location of the requester.
-     * Is generally used in getDelivery requests to produce a getDelivery for a result from this request.
-     * @return The location of requester of this request.
+     * The element of the colony that requested this request.
+     * @return The requester of this request.
      */
     @NotNull
-    ILocatable getRequesterLocation();
+    IRequester getRequester();
 
     /**
      * Return the object that is actually requested.

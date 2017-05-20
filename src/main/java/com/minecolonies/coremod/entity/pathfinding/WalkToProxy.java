@@ -255,7 +255,7 @@ public class WalkToProxy
             //Check if target is underground in shaft and miner is over it.
             else if (targetY <= levelDepth && workerY > levelDepth)
             {
-                final BlockPos buildingPos = building.getLocation();
+                final BlockPos buildingPos = building.getLocation().getInDimensionLocation();
                 BlockPos newProxy;
 
                 //First calculate way to miner building.

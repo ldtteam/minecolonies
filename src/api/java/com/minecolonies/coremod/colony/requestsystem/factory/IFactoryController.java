@@ -98,6 +98,7 @@ public interface IFactoryController {
      * @param <Output> The type of output.
      * @return The output from the factory, created by the given input and output.
      * @throws IllegalArgumentException thrown when the output and input do not match a factory known to this controller.
+     * @throws ClassCastException thrown when a Factory is known for the given input, but does not produce the given output.
      */
-    <Input, Output> Output getNewInstance(@NotNull Input input, @NotNull Object... context) throws IllegalArgumentException;
+    <Input, Output> Output getNewInstance(@NotNull Input input, @NotNull Object... context) throws IllegalArgumentException, ClassCastException;
 }

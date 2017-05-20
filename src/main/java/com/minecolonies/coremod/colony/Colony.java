@@ -8,7 +8,8 @@ import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.permissions.Rank;
 import com.minecolonies.coremod.colony.requestsystem.IRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.StandardRequestManager;
-import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
+import com.minecolonies.coremod.colony.requestsystem.factory.IFactoryController;
+import com.minecolonies.coremod.colony.workorder.IAbstractWorkOrder;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
@@ -65,13 +66,13 @@ public class Colony implements IColony
     private static final String TAG_FREE_POSITIONS             = "freePositions";
 
     //statistics tags
-    private static final String TAG_STATISTICS        = "statistics";
-    private static final String TAG_MINER_STATISTICS  = "minerStatistics";
-    private static final String TAG_MINER_ORES        = "ores";
-    private static final String TAG_MINER_DIAMONDS    = "diamonds";
-    private static final String TAG_FARMER_STATISTICS = "farmerStatistics";
-    private static final String TAG_FARMER_WHEAT      = "wheat";
-    private static final String TAG_FARMER_POTATOES   = "potatoes";
+    private static final String TAG_STATISTICS            = "statistics";
+    private static final String TAG_MINER_STATISTICS      = "minerStatistics";
+    private static final String TAG_MINER_ORES            = "ores";
+    private static final String TAG_MINER_DIAMONDS        = "diamonds";
+    private static final String TAG_FARMER_STATISTICS     = "farmerStatistics";
+    private static final String TAG_FARMER_WHEAT          = "wheat";
+    private static final String TAG_FARMER_POTATOES       = "potatoes";
     private static final String TAG_FARMER_CARROTS        = "carrots";
     private static final String TAG_GUARD_STATISTICS      = "guardStatistics";
     private static final String TAG_GUARD_MOBS            = "mobs";
@@ -82,7 +83,7 @@ public class Colony implements IColony
     private static final String TAG_LUMBERJACK_STATISTICS = "lumberjackStatistics";
     private static final String TAG_LUMBERJACK_TREES      = "trees";
     private static final String TAG_LUMBERJACK_SAPLINGS   = "saplings";
-    private static final int    NUM_ACHIEVEMENT_FIRST    = 1;
+    private static final int    NUM_ACHIEVEMENT_FIRST     = 1;
     private static final int    NUM_ACHIEVEMENT_SECOND    = 25;
     private static final int    NUM_ACHIEVEMENT_THIRD     = 100;
     private static final int    NUM_ACHIEVEMENT_FOURTH    = 500;
@@ -91,7 +92,7 @@ public class Colony implements IColony
     /**
      * Bonus happiness each factor added.
      */
-    private static final double HAPPINESS_FACTOR         = 0.1;
+    private static final double HAPPINESS_FACTOR = 0.1;
 
     /**
      * Saturation at which a citizen starts being happy.
@@ -147,7 +148,6 @@ public class Colony implements IColony
     private       int                             harvestedWheat    = 0;
     private       int                             harvestedPotatoes = 0;
     private       int                             harvestedCarrots  = 0;
-    private       int                             killedMobs        = 0;
     private       int                             builtHuts         = 0;
     private       int                             caughtFish        = 0;
     private       int                             felledTrees       = 0;
@@ -173,11 +173,11 @@ public class Colony implements IColony
     private int topCitizenId = 0;
     private int maxCitizens  = Configurations.maxCitizens;
 
-    private double overallHappiness = 5;
-    private int killedMobs   = 0;
+    private       double          overallHappiness = 5;
+    private       int             killedMobs       = 0;
     @NotNull
     //TODO: Serialization of requestmanagers.
-    private final IRequestManager requestManager = new StandardRequestManager(this);
+    private final IRequestManager requestManager   = new StandardRequestManager(this);
 
     /**
      * Constructor for a newly created Colony.
@@ -361,7 +361,7 @@ public class Colony implements IColony
      */
     private void addBuilding(@NotNull final AbstractBuilding building)
     {
-        buildings.put(building.getID(), building);
+        buildings.put(building.getLocation().getInDimensionLocation(), building);
         building.markDirty();
 
         //  Limit 1 town hall
@@ -515,11 +515,7 @@ public class Colony implements IColony
         return dimensionId;
     }
 
-    /**
-     * Increment the statistic amount and trigger achievement.
-     *
-     * @param statistic the statistic.
-     */
+    @Override
     public void incrementStatistic(@NotNull String statistic)
     {
         final int statisticAmount = this.getStatisticAmount(statistic);
@@ -697,9 +693,9 @@ public class Colony implements IColony
 
         // Add owners
         world.getMinecraftServer().getPlayerList().getPlayers()
-                .stream()
-                .filter(permissions::isSubscriber)
-                .forEachOrdered(subscribers::add);
+          .stream()
+          .filter(permissions::isSubscriber)
+          .forEachOrdered(subscribers::add);
 
         for (final EntityPlayer o : world.playerEntities)
         {
@@ -709,7 +705,7 @@ public class Colony implements IColony
 
                 final double distance = player.getDistanceSq(center);
                 if (distance < MAX_SQ_DIST_SUBSCRIBER_UPDATE
-                        || (oldSubscribers.contains(player) && distance < MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE))
+                      || (oldSubscribers.contains(player) && distance < MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE))
                 {
                     // Players become subscribers if they come within 16 blocks of the edge of the colony
                     // Players remain subscribers while they remain within double the colony's radius
@@ -811,7 +807,7 @@ public class Colony implements IColony
     {
         if (getWorkManager().isDirty() || hasNewSubscribers)
         {
-            for (final AbstractWorkOrder workOrder : getWorkManager().getWorkOrders().values())
+            for (final IAbstractWorkOrder workOrder : getWorkManager().getWorkOrders().values())
             {
                 subscribers.stream().filter(player -> workManager.isDirty() || !oldSubscribers.contains(player))
                   .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewWorkOrderMessage(this, workOrder), player));
@@ -875,7 +871,7 @@ public class Colony implements IColony
         if (Structures.isDirty() || hasNewSubscribers)
         {
             subscribers.stream()
-                .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyStylesMessage(), player));
+              .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyStylesMessage(), player));
         }
     }
 
@@ -898,11 +894,7 @@ public class Colony implements IColony
         }
     }
 
-    /**
-     * Get the Work Manager for the Colony.
-     *
-     * @return WorkManager for the Colony.
-     */
+    @Override
     @NotNull
     public WorkManager getWorkManager()
     {
@@ -1032,12 +1024,12 @@ public class Colony implements IColony
             building.onWorldTick(event);
         }
 
-        if(isDay && !world.isDaytime())
+        if (isDay && !world.isDaytime())
         {
             isDay = false;
             updateOverallHappiness();
         }
-        else if(!isDay && world.isDaytime())
+        else if (!isDay && world.isDaytime())
         {
             isDay = true;
         }
@@ -1052,12 +1044,12 @@ public class Colony implements IColony
         int housing = 0;
         int workers = 1;
         double saturation = 0;
-        for(final CitizenData citizen: citizens.values())
+        for (final CitizenData citizen : citizens.values())
         {
             final AbstractBuildingWorker buildingWorker = citizen.getWorkBuilding();
-            if(buildingWorker != null)
+            if (buildingWorker != null)
             {
-                if(buildingWorker instanceof BuildingGuardTower)
+                if (buildingWorker instanceof BuildingGuardTower)
                 {
                     guards += buildingWorker.getBuildingLevel();
                 }
@@ -1068,7 +1060,7 @@ public class Colony implements IColony
             }
 
             final BuildingHome home = citizen.getHomeBuilding();
-            if(home != null)
+            if (home != null)
             {
                 housing += home.getBuildingLevel();
             }
@@ -1076,26 +1068,26 @@ public class Colony implements IColony
             saturation += citizen.getSaturation();
         }
 
-        final int averageHousing = housing/Math.max(1, citizens.size());
+        final int averageHousing = housing / Math.max(1, citizens.size());
 
-        if(averageHousing > 1)
+        if (averageHousing > 1)
         {
             increaseOverallHappiness(averageHousing * HAPPINESS_FACTOR);
         }
 
-        final int averageSaturation = (int) (saturation/citizens.size());
-        if(averageSaturation < WELL_SATURATED_LIMIT)
+        final int averageSaturation = (int) (saturation / citizens.size());
+        if (averageSaturation < WELL_SATURATED_LIMIT)
         {
             decreaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * -HAPPINESS_FACTOR);
         }
-        else if(averageSaturation > WELL_SATURATED_LIMIT)
+        else if (averageSaturation > WELL_SATURATED_LIMIT)
         {
             increaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * HAPPINESS_FACTOR);
         }
 
-        int relation = guards/workers;
+        int relation = guards / workers;
 
-        if(relation > 1)
+        if (relation > 1)
         {
             decreaseOverallHappiness(relation * HAPPINESS_FACTOR);
         }
@@ -1162,7 +1154,7 @@ public class Colony implements IColony
 
         for (@NotNull final AbstractBuilding building : tempBuildings)
         {
-            final BlockPos loc = building.getLocation();
+            final BlockPos loc = building.getLocation().getInDimensionLocation();
             if (event.world.isBlockLoaded(loc) && !building.isMatchingBlock(event.world.getBlockState(loc).getBlock()))
             {
                 //  Sanity cleanup
@@ -1291,7 +1283,7 @@ public class Colony implements IColony
      */
     public void spawnCitizen(final CitizenData data)
     {
-        final BlockPos townHallLocation = townHall.getLocation();
+        final BlockPos townHallLocation = townHall.getLocation().getInDimensionLocation();
         if (!world.isBlockLoaded(townHallLocation))
         {
             //  Chunk with TownHall Block is not loaded
@@ -1342,23 +1334,14 @@ public class Colony implements IColony
         }
     }
 
-    /**
-     * Returns the max amount of citizens in the colony.
-     *
-     * @return Max amount of citizens.
-     */
+    @Override
     public int getMaxCitizens()
     {
         return maxCitizens;
     }
 
-    /**
-     * Get citizen by ID.
-     *
-     * @param citizenId ID of the Citizen.
-     * @return CitizenData associated with the ID, or null if it was not found.
-     */
-    public CitizenData getCitizen(final int citizenId)
+    @Override
+    public ICitizenData getCitizen(final int citizenId)
     {
         return citizens.get(citizenId);
     }
@@ -1513,6 +1496,7 @@ public class Colony implements IColony
      * @param buildingId ID (coordinates) of the building to get.
      * @return AbstractBuilding belonging to the given ID.
      */
+    @Override
     public AbstractBuilding getBuilding(final BlockPos buildingId)
     {
         return buildings.get(buildingId);
@@ -1636,7 +1620,7 @@ public class Colony implements IColony
         {
             for (final EntityPlayerMP player : subscribers)
             {
-                MineColonies.getNetwork().sendTo(new ColonyViewRemoveBuildingMessage(this, building.getID()), player);
+                MineColonies.getNetwork().sendTo(new ColonyViewRemoveBuildingMessage(this, building.getLocation().getInDimensionLocation()), player);
             }
 
             Log.getLogger().info(String.format("Colony %d - removed AbstractBuilding %s of type %s",
@@ -1739,27 +1723,24 @@ public class Colony implements IColony
         return null;
     }
 
+    @Override
     public List<BlockPos> getDeliverymanRequired()
     {
 
         return citizens.values().stream()
                  .filter(citizen -> citizen.getWorkBuilding() != null && citizen.getJob() != null)
                  .filter(citizen -> !citizen.getJob().isMissingNeededItem())
-                 .map(citizen -> citizen.getWorkBuilding().getLocation())
+                 .map(citizen -> citizen.getWorkBuilding().getLocation().getInDimensionLocation())
                  .collect(Collectors.toList());
     }
 
-    /**
-     * Performed when a building of this colony finished his upgrade state.
-     *
-     * @param building The upgraded building.
-     * @param level    The new level.
-     */
-    public void onBuildingUpgradeComplete(@NotNull final AbstractBuilding building, final int level)
+    @Override
+    public void onBuildingUpgradeComplete(@NotNull final IBuilding building, final int level)
     {
         building.onUpgradeComplete(level);
     }
 
+    @Override
     @NotNull
     public List<Achievement> getAchievements()
     {
@@ -1824,6 +1805,7 @@ public class Colony implements IColony
 
     /**
      * Getter for overall happiness.
+     *
      * @return the overall happiness.
      */
     public double getOverallHappiness()
@@ -1833,6 +1815,7 @@ public class Colony implements IColony
 
     /**
      * Increase the overall happiness by an amount, cap at max.
+     *
      * @param amount the amount.
      */
     public void increaseOverallHappiness(double amount)
@@ -1843,6 +1826,7 @@ public class Colony implements IColony
 
     /**
      * Decrease the overall happiness by an amount, cap at min.
+     *
      * @param amount the amount.
      */
     public void decreaseOverallHappiness(double amount)
@@ -1872,5 +1856,12 @@ public class Colony implements IColony
     @Override
     public IRequestManager getRequestManager() {
         return requestManager;
+    }
+
+    @NotNull
+    @Override
+    public IFactoryController getFactoryController()
+    {
+        return getRequestManager().getFactoryController();
     }
 }

@@ -2,7 +2,7 @@ package com.minecolonies.coremod.colony.requestsystem.request;
 
 import com.minecolonies.coremod.colony.requestsystem.RequestState;
 import com.minecolonies.coremod.colony.requestsystem.factory.IFactory;
-import com.minecolonies.coremod.colony.requestsystem.location.ILocatable;
+import com.minecolonies.coremod.colony.requestsystem.requester.IRequester;
 import com.minecolonies.coremod.colony.requestsystem.token.IToken;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,7 +31,7 @@ public interface IRequestFactory<T, R extends IRequest<T>> extends IFactory<T, R
         if (!(context[0] instanceof IToken))
             throw new IllegalArgumentException("Unsupported context - First context object is not a token");
 
-        if (!(context[1] instanceof ILocatable))
+        if (!(context[1] instanceof IRequester))
             throw new IllegalArgumentException("Unsupported context - Second context object should be a location");
 
         if (context.length == 2)
@@ -53,7 +53,7 @@ public interface IRequestFactory<T, R extends IRequest<T>> extends IFactory<T, R
      * @param token The token to build the request from.
      * @return The new output instance for a given input.
      */
-    default R getNewInstance(@NotNull T input, @NotNull ILocatable location, @NotNull IToken token)
+    default R getNewInstance(@NotNull T input, @NotNull IRequester location, @NotNull IToken token)
     {
         return this.getNewInstance(input, location, token, RequestState.CREATED);
     }
@@ -67,5 +67,5 @@ public interface IRequestFactory<T, R extends IRequest<T>> extends IFactory<T, R
      * @param initialState The initial state of the request request.
      * @return The new output instance for a given input.
      */
-    R getNewInstance(@NotNull T input, @NotNull ILocatable location, @NotNull IToken token, @NotNull RequestState initialState);
+    R getNewInstance(@NotNull T input, @NotNull IRequester location, @NotNull IToken token, @NotNull RequestState initialState);
 }

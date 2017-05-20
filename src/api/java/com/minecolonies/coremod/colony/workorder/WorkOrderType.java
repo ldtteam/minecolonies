@@ -1,8 +1,9 @@
 package com.minecolonies.coremod.colony.workorder;
 
 /**
- * ----------------------- Not Documented Object ---------------------
+ * Contains all classes which inherit directly from this class.
  */
-public class WorkOrderType
+public enum WorkOrderType
 {
+    BUILD
 }

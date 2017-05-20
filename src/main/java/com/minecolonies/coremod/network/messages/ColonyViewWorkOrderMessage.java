@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.network.messages;
 
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
+import com.minecolonies.coremod.colony.IColony;
+import com.minecolonies.coremod.colony.workorder.IAbstractWorkOrder;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -34,7 +34,7 @@ public class ColonyViewWorkOrderMessage implements IMessage, IMessageHandler<Col
      * @param colony    colony of the workOrder.
      * @param workOrder workOrder of the colony to update view.
      */
-    public ColonyViewWorkOrderMessage(@NotNull final Colony colony, @NotNull final AbstractWorkOrder workOrder)
+    public ColonyViewWorkOrderMessage(@NotNull final IColony colony, @NotNull final IAbstractWorkOrder workOrder)
     {
         this.colonyId = colony.getID();
         this.workOrderBuffer = Unpooled.buffer();

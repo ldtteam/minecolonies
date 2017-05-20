@@ -46,7 +46,12 @@ public enum RequestState {
     /**
      * State for a request that has been cancelled.
      */
-    CANCELLED;
+    CANCELLED,
+
+    /**
+     * State used to indicate that this request has been received by the requester.
+     */
+    RECEIVED;
 
     /**
      * Index list used to read and write from NBT

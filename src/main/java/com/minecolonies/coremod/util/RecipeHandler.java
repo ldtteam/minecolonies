@@ -28,6 +28,7 @@ public final class RecipeHandler
      * The amount of items returned by certain crafting recipes
      */
     private static final int ONE_FORTH_OF_A_STACK = 16;
+
     /**
      * Private constructor to hide the implicit public one.
      */
@@ -64,7 +65,7 @@ public final class RecipeHandler
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.buildTool, 1), "  C", " S ", "S  ", 'C', "cobblestone", 'S', WOODEN_STICK));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockSubstitution, ONE_FORTH_OF_A_STACK), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', ModItems.scanTool));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockSolidSubstitution, ONE_FORTH_OF_A_STACK),
-                "XXX", "X#X", "XXX", 'X', "logWood", '#', ModItems.scanTool));
+                                                    "XXX", "X#X", "XXX", 'X', "logWood", '#', ModItems.scanTool));
 
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutFarmer, 1), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', Items.WOODEN_HOE));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutFarmer, 2), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', Items.STONE_HOE));
@@ -86,7 +87,7 @@ public final class RecipeHandler
             GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutBaker, 1), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', Items.WHEAT));
             GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutBlacksmith, 1), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', "ingotIron"));
             GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutStonemason, 1), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#',
-                    Blocks.STONEBRICK));
+                                                        Blocks.STONEBRICK));
         }
     }
 

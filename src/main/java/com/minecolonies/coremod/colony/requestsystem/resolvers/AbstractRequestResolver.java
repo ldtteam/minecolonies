@@ -37,7 +37,7 @@ public abstract class AbstractRequestResolver<Requested> implements IRequestReso
     }
 
     @Override
-    public IToken getToken()
+    public IToken getID()
     {
         return token;
     }

@@ -2,7 +2,7 @@ package com.minecolonies.coremod.colony.jobs;
 
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.IColony;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.coremod.util.BlockPosUtil;
@@ -86,7 +86,7 @@ public class JobDeliveryman extends AbstractJob
 
     public boolean isNeeded()
     {
-        final Colony colony = getCitizen().getColony();
+        final IColony colony = getCitizen().getColony();
         return colony != null && !colony.getDeliverymanRequired().isEmpty();
     }
 

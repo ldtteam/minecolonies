@@ -3,7 +3,7 @@ package com.minecolonies.coremod.network.messages;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.coremod.colony.permissions.Action;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import com.minecolonies.coremod.util.LanguageHandler;
 import io.netty.buffer.ByteBuf;
@@ -130,11 +130,11 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
         if (colony != null)
         {
             //Verify player has permission to change this huts settings
-            if (!colony.getPermissions().hasPermission(player, Permissions.Action.EDIT_PERMISSIONS))
+            if (!colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS))
             {
                 LanguageHandler.sendPlayerMessage(
-                        player,
-                        "com.minecolonies.coremod.item.permissionscepter.permission.deny"
+                  player,
+                  "com.minecolonies.coremod.item.permissionscepter.permission.deny"
                 );
                 return;
             }
@@ -146,19 +146,19 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
                     case LOCATION:
                         colony.addFreePosition(message.pos);
                         LanguageHandler.sendPlayerMessage(
-                                player,
-                                "com.minecolonies.coremod.item.permissionscepter.addposition.success",
-                                message.pos.getX(),
-                                message.pos.getY(),
-                                message.pos.getZ()
+                          player,
+                          "com.minecolonies.coremod.item.permissionscepter.addposition.success",
+                          message.pos.getX(),
+                          message.pos.getY(),
+                          message.pos.getZ()
                         );
                         break;
                     case BLOCK:
                         colony.addFreeBlock(message.block);
                         LanguageHandler.sendPlayerMessage(
-                                player,
-                                "com.minecolonies.coremod.item.permissionscepter.addblock.success",
-                                message.block.getRegistryName()
+                          player,
+                          "com.minecolonies.coremod.item.permissionscepter.addblock.success",
+                          message.block.getRegistryName()
                         );
                         break;
                     default:
@@ -172,18 +172,18 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
                     case LOCATION:
                         colony.removeFreePosition(message.pos);
                         LanguageHandler.sendPlayerMessage(
-                                player,
-                                "com.minecolonies.coremod.item.permissionscepter.removelocation.success",
-                                message.pos.getX(),
-                                message.pos.getY(),
-                                message.pos.getZ());
+                          player,
+                          "com.minecolonies.coremod.item.permissionscepter.removelocation.success",
+                          message.pos.getX(),
+                          message.pos.getY(),
+                          message.pos.getZ());
                         break;
                     case BLOCK:
                         colony.removeFreeBlock(message.block);
                         LanguageHandler.sendPlayerMessage(
-                                player,
-                                "com.minecolonies.coremod.item.permissionscepter.removeblock.success",
-                                message.block.getRegistryName()
+                          player,
+                          "com.minecolonies.coremod.item.permissionscepter.removeblock.success",
+                          message.block.getRegistryName()
                         );
                         break;
                     default:

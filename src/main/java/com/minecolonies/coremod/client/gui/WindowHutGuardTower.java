@@ -291,7 +291,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
      */
     private void givePlayerScepter(final BuildingGuardTower.Task localTask)
     {
-        MineColonies.getNetwork().sendToServer(new GuardScepterMessage(localTask.ordinal(), building.getID()));
+        MineColonies.getNetwork().sendToServer(new GuardScepterMessage(localTask.ordinal(), building.getLocation().getInDimensionLocation()));
     }
 
     /**

@@ -57,7 +57,7 @@ public class HireFireMessage extends AbstractMessage<HireFireMessage, IMessage>
     {
         super();
         this.colonyId = building.getColony().getID();
-        this.buildingId = building.getID();
+        this.buildingId = building.getLocation().getInDimensionLocation();
         this.hire = hire;
         this.citizenID = citizenID;
     }
@@ -104,7 +104,7 @@ public class HireFireMessage extends AbstractMessage<HireFireMessage, IMessage>
 
             if (message.hire)
             {
-                final CitizenData citizen = colony.getCitizen(message.citizenID);
+                final CitizenData citizen = (CitizenData) colony.getCitizen(message.citizenID);
                 ((AbstractBuildingWorker) colony.getBuilding(message.buildingId)).setWorker(citizen);
             }
             else

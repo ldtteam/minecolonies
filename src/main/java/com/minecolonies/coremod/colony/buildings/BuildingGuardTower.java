@@ -8,6 +8,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
+import com.minecolonies.coremod.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -97,7 +98,7 @@ public class BuildingGuardTower extends AbstractBuildingWorker
     /**
      * Position the guard should guard at.
      */
-    private BlockPos guardPos = this.getID();
+    private BlockPos guardPos = this.getLocation().getInDimensionLocation();
 
     /**
      * The job of the guard, following the GuarJob enum.
@@ -225,7 +226,7 @@ public class BuildingGuardTower extends AbstractBuildingWorker
             return followPlayer.getPosition();
         }
         task = Task.GUARD;
-        return this.getLocation();
+        return this.getLocation().getInDimensionLocation();
     }
 
     /**
@@ -571,7 +572,7 @@ public class BuildingGuardTower extends AbstractBuildingWorker
         /**
          * Position the guard should guard at.
          */
-        public BlockPos guardPos = this.getID();
+        public BlockPos guardPos = this.getLocation().getInDimensionLocation();
 
         /**
          * The job of the guard, following the GuarJob enum.
@@ -589,9 +590,9 @@ public class BuildingGuardTower extends AbstractBuildingWorker
          * @param c The ColonyView the building is in.
          * @param l The location of the building.
          */
-        public View(final ColonyView c, final BlockPos l)
+        public View(final ColonyView c, @NotNull final BlockPos l, @NotNull final IToken id)
         {
-            super(c, l);
+            super(c, l, id);
         }
 
         /**

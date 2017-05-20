@@ -4,10 +4,14 @@ import com.google.common.collect.ImmutableMap;
 import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.permissions.IPermissions;
 import com.minecolonies.coremod.colony.requestsystem.IRequestManager;
+import com.minecolonies.coremod.colony.requestsystem.factory.IFactoryController;
+import net.minecraft.stats.Achievement;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * Interface of the Colony and ColonyView which will have to implement the
@@ -70,12 +74,62 @@ public interface IColony
     int getID();
 
     /**
+     * Increment the statistic amount and trigger achievement.
+     *
+     * @param statistic the statistic.
+     */
+    void incrementStatistic(@NotNull String statistic);
+
+    /**
+     * Get the Work Manager for the Colony.
+     *
+     * @return WorkManager for the Colony.
+     */
+    @NotNull
+    IWorkManager getWorkManager();
+
+    /**
      * returns the World the colony is in.
      *
      * @return the World the colony is in.
      */
     @Nullable
     World getWorld();
+
+    /**
+     * Returns the max amount of citizens in the colony.
+     *
+     * @return Max amount of citizens.
+     */
+    int getMaxCitizens();
+
+    IBuilding getBuilding(BlockPos pos);
+
+    /**
+     * Get citizen by ID.
+     *
+     * @param citizenId ID of the Citizen.
+     * @return CitizenData associated with the ID, or null if it was not found.
+     */
+    ICitizenData getCitizen(int citizenId);
+
+    List<BlockPos> getDeliverymanRequired();
+
+    /**
+     * Performed when a building of this colony finished his upgrade state.
+     *
+     * @param building The upgraded building.
+     * @param level    The new level.
+     */
+    void onBuildingUpgradeComplete(@NotNull IBuilding building, int level);
+
+    /**
+     * Method to get the achievements of this colony.
+     *
+     * @return The achievements achieved by this colony.
+     */
+    @NotNull
+    List<Achievement> getAchievements();
 
     /**
      * Returns the buildings in the colony
@@ -91,4 +145,12 @@ public interface IColony
      */
     @NotNull
     IRequestManager getRequestManager();
+
+    /**
+     * Method to get the factory controller for a given colony
+     *
+     * @return The factory controller.
+     */
+    @NotNull
+    IFactoryController getFactoryController();
 }

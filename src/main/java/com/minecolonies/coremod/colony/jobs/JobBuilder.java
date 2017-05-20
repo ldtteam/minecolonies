@@ -116,7 +116,7 @@ public class JobBuilder extends AbstractJobStructure
     public void complete()
     {
         final BlockPos buildingLocation = this.getWorkOrder().getBuildingLocation();
-        final AbstractBuilding building = this.getCitizen().getColony().getBuilding(buildingLocation);
+        final AbstractBuilding building = (AbstractBuilding) this.getCitizen().getColony().getBuilding(buildingLocation);
 
         if (building != null)
         {

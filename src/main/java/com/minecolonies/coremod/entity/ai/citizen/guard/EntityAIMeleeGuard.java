@@ -123,7 +123,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
      */
     protected AIState huntDown()
     {
-        if(huntDownlastAttacker())
+        if (huntDownlastAttacker())
         {
             targetEntity = this.worker.getLastAttacker();
         }
@@ -143,7 +143,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
             attacksExecuted += 1;
             currentSearchDistance = START_SEARCH_DISTANCE;
 
-            if(killedEnemy)
+            if (killedEnemy)
             {
                 return AIState.GUARD_GATHERING;
             }

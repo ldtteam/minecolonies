@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony;
 
-import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
+import com.minecolonies.coremod.colony.workorder.WorkOrderType;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
@@ -16,23 +16,23 @@ public class WorkOrderView
     /**
      * The work orders id.
      */
-    private int                             id;
+    private int           id;
     /**
      * The priority.
      */
-    private int                             priority;
+    private int           priority;
     /**
      * Its description.
      */
-    private String                          value;
+    private String        value;
     /**
      * The type (defined by an enum).
      */
-    private AbstractWorkOrder.WorkOrderType type;
+    private WorkOrderType type;
     /**
      * Claimed by citizen id x.
      */
-    private int                             claimedBy;
+    private int           claimedBy;
 
     /**
      * Public constructor of the WorkOrderView.
@@ -79,7 +79,7 @@ public class WorkOrderView
      *
      * @return the type (defined by Enum).
      */
-    public AbstractWorkOrder.WorkOrderType getType()
+    public WorkOrderType getType()
     {
         return type;
     }
@@ -135,7 +135,7 @@ public class WorkOrderView
         id = buf.readInt();
         priority = buf.readInt();
         claimedBy = buf.readInt();
-        type = AbstractWorkOrder.WorkOrderType.values()[buf.readInt()];
+        type = WorkOrderType.values()[buf.readInt()];
         value = ByteBufUtils.readUTF8String(buf);
     }
 }

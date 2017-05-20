@@ -26,10 +26,6 @@ public final class Compatibility
      */
     public static boolean getMiningLevelCompatibility(@Nullable final ItemStack stack, @Nullable final String tool)
     {
-        if (ToolBrokenCheck.checkTinkersBroken(stack))
-        {
-            return false;
-        }
-        return true;
+        return !ToolBrokenCheck.checkTinkersBroken(stack);
     }
 }

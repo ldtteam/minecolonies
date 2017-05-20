@@ -45,7 +45,7 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
      */
     private void pullLevelsFromHut()
     {
-        if (miner.getColony().getBuilding(miner.getID()) != null)
+        if (miner.getColony().getBuilding(miner.getLocation().getInDimensionLocation()) != null)
         {
             levels = miner.levels;
         }

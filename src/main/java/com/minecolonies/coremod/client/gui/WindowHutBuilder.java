@@ -74,7 +74,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
      */
     private void pullResourcesFromHut()
     {
-        final AbstractBuilding.View newView = builder.getColony().getBuilding(builder.getID());
+        final AbstractBuilding.View newView = builder.getColony().getBuilding(builder.getLocation().getInDimensionLocation());
         if (newView instanceof BuildingBuilderView)
         {
             final BuildingBuilderView updatedView = (BuildingBuilderView) newView;

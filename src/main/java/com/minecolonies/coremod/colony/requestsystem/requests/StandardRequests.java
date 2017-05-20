@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.colony.requestsystem.requests;
 
 import com.minecolonies.coremod.colony.requestsystem.RequestState;
-import com.minecolonies.coremod.colony.requestsystem.location.ILocatable;
 import com.minecolonies.coremod.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.coremod.colony.requestsystem.requestable.Tool;
+import com.minecolonies.coremod.colony.requestsystem.requester.IRequester;
 import com.minecolonies.coremod.colony.requestsystem.token.IToken;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -15,12 +15,12 @@ public final class StandardRequests {
 
     public static class ItemStackRequest extends AbstractRequest<ItemStack> {
 
-        public ItemStackRequest(@NotNull ILocatable requester, @NotNull IToken token, @NotNull ItemStack requested)
+        public ItemStackRequest(@NotNull IRequester requester, @NotNull IToken token, @NotNull ItemStack requested)
         {
             super(requester, token, requested);
         }
 
-        public ItemStackRequest(@NotNull ILocatable requester, @NotNull IToken token, @NotNull RequestState state, @NotNull ItemStack requested)
+        public ItemStackRequest(@NotNull IRequester requester, @NotNull IToken token, @NotNull RequestState state, @NotNull ItemStack requested)
         {
             super(requester, token, state, requested);
         }
@@ -38,12 +38,12 @@ public final class StandardRequests {
 
     public static class DeliveryRequest extends AbstractRequest<Delivery> {
 
-        public DeliveryRequest(@NotNull ILocatable requester, @NotNull IToken token, @NotNull Delivery requested)
+        public DeliveryRequest(@NotNull IRequester requester, @NotNull IToken token, @NotNull Delivery requested)
         {
             super(requester, token, requested);
         }
 
-        public DeliveryRequest(@NotNull ILocatable requester, @NotNull IToken token, @NotNull RequestState state, @NotNull Delivery requested)
+        public DeliveryRequest(@NotNull IRequester requester, @NotNull IToken token, @NotNull RequestState state, @NotNull Delivery requested)
         {
             super(requester, token, state, requested);
         }
@@ -65,12 +65,12 @@ public final class StandardRequests {
 
     public static class ToolRequest extends AbstractRequest<Tool> {
 
-        public ToolRequest(@NotNull ILocatable requester, @NotNull IToken token, @NotNull Tool requested)
+        public ToolRequest(@NotNull IRequester requester, @NotNull IToken token, @NotNull Tool requested)
         {
             super(requester, token, requested);
         }
 
-        public ToolRequest(@NotNull ILocatable requester, @NotNull IToken token, @NotNull RequestState state, @NotNull Tool requested)
+        public ToolRequest(@NotNull IRequester requester, @NotNull IToken token, @NotNull RequestState state, @NotNull Tool requested)
         {
             super(requester, token, state, requested);
         }

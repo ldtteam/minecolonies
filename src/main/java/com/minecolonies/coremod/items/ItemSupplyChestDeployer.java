@@ -224,25 +224,25 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
 
             case SOUTH:
                 StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(OFFSET_SOUTH_WEST, OFFSET_Y, OFFSET_SOUTH_EAST),
-                        Constants.ROTATE_THREE_TIMES, Mirror.NONE);
+                  Constants.ROTATE_THREE_TIMES, Mirror.NONE);
                 break;
             case NORTH:
                 StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(OFFSET_NORTH_EAST, OFFSET_Y, OFFSET_NORTH_WEST),
-                        Constants.ROTATE_ONCE, Mirror.NONE);
+                  Constants.ROTATE_ONCE, Mirror.NONE);
                 break;
             case EAST:
                 StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(OFFSET_SOUTH_EAST, OFFSET_Y, OFFSET_NORTH_EAST),
-                        Constants.ROTATE_TWICE, Mirror.NONE);
+                  Constants.ROTATE_TWICE, Mirror.NONE);
                 break;
             case WEST:
                 StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(OFFSET_NORTH_WEST, OFFSET_Y, OFFSET_SOUTH_WEST),
-                        Constants.ROTATE_0_TIMES, Mirror.NONE);
+                  Constants.ROTATE_0_TIMES, Mirror.NONE);
                 break;
             default:
                 break;
         }
     }
-    
+
     /**
      * Fills the content of the supplychest with the buildTool and townHall.
      *
@@ -272,13 +272,13 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @return true if it can be placed.
      */
     private static boolean checkX(
-            final World world,
-            final BlockPos pos,
-            final int k,
-            final int spaceRightK,
-            final int spaceLeftK,
-            final int widthK,
-            final boolean isCoordPositivelyAdded)
+                                   final World world,
+                                   final BlockPos pos,
+                                   final int k,
+                                   final int spaceRightK,
+                                   final int spaceLeftK,
+                                   final int widthK,
+                                   final boolean isCoordPositivelyAdded)
     {
         for (int i = DISTANCE; i < WIDTH; i++)
         {
@@ -315,13 +315,13 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @return true if it can be placed.
      */
     private static boolean checkZ(
-            final World world,
-            final BlockPos pos,
-            final int k,
-            final int spaceRightK,
-            final int spaceLeftK,
-            final int widthK,
-            final boolean isCoordPositivelyAdded)
+                                   final World world,
+                                   final BlockPos pos,
+                                   final int k,
+                                   final int spaceRightK,
+                                   final int spaceLeftK,
+                                   final int widthK,
+                                   final boolean isCoordPositivelyAdded)
     {
         for (int i = DISTANCE; i < WIDTH; i++)
         {

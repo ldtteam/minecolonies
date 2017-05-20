@@ -197,9 +197,9 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
      * @param mirror        Whether or not the strcture is mirrored.
      */
     private static void setupBuilding(
-                                      @NotNull final World world, @NotNull final EntityPlayer player,
-                                      final Structures.StructureName sn,
-                                      final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
+                                       @NotNull final World world, @NotNull final EntityPlayer player,
+                                       final Structures.StructureName sn,
+                                       final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
     {
         @Nullable final AbstractBuilding building = ColonyManager.getBuilding(world, buildPos);
 

@@ -1,8 +1,9 @@
 package com.minecolonies.coremod.util;
 
 import com.minecolonies.coremod.achievements.ModAchievements;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.coremod.colony.IColony;
+import com.minecolonies.coremod.colony.permissions.Player;
+import com.minecolonies.coremod.colony.permissions.Rank;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.stats.Achievement;
 import org.jetbrains.annotations.NotNull;
@@ -25,13 +26,13 @@ public final class AchievementUtils
 
     /**
      * This method will sync all acquired achievements by this colony to all
-     * members with at least rank {@link Permissions.Rank#OFFICER}.
+     * members with at least rank {@link Rank#OFFICER}.
      *
      * @param colony The colony to sync
      */
-    public static void syncAchievements(@NotNull final Colony colony)
+    public static void syncAchievements(@NotNull final IColony colony)
     {
-        @NotNull final List<Permissions.Player> players = PermissionUtils.getPlayersWithAtLeastRank(colony, Permissions.Rank.OFFICER);
+        @NotNull final List<Player> players = PermissionUtils.getPlayersWithAtLeastRank(colony, Rank.OFFICER);
 
         @NotNull final List<EntityPlayer> lPlayer = ServerUtils.getPlayersFromPermPlayer(players, colony.getWorld());
 

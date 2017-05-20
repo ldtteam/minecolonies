@@ -65,11 +65,12 @@ public class EntityAIGoHome extends EntityAIBase
     public boolean shouldExecute()
     {
         return (citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP && (!citizen.isAtHome() || isCitizenHungry()))
-                || isCitizenStarving();
+                 || isCitizenStarving();
     }
 
     /**
      * Check if a citizen is hungry (Saturation smaller than 7)
+     *
      * @return true if so.
      */
     private boolean isCitizenHungry()
@@ -79,6 +80,7 @@ public class EntityAIGoHome extends EntityAIBase
 
     /**
      * Check if a citizen is hungry saturation 0.
+     *
      * @return true if so.
      */
     private boolean isCitizenStarving()
@@ -128,7 +130,7 @@ public class EntityAIGoHome extends EntityAIBase
     private void handleSaturation(@NotNull final BlockPos pos)
     {
         if (citizen.isWorkerAtSiteWithMove(pos, 2) && citizen.getColony() != null
-                && citizen.getCitizenData() != null && citizen.getCitizenData().getSaturation() < EntityCitizen.HIGH_SATURATION)
+              && citizen.getCitizenData() != null && citizen.getCitizenData().getSaturation() < EntityCitizen.HIGH_SATURATION)
         {
             final double currentSaturation = citizen.getCitizenData().getSaturation();
             boolean tookFood = false;
@@ -136,7 +138,7 @@ public class EntityAIGoHome extends EntityAIBase
             if (home instanceof BuildingHome && currentSaturation < EntityCitizen.FULL_SATURATION)
             {
                 final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(home.getTileEntity(),
-                        itemStack -> itemStack.getItem() instanceof ItemFood);
+                  itemStack -> itemStack.getItem() instanceof ItemFood);
                 if (slot != -1)
                 {
                     final ItemStack stack = home.getTileEntity().getStackInSlot(slot);
@@ -144,13 +146,13 @@ public class EntityAIGoHome extends EntityAIBase
                     {
                         final int slotToSet = InventoryUtils.getFirstOpenSlotFromItemHandler(new InvWrapper(citizen.getInventoryCitizen()));
 
-                        if(slotToSet == -1)
+                        if (slotToSet == -1)
                         {
                             InventoryUtils.forceItemStackToItemHandler(
-                                    new InvWrapper(citizen.getInventoryCitizen()),
-                                    new ItemStack(stack.getItem(), 1),
-                                    stack1 -> !InventoryUtils.isItemStackEmpty(stack) && (stack.getItem() instanceof ItemTool
-                                            || stack.getItem() instanceof ItemSword));
+                              new InvWrapper(citizen.getInventoryCitizen()),
+                              new ItemStack(stack.getItem(), 1),
+                              stack1 -> !InventoryUtils.isItemStackEmpty(stack) && (stack.getItem() instanceof ItemTool
+                                                                                      || stack.getItem() instanceof ItemSword));
                         }
                         else
                         {
@@ -171,7 +173,7 @@ public class EntityAIGoHome extends EntityAIBase
 
     private void requestFoodIfRequired(final double currentSaturation, @NotNull final AbstractBuilding home)
     {
-        if (!(home instanceof BuildingHome) || (((BuildingHome) home).isFoodNeeded() && !((BuildingHome)home).hasOnGoingDelivery()))
+        if (!(home instanceof BuildingHome) || (((BuildingHome) home).isFoodNeeded() && !((BuildingHome) home).hasOnGoingDelivery()))
         {
             if (currentSaturation <= 0)
             {
@@ -191,9 +193,9 @@ public class EntityAIGoHome extends EntityAIBase
             }
         }
 
-        if(home instanceof BuildingHome)
+        if (home instanceof BuildingHome)
         {
-            ((BuildingHome)home).setFoodNeeded(true);
+            ((BuildingHome) home).setFoodNeeded(true);
         }
     }
 

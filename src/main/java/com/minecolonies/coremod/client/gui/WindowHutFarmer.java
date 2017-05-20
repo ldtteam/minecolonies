@@ -215,8 +215,8 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final FieldView field = fields.get(index);
-                @NotNull final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(field.getId(), building.getLocation())));
-                final String direction = calcDirection(building.getLocation(), field.getId());
+                @NotNull final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(field.getId(), building.getLocation().getInDimensionLocation())));
+                final String direction = calcDirection(building.getLocation().getInDimensionLocation(), field.getId());
                 @NotNull final String owner =
                   field.getOwner().isEmpty() ? ("<" + LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_UNUSED) + ">") : field.getOwner();
 

@@ -3,6 +3,8 @@ package com.minecolonies.coremod.colony.workorders;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.WorkOrderView;
+import com.minecolonies.coremod.colony.workorder.IAbstractWorkOrder;
+import com.minecolonies.coremod.colony.workorder.WorkOrderType;
 import com.minecolonies.coremod.util.Log;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
@@ -18,7 +20,7 @@ import java.util.Map;
 /**
  * General information between WorkOrders.
  */
-public abstract class AbstractWorkOrder
+public abstract class AbstractWorkOrder implements IAbstractWorkOrder
 {
     private static final String                                          TAG_TYPE       = "type";
     private static final String                                          TAG_ID         = "id";
@@ -125,6 +127,7 @@ public abstract class AbstractWorkOrder
      *
      * @param compound NBT Tag compound
      */
+    @Override
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         id = compound.getInteger(TAG_ID);
@@ -161,6 +164,7 @@ public abstract class AbstractWorkOrder
      *
      * @return the priority of the work order.
      */
+    @Override
     public int getPriority()
     {
         return this.priority;
@@ -171,6 +175,7 @@ public abstract class AbstractWorkOrder
      *
      * @param priority the new priority.
      */
+    @Override
     public void setPriority(final int priority)
     {
         this.priority = priority;
@@ -181,6 +186,7 @@ public abstract class AbstractWorkOrder
      *
      * @return true if so.
      */
+    @Override
     public boolean hasChanged()
     {
         return changed;
@@ -189,6 +195,7 @@ public abstract class AbstractWorkOrder
     /**
      * Resets the changed variable.
      */
+    @Override
     public void resetChange()
     {
         changed = false;
@@ -199,11 +206,13 @@ public abstract class AbstractWorkOrder
      *
      * @return ID of the work order
      */
+    @Override
     public int getID()
     {
         return id;
     }
 
+    @Override
     public void setID(final int id)
     {
         this.id = id;
@@ -214,6 +223,7 @@ public abstract class AbstractWorkOrder
      *
      * @return true if the Work Order has been claimed
      */
+    @Override
     public boolean isClaimed()
     {
         return claimedBy != 0;
@@ -225,6 +235,7 @@ public abstract class AbstractWorkOrder
      * @param citizen The citizen to check
      * @return true if the Work Order is claimed by this Citizen
      */
+    @Override
     public boolean isClaimedBy(@NotNull final CitizenData citizen)
     {
         return citizen.getId() == claimedBy;
@@ -235,6 +246,7 @@ public abstract class AbstractWorkOrder
      *
      * @return ID of citizen the Work Order has been claimed by, or null
      */
+    @Override
     public int getClaimedBy()
     {
         return claimedBy;
@@ -254,6 +266,7 @@ public abstract class AbstractWorkOrder
     /**
      * Clear the Claimed By status of the Work Order.
      */
+    @Override
     public void clearClaimedBy()
     {
         changed = true;
@@ -265,6 +278,7 @@ public abstract class AbstractWorkOrder
      *
      * @param compound NBT tag compount
      */
+    @Override
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         final String s = classToNameMap.get(this.getClass());
@@ -288,24 +302,18 @@ public abstract class AbstractWorkOrder
      * @param colony The colony that owns the Work Order
      * @return True if the WorkOrder is still valid, or False if it should be deleted
      */
+    @Override
     public boolean isValid(final Colony colony)
     {
         return true;
     }
 
     /**
-     * Attempt to fulfill the Work Order.
-     * Override this with an implementation for the Work Order to find a Citizen to perform the job
-     *
-     * @param colony The colony that owns the Work Order
-     */
-    public abstract void attemptToFulfill(Colony colony);
-
-    /**
      * Writes the workOrders data to a byte buf for transition.
      *
      * @param buf Buffer to write to
      */
+    @Override
     public void serializeViewNetworkData(@NotNull final ByteBuf buf)
     {
         buf.writeInt(id);
@@ -330,12 +338,4 @@ public abstract class AbstractWorkOrder
      * @return a description string.
      */
     protected abstract String getValue();
-
-    /**
-     * Contains all classes which inherit directly from this class.
-     */
-    public enum WorkOrderType
-    {
-        BUILD
-    }
 }

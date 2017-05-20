@@ -492,7 +492,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     @Override
     protected boolean checkIfCanceled()
     {
-        if(!isThereAStructureToBuild())
+        if (!isThereAStructureToBuild())
         {
             switch (getState())
             {

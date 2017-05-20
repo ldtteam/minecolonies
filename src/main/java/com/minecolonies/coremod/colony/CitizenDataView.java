@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
  * client-friendly form. Mutable operations on a View result in a message to the
  * server to perform the operation.
  */
-public class CitizenDataView
+public class CitizenDataView implements ICitizenData
 {
     /**
      * Attributes.
@@ -80,6 +80,19 @@ public class CitizenDataView
         return entityId;
     }
 
+    @NotNull
+    @Override
+    public IColony getColony()
+    {
+        return null;
+    }
+
+    @Override
+    public int getId()
+    {
+        return 0;
+    }
+
     /**
      * Entity name getter.
      *
@@ -98,6 +111,12 @@ public class CitizenDataView
     public boolean isFemale()
     {
         return female;
+    }
+
+    @Override
+    public int getTextureId()
+    {
+        return 0;
     }
 
     /**
@@ -184,7 +203,6 @@ public class CitizenDataView
 
     /**
      * Get the saturation of the citizen.
-     * @return
      */
     public double getSaturation()
     {

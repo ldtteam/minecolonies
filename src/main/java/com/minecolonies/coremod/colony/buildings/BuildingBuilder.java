@@ -232,7 +232,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
             //Count in the additional chests as well
             if (builder != null)
             {
-                for (final BlockPos pos : getAdditionalCountainers())
+                for (final BlockPos pos : getAdditionalContainers())
                 {
                     final TileEntity entity = builder.world.getTileEntity(pos);
                     if (entity instanceof TileEntityChest)

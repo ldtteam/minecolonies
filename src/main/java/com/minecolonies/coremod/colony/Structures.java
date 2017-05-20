@@ -34,33 +34,33 @@ public final class Structures
     /**
      * Extension used by the schematic files.
      */
-    public static final  String                                        SCHEMATIC_EXTENSION   = ".nbt";
+    public static final String SCHEMATIC_EXTENSION = ".nbt";
 
     /**
      * Schematic's path in the jar file.
      */
-    private static final String                                        SCHEMATICS_ASSET_PATH = "/assets/minecolonies/";
+    private static final String SCHEMATICS_ASSET_PATH = "/assets/minecolonies/";
 
     /**
      * Schematic's path separator.
      */
-    private static final String                                        SCHEMATICS_SEPARATOR = "/";
+    private static final String SCHEMATICS_SEPARATOR = "/";
 
     /**
      * Storage location for the "normal" schematics.
      * In the jar file or on the local hard drive
      */
-    public static final  String                                        SCHEMATICS_PREFIX     = "schematics";
+    public static final String SCHEMATICS_PREFIX = "schematics";
 
     /**
      * Storage location for the cached schematics.
      */
-    public static final  String                                        SCHEMATICS_CACHE      = "cache";
+    public static final String SCHEMATICS_CACHE = "cache";
 
     /**
      * Storage location for the player's schematics.
      */
-    public static final  String                                        SCHEMATICS_SCAN       = "scans";
+    public static final String SCHEMATICS_SCAN = "scans";
 
     /**
      * Maximum size for a compressed schematic.
@@ -76,7 +76,7 @@ public final class Structures
      * - scans/458764687564687654 => scans -> <none> -> 458764687564687654 , scan/458764687564687654
      */
     @NotNull
-    private static       Map<String, Map<String, Map<String, String>>> schematicsMap         = new HashMap<>();
+    private static Map<String, Map<String, Map<String, String>>> schematicsMap = new HashMap<>();
 
     /**
      * md5 hash for the schematics.
@@ -163,7 +163,7 @@ public final class Structures
         }
         catch (@NotNull URISyntaxException e)
         {
-            Log.getLogger().error("loadStyleMaps : ",e);
+            Log.getLogger().error("loadStyleMaps : ", e);
             return;
         }
 
@@ -367,7 +367,7 @@ public final class Structures
      * rename the file and the md5 entry
      *
      * @param structureName the structure to rename
-     * @param name New name for the schematic as in style/schematicname
+     * @param name          New name for the schematic as in style/schematicname
      * @return the new structureName
      */
     @SideOnly(Side.CLIENT)
@@ -500,7 +500,7 @@ public final class Structures
      * Get a list of schematics for this section and style.
      *
      * @param section such as Builder, schematics. scans ...
-     * @param style limit the list for schematics to this style.
+     * @param style   limit the list for schematics to this style.
      * @return the list of schematics
      */
     @NotNull
@@ -694,6 +694,7 @@ public final class Structures
          * Examples:
          * - schematics/stone/Builder1 return Level 1
          * - schematics/walls/Gate return Gate
+         *
          * @return the localized name of the schematic
          */
         public String getLocalizedName()
@@ -929,7 +930,7 @@ public final class Structures
         {
             Log.getLogger().info("Structures.handleSaveSchematicMessage: received new schematic md5:" + md5);
             final File schematicsFolder = Structure.getCachedSchematicsFolder();
-            final File schematicFile = schematicsFolder.toPath().resolve(SCHEMATICS_CACHE + SCHEMATICS_SEPARATOR +md5 + SCHEMATIC_EXTENSION).toFile();
+            final File schematicFile = schematicsFolder.toPath().resolve(SCHEMATICS_CACHE + SCHEMATICS_SEPARATOR + md5 + SCHEMATIC_EXTENSION).toFile();
             checkDirectory(schematicFile.getParentFile());
             try (OutputStream outputstream = new FileOutputStream(schematicFile))
             {

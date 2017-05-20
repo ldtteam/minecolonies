@@ -68,7 +68,7 @@ public class RecallTownhallMessage extends AbstractMessage<RecallTownhallMessage
             @Nullable final BuildingTownHall building = colony.getTownHall();
             if (building != null)
             {
-                final BlockPos location = building.getLocation();
+                final BlockPos location = building.getLocation().getInDimensionLocation();
                 final World world = colony.getWorld();
                 for (CitizenData citizenData : colony.getCitizens().values())
                 {

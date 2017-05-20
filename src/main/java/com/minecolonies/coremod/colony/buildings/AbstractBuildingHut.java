@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.requestsystem.token.IToken;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,9 +43,9 @@ public abstract class AbstractBuildingHut extends AbstractBuilding
          * @param c ColonyView associated with this building.
          * @param l The location of this building.
          */
-        protected View(final ColonyView c, @NotNull final BlockPos l)
+        protected View(final ColonyView c, @NotNull final BlockPos l, @NotNull final IToken id)
         {
-            super(c, l);
+            super(c, l, id);
         }
     }
 }

@@ -1,9 +1,8 @@
 package com.minecolonies.coremod.colony.requestsystem.resolver;
 
 import com.minecolonies.coremod.colony.requestsystem.IRequestManager;
-import com.minecolonies.coremod.colony.requestsystem.location.ILocatable;
 import com.minecolonies.coremod.colony.requestsystem.request.IRequest;
-import com.minecolonies.coremod.colony.requestsystem.token.IToken;
+import com.minecolonies.coremod.colony.requestsystem.requester.IRequester;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,14 +16,8 @@ import java.util.List;
  * The resolver himself is responsible for storing the tokens of requests that he returns
  * @param <R> The request type that this resolver can provide.
  */
-public interface IRequestResolver<R> extends ILocatable {
-
-    /**
-     * Method to get the unique token, used to identify this resolver inside the request
-     * management system.
-     * @return The unique token identifying this resolver.
-     */
-    IToken getToken();
+public interface IRequestResolver<R> extends IRequester
+{
 
     /**
      * Used to determine which type of requests can be resolved by this Resolver.

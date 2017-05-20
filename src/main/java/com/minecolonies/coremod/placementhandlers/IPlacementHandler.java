@@ -19,12 +19,14 @@ public interface IPlacementHandler
         IGNORE,
         REQUEST
     }
+
     /**
      * Method used to handle the processing of a Placement of a block.
-     * @param world receives the world.
-     * @param pos the position.
+     *
+     * @param world      receives the world.
+     * @param pos        the position.
      * @param blockState the blockState.
-     * @param placer the placer of the block.
+     * @param placer     the placer of the block.
      * @return ACCEPT, DENY or IGNORE.
      */
     Object handle(@NotNull World world, @NotNull BlockPos pos, @NotNull IBlockState blockState, @Nullable AbstractEntityAIStructure<?> placer);

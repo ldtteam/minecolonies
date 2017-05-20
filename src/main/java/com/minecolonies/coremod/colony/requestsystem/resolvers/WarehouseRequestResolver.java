@@ -36,7 +36,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<ItemStack>
     @Override
     public boolean canResolve(@NotNull final IRequestManager manager, final IRequest<ItemStack> requestToCheck)
     {
-        TileEntity tileEntity = manager.getColony().getWorld().getTileEntity(getLocation().getLocation());
+        TileEntity tileEntity = manager.getColony().getWorld().getTileEntity(getLocation().getInDimensionLocation());
 
         if (tileEntity instanceof TileEntityWareHouse)
         {
@@ -72,8 +72,8 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<ItemStack>
     public IRequest getFollowupRequestForCompletion(
                                                      @NotNull final IRequestManager manager, @NotNull final IRequest<ItemStack> completedRequest)
     {
-        return manager.getRequestForToken(manager.createRequest(completedRequest.getRequesterLocation(),
-          new Delivery(getLocation(), completedRequest.getRequesterLocation().getLocation(), completedRequest.getDelivery())));
+        return manager.getRequestForToken(manager.createRequest(completedRequest.getRequester(),
+          new Delivery(getLocation(), completedRequest.getRequester().getLocation(), completedRequest.getDelivery())));
     }
 
     @Nullable
@@ -89,5 +89,12 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<ItemStack>
     public void onResolvingOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<ItemStack> request) throws IllegalArgumentException
     {
         //TODO Release the stack from the warehouse.
+    }
+
+    @NotNull
+    @Override
+    public void onRequestComplete(@NotNull final IToken token)
+    {
+        //TODO Release the DMan that did the job.
     }
 }

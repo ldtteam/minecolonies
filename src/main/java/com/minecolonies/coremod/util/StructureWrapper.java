@@ -114,14 +114,15 @@ public final class StructureWrapper
      * @return true if succesful.
      */
 
-    public static boolean tryToLoadAndPlaceSupplyCampWithRotation(final World worldObj, @NotNull final String name,
-            @NotNull final BlockPos pos, final int rotations, @NotNull final Mirror mirror)
+    public static boolean tryToLoadAndPlaceSupplyCampWithRotation(
+                                                                   final World worldObj, @NotNull final String name,
+                                                                   @NotNull final BlockPos pos, final int rotations, @NotNull final Mirror mirror)
     {
         try
         {
             @NotNull final StructureWrapper structureWrapper = new StructureWrapper(worldObj, name);
             structureWrapper.rotate(rotations, worldObj, pos, mirror);
-            if(structureWrapper.checkForFreeSpace(pos))
+            if (structureWrapper.checkForFreeSpace(pos))
             {
                 structureWrapper.placeStructure(pos);
                 return true;
@@ -167,18 +168,18 @@ public final class StructureWrapper
 
                     final BlockPos worldPos = pos.add(localPos);
 
-                    if(worldPos.getY() <= pos.getY() && !world.getBlockState(worldPos.down()).getMaterial().isSolid())
+                    if (worldPos.getY() <= pos.getY() && !world.getBlockState(worldPos.down()).getMaterial().isSolid())
                     {
                         return false;
                     }
 
                     final IBlockState worldState = world.getBlockState(worldPos);
-                    if(worldState.getBlock() == Blocks.BEDROCK)
+                    if (worldState.getBlock() == Blocks.BEDROCK)
                     {
                         return false;
                     }
 
-                    if(worldPos.getY() > pos.getY() && worldState.getBlock() != Blocks.AIR)
+                    if (worldPos.getY() > pos.getY() && worldState.getBlock() != Blocks.AIR)
                     {
                         return false;
                     }
@@ -218,9 +219,9 @@ public final class StructureWrapper
                         continue;
                     }
 
-                    if(localBlock == ModBlocks.blockSolidSubstitution)
+                    if (localBlock == ModBlocks.blockSolidSubstitution)
                     {
-                        if( !worldState.getMaterial().isSolid())
+                        if (!worldState.getMaterial().isSolid())
                         {
                             final IBlockState subBlock = BlockUtils.getSubstitutionBlockAtWorld(world, worldPos);
                             placeBlock(subBlock, subBlock.getBlock(), worldPos);
@@ -336,7 +337,7 @@ public final class StructureWrapper
 
         final IBlockState worldBlockState = world.getBlockState(worldPos);
 
-        if(structureBlock == ModBlocks.blockSolidSubstitution && worldBlockState.getMaterial().isSolid())
+        if (structureBlock == ModBlocks.blockSolidSubstitution && worldBlockState.getMaterial().isSolid())
         {
             return true;
         }
@@ -348,7 +349,7 @@ public final class StructureWrapper
             return structureBlock == worldBlockState.getBlock();
         }
         else if ((structureBlock instanceof BlockStairs && structureBlockState == worldBlockState)
-                || BlockUtils.isGrassOrDirt(structureBlock, worldBlockState.getBlock(), structureBlockState, worldBlockState))
+                   || BlockUtils.isGrassOrDirt(structureBlock, worldBlockState.getBlock(), structureBlockState, worldBlockState))
         {
             return true;
         }

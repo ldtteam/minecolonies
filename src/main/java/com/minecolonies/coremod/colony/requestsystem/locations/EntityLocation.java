@@ -37,7 +37,8 @@ public class EntityLocation implements ILocation {
      */
     @NotNull
     @Override
-    public BlockPos getLocation() {
+    public BlockPos getInDimensionLocation()
+    {
         checkEntity();
         if (entity == null || entity.get() == null)
             return BlockPos.ORIGIN;

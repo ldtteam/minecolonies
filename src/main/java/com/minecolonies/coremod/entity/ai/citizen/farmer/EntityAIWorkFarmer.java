@@ -228,10 +228,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             }
             if (!walkToBuilding())
             {
-                if (isInHut(seeds))
+                if (checkBuildingForStack(seeds))
                 {
                     requestSeeds = false;
-                    isInHut(seeds);
+                    checkBuildingForStack(seeds);
                 }
                 shouldTryToGetSeed = requestSeeds;
                 if (requestSeeds)

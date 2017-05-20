@@ -1,9 +1,11 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.google.common.collect.ImmutableList;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.blocks.*;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView;
+import com.minecolonies.coremod.colony.requestsystem.locations.StaticLocation;
 import com.minecolonies.coremod.colony.requestsystem.request.IRequest;
 import com.minecolonies.coremod.colony.requestsystem.requestable.Tool;
 import com.minecolonies.coremod.colony.requestsystem.token.IToken;
@@ -15,7 +17,6 @@ import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.*;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -78,8 +79,34 @@ public abstract class AbstractBuilding implements IBuilding {
     /**
      * The tag to store the style of the building.
      */
-    private static final String                  TAG_STYLE                    = "style";
-    private static final int                     NO_WORK_ORDER                = 0;
+    private static final String TAG_STYLE = "style";
+
+    /**
+     * The tag to store the ID of the building in NBT. Will be regenerated when it does not exist.
+     */
+    private static final String TAG_ID = "id";
+
+    /**
+     * The tag to store the open requests made through this building.
+     */
+    private static final String TAG_REQUESTS_BY_CITIZENS = "requests";
+
+    /**
+     * The tag to store the completed requests made through this building.
+     */
+    private static final String TAG_COMPLETED_REQUESTS_BY_CITIZEN = "completed_requests";
+
+    /**
+     * The tag to store who created the request
+     */
+    private static final String TAG_REQUESTER = "requester";
+
+    /**
+     * The tag to store the id of the request.
+     */
+    private static final String TAG_REQUEST_TOKEN = "token";
+
+    private static final int NO_WORK_ORDER = 0;
 
     /**
      * List of all open requests made by this building.
@@ -89,18 +116,6 @@ public abstract class AbstractBuilding implements IBuilding {
      */
     @NotNull
     private final Map<Class, List<IToken>> openRequests = new HashMap<>();
-
-    /**
-     * Map used to identify which citizen assigned to this building made which request.
-     */
-    @NotNull
-    private final Map<IToken, Integer> requestsByCitizen = new HashMap<>();
-
-    /**
-     * Map used to identify which requests a given citizen has open.
-     */
-    @NotNull
-    private final Map<Integer, List<IToken>> citizensByRequests = new HashMap<>();
 
     /**
      * Map to resolve names to class.
@@ -149,16 +164,16 @@ public abstract class AbstractBuilding implements IBuilding {
     /**
      * The location of the building.
      */
-    private final BlockPos location;
+    private final StaticLocation           location;
     /**
      * The colony the building belongs to.
      */
     @NotNull
-    private final Colony colony;
+    private final Colony                   colony;
     /**
      * The tileEntity of the building.
      */
-    private TileEntityColonyBuilding tileEntity;
+    private       TileEntityColonyBuilding tileEntity;
 
     /**
      * The level of the building.
@@ -186,6 +201,26 @@ public abstract class AbstractBuilding implements IBuilding {
     private boolean dirty = false;
 
     /**
+     * The ID of the building. Needed in the request system to identify it.
+     */
+    private IToken id;
+
+    /**
+     * Keeps track of which citizen created what request. Citizen -> Request direction.
+     */
+    private HashMap<Integer, Collection<IToken>> citizensByRequests = new HashMap<>();
+
+    /**
+     * Keeps track of which citizen has completed requests. Citizen -> Request direction.
+     */
+    private HashMap<Integer, Collection<IToken>> citizensByCompletedRequests = new HashMap<>();
+
+    /**
+     * Keeps track of which citizen created what request. Request -> Citizen direction.
+     */
+    private HashMap<IToken, Integer> requestsByCitizen = new HashMap<>();
+
+    /**
      * Constructor for a AbstractBuilding.
      *
      * @param colony Colony the building belongs to.
@@ -193,7 +228,7 @@ public abstract class AbstractBuilding implements IBuilding {
      */
     protected AbstractBuilding(@NotNull final Colony colony, final BlockPos pos)
     {
-        location = pos;
+        location = new StaticLocation(pos, colony.getDimension());
         this.colony = colony;
     }
 
@@ -208,10 +243,10 @@ public abstract class AbstractBuilding implements IBuilding {
      * @param parentBlock   subclass of Block, located in {@link com.minecolonies.coremod.blocks}.
      */
     private static void addMapping(
-                                          final String name,
-                                          @NotNull final Class<? extends AbstractBuilding> buildingClass,
-                                          @NotNull final Class<? extends AbstractBuilding.View> viewClass,
-                                          @NotNull final Class<? extends AbstractBlockHut> parentBlock)
+                                    final String name,
+                                    @NotNull final Class<? extends AbstractBuilding> buildingClass,
+                                    @NotNull final Class<? extends AbstractBuilding.View> viewClass,
+                                    @NotNull final Class<? extends AbstractBlockHut> parentBlock)
     {
         final int buildingHashCode = buildingClass.getName().hashCode();
 
@@ -226,7 +261,8 @@ public abstract class AbstractBuilding implements IBuilding {
                 /*
                 If a constructor exist for the building, put the building in the lists.
                  */
-                if (buildingClass.getDeclaredConstructor(Colony.class, BlockPos.class) != null)
+                if (buildingClass.getDeclaredConstructor(Colony.class, BlockPos.class) != null
+                      && viewClass.getDeclaredConstructor(ColonyView.class, BlockPos.class, IToken.class) != null)
                 {
                     nameToClassMap.put(name, buildingClass);
                     classToNameMap.put(buildingClass, name);
@@ -319,9 +355,9 @@ public abstract class AbstractBuilding implements IBuilding {
         if (!Structures.hasMD5(sn))
         {
             final Structures.StructureName newStructureName = Structures.getStructureNameByMD5(md5);
-            if (newStructureName!= null
-                && newStructureName.getPrefix().equals(sn.getPrefix())
-                && newStructureName.getSchematic().equals(sn.getSchematic()))
+            if (newStructureName != null
+                  && newStructureName.getPrefix().equals(sn.getPrefix())
+                  && newStructureName.getSchematic().equals(sn.getSchematic()))
             {
                 //We found the new location for the schematic, update the style accordingly
                 style = newStructureName.getStyle();
@@ -342,6 +378,87 @@ public abstract class AbstractBuilding implements IBuilding {
             containerList.add(NBTUtil.getPosFromTag(containerCompound));
         }
         isMirrored = compound.getBoolean(TAG_MIRROR);
+
+        //Check if this building has an ID already. Else create a new one.
+        if (compound.hasKey(TAG_ID))
+        {
+            //Existing ID
+            id = getColony().getFactoryController().deserialize(compound.getCompoundTag(TAG_ID));
+        }
+        else
+        {
+            //Not existing.
+            id = getColony().getFactoryController().getNewInstance(UUID.randomUUID());
+            Log.getLogger().info("Loaded Building without ID. Assigned new one.");
+        }
+
+        openRequests.clear();
+        requestsByCitizen.clear();
+        citizensByRequests.clear();
+        citizensByCompletedRequests.clear();
+
+        //Check for open requests.
+        if (compound.hasKey(TAG_REQUESTS_BY_CITIZENS))
+        {
+            //Requests exist. Get the list.
+            NBTTagList requests = compound.getTagList(TAG_REQUESTS_BY_CITIZENS, Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < requests.tagCount(); i++)
+            {
+                //For each request attempt the deserialization.
+                try
+                {
+                    NBTTagCompound requestCompound = requests.getCompoundTagAt(i);
+                    Integer citizenId = requestCompound.getInteger(TAG_REQUESTER);
+
+                    //Use the factory to get the ID of the request from NBT.
+                    IToken requestToken = getColony().getFactoryController().deserialize(requestCompound.getCompoundTag(TAG_REQUEST_TOKEN));
+
+                    //Get the request from the colony. (Attention, request system needs to be deserialised before the Buildings!
+                    IRequest request = getColony().getRequestManager().getRequestForToken(requestToken);
+
+                    //Add the request to the map.
+                    addRequestToMaps(citizenId, requestToken, request.getRequestType());
+                }
+                catch (Exception ex)
+                {
+                    //Failure to deserialize and store the request.
+                    //TODO: Keep this in mind when we get the complete callback. Some request registration might have failed.
+                    //TODO: If so how to proceed? Probably discard. Citizen will have recreated a request or so. DMan needs to pick it up.
+                    Log.getLogger().warn("Failed to deserialize a Request. Somethings might look a bit weird, as it is being skipped.");
+                }
+            }
+        }
+
+        if (compound.hasKey(TAG_COMPLETED_REQUESTS_BY_CITIZEN))
+        {
+            //Requests exist. Get the list.
+            NBTTagList requests = compound.getTagList(TAG_REQUESTS_BY_CITIZENS, Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < requests.tagCount(); i++)
+            {
+                //For each request attempt the deserialization.
+                try
+                {
+                    NBTTagCompound requestCompound = requests.getCompoundTagAt(i);
+                    Integer citizenId = requestCompound.getInteger(TAG_REQUESTER);
+
+                    //Use the factory to get the ID of the request from NBT.
+                    IToken requestToken = getColony().getFactoryController().deserialize(requestCompound.getCompoundTag(TAG_REQUEST_TOKEN));
+
+                    if (!citizensByCompletedRequests.containsKey(citizenId))
+                    {
+                        citizensByCompletedRequests.put(citizenId, new ArrayList<>());
+                    }
+                    citizensByCompletedRequests.get(citizenId).add(requestToken);
+                }
+                catch (Exception ex)
+                {
+                    //Failure to deserialize and store the request.
+                    //TODO: Keep this in mind when we get the complete callback. Some request registration might have failed.
+                    //TODO: If so how to proceed? Probably discard. Citizen will have recreated a request or so. DMan needs to pick it up.
+                    Log.getLogger().warn("Failed to deserialize a Request. Somethings might look a bit weird, as it is being skipped.");
+                }
+            }
+        }
     }
 
     /**
@@ -370,6 +487,7 @@ public abstract class AbstractBuilding implements IBuilding {
             final BlockPos loc = parent.getPosition();
             final Constructor<?> constructor = oclass.getDeclaredConstructor(Colony.class, BlockPos.class);
             building = (AbstractBuilding) constructor.newInstance(colony, loc);
+            building.id = building.getColony().getFactoryController().getNewInstance(UUID.randomUUID());
         }
         catch (@NotNull NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException exception)
         {
@@ -387,12 +505,12 @@ public abstract class AbstractBuilding implements IBuilding {
      * Create a AbstractBuilding View given it's saved NBTTagCompound.
      *
      * @param colony The owning colony.
-     * @param id     Chunk coordinate of the block a view is created for.
+     * @param location     Chunk coordinate of the block a view is created for.
      * @param buf    The network data.
      * @return {@link AbstractBuilding.View} created from reading the buf.
      */
     @Nullable
-    public static View createBuildingView(final ColonyView colony, final BlockPos id, @NotNull final ByteBuf buf)
+    public static View createBuildingView(final ColonyView colony, final BlockPos location, final IToken id, @NotNull final ByteBuf buf)
     {
         @Nullable View view = null;
         @Nullable Class<?> oclass = null;
@@ -404,8 +522,8 @@ public abstract class AbstractBuilding implements IBuilding {
 
             if (oclass != null)
             {
-                final Constructor<?> constructor = oclass.getDeclaredConstructor(ColonyView.class, BlockPos.class);
-                view = (View) constructor.newInstance(colony, id);
+                final Constructor<?> constructor = oclass.getDeclaredConstructor(ColonyView.class, BlockPos.class, IToken.class);
+                view = (View) constructor.newInstance(colony, location, id);
             }
         }
         catch (@NotNull NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException exception)
@@ -470,8 +588,8 @@ public abstract class AbstractBuilding implements IBuilding {
         else
         {
             compound.setString(TAG_BUILDING_TYPE, s);
-            BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
-            final Structures.StructureName  structureName = new Structures.StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + buildingLevel);
+            BlockPosUtil.writeToNBT(compound, TAG_LOCATION, getLocation().getInDimensionLocation());
+            final Structures.StructureName structureName = new Structures.StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + buildingLevel);
             if (Structures.hasMD5(structureName))
             {
                 compound.setString(TAG_SCHEMATIC_MD5, Structures.getMD5(structureName.toString()));
@@ -490,6 +608,33 @@ public abstract class AbstractBuilding implements IBuilding {
         }
         compound.setTag(TAG_CONTAINERS, containerTagList);
         compound.setBoolean(TAG_MIRROR, isMirrored);
+
+        NBTTagList requests = new NBTTagList();
+        requestsByCitizen.forEach((IToken token, Integer citizenId) ->
+        {
+            NBTTagCompound requestCompound = new NBTTagCompound();
+            requestCompound.setInteger(TAG_REQUESTER, citizenId);
+            requestCompound.setTag(TAG_REQUEST_TOKEN, getColony().getFactoryController().serialize(token));
+
+            requests.appendTag(requestCompound);
+        });
+
+        compound.setTag(TAG_REQUESTS_BY_CITIZENS, requests);
+
+        NBTTagList completedRequests = new NBTTagList();
+        citizensByCompletedRequests.forEach((Integer citizenId, Collection<IToken> tokens) ->
+        {
+            tokens.forEach((IToken token) ->
+            {
+                NBTTagCompound requestCompound = new NBTTagCompound();
+                requestCompound.setInteger(TAG_REQUESTER, citizenId);
+                requestCompound.setTag(TAG_REQUEST_TOKEN, getColony().getFactoryController().serialize(token));
+
+                requests.appendTag(requestCompound);
+            });
+        });
+
+        compound.setTag(TAG_COMPLETED_REQUESTS_BY_CITIZEN, completedRequests);
     }
 
     /**
@@ -498,7 +643,7 @@ public abstract class AbstractBuilding implements IBuilding {
      * @return {@link BlockPos} of the current object.
      */
     @Override
-    public BlockPos getLocation()
+    public StaticLocation getLocation()
     {
         return location;
     }
@@ -538,12 +683,12 @@ public abstract class AbstractBuilding implements IBuilding {
     {
         final TileEntityColonyBuilding tileEntityNew = this.getTileEntity();
         final World world = colony.getWorld();
-        final Block block = world.getBlockState(this.location).getBlock();
+        final Block block = world.getBlockState(this.location.getInDimensionLocation()).getBlock();
 
         if (tileEntityNew != null)
         {
-            InventoryHelper.dropInventoryItems(world, this.location, (IInventory) tileEntityNew);
-            world.updateComparatorOutputLevel(this.location, block);
+            InventoryHelper.dropInventoryItems(world, this.location.getInDimensionLocation(), tileEntityNew);
+            world.updateComparatorOutputLevel(this.location.getInDimensionLocation(), block);
         }
         ConstructionTapeHelper.removeConstructionTape(this, world);
     }
@@ -555,9 +700,9 @@ public abstract class AbstractBuilding implements IBuilding {
      */
     public TileEntityColonyBuilding getTileEntity()
     {
-        if ((tileEntity == null || tileEntity.isInvalid()) && colony.getWorld().getBlockState(location).getBlock() != null)
+        if ((tileEntity == null || tileEntity.isInvalid()) && colony.getWorld().getBlockState(location.getInDimensionLocation()).getBlock() != null)
         {
-            final TileEntity te = getColony().getWorld().getTileEntity(location);
+            final TileEntity te = getColony().getWorld().getTileEntity(location.getInDimensionLocation());
             if (te instanceof TileEntityColonyBuilding)
             {
                 tileEntity = (TileEntityColonyBuilding) te;
@@ -668,10 +813,9 @@ public abstract class AbstractBuilding implements IBuilding {
      * @return {@link BlockPos} of the current object.
      */
     @Override
-    public BlockPos getID()
+    public IToken getID()
     {
-        // Location doubles as ID.
-        return location;
+        return id;
     }
 
     /**
@@ -780,11 +924,7 @@ public abstract class AbstractBuilding implements IBuilding {
         this.style = style;
     }
 
-    /**
-     * Called upon completion of an upgrade process.
-     *
-     * @param newLevel The new level.
-     */
+    @Override
     public void onUpgradeComplete(final int newLevel)
     {
         // Does nothing here
@@ -818,11 +958,7 @@ public abstract class AbstractBuilding implements IBuilding {
         return buildingLevel;
     }
 
-    /**
-     * Sets the current level of the building.
-     *
-     * @param level Level of the building.
-     */
+    @Override
     public void setBuildingLevel(final int level)
     {
         if (level > getMaxBuildingLevel())
@@ -860,7 +996,7 @@ public abstract class AbstractBuilding implements IBuilding {
      *
      * @return a copy of the list to avoid currentModification exception.
      */
-    public List<BlockPos> getAdditionalCountainers()
+    public List<BlockPos> getAdditionalContainers()
     {
         return new ArrayList<>(containerList);
     }
@@ -877,15 +1013,6 @@ public abstract class AbstractBuilding implements IBuilding {
     public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
     {
         return Collections.emptyMap();
-    }
-
-    /**
-     * Method used to check for a given worker if he has open request.
-     * @param citizen The worker to check for.
-     * @return True when the given worker has open requests, false when not.
-     */
-    public boolean hasWorkerOpenRequests(CitizenData citizen) {
-        return !citizensByRequests.containsKey(citizen.getId()) || citizensByRequests.get(citizen.getId()).isEmpty();
     }
 
     /**
@@ -1000,12 +1127,13 @@ public abstract class AbstractBuilding implements IBuilding {
      */
     public int getNeededPickaxeLevel()
     {
+        Tool pickaxeRequets = getRequestedToolForClass(Utils.PICKAXE);
+        if (pickaxeRequets == null)
+        {
+            return 0;
+        }
+
         return getRequestedToolForClass(Utils.PICKAXE).getMinLevel();
-    }
-
-    public <Request> void createRequest(@NotNull CitizenData requester, @NotNull Request requested) {
-        IToken requestToken = colony.getRequestManager().createAndAssignRequest(requester, requested);
-
     }
 
     /**
@@ -1015,32 +1143,15 @@ public abstract class AbstractBuilding implements IBuilding {
      */
     public String getRequiredTool()
     {
-        if (needsHoe())
+        if (!openRequests.containsKey(Tool.class))
         {
-            return Utils.HOE;
+            return "";
         }
 
-        if (needsAxe())
-        {
-            return Utils.AXE;
-        }
+        IToken firstOpenToolRequestToken = openRequests.get(Tool.class).get(0);
+        IRequest<Tool> firstOpenToolRequest = getColony().getRequestManager().getRequestForToken(firstOpenToolRequestToken);
 
-        if (needsPickaxe())
-        {
-            return Utils.PICKAXE;
-        }
-
-        if (needsShovel())
-        {
-            return Utils.SHOVEL;
-        }
-
-        if (needsWeapon())
-        {
-            return Utils.WEAPON;
-        }
-
-        return "";
+        return firstOpenToolRequest.getRequest().getToolClass();
     }
 
     /**
@@ -1130,6 +1241,129 @@ public abstract class AbstractBuilding implements IBuilding {
         this.isMirrored = !isMirrored;
     }
 
+    @Override
+    public <Request> void createRequest(@NotNull ICitizenData citizenData, @NotNull Request requested)
+    {
+        IToken requestToken = colony.getRequestManager().createAndAssignRequest(this, requested);
+
+        addRequestToMaps(citizenData.getId(), requestToken, requested.getClass());
+    }
+
+    /**
+     * Internal method used to register a new Request to the request maps.
+     * Helper method.
+     *
+     * @param citizenId    The id of the citizen.
+     * @param requestToken The {@link IToken} that is used to represent the request.
+     * @param requested    The class of the type that has been requested eg. {@code ItemStack.class}
+     */
+    private void addRequestToMaps(@NotNull Integer citizenId, @NotNull IToken requestToken, @NotNull Class requested)
+    {
+        if (!openRequests.containsKey(requested))
+        {
+            openRequests.put(requested, new ArrayList<>());
+        }
+        openRequests.get(requested).add(requestToken);
+
+        requestsByCitizen.put(requestToken, citizenId);
+
+        if (!citizensByRequests.containsKey(citizenId))
+        {
+            citizensByRequests.put(citizenId, new ArrayList<>());
+        }
+        citizensByRequests.get(citizenId).add(requestToken);
+    }
+
+    @NotNull
+    @Override
+    public void onRequestComplete(@NotNull final IToken token)
+    {
+        Integer citizenThatRequested = requestsByCitizen.remove(token);
+        citizensByRequests.get(citizenThatRequested).remove(token);
+
+        if (citizensByRequests.get(citizenThatRequested).isEmpty())
+        {
+            citizensByRequests.remove(citizenThatRequested);
+        }
+
+        IRequest requestThatCompleted = getColony().getRequestManager().getRequestForToken(token);
+        openRequests.get(requestThatCompleted.getRequestType()).remove(token);
+
+        if (openRequests.get(requestThatCompleted.getRequestType()).isEmpty())
+        {
+            openRequests.remove(requestThatCompleted.getRequestType());
+        }
+
+        if (!citizensByCompletedRequests.containsKey(citizenThatRequested))
+        {
+            citizensByCompletedRequests.put(citizenThatRequested, new ArrayList<>());
+        }
+        citizensByCompletedRequests.get(citizenThatRequested).add(token);
+
+        getColony().getCitizen(citizenThatRequested);
+    }
+
+    @Override
+    public boolean hasWorkerOpenRequests(@NotNull ICitizenData citizen)
+    {
+        return !getOpenRequests(citizen).isEmpty();
+    }
+
+    @Override
+    public <Request> boolean hasWorkerOpenRequestsOfType(@NotNull final ICitizenData citizenData, final Class<Request> requestType)
+    {
+        return getOpenRequests(citizenData).stream()
+                 .map(getColony().getRequestManager()::getRequestForToken)
+                 .anyMatch(request -> request.getRequestType().equals(requestType));
+    }
+
+    @Override
+    public ImmutableList<IToken> getOpenRequests(@NotNull final ICitizenData data)
+    {
+        if (!citizensByRequests.containsKey(data.getId()))
+        {
+            return ImmutableList.of();
+        }
+
+        return ImmutableList.copyOf(citizensByRequests.get(data.getId()));
+    }
+
+    @Override
+    public <Request> ImmutableList<IRequest<Request>> getOpenRequestsOfType(@NotNull final ICitizenData citizenData, final Class<Request> requestType)
+    {
+        return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
+                                      .map(getColony().getRequestManager()::getRequestForToken)
+                                      .filter(request -> request.getRequestType().equals(requestType))
+                                      .map(request -> (IRequest<Request>) request)
+                                      .iterator());
+    }
+
+    @Override
+    public ImmutableList<IToken> getCompletedRequestsForCitizen(@NotNull final ICitizenData data)
+    {
+        if (!citizensByCompletedRequests.containsKey(data.getId()))
+        {
+            return ImmutableList.of();
+        }
+
+        return ImmutableList.copyOf(citizensByCompletedRequests.get(data.getId()));
+    }
+
+    @Override
+    public void markRequestAsAccepted(@NotNull final ICitizenData data, @NotNull final IToken token) throws IllegalArgumentException
+    {
+        if (!citizensByCompletedRequests.containsKey(data.getId()) || !citizensByCompletedRequests.get(data).contains(token))
+        {
+            throw new IllegalArgumentException("The given token " + token + " is not known as a completed request waiting for acceptance by the citizen.");
+        }
+
+        citizensByCompletedRequests.get(data.getId()).remove(token);
+        if (citizensByCompletedRequests.get(data.getId()).isEmpty())
+        {
+            citizensByCompletedRequests.remove(data.getId());
+        }
+    }
+
     /**
      * The AbstractBuilding View is the client-side representation of a AbstractBuilding.
      * Views contain the AbstractBuilding's data that is relevant to a Client, in a more client-friendly form.
@@ -1137,9 +1371,11 @@ public abstract class AbstractBuilding implements IBuilding {
      */
     public static class View implements IBuilding
     {
-        private final ColonyView colony;
+        private final ColonyView     colony;
         @NotNull
-        private final BlockPos   location;
+        private final StaticLocation location;
+        @NotNull
+        private final IToken         id;
 
         private int buildingLevel    = 0;
         private int buildingMaxLevel = 0;
@@ -1151,10 +1387,11 @@ public abstract class AbstractBuilding implements IBuilding {
          * @param c ColonyView the building is in.
          * @param l The location of the building.
          */
-        protected View(final ColonyView c, @NotNull final BlockPos l)
+        protected View(final ColonyView c, @NotNull final BlockPos l, @NotNull final IToken id)
         {
             colony = c;
-            location = new BlockPos(l);
+            location = new StaticLocation(l, c.getDimension());
+            this.id = id;
         }
 
         /**
@@ -1163,10 +1400,16 @@ public abstract class AbstractBuilding implements IBuilding {
          * @return A BlockPos because the building ID is its location.
          */
         @NotNull
-        public BlockPos getID()
+        public IToken getID()
         {
             // Location doubles as ID
-            return location;
+            return id;
+        }
+
+        @Override
+        public void onUpgradeComplete(final int newLevel)
+        {
+            //Noop
         }
 
         /**
@@ -1175,9 +1418,17 @@ public abstract class AbstractBuilding implements IBuilding {
          * @return A BlockPos, where this building is.
          */
         @NotNull
-        public BlockPos getLocation()
+        public StaticLocation getLocation()
         {
             return location;
+        }
+
+        @NotNull
+        @Override
+        public void onRequestComplete(@NotNull final IToken token)
+        {
+            throw new IllegalStateException("Request complete called on the CLIENT side.");
+            //NOOP: On the client side this should never be called.
         }
 
         /**
@@ -1198,6 +1449,57 @@ public abstract class AbstractBuilding implements IBuilding {
         public int getBuildingLevel()
         {
             return buildingLevel;
+        }
+
+        @Override
+        public <Request> void createRequest(@NotNull final ICitizenData citizenData, @NotNull final Request requested)
+        {
+            throw new IllegalStateException("Requests cannot be created on the client side.");
+        }
+
+        @Override
+        public boolean hasWorkerOpenRequests(@NotNull final ICitizenData citizen)
+        {
+            //For now returns always false until getOpenRequests is populated properly (if ever)
+            return !getOpenRequests(citizen).isEmpty();
+        }
+
+        @Override
+        public <Request> boolean hasWorkerOpenRequestsOfType(@NotNull final ICitizenData citizenData, final Class<Request> requestType)
+        {
+            return getOpenRequests(citizenData).stream()
+                     .map(getColony().getRequestManager()::getRequestForToken)
+                     .anyMatch(request -> request.getRequestType().equals(requestType));
+        }
+
+        @Override
+        public ImmutableList<IToken> getOpenRequests(@NotNull final ICitizenData data)
+        {
+            //TODO: Fill properly from Server.
+            return ImmutableList.of();
+        }
+
+        @Override
+        public <Request> ImmutableList<IRequest<Request>> getOpenRequestsOfType(@NotNull final ICitizenData citizenData, final Class<Request> requestType)
+        {
+            return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
+                                          .map(getColony().getRequestManager()::getRequestForToken)
+                                          .filter(request -> request.getRequestType().equals(requestType))
+                                          .map(request -> (IRequest<Request>) request)
+                                          .iterator());
+        }
+
+        @Override
+        public ImmutableList<IToken> getCompletedRequestsForCitizen(@NotNull final ICitizenData data)
+        {
+            //TODO: Fill properly from Server.
+            return ImmutableList.of();
+        }
+
+        @Override
+        public void markRequestAsAccepted(@NotNull final ICitizenData data, @NotNull final IToken token) throws IllegalArgumentException
+        {
+            throw new IllegalStateException("Requests cannot be marked as accepted on the client side");
         }
 
         /**

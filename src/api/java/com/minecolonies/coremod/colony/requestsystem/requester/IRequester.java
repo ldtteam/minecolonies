@@ -1,11 +1,20 @@
-package com.minecolonies.coremod.colony.requestsystem.location;
+package com.minecolonies.coremod.colony.requestsystem.requester;
 
+import com.minecolonies.coremod.colony.requestsystem.location.ILocation;
+import com.minecolonies.coremod.colony.requestsystem.token.IToken;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Interface that describes an object that can be located in the Minecraft universe.
+ * Interface that describes an object that can be located in the Minecraft universe and can request objects inside a colony.
  */
-public interface ILocatable {
+public interface IRequester
+{
+    /**
+     * Method to get the ID of a given requester.
+     *
+     * @return The id of this requester.
+     */
+    IToken getID();
 
     /**
      * Method to get the location of this locatable.
@@ -13,4 +22,10 @@ public interface ILocatable {
      */
     @NotNull
     ILocation getLocation();
+
+    /**
+     * Method called by the request system to notify this requester that a
+     */
+    @NotNull
+    void onRequestComplete(@NotNull final IToken token);
 }

@@ -4,9 +4,6 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.requestsystem.location.ILocatable;
-import com.minecolonies.coremod.colony.requestsystem.location.ILocation;
-import com.minecolonies.coremod.colony.requestsystem.locations.EntityLocation;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
@@ -23,7 +20,7 @@ import java.util.Random;
 /**
  * Extra data for Citizens.
  */
-public class CitizenData implements ILocatable
+public class CitizenData implements ICitizenData
 {
     private static final float  MAX_HEALTH              = 20.0F;
     /**
@@ -252,7 +249,7 @@ public class CitizenData implements ILocatable
         catch (final RuntimeException ex)
         {
             Log.getLogger().error(String.format("A CitizenData.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-                    citizenDataView.getID()), ex);
+              citizenDataView.getID()), ex);
             citizenDataView = null;
         }
 
@@ -264,7 +261,8 @@ public class CitizenData implements ILocatable
      *
      * @return colony of the citizen.
      */
-    public Colony getColony()
+    @Override
+    public IColony getColony()
     {
         return colony;
     }
@@ -274,6 +272,7 @@ public class CitizenData implements ILocatable
      *
      * @return id of the citizen.
      */
+    @Override
     public int getId()
     {
         return id;
@@ -303,7 +302,7 @@ public class CitizenData implements ILocatable
         int levelCap = (int) colony.getOverallHappiness();
         @NotNull final Random random = new Random();
 
-        if(levelCap <= 1)
+        if (levelCap <= 1)
         {
             intelligence = 1;
             charisma = 1;
@@ -336,12 +335,12 @@ public class CitizenData implements ILocatable
         if (female)
         {
             citizenName = String.format("%s %s. %s", getRandomElement(rand, Configurations.femaleFirstNames), getRandomLetter(rand),
-                    getRandomElement(rand, Configurations.lastNames));
+              getRandomElement(rand, Configurations.lastNames));
         }
         else
         {
             citizenName = String.format("%s %s. %s", getRandomElement(rand, Configurations.maleFirstNames), getRandomLetter(rand),
-                    getRandomElement(rand, Configurations.lastNames));
+              getRandomElement(rand, Configurations.lastNames));
         }
         for (int i = 1; i <= this.getColony().getMaxCitizens(); i++)
         {
@@ -381,6 +380,7 @@ public class CitizenData implements ILocatable
      *
      * @return name of the citizen.
      */
+    @Override
     public String getName()
     {
         return name;
@@ -391,6 +391,7 @@ public class CitizenData implements ILocatable
      *
      * @return true for female, false for male.
      */
+    @Override
     public boolean isFemale()
     {
         return female;
@@ -401,6 +402,7 @@ public class CitizenData implements ILocatable
      *
      * @return texture ID.
      */
+    @Override
     public int getTextureId()
     {
         return textureId;
@@ -650,13 +652,13 @@ public class CitizenData implements ILocatable
         buf.writeBoolean(homeBuilding != null);
         if (homeBuilding != null)
         {
-            BlockPosUtil.writeToByteBuf(buf, homeBuilding.getID());
+            BlockPosUtil.writeToByteBuf(buf, homeBuilding.getLocation().getInDimensionLocation());
         }
 
         buf.writeBoolean(workBuilding != null);
         if (workBuilding != null)
         {
-            BlockPosUtil.writeToByteBuf(buf, workBuilding.getID());
+            BlockPosUtil.writeToByteBuf(buf, workBuilding.getLocation().getInDimensionLocation());
         }
 
         //  Attributes
@@ -690,6 +692,7 @@ public class CitizenData implements ILocatable
      *
      * @return level of the citizen.
      */
+    @Override
     public int getLevel()
     {
         return level;
@@ -739,6 +742,7 @@ public class CitizenData implements ILocatable
      *
      * @return experience of the citizen.
      */
+    @Override
     public double getExperience()
     {
         return experience;
@@ -749,6 +753,7 @@ public class CitizenData implements ILocatable
      *
      * @return citizen Strength value.
      */
+    @Override
     public int getStrength()
     {
         return strength;
@@ -759,6 +764,7 @@ public class CitizenData implements ILocatable
      *
      * @return citizen Endurance value.
      */
+    @Override
     public int getEndurance()
     {
         return endurance;
@@ -769,6 +775,7 @@ public class CitizenData implements ILocatable
      *
      * @return citizen Charisma value.
      */
+    @Override
     public int getCharisma()
     {
         return charisma;
@@ -779,6 +786,7 @@ public class CitizenData implements ILocatable
      *
      * @return citizen Intelligence value.
      */
+    @Override
     public int getIntelligence()
     {
         return intelligence;
@@ -789,6 +797,7 @@ public class CitizenData implements ILocatable
      *
      * @return citizen Dexterity value.
      */
+    @Override
     public int getDexterity()
     {
         return dexterity;
@@ -799,20 +808,9 @@ public class CitizenData implements ILocatable
      *
      * @return the saturation.
      */
+    @Override
     public double getSaturation()
     {
         return this.saturation;
-    }
-
-    /**
-     * Method to get the location of this locatable.
-     *
-     * @return
-     */
-    @NotNull
-    @Override
-    public ILocation getLocation() {
-        //TODO: Check if this works!
-        return new EntityLocation(getCitizenEntity().getPersistentID());
     }
 }

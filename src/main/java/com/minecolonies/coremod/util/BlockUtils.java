@@ -250,7 +250,7 @@ public final class BlockUtils
         {
             return Item.getItemFromBlock(Blocks.DIRT);
         }
-        else if(blockState.getBlock() instanceof BlockFire)
+        else if (blockState.getBlock() instanceof BlockFire)
         {
             return Items.FLINT_AND_STEEL;
         }
@@ -381,23 +381,24 @@ public final class BlockUtils
      * @param worldMetadata the world metadata.
      * @return true if equal.
      */
-    public static boolean isGrassOrDirt(@NotNull final Block structureBlock, @NotNull final Block worldBlock,
-            @NotNull final IBlockState structureMetaData, @NotNull final IBlockState worldMetadata)
+    public static boolean isGrassOrDirt(
+                                         @NotNull final Block structureBlock, @NotNull final Block worldBlock,
+                                         @NotNull final IBlockState structureMetaData, @NotNull final IBlockState worldMetadata)
     {
-        if((structureBlock == Blocks.DIRT || structureBlock == Blocks.GRASS) && (worldBlock == Blocks.DIRT || worldBlock == Blocks.GRASS))
+        if ((structureBlock == Blocks.DIRT || structureBlock == Blocks.GRASS) && (worldBlock == Blocks.DIRT || worldBlock == Blocks.GRASS))
         {
-            if(structureBlock == Blocks.DIRT
-                    && (structureMetaData.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.COARSE_DIRT
-                    || structureMetaData.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.PODZOL))
+            if (structureBlock == Blocks.DIRT
+                  && (structureMetaData.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.COARSE_DIRT
+                        || structureMetaData.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.PODZOL))
             {
                 return false;
             }
 
             return worldBlock != Blocks.DIRT
-                    || (worldMetadata.getValue(BlockDirt.VARIANT) != BlockDirt.DirtType.COARSE_DIRT
-                    && worldMetadata.getValue(BlockDirt.VARIANT) != BlockDirt.DirtType.PODZOL);
+                     || (worldMetadata.getValue(BlockDirt.VARIANT) != BlockDirt.DirtType.COARSE_DIRT
+                           && worldMetadata.getValue(BlockDirt.VARIANT) != BlockDirt.DirtType.PODZOL);
         }
-        return  false;
+        return false;
     }
 
     /**

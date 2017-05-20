@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.jobs;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.IColony;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.util.Log;
 import net.minecraft.entity.ai.EntityAITasks;
@@ -192,7 +193,7 @@ public abstract class AbstractJob
      *
      * @return {@link Colony} of the citizen.
      */
-    public Colony getColony()
+    public IColony getColony()
     {
         return citizen.getColony();
     }

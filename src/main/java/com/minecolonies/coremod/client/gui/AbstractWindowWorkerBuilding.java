@@ -78,7 +78,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
 
             if (building.getWorkerId() == 0)
             {
-                @NotNull final WindowHireWorker window = new WindowHireWorker(building.getColony(), building.getLocation());
+                @NotNull final WindowHireWorker window = new WindowHireWorker(building.getColony(), building.getLocation().getInDimensionLocation());
                 window.open();
             }
             else
@@ -113,7 +113,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
 
         if (building.getWorkerId() != 0)
         {
-            final CitizenDataView worker = building.getColony().getCitizen(building.getWorkerId());
+            final CitizenDataView worker = (CitizenDataView) building.getColony().getCitizen(building.getWorkerId());
             if (worker != null)
             {
                 workerName = worker.getName();
