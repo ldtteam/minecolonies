@@ -20,9 +20,9 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import java.io.File;
 
 
 /**

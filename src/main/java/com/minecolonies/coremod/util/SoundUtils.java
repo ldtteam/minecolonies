@@ -1,7 +1,8 @@
 package com.minecolonies.coremod.util;
 
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.sounds.*;
+import com.minecolonies.coremod.sounds.AbstractWorkerSounds;
+import com.minecolonies.coremod.sounds.ModSoundEvents;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
