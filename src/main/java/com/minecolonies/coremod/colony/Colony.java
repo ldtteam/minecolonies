@@ -18,12 +18,14 @@ import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.*;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.stats.Achievement;
 import net.minecraft.stats.StatBase;
@@ -40,7 +42,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * This class describes a colony and contains all the data and methods for manipulating a Colony.
+ * This class describes a colony and contains all the data and methods for
+ * manipulating a Colony.
  */
 public class Colony implements IColony
 {
@@ -58,17 +61,63 @@ public class Colony implements IColony
     private static final String TAG_WORK                       = "work";
     private static final String TAG_MANUAL_HIRING              = "manualHiring";
     private static final String TAG_WAYPOINT                   = "waypoints";
-    private static final String TAG_BLOCK                      = "blockState";
+    private static final String TAG_FREE_BLOCKS                = "freeBlocks";
+    private static final String TAG_FREE_POSITIONS             = "freePositions";
+
+    //statistics tags
+    private static final String TAG_STATISTICS        = "statistics";
+    private static final String TAG_MINER_STATISTICS  = "minerStatistics";
+    private static final String TAG_MINER_ORES        = "ores";
+    private static final String TAG_MINER_DIAMONDS    = "diamonds";
+    private static final String TAG_FARMER_STATISTICS = "farmerStatistics";
+    private static final String TAG_FARMER_WHEAT      = "wheat";
+    private static final String TAG_FARMER_POTATOES   = "potatoes";
+    private static final String TAG_FARMER_CARROTS        = "carrots";
+    private static final String TAG_GUARD_STATISTICS      = "guardStatistics";
+    private static final String TAG_GUARD_MOBS            = "mobs";
+    private static final String TAG_BUILDER_STATISTICS    = "builderStatistics";
+    private static final String TAG_BUILDER_HUTS          = "huts";
+    private static final String TAG_FISHERMAN_STATISTICS  = "fishermanStatistics";
+    private static final String TAG_FISHERMAN_FISH        = "fish";
+    private static final String TAG_LUMBERJACK_STATISTICS = "lumberjackStatistics";
+    private static final String TAG_LUMBERJACK_TREES      = "trees";
+    private static final String TAG_LUMBERJACK_SAPLINGS   = "saplings";
+    private static final int    NUM_ACHIEVEMENT_FIRST    = 1;
+    private static final int    NUM_ACHIEVEMENT_SECOND    = 25;
+    private static final int    NUM_ACHIEVEMENT_THIRD     = 100;
+    private static final int    NUM_ACHIEVEMENT_FOURTH    = 500;
+    private static final int    NUM_ACHIEVEMENT_FIFTH     = 1000;
+
+    /**
+     * Bonus happiness each factor added.
+     */
+    private static final double HAPPINESS_FACTOR         = 0.1;
+
+    /**
+     * Saturation at which a citizen starts being happy.
+     */
+    private static final int WELL_SATURATED_LIMIT = 5;
+
+    /**
+     * Variable to determine if its currently day or night.
+     */
+    private boolean isDay = true;
+
+    /**
+     * Max overall happiness.
+     */
+    private static final double MAX_OVERALL_HAPPINESS = 10;
+
+    /**
+     * Min overall happiness.
+     */
+    private static final double MIN_OVERALL_HAPPINESS = 1;
 
     //private int autoHostile = 0;//Off
-    private static final String TAG_FIELDS                  = "fields";
-    private static final String TAG_MOB_KILLS               = "mobKills";
-    private static final int    NUM_MOBS_ACHIEVEMENT_FIRST  = 1;
-    private static final int    NUM_MOBS_ACHIEVEMENT_SECOND = 25;
-    private static final int    NUM_MOBS_ACHIEVEMENT_THIRD  = 100;
-    private static final int    NUM_MOBS_ACHIEVEMENT_FOURTH = 500;
-    private static final int    NUM_MOBS_ACHIEVEMENT_FIFTH  = 1000;
-    private static final int    CHECK_WAYPOINT_EVERY        = 100;
+    private static final String TAG_FIELDS                        = "fields";
+    private static final int    CHECK_WAYPOINT_EVERY              = 100;
+    private static final double MAX_SQ_DIST_SUBSCRIBER_UPDATE     = MathUtils.square(Configurations.workingRangeTownHall + 16D);
+    private static final double MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE = MathUtils.square(Configurations.workingRangeTownHall * 2D);
     private final int id;
     //  General Attributes
     private final int dimensionId;
@@ -76,28 +125,45 @@ public class Colony implements IColony
     private final Map<BlockPos, Field>       fields    = new HashMap<>();
     //Additional Waypoints.
     private final Map<BlockPos, IBlockState> wayPoints = new HashMap<>();
-
     @NotNull
     private final List<Achievement> colonyAchievements;
     //  Workload and Jobs
-    private final WorkManager                     workManager      = new WorkManager(this);
+    private final WorkManager                     workManager       = new WorkManager(this);
     @NotNull
-    private final Map<BlockPos, AbstractBuilding> buildings        = new HashMap<>();
+    private final Map<BlockPos, AbstractBuilding> buildings         = new HashMap<>();
     //  Citizenry
     @NotNull
-    private final Map<Integer, CitizenData>       citizens         = new HashMap<>();
+    private final Map<Integer, CitizenData>       citizens          = new HashMap<>();
+    /**
+     * The Positions which players can freely interact.
+     */
+    private final Set<BlockPos>                   freePositions     = new HashSet<>();
+    /**
+     * The Blocks which players can freely interact with.
+     */
+    private final Set<Block>                      freeBlocks        = new HashSet<>();
+    private       int                             minedOres         = 0;
+    private       int                             minedDiamonds     = 0;
+    private       int                             harvestedWheat    = 0;
+    private       int                             harvestedPotatoes = 0;
+    private       int                             harvestedCarrots  = 0;
+    private       int                             killedMobs        = 0;
+    private       int                             builtHuts         = 0;
+    private       int                             caughtFish        = 0;
+    private       int                             felledTrees       = 0;
+    private       int                             plantedSaplings   = 0;
     //  Runtime Data
     @Nullable
-    private       World                           world            = null;
+    private       World                           world             = null;
     //  Updates and Subscriptions
     @NotNull
-    private       Set<EntityPlayerMP>             subscribers      = new HashSet<>();
-    private       boolean                         isDirty          = false;
-    private       boolean                         isCitizensDirty  = false;
-    private       boolean                         isBuildingsDirty = false;
-    private       boolean                         manualHiring     = false;
-    private       boolean                         isFieldsDirty    = false;
-    private       String                          name             = "ERROR(Wasn't placed by player)";
+    private       Set<EntityPlayerMP>             subscribers       = new HashSet<>();
+    private       boolean                         isDirty           = false;
+    private       boolean                         isCitizensDirty   = false;
+    private       boolean                         isBuildingsDirty  = false;
+    private       boolean                         manualHiring      = false;
+    private       boolean                         isFieldsDirty     = false;
+    private       String                          name              = "ERROR(Wasn't placed by player)";
     private BlockPos         center;
     //  Administration/permissions
     @NotNull
@@ -106,6 +172,8 @@ public class Colony implements IColony
     private BuildingTownHall townHall;
     private int topCitizenId = 0;
     private int maxCitizens  = Configurations.maxCitizens;
+
+    private double overallHappiness = 5;
     private int killedMobs   = 0;
     @NotNull
     //TODO: Serialization of requestmanagers.
@@ -141,6 +209,23 @@ public class Colony implements IColony
 
         // Register a new event handler
         MinecraftForge.EVENT_BUS.register(new ColonyPermissionEventHandler(this));
+
+        for (final String s : Configurations.freeToInteractBlocks)
+        {
+            final Block block = Block.getBlockFromName(s);
+            if (block == null)
+            {
+                final BlockPos pos = BlockPosUtil.getBlockPosOfString(s);
+                if (pos != null)
+                {
+                    freePositions.add(pos);
+                }
+            }
+            else
+            {
+                freeBlocks.add(block);
+            }
+        }
     }
 
     /**
@@ -171,7 +256,6 @@ public class Colony implements IColony
 
         manualHiring = compound.getBoolean(TAG_MANUAL_HIRING);
         maxCitizens = compound.getInteger(TAG_MAX_CITIZENS);
-        killedMobs = compound.getInteger(TAG_MOB_KILLS);
 
         // Permissions
         permissions.loadPermissions(compound);
@@ -204,10 +288,7 @@ public class Colony implements IColony
         {
             final NBTTagCompound fieldCompound = fieldTagList.getCompoundTagAt(i);
             final Field f = Field.createFromNBT(this, fieldCompound);
-            if (f != null)
-            {
-                addField(f);
-            }
+            addField(f);
         }
 
         // Restore colony achievements
@@ -235,6 +316,41 @@ public class Colony implements IColony
             final BlockPos pos = BlockPosUtil.readFromNBT(blockAtPos, TAG_WAYPOINT);
             final IBlockState state = NBTUtil.readBlockState(blockAtPos);
             wayPoints.put(pos, state);
+        }
+
+        //Statistics
+        final NBTTagCompound statisticsCompound = compound.getCompoundTag(TAG_STATISTICS);
+        final NBTTagCompound minerStatisticsCompound = statisticsCompound.getCompoundTag(TAG_MINER_STATISTICS);
+        final NBTTagCompound farmerStatisticsCompound = statisticsCompound.getCompoundTag(TAG_FARMER_STATISTICS);
+        final NBTTagCompound guardStatisticsCompound = statisticsCompound.getCompoundTag(TAG_FARMER_STATISTICS);
+        final NBTTagCompound builderStatisticsCompound = statisticsCompound.getCompoundTag(TAG_BUILDER_STATISTICS);
+        final NBTTagCompound fishermanStatisticsCompound = statisticsCompound.getCompoundTag(TAG_FISHERMAN_STATISTICS);
+        final NBTTagCompound lumberjackStatisticsCompound = statisticsCompound.getCompoundTag(TAG_LUMBERJACK_STATISTICS);
+        minedOres = minerStatisticsCompound.getInteger(TAG_MINER_ORES);
+        minedDiamonds = minerStatisticsCompound.getInteger(TAG_MINER_DIAMONDS);
+        harvestedCarrots = farmerStatisticsCompound.getInteger(TAG_FARMER_CARROTS);
+        harvestedPotatoes = farmerStatisticsCompound.getInteger(TAG_FARMER_POTATOES);
+        harvestedWheat = farmerStatisticsCompound.getInteger(TAG_FARMER_WHEAT);
+        killedMobs = guardStatisticsCompound.getInteger(TAG_GUARD_MOBS);
+        builtHuts = builderStatisticsCompound.getInteger(TAG_BUILDER_HUTS);
+        caughtFish = fishermanStatisticsCompound.getInteger(TAG_FISHERMAN_FISH);
+        felledTrees = lumberjackStatisticsCompound.getInteger(TAG_LUMBERJACK_TREES);
+        plantedSaplings = lumberjackStatisticsCompound.getInteger(TAG_LUMBERJACK_SAPLINGS);
+
+        // Free blocks
+        final NBTTagList freeBlockTagList = compound.getTagList(TAG_FREE_BLOCKS, NBT.TAG_STRING);
+        for (int i = 0; i < freeBlockTagList.tagCount(); ++i)
+        {
+            freeBlocks.add(Block.getBlockFromName(freeBlockTagList.getStringTagAt(i)));
+        }
+
+        // Free positions
+        final NBTTagList freePositionTagList = compound.getTagList(TAG_FREE_POSITIONS, NBT.TAG_COMPOUND);
+        for (int i = 0; i < freePositionTagList.tagCount(); ++i)
+        {
+            final NBTTagCompound blockTag = freePositionTagList.getCompoundTagAt(i);
+            final BlockPos block = BlockPosUtil.readFromNBT(blockTag, TAG_FREE_POSITIONS);
+            freePositions.add(block);
         }
     }
 
@@ -283,7 +399,6 @@ public class Colony implements IColony
         compound.setBoolean(TAG_MANUAL_HIRING, manualHiring);
         compound.setInteger(TAG_MAX_CITIZENS, maxCitizens);
 
-        compound.setInteger(TAG_MOB_KILLS, killedMobs);
 
         // Permissions
         permissions.savePermissions(compound);
@@ -344,6 +459,50 @@ public class Colony implements IColony
             wayPointTagList.appendTag(wayPointCompound);
         }
         compound.setTag(TAG_WAYPOINT, wayPointTagList);
+
+        // Statistics
+        @NotNull final NBTTagCompound statisticsCompound = new NBTTagCompound();
+        @NotNull final NBTTagCompound minerStatisticsCompound = new NBTTagCompound();
+        @NotNull final NBTTagCompound farmerStatisticsCompound = new NBTTagCompound();
+        @NotNull final NBTTagCompound guardStatisticsCompound = new NBTTagCompound();
+        @NotNull final NBTTagCompound builderStatisticsCompound = new NBTTagCompound();
+        @NotNull final NBTTagCompound fishermanStatisticsCompound = new NBTTagCompound();
+        @NotNull final NBTTagCompound lumberjackStatisticsCompound = new NBTTagCompound();
+        compound.setTag(TAG_STATISTICS, statisticsCompound);
+        statisticsCompound.setTag(TAG_MINER_STATISTICS, minerStatisticsCompound);
+        minerStatisticsCompound.setInteger(TAG_MINER_ORES, minedOres);
+        minerStatisticsCompound.setInteger(TAG_MINER_DIAMONDS, minedDiamonds);
+        statisticsCompound.setTag(TAG_FARMER_STATISTICS, farmerStatisticsCompound);
+        farmerStatisticsCompound.setInteger(TAG_FARMER_CARROTS, harvestedCarrots);
+        farmerStatisticsCompound.setInteger(TAG_FARMER_POTATOES, harvestedPotatoes);
+        farmerStatisticsCompound.setInteger(TAG_FARMER_WHEAT, harvestedWheat);
+        statisticsCompound.setTag(TAG_GUARD_STATISTICS, guardStatisticsCompound);
+        guardStatisticsCompound.setInteger(TAG_GUARD_MOBS, killedMobs);
+        statisticsCompound.setTag(TAG_BUILDER_STATISTICS, builderStatisticsCompound);
+        builderStatisticsCompound.setInteger(TAG_BUILDER_HUTS, builtHuts);
+        statisticsCompound.setTag(TAG_FISHERMAN_STATISTICS, fishermanStatisticsCompound);
+        fishermanStatisticsCompound.setInteger(TAG_FISHERMAN_FISH, caughtFish);
+        statisticsCompound.setTag(TAG_LUMBERJACK_STATISTICS, lumberjackStatisticsCompound);
+        lumberjackStatisticsCompound.setInteger(TAG_LUMBERJACK_TREES, felledTrees);
+        lumberjackStatisticsCompound.setInteger(TAG_LUMBERJACK_SAPLINGS, plantedSaplings);
+
+        // Free blocks
+        @NotNull final NBTTagList freeBlocksTagList = new NBTTagList();
+        for (@NotNull final Block block : freeBlocks)
+        {
+            freeBlocksTagList.appendTag(new NBTTagString(block.getRegistryName().toString()));
+        }
+        compound.setTag(TAG_FREE_BLOCKS, freeBlocksTagList);
+
+        // Free positions
+        @NotNull final NBTTagList freePositionsTagList = new NBTTagList();
+        for (@NotNull final BlockPos pos : freePositions)
+        {
+            @NotNull final NBTTagCompound wayPointCompound = new NBTTagCompound();
+            BlockPosUtil.writeToNBT(wayPointCompound, TAG_FREE_POSITIONS, pos);
+            freePositionsTagList.appendTag(wayPointCompound);
+        }
+        compound.setTag(TAG_FREE_POSITIONS, freePositionsTagList);
     }
 
     /**
@@ -357,63 +516,113 @@ public class Colony implements IColony
     }
 
     /**
-     * Increment the mobs killed by this colony.
-     * <p>
-     * Will award achievements for mobs killed.
+     * Increment the statistic amount and trigger achievement.
+     *
+     * @param statistic the statistic.
      */
-    public void incrementMobsKilled()
+    public void incrementStatistic(@NotNull String statistic)
     {
-        killedMobs++;
-        final int mobKills = this.getKilledMobs();
-        if (mobKills >= NUM_MOBS_ACHIEVEMENT_FIRST)
+        final int statisticAmount = this.getStatisticAmount(statistic);
+        incrementStatisticAmount(statistic);
+        if (statisticAmount >= NUM_ACHIEVEMENT_FIRST)
         {
-            this.triggerAchievement(ModAchievements.achievementKillOneMob);
+            TriggerColonyAchievements.triggerFirstAchievement(statistic, this);
         }
-        if (mobKills >= NUM_MOBS_ACHIEVEMENT_SECOND)
+        if (statisticAmount >= NUM_ACHIEVEMENT_SECOND)
         {
-            this.triggerAchievement(ModAchievements.achievementKill25Mobs);
+            TriggerColonyAchievements.triggerSecondAchievement(statistic, this);
         }
-        if (mobKills >= NUM_MOBS_ACHIEVEMENT_THIRD)
+        if (statisticAmount >= NUM_ACHIEVEMENT_THIRD)
         {
-            this.triggerAchievement(ModAchievements.achievementKill100Mobs);
+            TriggerColonyAchievements.triggerThirdAchievement(statistic, this);
         }
-        if (mobKills >= NUM_MOBS_ACHIEVEMENT_FOURTH)
+        if (statisticAmount >= NUM_ACHIEVEMENT_FOURTH)
         {
-            this.triggerAchievement(ModAchievements.achievementKill500Mobs);
+            TriggerColonyAchievements.triggerFourthAchievement(statistic, this);
         }
-        if (mobKills >= NUM_MOBS_ACHIEVEMENT_FIFTH)
+        if (statisticAmount >= NUM_ACHIEVEMENT_FIFTH)
         {
-            this.triggerAchievement(ModAchievements.achievementKill1000Mobs);
+            TriggerColonyAchievements.triggerFifthAchievement(statistic, this);
         }
     }
 
     /**
-     * get the amount of killed mobs.
+     * Get the amount of statistic.
      *
-     * @return amount of mobs killed
+     * @param statistic the statistic.
+     * @return amount of statistic.
      */
-    public int getKilledMobs()
+    private int getStatisticAmount(@NotNull String statistic)
     {
-        return killedMobs;
+        switch (statistic)
+        {
+            case TAG_GUARD_MOBS:
+                return killedMobs;
+            case TAG_MINER_ORES:
+                return minedOres;
+            case TAG_MINER_DIAMONDS:
+                return minedDiamonds;
+            case TAG_BUILDER_HUTS:
+                return builtHuts;
+            case TAG_FISHERMAN_FISH:
+                return caughtFish;
+            case TAG_FARMER_WHEAT:
+                return harvestedWheat;
+            case TAG_FARMER_POTATOES:
+                return harvestedPotatoes;
+            case TAG_FARMER_CARROTS:
+                return harvestedCarrots;
+            case TAG_LUMBERJACK_SAPLINGS:
+                return plantedSaplings;
+            case TAG_LUMBERJACK_TREES:
+                return felledTrees;
+            default:
+                return 0;
+        }
     }
 
     /**
-     * Triggers an achievement on this colony.
-     * <p>
-     * Will automatically sync to all players.
+     * increment statistic amount.
      *
-     * @param achievement The achievement to trigger
+     * @param statistic the statistic.
      */
-    public void triggerAchievement(@NotNull final Achievement achievement)
+    private void incrementStatisticAmount(@NotNull String statistic)
     {
-        if (this.colonyAchievements.contains(achievement))
+        switch (statistic)
         {
-            return;
+            case TAG_GUARD_MOBS:
+                killedMobs++;
+                break;
+            case TAG_MINER_ORES:
+                minedOres++;
+                break;
+            case TAG_MINER_DIAMONDS:
+                minedDiamonds++;
+                break;
+            case TAG_BUILDER_HUTS:
+                builtHuts++;
+                break;
+            case TAG_FISHERMAN_FISH:
+                caughtFish++;
+                break;
+            case TAG_FARMER_WHEAT:
+                harvestedWheat++;
+                break;
+            case TAG_FARMER_POTATOES:
+                harvestedPotatoes++;
+                break;
+            case TAG_FARMER_CARROTS:
+                harvestedCarrots++;
+                break;
+            case TAG_LUMBERJACK_SAPLINGS:
+                plantedSaplings++;
+                break;
+            case TAG_LUMBERJACK_TREES:
+                felledTrees++;
+                break;
+            default:
+                break;
         }
-
-        this.colonyAchievements.add(achievement);
-
-        AchievementUtils.syncAchievements(this);
     }
 
     /**
@@ -476,7 +685,8 @@ public class Colony implements IColony
     private void updateSubscribers()
     {
         // If the world or server is null, don't try to update the subscribers this tick.
-        if (world == null || world.getMinecraftServer() == null) {
+        if (world == null || world.getMinecraftServer() == null)
+        {
             return;
         }
 
@@ -486,35 +696,24 @@ public class Colony implements IColony
         subscribers = new HashSet<>();
 
         // Add owners
-        subscribers.addAll(
-          world.getMinecraftServer().getPlayerList().getPlayers()
-            .stream()
-            .filter(permissions::isSubscriber)
-            .collect(Collectors.toList()));
+        world.getMinecraftServer().getPlayerList().getPlayers()
+                .stream()
+                .filter(permissions::isSubscriber)
+                .forEachOrdered(subscribers::add);
 
-        //  Add nearby players
-        if (world != null)
+        for (final EntityPlayer o : world.playerEntities)
         {
-            for (final EntityPlayer o : world.playerEntities)
+            if (o instanceof EntityPlayerMP)
             {
-                if (o instanceof EntityPlayerMP)
+                @NotNull final EntityPlayerMP player = (EntityPlayerMP) o;
+
+                final double distance = player.getDistanceSq(center);
+                if (distance < MAX_SQ_DIST_SUBSCRIBER_UPDATE
+                        || (oldSubscribers.contains(player) && distance < MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE))
                 {
-                    @NotNull final EntityPlayerMP player = (EntityPlayerMP) o;
-
-                    if (subscribers.contains(player))
-                    {
-                        //  Already a subscriber
-                        continue;
-                    }
-
-                    final double distance = player.getDistanceSq(center);
-                    if (distance < MathUtils.square(Configurations.workingRangeTownHall + 16D)
-                          || (oldSubscribers.contains(player) && distance < MathUtils.square(Configurations.workingRangeTownHall * 2D)))
-                    {
-                        // Players become subscribers if they come within 16 blocks of the edge of the colony
-                        // Players remain subscribers while they remain within double the colony's radius
-                        subscribers.add(player);
-                    }
+                    // Players become subscribers if they come within 16 blocks of the edge of the colony
+                    // Players remain subscribers while they remain within double the colony's radius
+                    subscribers.add(player);
                 }
             }
         }
@@ -546,7 +745,14 @@ public class Colony implements IColony
             //Fields
             if (!isBuildingsDirty)
             {
-                sendFieldPackets(oldSubscribers, hasNewSubscribers);
+                sendFieldPackets(hasNewSubscribers);
+            }
+
+            //schematics
+            if (Structures.isDirty())
+            {
+                sendSchematicsPackets(hasNewSubscribers);
+                Structures.clearDirty();
             }
         }
 
@@ -660,12 +866,25 @@ public class Colony implements IColony
     }
 
     /**
-     * Sends packages to update the fields.
+     * Sends packages to update the schematics.
      *
-     * @param oldSubscribers    the existing subscribers.
      * @param hasNewSubscribers the new subscribers.
      */
-    private void sendFieldPackets(final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers)
+    private void sendSchematicsPackets(final boolean hasNewSubscribers)
+    {
+        if (Structures.isDirty() || hasNewSubscribers)
+        {
+            subscribers.stream()
+                .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyStylesMessage(), player));
+        }
+    }
+
+    /**
+     * Sends packages to update the fields.
+     *
+     * @param hasNewSubscribers the new subscribers.
+     */
+    private void sendFieldPackets(final boolean hasNewSubscribers)
     {
         if ((isFieldsDirty && !isBuildingsDirty) || hasNewSubscribers)
         {
@@ -691,6 +910,70 @@ public class Colony implements IColony
     }
 
     /**
+     * Get a copy of the freePositions list.
+     *
+     * @return the list of free to interact positions.
+     */
+    public Set<BlockPos> getFreePositions()
+    {
+        return new HashSet<>(freePositions);
+    }
+
+    /**
+     * Get a copy of the freeBlocks list.
+     *
+     * @return the list of free to interact blocks.
+     */
+    public Set<Block> getFreeBlocks()
+    {
+        return new HashSet<>(freeBlocks);
+    }
+
+    /**
+     * Add a new free to interact position.
+     *
+     * @param pos position to add.
+     */
+    public void addFreePosition(@NotNull final BlockPos pos)
+    {
+        freePositions.add(pos);
+        markDirty();
+    }
+
+    /**
+     * Add a new free to interact block.
+     *
+     * @param block block to add.
+     */
+    public void addFreeBlock(@NotNull final Block block)
+    {
+        freeBlocks.add(block);
+        markDirty();
+    }
+
+    /**
+     * Remove a free to interact position.
+     *
+     * @param pos position to remove.
+     */
+    public void removeFreePosition(@NotNull final BlockPos pos)
+    {
+        freePositions.remove(pos);
+        markDirty();
+    }
+
+    /**
+     * Remove a free to interact block.
+     *
+     * @param block state to remove.
+     */
+    public void removeFreeBlock(@NotNull final Block block)
+    {
+        freeBlocks.remove(block);
+        markDirty();
+    }
+
+    /**
      * Any per-world-tick logic should be performed here.
      * NOTE: If the Colony's world isn't loaded, it won't have a world tick.
      * Use onServerTick for logic that should _always_ run.
@@ -701,7 +984,11 @@ public class Colony implements IColony
     {
         if (event.world != getWorld())
         {
-            throw new IllegalStateException("Colony's world does not match the event.");
+            /**
+             * If the event world is not the colony world ignore. This might happen in interactions with other mods.
+             * This should not be a problem for minecolonies as long as we take care to do nothing in that moment.
+             */
+            return;
         }
 
         if (event.phase == TickEvent.Phase.START)
@@ -745,6 +1032,81 @@ public class Colony implements IColony
             building.onWorldTick(event);
         }
 
+        if(isDay && !world.isDaytime())
+        {
+            isDay = false;
+            updateOverallHappiness();
+        }
+        else if(!isDay && world.isDaytime())
+        {
+            isDay = true;
+        }
+
+        updateWayPoints();
+        workManager.onWorldTick(event);
+    }
+
+    private void updateOverallHappiness()
+    {
+        int guards = 1;
+        int housing = 0;
+        int workers = 1;
+        double saturation = 0;
+        for(final CitizenData citizen: citizens.values())
+        {
+            final AbstractBuildingWorker buildingWorker = citizen.getWorkBuilding();
+            if(buildingWorker != null)
+            {
+                if(buildingWorker instanceof BuildingGuardTower)
+                {
+                    guards += buildingWorker.getBuildingLevel();
+                }
+                else
+                {
+                    workers += buildingWorker.getBuildingLevel();
+                }
+            }
+
+            final BuildingHome home = citizen.getHomeBuilding();
+            if(home != null)
+            {
+                housing += home.getBuildingLevel();
+            }
+
+            saturation += citizen.getSaturation();
+        }
+
+        final int averageHousing = housing/Math.max(1, citizens.size());
+
+        if(averageHousing > 1)
+        {
+            increaseOverallHappiness(averageHousing * HAPPINESS_FACTOR);
+        }
+
+        final int averageSaturation = (int) (saturation/citizens.size());
+        if(averageSaturation < WELL_SATURATED_LIMIT)
+        {
+            decreaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * -HAPPINESS_FACTOR);
+        }
+        else if(averageSaturation > WELL_SATURATED_LIMIT)
+        {
+            increaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * HAPPINESS_FACTOR);
+        }
+
+        int relation = guards/workers;
+
+        if(relation > 1)
+        {
+            decreaseOverallHappiness(relation * HAPPINESS_FACTOR);
+        }
+        markDirty();
+    }
+
+    /**
+     * Update the waypoints after worldTicks.
+     */
+    private void updateWayPoints()
+    {
         final Random rand = new Random();
         if (rand.nextInt(CHECK_WAYPOINT_EVERY) <= 1 && wayPoints.size() > 0)
         {
@@ -762,8 +1124,17 @@ public class Colony implements IColony
                 }
             }
         }
+    }
 
-        workManager.onWorldTick(event);
+    /**
+     * Returns the world the colony is in.
+     *
+     * @return World the colony is in.
+     */
+    @Nullable
+    public World getWorld()
+    {
+        return world;
     }
 
     private boolean areAllColonyChunksLoaded(@NotNull final TickEvent.WorldTickEvent event)
@@ -882,17 +1253,6 @@ public class Colony implements IColony
                  && BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ())) <= MathUtils.square(Configurations.workingRangeTownHall);
     }
 
-    /**
-     * Returns the world the colony is in.
-     *
-     * @return World the colony is in.
-     */
-    @Nullable
-    public World getWorld()
-    {
-        return world;
-    }
-
     @Override
     public long getDistanceSquared(@NotNull final BlockPos pos)
     {
@@ -922,19 +1282,6 @@ public class Colony implements IColony
     private void markFieldsDirty()
     {
         isFieldsDirty = true;
-    }
-
-    /**
-     * Spawn citizen if his entity is null.
-     * @param data his data
-     */
-    public void spawnCitizenIfNull(@NotNull final CitizenData data)
-    {
-        if(data.getCitizenEntity() == null)
-        {
-            Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", this.getID(), data.getId()));
-            spawnCitizen(data);
-        }
     }
 
     /**
@@ -980,8 +1327,8 @@ public class Colony implements IColony
                 {
                     //TODO: add Colony Name prefix?
                     LanguageHandler.sendPlayersMessage(
-                            this.getMessageEntityPlayers(),
-                            "tile.blockHutTownHall.messageMaxSize");
+                      this.getMessageEntityPlayers(),
+                      "tile.blockHutTownHall.messageMaxSize");
                 }
             }
             entity.setColony(this, citizenData);
@@ -1020,7 +1367,8 @@ public class Colony implements IColony
      * Returns a map of citizens in the colony.
      * The map has ID as key, and citizen data as value.
      *
-     * @return Map of citizens in the colony, with as key the citizen ID, and as value the citizen data.
+     * @return Map of citizens in the colony, with as key the citizen ID, and as
+     * value the citizen data.
      */
     @NotNull
     public Map<Integer, CitizenData> getCitizens()
@@ -1069,6 +1417,39 @@ public class Colony implements IColony
     public void markCitizensDirty()
     {
         isCitizensDirty = true;
+    }
+
+    /**
+     * Triggers an achievement on this colony.
+     * <p>
+     * Will automatically sync to all players.
+     *
+     * @param achievement The achievement to trigger
+     */
+    public void triggerAchievement(@NotNull final Achievement achievement)
+    {
+        if (this.colonyAchievements.contains(achievement))
+        {
+            return;
+        }
+
+        this.colonyAchievements.add(achievement);
+
+        AchievementUtils.syncAchievements(this);
+    }
+
+    /**
+     * Spawn citizen if his entity is null.
+     *
+     * @param data his data
+     */
+    private void spawnCitizenIfNull(@NotNull final CitizenData data)
+    {
+        if (data.getCitizenEntity() == null)
+        {
+            Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", this.getID(), data.getId()));
+            spawnCitizen(data);
+        }
     }
 
     /**
@@ -1138,7 +1519,8 @@ public class Colony implements IColony
     }
 
     /**
-     * Get building in Colony by ID. The building will be casted to the provided type.
+     * Get building in Colony by ID. The building will be casted to the provided
+     * type.
      *
      * @param buildingId ID (coordinates) of the building to get.
      * @param type       Type of building.
@@ -1186,7 +1568,6 @@ public class Colony implements IColony
     public AbstractBuilding addNewBuilding(@NotNull final TileEntityColonyBuilding tileEntity)
     {
         tileEntity.setColony(this);
-
         @Nullable final AbstractBuilding building = AbstractBuilding.create(this, tileEntity);
         if (building != null)
         {
@@ -1197,6 +1578,14 @@ public class Colony implements IColony
               getID(),
               tileEntity.getBlockType().getClass(),
               tileEntity.getPosition()));
+            if (tileEntity.isMirrored())
+            {
+                building.setMirror();
+            }
+            if (!tileEntity.getStyle().isEmpty())
+            {
+                building.setStyle(tileEntity.getStyle());
+            }
             ConstructionTapeHelper.placeConstructionTape(building, world);
         }
         else
@@ -1431,6 +1820,35 @@ public class Colony implements IColony
         }
 
         return tempWayPoints;
+    }
+
+    /**
+     * Getter for overall happiness.
+     * @return the overall happiness.
+     */
+    public double getOverallHappiness()
+    {
+        return this.overallHappiness;
+    }
+
+    /**
+     * Increase the overall happiness by an amount, cap at max.
+     * @param amount the amount.
+     */
+    public void increaseOverallHappiness(double amount)
+    {
+        this.overallHappiness = Math.min(this.overallHappiness + Math.abs(amount), MAX_OVERALL_HAPPINESS);
+        this.markDirty();
+    }
+
+    /**
+     * Decrease the overall happiness by an amount, cap at min.
+     * @param amount the amount.
+     */
+    public void decreaseOverallHappiness(double amount)
+    {
+        this.overallHappiness = Math.max(this.overallHappiness - Math.abs(amount), MIN_OVERALL_HAPPINESS);
+        this.markDirty();
     }
 
     /**

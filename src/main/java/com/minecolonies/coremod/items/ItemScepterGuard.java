@@ -101,6 +101,12 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
             return EnumActionResult.FAIL;
         }
 
+        if(BlockPosUtil.getDistance2D(pos, guardTower) > ((BuildingGuardTower) hut).getPatrolDistance())
+        {
+            LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.job.guard.toolClickGuardTooFar");
+            return EnumActionResult.FAIL;
+        }
+
         final BuildingGuardTower.Task task = BuildingGuardTower.Task.values()[compound.getInteger("task")];
         final CitizenData citizen = ((BuildingGuardTower) hut).getWorker();
 

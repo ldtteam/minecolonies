@@ -17,6 +17,7 @@ import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.Log;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -39,13 +40,13 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     private static final String RESOURCE_MISSING                   = "resourceMissing";
     private static final String RESOURCE_ADD                       = "resourceAdd";
     private static final String RESOURCE_ID                        = "resourceId";
-    private static final int RESOURCE_ID_POSITION                  = 4;
+    private static final int    RESOURCE_ID_POSITION               = 4;
     private static final String RESOURCE_QUANTITY_MISSING          = "resourceQuantity";
-    private static final int RESOURCE_QUANTITY_MISSING_POSITION    = 5;
+    private static final int    RESOURCE_QUANTITY_MISSING_POSITION = 5;
 
-    private static final int RED       = Color.getByName("red",0);
-    private static final int DARKGREEN = Color.getByName("darkgreen",0);
-    private static final int BLACK     = Color.getByName("black",0);
+    private static final int RED       = Color.getByName("red", 0);
+    private static final int DARKGREEN = Color.getByName("darkgreen", 0);
+    private static final int BLACK     = Color.getByName("black", 0);
 
     private final BuildingBuilderView builder;
 
@@ -54,8 +55,6 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
      */
     @NotNull
     private final List<BuildingBuilderResource> resources = new ArrayList<>();
-
-
 
     /**
      * Constructor for window builder hut.
@@ -85,23 +84,11 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
             resources.addAll(updatedView.getResources().values());
             for (final BuildingBuilderResource resource : resources)
             {
-                resource.setPlayerAmount(InventoryUtils.getItemCountInInventory(inventory, resource.getItem(), resource.getDamageValue()));
+                resource.setPlayerAmount(InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory), resource.getItem(), resource.getDamageValue()));
             }
 
             resources.sort(new BuildingBuilderResource.ResourceComparator());
         }
-    }
-
-    /**
-     * Returns the name of a building.
-     *
-     * @return Name of a building.
-     */
-    @NotNull
-    @Override
-    public String getBuildingName()
-    {
-        return "com.minecolonies.coremod.gui.workerHuts.buildersHut";
     }
 
     @Override
@@ -119,6 +106,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
             {
                 return resources.size();
             }
+
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
@@ -133,7 +121,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     /**
      * Update one row pad with its resource informations.
      *
-     * @param index index in the list of resources.
+     * @param index   index in the list of resources.
      * @param rowPane The Pane to use to display the information.
      */
     private void updateResourcePane(final int index, @NotNull final Pane rowPane)
@@ -167,17 +155,16 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
             case NOT_NEEDED:
             default:
                 addButton.disable();
-                resourceLabel.setColor(BLACK,BLACK);
+                resourceLabel.setColor(BLACK, BLACK);
                 resourceMissingLabel.setColor(BLACK, BLACK);
-                neededLabel.setColor(BLACK,BLACK);
+                neededLabel.setColor(BLACK, BLACK);
                 break;
-
         }
 
         //position the addRessource Button to the right
         final int buttonX = rowPane.getWidth() - addButton.getWidth() - (rowPane.getHeight() - addButton.getHeight()) / 2;
         final int buttonY = rowPane.getHeight() - addButton.getHeight() - 2;
-        addButton.setPosition(buttonX,buttonY);
+        addButton.setPosition(buttonX, buttonY);
 
         resourceLabel.setLabelText(resource.getName());
         final int missing = resource.getMissingFromPlayer();
@@ -192,7 +179,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
 
         neededLabel.setLabelText(Integer.toString(resource.getAvailable()) + " / " + Integer.toString(resource.getAmount()));
         rowPane.findPaneOfTypeByID(RESOURCE_ID, Label.class).setLabelText(Integer.toString(index));
-        rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class).setLabelText(Integer.toString(resource.getAmount()-resource.getAvailable()));
+        rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class).setLabelText(Integer.toString(resource.getAmount() - resource.getAvailable()));
     }
 
     @Override
@@ -206,6 +193,18 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
             pullResourcesFromHut();
             window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class).refreshElementPanes();
         }
+    }
+
+    /**
+     * Returns the name of a building.
+     *
+     * @return Name of a building.
+     */
+    @NotNull
+    @Override
+    public String getBuildingName()
+    {
+        return "com.minecolonies.coremod.gui.workerHuts.buildersHut";
     }
 
     /**
@@ -232,6 +231,4 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
             MineColonies.getNetwork().sendToServer(new TransferItemsRequestMessage(this.building, itemStack, quantity));
         }
     }
-
-
 }

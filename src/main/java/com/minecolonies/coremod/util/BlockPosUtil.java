@@ -17,6 +17,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -29,6 +30,17 @@ public final class BlockPosUtil
      * Min distance to availate two positions as close.
      */
     private static final double CLOSE_DISTANCE = 4.84;
+
+    /**
+     * Max depth of the floor check to avoid endless void searching
+     * (Stackoverflow).
+     */
+    private static final int MAX_DEPTH = 50;
+
+    /**
+     * Amount of string required to try to calculate a blockpos.
+     */
+    private static final int BLOCKPOS_LENGTH = 3;
 
     private BlockPosUtil()
     {
@@ -87,7 +99,8 @@ public final class BlockPosUtil
      * Reads a Chunk Coordinate from a tag list.
      *
      * @param tagList Tag list to read compound with chunk coordinate from.
-     * @param index   Index in the tag list where the required chunk coordinate is.
+     * @param index   Index in the tag list where the required chunk coordinate
+     *                is.
      * @return Chunk coordinate read from the tag list.
      */
     @NotNull
@@ -129,11 +142,41 @@ public final class BlockPosUtil
     }
 
     /**
-     * this checks that you are not in liquid.  Will check for all liquids, even those from other mods
-     * before TP
+     * Try to parse a blockPos of an input string.
+     *
+     * @param inputText the string to parse.
+     * @return the blockPos if able to.
+     */
+    @Nullable
+    public static BlockPos getBlockPosOfString(@NotNull final String inputText)
+    {
+        final String[] strings = inputText.split(" ");
+
+        if (strings.length == BLOCKPOS_LENGTH)
+        {
+            try
+            {
+                final int x = Integer.parseInt(strings[0]);
+                final int y = Integer.parseInt(strings[1]);
+                final int z = Integer.parseInt(strings[2]);
+                return new BlockPos(x, y, z);
+            }
+            catch (NumberFormatException e)
+            {
+                /**
+                 * Empty for a purpose.
+                 */
+            }
+        }
+        return null;
+    }
+
+    /**
+     * this checks that you are not in liquid.  Will check for all liquids, even
+     * those from other mods before TP
      *
      * @param blockPos for the current block LOC
-     * @param sender uses the player to get the world
+     * @param sender   uses the player to get the world
      * @return isSafe true=safe false=water or lava
      */
     public static boolean isPositionSafe(@NotNull ICommandSender sender, BlockPos blockPos)
@@ -148,7 +191,7 @@ public final class BlockPosUtil
      * If so it will look up and down for a good landing spot before TP.
      *
      * @param blockPos for the current block LOC.
-     * @param world the world to search in.
+     * @param world    the world to search in.
      * @return blockPos to be used for the TP.
      */
     public static BlockPos findLand(final BlockPos blockPos, final World world)
@@ -162,7 +205,7 @@ public final class BlockPosUtil
         //We are doing a binary search to limit the amount of checks (usually at most 9 this way)
         while (top >= bot)
         {
-            tempPos = new BlockPos( tempPos.getX(),mid, tempPos.getZ());
+            tempPos = new BlockPos(tempPos.getX(), mid, tempPos.getZ());
             final Block blocks = world.getBlockState(tempPos).getBlock();
             if (blocks == Blocks.AIR && world.canSeeSky(tempPos))
             {
@@ -174,14 +217,15 @@ public final class BlockPosUtil
                 bot = mid + 1;
                 foundland = tempPos;
             }
-            mid = (bot + top)/2;
+            mid = (bot + top) / 2;
         }
 
         return foundland;
     }
 
     /**
-     * Returns if the {@link #getDistanceSquared(BlockPos, BlockPos)} from a coordinate to an citizen is closer than 4.84.
+     * Returns if the {@link #getDistanceSquared(BlockPos, BlockPos)} from a
+     * coordinate to an citizen is closer than 4.84.
      *
      * @param coordinate Coordinate you want check distance of.
      * @param citizen    Citizen you want check distance of.
@@ -279,7 +323,8 @@ public final class BlockPosUtil
     }
 
     /**
-     * Returns a list of drops possible mining a specific block with specific fortune level.
+     * Returns a list of drops possible mining a specific block with specific
+     * fortune level.
      *
      * @param world   World the block is in.
      * @param coords  Coordinates of the block.
@@ -368,7 +413,8 @@ public final class BlockPosUtil
     }
 
     /**
-     * {@link EntityUtils#isWorkerAtSiteWithMove(EntityCitizen, int, int, int, int)}.
+     * {@link EntityUtils#isWorkerAtSiteWithMove(EntityCitizen, int, int, int,
+     * int)}.
      *
      * @param worker Worker to check.
      * @param site   Chunk coordinates of site to check.
@@ -406,7 +452,8 @@ public final class BlockPosUtil
     }
 
     /**
-     * Create a method for using a {@link BlockPos} when using {@link net.minecraft.util.math.BlockPos.MutableBlockPos#setPos(int, int, int)}.
+     * Create a method for using a {@link BlockPos} when using {@link
+     * net.minecraft.util.math.BlockPos.MutableBlockPos#setPos(int, int, int)}.
      *
      * @param pos    {@link net.minecraft.util.math.BlockPos.MutableBlockPos}.
      * @param newPos The new position to set.
@@ -440,5 +487,51 @@ public final class BlockPosUtil
     public static BlockPos fromEntity(@NotNull final Entity entity)
     {
         return new BlockPos(MathHelper.floor(entity.posX), MathHelper.floor(entity.posY), MathHelper.floor(entity.posZ));
+    }
+
+    /**
+     * Calculates the floor level.
+     *
+     * @param position input position.
+     * @param world    the world the position is in.
+     * @return returns BlockPos position with air above.
+     */
+    @NotNull
+    public static BlockPos getFloor(@NotNull BlockPos position, @NotNull final World world)
+    {
+        final BlockPos floor = getFloor(position, 0, world);
+        if (floor == null)
+        {
+            return position;
+        }
+        return floor;
+    }
+
+    /**
+     * Calculates the floor level.
+     *
+     * @param position input position.
+     * @param depth    the iteration depth.
+     * @param world    the world the position is in.
+     * @return returns BlockPos position with air above.
+     */
+    @Nullable
+    private static BlockPos getFloor(@NotNull final BlockPos position, int depth, @NotNull final World world)
+    {
+        if (depth > MAX_DEPTH)
+        {
+            return null;
+        }
+        //If the position is floating in Air go downwards
+        if (!EntityUtils.solidOrLiquid(world, position))
+        {
+            return getFloor(position.down(), depth + 1, world);
+        }
+        //If there is no air above the block go upwards
+        if (!EntityUtils.solidOrLiquid(world, position.up()))
+        {
+            return position;
+        }
+        return getFloor(position.up(), depth + 1, world);
     }
 }

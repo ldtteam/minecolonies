@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.miner;
 
+import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.buildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
@@ -14,8 +15,11 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.awt.geom.Point2D;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
@@ -24,6 +28,11 @@ import static com.minecolonies.coremod.entity.ai.util.AIState.*;
  */
 public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 {
+    /**
+     * Lead the miner to the other side of the shaft.
+     */
+    private static final int OTHER_SIDE_OF_SHAFT = 6;
+
     private static final String RENDER_META_TORCH   = "Torch";
     private static final int    NODE_DISTANCE       = 7;
     /**
@@ -89,12 +98,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     {
         //TODO make this more sophisticated
         return block instanceof BlockOre;
-    }
-
-    @Override
-    public IBlockState getSolidSubstitution(BlockPos ignored)
-    {
-        return Blocks.COBBLESTONE.getDefaultState();
     }
 
     //Miner wants to work but is not at building
@@ -489,7 +492,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     @Override
     protected boolean checkIfCanceled()
     {
-       if(!isThereAStructureToBuild())
+        if(!isThereAStructureToBuild())
         {
             switch (getState())
             {
@@ -537,8 +540,10 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         //normal facing +x
         int rotation = 0;
 
-        final int vectorX = workingNode.getX() < workingNode.getParent().getX() ? -1 : (workingNode.getX() > workingNode.getParent().getX() ? 1 : 0);
-        final int vectorZ = workingNode.getZ() < workingNode.getParent().getY() ? -1 : (workingNode.getZ() > workingNode.getParent().getY() ? 1 : 0);
+        final int workingNodeX = workingNode.getX() > workingNode.getParent().getX() ? 1 : 0;
+        final int workingNodeZ = workingNode.getZ() > workingNode.getParent().getY() ? 1 : 0;
+        final int vectorX = workingNode.getX() < workingNode.getParent().getX() ? -1 : workingNodeX;
+        final int vectorZ = workingNode.getZ() < workingNode.getParent().getY() ? -1 : workingNodeZ;
 
         if (vectorX == -1)
         {
@@ -588,28 +593,29 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     /**
      * Initiates structure loading.
      *
-     * @param mineNode  the node to load it for
+     * @param mineNode     the node to load it for.
+     * @param rotateTimes  The amount of time to rotate the structure.
+     * @param structurePos The position of the structure.
      */
     private void initStructure(final Node mineNode, final int rotateTimes, BlockPos structurePos)
     {
         if (mineNode == null)
         {
-            loadStructure("miner/minerMainShaft", getRotationFromVector(), structurePos);
+            loadStructure(Structures.SCHEMATICS_PREFIX + "/miner/minerMainShaft", getRotationFromVector(), structurePos, false);
         }
         else
         {
-            //todo we can add other nodeTypes without a problem.
             if (mineNode.getStyle() == Node.NodeType.CROSSROAD)
             {
-                loadStructure("miner/minerX4", rotateTimes, structurePos);
+                loadStructure(Structures.SCHEMATICS_PREFIX + "/miner/minerX4", rotateTimes, structurePos, false);
             }
             if (mineNode.getStyle() == Node.NodeType.BEND)
             {
-                loadStructure("miner/minerX2Right", rotateTimes, structurePos);
+                loadStructure(Structures.SCHEMATICS_PREFIX + "/miner/minerX2Right", rotateTimes, structurePos, false);
             }
             if (mineNode.getStyle() == Node.NodeType.TUNNEL)
             {
-                loadStructure("miner/minerX2Top", rotateTimes, structurePos);
+                loadStructure(Structures.SCHEMATICS_PREFIX + "/miner/minerX2Top", rotateTimes, structurePos, false);
             }
         }
     }
@@ -698,9 +704,9 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         }
         if (slot != -1)
         {
-            getInventory().decrStackSize(slot, 1);
+            new InvWrapper(getInventory()).extractItem(slot, 1, false);
             //Flag 1+2 is needed for updates
-            world.setBlockState(location, metadata, 3);
+            world.setBlockState(location, metadata, 0x03);
         }
     }
 
@@ -731,5 +737,82 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         {
             return pos.getY() - 1;
         }
+    }
+
+    /**
+     * Calculates the working position.
+     * <p>
+     * Takes a min distance from width and length.
+     * <p>
+     * Then finds the floor level at that distance and then check if it does contain two air levels.
+     *
+     * @param targetPosition the position to work at.
+     * @return BlockPos position to work from.
+     */
+    @Override
+    public BlockPos getWorkingPosition(BlockPos targetPosition)
+    {
+        return getNodeMiningPosition(targetPosition);
+    }
+
+    @Override
+    public void executeSpecificCompleteActions()
+    {
+        final BuildingMiner minerBuilding = getOwnBuilding();
+        //If shaft isn't cleared we're in shaft clearing mode.
+        if (minerBuilding.clearedShaft)
+        {
+            minerBuilding.getCurrentLevel().closeNextNode(getRotation());
+        }
+        else
+        {
+            @NotNull final Level currentLevel = new Level(minerBuilding, job.getStructure().getPosition().getY());
+            minerBuilding.addLevel(currentLevel);
+            minerBuilding.setCurrentLevel(minerBuilding.getNumberOfLevels());
+            minerBuilding.resetStartingLevelShaft();
+        }
+        //Send out update to client
+        getOwnBuilding().markDirty();
+
+        job.setStructure(null);
+    }
+
+    @Override
+    public IBlockState getSolidSubstitution(BlockPos ignored)
+    {
+        return Blocks.COBBLESTONE.getDefaultState();
+    }
+
+    /**
+     * Create a save mining position for the miner.
+     *
+     * @param blockToMine block which should be mined or placed.
+     * @return the save position.
+     */
+    private BlockPos getNodeMiningPosition(BlockPos blockToMine)
+    {
+        final BuildingMiner buildingMiner = getOwnBuilding();
+        if (buildingMiner.getCurrentLevel() == null || buildingMiner.getCurrentLevel().getRandomNode() == null)
+        {
+            return blockToMine;
+        }
+        final Point2D parentPos = buildingMiner.getCurrentLevel().getRandomNode().getParent();
+        if (parentPos != null && buildingMiner.getCurrentLevel().getNode(parentPos) != null
+              && buildingMiner.getCurrentLevel().getNode(parentPos).getStyle() == Node.NodeType.SHAFT)
+        {
+            final BlockPos ladderPos = buildingMiner.getLadderLocation();
+            return new BlockPos(
+                                 ladderPos.getX() + buildingMiner.getVectorX() * OTHER_SIDE_OF_SHAFT,
+                                 buildingMiner.getCurrentLevel().getDepth(),
+                                 ladderPos.getZ() + buildingMiner.getVectorZ() * OTHER_SIDE_OF_SHAFT);
+        }
+        final Point2D pos = buildingMiner.getCurrentLevel().getRandomNode().getParent();
+        return new BlockPos(pos.getX(), buildingMiner.getCurrentLevel().getDepth(), pos.getY());
+    }
+
+    @Override
+    public boolean shallReplaceSolidSubstitutionBlock(final Block worldBlock, final IBlockState worldMetadata)
+    {
+        return worldBlock instanceof BlockOre && worldMetadata.getMaterial().isSolid();
     }
 }

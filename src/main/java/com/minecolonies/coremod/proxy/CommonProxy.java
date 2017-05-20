@@ -2,6 +2,7 @@ package com.minecolonies.coremod.proxy;
 
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
+import com.minecolonies.coremod.configuration.ConfigurationHandler;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
 import com.minecolonies.coremod.event.EventHandler;
@@ -20,8 +21,10 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+
 
 /**
  * CommonProxy of the minecolonies mod (Server and Client).
@@ -29,7 +32,8 @@ import java.util.Map;
 public class CommonProxy implements IProxy
 {
     /**
-     * Used to store IExtendedEntityProperties data temporarily between player death and respawn.
+     * Used to store IExtendedEntityProperties data temporarily between player
+     * death and respawn.
      */
     private static final Map<String, NBTTagCompound> playerPropertiesData = new HashMap<>();
     private              int                         nextEntityId         = 0;
@@ -38,7 +42,8 @@ public class CommonProxy implements IProxy
      * Adds an entity's custom data to the map for temporary storage.
      *
      * @param name     player UUID + Properties name, HashMap key.
-     * @param compound An NBT Tag Compound that stores the IExtendedEntityProperties data only.
+     * @param compound An NBT Tag Compound that stores the IExtendedEntityProperties
+     *                 data only.
      */
     public static void storeEntityData(final String name, final NBTTagCompound compound)
     {
@@ -46,7 +51,8 @@ public class CommonProxy implements IProxy
     }
 
     /**
-     * Removes the compound from the map and returns the NBT tag stored for name or null if none exists.
+     * Removes the compound from the map and returns the NBT tag stored for name
+     * or null if none exists.
      *
      * @param name player UUID + Properties name, HashMap key.
      * @return NBTTagCompound PlayerProperties NBT compound.
@@ -77,6 +83,7 @@ public class CommonProxy implements IProxy
     {
         MinecraftForge.EVENT_BUS.register(new EventHandler());
         MinecraftForge.EVENT_BUS.register(new FMLEventHandler());
+        MinecraftForge.EVENT_BUS.register(new ConfigurationHandler());
     }
 
     /*
@@ -152,4 +159,11 @@ public class CommonProxy implements IProxy
     {
         return nextEntityId++;
     }
+
+    @Override
+    public File getSchematicsFolder()
+    {
+        return null;
+    }
+
 }

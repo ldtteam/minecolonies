@@ -23,6 +23,8 @@ public class TileEntityColonyBuilding extends TileEntityChest
      * NBTTag to store the colony id.
      */
     private static final String TAG_COLONY = "colony";
+    private static final String TAG_MIRROR = "mirror";
+    private static final String TAG_STYLE  = "style";
 
     /**
      * The colony id.
@@ -40,52 +42,21 @@ public class TileEntityColonyBuilding extends TileEntityChest
     private AbstractBuilding building;
 
     /**
+     * Check if the building has a mirror.
+     */
+    private boolean mirror;
+
+    /**
+     * The style of the building.
+     */
+    private String style = "";
+
+    /**
      * Empty standard constructor.
      */
     public TileEntityColonyBuilding()
     {
         super();
-    }
-
-    @Override
-    public SPacketUpdateTileEntity getUpdatePacket()
-    {
-        final NBTTagCompound compound = new NBTTagCompound();
-        compound.setInteger(TAG_COLONY, colonyId);
-        return new SPacketUpdateTileEntity(this.getPosition(), 0, compound);
-    }
-
-    @NotNull
-    @Override
-    public NBTTagCompound getUpdateTag()
-    {
-        return writeToNBT(new NBTTagCompound());
-    }
-
-    @Override
-    public void onDataPacket(final NetworkManager net, final SPacketUpdateTileEntity packet)
-    {
-        final NBTTagCompound compound = packet.getNbtCompound();
-        colonyId = compound.getInteger(TAG_COLONY);
-    }
-
-    @Override
-    public void onChunkUnload()
-    {
-        if (building != null)
-        {
-            building.setTileEntity(null);
-        }
-    }
-
-    /**
-     * Returns the position of the tile entity.
-     *
-     * @return Block Coordinates of the tile entity.
-     */
-    public BlockPos getPosition()
-    {
-        return pos;
     }
 
     /**
@@ -169,6 +140,57 @@ public class TileEntityColonyBuilding extends TileEntityChest
         markDirty();
     }
 
+    @Override
+    public void markDirty()
+    {
+        super.markDirty();
+        if (building != null)
+        {
+            building.markDirty();
+        }
+    }
+
+    @Override
+    public SPacketUpdateTileEntity getUpdatePacket()
+    {
+        final NBTTagCompound compound = new NBTTagCompound();
+        compound.setInteger(TAG_COLONY, colonyId);
+        return new SPacketUpdateTileEntity(this.getPosition(), 0, compound);
+    }
+
+    @NotNull
+    @Override
+    public NBTTagCompound getUpdateTag()
+    {
+        return writeToNBT(new NBTTagCompound());
+    }
+
+    @Override
+    public void onDataPacket(final NetworkManager net, final SPacketUpdateTileEntity packet)
+    {
+        final NBTTagCompound compound = packet.getNbtCompound();
+        colonyId = compound.getInteger(TAG_COLONY);
+    }
+
+    @Override
+    public void onChunkUnload()
+    {
+        if (building != null)
+        {
+            building.setTileEntity(null);
+        }
+    }
+
+    /**
+     * Returns the position of the tile entity.
+     *
+     * @return Block Coordinates of the tile entity.
+     */
+    public BlockPos getPosition()
+    {
+        return pos;
+    }
+
     /**
      * Returns the building associated with the tile entity.
      *
@@ -193,17 +215,6 @@ public class TileEntityColonyBuilding extends TileEntityChest
         building = b;
     }
 
-    @Override
-    public void markDirty()
-    {
-        super.markDirty();
-        if (building!=null)
-        {
-            building.markDirty();
-        }
-    }
-
-
     /**
      * Returns the view of the building associated with the tile entity.
      *
@@ -225,6 +236,8 @@ public class TileEntityColonyBuilding extends TileEntityChest
         }
 
         updateColonyReferences();
+        mirror = compound.getBoolean(TAG_MIRROR);
+        style = compound.getString(TAG_STYLE);
     }
 
     @NotNull
@@ -239,6 +252,8 @@ public class TileEntityColonyBuilding extends TileEntityChest
         }
         */
         compound.setInteger(TAG_COLONY, colonyId);
+        compound.setBoolean(TAG_MIRROR, mirror);
+        compound.setString(TAG_STYLE, style);
         return compound;
     }
 
@@ -273,5 +288,45 @@ public class TileEntityColonyBuilding extends TileEntityChest
     {
         //TODO This is called every tick the GUI is open. Is that bad?
         return building == null || building.getColony().getPermissions().hasPermission(player, Action.ACCESS_HUTS);
+    }
+
+    /**
+     * Set if the entity is mirrored.
+     *
+     * @param mirror true if so.
+     */
+    public void setMirror(final boolean mirror)
+    {
+        this.mirror = mirror;
+    }
+
+    /**
+     * Check if building is mirrored.
+     *
+     * @return true if so.
+     */
+    public boolean isMirrored()
+    {
+        return mirror;
+    }
+
+    /**
+     * Getter for the style.
+     *
+     * @return the string of it.
+     */
+    public String getStyle()
+    {
+        return this.style;
+    }
+
+    /**
+     * Set the style of the tileEntity.
+     *
+     * @param style the style to set.
+     */
+    public void setStyle(final String style)
+    {
+        this.style = style;
     }
 }

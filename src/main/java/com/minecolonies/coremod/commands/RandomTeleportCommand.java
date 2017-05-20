@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.COLONYTP;
+import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.RTP;
 
 /**
  * this command is made to TP a player to a safe random spot that is not to close to another colony.
@@ -33,7 +33,8 @@ public class RandomTeleportCommand extends AbstractSingleCommand
     private static final int    LOWER_BOUNDS     = Configurations.maxDistanceFromWorldSpawn;
     private static final int    SPAWN_NO_TP      = Configurations.minDistanceFromWorldSpawn;
     private static final int    STARTING_Y       = 250;
-    private static final double SAFETY_DROP      = 4;
+    private static final double SAFETY_DROP      = 8;
+    private static final int    FALL_DISTANCE    = 5;
     private static final String CANT_FIND_PLAYER = "No player found for teleport, please define one.";
 
     /**
@@ -61,7 +62,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand
             sender.getCommandSenderEntity().sendMessage(new TextComponentString("Please have an admin raise the maxDistanceFromWorldSpawn number in config."));
             return;
         }
-        if (!canCommandSenderUseCommand(COLONYTP))
+        if (!canCommandSenderUseCommand(RTP))
         {
             sender.getCommandSenderEntity().sendMessage(new TextComponentString("Not happenin bro!!, ask an OP to TP you."));
             return;
@@ -79,8 +80,8 @@ public class RandomTeleportCommand extends AbstractSingleCommand
         {
             final World world = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld();
             playerToTeleport =
-                    ServerUtils.getPlayerFromUUID(FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache()
-                            .getGameProfileForUsername(args[0]).getId(), world);
+              ServerUtils.getPlayerFromUUID(FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache()
+                                              .getGameProfileForUsername(args[0]).getId(), world);
 
             sender.getCommandSenderEntity().sendMessage(new TextComponentString("TPin Player: " + playerToTeleport.getName()));
         }
@@ -92,25 +93,8 @@ public class RandomTeleportCommand extends AbstractSingleCommand
         }
         playerToTeleport.getCommandSenderEntity().sendMessage(new TextComponentString("Buckle up buttercup, this ain't no joy ride!!!"));
         teleportPlayer(sender, playerToTeleport);
-    }
-
-    /**
-     * Get a random coordinate to teleport to.
-     * @return
-     */
-    private static int getRandCoordinate()
-    {
-        final Random rnd = new Random();
-
-        int x = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
-
-        /* keeping X out of the spawn radius */
-        while (x > -SPAWN_NO_TP && x < SPAWN_NO_TP)
-        {
-            x = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
-        }
-
-        return x;
+        //.fallDistance is used to cancel out fall damage  basically if you have -5 it will reduce fall damage by 2.5 hearts
+        playerToTeleport.fallDistance = FALL_DISTANCE;
     }
 
     /**
@@ -149,21 +133,46 @@ public class RandomTeleportCommand extends AbstractSingleCommand
 
             if (foundPosition)
             {
-                /* everything checks out good make the TP and jump out*/
-                playerToTeleport.setPositionAndUpdate(groundPosition.getX(), groundPosition.getY() + SAFETY_DROP, groundPosition.getZ());
+                if (MinecoloniesCommand.canExecuteCommand((EntityPlayer) sender))
+                {
+
+                    playerToTeleport.setPositionAndUpdate(groundPosition.getX(), groundPosition.getY() + SAFETY_DROP, groundPosition.getZ());
+                }
+                else
+                {
+                    sender.getCommandSenderEntity().sendMessage(new TextComponentString("Please wait at least " + Configurations.teleportBuffer + " seconds to teleport again"));
+                }
                 return;
             }
         }
         playerToTeleport.getCommandSenderEntity().sendMessage(new TextComponentString("Couldn't find a safe spot.  Try again in a moment."));
     }
 
+    /**
+     * Get a random coordinate to teleport to.
+     */
+    private static int getRandCoordinate()
+    {
+        final Random rnd = new Random();
+
+        int x = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
+
+        /* keeping X out of the spawn radius */
+        while (x > -SPAWN_NO_TP && x < SPAWN_NO_TP)
+        {
+            x = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
+        }
+
+        return x;
+    }
+
     @NotNull
     @Override
     public List<String> getTabCompletionOptions(
-            @NotNull final MinecraftServer server,
-            @NotNull final ICommandSender sender,
-            @NotNull final String[] args,
-            final BlockPos pos)
+                                                 @NotNull final MinecraftServer server,
+                                                 @NotNull final ICommandSender sender,
+                                                 @NotNull final String[] args,
+                                                 final BlockPos pos)
     {
         return Collections.emptyList();
     }

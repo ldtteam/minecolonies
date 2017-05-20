@@ -8,9 +8,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * The CitizenDataView is the client-side representation of a CitizenData.
- * Views contain the CitizenData's data that is relevant to a Client, in a more client-friendly form.
- * Mutable operations on a View result in a message to the server to perform the operation.
+ * The CitizenDataView is the client-side representation of a CitizenData. Views
+ * contain the CitizenData's data that is relevant to a Client, in a more
+ * client-friendly form. Mutable operations on a View result in a message to the
+ * server to perform the operation.
  */
 public class CitizenDataView
 {
@@ -34,6 +35,7 @@ public class CitizenDataView
     private int    charisma;
     private int    intelligence;
     private int    dexterity;
+    private double saturation;
 
     /**
      * Job identifier.
@@ -181,6 +183,15 @@ public class CitizenDataView
     }
 
     /**
+     * Get the saturation of the citizen.
+     * @return
+     */
+    public double getSaturation()
+    {
+        return saturation;
+    }
+
+    /**
      * Intelligence getter.
      *
      * @return citizen Intelligence value.
@@ -245,6 +256,7 @@ public class CitizenDataView
         charisma = buf.readInt();
         intelligence = buf.readInt();
         dexterity = buf.readInt();
+        saturation = buf.readDouble();
 
         job = ByteBufUtils.readUTF8String(buf);
     }

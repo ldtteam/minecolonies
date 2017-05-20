@@ -100,18 +100,6 @@ public class BuildingFisherman extends AbstractBuildingWorker
     }
 
     /**
-     * Getter of the job description.
-     *
-     * @return the description of the fisherman job.
-     */
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return FISHERMAN;
-    }
-
-    /**
      * Create the job for the fisherman.
      *
      * @param citizen the citizen to take the job.
@@ -122,6 +110,18 @@ public class BuildingFisherman extends AbstractBuildingWorker
     public AbstractJob createJob(final CitizenData citizen)
     {
         return new JobFisherman(citizen);
+    }
+
+    /**
+     * Getter of the job description.
+     *
+     * @return the description of the fisherman job.
+     */
+    @NotNull
+    @Override
+    public String getJobName()
+    {
+        return FISHERMAN;
     }
 
     /**

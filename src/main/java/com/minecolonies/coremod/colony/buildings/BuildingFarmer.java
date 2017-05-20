@@ -31,6 +31,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+import static com.minecolonies.coremod.util.constants.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER;
+import static com.minecolonies.coremod.util.constants.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER_NOONE;
+
 /**
  * Class which handles the farmer building.
  */
@@ -59,30 +62,25 @@ public class BuildingFarmer extends AbstractBuildingWorker
     /**
      * Flag used to be notified about block updates.
      */
-    private static final int BLOCK_UPDATE_FLAG = 3;
-
+    private static final int                       BLOCK_UPDATE_FLAG = 3;
+    /**
+     * Sets the amount of saplings the lumberjack should keep.
+     */
+    private static final int                       SEEDS_TO_KEEP     = 64;
     /**
      * The list of the fields the farmer manages.
      */
-    private final ArrayList<Field> farmerFields = new ArrayList<>();
-
+    private final        ArrayList<Field>          farmerFields      = new ArrayList<>();
+    private final        Map<ItemStorage, Integer> keepX             = new HashMap<>();
     /**
      * The field the farmer is currently working on.
      */
     @Nullable
     private Field currentField;
-
     /**
      * Fields should be assigned manually to the farmer.
      */
     private boolean assignManually = false;
-
-    /**
-     * Sets the amount of saplings the lumberjack should keep.
-     */
-    private static final int SEEDS_TO_KEEP = 64;
-
-    private final Map<ItemStorage, Integer> keepX = new HashMap<>();
 
     /**
      * Public constructor which instantiates the building.
@@ -102,7 +100,6 @@ public class BuildingFarmer extends AbstractBuildingWorker
         keepX.put(new ItemStorage(stackCarrot.getItem(), stackCarrot.getItemDamage(), 0, false), SEEDS_TO_KEEP);
         keepX.put(new ItemStorage(stackPotatoe.getItem(), stackPotatoe.getItemDamage(), 0, false), SEEDS_TO_KEEP);
         keepX.put(new ItemStorage(stackReed.getItem(), stackReed.getItemDamage(), 0, false), SEEDS_TO_KEEP);
-
     }
 
     /**
@@ -178,19 +175,6 @@ public class BuildingFarmer extends AbstractBuildingWorker
         return null;
     }
 
-    /**
-     * Override this method if you want to keep an amount of items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
-     *
-     * @return a list of objects which should be kept.
-     */
-    @Override
-    public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
-    {
-        return keepX;
-    }
-
     @NotNull
     @Override
     public String getSchematicName()
@@ -219,11 +203,17 @@ public class BuildingFarmer extends AbstractBuildingWorker
         }
     }
 
-    @NotNull
+    /**
+     * Override this method if you want to keep an amount of items in inventory.
+     * When the inventory is full, everything get's dumped into the building chest.
+     * But you can use this method to hold some stacks back.
+     *
+     * @return a list of objects which should be kept.
+     */
     @Override
-    public String getJobName()
+    public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
     {
-        return FARMER;
+        return keepX;
     }
 
     @NotNull
@@ -304,7 +294,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
             {
                 tempField.setTaken(false);
                 tempField.setOwner("");
-                @NotNull final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) getColony().getWorld().getTileEntity(field.getID());
+                final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) getColony().getWorld().getTileEntity(field.getID());
 
                 if (getColony() != null && getColony().getWorld() != null)
                 {
@@ -313,11 +303,18 @@ public class BuildingFarmer extends AbstractBuildingWorker
                         getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
                         getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
                         BLOCK_UPDATE_FLAG);
-                    scarecrowTileEntity.setName(LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user",
-                      LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user.noone")));
+                    scarecrowTileEntity.setName(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER,
+                      LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER_NOONE)));
                 }
             }
         }
+    }
+
+    @NotNull
+    @Override
+    public String getJobName()
+    {
+        return FARMER;
     }
 
     /**
@@ -390,7 +387,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
             for (@NotNull final Field field : tempFields)
             {
-                @NotNull final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) world.getTileEntity(field.getID());
+                final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) world.getTileEntity(field.getID());
                 if (scarecrow == null)
                 {
                     farmerFields.remove(field);
@@ -401,7 +398,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
                 }
                 else
                 {
-                    scarecrow.setName(LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user", getWorker().getName()));
+                    scarecrow.setName(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER, getWorker().getName()));
                     getColony().getWorld()
                       .notifyBlockUpdate(scarecrow.getPos(),
                         getColony().getWorld().getBlockState(scarecrow.getPos()),
@@ -456,14 +453,14 @@ public class BuildingFarmer extends AbstractBuildingWorker
             final Field field = getColony().getField(position);
             field.setTaken(false);
             field.setOwner("");
-            @NotNull final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) getColony().getWorld().getTileEntity(field.getID());
+            final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) getColony().getWorld().getTileEntity(field.getID());
             getColony().getWorld()
               .notifyBlockUpdate(scarecrowTileEntity.getPos(),
                 getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
                 getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
                 BLOCK_UPDATE_FLAG);
-            scarecrowTileEntity.setName(LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user",
-              LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user.noone")));
+            scarecrowTileEntity.setName(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER,
+              LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER_NOONE)));
         }
     }
 

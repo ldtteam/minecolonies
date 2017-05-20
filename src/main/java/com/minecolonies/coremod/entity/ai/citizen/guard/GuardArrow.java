@@ -1,10 +1,12 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
+import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.util.Log;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -61,7 +63,43 @@ public class GuardArrow extends EntityTippedArrow
         Log.getLogger().info("Arrow hit " + targetEntity + " with " + targetEntity.getHealth());
         if (targetEntity.getHealth() <= 0.0F)
         {
-            colony.incrementMobsKilled();
+            if (targetEntity instanceof EntityPlayer)
+            {
+                final EntityPlayer player = (EntityPlayer) targetEntity;
+                if (colony.getPermissions().isColonyMember(player))
+                {
+                    this.colony.triggerAchievement(ModAchievements.achievementPlayerDeathGuard);
+                }
+            }
+            colony.incrementStatistic("mobs");
         }
+    }
+
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (!(o instanceof GuardArrow))
+        {
+            return false;
+        }
+        if (!super.equals(o))
+        {
+            return false;
+        }
+
+        final GuardArrow that = (GuardArrow) o;
+        return colony == null ? (that.colony != null) : colony.equals(that.colony);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = super.hashCode();
+        result = 31 * result + (colony != null ? colony.hashCode() : 0);
+        return result;
     }
 }

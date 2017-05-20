@@ -11,7 +11,6 @@ import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.Utils;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -21,6 +20,7 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -104,18 +104,6 @@ public class BuildingBuilder extends AbstractBuildingWorker
     }
 
     /**
-     * Getter of the job description.
-     *
-     * @return the description of the builder job.
-     */
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return BUILDER;
-    }
-
-    /**
      * Create the job for the builder.
      *
      * @param citizen the citizen to take the job.
@@ -150,7 +138,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         {
             final NBTTagCompound neededRes = neededResTagList.getCompoundTagAt(i);
             final ItemStack stack = new ItemStack(neededRes);
-            final BuildingBuilderResource resource = new BuildingBuilderResource(stack.getItem(),stack.getItemDamage(),stack.getCount());
+            final BuildingBuilderResource resource = new BuildingBuilderResource(stack.getItem(), stack.getItemDamage(), stack.getCount());
             neededResources.put(stack.getUnlocalizedName(), resource);
         }
     }
@@ -163,12 +151,24 @@ public class BuildingBuilder extends AbstractBuildingWorker
         for (@NotNull final BuildingBuilderResource resource : neededResources.values())
         {
             @NotNull final NBTTagCompound neededRes = new NBTTagCompound();
-            final ItemStack itemStack = new ItemStack(resource.getItem(),resource.getAmount(),resource.getDamageValue());
+            final ItemStack itemStack = new ItemStack(resource.getItem(), resource.getAmount(), resource.getDamageValue());
             itemStack.writeToNBT(neededRes);
 
             neededResTagList.appendTag(neededRes);
         }
         compound.setTag(TAG_RESOURCE_LIST, neededResTagList);
+    }
+
+    /**
+     * Getter of the job description.
+     *
+     * @return the description of the builder job.
+     */
+    @NotNull
+    @Override
+    public String getJobName()
+    {
+        return BUILDER;
     }
 
     /**
@@ -193,6 +193,54 @@ public class BuildingBuilder extends AbstractBuildingWorker
             buf.writeInt(damage);
             buf.writeInt(resource.getAvailable());
             buf.writeInt(resource.getAmount());
+        }
+    }
+
+    /**
+     * Update the available resources.
+     * <p>
+     * which are needed for the build and in the builder's chest or inventory
+     */
+    private void updateAvailableResources()
+    {
+        final EntityCitizen builder = getWorkerEntity();
+
+        InventoryCitizen builderInventory = null;
+        if (builder != null)
+        {
+            builderInventory = builder.getInventoryCitizen();
+        }
+
+
+        for (@NotNull final Map.Entry<String, BuildingBuilderResource> entry : neededResources.entrySet())
+        {
+            final BuildingBuilderResource resource = entry.getValue();
+
+            resource.setAvailable(0);
+
+            if (builderInventory != null)
+            {
+                resource.addAvailable(InventoryUtils.getItemCountInItemHandler(new InvWrapper(builderInventory), resource.getItem(), resource.getDamageValue()));
+            }
+
+            final TileEntity chestInventory = this.getTileEntity();
+            if (chestInventory != null)
+            {
+                resource.addAvailable(InventoryUtils.getItemCountInProvider(chestInventory, resource.getItem(), resource.getDamageValue()));
+            }
+
+            //Count in the additional chests as well
+            if (builder != null)
+            {
+                for (final BlockPos pos : getAdditionalCountainers())
+                {
+                    final TileEntity entity = builder.world.getTileEntity(pos);
+                    if (entity instanceof TileEntityChest)
+                    {
+                        resource.addAvailable(InventoryUtils.getItemCountInProvider(entity, resource.getItem(), resource.getDamageValue()));
+                    }
+                }
+            }
         }
     }
 
@@ -225,7 +273,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         }
         else
         {
-            resource.setAmount(resource.getAmount()+amount);
+            resource.setAmount(resource.getAmount() + amount);
         }
         this.neededResources.put(res.getUnlocalizedName(), resource);
         this.markDirty();
@@ -266,55 +314,6 @@ public class BuildingBuilder extends AbstractBuildingWorker
     }
 
     /**
-     * Update the available resources.
-     *
-     * which are needed for the build and in the builder's chest or inventory
-     */
-    private void updateAvailableResources()
-    {
-        final EntityCitizen builder = getWorkerEntity();
-
-        InventoryCitizen builderInventory = null;
-        if (builder!=null)
-        {
-            builderInventory = builder.getInventoryCitizen();
-        }
-
-
-        for (@NotNull final Map.Entry<String, BuildingBuilderResource> entry : neededResources.entrySet())
-        {
-            final BuildingBuilderResource resource = entry.getValue();
-
-            resource.setAvailable(0);
-
-            if (builderInventory!=null)
-            {
-                resource.addAvailable(InventoryUtils.getItemCountInInventory(builderInventory, resource.getItem(), resource.getDamageValue()));
-            }
-
-            final IInventory chestInventory = this.getTileEntity();
-            if (chestInventory!=null)
-            {
-                resource.addAvailable(InventoryUtils.getItemCountInInventory(chestInventory, resource.getItem(), resource.getDamageValue()));
-            }
-
-            //Count in the additional chests as well
-            if (builder!=null)
-            {
-                for(final BlockPos pos : getAdditionalCountainers())
-                {
-                    final TileEntity entity = builder.world.getTileEntity(pos);
-                    if(entity instanceof TileEntityChest)
-                    {
-                        resource.addAvailable(InventoryUtils.getItemCountInInventory((TileEntityChest)entity, resource.getItem(), resource.getDamageValue()));
-                    }
-                }
-            }
-
-        }
-    }
-
-    /**
      * Check if the builder requires a certain ItemStack for the current construction.
      *
      * @param stack the stack to test.
@@ -326,25 +325,27 @@ public class BuildingBuilder extends AbstractBuildingWorker
     }
 
     @Override
-    public boolean transferStack(@NotNull final ItemStack stack, @NotNull final World world)
+    public ItemStack transferStack(@NotNull final ItemStack stack, @NotNull final World world)
     {
-        if (super.transferStack(stack, world))
+        @NotNull final ItemStack resultStack = super.transferStack(stack, world);
+
+        if (InventoryUtils.isItemStackEmpty(resultStack))
         {
             this.markDirty();
-            return true;
         }
-        return false;
+
+        return resultStack;
     }
 
     @Override
     public ItemStack forceTransferStack(final ItemStack stack, final World world)
     {
         final ItemStack itemStack = super.forceTransferStack(stack, world);
-        if (itemStack != null)
+        if (InventoryUtils.isItemStackEmpty(itemStack))
         {
             this.markDirty();
-            return itemStack;
         }
+
         return itemStack;
     }
 }

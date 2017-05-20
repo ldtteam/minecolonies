@@ -29,6 +29,11 @@ import java.util.List;
 public class BuildingGuardTower extends AbstractBuildingWorker
 {
     /**
+     * Worker gets this distance times building level away from his building to patrol.
+     */
+    public static final int PATROL_DISTANCE = 40;
+
+    /**
      * Name description of the guard hat.
      */
     private static final String GUARD_TOWER = "GuardTower";
@@ -199,6 +204,16 @@ public class BuildingGuardTower extends AbstractBuildingWorker
     }
 
     /**
+     * Getter for the patrol distance the guard currently has.
+     *
+     * @return the distance in whole numbers.
+     */
+    public int getPatrolDistance()
+    {
+        return this.getBuildingLevel() * PATROL_DISTANCE;
+    }
+
+    /**
      * Gets the player to follow.
      *
      * @return the entity player.
@@ -319,18 +334,6 @@ public class BuildingGuardTower extends AbstractBuildingWorker
     }
 
     /**
-     * The name of the baker's job.
-     *
-     * @return The name of the baker's job.
-     */
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return GUARD_TOWER;
-    }
-
-    /**
      * Create a Guard job.
      *
      * @param citizen the citizen to take the job.
@@ -341,16 +344,6 @@ public class BuildingGuardTower extends AbstractBuildingWorker
     public AbstractJob createJob(final CitizenData citizen)
     {
         return new JobGuard(citizen);
-    }
-
-    @Override
-    public boolean neededForWorker(@Nullable final ItemStack stack)
-    {
-        return stack != null
-                 && (stack.getItem() instanceof ItemArmor
-                       || stack.getItem() instanceof ItemTool
-                       || stack.getItem() instanceof ItemSword
-                       || stack.getItem() instanceof ItemBow);
     }
 
     @Override
@@ -365,6 +358,16 @@ public class BuildingGuardTower extends AbstractBuildingWorker
             citizen.getCitizenEntity().getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH + getBonusHealth());
         }
         super.setWorker(citizen);
+    }
+
+    @Override
+    public boolean neededForWorker(@Nullable final ItemStack stack)
+    {
+        return stack != null
+                 && (stack.getItem() instanceof ItemArmor
+                       || stack.getItem() instanceof ItemTool
+                       || stack.getItem() instanceof ItemSword
+                       || stack.getItem() instanceof ItemBow);
     }
 
     @Override
@@ -411,6 +414,18 @@ public class BuildingGuardTower extends AbstractBuildingWorker
         compound.setTag(TAG_PATROL_TARGETS, wayPointTagList);
 
         BlockPosUtil.writeToNBT(compound, TAG_GUARD, guardPos);
+    }
+
+    /**
+     * The name of the baker's job.
+     *
+     * @return The name of the baker's job.
+     */
+    @NotNull
+    @Override
+    public String getJobName()
+    {
+        return GUARD_TOWER;
     }
 
     @Override

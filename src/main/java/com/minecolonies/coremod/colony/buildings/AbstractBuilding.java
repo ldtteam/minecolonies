@@ -2,16 +2,14 @@ package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.blocks.*;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView;
 import com.minecolonies.coremod.colony.requestsystem.request.IRequest;
 import com.minecolonies.coremod.colony.requestsystem.requestable.Tool;
 import com.minecolonies.coremod.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
+import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.*;
@@ -27,6 +25,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
@@ -67,6 +66,16 @@ public abstract class AbstractBuilding implements IBuilding {
     private static final String TAG_ROTATION = "rotation";
 
     /**
+     * The tag to store the md5 hash of the schematic.
+     */
+    private static final String TAG_SCHEMATIC_MD5 = "schematicMD5";
+
+    /**
+     * The tag to store the mirror of the building.
+     */
+    private static final String TAG_MIRROR = "mirror";
+
+    /**
      * The tag to store the style of the building.
      */
     private static final String                  TAG_STYLE                    = "style";
@@ -97,7 +106,7 @@ public abstract class AbstractBuilding implements IBuilding {
      * Map to resolve names to class.
      */
     @NotNull
-    private static final Map<String, Class<?>>   nameToClassMap               = new HashMap<>();
+    private static final Map<String, Class<?>>   nameToClassMap               = new TreeMap<>();
     /**
      * Map to resolve classes to name.
      */
@@ -133,13 +142,14 @@ public abstract class AbstractBuilding implements IBuilding {
         addMapping("WareHouse", BuildingWareHouse.class, BuildingWareHouse.View.class, BlockHutWareHouse.class);
     }
     /**
-     * A list which contains the position of all containers which belong to the worker building.
+     * A list which contains the position of all containers which belong to the
+     * worker building.
      */
     private final List<BlockPos> containerList = new ArrayList<>();
     /**
      * The location of the building.
      */
-    private final BlockPos                 location;
+    private final BlockPos location;
     /**
      * The colony the building belongs to.
      */
@@ -148,7 +158,7 @@ public abstract class AbstractBuilding implements IBuilding {
     /**
      * The tileEntity of the building.
      */
-    private       TileEntityColonyBuilding tileEntity;
+    private TileEntityColonyBuilding tileEntity;
 
     /**
      * The level of the building.
@@ -159,6 +169,11 @@ public abstract class AbstractBuilding implements IBuilding {
      * The rotation of the building.
      */
     private int rotation = 0;
+
+    /**
+     * The mirror of the building.
+     */
+    private boolean isMirrored = false;
 
     /**
      * The building style.
@@ -193,10 +208,10 @@ public abstract class AbstractBuilding implements IBuilding {
      * @param parentBlock   subclass of Block, located in {@link com.minecolonies.coremod.blocks}.
      */
     private static void addMapping(
-            final String name,
-            @NotNull final Class<? extends AbstractBuilding> buildingClass,
-            @NotNull final Class<? extends AbstractBuilding.View> viewClass,
-            @NotNull final Class<? extends AbstractBlockHut> parentBlock)
+                                          final String name,
+                                          @NotNull final Class<? extends AbstractBuilding> buildingClass,
+                                          @NotNull final Class<? extends AbstractBuilding.View> viewClass,
+                                          @NotNull final Class<? extends AbstractBlockHut> parentBlock)
     {
         final int buildingHashCode = buildingClass.getName().hashCode();
 
@@ -296,6 +311,24 @@ public abstract class AbstractBuilding implements IBuilding {
 
         rotation = compound.getInteger(TAG_ROTATION);
         style = compound.getString(TAG_STYLE);
+
+        final String md5 = compound.getString(TAG_SCHEMATIC_MD5);
+        final int testLevel = buildingLevel == 0 ? 1 : buildingLevel;
+        final Structures.StructureName sn = new Structures.StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + testLevel);
+
+        if (!Structures.hasMD5(sn))
+        {
+            final Structures.StructureName newStructureName = Structures.getStructureNameByMD5(md5);
+            if (newStructureName!= null
+                && newStructureName.getPrefix().equals(sn.getPrefix())
+                && newStructureName.getSchematic().equals(sn.getSchematic()))
+            {
+                //We found the new location for the schematic, update the style accordingly
+                style = newStructureName.getStyle();
+                Log.getLogger().warn("AbstractBuilding.readFromNBT: " + sn + " have been moved to " + newStructureName);
+            }
+        }
+
         if (style.isEmpty())
         {
             Log.getLogger().warn("Loaded empty style, setting to wooden");
@@ -308,6 +341,7 @@ public abstract class AbstractBuilding implements IBuilding {
             final NBTTagCompound containerCompound = containerTagList.getCompoundTagAt(i);
             containerList.add(NBTUtil.getPosFromTag(containerCompound));
         }
+        isMirrored = compound.getBoolean(TAG_MIRROR);
     }
 
     /**
@@ -342,6 +376,10 @@ public abstract class AbstractBuilding implements IBuilding {
             Log.getLogger().error(String.format("Unknown Building type '%s' or missing constructor of proper format.", parent.getClass().getName()), exception);
         }
 
+        if (building != null && parent.getWorld() != null)
+        {
+            ConstructionTapeHelper.placeConstructionTape(building, parent.getWorld());
+        }
         return building;
     }
 
@@ -433,6 +471,11 @@ public abstract class AbstractBuilding implements IBuilding {
         {
             compound.setString(TAG_BUILDING_TYPE, s);
             BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
+            final Structures.StructureName  structureName = new Structures.StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + buildingLevel);
+            if (Structures.hasMD5(structureName))
+            {
+                compound.setString(TAG_SCHEMATIC_MD5, Structures.getMD5(structureName.toString()));
+            }
         }
 
         compound.setInteger(TAG_BUILDING_LEVEL, buildingLevel);
@@ -446,6 +489,7 @@ public abstract class AbstractBuilding implements IBuilding {
             containerTagList.appendTag(NBTUtil.createPosTag(pos));
         }
         compound.setTag(TAG_CONTAINERS, containerTagList);
+        compound.setBoolean(TAG_MIRROR, isMirrored);
     }
 
     /**
@@ -592,33 +636,11 @@ public abstract class AbstractBuilding implements IBuilding {
     }
 
     /**
-     * Get the current level of the work order.
+     * Children must return their max building level.
      *
-     * @return NO_WORK_ORDER if not current work otherwise the level requested.
+     * @return Max building level.
      */
-    private int getCurrentWorkOrderLevel()
-    {
-        for (@NotNull final WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
-        {
-            if (o.getBuildingLocation().equals(getID()))
-            {
-                return o.getUpgradeLevel();
-            }
-        }
-
-        return NO_WORK_ORDER;
-    }
-
-    /**
-     * Checks if this building have a work order.
-     *
-     * @return true if the building is building, upgrading or repairing.
-     */
-    @Override
-    public boolean hasWorkOrder()
-    {
-        return getCurrentWorkOrderLevel() != NO_WORK_ORDER;
-    }
+    public abstract int getMaxBuildingLevel();
 
     /**
      * Adds work orders to the {@link Colony#workManager}.
@@ -650,6 +672,43 @@ public abstract class AbstractBuilding implements IBuilding {
     {
         // Location doubles as ID.
         return location;
+    }
+
+    /**
+     * Marks the instance and the building dirty.
+     */
+    public final void markDirty()
+    {
+        dirty = true;
+        colony.markBuildingsDirty();
+    }
+
+    /**
+     * Checks if this building have a work order.
+     *
+     * @return true if the building is building, upgrading or repairing.
+     */
+    public boolean hasWorkOrder()
+    {
+        return getCurrentWorkOrderLevel() != NO_WORK_ORDER;
+    }
+
+    /**
+     * Get the current level of the work order.
+     *
+     * @return NO_WORK_ORDER if not current work otherwise the level requested.
+     */
+    private int getCurrentWorkOrderLevel()
+    {
+        for (@NotNull final WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
+        {
+            if (o.getBuildingLocation().equals(getID()))
+            {
+                return o.getUpgradeLevel();
+            }
+        }
+
+        return NO_WORK_ORDER;
     }
 
     /**
@@ -774,15 +833,6 @@ public abstract class AbstractBuilding implements IBuilding {
         buildingLevel = level;
         markDirty();
         ColonyManager.markDirty();
-    }
-
-    /**
-     * Marks the instance and the building dirty.
-     */
-    public final void markDirty()
-    {
-        dirty = true;
-        colony.markBuildingsDirty();
     }
 
     /**
@@ -998,26 +1048,31 @@ public abstract class AbstractBuilding implements IBuilding {
      *
      * @param stack the stack to transfer.
      * @param world the world to do it in.
-     * @return true if was able to.
+     * @return The {@link ItemStack} as that is left over, might be {@link InventoryUtils#EMPTY} if the stack was completely accepted
      */
-    public boolean transferStack(@NotNull final ItemStack stack, @NotNull final World world)
+    public ItemStack transferStack(@NotNull final ItemStack stack, @NotNull final World world)
     {
-        if (tileEntity == null || InventoryUtils.isInventoryFull(tileEntity))
+        if (tileEntity == null || InventoryUtils.isProviderFull(tileEntity))
         {
-            for (final BlockPos pos : containerList)
+            Iterator<BlockPos> posIterator = containerList.iterator();
+            @NotNull ItemStack resultStack = stack.copy();
+
+            while (posIterator.hasNext() && !InventoryUtils.isItemStackEmpty(resultStack))
             {
+                final BlockPos pos = posIterator.next();
                 final TileEntity tempTileEntity = world.getTileEntity(pos);
-                if (tempTileEntity instanceof TileEntityChest && !InventoryUtils.isInventoryFull((IInventory) tempTileEntity))
+                if (tempTileEntity instanceof TileEntityChest && !InventoryUtils.isProviderFull(tempTileEntity))
                 {
-                    return InventoryUtils.addItemStackToInventory((IInventory) tempTileEntity, stack);
+                    resultStack = InventoryUtils.addItemStackToProviderWithResult(tempTileEntity, stack);
                 }
             }
+
+            return resultStack;
         }
         else
         {
-            return InventoryUtils.addItemStackToInventory(tileEntity, stack);
+            return InventoryUtils.addItemStackToProviderWithResult(tileEntity, stack);
         }
-        return false;
     }
 
     /**
@@ -1025,7 +1080,7 @@ public abstract class AbstractBuilding implements IBuilding {
      *
      * @param stack the stack to transfer.
      * @param world the world to do it in.
-     * @return the itemStack which has been replaced
+     * @return the itemStack which has been replaced or the itemStack which could not be transfered
      */
     @Nullable
     public ItemStack forceTransferStack(final ItemStack stack, final World world)
@@ -1035,20 +1090,45 @@ public abstract class AbstractBuilding implements IBuilding {
             for (final BlockPos pos : containerList)
             {
                 final TileEntity tempTileEntity = world.getTileEntity(pos);
-                if (tempTileEntity instanceof TileEntityChest && !InventoryUtils.isInventoryFull((IInventory) tempTileEntity))
+                if (tempTileEntity instanceof TileEntityChest && !InventoryUtils.isProviderFull(tempTileEntity))
                 {
-                    return InventoryUtils.forceItemStackToInventory((IInventory) tempTileEntity, stack, this);
+                    return forceItemStackToProvider(tempTileEntity, stack);
                 }
             }
         }
         else
         {
-            return InventoryUtils.forceItemStackToInventory(tileEntity, stack, this);
+            return forceItemStackToProvider(tileEntity, stack);
         }
-        return null;
+        return stack;
+    }
+
+    @Nullable
+    private ItemStack forceItemStackToProvider(@NotNull final ICapabilityProvider provider, @NotNull final ItemStack itemStack)
+    {
+        final List<ItemStorage> localAlreadyKept = new ArrayList<>();
+        return InventoryUtils.forceItemStackToProvider(provider, itemStack, (ItemStack stack) -> EntityAIWorkDeliveryman.workerRequiresItem(this, stack, localAlreadyKept));
+    }
+
+    /**
+     * Returns the mirror of the current building.
+     *
+     * @return boolean value of the mirror.
+     */
+    public boolean isMirrored()
+    {
+        return isMirrored;
     }
 
     //------------------------- Ending Required Tools/Item handling -------------------------//
+
+    /**
+     * Sets the mirror of the current building.
+     */
+    public void setMirror()
+    {
+        this.isMirrored = !isMirrored;
+    }
 
     /**
      * The AbstractBuilding View is the client-side representation of a AbstractBuilding.

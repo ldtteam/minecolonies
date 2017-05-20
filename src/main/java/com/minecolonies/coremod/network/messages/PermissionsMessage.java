@@ -3,9 +3,7 @@ package com.minecolonies.coremod.network.messages;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.permissions.Action;
 import com.minecolonies.coremod.colony.permissions.Permissions;
-import com.minecolonies.coremod.colony.permissions.Rank;
 import com.minecolonies.coremod.network.PacketUtils;
 import com.minecolonies.coremod.util.Log;
 import io.netty.buffer.ByteBuf;
@@ -63,7 +61,7 @@ public class PermissionsMessage
          * @param colony     with the colony.
          * @param viewerRank and viewer rank.
          */
-        public View(@NotNull final Colony colony, @NotNull final Rank viewerRank)
+        public View(@NotNull final Colony colony, @NotNull final Permissions.Rank viewerRank)
         {
             this.colonyID = colony.getID();
             this.data = Unpooled.buffer();
@@ -97,10 +95,10 @@ public class PermissionsMessage
      */
     public static class Permission extends AbstractMessage<Permission, IMessage>
     {
-        private int         colonyID;
-        private MessageType type;
-        private Rank        rank;
-        private Action      action;
+        private int                colonyID;
+        private MessageType        type;
+        private Permissions.Rank   rank;
+        private Permissions.Action action;
 
         /**
          * Empty public constructor.
@@ -115,10 +113,10 @@ public class PermissionsMessage
          *
          * @param colony Colony the permission is set in
          * @param type   Type of permission {@link MessageType}
-         * @param rank   Rank of the permission {@link Rank}
-         * @param action Action of the permission {@link Action}
+         * @param rank   Rank of the permission {@link com.minecolonies.coremod.colony.permissions.Permissions.Rank}
+         * @param action Action of the permission {@link com.minecolonies.coremod.colony.permissions.Permissions.Action}
          */
-        public Permission(@NotNull final ColonyView colony, final MessageType type, final Rank rank, final Action action)
+        public Permission(@NotNull final ColonyView colony, final MessageType type, final Permissions.Rank rank, final Permissions.Action action)
         {
             super();
             this.colonyID = colony.getID();
@@ -138,7 +136,7 @@ public class PermissionsMessage
             }
 
             //Verify player has permission to do edit permissions
-            if (!colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS))
+            if (!colony.getPermissions().hasPermission(player, Permissions.Action.EDIT_PERMISSIONS))
             {
                 return;
             }
@@ -173,8 +171,8 @@ public class PermissionsMessage
         {
             colonyID = buf.readInt();
             type = MessageType.valueOf(ByteBufUtils.readUTF8String(buf));
-            rank = Rank.valueOf(ByteBufUtils.readUTF8String(buf));
-            action = Action.valueOf(ByteBufUtils.readUTF8String(buf));
+            rank = Permissions.Rank.valueOf(ByteBufUtils.readUTF8String(buf));
+            action = Permissions.Action.valueOf(ByteBufUtils.readUTF8String(buf));
         }
     }
 
@@ -226,9 +224,9 @@ public class PermissionsMessage
         {
             final Colony colony = ColonyManager.getColony(message.colonyID);
 
-            if (colony != null && colony.getPermissions().hasPermission(player, Action.CAN_PROMOTE) && colony.getWorld() != null)
+            if (colony != null && colony.getPermissions().hasPermission(player, Permissions.Action.CAN_PROMOTE) && colony.getWorld() != null)
             {
-                colony.getPermissions().addPlayer(message.playerName, Rank.NEUTRAL, colony.getWorld());
+                colony.getPermissions().addPlayer(message.playerName, Permissions.Rank.NEUTRAL, colony.getWorld());
             }
             else
             {
@@ -305,13 +303,18 @@ public class PermissionsMessage
                 return;
             }
 
-            if (message.type == Type.PROMOTE && colony.getPermissions().hasPermission(player, Action.CAN_PROMOTE))
+            if (colony.getPermissions().hasPermission(player, Permissions.Action.EDIT_PERMISSIONS))
             {
-                colony.getPermissions().setPlayerRank(message.playerID, Permissions.getPromotionRank(colony.getPermissions().getRank(message.playerID)), colony.getWorld());
-            }
-            else if (message.type == Type.DEMOTE && colony.getPermissions().hasPermission(player, Action.CAN_DEMOTE))
-            {
-                colony.getPermissions().setPlayerRank(message.playerID, Permissions.getDemotionRank(colony.getPermissions().getRank(message.playerID)), colony.getWorld());
+                if (message.type == Type.PROMOTE && colony.getPermissions().getRank(player).ordinal() < colony.getPermissions().getRank(message.playerID).ordinal())
+                {
+                    colony.getPermissions().setPlayerRank(message.playerID, Permissions.getPromotionRank(colony.getPermissions().getRank(message.playerID)), colony.getWorld());
+                }
+                else if (message.type == Type.DEMOTE
+                           && (colony.getPermissions().getRank(player).ordinal() < colony.getPermissions().getRank(message.playerID).ordinal()
+                                 || player.getUniqueID().equals(message.playerID)))
+                {
+                    colony.getPermissions().setPlayerRank(message.playerID, Permissions.getDemotionRank(colony.getPermissions().getRank(message.playerID)), colony.getWorld());
+                }
             }
         }
     }
@@ -371,8 +374,11 @@ public class PermissionsMessage
             }
 
             final Permissions.Player permissionsPlayer = colony.getPermissions().getPlayers().get(message.playerID);
-            if ((permissionsPlayer.getRank() == Rank.HOSTILE && colony.getPermissions().hasPermission(player, Action.CAN_PROMOTE))
-                  || (permissionsPlayer.getRank() != Rank.HOSTILE && colony.getPermissions().hasPermission(player, Action.CAN_DEMOTE)))
+            if ((permissionsPlayer.getRank() == Permissions.Rank.HOSTILE && colony.getPermissions().hasPermission(player, Permissions.Action.EDIT_PERMISSIONS))
+                  || (permissionsPlayer.getRank() != Permissions.Rank.HOSTILE
+                        && colony.getPermissions().hasPermission(player, Permissions.Action.EDIT_PERMISSIONS)
+                        && colony.getPermissions().getRank(player).ordinal() < colony.getPermissions().getRank(message.playerID).ordinal())
+                  || player.getUniqueID().equals(message.playerID))
             {
                 colony.getPermissions().removePlayer(message.playerID);
             }

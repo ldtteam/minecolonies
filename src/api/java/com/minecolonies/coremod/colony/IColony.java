@@ -10,7 +10,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Interface of the Colony and ColonyView which will have to implement the following methods.
+ * Interface of the Colony and ColonyView which will have to implement the
+ * following methods.
  */
 public interface IColony
 {
@@ -37,7 +38,8 @@ public interface IColony
     IPermissions getPermissions();
 
     /**
-     * Determine if a given chunk coordinate is considered to be within the colony's bounds.
+     * Determine if a given chunk coordinate is considered to be within the
+     * colony's bounds.
      *
      * @param w   World to check.
      * @param pos Block Position.

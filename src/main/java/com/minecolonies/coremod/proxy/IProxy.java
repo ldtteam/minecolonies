@@ -3,6 +3,9 @@ package com.minecolonies.coremod.proxy;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import net.minecraft.util.math.BlockPos;
 
+import javax.annotation.Nullable;
+import java.io.File;
+
 /**
  * Basic proxy interface.
  */
@@ -63,4 +66,12 @@ public interface IProxy
      * Registers all block and item renderer.
      */
     void registerRenderer();
+
+    /**
+     * Get the file representation of the additional schematics' folder.
+     *
+     * @return the folder for the schematic
+     */
+    @Nullable
+    File getSchematicsFolder();
 }

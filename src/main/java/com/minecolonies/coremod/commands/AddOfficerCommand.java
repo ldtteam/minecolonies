@@ -3,7 +3,7 @@ package com.minecolonies.coremod.commands;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.IColony;
-import com.minecolonies.coremod.colony.permissions.Rank;
+import com.minecolonies.coremod.colony.permissions.Permissions;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,11 +24,10 @@ import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.A
 public class AddOfficerCommand extends AbstractSingleCommand
 {
 
-    public static final  String       DESC            = "addOfficer";
-    private static final String       SUCCESS_MESSAGE = "Succesfully added Player %s to colony %d";
-    private static final String       COLONY_NULL     = "Couldn't find colony %d.";
-    private static final String       NO_ARGUMENTS    = "Please define a colony or player";
-    private static final String       NO_PLAYER       = "Can't find player to add";
+    public static final  String DESC            = "addOfficer";
+    private static final String SUCCESS_MESSAGE = "Succesfully added Player %s to colony %d";
+    private static final String COLONY_NULL     = "Couldn't find colony %d.";
+    private static final String NO_ARGUMENTS    = "Please define a colony or player";
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -50,17 +49,17 @@ public class AddOfficerCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        if(args.length == 0)
+        if (args.length == 0)
         {
             sender.getCommandSenderEntity().sendMessage(new TextComponentString(NO_ARGUMENTS));
             return;
         }
 
         int colonyId = getIthArgument(args, 0, -1);
-        if(colonyId == -1 && sender instanceof EntityPlayer)
+        if (colonyId == -1 && sender instanceof EntityPlayer)
         {
             final IColony colony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), ((EntityPlayer) sender).getUniqueID());
-            if(colony == null)
+            if (colony == null)
             {
                 sender.getCommandSenderEntity().sendMessage(new TextComponentString(COLONY_NULL));
                 return;
@@ -72,11 +71,11 @@ public class AddOfficerCommand extends AbstractSingleCommand
 
         if (colony == null)
         {
-            sender.sendMessage(new TextComponentString(String.format(COLONY_NULL, colonyId, colonyId)));
+            sender.sendMessage(new TextComponentString(String.format(COLONY_NULL, colonyId)));
             return;
         }
 
-        if(sender instanceof EntityPlayer)
+        if (sender instanceof EntityPlayer)
         {
             EntityPlayer player = (EntityPlayer) sender;
             if (!canPlayerUseCommand(player, ADDOFFICER, colonyId))
@@ -97,13 +96,7 @@ public class AddOfficerCommand extends AbstractSingleCommand
             playerName = sender.getName();
         }
 
-        if(playerName == null)
-        {
-            sender.getCommandSenderEntity().sendMessage(new TextComponentString(NO_PLAYER));
-            return;
-        }
-
-        colony.getPermissions().addPlayer(playerName, Rank.OFFICER, colony.getWorld());
+        colony.getPermissions().addPlayer(playerName, Permissions.Rank.OFFICER, colony.getWorld());
         sender.sendMessage(new TextComponentString(String.format(SUCCESS_MESSAGE, playerName, colonyId)));
     }
 

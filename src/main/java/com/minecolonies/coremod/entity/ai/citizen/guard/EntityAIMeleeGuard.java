@@ -58,11 +58,6 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
     private static final double BASIC_VOLUME = 1.0D;
 
     /**
-     * Experience the guard receives each shot arrow.
-     */
-    private static final double XP_EACH_HIT = 0.2;
-
-    /**
      * Base speed of the guard he follows his target.
      */
     private static final int BASE_FOLLOW_SPEED = 1;
@@ -117,7 +112,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         {
             return AIState.GUARD_SEARCH_TARGET;
         }
-        InventoryFunctions.matchFirstInInventory(worker.getInventoryCitizen(), stack -> stack != null && Utils.doesItemServeAsWeapon(stack), worker::setHeldItem);
+        InventoryFunctions.matchFirstInProvider(worker, stack -> stack != null && Utils.doesItemServeAsWeapon(stack), worker::setHeldItem);
         return super.searchTarget();
     }
 
@@ -128,6 +123,11 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
      */
     protected AIState huntDown()
     {
+        if(huntDownlastAttacker())
+        {
+            targetEntity = this.worker.getLastAttacker();
+        }
+
         if (!targetEntity.isEntityAlive() || checkForWeapon())
         {
             targetEntity = null;
@@ -135,13 +135,18 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
             return AIState.GUARD_GATHERING;
         }
 
-        if (worker.getEntitySenses().canSee(targetEntity) && worker.getDistanceToEntity(targetEntity) <= MIN_ATTACK_DISTANCE)
+        if (worker.canEntityBeSeen(targetEntity) && worker.getDistanceToEntity(targetEntity) <= MIN_ATTACK_DISTANCE)
         {
             worker.resetActiveHand();
-            attackEntity(targetEntity, (float) DAMAGE_PER_ATTACK);
+            boolean killedEnemy = attackEntity(targetEntity, (float) DAMAGE_PER_ATTACK);
             setDelay(getReloadTime());
             attacksExecuted += 1;
             currentSearchDistance = START_SEARCH_DISTANCE;
+
+            if(killedEnemy)
+            {
+                return AIState.GUARD_GATHERING;
+            }
 
             if (attacksExecuted >= getMaxAttacksUntilRestock())
             {
@@ -162,7 +167,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         return AIState.GUARD_SEARCH_TARGET;
     }
 
-    private void attackEntity(@NotNull final EntityLivingBase entityToAttack, final float baseDamage)
+    private boolean attackEntity(@NotNull final EntityLivingBase entityToAttack, final float baseDamage)
     {
         double damgeToBeDealt = baseDamage;
 
@@ -174,7 +179,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         final ItemStack heldItem = worker.getHeldItem(EnumHand.MAIN_HAND);
         if (heldItem != null)
         {
-            if (heldItem.getItem() instanceof ItemSword)
+            if (Utils.doesItemServeAsWeapon(heldItem) && heldItem.getItem() instanceof ItemSword)
             {
                 damgeToBeDealt += ((ItemSword) heldItem.getItem()).getDamageVsEntity();
             }
@@ -190,10 +195,11 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
             targetEntity.setFire(fireAspectModifier * FIRE_CHANCE_MULTIPLIER);
         }
 
-        worker.addExperience(XP_EACH_HIT);
+        boolean killedEnemy = false;
         if (targetEntity.getHealth() <= 0.0F)
         {
             this.onKilledEntity(targetEntity);
+            killedEnemy = true;
         }
 
         worker.faceEntity(entityToAttack, (float) TURN_AROUND, (float) TURN_AROUND);
@@ -211,6 +217,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         worker.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) getRandomPitch());
 
         worker.damageItemInHand(1);
+        return killedEnemy;
     }
 
     private int getReloadTime()

@@ -35,32 +35,35 @@ public class InventoryCitizen implements IInventory
     /**
      * Max size of the stacks.
      */
-    private static final int MAX_STACK_SIZE = 64;
+    private static final int                    MAX_STACK_SIZE   = 64;
     /**
      * The returned slot if a slot hasn't been found.
      */
-    private static final int NO_SLOT        = -1;
+    private static final int                    NO_SLOT          = -1;
     /**
      * Size of the hotbar.
      */
-    private static final int HOTBAR_SIZE    = 0;
+    private static final int                    HOTBAR_SIZE      = 0;
     /**
      * The main inventory.
      */
-    private final NonNullList<ItemStack> mainInventory    = NonNullList.<ItemStack>withSize(36, ItemStack.EMPTY);
+    private final        NonNullList<ItemStack> mainInventory    = NonNullList.<ItemStack>withSize(36, ItemStack.EMPTY);
     /**
      * The armour inventory.
      */
-    private final NonNullList<ItemStack> armorInventory   = NonNullList.<ItemStack>withSize(4, ItemStack.EMPTY);
+    private final        NonNullList<ItemStack> armorInventory   = NonNullList.<ItemStack>withSize(4, ItemStack.EMPTY);
     /**
      * The off-hand inventory.
      */
-    private final NonNullList<ItemStack> offHandInventory = NonNullList.<ItemStack>withSize(1, ItemStack.EMPTY);
+    private final        NonNullList<ItemStack> offHandInventory = NonNullList.<ItemStack>withSize(1, ItemStack.EMPTY);
     private final List<NonNullList<ItemStack>> allInventories;
     /**
      * The index of the currently held item (0-8).
      */
     public        int                          currentItem;
+
+    private ItemStack itemStack = ItemStack.EMPTY;
+
     /**
      * The inventories custom name. In our case the citizens name.
      */
@@ -73,7 +76,6 @@ public class InventoryCitizen implements IInventory
      * The citizen which owns the inventory.
      */
     private EntityCitizen citizen;
-    private       ItemStack                    itemStack;
 
     /**
      * Creates the inventory of the citizen.
@@ -89,7 +91,7 @@ public class InventoryCitizen implements IInventory
         {
             customName = title;
         }
-        this.allInventories = new ArrayList<NonNullList<ItemStack>>();
+        this.allInventories = new ArrayList<>();
         this.allInventories.add(this.mainInventory);
         this.allInventories.add(this.armorInventory);
         this.allInventories.add(this.offHandInventory);
@@ -109,7 +111,7 @@ public class InventoryCitizen implements IInventory
         {
             customName = title;
         }
-        this.allInventories = new ArrayList<NonNullList<ItemStack>>();
+        this.allInventories = new ArrayList<>();
         this.allInventories.add(this.mainInventory);
         this.allInventories.add(this.armorInventory);
         this.allInventories.add(this.offHandInventory);
@@ -195,20 +197,12 @@ public class InventoryCitizen implements IInventory
 
     /**
      * Returns the item stack currently held by the player.
+     *
+     * @return the current itemstack.
      */
     public ItemStack getCurrentItem()
     {
         return this.mainInventory.get(this.currentItem);
-    }    /**
-     * Get the name of this object. For citizens this returns their name.
-     *
-     * @return the name of the inventory.
-     */
-    @NotNull
-    @Override
-    public String getName()
-    {
-        return this.hasCustomName() ? this.customName : "citizen.inventory";
     }
 
     /**
@@ -222,15 +216,18 @@ public class InventoryCitizen implements IInventory
         ItemStack itemstack = this.mainInventory.get(this.currentItem);
         this.mainInventory.set(this.currentItem, this.mainInventory.get(index));
         this.mainInventory.set(index, itemstack);
-    }    /**
-     * Checks if the inventory is named.
+    }
+
+    /**
+     * Get the name of this object. For citizens this returns their name.
      *
-     * @return true if the inventory has a custom name.
+     * @return the name of the inventory.
      */
+    @NotNull
     @Override
-    public boolean hasCustomName()
+    public String getName()
     {
-        return this.customName != null;
+        return this.hasCustomName() ? this.customName : "citizen.inventory";
     }
 
     /**
@@ -260,6 +257,17 @@ public class InventoryCitizen implements IInventory
     {
         return stack1.getItem() == stack2.getItem()
                  && (!stack1.getHasSubtypes() || stack1.getMetadata() == stack2.getMetadata()) && ItemStack.areItemStackTagsEqual(stack1, stack2);
+    }
+
+    /**
+     * Checks if the inventory is named.
+     *
+     * @return true if the inventory has a custom name.
+     */
+    @Override
+    public boolean hasCustomName()
+    {
+        return this.customName != null;
     }
 
     /**
@@ -471,14 +479,6 @@ public class InventoryCitizen implements IInventory
         {
             return ItemStack.EMPTY;
         }
-    }    /**
-     * Get the formatted TextComponent that will be used for the sender's username in chat.
-     */
-    @NotNull
-    @Override
-    public ITextComponent getDisplayName()
-    {
-        return this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName());
     }
 
     /**
@@ -532,6 +532,16 @@ public class InventoryCitizen implements IInventory
         {
             this.citizen.onInventoryChanged();
         }
+    }
+
+    /**
+     * Get the formatted TextComponent that will be used for the sender's username in chat.
+     */
+    @NotNull
+    @Override
+    public ITextComponent getDisplayName()
+    {
+        return this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName());
     }
 
     /**
@@ -716,6 +726,8 @@ public class InventoryCitizen implements IInventory
 
     /**
      * Returns the first item stack that is empty.
+     *
+     * @return the first empty slot.
      */
     public int getFirstEmptyStack()
     {
@@ -961,7 +973,7 @@ public class InventoryCitizen implements IInventory
         else
         {
             ItemStack itemstack = this.getStackInSlot(this.currentItem);
-            return !itemstack.isEmpty() ? itemstack.canHarvestBlock(state) : false;
+            return !itemstack.isEmpty() && itemstack.canHarvestBlock(state);
         }
     }
 
@@ -998,6 +1010,8 @@ public class InventoryCitizen implements IInventory
 
     /**
      * Stack helds by mouse, used in GUI and Containers
+     *
+     * @return the hold stack.
      */
     public ItemStack getItemStack()
     {
@@ -1006,6 +1020,8 @@ public class InventoryCitizen implements IInventory
 
     /**
      * Set the stack helds by mouse, used in GUI/Container
+     *
+     * @param itemStackIn the stack to set.
      */
     public void setItemStack(ItemStack itemStackIn)
     {
@@ -1068,4 +1084,3 @@ public class InventoryCitizen implements IInventory
 
 
 }
-

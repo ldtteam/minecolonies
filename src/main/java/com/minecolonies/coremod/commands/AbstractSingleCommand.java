@@ -2,7 +2,7 @@ package com.minecolonies.coremod.commands;
 
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.permissions.Rank;
+import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.configuration.Configurations;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,13 +15,8 @@ import org.jetbrains.annotations.NotNull;
 public abstract class AbstractSingleCommand implements ISubCommand
 {
 
-    private final String[] parents;
     public static final String NOT_PERMITTED = "You are not allowed to do that!";
-    public static final Integer PERMNUM = Configurations.opLevelForServer;
-    enum Commands
-    {
-        CITIZENINFO, COLONYTP, DELETECOLONY, KILLCITIZENS, LISTCITIZENS, RESPAWNCITIZENS, SHOWCOLONYINFO, ADDOFFICER, CHANGE_COLONY_OWNER, REFRESH_COLONY
-    }
+    private final String[] parents;
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -73,10 +68,11 @@ public abstract class AbstractSingleCommand implements ISubCommand
     /**
      * Will check the config file to see if players are allowed to use the command that is sent here.
      * and will verify that they are of correct rank to do so.
-     * @param player the players/senders name.
+     *
+     * @param player     the players/senders name.
      * @param theCommand which command to check if the player can use it.
-     * @param colonyId the id of the colony.
-     * @return boolean
+     * @param colonyId   the id of the colony.
+     * @return boolean.
      */
 
     public boolean canPlayerUseCommand(final EntityPlayer player, final Commands theCommand, final int colonyId)
@@ -87,24 +83,30 @@ public abstract class AbstractSingleCommand implements ISubCommand
         }
 
         final Colony chkColony = ColonyManager.getColony(colonyId);
-        if(chkColony == null)
+        if (chkColony == null)
         {
             return false;
         }
         return canCommandSenderUseCommand(theCommand)
-                && canRankUseCommand(chkColony, player);
+                 && canRankUseCommand(chkColony, player);
     }
 
     /**
-     * Checks if the player has the permission to use the command.
-     * By default officer and owner, overwrite this if other required.
-     * @param colony the colony.
-     * @param player the player.
-     * @return true if so.
+     * Will check to see if play is Opped for the given command name.
+     *
+     * @param sender  to check the player using the command.
+     * @param cmdName the name of the command to be checked.
+     * @return boolean
      */
-    public boolean canRankUseCommand(@NotNull final Colony colony, @NotNull final EntityPlayer player)
+    @NotNull
+    public boolean isPlayerOpped(@NotNull final ICommandSender sender, String cmdName)
     {
-        return colony.getPermissions().getRank(player).equals(Rank.OFFICER) || colony.getPermissions().getRank(player).equals(Rank.OWNER);
+        if (sender instanceof EntityPlayer)
+        {
+            return FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList()
+                     .canSendCommands(((EntityPlayer) sender).getGameProfile());
+        }
+        return true;
     }
 
     /**
@@ -117,12 +119,16 @@ public abstract class AbstractSingleCommand implements ISubCommand
     {
         switch (theCommand)
         {
-            case CITIZENINFO:
-                return Configurations.canPlayerUseCitizenInfoCommand;
+            case HOMETP:
+                return Configurations.canPlayerUseHomeTPCommand;
             case COLONYTP:
+                return Configurations.canPlayerUseColonyTPCommand;
+            case RTP:
                 return Configurations.canPlayerUseRTPCommand;
             case KILLCITIZENS:
                 return Configurations.canPlayerUseKillCitizensCommand;
+            case CITIZENINFO:
+                return Configurations.canPlayerUseCitizenInfoCommand;
             case LISTCITIZENS:
                 return Configurations.canPlayerUseListCitizensCommand;
             case RESPAWNCITIZENS:
@@ -135,31 +141,40 @@ public abstract class AbstractSingleCommand implements ISubCommand
                 return Configurations.canPlayerUseDeleteColonyCommand;
             case REFRESH_COLONY:
                 return Configurations.canPlayerUseRefreshColonyCommand;
+            case MC_BACKUP:
+                return Configurations.canPlayerUseBackupCommand;
+            default:
+                return false;
         }
-
-        return false;
     }
 
     /**
-     * Will check to see if play is Opped for the given command name.
+     * Checks if the player has the permission to use the command.
+     * By default officer and owner, overwrite this if other required.
      *
-     * @param sender to check the player using the command.
-     * @param cmdName the name of the command to be checked.
-     * @return boolean
+     * @param colony the colony.
+     * @param player the player.
+     * @return true if so.
      */
-    @NotNull
-    public boolean isPlayerOpped(@NotNull final ICommandSender sender, String cmdName)
+    public boolean canRankUseCommand(@NotNull final Colony colony, @NotNull final EntityPlayer player)
     {
-        int requiredOpLevel = PERMNUM;
-        if (PERMNUM < 1)
-        {
-            requiredOpLevel = 1;
-        }
-        if (PERMNUM > 4)
-        {
-            requiredOpLevel = 4;
-        }
+        return colony.getPermissions().getRank(player).equals(Permissions.Rank.OFFICER) || colony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER);
+    }
 
-        return FMLCommonHandler.instance().getMinecraftServerInstance().canUseCommand(requiredOpLevel,cmdName);
+    enum Commands
+    {
+        CITIZENINFO,
+        COLONYTP,
+        RTP,
+        DELETECOLONY,
+        KILLCITIZENS,
+        LISTCITIZENS,
+        RESPAWNCITIZENS,
+        SHOWCOLONYINFO,
+        ADDOFFICER,
+        CHANGE_COLONY_OWNER,
+        REFRESH_COLONY,
+        HOMETP,
+        MC_BACKUP
     }
 }

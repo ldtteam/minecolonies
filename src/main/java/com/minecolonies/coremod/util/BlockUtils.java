@@ -2,6 +2,7 @@ package com.minecolonies.coremod.util;
 
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import net.minecraft.block.*;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -71,6 +72,24 @@ public final class BlockUtils
             default:
                 return Rotation.NONE;
         }
+    }
+
+    /**
+     * Get the filler block at a certain location.
+     * If block follows gravity laws return dirt.
+     *
+     * @param world    the world the block is in.
+     * @param location the location it is at.
+     * @return the IBlockState of the filler block.
+     */
+    public static IBlockState getSubstitutionBlockAtWorld(@NotNull final World world, @NotNull final BlockPos location)
+    {
+        final IBlockState filler = world.getBiome(location).fillerBlock;
+        if (filler.getBlock() instanceof BlockFalling)
+        {
+            return Blocks.DIRT.getDefaultState();
+        }
+        return filler;
     }
 
     /**
@@ -172,7 +191,11 @@ public final class BlockUtils
 
     private static Item getItem(@NotNull final IBlockState blockState)
     {
-        if (blockState.getBlock() instanceof BlockBanner)
+        if (blockState.getMaterial().equals(Material.LAVA))
+        {
+            return Items.LAVA_BUCKET;
+        }
+        else if (blockState.getBlock() instanceof BlockBanner)
         {
             return Items.BANNER;
         }
@@ -226,6 +249,10 @@ public final class BlockUtils
         else if (blockState.getBlock() instanceof BlockFarmland || blockState.getBlock() instanceof BlockGrassPath)
         {
             return Item.getItemFromBlock(Blocks.DIRT);
+        }
+        else if(blockState.getBlock() instanceof BlockFire)
+        {
+            return Items.FLINT_AND_STEEL;
         }
         else if (blockState.getBlock() instanceof BlockFlowerPot)
         {
@@ -345,8 +372,38 @@ public final class BlockUtils
     }
 
     /**
-     * Get the damage value from a block and blockState, where the block is the placeable and obtainable block.
-     * The blockstate might differ from the block.
+     * Compares two blocks and checks if they are equally dirt.
+     * Meaning dirt and grass are equal. But podzol and coarse dirt not.
+     *
+     * @param structureBlock the block of the structure.
+     * @param worldBlock the world block.
+     * @param structureMetaData the structure metadata.
+     * @param worldMetadata the world metadata.
+     * @return true if equal.
+     */
+    public static boolean isGrassOrDirt(@NotNull final Block structureBlock, @NotNull final Block worldBlock,
+            @NotNull final IBlockState structureMetaData, @NotNull final IBlockState worldMetadata)
+    {
+        if((structureBlock == Blocks.DIRT || structureBlock == Blocks.GRASS) && (worldBlock == Blocks.DIRT || worldBlock == Blocks.GRASS))
+        {
+            if(structureBlock == Blocks.DIRT
+                    && (structureMetaData.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.COARSE_DIRT
+                    || structureMetaData.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.PODZOL))
+            {
+                return false;
+            }
+
+            return worldBlock != Blocks.DIRT
+                    || (worldMetadata.getValue(BlockDirt.VARIANT) != BlockDirt.DirtType.COARSE_DIRT
+                    && worldMetadata.getValue(BlockDirt.VARIANT) != BlockDirt.DirtType.PODZOL);
+        }
+        return  false;
+    }
+
+    /**
+     * Get the damage value from a block and blockState, where the block is the
+     * placeable and obtainable block. The blockstate might differ from the
+     * block.
      *
      * @param block      the block.
      * @param blockState the state.
@@ -364,6 +421,10 @@ public final class BlockUtils
         }
         else if (block instanceof BlockDirt)
         {
+            if (blockState.getBlock() instanceof BlockGrassPath)
+            {
+                return Blocks.DIRT.getDefaultState().getValue(BlockDirt.VARIANT).getMetadata();
+            }
             return blockState.getValue(BlockDirt.VARIANT).getMetadata();
         }
         else if (block instanceof BlockDoublePlant
@@ -403,6 +464,6 @@ public final class BlockUtils
      */
     public static boolean isPathBlock(final Block block)
     {
-        return block == Blocks.GRAVEL || block == Blocks.STONEBRICK;
+        return block == Blocks.GRAVEL || block == Blocks.STONEBRICK || block instanceof BlockGrassPath;
     }
 }

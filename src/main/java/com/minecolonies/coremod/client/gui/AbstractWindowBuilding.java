@@ -31,13 +31,13 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
     /**
      * Type B is a class that extends {@link AbstractBuildingWorker.View}.
      */
-    protected final B building;
-    private final SwitchView switchView;
-    private final Label title;
-    private final Button buttonPrevPage;
-    private final Button buttonNextPage;
-    private final Button buttonBuild;
-    private final Button buttonRepair;
+    protected final B          building;
+    private final   SwitchView switchView;
+    private final   Label      title;
+    private final   Button     buttonPrevPage;
+    private final   Button     buttonNextPage;
+    private final   Button     buttonBuild;
+    private final   Button     buttonRepair;
 
     /**
      * Constructor for the windows that are associated with buildings.
@@ -53,13 +53,12 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
         registerButton(BUTTON_BUILD, this::buildClicked);
         registerButton(BUTTON_REPAIR, this::repairClicked);
         registerButton(BUTTON_INVENTORY, this::inventoryClicked);
-        switchView     = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class);
-        title          = findPaneOfTypeByID(LABEL_BUILDING_NAME, Label.class);
+        switchView = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class);
+        title = findPaneOfTypeByID(LABEL_BUILDING_NAME, Label.class);
         buttonNextPage = findPaneOfTypeByID(BUTTON_NEXTPAGE, Button.class);
         buttonPrevPage = findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class);
-        buttonBuild    = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
-        buttonRepair   = findPaneOfTypeByID(BUTTON_REPAIR, Button.class);
-
+        buttonBuild = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
+        buttonRepair = findPaneOfTypeByID(BUTTON_REPAIR, Button.class);
     }
 
     /**
@@ -85,6 +84,39 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
     {
         MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(building));
     }
+
+    @Override
+    public void onUpdate()
+    {
+        super.onUpdate();
+
+        // Check if there is no page switcher
+        // Or that we are on the correct page
+        if (switchView == null || switchView.getCurrentView().getID().equals(PAGE_ACTIONS))
+        {
+            final AbstractBuilding.View buildingView = building.getColony().getBuilding(building.getID());
+
+            if (buttonPrevPage != null)
+            {
+                buttonPrevPage.disable();
+            }
+
+            if (title != null)
+            {
+                title.setLabelText(LanguageHandler.format(getBuildingName()) + " " + buildingView.getBuildingLevel());
+            }
+
+            updateButtonBuild(buildingView);
+            updateButtonRepair(buildingView);
+        }
+    }
+
+    /**
+     * Returns the name of a building.
+     *
+     * @return Name of a building.
+     */
+    public abstract String getBuildingName();
 
     /**
      * Update the state and label for the Build button.
@@ -147,32 +179,6 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
     }
 
     @Override
-    public void onUpdate()
-    {
-        super.onUpdate();
-
-        // Check if there is no page switcher
-        // Or that we are on the correct page
-        if (switchView == null || switchView.getCurrentView().getID().equals(PAGE_ACTIONS))
-        {
-            final AbstractBuilding.View buildingView = building.getColony().getBuilding(building.getID());
-
-            if (buttonPrevPage != null)
-            {
-                buttonPrevPage.disable();
-            }
-
-            if (title != null)
-            {
-                title.setLabelText(LanguageHandler.format(getBuildingName()) + " " + buildingView.getBuildingLevel());
-            }
-
-            updateButtonBuild(buildingView);
-            updateButtonRepair(buildingView);
-        }
-    }
-
-    @Override
     public void onButtonClicked(@NotNull final Button button)
     {
         switch (button.getID())
@@ -192,11 +198,4 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
                 break;
         }
     }
-
-    /**
-     * Returns the name of a building.
-     *
-     * @return Name of a building.
-     */
-    public abstract String getBuildingName();
 }
