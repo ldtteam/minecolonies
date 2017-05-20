@@ -1054,13 +1054,16 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Getter for the neededItems.
+     * This method makes a copy of the itemsCurrentlyNeeded.
+     * Currently every call to this method needs a copy, if for some reason an outside
+     * class needs this list and a copy isn't desired, a new method should be created,
+     * and this doc should be changed to point to that new method.
      *
-     * @return an unmodifiable list.
+     * @return a copy of the itemsCurrentlyNeeded list.
      */
-    public List<ItemStack> getNeededItems()
+    public List<ItemStack> getCopyOfNeededItems()
     {
-        return Collections.unmodifiableList(itemsCurrentlyNeeded);
+        return new ArrayList<>(itemsCurrentlyNeeded);
     }
 
     /**
