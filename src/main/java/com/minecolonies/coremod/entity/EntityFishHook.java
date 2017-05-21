@@ -332,7 +332,7 @@ public final class EntityFishHook extends Entity
 
         if (!this.inGround)
         {
-            return false;
+            return;
         }
 
         this.inGround = false;

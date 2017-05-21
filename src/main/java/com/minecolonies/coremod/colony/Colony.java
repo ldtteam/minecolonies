@@ -1280,6 +1280,12 @@ public class Colony implements IColony
         return id;
     }
 
+    @Override
+    public boolean hasWarehouse()
+    {
+        return wareHouse != null;
+    }
+
     /**
      * Updates all subscribers of fields etc.
      */
