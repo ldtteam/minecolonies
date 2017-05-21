@@ -57,7 +57,7 @@ public class JobBaker extends AbstractJob
     @Override
     public RenderBipedCitizen.Model getModel()
     {
-        return RenderBipedCitizen.Model.BUILDER;
+        return RenderBipedCitizen.Model.BAKER;
     }
 
     /**

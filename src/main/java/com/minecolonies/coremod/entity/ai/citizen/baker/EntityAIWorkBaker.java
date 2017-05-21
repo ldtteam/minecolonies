@@ -135,8 +135,6 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
      */
     private AIState prepareForBaking()
     {
-        Log.getLogger().info("SUCK MY DICK");
-
         if(true)
         {
             return BAKER_KNEADING;
