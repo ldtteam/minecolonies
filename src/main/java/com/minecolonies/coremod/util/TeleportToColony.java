@@ -2,8 +2,8 @@ package com.minecolonies.coremod.util;
 
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.IColony;
-import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.coremod.commands.MinecoloniesCommand;
 import com.minecolonies.coremod.configuration.Configurations;
 import net.minecraft.command.ICommandSender;
@@ -88,7 +88,7 @@ public final class TeleportToColony
     private static void teleportPlayer(final EntityPlayer playerToTeleport, final int colID, final ICommandSender sender)
     {
         final Colony colony = ColonyManager.getColony(colID);
-        final BuildingTownHall townHall = colony.getTownHall();
+        final IBuilding townHall = colony.getTownHall();
 
         if (townHall == null)
         {
@@ -98,7 +98,7 @@ public final class TeleportToColony
 
         playerToTeleport.getCommandSenderEntity().sendMessage(new TextComponentString("We got places to go, kid..."));
 
-        final BlockPos position = townHall.getLocation();
+        final BlockPos position = townHall.getLocation().getInDimensionLocation();
 
         if (colID >= 1)
         {

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.util;
 
+import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.util.math.BlockPos;
 import org.junit.Test;
 import org.junit.runner.RunWith;

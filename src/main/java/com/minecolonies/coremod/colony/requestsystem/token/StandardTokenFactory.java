@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.requestsystem.token;
 
-import com.minecolonies.coremod.colony.requestsystem.factory.IFactoryController;
+import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
+import com.minecolonies.api.colony.requestsystem.token.ITokenFactory;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,7 +10,8 @@ import java.util.UUID;
 /**
  * Factory for the standard request token.
  */
-public class StandardTokenFactory implements ITokenFactory<UUID, StandardToken> {
+public class StandardTokenFactory implements ITokenFactory<UUID, StandardToken>
+{
     /**
      * Method to get the request type this factory can produce.
      *

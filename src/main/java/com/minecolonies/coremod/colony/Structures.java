@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.colony;
 
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
+import com.minecolonies.api.colony.workorder.IWorkOrder;
+import com.minecolonies.coremod.colony.workorders.AbstractWorkOrderBuildDecoration;
 import com.minecolonies.coremod.configuration.Configurations;
-import com.minecolonies.coremod.lib.Constants;
+import com.minecolonies.api.lib.Constants;
 import com.minecolonies.coremod.util.LanguageHandler;
-import com.minecolonies.coremod.util.Log;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.structures.helpers.Structure;
 import net.minecraft.block.Block;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -881,11 +881,11 @@ public final class Structures
         int countInUseStructures = 0;
         for (final Colony c : ColonyManager.getColonies())
         {
-            for (final AbstractWorkOrder workOrder : c.getWorkManager().getWorkOrders().values())
+            for (final IWorkOrder workOrder : c.getWorkManager().getWorkOrders().values())
             {
-                if (workOrder instanceof WorkOrderBuildDecoration)
+                if (workOrder instanceof AbstractWorkOrderBuildDecoration)
                 {
-                    final String schematicName = ((WorkOrderBuildDecoration) workOrder).getStructureName();
+                    final String schematicName = ((AbstractWorkOrderBuildDecoration) workOrder).getStructureName();
                     if (md5Set.contains(schematicName))
                     {
                         md5Set.remove(schematicName);

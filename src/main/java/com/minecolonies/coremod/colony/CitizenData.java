@@ -1,14 +1,18 @@
 package com.minecolonies.coremod.colony;
 
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.entity.Citizen;
+import com.minecolonies.api.entity.ai.basic.AbstractAISkeleton;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
-import com.minecolonies.coremod.util.BlockPosUtil;
-import com.minecolonies.coremod.util.Log;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -97,7 +101,7 @@ public class CitizenData implements ICitizenData
     /**
      * The job of the citizen.
      */
-    private AbstractJob job;
+    private IJob job;
 
     /**
      * If the citizen is dirty (Has to be updated on client side).
@@ -108,7 +112,7 @@ public class CitizenData implements ICitizenData
      * Its entitity.
      */
     @Nullable
-    private EntityCitizen entity;
+    private Citizen entity;
 
     /**
      * Attributes, which influence the workers behaviour.
@@ -198,24 +202,15 @@ public class CitizenData implements ICitizenData
         }
     }
 
-    /**
-     * Return the entity instance of the citizen data. Respawn the citizen if
-     * needed.
-     *
-     * @return {@link EntityCitizen} of the citizen data.
-     */
+    @Override
     @Nullable
-    public EntityCitizen getCitizenEntity()
+    public Citizen getCitizen()
     {
         return entity;
     }
 
-    /**
-     * Sets the entity of the citizen data.
-     *
-     * @param citizen {@link EntityCitizen} instance of the citizen data.
-     */
-    public void setCitizenEntity(final EntityCitizen citizen)
+    @Override
+    public void setCitizenEntity(final Citizen citizen)
     {
         entity = citizen;
         markDirty();
@@ -531,7 +526,7 @@ public class CitizenData implements ICitizenData
             }
             else if (job != null)
             {
-                final EntityCitizen citizen = getCitizenEntity();
+                final Citizen citizen = getCitizen();
                 if (citizen != null)
                 {
                     citizen.tasks.removeTask(citizen.tasks.taskEntries.stream().filter(task -> task.action instanceof AbstractAISkeleton).findFirst().orElse(null).action);
@@ -553,52 +548,24 @@ public class CitizenData implements ICitizenData
         entity = null;
     }
 
-    /**
-     * Returns the job of the citizen.
-     *
-     * @return Job of the citizen.
-     */
-    public AbstractJob getJob()
+    @Override
+    public IJob getJob()
     {
         return job;
     }
 
-    /**
-     * Sets the job of this citizen.
-     *
-     * @param job Job of the citizen.
-     */
-    public void setJob(final AbstractJob job)
+    @Override
+    public void setJob(final IJob job)
     {
         this.job = job;
 
-        @Nullable final EntityCitizen localEntity = getCitizenEntity();
+        @Nullable final Citizen localEntity = getCitizen();
         if (localEntity != null)
         {
             localEntity.onJobChanged(job);
         }
 
         markDirty();
-    }
-
-    /**
-     * Returns the job subclass needed. Returns null on type mismatch.
-     *
-     * @param type the type of job wanted.
-     * @param <J>  The job type returned.
-     * @return the job this citizen has.
-     */
-    @Nullable
-    public <J extends AbstractJob> J getJob(@NotNull final Class<J> type)
-    {
-        try
-        {
-            return type.cast(job);
-        }
-        catch (final ClassCastException ignored)
-        {
-            return null;
-        }
     }
 
     /**

@@ -1,11 +1,12 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.coremod.client.render.RenderBipedCitizen;
+import com.minecolonies.api.client.render.Model;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColony;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
-import com.minecolonies.coremod.util.Log;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.entity.ai.basic.AbstractAISkeleton;
+import com.minecolonies.api.util.Log;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundEvent;
@@ -26,7 +27,7 @@ import java.util.Map;
  * We are only mapping classes and that is reasonable
  */
 @SuppressWarnings("squid:S2390")
-public abstract class AbstractJob
+public abstract class AbstractJob implements IJob
 {
     private static final String TAG_TYPE         = "type";
     private static final String TAG_ITEMS_NEEDED = "itemsNeeded";
@@ -156,26 +157,21 @@ public abstract class AbstractJob
      *
      * @param compound NBTTagCompound containing saved Job data.
      */
+    @Override
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         //NOOP; Requests are stored on the building.
     }
 
     /**
-     * Return a Localization textContent for the Job.
-     *
-     * @return localization textContent String.
-     */
-    public abstract String getName();
-
-    /**
      * Get the RenderBipedCitizen.Model to use when the Citizen performs this job role.
      *
      * @return Model of the citizen.
      */
-    public RenderBipedCitizen.Model getModel()
+    @Override
+    public Model getModel()
     {
-        return RenderBipedCitizen.Model.CITIZEN;
+        return Model.CITIZEN;
     }
 
     /**
@@ -183,6 +179,7 @@ public abstract class AbstractJob
      *
      * @return CitizenData that owns this Job.
      */
+    @Override
     public CitizenData getCitizen()
     {
         return citizen;
@@ -193,6 +190,7 @@ public abstract class AbstractJob
      *
      * @return {@link Colony} of the citizen.
      */
+    @Override
     public IColony getColony()
     {
         return citizen.getColony();
@@ -203,6 +201,7 @@ public abstract class AbstractJob
      *
      * @param compound NBTTagCompound to save the Job to.
      */
+    @Override
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         final String s = classToNameMap.get(this.getClass());
@@ -220,6 +219,7 @@ public abstract class AbstractJob
      *
      * @return true if the Job has no needed items.
      */
+    @Override
     public boolean isMissingNeededItem()
     {
         return citizen.getWorkBuilding().hasWorkerOpenRequests(citizen);
@@ -230,6 +230,7 @@ public abstract class AbstractJob
      * @param request The request to create.
      * @param <Request> The type of request.
      */
+    @Override
     public <Request> void createRequest(@NotNull final Request request)
     {
         citizen.getWorkBuilding().createRequest(citizen, request);
@@ -240,6 +241,7 @@ public abstract class AbstractJob
      *
      * @param tasks EntityAITasks list to add tasks to.
      */
+    @Override
     public void addTasks(@NotNull final EntityAITasks tasks)
     {
         final AbstractAISkeleton<? extends AbstractJob> aiTask = generateAI();
@@ -250,24 +252,12 @@ public abstract class AbstractJob
     }
 
     /**
-     * Generate your AI class to register.
-     * <p>
-     * Suppressing Sonar Rule squid:S1452
-     * This rule does "Generic wildcard types should not be used in return parameters"
-     * But in this case the rule does not apply because
-     * We are fine with all AbstractJob implementations and need generics only for java
-     *
-     * @return your personal AI instance.
-     */
-    @SuppressWarnings("squid:S1452")
-    public abstract AbstractAISkeleton<? extends AbstractJob> generateAI();
-
-    /**
      * This method can be used to display the current status.
      * That a citizen is having.
      *
      * @return Small string to display info in name tag
      */
+    @Override
     public String getNameTagDescription()
     {
         return this.nameTag;
@@ -279,6 +269,7 @@ public abstract class AbstractJob
      *
      * @param nameTag The name tag to display.
      */
+    @Override
     public final void setNameTag(final String nameTag)
     {
         this.nameTag = nameTag;
@@ -289,6 +280,7 @@ public abstract class AbstractJob
      *
      * @return soundEvent to be played.
      */
+    @Override
     public SoundEvent getBedTimeSound()
     {
         return null;
@@ -299,6 +291,7 @@ public abstract class AbstractJob
      *
      * @return soundEvent to be played.
      */
+    @Override
     public SoundEvent getBadWeatherSound()
     {
         return null;

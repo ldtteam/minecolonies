@@ -1,6 +1,10 @@
 package com.minecolonies.coremod.colony.permissions;
 
-import com.minecolonies.coremod.colony.IColony;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.colony.permissions.IPermissions;
+import com.minecolonies.api.colony.permissions.Player;
+import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.network.PacketUtils;
 import com.minecolonies.coremod.util.AchievementUtils;
 import com.minecolonies.coremod.util.Utils;
@@ -19,8 +23,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.coremod.colony.permissions.Action.*;
-import static com.minecolonies.coremod.colony.permissions.Rank.*;
+import static com.minecolonies.api.colony.permissions.Action.*;
+import static com.minecolonies.api.colony.permissions.Rank.*;
 
 /**
  * Colony Permissions System.

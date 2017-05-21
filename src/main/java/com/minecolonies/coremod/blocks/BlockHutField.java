@@ -1,11 +1,10 @@
 package com.minecolonies.coremod.blocks;
 
+import com.minecolonies.api.lib.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
-import com.minecolonies.coremod.inventory.InventoryField;
-import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockHorizontal;
@@ -29,6 +28,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -222,7 +222,7 @@ public class BlockHutField extends BlockContainer
 
             if (colony != null)
             {
-                @NotNull final InventoryField inventoryField = new InventoryField();
+                @NotNull final ItemStackHandler inventoryField = new ItemStackHandler();
                 final ScarecrowTileEntity scareCrow = (ScarecrowTileEntity) worldIn.getTileEntity(pos);
                 final EntityPlayer player = (EntityPlayer) placer;
                 if (scareCrow != null)

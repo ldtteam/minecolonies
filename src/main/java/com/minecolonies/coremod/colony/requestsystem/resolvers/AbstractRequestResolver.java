@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
-import com.minecolonies.coremod.colony.requestsystem.location.ILocation;
-import com.minecolonies.coremod.colony.requestsystem.resolver.IRequestResolver;
-import com.minecolonies.coremod.colony.requestsystem.token.IToken;
+import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import org.jetbrains.annotations.NotNull;
 
 /**

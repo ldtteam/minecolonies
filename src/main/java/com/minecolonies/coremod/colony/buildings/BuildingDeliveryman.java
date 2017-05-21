@@ -7,9 +7,12 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -113,13 +116,14 @@ public class BuildingDeliveryman extends AbstractBuildingWorker
          * @param c the colonyview to put it in
          * @param l the positon
          */
-        public View(final ColonyView c, final BlockPos l)
+        protected View(final ColonyView c, @NotNull final BlockPos l, @NotNull final IToken id)
         {
-            super(c, l);
+            super(c, l, id);
         }
 
         @NotNull
         @Override
+        @SideOnly(Side.CLIENT)
         public Window getWindow()
         {
             return new WindowHutWorkerPlaceholder<>(this, DELIVERYMAN);

@@ -8,9 +8,10 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
-import com.minecolonies.coremod.util.BlockPosUtil;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.util.Utils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
@@ -22,6 +23,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -665,13 +668,14 @@ public class BuildingMiner extends AbstractBuildingWorker
          * @param c the colony.
          * @param l the position.
          */
-        public View(final ColonyView c, final BlockPos l)
+        protected View(final ColonyView c, @NotNull final BlockPos l, @NotNull final IToken id)
         {
-            super(c, l);
+            super(c, l, id);
         }
 
         @NotNull
         @Override
+        @SideOnly(Side.CLIENT)
         public Window getWindow()
         {
             return new WindowHutMiner(this);

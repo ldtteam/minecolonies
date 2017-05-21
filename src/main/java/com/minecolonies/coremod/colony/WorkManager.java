@@ -1,11 +1,13 @@
 package com.minecolonies.coremod.colony;
 
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IWorkManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.workorder.IAbstractWorkOrder;
+import com.minecolonies.api.colony.workorder.IWorkOrder;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
+import com.minecolonies.coremod.colony.workorders.AbstractWorkOrderBuild;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
-import com.minecolonies.coremod.util.Log;
+import com.minecolonies.api.util.Log;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -32,12 +34,12 @@ public class WorkManager implements IWorkManager
      */
     protected final Colony colony;
     @NotNull
-    private final Map<Integer, IAbstractWorkOrder> workOrders     = new LinkedHashMap<>();
-    private       int                              topWorkOrderId = 0;
+    private final Map<Integer, IWorkOrder> workOrders     = new LinkedHashMap<>();
+    private       int                      topWorkOrderId = 0;
     /**
      * Checks if there has been changes.
      */
-    private       boolean                          dirty          = false;
+    private       boolean                  dirty          = false;
 
     /**
      * Constructor, saves reference to the colony.
@@ -55,7 +57,7 @@ public class WorkManager implements IWorkManager
      * @param order {@link AbstractWorkOrder} to remove.
      */
     @Override
-    public void removeWorkOrder(@NotNull final IAbstractWorkOrder order)
+    public void removeWorkOrder(@NotNull final IWorkOrder order)
     {
         removeWorkOrder(order.getID());
     }
@@ -68,12 +70,12 @@ public class WorkManager implements IWorkManager
     @Override
     public void removeWorkOrder(final int orderId)
     {
-        final IAbstractWorkOrder workOrder = workOrders.get(orderId);
+        final IWorkOrder workOrder = workOrders.get(orderId);
         workOrders.remove(orderId);
         colony.removeWorkOrder(orderId);
-        if (workOrder instanceof WorkOrderBuild)
+        if (workOrder instanceof AbstractWorkOrderBuild)
         {
-            final WorkOrderBuild wob = (WorkOrderBuild) workOrder;
+            final AbstractWorkOrderBuild wob = (AbstractWorkOrderBuild) workOrder;
             final AbstractBuilding building = colony.getBuilding(wob.getBuildingLocation());
             ConstructionTapeHelper.removeConstructionTape(wob, colony.getWorld());
             if (building != null)
@@ -94,7 +96,7 @@ public class WorkManager implements IWorkManager
      */
     @Override
     @Nullable
-    public <W extends IAbstractWorkOrder> W getWorkOrder(final int id, @NotNull final Class<W> type)
+    public <W extends IWorkOrder> W getWorkOrder(final int id, @NotNull final Class<W> type)
     {
         try
         {
@@ -115,7 +117,7 @@ public class WorkManager implements IWorkManager
      * @return the work order of the specified id, or null.
      */
     @Override
-    public IAbstractWorkOrder getWorkOrder(final int id)
+    public IWorkOrder getWorkOrder(final int id)
     {
         return workOrders.get(id);
     }
@@ -130,9 +132,9 @@ public class WorkManager implements IWorkManager
      */
     @Override
     @Nullable
-    public <W extends IAbstractWorkOrder> W getUnassignedWorkOrder(@NotNull final Class<W> type)
+    public <W extends IWorkOrder> W getUnassignedWorkOrder(@NotNull final Class<W> type)
     {
-        for (@NotNull final IAbstractWorkOrder o : workOrders.values())
+        for (@NotNull final IWorkOrder o : workOrders.values())
         {
             if (!o.isClaimed() && type.isAssignableFrom(o.getClass()))
             {
@@ -151,7 +153,7 @@ public class WorkManager implements IWorkManager
      * @return a list of all work orders of the given type.
      */
     @Override
-    public <W extends IAbstractWorkOrder> List<W> getWorkOrdersOfType(@NotNull final Class<W> type)
+    public <W extends IWorkOrder> List<W> getWorkOrdersOfType(@NotNull final Class<W> type)
     {
         return workOrders.values().stream().filter(o -> type.isAssignableFrom(o.getClass())).map(type::cast).collect(Collectors.toList());
     }
@@ -163,7 +165,7 @@ public class WorkManager implements IWorkManager
      */
     @Override
     @NotNull
-    public Map<Integer, IAbstractWorkOrder> getWorkOrders()
+    public Map<Integer, IWorkOrder> getWorkOrders()
     {
         return workOrders;
     }
@@ -178,7 +180,7 @@ public class WorkManager implements IWorkManager
     public void clearWorkForCitizen(@NotNull final ICitizenData citizen)
     {
         dirty = true;
-        workOrders.values().stream().filter(o -> o != null && o.isClaimedBy(citizen)).forEach(IAbstractWorkOrder::clearClaimedBy);
+        workOrders.values().stream().filter(o -> o != null && o.isClaimedBy(citizen)).forEach(IWorkOrder::clearClaimedBy);
     }
 
     /**
@@ -191,7 +193,7 @@ public class WorkManager implements IWorkManager
     {
         //  Work Orders
         @NotNull final NBTTagList list = new NBTTagList();
-        for (@NotNull final IAbstractWorkOrder o : workOrders.values())
+        for (@NotNull final IWorkOrder o : workOrders.values())
         {
             @NotNull final NBTTagCompound orderCompound = new NBTTagCompound();
             o.writeToNBT(orderCompound);
@@ -237,7 +239,7 @@ public class WorkManager implements IWorkManager
      * @param order Order to add.
      */
     @Override
-    public void addWorkOrder(@NotNull final IAbstractWorkOrder order)
+    public void addWorkOrder(@NotNull final IWorkOrder order)
     {
         dirty = true;
 
@@ -246,9 +248,9 @@ public class WorkManager implements IWorkManager
             topWorkOrderId++;
             order.setID(topWorkOrderId);
         }
-        if (order instanceof WorkOrderBuild && colony != null && colony.getWorld() != null)
+        if (order instanceof AbstractWorkOrderBuild && colony != null && colony.getWorld() != null)
         {
-            ConstructionTapeHelper.placeConstructionTape((WorkOrderBuild) order, colony.getWorld());
+            ConstructionTapeHelper.placeConstructionTape((AbstractWorkOrderBuild) order, colony.getWorld());
         }
         workOrders.put(order.getID(), order);
     }
@@ -264,10 +266,10 @@ public class WorkManager implements IWorkManager
     {
         if (event.phase == TickEvent.Phase.END)
         {
-            @NotNull final Iterator<IAbstractWorkOrder> iter = workOrders.values().iterator();
+            @NotNull final Iterator<IWorkOrder> iter = workOrders.values().iterator();
             while (iter.hasNext())
             {
-                final IAbstractWorkOrder o = iter.next();
+                final IWorkOrder o = iter.next();
                 if (!o.isValid(colony))
                 {
                     iter.remove();

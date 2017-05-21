@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.configuration;
 
-import com.minecolonies.coremod.lib.Constants;
+import com.minecolonies.api.lib.Constants;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;

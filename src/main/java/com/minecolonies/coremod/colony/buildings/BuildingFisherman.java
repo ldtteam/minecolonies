@@ -8,6 +8,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobFisherman;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import net.minecraft.init.Items;
 import net.minecraft.util.math.BlockPos;
@@ -135,9 +136,9 @@ public class BuildingFisherman extends AbstractBuildingWorker
          * @param c the colony.
          * @param l the position.
          */
-        public View(final ColonyView c, final BlockPos l)
+        protected View(final ColonyView c, @NotNull final BlockPos l, @NotNull final IToken id)
         {
-            super(c, l);
+            super(c, l, id);
         }
 
         /**

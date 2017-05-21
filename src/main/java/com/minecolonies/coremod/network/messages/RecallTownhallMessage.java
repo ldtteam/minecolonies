@@ -4,7 +4,7 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
-import com.minecolonies.coremod.colony.permissions.Action;
+import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
@@ -72,7 +72,7 @@ public class RecallTownhallMessage extends AbstractMessage<RecallTownhallMessage
                 final World world = colony.getWorld();
                 for (CitizenData citizenData : colony.getCitizens().values())
                 {
-                    if (!TeleportHelper.teleportCitizen(citizenData.getCitizenEntity(), world, location))
+                    if (!TeleportHelper.teleportCitizen(citizenData.getCitizen(), world, location))
                     {
                         LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.workerHuts.recallFail");
                     }

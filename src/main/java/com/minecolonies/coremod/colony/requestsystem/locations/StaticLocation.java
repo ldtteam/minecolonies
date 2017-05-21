@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.colony.requestsystem.locations;
 
-import com.minecolonies.coremod.colony.requestsystem.factory.IFactoryController;
-import com.minecolonies.coremod.colony.requestsystem.location.ILocation;
-import com.minecolonies.coremod.colony.requestsystem.location.ILocationFactory;
+import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
+import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.colony.requestsystem.location.ILocationFactory;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;

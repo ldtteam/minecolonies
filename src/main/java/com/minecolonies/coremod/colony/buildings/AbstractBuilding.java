@@ -1,15 +1,19 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.blocks.*;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView;
 import com.minecolonies.coremod.colony.requestsystem.locations.StaticLocation;
-import com.minecolonies.coremod.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.coremod.colony.requestsystem.requestable.Tool;
-import com.minecolonies.coremod.colony.requestsystem.token.IToken;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.coremod.colony.workorders.AbstractWorkOrderBuild;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
@@ -29,6 +33,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,7 +45,8 @@ import java.util.*;
 /**
  * Base building class, has all the foundation for what a building stores and does.
  */
-public abstract class AbstractBuilding implements IBuilding {
+public abstract class AbstractBuilding implements IBuilding
+{
     /**
      * Tag used to store the containers to NBT.
      */
@@ -794,7 +801,7 @@ public abstract class AbstractBuilding implements IBuilding {
      */
     private void requestWorkOrder(final int level)
     {
-        for (@NotNull final WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
+        for (@NotNull final AbstractWorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(AbstractWorkOrderBuild.class))
         {
             if (o.getBuildingLocation().equals(getID()))
             {
@@ -802,7 +809,7 @@ public abstract class AbstractBuilding implements IBuilding {
             }
         }
 
-        colony.getWorkManager().addWorkOrder(new WorkOrderBuild(this, level));
+        colony.getWorkManager().addWorkOrder(new AbstractWorkOrderBuild(this, level));
         LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.workOrderAdded");
         markDirty();
     }
@@ -844,7 +851,7 @@ public abstract class AbstractBuilding implements IBuilding {
      */
     private int getCurrentWorkOrderLevel()
     {
-        for (@NotNull final WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
+        for (@NotNull final AbstractWorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(AbstractWorkOrderBuild.class))
         {
             if (o.getBuildingLocation().equals(getID()))
             {
@@ -873,7 +880,7 @@ public abstract class AbstractBuilding implements IBuilding {
      */
     public void removeWorkOrder()
     {
-        for (@NotNull final WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
+        for (@NotNull final AbstractWorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(AbstractWorkOrderBuild.class))
         {
             if (o.getBuildingLocation().equals(getID()))
             {
@@ -1015,33 +1022,19 @@ public abstract class AbstractBuilding implements IBuilding {
         return Collections.emptyMap();
     }
 
-    /**
-     * Check if the worker needs anything. Tool or item.
-     * Basically checks if the worker has open requests, regardless of by whom they will be fullfilled.
-     *
-     * @return true if so.
-     */
+    @Override
     public boolean needsAnything()
     {
         return !openRequests.isEmpty();
     }
 
-    /**
-     * Check if any items are needed at the moment.
-     *
-     * @return true if so.
-     */
+    @Override
     public boolean areItemsNeeded()
     {
         return !openRequests.get(ItemStack.class).isEmpty();
     }
 
-    /**
-     * Check if the worker needs a tool of the given type.
-     *
-     * @param toolClass The type of tool requested.
-     * @return True if so.
-     */
+    @Override
     public boolean requiresTool(String toolClass) {
         if (openRequests.get(Tool.class).isEmpty())
             return false;
@@ -1452,6 +1445,30 @@ public abstract class AbstractBuilding implements IBuilding {
         }
 
         @Override
+        public void setBuildingLevel(final int level)
+        {
+            throw new IllegalStateException("Cannot set building level on the client side.");
+        }
+
+        @Override
+        public boolean needsAnything()
+        {
+            return false;
+        }
+
+        @Override
+        public boolean areItemsNeeded()
+        {
+            return false;
+        }
+
+        @Override
+        public boolean requiresTool(final String toolClass)
+        {
+            return false;
+        }
+
+        @Override
         public <Request> void createRequest(@NotNull final ICitizenData citizenData, @NotNull final Request requested)
         {
             throw new IllegalStateException("Requests cannot be created on the client side.");
@@ -1555,6 +1572,7 @@ public abstract class AbstractBuilding implements IBuilding {
         /**
          * Open the associated BlockOut window for this building.
          */
+        @SideOnly(Side.CLIENT)
         public void openGui()
         {
             @Nullable final Window window = getWindow();
@@ -1570,6 +1588,7 @@ public abstract class AbstractBuilding implements IBuilding {
          * @return BlockOut window.
          */
         @Nullable
+        @SideOnly(Side.CLIENT)
         public Window getWindow()
         {
             return null;

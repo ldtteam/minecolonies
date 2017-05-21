@@ -7,7 +7,7 @@ import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.BuildingMiner;
-import com.minecolonies.coremod.lib.Constants;
+import com.minecolonies.api.lib.Constants;
 import com.minecolonies.coremod.network.messages.MinerSetLevelMessage;
 import com.minecolonies.coremod.util.LanguageHandler;
 import org.jetbrains.annotations.NotNull;

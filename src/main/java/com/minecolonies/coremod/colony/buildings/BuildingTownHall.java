@@ -5,7 +5,7 @@ import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowTownHall;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.requestsystem.token.IToken;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 

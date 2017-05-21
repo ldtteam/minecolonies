@@ -6,15 +6,15 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.permissions.Action;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
+import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.coremod.colony.workorders.AbstractWorkOrderBuildDecoration;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.event.EventHandler;
-import com.minecolonies.coremod.lib.Constants;
-import com.minecolonies.coremod.util.BlockPosUtil;
-import com.minecolonies.coremod.util.BlockUtils;
+import com.minecolonies.api.lib.Constants;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.coremod.util.LanguageHandler;
-import com.minecolonies.coremod.util.Log;
+import com.minecolonies.api.util.Log;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -231,7 +231,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
     }
 
     /**
-     * Creates the {@link WorkOrderBuildDecoration} to start building the decoration.
+     * Creates the {@link AbstractWorkOrderBuildDecoration} to start building the decoration.
      *
      * @param world         The world the decoration is being built in.
      * @param player        The player who placed the decoration.
@@ -249,7 +249,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
         @Nullable final Colony colony = ColonyManager.getColony(world, buildPos);
         if (colony != null && colony.getPermissions().hasPermission(player, Action.PLACE_HUTS))
         {
-            colony.getWorkManager().addWorkOrder(new WorkOrderBuildDecoration(sn.toString(), workOrderName, rotation, buildPos, mirror));
+            colony.getWorkManager().addWorkOrder(new AbstractWorkOrderBuildDecoration(sn.toString(), workOrderName, rotation, buildPos, mirror));
         }
         else
         {

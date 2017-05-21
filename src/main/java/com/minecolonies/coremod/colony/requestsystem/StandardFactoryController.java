@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.colony.requestsystem;
 
 import com.minecolonies.blockout.Log;
-import com.minecolonies.coremod.colony.requestsystem.factory.IFactory;
-import com.minecolonies.coremod.colony.requestsystem.factory.IFactoryController;
+import com.minecolonies.api.colony.requestsystem.factory.IFactory;
+import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 

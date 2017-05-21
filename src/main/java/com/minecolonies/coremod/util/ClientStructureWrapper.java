@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.util;
 
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.structures.helpers.Settings;
 import com.minecolonies.structures.helpers.Structure;

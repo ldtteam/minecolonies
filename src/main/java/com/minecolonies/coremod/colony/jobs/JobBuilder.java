@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.coremod.client.render.RenderBipedCitizen;
+import com.minecolonies.api.client.render.Model;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
+import com.minecolonies.coremod.colony.workorders.AbstractWorkOrderBuild;
+import com.minecolonies.api.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.builder.EntityAIStructureBuilder;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
@@ -56,9 +56,9 @@ public class JobBuilder extends AbstractJobStructure
 
     @NotNull
     @Override
-    public RenderBipedCitizen.Model getModel()
+    public Model getModel()
     {
-        return RenderBipedCitizen.Model.BUILDER;
+        return Model.BUILDER;
     }
 
     @Override
@@ -131,13 +131,13 @@ public class JobBuilder extends AbstractJobStructure
 
     /**
      * Get the Work Order for the Job.
-     * Warning: WorkOrder is not cached
+     * Warning: AbstractWorkOrder is not cached
      *
-     * @return WorkOrderBuild for the Build
+     * @return AbstractWorkOrderBuild for the Build
      */
-    public WorkOrderBuild getWorkOrder()
+    public AbstractWorkOrderBuild getWorkOrder()
     {
-        return getColony().getWorkManager().getWorkOrder(workOrderId, WorkOrderBuild.class);
+        return getColony().getWorkManager().getWorkOrder(workOrderId, AbstractWorkOrderBuild.class);
     }
 
     /**
@@ -157,7 +157,7 @@ public class JobBuilder extends AbstractJobStructure
      *
      * @param order Work Order to associate with this job, or null
      */
-    public void setWorkOrder(@Nullable final WorkOrderBuild order)
+    public void setWorkOrder(@Nullable final AbstractWorkOrderBuild order)
     {
         if (order == null)
         {

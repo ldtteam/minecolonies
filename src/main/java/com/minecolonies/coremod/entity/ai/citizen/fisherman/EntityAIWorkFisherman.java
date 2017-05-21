@@ -7,7 +7,7 @@ import com.minecolonies.coremod.entity.EntityFishHook;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
-import com.minecolonies.coremod.entity.pathfinding.PathJobFindWater;
+import com.minecolonies.api.entity.pathfinding.PathJobFindWater;
 import com.minecolonies.coremod.sounds.FishermanSounds;
 import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.SoundUtils;

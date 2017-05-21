@@ -1,7 +1,8 @@
 package com.minecolonies.coremod.entity.ai.citizen.deliveryman;
 
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColony;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.colony.buildings.*;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.entity.EntityCitizen;

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
+import com.minecolonies.api.entity.DesiredCitizenActivity;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -64,7 +65,7 @@ public class EntityAIGoHome extends EntityAIBase
     @Override
     public boolean shouldExecute()
     {
-        return (citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP && (!citizen.isAtHome() || isCitizenHungry()))
+        return (citizen.getDesiredActivity() == DesiredCitizenActivity.SLEEP && (!citizen.isAtHome() || isCitizenHungry()))
                  || isCitizenStarving();
     }
 
@@ -96,7 +97,7 @@ public class EntityAIGoHome extends EntityAIBase
     @Override
     public boolean continueExecuting()
     {
-        return !citizen.getNavigator().noPath() && citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP;
+        return !citizen.getNavigator().noPath() && citizen.getDesiredActivity() == DesiredCitizenActivity.SLEEP;
     }
 
     @Override

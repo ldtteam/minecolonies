@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.colony.workorders;
 
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.WorkOrderView;
-import com.minecolonies.coremod.colony.workorder.IAbstractWorkOrder;
-import com.minecolonies.coremod.colony.workorder.WorkOrderType;
-import com.minecolonies.coremod.util.Log;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.coremod.colony.*;
+import com.minecolonies.api.colony.workorder.IWorkOrder;
+import com.minecolonies.api.colony.workorder.WorkOrderType;
+import com.minecolonies.api.util.Log;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -20,7 +20,7 @@ import java.util.Map;
 /**
  * General information between WorkOrders.
  */
-public abstract class AbstractWorkOrder implements IAbstractWorkOrder
+public abstract class AbstractWorkOrder implements IWorkOrder
 {
     private static final String                                          TAG_TYPE       = "type";
     private static final String                                          TAG_ID         = "id";
@@ -32,8 +32,8 @@ public abstract class AbstractWorkOrder implements IAbstractWorkOrder
     private static final Map<Class<? extends AbstractWorkOrder>, String> classToNameMap = new HashMap<>();
     static
     {
-        addMapping("build", WorkOrderBuild.class);
-        addMapping("decoration", WorkOrderBuildDecoration.class);
+        addMapping("build", AbstractWorkOrderBuild.class);
+        addMapping("decoration", AbstractWorkOrderBuildDecoration.class);
     }
 
     protected int id;
@@ -105,7 +105,7 @@ public abstract class AbstractWorkOrder implements IAbstractWorkOrder
 
         if (order == null)
         {
-            Log.getLogger().warn(String.format("Unknown WorkOrder type '%s' or missing constructor of proper format.", compound.getString(TAG_TYPE)));
+            Log.getLogger().warn(String.format("Unknown AbstractWorkOrder type '%s' or missing constructor of proper format.", compound.getString(TAG_TYPE)));
             return null;
         }
         try
@@ -114,7 +114,7 @@ public abstract class AbstractWorkOrder implements IAbstractWorkOrder
         }
         catch (final RuntimeException ex)
         {
-            Log.getLogger().error(String.format("A WorkOrder %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
+            Log.getLogger().error(String.format("A AbstractWorkOrder %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
               compound.getString(TAG_TYPE), oclass.getName()), ex);
             return null;
         }
@@ -123,7 +123,7 @@ public abstract class AbstractWorkOrder implements IAbstractWorkOrder
     }
 
     /**
-     * Read the WorkOrder data from the NBTTagCompound.
+     * Read the AbstractWorkOrder data from the NBTTagCompound.
      *
      * @param compound NBT Tag compound
      */
@@ -135,7 +135,7 @@ public abstract class AbstractWorkOrder implements IAbstractWorkOrder
     }
 
     /**
-     * Create a WorkOrder View from a buffer.
+     * Create a AbstractWorkOrder View from a buffer.
      *
      * @param buf The network data
      * @return View object of the workOrder
@@ -151,7 +151,7 @@ public abstract class AbstractWorkOrder implements IAbstractWorkOrder
         }
         catch (final RuntimeException ex)
         {
-            Log.getLogger().error(String.format("A WorkOrder.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
+            Log.getLogger().error(String.format("A AbstractWorkOrder.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
               workOrderView.getId()), ex);
             workOrderView = null;
         }
@@ -229,14 +229,8 @@ public abstract class AbstractWorkOrder implements IAbstractWorkOrder
         return claimedBy != 0;
     }
 
-    /**
-     * Is the Work Order claimed by the given citizen?
-     *
-     * @param citizen The citizen to check
-     * @return true if the Work Order is claimed by this Citizen
-     */
     @Override
-    public boolean isClaimedBy(@NotNull final CitizenData citizen)
+    public boolean isClaimedBy(@NotNull final ICitizenData citizen)
     {
         return citizen.getId() == claimedBy;
     }
@@ -257,7 +251,7 @@ public abstract class AbstractWorkOrder implements IAbstractWorkOrder
      *
      * @param citizen {@link CitizenData}
      */
-    void setClaimedBy(@Nullable final CitizenData citizen)
+    void setClaimedBy(@Nullable final ICitizenData citizen)
     {
         changed = true;
         claimedBy = (citizen != null) ? citizen.getId() : 0;
@@ -297,13 +291,13 @@ public abstract class AbstractWorkOrder implements IAbstractWorkOrder
     }
 
     /**
-     * Is this WorkOrder still valid?  If not, it will be deleted.
+     * Is this AbstractWorkOrder still valid?  If not, it will be deleted.
      *
      * @param colony The colony that owns the Work Order
-     * @return True if the WorkOrder is still valid, or False if it should be deleted
+     * @return True if the AbstractWorkOrder is still valid, or False if it should be deleted
      */
     @Override
-    public boolean isValid(final Colony colony)
+    public boolean isValid(final IColony colony)
     {
         return true;
     }
@@ -325,7 +319,7 @@ public abstract class AbstractWorkOrder implements IAbstractWorkOrder
     }
 
     /**
-     * Gets of the WorkOrder Type. Overwrite this for the different implementations.
+     * Gets of the AbstractWorkOrder Type. Overwrite this for the different implementations.
      *
      * @return the type.
      */
@@ -333,7 +327,7 @@ public abstract class AbstractWorkOrder implements IAbstractWorkOrder
     protected abstract WorkOrderType getType();
 
     /**
-     * Gets the value of the WorkOrder. Overwrite this in every subclass.
+     * Gets the value of the AbstractWorkOrder. Overwrite this in every subclass.
      *
      * @return a description string.
      */

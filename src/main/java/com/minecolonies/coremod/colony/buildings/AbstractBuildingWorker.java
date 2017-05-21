@@ -4,7 +4,7 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.requestsystem.token.IToken;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
@@ -74,7 +74,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         // If we have a worker, it no longer works here
         if (worker != null)
         {
-            final EntityCitizen tempCitizen = worker.getCitizenEntity();
+            final EntityCitizen tempCitizen = worker.getCitizen();
             worker.setWorkBuilding(null);
             if (tempCitizen != null)
             {
@@ -87,7 +87,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         // If we set a worker, inform it of such
         if (worker != null)
         {
-            final EntityCitizen tempCitizen = citizen.getCitizenEntity();
+            final EntityCitizen tempCitizen = citizen.getCitizen();
             if (tempCitizen != null && !tempCitizen.getLastJob().equals(getJobName()))
             {
                 citizen.resetExperienceAndLevel();
@@ -123,7 +123,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         {
             return null;
         }
-        return worker.getCitizenEntity();
+        return worker.getCitizen();
     }
 
     @Override

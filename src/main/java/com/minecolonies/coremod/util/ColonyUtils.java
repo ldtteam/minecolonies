@@ -20,7 +20,7 @@ public class ColonyUtils
      */
     public static boolean isCitizenMissingFromWorld(@NotNull final CitizenData citizen)
     {
-        final EntityCitizen entity = citizen.getCitizenEntity();
+        final EntityCitizen entity = citizen.getCitizen();
 
         return entity != null && entity.world.getEntityByID(entity.getEntityId()) != entity;
     }

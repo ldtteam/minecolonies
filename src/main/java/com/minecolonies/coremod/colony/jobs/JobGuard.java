@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.coremod.client.render.RenderBipedCitizen;
+import com.minecolonies.api.client.render.Model;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingGuardTower;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
+import com.minecolonies.api.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.guard.EntityAIMeleeGuard;
 import com.minecolonies.coremod.entity.ai.citizen.guard.EntityAIRangeGuard;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +40,7 @@ public class JobGuard extends AbstractJob
 
     @NotNull
     @Override
-    public RenderBipedCitizen.Model getModel()
+    public Model getModel()
     {
         final AbstractBuilding building = getCitizen().getWorkBuilding();
         if (building instanceof BuildingGuardTower)
@@ -53,11 +53,11 @@ public class JobGuard extends AbstractJob
 
             if (job == BuildingGuardTower.GuardJob.KNIGHT)
             {
-                return RenderBipedCitizen.Model.KNIGHT_GUARD;
+                return Model.KNIGHT_GUARD;
             }
-            return RenderBipedCitizen.Model.ARCHER_GUARD;
+            return Model.ARCHER_GUARD;
         }
-        return RenderBipedCitizen.Model.ARCHER_GUARD;
+        return Model.ARCHER_GUARD;
     }
 
     /**

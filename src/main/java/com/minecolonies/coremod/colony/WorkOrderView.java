@@ -1,13 +1,13 @@
 package com.minecolonies.coremod.colony;
 
-import com.minecolonies.coremod.colony.workorder.WorkOrderType;
+import com.minecolonies.api.colony.workorder.WorkOrderType;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * The WorkOrderView is the client-side representation of a WorkOrders. Views
- * contain the WorkOrder's data that is relevant to a Client, in a more
+ * contain the AbstractWorkOrder's data that is relevant to a Client, in a more
  * client-friendly form Mutable operations on a View result in a message to the
  * server to perform the operation
  */

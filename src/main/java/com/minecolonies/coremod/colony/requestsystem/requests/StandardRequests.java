@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.colony.requestsystem.requests;
 
-import com.minecolonies.coremod.colony.requestsystem.RequestState;
+import com.minecolonies.api.colony.requestsystem.RequestState;
 import com.minecolonies.coremod.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.coremod.colony.requestsystem.requestable.Tool;
-import com.minecolonies.coremod.colony.requestsystem.requester.IRequester;
-import com.minecolonies.coremod.colony.requestsystem.token.IToken;
+import com.minecolonies.api.colony.requestsystem.requester.IRequester;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 

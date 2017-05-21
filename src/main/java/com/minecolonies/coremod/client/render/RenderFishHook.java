@@ -2,7 +2,7 @@ package com.minecolonies.coremod.client.render;
 
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
-import com.minecolonies.coremod.lib.Literals;
+import com.minecolonies.api.lib.Literals;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;

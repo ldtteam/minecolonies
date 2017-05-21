@@ -4,11 +4,11 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.permissions.Action;
+import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.util.BlockPosUtil;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.util.LanguageHandler;
-import com.minecolonies.coremod.util.Log;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -85,7 +85,7 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
                     {
                         Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", colony.getID(), citizenData.getId()));
                         colony.spawnCitizen(citizenData);
-                        citizen = citizenData.getCitizenEntity();
+                        citizen = citizenData.getCitizen();
                     }
                     else
                     {

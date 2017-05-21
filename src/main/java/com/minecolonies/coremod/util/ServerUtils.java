@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.util;
 
-import com.minecolonies.coremod.colony.permissions.Player;
+import com.minecolonies.api.colony.permissions.Player;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;

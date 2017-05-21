@@ -1,18 +1,19 @@
 package com.minecolonies.coremod.colony;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.IBuilding;
-import com.minecolonies.coremod.colony.permissions.Player;
-import com.minecolonies.coremod.colony.permissions.Rank;
-import com.minecolonies.coremod.colony.requestsystem.token.IToken;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.permissions.Player;
+import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.util.AchievementUtils;
 import com.minecolonies.coremod.util.LanguageHandler;
-import com.minecolonies.coremod.util.Log;
+import com.minecolonies.api.util.Log;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -177,11 +178,11 @@ public final class ColonyManager
             for (final CitizenData citizenData : new ArrayList<>(colony.getCitizens().values()))
             {
                 Log.getLogger().info("Kill Citizen " + citizenData.getName());
-                final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
+                final EntityCitizen entityCitizen = citizenData.getCitizen();
                 if (entityCitizen != null)
                 {
                     final World world = entityCitizen.getEntityWorld();
-                    citizenData.getCitizenEntity().onDeath(CONSOLE_DAMAGE_SOURCE);
+                    citizenData.getCitizen().onDeath(CONSOLE_DAMAGE_SOURCE);
                     colonyWorlds.add(world);
                 }
             }

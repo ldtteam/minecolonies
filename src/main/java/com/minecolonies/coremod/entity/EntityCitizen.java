@@ -1,23 +1,31 @@
 package com.minecolonies.coremod.entity;
 
+import com.minecolonies.api.client.render.Model;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.entity.Citizen;
+import com.minecolonies.api.entity.CitizenStatus;
+import com.minecolonies.api.entity.DesiredCitizenActivity;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
-import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingFarmer;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.*;
-import com.minecolonies.coremod.colony.permissions.Action;
-import com.minecolonies.coremod.colony.permissions.Player;
-import com.minecolonies.coremod.colony.permissions.Rank;
+import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.colony.permissions.Player;
+import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.minimal.*;
-import com.minecolonies.coremod.entity.pathfinding.PathNavigate;
+import com.minecolonies.api.entity.pathfinding.PathNavigate;
 import com.minecolonies.coremod.entity.pathfinding.WalkToProxy;
-import com.minecolonies.coremod.inventory.InventoryCitizen;
-import com.minecolonies.coremod.lib.Constants;
+import com.minecolonies.api.inventory.InventoryCitizen;
+import com.minecolonies.api.lib.Constants;
 import com.minecolonies.coremod.network.messages.BlockParticleEffectMessage;
 import com.minecolonies.coremod.util.*;
 import net.minecraft.block.Block;
@@ -65,7 +73,7 @@ import java.util.*;
 /**
  * The Class used to represent the citizen entities.
  */
-public class EntityCitizen extends EntityAgeable implements INpc
+public class EntityCitizen extends Citizen
 {
     /**
      * Base movement speed of every citizen.
@@ -236,12 +244,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @NotNull
     private final Map<String, Integer> statusMessages = new HashMap<>();
     private final PathNavigate newNavigator;
-    protected Status                   status  = Status.IDLE;
+    protected CitizenStatus status  = CitizenStatus.IDLE;
     /**
      * The last job of the citizen.
      */
-    private   String                   lastJob = "";
-    private   RenderBipedCitizen.Model modelId = RenderBipedCitizen.Model.SETTLER;
+    private   String        lastJob = "";
+    private   Model         modelId = Model.SETTLER;
     private String           renderMetadata;
     private ResourceLocation texture;
     private int              colonyId;
@@ -258,9 +266,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private double skillModifier = 0;
     private boolean     female;
     @Nullable
-    private Colony      colony;
+    private IColony      colony;
     @Nullable
-    private CitizenData citizenData;
+    private ICitizenData citizenData;
 
     /**
      * The entities current Position.
@@ -360,8 +368,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
         onJobChanged(getColonyJob());
     }
 
+    @Override
     @Nullable
-    public AbstractJob getColonyJob()
+    public IJob getColonyJob()
     {
         return citizenData == null ? null : citizenData.getJob();
     }
@@ -371,7 +380,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
      *
      * @param job the set job.
      */
-    public void onJobChanged(@Nullable final AbstractJob job)
+    @Override
+    public void onJobChanged(@Nullable final IJob job)
     {
         //  Model
         if (job == null)
@@ -379,16 +389,16 @@ public class EntityCitizen extends EntityAgeable implements INpc
             switch (getLevel())
             {
                 case 1:
-                    modelId = RenderBipedCitizen.Model.CITIZEN;
+                    modelId = Model.CITIZEN;
                     break;
                 case 2:
-                    modelId = RenderBipedCitizen.Model.NOBLE;
+                    modelId = Model.NOBLE;
                     break;
                 case 3:
-                    modelId = RenderBipedCitizen.Model.ARISTOCRAT;
+                    modelId = Model.ARISTOCRAT;
                     break;
                 default:
-                    modelId = RenderBipedCitizen.Model.SETTLER;
+                    modelId = Model.SETTLER;
                     break;
             }
         }
@@ -416,16 +426,19 @@ public class EntityCitizen extends EntityAgeable implements INpc
             job.addTasks(this.tasks);
             if (ticksExisted > 0 && getWorkBuilding() != null)
             {
-                BlockPosUtil.tryMoveLivingToXYZ(this, getWorkBuilding().getLocation().getInDimensionLocation());
+                BlockPos buildingPos = getWorkBuilding().getLocation().getInDimensionLocation();
+                EntityUtils.tryMoveLivingToXYZ(this, buildingPos.getX(), buildingPos.getY(), buildingPos.getZ());
             }
         }
     }
 
+    @Override
     public int getLevel()
     {
         return level;
     }
 
+    @Override
     public void setRenderMetadata(final String metadata)
     {
         renderMetadata = metadata;
@@ -452,18 +465,21 @@ public class EntityCitizen extends EntityAgeable implements INpc
      *
      * @return the building or null if none present.
      */
+    @Override
     @Nullable
     public AbstractBuildingWorker getWorkBuilding()
     {
         return (citizenData == null) ? null : citizenData.getWorkBuilding();
     }
 
-    public Status getStatus()
+    @Override
+    public CitizenStatus getStatus()
     {
         return status;
     }
 
-    public void setStatus(final Status status)
+    @Override
+    public void setStatus(final CitizenStatus status)
     {
         this.status = status;
     }
@@ -471,6 +487,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * On Inventory change, mark the building dirty.
      */
+    @Override
     public void onInventoryChanged()
     {
         final AbstractBuildingWorker building = citizenData.getWorkBuilding();
@@ -488,6 +505,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param range Range to check in
      * @return True if worker is at site, otherwise false.
      */
+    @Override
     public boolean isWorkerAtSiteWithMove(@NotNull final BlockPos site, final int range)
     {
         if (proxy == null)
@@ -498,23 +516,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Get the job of the citizen.
-     *
-     * @param type of the type.
-     * @param <J>  wildcard.
-     * @return the job.
-     */
-    @Nullable
-    public <J extends AbstractJob> J getColonyJob(@NotNull final Class<J> type)
-    {
-        return citizenData == null ? null : citizenData.getJob(type);
-    }
-
-    /**
      * Change the citizens Rotation to look at said block.
      *
      * @param block the block he should look at.
      */
+    @Override
     public void faceBlock(@Nullable final BlockPos block)
     {
         if (block == null)
@@ -569,6 +575,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Collect exp orbs around the entity.
      */
+    @Override
     public void gatherXp()
     {
         for (@NotNull final EntityXPOrb orb : getXPOrbsOnGrid())
@@ -597,6 +604,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      *
      * @param xp the amount of points added.
      */
+    @Override
     public void addExperience(final double xp)
     {
         final BuildingHome home = getHomeBuilding();
@@ -671,6 +679,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      *
      * @return citizen ExperienceLevel value.
      */
+    @Override
     public int getExperienceLevel()
     {
         if (citizenData != null)
@@ -821,7 +830,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param source The damage source.
      * @param job    The job of the citizen.
      */
-    public void triggerDeathAchievement(final DamageSource source, final AbstractJob job)
+    @Override
+    public void triggerDeathAchievement(final DamageSource source, final IJob job)
     {
         if (job instanceof JobMiner)
         {
@@ -848,6 +858,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
     }
 
+    @Override
     @Nullable
     public CitizenData getCitizenData()
     {
@@ -865,6 +876,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         return citizenData.getExperience();
     }
 
+    @Override
     @Nullable
     public Colony getColony()
     {
@@ -963,7 +975,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         dataManager.register(DATA_TEXTURE, 0);
         dataManager.register(DATA_LEVEL, 0);
         dataManager.register(DATA_IS_FEMALE, 0);
-        dataManager.register(DATA_MODEL, RenderBipedCitizen.Model.SETTLER.name());
+        dataManager.register(DATA_MODEL, Model.SETTLER.name());
         dataManager.register(DATA_RENDER_METADATA, "");
     }
 
@@ -989,7 +1001,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         super.readEntityFromNBT(compound);
 
-        status = Status.values()[compound.getInteger(TAG_STATUS)];
+        status = CitizenStatus.values()[compound.getInteger(TAG_STATUS)];
         colonyId = compound.getInteger(TAG_COLONY_ID);
         citizenId = compound.getInteger(TAG_CITIZEN);
 
@@ -1083,7 +1095,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
             female = dataManager.get(DATA_IS_FEMALE) != 0;
             level = dataManager.get(DATA_LEVEL);
-            modelId = RenderBipedCitizen.Model.valueOf(dataManager.get(DATA_MODEL));
+            modelId = Model.valueOf(dataManager.get(DATA_MODEL));
             textureId = dataManager.get(DATA_TEXTURE);
             renderMetadata = dataManager.get(DATA_RENDER_METADATA);
             setTexture();
@@ -1209,7 +1221,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             return;
         }
 
-        final RenderBipedCitizen.Model model = getModelID();
+        final Model model = getModelID();
 
         String textureBase = "textures/entity/" + model.textureBase;
         textureBase += female ? "Female" : "Male";
@@ -1218,12 +1230,14 @@ public class EntityCitizen extends EntityAgeable implements INpc
         texture = new ResourceLocation(Constants.MOD_ID, textureBase + moddedTextureId + renderMetadata + ".png");
     }
 
+    @Override
     public int getOffsetTicks()
     {
         return this.ticksExisted + OFFSET_TICK_MULTIPLIER * this.getEntityId();
     }
 
-    public RenderBipedCitizen.Model getModelID()
+    @Override
+    public Model getModelID()
     {
         return modelId;
     }
@@ -1231,6 +1245,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Server-specific update for the EntityCitizen.
      */
+    @Override
     public void updateColonyServer()
     {
         if (colonyId == 0)
@@ -1271,7 +1286,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             return;
         }
 
-        @Nullable final EntityCitizen existingCitizen = data.getCitizenEntity();
+        @Nullable final EntityCitizen existingCitizen = data.getCitizen();
         if (existingCitizen != null && existingCitizen != this)
         {
             // This Citizen already has a different Entity registered to it
@@ -1305,7 +1320,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param c    the colony.
      * @param data the data of the new citizen.
      */
-    public void setColony(@Nullable final Colony c, @Nullable final CitizenData data)
+    @Override
+    public void setColony(@Nullable final IColony c, @Nullable final ICitizenData data)
     {
         if (c == null)
         {
@@ -1362,6 +1378,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      *
      * @return the last job he had.
      */
+    @Override
     @NotNull
     public String getLastJob()
     {
@@ -1373,6 +1390,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      *
      * @param jobName the job he last had.
      */
+    @Override
     public void setLastJob(@NotNull String jobName)
     {
         this.lastJob = jobName;
@@ -1383,6 +1401,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      *
      * @return random object.
      */
+    @Override
     public Random getRandom()
     {
         return rand;
@@ -1441,6 +1460,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      *
      * @return the inventory this citizen has.
      */
+    @Override
     @NotNull
     public InventoryCitizen getInventoryCitizen()
     {
@@ -1463,6 +1483,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      *
      * @return location of the texture.
      */
+    @Override
     public ResourceLocation getTexture()
     {
         return texture;
@@ -1473,6 +1494,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      *
      * @return true if female.
      */
+    @Override
     public boolean isFemale()
     {
         return female;
@@ -1481,11 +1503,13 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Clears the colony of the citizen.
      */
+    @Override
     public void clearColony()
     {
         setColony(null, null);
     }
 
+    @Override
     public boolean isAtHome()
     {
         @Nullable final BlockPos homePosition = getHomePosition();
@@ -1514,6 +1538,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         return null;
     }
 
+    @Override
     public boolean isInventoryFull()
     {
         return InventoryUtils.isProviderFull(this);
@@ -1522,6 +1547,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Lets the citizen tryToEat to replentish saturation.
      */
+    @Override
     public void tryToEat()
     {
         final int slot = InventoryUtils.findFirstSlotInProviderWith(this,
@@ -1542,12 +1568,13 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
     }
 
+    @Override
     @NotNull
-    public DesiredActivity getDesiredActivity()
+    public DesiredCitizenActivity getDesiredActivity()
     {
         if (this.getColonyJob() instanceof JobGuard)
         {
-            return DesiredActivity.WORK;
+            return DesiredCitizenActivity.WORK;
         }
 
         if (!world.isDaytime())
@@ -1561,14 +1588,14 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 citizenData.decreaseSaturation(decreaseBy);
                 citizenData.markDirty();
             }
-            return DesiredActivity.SLEEP;
+            return DesiredCitizenActivity.SLEEP;
         }
 
         isDay = true;
 
         if (world.isRaining() && !shouldWorkWhileRaining())
         {
-            return DesiredActivity.IDLE;
+            return DesiredCitizenActivity.IDLE;
         }
         else
         {
@@ -1576,7 +1603,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             {
                 this.getNavigator().clearPathEntity();
             }
-            return DesiredActivity.WORK;
+            return DesiredCitizenActivity.WORK;
         }
     }
 
@@ -1617,6 +1644,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param itemDamage the damage value
      * @return the slot.
      */
+    @Override
     public int findFirstSlotInInventoryWith(final Item targetItem, int itemDamage)
     {
         return InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(getInventoryCitizen()), targetItem, itemDamage);
@@ -1629,6 +1657,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param itemDamage the damage value
      * @return the slot.
      */
+    @Override
     public int findFirstSlotInInventoryWith(final Block block, int itemDamage)
     {
         return InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(getInventoryCitizen()), block, itemDamage);
@@ -1641,6 +1670,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param itemDamage the damage value
      * @return the quantity.
      */
+    @Override
     public int getItemCountInInventory(final Block block, int itemDamage)
     {
         return InventoryUtils.getItemCountInItemHandler(new InvWrapper(getInventoryCitizen()), block, itemDamage);
@@ -1653,6 +1683,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param itemDamage the damage value.
      * @return the quantity.
      */
+    @Override
     public int getItemCountInInventory(final Item targetItem, int itemDamage)
     {
         return InventoryUtils.getItemCountInItemHandler(new InvWrapper(getInventoryCitizen()), targetItem, itemDamage);
@@ -1665,6 +1696,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param itemDamage the damage value
      * @return true if so.
      */
+    @Override
     public boolean hasItemInInventory(final Block block, int itemDamage)
     {
         return InventoryUtils.hasItemInItemHandler(new InvWrapper(getInventoryCitizen()), block, itemDamage);
@@ -1677,6 +1709,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param itemDamage the damage value
      * @return true if so.
      */
+    @Override
     public boolean hasItemInInventory(final Item item, int itemDamage)
     {
         return InventoryUtils.hasItemInItemHandler(new InvWrapper(getInventoryCitizen()), item, itemDamage);
@@ -1721,6 +1754,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Removes the currently held item.
      */
+    @Override
     public void removeHeldItem()
     {
         setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStack.EMPTY);
@@ -1731,6 +1765,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      *
      * @param slot from the inventory slot.
      */
+    @Override
     public void setHeldItem(final int slot)
     {
         inventory.setHeldItem(slot);
@@ -1744,6 +1779,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      *
      * @param blockPos Block position.
      */
+    @Override
     public void hitBlockWithToolInHand(@Nullable final BlockPos blockPos)
     {
         if (blockPos == null)
@@ -1819,6 +1855,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      *
      * @param damage amount of damage.
      */
+    @Override
     public void damageItemInHand(final int damage)
     {
         final ItemStack heldItem = inventory.getHeldItemMainhand();
@@ -1845,6 +1882,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      *
      * @param blockPos Block position.
      */
+    @Override
     public void breakBlockWithToolInHand(@Nullable final BlockPos blockPos)
     {
         if (blockPos == null)
@@ -1861,6 +1899,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param key  the key to retrieve the string.
      * @param args additional arguments.
      */
+    @Override
     public void sendLocalizedChat(final String key, final Object... args)
     {
         sendChat(key, args);
@@ -1903,6 +1942,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      *
      * @return citizen intelligence value.
      */
+    @Override
     public int getIntelligence()
     {
         return citizenData.getIntelligence();
@@ -1913,6 +1953,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      *
      * @return citizen Charisma value.
      */
+    @Override
     public int getCharisma()
     {
         return citizenData.getCharisma();
@@ -1923,6 +1964,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      *
      * @return citizen Strength value.
      */
+    @Override
     public int getStrength()
     {
         return citizenData.getStrength();
@@ -1933,6 +1975,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      *
      * @return citizen Endurance value.
      */
+    @Override
     public int getEndurance()
     {
         return citizenData.getEndurance();
@@ -1943,6 +1986,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      *
      * @return citizen Dexterity value.
      */
+    @Override
     public int getDexterity()
     {
         return citizenData.getDexterity();
@@ -1954,6 +1998,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      *
      * @param modifier input modifier.
      */
+    @Override
     public void setSkillModifier(final int modifier)
     {
         skillModifier = modifier;
@@ -1962,6 +2007,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Called when the citizen wakes up.
      */
+    @Override
     public void onWakeUp()
     {
         if (this.getWorkBuilding() instanceof BuildingFarmer)
@@ -1970,29 +2016,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
     }
 
-    /**
-     * Enum describing the citizens activity.
-     */
-    public enum DesiredActivity
+    @Override
+    public World getWorld()
     {
-        SLEEP,
-        IDLE,
-        WORK
-    }
-
-    /**
-     * Used for chat messages, sounds, and other need based interactions.
-     * Created: June 20, 2014
-     *
-     * @author Colton
-     */
-    public enum Status
-    {
-        IDLE,
-        SLEEPING,
-        WORKING,
-        GETTING_ITEMS,
-        NEED_ASSISTANCE,
-        PATHFINDING_ERROR
+        return world;
     }
 }

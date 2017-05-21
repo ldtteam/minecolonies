@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.coremod.client.render.RenderBipedCitizen;
+import com.minecolonies.api.client.render.Model;
 import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.IColony;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
-import com.minecolonies.coremod.util.BlockPosUtil;
+import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -47,9 +47,9 @@ public class JobDeliveryman extends AbstractJob
 
     @NotNull
     @Override
-    public RenderBipedCitizen.Model getModel()
+    public Model getModel()
     {
-        return RenderBipedCitizen.Model.DELIVERYMAN;
+        return Model.DELIVERYMAN;
     }
 
     @Override

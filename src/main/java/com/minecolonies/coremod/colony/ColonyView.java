@@ -2,23 +2,26 @@ package com.minecolonies.coremod.colony;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IWorkManager;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
-import com.minecolonies.coremod.colony.buildings.IBuilding;
-import com.minecolonies.coremod.colony.permissions.Action;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.colony.permissions.Permissions;
-import com.minecolonies.coremod.colony.permissions.Player;
-import com.minecolonies.coremod.colony.permissions.Rank;
-import com.minecolonies.coremod.colony.requestsystem.IRequestManager;
+import com.minecolonies.api.colony.permissions.Player;
+import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.colony.requestsystem.IRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.StandardFactoryController;
-import com.minecolonies.coremod.colony.requestsystem.factory.IFactoryController;
-import com.minecolonies.coremod.colony.requestsystem.token.IToken;
+import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.TownHallRenameMessage;
-import com.minecolonies.coremod.util.BlockPosUtil;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.util.MathUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
@@ -371,6 +374,18 @@ public final class ColonyView implements IColony
         return citizens.get(id);
     }
 
+    @Override
+    public List<BlockPos> getDeliverymanRequired()
+    {
+        return null;
+    }
+
+    @Override
+    public void onBuildingUpgradeComplete(@NotNull final IBuilding building, final int level)
+    {
+
+    }
+
     /**
      * Populate a ColonyView from the network data.
      *
@@ -641,6 +656,19 @@ public final class ColonyView implements IColony
     public int getID()
     {
         return id;
+    }
+
+    @Override
+    public void incrementStatistic(@NotNull final String statistic)
+    {
+
+    }
+
+    @NotNull
+    @Override
+    public IWorkManager getWorkManager()
+    {
+        return null;
     }
 
     /**

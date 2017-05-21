@@ -3,7 +3,7 @@ package com.minecolonies.coremod.commands;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.util.Log;
+import com.minecolonies.api.util.Log;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -48,7 +48,7 @@ public class RespawnCitizenCommand extends AbstractCitizensCommands
     void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final Colony colony, final int citizenId)
     {
         final CitizenData citizenData = (CitizenData) colony.getCitizen(citizenId);
-        final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
+        final EntityCitizen entityCitizen = citizenData.getCitizen();
         sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, citizenData.getId(), citizenData.getName())));
 
         if (entityCitizen == null)

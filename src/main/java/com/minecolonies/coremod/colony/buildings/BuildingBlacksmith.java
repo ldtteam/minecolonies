@@ -7,7 +7,10 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobPlaceholder;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -80,12 +83,13 @@ public class BuildingBlacksmith extends AbstractBuildingWorker
          * @param c the colonyView.
          * @param l the location of the block.
          */
-        public View(final ColonyView c, final BlockPos l)
+        public View(final ColonyView c, @NotNull final BlockPos l, @NotNull final IToken id)
         {
-            super(c, l);
+            super(c,l,id);
         }
 
         @NotNull
+        @SideOnly(Side.CLIENT)
         public Window getWindow()
         {
             return new WindowHutWorkerPlaceholder<AbstractBuildingWorker.View>(this, BLACKSMITH_HUT_NAME);

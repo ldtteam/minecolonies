@@ -8,8 +8,8 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
-import com.minecolonies.coremod.colony.requestsystem.token.IToken;
-import com.minecolonies.coremod.util.BlockPosUtil;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
@@ -354,9 +354,9 @@ public class BuildingGuardTower extends AbstractBuildingWorker
         {
             this.getWorkerEntity().getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH);
         }
-        else if (citizen != null && citizen.getCitizenEntity() != null)
+        else if (citizen != null && citizen.getCitizen() != null)
         {
-            citizen.getCitizenEntity().getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH + getBonusHealth());
+            citizen.getCitizen().getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH + getBonusHealth());
         }
         super.setWorker(citizen);
     }

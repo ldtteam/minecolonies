@@ -3,7 +3,7 @@ package com.minecolonies.coremod.permissions;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
-import com.minecolonies.coremod.colony.permissions.Action;
+import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.EntityCitizen;

@@ -4,7 +4,7 @@ import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.TextField;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.lib.Constants;
+import com.minecolonies.api.lib.Constants;
 import org.jetbrains.annotations.NotNull;
 
 /**

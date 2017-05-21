@@ -1,8 +1,9 @@
 package com.minecolonies.coremod.tileentities;
 
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.*;
-import com.minecolonies.coremod.inventory.InventoryCitizen;
+import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.InventoryFunctions;
 import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.LanguageHandler;
@@ -79,7 +80,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
               && wareHouseBuilding instanceof BuildingWareHouse
               && !((BuildingWareHouse) wareHouseBuilding).getRegisteredDeliverymen().isEmpty())
         {
-            final Map<BlockPos, AbstractBuilding> buildingMap = getColony().getBuildings();
+            final Map<BlockPos, IBuilding> buildingMap = getColony().getBuildings();
 
             if (buildingMap.size() < this.index)
             {
@@ -87,7 +88,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             }
 
             int i = 1;
-            for (@NotNull final Map.Entry<BlockPos, AbstractBuilding> buildingEntry : buildingMap.entrySet())
+            for (@NotNull final Map.Entry<BlockPos, IBuilding> buildingEntry : buildingMap.entrySet())
             {
                 if (i == index)
                 {
@@ -152,7 +153,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      * @param addToList if is in warehouse should add to the list?
      * @return true if has something in warehouse to deliver.
      */
-    public boolean checkInWareHouse(@NotNull final AbstractBuilding buildingEntry, boolean addToList)
+    public boolean checkInWareHouse(@NotNull final IBuilding buildingEntry, boolean addToList)
     {
         if (buildingEntry.areItemsNeeded())
         {

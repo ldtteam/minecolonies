@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
 import com.google.common.collect.Lists;
-import com.minecolonies.coremod.colony.requestsystem.IRequestManager;
-import com.minecolonies.coremod.colony.requestsystem.location.ILocation;
-import com.minecolonies.coremod.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.IRequestManager;
+import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.coremod.colony.requestsystem.requestable.Delivery;
-import com.minecolonies.coremod.colony.requestsystem.token.IToken;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;

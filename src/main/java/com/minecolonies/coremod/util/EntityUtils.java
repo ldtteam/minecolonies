@@ -1,8 +1,10 @@
 package com.minecolonies.coremod.util;
 
+import com.minecolonies.api.entity.Citizen;
+import com.minecolonies.api.entity.CitizenStatus;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.block.BlockLeaves;
-import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
@@ -69,7 +71,7 @@ public final class EntityUtils
     }
 
     /**
-     * {@link #isWorkerAtSiteWithMove(EntityCitizen, int, int, int, int)}.
+     * {@link #isWorkerAtSiteWithMove(Citizen, int, int, int, int)}.
      *
      * @param worker Worker to check
      * @param x      X-coordinate
@@ -77,7 +79,7 @@ public final class EntityUtils
      * @param z      Z-coordinate
      * @return True if worker is at site, otherwise false
      */
-    public static boolean isWorkerAtSiteWithMove(@NotNull final EntityCitizen worker, final int x, final int y, final int z)
+    public static boolean isWorkerAtSiteWithMove(@NotNull final Citizen worker, final int x, final int y, final int z)
     {
         //Default range of 3 works better
         //Range of 2 get some workers stuck
@@ -95,7 +97,7 @@ public final class EntityUtils
      * @param range  Range to check in
      * @return True if worker is at site, otherwise false.
      */
-    public static boolean isWorkerAtSiteWithMove(@NotNull final EntityCitizen worker, final int x, final int y, final int z, final int range)
+    public static boolean isWorkerAtSiteWithMove(@NotNull final Citizen worker, final int x, final int y, final int z, final int range)
     {
         if (!isWorkerAtSite(worker, x, y, z, TELEPORT_RANGE))
         {
@@ -124,7 +126,7 @@ public final class EntityUtils
             //If not moving the try setting the point where the entity should move to
             if (worker.getNavigator().noPath() && !tryMoveLivingToXYZ(worker, x, y, z))
             {
-                worker.setStatus(EntityCitizen.Status.PATHFINDING_ERROR);
+                worker.setStatus(CitizenStatus.PATHFINDING_ERROR);
             }
             return false;
         }
@@ -142,7 +144,7 @@ public final class EntityUtils
      * @param range  Range to check in
      * @return True if worker is at site, otherwise false
      */
-    public static boolean isWorkerAtSite(@NotNull final EntityCitizen worker, final int x, final int y, final int z, final int range)
+    public static boolean isWorkerAtSite(@NotNull final Citizen worker, final int x, final int y, final int z, final int range)
     {
         return worker.getPosition().distanceSq(new Vec3i(x, y, z)) < MathUtils.square(range);
     }
@@ -293,29 +295,12 @@ public final class EntityUtils
     {
         for (int i = 1; i < AIR_SPACE_ABOVE_TO_CHECK; i++)
         {
-            if (solidOrLiquid(world, groundPosition.up(i)) || world.getBlockState(groundPosition.up(i)).getBlock() instanceof BlockLeaves)
+            if (BlockPosUtil.solidOrLiquid(world, groundPosition.up(i)) || world.getBlockState(groundPosition.up(i)).getBlock() instanceof BlockLeaves)
             {
                 return false;
             }
         }
         return world.getBlockState(groundPosition).getMaterial().isSolid();
-    }
-
-    /**
-     * Checks if a blockPos in a world is solid or liquid.
-     * <p>
-     * Useful to find a suitable Place to stand.
-     * (avoid these blocks to find one)
-     *
-     * @param world    the world to look in
-     * @param blockPos the blocks position
-     * @return true if solid or liquid
-     */
-    public static boolean solidOrLiquid(@NotNull final World world, @NotNull final BlockPos blockPos)
-    {
-        final Material material = world.getBlockState(blockPos).getMaterial();
-        return material.isSolid()
-                 || material.isLiquid();
     }
 
     /**

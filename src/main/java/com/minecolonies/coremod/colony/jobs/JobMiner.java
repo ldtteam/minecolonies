@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.coremod.client.render.RenderBipedCitizen;
+import com.minecolonies.api.client.render.Model;
 import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
+import com.minecolonies.api.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.miner.EntityAIStructureMiner;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,9 +30,9 @@ public class JobMiner extends AbstractJobStructure
 
     @NotNull
     @Override
-    public RenderBipedCitizen.Model getModel()
+    public Model getModel()
     {
-        return RenderBipedCitizen.Model.MINER;
+        return Model.MINER;
     }
 
     /**

@@ -1,13 +1,13 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.entity.Citizen;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.buildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
-import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Node;
-import com.minecolonies.coremod.util.BlockPosUtil;
 import com.minecolonies.coremod.util.EntityUtils;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +40,7 @@ public class WalkToProxy
     /**
      * The worker entity associated with the proxy.
      */
-    private final EntityCitizen worker;
+    private final Citizen worker;
 
     /**
      * The current proxy the citizen paths to.
@@ -62,7 +62,7 @@ public class WalkToProxy
      *
      * @param worker the worker.
      */
-    public WalkToProxy(EntityCitizen worker)
+    public WalkToProxy(Citizen worker)
     {
         this.worker = worker;
     }
@@ -183,7 +183,7 @@ public class WalkToProxy
     {
         BlockPos proxyPoint;
 
-        final AbstractBuildingWorker building = worker.getWorkBuilding();
+        final IBuilding building = worker.getWorkBuilding();
         if (worker.getColonyJob() != null && worker.getColonyJob() instanceof JobMiner && building instanceof BuildingMiner)
         {
             proxyPoint = getMinerProxy(target, distanceToPath, (BuildingMiner) building);

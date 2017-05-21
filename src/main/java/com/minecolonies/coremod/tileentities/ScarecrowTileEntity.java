@@ -1,9 +1,10 @@
 package com.minecolonies.coremod.tileentities;
 
+import com.minecolonies.api.entity.ai.citizen.farmer.ScareCrowType;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.inventory.InventoryField;
-import com.minecolonies.coremod.lib.Constants;
+import com.minecolonies.api.lib.Constants;
 import com.minecolonies.coremod.util.EntityUtils;
 import com.minecolonies.coremod.util.LanguageHandler;
 import net.minecraft.entity.Entity;
@@ -13,6 +14,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.World;
+import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,7 +23,7 @@ import java.util.Random;
 /**
  * The scarecrow tile entity to store extra data.
  */
-public class ScarecrowTileEntity extends TileEntityChest
+public class ScarecrowTileEntity extends TileEntityChest implements com.minecolonies.api.entity.ai.citizen.farmer.IScarecrow
 {
     /**
      * NBTTag to store the type.
@@ -46,7 +48,7 @@ public class ScarecrowTileEntity extends TileEntityChest
     /**
      * The inventory connected with the scarecrow.
      */
-    private InventoryField inventoryField;
+    private ItemStackHandler inventoryField;
 
     /**
      * The type of the scarecrow.
@@ -72,6 +74,7 @@ public class ScarecrowTileEntity extends TileEntityChest
      *
      * @return the string.
      */
+    @Override
     public String getDesc()
     {
         return name;
@@ -82,6 +85,7 @@ public class ScarecrowTileEntity extends TileEntityChest
      *
      * @param name string to set.
      */
+    @Override
     public void setName(final String name)
     {
         this.name = name;
@@ -151,6 +155,7 @@ public class ScarecrowTileEntity extends TileEntityChest
      *
      * @return the enum type.
      */
+    @Override
     public ScareCrowType getType()
     {
         if (this.type == null)
@@ -165,7 +170,8 @@ public class ScarecrowTileEntity extends TileEntityChest
      *
      * @return the inventory field of this scarecrow
      */
-    public InventoryField getInventoryField()
+    @Override
+    public ItemStackHandler getInventoryField()
     {
         return inventoryField;
     }
@@ -175,17 +181,9 @@ public class ScarecrowTileEntity extends TileEntityChest
      *
      * @param inventoryField the field to set it to
      */
-    public final void setInventoryField(final InventoryField inventoryField)
+    @Override
+    public final void setInventoryField(final ItemStackHandler inventoryField)
     {
         this.inventoryField = inventoryField;
-    }
-
-    /**
-     * Enum describing the different textures the scarecrow has.
-     */
-    public enum ScareCrowType
-    {
-        PUMPKINHEAD,
-        NORMAL
     }
 }

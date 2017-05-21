@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.event;
 
-import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
+import com.minecolonies.api.entity.pathfinding.Pathfinding;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;

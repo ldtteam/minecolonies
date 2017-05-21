@@ -1,10 +1,11 @@
 package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
-import com.minecolonies.coremod.entity.pathfinding.PathJobFindTree;
+import com.minecolonies.api.entity.pathfinding.PathJobFindTree;
 import com.minecolonies.coremod.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSapling;

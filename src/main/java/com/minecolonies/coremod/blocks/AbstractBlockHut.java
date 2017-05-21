@@ -1,11 +1,12 @@
 package com.minecolonies.coremod.blocks;
 
+import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.permissions.Action;
+import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
-import com.minecolonies.coremod.lib.Constants;
+import com.minecolonies.api.lib.Constants;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
@@ -36,7 +37,7 @@ import org.jetbrains.annotations.Nullable;
  * <p>
  * All AbstractBlockHut[something] should extend this class.
  */
-public abstract class AbstractBlockHut extends Block implements ITileEntityProvider
+public abstract class AbstractBlockHut extends Block implements ITileEntityProvider, IBuilderUndestroyable
 {
     public static final  PropertyDirection FACING     = BlockHorizontal.FACING;
     private static final float             HARDNESS   = 10F;

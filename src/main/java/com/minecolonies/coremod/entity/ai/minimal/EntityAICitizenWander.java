@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
+import com.minecolonies.api.entity.DesiredCitizenActivity;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.RandomPositionGenerator;
@@ -41,7 +42,7 @@ public class EntityAICitizenWander extends EntityAIBase
     @Override
     public boolean shouldExecute()
     {
-        if (isToOld() || checkForRandom() || citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP)
+        if (isToOld() || checkForRandom() || citizen.getDesiredActivity() == DesiredCitizenActivity.SLEEP)
         {
             return false;
         }

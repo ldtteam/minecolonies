@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.coremod.colony.buildings.BuildingFisherman;
-import com.minecolonies.coremod.lib.Constants;
+import com.minecolonies.api.lib.Constants;
 import org.jetbrains.annotations.NotNull;
 
 /**

@@ -1,12 +1,14 @@
 package com.minecolonies.coremod.entity.ai.citizen.farmer;
 
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.entity.ai.citizen.farmer.FieldStage;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.permissions.Action;
+import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.inventory.InventoryField;
-import com.minecolonies.coremod.lib.Constants;
+import com.minecolonies.api.lib.Constants;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import com.minecolonies.coremod.util.BlockPosUtil;
+import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -17,6 +19,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -135,7 +139,7 @@ public class Field extends Container
      * The colony of the field.
      */
     @Nullable
-    private final Colony colony;
+    private final IColony colony;
 
     /**
      * The fields location.
@@ -185,7 +189,7 @@ public class Field extends Container
     /**
      * The inventorySlot of the field.
      */
-    private InventoryField inventory;
+    private ItemStackHandler inventory;
 
     /**
      * Name of the citizen claiming the field.
@@ -198,7 +202,7 @@ public class Field extends Container
      *
      * @param colony the colony the field belongs to.
      */
-    private Field(final Colony colony)
+    private Field(final IColony colony)
     {
         super();
         this.colony = colony;
@@ -291,7 +295,7 @@ public class Field extends Container
      * @return {@link com.minecolonies.coremod.colony.Colony} of the current object.
      */
     @Nullable
-    public Colony getColony()
+    public IColony getColony()
     {
         return this.colony;
     }
@@ -605,16 +609,5 @@ public class Field extends Container
     public void setOwner(@NotNull final String owner)
     {
         this.owner = owner;
-    }
-
-    /**
-     * Describes the stage the field is in.
-     * Like if it has been hoed, planted or is empty.
-     */
-    public enum FieldStage
-    {
-        EMPTY,
-        HOED,
-        PLANTED
     }
 }

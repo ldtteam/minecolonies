@@ -3,7 +3,7 @@ package com.minecolonies.coremod.commands;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.IColony;
+import com.minecolonies.api.colony.IColony;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -112,9 +112,9 @@ public class ListCitizensCommand extends AbstractSingleCommand
               citizen.getName())).setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
                                                                                      String.format(COMMAND_CITIZEN_INFO, citizen.getColony().getID(), citizen.getId())))));
 
-            if (citizen.getCitizenEntity() != null)
+            if (citizen.getCitizen() != null)
             {
-                final BlockPos position = citizen.getCitizenEntity().getPosition();
+                final BlockPos position = citizen.getCitizen().getPosition();
                 sender.sendMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
             }
         }

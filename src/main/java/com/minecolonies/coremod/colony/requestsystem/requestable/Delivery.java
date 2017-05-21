@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.colony.requestsystem.requestable;
 
-import com.minecolonies.coremod.colony.requestsystem.factory.IFactoryController;
-import com.minecolonies.coremod.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
+import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;

@@ -1,19 +1,22 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.entity.ai.basic.AbstractAISkeleton;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
-import com.minecolonies.coremod.colony.requestsystem.RequestState;
-import com.minecolonies.coremod.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.RequestState;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.coremod.colony.requestsystem.requestable.Tool;
 import com.minecolonies.coremod.colony.requestsystem.requestable.Weapon;
-import com.minecolonies.coremod.colony.requestsystem.token.IToken;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.pathfinding.WalkToProxy;
-import com.minecolonies.coremod.inventory.InventoryCitizen;
+import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;

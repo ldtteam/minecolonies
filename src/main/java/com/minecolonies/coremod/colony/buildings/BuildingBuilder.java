@@ -7,7 +7,7 @@ import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.inventory.InventoryCitizen;
+import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.Utils;
 import io.netty.buffer.ByteBuf;

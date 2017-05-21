@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
+import com.minecolonies.api.entity.DesiredCitizenActivity;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.entity.ai.EntityAIBase;
 
@@ -33,7 +34,7 @@ public class EntityAISleep extends EntityAIBase
     @Override
     public boolean shouldExecute()
     {
-        return citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP
+        return citizen.getDesiredActivity() == DesiredCitizenActivity.SLEEP
                  && citizen.isAtHome();
     }
 
@@ -47,7 +48,7 @@ public class EntityAISleep extends EntityAIBase
     @Override
     public boolean continueExecuting()
     {
-        if (citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP)
+        if (citizen.getDesiredActivity() == DesiredCitizenActivity.SLEEP)
         {
             //TODO might search a bed?
             return true;

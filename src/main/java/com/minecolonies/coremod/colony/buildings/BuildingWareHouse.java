@@ -6,7 +6,7 @@ import com.minecolonies.coremod.blocks.BlockHutDeliveryman;
 import com.minecolonies.coremod.client.gui.WindowWareHouseBuilding;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.requestsystem.token.IToken;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import io.netty.buffer.ByteBuf;
