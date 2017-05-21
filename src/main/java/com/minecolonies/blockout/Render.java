@@ -48,6 +48,12 @@ public final class Render
      */
     public static void drawOutlineRect(final int x1, final int y1, final int x2, final int y2, final float lineWidth, final int color)
     {
+        if (lineWidth <= 0.0F)
+        {
+            // If lineWidth is less than or equal to 0, a GL Error occurs
+            return;
+        }
+
         final float a = (float) (((color >> ALPHA_SHIFT) & COLOR_MASK) / COLOR_DIVISOR);
         final float r = (float) (((color >> RED_SHIFT) & COLOR_MASK) / COLOR_DIVISOR);
         final float g = (float) (((color >> GREEN_SHIFT) & COLOR_MASK) / COLOR_DIVISOR);
