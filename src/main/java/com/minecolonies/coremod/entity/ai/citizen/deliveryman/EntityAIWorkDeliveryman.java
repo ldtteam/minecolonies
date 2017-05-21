@@ -382,7 +382,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                     buildingToDeliver.setOnGoingDelivery(false);
                     return START_WORKING;
                 }
-                itemsToDeliver = new ArrayList<>(buildingToDeliver.getNeededItems());
+                itemsToDeliver = buildingToDeliver.getCopyOfNeededItems();
                 return GATHER_IN_WAREHOUSE;
             }
         }
