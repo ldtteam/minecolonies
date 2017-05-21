@@ -59,6 +59,14 @@ public final class ColonyView implements IColony
      */
     private Set<Block> freeBlocks = new HashSet<>();
 
+    /**
+     * The Set of waypoints.
+     */
+    private Set<BlockPos> wayPoints = new HashSet<>();
+
+    /**
+     * The overall happiness of the colony.
+     */
     private double overallHappiness = 5;
 
     /**
@@ -102,6 +110,7 @@ public final class ColonyView implements IColony
 
         final Set<Block> freeBlocks = colony.getFreeBlocks();
         final Set<BlockPos> freePos = colony.getFreePositions();
+        final Set<BlockPos> waypoints = colony.getWayPoints().keySet();
 
         buf.writeInt(freeBlocks.size());
         for (final Block block : freeBlocks)
@@ -115,7 +124,13 @@ public final class ColonyView implements IColony
             BlockPosUtil.writeToByteBuf(buf, block);
         }
         buf.writeDouble(colony.getOverallHappiness());
+        buf.writeBoolean(colony.hasWarehouse());
 
+        buf.writeInt(waypoints.size());
+        for(final BlockPos block: waypoints)
+        {
+            BlockPosUtil.writeToByteBuf(buf, block);
+        }
         //  Citizens are sent as a separate packet
     }
 
@@ -370,6 +385,7 @@ public final class ColonyView implements IColony
 
         freePositions = new HashSet<>();
         freeBlocks = new HashSet<>();
+        wayPoints = new HashSet<>();
 
         final int blockListSize = buf.readInt();
         for (int i = 0; i < blockListSize; i++)
@@ -383,7 +399,13 @@ public final class ColonyView implements IColony
             freePositions.add(BlockPosUtil.readFromByteBuf(buf));
         }
         this.overallHappiness = buf.readDouble();
+        this.hasWarehouse = buf.readBoolean();
 
+        final int wayPointListSize = buf.readInt();
+        for(int i = 0; i < wayPointListSize; i++)
+        {
+            wayPoints.add(BlockPosUtil.readFromByteBuf(buf));
+        }
         return null;
     }
 
@@ -588,6 +610,15 @@ public final class ColonyView implements IColony
     public boolean hasTownHall()
     {
         return townHall != null;
+    }
+
+    /**
+     * Get a list of all waypoints in the colony view.
+     * @return a copy of the list.
+     */
+    public Set<BlockPos> getWayPoints()
+    {
+        return new HashSet<>(wayPoints);
     }
 
     /**

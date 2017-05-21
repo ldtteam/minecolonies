@@ -1085,7 +1085,7 @@ public class Colony implements IColony
             increaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * HAPPINESS_FACTOR);
         }
 
-        int relation = guards/workers;
+        int relation = workers/guards;
 
         if(relation > 1)
         {
@@ -1113,6 +1113,7 @@ public class Colony implements IColony
                 if (world != null && world.getBlockState(key).getBlock() != (value.getBlock()))
                 {
                     wayPoints.remove(key);
+                    markDirty();
                 }
             }
         }
@@ -1778,6 +1779,7 @@ public class Colony implements IColony
     public void addWayPoint(final BlockPos point, IBlockState block)
     {
         wayPoints.put(point, block);
+        markDirty();
     }
 
     /**
@@ -1853,5 +1855,14 @@ public class Colony implements IColony
     public Map<BlockPos, AbstractBuilding> getBuildings()
     {
         return Collections.unmodifiableMap(buildings);
+    }
+
+    /**
+     * Get all the waypoints of the colony.
+     * @return copy of hashmap.
+     */
+    public Map<BlockPos, IBlockState> getWayPoints()
+    {
+        return new HashMap<>(wayPoints);
     }
 }

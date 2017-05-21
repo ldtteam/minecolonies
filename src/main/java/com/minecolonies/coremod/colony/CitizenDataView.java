@@ -184,7 +184,7 @@ public class CitizenDataView
 
     /**
      * Get the saturation of the citizen.
-     * @return
+     * @return the saturation a double.
      */
     public double getSaturation()
     {
