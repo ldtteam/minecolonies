@@ -41,14 +41,14 @@ public class ClientEventHandler
             final BlockPos position = Settings.instance.getPosition();
             if (Settings.instance.getStructureName().contains(AbstractEntityAIStructure.WAYPOINT_STRING))
             {
-                RenderUtils.renderWayPoints(position, Minecraft.getMinecraft().theWorld, event.getPartialTicks());
+                RenderUtils.renderWayPoints(position, Minecraft.getMinecraft().world, event.getPartialTicks());
             }
             else
             {
                 Structures.StructureName name = new Structures.StructureName(Settings.instance.getStructureName());
                 if (name.isHut())
                 {
-                    RenderUtils.renderColonyBorder(position, Minecraft.getMinecraft().theWorld, event.getPartialTicks(), Minecraft.getMinecraft().thePlayer, colonyBorder);
+                    RenderUtils.renderColonyBorder(position, Minecraft.getMinecraft().world, event.getPartialTicks(), Minecraft.getMinecraft().player, colonyBorder);
                 }
             }
             return;

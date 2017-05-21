@@ -155,7 +155,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     {
         if (getItemsForPickUp() == null)
         {
-            searchForItems();
+            fillItemsList();
         }
 
         if (getItemsForPickUp() != null && !getItemsForPickUp().isEmpty())

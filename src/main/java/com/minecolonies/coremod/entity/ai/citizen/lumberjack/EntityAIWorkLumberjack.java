@@ -582,7 +582,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     {
         if (getItemsForPickUp() == null)
         {
-            searchForItems();
+            fillItemsList();
         }
 
         if (getItemsForPickUp() != null && !getItemsForPickUp().isEmpty())

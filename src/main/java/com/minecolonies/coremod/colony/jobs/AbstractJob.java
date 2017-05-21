@@ -144,7 +144,7 @@ public abstract class AbstractJob
             catch (final RuntimeException ex)
             {
                 Log.getLogger().error(String.format("A Job %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-                  compound.getString(TAG_TYPE), oclass.getName()), ex);
+                        compound.getString(TAG_TYPE), oclass.getName()), ex);
                 job = null;
             }
         }
@@ -399,5 +399,18 @@ public abstract class AbstractJob
     public SoundEvent getMoveAwaySound()
     {
         return null;
+    }
+
+    /**
+     * Override this to implement Job specific death achievements.
+     * Override this to let the worker return a hostile move away sound.
+     *
+     * @param source  of the death
+     * @param citizen which just died
+     * @return soundEvent to be played.
+     */
+    public void triggerDeathAchievement(final DamageSource source, final EntityCitizen citizen)
+    {
+
     }
 }

@@ -1004,9 +1004,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
             {
                 checkIfStuck();
             }
-            if (worldObj.isDaytime() && !worldObj.isRaining() && citizenData != null)
+            if (world.isDaytime() && !world.isRaining() && citizenData != null)
             {
-                SoundUtils.playRandomSound(worldObj, this, citizenData.getSaturation());
+                SoundUtils.playRandomSound(world, this, citizenData.getSaturation());
             }
             else if (world.isRaining() && 1 >= rand.nextInt(RANT_ABOUT_WEATHER_CHANCE) && this.getColonyJob() != null)
             {
@@ -1960,7 +1960,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         if(getColonyJob() != null)
         {
-            SoundUtils.playSoundAtCitizenWithChance(worldObj, getPosition(),
+            SoundUtils.playSoundAtCitizenWithChance(world, getPosition(),
                     getColonyJob().getMoveAwaySound(), 1);
         }
     }
