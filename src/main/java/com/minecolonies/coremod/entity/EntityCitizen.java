@@ -814,7 +814,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public void triggerDeathAchievement(final DamageSource source, final AbstractJob job)
     {
-        job.triggerDeathAchievement(source, this);
+        // If the job is null, then we can trigger jobless citizen achievement
+        if (job != null)
+        {
+            job.triggerDeathAchievement(source, this);
+        }
     }
 
     @Nullable
