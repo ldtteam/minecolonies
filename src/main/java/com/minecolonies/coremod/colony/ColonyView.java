@@ -50,6 +50,11 @@ public final class ColonyView implements IColony
     private int maxCitizens = 0;
 
     /**
+     * Check if the colony has a warehouse.
+     */
+    private boolean hasWarehouse;
+
+    /**
      * The Positions which players can freely interact.
      */
     private Set<BlockPos> freePositions = new HashSet<>();
@@ -630,5 +635,11 @@ public final class ColonyView implements IColony
     public int getID()
     {
         return id;
+    }
+
+    @Override
+    public boolean hasWarehouse()
+    {
+        return hasWarehouse;
     }
 }

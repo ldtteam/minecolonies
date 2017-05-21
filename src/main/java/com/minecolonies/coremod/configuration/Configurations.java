@@ -11,6 +11,7 @@ public class Configurations
     public static       boolean allowInfiniteSupplyChests    = false;
     public static       int     citizenRespawnInterval       = 240;
     public static       boolean builderInfiniteResources     = false;
+    public static       boolean limitToOneWareHousePerColony = true;
     public static       int     builderBuildBlockDelay       = 15;
     public static       int     blockMiningDelayModifier     = 125;
 
