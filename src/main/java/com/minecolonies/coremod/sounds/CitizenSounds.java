@@ -8,7 +8,7 @@ import net.minecraft.world.World;
 /**
  * Class used to store the basic citizen sounds.
  */
-public final class CitizenSounds
+public final class CitizenSounds extends AbstractWorkerSounds
 {
     /**
      * Chance to say a phrase.
@@ -52,31 +52,34 @@ public final class CitizenSounds
     }
 
     /**
-     * Private constructor to hide the implicit public one.
-     */
-    private CitizenSounds()
-    {
-        /*
-         * Intentionally left empty.
-         */
-    }
-
-    /**
      * Plays citizen sounds.
      *
      * @param worldIn  the world to play the sound in.
      * @param position the position to play the sound at.
      * @param isFemale the gender.
      */
-    public static void playCitizenSounds(final World worldIn, final BlockPos position, final boolean isFemale)
+    @Override
+    public void playSound(final World worldIn, final BlockPos position, final boolean isFemale, final double saturation)
     {
         if (isFemale)
         {
-            SoundUtils.playSoundAtCitizenWithChance(worldIn, position, Female.say, PHRASE_CHANCE);
+            SoundUtils.playSoundAtCitizenWithChance(worldIn, position, Female.say, getPhraseChance());
         }
         else
         {
-            SoundUtils.playSoundAtCitizenWithChance(worldIn, position, Male.say, PHRASE_CHANCE);
+            SoundUtils.playSoundAtCitizenWithChance(worldIn, position, Male.say, getPhraseChance());
         }
+    }
+
+    @Override
+    public int getPhraseChance()
+    {
+        return PHRASE_CHANCE;
+    }
+
+    @Override
+    public String getWorkerString()
+    {
+        return "";
     }
 }
