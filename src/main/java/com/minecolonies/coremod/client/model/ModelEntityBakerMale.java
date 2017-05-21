@@ -79,27 +79,32 @@ public class ModelEntityBakerMale extends ModelBiped
         middle.mirror = true;
         setRotation(middle, -0.1858931F, 0F, 0F);
 
-        bipedBody.addChild(base);
-        bipedBody.addChild(middle);
-
+        bipedHead.addChild(base);
+        bipedHead.addChild(middle);
         bipedHead.addChild(top);
 
         bipedHeadwear.isHidden = true;
     }
 
-    public void render(final Entity entity, float f, float f1, float f2, float f3, float f4, float f5)
+    @Override
+    public void render( final Entity entityIn, final float limbSwing,
+            final float limbSwingAmount,
+            final float ageInTicks,
+            final float netHeadYaw,
+            final float headPitch,
+            final float scaleFactor
+    )
     {
-        super.render(entity, f, f1, f2, f3, f4, f5);
-        setRotationAngles(f, f1, f2, f3, f4, f5, entity);
-        /*bipedRightArm.render(f5);
-        bipedLeftArm.render(f5);
-        bipedRightLeg.render(f5);
-        bipedLeftLeg.render(f5);
-        bipedBody.render(f5);
-        bipedHead.render(f5);
-        top.render(f5);
-        base.render(f5);
-        middle.render(f5);*/
+        setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entityIn);
+        bipedHead.render(scaleFactor);
+        bipedBody.render(scaleFactor);
+        bipedLeftArm.render(scaleFactor);
+        bipedRightArm.render(scaleFactor);
+        bipedRightLeg.render(scaleFactor);
+        bipedLeftLeg.render(scaleFactor);
+        base.render(scaleFactor);
+        middle.render(scaleFactor);
+        top.render(scaleFactor);
     }
 
     private void setRotation(final ModelRenderer model, float x, float y, float z)
@@ -123,6 +128,9 @@ public class ModelEntityBakerMale extends ModelBiped
         final float headX = bipedHead.rotateAngleX;
         bipedBody.rotateAngleX = bodyX;
         bipedHead.rotateAngleX = headX;
+        base.rotateAngleX = bodyX;
+        middle.rotateAngleX = bodyX;
+        top.rotateAngleX = headX;
         super.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entityIn);
     }
 

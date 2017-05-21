@@ -10,15 +10,9 @@ import net.minecraft.entity.Entity;
 public class ModelEntityBakerFemale extends ModelBiped
 {
     //fields
-    ModelRenderer RightArm;
-    ModelRenderer LeftArm;
-    ModelRenderer Chest;
-    ModelRenderer RightLeg;
-    ModelRenderer LeftLeg;
-    ModelRenderer Body;
-    ModelRenderer Head;
-    ModelRenderer PonytailB;
-    ModelRenderer PonytailT;
+    ModelRenderer chest;
+    ModelRenderer ponyTailB;
+    ModelRenderer ponyTailT;
     ModelRenderer lipR;
     ModelRenderer baseT;
     ModelRenderer lipT;
@@ -38,68 +32,68 @@ public class ModelEntityBakerFemale extends ModelBiped
         textureWidth = 256;
         textureHeight = 128;
 
-        RightArm = new ModelRenderer(this, 40, 16);
-        RightArm.addBox(-3F, -2F, -2F, 4, 12, 4);
-        RightArm.setRotationPoint(-5F, 2F, 0F);
-        RightArm.setTextureSize(256, 128);
-        RightArm.mirror = true;
-        setRotation(RightArm, 0F, 0F, 0F);
+        bipedRightArm = new ModelRenderer(this, 40, 16);
+        bipedRightArm.addBox(-3F, -2F, -2F, 4, 12, 4);
+        bipedRightArm.setRotationPoint(-5F, 2F, 0F);
+        bipedRightArm.setTextureSize(256, 128);
+        bipedRightArm.mirror = true;
+        setRotation(bipedRightArm, 0F, 0F, 0F);
 
-        LeftArm = new ModelRenderer(this, 40, 16);
-        LeftArm.addBox(-1F, -2F, -2F, 4, 12, 4);
-        LeftArm.setRotationPoint(5F, 2F, 0F);
-        LeftArm.setTextureSize(256, 128);
-        LeftArm.mirror = true;
-        setRotation(LeftArm, 0F, 0F, 0F);
+        bipedLeftArm = new ModelRenderer(this, 40, 16);
+        bipedLeftArm.addBox(-1F, -2F, -2F, 4, 12, 4);
+        bipedLeftArm.setRotationPoint(5F, 2F, 0F);
+        bipedLeftArm.setTextureSize(256, 128);
+        bipedLeftArm.mirror = true;
+        setRotation(bipedLeftArm, 0F, 0F, 0F);
 
-        Chest = new ModelRenderer(this, 17, 32);
-        Chest.addBox(-3.5F, 2.7F, -0.5F, 7, 3, 4);
-        Chest.setRotationPoint(0F, 0F, 0F);
-        Chest.setTextureSize(256, 128);
-        Chest.mirror = true;
-        setRotation(Chest, -0.5934119F, 0F, 0F);
+        chest = new ModelRenderer(this, 17, 32);
+        chest.addBox(-3.5F, 2.7F, -0.5F, 7, 3, 4);
+        chest.setRotationPoint(0F, 0F, 0F);
+        chest.setTextureSize(256, 128);
+        chest.mirror = true;
+        setRotation(chest, -0.5934119F, 0F, 0F);
 
-        RightLeg = new ModelRenderer(this, 0, 16);
-        RightLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
-        RightLeg.setRotationPoint(-2F, 12F, 0F);
-        RightLeg.setTextureSize(256, 128);
-        RightLeg.mirror = true;
-        setRotation(RightLeg, 0F, 0F, 0F);
+        bipedRightLeg = new ModelRenderer(this, 0, 16);
+        bipedRightLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
+        bipedRightLeg.setRotationPoint(-2F, 12F, 0F);
+        bipedRightLeg.setTextureSize(256, 128);
+        bipedRightLeg.mirror = true;
+        setRotation(bipedRightLeg, 0F, 0F, 0F);
 
-        LeftLeg = new ModelRenderer(this, 0, 16);
-        LeftLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
-        LeftLeg.setRotationPoint(2F, 12F, 0F);
-        LeftLeg.setTextureSize(256, 128);
-        LeftLeg.mirror = true;
-        setRotation(LeftLeg, 0F, 0F, 0F);
+        bipedLeftLeg = new ModelRenderer(this, 0, 16);
+        bipedLeftLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
+        bipedLeftLeg.setRotationPoint(2F, 12F, 0F);
+        bipedLeftLeg.setTextureSize(256, 128);
+        bipedLeftLeg.mirror = true;
+        setRotation(bipedLeftLeg, 0F, 0F, 0F);
 
-        Body = new ModelRenderer(this, 16, 16);
-        Body.addBox(-4F, 0F, -2F, 8, 12, 4);
-        Body.setRotationPoint(0F, 0F, 0F);
-        Body.setTextureSize(256, 128);
-        Body.mirror = true;
-        setRotation(Body, 0F, 0F, 0F);
+        bipedBody = new ModelRenderer(this, 16, 16);
+        bipedBody.addBox(-4F, 0F, -2F, 8, 12, 4);
+        bipedBody.setRotationPoint(0F, 0F, 0F);
+        bipedBody.setTextureSize(256, 128);
+        bipedBody.mirror = true;
+        setRotation(bipedBody, 0F, 0F, 0F);
 
-        Head = new ModelRenderer(this, 0, 0);
-        Head.addBox(-4F, -8F, -4F, 8, 8, 8);
-        Head.setRotationPoint(0F, 0F, 0F);
-        Head.setTextureSize(256, 128);
-        Head.mirror = true;
-        setRotation(Head, 0F, 0F, 0F);
+        bipedHead = new ModelRenderer(this, 0, 0);
+        bipedHead.addBox(-4F, -8F, -4F, 8, 8, 8);
+        bipedHead.setRotationPoint(0F, 0F, 0F);
+        bipedHead.setTextureSize(256, 128);
+        bipedHead.mirror = true;
+        setRotation(bipedHead, 0F, 0F, 0F);
 
-        PonytailB = new ModelRenderer(this, 33, 6);
-        PonytailB.addBox(-0.5F, 2.2F, 3.8F, 1, 5, 1);
-        PonytailB.setRotationPoint(0F, 0F, 0F);
-        PonytailB.setTextureSize(256, 128);
-        PonytailB.mirror = true;
-        setRotation(PonytailB, 0.1047198F, 0F, 0F);
+        ponyTailB = new ModelRenderer(this, 33, 6);
+        ponyTailB.addBox(-0.5F, 2.2F, 3.8F, 1, 5, 1);
+        ponyTailB.setRotationPoint(0F, 0F, 0F);
+        ponyTailB.setTextureSize(256, 128);
+        ponyTailB.mirror = true;
+        setRotation(ponyTailB, 0.1047198F, 0F, 0F);
 
-        PonytailT = new ModelRenderer(this, 32, 0);
-        PonytailT.addBox(-1F, -2.2F, 3.5F, 2, 5, 1);
-        PonytailT.setRotationPoint(0F, 0F, 0F);
-        PonytailT.setTextureSize(256, 128);
-        PonytailT.mirror = true;
-        setRotation(PonytailT, 0.2268928F, 0F, 0F);
+        ponyTailT = new ModelRenderer(this, 32, 0);
+        ponyTailT.addBox(-1F, -2.2F, 3.5F, 2, 5, 1);
+        ponyTailT.setRotationPoint(0F, 0F, 0F);
+        ponyTailT.setTextureSize(256, 128);
+        ponyTailT.mirror = true;
+        setRotation(ponyTailT, 0.2268928F, 0F, 0F);
 
         lipR = new ModelRenderer(this, 22, 70);
         lipR.addBox(2F, -6.2F, -7.5F, 2, 1, 9);
@@ -191,37 +185,64 @@ public class ModelEntityBakerFemale extends ModelBiped
         midL.setTextureSize(256, 128);
         midL.mirror = true;
         setRotation(midL, 0F, 0F, 0F);
+
+        bipedBody.addChild(chest);
+        bipedHead.addChild(ponyTailB);
+        bipedHead.addChild(ponyTailT);
+
+        baseT.addChild(topL);
+        baseT.addChild(topF);
+        baseT.addChild(topR);
+        baseB.addChild(botL);
+        baseM.addChild(midR);
+        baseM.addChild(midL);
+        baseM.addChild(lipR);
+        baseT.addChild(lipT);
+        baseM.addChild(lipL);
+        baseB.addChild(lipB);
+
+        bipedHead.addChild(baseT);
+        bipedHead.addChild(baseB);
+        bipedHead.addChild(baseM);
     }
 
-    public void render(final Entity entity, float f, float f1, float f2, float f3, float f4, float f5)
+    @Override
+    public void render(
+            final Entity entityIn,
+            final float limbSwing,
+            final float limbSwingAmount,
+            final float ageInTicks,
+            final float netHeadYaw,
+            final float headPitch,
+            final float scaleFactor
+    )
     {
-        super.render(entity, f, f1, f2, f3, f4, f5);
-        setRotationAngles(f, f1, f2, f3, f4, f5, entity);
-        RightArm.render(f5);
-        LeftArm.render(f5);
-        Chest.render(f5);
-        RightLeg.render(f5);
-        LeftLeg.render(f5);
-        Body.render(f5);
-        Head.render(f5);
-        PonytailB.render(f5);
-        PonytailT.render(f5);
-        lipR.render(f5);
-        baseT.render(f5);
-        lipT.render(f5);
-        lipL.render(f5);
-        lipB.render(f5);
-        baseB.render(f5);
-        baseM.render(f5);
-        topL.render(f5);
-        topF.render(f5);
-        botL.render(f5);
-        topR.render(f5);
-        midR.render(f5);
-        midL.render(f5);
+        setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entityIn);
+        bipedHead.render(scaleFactor);
+        bipedBody.render(scaleFactor);
+        bipedLeftArm.render(scaleFactor);
+        bipedRightArm.render(scaleFactor);
+        bipedRightLeg.render(scaleFactor);
+        bipedLeftLeg.render(scaleFactor);
+        chest.render(scaleFactor);
+        ponyTailB.render(scaleFactor);
+        ponyTailT.render(scaleFactor);
+        lipR.render(scaleFactor);
+        baseT.render(scaleFactor);
+        lipT.render(scaleFactor);
+        lipL.render(scaleFactor);
+        lipB.render(scaleFactor);
+        baseB.render(scaleFactor);
+        baseM.render(scaleFactor);
+        topL.render(scaleFactor);
+        topF.render(scaleFactor);
+        topR.render(scaleFactor);
+        botL.render(scaleFactor);
+        midR.render(scaleFactor);
+        midL.render(scaleFactor);
     }
 
-    private void setRotation(final ModelRenderer model, float x, float y, float z)
+    private void setRotation(final ModelRenderer model, final float x, final float y, final float z)
     {
         model.rotateAngleX = x;
         model.rotateAngleY = y;
@@ -241,9 +262,25 @@ public class ModelEntityBakerFemale extends ModelBiped
         final float bodyX = bipedBody.rotateAngleX;
         final float headX = bipedHead.rotateAngleX;
 
-        super.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entityIn);
-
         bipedBody.rotateAngleX = bodyX;
         bipedHead.rotateAngleX = headX;
+        chest.rotateAngleX = bodyX;
+        ponyTailB.rotateAngleX = headX;
+        ponyTailT.rotateAngleX = headX;
+        lipR.rotateAngleX = headX;
+        baseT.rotateAngleX = headX;
+        lipT.rotateAngleX = headX;
+        lipL.rotateAngleX = headX;
+        lipB.rotateAngleX = headX;
+        baseB.rotateAngleX = headX;
+        baseM.rotateAngleX = headX;
+        topL.rotateAngleX = headX;
+        topF.rotateAngleX = headX;
+        botL.rotateAngleX = headX;
+        topR.rotateAngleX = headX;
+        midR.rotateAngleX = headX;
+        midL.rotateAngleX = headX;
+
+        super.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entityIn);
     }
 }
