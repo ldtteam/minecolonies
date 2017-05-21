@@ -403,11 +403,9 @@ public abstract class AbstractJob
 
     /**
      * Override this to implement Job specific death achievements.
-     * Override this to let the worker return a hostile move away sound.
      *
      * @param source  of the death
      * @param citizen which just died
-     * @return soundEvent to be played.
      */
     public void triggerDeathAchievement(final DamageSource source, final EntityCitizen citizen)
     {
