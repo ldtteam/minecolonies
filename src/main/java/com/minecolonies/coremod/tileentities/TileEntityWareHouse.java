@@ -93,7 +93,8 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             {
                 if (i == index)
                 {
-                    if(buildingEntry.getValue() instanceof AbstractBuildingWorker)
+                    if(buildingEntry.getValue() instanceof AbstractBuildingWorker
+                        && !list.contains(buildingEntry.getValue()))
                     {
                         checkInWareHouse((AbstractBuildingWorker) buildingEntry.getValue(), true);
                     }
@@ -113,10 +114,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                 if (addToList)
                 {
                     buildingEntry.setOnGoingDelivery(true);
-                    if (!list.contains(buildingEntry))
-                    {
-                        list.add(buildingEntry);
-                    }
+                    list.add(buildingEntry);
                 }
                 return true;
             }
@@ -168,10 +166,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                     if(addToList)
                     {
                         buildingEntry.setOnGoingDelivery(true);
-                        if (!list.contains(buildingEntry))
-                        {
-                            list.add(buildingEntry);
-                        }
+                        list.add(buildingEntry);
                     }
                     return true;
                 }
