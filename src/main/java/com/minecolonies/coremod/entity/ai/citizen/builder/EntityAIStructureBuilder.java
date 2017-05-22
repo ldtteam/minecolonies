@@ -506,14 +506,14 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     }
 
     @Override
-    public void connectChestToBuildingIfNecessary(@NotNull final BlockPos pos)
+    public void connectBlockToBuildingIfNecessary(@NotNull Block block, @NotNull final BlockPos pos)
     {
         final BlockPos buildingLocation = job.getWorkOrder().getBuildingLocation();
         final AbstractBuilding building = this.getOwnBuilding().getColony().getBuilding(buildingLocation);
 
         if (building != null)
         {
-            building.addContainerPosition(pos);
+            building.registerBlockPosition(block, pos);
         }
     }
 
