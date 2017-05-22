@@ -37,4 +37,5 @@ README.txt
 /minecolonies_Client.launch
 /minecolonies_Server.launch
 
-tools/.api_key
+tools/export_lang/.api_key
+tools/fix_model_angle/*.class
