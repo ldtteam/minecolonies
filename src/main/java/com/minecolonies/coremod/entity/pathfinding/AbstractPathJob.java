@@ -726,7 +726,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
 
         final boolean isSwimming = calculateSwimming(world, pos, node);
-        final boolean onRoad = BlockUtils.isPathBlock(world.getBlockState(pos).getBlock());
+        final boolean onRoad = BlockUtils.isPathBlock(world.getBlockState(pos.down()).getBlock());
         //  Cost may have changed due to a jump up or drop
         final double stepCost = computeCost(dPos.add(yFix), isSwimming, onRoad);
         final double heuristic = computeHeuristic(pos);
