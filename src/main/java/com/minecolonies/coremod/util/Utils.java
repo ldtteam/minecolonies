@@ -326,18 +326,6 @@ public final class Utils
     }
 
     /**
-     * Checks if this tool is useful for the miner.
-     *
-     * @param itemStack Item to check.
-     * @return True if mining tool, otherwise false.
-     */
-/*    public static boolean isMiningTool(@Nullable final ItemStack itemStack)
-    {
-        return isPickaxe(itemStack) || isShovel(itemStack);
-    }
-*/
-
-    /**
      * Checks if this ItemStack can be used as a Shovel.
      *
      * @param itemStack Item to check.
