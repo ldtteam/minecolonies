@@ -227,7 +227,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
     @Override
     public boolean neededForWorker(@Nullable final ItemStack stack)
     {
-        return Utils.isMiningTool(stack);
+        return Utils.isMiningTool(stack) || neededResources.containsKey(stack.getUnlocalizedName());
     }
 
     /**

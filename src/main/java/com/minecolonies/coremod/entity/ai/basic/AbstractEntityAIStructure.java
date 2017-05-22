@@ -12,7 +12,6 @@ import com.minecolonies.coremod.placementhandlers.IPlacementHandler;
 import com.minecolonies.coremod.placementhandlers.PlacementHandlers;
 import com.minecolonies.coremod.util.*;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -257,13 +256,18 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             }
 
             if (structureBlock.block == null
-                    || structureBlock.doesStructureBlockEqualWorldBlock()
                     || (!structureBlock.metadata.getMaterial().isSolid() && structureBlock.block != Blocks.AIR))
             {
                 //findNextBlock count was reached and we can ignore this block
                 return true;
             }
 
+            if (structureBlock.doesStructureBlockEqualWorldBlock())
+            {
+                connectBlockToBuildingIfNecessary(structureBlock.block, structureBlock.blockPosition);
+                //findNextBlock count was reached and we can ignore this block
+                return true;
+            }
 
             @Nullable Block block = structureBlock.block;
             @Nullable IBlockState blockState = structureBlock.metadata;
@@ -643,10 +647,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
 
         @NotNull Block blockToPlace = block;
-        if (blockToPlace instanceof BlockContainer)
-        {
-            connectChestToBuildingIfNecessary(pos);
-        }
+        connectBlockToBuildingIfNecessary(blockToPlace, pos);
 
         //It will crash at blocks like water which is actually free, we don't have to decrease the stacks we have.
         if (isBlockFree(blockToPlace, blockToPlace.getMetaFromState(stateToPlace)))
@@ -706,10 +707,12 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     }
 
     /**
-     * On placement of a Container execute this to store the location in the regarding building.
-     * @param pos the position of the container.
+     * On placement of a Block execute this to store the location in the regarding building when needed.
+     *
+     * @param block itself
+     * @param pos the position of the block.
      */
-    public void connectChestToBuildingIfNecessary(@NotNull final BlockPos pos)
+    public void connectBlockToBuildingIfNecessary(@NotNull final Block block, @NotNull final BlockPos pos)
     {
         /**
          * Classes can overwrite this if necessary.
