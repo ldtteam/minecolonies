@@ -111,11 +111,7 @@ public class BuildingWareHouse extends AbstractBuilding
      */
     public boolean canAccessWareHouse(BuildingDeliveryman buildingWorker)
     {
-        if (registeredDeliverymen.contains(new Vec3d(buildingWorker.getID())))
-        {
-            return true;
-        }
-        return false;
+        return registeredDeliverymen.contains(new Vec3d(buildingWorker.getID()));
     }
 
     /**
