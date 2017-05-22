@@ -591,7 +591,7 @@ public class Structure
         return entityList;
     }
 
-    private static void getQuads(final ModelHolder holder, final List<BakedQuad> quads)
+    public static void getQuads(final ModelHolder holder, final List<BakedQuad> quads)
     {
         if (holder.actualState.getRenderType() == EnumBlockRenderType.MODEL)
         {
@@ -616,7 +616,7 @@ public class Structure
         }
     }
 
-    private void renderGhost(final World world, final ModelHolder holder, final EntityPlayer player, final float partialTicks)
+    public void renderGhost(final World world, final ModelHolder holder, final EntityPlayer player, final float partialTicks)
     {
         final boolean existingModel = !this.mc.world.isAirBlock(holder.pos);
 

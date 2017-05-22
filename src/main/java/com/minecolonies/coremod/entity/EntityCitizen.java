@@ -819,7 +819,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public void triggerDeathAchievement(final DamageSource source, final AbstractJob job)
     {
-        job.triggerDeathAchievement(source, this);
+        // If the job is null, then we can trigger jobless citizen achievement
+        if (job != null)
+        {
+            job.triggerDeathAchievement(source, this);
+        }
     }
 
     @Nullable
@@ -1004,9 +1008,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
             {
                 checkIfStuck();
             }
-            if (world.isDaytime() && !world.isRaining())
+            if (world.isDaytime() && !world.isRaining() && citizenData != null)
             {
-                SoundUtils.playRandomSound(world, this);
+                SoundUtils.playRandomSound(world, this, citizenData.getSaturation());
             }
             else if (world.isRaining() && 1 >= rand.nextInt(RANT_ABOUT_WEATHER_CHANCE) && this.getColonyJob() != null)
             {
@@ -1950,6 +1954,18 @@ public class EntityCitizen extends EntityAgeable implements INpc
         if (this.getWorkBuilding() != null)
         {
             this.getWorkBuilding().onWakeUp();
+        }
+    }
+
+    /**
+     * Play move away sound when running from an entity.
+     */
+    public void playMoveAwaySound()
+    {
+        if(getColonyJob() != null)
+        {
+            SoundUtils.playSoundAtCitizenWithChance(world, getPosition(),
+                    getColonyJob().getMoveAwaySound(), 1);
         }
     }
 
