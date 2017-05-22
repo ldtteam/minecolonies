@@ -121,6 +121,12 @@ public class Colony implements IColony
     private final Map<BlockPos, Field>       fields    = new HashMap<>();
     //Additional Waypoints.
     private final Map<BlockPos, IBlockState> wayPoints = new HashMap<>();
+
+    /**
+     * The warehouse building position. Initially null.
+     */
+    private BuildingWareHouse wareHouse = null;
+
     @NotNull
     private final List<Achievement> colonyAchievements;
     //  Workload and Jobs
@@ -360,6 +366,11 @@ public class Colony implements IColony
         if (building instanceof BuildingTownHall && townHall == null)
         {
             townHall = (BuildingTownHall) building;
+        }
+
+        if(building instanceof BuildingWareHouse && wareHouse == null)
+        {
+            wareHouse = (BuildingWareHouse) building;
         }
     }
 
@@ -1085,7 +1096,7 @@ public class Colony implements IColony
             increaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * HAPPINESS_FACTOR);
         }
 
-        int relation = guards/workers;
+        int relation = workers/guards;
 
         if(relation > 1)
         {
@@ -1113,6 +1124,7 @@ public class Colony implements IColony
                 if (world != null && world.getBlockState(key).getBlock() != (value.getBlock()))
                 {
                     wayPoints.remove(key);
+                    markDirty();
                 }
             }
         }
@@ -1266,6 +1278,12 @@ public class Colony implements IColony
     public int getID()
     {
         return id;
+    }
+
+    @Override
+    public boolean hasWarehouse()
+    {
+        return wareHouse != null;
     }
 
     /**
@@ -1641,6 +1659,10 @@ public class Colony implements IColony
         {
             townHall = null;
         }
+        else if(building instanceof BuildingWareHouse)
+        {
+            wareHouse = null;
+        }
 
         //Allow Citizens to fix up any data that wasn't fixed up by the AbstractBuilding's own onDestroyed
         for (@NotNull final CitizenData citizen : citizens.values())
@@ -1778,6 +1800,7 @@ public class Colony implements IColony
     public void addWayPoint(final BlockPos point, IBlockState block)
     {
         wayPoints.put(point, block);
+        markDirty();
     }
 
     /**
@@ -1853,5 +1876,14 @@ public class Colony implements IColony
     public Map<BlockPos, AbstractBuilding> getBuildings()
     {
         return Collections.unmodifiableMap(buildings);
+    }
+
+    /**
+     * Get all the waypoints of the colony.
+     * @return copy of hashmap.
+     */
+    public Map<BlockPos, IBlockState> getWayPoints()
+    {
+        return new HashMap<>(wayPoints);
     }
 }

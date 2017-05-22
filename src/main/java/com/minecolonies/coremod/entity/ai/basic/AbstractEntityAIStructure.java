@@ -152,14 +152,12 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
     private AIState pickUpResiduals()
     {
-        final List<BlockPos> items = getItemsForPickUp();
-        if (items == null)
+        if (getItemsForPickUp() == null)
         {
             fillItemsList();
-            return getState();
         }
 
-        if (!items.isEmpty())
+        if (getItemsForPickUp() != null && !getItemsForPickUp().isEmpty())
         {
             gatherItems();
             return getState();
