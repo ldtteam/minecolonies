@@ -1,9 +1,11 @@
-[![Build Status](https://travis-ci.org/Minecolonies/minecolonies.svg?branch=develop)](https://travis-ci.org/Minecolonies/minecolonies)
-[![Quality Gate](http://home.kk-sc.de:9000/api/badges/gate?key=com.minecolonies%3Aminecolonies%3Adevelop&blinking=true)](http://home.kk-sc.de:9000/overview?id=com.minecolonies%3Aminecolonies%3Adevelop)
-[![Comment Lines](http://home.kk-sc.de:9000/api/badges/measure?key=com.minecolonies%3Aminecolonies%3Adevelop&blinking=true&metric=comment_lines_density)](http://home.kk-sc.de:9000/overview?id=com.minecolonies%3Aminecolonies%3Adevelop)
-[![Public API](http://home.kk-sc.de:9000/api/badges/measure?key=com.minecolonies%3Aminecolonies%3Adevelop&blinking=true&metric=public_documented_api_density)](http://home.kk-sc.de:9000/overview?id=com.minecolonies%3Aminecolonies%3Adevelop)
-[![Lines of Code](http://home.kk-sc.de:9000/api/badges/measure?key=com.minecolonies%3Aminecolonies%3Adevelop&blinking=true&metric=ncloc)](http://home.kk-sc.de:9000/overview?id=com.minecolonies%3Aminecolonies%3Adevelop)
+[![CLA assistant](https://cla-assistant.io/readme/badge/Minecolonies/minecolonies)](https://cla-assistant.io/Minecolonies/minecolonies)
+[![Build Status](https://teamcity.minecolonies.com/app/rest/builds/buildType:Minecolonies_Alpha/statusIcon)](http://teamcity.minecolonies.com/)
+[![Quality Gate](https://sonar.minecolonies.com/api/badges/gate?key=Minecolonies%3Aversion%2F1.11&blinking=true)](https://sonar.minecolonies.com/overview?id=Minecolonies%3Aversion%2F1.11)
+[![Comment Lines](https://sonar.minecolonies.com/api/badges/measure?key=Minecolonies%3Aversion%2F1.11&blinking=true&metric=comment_lines_density)](https://sonar.minecolonies.com/overview?id=Minecolonies%3Aversion%2F1.11)
+[![Lines of Code](https://sonar.minecolonies.com/api/badges/measure?key=Minecolonies%3Aversion%2F1.11&blinking=true&metric=ncloc)](https://sonar.minecolonies.com/overview?id=Minecolonies%3Aversion%2F1.11)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/3f8479027286436bbb6add73d309e054)](https://www.codacy.com/app/Minecolonies/minecolonies?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Minecolonies/minecolonies&amp;utm_campaign=Badge_Grade)
 [![Stories in Ready](https://badge.waffle.io/Minecolonies/minecolonies.png?label=help%20wanted&title=Help%20Wanted)](http://waffle.io/Minecolonies/minecolonies)
+
 
 
 ![alt tag](resources/minecolonies.png)
@@ -32,8 +34,8 @@ The Java JDK is used to compile MineColonies
 	* Linux: Installation methods for certain popular flavors of Linux are listed below.  If your distribution is not listed, follow the instructions specific to your package manager or install it manually [here](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
 		* Gentoo: `emerge dev-java/oracle-jdk-bin`
 		* Archlinux: `pacman -S jdk8-openjdk`
-		* Ubuntu/Debian: `apt-get install openjdk-7-jdk`
-		* Fedora: `yum install java-1.7.0-openjdk`
+		* Ubuntu/Debian: `apt-get install openjdk-8-jdk`
+		* Fedora: `yum install java-1.8.0-openjdk`
 2. Windows: Set environment variables for the JDK.
     * Go to `Control Panel\System and Security\System`, and click on `Advanced System Settings` on the left-hand side.
     * Click on `Environment Variables`.
