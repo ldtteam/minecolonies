@@ -1,14 +1,14 @@
 package com.minecolonies.coremod.entity.ai.citizen.baker;
 
-import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.buildings.BuildingBaker;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
-import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -122,8 +122,20 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
      */
     private AIState BakeBread()
     {
-        BlockPos oven = SearchOven(getOwnBuilding().getLocation());
-        walkToBlock(oven);
+        //todo can take care of buildingLevel furnaces.
+        final BlockPos oven = SearchOven(getOwnBuilding().getLocation());
+
+        if(oven == null)
+        {
+            //todo tell player about missing oven! (repair my building, furnaces got lost)
+            return PREPARING;
+        }
+
+        if(walkToBlock(oven))
+        {
+            return BAKER_BAKING;
+        }
+
         worker.hitBlockWithToolInHand(oven);
         return PREPARING;
     }

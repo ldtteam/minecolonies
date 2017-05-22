@@ -275,7 +275,11 @@ public enum AIState
     /**
      * Bake the dough.
      */
-    BAKER_BAKING
+    BAKER_BAKING,
 
+    /**
+     * Finish up the product.
+     */
+    BAKER_FINISHING,
 
 }

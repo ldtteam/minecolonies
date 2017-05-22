@@ -7,23 +7,55 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
+import com.minecolonies.coremod.entity.ai.citizen.baker.Product.ProductState;
+import com.minecolonies.coremod.entity.ai.citizen.baker.Product;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Building for the baker.
  */
 public class BuildingBaker extends AbstractBuildingWorker
 {
-    private static final String BAKER          = "Baker";
-    private static final String BAKER_HUT_NAME = "bakerHut";
+    /**
+     * General baker description key.
+     */
+    private static final String BAKER = "Baker";
 
+    /**
+     * Max hut level of the baker.
+     */
     private static final int BAKER_HUT_MAX_LEVEL = 5;
 
+    /**
+     * Tag to retrieve the tasks hashmap.
+     */
+    private static final String TAG_TASKS = "tasks";
+
+    /**
+     * Tag to retrieve the state of an entry.
+     */
+    private static final String TAG_STATE = "state";
+
+    /**
+     * Tag to retrieve the products list.
+     */
+    private static final String TAG_PRODUCTS = "products";
+
+    /**
+     * List of furnaces added to this building.
+     */
     private final List<BlockPos> furnaces = new ArrayList<>();
+
+    /**
+     * Map of tasks for the baker to work on.
+     */
+    private final Map<ProductState, List<Product>> tasks = new EnumMap(ProductState.class);
 
     /**
      * Amounts of dough the Baker left in the oven.
@@ -109,6 +141,7 @@ public class BuildingBaker extends AbstractBuildingWorker
 
     /**
      * Add a furnace to the building.
+     *
      * @param pos the position of it.
      */
     public void addToFurnaces(final BlockPos pos)
@@ -118,6 +151,7 @@ public class BuildingBaker extends AbstractBuildingWorker
 
     /**
      * Remove a furnace from the building.
+     *
      * @param pos the position of it.
      */
     public void removeFromFurnaces(final BlockPos pos)
@@ -127,6 +161,7 @@ public class BuildingBaker extends AbstractBuildingWorker
 
     /**
      * Return a list of furnaces assigned to this hut.
+     *
      * @return copy of the list
      */
     public List<BlockPos> getFurnaces()
@@ -136,6 +171,7 @@ public class BuildingBaker extends AbstractBuildingWorker
 
     /**
      * Getter for the breads in oven.
+     *
      * @return the amount.
      */
     public int getBreadsInOvens()
@@ -145,6 +181,7 @@ public class BuildingBaker extends AbstractBuildingWorker
 
     /**
      * Setter for the breads in oven.
+     *
      * @param breadsInOvens new amount.
      */
     public void setBreadsInOvens(final int breadsInOvens)
@@ -154,6 +191,7 @@ public class BuildingBaker extends AbstractBuildingWorker
 
     /**
      * Getter for the prepared dough.
+     *
      * @return the amount.
      */
     public int getPreparedDough()
@@ -163,6 +201,7 @@ public class BuildingBaker extends AbstractBuildingWorker
 
     /**
      * Setter for the prepared dough.
+     *
      * @param preparedDough new amount.
      */
     public void setPreparedDough(final int preparedDough)
@@ -172,6 +211,7 @@ public class BuildingBaker extends AbstractBuildingWorker
 
     /**
      * Getter for the baked breads.
+     *
      * @return the amount.
      */
     public int getBakedBreads()
@@ -181,11 +221,58 @@ public class BuildingBaker extends AbstractBuildingWorker
 
     /**
      * Setter for the bked breads.
+     *
      * @param bakedBreads the new amount.
      */
     public void setBakedBreads(final int bakedBreads)
     {
         this.bakedBreads = bakedBreads;
+    }
+
+    @Override
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    {
+        super.writeToNBT(compound);
+        @NotNull final NBTTagList tasksTagList = new NBTTagList();
+        for (@NotNull final Map.Entry<ProductState, List<Product>> entry : tasks.entrySet())
+        {
+            @NotNull final NBTTagCompound taskCompound = new NBTTagCompound();
+            taskCompound.setInteger(TAG_STATE, entry.getKey().ordinal());
+
+            @NotNull final NBTTagList productsTaskList = new NBTTagList();
+            for(@NotNull final Product product: entry.getValue())
+            {
+                @NotNull final NBTTagCompound productCompound = new NBTTagCompound();
+                product.writeToNBT(productCompound);
+            }
+            taskCompound.setTag(TAG_PRODUCTS, productsTaskList);
+            tasksTagList.appendTag(taskCompound);
+        }
+        compound.setTag(TAG_TASKS, tasksTagList);
+    }
+
+    @Override
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    {
+        tasks.clear();
+        super.readFromNBT(compound);
+        final NBTTagList taskTagList = compound.getTagList(TAG_TASKS, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < taskTagList.tagCount(); ++i)
+        {
+            final NBTTagCompound taskCompound = taskTagList.getCompoundTagAt(i);
+            final ProductState state = ProductState.values()[taskCompound.getInteger(TAG_STATE)];
+            final List<Product> products = new ArrayList<>();
+
+            final NBTTagList productTagList = taskCompound.getTagList(TAG_PRODUCTS, Constants.NBT.TAG_COMPOUND);
+            for (int j = 0; j < productTagList.tagCount(); ++j)
+            {
+                final NBTTagCompound productCompound = taskTagList.getCompoundTagAt(i);
+                final Product product = Product.createFromNBT(productCompound);
+                products.add(product);
+            }
+
+            tasks.put(state, products);
+        }
     }
 
     /**
