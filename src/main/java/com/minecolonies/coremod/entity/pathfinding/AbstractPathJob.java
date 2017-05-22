@@ -690,7 +690,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param dPos   Delta from parent, expected in range of [-1..1].
      * @return true if a node was added or updated when attempting to move in the given direction.
      */
-    protected final boolean walk(@NotNull final Node parent, @NotNull BlockPos dPos)
+    protected final boolean walk(@NotNull final Node parent, @NotNull final BlockPos dPos)
     {
         BlockPos pos = parent.pos.add(dPos);
 
@@ -707,9 +707,12 @@ public abstract class AbstractPathJob implements Callable<Path>
             return false;
         }
 
+        BlockPos yFix = BlockPos.ORIGIN;
+
         if (pos.getY() != newY)
         {
-            final int yDelta = newY - pos.getY();
+            yFix = dPos.add(0, newY - pos.getY(), 0);
+
             //  Has this node been visited?
             pos = new BlockPos(pos.getX(), newY, pos.getZ());
             nodeKey = computeNodeKey(pos);
@@ -719,16 +722,13 @@ public abstract class AbstractPathJob implements Callable<Path>
                 //  Early out on previously visited and closed nodes
                 return false;
             }
-
-            // Update change in position
-            dPos = dPos.add(0, yDelta, 0);
         }
 
 
         final boolean isSwimming = calculateSwimming(world, pos, node);
         final boolean onRoad = BlockUtils.isPathBlock(world.getBlockState(pos).getBlock());
         //  Cost may have changed due to a jump up or drop
-        final double stepCost = computeCost(dPos, isSwimming, onRoad);
+        final double stepCost = computeCost(dPos.add(yFix), isSwimming, onRoad);
         final double heuristic = computeHeuristic(pos);
         final double cost = parent.getCost() + stepCost;
         final double score = cost + heuristic;
