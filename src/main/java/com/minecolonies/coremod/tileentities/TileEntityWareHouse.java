@@ -23,6 +23,8 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Predicate;
 
+import static com.minecolonies.coremod.util.constants.TranslationConstants.*;
+
 /**
  * Class which handles the tileEntity of our colonyBuildings.
  */
@@ -98,10 +100,6 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                     {
                         checkInWareHouse(buildingEntry.getValue(), true);
                     }
-                    else if(buildingEntry.getValue() instanceof BuildingHome && ((BuildingHome) buildingEntry.getValue()).isFoodNeeded())
-                    {
-                        checkInWareHouseForFood((BuildingHome) buildingEntry.getValue(), true);
-                    }
                     this.index++;
                 }
                 i++;
@@ -109,7 +107,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         }
     }
 
-    public boolean checkInWareHouseForFood(final BuildingHome buildingEntry, final boolean addToList)
+    public boolean checkInWareHouse(final BuildingHome buildingEntry, final boolean addToList)
     {
         if (buildingEntry.isFoodNeeded())
         {
@@ -441,7 +439,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             @Nullable final TileEntityChest chest = searchRightChestForStack(stack);
             if(chest == null)
             {
-                LanguageHandler.sendPlayersMessage(getColony().getMessageEntityPlayers(), "com.minecolonies.coremod.wareHouse.full");
+                LanguageHandler.sendPlayersMessage(getColony().getMessageEntityPlayers(), COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL);
                 return;
             }
             InventoryUtils.transferItemStackIntoNextFreeSlotInProvider(new InvWrapper(inventoryCitizen), i, chest);
