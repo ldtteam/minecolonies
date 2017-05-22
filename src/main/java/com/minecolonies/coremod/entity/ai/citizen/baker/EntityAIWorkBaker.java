@@ -80,22 +80,6 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         worker.setCanPickUpLoot(true);
     }
 
-    private BlockPos SearchOven(BlockPos HutBlock)
-    {
-        for (int xn = HutBlock.getX()-9; xn <= HutBlock.getX()+9; xn++)
-            for (int yn = HutBlock.getY(); yn <= HutBlock.getY()+1; yn++)
-                for (int zn = HutBlock.getZ()-9; zn <= HutBlock.getZ()+9; zn++)
-                {
-                    BlockPos block = new BlockPos(xn, yn, zn);
-                    if (world.getBlockState(block).getBlock() == Blocks.FURNACE)
-                    {
-                        return block;
-                    }
-                }
-        return null;
-    }
-
-
     /**
      * Prepares the baker for baking and requests ingredients.
      *
@@ -124,7 +108,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     private AIState BakeBread()
     {
         //todo can take care of buildingLevel furnaces.
-        final BlockPos oven = SearchOven(getOwnBuilding().getLocation());
+        final BlockPos oven = getOwnBuilding().getFurnaces().get(0);
 
         if(oven == null)
         {

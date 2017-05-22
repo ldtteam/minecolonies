@@ -9,6 +9,8 @@ import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
 import com.minecolonies.coremod.entity.ai.citizen.baker.Product.ProductState;
 import com.minecolonies.coremod.entity.ai.citizen.baker.Product;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockFurnace;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
@@ -272,6 +274,16 @@ public class BuildingBaker extends AbstractBuildingWorker
             }
 
             tasks.put(state, products);
+        }
+    }
+
+    @Override
+    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos)
+    {
+        super.registerBlockPosition(block, pos);
+        if(block instanceof BlockFurnace && !furnaces.contains(pos))
+        {
+            furnaces.add(pos);
         }
     }
 
