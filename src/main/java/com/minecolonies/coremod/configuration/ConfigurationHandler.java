@@ -71,8 +71,10 @@ public final class ConfigurationHandler
             enableColonyProtection = config.get(CATEGORY_GAMEPLAY, "enableColonyProtection", enableColonyProtection,
               "Enable the automatic colony protection?").getBoolean();
             turnOffExplosionsInColonies = config.get(CATEGORY_GAMEPLAY, "turnOffExplosionsInColonies", turnOffExplosionsInColonies,
-              "Turn off explosions inside the colonies radius?").getBoolean();
-
+                    "Turn off explosions inside the colonies radius?").getBoolean();
+            limitToOneWareHousePerColony = config.get(CATEGORY_GAMEPLAY, "limitToOneWareHousePerColony", limitToOneWareHousePerColony,
+                    "Limit the Colony to 1 Warehouse per Colony?").getBoolean();
+            
             /* schematics usage */
             ignoreSchematicsFromJar = config.get(CATEGORY_GAMEPLAY, "ignoreSchematicsFromJar", ignoreSchematicsFromJar,
                     "Ignore the schematic from the jar file").getBoolean();

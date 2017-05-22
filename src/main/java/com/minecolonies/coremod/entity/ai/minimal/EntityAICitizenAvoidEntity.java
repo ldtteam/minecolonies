@@ -130,6 +130,8 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     @Override
     public void updateTask()
     {
+        theEntity.playMoveAwaySound();
+
         @Nullable final Entity newClosest = getClosestToAvoid();
         if (newClosest != null && newClosest != closestLivingEntity)
         {
