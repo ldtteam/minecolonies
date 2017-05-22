@@ -55,6 +55,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     //todo if he finds stuff for cake, hit a long time on the hut block and then ready, same for cookies. (twice as long as bread)
     //todo and hit with the ingredients
 
+    //todo create a class which contains a recipe, list of input itemstacks, list of output itemStacks, and required pattern (4,9, +?)
 
 
     /**
