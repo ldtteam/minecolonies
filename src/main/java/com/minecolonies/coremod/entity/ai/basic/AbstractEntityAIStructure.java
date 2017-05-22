@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
 import com.minecolonies.coremod.blocks.ModBlocks;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.configuration.Configurations;
@@ -12,11 +11,12 @@ import com.minecolonies.coremod.entity.ai.util.Structure;
 import com.minecolonies.coremod.placementhandlers.IPlacementHandler;
 import com.minecolonies.coremod.placementhandlers.PlacementHandlers;
 import com.minecolonies.coremod.util.*;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -39,9 +39,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
-import static com.minecolonies.coremod.placementhandlers.IPlacementHandler.ActionProcessingResult.*;
+import static com.minecolonies.coremod.placementhandlers.IPlacementHandler.ActionProcessingResult.ACCEPT;
+import static com.minecolonies.coremod.placementhandlers.IPlacementHandler.ActionProcessingResult.DENY;
 
 /**
  * This base ai class is used by ai's who need to build entire structures.
@@ -112,6 +114,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         this.registerTargets(
 
                 /**
+                 * Pick up stuff which might've been
+                 */
+                new AITarget(PICK_UP_RESIDUALS, this::pickUpResiduals),
+                /**
                  * Check if tasks should be executed.
                  */
                 new AITarget(this::checkIfCanceled, IDLE),
@@ -146,6 +152,49 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         );
     }
 
+    private AIState pickUpResiduals()
+    {
+        if (getItemsForPickUp() == null)
+        {
+            searchForItems();
+        }
+
+        if (getItemsForPickUp() != null && !getItemsForPickUp().isEmpty())
+        {
+            gatherItems();
+            return getState();
+        }
+        resetGatheringItems();
+        workFrom = null;
+        currentStructure = null;
+
+        return AIState.IDLE;
+    }
+
+    @Override
+    public List<BlockPos> searchForItems()
+    {
+        if(currentStructure == null)
+        {
+            return Collections.emptyList();
+        }
+
+        final BlockPos centerPos = currentStructure.getCenter();
+        if(centerPos.getY() == 0)
+        {
+            return Collections.emptyList();
+        }
+
+        AxisAlignedBB boundingBox
+                = new AxisAlignedBB(centerPos).expand(currentStructure.getLength() / 2.0, currentStructure.getHeight(), currentStructure.getWidth() / 2.0);
+
+        return world.getEntitiesWithinAABB(EntityItem.class, boundingBox)
+                .stream()
+                .filter(item -> item != null && !item.isDead)
+                .map(BlockPosUtil::fromEntity)
+                .collect(Collectors.toList());
+    }
+
     private AIState completeBuild()
     {
         if (job instanceof AbstractJobStructure)
@@ -154,10 +203,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             worker.addExperience(XP_EACH_BUILDING);
         }
 
-        workFrom = null;
-        currentStructure = null;
-
-        return AIState.IDLE;
+        return AIState.PICK_UP_RESIDUALS;
     }
 
     private Boolean decorationStep(final Structure.StructureBlock structureBlock)
@@ -210,13 +256,18 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             }
 
             if (structureBlock.block == null
-                    || structureBlock.doesStructureBlockEqualWorldBlock()
                     || (!structureBlock.metadata.getMaterial().isSolid() && structureBlock.block != Blocks.AIR))
             {
                 //findNextBlock count was reached and we can ignore this block
                 return true;
             }
 
+            if (structureBlock.doesStructureBlockEqualWorldBlock())
+            {
+                connectBlockToBuildingIfNecessary(structureBlock.block, structureBlock.blockPosition);
+                //findNextBlock count was reached and we can ignore this block
+                return true;
+            }
 
             @Nullable Block block = structureBlock.block;
             @Nullable IBlockState blockState = structureBlock.metadata;
@@ -596,10 +647,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
 
         @NotNull Block blockToPlace = block;
-        if (blockToPlace instanceof BlockContainer)
-        {
-            connectChestToBuildingIfNecessary(pos);
-        }
+        connectBlockToBuildingIfNecessary(blockToPlace, pos);
 
         //It will crash at blocks like water which is actually free, we don't have to decrease the stacks we have.
         if (isBlockFree(blockToPlace, blockToPlace.getMetaFromState(stateToPlace)))
@@ -659,10 +707,12 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     }
 
     /**
-     * On placement of a Container execute this to store the location in the regarding building.
-     * @param pos the position of the container.
+     * On placement of a Block execute this to store the location in the regarding building when needed.
+     *
+     * @param block itself
+     * @param pos the position of the block.
      */
-    public void connectChestToBuildingIfNecessary(@NotNull final BlockPos pos)
+    public void connectBlockToBuildingIfNecessary(@NotNull final Block block, @NotNull final BlockPos pos)
     {
         /**
          * Classes can overwrite this if necessary.
@@ -715,6 +765,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      */
     public void resetCurrentStructure()
     {
+        workFrom = null;
         currentStructure = null;
     }
 

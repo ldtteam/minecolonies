@@ -137,6 +137,11 @@ public class Colony implements IColony
     //Additional Waypoints.
     private final Map<BlockPos, IBlockState> wayPoints = new HashMap<>();
 
+    /**
+     * The warehouse building position. Initially null.
+     */
+    private BuildingWareHouse wareHouse = null;
+
     @NotNull
     private final List<Achievement> colonyAchievements;
     //  Workload and Jobs
@@ -378,6 +383,11 @@ public class Colony implements IColony
         {
             townHall = (BuildingTownHall) building;
         }
+
+        if(building instanceof BuildingWareHouse && wareHouse == null)
+        {
+            wareHouse = (BuildingWareHouse) building;
+        }
     }
 
     /**
@@ -599,6 +609,16 @@ public class Colony implements IColony
     public boolean hasTownHall()
     {
         return townHall != null;
+    }
+
+    /**
+     * Check if there is a warehouse in the colony already.
+     * @return true if so.
+     */
+    @Override
+    public boolean hasWarehouse()
+    {
+        return wareHouse != null;
     }
 
     /**
@@ -1108,7 +1128,11 @@ public class Colony implements IColony
     {
         if (event.world != getWorld())
         {
-            throw new IllegalStateException("Colony's world does not match the event.");
+            /**
+             * If the event world is not the colony world ignore. This might happen in interactions with other mods.
+             * This should not be a problem for minecolonies as long as we take care to do nothing in that moment.
+             */
+            return;
         }
 
         if (event.phase == TickEvent.Phase.START)
@@ -1168,8 +1192,9 @@ public class Colony implements IColony
 
     private void updateOverallHappiness()
     {
-        int requiredGuardLevels = 0;
+        int guards = 1;
         int housing = 0;
+        int workers = 1;
         double saturation = 0;
         for(final CitizenData citizen: citizens.values())
         {
@@ -1178,24 +1203,24 @@ public class Colony implements IColony
             {
                 if(buildingWorker instanceof BuildingGuardTower)
                 {
-                    requiredGuardLevels -= buildingWorker.getBuildingLevel();
+                    guards += buildingWorker.getBuildingLevel();
                 }
                 else
                 {
-                    requiredGuardLevels += buildingWorker.getBuildingLevel();
+                    workers += buildingWorker.getBuildingLevel();
                 }
             }
 
             final BuildingHome home = citizen.getHomeBuilding();
             if(home != null)
             {
-                housing = home.getBuildingLevel();
+                housing += home.getBuildingLevel();
             }
 
             saturation += citizen.getSaturation();
         }
 
-        final int averageHousing = housing/ Math.max(1, citizens.size());
+        final int averageHousing = housing / Math.max(1, citizens.size());
 
         if(averageHousing > 1)
         {
@@ -1212,13 +1237,11 @@ public class Colony implements IColony
             increaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * HAPPINESS_FACTOR);
         }
 
-        if(requiredGuardLevels < 0)
+        int relation = workers/guards;
+
+        if(relation > 1)
         {
-            increaseOverallHappiness(requiredGuardLevels * -HAPPINESS_FACTOR);
-        }
-        else if(requiredGuardLevels > 0)
-        {
-            decreaseOverallHappiness(requiredGuardLevels * HAPPINESS_FACTOR);
+            decreaseOverallHappiness(relation * HAPPINESS_FACTOR);
         }
         markDirty();
     }
@@ -1242,6 +1265,7 @@ public class Colony implements IColony
                 if (world != null && world.getBlockState(key).getBlock() != (value.getBlock()))
                 {
                     wayPoints.remove(key);
+                    markDirty();
                 }
             }
         }
@@ -1617,6 +1641,10 @@ public class Colony implements IColony
         {
             townHall = null;
         }
+        else if(building instanceof BuildingWareHouse)
+        {
+            wareHouse = null;
+        }
 
         //Allow Citizens to fix up any data that wasn't fixed up by the AbstractBuilding's own onDestroyed
         for (@NotNull final CitizenData citizen : citizens.values())
@@ -1793,6 +1821,7 @@ public class Colony implements IColony
     public void addWayPoint(final BlockPos point, IBlockState block)
     {
         wayPoints.put(point, block);
+        markDirty();
     }
 
     /**
@@ -1868,5 +1897,14 @@ public class Colony implements IColony
     public Map<BlockPos, AbstractBuilding> getBuildings()
     {
         return Collections.unmodifiableMap(buildings);
+    }
+
+    /**
+     * Get all the waypoints of the colony.
+     * @return copy of hashmap.
+     */
+    public Map<BlockPos, IBlockState> getWayPoints()
+    {
+        return new HashMap<>(wayPoints);
     }
 }

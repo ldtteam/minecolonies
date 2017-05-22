@@ -248,7 +248,8 @@ public final class EntityFishHook extends Entity
         {
             this.setDead();
         }
-        if (bounceFromGround() || this.inGround)
+        bounceFromGround();
+        if (this.inGround)
         {
             return;
         }
@@ -323,10 +324,8 @@ public final class EntityFishHook extends Entity
      * Update some movement things for the hook.
      * Detect if the hook is on ground and maybe bounce.
      * Also count how long the hook is laying on the ground or in water.
-     *
-     * @return true if the hook is killed.
      */
-    private boolean bounceFromGround()
+    private void bounceFromGround()
     {
         if (this.shake > 0)
         {
@@ -335,15 +334,13 @@ public final class EntityFishHook extends Entity
 
         if (!this.inGround)
         {
-            return false;
+            return;
         }
 
         this.inGround = false;
         this.motionX *= (this.rand.nextDouble() * BOUNCE_MOVEMENT_LIMITER);
         this.motionY *= (this.rand.nextDouble() * BOUNCE_MOVEMENT_LIMITER);
         this.motionZ *= (this.rand.nextDouble() * BOUNCE_MOVEMENT_LIMITER);
-
-        return false;
     }
 
     /**
@@ -666,7 +663,6 @@ public final class EntityFishHook extends Entity
      * Spawns a random loot from the loot table.
      * and some exp orbs.
      * Should be called when retrieving a hook.
-     * todo: Perhaps streamline this and directly add the items?
      *
      * @param citizen the fisherman getting the loot.
      */
@@ -731,13 +727,9 @@ public final class EntityFishHook extends Entity
     private ItemStack getLootForLootTable(ResourceLocation lootTable)
     {
         final LootContext.Builder lootContextBuilder = new LootContext.Builder((WorldServer) this.worldObj);
-        for (final ItemStack itemstack : this.worldObj.getLootTableManager()
+        return this.worldObj.getLootTableManager()
                 .getLootTableFromLocation(lootTable)
-                .generateLootForPools(this.rand, lootContextBuilder.build()))
-        {
-            return itemstack;
-        }
-        return null;
+                .generateLootForPools(this.rand, lootContextBuilder.build()).stream().findFirst().orElse(null);
     }
 
     /**

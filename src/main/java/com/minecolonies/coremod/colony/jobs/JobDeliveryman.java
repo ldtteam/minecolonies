@@ -5,10 +5,13 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
+import com.minecolonies.coremod.sounds.DeliverymanSounds;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Class of the deliveryman job.
@@ -60,6 +63,28 @@ public class JobDeliveryman extends AbstractJob
         {
             BlockPosUtil.writeToNBT(compound, TAG_DESTINATION, destination);
         }
+    }
+
+    @Nullable
+    @Override
+    public SoundEvent getBadWeatherSound()
+    {
+        if (getCitizen() != null)
+        {
+            return getCitizen().isFemale() ? DeliverymanSounds.Female.badWeather : null;
+        }
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public SoundEvent getMoveAwaySound()
+    {
+        if (getCitizen() != null)
+        {
+            return getCitizen().isFemale() ? DeliverymanSounds.Female.hostile : null;
+        }
+        return null;
     }
 
     /**

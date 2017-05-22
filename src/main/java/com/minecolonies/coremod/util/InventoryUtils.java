@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.util;
 
 import net.minecraft.block.Block;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
@@ -423,7 +422,7 @@ public final class InventoryUtils
      *
      * @param itemHandler {@link IItemHandler} to add itemstack to.
      * @param itemStack   ItemStack to add.
-     * @return True if successful, otherwise false.
+     * @return Empty when fully transfered without swapping, otherwise return the remain of a partial transfer or the itemStack it has been swapped with.
      */
     public static ItemStack addItemStackToItemHandlerWithResult(@NotNull final IItemHandler itemHandler, @Nullable ItemStack itemStack)
     {
@@ -485,28 +484,32 @@ public final class InventoryUtils
             @NotNull final ItemStack itemStack,
             @NotNull final Predicate<ItemStack> itemStackToKeepPredicate)
     {
-        if (!InventoryUtils.addItemStackToItemHandler(itemHandler, itemStack))
+        ItemStack standardInsertionResult = addItemStackToItemHandlerWithResult(itemHandler, itemStack);
+
+        if (!isItemStackEmpty(standardInsertionResult))
         {
-            for (int i = 0; i < itemHandler.getSlots(); i++)
+            for (int i = 0; i < itemHandler.getSlots() && !isItemStackEmpty(standardInsertionResult); i++)
             {
                 final ItemStack localStack = itemHandler.getStackInSlot(i);
                 if (isItemStackEmpty(localStack) || !itemStackToKeepPredicate.test(localStack))
                 {
                     final ItemStack removedStack = itemHandler.extractItem(i, Integer.MAX_VALUE, false);
-                    if (isItemStackEmpty(itemHandler.insertItem(i, itemStack, true)))
-                    {
-                        itemHandler.insertItem(i, itemStack, false);
-                        if (isItemStackEmpty(removedStack))
-                        {
-                            return EMPTY;
-                        }
+                    ItemStack localInsertionResult = itemHandler.insertItem(i, standardInsertionResult, false);
 
+                    if (isItemStackEmpty(localInsertionResult))
+                    {
+                        //Insertion successful. Returning the extracted stack.
                         return removedStack.copy();
+                    }
+                    else
+                    {
+                        //Insertion failed. The inserted stack was not accepted completely. Undo the extraction.
+                        itemHandler.insertItem(i, removedStack, false);
                     }
                 }
             }
         }
-        return InventoryUtils.EMPTY;
+        return standardInsertionResult;
     }
 
     /**
@@ -829,7 +832,7 @@ public final class InventoryUtils
      *
      * @param provider  {@link ICapabilityProvider} to add itemstack to.
      * @param itemStack ItemStack to add.
-     * @return True if successful, otherwise false.
+     * @return Empty when fully transfered without swapping, otherwise return the remain of a partial transfer or the itemStack it has been swapped with.
      */
     public static ItemStack addItemStackToProviderWithResult(@NotNull final ICapabilityProvider provider, @Nullable ItemStack itemStack)
     {
@@ -865,13 +868,18 @@ public final class InventoryUtils
             @NotNull final ItemStack itemStack,
             @NotNull final Predicate<ItemStack> itemStackToKeepPredicate)
     {
-        if (!addItemStackToProvider(provider, itemStack))
+        final ItemStack standardInsertionResult = addItemStackToProviderWithResult(provider, itemStack);
+
+        if (!isItemStackEmpty(standardInsertionResult))
         {
-            return getItemHandlersFromProvider(provider).stream()
-                    .map(handler -> forceItemStackToItemHandler(handler, itemStack, itemStackToKeepPredicate))
-                    .filter(Objects::nonNull)
-                    .findFirst()
-                    .orElse(EMPTY);
+            ItemStack resultStack = standardInsertionResult.copy();
+            Iterator<IItemHandler> iterator = getItemHandlersFromProvider(provider).iterator();
+            while (iterator.hasNext() && !isItemStackEmpty(resultStack))
+            {
+                resultStack = forceItemStackToItemHandler(iterator.next(), resultStack, itemStackToKeepPredicate);
+            }
+
+            return resultStack;
         }
 
         return EMPTY;

@@ -28,6 +28,7 @@ import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.coremod.util.constants.TranslationConstants.*;
 
 /**
  * This class provides basic ai functionality.
@@ -725,7 +726,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
         if (!getOwnBuilding().hasOnGoingDelivery())
         {
-            chatSpamFilter.talkWithoutSpam("entity.worker.toolRequest", tool, InventoryUtils.swapToolGrade(hutLevel));
+            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_TOOLREQUEST, tool, InventoryUtils.swapToolGrade(hutLevel));
         }
         return true;
     }
@@ -843,9 +844,17 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             }
             if (!getOwnBuilding().hasOnGoingDelivery())
             {
-                chatSpamFilter.talkWithoutSpam("entity.worker.pickaxeRequest",
-                  InventoryUtils.swapToolGrade(minlevel),
-                  InventoryUtils.swapToolGrade(hutLevel));
+                if (minlevel > hutLevel)
+                {
+                    chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUESTBETTERHUT,
+                      InventoryUtils.swapToolGrade(hutLevel));
+                }
+                else
+                {
+                    chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUEST,
+                      InventoryUtils.swapToolGrade(minlevel),
+                      InventoryUtils.swapToolGrade(hutLevel));
+                }
             }
         }
 
@@ -960,7 +969,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
         if (isInventoryAndChestFull())
         {
-            chatSpamFilter.talkWithoutSpam("entity.worker.inventoryFullChestFull");
+            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST);
         }
         //collect items that are nice to have if they are available
         this.itemsNiceToHave().forEach(this::isInHut);
@@ -1060,7 +1069,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             final ItemStorage tempStorage = new ItemStorage(stack.getItem(), stack.getItemDamage(), stack.stackSize, false);
             final ItemStack tempStack = handleKeepX(alreadyKept, shouldKeep, tempStorage);
-            if (tempStack == null || tempStack.stackSize <= 0)
+            if (InventoryUtils.isItemStackEmpty(tempStack))
             {
                 return false;
             }
@@ -1114,7 +1123,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param alreadyKept already kept items.
      * @param shouldKeep  to keep items.
      * @param tempStorage item to analyze.
-     * @return null if should be kept entirely, else itemStack with amount which should be dumped.
+     * @return InventoryUtils.EMPTY if should be kept entirely, else itemStack with amount which should be dumped.
      */
     private static ItemStack handleKeepX(
                                           @NotNull final Map<ItemStorage, Integer> alreadyKept,
@@ -1129,7 +1138,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         if (shouldKeep.get(tempStorage) >= (tempStorage.getAmount() + amountKept))
         {
             alreadyKept.put(tempStorage, tempStorage.getAmount() + amountKept);
-            return null;
+            return InventoryUtils.EMPTY;
         }
         alreadyKept.put(tempStorage, shouldKeep.get(tempStorage));
         final int dump = tempStorage.getAmount() + amountKept - shouldKeep.get(tempStorage);
@@ -1396,7 +1405,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             }
         }
 
-        //if necessary we can could implement calling getWorkingPosition recursively and add some "offset" to the sides.
+        //if necessary we call it recursively and add some "offset" to the sides.
         return getWorkingPosition(distance, targetPos, offset + 1);
     }
 
