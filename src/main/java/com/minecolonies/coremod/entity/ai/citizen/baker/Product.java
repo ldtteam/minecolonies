@@ -11,6 +11,11 @@ public class Product
     private static final String TAG_STATE = "state";
 
     /**
+     * Recipe id of the product.
+     */
+    private static final String TAG_RECIPE_ID = "recipeId";
+
+    /**
      * Baking progress of the bread.
      */
     private static final int FINISHED_BAKING_PROGRESS = 10;
@@ -18,7 +23,7 @@ public class Product
     /**
      * Current state of the product, intantiated at raw.
      */
-    private ProductState state = ProductState.RAW;
+    private ProductState state = ProductState.UNCRAFTED;
 
     /**
      * The end product of the Product.
@@ -31,12 +36,18 @@ public class Product
     private int bakingProgress = 0;
 
     /**
+     * The recipe id of the product.
+     */
+    private int recipeId = 0;
+
+    /**
      * Instantiates the Product, requires the end product of it.
      * @param endProduct the product when finished.
      */
-    public Product(final ItemStack endProduct)
+    public Product(final ItemStack endProduct, int recipeId)
     {
         this.endProduct = endProduct;
+        this.recipeId = recipeId;
     }
 
     /**
@@ -104,6 +115,15 @@ public class Product
     }
 
     /**
+     * Getter for the recipe id of the product.
+     * @return the id.
+     */
+    public int getRecipeId()
+    {
+        return recipeId;
+    }
+
+    /**
      * Create the product from NBT.
      * @param productCompound the compound to use.
      * @return the restored Product.
@@ -111,7 +131,8 @@ public class Product
     public static Product createFromNBT(final NBTTagCompound productCompound)
     {
         final ProductState state = ProductState.values()[productCompound.getInteger(TAG_STATE)];
-        final Product product = new Product(ItemStack.loadItemStackFromNBT(productCompound));
+        final int recipeId = productCompound.getInteger(TAG_RECIPE_ID);
+        final Product product = new Product(ItemStack.loadItemStackFromNBT(productCompound), recipeId);
         product.setState(state);
         return product;
     }
@@ -123,11 +144,13 @@ public class Product
     public void writeToNBT(final NBTTagCompound productCompound)
     {
         productCompound.setInteger(TAG_STATE, state.ordinal());
+        productCompound.setInteger(TAG_RECIPE_ID, recipeId);
         endProduct.writeToNBT(productCompound);
     }
 
     public enum ProductState
     {
+        UNCRAFTED,
         RAW,
         PREPARED,
         BAKING,

@@ -20,9 +20,14 @@ public class RecipeStorage
     private final List<ItemStack> input;
 
     /**
-     * Output generated for the recipe.
+     * Primary output generated for the recipe.
      */
-    private final List<ItemStack> output;
+    private final ItemStack primaryOutput;
+
+    /**
+     * Secondary output generated for the recipe.
+     */
+    private final List<ItemStack> secondaryOutput;
 
     /**
      * Grid size required for the recipe.
@@ -34,11 +39,13 @@ public class RecipeStorage
      * @param input the list of input items (required for the recipe).
      * @param output the list of output items (produced by the recipe).
      * @param gridSize the required grid size to make it.
+     * @param secondaryOutput the secondary output (like buckets or similar).
      */
-    public RecipeStorage(final List<ItemStack> input, final int gridSize, final ItemStack...output)
+    public RecipeStorage(final List<ItemStack> input, final int gridSize, final ItemStack primaryOutput, final ItemStack...secondaryOutput)
     {
         this.input = new ArrayList<>(input);
-        this.output = new ArrayList<>(Arrays.asList(output));
+        this.primaryOutput = primaryOutput;
+        this.secondaryOutput = new ArrayList<>(Arrays.asList(secondaryOutput));
         this.gridSize = gridSize;
     }
 
@@ -55,9 +62,18 @@ public class RecipeStorage
      * Get the list of output items.
      * @return the copy of the list.
      */
-    public List<ItemStack> getOutput()
+    public List<ItemStack> getSecondaryOutput()
     {
-        return new ArrayList<>(output);
+        return new ArrayList<>(secondaryOutput);
+    }
+
+    /**
+     * Getter for the primary output.
+     * @return the itemStack to be produced.
+     */
+    public ItemStack getPrimaryOutput()
+    {
+        return primaryOutput;
     }
 
     /**

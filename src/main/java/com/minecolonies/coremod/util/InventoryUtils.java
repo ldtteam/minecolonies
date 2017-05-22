@@ -10,6 +10,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -1702,5 +1703,34 @@ public final class InventoryUtils
         }
 
         return existingStack.getMaxStackSize() >= (getItemStackSize(existingStack) + getItemStackSize(mergingStack));
+    }
+
+    /**
+     * Remove a list of stacks from a given Itemhandler
+     * @param handler the itemHandler.
+     * @param input the list of stacks
+     */
+    public static boolean removeStacksFromItemHandler(final IItemHandler handler, final List<ItemStack> input)
+    {
+        int i = 0;
+        while(i < input.size())
+        {
+            final ItemStack stack = input.get(i);
+            int slot = findFirstSlotInItemHandlerNotEmptyWith(handler, itemStack -> itemStack.isItemEqual(stack));
+
+            if(slot == -1)
+            {
+                return false;
+            }
+
+            int removedSize = handler.extractItem(slot, stack.stackSize, false).stackSize;
+
+            if(removedSize == stack.stackSize)
+            {
+                i++;
+            }
+        }
+
+        return true;
     }
 }

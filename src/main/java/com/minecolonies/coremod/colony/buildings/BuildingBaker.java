@@ -7,16 +7,23 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.citizen.baker.Product.ProductState;
 import com.minecolonies.coremod.entity.ai.citizen.baker.Product;
 import com.minecolonies.coremod.util.BlockPosUtil;
+import com.minecolonies.coremod.util.InventoryUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFurnace;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -180,6 +187,7 @@ public class BuildingBaker extends AbstractBuildingWorker
 
     /**
      * Get the map of current tasks in the baker.
+     *
      * @return the map of states and products.
      */
     public Map<ProductState, List<Product>> getTasks()
@@ -198,7 +206,7 @@ public class BuildingBaker extends AbstractBuildingWorker
             taskCompound.setInteger(TAG_STATE, entry.getKey().ordinal());
 
             @NotNull final NBTTagList productsTaskList = new NBTTagList();
-            for(@NotNull final Product product: entry.getValue())
+            for (@NotNull final Product product : entry.getValue())
             {
                 @NotNull final NBTTagCompound productCompound = new NBTTagCompound();
                 product.writeToNBT(productCompound);
@@ -257,7 +265,7 @@ public class BuildingBaker extends AbstractBuildingWorker
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos)
     {
         super.registerBlockPosition(block, pos);
-        if(block instanceof BlockFurnace && !furnaces.containsKey(pos))
+        if (block instanceof BlockFurnace && !furnaces.containsKey(pos))
         {
             addToFurnaces(pos);
         }
@@ -265,12 +273,13 @@ public class BuildingBaker extends AbstractBuildingWorker
 
     /**
      * Add a task to the tasks list.
-     * @param state the state of the task.
+     *
+     * @param state   the state of the task.
      * @param product the regarding product.
      */
     public void addToTasks(final ProductState state, final Product product)
     {
-        if(tasks.containsKey(state))
+        if (tasks.containsKey(state))
         {
             tasks.get(state).add(product);
         }
@@ -284,15 +293,16 @@ public class BuildingBaker extends AbstractBuildingWorker
 
     /**
      * Add a task to the tasks list.
-     * @param state the state of the task.
+     *
+     * @param state   the state of the task.
      * @param product the regarding product.
      */
     public void removeFromTasks(final ProductState state, final Product product)
     {
-        if(tasks.containsKey(state))
+        if (tasks.containsKey(state))
         {
             tasks.get(state).remove(product);
-            if(tasks.get(state).size() == 0)
+            if (tasks.get(state).size() == 0)
             {
                 tasks.remove(state);
             }
@@ -301,8 +311,9 @@ public class BuildingBaker extends AbstractBuildingWorker
 
     /**
      * Put a certain Product in the furnace.
+     *
      * @param currentFurnace the furnace to put it in.
-     * @param product the Product.
+     * @param product        the Product.
      */
     public void putInFurnace(final BlockPos currentFurnace, final Product product)
     {

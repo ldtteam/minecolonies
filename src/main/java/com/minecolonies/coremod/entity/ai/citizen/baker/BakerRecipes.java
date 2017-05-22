@@ -55,23 +55,22 @@ public class BakerRecipes
 
     static
     {
-        final List<ItemStack> inputBread = new ArrayList<>();
-        inputBread.add(new ItemStack(Items.WHEAT, REQUIRED_WHEAT));
-
-        final List<ItemStack> inputCookie = new ArrayList<>();
-        inputCookie.add(new ItemStack(Items.WHEAT, REQUIRED_WHEAT_COOKIES));
-        inputCookie.add(new ItemStack(Blocks.COCOA, REQUIRED_COCOA));
-
         final List<ItemStack> inputCake = new ArrayList<>();
         inputCake.add(new ItemStack(Items.WHEAT, REQUIRED_WHEAT));
         inputCake.add(new ItemStack(Items.MILK_BUCKET, REQUIRED_MILK));
         inputCake.add(new ItemStack(Items.SUGAR, REQUIRED_SUGAR));
         inputCake.add(new ItemStack(Items.EGG, REQUIRED_EGGS));
 
+        final List<ItemStack> inputCookie = new ArrayList<>();
+        inputCookie.add(new ItemStack(Items.WHEAT, REQUIRED_WHEAT_COOKIES));
+        inputCookie.add(new ItemStack(Blocks.COCOA, REQUIRED_COCOA));
 
-        recipes.add(new RecipeStorage(inputBread, GRID_SIZE, new ItemStack(Items.BREAD, 1)));
-        recipes.add(new RecipeStorage(inputCake, GRID_SIZE, new ItemStack(Items.CAKE, 1), new ItemStack(Items.MILK_BUCKET, 3)));
+        final List<ItemStack> inputBread = new ArrayList<>();
+        inputBread.add(new ItemStack(Items.WHEAT, REQUIRED_WHEAT));
+
         recipes.add(new RecipeStorage(inputCookie, GRID_SIZE, new ItemStack(Items.COOKIE, 1)));
+        recipes.add(new RecipeStorage(inputCake, GRID_SIZE, new ItemStack(Items.CAKE, 1), new ItemStack(Items.BUCKET, REQUIRED_MILK)));
+        recipes.add(new RecipeStorage(inputBread, GRID_SIZE, new ItemStack(Items.BREAD, 1)));
     }
 
     /**
