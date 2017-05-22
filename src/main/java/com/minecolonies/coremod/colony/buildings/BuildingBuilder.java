@@ -126,7 +126,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
     @Override
     public boolean neededForWorker(@Nullable final ItemStack stack)
     {
-        return Utils.isMiningTool(stack) || neededResources.containsKey(stack.getUnlocalizedName());
+        return Utils.isMiningTool(stack) || Utils.isAxe(stack) || neededResources.containsKey(stack.getUnlocalizedName());
     }
 
     @Override
