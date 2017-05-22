@@ -116,6 +116,7 @@ public class BuildingHome extends AbstractBuildingHut
         }
     }
 
+    @Override
     public boolean needsAnything()
     {
         return super.needsAnything() || isFoodNeeded();
