@@ -33,8 +33,8 @@ The Java JDK is used to compile MineColonies
 	* Linux: Installation methods for certain popular flavors of Linux are listed below.  If your distribution is not listed, follow the instructions specific to your package manager or install it manually [here](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
 		* Gentoo: `emerge dev-java/oracle-jdk-bin`
 		* Archlinux: `pacman -S jdk8-openjdk`
-		* Ubuntu/Debian: `apt-get install openjdk-7-jdk`
-		* Fedora: `yum install java-1.7.0-openjdk`
+		* Ubuntu/Debian: `apt-get install openjdk-8-jdk`
+		* Fedora: `yum install java-1.8.0-openjdk`
 2. Windows: Set environment variables for the JDK.
     * Go to `Control Panel\System and Security\System`, and click on `Advanced System Settings` on the left-hand side.
     * Click on `Environment Variables`.
