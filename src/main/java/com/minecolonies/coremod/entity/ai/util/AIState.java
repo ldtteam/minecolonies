@@ -286,4 +286,9 @@ public enum AIState
      */
     BAKER_FINISHING,
 
+    /**
+     * Take the product out of the oven.
+     */
+    BAKER_TAKE_OUT_OF_OVEN
+
 }

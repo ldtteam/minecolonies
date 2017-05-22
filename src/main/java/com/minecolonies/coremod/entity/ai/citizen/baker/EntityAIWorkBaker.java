@@ -6,14 +6,17 @@ import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
+import net.minecraft.block.BlockFurnace;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+import java.util.Map;
+
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.coremod.util.constants.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BAKER_NO_FURNACES;
 
 /**
  * Fisherman AI class.
@@ -35,16 +38,13 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
      */
     private static final int DEXTERITY_MULTIPLIER = 1;
 
-    //todo check how many doughs we have
-    //todo check how many furnaces we have
-    //todo check how many baked ones we have
-    //todo add furnace search inside the building!
-    //todo 1 principal "Start working" -> checks what we have now atm (doughs etc) always try to wrap up things
-    //todo check for the furnaces if we're waiting for them in there, if ready progress there, else progress elsewhere
+    /**
+     * Current furnace to walk to.
+     */
+    private BlockPos currentFurnace = null;
+
 
     //todo first step dough: Take the wheat, by chance need between 3-5 (6-building level) so 5,4,3,2,1 (by chance could need only 1 each bread), hit for time depending on level at hut chest with wheat in hand. (Particle effects?)
-
-    //todo second step bring to furnace, will need a fixed time, but can use building level furnaces.
 
     //todo prepare, hit with bread in hand on hut block for fixed time depending on his level.
 
@@ -52,11 +52,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 
     //todo if he has no wheat, request it to dman, always if he can't find wheat in start working and he has nothing to do at the moment
 
-    //todo if he finds stuff for cake, hit a long time on the hut block and then ready, same for cookies. (twice as long as bread)
     //todo and hit with the ingredients
-
-    //todo create a class which contains a recipe, list of input itemstacks, list of output itemStacks, and required pattern (4,9, +?)
-
 
     /**
      * Constructor for the Fisherman.
@@ -72,12 +68,36 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
           new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
           new AITarget(PREPARING, this::prepareForBaking),
           new AITarget(BAKER_KNEADING, this::kneadTheDough),
-          new AITarget(BAKER_BAKING, this::BakeBread)
+          new AITarget(BAKER_BAKING, this::bakeBread),
+          new AITarget(BAKER_TAKE_OUT_OF_OVEN, this::takeFromOven)
         );
         worker.setSkillModifier(
           INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
             + DEXTERITY_MULTIPLIER * worker.getCitizenData().getDexterity());
         worker.setCanPickUpLoot(true);
+    }
+
+    private AIState takeFromOven()
+    {
+        if(currentFurnace == null)
+        {
+            return START_WORKING;
+        }
+
+        if (walkToBlock(currentFurnace))
+        {
+            return getState();
+        }
+
+        final Product product = getOwnBuilding().getFurnacesWithProduct().remove(currentFurnace);
+        if(product != null)
+        {
+            getOwnBuilding().addToTasks(product.getState(), product);
+        }
+
+        currentFurnace = null;
+
+        return START_WORKING;
     }
 
     /**
@@ -87,6 +107,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
      */
     private AIState kneadTheDough()
     {
+        //todo decide which task to do
        walkToBlock(getOwnBuilding().getLocation());
        int i = 0;
        while (i <= 10)
@@ -105,23 +126,35 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
      *
      * @return the next AIState
      */
-    private AIState BakeBread()
+    private AIState bakeBread()
     {
-        //todo can take care of buildingLevel furnaces.
-        final BlockPos oven = getOwnBuilding().getFurnaces().get(0);
-
-        if(oven == null)
+        final BuildingBaker building = getOwnBuilding();
+        if(currentFurnace == null || building.getFurnacesWithProduct().get(currentFurnace) != null)
         {
-            //todo tell player about missing oven! (repair my building, furnaces got lost)
             return PREPARING;
         }
 
-        if(walkToBlock(oven))
+        if(walkToBlock(currentFurnace))
         {
             return BAKER_BAKING;
         }
 
-        worker.hitBlockWithToolInHand(oven);
+        final List<Product> products = building.getTasks().get(Product.ProductState.PREPARED);
+        if(!(world.getBlockState(currentFurnace).getBlock() instanceof BlockFurnace) || products.isEmpty())
+        {
+            building.removeFromFurnaces(currentFurnace);
+            return START_WORKING;
+        }
+
+        final Product product = products.get(0);
+        building.removeFromTasks(Product.ProductState.PREPARED, product);
+
+        if(product != null && product.getState() == Product.ProductState.BAKING)
+        {
+            building.putInFurnace(currentFurnace, product);
+            product.nextState();
+            world.setBlockState(currentFurnace, Blocks.LIT_FURNACE.getDefaultState());
+        }
         return PREPARING;
     }
 
@@ -132,11 +165,48 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
      */
     private AIState prepareForBaking()
     {
-        if(true)
+        if(getOwnBuilding().getFurnaces().isEmpty())
+        {
+            worker.sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BAKER_NO_FURNACES);
+            return getState();
+        }
+
+        boolean emptyFurnace = false;
+        for(final Map.Entry<BlockPos, Product> entry: getOwnBuilding().getFurnacesWithProduct().entrySet())
+        {
+            if(entry.getValue() == null)
+            {
+                emptyFurnace = true;
+                currentFurnace = entry.getKey();
+            }
+            else if(entry.getValue().getState() == Product.ProductState.BAKED)
+            {
+                currentFurnace = entry.getKey();
+                return BAKER_TAKE_OUT_OF_OVEN;
+            }
+        }
+
+        @NotNull final Map<Product.ProductState, List<Product>> map = getOwnBuilding().getTasks();
+        if(map.isEmpty())
         {
             return BAKER_KNEADING;
         }
-        return getState();
+
+        if(map.containsKey(Product.ProductState.BAKED))
+        {
+            return BAKER_FINISHING;
+        }
+
+        if(emptyFurnace)
+        {
+            if(map.containsKey(Product.ProductState.PREPARED))
+            {
+                return BAKER_BAKING;
+            }
+            return BAKER_KNEADING;
+        }
+
+        return BAKER_KNEADING;
     }
 
 

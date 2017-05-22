@@ -1,6 +1,9 @@
 package com.minecolonies.coremod.entity.ai.util;
 
+import com.minecolonies.coremod.util.InventoryUtils;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.IItemHandler;
+import org.jetbrains.annotations.NotNull;
 import scala.actors.threadpool.Arrays;
 
 import java.util.ArrayList;
@@ -66,5 +69,38 @@ public class RecipeStorage
         return gridSize;
     }
 
-    public boolean canFullFillRecipe()
+    /**
+     * Method to check if with the help of inventories this recipe can be fullfilled.
+     * @param inventories the inventories to check.
+     * @return true if possible, else false.
+     */
+    public boolean canFullFillRecipe(@NotNull final IItemHandler...inventories)
+    {
+        for(final ItemStack stack: input)
+        {
+            int amountNeeded = stack.stackSize;
+            boolean hasStack = false;
+            for(final IItemHandler handler: inventories)
+            {
+                hasStack = InventoryUtils.hasItemInItemHandler(handler, itemStack -> !InventoryUtils.isItemStackEmpty(itemStack) && itemStack.isItemEqual(stack));
+
+                if(hasStack)
+                {
+                    final int count = InventoryUtils.getItemCountInItemHandler(handler, itemStack -> !InventoryUtils.isItemStackEmpty(itemStack) && itemStack.isItemEqual(stack));
+                    if(count > amountNeeded)
+                    {
+                        break;
+                    }
+                    hasStack = false;
+                    amountNeeded-= count;
+                }
+            }
+
+            if(!hasStack)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
 }

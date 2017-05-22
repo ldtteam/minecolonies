@@ -11,14 +11,24 @@ public class Product
     private static final String TAG_STATE = "state";
 
     /**
+     * Baking progress of the bread.
+     */
+    private static final int FINISHED_BAKING_PROGRESS = 10;
+
+    /**
      * Current state of the product, intantiated at raw.
      */
-    private ProductState state         = ProductState.RAW;
+    private ProductState state = ProductState.RAW;
 
     /**
      * The end product of the Product.
      */
     private final ItemStack endProduct;
+
+    /**
+     * The baking progress of the product.
+     */
+    private int bakingProgress = 0;
 
     /**
      * Instantiates the Product, requires the end product of it.
@@ -71,6 +81,29 @@ public class Product
     }
 
     /**
+     * Get the Baking progress of the product in the oven.
+     * @return an integer between 0-10.
+     */
+    public int getBakingProgress()
+    {
+        return bakingProgress;
+    }
+
+    /**
+     * Increase the baking progress.
+     * If reached finish line, this will make the product reach the next state.
+     */
+    public void increaseBakingProgress()
+    {
+        this.bakingProgress++;
+
+        if(bakingProgress >= FINISHED_BAKING_PROGRESS)
+        {
+            this.nextState();
+        }
+    }
+
+    /**
      * Create the product from NBT.
      * @param productCompound the compound to use.
      * @return the restored Product.
@@ -97,6 +130,7 @@ public class Product
     {
         RAW,
         PREPARED,
+        BAKING,
         BAKED
     }
 }
