@@ -126,7 +126,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
     @Override
     public boolean neededForWorker(@Nullable final ItemStack stack)
     {
-        return Utils.isMiningTool(stack);
+        return Utils.isMiningTool(stack) || neededResources.containsKey(stack.getUnlocalizedName());
     }
 
     @Override
@@ -311,17 +311,6 @@ public class BuildingBuilder extends AbstractBuildingWorker
     {
         neededResources = new HashMap<>();
         this.markDirty();
-    }
-
-    /**
-     * Check if the builder requires a certain ItemStack for the current construction.
-     *
-     * @param stack the stack to test.
-     * @return true if so.
-     */
-    public boolean requiresResourceForBuilding(ItemStack stack)
-    {
-        return neededResources.containsKey(stack.getUnlocalizedName());
     }
 
     @Override
