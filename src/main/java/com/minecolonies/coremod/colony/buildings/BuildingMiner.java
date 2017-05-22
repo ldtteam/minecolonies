@@ -284,7 +284,7 @@ public class BuildingMiner extends AbstractBuildingWorker
     @Override
     public boolean neededForWorker(@Nullable final ItemStack stack)
     {
-        return Utils.isPickaxe(stack) || Utils.isShovel(stack);
+        return Utils.isPickaxe(stack) || Utils.isShovel(stack) || Utils.isAxe(stack);
     }
 
     /**
