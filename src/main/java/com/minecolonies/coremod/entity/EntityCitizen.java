@@ -260,7 +260,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private BlockPos currentPosition = null;
 
     /**
-     * Time the entitiy is at the same position already.
+     * Time the entity is at the same position already.
      */
     private int stuckTime = 0;
 

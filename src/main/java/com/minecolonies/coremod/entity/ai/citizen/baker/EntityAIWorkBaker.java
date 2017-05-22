@@ -1,13 +1,11 @@
 package com.minecolonies.coremod.entity.ai.citizen.baker;
 
-import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.buildings.BuildingBaker;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
-import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
