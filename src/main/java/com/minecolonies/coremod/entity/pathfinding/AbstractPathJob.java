@@ -51,17 +51,17 @@ public abstract class AbstractPathJob implements Callable<Path>
     /**
      * Additional cost of jumping and dropping - base 1.
      */
-    private static final double JUMP_DROP_COST = 1.1D;
+    private static final double JUMP_DROP_COST = 2.5D;
 
     /**
      * Cost improvement of paths - base 1.
      */
-    private static final double ON_PATH_COST = 0.75D;
+    private static final double ON_PATH_COST = 0.5D;
 
     /**
      * Additional cost of swimming - base 1.
      */
-    private static final double SWIM_COST = 5D;
+    private static final double SWIM_COST = 10D;
 
     /**
      * Distance which is considered to be too close to a fence.
@@ -690,7 +690,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param dPos   Delta from parent, expected in range of [-1..1].
      * @return true if a node was added or updated when attempting to move in the given direction.
      */
-    protected final boolean walk(@NotNull final Node parent, @NotNull final BlockPos dPos)
+    protected final boolean walk(@NotNull final Node parent, @NotNull BlockPos dPos)
     {
         BlockPos pos = parent.pos.add(dPos);
 
@@ -709,6 +709,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         if (pos.getY() != newY)
         {
+            final int yDelta = newY - pos.getY();
             //  Has this node been visited?
             pos = new BlockPos(pos.getX(), newY, pos.getZ());
             nodeKey = computeNodeKey(pos);
@@ -718,6 +719,9 @@ public abstract class AbstractPathJob implements Callable<Path>
                 //  Early out on previously visited and closed nodes
                 return false;
             }
+
+            // Update change in position
+            dPos = dPos.add(0, yDelta, 0);
         }
 
 
