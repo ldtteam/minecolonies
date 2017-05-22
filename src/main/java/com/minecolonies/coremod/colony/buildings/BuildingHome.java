@@ -116,6 +116,13 @@ public class BuildingHome extends AbstractBuildingHut
         }
     }
 
+    @Override
+    public boolean needsAnything()
+    {
+        return super.needsAnything() || isFoodNeeded();
+    }
+
+
     /**
      * Set food requirements for the building.
      * @param foodNeeded set true if required.
