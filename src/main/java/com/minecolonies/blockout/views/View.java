@@ -1,6 +1,9 @@
-package com.minecolonies.blockout;
+package com.minecolonies.blockout.views;
 
-import com.minecolonies.blockout.views.Window;
+import com.minecolonies.blockout.Alignment;
+import com.minecolonies.blockout.Loader;
+import com.minecolonies.blockout.Pane;
+import com.minecolonies.blockout.PaneParams;
 import net.minecraft.client.renderer.GlStateManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -100,7 +103,7 @@ public class View extends Pane
     }
 
     @Override
-    protected void setWindow(final Window w)
+    public void setWindow(final Window w)
     {
         super.setWindow(w);
         for (final Pane child : children)
@@ -201,12 +204,14 @@ public class View extends Pane
             childWidth = Math.max(0, getInteriorWidth() + childWidth);
         }
 
+        final Alignment alignment = child.getAlignment();
+
         //  Adjust for horizontal alignment.
-        if (child.alignment.isRightAligned())
+        if (alignment.isRightAligned())
         {
             childX = (getInteriorWidth() - childWidth) - childX;
         }
-        else if (child.alignment.isHorizontalCentered())
+        else if (alignment.isHorizontalCentered())
         {
             childX = ((getInteriorWidth() - childWidth) / 2) + childX;
         }
@@ -218,11 +223,11 @@ public class View extends Pane
         }
 
         //  Adjust for vertical alignment.
-        if (child.alignment.isBottomAligned())
+        if (alignment.isBottomAligned())
         {
             childY = (getInteriorHeight() - childHeight) - childY;
         }
-        else if (child.alignment.isVerticalCentered())
+        else if (alignment.isVerticalCentered())
         {
             childY = ((getInteriorHeight() - childHeight) / 2) + childY;
         }

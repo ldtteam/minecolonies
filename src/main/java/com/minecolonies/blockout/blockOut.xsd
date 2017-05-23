@@ -89,6 +89,7 @@
             <xs:element name="box" type="boxType"/>
             <xs:element name="itemicon" type="itemIconType"/>
             <xs:element name="switch" type="switchType"/>
+            <xs:element name="dropdown" type="dropdownType"/>
         </xs:choice>
     </xs:group>
 
@@ -228,6 +229,18 @@
                 <xs:attribute name="colordisabled" type="xs:string"/>
                 <xs:attribute name="shadow" type="xs:boolean"/>
                 <xs:attribute name="tab" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- <dropdown> -->
+    <xs:complexType name="dropdownType">
+        <xs:complexContent>
+            <xs:extension base="paneType">
+                <xs:group ref="paneContainerGroup" minOccurs="1" maxOccurs="1"/>
+                <xs:attribute name="padding" type="xs:integer"/>
+                <xs:attribute name="maxContentHeight" type="xs:integer"/>
+                <xs:attribute name="dropDownSize" type="fixedSizePair"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
