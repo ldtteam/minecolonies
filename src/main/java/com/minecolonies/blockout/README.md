@@ -1,6 +1,6 @@
 About BlockOut
 --------------
-BlockOut is a data-driven GUI library for Minecraft (currently 1.7 only).
+BlockOut is a data-driven GUI library for Minecraft.
 
 BlockOut uses a hierarchical structure, consisting of a root Window, which contains one or more Panes and Views.  Views
 are a type of Pane which can contain other Panes (and Views).
