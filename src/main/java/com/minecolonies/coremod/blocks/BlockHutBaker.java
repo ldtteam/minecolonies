@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BlockHutBaker extends AbstractBlockHut
 {
-    protected BlockHutBaker()
+    public BlockHutBaker()
     {
         //No different from Abstract parent
         super();

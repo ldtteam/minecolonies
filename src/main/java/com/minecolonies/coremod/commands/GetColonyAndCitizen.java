@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.commands;
 
-import com.minecolonies.api.colony.ColonyManager;
+import com.minecolonies.api.colony.management.ColonyManager;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -58,13 +58,13 @@ public final class GetColonyAndCitizen
         }
         else if (args.length == SHORT_ARGUMENT_LENGTH || args.length == NAME_ARGUMENT_LENGTH)
         {
-            if (ColonyManager.getIColonyByOwner(world, mayorID) == null)
+            if (ColonyManager.getColonyByOwner(world, mayorID) == null)
             {
                 throw new IllegalArgumentException(NO_COLONY);
             }
             else
             {
-                colonyId = ColonyManager.getIColonyByOwner(world, mayorID).getID();
+                colonyId = ColonyManager.getColonyByOwner(world, mayorID).getID();
             }
         }
         else if (args.length >= TOO_MANY_ARGUMENTS_LENGTH)

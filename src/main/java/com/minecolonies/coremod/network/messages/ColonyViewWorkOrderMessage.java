@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.network.messages;
 
-import com.minecolonies.api.colony.ColonyManager;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.management.ColonyManager;
 import com.minecolonies.api.colony.workorder.IWorkOrder;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

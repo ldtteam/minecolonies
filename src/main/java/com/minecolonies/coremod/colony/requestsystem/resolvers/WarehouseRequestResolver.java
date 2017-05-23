@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import com.minecolonies.api.colony.requestsystem.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.coremod.colony.requestsystem.requestable.Delivery;
+import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.item.ItemStack;

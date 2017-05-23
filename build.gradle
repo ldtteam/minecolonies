@@ -82,6 +82,8 @@ sourceSets {
 }
 
 dependencies {
+    structuresCompile sourceSets.api.output
+
     compile sourceSets.api.output
     compile sourceSets.blockOut.output
     compile sourceSets.structures.output

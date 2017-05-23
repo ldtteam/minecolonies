@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.commands;
 
-import com.minecolonies.api.colony.ColonyManager;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.management.ColonyManager;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.colony.Colony;
 import com.mojang.authlib.GameProfile;
@@ -78,7 +78,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand
             IColony colony = null;
             if (sender instanceof EntityPlayer)
             {
-                colony = ColonyManager.getIColonyByOwner(((EntityPlayer) sender).world, (EntityPlayer) sender);
+                colony = ColonyManager.getColonyByOwner(((EntityPlayer) sender).world, (EntityPlayer) sender);
             }
 
             if (colony == null)

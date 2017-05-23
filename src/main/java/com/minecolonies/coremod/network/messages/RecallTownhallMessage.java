@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.network.messages;
 
-import com.minecolonies.api.colony.ColonyManager;
+import com.minecolonies.api.colony.management.ColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
-import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;

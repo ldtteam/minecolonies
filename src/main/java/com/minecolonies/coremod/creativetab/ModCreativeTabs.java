@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.creativetab;
 
-import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.api.lib.Constants;
+import com.minecolonies.api.reference.ModBlocks;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 

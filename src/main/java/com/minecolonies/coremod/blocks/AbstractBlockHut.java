@@ -1,13 +1,14 @@
 package com.minecolonies.coremod.blocks;
 
-import com.minecolonies.api.colony.ColonyManager;
+import com.minecolonies.api.IAPI;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IHutBlock;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.lib.Constants;
-import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
-import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.ITileEntityProvider;
@@ -37,7 +38,7 @@ import org.jetbrains.annotations.Nullable;
  * <p>
  * All AbstractBlockHut[something] should extend this class.
  */
-public abstract class AbstractBlockHut extends Block implements ITileEntityProvider, IBuilderUndestroyable
+public abstract class AbstractBlockHut extends Block implements ITileEntityProvider, IBuilderUndestroyable, IHutBlock
 {
     public static final  PropertyDirection FACING     = BlockHorizontal.FACING;
     private static final float             HARDNESS   = 10F;
@@ -200,7 +201,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
          */
         if (worldIn.isRemote)
         {
-            @Nullable final AbstractBuilding.View building = ColonyManager.getBuildingView(pos);
+            @Nullable final AbstractBuilding.View building = (AbstractBuilding.View) IAPI.Holder.getApi().getColonyManager().getBuilding(worldIn, pos);
 
             if (building != null
                   && building.getColony() != null
@@ -259,7 +260,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         if (placer instanceof EntityPlayer && tileEntity instanceof TileEntityColonyBuilding)
         {
             @NotNull final TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
-            @Nullable final Colony colony = ColonyManager.getColony(worldIn, hut.getPosition());
+            @Nullable final IColony colony = IAPI.Holder.getApi().getColonyManager().getColony(worldIn, hut.getPosition());
 
             if (colony != null)
             {

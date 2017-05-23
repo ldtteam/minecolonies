@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.tileentities;
 
-import com.minecolonies.api.colony.ColonyManager;
+import com.minecolonies.api.colony.management.ColonyManager;
 import com.minecolonies.api.entity.ai.citizen.farmer.ScareCrowType;
 import com.minecolonies.api.lib.Constants;
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.inventory.InventoryField;
 import com.minecolonies.coremod.util.EntityUtils;
-import com.minecolonies.coremod.util.LanguageHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;

@@ -1,7 +1,8 @@
 package com.minecolonies.coremod.colony.requestsystem;
 
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.colony.requestsystem.token.StandardTokenFactory;
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequestFactories;
-import com.minecolonies.coremod.colony.requestsystem.token.StandardTokenFactory;
 
 /**
  * Initialization handler for the request system.

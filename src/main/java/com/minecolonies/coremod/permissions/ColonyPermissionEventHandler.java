@@ -2,6 +2,7 @@ package com.minecolonies.coremod.permissions;
 
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
@@ -9,7 +10,6 @@ import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.items.ItemScanTool;
 import com.minecolonies.coremod.util.EntityUtils;
-import com.minecolonies.coremod.util.LanguageHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.state.IBlockState;

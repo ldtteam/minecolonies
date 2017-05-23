@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.colony.requestsystem.requestable;
+package com.minecolonies.api.colony.requestsystem.requestable;
 
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;

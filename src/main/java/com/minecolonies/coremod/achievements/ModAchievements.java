@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.achievements;
 
-import com.minecolonies.coremod.blocks.ModBlocks;
-import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.api.lib.Constants;
+import com.minecolonies.api.reference.ModBlocks;
+import com.minecolonies.coremod.items.ModItems;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.stats.Achievement;

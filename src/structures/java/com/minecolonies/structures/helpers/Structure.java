@@ -1,13 +1,12 @@
 package com.minecolonies.structures.helpers;
 
-import com.minecolonies.api.colony.ColonyManager;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.lib.Constants;
+import com.minecolonies.api.reference.ModBlocks;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.blocks.ModBlocks;
-import com.minecolonies.coremod.colony.Structures;
+import com.minecolonies.structures.Structures;
+import com.minecolonies.structures.StructuresConfiguration;
 import com.minecolonies.structures.fake.FakeEntity;
 import com.minecolonies.structures.fake.FakeWorld;
 import com.minecolonies.structures.lib.ModelHolder;
@@ -157,9 +156,9 @@ public class Structure
     {
         if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
         {
-            if (ColonyManager.getServerUUID() != null)
+            if (StructuresConfiguration.getServerID() != null)
             {
-                return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + "/" + ColonyManager.getServerUUID());
+                return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + "/" + StructuresConfiguration.getServerID());
             }
             else
             {
@@ -220,7 +219,7 @@ public class Structure
         else
         {
             //Look in the folder first
-            inputstream = Structure.getStreamFromFolder(MineColonies.proxy.getSchematicsFolder(), structureName);
+            inputstream = Structure.getStreamFromFolder(StructuresConfiguration.getSchematicsFolder(), structureName);
             if (inputstream == null && !Configurations.ignoreSchematicsFromJar)
             {
                 inputstream = Structure.getStreamFromJar(structureName);

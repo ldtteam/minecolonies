@@ -1,12 +1,10 @@
 package com.minecolonies.api.entity.ai.citizen.farmer;
 
+import com.minecolonies.api.IAPI;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.lib.Constants;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.inventory.InventoryField;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -216,7 +214,7 @@ public class Field extends Container
     public Field(@NotNull final IScarecrow scarecrowTileEntity, final InventoryPlayer playerInventory, @NotNull final World world, @NotNull final BlockPos location)
     {
         super();
-        this.colony = ColonyManager.getColony(world, location);
+        this.colony = IAPI.Holder.getApi().getColonyManager().getColony(world, location);
         this.location = location;
         this.inventory = scarecrowTileEntity.getInventoryField();
 
@@ -289,7 +287,7 @@ public class Field extends Container
     /**
      * Returns the colony of the field.
      *
-     * @return {@link com.minecolonies.coremod.colony.Colony} of the current object.
+     * @return {@link IColony} of the current object.
      */
     @Nullable
     public IColony getColony()
@@ -305,7 +303,7 @@ public class Field extends Container
      * @return {@link Field} created from the compound.
      */
     @NotNull
-    public static Field createFromNBT(final Colony colony, @NotNull final NBTTagCompound compound)
+    public static Field createFromNBT(final IColony colony, @NotNull final NBTTagCompound compound)
     {
         @NotNull final Field field = new Field(colony);
         field.readFromNBT(compound);
@@ -327,7 +325,7 @@ public class Field extends Container
         widthPlusZ = compound.getInteger(TAG_WIDTH_PLUS);
         lengthMinusX = compound.getInteger(TAG_LENGTH_MINUS);
         widthMinusZ = compound.getInteger(TAG_WIDTH_MINUS);
-        inventory = new InventoryField();
+        inventory = new ItemStackHandler();
         inventory.deserializeNBT((NBTTagCompound) compound.getTag(Constants.MOD_ID + TAG_INVENTORY));
         setOwner(compound.getString(TAG_OWNER));
         initialized = compound.getBoolean(TAG_INITIALIZED);
@@ -582,7 +580,7 @@ public class Field extends Container
      *
      * @param inventory the inventory to set.
      */
-    public void setInventoryField(final InventoryField inventory)
+    public void setInventoryField(final ItemStackHandler inventory)
     {
         this.inventory = inventory;
     }

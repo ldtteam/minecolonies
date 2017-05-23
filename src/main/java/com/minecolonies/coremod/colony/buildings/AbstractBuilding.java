@@ -1,30 +1,26 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.google.common.collect.ImmutableList;
-import com.minecolonies.api.colony.ColonyManager;
+import com.minecolonies.api.IAPI;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.Tool;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.Utils;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.api.util.*;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.blocks.*;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView;
 import com.minecolonies.coremod.colony.requestsystem.locations.StaticLocation;
-import com.minecolonies.coremod.colony.requestsystem.requestable.Tool;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrderBuild;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
-import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.coremod.util.LanguageHandler;
+import com.minecolonies.structures.Structures;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.InventoryHelper;
@@ -726,11 +722,7 @@ public abstract class AbstractBuilding implements IBuilding
         return tileEntity;
     }
 
-    /**
-     * Sets the tile entity for the building.
-     *
-     * @param te {@link TileEntityColonyBuilding} that will fill the {@link #tileEntity} field.
-     */
+    @Override
     public void setTileEntity(final TileEntityColonyBuilding te)
     {
         tileEntity = te;
@@ -827,9 +819,7 @@ public abstract class AbstractBuilding implements IBuilding
         return id;
     }
 
-    /**
-     * Marks the instance and the building dirty.
-     */
+    @Override
     public final void markDirty()
     {
         dirty = true;
@@ -977,7 +967,7 @@ public abstract class AbstractBuilding implements IBuilding
 
         buildingLevel = level;
         markDirty();
-        ColonyManager.markDirty();
+        IAPI.Holder.getApi().getColonyManager().markDirty();
     }
 
     /**
@@ -1428,6 +1418,12 @@ public abstract class AbstractBuilding implements IBuilding
             return null;
         }
 
+        @Override
+        public void setTileEntity(final TileEntityColonyBuilding te)
+        {
+
+        }
+
         /**
          * Gets the ColonyView that this building belongs to.
          *
@@ -1436,6 +1432,12 @@ public abstract class AbstractBuilding implements IBuilding
         public ColonyView getColony()
         {
             return colony;
+        }
+
+        @Override
+        public void markDirty()
+        {
+
         }
 
         /**

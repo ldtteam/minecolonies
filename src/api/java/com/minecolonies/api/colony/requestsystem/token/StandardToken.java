@@ -1,6 +1,5 @@
-package com.minecolonies.coremod.colony.requestsystem.token;
+package com.minecolonies.api.colony.requestsystem.token;
 
-import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 

@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BlockHutStonemason extends AbstractBlockHut
 {
-    protected BlockHutStonemason()
+    public BlockHutStonemason()
     {
         //No different from Abstract parent
         super();

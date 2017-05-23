@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class BlockHutWareHouse extends AbstractBlockHut
 {
-    protected BlockHutWareHouse()
+    public BlockHutWareHouse()
     {
         //No different from Abstract parent
         super();

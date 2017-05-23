@@ -1,5 +1,6 @@
 package com.minecolonies.api.colony;
 
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.Citizen;
 import org.jetbrains.annotations.NotNull;
@@ -62,6 +63,14 @@ public interface ICitizenData
      * @return The client sided texture of the citizen.
      */
     int getTextureId();
+
+    /**
+     * Returns the work building of a citizen.
+     *
+     * @return home building of a citizen.
+     */
+    @Nullable
+    IBuilding getWorkBuilding();
 
     /**
      * Returns the job of the citizen.

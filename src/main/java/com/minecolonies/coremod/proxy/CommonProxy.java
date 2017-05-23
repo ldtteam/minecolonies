@@ -1,6 +1,10 @@
 package com.minecolonies.coremod.proxy;
 
+import com.minecolonies.api.lib.Constants;
+import com.minecolonies.api.reference.ModBlocks;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.blocks.*;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.configuration.ConfigurationHandler;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -8,10 +12,8 @@ import com.minecolonies.coremod.entity.EntityFishHook;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.event.FMLEventHandler;
 import com.minecolonies.coremod.inventory.GuiHandler;
-import com.minecolonies.api.lib.Constants;
 import com.minecolonies.coremod.sounds.ModSoundEvents;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
@@ -66,6 +68,29 @@ public class CommonProxy implements IProxy
     public boolean isClient()
     {
         return false;
+    }
+
+    @Override
+    public void registerBlocks()
+    {
+        ModBlocks.blockHutTownHall = new BlockHutTownHall();
+        ModBlocks.blockHutCitizen = new BlockHutCitizen();
+        ModBlocks.blockHutMiner = new BlockHutMiner();
+        ModBlocks.blockHutLumberjack = new BlockHutLumberjack();
+        ModBlocks.blockHutBaker = new BlockHutBaker();
+        ModBlocks.blockHutBuilder = new BlockHutBuilder();
+        ModBlocks.blockHutDeliveryman = new BlockHutDeliveryman();
+        ModBlocks.blockHutBlacksmith = new BlockHutBlacksmith();
+        ModBlocks.blockHutStonemason = new BlockHutStonemason();
+        ModBlocks.blockHutFarmer = new BlockHutFarmer();
+        ModBlocks.blockHutFisherman = new BlockHutFisherman();
+        ModBlocks.blockSubstitution = new BlockSubstitution();
+        ModBlocks.blockSolidSubstitution = new BlockSolidSubstitution();
+        ModBlocks.blockHutField = new BlockHutField();
+        ModBlocks.blockHutGuardTower = new BlockHutGuardTower();
+        ModBlocks.blockHutWareHouse = new BlockHutWareHouse();
+        ModBlocks.blockConstructionTape = new BlockConstructionTape();
+        ModBlocks.blockConstructionTapeCorner = new BlockConstructionTapeCorner();
     }
 
     @Override

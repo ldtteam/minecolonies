@@ -10,7 +10,7 @@ public class BlockHutGuardTower extends AbstractBlockHut
     /**
      * Default constructor.
      */
-    protected BlockHutGuardTower()
+    public BlockHutGuardTower()
     {
         //No different from Abstract parent
         super();

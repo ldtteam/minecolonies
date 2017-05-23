@@ -1,9 +1,7 @@
-package com.minecolonies.coremod.entity.pathfinding;
+package com.minecolonies.api.entity.pathfinding;
 
-import com.minecolonies.api.entity.pathfinding.AbstractPathJob;
-import com.minecolonies.api.entity.pathfinding.Node;
-import com.minecolonies.coremod.configuration.Configurations;
-import com.minecolonies.coremod.util.Log;
+import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.Log;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.items;
 
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
-import com.minecolonies.coremod.util.LanguageHandler;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.ai.attributes.RangedAttribute;

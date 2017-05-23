@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.network.messages;
 
-import com.minecolonies.api.colony.ColonyManager;
+import com.minecolonies.api.colony.management.ColonyManager;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;

@@ -1,6 +1,7 @@
-package com.minecolonies.api.colony;
+package com.minecolonies.api.colony.management;
 
-
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyList;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
@@ -365,14 +366,14 @@ public final class ColonyManager implements IColonyManager
 
     @Override
     @Nullable
-    public IColony getIColonyByOwner(@NotNull final World w, @NotNull final EntityPlayer owner)
+    public IColony getColonyByOwner(@NotNull final World w, @NotNull final EntityPlayer owner)
     {
-        return getIColonyByOwner(w, w.isRemote ? owner.getUniqueID() : owner.getGameProfile().getId());
+        return getColonyByOwner(w, w.isRemote ? owner.getUniqueID() : owner.getGameProfile().getId());
     }
 
     @Override
     @Nullable
-    public IColony getIColonyByOwner(@NotNull final World w, final UUID owner)
+    public IColony getColonyByOwner(@NotNull final World w, final UUID owner)
     {
         return w.isRemote ? getColonyViewByOwner(owner) : getColonyByOwner(owner);
     }

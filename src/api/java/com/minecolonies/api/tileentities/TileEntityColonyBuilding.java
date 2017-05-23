@@ -1,18 +1,22 @@
-package com.minecolonies.coremod.tileentities;
+package com.minecolonies.api.tileentities;
 
-import com.minecolonies.api.colony.ColonyManager;
+import com.minecolonies.api.IAPI;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.UUID;
 
 /**
  * Class which handles the tileEntity of our colonyBuildings.
@@ -29,17 +33,17 @@ public class TileEntityColonyBuilding extends TileEntityChest
     /**
      * The colony id.
      */
-    private int colonyId = 0;
+    private IToken colonyId = StandardFactoryController.getInstance().getNewInstance(UUID.randomUUID());
 
     /**
      * The colony.
      */
-    private Colony colony;
+    private IColony colony;
 
     /**
      * The building the tileEntity belongs to.
      */
-    private AbstractBuilding building;
+    private IBuilding building;
 
     /**
      * Check if the building has a mirror.
@@ -64,7 +68,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
      *
      * @return ID of the colony.
      */
-    public int getColonyId()
+    public IToken getColonyId()
     {
         return colonyId;
     }
@@ -74,7 +78,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
      *
      * @return Colony of the tile entity.
      */
-    public Colony getColony()
+    public IColony getColony()
     {
         if (colony == null)
         {
@@ -90,13 +94,13 @@ public class TileEntityColonyBuilding extends TileEntityChest
     {
         if (colony == null && world != null)
         {
-            if (colonyId == 0)
+            if (colonyId == null)
             {
-                colony = ColonyManager.getColony(world, this.getPos());
+                colony = IAPI.Holder.getApi().getColonyManager().getColony(world, this.getPos());
             }
             else
             {
-                colony = ColonyManager.getColony(colonyId);
+                colony = IAPI.Holder.getApi().getColonyManager().getColony(colonyId);
             }
 
             if (colony == null)
@@ -133,7 +137,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
      *
      * @param c Colony to set in references.
      */
-    public void setColony(final Colony c)
+    public void setColony(final IColony c)
     {
         colony = c;
         colonyId = c.getID();
@@ -154,7 +158,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
     public SPacketUpdateTileEntity getUpdatePacket()
     {
         final NBTTagCompound compound = new NBTTagCompound();
-        compound.setInteger(TAG_COLONY, colonyId);
+        compound.setTag(TAG_COLONY, StandardFactoryController.getInstance().serialize(colonyId));
         return new SPacketUpdateTileEntity(this.getPosition(), 0, compound);
     }
 
@@ -169,7 +173,8 @@ public class TileEntityColonyBuilding extends TileEntityChest
     public void onDataPacket(final NetworkManager net, final SPacketUpdateTileEntity packet)
     {
         final NBTTagCompound compound = packet.getNbtCompound();
-        colonyId = compound.getInteger(TAG_COLONY);
+
+        colonyId = StandardFactoryController.getInstance().deserialize(compound.getCompoundTag(TAG_COLONY));
     }
 
     @Override
@@ -194,9 +199,9 @@ public class TileEntityColonyBuilding extends TileEntityChest
     /**
      * Returns the building associated with the tile entity.
      *
-     * @return {@link AbstractBuilding} associated with the tile entity.
+     * @return {@link IBuilding} associated with the tile entity.
      */
-    public AbstractBuilding getBuilding()
+    public IBuilding getBuilding()
     {
         if (building == null)
         {
@@ -208,22 +213,11 @@ public class TileEntityColonyBuilding extends TileEntityChest
     /**
      * Sets the building associated with the tile entity.
      *
-     * @param b {@link AbstractBuilding} to associate with the tile entity.
+     * @param b {@link IBuilding} to associate with the tile entity.
      */
-    public void setBuilding(final AbstractBuilding b)
+    public void setBuilding(final IBuilding b)
     {
         building = b;
-    }
-
-    /**
-     * Returns the view of the building associated with the tile entity.
-     *
-     * @return {@link AbstractBuilding.View} the tile entity is associated with.
-     */
-    public AbstractBuilding.View getBuildingView()
-    {
-        final ColonyView c = ColonyManager.getColonyView(colonyId);
-        return c == null ? null : c.getBuilding(getPosition());
     }
 
     @Override
@@ -232,7 +226,15 @@ public class TileEntityColonyBuilding extends TileEntityChest
         super.readFromNBT(compound);
         if (compound.hasKey(TAG_COLONY))
         {
-            colonyId = compound.getInteger(TAG_COLONY);
+            NBTBase base = compound.getTag(TAG_COLONY);
+            if (base instanceof NBTTagCompound)
+            {
+                colonyId = StandardFactoryController.getInstance().deserialize((NBTTagCompound) base);
+            }
+            else
+            {
+                colonyId = null;
+            }
         }
 
         updateColonyReferences();
@@ -251,7 +253,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
             //todo: actually do something about it and not spam the server
         }
         */
-        compound.setInteger(TAG_COLONY, colonyId);
+        compound.setTag(TAG_COLONY, StandardFactoryController.getInstance().serialize(colonyId));
         compound.setBoolean(TAG_MIRROR, mirror);
         compound.setString(TAG_STYLE, style);
         return compound;
@@ -262,9 +264,9 @@ public class TileEntityColonyBuilding extends TileEntityChest
     {
         super.update();
 
-        if (!world.isRemote && colonyId == 0)
+        if (!world.isRemote && colonyId == null)
         {
-            final Colony tempColony = ColonyManager.getColony(world, this.getPosition());
+            final IColony tempColony = IAPI.Holder.getApi().getColonyManager().getColony(world, this.getPosition());
             if (tempColony != null)
             {
                 colonyId = tempColony.getID();

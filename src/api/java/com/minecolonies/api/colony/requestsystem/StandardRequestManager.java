@@ -1,12 +1,9 @@
-package com.minecolonies.coremod.colony.requestsystem;
+package com.minecolonies.api.colony.requestsystem;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
-import com.minecolonies.api.colony.requestsystem.IRequestManager;
-import com.minecolonies.api.colony.requestsystem.RequestState;
-import com.minecolonies.blockout.Log;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
@@ -15,7 +12,8 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.coremod.colony.requestsystem.token.StandardToken;
+import com.minecolonies.api.colony.requestsystem.token.StandardToken;
+import com.minecolonies.blockout.Log;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

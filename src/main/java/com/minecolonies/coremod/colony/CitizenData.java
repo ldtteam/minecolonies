@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.Citizen;
@@ -488,13 +489,9 @@ public class CitizenData implements ICitizenData
         }
     }
 
-    /**
-     * Returns the work building of a citizen.
-     *
-     * @return home building of a citizen.
-     */
+    @Override
     @Nullable
-    public AbstractBuildingWorker getWorkBuilding()
+    public IBuilding getWorkBuilding()
     {
         return workBuilding;
     }

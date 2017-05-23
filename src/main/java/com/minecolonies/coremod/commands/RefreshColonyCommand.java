@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.commands;
 
-import com.minecolonies.api.colony.ColonyManager;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.management.ColonyManager;
 import com.minecolonies.coremod.colony.Colony;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.command.CommandException;
@@ -71,7 +71,7 @@ public class RefreshColonyCommand extends AbstractSingleCommand
             final EntityPlayer player = server.getEntityWorld().getPlayerEntityByName(args[0]);
             if (player != null)
             {
-                tempColony = ColonyManager.getIColonyByOwner(server.getEntityWorld(), player);
+                tempColony = ColonyManager.getColonyByOwner(server.getEntityWorld(), player);
             }
         }
 
@@ -80,7 +80,7 @@ public class RefreshColonyCommand extends AbstractSingleCommand
             final UUID mayorID = sender.getCommandSenderEntity().getUniqueID();
             if (tempColony == null)
             {
-                tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), mayorID);
+                tempColony = ColonyManager.getColonyByOwner(sender.getEntityWorld(), mayorID);
             }
 
             final EntityPlayer player = (EntityPlayer) sender;

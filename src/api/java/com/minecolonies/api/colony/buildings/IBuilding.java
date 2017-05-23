@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -26,12 +27,24 @@ public interface IBuilding extends IRequester
     TileEntity getTileEntity();
 
     /**
+     * Sets the tile entity for the building.
+     *
+     * @param te {@link TileEntityColonyBuilding} that will fill the {@code tileEntity} field.
+     */
+    void setTileEntity(TileEntityColonyBuilding te);
+
+    /**
      * Returns the colony of the building.
      *
      * @return {@link IColony} of the current object.
      */
     @NotNull
     IColony getColony();
+
+    /**
+     * Marks the instance and the building dirty.
+     */
+    void markDirty();
 
     /**
      * Checks if this building have a work order.

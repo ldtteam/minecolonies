@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.blocks;
 
-import com.minecolonies.api.colony.ColonyManager;
+import com.minecolonies.api.colony.management.ColonyManager;
 import com.minecolonies.api.entity.ai.citizen.farmer.IFieldBlock;
 import com.minecolonies.api.lib.Constants;
 import com.minecolonies.coremod.MineColonies;
@@ -81,7 +81,7 @@ public class BlockHutField extends BlockContainer implements IFieldBlock
     /**
      * Constructor called on block placement.
      */
-    BlockHutField()
+    public BlockHutField()
     {
         super(Material.WOOD);
         initBlock();

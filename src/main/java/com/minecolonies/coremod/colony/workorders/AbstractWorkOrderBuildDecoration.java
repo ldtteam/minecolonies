@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.colony.workorders;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.coremod.colony.Structures;
+import com.minecolonies.structures.Structures;
 import net.minecraft.util.math.BlockPos;
 
 /**
@@ -49,5 +49,11 @@ public class AbstractWorkOrderBuildDecoration extends AbstractWorkOrderBuild
     protected String getValue()
     {
         return workOrderName;
+    }
+
+    @Override
+    public boolean isDecoration()
+    {
+        return true;
     }
 }

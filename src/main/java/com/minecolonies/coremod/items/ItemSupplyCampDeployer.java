@@ -1,15 +1,15 @@
 package com.minecolonies.coremod.items;
 
-import com.minecolonies.api.colony.ColonyManager;
+import com.minecolonies.api.colony.management.ColonyManager;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.lib.Constants;
+import com.minecolonies.api.reference.ModBlocks;
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.achievements.ModAchievements;
-import com.minecolonies.coremod.blocks.ModBlocks;
-import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
-import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.StructureWrapper;
+import com.minecolonies.structures.Structures;
 import net.minecraft.block.BlockChest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;

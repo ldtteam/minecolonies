@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class BlockHutCitizen extends AbstractBlockHut
 {
-    protected BlockHutCitizen()
+    public BlockHutCitizen()
     {
         //No different from Abstract parent
         super();

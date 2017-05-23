@@ -1,6 +1,6 @@
 package com.minecolonies.structures.helpers;
 
-import com.minecolonies.coremod.blocks.AbstractBlockHut;
+import com.minecolonies.api.colony.buildings.IHutBlock;
 import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.Mirror;
@@ -54,7 +54,7 @@ public class StructureProxy
             blocks[tempPos.getX()][tempPos.getY()][tempPos.getZ()] = info;
             entities[tempPos.getX()][tempPos.getY()][tempPos.getZ()] = null;
 
-            if (info.blockState.getBlock() instanceof AbstractBlockHut)
+            if (info.blockState.getBlock() instanceof IHutBlock)
             {
                 offset = info.pos;
             }
@@ -277,7 +277,7 @@ public class StructureProxy
             this.blocks[x][y][z] = info;
             this.entities[x][y][z] = null;
 
-            if (info.blockState.getBlock() instanceof AbstractBlockHut)
+            if (info.blockState.getBlock() instanceof IHutBlock)
             {
                 foundHut = true;
                 offset = info.pos.add(minX, minY, minZ);

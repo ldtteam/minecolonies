@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.commands;
 
-import com.minecolonies.api.colony.ColonyManager;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.management.ColonyManager;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.command.CommandException;
@@ -130,7 +130,7 @@ public class ListCitizensCommand extends AbstractSingleCommand
      */
     private static int getColonyId(@NotNull final ICommandSender sender)
     {
-        final IColony tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), sender.getCommandSenderEntity().getUniqueID());
+        final IColony tempColony = ColonyManager.getColonyByOwner(sender.getEntityWorld(), sender.getCommandSenderEntity().getUniqueID());
         if (tempColony != null)
         {
             final Colony colony = ColonyManager.getColony(sender.getEntityWorld(), tempColony.getCenter());

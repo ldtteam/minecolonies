@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.commands;
 
-import com.minecolonies.api.colony.ColonyManager;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.management.ColonyManager;
 import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -72,7 +72,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
                 return;
             }
             final EntityPlayer player = sender.getEntityWorld().getPlayerEntityByName(playerName);
-            final IColony colony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), player.getUniqueID());
+            final IColony colony = ColonyManager.getColonyByOwner(sender.getEntityWorld(), player.getUniqueID());
             colonyId = colony.getID();
         }
 
@@ -103,7 +103,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
             return;
         }
 
-        if (ColonyManager.getIColonyByOwner(sender.getEntityWorld(), player) != null)
+        if (ColonyManager.getColonyByOwner(sender.getEntityWorld(), player) != null)
         {
             sender.getCommandSenderEntity().sendMessage(new TextComponentString(String.format(HAS_A_COLONY, playerName)));
             return;

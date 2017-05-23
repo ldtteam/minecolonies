@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.blocks;
 
-import com.minecolonies.api.colony.ColonyManager;
+import com.minecolonies.api.colony.management.ColonyManager;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.Colony;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BlockHutTownHall extends AbstractBlockHut
 {
-    protected BlockHutTownHall()
+    public BlockHutTownHall()
     {
         super();
         //Sets the working range to whatever the config is set to

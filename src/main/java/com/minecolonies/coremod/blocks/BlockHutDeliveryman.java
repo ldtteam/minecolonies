@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class BlockHutDeliveryman extends AbstractBlockHut
 {
-    protected BlockHutDeliveryman()
+    public BlockHutDeliveryman()
     {
         //No different from Abstract parent
         super();

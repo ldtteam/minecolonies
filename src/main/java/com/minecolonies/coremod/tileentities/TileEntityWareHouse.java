@@ -2,12 +2,13 @@ package com.minecolonies.coremod.tileentities;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.inventory.InventoryCitizen;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.*;
-import com.minecolonies.coremod.util.LanguageHandler;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

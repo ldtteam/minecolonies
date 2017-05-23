@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.commands;
 
-import com.minecolonies.api.colony.ColonyManager;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.management.ColonyManager;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.command.CommandException;
@@ -58,7 +58,7 @@ public class AddOfficerCommand extends AbstractSingleCommand
         int colonyId = getIthArgument(args, 0, -1);
         if (colonyId == -1 && sender instanceof EntityPlayer)
         {
-            final IColony colony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), ((EntityPlayer) sender).getUniqueID());
+            final IColony colony = ColonyManager.getColonyByOwner(sender.getEntityWorld(), ((EntityPlayer) sender).getUniqueID());
             if (colony == null)
             {
                 sender.getCommandSenderEntity().sendMessage(new TextComponentString(COLONY_NULL));

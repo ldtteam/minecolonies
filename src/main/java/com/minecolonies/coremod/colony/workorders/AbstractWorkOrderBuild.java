@@ -2,14 +2,15 @@ package com.minecolonies.coremod.colony.workorders;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.coremod.colony.*;
+import com.minecolonies.api.colony.workorder.IWorkOrderBuild;
+import com.minecolonies.api.colony.workorder.WorkOrderType;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
-import com.minecolonies.api.colony.workorder.WorkOrderType;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.util.LanguageHandler;
-import com.minecolonies.api.util.Log;
+import com.minecolonies.structures.Structures;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
  * Represents one building order to complete.
  * Has his own structure for the building.
  */
-public class AbstractWorkOrderBuild extends AbstractWorkOrder
+public class AbstractWorkOrderBuild extends AbstractWorkOrder implements IWorkOrderBuild
 {
     private static final String TAG_BUILDING       = "building";
     private static final String TAG_UPGRADE_LEVEL  = "upgradeLevel";
@@ -95,11 +96,7 @@ public class AbstractWorkOrderBuild extends AbstractWorkOrder
         return upgradeName;
     }
 
-    /**
-     * Get the name of the work order.
-     *
-     * @return the work order name
-     */
+    @Override
     public String getName()
     {
         return workOrderName;
@@ -211,7 +208,7 @@ public class AbstractWorkOrderBuild extends AbstractWorkOrder
 
         for (@NotNull final ICitizenData citizen : colony.getCitizens().values())
         {
-            final JobBuilder job = citizen.getJob(JobBuilder.class);
+            final JobBuilder job = (JobBuilder) citizen.getJob();
 
             if (job == null || citizen.getWorkBuilding() == null)
             {
@@ -274,7 +271,7 @@ public class AbstractWorkOrderBuild extends AbstractWorkOrder
                  || isLocationTownhall(colony, buildingLocation);
     }
 
-    private void sendBuilderMessage(@NotNull final Colony colony, final boolean hasBuilder, final boolean sendMessage)
+    private void sendBuilderMessage(@NotNull final IColony colony, final boolean hasBuilder, final boolean sendMessage)
     {
         if (hasSentMessageForThisWorkOrder)
         {
@@ -301,93 +298,63 @@ public class AbstractWorkOrderBuild extends AbstractWorkOrder
         return colony.hasTownHall() && colony.getTownHall() != null && colony.getTownHall().getID().equals(buildingLocation);
     }
 
-    /**
-     * Returns the level up level of the building.
-     *
-     * @return Level after upgrade.
-     */
+    @Override
     public int getUpgradeLevel()
     {
         return upgradeLevel;
     }
 
-    /**
-     * Returns the ID of the building (aka ChunkCoordinates).
-     *
-     * @return ID of the building.
-     */
+    @Override
     public BlockPos getBuildingLocation()
     {
         return buildingLocation;
     }
 
-    /**
-     * Get the name the structure for this work order.
-     *
-     * @return the internal string for this structure.
-     */
+    @Override
     public String getStructureName()
     {
         return structureName;
     }
 
-    /**
-     * Gets how many times this structure should be rotated.
-     *
-     * @return building rotation.
-     */
+    @Override
     public int getRotation()
     {
         return buildingRotation;
     }
 
-    /**
-     * Gets whether or not the building has been cleared.
-     *
-     * @return true if the building has been cleared.
-     */
+    @Override
     public boolean isCleared()
     {
         return cleared;
     }
 
-    /**
-     * Set whether or not the building has been cleared.
-     *
-     * @param cleared true if the building has been cleared.
-     */
+    @Override
     public void setCleared(final boolean cleared)
     {
         this.cleared = cleared;
     }
 
-    /**
-     * Gets whether or not the building materials have been requested already.
-     *
-     * @return true if the materials has been requested.
-     */
+    @Override
     public boolean isRequested()
     {
         return requested;
     }
 
-    /**
-     * Set whether or not the building materials have been requested already.
-     *
-     * @param requested true if so.
-     */
+    @Override
     public void setRequested(final boolean requested)
     {
         this.requested = requested;
     }
 
-    /**
-     * Check if the workOrder should be built isMirrored.
-     *
-     * @return true if so.
-     */
+    @Override
     public boolean isMirrored()
     {
         return isMirrored;
+    }
+
+    @Override
+    public boolean isDecoration()
+    {
+        return false;
     }
 }

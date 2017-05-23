@@ -1,6 +1,6 @@
 package com.minecolonies.structures.helpers;
 
-import com.minecolonies.coremod.blocks.AbstractBlockHut;
+import com.minecolonies.api.colony.buildings.IHutBlock;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
@@ -182,7 +182,7 @@ public final class Settings
         {
             for (final Template.BlockInfo info : structure.getBlockInfoWithSettings(settings))
             {
-                if (info.blockState.getBlock() instanceof AbstractBlockHut)
+                if (info.blockState.getBlock() instanceof IHutBlock)
                 {
                     offset.setPos(info.pos);
                     return info.pos;

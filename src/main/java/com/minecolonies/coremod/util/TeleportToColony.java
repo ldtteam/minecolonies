@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.util;
 
-import com.minecolonies.api.colony.ColonyManager;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.management.ColonyManager;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.commands.MinecoloniesCommand;
@@ -54,7 +54,7 @@ public final class TeleportToColony
             if (args.length == 0)
             {
                 playerToTeleport = (EntityPlayer) sender;
-                colony = ColonyManager.getIColonyByOwner(((EntityPlayer) sender).world, (EntityPlayer) sender);
+                colony = ColonyManager.getColonyByOwner(((EntityPlayer) sender).world, (EntityPlayer) sender);
                 colonyId = colony.getID();
             }
             else

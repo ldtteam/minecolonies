@@ -19,6 +19,11 @@ public interface IProxy
     boolean isClient();
 
     /**
+     * Method used to register and setup ModBlocks.
+     */
+    void registerBlocks();
+
+    /**
      * Method to register Tile Entities in.
      */
     void registerTileEntities();

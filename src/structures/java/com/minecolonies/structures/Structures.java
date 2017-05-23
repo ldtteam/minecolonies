@@ -1,13 +1,10 @@
-package com.minecolonies.coremod.colony;
+package com.minecolonies.structures;
 
-import com.minecolonies.api.colony.ColonyManager;
-import com.minecolonies.api.colony.workorder.IWorkOrder;
+import com.minecolonies.api.colony.management.ColonyManager;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.lib.Constants;
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.workorders.AbstractWorkOrderBuildDecoration;
-import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.structures.helpers.Structure;
 import net.minecraft.block.Block;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -129,7 +126,7 @@ public final class Structures
             loadStyleMapsJar();
         }
 
-        final File schematicsFolder = MineColonies.proxy.getSchematicsFolder();
+        final File schematicsFolder = StructuresConfiguration.getSchematicsFolder();
         if (schematicsFolder != null)
         {
             Log.getLogger().info("Load additionnal huts or decorations from " + schematicsFolder + SCHEMATICS_SEPARATOR + SCHEMATICS_PREFIX);
@@ -253,7 +250,7 @@ public final class Structures
                     else if (isSchematicSizeValid(structureName.toString()))
                     {
                         md5Map.put(structureName.toString(), md5);
-                        if (MineColonies.isClient())
+                        if (StructuresConfiguration.isClient())
                         {
                             addSchematic(structureName);
                         }
@@ -842,7 +839,7 @@ public final class Structures
             return false;
         }
 
-        final File structureFile = MineColonies.proxy.getSchematicsFolder().toPath().resolve(structureName.toString() + SCHEMATIC_EXTENSION).toFile();
+        final File structureFile = StructuresConfiguration.getSchematicsFolder().toPath().resolve(structureName.toString() + SCHEMATIC_EXTENSION).toFile();
         if (structureFile.delete())
         {
             md5Map.remove(structureName.toString());
@@ -863,7 +860,7 @@ public final class Structures
      */
     private static boolean canStoreNewSchematic()
     {
-        if (MineColonies.isClient())
+        if (StructuresConfiguration.isClient())
         {
             return true;
         }
@@ -879,22 +876,7 @@ public final class Structures
         }
 
 
-        int countInUseStructures = 0;
-        for (final Colony c : ColonyManager.getColonies())
-        {
-            for (final IWorkOrder workOrder : c.getWorkManager().getWorkOrders().values())
-            {
-                if (workOrder instanceof AbstractWorkOrderBuildDecoration)
-                {
-                    final String schematicName = ((AbstractWorkOrderBuildDecoration) workOrder).getStructureName();
-                    if (md5Set.contains(schematicName))
-                    {
-                        md5Set.remove(schematicName);
-                        countInUseStructures++;
-                    }
-                }
-            }
-        }
+        int countInUseStructures = StructuresConfiguration.getInuseDecorationsCountCallback().get();
 
         //md5Set containd only the unused one
         Iterator<String> iterator = md5Set.iterator();
@@ -951,7 +933,7 @@ public final class Structures
         }
 
         //Let the gui know we just save a schematic
-        ColonyManager.setSchematicDownloaded(true);
+        StructuresConfiguration.getSchematicsDownloadedCallback().accept(true);
         return true;
     }
 

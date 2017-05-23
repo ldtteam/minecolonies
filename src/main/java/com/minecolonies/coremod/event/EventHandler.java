@@ -1,14 +1,14 @@
 package com.minecolonies.coremod.event;
 
-import com.minecolonies.api.colony.ColonyManager;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.management.ColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockHutTownHall;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.util.LanguageHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSilverfish;
 import net.minecraft.client.Minecraft;
@@ -209,7 +209,7 @@ public class EventHandler
 
     static boolean onTownHallPlaced(@NotNull final World world, @NotNull final EntityPlayer player, final BlockPos pos)
     {
-        IColony colony = ColonyManager.getIColonyByOwner(world, player);
+        IColony colony = ColonyManager.getColonyByOwner(world, player);
         if (colony != null)
         {
             return canOwnerPlaceTownHallHere(world, player, colony, pos);
@@ -232,7 +232,7 @@ public class EventHandler
         if (colony == null)
         {
             //  Not in a colony
-            if (ColonyManager.getIColonyByOwner(world, player) == null)
+            if (ColonyManager.getColonyByOwner(world, player) == null)
             {
                 LanguageHandler.sendPlayerMessage(player, "tile.blockHut.messageNoTownHall");
             }
