@@ -2,7 +2,6 @@ package com.minecolonies.blockout.views;
 
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.PaneParams;
-import com.minecolonies.blockout.View;
 import com.minecolonies.blockout.controls.Scrollbar;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,7 +13,7 @@ public class ScrollingView extends View
     private static final int DEFAULT_SCROLLBAR_WIDTH = 8;
 
     //  Params
-    protected int scrollbarWidth = DEFAULT_SCROLLBAR_WIDTH;
+    private int scrollbarWidth = DEFAULT_SCROLLBAR_WIDTH;
 
     //  Runtime
     protected ScrollingContainer container;
@@ -26,6 +25,17 @@ public class ScrollingView extends View
     public ScrollingView()
     {
         super();
+        setup();
+    }
+
+    /**
+     * Load from xml.
+     *
+     * @param params xml parameters.
+     */
+    public ScrollingView(final PaneParams params)
+    {
+        super(params);
         setup();
     }
 
@@ -55,17 +65,6 @@ public class ScrollingView extends View
     protected ScrollingContainer createScrollingContainer()
     {
         return new ScrollingContainer(this);
-    }
-
-    /**
-     * Load from xml.
-     *
-     * @param params xml parameters.
-     */
-    public ScrollingView(final PaneParams params)
-    {
-        super(params);
-        setup();
     }
 
     public ScrollingContainer getContainer()
