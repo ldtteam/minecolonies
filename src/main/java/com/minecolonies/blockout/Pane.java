@@ -1,5 +1,6 @@
 package com.minecolonies.blockout;
 
+import com.minecolonies.blockout.views.View;
 import com.minecolonies.blockout.views.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;

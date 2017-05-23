@@ -1,9 +1,7 @@
 package com.minecolonies.blockout.views;
 
-import com.minecolonies.blockout.OverlayView;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.PaneParams;
-import com.minecolonies.blockout.View;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.ButtonVanilla;
 import com.minecolonies.blockout.controls.Label;

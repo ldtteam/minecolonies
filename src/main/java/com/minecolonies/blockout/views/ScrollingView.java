@@ -2,7 +2,6 @@ package com.minecolonies.blockout.views;
 
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.PaneParams;
-import com.minecolonies.blockout.View;
 import com.minecolonies.blockout.controls.Scrollbar;
 import org.jetbrains.annotations.NotNull;
 

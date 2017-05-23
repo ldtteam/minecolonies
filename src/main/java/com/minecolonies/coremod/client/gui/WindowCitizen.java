@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.blockout.Alignment;
-import com.minecolonies.blockout.View;
+import com.minecolonies.blockout.views.View;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.Image;
 import com.minecolonies.blockout.controls.Label;

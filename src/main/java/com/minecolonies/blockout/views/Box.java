@@ -2,7 +2,6 @@ package com.minecolonies.blockout.views;
 
 import com.minecolonies.blockout.PaneParams;
 import com.minecolonies.blockout.Render;
-import com.minecolonies.blockout.View;
 import org.jetbrains.annotations.NotNull;
 
 /**
