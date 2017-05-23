@@ -1,10 +1,12 @@
 package com.minecolonies.blockout.controls;
 
+import java.util.function.Consumer;
+
 /**
  * Used for windows that have buttons and want to respond to clicks.
  */
 @FunctionalInterface
-public interface ButtonHandler
+public interface ButtonHandler extends Consumer<Button>
 {
     /**
      * Called when a button is clicked.
@@ -12,4 +14,8 @@ public interface ButtonHandler
      * @param button the button that was clicked.
      */
     void onButtonClicked(Button button);
+
+    default void accept(Button button) {
+        onButtonClicked(button);
+    }
 }
