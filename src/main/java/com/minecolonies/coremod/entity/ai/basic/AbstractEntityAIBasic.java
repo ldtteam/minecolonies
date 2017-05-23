@@ -584,7 +584,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param maxLevel the max tool level.
      * @return true if found the tool.
      */
-    public boolean isToolInTileEntity(TileEntityChest entity, final String tool, final int minLevel, final int maxLevel)
+    public boolean isToolInTileEntity(final TileEntityChest entity, final String tool, final int minLevel, final int maxLevel)
     {
         return InventoryFunctions.matchFirstInProviderWithAction(
                 entity,
