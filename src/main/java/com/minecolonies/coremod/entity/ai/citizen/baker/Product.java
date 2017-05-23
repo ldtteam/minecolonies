@@ -153,6 +153,45 @@ public class Product
         endProduct.writeToNBT(productCompound);
     }
 
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (!(o instanceof Product))
+        {
+            return false;
+        }
+
+        final Product product = (Product) o;
+
+        if (recipeId != product.recipeId)
+        {
+            return false;
+        }
+        if (state != product.state)
+        {
+            return false;
+        }
+        if (!endProduct.equals(product.endProduct))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = state.hashCode();
+        result = 31 * result + endProduct.writeToNBT(new NBTTagCompound()).hashCode();
+        result = 31 * result + recipeId;
+        return result;
+    }
+
     public enum ProductState
     {
         UNCRAFTED,

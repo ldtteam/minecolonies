@@ -132,11 +132,11 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         if (progress >= getRequiredProgressForKneading())
         {
             worker.setHeldItem(EnumHand.MAIN_HAND, InventoryUtils.EMPTY);
-            currentProduct.nextState();
             getOwnBuilding().removeFromTasks(Product.ProductState.BAKED, currentProduct);
             InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), currentProduct.getEndProduct());
             incrementActionsDone();
             progress = 0;
+            currentProduct = null;
             return PREPARING;
         }
 
@@ -246,6 +246,8 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         {
             if (stack.getItem() == Items.WHEAT)
             {
+                //todo he isn't crafting the right amount!
+                //He reduces the amount of the recipe, shouldn't!).
                 list.remove(stack);
                 final ItemStack copy = stack.copy();
                 final int form = (getOwnBuilding().getMaxBuildingLevel() + 1) - (getOwnBuilding().getBuildingLevel() + copy.stackSize);
@@ -333,7 +335,10 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         final List<Product> products = building.getTasks().get(Product.ProductState.PREPARED);
         if (!(furnace.getBlock() instanceof BlockFurnace) || products.isEmpty())
         {
-            building.removeFromFurnaces(currentFurnace);
+            if(!(furnace.getBlock() instanceof BlockFurnace))
+            {
+                building.removeFromFurnaces(currentFurnace);
+            }
             return START_WORKING;
         }
 
