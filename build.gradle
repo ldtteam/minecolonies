@@ -70,6 +70,9 @@ sourceSets {
         resources {
             srcDir 'src/main/resources'
         }
+        compileClasspath += sourceSets.structures.output
+        compileClasspath += sourceSets.blockOut.output
+        compileClasspath += sourceSets.api.output
     }
     test {
         java {
@@ -83,10 +86,10 @@ sourceSets {
 
 dependencies {
     structuresCompile sourceSets.api.output
+    blockOutCompile sourceSets.api.output
 
-    compile sourceSets.api.output
-    compile sourceSets.blockOut.output
-    compile sourceSets.structures.output
+    testCompile sourceSets.structures.output
+    testCompile sourceSets.blockOut.output
 
     testCompile 'junit:junit:4.11'
     testCompile "org.mockito:mockito-core:1.+"

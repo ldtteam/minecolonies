@@ -1,6 +1,5 @@
 package com.minecolonies.structures;
 
-import com.minecolonies.api.colony.management.ColonyManager;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.lib.Constants;
 import com.minecolonies.api.util.LanguageHandler;
@@ -157,7 +156,7 @@ public final class Structures
         URI uri = null;
         try
         {
-            uri = ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI();
+            uri = Structures.class.getResource(SCHEMATICS_ASSET_PATH).toURI();
         }
         catch (@NotNull URISyntaxException e)
         {
