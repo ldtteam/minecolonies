@@ -28,7 +28,7 @@ If a Window requires no special code, you can directly instantiate `com.blockout
 Java class that extends com.blockout.views.Window.  Override Window methods to add additional behavior, such as click
 handling.
 
-If your Window subclass implements com.blockout.controls.Button.Handler, it will automatically receive button events via
+If your Window subclass implements com.blockout.controls.ButtonHandler, it will automatically receive button events via
 the `onButtonClicked()`
 
 

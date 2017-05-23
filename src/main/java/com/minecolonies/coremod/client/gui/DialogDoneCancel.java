@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.blockout.Loader;
+import com.minecolonies.blockout.controls.ButtonHandler;
 import com.minecolonies.blockout.views.OverlayView;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.Label;
@@ -14,7 +15,7 @@ import java.util.function.ObjIntConsumer;
 /**
  * Manage windows and their events.
  */
-public class DialogDoneCancel extends OverlayView implements Button.Handler
+public class DialogDoneCancel extends OverlayView implements ButtonHandler
 {
     /**
      * buttonid when cancel is pressed.

@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.blockout.controls.Button;
+import com.minecolonies.blockout.controls.ButtonHandler;
 import com.minecolonies.coremod.colony.buildings.BuildingDeliveryman;
 import com.minecolonies.coremod.lib.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -8,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Window for the farmer hut.
  */
-public class WindowHutDeliveryman extends AbstractWindowWorkerBuilding<BuildingDeliveryman.View> implements Button.Handler
+public class WindowHutDeliveryman extends AbstractWindowWorkerBuilding<BuildingDeliveryman.View> implements ButtonHandler
 {
     private static final String HUT_WAREHOUSE_RESOURCE_SUFFIX = ":gui/windowhutwarehouse.xml";
 
