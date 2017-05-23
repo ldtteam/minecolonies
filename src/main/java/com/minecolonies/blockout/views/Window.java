@@ -3,7 +3,6 @@ package com.minecolonies.blockout.views;
 import com.minecolonies.blockout.Loader;
 import com.minecolonies.blockout.PaneParams;
 import com.minecolonies.blockout.Screen;
-import com.minecolonies.blockout.View;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;

@@ -1,5 +1,6 @@
 package com.minecolonies.blockout;
 
+import com.minecolonies.blockout.views.View;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
