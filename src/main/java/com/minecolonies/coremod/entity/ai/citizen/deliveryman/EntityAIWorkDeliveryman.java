@@ -441,7 +441,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                     buildingToDeliver.getNeededPickaxeLevel(),
                     buildingToDeliver.getBuildingLevel());
         }
-        return InventoryUtils.isToolInItemHandler(new InvWrapper(worker.getInventoryCitizen()), requiredTool, buildingToDeliver.getBuildingLevel());
+        //TODO check that 0 is ok
+        return InventoryUtils.isToolInItemHandler(new InvWrapper(worker.getInventoryCitizen()), requiredTool, 0, buildingToDeliver.getBuildingLevel());
     }
 
     /**
@@ -537,7 +538,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                         buildingToDeliver.getBuildingLevel() + extraFood,
                         new InvWrapper(worker.getInventoryCitizen()));
             }
-            else if (itemsToDeliver.isEmpty() && !isToolInTileEntity((TileEntityChest) tileEntity, buildingToDeliver.getRequiredTool(),
+            //TODO 0 is probably not correct here
+            else if (itemsToDeliver.isEmpty() && !isToolInTileEntity((TileEntityChest) tileEntity, buildingToDeliver.getRequiredTool(), 0,
                     buildingToDeliver.getBuildingLevel()))
             {
                 return false;

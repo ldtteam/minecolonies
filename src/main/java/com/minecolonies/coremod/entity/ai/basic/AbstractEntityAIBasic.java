@@ -583,11 +583,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param toolLevel the min tool level.
      * @return true if found the tool.
      */
-    public boolean isToolInTileEntity(TileEntityChest entity, final String tool, int toolLevel)
+    public boolean isToolInTileEntity(TileEntityChest entity, final String tool, final int minLevel, final int maxLevel)
     {
         return InventoryFunctions.matchFirstInProviderWithAction(
                 entity,
-                stack -> Utils.isTool(stack, tool) && InventoryUtils.hasToolLevel(stack, tool, toolLevel),
+                stack -> Utils.isTool(stack, tool) && InventoryUtils.hasToolLevel(stack, tool, minLevel, maxLevel),
                 this::takeItemStackFromProvider
         );
     }
@@ -650,7 +650,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         final int hutLevel = worker.getWorkBuilding().getBuildingLevel();
         final InventoryCitizen inventory = worker.getInventoryCitizen();
-        final boolean isUsable = InventoryUtils.isToolInItemHandler(new InvWrapper(inventory), tool, hutLevel);
+        //TODO is 0 correct
+        final boolean isUsable = InventoryUtils.isToolInItemHandler(new InvWrapper(inventory), tool, 0, hutLevel);
 
 
         if (!needsTool && isUsable)
@@ -824,7 +825,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         final InventoryCitizen inventory = worker.getInventoryCitizen();
         final int hutLevel = worker.getWorkBuilding().getBuildingLevel();
-        final boolean isUsable = InventoryUtils.isToolInItemHandler(new InvWrapper(inventory), Utils.PICKAXE, hutLevel);
+        final boolean isUsable = InventoryUtils.isToolInItemHandler(new InvWrapper(inventory), Utils.PICKAXE, minlevel, hutLevel);
 
         if (!isUsable)
         {
@@ -1306,14 +1307,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             final ItemStack item = inventory.getStackInSlot(i);
             final int level = Utils.getMiningLevel(item, tool);
-
-            if (level >= required && level < bestLevel)
+            if (tool == null || InventoryUtils.verifyToolLevel(item, level, required, hutLevel))
             {
-                if (tool == null || InventoryUtils.verifyToolLevel(item, level, hutLevel))
-                {
-                    bestSlot = i;
-                    bestLevel = level;
-                }
+                bestSlot = i;
+                bestLevel = level;
             }
         }
 

@@ -319,7 +319,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         {
             if((minLevel != -1
                     && InventoryUtils.isPickaxeInProvider(building.getTileEntity(), minLevel, requestingBuilding.getBuildingLevel()))
-                    || InventoryUtils.isToolInProvider(building.getTileEntity(), tool, requestingBuilding.getBuildingLevel()))
+                    || InventoryUtils.isToolInProvider(building.getTileEntity(), tool, minLevel, requestingBuilding.getBuildingLevel()))
             {
                 return building.getLocation();
             }
@@ -329,7 +329,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                 final TileEntity entity = world.getTileEntity(pos);
                 if (entity instanceof TileEntityChest
                         && ((minLevel != -1 && InventoryUtils.isPickaxeInProvider(entity, minLevel, requestingBuilding.getBuildingLevel()))
-                        || InventoryUtils.isToolInProvider(entity, tool, requestingBuilding.getBuildingLevel())))
+                        || InventoryUtils.isToolInProvider(entity, tool, minLevel, requestingBuilding.getBuildingLevel())))
                 {
                     return pos;
                 }
@@ -357,7 +357,8 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             }
             else
             {
-                hasItem = InventoryUtils.isToolInProvider(building.getTileEntity(), tool, requestingBuilding.getBuildingLevel());
+                //TODO check if 0 is the good minimum
+                hasItem = InventoryUtils.isToolInProvider(building.getTileEntity(), tool, 0,requestingBuilding.getBuildingLevel());
             }
 
             if(hasItem)
@@ -376,7 +377,8 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                     }
                     else
                     {
-                        hasItem = InventoryUtils.isToolInProvider(entity, tool, requestingBuilding.getBuildingLevel());
+                        //TODO check that 0 i correct
+                        hasItem = InventoryUtils.isToolInProvider(entity, tool, 0, requestingBuilding.getBuildingLevel());
                     }
 
                     if(hasItem)

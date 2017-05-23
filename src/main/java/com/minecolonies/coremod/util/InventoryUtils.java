@@ -346,19 +346,20 @@ public class InventoryUtils
     public static boolean isPickaxeInItemHandler(IItemHandler itemHandler, final int requiredLevel, final int maximalLevel)
     {
         return hasItemInItemHandler(itemHandler, (ItemStack stack) -> Utils.checkIfPickaxeQualifies(requiredLevel, Utils.getMiningLevel(stack, Utils.PICKAXE))
-                                                                        && InventoryUtils.hasToolLevel(stack, Utils.PICKAXE, maximalLevel));
+                                                                        && InventoryUtils.hasToolLevel(stack, Utils.PICKAXE, requiredLevel, maximalLevel));
     }
 
     /**
      * Verifies if there is one tool with an acceptable level
      * in a worker's inventory.
      *
-     * @param toolName     the type of tool needed
      * @param stack        the stack to test.
-     * @param minimalLevel the worker's hut level
+     * @param toolName     the type of tool needed
+     * @param minimalLevel the minimum level for the tool to find.
+     * @param maximumLevel the maximum level for the tool to find.
      * @return true if tool is acceptable
      */
-    public static boolean hasToolLevel(@Nullable ItemStack stack, final String toolName, final int minimalLevel)
+    public static boolean hasToolLevel(@Nullable ItemStack stack, final String toolName, final int minimalLevel, final int maximumLevel)
     {
         if (isItemStackEmpty(stack))
         {
@@ -366,34 +367,38 @@ public class InventoryUtils
         }
 
         final int level = Utils.getMiningLevel(stack, toolName);
-        if (Utils.isTool(stack, toolName) && verifyToolLevel(stack, level, minimalLevel))
-        {
-            return true;
-        }
-
-        return false;
+        return Utils.isTool(stack, toolName) && verifyToolLevel(stack, level, minimalLevel, maximumLevel);
     }
 
     /**
      * Verifies if an item has an appropriated grade.
      *
      * @param itemStack    the type of tool needed
-     * @param toolLevel    the type of tool needed
-     * @param minimalLevel the worker's hut level
+     * @param toolLevel    the tool level
+     * @param minimalLevel the minimum level needed
+     * @param maximumLevel the maximum level needed (usually the worker's hut level)
      * @return true if tool is acceptable
      */
-    public static boolean verifyToolLevel(@NotNull final ItemStack itemStack, int toolLevel, final int minimalLevel)
+    public static boolean verifyToolLevel(@NotNull final ItemStack itemStack, int toolLevel, final int minimalLevel, final int maximumLevel)
     {
-        if (isItemStackEmpty(itemStack) || minimalLevel > FREE_TOOL_CHOICE_LEVEL || minimalLevel >= toolLevel)
+        if (isItemStackEmpty(itemStack))
         {
+            //We can always use a bare hand
             return true;
         }
-        else if (itemStack.isItemEnchanted() && minimalLevel <= EFFECT_TOOL_CHOICE_LEVEL)
+
+        if (toolLevel < minimalLevel || toolLevel > maximumLevel)
         {
             return false;
         }
 
-        return false;
+        //Check that we can use a enchanted item
+        if (itemStack.isItemEnchanted() && maximumLevel < EFFECT_TOOL_CHOICE_LEVEL)
+        {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -832,12 +837,13 @@ public class InventoryUtils
      * @param provider     The {@link ICapabilityProvider} to scan.
      * @param toolTypeName The toolTypeName of the tool to find.
      * @param minimalLevel The minimal level to find.
+     * @param maximumLevel The maximum level to find.
      * @return True if a Tool with the given toolTypeName was found in the given
      * {@link ICapabilityProvider}, false when not.
      */
-    public static boolean isToolInProvider(@NotNull final ICapabilityProvider provider, @NotNull final String toolTypeName, int minimalLevel)
+    public static boolean isToolInProvider(@NotNull final ICapabilityProvider provider, @NotNull final String toolTypeName, final int minimalLevel, final int maximumLevel)
     {
-        return hasItemInProvider(provider, (ItemStack stack) -> Utils.isTool(stack, toolTypeName) && InventoryUtils.hasToolLevel(stack, toolTypeName, minimalLevel));
+        return hasItemInProvider(provider, (ItemStack stack) -> Utils.isTool(stack, toolTypeName) && InventoryUtils.hasToolLevel(stack, toolTypeName, minimalLevel, maximumLevel));
     }
 
     /**
@@ -868,7 +874,7 @@ public class InventoryUtils
     public static boolean isPickaxeInProvider(ICapabilityProvider provider, final int requiredLevel, final int maximalLevel)
     {
         return hasItemInProvider(provider, (ItemStack stack) -> Utils.checkIfPickaxeQualifies(requiredLevel, Utils.getMiningLevel(stack, Utils.PICKAXE))
-                                                                  && InventoryUtils.hasToolLevel(stack, Utils.PICKAXE, maximalLevel));
+                                                                  && InventoryUtils.hasToolLevel(stack, Utils.PICKAXE, requiredLevel, maximalLevel));
     }
 
     /**
@@ -1342,17 +1348,19 @@ public class InventoryUtils
      * @param facing       The side to check for.
      * @param toolTypeName The toolTypeName of the tool to find.
      * @param minimalLevel The minimal level to find.
+     * @param maximumLevel The maximum level to find.
      * @return True if a Tool with the given toolTypeName was found in the given
      * {@link ICapabilityProvider}, false when not.
      */
-    public static boolean isToolInProviderForSide(@NotNull final ICapabilityProvider provider, @Nullable EnumFacing facing, @NotNull final String toolTypeName, int minimalLevel)
+    public static boolean isToolInProviderForSide(@NotNull final ICapabilityProvider provider, @Nullable EnumFacing facing, @NotNull final String toolTypeName, final int minimalLevel,
+                                                  final int maximumLevel)
     {
         if (!provider.hasCapability(ITEM_HANDLER_CAPABILITY, facing))
         {
             return false;
         }
 
-        return isToolInItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing), toolTypeName, minimalLevel);
+        return isToolInItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing), toolTypeName, minimalLevel, maximumLevel);
     }
 
     /**
@@ -1365,9 +1373,9 @@ public class InventoryUtils
      * @return True if a Tool with the given toolTypeName was found in the given
      * {@link IItemHandler}, false when not.
      */
-    public static boolean isToolInItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final String toolTypeName, int minimalLevel)
+    public static boolean isToolInItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final String toolTypeName, final int minimalLevel, final int maximumLevel)
     {
-        return hasItemInItemHandler(itemHandler, (ItemStack stack) -> Utils.isTool(stack, toolTypeName) && InventoryUtils.hasToolLevel(stack, toolTypeName, minimalLevel));
+        return hasItemInItemHandler(itemHandler, (ItemStack stack) -> Utils.isTool(stack, toolTypeName) && InventoryUtils.hasToolLevel(stack, toolTypeName, minimalLevel, maximumLevel));
     }
 
     /**
@@ -1408,12 +1416,12 @@ public class InventoryUtils
      * @param requiredLevel the worker's hut level
      * @return true if tool is acceptable
      */
-    public static boolean hasItemHandlerToolWithLevel(@NotNull final IItemHandler itemHandler, final String toolTypeName, final int requiredLevel)
+    public static boolean hasItemHandlerToolWithLevel(@NotNull final IItemHandler itemHandler, final String toolTypeName, final int requiredLevel, final int maximumLevel)
     {
         return findFirstSlotInItemHandlerWith(itemHandler,
           (ItemStack stack) -> (!isItemStackEmpty(stack) && (Utils.isTool(stack, toolTypeName) && verifyToolLevel(stack,
             Utils.getMiningLevel(stack, toolTypeName),
-            requiredLevel)))) > -1;
+            requiredLevel, maximumLevel)))) > -1;
     }
 
     /**
