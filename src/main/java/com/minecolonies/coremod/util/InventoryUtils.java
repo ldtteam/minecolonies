@@ -386,14 +386,12 @@ public class InventoryUtils
             //We can always use a bare hand
             return true;
         }
-
-        if (toolLevel < minimalLevel || toolLevel > maximumLevel)
+        else if (toolLevel < minimalLevel || toolLevel > maximumLevel)
         {
             return false;
         }
-
         //Check that we can use a enchanted item
-        if (itemStack.isItemEnchanted() && maximumLevel < EFFECT_TOOL_CHOICE_LEVEL)
+        else if (itemStack.isItemEnchanted() && maximumLevel < EFFECT_TOOL_CHOICE_LEVEL)
         {
             return false;
         }
@@ -1352,8 +1350,8 @@ public class InventoryUtils
      * @return True if a Tool with the given toolTypeName was found in the given
      * {@link ICapabilityProvider}, false when not.
      */
-    public static boolean isToolInProviderForSide(@NotNull final ICapabilityProvider provider, @Nullable EnumFacing facing, @NotNull final String toolTypeName, final int minimalLevel,
-                                                  final int maximumLevel)
+    public static boolean isToolInProviderForSide(@NotNull final ICapabilityProvider provider, @Nullable EnumFacing facing, @NotNull final String toolTypeName, 
+                                                  final int minimalLevel, final int maximumLevel)
     {
         if (!provider.hasCapability(ITEM_HANDLER_CAPABILITY, facing))
         {
@@ -1376,7 +1374,8 @@ public class InventoryUtils
      */
     public static boolean isToolInItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final String toolTypeName, final int minimalLevel, final int maximumLevel)
     {
-        return hasItemInItemHandler(itemHandler, (ItemStack stack) -> Utils.isTool(stack, toolTypeName) && InventoryUtils.hasToolLevel(stack, toolTypeName, minimalLevel, maximumLevel));
+        return hasItemInItemHandler(itemHandler, (ItemStack stack) -> 
+                                    Utils.isTool(stack, toolTypeName) && InventoryUtils.hasToolLevel(stack, toolTypeName, minimalLevel, maximumLevel));
     }
 
     /**
