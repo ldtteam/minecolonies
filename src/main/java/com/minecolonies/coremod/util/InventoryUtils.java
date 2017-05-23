@@ -1370,6 +1370,7 @@ public class InventoryUtils
      * @param itemHandler  The {@link IItemHandler} to scan.
      * @param toolTypeName The toolTypeName of the tool to find.
      * @param minimalLevel The minimal level to find.
+     * @param maximumLevel The maximum level to find.
      * @return True if a Tool with the given toolTypeName was found in the given
      * {@link IItemHandler}, false when not.
      */
@@ -1413,7 +1414,8 @@ public class InventoryUtils
      *
      * @param toolTypeName  the type of tool needed
      * @param itemHandler   the worker's inventory
-     * @param requiredLevel the worker's hut level
+     * @param requiredLevel the minimum tool level
+     * @param maximumLevel  the worker's hut level
      * @return true if tool is acceptable
      */
     public static boolean hasItemHandlerToolWithLevel(@NotNull final IItemHandler itemHandler, final String toolTypeName, final int requiredLevel, final int maximumLevel)

@@ -580,7 +580,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @param entity    the tileEntity chest or building.
      * @param tool      the tool.
-     * @param toolLevel the min tool level.
+     * @param minLevel the min tool level.
+     * @param maxLevel the max tool level.
      * @return true if found the tool.
      */
     public boolean isToolInTileEntity(TileEntityChest entity, final String tool, final int minLevel, final int maxLevel)
