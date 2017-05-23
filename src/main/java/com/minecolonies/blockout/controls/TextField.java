@@ -39,6 +39,8 @@ public class TextField extends Pane
     protected int selectionEnd       = 0;
     protected int cursorBlinkCounter = 0;
 
+    private static final int RECT_COLOR = -3_092_272;
+
     /**
      * Simple public constructor to instantiate.
      */
@@ -373,7 +375,7 @@ public class TextField extends Pane
         {
             if (cursorBeforeEnd)
             {
-                drawRect(cursorX, drawY - 1, cursorX + 1, drawY + 1 + mc.fontRendererObj.FONT_HEIGHT, -3_092_272);
+                drawRect(cursorX, drawY - 1, cursorX + 1, drawY + 1 + mc.fontRendererObj.FONT_HEIGHT, RECT_COLOR);
             }
             else
             {
