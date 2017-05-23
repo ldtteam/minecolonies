@@ -4,7 +4,6 @@ import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.PaneParams;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -13,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public class Button extends Pane
 {
-    private static final ResourceLocation soundClick = new ResourceLocation("gui.button.press");
     protected Handler handler;
     protected String  label;
 

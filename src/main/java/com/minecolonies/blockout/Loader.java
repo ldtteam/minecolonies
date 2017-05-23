@@ -6,8 +6,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -29,8 +27,6 @@ import java.util.Map;
  */
 public final class Loader
 {
-    private static final Logger logger = LogManager.getLogger("BlockOut");
-
     private static final Map<String, Constructor<? extends Pane>> paneConstructorMap = new HashMap<>();
     static
     {
@@ -112,7 +108,7 @@ public final class Loader
             }
             catch (InstantiationException | IllegalAccessException | InvocationTargetException exc)
             {
-                logger.error(
+                Log.getLogger().error(
                   String.format("Exception when parsing XML for pane type %s", paneType),
                   exc);
             }
@@ -193,7 +189,7 @@ public final class Loader
         }
         catch (ParserConfigurationException | SAXException | IOException exc)
         {
-            logger.error("Exception when parsing XML.", exc);
+            Log.getLogger().error("Exception when parsing XML.", exc);
         }
     }
 
@@ -251,7 +247,7 @@ public final class Loader
         }
         catch (final IOException e)
         {
-            logger.error("IOException Loader.java", e);
+            Log.getLogger().error("IOException Loader.java", e);
         }
         return null;
     }

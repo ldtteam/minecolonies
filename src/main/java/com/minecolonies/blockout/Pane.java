@@ -37,6 +37,9 @@ public class Pane extends Gui
     protected Window window;
     protected View   parent;
 
+    private static final int SCISSOR_X_INDEX = 12;
+    private static final int SCISSOR_Y_INDEX = 13;
+
     /**
      * Default constructor.
      */
@@ -404,7 +407,7 @@ public class Pane extends Gui
         return window;
     }
 
-    protected void setWindow(final Window w)
+    public void setWindow(final Window w)
     {
         window = w;
     }
@@ -512,8 +515,8 @@ public class Pane extends Gui
         final FloatBuffer fb = BufferUtils.createFloatBuffer(16 * 4);
         GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, fb);
 
-        int scissorsX = (int) fb.get(12) + getX();
-        int scissorsY = (int) fb.get(13) + getY();
+        int scissorsX = (int) fb.get(SCISSOR_X_INDEX) + getX();
+        int scissorsY = (int) fb.get(SCISSOR_Y_INDEX) + getY();
         int h = getHeight();
         int w = getWidth();
 

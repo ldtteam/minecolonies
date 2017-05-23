@@ -316,10 +316,10 @@ public class TextField extends Pane
         cursorBlinkCounter = 0;
     }
 
-    @Override
     /**
      * Draw itself at positions mx and my.
      */
+    @Override
     protected void drawSelf(final int mx, final int my)
     {
         final int color = enabled ? textColor : textColorDisabled;
@@ -355,13 +355,10 @@ public class TextField extends Pane
         {
             cursorX = relativeCursorPosition > 0 ? (drawX + width) : drawX;
         }
-        else if (cursorBeforeEnd)
+        else if (cursorBeforeEnd && shadow)
         {
-            if (shadow)
-            {
-                textX -= 1;
-            }
-            cursorX = textX;
+            textX -= 1;
+            cursorX -= 1;
         }
 
         //  Draw string after cursor
@@ -376,7 +373,7 @@ public class TextField extends Pane
         {
             if (cursorBeforeEnd)
             {
-                drawRect(cursorX, drawY - 1, cursorX + 1, drawY + 1 + mc.fontRendererObj.FONT_HEIGHT, -3092272);
+                drawRect(cursorX, drawY - 1, cursorX + 1, drawY + 1 + mc.fontRendererObj.FONT_HEIGHT, -3_092_272);
             }
             else
             {
