@@ -3,7 +3,8 @@ package com.minecolonies.coremod.client.gui;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Alignment;
-import com.minecolonies.blockout.View;
+import com.minecolonies.blockout.controls.ButtonHandler;
+import com.minecolonies.blockout.views.View;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.Image;
 import com.minecolonies.blockout.controls.Label;
@@ -19,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Window for the citizen.
  */
-public class WindowCitizen extends Window implements Button.Handler
+public class WindowCitizen extends Window implements ButtonHandler
 {
     /**
      * The label to find the inventory button.

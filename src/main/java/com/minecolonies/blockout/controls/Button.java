@@ -4,7 +4,6 @@ import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.PaneParams;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -13,9 +12,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class Button extends Pane
 {
-    private static final ResourceLocation soundClick = new ResourceLocation("gui.button.press");
-    protected Handler handler;
-    protected String  label;
+    protected ButtonHandler handler;
+    protected String        label;
 
     /**
      * Default constructor.
@@ -61,7 +59,7 @@ public class Button extends Pane
      *
      * @param h The new handler.
      */
-    public void setHandler(final Handler h)
+    public void setHandler(final ButtonHandler h)
     {
         handler = h;
     }
@@ -77,16 +75,16 @@ public class Button extends Pane
     {
         mc.getSoundHandler().playSound(PositionedSoundRecord.getMusicRecord(SoundEvents.UI_BUTTON_CLICK));
 
-        Handler delegatedHandler = handler;
+        ButtonHandler delegatedHandler = handler;
 
         if (delegatedHandler == null)
         {
             //  If we do not have a designated handler, find the closest ancestor that is a Handler
             for (Pane p = parent; p != null; p = p.getParent())
             {
-                if (p instanceof Handler)
+                if (p instanceof ButtonHandler)
                 {
-                    delegatedHandler = (Handler) p;
+                    delegatedHandler = (ButtonHandler) p;
                     break;
                 }
             }
@@ -96,19 +94,5 @@ public class Button extends Pane
         {
             delegatedHandler.onButtonClicked(this);
         }
-    }
-
-    /**
-     * Used for windows that have buttons and want to respond to clicks.
-     */
-    @FunctionalInterface
-    public interface Handler
-    {
-        /**
-         * Called when a button is clicked.
-         *
-         * @param button the button that was clicked.
-         */
-        void onButtonClicked(Button button);
     }
 }
