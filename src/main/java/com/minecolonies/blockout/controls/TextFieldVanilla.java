@@ -9,9 +9,14 @@ import net.minecraft.util.ChatAllowedCharacters;
  */
 public class TextFieldVanilla extends TextField
 {
-    protected boolean backgroundEnabled    = true;
-    protected int     backgroundOuterColor = 0xFFA0A0A0;
-    protected int     backgroundInnerColor = 0xFF000000;
+    private boolean backgroundEnabled = true;
+    private int     backgroundOuterColor = 0xFFA0A0A0;
+    private int     backgroundInnerColor = 0xFF000000;
+
+    private static final int BACKGROUND_WIDTH_OFFSET = 8;
+    private static final float BACKGROUND_X_TRANSLATE = 4F;
+    private static final int BACKGROUND_Y_TRANSLATE_OFFSET = 8;
+    private static final int BACKGROUND_MOUSE_OFFSET_X = 4;
 
     /**
      * Required default constructor.
@@ -36,7 +41,7 @@ public class TextFieldVanilla extends TextField
         filter = new FilterVanilla();
     }
 
-    public boolean getBackgroundEnabled()
+    public boolean isBackgroundEnabled()
     {
         return backgroundEnabled;
     }
@@ -69,7 +74,7 @@ public class TextFieldVanilla extends TextField
     @Override
     public int getInternalWidth()
     {
-        return backgroundEnabled ? (getWidth() - 8) : getWidth();
+        return backgroundEnabled ? (getWidth() - BACKGROUND_WIDTH_OFFSET) : getWidth();
     }
 
     @Override
@@ -82,7 +87,7 @@ public class TextFieldVanilla extends TextField
             drawRect(x, y, x + width, y + height, backgroundInnerColor);
 
             GlStateManager.pushMatrix();
-            GlStateManager.translate(4, (float) ((height - 8) / 2.0), 0);
+            GlStateManager.translate(BACKGROUND_X_TRANSLATE, (float) ((height - BACKGROUND_Y_TRANSLATE_OFFSET) / 2.0), 0);
         }
 
         super.drawSelf(mx, my);
@@ -100,7 +105,7 @@ public class TextFieldVanilla extends TextField
 
         if (backgroundEnabled)
         {
-            mouseX -= 4;
+            mouseX -= BACKGROUND_MOUSE_OFFSET_X;
         }
 
         super.handleClick(mouseX, my);

@@ -18,9 +18,9 @@ public class ButtonVanilla extends Button
     private static final int DEFAULT_BUTTON_WIDTH  = 200;
     private static final int DEFAULT_BUTTON_HEIGHT = 20;
 
-    private static final int ENABLED_COLOR  = 14737632;
-    private static final int HOVER_COLOR    = 16777120;
-    private static final int DISABLED_COLOR = 10526880;
+    private static final int ENABLED_COLOR  = 0xE0E0E0;
+    private static final int HOVER_COLOR    = 0xFFFFA0;
+    private static final int DISABLED_COLOR = 0xA0A0A0;
 
     private static final int ENABLED_TEXTURE_V  = 66;
     private static final int HOVER_TEXTURE_V    = 86;
@@ -69,7 +69,22 @@ public class ButtonVanilla extends Button
         final boolean isMouseOver = isPointInPane(mx, my);
 
         final int u = 0;
-        final int v = this.enabled ? (isMouseOver ? HOVER_TEXTURE_V : ENABLED_TEXTURE_V) : DISABLED_TEXTURE_V;
+        final int v;
+        if (enabled)
+        {
+            if (isMouseOver)
+            {
+                v = HOVER_TEXTURE_V;
+            }
+            else
+            {
+                v = ENABLED_TEXTURE_V;
+            }
+        }
+        else
+        {
+            v = DISABLED_TEXTURE_V;
+        }
 
 
         GlStateManager.enableBlend();
@@ -89,7 +104,23 @@ public class ButtonVanilla extends Button
             drawTexturedModalRect(x + width / 2, y + height / 2, u + DEFAULT_BUTTON_WIDTH - width / 2, v + DEFAULT_BUTTON_HEIGHT - height / 2, width / 2, height / 2);
         }
 
-        final int textColor = this.enabled ? (isMouseOver ? HOVER_COLOR : ENABLED_COLOR) : DISABLED_COLOR;
+        final int textColor;
+        if (enabled)
+        {
+            if (isMouseOver)
+            {
+                textColor = HOVER_COLOR;
+            }
+            else
+            {
+                textColor = ENABLED_COLOR;
+            }
+        }
+        else
+        {
+            textColor = DISABLED_COLOR;
+        }
+
         drawCenteredString(this.mc.fontRendererObj, label, x + width / 2, y + (height - this.mc.fontRendererObj.FONT_HEIGHT) / 2, textColor);
 
         GlStateManager.disableBlend();

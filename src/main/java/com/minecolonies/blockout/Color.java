@@ -1,6 +1,7 @@
 package com.minecolonies.blockout;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -48,7 +49,7 @@ public final class Color
      */
     public static int getByName(final String name, final int def)
     {
-        final Integer i = nameToColorMap.get(name.toLowerCase());
+        final Integer i = nameToColorMap.get(name.toLowerCase(Locale.ENGLISH));
         return i != null ? i : def;
     }
 }

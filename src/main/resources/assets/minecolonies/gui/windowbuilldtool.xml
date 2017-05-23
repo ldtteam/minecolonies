@@ -4,28 +4,28 @@
 
     <button id="previousBuildingType" size="15 15" pos="0 0" label="&lt;"/>
     <dropdown id="buildingType" size="114 15" pos="13 0" dropDownSize="140 75">
-        <box size="100% 15" linewidth="0">
+        <view size="100% 15">
             <label id="id" size="100% 100%" label="" pos="0 0"/>
             <button id="button" size="100% 100%" label="" pos="0 0"/>
-        </box>
+        </view>
     </dropdown>
     <button id="nextBuildingType" size="15 15" pos="125 0" label="&gt;"/>
 
     <button id="previousStyle" size="15 15" pos="140 0" label="&lt;"/>
     <dropdown id="style" size="114 15" pos="153 0" maxContentHeight="75" dropDownSize="140 75">
-        <box size="100% 15" linewidth="0">
+        <view size="100% 15">
             <label id="id" size="100% 100%" label="" pos="0 0"/>
             <button id="button" size="100% 100%" label="" pos="0 0"/>
-        </box>
+        </view>
     </dropdown>
     <button id="nextStyle" size="15 15" pos="265 0" label="&gt;"/>
 
     <button id="previousSchematic" size="15 15" pos="280 0" label="&lt;"/>
     <dropdown id="schematic" size="114 15" pos="293 0" maxContentHeight="75" dropDownSize="140 75">
-        <box size="100% 15" linewidth="0">
+        <view size="100% 15">
             <label id="id" size="100% 100%" label="" pos="0 0"/>
             <button id="button" size="100% 100%" label="" pos="0 0"/>
-        </box>
+        </view>
     </dropdown>
     <button id="nextSchematic" size="15 15" pos="405 0" label="&gt;"/>
 
