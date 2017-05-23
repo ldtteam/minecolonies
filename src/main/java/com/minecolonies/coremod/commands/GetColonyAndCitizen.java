@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.commands;
 
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.api.colony.ColonyManager;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 

@@ -1,11 +1,10 @@
 package com.minecolonies.api.entity.pathfinding;
 
-import com.minecolonies.coremod.blocks.BlockConstructionTape;
-import com.minecolonies.coremod.blocks.BlockConstructionTapeCorner;
-import com.minecolonies.coremod.blocks.BlockHutField;
-import com.minecolonies.coremod.configuration.Configurations;
-import com.minecolonies.coremod.util.BlockUtils;
-import com.minecolonies.coremod.util.Log;
+import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.entity.ai.basic.IConstructionTapeBlock;
+import com.minecolonies.api.entity.ai.citizen.farmer.IFieldBlock;
+import com.minecolonies.api.util.BlockUtils;
+import com.minecolonies.api.util.Log;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -192,7 +191,7 @@ public abstract class AbstractPathJob implements Callable<Path>
                 bs = entity.world.getBlockState(pos);
             }
         }
-        else if (b instanceof BlockFence || b instanceof BlockWall || b instanceof BlockHutField)
+        else if (b instanceof BlockFence || b instanceof BlockWall || b instanceof IFieldBlock)
         {
             //Push away from fence
             final double dX = entity.posX - Math.floor(entity.posX);
@@ -956,8 +955,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             {
                 return block.getBlock() instanceof BlockDoor
                          || block.getBlock() instanceof BlockFenceGate
-                         || block.getBlock() instanceof BlockConstructionTape
-                         || block.getBlock() instanceof BlockConstructionTapeCorner;
+                         || block.getBlock() instanceof IConstructionTapeBlock;
             }
             else if (block.getMaterial().isLiquid())
             {
@@ -986,12 +984,12 @@ public abstract class AbstractPathJob implements Callable<Path>
         if (block instanceof BlockFence
               || block instanceof BlockFenceGate
               || block instanceof BlockWall
-              || block instanceof BlockHutField)
+              || block instanceof IFieldBlock)
         {
             return SurfaceType.NOT_PASSABLE;
         }
 
-        if (block instanceof BlockConstructionTape || block instanceof BlockConstructionTapeCorner)
+        if (block instanceof IConstructionTapeBlock)
         {
             return SurfaceType.DROPABLE;
         }

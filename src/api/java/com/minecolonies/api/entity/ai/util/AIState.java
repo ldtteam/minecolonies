@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.entity.ai.util;
+package com.minecolonies.api.entity.ai.util;
 
 /**
  * Basic state enclosing states all ai's use.
@@ -261,5 +261,5 @@ public enum AIState
     /**
      * Dump inventory over chests in warehouse.
      */
-    DUMPING;
+    DUMPING
 }

@@ -1,13 +1,13 @@
 package com.minecolonies.api.entity.ai.basic;
 
-import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.ai.util.AIState;
-import com.minecolonies.coremod.entity.ai.util.AITarget;
-import com.minecolonies.coremod.entity.ai.util.ChatSpamFilter;
-import com.minecolonies.coremod.util.Log;
-import net.minecraft.entity.Entity;
+import com.minecolonies.api.entity.Citizen;
+import com.minecolonies.api.entity.CitizenStatus;
+import com.minecolonies.api.entity.DesiredCitizenActivity;
+import com.minecolonies.api.entity.ai.util.AIState;
+import com.minecolonies.api.entity.ai.util.AITarget;
+import com.minecolonies.api.entity.ai.util.ChatSpamFilter;
+import com.minecolonies.api.util.Log;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -15,13 +15,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static com.minecolonies.coremod.entity.EntityCitizen.Status.IDLE;
 
 /**
  * Skeleton class for worker ai.
  * Here general target execution will be handled.
- * No utility on this level!
- * That's what {@link AbstractEntityAIInteract} is for.
  *
  * @param <J> the job this ai will have.
  */
@@ -32,7 +29,7 @@ public abstract class AbstractAISkeleton<J extends IJob> extends EntityAIBase
     @NotNull
     protected final J                   job;
     @NotNull
-    protected final Entity              worker;
+    protected final Citizen             worker;
     protected final World               world;
     @NotNull
     protected final ChatSpamFilter      chatSpamFilter;
@@ -91,7 +88,7 @@ public abstract class AbstractAISkeleton<J extends IJob> extends EntityAIBase
     @Override
     public final boolean shouldExecute()
     {
-        return worker.getDesiredActivity() == EntityCitizen.DesiredActivity.WORK;
+        return worker.getDesiredActivity() == DesiredCitizenActivity.WORK;
     }
 
     /**
@@ -109,7 +106,7 @@ public abstract class AbstractAISkeleton<J extends IJob> extends EntityAIBase
     @Override
     public final void startExecuting()
     {
-        worker.setStatus(EntityCitizen.Status.WORKING);
+        worker.setStatus(CitizenStatus.WORKING);
     }
 
     /**
@@ -118,7 +115,7 @@ public abstract class AbstractAISkeleton<J extends IJob> extends EntityAIBase
     @Override
     public final void resetTask()
     {
-        worker.setStatus(Status.IDLE);
+        worker.setStatus(CitizenStatus.IDLE);
     }
 
     /**

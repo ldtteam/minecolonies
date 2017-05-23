@@ -3,6 +3,8 @@ package com.minecolonies.coremod.util;
 import com.minecolonies.api.entity.Citizen;
 import com.minecolonies.api.entity.CitizenStatus;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.MathUtils;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.entity.Entity;

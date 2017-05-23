@@ -1,14 +1,12 @@
-package com.minecolonies.coremod.entity.ai.citizen.farmer;
+package com.minecolonies.api.entity.ai.citizen.farmer;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.entity.ai.citizen.farmer.FieldStage;
+import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.lib.Constants;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.inventory.InventoryField;
-import com.minecolonies.api.lib.Constants;
-import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -19,7 +17,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IPlantable;
-import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -216,7 +213,7 @@ public class Field extends Container
      * @param world               the world.
      * @param location            the position of the field.
      */
-    public Field(@NotNull final ScarecrowTileEntity scarecrowTileEntity, final InventoryPlayer playerInventory, @NotNull final World world, @NotNull final BlockPos location)
+    public Field(@NotNull final IScarecrow scarecrowTileEntity, final InventoryPlayer playerInventory, @NotNull final World world, @NotNull final BlockPos location)
     {
         super();
         this.colony = ColonyManager.getColony(world, location);
@@ -575,7 +572,7 @@ public class Field extends Container
      * @return the inventory this citizen has.
      */
     @NotNull
-    public InventoryField getInventoryField()
+    public ItemStackHandler getInventoryField()
     {
         return inventory;
     }

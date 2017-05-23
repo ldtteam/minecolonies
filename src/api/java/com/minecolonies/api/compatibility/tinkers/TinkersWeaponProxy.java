@@ -1,4 +1,4 @@
-package com.minecolonies.compatibility.tinkers;
+package com.minecolonies.api.compatibility.tinkers;
 
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;

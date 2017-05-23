@@ -1,6 +1,6 @@
-package com.minecolonies.compatibility;
+package com.minecolonies.api.compatibility;
 
-import com.minecolonies.compatibility.tinkers.ToolBrokenCheck;
+import com.minecolonies.api.compatibility.tinkers.ToolBrokenCheck;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 

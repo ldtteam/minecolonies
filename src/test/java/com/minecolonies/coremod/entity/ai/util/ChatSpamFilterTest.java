@@ -1,13 +1,14 @@
 package com.minecolonies.coremod.entity.ai.util;
 
+import com.minecolonies.api.entity.ai.util.ChatSpamFilter;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.test.AbstractMockStaticsTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
-import static com.minecolonies.coremod.entity.ai.util.ChatSpamFilter.BASE_TIMEOUT;
-import static com.minecolonies.coremod.entity.ai.util.ChatSpamFilter.MAX_TIMEOUT;
+import static com.minecolonies.api.entity.ai.util.ChatSpamFilter.BASE_TIMEOUT;
+import static com.minecolonies.api.entity.ai.util.ChatSpamFilter.MAX_TIMEOUT;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 

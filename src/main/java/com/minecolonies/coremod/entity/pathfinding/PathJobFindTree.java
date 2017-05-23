@@ -1,5 +1,8 @@
-package com.minecolonies.api.entity.pathfinding;
+package com.minecolonies.coremod.entity.pathfinding;
 
+import com.minecolonies.api.entity.pathfinding.AbstractPathJob;
+import com.minecolonies.api.entity.pathfinding.Node;
+import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;

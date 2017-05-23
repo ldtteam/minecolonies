@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
-import com.minecolonies.coremod.colony.jobs.AbstractJob;
+import com.minecolonies.api.colony.jobs.IJob;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @param <J> The job this ai has to fulfil.
  */
-public abstract class AbstractEntityAISkill<J extends AbstractJob> extends AbstractEntityAIBasic<J>
+public abstract class AbstractEntityAISkill<J extends IJob> extends AbstractEntityAIBasic<J>
 {
 
     /**

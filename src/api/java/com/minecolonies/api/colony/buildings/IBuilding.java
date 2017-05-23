@@ -6,14 +6,24 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * Created by marcf on 3/7/2017.
  */
 public interface IBuilding extends IRequester
 {
+
+    /**
+     * Returns the tile entity that belongs to the colony building.
+     *
+     * @return {@link TileEntity} object of the building.
+     */
+    TileEntity getTileEntity();
 
     /**
      * Returns the colony of the building.
@@ -64,6 +74,13 @@ public interface IBuilding extends IRequester
      * @param level Level of the building.
      */
     void setBuildingLevel(int level);
+
+    /**
+     * Get all additional containers which belong to the building.
+     *
+     * @return a copy of the list to avoid currentModification exception.
+     */
+    List<BlockPos> getAdditionalContainers();
 
     /**
      * Check if the worker needs anything. Tool or item.

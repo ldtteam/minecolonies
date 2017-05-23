@@ -1,19 +1,19 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
+import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.entity.ai.util.AIState;
+import com.minecolonies.api.entity.ai.util.AITarget;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.ModBlocks;
-import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
-import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.ai.util.AIState;
-import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.ai.util.Structure;
 import com.minecolonies.coremod.placementhandlers.IPlacementHandler;
 import com.minecolonies.coremod.placementhandlers.PlacementHandlers;
-import com.minecolonies.coremod.util.*;
+import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.state.IBlockState;
@@ -43,9 +43,7 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static com.minecolonies.coremod.entity.ai.util.AIState.*;
-import static com.minecolonies.coremod.placementhandlers.IPlacementHandler.ActionProcessingResult.ACCEPT;
-import static com.minecolonies.coremod.placementhandlers.IPlacementHandler.ActionProcessingResult.DENY;
+import static com.minecolonies.api.entity.ai.util.AIState.*;
 
 /**
  * This base ai class is used by ai's who need to build entire structures.
@@ -58,7 +56,7 @@ import static com.minecolonies.coremod.placementhandlers.IPlacementHandler.Actio
  *
  * @param <J> the job type this AI has to do.
  */
-public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends AbstractEntityAIInteract<J>
+public abstract class AbstractEntityAIStructure<J extends IJob> extends AbstractEntityAIInteract<J>
 {
     /**
      * Amount of xp the builder gains each building (Will increase by attribute modifiers additionally).
@@ -488,13 +486,13 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
         switch (currentStructure.getStage())
         {
-            case CLEAR:
+            case Stage.CLEAR:
                 return AIState.CLEAR_STEP;
-            case BUILD:
+            case Stage.BUILD:
                 return AIState.BUILDING_STEP;
-            case DECORATE:
+            case Stage.DECORATE:
                 return AIState.DECORATION_STEP;
-            case SPAWN:
+            case Stage.SPAWN:
                 return AIState.SPAWN_STEP;
             default:
                 return AIState.COMPLETE_BUILD;
@@ -551,12 +549,12 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             final Object result = handlers.handle(world, coords, blockState, this);
             if (result instanceof IPlacementHandler.ActionProcessingResult)
             {
-                if (result == ACCEPT)
+                if (result == ActionProcessingResult.ACCEPT)
                 {
                     return true;
                 }
 
-                if (result == DENY)
+                if (result == ActionProcessingResult.DENY)
                 {
                     return false;
                 }

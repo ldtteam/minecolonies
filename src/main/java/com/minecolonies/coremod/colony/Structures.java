@@ -1,12 +1,13 @@
 package com.minecolonies.coremod.colony;
 
-import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.api.colony.ColonyManager;
 import com.minecolonies.api.colony.workorder.IWorkOrder;
-import com.minecolonies.coremod.colony.workorders.AbstractWorkOrderBuildDecoration;
-import com.minecolonies.coremod.configuration.Configurations;
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.lib.Constants;
-import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.workorders.AbstractWorkOrderBuildDecoration;
+import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.structures.helpers.Structure;
 import net.minecraft.block.Block;
 import net.minecraftforge.fml.common.FMLCommonHandler;

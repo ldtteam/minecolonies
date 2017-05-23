@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.configuration;
+package com.minecolonies.api.configuration;
 
 public class Configurations
 {

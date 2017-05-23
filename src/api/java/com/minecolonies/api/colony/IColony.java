@@ -5,6 +5,8 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.requestsystem.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.entity.ai.citizen.farmer.IScarecrow;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -102,7 +104,7 @@ public interface IColony
      *
      * @return an int representing the id.
      */
-    int getID();
+    IToken getID();
 
     /**
      * Read colony from saved data.
@@ -324,7 +326,7 @@ public interface IColony
      *
      * @param data Data to use to spawn citizen.
      */
-    void spawnCitizen(CitizenData data);
+    void spawnCitizen(ICitizenData data);
 
     /**
      * Returns the max amount of citizens in the colony.
@@ -370,7 +372,7 @@ public interface IColony
      *
      * @param data his data
      */
-    void spawnCitizenIfNull(@NotNull CitizenData data);
+    void spawnCitizenIfNull(@NotNull ICitizenData data);
 
     /**
      * Gets the town hall of the colony.
@@ -425,7 +427,7 @@ public interface IColony
      * @return the building with the specified id.
      */
     @Nullable
-    <B extends AbstractBuilding> B getBuilding(BlockPos buildingId, @NotNull Class<B> type);
+    <B extends IBuilding> B getBuilding(BlockPos buildingId, @NotNull Class<B> type);
 
     /**
      * Creates a field from a tile entity and adds it to the colony.
@@ -435,7 +437,7 @@ public interface IColony
      * @param pos             Position where the field has been placed.
      * @param world           the world of the field.
      */
-    void addNewField(ScarecrowTileEntity tileEntity, InventoryPlayer inventoryPlayer, BlockPos pos, World world);
+    void addNewField(IScarecrow tileEntity, InventoryPlayer inventoryPlayer, BlockPos pos, World world);
 
     /**
      * Creates a building from a tile entity and adds it to the colony.
@@ -444,7 +446,7 @@ public interface IColony
      * @return AbstractBuilding that was created and added.
      */
     @Nullable
-    AbstractBuilding addNewBuilding(@NotNull TileEntityColonyBuilding tileEntity);
+    IBuilding addNewBuilding(@NotNull TileEntityColonyBuilding tileEntity);
 
     /**
      * Recalculates how many citizen can be in the colony.
@@ -456,7 +458,7 @@ public interface IColony
      *
      * @param building AbstractBuilding to remove.
      */
-    void removeBuilding(@NotNull AbstractBuilding building);
+    void removeBuilding(@NotNull IBuilding building);
 
     /**
      * Getter which checks if jobs should be manually allocated.
@@ -477,7 +479,7 @@ public interface IColony
      *
      * @param citizen Citizen data to remove.
      */
-    void removeCitizen(@NotNull CitizenData citizen);
+    void removeCitizen(@NotNull ICitizenData citizen);
 
     /**
      * Send the message of a removed workOrder to the client.
@@ -492,7 +494,7 @@ public interface IColony
      * @return Citizen with no current job.
      */
     @Nullable
-    CitizenData getJoblessCitizen();
+    ICitizenData getJoblessCitizen();
 
     List<BlockPos> getDeliverymanRequired();
 

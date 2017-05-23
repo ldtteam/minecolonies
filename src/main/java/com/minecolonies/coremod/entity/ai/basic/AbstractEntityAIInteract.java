@@ -1,11 +1,8 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.BlockUtils;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.configuration.Configurations;
-import com.minecolonies.coremod.util.*;
+import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -29,7 +26,7 @@ import java.util.List;
  *
  * @param <J> the job type this AI has to do.
  */
-public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends AbstractEntityAICrafting<J>
+public abstract class AbstractEntityAIInteract<J extends IJob> extends AbstractEntityAICrafting<J>
 {
     /**
      * The amount of xp the entity gains per block mined.

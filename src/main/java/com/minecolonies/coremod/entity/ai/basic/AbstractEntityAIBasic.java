@@ -1,23 +1,23 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
 import com.google.common.collect.ImmutableList;
-import com.minecolonies.api.entity.ai.basic.AbstractAISkeleton;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.RequestState;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.entity.ai.basic.AbstractAISkeleton;
+import com.minecolonies.api.entity.ai.util.AIState;
+import com.minecolonies.api.entity.ai.util.AITarget;
+import com.minecolonies.api.inventory.InventoryCitizen;
+import com.minecolonies.api.util.*;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.colony.requestsystem.requestable.Tool;
 import com.minecolonies.coremod.colony.requestsystem.requestable.Weapon;
-import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.coremod.colony.requestsystem.requestable.WeaponType;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
-import com.minecolonies.coremod.entity.ai.util.AIState;
-import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.pathfinding.WalkToProxy;
-import com.minecolonies.api.inventory.InventoryCitizen;
-import com.minecolonies.coremod.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -36,14 +36,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.api.entity.ai.util.AIState.*;
 
 /**
  * This class provides basic ai functionality.
  *
+ * TODO: Disentangle this class and move to API package.
+ *
  * @param <J> The job this ai has to fulfil
  */
-public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends AbstractAISkeleton<J>
+public abstract class AbstractEntityAIBasic<J extends IJob> extends AbstractAISkeleton<J>
 {
     /**
      * Buffer time in ticks he will accept a last attacker as valid.
@@ -166,7 +168,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @return the building associated with this AI's worker.
      */
     @Nullable
-    protected AbstractBuildingWorker getOwnBuilding()
+    protected IBuilding getOwnBuilding()
     {
         return worker.getWorkBuilding();
     }
@@ -184,7 +186,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             {
                 final String name = this.worker.getName();
                 final BlockPos workerPosition = worker.getPosition();
-                final AbstractJob colonyJob = worker.getColonyJob();
+                final IJob colonyJob = worker.getColonyJob();
                 final String jobName = colonyJob == null ? "null" : colonyJob.getName();
                 Log.getLogger().error("Pausing Entity " + name + " (" + jobName + ") at " + workerPosition + " for " + timeout + " Seconds because of error:");
             }
@@ -412,7 +414,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     protected final boolean walkToBuilding()
     {
-        @Nullable final AbstractBuildingWorker ownBuilding = getOwnBuilding();
+        @Nullable final IBuilding ownBuilding = getOwnBuilding();
         //Return true if the building is null to stall the worker
         return ownBuilding == null
                  || walkToBlock(ownBuilding.getLocation().getInDimensionLocation());
@@ -426,12 +428,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     public boolean checkBuildingForStack(@Nullable final ItemStack stack)
     {
-        @Nullable final AbstractBuildingWorker building = getOwnBuilding();
+        @Nullable final IBuilding building = getOwnBuilding();
 
         boolean hasItem;
         if (building != null)
         {
-            hasItem = isInTileEntity(building.getTileEntity(), stack);
+            hasItem = isInProvider(building.getTileEntity(), stack);
 
             if (hasItem)
             {
@@ -443,7 +445,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 final TileEntity entity = world.getTileEntity(pos);
                 if (entity instanceof TileEntityChest)
                 {
-                    hasItem = isInTileEntity((TileEntityChest) entity, stack);
+                    hasItem = isInProvider(entity, stack);
 
                     if (hasItem)
                     {
@@ -477,7 +479,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param is     the itemStack.
      * @return true if found the stack.
      */
-    public boolean isInTileEntity(TileEntityChest entity, ItemStack is)
+    public boolean isInProvider(ICapabilityProvider entity, ItemStack is)
     {
         return is != null
                  && InventoryFunctions
@@ -546,7 +548,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
      */
 
-    public boolean isToolInTileEntity(ICapabilityProvider entity, final String tool, int toolLevel)
+    public boolean isToolInProvider(ICapabilityProvider entity, final String tool, int toolLevel)
     {
         return InventoryFunctions.matchFirstInProviderWithAction(
           entity,
@@ -592,8 +594,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private boolean checkForShovel()
     {
-        checkForTool(Utils.SHOVEL);
-        return getOwnBuilding().needsShovel();
+        return checkForTool(Utils.SHOVEL);
     }
 
     /**
@@ -647,7 +648,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     public boolean isToolInHut(final String tool, int toolLevel)
     {
-        @Nullable final AbstractBuildingWorker building = getOwnBuilding();
+        @Nullable final IBuilding building = getOwnBuilding();
 
         boolean hasItem;
         if (building != null)
@@ -661,7 +662,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
             //No request open
 
-            hasItem = isToolInTileEntity(building.getTileEntity(), tool, toolLevel);
+            hasItem = isToolInProvider(building.getTileEntity(), tool, toolLevel);
 
             if (hasItem)
             {
@@ -673,7 +674,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 final TileEntity entity = world.getTileEntity(pos);
                 if (entity instanceof TileEntityChest)
                 {
-                    hasItem = isToolInTileEntity(entity, tool, toolLevel);
+                    hasItem = isToolInProvider(entity, tool, toolLevel);
 
                     if (hasItem)
                     {
@@ -710,8 +711,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     protected boolean checkForAxe()
     {
-        checkForTool(Utils.AXE);
-        return getOwnBuilding().needsAxe();
+        return checkForTool(Utils.AXE);
     }
 
     /**
@@ -738,8 +738,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     protected boolean checkForHoe()
     {
-        checkForTool(Utils.HOE);
-        return getOwnBuilding().needsHoe();
+        return checkForTool(Utils.HOE);
     }
 
     /**
@@ -750,7 +749,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     @NotNull
     private AIState waitForPickaxe()
     {
-        if (checkForPickaxe(getOwnBuilding().getNeededPickaxeLevel()))
+        if (checkForPickaxe(Math.min(worker.getLevel(), getOwnBuilding().getBuildingLevel())))
         {
             delay += DELAY_RECHECK;
             return NEEDS_PICKAXE;
@@ -817,7 +816,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private boolean isPickaxeInHut(final int minlevel)
     {
-        @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
+        @Nullable final IBuilding buildingWorker = getOwnBuilding();
         return buildingWorker != null
                  && InventoryFunctions.matchFirstInProviderWithAction(
           buildingWorker.getTileEntity(),
@@ -874,7 +873,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 return true;
             }
 
-            getOwnBuilding().createRequest(worker.getCitizenData(), new Weapon(Weapon.Type.SWORD, 0, worker.getLevel()));
+            getOwnBuilding().createRequest(worker.getCitizenData(), new Weapon(WeaponType.SWORD, 0, worker.getLevel()));
         }
         return missing;
     }
@@ -889,7 +888,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private boolean isWeaponInHut()
     {
-        @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
+        @Nullable final IBuilding buildingWorker = getOwnBuilding();
         return buildingWorker != null
                  && InventoryFunctions.matchFirstInProviderWithAction(
           buildingWorker.getTileEntity(),
@@ -986,7 +985,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         final Map<ItemStorage, Integer> alreadyKept = new HashMap<>();
         final Map<ItemStorage, Integer> shouldKeep = getOwnBuilding().getRequiredItemsAndAmount();
 
-        @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
+        @Nullable final IBuilding buildingWorker = getOwnBuilding();
 
         return buildingWorker != null
                  && (walkToBuilding()

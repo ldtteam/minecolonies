@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.entity.ai.util;
+package com.minecolonies.api.entity.ai.util;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

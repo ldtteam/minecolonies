@@ -1,14 +1,14 @@
 package com.minecolonies.coremod.event;
 
+import com.minecolonies.api.colony.ColonyManager;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockHutTownHall;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.util.LanguageHandler;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.util.MathUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSilverfish;
 import net.minecraft.client.Minecraft;
@@ -53,12 +53,12 @@ public class EventHandler
             {
                 final WorldClient world = mc.world;
                 final EntityPlayerSP player = mc.player;
-                IColony colony = ColonyManager.getIColony(world, player.getPosition());
+                IColony colony = ColonyManager.getColony(world, player.getPosition());
                 final double minDistance = ColonyManager.getMinimumDistanceBetweenTownHalls();
 
                 if (colony == null)
                 {
-                    colony = ColonyManager.getClosestIColony(world, player.getPosition());
+                    colony = ColonyManager.getClosestColony(world, player.getPosition());
 
                     if (colony == null || Math.sqrt(colony.getDistanceSquared(player.getPosition())) > 2 * minDistance)
                     {
@@ -130,7 +130,7 @@ public class EventHandler
 
 
             {
-                final IColony colony = ColonyManager.getIColony(world, event.getPos());
+                final IColony colony = ColonyManager.getColony(world, event.getPos());
                 if (colony != null
                       && !colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
                 {
@@ -215,7 +215,7 @@ public class EventHandler
             return canOwnerPlaceTownHallHere(world, player, colony, pos);
         }
 
-        colony = ColonyManager.getClosestIColony(world, pos);
+        colony = ColonyManager.getClosestColony(world, pos);
         if (colony == null)
         {
             return true;
@@ -227,7 +227,7 @@ public class EventHandler
 
     private static boolean onBlockHutPlaced(final World world, @NotNull final EntityPlayer player, final BlockPos pos)
     {
-        final IColony colony = ColonyManager.getIColony(world, pos);
+        final IColony colony = ColonyManager.getColony(world, pos);
 
         if (colony == null)
         {
@@ -263,7 +263,7 @@ public class EventHandler
             return false;
         }
 
-        final IColony currentColony = ColonyManager.getIColony(world, pos);
+        final IColony currentColony = ColonyManager.getColony(world, pos);
         if (currentColony != colony)
         {
             LanguageHandler.sendPlayerMessage(player, "tile.blockHutTownhall.messageTooFar");

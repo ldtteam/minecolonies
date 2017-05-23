@@ -1,9 +1,10 @@
 package com.minecolonies.coremod.blocks;
 
+import com.minecolonies.api.colony.ColonyManager;
+import com.minecolonies.api.entity.ai.citizen.farmer.IFieldBlock;
 import com.minecolonies.api.lib.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.block.BlockContainer;
@@ -38,7 +39,7 @@ import static net.minecraft.util.EnumFacing.fromAngle;
 /**
  * The class handling the fieldBlocks, placement and activation.
  */
-public class BlockHutField extends BlockContainer
+public class BlockHutField extends BlockContainer implements IFieldBlock
 {
     /**
      * The position it faces.

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.configuration;
 
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.lib.Constants;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.config.Configuration;
@@ -8,7 +9,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.io.File;
 
-import static com.minecolonies.coremod.configuration.Configurations.*;
+import static com.minecolonies.api.configuration.Configurations.*;
 
 /**
  * Configuration Handler.

@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
 import com.minecolonies.api.entity.DesiredCitizenActivity;
+import com.minecolonies.api.entity.ai.util.ChatSpamFilter;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.ai.util.ChatSpamFilter;
-import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.item.ItemFood;

@@ -23,7 +23,7 @@ import java.util.stream.StreamSupport;
  * @param <T> Type of IColony (Colony or ColonyView)
  * @author Colton
  */
-public final class ColonyList<T extends IColony> implements Iterable<T>
+public final class ColonyList<T extends IColony> implements com.minecolonies.api.colony.IColonyList<T>
 {
     @VisibleForTesting
     static final  int           INITIAL_SIZE = 16;
@@ -40,6 +40,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
      * @param position The position for the Colony center.
      * @return The newly created Colony.
      */
+    @Override
     @NotNull
     public Colony create(World world, BlockPos position)
     {
@@ -85,6 +86,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
      *
      * @param colony colony to add to the list.
      */
+    @Override
     public void add(T colony)
     {
         final T existingColony = get(colony.getID());
@@ -121,6 +123,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
      * @param index colony id.
      * @return The Colony associated with the provided id.
      */
+    @Override
     @Nullable
     // no way to remove this, java does it too
     @SuppressWarnings("unchecked")
@@ -139,6 +142,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
      *
      * @param colony the Colony to remove.
      */
+    @Override
     public void remove(T colony)
     {
         remove(colony.getID());
@@ -149,6 +153,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
      *
      * @param id colony id to remove.
      */
+    @Override
     public void remove(int id)
     {
         if (list[id] == null)
@@ -168,6 +173,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
     /**
      * Empty the list.
      */
+    @Override
     public void clear()
     {
         for (int i = 0; i < list.length; i++)
@@ -186,6 +192,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
      *
      * @return number of Colonies in the list.
      */
+    @Override
     public int size()
     {
         return size;
@@ -196,6 +203,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
      *
      * @return true if there are no Colonies.
      */
+    @Override
     public boolean isEmpty()
     {
         return size == 0;
@@ -207,6 +215,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
      *
      * @return List of Colonies.
      */
+    @Override
     @NotNull
     public List<T> getCopyAsList()
     {
@@ -272,6 +281,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
      *
      * @return a Colony Stream.
      */
+    @Override
     public Stream<T> stream()
     {
         return StreamSupport.stream(spliterator(), false);

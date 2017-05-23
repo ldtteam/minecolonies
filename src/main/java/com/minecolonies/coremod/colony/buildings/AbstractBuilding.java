@@ -1,24 +1,30 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.ColonyManager;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.blocks.*;
-import com.minecolonies.coremod.colony.*;
+import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView;
 import com.minecolonies.coremod.colony.requestsystem.locations.StaticLocation;
-import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.coremod.colony.requestsystem.requestable.Tool;
-import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrderBuild;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.coremod.util.*;
+import com.minecolonies.coremod.util.LanguageHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.InventoryHelper;
@@ -700,11 +706,7 @@ public abstract class AbstractBuilding implements IBuilding
         ConstructionTapeHelper.removeConstructionTape(this, world);
     }
 
-    /**
-     * Returns the tile entity that belongs to the colony building.
-     *
-     * @return {@link TileEntityColonyBuilding} object of the building.
-     */
+    @Override
     public TileEntityColonyBuilding getTileEntity()
     {
         if ((tileEntity == null || tileEntity.isInvalid()) && colony.getWorld().getBlockState(location.getInDimensionLocation()).getBlock() != null)
@@ -998,11 +1000,7 @@ public abstract class AbstractBuilding implements IBuilding
         containerList.remove(pos);
     }
 
-    /**
-     * Get all additional containers which belong to the building.
-     *
-     * @return a copy of the list to avoid currentModification exception.
-     */
+    @Override
     public List<BlockPos> getAdditionalContainers()
     {
         return new ArrayList<>(containerList);
@@ -1424,6 +1422,12 @@ public abstract class AbstractBuilding implements IBuilding
             //NOOP: On the client side this should never be called.
         }
 
+        @Override
+        public TileEntity getTileEntity()
+        {
+            return null;
+        }
+
         /**
          * Gets the ColonyView that this building belongs to.
          *
@@ -1448,6 +1452,12 @@ public abstract class AbstractBuilding implements IBuilding
         public void setBuildingLevel(final int level)
         {
             throw new IllegalStateException("Cannot set building level on the client side.");
+        }
+
+        @Override
+        public List<BlockPos> getAdditionalContainers()
+        {
+            return null;
         }
 
         @Override
