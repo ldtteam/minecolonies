@@ -233,7 +233,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     {
         final List<RecipeStorage> recipes = BakerRecipes.getRecipes();
         final List<ItemStack> lastRecipe = recipes.get(recipes.size() - 1).getInput();
-        if (checkOrRequestItems(lastRecipe.toArray(new ItemStack[lastRecipe.size()])))
+        if (checkOrRequestItems(true,false, lastRecipe.toArray(new ItemStack[lastRecipe.size()])))
         {
             return getState();
         }
@@ -241,13 +241,14 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 
         final List<ItemStack> list = new ArrayList<>(storage.getInput());
 
+        //todo for each and remove wheat
+        //todo still have to handle correctly if > 3 wheat
+
         //Wheat will be reduced by chance only (Between 3 and 6- getBuildingLevel, meaning 3-5, 3-4, 3-3, 3-2, 3-1)
         for (final ItemStack stack : storage.getInput())
         {
             if (stack.getItem() == Items.WHEAT)
             {
-                //todo he isn't crafting the right amount!
-                //He reduces the amount of the recipe, shouldn't!).
                 list.remove(stack);
                 final ItemStack copy = stack.copy();
                 final int form = (getOwnBuilding().getMaxBuildingLevel() + 1) - (getOwnBuilding().getBuildingLevel() + copy.stackSize);
@@ -302,12 +303,12 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         {
             final List<RecipeStorage> recipes = BakerRecipes.getRecipes();
             final List<ItemStack> lastRecipe = recipes.get(recipes.size() - 1).getInput();
-            checkOrRequestItems(lastRecipe.toArray(new ItemStack[lastRecipe.size()]));
+            checkOrRequestItems(true, false, lastRecipe.toArray(new ItemStack[lastRecipe.size()]));
             setDelay(UNABLE_TO_CRAFT_DELAY);
             return PREPARING;
         }
 
-        final Product product = new Product(storage.getPrimaryOutput(), recipeId);
+        final Product product = new Product(storage.getPrimaryOutput().copy(), recipeId);
         getOwnBuilding().addToTasks(product.getState(), product);
         currentProduct = product;
         return getState();
@@ -338,6 +339,10 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
             if(!(furnace.getBlock() instanceof BlockFurnace))
             {
                 building.removeFromFurnaces(currentFurnace);
+            }
+            else
+            {
+                building.removeFromTasks(Product.ProductState.PREPARED, null);
             }
             return START_WORKING;
         }

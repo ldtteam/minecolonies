@@ -7,23 +7,15 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
-import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.citizen.baker.Product.ProductState;
 import com.minecolonies.coremod.entity.ai.citizen.baker.Product;
 import com.minecolonies.coremod.util.BlockPosUtil;
-import com.minecolonies.coremod.util.InventoryUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFurnace;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -267,7 +259,7 @@ public class BuildingBaker extends AbstractBuildingWorker
         final NBTTagList furnaceTagList = compound.getTagList(TAG_FURNACES, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < furnaceTagList.tagCount(); ++i)
         {
-            final NBTTagCompound furnaceCompound = taskTagList.getCompoundTagAt(i);
+            final NBTTagCompound furnaceCompound = furnaceTagList.getCompoundTagAt(i);
             final BlockPos pos = BlockPosUtil.readFromNBT(furnaceCompound, TAG_FURNACE_POS);
             final Product product = Product.createFromNBT(furnaceCompound);
             furnaces.put(pos, product);
@@ -322,6 +314,7 @@ public class BuildingBaker extends AbstractBuildingWorker
                 tasks.remove(state);
             }
         }
+
         markDirty();
     }
 

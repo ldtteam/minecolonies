@@ -115,6 +115,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private int exceptionTimer = 1;
 
     /**
+     * Check to see if the worker wants to stand still waiting for the request to be fullfilled.
+     */
+    private boolean waitForRequest = true;
+
+    /**
      * Sets up some important skeleton stuff for every ai.
      *
      * @param job the job class
@@ -145,7 +150,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                  * If yes, transition to NEEDS_ITEM.
                  * and wait for new items.
                  */
-          new AITarget(() -> this.getOwnBuilding().areItemsNeeded(), this::waitForNeededItems),
+          new AITarget(() -> this.getOwnBuilding().areItemsNeeded() && !waitForRequest, this::waitForNeededItems),
                 /*
                  * Wait for different tools.
                  */
@@ -1157,7 +1162,21 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     public boolean checkOrRequestItems(@Nullable final ItemStack... items)
     {
-        return checkOrRequestItems(true, items);
+        return checkOrRequestItems(true, true, items);
+    }
+
+    /**
+     * Require that items are in the workers inventory.
+     * This safeguard ensures you have said items before you execute a task.
+     * Please stop execution on false returned.
+     *
+     * @param useItemDamage use item damage?
+     * @param items the items needed
+     * @return false if they are in inventory
+     */
+    public boolean checkOrRequestItems(final boolean useItemDamage, @Nullable final ItemStack... items)
+    {
+        return checkOrRequestItems(useItemDamage, true, items);
     }
 
     /**
@@ -1166,10 +1185,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Please stop execution on false returned.
      *
      * @param useItemDamage compare the itemDamage of the values.
+     * @param waitForRequest wait for the request.
      * @param items         the items needed
      * @return false if they are in inventory
      */
-    public boolean checkOrRequestItems(final boolean useItemDamage, @Nullable final ItemStack... items)
+    public boolean checkOrRequestItems(final boolean useItemDamage, boolean waitForRequest, @Nullable final ItemStack... items)
     {
         if (items == null)
         {
@@ -1209,6 +1229,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
         itemsNeeded.clear();
         Collections.addAll(itemsNeeded, items);
+        this.waitForRequest = waitForRequest;
         return true;
     }
 

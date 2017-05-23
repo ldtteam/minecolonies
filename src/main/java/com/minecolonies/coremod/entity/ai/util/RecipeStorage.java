@@ -51,11 +51,17 @@ public class RecipeStorage
 
     /**
      * Get the list of input items.
-     * @return the copy of the list
+     * Make a real copy of the itemStack so we're able to request and handle them without changing the recipe.
+     * @return the copy of the list.
      */
     public List<ItemStack> getInput()
     {
-        return new ArrayList<>(input);
+        final List<ItemStack> copy = new ArrayList<>();
+        for(final ItemStack stack: input)
+        {
+            copy.add(stack.copy());
+        }
+        return copy;
     }
 
     /**

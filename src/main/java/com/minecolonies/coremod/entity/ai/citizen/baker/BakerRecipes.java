@@ -63,6 +63,7 @@ public class BakerRecipes
 
         final List<ItemStack> inputCookie = new ArrayList<>();
         inputCookie.add(new ItemStack(Items.WHEAT, REQUIRED_WHEAT_COOKIES));
+        //todo that doesn'T seem right
         inputCookie.add(new ItemStack(Blocks.COCOA, REQUIRED_COCOA));
 
         final List<ItemStack> inputBread = new ArrayList<>();

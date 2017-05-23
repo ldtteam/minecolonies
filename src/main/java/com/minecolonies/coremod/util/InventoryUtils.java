@@ -195,8 +195,8 @@ public final class InventoryUtils
      */
     public static int findFirstSlotInItemHandlerNotEmptyWith(@NotNull final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        @NotNull final Predicate<ItemStack> notEmptyPredicate = itemStack -> !InventoryUtils.isItemStackEmpty(itemStack);
-        notEmptyPredicate.and(itemStackSelectionPredicate);
+        @NotNull Predicate<ItemStack> notEmptyPredicate = itemStack -> !InventoryUtils.isItemStackEmpty(itemStack);
+        notEmptyPredicate = notEmptyPredicate.and(itemStackSelectionPredicate);
 
         for (int slot = 0; slot < itemHandler.getSlots(); slot++)
         {
