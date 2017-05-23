@@ -9,12 +9,12 @@ import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
-import net.minecraft.item.ItemTool;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.coremod.util.constants.TranslationConstants.*;
 
 /**
  * EntityCitizen go home AI.
@@ -149,8 +149,7 @@ public class EntityAIGoHome extends EntityAIBase
                             InventoryUtils.forceItemStackToItemHandler(
                                     new InvWrapper(citizen.getInventoryCitizen()),
                                     new ItemStack(stack.getItem(), 1),
-                                    stack1 -> !InventoryUtils.isItemStackEmpty(stack) && (stack.getItem() instanceof ItemTool
-                                            || stack.getItem() instanceof ItemSword));
+                                    stack1 -> citizen.getWorkBuilding() == null || !citizen.getWorkBuilding().neededForWorker(stack1));
                         }
                         else
                         {
@@ -175,19 +174,19 @@ public class EntityAIGoHome extends EntityAIBase
         {
             if (currentSaturation <= 0)
             {
-                chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.saturation.0");
+                chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_SATURATION_0);
             }
             else if (currentSaturation < EntityCitizen.LOW_SATURATION)
             {
-                chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.saturation.3");
+                chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_SATURATION_3);
             }
             else if (currentSaturation < EntityCitizen.AVERAGE_SATURATION)
             {
-                chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.saturation.5");
+                chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_SATURATION_5);
             }
             else if (currentSaturation < EntityCitizen.HIGH_SATURATION)
             {
-                chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.saturation.7");
+                chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_SATURATION_7);
             }
         }
 
