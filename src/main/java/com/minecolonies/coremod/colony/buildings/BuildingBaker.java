@@ -166,6 +166,15 @@ public class BuildingBaker extends AbstractBuildingWorker
     }
 
     /**
+     * Remove a product from the furnace.
+     * @param pos the position the furnace is at.
+     */
+    public void removeProductFromFurnace(final BlockPos pos)
+    {
+        furnaces.replace(pos, null);
+    }
+
+    /**
      * Return a list of furnaces assigned to this hut.
      *
      * @return copy of the list
@@ -221,7 +230,11 @@ public class BuildingBaker extends AbstractBuildingWorker
         {
             @NotNull final NBTTagCompound furnaceCompound = new NBTTagCompound();
             BlockPosUtil.writeToNBT(furnaceCompound, TAG_FURNACE_POS, entry.getKey());
-            entry.getValue().writeToNBT(furnaceCompound);
+
+            if(entry.getValue() != null)
+            {
+                entry.getValue().writeToNBT(furnaceCompound);
+            }
 
             furnacesTagList.appendTag(furnaceCompound);
         }
@@ -269,6 +282,7 @@ public class BuildingBaker extends AbstractBuildingWorker
         {
             addToFurnaces(pos);
         }
+        markDirty();
     }
 
     /**
@@ -289,6 +303,7 @@ public class BuildingBaker extends AbstractBuildingWorker
             products.add(product);
             tasks.put(state, products);
         }
+        markDirty();
     }
 
     /**
@@ -302,11 +317,12 @@ public class BuildingBaker extends AbstractBuildingWorker
         if (tasks.containsKey(state))
         {
             tasks.get(state).remove(product);
-            if (tasks.get(state).size() == 0)
+            if (tasks.get(state).isEmpty())
             {
                 tasks.remove(state);
             }
         }
+        markDirty();
     }
 
     /**
@@ -352,14 +368,14 @@ public class BuildingBaker extends AbstractBuildingWorker
         @Override
         public Skill getPrimarySkill()
         {
-            return Skill.DEXTERITY;
+            return Skill.INTELLIGENCE;
         }
 
         @NotNull
         @Override
         public Skill getSecondarySkill()
         {
-            return Skill.CHARISMA;
+            return Skill.DEXTERITY;
         }
     }
 }

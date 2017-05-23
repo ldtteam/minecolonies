@@ -103,7 +103,7 @@ public class RecipeStorage
                 if(hasStack)
                 {
                     final int count = InventoryUtils.getItemCountInItemHandler(handler, itemStack -> !InventoryUtils.isItemStackEmpty(itemStack) && itemStack.isItemEqual(stack));
-                    if(count > amountNeeded)
+                    if(count >= amountNeeded)
                     {
                         break;
                     }

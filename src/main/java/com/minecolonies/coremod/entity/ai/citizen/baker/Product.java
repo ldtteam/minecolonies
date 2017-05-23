@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.baker;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import org.jetbrains.annotations.NotNull;
 
 public class Product
 {
@@ -44,7 +45,7 @@ public class Product
      * Instantiates the Product, requires the end product of it.
      * @param endProduct the product when finished.
      */
-    public Product(final ItemStack endProduct, int recipeId)
+    public Product(@NotNull final ItemStack endProduct, int recipeId)
     {
         this.endProduct = endProduct;
         this.recipeId = recipeId;
@@ -130,11 +131,15 @@ public class Product
      */
     public static Product createFromNBT(final NBTTagCompound productCompound)
     {
-        final ProductState state = ProductState.values()[productCompound.getInteger(TAG_STATE)];
-        final int recipeId = productCompound.getInteger(TAG_RECIPE_ID);
-        final Product product = new Product(ItemStack.loadItemStackFromNBT(productCompound), recipeId);
-        product.setState(state);
-        return product;
+        if(productCompound.hasKey(TAG_STATE))
+        {
+            final ProductState state = ProductState.values()[productCompound.getInteger(TAG_STATE)];
+            final int recipeId = productCompound.getInteger(TAG_RECIPE_ID);
+            final Product product = new Product(ItemStack.loadItemStackFromNBT(productCompound), recipeId);
+            product.setState(state);
+            return product;
+        }
+        return null;
     }
 
     /**

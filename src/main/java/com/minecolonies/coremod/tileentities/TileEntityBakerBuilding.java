@@ -4,6 +4,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingBaker;
 import com.minecolonies.coremod.entity.ai.citizen.baker.Product;
 import net.minecraft.block.BlockFurnace;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -53,7 +54,8 @@ public class TileEntityBakerBuilding extends TileEntityColonyBuilding
     {
         for(final Map.Entry<BlockPos, Product> entry: building.getFurnacesWithProduct().entrySet())
         {
-            if(!(worldObj.getBlockState(entry.getKey()).getBlock() instanceof BlockFurnace))
+            final IBlockState furnace = worldObj.getBlockState(entry.getKey());
+            if(!(furnace.getBlock() instanceof BlockFurnace))
             {
                 building.removeFromFurnaces(entry.getKey());
                 continue;
@@ -63,11 +65,11 @@ public class TileEntityBakerBuilding extends TileEntityColonyBuilding
             if(product != null && product.getState() == Product.ProductState.BAKING)
             {
                 product.increaseBakingProgress();
-                worldObj.setBlockState(entry.getKey(), Blocks.LIT_FURNACE.getDefaultState());
+                worldObj.setBlockState(entry.getKey(), Blocks.LIT_FURNACE.getDefaultState().withProperty(BlockFurnace.FACING, furnace.getValue(BlockFurnace.FACING)));
             }
             else
             {
-                worldObj.setBlockState(entry.getKey(), Blocks.FURNACE.getDefaultState());
+                worldObj.setBlockState(entry.getKey(), Blocks.FURNACE.getDefaultState().withProperty(BlockFurnace.FACING, furnace.getValue(BlockFurnace.FACING)));
             }
         }
     }

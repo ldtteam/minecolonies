@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.ai.citizen.baker;
 
-import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.buildings.BuildingBaker;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -10,10 +9,13 @@ import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.ai.util.RecipeStorage;
 import com.minecolonies.coremod.util.InventoryUtils;
 import net.minecraft.block.BlockFurnace;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -63,6 +65,11 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     private static final int UNABLE_TO_CRAFT_DELAY = 100;
 
     /**
+     * Make this amount of products until dumping
+     */
+    private static final int UNTIL_DUMP = 10;
+
+    /**
      * Current furnace to walk to.
      */
     private BlockPos currentFurnace = null;
@@ -76,17 +83,6 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
      * Progress in hitting the product.
      */
     private int progress = 0;
-
-
-    //todo first step dough: Take the wheat, by chance need between 3-5 (6-building level) so 5,4,3,2,1 (by chance could need only 1 each bread), hit for time depending on level at hut chest with wheat in hand. (Particle effects?)
-
-    //todo prepare, hit with bread in hand on hut block for fixed time depending on his level.
-
-    //todo ready, but bread in chest and start over.
-
-    //todo if he has no wheat, request it to dman, always if he can't find wheat in start working and he has nothing to do at the moment
-
-    //todo and hit with the ingredients
 
     /**
      * Constructor for the Fisherman.
@@ -103,12 +99,56 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
                 new AITarget(PREPARING, this::prepareForBaking),
                 new AITarget(BAKER_KNEADING, this::kneadTheDough),
                 new AITarget(BAKER_BAKING, this::bakeBread),
-                new AITarget(BAKER_TAKE_OUT_OF_OVEN, this::takeFromOven)
+                new AITarget(BAKER_TAKE_OUT_OF_OVEN, this::takeFromOven),
+                new AITarget(BAKER_FINISHING, this::finishing)
         );
         worker.setSkillModifier(
                 INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
                         + DEXTERITY_MULTIPLIER * worker.getCitizenData().getDexterity());
         worker.setCanPickUpLoot(true);
+    }
+
+    private AIState finishing()
+    {
+        if (currentProduct == null)
+        {
+            progress = 0;
+            final List<Product> products = getOwnBuilding().getTasks().get(Product.ProductState.BAKED);
+            if (products == null || products.isEmpty())
+            {
+                return PREPARING;
+            }
+            currentProduct = products.get(0);
+        }
+
+        if (currentProduct.getState() != Product.ProductState.BAKED)
+        {
+            return PREPARING;
+        }
+
+        worker.setHeldItem(EnumHand.MAIN_HAND, currentProduct.getEndProduct());
+        worker.hitBlockWithToolInHand(getOwnBuilding().getLocation());
+
+        if (progress >= getRequiredProgressForKneading())
+        {
+            worker.setHeldItem(EnumHand.MAIN_HAND, InventoryUtils.EMPTY);
+            currentProduct.nextState();
+            getOwnBuilding().removeFromTasks(Product.ProductState.BAKED, currentProduct);
+            InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), currentProduct.getEndProduct());
+            incrementActionsDone();
+            progress = 0;
+            return PREPARING;
+        }
+
+        progress++;
+        setDelay(HIT_DELAY);
+        return getState();
+    }
+
+    @Override
+    protected int getActionsDoneUntilDumping()
+    {
+        return UNTIL_DUMP;
     }
 
     private AIState takeFromOven()
@@ -123,7 +163,8 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
             return getState();
         }
 
-        final Product product = getOwnBuilding().getFurnacesWithProduct().remove(currentFurnace);
+        final Product product = getOwnBuilding().getFurnacesWithProduct().get(currentFurnace);
+        getOwnBuilding().removeProductFromFurnace(currentFurnace);
         if (product != null)
         {
             getOwnBuilding().addToTasks(product.getState(), product);
@@ -146,86 +187,127 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
             return getState();
         }
 
-        if(currentProduct == null)
+        if (currentProduct == null)
         {
-            final List<IItemHandler> handlers = new ArrayList<>();
-            handlers.add(new InvWrapper(worker.getInventoryCitizen()));
-            handlers.add(new InvWrapper(getOwnBuilding().getTileEntity()));
-
-            for(final BlockPos pos: getOwnBuilding().getAdditionalCountainers())
-            {
-                final TileEntity entity = world.getTileEntity(pos);
-                if(entity instanceof TileEntityChest)
-                {
-                    handlers.add(new InvWrapper((TileEntityChest) entity));
-                }
-            }
-
-            RecipeStorage storage = null;
-            int recipeId = 0;
-            for(final RecipeStorage tempStorage : BakerRecipes.getRecipes())
-            {
-                if(tempStorage.canFullFillRecipe(handlers.toArray(new IItemHandler[handlers.size()])))
-                {
-                    storage = tempStorage;
-                    break;
-                }
-                recipeId++;
-            }
-
-            if(storage == null)
-            {
-                final List<RecipeStorage> recipes = BakerRecipes.getRecipes();
-                final List<ItemStack> lastRecipe = recipes.get(recipes.size()-1).getInput();
-                checkOrRequestItems(lastRecipe.toArray(new ItemStack[lastRecipe.size()]));
-                setDelay(UNABLE_TO_CRAFT_DELAY);
-                return PREPARING;
-            }
-
-            final Product product = new Product(storage.getPrimaryOutput(), recipeId);
-            currentProduct = product;
-            return getState();
+            return createNewProduct();
         }
 
-        if(currentProduct.getState() == Product.ProductState.UNCRAFTED)
+        final RecipeStorage storage = BakerRecipes.getRecipes().get(currentProduct.getRecipeId());
+
+        if (currentProduct.getState() == Product.ProductState.UNCRAFTED)
         {
-            final List<RecipeStorage> recipes = BakerRecipes.getRecipes();
-            final List<ItemStack> lastRecipe = recipes.get(recipes.size()-1).getInput();
-            if(checkOrRequestItems(lastRecipe.toArray(new ItemStack[lastRecipe.size()])))
-            {
-                return getState();
-            }
-            currentProduct.nextState();
-
-            if(BakerRecipes.getRecipes().size() < currentProduct.getRecipeId())
-            {
-                Log.getLogger().warn("That shouldn't happen, please report it to the mod authors with this code: RECIPEGONEMAD");
-                return PREPARING;
-            }
-
-            final RecipeStorage storage = BakerRecipes.getRecipes().get(currentProduct.getRecipeId());
-
-            InventoryUtils.removeStacksFromItemHandler(new InvWrapper(worker.getInventoryCitizen()), storage.getInput());
-
-            return PREPARING;
+            return craftNewProduct(storage);
         }
 
-        if(currentProduct.getState() != Product.ProductState.RAW)
+        if (currentProduct.getState() != Product.ProductState.RAW)
         {
             return PREPARING;
         }
 
+        worker.setHeldItem(EnumHand.MAIN_HAND, storage.getInput().get(worker.getRandom().nextInt(storage.getInput().size())));
         worker.hitBlockWithToolInHand(getOwnBuilding().getLocation());
 
-
-        if(progress >= getRequiredProgressForKneading())
+        if (progress >= getRequiredProgressForKneading())
         {
+            worker.setHeldItem(EnumHand.MAIN_HAND, InventoryUtils.EMPTY);
+            progress = 0;
             currentProduct.nextState();
+            getOwnBuilding().removeFromTasks(Product.ProductState.RAW, currentProduct);
+            getOwnBuilding().addToTasks(Product.ProductState.PREPARED, currentProduct);
+            currentProduct = null;
             return PREPARING;
         }
 
         progress++;
         setDelay(HIT_DELAY);
+        return getState();
+    }
+
+    /**
+     * Craft a new product from a given Storage.
+     *
+     * @param storage the given storage.
+     * @return the next state to transit to.
+     */
+    private AIState craftNewProduct(final RecipeStorage storage)
+    {
+        final List<RecipeStorage> recipes = BakerRecipes.getRecipes();
+        final List<ItemStack> lastRecipe = recipes.get(recipes.size() - 1).getInput();
+        if (checkOrRequestItems(lastRecipe.toArray(new ItemStack[lastRecipe.size()])))
+        {
+            return getState();
+        }
+        currentProduct.nextState();
+
+        final List<ItemStack> list = new ArrayList<>(storage.getInput());
+
+        //Wheat will be reduced by chance only (Between 3 and 6- getBuildingLevel, meaning 3-5, 3-4, 3-3, 3-2, 3-1)
+        for (final ItemStack stack : storage.getInput())
+        {
+            if (stack.getItem() == Items.WHEAT)
+            {
+                list.remove(stack);
+                final ItemStack copy = stack.copy();
+                final int form = (getOwnBuilding().getMaxBuildingLevel() + 1) - (getOwnBuilding().getBuildingLevel() + copy.stackSize);
+                int req = form < 0 ? -worker.getRandom().nextInt(Math.abs(form)) : worker.getRandom().nextInt(form);
+                copy.stackSize += req;
+                list.add(copy);
+            }
+        }
+
+        getOwnBuilding().removeFromTasks(Product.ProductState.UNCRAFTED, currentProduct);
+        getOwnBuilding().addToTasks(Product.ProductState.RAW, currentProduct);
+
+        InventoryUtils.removeStacksFromItemHandler(new InvWrapper(worker.getInventoryCitizen()), list);
+
+        return getState();
+    }
+
+    /**
+     * Create a new product depending on what the baker has available on resources.
+     *
+     * @return the next state to transit to.
+     */
+    private AIState createNewProduct()
+    {
+        progress = 0;
+        final List<IItemHandler> handlers = new ArrayList<>();
+        handlers.add(new InvWrapper(worker.getInventoryCitizen()));
+        handlers.add(new InvWrapper(getOwnBuilding().getTileEntity()));
+
+        for (final BlockPos pos : getOwnBuilding().getAdditionalCountainers())
+        {
+            final TileEntity entity = world.getTileEntity(pos);
+            if (entity instanceof TileEntityChest)
+            {
+                handlers.add(new InvWrapper((TileEntityChest) entity));
+            }
+        }
+
+        RecipeStorage storage = null;
+        int recipeId = 0;
+        for (final RecipeStorage tempStorage : BakerRecipes.getRecipes())
+        {
+            if (tempStorage.canFullFillRecipe(handlers.toArray(new IItemHandler[handlers.size()])))
+            {
+                storage = tempStorage;
+                break;
+            }
+            recipeId++;
+        }
+
+        if (storage == null)
+        {
+            final List<RecipeStorage> recipes = BakerRecipes.getRecipes();
+            final List<ItemStack> lastRecipe = recipes.get(recipes.size() - 1).getInput();
+            checkOrRequestItems(lastRecipe.toArray(new ItemStack[lastRecipe.size()]));
+            setDelay(UNABLE_TO_CRAFT_DELAY);
+            return PREPARING;
+        }
+
+        final Product product = new Product(storage.getPrimaryOutput(), recipeId);
+        getOwnBuilding().addToTasks(product.getState(), product);
+        currentProduct = product;
         return getState();
     }
 
@@ -247,8 +329,9 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
             return BAKER_BAKING;
         }
 
+        final IBlockState furnace = world.getBlockState(currentFurnace);
         final List<Product> products = building.getTasks().get(Product.ProductState.PREPARED);
-        if (!(world.getBlockState(currentFurnace).getBlock() instanceof BlockFurnace) || products.isEmpty())
+        if (!(furnace.getBlock() instanceof BlockFurnace) || products.isEmpty())
         {
             building.removeFromFurnaces(currentFurnace);
             return START_WORKING;
@@ -257,11 +340,11 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         final Product product = products.get(0);
         building.removeFromTasks(Product.ProductState.PREPARED, product);
 
-        if (product != null && product.getState() == Product.ProductState.BAKING)
+        if (product != null && product.getState() == Product.ProductState.PREPARED)
         {
             building.putInFurnace(currentFurnace, product);
             product.nextState();
-            world.setBlockState(currentFurnace, Blocks.LIT_FURNACE.getDefaultState());
+            world.setBlockState(currentFurnace, Blocks.LIT_FURNACE.getDefaultState().withProperty(BlockFurnace.FACING, furnace.getValue(BlockFurnace.FACING)));
         }
         return PREPARING;
     }
@@ -275,7 +358,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     {
         if (getOwnBuilding().getFurnaces().isEmpty())
         {
-            worker.sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BAKER_NO_FURNACES);
+            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_BAKER_NO_FURNACES);
             return getState();
         }
 
@@ -307,13 +390,24 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 
         if (emptyFurnace)
         {
-            if (map.containsKey(Product.ProductState.PREPARED))
-            {
-                return BAKER_BAKING;
-            }
-            return BAKER_KNEADING;
+            return handleEmptyFurnace(map);
         }
 
+        return BAKER_KNEADING;
+    }
+
+    /**
+     * Handle an empty furnace and start baking if prepared products are rhere.
+     *
+     * @param map the map of furnaces.
+     * @return the next state to transit to.
+     */
+    private static AIState handleEmptyFurnace(final Map<Product.ProductState, List<Product>> map)
+    {
+        if (map.containsKey(Product.ProductState.PREPARED))
+        {
+            return BAKER_BAKING;
+        }
         return BAKER_KNEADING;
     }
 

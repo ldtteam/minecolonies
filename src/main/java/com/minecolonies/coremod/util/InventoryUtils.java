@@ -10,7 +10,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -1712,11 +1711,20 @@ public final class InventoryUtils
      */
     public static boolean removeStacksFromItemHandler(final IItemHandler handler, final List<ItemStack> input)
     {
-        int i = 0;
-        while(i < input.size())
+        final List<ItemStack> list = new ArrayList<>();
+        int maxTries = 0;
+        for(final ItemStack stack: input)
         {
-            final ItemStack stack = input.get(i);
-            int slot = findFirstSlotInItemHandlerNotEmptyWith(handler, itemStack -> itemStack.isItemEqual(stack));
+            maxTries+= stack.stackSize;
+            list.add(stack.copy());
+        }
+
+        int i = 0;
+        int tries = 0;
+        while(i < list.size() && tries < maxTries)
+        {
+            final ItemStack stack = list.get(i);
+            int slot = findFirstSlotInItemHandlerNotEmptyWith(handler, stack::isItemEqual);
 
             if(slot == -1)
             {
@@ -1729,8 +1737,13 @@ public final class InventoryUtils
             {
                 i++;
             }
+            else
+            {
+                stack.stackSize -= removedSize;
+            }
+            tries++;
         }
 
-        return true;
+        return i >= list.size();
     }
 }
