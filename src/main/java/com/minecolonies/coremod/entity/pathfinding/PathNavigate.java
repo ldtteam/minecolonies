@@ -135,9 +135,9 @@ public class PathNavigate extends PathNavigateGround
     @Nullable
     public PathResult moveToXYZ(final double x, final double y, final double z, final double speed)
     {
-        int newX = MathHelper.floor(x);
-        int newY = (int) y;
-        int newZ = MathHelper.floor(z);
+        final int newX = MathHelper.floor(x);
+        final int newY = (int) y;
+        final int newZ = MathHelper.floor(z);
 
 
         if ((destination != null
