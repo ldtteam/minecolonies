@@ -4,6 +4,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.buildings.*;
 import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -798,7 +799,7 @@ public class Colony implements IColony
               .stream()
               .filter(player -> permissions.isDirty() || !oldSubscribers.contains(player)).forEach(player ->
             {
-                final Permissions.Rank rank = getPermissions().getRank(player);
+                final Rank rank = getPermissions().getRank(player);
                 MineColonies.getNetwork().sendTo(new PermissionsMessage.View(this, rank), player);
             });
         }

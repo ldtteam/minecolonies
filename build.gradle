@@ -28,32 +28,7 @@ sonarqube {
 
 apply plugin: 'idea'
 apply plugin: 'net.minecraftforge.gradle.forge'
-apply plugin: 'checkstyle'
-apply plugin: 'pmd'
 apply plugin: 'jacoco'
-
-tasks.withType(Checkstyle) {
-    reports {
-        xml.enabled true
-    }
-}
-
-checkstyle {
-    toolVersion ="7.6.1"
-}
-
-checkstyleTest.enabled = false
-checkstyleMain.enabled = false
-checkstyleApi.enabled = false
-pmdTest.enabled = false
-pmdMain.enabled = false
-pmdApi.enabled = false
-
-pmd {
-    toolVersion = "5.5.5"
-    ruleSetFiles = files("config/PMD/pmd.xml")
-    ignoreFailures = true
-}
 
 jacocoTestReport {
     reports {
@@ -61,7 +36,61 @@ jacocoTestReport {
     }
 }
 
+sourceSets {
+    api {
+        java {
+            srcDir 'src/api/java'
+        }
+        resources {
+            srcDir 'src/api/resources'
+        }
+    }
+    blockOut {
+        java {
+            srcDir 'src/blockout/java'
+        }
+        resources {
+            srcDir 'src/blockout/resources'
+        }
+        // compileClasspath += sourceSets.api.compileClasspath
+    }
+    structures {
+        java {
+            srcDir 'src/structures/java'
+        }
+        resources {
+            srcDir 'src/structures/resources'
+        }
+        // compileClasspath += sourceSets.api.compileClasspath
+    }
+    main {
+        java {
+            srcDir 'src/main/java'
+        }
+        resources {
+            srcDir 'src/main/resources'
+        }
+        compileClasspath += sourceSets.structures.output
+        compileClasspath += sourceSets.blockOut.output
+        compileClasspath += sourceSets.api.output
+    }
+    test {
+        java {
+            srcDir 'src/test/java'
+        }
+        resources {
+            srcDir 'src/test/resources'
+        }
+    }
+}
+
 dependencies {
+    //structuresCompile sourceSets.api.output
+    //blockOutCompile sourceSets.api.output
+
+    testCompile sourceSets.structures.output
+    testCompile sourceSets.blockOut.output
+
     testCompile 'junit:junit:4.11'
     testCompile "org.mockito:mockito-core:1.+"
     testCompile group: 'org.powermock', name: 'powermock-module-junit4', version: '1.6.5'
