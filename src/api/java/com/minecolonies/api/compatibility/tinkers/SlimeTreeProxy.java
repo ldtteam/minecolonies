@@ -1,4 +1,4 @@
-package com.minecolonies.compatibility.tinkers;
+package com.minecolonies.api.compatibility.tinkers;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
