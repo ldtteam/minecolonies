@@ -538,8 +538,10 @@ public class Permissions implements IPermissions
      */
     public Set<UUID> getMessagePlayers()
     {
-        return players.values().stream().filter(player ->
-                                                  hasPermission(player.getRank(), Action.RECEIVE_MESSAGES)).map(player -> player.getID()).collect(Collectors.toSet());
+        return players.values().stream()
+                 .filter(player -> hasPermission(player.getRank(), Action.RECEIVE_MESSAGES))
+                 .map(Player::getID)
+                 .collect(Collectors.toSet());
     }
 
     /**
