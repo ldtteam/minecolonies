@@ -99,7 +99,6 @@ public abstract class AbstractPathJob implements Callable<Path>
     private final Map<Integer, Node> nodesVisited                 = new HashMap<>();
     //  Debug Rendering
     protected     boolean            debugDrawEnabled             = false;
-    protected     int                debugSleepMs                 = 0;
     @Nullable
     protected     Set<Node>          debugNodesVisited            = null;
     @Nullable
@@ -155,7 +154,6 @@ public abstract class AbstractPathJob implements Callable<Path>
         if (Configurations.pathfindingDebugDraw)
         {
             debugDrawEnabled = true;
-            debugSleepMs = 0;
             debugNodesVisited = new HashSet<>();
             debugNodesNotVisited = new HashSet<>();
             debugNodesPath = new HashSet<>();
@@ -410,11 +408,6 @@ public abstract class AbstractPathJob implements Callable<Path>
             {
                 walkCurrentNode(currentNode);
             }
-
-            if (doDebugSleep())
-            {
-                return null;
-            }
         }
 
         @NotNull final Path path = finalizePath(bestNode);
@@ -446,31 +439,10 @@ public abstract class AbstractPathJob implements Callable<Path>
         debugNodesVisited.add(currentNode);
     }
 
-    private boolean doDebugSleep()
+    private void addPathNodeToDebug(final Node node)
     {
-        if (debugDrawEnabled && debugSleepMs != 0)
-        {
-            synchronized (debugNodeMonitor)
-            {
-                lastDebugNodesNotVisited = new HashSet<>(debugNodesNotVisited);
-                lastDebugNodesVisited = new HashSet<>(debugNodesVisited);
-                lastDebugNodesPath = null;
-            }
-
-            if (debugSleepMs != 0)
-            {
-                try
-                {
-                    Thread.sleep(debugSleepMs);
-                }
-                catch (final InterruptedException ex)
-                {
-                    Thread.currentThread().interrupt();
-                    return true;
-                }
-            }
-        }
-        return false;
+        debugNodesVisited.remove(node);
+        debugNodesPath.add(node);
     }
 
     private void walkCurrentNode(@NotNull final Node currentNode)
@@ -587,7 +559,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         {
             if (debugDrawEnabled)
             {
-                addNodeToDebug(node);
+                addPathNodeToDebug(node);
             }
 
             --pathLength;
