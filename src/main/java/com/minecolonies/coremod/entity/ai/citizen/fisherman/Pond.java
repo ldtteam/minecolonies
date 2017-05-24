@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.fisherman;
 
-import com.minecolonies.coremod.util.BlockPosUtil;
+import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;

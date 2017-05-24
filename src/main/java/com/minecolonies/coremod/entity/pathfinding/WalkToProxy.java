@@ -1,5 +1,9 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.EntityUtils;
+import com.minecolonies.api.util.Vec2i;
+
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
@@ -7,9 +11,7 @@ import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Node;
-import com.minecolonies.coremod.util.BlockPosUtil;
-import com.minecolonies.coremod.util.EntityUtils;
-import com.minecolonies.api.util.Vec2i;
+import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -92,12 +94,12 @@ public class WalkToProxy
         if (onMove)
         {
             final int targetY = worker.getColonyJob() instanceof JobBuilder ? worker.getPosition().getY() : target.getY();
-            return EntityUtils.isWorkerAtSiteWithMove(worker, target.getX(), target.getY(), target.getZ(), range)
-                     || EntityUtils.isWorkerAtSite(worker, target.getX(), targetY, target.getZ(), range + 1);
+            return WorkerUtil.isWorkerAtSiteWithMove(worker, target.getX(), target.getY(), target.getZ(), range)
+                     || WorkerUtil.isWorkerAtSite(worker, target.getX(), targetY, target.getZ(), range + 1);
         }
         else
         {
-            return !EntityUtils.isWorkerAtSite(worker, target.getX(), target.getY(), target.getZ(), range);
+            return !WorkerUtil.isWorkerAtSite(worker, target.getX(), target.getY(), target.getZ(), range);
         }
     }
 
@@ -162,7 +164,7 @@ public class WalkToProxy
             proxyList.remove(0);
         }
 
-        if (currentProxy != null && !EntityUtils.isWorkerAtSiteWithMove(worker, currentProxy.getX(), currentProxy.getY(), currentProxy.getZ(), range))
+        if (currentProxy != null && !WorkerUtil.isWorkerAtSiteWithMove(worker, currentProxy.getX(), currentProxy.getY(), currentProxy.getZ(), range))
         {
             //only walk to the block
             return !onMove;

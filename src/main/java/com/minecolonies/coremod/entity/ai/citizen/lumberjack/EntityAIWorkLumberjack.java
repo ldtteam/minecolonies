@@ -1,13 +1,18 @@
 package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
 import com.minecolonies.api.compatibility.Compatibility;
+import com.minecolonies.api.util.constants.ToolType;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.pathfinding.PathJobFindTree;
-import com.minecolonies.coremod.util.*;
-import com.minecolonies.coremod.util.constants.ToolType;
+import com.minecolonies.coremod.util.MathUtils;
+import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSapling;
 import net.minecraft.block.SoundType;
@@ -366,15 +371,14 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         if (isOnSapling())
         {
             @Nullable final BlockPos spawnPoint =
-                    Utils.scanForBlockNearPoint
-                            (world, workFrom, 1, 1, 1, 3,
-                                    Blocks.AIR,
-                                    Blocks.SNOW_LAYER,
-                                    Blocks.TALLGRASS,
-                                    Blocks.RED_FLOWER,
-                                    Blocks.YELLOW_FLOWER);
-            EntityUtils.setSpawnPoint(spawnPoint, worker);
-
+              Utils.scanForBlockNearPoint
+                      (world, workFrom, 1, 1, 1, 3,
+                        Blocks.AIR,
+                        Blocks.SNOW_LAYER,
+                        Blocks.TALLGRASS,
+                        Blocks.RED_FLOWER,
+                        Blocks.YELLOW_FLOWER);
+            WorkerUtil.setSpawnPoint(spawnPoint, worker);
         }
 
         if (job.tree.hasLogs())
