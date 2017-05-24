@@ -24,19 +24,21 @@ import java.util.concurrent.Future;
  */
 public class PathNavigate extends PathNavigateGround
 {
-    public static final double MAX_PATHING_LENGTH          = 36.0;
-    public static final double PATHING_INTERMEDIARY_LENGTH = 16.0;
+    private static final double ON_PATH_SPEED_MULTIPLIER    = 1.3D;
+
     //  Parent class private members
     private final EntityLiving entity;
-    private       double       walkSpeed;
+
+    private double walkSpeed = 1.0D;
+
     @Nullable
-    private       BlockPos     destination;
+    private BlockPos     destination;
     @Nullable
-    private       BlockPos     originalDestination;
+    private BlockPos     originalDestination;
     @Nullable
-    private       Future<Path> future;
+    private Future<Path> future;
     @Nullable
-    private       PathResult   pathResult;
+    private PathResult   pathResult;
 
     /**
      * Instantiates the navigation of an entity.
@@ -82,7 +84,7 @@ public class PathNavigate extends PathNavigateGround
     /**
      * Get the destination from the path.
      *
-     * @return the destionation position.
+     * @return the destination position.
      */
     public BlockPos getDestination()
     {
@@ -148,17 +150,6 @@ public class PathNavigate extends PathNavigateGround
             return pathResult;
         }
 
-        final Vec3d moveVector = getEntityPosition().subtractReverse(new Vec3d(newX, newY, newZ));
-        final double moveLength = moveVector.lengthVector();
-        if (moveLength >= MAX_PATHING_LENGTH && !this.isUnableToReachDestination())
-        {
-            final Vec3d newMove = moveVector.scale(PATHING_INTERMEDIARY_LENGTH / moveLength).add(getEntityPosition());
-            originalDestination = new BlockPos(newX, newY, newZ);
-            newX = MathHelper.floor(newMove.xCoord);
-            newY = MathHelper.floor(newMove.yCoord);
-            newZ = MathHelper.floor(newMove.zCoord);
-        }
-
         @NotNull final BlockPos start = AbstractPathJob.prepareStart(entity);
         @NotNull final BlockPos dest = new BlockPos(newX, newY, newZ);
 
@@ -167,17 +158,13 @@ public class PathNavigate extends PathNavigateGround
           dest, speed);
     }
 
-    public boolean isUnableToReachDestination()
-    {
-        return pathResult != null && pathResult.failedToReachDestination();
-    }
-
     @Nullable
     private PathResult setPathJob(@NotNull final AbstractPathJob job, final BlockPos dest, final double speed)
     {
         clearPathEntity();
 
         this.destination = dest;
+        this.originalDestination = dest;
         this.walkSpeed = speed;
 
         future = Pathfinding.enqueue(job);
@@ -304,10 +291,10 @@ public class PathNavigate extends PathNavigateGround
 
                 this.getPath().setCurrentPathIndex(oldIndex);
 
-                Vec3d Vec3d = this.getPath().getPosition(this.entity);
+                Vec3d vec3d = this.getPath().getPosition(this.entity);
 
-                if (Vec3d.squareDistanceTo(new Vec3d(entity.posX, Vec3d.yCoord, entity.posZ)) < 0.1
-                      && Math.abs(entity.posY - Vec3d.yCoord) < 0.5)
+                if (vec3d.squareDistanceTo(new Vec3d(entity.posX, vec3d.yCoord, entity.posZ)) < 0.1
+                      && Math.abs(entity.posY - vec3d.yCoord) < 0.5)
                 {
                     this.getPath().setCurrentPathIndex(this.getPath().getCurrentPathIndex() + 1);
                     if (this.noPath())
@@ -315,20 +302,20 @@ public class PathNavigate extends PathNavigateGround
                         return;
                     }
 
-                    Vec3d = this.getPath().getPosition(this.entity);
+                    vec3d = this.getPath().getPosition(this.entity);
                 }
 
-                this.entity.getMoveHelper().setMoveTo(Vec3d.xCoord, Vec3d.yCoord, Vec3d.zCoord, walkSpeed);
+                this.entity.getMoveHelper().setMoveTo(vec3d.xCoord, vec3d.yCoord, vec3d.zCoord, walkSpeed);
             }
             else
             {
                 if (BlockUtils.isPathBlock(world.getBlockState(entity.getPosition().down()).getBlock()))
                 {
-                    speed = 1.3;
+                    speed = ON_PATH_SPEED_MULTIPLIER * walkSpeed;
                 }
                 else
                 {
-                    speed = 1.0;
+                    speed = walkSpeed;
                 }
             }
         }
