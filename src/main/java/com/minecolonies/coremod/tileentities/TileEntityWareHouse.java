@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Predicate;
 
 import static com.minecolonies.coremod.util.constants.TranslationConstants.*;
+import static com.minecolonies.coremod.util.constants.ToolLevelConstants.*;
 
 /**
  * Class which handles the tileEntity of our colonyBuildings.
@@ -317,7 +318,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
 
         if(building != null)
         {
-            if((minLevel != -1
+            if((minLevel != TOOL_LEVEL_HAND
                     && InventoryUtils.isPickaxeInProvider(building.getTileEntity(), minLevel, requestingBuilding.getBuildingLevel()))
                     || InventoryUtils.isToolInProvider(building.getTileEntity(), tool, minLevel, requestingBuilding.getBuildingLevel()))
             {
@@ -328,7 +329,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             {
                 final TileEntity entity = world.getTileEntity(pos);
                 if (entity instanceof TileEntityChest
-                        && ((minLevel != -1 && InventoryUtils.isPickaxeInProvider(entity, minLevel, requestingBuilding.getBuildingLevel()))
+                        && ((minLevel != TOOL_LEVEL_HAND && InventoryUtils.isPickaxeInProvider(entity, minLevel, requestingBuilding.getBuildingLevel()))
                         || InventoryUtils.isToolInProvider(entity, tool, minLevel, requestingBuilding.getBuildingLevel())))
                 {
                     return pos;
@@ -357,8 +358,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             }
             else
             {
-                //TODO check if 0 is the good minimum
-                hasItem = InventoryUtils.isToolInProvider(building.getTileEntity(), tool, 0,requestingBuilding.getBuildingLevel());
+                hasItem = InventoryUtils.isToolInProvider(building.getTileEntity(), tool, TOOL_LEVEL_WOOD_OR_GOLD, requestingBuilding.getBuildingLevel());
             }
 
             if(hasItem)
@@ -377,8 +377,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                     }
                     else
                     {
-                        //TODO check that 0 i correct
-                        hasItem = InventoryUtils.isToolInProvider(entity, tool, 0, requestingBuilding.getBuildingLevel());
+                        hasItem = InventoryUtils.isToolInProvider(entity, tool, TOOL_LEVEL_WOOD_OR_GOLD, requestingBuilding.getBuildingLevel());
                     }
 
                     if(hasItem)
