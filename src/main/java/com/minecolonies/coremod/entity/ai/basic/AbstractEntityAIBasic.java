@@ -1212,7 +1212,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             {
                 countOfItem = worker.getItemCountInInventory(stack.getItem(), -1);
             }
-            if (countOfItem < 1)
+            if (countOfItem < 1 || (countOfItem < tempStack.stackSize && !waitForRequest))
             {
                 final int itemsLeft = stack.stackSize - countOfItem;
                 @NotNull final ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft, -1);
@@ -1231,6 +1231,16 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         itemsNeeded.clear();
         Collections.addAll(itemsNeeded, items);
         this.waitForRequest = waitForRequest;
+        if(!waitForRequest)
+        {
+            for (final @Nullable ItemStack tempStack : items)
+            {
+                if(!isInHut(tempStack))
+                {
+                    requestWithoutSpam(tempStack.getDisplayName());
+                }
+            }
+        }
         return true;
     }
 
