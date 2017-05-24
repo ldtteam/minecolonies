@@ -12,7 +12,8 @@ import java.util.HashMap;
  * Default implementation of a FactoryController
  * Singleton.
  */
-public class StandardFactoryController implements IFactoryController {
+public class StandardFactoryController implements IFactoryController
+{
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
     private static final String NBT_TYPE = "Type";
@@ -23,29 +24,11 @@ public class StandardFactoryController implements IFactoryController {
      * Instance variable.
      */
     private static final StandardFactoryController INSTANCE = new StandardFactoryController();
-
-    /**
-     * Method to get the current instance of the StandardFactoryController
-     * @return The current instance of the standard factory controller.
-     */
-    public static StandardFactoryController getInstance() {
-        return INSTANCE;
-    }
-
-    /**
-     * Private constructor. Throws IllegalStateException if already created.
-     */
-    private StandardFactoryController()  {
-        if (INSTANCE != null)
-            throw new IllegalStateException("StandardFactoryController");
-    }
-
     /**
      * Input mappings.
      */
     @NotNull
     private final HashMap<Class, IFactory> inputMappings = new HashMap<>();
-
     /**
      * Output mappings.
      */
@@ -53,14 +36,37 @@ public class StandardFactoryController implements IFactoryController {
     private final HashMap<Class, IFactory> outputMappings = new HashMap<>();
 
     /**
+     * Private constructor. Throws IllegalStateException if already created.
+     */
+    private StandardFactoryController()
+    {
+        if (INSTANCE != null)
+        {
+            throw new IllegalStateException("StandardFactoryController");
+        }
+    }
+
+    /**
+     * Method to get the current instance of the StandardFactoryController
+     *
+     * @return The current instance of the standard factory controller.
+     */
+    public static StandardFactoryController getInstance()
+    {
+        return INSTANCE;
+    }
+
+    /**
      * Method used to get a factory for a given input class.
      *
      * @param clazz The class of the input type of the requested factory.
      * @return The factory that can handle the given input class.
+     *
      * @throws IllegalArgumentException is thrown when the given input class is unknown to this Factory Controller.
      */
     @Override
-    public <Input> IFactory<Input, ?> getFactoryForInput(@NotNull Class<? extends Input> clazz) throws IllegalArgumentException {
+    public <Input> IFactory<Input, ?> getFactoryForInput(@NotNull Class<? extends Input> clazz) throws IllegalArgumentException
+    {
         if (!inputMappings.containsKey(clazz))
         {
             throw new IllegalArgumentException("The given class(name) has no been registered to this Factory.");
@@ -74,10 +80,12 @@ public class StandardFactoryController implements IFactoryController {
      *
      * @param clazz The class of the output type of the requested factory.
      * @return The factory that can handle the given output class.
+     *
      * @throws IllegalArgumentException is thrown when the given output class is unknown to this Factory Controller.
      */
     @Override
-    public <Output> IFactory<?, Output> getFactoryForOutput(@NotNull Class<? extends Output> clazz) throws IllegalArgumentException {
+    public <Output> IFactory<?, Output> getFactoryForOutput(@NotNull Class<? extends Output> clazz) throws IllegalArgumentException
+    {
         if (!inputMappings.containsKey(clazz))
         {
             throw new IllegalArgumentException("The given class(name) has not been registered to this Factory.");
@@ -88,20 +96,27 @@ public class StandardFactoryController implements IFactoryController {
 
     /**
      * Method used to register a new factory to this controller.
-     * @param factory The new factory.
-     * @param <Input> The type of input the factory accepts.
+     *
+     * @param factory  The new factory.
+     * @param <Input>  The type of input the factory accepts.
      * @param <Output> The type of output the factory produces.
      * @throws IllegalArgumentException if there is already a factory registered with either the given input and/or the given output.
      */
     @Override
-    public <Input, Output> void registerNewFactory(@NotNull IFactory<Input, Output> factory) throws IllegalArgumentException {
+    public <Input, Output> void registerNewFactory(@NotNull IFactory<Input, Output> factory) throws IllegalArgumentException
+    {
         if (inputMappings.containsKey(factory.getFactoryInputType()))
+        {
             throw new IllegalArgumentException("A factory with the given input type is already registered!");
+        }
 
         if (outputMappings.containsKey(factory.getFactoryOutputType()))
+        {
             throw new IllegalArgumentException("A factory with the given output type is already registered!");
+        }
 
-        Log.getLogger().debug("Registering factory: " + factory.toString() + " with input: " + factory.getFactoryInputType().getName() + " and output: " + factory.getFactoryOutputType() +".");
+        Log.getLogger()
+          .debug("Registering factory: " + factory.toString() + " with input: " + factory.getFactoryInputType().getName() + " and output: " + factory.getFactoryOutputType() + ".");
         inputMappings.put(factory.getFactoryInputType(), factory);
         outputMappings.put(factory.getFactoryOutputType(), factory);
     }
@@ -111,11 +126,13 @@ public class StandardFactoryController implements IFactoryController {
      *
      * @param object The object to serialize.
      * @return An NBTTag containing a serialized version of the given object.
+     *
      * @throws IllegalArgumentException is thrown when the output type is unknown to this controller.
      */
     @Override
     @SuppressWarnings("unchecked")
-    public <Output> NBTTagCompound serialize(@NotNull Output object) throws IllegalArgumentException {
+    public <Output> NBTTagCompound serialize(@NotNull Output object) throws IllegalArgumentException
+    {
         NBTTagCompound compound = new NBTTagCompound();
 
         IFactory<?, Output> factory = getFactoryForOutput((Class<? extends Output>) object.getClass());
@@ -131,11 +148,13 @@ public class StandardFactoryController implements IFactoryController {
      *
      * @param compound The data to deserialize an object from.
      * @return The deserialized version of the given data.
+     *
      * @throws IllegalArgumentException is thrown when the type stored in the data is unknown to this controller.
      */
     @Override
     @SuppressWarnings("unchecked")
-    public <Output> Output deserialize(@NotNull NBTTagCompound compound) throws IllegalArgumentException {
+    public <Output> Output deserialize(@NotNull NBTTagCompound compound) throws IllegalArgumentException
+    {
         String className = compound.getString(NBT_TYPE);
 
         IFactory<?, Output> factory = getFactoryForOutput(className);
@@ -148,8 +167,9 @@ public class StandardFactoryController implements IFactoryController {
      * @param input   The input to process.
      * @param context The context for the creation.
      * @return The output from the factory, created by the given input and output.
+     *
      * @throws IllegalArgumentException thrown when the output and input do not match a factory known to this controller.
-     * @throws ClassCastException thrown when a Factory is known for the given input, but does not produce the given output.
+     * @throws ClassCastException       thrown when a Factory is known for the given input, but does not produce the given output.
      */
     @Override
     @SuppressWarnings("unchecked")
