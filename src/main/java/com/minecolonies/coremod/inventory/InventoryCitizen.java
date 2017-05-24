@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.inventory;
 
-import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.crash.CrashReport;
@@ -553,7 +553,7 @@ public class InventoryCitizen implements IInventory
     @Override
     public boolean isUsableByPlayer(@NotNull final EntityPlayer player)
     {
-        return this.citizen.getColony().getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS);
+        return this.citizen.getColony().getPermissions().hasPermission(player, Action.ACCESS_HUTS);
     }
 
     /**

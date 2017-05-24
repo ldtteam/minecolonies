@@ -3,7 +3,7 @@ package com.minecolonies.coremod.commands;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -91,6 +91,6 @@ public class KillCitizenCommand extends AbstractCitizensCommands
     public boolean canPlayerUseCommand(final EntityPlayer player, final Commands theCommand, final int colonyId)
     {
         return super.canPlayerUseCommand(player, theCommand, colonyId)
-                 && ColonyManager.getColony(colonyId) != null && ColonyManager.getColony(colonyId).getPermissions().getRank(player).equals(Permissions.Rank.OWNER);
+                 && ColonyManager.getColony(colonyId) != null && ColonyManager.getColony(colonyId).getPermissions().getRank(player).equals(Rank.OWNER);
     }
 }
