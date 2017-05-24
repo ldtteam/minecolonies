@@ -1,5 +1,8 @@
-package com.minecolonies.blockout;
+package com.minecolonies.blockout.views;
 
+import com.minecolonies.blockout.Log;
+import com.minecolonies.blockout.Pane;
+import com.minecolonies.blockout.PaneParams;
 import org.lwjgl.input.Keyboard;
 
 /**

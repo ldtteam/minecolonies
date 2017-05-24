@@ -2,6 +2,7 @@ package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.Button;
+import com.minecolonies.blockout.controls.ButtonHandler;
 import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.Window;
@@ -26,7 +27,7 @@ import static com.minecolonies.coremod.util.constants.TranslationConstants.*;
 /**
  * Window for the hiring or firing of a worker.
  */
-public class WindowHireWorker extends Window implements Button.Handler
+public class WindowHireWorker extends Window implements ButtonHandler
 {
     /**
      * Id of the done button in the GUI.

@@ -365,9 +365,8 @@ public class BuildingGuardTower extends AbstractBuildingWorker
     {
         return stack != null
                  && (stack.getItem() instanceof ItemArmor
-                       || stack.getItem() instanceof ItemTool
-                       || stack.getItem() instanceof ItemSword
-                       || stack.getItem() instanceof ItemBow);
+                       || (GuardJob.KNIGHT.equals(job) && stack.getItem() instanceof ItemSword)
+                       || (GuardJob.RANGER.equals(job) && stack.getItem() instanceof ItemBow));
     }
 
     @Override

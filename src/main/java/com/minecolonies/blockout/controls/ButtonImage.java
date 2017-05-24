@@ -428,7 +428,7 @@ public class ButtonImage extends Button
     /**
      * @return true if the shadow is enabled.
      */
-    public boolean getShadow()
+    public boolean hasShadow()
     {
         return shadow;
     }
