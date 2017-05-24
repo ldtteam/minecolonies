@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.util;
 
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.inventory.api.IWorldNameableModifiable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;

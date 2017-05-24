@@ -6,13 +6,13 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.lib.Constants;
-import com.minecolonies.coremod.util.BlockPosUtil;
-import com.minecolonies.coremod.util.BlockUtils;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Log;
 import io.netty.buffer.ByteBuf;
@@ -160,7 +160,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
         final Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
         final Colony tempColony = ColonyManager.getClosestColony(world, buildPos);
         if (tempColony != null
-              && (!tempColony.getPermissions().hasPermission(player, Permissions.Action.MANAGE_HUTS)
+              && (!tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
                     && !(block instanceof BlockHutTownHall
                            && BlockPosUtil.getDistance2D(tempColony.getCenter(), buildPos) >= Configurations.workingRangeTownHall * 2 + Configurations.townHallPadding)))
         {
@@ -247,7 +247,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
                                           final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
     {
         @Nullable final Colony colony = ColonyManager.getColony(world, buildPos);
-        if (colony != null && colony.getPermissions().hasPermission(player, Permissions.Action.PLACE_HUTS))
+        if (colony != null && colony.getPermissions().hasPermission(player, Action.PLACE_HUTS))
         {
             colony.getWorkManager().addWorkOrder(new WorkOrderBuildDecoration(sn.toString(), workOrderName, rotation, buildPos, mirror));
         }

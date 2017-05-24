@@ -1,14 +1,18 @@
 package com.minecolonies.coremod.entity;
 
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
-import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.colony.permissions.Player;
+import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.minimal.*;
@@ -739,7 +743,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         double penalty = CITIZEN_DEATH_PENALTY;
         if (par1DamageSource.getEntity() instanceof EntityPlayer)
         {
-            for (Permissions.Player player : PermissionUtils.getPlayersWithAtLeastRank(colony, Permissions.Rank.OFFICER))
+            for (final Player player : PermissionUtils.getPlayersWithAtLeastRank(colony, Rank.OFFICER))
             {
                 if (player.getID().equals(par1DamageSource.getEntity().getUniqueID()))
                 {
@@ -916,7 +920,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     public boolean processInteract(final EntityPlayer player, final EnumHand hand)
     {
         final ColonyView colonyView = ColonyManager.getColonyView(colonyId);
-        if (colonyView != null && !colonyView.getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS))
+        if (colonyView != null && !colonyView.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
         {
             return false;
         }
@@ -1137,7 +1141,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
                                         Blocks.YELLOW_FLOWER,
                                         Blocks.CARPET);
 
-                EntityUtils.setSpawnPoint(spawnPoint, this);
+                WorkerUtil.setSpawnPoint(spawnPoint, this);
                 if (colony != null)
                 {
                     Log.getLogger().info("Teleported stuck citizen " + this.getName() + " from colony: " + colony.getID() + " to target location");

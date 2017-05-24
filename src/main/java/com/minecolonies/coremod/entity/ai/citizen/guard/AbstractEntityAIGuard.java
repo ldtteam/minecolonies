@@ -5,14 +5,14 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingGuardTower;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
-import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.coremod.util.BlockPosUtil;
-import com.minecolonies.coremod.util.InventoryUtils;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Log;
 import net.minecraft.entity.Entity;
@@ -258,7 +258,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
             {
                 if (entity instanceof EntityPlayer)
                 {
-                    if (worker.getColony() != null && worker.getColony().getPermissions().hasPermission((EntityPlayer) entity, Permissions.Action.GUARDS_ATTACK))
+                    if (worker.getColony() != null && worker.getColony().getPermissions().hasPermission((EntityPlayer) entity, Action.GUARDS_ATTACK))
                     {
                         targetEntity = (EntityLivingBase) entity;
                         worker.getNavigator().clearPathEntity();
