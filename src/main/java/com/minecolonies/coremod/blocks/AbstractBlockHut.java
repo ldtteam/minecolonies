@@ -37,7 +37,7 @@ import org.jetbrains.annotations.Nullable;
  * <p>
  * All AbstractBlockHut[something] should extend this class.
  */
-public abstract class AbstractBlockHut extends Block implements ITileEntityProvider
+public abstract class AbstractBlockHut extends Block implements ITileEntityProvider, IBuilderUndestroyable
 {
     public static final  PropertyDirection FACING     = BlockHorizontal.FACING;
     private static final float             HARDNESS   = 10F;

@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.BuildingBaker;
-import com.minecolonies.coremod.lib.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BAKER;

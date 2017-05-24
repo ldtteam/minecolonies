@@ -1,6 +1,7 @@
 package com.minecolonies.api.util;
 
 import com.minecolonies.api.util.constant.Constants;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -44,7 +45,6 @@ public final class Log
      * @param format The format the use.
      * @param data The data to format.
      */
-/*
     public static void bigWarning(String format, Object... data)
     {
         StackTraceElement[] trace = Thread.currentThread().getStackTrace();
@@ -55,6 +55,6 @@ public final class Log
             getLogger().log(Level.WARN, "*  at %s%s", trace[i].toString(), i == 7 ? "..." : "");
         }
         getLogger().log(Level.WARN, "****************************************");
-    }*/
+    }
 
 }
