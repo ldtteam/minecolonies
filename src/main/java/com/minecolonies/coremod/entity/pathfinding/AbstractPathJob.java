@@ -4,6 +4,7 @@ import com.minecolonies.coremod.blocks.BlockConstructionTape;
 import com.minecolonies.coremod.blocks.BlockConstructionTapeCorner;
 import com.minecolonies.coremod.blocks.BlockHutField;
 import com.minecolonies.coremod.configuration.Configurations;
+import com.minecolonies.coremod.util.BlockPosUtil;
 import com.minecolonies.coremod.util.BlockUtils;
 import com.minecolonies.coremod.util.Log;
 import net.minecraft.block.*;
@@ -404,7 +405,7 @@ public abstract class AbstractPathJob implements Callable<Path>
                 bestNodeResultScore = nodeResultScore;
             }
 
-            if (currentNode.getSteps() <= maxRange)
+            if (BlockPosUtil.getDistanceSquared2D(currentNode.pos, start) <= maxRange * maxRange)
             {
                 walkCurrentNode(currentNode);
             }
