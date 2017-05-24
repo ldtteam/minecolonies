@@ -29,6 +29,7 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 import static com.minecolonies.coremod.util.constants.TranslationConstants.*;
+import static com.minecolonies.coremod.util.constants.TranslationConstants.*;
 
 /**
  * This class provides basic ai functionality.
@@ -653,8 +654,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         final int hutLevel = worker.getWorkBuilding().getBuildingLevel();
         final InventoryCitizen inventory = worker.getInventoryCitizen();
-        //TODO is 0 correct
-        final boolean isUsable = InventoryUtils.isToolInItemHandler(new InvWrapper(inventory), tool, 0, hutLevel);
+        final boolean isUsable = InventoryUtils.isToolInItemHandler(new InvWrapper(inventory), tool, TOOL_LEVEL_WOOD_OR_GOLD, hutLevel);
 
 
         if (!needsTool && isUsable)
