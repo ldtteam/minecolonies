@@ -29,7 +29,7 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 import static com.minecolonies.coremod.util.constants.TranslationConstants.*;
-import static com.minecolonies.coremod.util.constants.TranslationConstants.*;
+import static com.minecolonies.coremod.util.constants.ToolLevelConstants.*;
 
 /**
  * This class provides basic ai functionality.
