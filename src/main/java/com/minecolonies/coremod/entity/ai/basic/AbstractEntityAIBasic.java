@@ -631,17 +631,17 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private boolean checkForShovel()
     {
-        getOwnBuilding().setNeedsShovel(checkForTool(Utils.SHOVEL));
+        getOwnBuilding().setNeedsShovel(checkForNeededTool(Utils.SHOVEL));
         return getOwnBuilding().needsShovel();
     }
 
     /**
-     * Ensures that we have a tool available.
+     * Check if we need a tool.
      *
      * @param tool tool required for block
-     * @return true if we have a tool
+     * @return true if we need a tool
      */
-    private boolean checkForTool(@NotNull String tool)
+    private boolean checkForNeededTool(@NotNull String tool)
     {
         final boolean needsTool = !InventoryFunctions
                                            .matchFirstInProvider(
@@ -757,7 +757,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     protected boolean checkForAxe()
     {
-        getOwnBuilding().setNeedsAxe(checkForTool(Utils.AXE));
+        getOwnBuilding().setNeedsAxe(checkForNeededTool(Utils.AXE));
         return getOwnBuilding().needsAxe();
     }
 
@@ -785,7 +785,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     protected boolean checkForHoe()
     {
-        getOwnBuilding().setNeedsHoe(checkForTool(Utils.HOE));
+        getOwnBuilding().setNeedsHoe(checkForNeededTool(Utils.HOE));
         return getOwnBuilding().needsHoe();
     }
 
