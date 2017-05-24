@@ -5,7 +5,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingGuardTower;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
-import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.util.AIState;
@@ -254,7 +254,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
             {
                 if (entity instanceof EntityPlayer)
                 {
-                    if (worker.getColony() != null && worker.getColony().getPermissions().hasPermission((EntityPlayer) entity, Permissions.Action.GUARDS_ATTACK))
+                    if (worker.getColony() != null && worker.getColony().getPermissions().hasPermission((EntityPlayer) entity, Action.GUARDS_ATTACK))
                     {
                         targetEntity = (EntityLivingBase) entity;
                         worker.getNavigator().clearPathEntity();

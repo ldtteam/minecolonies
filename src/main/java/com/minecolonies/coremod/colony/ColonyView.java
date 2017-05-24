@@ -3,7 +3,10 @@ package com.minecolonies.coremod.colony;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
+import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.api.colony.permissions.Player;
+import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
@@ -259,13 +262,13 @@ public final class ColonyView implements IColony
     }
 
     /**
-     * Returns a map of players in the colony.
-     * Key is the UUID, value is {@link com.minecolonies.coremod.colony.permissions.Permissions.Player}
+     * Returns a map of players in the colony. Key is the UUID, value is {@link
+     * Player}
      *
-     * @return Map of UUID's and {@link com.minecolonies.coremod.colony.permissions.Permissions.Player}
+     * @return Map of UUID's and {@link Player}
      */
     @NotNull
-    public Map<UUID, Permissions.Player> getPlayers()
+    public Map<UUID, Player> getPlayers()
     {
         return permissions.getPlayers();
     }
@@ -276,7 +279,7 @@ public final class ColonyView implements IColony
      * @param rank   Rank to get the permission.
      * @param action Permission to get.
      */
-    public void setPermission(final Permissions.Rank rank, @NotNull final Permissions.Action action)
+    public void setPermission(final Rank rank, @NotNull final Action action)
     {
         if (permissions.setPermission(rank, action))
         {
@@ -290,7 +293,7 @@ public final class ColonyView implements IColony
      * @param rank   Rank to remove permission from.
      * @param action Action to remove permission of.
      */
-    public void removePermission(final Permissions.Rank rank, @NotNull final Permissions.Action action)
+    public void removePermission(final Rank rank, @NotNull final Action action)
     {
         if (permissions.removePermission(rank, action))
         {
@@ -304,7 +307,7 @@ public final class ColonyView implements IColony
      * @param rank   Rank to toggle permission of.
      * @param action Action to toggle permission of.
      */
-    public void togglePermission(final Permissions.Rank rank, @NotNull final Permissions.Action action)
+    public void togglePermission(final Rank rank, @NotNull final Action action)
     {
         permissions.togglePermission(rank, action);
         MineColonies.getNetwork().sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.TOGGLE_PERMISSION, rank, action));
