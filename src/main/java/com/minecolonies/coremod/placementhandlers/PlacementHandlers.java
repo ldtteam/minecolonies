@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.placementhandlers;
 
 import com.minecolonies.coremod.blocks.BlockSolidSubstitution;
-import com.minecolonies.coremod.configuration.Configurations;
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.api.util.BlockUtils;

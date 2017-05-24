@@ -2,7 +2,7 @@ package com.minecolonies.coremod.proxy;
 
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
-import com.minecolonies.coremod.configuration.ConfigurationHandler;
+import com.minecolonies.api.configuration.ConfigurationHandler;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
 import com.minecolonies.coremod.event.EventHandler;

@@ -11,7 +11,7 @@ import com.minecolonies.coremod.colony.jobs.JobGuard;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
-import com.minecolonies.coremod.configuration.Configurations;
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.minimal.*;
 import com.minecolonies.coremod.entity.pathfinding.PathNavigate;

@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
-import com.minecolonies.coremod.configuration.Configurations;
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.Log;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;

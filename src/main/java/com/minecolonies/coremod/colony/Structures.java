@@ -3,7 +3,7 @@ package com.minecolonies.coremod.colony;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
-import com.minecolonies.coremod.configuration.Configurations;
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;

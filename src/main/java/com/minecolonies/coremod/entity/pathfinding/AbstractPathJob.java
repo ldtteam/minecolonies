@@ -3,7 +3,7 @@ package com.minecolonies.coremod.entity.pathfinding;
 import com.minecolonies.coremod.blocks.BlockConstructionTape;
 import com.minecolonies.coremod.blocks.BlockConstructionTapeCorner;
 import com.minecolonies.coremod.blocks.BlockHutField;
-import com.minecolonies.coremod.configuration.Configurations;
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.Log;
 import net.minecraft.block.*;

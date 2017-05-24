@@ -8,7 +8,7 @@ import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
-import com.minecolonies.coremod.configuration.Configurations;
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.BlockPosUtil;
