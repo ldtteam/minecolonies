@@ -131,6 +131,7 @@ public class WalkToProxy
                 currentProxy = target;
             }
 
+            //TODO any reason we don't just call proxyList.clear() ?
             proxyList = new ArrayList<>();
             return takeTheDirectPath(target, range, onMove);
         }
