@@ -44,6 +44,7 @@ public class Product
     /**
      * Instantiates the Product, requires the end product of it.
      * @param endProduct the product when finished.
+     * @param recipeId the id of the used recipe for this product.
      */
     public Product(@NotNull final ItemStack endProduct, int recipeId)
     {

@@ -78,7 +78,7 @@ public class BakerRecipes
 
     /**
      * Get the list of recipes from the class.
-     * @return
+     * @return a copy of the recipes.
      */
     public static List<RecipeStorage> getRecipes()
     {

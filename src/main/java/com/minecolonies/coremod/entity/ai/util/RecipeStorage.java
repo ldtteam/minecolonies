@@ -37,8 +37,8 @@ public class RecipeStorage
     /**
      * Create an instance of the recipe storage.
      * @param input the list of input items (required for the recipe).
-     * @param output the list of output items (produced by the recipe).
      * @param gridSize the required grid size to make it.
+     * @param primaryOutput the primary output of the recipe.
      * @param secondaryOutput the secondary output (like buckets or similar).
      */
     public RecipeStorage(final List<ItemStack> input, final int gridSize, final ItemStack primaryOutput, final ItemStack...secondaryOutput)
