@@ -92,7 +92,7 @@ public class PathNavigate extends PathNavigateGround
     }
 
     @Override
-    protected boolean isDirectPathBetweenPoints(final Vec3d start, final Vec3d end, int sizeX, int sizeY, int sizeZ)
+    protected boolean isDirectPathBetweenPoints(final Vec3d start, final Vec3d end, final int sizeX, final int sizeY, final int sizeZ)
     {
         // TODO improve road walking. This is better in some situations, but still not great.
         return !BlockUtils.isPathBlock(world.getBlockState(new BlockPos(start.xCoord, start.yCoord - 1, start.zCoord)).getBlock())

@@ -129,8 +129,8 @@ public final class Pathfinding
 
         GlStateManager.scale(0.25D, 0.25D, 0.25D);
 
-        Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer vertexBuffer = tessellator.getBuffer();
+        final Tessellator tessellator = Tessellator.getInstance();
+        final VertexBuffer vertexBuffer = tessellator.getBuffer();
         vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
         GlStateManager.color(r, g, b);
 

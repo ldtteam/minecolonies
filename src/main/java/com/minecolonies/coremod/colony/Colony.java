@@ -1823,7 +1823,7 @@ public class Colony implements IColony
         final double minX = Math.min(position.getX(), target.getX());
         final double minZ = Math.min(position.getZ(), target.getZ());
 
-        Iterator<BlockPos> iterator = tempWayPoints.iterator();
+        final Iterator<BlockPos> iterator = tempWayPoints.iterator();
         while (iterator.hasNext())
         {
             final BlockPos p = iterator.next();
