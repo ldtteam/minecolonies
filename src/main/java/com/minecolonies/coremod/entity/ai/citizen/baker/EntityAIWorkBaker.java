@@ -67,7 +67,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     /**
      * Make this amount of products until dumping
      */
-    private static final int UNTIL_DUMP = 10;
+    private static final int UNTIL_DUMP = 3;
 
     /**
      * Current furnace to walk to.
@@ -274,8 +274,6 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 
         getOwnBuilding().removeFromTasks(Product.ProductState.UNCRAFTED, currentProduct);
         getOwnBuilding().addToTasks(Product.ProductState.RAW, currentProduct);
-
-        //todo not increasing - decreasing, taking correctly!!
         InventoryUtils.removeStacksFromItemHandler(new InvWrapper(worker.getInventoryCitizen()), list);
 
         return getState();

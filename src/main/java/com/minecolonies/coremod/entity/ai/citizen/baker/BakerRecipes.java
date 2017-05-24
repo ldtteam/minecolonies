@@ -53,6 +53,11 @@ public class BakerRecipes
      */
     private static final List<RecipeStorage> recipes = new ArrayList<>();
 
+    /**
+     * Amount of buckets he should give back after a cake
+     */
+    private static final int BUCKET_COUNT = 3 ;
+    
     static
     {
         final List<ItemStack> inputCake = new ArrayList<>();
@@ -71,7 +76,7 @@ public class BakerRecipes
         inputBread.add(new ItemStack(Items.WHEAT, REQUIRED_WHEAT));
 
         recipes.add(new RecipeStorage(inputCookie, GRID_SIZE, new ItemStack(Items.COOKIE, 1)));
-        recipes.add(new RecipeStorage(inputCake, GRID_SIZE, new ItemStack(Items.CAKE, 1), new ItemStack(Items.BUCKET, REQUIRED_MILK)));
+        recipes.add(new RecipeStorage(inputCake, GRID_SIZE, new ItemStack(Items.CAKE, 1), new ItemStack(Items.BUCKET, BUCKET_COUNT)));
         recipes.add(new RecipeStorage(inputBread, GRID_SIZE, new ItemStack(Items.BREAD, 1)));
     }
 

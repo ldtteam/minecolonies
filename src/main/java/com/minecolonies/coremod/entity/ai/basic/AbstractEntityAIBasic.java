@@ -1235,7 +1235,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             for (final @Nullable ItemStack tempStack : items)
             {
-                if(!isInHut(tempStack))
+                if(isInHut(tempStack))
                 {
                     requestWithoutSpam(tempStack.getDisplayName());
                 }
