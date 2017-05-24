@@ -496,7 +496,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param is     the itemStack.
      * @return true if found the stack.
      */
-    public boolean isInTileEntity(TileEntityChest entity, ItemStack is)
+    public boolean isInTileEntity(final TileEntityChest entity, final ItemStack is)
     {
         return is != null
                 && InventoryFunctions
@@ -517,7 +517,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param itemStackSelectionPredicate the criteria.
      * @return true if found the stack.
      */
-    public boolean isInTileEntity(TileEntityChest entity, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    public boolean isInTileEntity(final TileEntityChest entity, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
         return InventoryFunctions
                 .matchFirstInProviderWithAction(
@@ -602,7 +602,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param provider  The provider to take from.
      * @param slotIndex The slot to take.
      */
-    public void takeItemStackFromProvider(@NotNull ICapabilityProvider provider, int slotIndex)
+    public void takeItemStackFromProvider(@NotNull final ICapabilityProvider provider, final int slotIndex)
     {
         InventoryUtils.transferItemStackIntoNextFreeSlotFromProvider(provider, slotIndex, new InvWrapper(worker.getInventoryCitizen()));
     }
@@ -638,10 +638,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Check if we need a tool.
      *
+     * Do not use it to find a pickaxe as it need a minimum level
      * @param tool tool required for block
      * @return true if we need a tool
      */
-    private boolean checkForNeededTool(@NotNull String tool)
+    private boolean checkForNeededTool(@NotNull final String tool)
     {
         final boolean needsTool = !InventoryFunctions
                                            .matchFirstInProvider(
@@ -724,7 +725,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param tool   the tool.
      * @return true if found the tool.
      */
-    public boolean isToolInTileEntity(TileEntityChest entity, final String tool)
+    public boolean isToolInTileEntity(final TileEntityChest entity, final String tool)
     {
         return InventoryFunctions.matchFirstInProviderWithAction(
                 entity,
@@ -1356,14 +1357,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Calculates the working position.
      * <p>
-     * Takes a min distance from width and length.
+     * Takes the position where the worker would like to work on and return the most appropriate position for it.
      * <p>
-     * Then finds the floor level at that distance and then check if it does contain two air levels.
      *
      * @param targetPosition the position to work at.
-     * @return BlockPos position to work from.
+     * @return BlockPos most appropiate position to work from.
      */
-    public BlockPos getWorkingPosition(BlockPos targetPosition)
+    public BlockPos getWorkingPosition(final BlockPos targetPosition)
     {
         return targetPosition;
     }
