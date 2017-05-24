@@ -10,7 +10,7 @@ import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.network.messages.BuildToolPlaceMessage;
 import com.minecolonies.coremod.network.messages.SchematicRequestMessage;
 import com.minecolonies.coremod.network.messages.SchematicSaveMessage;
-import com.minecolonies.coremod.util.BlockUtils;
+import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.structures.helpers.Settings;
 import com.minecolonies.structures.helpers.Structure;
