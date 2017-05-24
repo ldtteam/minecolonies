@@ -6,7 +6,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingGuardTower;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.util.LanguageHandler;
+import com.minecolonies.api.util.LanguageHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

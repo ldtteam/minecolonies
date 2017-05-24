@@ -7,7 +7,7 @@ import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.network.messages.HireFireMessage;
 import com.minecolonies.coremod.network.messages.RecallCitizenMessage;
-import com.minecolonies.coremod.util.LanguageHandler;
+import com.minecolonies.api.util.LanguageHandler;
 import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.NotNull;
 

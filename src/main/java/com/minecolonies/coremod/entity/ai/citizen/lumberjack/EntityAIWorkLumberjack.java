@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;

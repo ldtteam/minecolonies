@@ -4,7 +4,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.inventory.InventoryField;
-import com.minecolonies.coremod.lib.Constants;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.entity.player.EntityPlayer;

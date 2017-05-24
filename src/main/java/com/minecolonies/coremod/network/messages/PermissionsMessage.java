@@ -8,7 +8,7 @@ import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.network.PacketUtils;
-import com.minecolonies.coremod.util.Log;
+import com.minecolonies.api.util.Log;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.EntityPlayerMP;

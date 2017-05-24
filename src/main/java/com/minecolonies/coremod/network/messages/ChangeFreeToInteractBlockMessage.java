@@ -5,7 +5,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.util.LanguageHandler;
+import com.minecolonies.api.util.LanguageHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayerMP;

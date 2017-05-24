@@ -8,7 +8,7 @@ import com.minecolonies.coremod.entity.EntityFishHook;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.event.FMLEventHandler;
 import com.minecolonies.coremod.inventory.GuiHandler;
-import com.minecolonies.coremod.lib.Constants;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.sounds.ModSoundEvents;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;

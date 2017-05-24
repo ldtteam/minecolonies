@@ -9,7 +9,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingHut;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.network.messages.BuildRequestMessage;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
-import com.minecolonies.coremod.util.LanguageHandler;
+import com.minecolonies.api.util.LanguageHandler;
 import org.jetbrains.annotations.NotNull;
 
 /**

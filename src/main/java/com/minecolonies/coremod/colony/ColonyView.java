@@ -12,7 +12,7 @@ import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.TownHallRenameMessage;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.util.MathUtils;
+import com.minecolonies.api.util.MathUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.util.math.BlockPos;

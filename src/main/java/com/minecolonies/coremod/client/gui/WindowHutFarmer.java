@@ -8,9 +8,9 @@ import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.colony.buildings.BuildingFarmer;
 import com.minecolonies.coremod.entity.ai.citizen.farmer.FieldView;
-import com.minecolonies.coremod.lib.Constants;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.util.LanguageHandler;
+import com.minecolonies.api.util.LanguageHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.minecolonies.coremod.util.constants.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * Window for the farmer hut.

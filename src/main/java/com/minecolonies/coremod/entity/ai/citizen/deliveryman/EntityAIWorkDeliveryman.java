@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
-import static com.minecolonies.coremod.util.constants.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * Performs deliveryman work.

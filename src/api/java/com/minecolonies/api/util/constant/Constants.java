@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.lib;
+package com.minecolonies.api.util.constant;
 
 /**
  * Some constants needed for the whole mod.

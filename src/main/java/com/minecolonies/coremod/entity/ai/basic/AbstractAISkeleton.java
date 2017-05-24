@@ -5,7 +5,7 @@ import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.ai.util.ChatSpamFilter;
-import com.minecolonies.coremod.util.Log;
+import com.minecolonies.api.util.Log;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;

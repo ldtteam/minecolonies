@@ -4,6 +4,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockSolidSubstitution;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -44,7 +45,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
-import static com.minecolonies.coremod.util.constants.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * AI class for the builder.

@@ -1,8 +1,6 @@
 package com.minecolonies.coremod.entity;
 
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.Utils;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.*;
@@ -19,7 +17,7 @@ import com.minecolonies.coremod.entity.ai.minimal.*;
 import com.minecolonies.coremod.entity.pathfinding.PathNavigate;
 import com.minecolonies.coremod.entity.pathfinding.WalkToProxy;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
-import com.minecolonies.coremod.lib.Constants;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.network.messages.BlockParticleEffectMessage;
 import com.minecolonies.coremod.util.*;
 import net.minecraft.block.Block;

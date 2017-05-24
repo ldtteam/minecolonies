@@ -123,7 +123,7 @@ minecraft {
 	mappings = "${config.minecolonies_mappings}"
 	
     replace "@VERSION@", project.version
-    replaceIn "lib/Constants.java"
+    replaceIn "util/constant/Constants.java"
     if (project.hasProperty("signature"))
         replace "@FINGERPRINT@", signature
 }

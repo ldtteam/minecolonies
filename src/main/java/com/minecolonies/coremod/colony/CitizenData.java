@@ -8,7 +8,7 @@ import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.util.Log;
+import com.minecolonies.api.util.Log;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;

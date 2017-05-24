@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.test;
 
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.util.LanguageHandler;
-import com.minecolonies.coremod.util.Log;
+import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.Log;
 import net.minecraft.item.ItemStack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

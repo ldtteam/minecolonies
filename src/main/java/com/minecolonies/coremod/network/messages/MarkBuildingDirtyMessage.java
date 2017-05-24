@@ -4,7 +4,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.util.Log;
+import com.minecolonies.api.util.Log;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;

@@ -5,7 +5,7 @@ import com.minecolonies.coremod.colony.buildings.*;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.coremod.util.LanguageHandler;
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Utils;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
@@ -23,7 +23,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Predicate;
 
-import static com.minecolonies.coremod.util.constants.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * Class which handles the tileEntity of our colonyBuildings.
