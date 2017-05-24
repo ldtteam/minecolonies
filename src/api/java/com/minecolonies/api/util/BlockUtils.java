@@ -1,6 +1,6 @@
-package com.minecolonies.coremod.util;
+package com.minecolonies.api.util;
 
-import com.minecolonies.coremod.blocks.AbstractBlockHut;
+import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
@@ -102,8 +102,8 @@ public final class BlockUtils
      */
     public static boolean shouldNeverBeMessedWith(final Block block)
     {
-        return block instanceof AbstractBlockHut
-                || Objects.equals(block, Blocks.BEDROCK);
+        return block instanceof IBuilderUndestroyable
+                 || Objects.equals(block, Blocks.BEDROCK);
     }
 
     /**
@@ -222,7 +222,8 @@ public final class BlockUtils
         else if (blockState.getBlock() instanceof BlockCrops)
         {
             final ItemStack stack = ((BlockCrops) blockState.getBlock()).getItem(null, null, blockState);
-            if (!ItemStackUtils.isEmpty(stack))
+            //TODO ItemStackUtils.isEmpty(stack)
+            if (stack != null)
             {
                 return stack.getItem();
             }
@@ -313,7 +314,8 @@ public final class BlockUtils
         else if (blockState.getBlock() instanceof BlockStem)
         {
             final ItemStack stack = ((BlockStem) blockState.getBlock()).getItem(null, null, blockState);
-            if (!ItemStackUtils.isEmpty(stack))
+            //TODO if (!ItemStackUtils.isEmpty(stack))
+            if (stack != null)
             {
                 return stack.getItem();
             }
