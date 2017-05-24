@@ -28,6 +28,11 @@ public interface IPermissions
      */
     boolean isColonyMember(EntityPlayer player);
 
+    /**
+     * Returns an unmodifiable map of the players list.
+     *
+     * @return map of UUIDs and player objects.
+     */
     @NotNull
     Map<UUID, Player> getPlayers();
 
