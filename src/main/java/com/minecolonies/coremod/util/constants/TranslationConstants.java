@@ -60,6 +60,14 @@ public final class TranslationConstants
     public static final String COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL                        = "com.minecolonies.coremod.wareHouse.full";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_BAKER_NO_FURNACES              = "com.minecolonies.coremod.baker.noFurnace";
+    @NonN1s
+    public static final String COM_MINECOLONIES_COREMOD_SATURATION_0                          = "com.minecolonies.coremod.saturation.0";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_SATURATION_3                          = "com.minecolonies.coremod.saturation.3";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_SATURATION_5                          = "com.minecolonies.coremod.saturation.5";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_SATURATION_7                          = "com.minecolonies.coremod.saturation.7";
 
     private TranslationConstants()
     {
