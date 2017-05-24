@@ -91,6 +91,9 @@ sourceSets {
 }
 
 dependencies {
+    deobfCompile "slimeknights.mantle:Mantle:1.10.2-1.1.5.205"
+    deobfCompile "slimeknights:TConstruct:1.10.2-2.6.3.500"
+
     structuresCompile sourceSets.api.output
     //blockOutCompile sourceSets.api.output
 
