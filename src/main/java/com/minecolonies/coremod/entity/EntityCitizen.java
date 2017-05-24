@@ -740,7 +740,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         double penalty = CITIZEN_DEATH_PENALTY;
         if (par1DamageSource.getEntity() instanceof EntityPlayer)
         {
-            for (Player player : PermissionUtils.getPlayersWithAtLeastRank(colony, Rank.OFFICER))
+            for (final Player player : PermissionUtils.getPlayersWithAtLeastRank(colony, Rank.OFFICER))
             {
                 if (player.getID().equals(par1DamageSource.getEntity().getUniqueID()))
                 {
