@@ -65,7 +65,7 @@ public class BakerRecipes
 
         final List<ItemStack> inputCookie = new ArrayList<>();
         inputCookie.add(new ItemStack(Items.WHEAT, REQUIRED_WHEAT_COOKIES));
-        inputCookie.add(new ItemStack(Items.DYE, REQUIRED_COCOA, 3));
+        inputCookie.add(new ItemStack(Items.DYE, REQUIRED_COCOA, 0x3));
 
         final List<ItemStack> inputBread = new ArrayList<>();
         inputBread.add(new ItemStack(Items.WHEAT, REQUIRED_WHEAT));
