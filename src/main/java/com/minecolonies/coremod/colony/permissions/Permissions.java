@@ -527,11 +527,7 @@ public class Permissions implements IPermissions
         compound.setBoolean(TAG_UPDATE, updatedPermissionAlready);
     }
 
-    /**
-     * Returns an unmodifiable map of the players list.
-     *
-     * @return map of UUIDs and player objects.
-     */
+    @Override
     @NotNull
     public Map<UUID, Player> getPlayers()
     {
@@ -545,8 +541,10 @@ public class Permissions implements IPermissions
      */
     public Set<UUID> getMessagePlayers()
     {
-        return players.values().stream().filter(player ->
-                                                  hasPermission(player.getRank(), RECEIVE_MESSAGES)).map(player -> player.getID()).collect(Collectors.toSet());
+        return players.values().stream()
+                 .filter(player -> hasPermission(player.getRank(), Action.RECEIVE_MESSAGES))
+                 .map(Player::getID)
+                 .collect(Collectors.toSet());
     }
 
     /**
@@ -651,7 +649,7 @@ public class Permissions implements IPermissions
     public Rank getRank(final UUID id)
     {
         final Player player = players.get(id);
-        return player != null ? player.getRank() : NEUTRAL;
+        return player != null ? player.getRank() : Rank.NEUTRAL;
     }
 
     /**
