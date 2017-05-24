@@ -91,13 +91,13 @@ public class PathNavigate extends PathNavigateGround
         return destination;
     }
 
-    //  Re-enable this if path shortcutting becomes a problem; then entities will move more rigidly along world grid
-//    @Override
-//    protected boolean isDirectPathBetweenPoints(final Vec3d Vec3d, final Vec3d Vec3d1, final int i, final int i1, final int i2)
-//    {
-//        //we don't use, so it doesn't matter
-//        return false;
-//    }
+    @Override
+    protected boolean isDirectPathBetweenPoints(final Vec3d start, final Vec3d end, int sizeX, int sizeY, int sizeZ)
+    {
+        // TODO improve road walking. This is better in some situations, but still not great.
+        return !BlockUtils.isPathBlock(world.getBlockState(new BlockPos(start.xCoord, start.yCoord - 1, start.zCoord)).getBlock())
+                && super.isDirectPathBetweenPoints(start, end, sizeX, sizeY, sizeZ);
+    }
 
     public double getSpeed()
     {
