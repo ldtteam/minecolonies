@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.commands;
 
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.util.TeleportToColony;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -62,7 +62,7 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand
     @Override
     public boolean canRankUseCommand(@NotNull final Colony colony, @NotNull final EntityPlayer player)
     {
-        return colony.getPermissions().hasPermission(player, Permissions.Action.TELEPORT_TO_COLONY);
+        return colony.getPermissions().hasPermission(player, Action.TELEPORT_TO_COLONY);
     }
 
     @NotNull

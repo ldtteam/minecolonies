@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.util;
 
-import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.api.colony.permissions.Player;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
@@ -80,23 +80,25 @@ public final class ServerUtils
     }
 
     /**
-     * Returns a list of players from a list of {@link Permissions.Player}.
+     * Returns a list of players from a list of {@link Player}.
      * <p>
-     * The {@link Permissions.Player} is a wrapper around a {@link UUID} of minecraft players.
-     * The List will simply be converted into an {@link EntityPlayer} type.
+     * The {@link Player} is a wrapper around a {@link UUID} of
+     * minecraft players. The List will simply be converted into an {@link
+     * EntityPlayer} type.
      * <p>
-     * Uses {@link ServerUtils#getPlayerFromPermPlayer(Permissions.Player, World)}.
+     * Uses {@link ServerUtils#getPlayerFromPermPlayer(Player,
+     * World)}.
      *
      * @param players The list of players to convert.
      * @param world an instance of the world.
      * @return A list of {@link EntityPlayer}s
      */
     @NotNull
-    public static List<EntityPlayer> getPlayersFromPermPlayer(@NotNull final List<Permissions.Player> players, @NotNull final World world)
+    public static List<EntityPlayer> getPlayersFromPermPlayer(@NotNull final List<Player> players, @NotNull final World world)
     {
         @NotNull final List<EntityPlayer> playerList = new ArrayList<>();
 
-        for (@NotNull final Permissions.Player player : players)
+        for (@NotNull final Player player : players)
         {
             playerList.add(ServerUtils.getPlayerFromPermPlayer(player, world));
         }
@@ -105,18 +107,19 @@ public final class ServerUtils
     }
 
     /**
-     * Retrieves a Player from {@link Permissions.Player}.
+     * Retrieves a Player from {@link Player}.
      * <p>
      * Simply converts our type into the base type.
      * <p>
-     * Passes this {@link Permissions.Player#getID()} to {@link ServerUtils#getPlayerFromUUID(UUID, World)}.
+     * Passes this {@link Player#getID()} to {@link
+     * ServerUtils#getPlayerFromUUID(UUID, World)}.
      *
-     * @param player The {@link Permissions.Player} to convert
-     * @param world an instance of the world.
+     * @param player The {@link Player} to convert
+     * @param world  an instance of the world.
      * @return The {@link EntityPlayer} reference.
      */
     @Nullable
-    public static EntityPlayer getPlayerFromPermPlayer(@NotNull final Permissions.Player player, @NotNull final World world)
+    public static EntityPlayer getPlayerFromPermPlayer(@NotNull final Player player, @NotNull final World world)
     {
         return ServerUtils.getPlayerFromUUID(player.getID(), world);
     }
