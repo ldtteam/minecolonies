@@ -138,7 +138,8 @@
         <module name="NoWhitespaceBefore"/>
         <module name="OperatorWrap">
             <property name="severity" value="info"/>
-            <property name="tokens" value="QUESTION,COLON,EQUAL,NOT_EQUAL,DIV,PLUS,MINUS,STAR,MOD,SR,BSR,GE,GT,SL,LE,LT,BXOR,BOR,LOR,BAND,LAND,TYPE_EXTENSION_AND,LITERAL_INSTANCEOF"/>
+            <property name="tokens"
+                      value="QUESTION,COLON,EQUAL,NOT_EQUAL,DIV,PLUS,MINUS,STAR,MOD,SR,BSR,GE,GT,SL,LE,LT,BXOR,BOR,LOR,BAND,LAND,TYPE_EXTENSION_AND,LITERAL_INSTANCEOF"/>
             <property name="option" value="nl"/>
         </module>
         <module name="ParenPad"/>
@@ -162,7 +163,7 @@
         </module>
         <module name="NeedBraces"/>
         <module name="RightCurly">
-            <property name="option" value="alone_or_singleline" />
+            <property name="option" value="alone_or_singleline"/>
         </module>
 
 
