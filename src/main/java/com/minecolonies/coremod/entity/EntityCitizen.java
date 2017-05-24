@@ -1,5 +1,8 @@
 package com.minecolonies.coremod.entity;
 
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.*;
@@ -1138,7 +1141,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
                                         Blocks.YELLOW_FLOWER,
                                         Blocks.CARPET);
 
-                EntityUtils.setSpawnPoint(spawnPoint, this);
+                WorkerUtil.setSpawnPoint(spawnPoint, this);
                 if (colony != null)
                 {
                     Log.getLogger().info("Teleported stuck citizen " + this.getName() + " from colony: " + colony.getID() + " to target location");

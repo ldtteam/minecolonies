@@ -1,5 +1,8 @@
 package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.util.AIState;
@@ -18,7 +21,6 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Objects;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
@@ -337,7 +339,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
                         Blocks.TALLGRASS,
                         Blocks.RED_FLOWER,
                         Blocks.YELLOW_FLOWER);
-            EntityUtils.setSpawnPoint(spawnPoint, worker);
+            WorkerUtil.setSpawnPoint(spawnPoint, worker);
         }
 
         //take first log from queue
