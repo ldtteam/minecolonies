@@ -342,7 +342,7 @@ public class InventoryUtils
      * @return True if the {@link IItemHandler} contains a {@link ItemPickaxe}
      * with the given minimal required level.
      */
-    public static boolean isPickaxeInItemHandler(IItemHandler itemHandler, final int requiredLevel, final int maximalLevel)
+    public static boolean isPickaxeInItemHandler(final IItemHandler itemHandler, final int requiredLevel, final int maximalLevel)
     {
         return hasItemInItemHandler(itemHandler, (ItemStack stack) -> Utils.checkIfPickaxeQualifies(requiredLevel, Utils.getMiningLevel(stack, Utils.PICKAXE))
                                                                         && InventoryUtils.hasToolLevel(stack, Utils.PICKAXE, requiredLevel, maximalLevel));
@@ -358,7 +358,7 @@ public class InventoryUtils
      * @param maximumLevel the maximum level for the tool to find.
      * @return true if tool is acceptable
      */
-    public static boolean hasToolLevel(@Nullable ItemStack stack, final String toolName, final int minimalLevel, final int maximumLevel)
+    public static boolean hasToolLevel(@Nullable final ItemStack stack, final String toolName, final int minimalLevel, final int maximumLevel)
     {
         if (isItemStackEmpty(stack))
         {
@@ -378,7 +378,7 @@ public class InventoryUtils
      * @param maximumLevel the maximum level needed (usually the worker's hut level)
      * @return true if tool is acceptable
      */
-    public static boolean verifyToolLevel(@NotNull final ItemStack itemStack, int toolLevel, final int minimalLevel, final int maximumLevel)
+    public static boolean verifyToolLevel(@NotNull final ItemStack itemStack, final int toolLevel, final int minimalLevel, final int maximumLevel)
     {
         if (isItemStackEmpty(itemStack))
         {
