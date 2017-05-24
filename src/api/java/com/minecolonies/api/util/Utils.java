@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.util;
+package com.minecolonies.api.util;
 
 import com.minecolonies.api.compatibility.Compatibility;
 import net.minecraft.block.Block;

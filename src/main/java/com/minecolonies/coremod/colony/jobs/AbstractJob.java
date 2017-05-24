@@ -5,7 +5,7 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
-import com.minecolonies.coremod.util.ItemStackUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.util.Log;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.item.ItemStack;

@@ -2,7 +2,7 @@ package com.minecolonies.coremod.inventory;
 
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.util.ItemStackUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.player.EntityPlayer;

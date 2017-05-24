@@ -1,6 +1,6 @@
 package com.minecolonies.api.compatibility.tinkers;
 
-//import com.minecolonies.coremod.util.ItemStackUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Optional;
 import org.jetbrains.annotations.NotNull;
@@ -21,8 +21,7 @@ public final class TinkersWeaponHelper extends TinkersWeaponProxy
     @Optional.Method(modid = "tconstruct")
     public boolean isTinkersWeapon(@NotNull final ItemStack stack)
     {
-        //TODO return !ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof SwordCore;
-        return stack != null && stack.getItem() instanceof SwordCore;
+        return !ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof SwordCore;
     }
 
     /**

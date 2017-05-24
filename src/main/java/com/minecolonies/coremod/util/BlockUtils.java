@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.util;
 
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;

@@ -13,7 +13,7 @@ import com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView;
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.network.messages.MarkBuildingDirtyMessage;
 import com.minecolonies.coremod.network.messages.TransferItemsRequestMessage;
-import com.minecolonies.coremod.util.InventoryUtils;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.util.Log;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;

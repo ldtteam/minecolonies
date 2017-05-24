@@ -1,5 +1,8 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
@@ -8,10 +11,7 @@ import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
-import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.util.ItemStackUtils;
-import com.minecolonies.coremod.util.InventoryUtils;
-import com.minecolonies.coremod.util.Utils;
+import com.minecolonies.api.util.ItemStackUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

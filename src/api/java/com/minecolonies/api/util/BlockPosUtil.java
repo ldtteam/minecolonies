@@ -1,7 +1,5 @@
-package com.minecolonies.coremod.util;
+package com.minecolonies.api.util;
 
-import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.pathfinding.PathResult;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -221,18 +219,6 @@ public final class BlockPosUtil
     }
 
     /**
-     * Returns if the {@link #getDistanceSquared(BlockPos, BlockPos)} from a coordinate to an citizen is closer than 4.84.
-     *
-     * @param coordinate Coordinate you want check distance of.
-     * @param citizen    Citizen you want check distance of.
-     * @return Whether or not the distance is less than 4.84.
-     */
-    public static boolean isClose(@NotNull final BlockPos coordinate, @NotNull final EntityCitizen citizen)
-    {
-        return getDistanceSquared(coordinate, citizen.getPosition()) < CLOSE_DISTANCE;
-    }
-
-    /**
      * Squared distance between two BlockPos.
      *
      * @param block1 position one.
@@ -252,22 +238,6 @@ public final class BlockPosUtil
                                               + xDiff + " | " + yDiff + " | " + zDiff);
         }
         return result;
-    }
-
-    /**
-     * Simple two dimensional distance between two points.
-     *
-     * @param block1 position one.
-     * @param block2 position two.
-     * @return squared distance.
-     */
-    public static long getDistance(@NotNull BlockPos block1, @NotNull BlockPos block2)
-    {
-        final long xDiff = (long) block1.getX() - block2.getX();
-        final long yDiff = (long) block1.getY() - block2.getY();
-        final long zDiff = (long) block1.getZ() - block2.getZ();
-
-        return Math.abs(xDiff + yDiff + zDiff);
     }
 
     /**
@@ -356,19 +326,6 @@ public final class BlockPosUtil
     }
 
     /**
-     * Sets a block in the world.
-     *
-     * @param world  World the block needs to be set in.
-     * @param coords Coordinate to place block.
-     * @param block  Block to place.
-     * @return True if block is placed, otherwise false.
-     */
-    public static boolean setBlock(@NotNull final World world, final BlockPos coords, @NotNull final Block block)
-    {
-        return world.setBlockState(coords, block.getDefaultState());
-    }
-
-    /**
      * Sets a block in the world, with specific metadata and flags.
      *
      * @param worldIn World the block needs to be set in.
@@ -380,44 +337,6 @@ public final class BlockPosUtil
     public static boolean setBlock(@NotNull final World worldIn, @NotNull final BlockPos coords, final IBlockState state, final int flag)
     {
         return worldIn.setBlockState(coords, state, flag);
-    }
-
-    /**
-     * Returns whether or not the citizen is heading to a specific location.
-     * {@link EntityUtils#isPathingTo(EntityCitizen, int, int)}.
-     *
-     * @param citizen Citizen you want to check.
-     * @param pos     Position you want to check.
-     * @return True if citizen heads to pos, otherwise false.
-     */
-    public static boolean isPathingTo(@NotNull final EntityCitizen citizen, @NotNull final BlockPos pos)
-    {
-        return EntityUtils.isPathingTo(citizen, pos.getX(), pos.getZ());
-    }
-
-    /**
-     * {@link EntityUtils#isWorkerAtSiteWithMove(EntityCitizen, int, int, int)}.
-     *
-     * @param worker Worker to check.
-     * @param site   Chunk coordinates of site to check.
-     * @return True when worker is at site, otherwise false.
-     */
-    public static boolean isWorkerAtSiteWithMove(@NotNull final EntityCitizen worker, @NotNull final BlockPos site)
-    {
-        return EntityUtils.isWorkerAtSiteWithMove(worker, site.getX(), site.getY(), site.getZ());
-    }
-
-    /**
-     * {@link EntityUtils#isWorkerAtSiteWithMove(EntityCitizen, int, int, int, int)}.
-     *
-     * @param worker Worker to check.
-     * @param site   Chunk coordinates of site to check.
-     * @param range  Range to check in.
-     * @return True when within range, otherwise false.
-     */
-    public static boolean isWorkerAtSiteWithMove(@NotNull final EntityCitizen worker, @NotNull final BlockPos site, final int range)
-    {
-        return EntityUtils.isWorkerAtSiteWithMove(worker, site.getX(), site.getY(), site.getZ(), range);
     }
 
     /**
@@ -433,20 +352,8 @@ public final class BlockPosUtil
     }
 
     /**
-     * Attempt to move to XYZ.
-     * True when found and destination is set.
-     *
-     * @param citizen     Citizen to move to XYZ.
-     * @param destination Chunk coordinate of the distance.
-     * @return True when found, and destination is set, otherwise false.
-     */
-    public static PathResult moveLivingToXYZ(@NotNull final EntityCitizen citizen, @NotNull final BlockPos destination)
-    {
-        return citizen.getNavigator().moveToXYZ(destination.getX(), destination.getY(), destination.getZ(), 1.0);
-    }
-
-    /**
-     * Create a method for using a {@link BlockPos} when using {@link net.minecraft.util.math.BlockPos.MutableBlockPos#setPos(int, int, int)}.
+     * Create a method for using a {@link BlockPos} when using {@link
+     * net.minecraft.util.math.BlockPos.MutableBlockPos#setPos(int, int, int)}.
      *
      * @param pos    {@link net.minecraft.util.math.BlockPos.MutableBlockPos}.
      * @param newPos The new position to set.

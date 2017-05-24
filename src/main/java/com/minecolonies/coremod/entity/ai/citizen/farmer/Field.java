@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.entity.ai.citizen.farmer;
 
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.inventory.InventoryField;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import com.minecolonies.coremod.util.BlockPosUtil;
-import com.minecolonies.coremod.util.ItemStackUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.util.LanguageHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
