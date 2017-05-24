@@ -29,6 +29,7 @@ import java.util.Map;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 import static com.minecolonies.coremod.util.constants.TranslationConstants.*;
+import static com.minecolonies.coremod.util.constants.ToolLevelConstants.*;
 
 /**
  * Performs deliveryman work.
@@ -441,8 +442,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                     buildingToDeliver.getNeededPickaxeLevel(),
                     buildingToDeliver.getBuildingLevel());
         }
-        //TODO check that 0 is ok
-        return InventoryUtils.isToolInItemHandler(new InvWrapper(worker.getInventoryCitizen()), requiredTool, 0, buildingToDeliver.getBuildingLevel());
+        return InventoryUtils.isToolInItemHandler(new InvWrapper(worker.getInventoryCitizen()), requiredTool, TOOL_LEVEL_WOOD_OR_GOLD, buildingToDeliver.getBuildingLevel());
     }
 
     /**
@@ -538,8 +538,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                         buildingToDeliver.getBuildingLevel() + extraFood,
                         new InvWrapper(worker.getInventoryCitizen()));
             }
-            //TODO 0 is probably not correct here
-            else if (itemsToDeliver.isEmpty() && !isToolInTileEntity((TileEntityChest) tileEntity, buildingToDeliver.getRequiredTool(), 0,
+            else if (itemsToDeliver.isEmpty() && !isToolInTileEntity((TileEntityChest) tileEntity, buildingToDeliver.getRequiredTool(), TOOL_LEVEL_WOOD_OR_GOLD,
                     buildingToDeliver.getBuildingLevel()))
             {
                 return false;
