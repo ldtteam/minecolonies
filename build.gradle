@@ -52,7 +52,7 @@ sourceSets {
         resources {
             srcDir 'src/blockout/resources'
         }
-        compileClasspath += sourceSets.api.compileClasspath
+        // compileClasspath += sourceSets.api.compileClasspath
     }
     structures {
         java {
