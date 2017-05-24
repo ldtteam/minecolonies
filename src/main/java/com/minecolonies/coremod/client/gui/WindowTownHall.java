@@ -570,7 +570,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         }
         final boolean trigger = LanguageHandler.format(ON).equals(button.getLabel());
         final Action action = Action.values()[index];
-        final Rank rank = Rank.valueOf(actionsList.getParent().getID().toUpperCase());
+        final Rank rank = Rank.valueOf(actionsList.getParent().getID().toUpperCase(Locale.ENGLISH));
 
         MineColonies.getNetwork().sendToServer(new PermissionsMessage.Permission(townHall.getColony(), PermissionsMessage.MessageType.TOGGLE_PERMISSION, rank, action));
         townHall.getColony().getPermissions().togglePermission(rank, action);
@@ -641,7 +641,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 }
 
                 rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(name);
-                final boolean isTriggered = townHall.getColony().getPermissions().hasPermission(Rank.valueOf(actionsList.getParent().getID().toUpperCase()), action);
+                final boolean isTriggered = townHall.getColony().getPermissions().hasPermission(Rank.valueOf(actionsList.getParent().getID().toUpperCase(Locale.ENGLISH)), action);
                 rowPane.findPaneOfTypeByID("trigger", Button.class)
                   .setLabel(isTriggered ? LanguageHandler.format(ON)
                               : LanguageHandler.format(OFF));
@@ -838,7 +838,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             {
                 final Player player = users.get(index);
                 String rank = player.getRank().name();
-                rank = Character.toUpperCase(rank.charAt(0)) + rank.toLowerCase().substring(1);
+                rank = Character.toUpperCase(rank.charAt(0)) + rank.toLowerCase(Locale.ENGLISH).substring(1);
                 rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(player.getName());
                 rowPane.findPaneOfTypeByID("rank", Label.class).setLabelText(rank);
             }
