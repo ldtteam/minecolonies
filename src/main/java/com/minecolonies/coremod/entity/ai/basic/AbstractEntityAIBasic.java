@@ -150,7 +150,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                  * If yes, transition to NEEDS_ITEM.
                  * and wait for new items.
                  */
-          new AITarget(() -> this.getOwnBuilding().areItemsNeeded() && !waitForRequest, this::waitForNeededItems),
+          new AITarget(() -> this.getOwnBuilding().areItemsNeeded() && waitForRequest, this::waitForNeededItems),
                 /*
                  * Wait for different tools.
                  */
@@ -1196,8 +1196,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             return false;
         }
         boolean allClear = true;
-        for (final @Nullable ItemStack stack : items)
+        for (final @Nullable ItemStack tempStack : items)
         {
+            final ItemStack stack = tempStack.copy();
             if (stack == null || stack.getItem() == null)
             {
                 continue;

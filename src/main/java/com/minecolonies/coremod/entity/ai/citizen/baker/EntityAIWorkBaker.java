@@ -134,6 +134,13 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
             worker.setHeldItem(EnumHand.MAIN_HAND, InventoryUtils.EMPTY);
             getOwnBuilding().removeFromTasks(Product.ProductState.BAKED, currentProduct);
             InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), currentProduct.getEndProduct());
+
+            RecipeStorage storage = BakerRecipes.getRecipes().get(currentProduct.getRecipeId());
+            for(final ItemStack stack : storage.getSecondaryOutput())
+            {
+                InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), stack);
+            }
+
             incrementActionsDone();
             progress = 0;
             currentProduct = null;
@@ -231,36 +238,40 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
      */
     private AIState craftNewProduct(final RecipeStorage storage)
     {
-        final List<RecipeStorage> recipes = BakerRecipes.getRecipes();
-        final List<ItemStack> lastRecipe = recipes.get(recipes.size() - 1).getInput();
-        if (checkOrRequestItems(true,false, lastRecipe.toArray(new ItemStack[lastRecipe.size()])))
+        final List<ItemStack> list = new ArrayList<>();
+
+        ItemStack copy = null;
+        for(final ItemStack stack: storage.getInput())
+        {
+            if(stack.getItem() != Items.WHEAT)
+            {
+                list.add(stack);
+            }
+            else
+            {
+                copy = stack;
+            }
+        }
+
+        if(copy != null)
+        {
+            //Wheat will be reduced by chance only (Between 3 and 6- getBuildingLevel, meaning 3-5, 3-4, 3-3, 3-2, 3-1)
+            final int form = (getOwnBuilding().getMaxBuildingLevel() + 1) - (getOwnBuilding().getBuildingLevel() + copy.stackSize);
+            int req = form < 0 ? -worker.getRandom().nextInt(Math.abs(form)) : worker.getRandom().nextInt(form);
+            copy.stackSize += req;
+            list.add(copy);
+        }
+
+        if (checkOrRequestItems(true,false, list.toArray(new ItemStack[list.size()])))
         {
             return getState();
         }
         currentProduct.nextState();
 
-        final List<ItemStack> list = new ArrayList<>(storage.getInput());
-
-        //todo for each and remove wheat
-        //todo still have to handle correctly if > 3 wheat
-
-        //Wheat will be reduced by chance only (Between 3 and 6- getBuildingLevel, meaning 3-5, 3-4, 3-3, 3-2, 3-1)
-        for (final ItemStack stack : storage.getInput())
-        {
-            if (stack.getItem() == Items.WHEAT)
-            {
-                list.remove(stack);
-                final ItemStack copy = stack.copy();
-                final int form = (getOwnBuilding().getMaxBuildingLevel() + 1) - (getOwnBuilding().getBuildingLevel() + copy.stackSize);
-                int req = form < 0 ? -worker.getRandom().nextInt(Math.abs(form)) : worker.getRandom().nextInt(form);
-                copy.stackSize += req;
-                list.add(copy);
-            }
-        }
-
         getOwnBuilding().removeFromTasks(Product.ProductState.UNCRAFTED, currentProduct);
         getOwnBuilding().addToTasks(Product.ProductState.RAW, currentProduct);
 
+        //todo not increasing - decreasing, taking correctly!!
         InventoryUtils.removeStacksFromItemHandler(new InvWrapper(worker.getInventoryCitizen()), list);
 
         return getState();
