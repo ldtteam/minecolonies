@@ -1,18 +1,18 @@
 package com.minecolonies.coremod.colony;
 
+import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.colony.permissions.Player;
+import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
-import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.colony.permissions.Permissions;
-import com.minecolonies.api.colony.permissions.Player;
-import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.TownHallRenameMessage;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.MathUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.util.math.BlockPos;
