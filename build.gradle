@@ -143,15 +143,26 @@ processResources {
     }
 }
 
+
 compileJava {
     options.encoding = 'UTF-8'
     options.compilerArgs << "-Xlint"
 }
 
-//task sourceJar(type: Jar) {
-//    from sourceSets.main.allSource
-//    appendix = 'src'
-//}
+task apiJar(type: Jar) {
+    from sourceSets.api.output
+    classifier 'api'
+}
+
+task blockOutJar(type: Jar) {
+    from sourceSets.blockOut.output
+    classifier 'blockOut'
+}
+
+task structuresJar(type: Jar){
+    from sourceSets.structures.output
+    classifier 'structures'
+}
 
 task deobfJar(type: Jar) {
     from sourceSets.main.output
@@ -170,13 +181,27 @@ task incrementBuildNumber() {
 }
 
 jar {
-    dependsOn "deobfJar"
+    from sourceSets.api.output
+    from sourceSets.blockOut.output
+    from sourceSets.structures.output
+    from sourceSets.main.output
+
+    dependsOn apiJar
+    dependsOn blockOutJar
+    dependsOn structuresJar
+    dependsOn deobfJar
     appendix = 'universal'
     archiveName = "minecolonies-universal-" + project.version + ".jar"
 
     manifest {
         attributes 'FMLAT': "minecolonies_at.cfg"
     }
+}
+
+javadoc {
+    source += sourceSets.api.allSource
+    source += sourceSets.blockOut.allSource
+    source += sourceSets.structures.allSource
 }
 
 idea {
