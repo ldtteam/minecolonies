@@ -94,9 +94,8 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             {
                 if (i == index)
                 {
-                    if(buildingEntry.getValue() instanceof AbstractBuildingWorker
-                            && !taskQueue.contains(buildingEntry.getValue())
-                            && (buildingEntry.getValue()).needsAnything())
+                    if(!taskQueue.contains(buildingEntry.getValue())
+                            && buildingEntry.getValue().needsAnything())
                     {
                         checkInWareHouse(buildingEntry.getValue(), true);
                     }
@@ -196,7 +195,8 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                 buildingEntry.setOnGoingDelivery(false);
             }
         }
-        return false;
+
+        return buildingEntry instanceof BuildingHome && checkInWareHouse((BuildingHome) buildingEntry, addToList);
     }
 
     /**
