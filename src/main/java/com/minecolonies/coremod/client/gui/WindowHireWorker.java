@@ -1,5 +1,8 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.constant.ColorConstants;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.Label;
@@ -10,10 +13,7 @@ import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.network.messages.HireFireMessage;
-import com.minecolonies.coremod.util.LanguageHandler;
-import com.minecolonies.api.util.constant.ColorConstants;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 

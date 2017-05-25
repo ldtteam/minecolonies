@@ -1,9 +1,8 @@
 package com.minecolonies.coremod.blocks;
 
+import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
-import com.minecolonies.coremod.lib.Constants;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.util.Log;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyInteger;

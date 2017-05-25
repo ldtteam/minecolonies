@@ -135,14 +135,11 @@ minecraft {
     runDir = "run"
 	
 	mappings = "${config.minecolonies_mappings}"
-
-    replaceIn "lib/Constants.java"
+	
     replace "@VERSION@", project.version
-
-    // Set the jar signature in code prior to compilation, if it exists as a build property
-    if (project.hasProperty("signature")) {
-        replace "@FINGERPRINT@", project.signature
-    }
+    replaceIn "util/constant/Constants.java"
+    if (project.hasProperty("signature"))
+        replace "@FINGERPRINT@", signature
 }
 
 processResources {

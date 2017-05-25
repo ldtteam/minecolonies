@@ -1,8 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.builder;
 
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.EntityUtils;
-import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockSolidSubstitution;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -16,7 +14,7 @@ import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
-import com.minecolonies.coremod.util.*;
+import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockDoor;
@@ -42,9 +40,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART;
+import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 /**
  * AI class for the builder.

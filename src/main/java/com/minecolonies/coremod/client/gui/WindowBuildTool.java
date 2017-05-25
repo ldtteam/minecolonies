@@ -1,17 +1,17 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.util.BlockUtils;
+import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.views.DropDownList;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.Structures;
-import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.network.messages.BuildToolPlaceMessage;
 import com.minecolonies.coremod.network.messages.SchematicRequestMessage;
 import com.minecolonies.coremod.network.messages.SchematicSaveMessage;
-import com.minecolonies.coremod.util.BlockUtils;
-import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.structures.helpers.Settings;
 import com.minecolonies.structures.helpers.Structure;
 import net.minecraft.block.Block;

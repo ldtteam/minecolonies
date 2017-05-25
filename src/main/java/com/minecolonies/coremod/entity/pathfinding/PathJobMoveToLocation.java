@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.configuration.Configurations;
-import com.minecolonies.coremod.util.Log;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
