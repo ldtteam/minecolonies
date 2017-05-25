@@ -1042,7 +1042,7 @@ public abstract class AbstractBuilding
      */
     public ToolType getRequiredTool()
     {
-        return needsTool;
+        return neededTool;
     }
 
     /**
