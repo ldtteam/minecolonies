@@ -4,6 +4,8 @@ import com.minecolonies.coremod.colony.buildings.BuildingBaker;
 import com.minecolonies.coremod.lib.Constants;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.coremod.util.constants.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BAKER;
+
 /**
  * Window for the fisherman hut.
  */
@@ -28,7 +30,7 @@ public class WindowHutBaker extends AbstractWindowWorkerBuilding<BuildingBaker.V
     @Override
     public String getBuildingName()
     {
-        return "com.minecolonies.coremod.gui.workerHuts.baker";
+        return COM_MINECOLONIES_COREMOD_GUI_BAKER;
     }
 }
 

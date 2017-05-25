@@ -1707,7 +1707,8 @@ public final class InventoryUtils
     /**
      * Remove a list of stacks from a given Itemhandler
      * @param handler the itemHandler.
-     * @param input the list of stacks
+     * @param input the list of stacks.
+     * @return true if succesful.
      */
     public static boolean removeStacksFromItemHandler(final IItemHandler handler, final List<ItemStack> input)
     {
@@ -1719,6 +1720,7 @@ public final class InventoryUtils
             list.add(stack.copy());
         }
 
+        boolean success = true;
         int i = 0;
         int tries = 0;
         while(i < list.size() && tries < maxTries)
@@ -1728,7 +1730,8 @@ public final class InventoryUtils
 
             if(slot == -1)
             {
-                return false;
+                success = false;
+                continue;
             }
 
             int removedSize = handler.extractItem(slot, stack.stackSize, false).stackSize;
@@ -1744,6 +1747,26 @@ public final class InventoryUtils
             tries++;
         }
 
-        return i >= list.size();
+        return success && i >= list.size();
     }
+
+    /**
+     * Remove a list of stacks from a given provider
+     * @param handler the provider.
+     * @param input the list of stacks.
+     * @return true if succesful.
+     */
+    public static boolean removeStacksFromProvider(final ICapabilityProvider provider, final List<ItemStack> input)
+    {
+        for (IItemHandler handler : getItemHandlersFromProvider(provider))
+        {
+            if(!removeStacksFromItemHandler(handler, input))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 }

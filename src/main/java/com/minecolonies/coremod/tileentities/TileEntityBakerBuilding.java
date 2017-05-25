@@ -2,10 +2,12 @@ package com.minecolonies.coremod.tileentities;
 
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingBaker;
-import com.minecolonies.coremod.entity.ai.citizen.baker.Product;
+import com.minecolonies.coremod.entity.ai.citizen.baker.BakerEnums;
+import com.minecolonies.coremod.entity.ai.citizen.baker.BakingProduct;
 import net.minecraft.block.BlockFurnace;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.crafting.RecipesFood;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -52,7 +54,7 @@ public class TileEntityBakerBuilding extends TileEntityColonyBuilding
      */
     private void checkFurnaces(@NotNull final BuildingBaker building)
     {
-        for(final Map.Entry<BlockPos, Product> entry: building.getFurnacesWithProduct().entrySet())
+        for(final Map.Entry<BlockPos, BakingProduct> entry: building.getFurnacesWithProduct().entrySet())
         {
             final IBlockState furnace = worldObj.getBlockState(entry.getKey());
             if(!(furnace.getBlock() instanceof BlockFurnace))
@@ -61,10 +63,10 @@ public class TileEntityBakerBuilding extends TileEntityColonyBuilding
                 continue;
             }
 
-            final Product product = entry.getValue();
-            if(product != null && product.getState() == Product.ProductState.BAKING)
+            final BakingProduct bakingProduct = entry.getValue();
+            if(bakingProduct != null && bakingProduct.getState() == BakerEnums.ProductState.BAKING)
             {
-                product.increaseBakingProgress();
+                bakingProduct.increaseBakingProgress();
                 worldObj.setBlockState(entry.getKey(), Blocks.LIT_FURNACE.getDefaultState().withProperty(BlockFurnace.FACING, furnace.getValue(BlockFurnace.FACING)));
             }
             else

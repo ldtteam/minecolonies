@@ -7,8 +7,8 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
-import com.minecolonies.coremod.entity.ai.citizen.baker.Product.ProductState;
-import com.minecolonies.coremod.entity.ai.citizen.baker.Product;
+import com.minecolonies.coremod.entity.ai.citizen.baker.BakingProduct;
+import com.minecolonies.coremod.entity.ai.citizen.baker.BakerEnums.ProductState;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFurnace;
@@ -63,12 +63,12 @@ public class BuildingBaker extends AbstractBuildingWorker
     /**
      * List of furnaces added to this building.
      */
-    private final Map<BlockPos, Product> furnaces = new HashMap<>();
+    private final Map<BlockPos, BakingProduct> furnaces = new HashMap<>();
 
     /**
      * Map of tasks for the baker to work on.
      */
-    private final Map<ProductState, List<Product>> tasks = new EnumMap(ProductState.class);
+    private final Map<ProductState, List<BakingProduct>> tasks = new EnumMap(ProductState.class);
 
     /**
      * Constructor for the baker building.
@@ -179,9 +179,9 @@ public class BuildingBaker extends AbstractBuildingWorker
     /**
      * Return the map of furnaces assigned to this hut and the product in it.
      *
-     * @return a hashmap with BlockPos, Product.
+     * @return a hashmap with BlockPos, BakingProduct.
      */
-    public Map<BlockPos, Product> getFurnacesWithProduct()
+    public Map<BlockPos, BakingProduct> getFurnacesWithProduct()
     {
         return new HashMap<>(furnaces);
     }
@@ -191,9 +191,9 @@ public class BuildingBaker extends AbstractBuildingWorker
      *
      * @return the map of states and products.
      */
-    public Map<ProductState, List<Product>> getTasks()
+    public Map<ProductState, List<BakingProduct>> getTasks()
     {
-        return new HashMap<>(tasks);
+        return Collections.unmodifiableMap(tasks);
     }
 
     @Override
@@ -201,16 +201,16 @@ public class BuildingBaker extends AbstractBuildingWorker
     {
         super.writeToNBT(compound);
         @NotNull final NBTTagList tasksTagList = new NBTTagList();
-        for (@NotNull final Map.Entry<ProductState, List<Product>> entry : tasks.entrySet())
+        for (@NotNull final Map.Entry<ProductState, List<BakingProduct>> entry : tasks.entrySet())
         {
             @NotNull final NBTTagCompound taskCompound = new NBTTagCompound();
             taskCompound.setInteger(TAG_STATE, entry.getKey().ordinal());
 
             @NotNull final NBTTagList productsTaskList = new NBTTagList();
-            for (@NotNull final Product product : entry.getValue())
+            for (@NotNull final BakingProduct bakingProduct : entry.getValue())
             {
                 @NotNull final NBTTagCompound productCompound = new NBTTagCompound();
-                product.writeToNBT(productCompound);
+                bakingProduct.writeToNBT(productCompound);
             }
             taskCompound.setTag(TAG_PRODUCTS, productsTaskList);
             tasksTagList.appendTag(taskCompound);
@@ -218,7 +218,7 @@ public class BuildingBaker extends AbstractBuildingWorker
         compound.setTag(TAG_TASKS, tasksTagList);
 
         @NotNull final NBTTagList furnacesTagList = new NBTTagList();
-        for (@NotNull final Map.Entry<BlockPos, Product> entry : furnaces.entrySet())
+        for (@NotNull final Map.Entry<BlockPos, BakingProduct> entry : furnaces.entrySet())
         {
             @NotNull final NBTTagCompound furnaceCompound = new NBTTagCompound();
             BlockPosUtil.writeToNBT(furnaceCompound, TAG_FURNACE_POS, entry.getKey());
@@ -243,17 +243,17 @@ public class BuildingBaker extends AbstractBuildingWorker
         {
             final NBTTagCompound taskCompound = taskTagList.getCompoundTagAt(i);
             final ProductState state = ProductState.values()[taskCompound.getInteger(TAG_STATE)];
-            final List<Product> products = new ArrayList<>();
+            final List<BakingProduct> bakingProducts = new ArrayList<>();
 
             final NBTTagList productTagList = taskCompound.getTagList(TAG_PRODUCTS, Constants.NBT.TAG_COMPOUND);
             for (int j = 0; j < productTagList.tagCount(); ++j)
             {
                 final NBTTagCompound productCompound = taskTagList.getCompoundTagAt(i);
-                final Product product = Product.createFromNBT(productCompound);
-                products.add(product);
+                final BakingProduct bakingProduct = BakingProduct.createFromNBT(productCompound);
+                bakingProducts.add(bakingProduct);
             }
 
-            tasks.put(state, products);
+            tasks.put(state, bakingProducts);
         }
 
         final NBTTagList furnaceTagList = compound.getTagList(TAG_FURNACES, Constants.NBT.TAG_COMPOUND);
@@ -261,8 +261,8 @@ public class BuildingBaker extends AbstractBuildingWorker
         {
             final NBTTagCompound furnaceCompound = furnaceTagList.getCompoundTagAt(i);
             final BlockPos pos = BlockPosUtil.readFromNBT(furnaceCompound, TAG_FURNACE_POS);
-            final Product product = Product.createFromNBT(furnaceCompound);
-            furnaces.put(pos, product);
+            final BakingProduct bakingProduct = BakingProduct.createFromNBT(furnaceCompound);
+            furnaces.put(pos, bakingProduct);
         }
     }
 
@@ -281,52 +281,51 @@ public class BuildingBaker extends AbstractBuildingWorker
      * Add a task to the tasks list.
      *
      * @param state   the state of the task.
-     * @param product the regarding product.
+     * @param bakingProduct the regarding bakingProduct.
      */
-    public void addToTasks(final ProductState state, final Product product)
+    public void addToTasks(final ProductState state, final BakingProduct bakingProduct)
     {
         if (tasks.containsKey(state))
         {
-            tasks.get(state).add(product);
+            tasks.get(state).add(bakingProduct);
         }
         else
         {
-            final List<Product> products = new ArrayList<>();
-            products.add(product);
-            tasks.put(state, products);
+            final List<BakingProduct> bakingProducts = new ArrayList<>();
+            bakingProducts.add(bakingProduct);
+            tasks.put(state, bakingProducts);
+            markDirty();
         }
-        markDirty();
     }
 
     /**
      * Add a task to the tasks list.
      *
      * @param state   the state of the task.
-     * @param product the regarding product.
+     * @param bakingProduct the regarding bakingProduct.
      */
-    public void removeFromTasks(final ProductState state, final Product product)
+    public void removeFromTasks(final ProductState state, final BakingProduct bakingProduct)
     {
         if (tasks.containsKey(state))
         {
-            tasks.get(state).remove(product);
+            tasks.get(state).remove(bakingProduct);
             if (tasks.get(state).isEmpty())
             {
                 tasks.remove(state);
+                markDirty();
             }
         }
-
-        markDirty();
     }
 
     /**
-     * Put a certain Product in the furnace.
+     * Put a certain BakingProduct in the furnace.
      *
      * @param currentFurnace the furnace to put it in.
-     * @param product        the Product.
+     * @param bakingProduct        the BakingProduct.
      */
-    public void putInFurnace(final BlockPos currentFurnace, final Product product)
+    public void putInFurnace(final BlockPos currentFurnace, final BakingProduct bakingProduct)
     {
-        furnaces.replace(currentFurnace, product);
+        furnaces.replace(currentFurnace, bakingProduct);
     }
 
     /**

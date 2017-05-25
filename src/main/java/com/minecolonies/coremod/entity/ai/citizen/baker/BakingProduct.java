@@ -3,8 +3,9 @@ package com.minecolonies.coremod.entity.ai.citizen.baker;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
+import com.minecolonies.coremod.entity.ai.citizen.baker.BakerEnums.ProductState;
 
-public class Product
+public class BakingProduct
 {
     /**
      * Tag used to store the state of the product.
@@ -27,7 +28,7 @@ public class Product
     private ProductState state = ProductState.UNCRAFTED;
 
     /**
-     * The end product of the Product.
+     * The end product of the BakingProduct.
      */
     private final ItemStack endProduct;
 
@@ -42,18 +43,18 @@ public class Product
     private int recipeId = 0;
 
     /**
-     * Instantiates the Product, requires the end product of it.
+     * Instantiates the BakingProduct, requires the end product of it.
      * @param endProduct the product when finished.
      * @param recipeId the id of the used recipe for this product.
      */
-    public Product(@NotNull final ItemStack endProduct, int recipeId)
+    public BakingProduct(@NotNull final ItemStack endProduct, int recipeId)
     {
         this.endProduct = endProduct;
         this.recipeId = recipeId;
     }
 
     /**
-     * Get the current State of the Product.
+     * Get the current State of the BakingProduct.
      * @return the state.
      */
     public ProductState getState()
@@ -76,7 +77,7 @@ public class Product
     }
 
     /**
-     * Set the State of the Product.
+     * Set the State of the BakingProduct.
      * @param state the state to set it to.
      */
     private void setState(final ProductState state)
@@ -128,23 +129,23 @@ public class Product
     /**
      * Create the product from NBT.
      * @param productCompound the compound to use.
-     * @return the restored Product.
+     * @return the restored BakingProduct.
      */
-    public static Product createFromNBT(final NBTTagCompound productCompound)
+    public static BakingProduct createFromNBT(final NBTTagCompound productCompound)
     {
         if(productCompound.hasKey(TAG_STATE))
         {
             final ProductState state = ProductState.values()[productCompound.getInteger(TAG_STATE)];
             final int recipeId = productCompound.getInteger(TAG_RECIPE_ID);
-            final Product product = new Product(ItemStack.loadItemStackFromNBT(productCompound), recipeId);
-            product.setState(state);
-            return product;
+            final BakingProduct bakingProduct = new BakingProduct(ItemStack.loadItemStackFromNBT(productCompound), recipeId);
+            bakingProduct.setState(state);
+            return bakingProduct;
         }
         return null;
     }
 
     /**
-     * Write the Product to NBT.
+     * Write the BakingProduct to NBT.
      * @param productCompound the compound to write it to.
      */
     public void writeToNBT(final NBTTagCompound productCompound)
@@ -161,22 +162,22 @@ public class Product
         {
             return true;
         }
-        if (!(o instanceof Product))
+        if (!(o instanceof BakingProduct))
         {
             return false;
         }
 
-        final Product product = (Product) o;
+        final BakingProduct bakingProduct = (BakingProduct) o;
 
-        if (recipeId != product.recipeId)
+        if (recipeId != bakingProduct.recipeId)
         {
             return false;
         }
-        if (state != product.state)
+        if (state != bakingProduct.state)
         {
             return false;
         }
-        if (!endProduct.equals(product.endProduct))
+        if (!endProduct.equals(bakingProduct.endProduct))
         {
             return false;
         }
@@ -191,15 +192,6 @@ public class Product
         result = 31 * result + endProduct.writeToNBT(new NBTTagCompound()).hashCode();
         result = 31 * result + recipeId;
         return result;
-    }
-
-    public enum ProductState
-    {
-        UNCRAFTED,
-        RAW,
-        PREPARED,
-        BAKING,
-        BAKED
     }
 }
 

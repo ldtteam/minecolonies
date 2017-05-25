@@ -8,6 +8,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundEvent;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.coremod.util.constants.TranslationConstants.COM_MINECOLONIES_COREMOD_JOB_BAKER;
 
 /**
  * The fisherman's job class.
@@ -45,7 +46,7 @@ public class JobBaker extends AbstractJob
     @Override
     public String getName()
     {
-        return "com.minecolonies.coremod.job.baker";
+        return COM_MINECOLONIES_COREMOD_JOB_BAKER;
     }
 
     /**
