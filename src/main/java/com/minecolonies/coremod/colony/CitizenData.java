@@ -297,7 +297,7 @@ public class CitizenData
         experience = 0;
         level = 0;
         saturation = MAX_SATURATION;
-        int levelCap = (int) colony.getOverallHappiness();
+        final int levelCap = (int) colony.getOverallHappiness();
         @NotNull final Random random = new Random();
 
         if(levelCap <= 1)

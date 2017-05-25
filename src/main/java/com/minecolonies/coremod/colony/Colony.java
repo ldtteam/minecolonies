@@ -527,7 +527,7 @@ public class Colony implements IColony
      *
      * @param statistic the statistic.
      */
-    public void incrementStatistic(@NotNull String statistic)
+    public void incrementStatistic(@NotNull final String statistic)
     {
         final int statisticAmount = this.getStatisticAmount(statistic);
         incrementStatisticAmount(statistic);
@@ -559,7 +559,7 @@ public class Colony implements IColony
      * @param statistic the statistic.
      * @return amount of statistic.
      */
-    private int getStatisticAmount(@NotNull String statistic)
+    private int getStatisticAmount(@NotNull final String statistic)
     {
         switch (statistic)
         {
@@ -593,7 +593,7 @@ public class Colony implements IColony
      *
      * @param statistic the statistic.
      */
-    private void incrementStatisticAmount(@NotNull String statistic)
+    private void incrementStatisticAmount(@NotNull final String statistic)
     {
         switch (statistic)
         {
@@ -1100,7 +1100,7 @@ public class Colony implements IColony
             increaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * HAPPINESS_FACTOR);
         }
 
-        int relation = workers/guards;
+        final int relation = workers/guards;
 
         if(relation > 1)
         {
@@ -1801,7 +1801,7 @@ public class Colony implements IColony
      * @param point the waypoint to add.
      * @param block the block at the waypoint.
      */
-    public void addWayPoint(final BlockPos point, IBlockState block)
+    public void addWayPoint(final BlockPos point, final IBlockState block)
     {
         wayPoints.put(point, block);
         markDirty();
@@ -1855,7 +1855,7 @@ public class Colony implements IColony
      * Increase the overall happiness by an amount, cap at max.
      * @param amount the amount.
      */
-    public void increaseOverallHappiness(double amount)
+    public void increaseOverallHappiness(final double amount)
     {
         this.overallHappiness = Math.min(this.overallHappiness + Math.abs(amount), MAX_OVERALL_HAPPINESS);
         this.markDirty();
@@ -1865,7 +1865,7 @@ public class Colony implements IColony
      * Decrease the overall happiness by an amount, cap at min.
      * @param amount the amount.
      */
-    public void decreaseOverallHappiness(double amount)
+    public void decreaseOverallHappiness(final double amount)
     {
         this.overallHappiness = Math.max(this.overallHappiness - Math.abs(amount), MIN_OVERALL_HAPPINESS);
         this.markDirty();

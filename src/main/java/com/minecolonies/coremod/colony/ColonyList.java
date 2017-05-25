@@ -40,7 +40,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
      * @return The newly created Colony.
      */
     @NotNull
-    public Colony create(World world, BlockPos position)
+    public Colony create(final World world, final BlockPos position)
     {
         final int colonyID = getNextColonyID();
         if (colonyID >= list.length)
@@ -84,7 +84,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
      *
      * @param colony colony to add to the list.
      */
-    public void add(T colony)
+    public void add(final T colony)
     {
         final T existingColony = get(colony.getID());
         if (existingColony != null && existingColony != colony)
@@ -123,7 +123,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
     @Nullable
     // no way to remove this, java does it too
     @SuppressWarnings("unchecked")
-    public T get(int index)
+    public T get(final int index)
     {
         if (index < 1 || index >= list.length)
         {
@@ -138,7 +138,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
      *
      * @param colony the Colony to remove.
      */
-    public void remove(T colony)
+    public void remove(final T colony)
     {
         remove(colony.getID());
     }
@@ -148,7 +148,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
      *
      * @param id colony id to remove.
      */
-    public void remove(int id)
+    public void remove(final int id)
     {
         if (list[id] == null)
         {
@@ -250,7 +250,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
         };
     }
 
-    private int getNextIndex(int startingIndex)
+    private int getNextIndex(final int startingIndex)
     {
         int index = startingIndex + 1;
         while (index < list.length)

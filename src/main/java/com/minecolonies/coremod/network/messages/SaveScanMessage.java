@@ -48,9 +48,9 @@ public class SaveScanMessage implements IMessage, IMessageHandler<SaveScanMessag
     @Override
     public void fromBytes(@NotNull final ByteBuf buf)
     {
-        PacketBuffer buffer = new PacketBuffer(buf);
-        int i = buffer.readerIndex();
-        byte b0 = buffer.readByte();
+        final PacketBuffer buffer = new PacketBuffer(buf);
+        final int i = buffer.readerIndex();
+        final byte b0 = buffer.readByte();
         if (b0 != 0)
         {
             buffer.readerIndex(i);
@@ -58,11 +58,11 @@ public class SaveScanMessage implements IMessage, IMessageHandler<SaveScanMessag
             {
                 nbttagcompound = CompressedStreamTools.read(stream, NBTSizeTracker.INFINITE);
             }
-            catch (RuntimeException e)
+            catch (final RuntimeException e)
             {
                 Log.getLogger().info("Structure too big to be processed", e);
             }
-            catch (IOException e)
+            catch (final IOException e)
             {
                 Log.getLogger().info("Problem at retrieving structure on server.", e);
             }

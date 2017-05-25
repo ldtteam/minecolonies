@@ -65,7 +65,7 @@ public class BuildingWareHouse extends AbstractBuilding
      * @param buildingWorker the building of the worker.
      * @return true if able to register or already registered
      */
-    public boolean registerWithWareHouse(BuildingDeliveryman buildingWorker)
+    public boolean registerWithWareHouse(final BuildingDeliveryman buildingWorker)
     {
         if (registeredDeliverymen.contains(new Vec3d(buildingWorker.getID())))
         {
@@ -109,7 +109,7 @@ public class BuildingWareHouse extends AbstractBuilding
      * @param buildingWorker the building of the deliveryman.
      * @return true if able to.
      */
-    public boolean canAccessWareHouse(BuildingDeliveryman buildingWorker)
+    public boolean canAccessWareHouse(final BuildingDeliveryman buildingWorker)
     {
         return registeredDeliverymen.contains(new Vec3d(buildingWorker.getID()));
     }

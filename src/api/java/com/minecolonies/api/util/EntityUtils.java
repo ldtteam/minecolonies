@@ -167,7 +167,7 @@ public final class EntityUtils
      * @return The spawn position.
      */
     @Nullable
-    public static BlockPos getSpawnPoint(World world, BlockPos nearPoint)
+    public static BlockPos getSpawnPoint(final World world, final BlockPos nearPoint)
     {
         return Utils.scanForBlockNearPoint(
           world,

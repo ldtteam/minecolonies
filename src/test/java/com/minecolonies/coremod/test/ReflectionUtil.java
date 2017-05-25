@@ -9,26 +9,26 @@ import java.lang.reflect.Modifier;
  */
 public class ReflectionUtil
 {
-    public static void setFinalField(Object object, String fieldName, Object newValue)
+    public static void setFinalField(final Object object, final String fieldName, final Object newValue)
       throws NoSuchFieldException, IllegalAccessException
     {
-        Field field = object.getClass().getField(fieldName);
+        final Field field = object.getClass().getField(fieldName);
         field.setAccessible(true);
 
-        Field modifiersField = Field.class.getDeclaredField("modifiers");
+        final Field modifiersField = Field.class.getDeclaredField("modifiers");
         modifiersField.setAccessible(true);
         modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
 
         field.set(object, newValue);
     }
 
-    public static void setStaticFinalField(Class clazz, String fieldName, Object newValue)
+    public static void setStaticFinalField(final Class clazz, final String fieldName, final Object newValue)
       throws NoSuchFieldException, IllegalAccessException
     {
-        Field field = clazz.getField(fieldName);
+        final Field field = clazz.getField(fieldName);
         field.setAccessible(true);
 
-        Field modifiersField = Field.class.getDeclaredField("modifiers");
+        final Field modifiersField = Field.class.getDeclaredField("modifiers");
         modifiersField.setAccessible(true);
         modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
 

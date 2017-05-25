@@ -268,7 +268,7 @@ public class BlockConstructionTapeCorner extends Block
     @SideOnly(Side.CLIENT)
     @Override
     @Deprecated
-    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
+    public boolean shouldSideBeRendered(final IBlockState blockState, final IBlockAccess blockAccess, final BlockPos pos, final EnumFacing side)
     {
         return true;
     }
