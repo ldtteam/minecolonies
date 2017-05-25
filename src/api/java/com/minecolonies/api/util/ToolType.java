@@ -1,7 +1,5 @@
 package com.minecolonies.api.util;
 
-import com.minecolonies.api.util.IToolType;
-
 public enum ToolType implements IToolType
 {
     NONE (""),
@@ -27,7 +25,7 @@ public enum ToolType implements IToolType
 
     public static ToolType getToolType(final String tool)
     {
-        for (ToolType toolType : ToolType.values())
+        for (final ToolType toolType : ToolType.values())
         {
              if (toolType.getName().equals(tool))
              {

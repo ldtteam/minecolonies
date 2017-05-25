@@ -941,7 +941,7 @@ public abstract class AbstractBuilding
      */
     public boolean needsTool(final ToolType toolType)
     {
-        return needsTool == toolType;
+        return needsTool.equals(toolType);
     }
 
     /**

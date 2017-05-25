@@ -1,7 +1,6 @@
 package com.minecolonies.api.util;
 
 import com.minecolonies.api.compatibility.Compatibility;
-import com.minecolonies.api.util.ToolType;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemHoe;

@@ -1,7 +1,5 @@
 package com.minecolonies.api.util;
 
-import com.minecolonies.api.util.ToolType;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemPickaxe;

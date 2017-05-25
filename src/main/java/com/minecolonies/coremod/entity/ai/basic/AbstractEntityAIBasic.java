@@ -575,10 +575,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Make sure that the worker stands next the chest to not break immersion.
      * Also make sure to have inventory space for the stack.
      *
-     * @param entity    the tileEntity chest or building.
-     * @param tool      the tool.
+     * @param entity   the tileEntity chest or building.
+     * @param toolType the type of tool.
      * @param minLevel the min tool level.
-     * @param maxLevel the max tool level.
+     * @param maxLevel the max tool lev	el.
      * @return true if found the tool.
      */
     public boolean isToolInTileEntity(final TileEntityChest entity, final ToolType toolType, final int minLevel, final int maxLevel)
@@ -677,7 +677,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Check all chests in the worker hut for a required tool.
      *
-     * @param tool the type of tool requested (amount is ignored)
+     * @param toolType the type of tool requested (amount is ignored)
      * @return true if a stack of that type was found
      */
     public boolean isToolInHut(final ToolType toolType)
@@ -718,8 +718,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Make sure that the worker stands next the chest to not break immersion.
      * Also make sure to have inventory space for the stack.
      *
-     * @param entity the tileEntity chest or building.
-     * @param tool   the tool.
+     * @param entity   the tileEntity chest or building.
+     * @param toolType the type of tool.
      * @return true if found the tool.
      */
     public boolean isToolInTileEntity(final TileEntityChest entity, final ToolType toolType)
@@ -1288,6 +1288,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             default:
                 checkForPickaxe(TOOL_LEVEL_DIAMOND);
                 Log.getLogger().error("Invalid tool " + toolType.getName() + " not implemented as tool will require pickaxe level 4 instead.");
+                break;
         }
     }
 
