@@ -436,12 +436,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return true;
         }
 
-        /*if (requiredTool.equals(Utils.PICKAXE))
-        {
-            return InventoryUtils.isPickaxeInItemHandler(new InvWrapper(worker.getInventoryCitizen()),
-                    buildingToDeliver.getNeededPickaxeLevel(),
-                    buildingToDeliver.getBuildingLevel());
-        }*/
         return InventoryUtils.isToolInItemHandler(new InvWrapper(worker.getInventoryCitizen()), requiredTool, buildingToDeliver.getNeededPickaxeLevel(), buildingToDeliver.getBuildingLevel());
     }
 
