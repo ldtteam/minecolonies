@@ -60,7 +60,7 @@ public class ListColoniesCommand extends AbstractSingleCommand
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
         int page = getIthArgument(args, 0, 1);
-        int abandonedSince = getIthArgument(args, 1, 0);
+        final int abandonedSince = getIthArgument(args, 1, 0);
 
         final List<Colony> colonies;
         if (abandonedSince > 0)
