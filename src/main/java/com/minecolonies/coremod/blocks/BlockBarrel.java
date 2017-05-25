@@ -2,7 +2,6 @@ package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;

@@ -2,7 +2,6 @@ package com.minecolonies.coremod.entity.ai.basic;
 
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
@@ -41,7 +40,7 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static com.minecolonies.api.util.constant.Suppression.*;
+import static com.minecolonies.api.util.constant.Suppression.MULTIPLE_LOOPS_OVER_THE_SAME_SET_SHOULD_BE_COMBINED;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 import static com.minecolonies.coremod.placementhandlers.IPlacementHandler.ActionProcessingResult.ACCEPT;
 import static com.minecolonies.coremod.placementhandlers.IPlacementHandler.ActionProcessingResult.DENY;

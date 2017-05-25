@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony.workorders;
 
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.WorkOrderView;
@@ -16,7 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.minecolonies.api.util.constant.Suppression.*;
+import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED;
 
 /**
  * General information between WorkOrders.

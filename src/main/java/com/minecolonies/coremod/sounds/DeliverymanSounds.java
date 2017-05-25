@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.sounds;
 
-import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.util.SoundEvent;
@@ -9,7 +8,7 @@ import net.minecraft.world.World;
 
 import java.util.Random;
 
-import static com.minecolonies.api.util.constant.Suppression.*;
+import static com.minecolonies.api.util.constant.Suppression.MAGIC_NUMBERS_SHOULD_NOT_BE_USED;
 
 /**
  * Class containing the fisherman sounds.

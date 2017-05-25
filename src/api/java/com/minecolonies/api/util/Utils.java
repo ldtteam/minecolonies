@@ -1,7 +1,6 @@
 package com.minecolonies.api.util;
 
 import com.minecolonies.api.compatibility.Compatibility;
-import com.minecolonies.api.util.constant.Suppression;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemHoe;
@@ -16,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-import static com.minecolonies.api.util.constant.Suppression.*;
+import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 
 /**
  * General purpose utilities class.
