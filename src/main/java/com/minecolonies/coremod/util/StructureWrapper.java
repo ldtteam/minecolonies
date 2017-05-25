@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.util;
 
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.ModBlocks;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.structures.helpers.StructureProxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
