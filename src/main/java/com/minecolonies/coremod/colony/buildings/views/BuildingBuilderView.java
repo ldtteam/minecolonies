@@ -46,7 +46,7 @@ public class BuildingBuilderView extends AbstractBuildingWorker.View
     }
 
     @Override
-    public void deserialize(@NotNull ByteBuf buf)
+    public void deserialize(@NotNull final ByteBuf buf)
     {
         super.deserialize(buf);
 

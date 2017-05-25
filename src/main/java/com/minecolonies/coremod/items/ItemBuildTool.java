@@ -54,7 +54,7 @@ public class ItemBuildTool extends AbstractItemMinecolonies
     @Override
     public ActionResult<ItemStack> onItemRightClick(final World worldIn, final EntityPlayer playerIn, final EnumHand hand)
     {
-        ItemStack stack = playerIn.getHeldItem(hand);
+        final ItemStack stack = playerIn.getHeldItem(hand);
 
         if (worldIn.isRemote)
         {

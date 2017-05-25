@@ -977,7 +977,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         {
             updateColonyServer();
         }
-        NBTTagList nbttaglist = compound.getTagList("Inventory", 10);
+        final NBTTagList nbttaglist = compound.getTagList("Inventory", 10);
         this.inventory.readFromNBT(nbttaglist);
 
         inventory.setHeldItem(compound.getInteger(TAG_HELD_ITEM_SLOT));
@@ -1353,7 +1353,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      *
      * @param jobName the job he last had.
      */
-    public void setLastJob(@NotNull String jobName)
+    public void setLastJob(@NotNull final String jobName)
     {
         this.lastJob = jobName;
     }
@@ -1515,7 +1515,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         final ItemStack stack = inventory.getStackInSlot(slot);
         if(!InventoryUtils.isItemStackEmpty(stack) && stack.getItem() instanceof ItemFood && citizenData != null)
         {
-            int heal = ((ItemFood) stack.getItem()).getHealAmount(stack);
+            final int heal = ((ItemFood) stack.getItem()).getHealAmount(stack);
             citizenData.increaseSaturation(heal);
             inventory.decrStackSize(slot, 1);
             citizenData.markDirty();
@@ -1597,7 +1597,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param itemDamage the damage value
      * @return the slot.
      */
-    public int findFirstSlotInInventoryWith(final Item targetItem, int itemDamage)
+    public int findFirstSlotInInventoryWith(final Item targetItem, final int itemDamage)
     {
         return InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(getInventoryCitizen()), targetItem, itemDamage);
     }
@@ -1609,7 +1609,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param itemDamage the damage value
      * @return the slot.
      */
-    public int findFirstSlotInInventoryWith(final Block block, int itemDamage)
+    public int findFirstSlotInInventoryWith(final Block block, final int itemDamage)
     {
         return InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(getInventoryCitizen()), block, itemDamage);
     }
@@ -1621,7 +1621,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param itemDamage the damage value
      * @return the quantity.
      */
-    public int getItemCountInInventory(final Block block, int itemDamage)
+    public int getItemCountInInventory(final Block block, final int itemDamage)
     {
         return InventoryUtils.getItemCountInItemHandler(new InvWrapper(getInventoryCitizen()), block, itemDamage);
     }
@@ -1633,7 +1633,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param itemDamage the damage value.
      * @return the quantity.
      */
-    public int getItemCountInInventory(final Item targetItem, int itemDamage)
+    public int getItemCountInInventory(final Item targetItem, final int itemDamage)
     {
         return InventoryUtils.getItemCountInItemHandler(new InvWrapper(getInventoryCitizen()), targetItem, itemDamage);
     }
@@ -1645,7 +1645,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param itemDamage the damage value
      * @return true if so.
      */
-    public boolean hasItemInInventory(final Block block, int itemDamage)
+    public boolean hasItemInInventory(final Block block, final int itemDamage)
     {
         return InventoryUtils.hasItemInItemHandler(new InvWrapper(getInventoryCitizen()), block, itemDamage);
     }
@@ -1657,7 +1657,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param itemDamage the damage value
      * @return true if so.
      */
-    public boolean hasItemInInventory(final Item item, int itemDamage)
+    public boolean hasItemInInventory(final Item item, final int itemDamage)
     {
         return InventoryUtils.hasItemInItemHandler(new InvWrapper(getInventoryCitizen()), item, itemDamage);
     }
@@ -1874,7 +1874,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         citizenDescription.appendText(this.getCustomNameTag()).appendText(": ");
         final TextComponentString colonyDescription = new TextComponentString(" at " + this.getColony().getName() + ":");
 
-        List<EntityPlayer> players = new ArrayList<>(colony.getMessageEntityPlayers());
+        final List<EntityPlayer> players = new ArrayList<>(colony.getMessageEntityPlayers());
         final EntityPlayer owner = ServerUtils.getPlayerFromUUID(world, this.getColony().getPermissions().getOwner());
         if (owner != null)
         {

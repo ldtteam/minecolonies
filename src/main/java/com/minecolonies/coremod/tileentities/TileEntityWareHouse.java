@@ -146,7 +146,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      * @param addToList if is in warehouse should add to the list?
      * @return true if has something in warehouse to deliver.
      */
-    public boolean checkInWareHouse(@NotNull final AbstractBuilding buildingEntry, boolean addToList)
+    public boolean checkInWareHouse(@NotNull final AbstractBuilding buildingEntry, final boolean addToList)
     {
         if(buildingEntry.areItemsNeeded())
         {

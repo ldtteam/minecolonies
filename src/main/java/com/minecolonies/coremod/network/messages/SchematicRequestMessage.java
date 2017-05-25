@@ -66,7 +66,7 @@ public class SchematicRequestMessage extends AbstractMessage<SchematicRequestMes
         else
         {
             Log.getLogger().info("Request: player " + player.getName() + " is requesting schematic " + message.filename);
-            byte[] schematic = Structure.getStreamAsByteArray(stream);
+            final byte[] schematic = Structure.getStreamAsByteArray(stream);
             MineColonies.getNetwork().sendTo(new SchematicSaveMessage(schematic), player);
         }
     }

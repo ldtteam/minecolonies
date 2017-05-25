@@ -120,7 +120,7 @@ public class DialogDoneCancel extends OverlayView implements ButtonHandler
      *
      * @param button which have been clicked on.
      */
-    public void onButtonClicked(Button button)
+    public void onButtonClicked(final Button button)
     {
         this.setVisible(false);
         if (handler == null)

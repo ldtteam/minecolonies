@@ -723,7 +723,7 @@ public final class EntityFishHook extends Entity
      * @param lootTable the lootTable.
      * @return the ItemStack of the loot.
      */
-    private ItemStack getLootForLootTable(ResourceLocation lootTable)
+    private ItemStack getLootForLootTable(final ResourceLocation lootTable)
     {
         final LootContext.Builder lootContextBuilder = new LootContext.Builder((WorldServer) this.world);
         return this.world.getLootTableManager()

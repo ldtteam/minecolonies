@@ -63,7 +63,7 @@ public class Node
      * @param z      Z-coordinate in the node
      * @param parent the parent of the node.
      */
-    public Node(final double x, final double z, @Nullable Point2D parent)
+    public Node(final double x, final double z, @Nullable final Point2D parent)
     {
         this.x = x;
         this.z = z;
