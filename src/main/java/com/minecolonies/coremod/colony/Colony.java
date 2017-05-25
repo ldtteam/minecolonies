@@ -863,12 +863,19 @@ public class Colony implements IColony
           .filter(permissions::isSubscriber)
           .forEachOrdered(subscribers::add);
 
-        if(subscribers.isEmpty() && ticksPassed >= TICKS_HOUR)
+        if(subscribers.isEmpty())
+        {
+            if(ticksPassed >= TICKS_HOUR)
+            {
+                ticksPassed = 0;
+                lastContactInHours++;
+            }
+            ticksPassed++;
+        }
+        else
         {
             ticksPassed = 0;
-            lastContactInHours++;
         }
-        ticksPassed++;
 
         //  Add nearby players
         for (final EntityPlayer o : world.playerEntities)

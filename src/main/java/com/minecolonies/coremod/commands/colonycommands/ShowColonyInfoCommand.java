@@ -34,7 +34,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
     private static final String CITIZENS                   = "§2Citizens: §f";
     private static final String NO_COLONY_FOUND_MESSAGE    = "Colony with mayor %s not found.";
     private static final String NO_COLONY_FOUND_MESSAGE_ID = "Colony with ID %d not found.";
-    private static final String LAST_CONTACT_TEXT          = "Last contact with Owner of Officer: %d hours ago!";
+    private static final String LAST_CONTACT_TEXT          = "Last contact with Owner or Officer: %d hours ago!";
 
     /**
      * Initialize this SubCommand with it's parents.
