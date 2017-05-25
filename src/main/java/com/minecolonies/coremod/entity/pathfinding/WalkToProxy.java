@@ -113,7 +113,7 @@ public class WalkToProxy
     {
         if (!target.equals(this.target))
         {
-            reset();
+            this.resetProxyList();
             this.target = target;
         }
 
@@ -131,7 +131,7 @@ public class WalkToProxy
                 currentProxy = target;
             }
 
-            proxyList = new ArrayList<>();
+            this.resetProxyList();
             return takeTheDirectPath(target, range, onMove);
         }
 
@@ -204,10 +204,10 @@ public class WalkToProxy
     /**
      * Reset the proxy.
      */
-    public void reset()
+    private void resetProxyList()
     {
         currentProxy = null;
-        proxyList = new ArrayList<>();
+        proxyList.clear();
     }
 
     /**
@@ -235,7 +235,7 @@ public class WalkToProxy
             {
                 if (level.getRandomNode() != null && level.getRandomNode().getParent() != null)
                 {
-                    com.minecolonies.coremod.entity.ai.citizen.miner.Node currentNode = level.getNode(level.getRandomNode().getParent());
+                    Node currentNode = level.getNode(level.getRandomNode().getParent());
                     while (new Point2D.Double(currentNode.getX(), currentNode.getZ()) != currentNode.getParent() && currentNode.getParent() != null)
                     {
                         proxyList.add(new BlockPos(currentNode.getX(), levelDepth, currentNode.getZ()));
@@ -272,7 +272,7 @@ public class WalkToProxy
                 if (level.getRandomNode() != null && level.getRandomNode().getParent() != null)
                 {
                     final List<BlockPos> nodesToTarget = new ArrayList<>();
-                    com.minecolonies.coremod.entity.ai.citizen.miner.Node currentNode = level.getNode(level.getRandomNode().getParent());
+                    Node currentNode = level.getNode(level.getRandomNode().getParent());
                     while (new Point2D.Double(currentNode.getX(), currentNode.getZ()) != currentNode.getParent() && currentNode.getParent() != null)
                     {
                         nodesToTarget.add(new BlockPos(currentNode.getX(), levelDepth, currentNode.getZ()));
@@ -304,7 +304,7 @@ public class WalkToProxy
 
                 if (lastNode != null && lastNode.getParent() != null)
                 {
-                    com.minecolonies.coremod.entity.ai.citizen.miner.Node currentNode = level.getNode(lastNode.getParent());
+                    Node currentNode = level.getNode(lastNode.getParent());
                     while (new Point2D.Double(currentNode.getX(), currentNode.getZ()) != currentNode.getParent() && currentNode.getParent() != null)
                     {
                         proxyList.add(new BlockPos(currentNode.getX(), levelDepth, currentNode.getZ()));
@@ -315,7 +315,7 @@ public class WalkToProxy
                 if (level.getRandomNode().getParent() != null)
                 {
                     final List<BlockPos> nodesToTarget = new ArrayList<>();
-                    com.minecolonies.coremod.entity.ai.citizen.miner.Node currentNode = level.getNode(level.getRandomNode().getParent());
+                    Node currentNode = level.getNode(level.getRandomNode().getParent());
                     while (new Point2D.Double(currentNode.getX(), currentNode.getZ()) != currentNode.getParent() && currentNode.getParent() != null)
                     {
                         nodesToTarget.add(new BlockPos(currentNode.getX(), levelDepth, currentNode.getZ()));

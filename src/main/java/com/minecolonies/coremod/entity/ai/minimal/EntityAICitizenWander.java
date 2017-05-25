@@ -45,17 +45,18 @@ public class EntityAICitizenWander extends EntityAIBase
         {
             return false;
         }
-        Vec3d Vec3d = RandomPositionGenerator.findRandomTarget(citizen, 10, 7);
-        if (Vec3d == null)
+
+        Vec3d vec3d = RandomPositionGenerator.getLandPos(citizen, 10, 7);
+        if (vec3d == null)
         {
             return false;
         }
 
-        Vec3d = new Vec3d(Vec3d.xCoord, getValidHeight(Vec3d), Vec3d.zCoord);
+        vec3d = new Vec3d(vec3d.xCoord, getValidHeight(vec3d), vec3d.zCoord);
 
-        this.xPosition = Vec3d.xCoord;
-        this.yPosition = Vec3d.yCoord;
-        this.zPosition = Vec3d.zCoord;
+        this.xPosition = vec3d.xCoord;
+        this.yPosition = vec3d.yCoord;
+        this.zPosition = vec3d.zCoord;
 
         return true;
     }
