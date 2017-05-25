@@ -394,7 +394,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         sections.clear();
         final InventoryPlayer inventory = this.mc.player.inventory;
         final List<String> allSections = Structures.getSections();
-        for (String section : allSections)
+        for (final String section : allSections)
         {
             if (section.equals(Structures.SCHEMATICS_PREFIX) || section.equals(Structures.SCHEMATICS_SCAN) || inventoryHasHut(inventory, section))
             {
@@ -522,13 +522,13 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             schematic = schematics.get(schematicsDropDownList.getSelectedIndex());
         }
         final String currentSchematic = schematic.isEmpty() ? "" : (new Structures.StructureName(schematic)).getSchematic();
-        String section = sections.get(sectionsDropDownList.getSelectedIndex());
-        String style = styles.get(stylesDropDownList.getSelectedIndex());
+        final String section = sections.get(sectionsDropDownList.getSelectedIndex());
+        final String style = styles.get(stylesDropDownList.getSelectedIndex());
         schematics = Structures.getSchematicsFor(section, style);
         int newIndex = -1;
         for (int i = 0; i < schematics.size(); i++)
         {
-            Structures.StructureName sn = new Structures.StructureName(schematics.get(i));
+            final Structures.StructureName sn = new Structures.StructureName(schematics.get(i));
             if (sn.getSchematic().equals(currentSchematic))
             {
                 newIndex = i;
@@ -710,7 +710,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     {
         final String sname = schematics.get(schematicsDropDownList.getSelectedIndex());
         final Structures.StructureName structureName = new Structures.StructureName(sname);
-        Structure structure = new Structure(null,
+        final Structure structure = new Structure(null,
                                              structureName.toString(),
                                              new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())).setMirror(Settings.instance.getMirror()));
 

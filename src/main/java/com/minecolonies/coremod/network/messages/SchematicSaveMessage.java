@@ -43,7 +43,7 @@ public class SchematicSaveMessage implements IMessage, IMessageHandler<Schematic
     @Override
     public void fromBytes(@NotNull final ByteBuf buf)
     {
-        int length = buf.readInt();
+        final int length = buf.readInt();
         final byte[] compressedData = new byte[length];
         buf.readBytes(compressedData);
         data = Structure.uncompress(compressedData);
@@ -91,7 +91,7 @@ public class SchematicSaveMessage implements IMessage, IMessageHandler<Schematic
             return null;
         }
 
-        boolean schematicSent;
+        final boolean schematicSent;
         if (message.data == null)
         {
             Log.getLogger().error("Received empty schematic file");

@@ -31,7 +31,7 @@ public class StandardToken implements IToken<UUID, NBTTagCompound>
     /**
      * Creates a new token with the given id.
      */
-    public StandardToken(@NotNull UUID id)
+    public StandardToken(@NotNull final UUID id)
     {
         this.id = id;
     }
@@ -50,7 +50,7 @@ public class StandardToken implements IToken<UUID, NBTTagCompound>
     @Override
     public NBTTagCompound serializeNBT()
     {
-        NBTTagCompound compound = new NBTTagCompound();
+        final NBTTagCompound compound = new NBTTagCompound();
 
         compound.setLong(NBT_LSB, id.getLeastSignificantBits());
         compound.setLong(NBT_MSB, id.getMostSignificantBits());
@@ -59,7 +59,7 @@ public class StandardToken implements IToken<UUID, NBTTagCompound>
     }
 
     @Override
-    public void deserializeNBT(NBTTagCompound nbt)
+    public void deserializeNBT(final NBTTagCompound nbt)
     {
         this.id = new UUID(nbt.getLong(NBT_MSB), nbt.getLong(NBT_LSB));
     }
@@ -71,7 +71,7 @@ public class StandardToken implements IToken<UUID, NBTTagCompound>
     }
 
     @Override
-    public boolean equals(Object o)
+    public boolean equals(final Object o)
     {
         if (this == o)
         {
@@ -82,7 +82,7 @@ public class StandardToken implements IToken<UUID, NBTTagCompound>
             return false;
         }
 
-        IToken that = (IToken) o;
+        final IToken that = (IToken) o;
 
         return id.equals(that.getIdentifier());
     }

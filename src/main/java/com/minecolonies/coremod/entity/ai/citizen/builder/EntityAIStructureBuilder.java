@@ -237,7 +237,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
      * @param building   the building.
      * @param blockState the block to add.
      */
-    private void requestBlockToBuildingIfRequired(BuildingBuilder building, IBlockState blockState)
+    private void requestBlockToBuildingIfRequired(final BuildingBuilder building, final IBlockState blockState)
     {
         if (job.getStructure().getBlockInfo().tileentityData != null)
         {
@@ -256,7 +256,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     /**
      * Adds entities to the builder building if he needs it.
      */
-    private void requestEntityToBuildingIfRequired(Template.EntityInfo entityInfo)
+    private void requestEntityToBuildingIfRequired(final Template.EntityInfo entityInfo)
     {
         if (entityInfo != null)
         {
@@ -398,7 +398,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
      * @param compound the tileEntity stored in a compound.
      * @return the list of itemstacks.
      */
-    private List<ItemStack> getItemStacksOfTileEntity(NBTTagCompound compound)
+    private List<ItemStack> getItemStacksOfTileEntity(final NBTTagCompound compound)
     {
         final List<ItemStack> items = new ArrayList<>();
         final TileEntity tileEntity = TileEntity.create(world, compound);
@@ -508,7 +508,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     }
 
     @Override
-    public void connectBlockToBuildingIfNecessary(@NotNull Block block, @NotNull final BlockPos pos)
+    public void connectBlockToBuildingIfNecessary(@NotNull final Block block, @NotNull final BlockPos pos)
     {
         final BlockPos buildingLocation = job.getWorkOrder().getBuildingLocation();
         final AbstractBuilding building = this.getOwnBuilding().getColony().getBuilding(buildingLocation);
@@ -538,7 +538,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     @Override
     public BlockPos getWorkingPosition(final BlockPos targetPosition)
     {
-        StructureWrapper wrapper = job.getStructure();
+        final StructureWrapper wrapper = job.getStructure();
         final int x1 = wrapper.getPosition().getX() - wrapper.getOffset().getX() - 1;
         final int z1 = wrapper.getPosition().getZ() - wrapper.getOffset().getZ() - 1;
         final int x3 = wrapper.getPosition().getX() + (wrapper.getWidth() - wrapper.getOffset().getX());

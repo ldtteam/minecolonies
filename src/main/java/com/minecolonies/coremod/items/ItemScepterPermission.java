@@ -81,7 +81,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
             final float hitY,
             final float hitZ)
     {
-        ItemStack scepter = playerIn.getHeldItem(hand);
+        final ItemStack scepter = playerIn.getHeldItem(hand);
 
         if (worldIn.isRemote)
         {
@@ -118,7 +118,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
             final EntityPlayer playerIn,
             final EnumHand hand)
     {
-        ItemStack scepter = playerIn.getHeldItem(hand);
+        final ItemStack scepter = playerIn.getHeldItem(hand);
 
         if (worldIn.isRemote)
         {
@@ -204,7 +204,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
             final BlockPos pos,
             final ColonyView colonyView)
     {
-        ChangeFreeToInteractBlockMessage message = new ChangeFreeToInteractBlockMessage(colonyView, pos, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK);
+        final ChangeFreeToInteractBlockMessage message = new ChangeFreeToInteractBlockMessage(colonyView, pos, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK);
         MineColonies.getNetwork().sendToServer(message);
 
         return EnumActionResult.SUCCESS;

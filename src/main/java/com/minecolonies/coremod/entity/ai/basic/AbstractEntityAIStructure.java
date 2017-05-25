@@ -342,7 +342,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     /**
      * Switches the structures stage after the current one has been completed.
      */
-    private void switchStage(AIState state)
+    private void switchStage(final AIState state)
     {
         if (state.equals(AIState.BUILDING_STEP))
         {
@@ -393,7 +393,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * @param position    the position to set it.
      * @param isMirrored  is the structure mirroed?
      */
-    public void loadStructure(@NotNull final String name, int rotateTimes, BlockPos position, boolean isMirrored)
+    public void loadStructure(@NotNull final String name, final int rotateTimes, final BlockPos position, final boolean isMirrored)
     {
         if (job instanceof AbstractJobStructure)
         {
@@ -588,7 +588,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         final ItemStack item = BlockUtils.getItemStackFromBlockState(blockState);
         worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item == null ? InventoryUtils.EMPTY : item);
         final IBlockState decrease;
-        for(IPlacementHandler handlers :PlacementHandlers.handlers)
+        for(final IPlacementHandler handlers :PlacementHandlers.handlers)
         {
             final Object result = handlers.handle(world, coords, blockState, this);
             if(result instanceof IPlacementHandler.ActionProcessingResult)
@@ -630,7 +630,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
     private boolean decreaseInventory(@NotNull final BlockPos pos, final Block block, @NotNull final IBlockState state)
     {
-        @NotNull IBlockState stateToPlace = state;
+        @NotNull final IBlockState stateToPlace = state;
 
         //Move out of the way when placing blocks
         if (MathHelper.floor(worker.posX) == pos.getX()
@@ -641,7 +641,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             worker.getNavigator().moveAwayFromXYZ(pos, RUN_AWAY_SPEED, 1.0);
         }
 
-        @NotNull Block blockToPlace = block;
+        @NotNull final Block blockToPlace = block;
         connectBlockToBuildingIfNecessary(blockToPlace, pos);
 
         //It will crash at blocks like water which is actually free, we don't have to decrease the stacks we have.
@@ -734,13 +734,13 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * @return the output object or null.
      */
     @Nullable
-    public Entity getEntityFromEntityInfoOrNull(Template.EntityInfo entityInfo)
+    public Entity getEntityFromEntityInfoOrNull(final Template.EntityInfo entityInfo)
     {
         try
         {
             return EntityList.createEntityFromNBT(entityInfo.entityData, world);
         }
-        catch (RuntimeException e)
+        catch (final RuntimeException e)
         {
             Log.getLogger().info("Couldn't restore entitiy", e);
             return null;

@@ -35,7 +35,7 @@ public abstract class AbstractWindowSkeleton extends Window implements ButtonHan
      * @param id     Button ID.
      * @param action Consumer with the action to be performed.
      */
-    public final void registerButton(String id, Runnable action)
+    public final void registerButton(final String id, final Runnable action)
     {
         registerButton(id, (button) -> action.run());
     }

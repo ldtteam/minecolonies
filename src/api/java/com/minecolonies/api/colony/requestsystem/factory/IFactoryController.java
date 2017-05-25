@@ -18,7 +18,7 @@ public interface IFactoryController
      *
      * @throws IllegalArgumentException is thrown when the given input name is unknown to this Factory Controller.
      */
-    default <Input> IFactory<Input, ?> getFactoryForInput(@NotNull String className) throws IllegalArgumentException
+    default <Input> IFactory<Input, ?> getFactoryForInput(@NotNull final String className) throws IllegalArgumentException
     {
         //Simple default implementation grabs the class from a given name and casts it to the proper type.
         //Any exceptions thrown before actual request is made gets wrapped.
@@ -26,11 +26,11 @@ public interface IFactoryController
         {
             return getFactoryForInput((Class<? extends Input>) Class.forName(className));
         }
-        catch (IllegalArgumentException ex)
+        catch (final IllegalArgumentException ex)
         {
             throw ex;
         }
-        catch (Exception ex)
+        catch (final Exception ex)
         {
             throw new IllegalArgumentException("The given input name is unknown", ex);
         }
@@ -56,7 +56,7 @@ public interface IFactoryController
      *
      * @throws IllegalArgumentException is thrown when the given Output name is unknown to this Factory Controller.
      */
-    default <Output> IFactory<?, Output> getFactoryForOutput(@NotNull String className) throws IllegalArgumentException
+    default <Output> IFactory<?, Output> getFactoryForOutput(@NotNull final String className) throws IllegalArgumentException
     {
         //Simple default implementation grabs the class from a given name and casts it to the proper type.
         //Any exceptions thrown before actual request is made gets wrapped.
@@ -64,11 +64,11 @@ public interface IFactoryController
         {
             return getFactoryForOutput((Class<? extends Output>) Class.forName(className));
         }
-        catch (IllegalArgumentException ex)
+        catch (final IllegalArgumentException ex)
         {
             throw ex;
         }
-        catch (Exception ex)
+        catch (final Exception ex)
         {
             throw new IllegalArgumentException("The given output name is unknown", ex);
         }

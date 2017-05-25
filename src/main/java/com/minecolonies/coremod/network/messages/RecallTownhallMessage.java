@@ -42,19 +42,19 @@ public class RecallTownhallMessage extends AbstractMessage<RecallTownhallMessage
     }
 
     @Override
-    public void fromBytes(ByteBuf buf)
+    public void fromBytes(final ByteBuf buf)
     {
         colonyId = buf.readInt();
     }
 
     @Override
-    public void toBytes(ByteBuf buf)
+    public void toBytes(final ByteBuf buf)
     {
         buf.writeInt(colonyId);
     }
 
     @Override
-    public void messageOnServerThread(RecallTownhallMessage message, EntityPlayerMP player)
+    public void messageOnServerThread(final RecallTownhallMessage message, final EntityPlayerMP player)
     {
         final Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null)
@@ -70,7 +70,7 @@ public class RecallTownhallMessage extends AbstractMessage<RecallTownhallMessage
             {
                 final BlockPos location = building.getLocation();
                 final World world = colony.getWorld();
-                for (CitizenData citizenData : colony.getCitizens().values())
+                for (final CitizenData citizenData : colony.getCitizens().values())
                 {
                     if (!TeleportHelper.teleportCitizen(citizenData.getCitizenEntity(), world, location))
                     {

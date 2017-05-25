@@ -83,7 +83,7 @@ public class ColonyListTest
     @Test
     public void testCreate()
     {
-        Colony colony = list.create(world, BlockPos.ORIGIN);
+        final Colony colony = list.create(world, BlockPos.ORIGIN);
 
         assertEquals(colony, list.get(colony.getID()));
     }
@@ -93,7 +93,7 @@ public class ColonyListTest
     {
         for (int i = 0; i < ColonyList.INITIAL_SIZE + 1; i++)
         {
-            Colony colony = list.create(world, BlockPos.ORIGIN);
+            final Colony colony = list.create(world, BlockPos.ORIGIN);
             assertEquals(colony, list.get(colony.getID()));
         }
 
@@ -138,8 +138,8 @@ public class ColonyListTest
     @Test
     public void testAddHighId()
     {
-        Colony colony = mock(Colony.class);
-        int id = 10 * ColonyList.INITIAL_SIZE;
+        final Colony colony = mock(Colony.class);
+        final int id = 10 * ColonyList.INITIAL_SIZE;
         when(colony.getID()).thenReturn(id);
         list.add(colony);
 
@@ -185,7 +185,7 @@ public class ColonyListTest
         list.add(colony1);
         list.remove(colony1);
 
-        Colony colony = list.create(world, BlockPos.ORIGIN);
+        final Colony colony = list.create(world, BlockPos.ORIGIN);
 
         assertEquals(1, colony.getID());
     }
@@ -225,7 +225,7 @@ public class ColonyListTest
         list.add(colony1);
         list.add(colony2);
 
-        List<Colony> copy = list.getCopyAsList();
+        final List<Colony> copy = list.getCopyAsList();
 
         assertEquals(list.size(), copy.size());
         assertEquals(1, copy.get(0).getID());
@@ -238,7 +238,7 @@ public class ColonyListTest
         list.add(colony1);
         list.add(colony2);
 
-        Iterator<Colony> itr = list.iterator();
+        final Iterator<Colony> itr = list.iterator();
 
         int count = 0;
 
