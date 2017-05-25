@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -32,6 +33,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 import static net.minecraft.util.EnumFacing.NORTH;
 import static net.minecraft.util.EnumFacing.fromAngle;
 
@@ -118,7 +120,7 @@ public class BlockHutField extends BlockContainer
     }
 
     //todo: remove once we no longer need to support this
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings(DEPRECATION)
     @Override
     public boolean isFullCube(final IBlockState state)
     {
@@ -133,7 +135,7 @@ public class BlockHutField extends BlockContainer
 
     //todo: remove once we no longer need to support this
     @NotNull
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings(DEPRECATION)
     @Override
     public AxisAlignedBB getBoundingBox(final IBlockState state, final IBlockAccess source, final BlockPos pos)
     {
@@ -146,7 +148,7 @@ public class BlockHutField extends BlockContainer
     }
 
     //todo: remove once we no longer need to support this
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings(DEPRECATION)
     @Override
     public boolean isOpaqueCube(final IBlockState state)
     {
@@ -190,7 +192,7 @@ public class BlockHutField extends BlockContainer
     // ======================= Rendering & IBlockState =======================
     // =======================================================================
 
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings(DEPRECATION)
     @NotNull
     @Override
     public IBlockState getStateForPlacement(

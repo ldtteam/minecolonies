@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.Suppression;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -13,6 +14,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
+import static com.minecolonies.api.util.constant.Suppression.*;
 
 //TODO extend list/collection
 
@@ -121,8 +124,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
      * @return The Colony associated with the provided id.
      */
     @Nullable
-    // no way to remove this, java does it too
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     public T get(final int index)
     {
         if (index < 1 || index >= list.length)

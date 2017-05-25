@@ -4,6 +4,7 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -51,6 +52,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+
+import static com.minecolonies.api.util.constant.Suppression.*;
 
 /**
  * Structure class, used to store, create, get structures.
@@ -199,7 +202,7 @@ public class Structure
      * @param structureName name of the structure to load
      * @return the input stream or null
      */
-    @SuppressWarnings("squid:S2095")
+    @SuppressWarnings(RESOURCES_SHOULD_BE_CLOSED)
     @Nullable
     public static InputStream getStream(final String structureName)
     {

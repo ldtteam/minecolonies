@@ -1,6 +1,7 @@
 package com.minecolonies.api.util;
 
 import com.minecolonies.api.compatibility.Compatibility;
+import com.minecolonies.api.util.constant.Suppression;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemHoe;
@@ -14,6 +15,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+
+import static com.minecolonies.api.util.constant.Suppression.*;
 
 /**
  * General purpose utilities class.
@@ -366,7 +369,7 @@ public final class Utils
      * @param tool  the tool category.
      * @return integer value for mining level &gt;= 0 is okay.
      */
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings(DEPRECATION)
     public static int getMiningLevel(@Nullable final ItemStack stack, @Nullable final String tool)
     {
         if (tool == null)

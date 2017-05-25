@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.workorders;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.Structures;
@@ -13,6 +14,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.util.constant.Suppression.*;
 
 /**
  * A work order that the build can take to build decorations.
@@ -201,7 +203,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
      * @param hasBuilder true if we have a builder for this work order
      * @param sendMessage true if we need to send the message
      */
-    @SuppressWarnings("squid:S1172")
+    @SuppressWarnings(UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED)
     protected void sendBuilderMessage(@NotNull final Colony colony, final boolean hasBuilder, final boolean sendMessage)
     {
         if (hasSentMessageForThisWorkOrder)
@@ -226,7 +228,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
      * @param citizen which could build it or not
      * @return true if he is able to.
      */
-    @SuppressWarnings("squid:S1172")
+    @SuppressWarnings(UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED)
     protected boolean canBuild(@NotNull final CitizenData citizen)
     {
         return true;
@@ -282,7 +284,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
      * @param world where the decoration is
      * @return building rotation.
      */
-    @SuppressWarnings("squid:S1172")
+    @SuppressWarnings(UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED)
     public int getRotation(final World world)
     {
         return buildingRotation;

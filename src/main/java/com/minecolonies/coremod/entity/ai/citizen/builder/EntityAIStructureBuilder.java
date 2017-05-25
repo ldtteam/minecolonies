@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.builder;
 
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockSolidSubstitution;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -40,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.Suppression.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
@@ -172,7 +174,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
      * The rule thinks we should have less continue and breaks.
      * But in this case the rule does not apply because code would become unreadable and uneffective without.
      */
-    @SuppressWarnings("squid:S135")
+    @SuppressWarnings(LOOPS_SHOULD_NOT_CONTAIN_MORE_THAN_A_SINGLE_BREAK_OR_CONTINUE_STATEMENT)
     private void requestMaterials()
     {
         if (job.getWorkOrder().isRequested())

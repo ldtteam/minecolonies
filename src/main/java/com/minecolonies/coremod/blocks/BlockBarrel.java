@@ -2,6 +2,7 @@ package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -19,6 +20,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Random;
+
+import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 
 public class BlockBarrel extends Block
 {
@@ -60,7 +63,7 @@ public class BlockBarrel extends Block
     /**
      * initialize the block
      */
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings(DEPRECATION)
     private void initBlock()
     {
         setRegistryName(BLOCK_NAME);
@@ -135,7 +138,7 @@ public class BlockBarrel extends Block
     }
 
     //todo: remove once we no longer need to support this
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings(DEPRECATION)
     @Override
     public IBlockState getStateFromMeta(final int meta)
     {
@@ -155,7 +158,7 @@ public class BlockBarrel extends Block
      * @return true
      */
     //todo: remove once we no longer need to support this
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings(DEPRECATION)
     @Override
     public boolean isOpaqueCube(final IBlockState state)
     {

@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.*;
@@ -59,6 +60,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.*;
+
+import static com.minecolonies.api.util.constant.Suppression.*;
 
 /**
  * The Class used to represent the citizen entities.
@@ -336,7 +339,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * The rule thinks we should extract ++priority in a proper statement.
      * But in this case the rule does not apply because that would remove the readability.
      */
-    @SuppressWarnings("squid:S881")
+    @SuppressWarnings(INCREMENT_AND_DECREMENT_OPERATORS_SHOULD_NOT_BE_USED_IN_A_METHOD_CALL_OR_MIXED_WITH_OTHER_OPERATORS_IN_AN_EXPRESSION)
     private void initTasks()
     {
         int priority = 0;

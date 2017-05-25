@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
@@ -25,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
+import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 import static net.minecraft.util.EnumFacing.*;
 
 /**
@@ -309,7 +311,7 @@ public class BlockConstructionTapeCorner extends Block
         return BlockRenderLayer.SOLID;
     }
 
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings(DEPRECATION)
     @NotNull
     @Override
     public IBlockState getStateForPlacement(
