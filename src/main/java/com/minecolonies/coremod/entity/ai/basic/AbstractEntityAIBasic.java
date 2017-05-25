@@ -630,8 +630,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         if (checkForNeededTool(Utils.SHOVEL))
         {
-            getOwnBuilding().setNeedsShovel(true);
-            getOwnBuilding().setNeedsPickaxeLevel(TOOL_LEVEL_WOOD_OR_GOLD);
+            getOwnBuilding().setNeedsTool(Utils.SHOVEL);
         }
 
         return getOwnBuilding().needsShovel();
@@ -761,8 +760,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         if (checkForNeededTool(Utils.AXE))
         {
-            getOwnBuilding().setNeedsAxe(true);
-            getOwnBuilding().setNeedsPickaxeLevel(TOOL_LEVEL_WOOD_OR_GOLD);
+            getOwnBuilding().setNeedsTool(Utils.AXE);
         }
         return getOwnBuilding().needsAxe();
     }
@@ -793,8 +791,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         if (checkForNeededTool(Utils.HOE))
         {
-            getOwnBuilding().setNeedsHoe(true);
-            getOwnBuilding().setNeedsPickaxeLevel(TOOL_LEVEL_WOOD_OR_GOLD);
+            getOwnBuilding().setNeedsTool(Utils.HOE);
         }
         return getOwnBuilding().needsHoe();
     }
@@ -807,7 +804,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     @NotNull
     private AIState waitForPickaxe()
     {
-        if (checkForPickaxe(getOwnBuilding().getNeededPickaxeLevel()))
+        if (checkForPickaxe(getOwnBuilding().getNeededToolLevel()))
         {
             delay += DELAY_RECHECK;
             return NEEDS_PICKAXE;
@@ -824,28 +821,19 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private boolean checkForPickaxe(final int minlevel)
     {
-        //Check for a pickaxe
-        getOwnBuilding().setNeedsPickaxe(!InventoryFunctions
-                                                  .matchFirstInProvider(
-                                                          worker,
-                                              stack -> Utils.checkIfPickaxeQualifies(
-                                                minlevel, Utils.getMiningLevel(stack, Utils.PICKAXE)),
-                                              InventoryFunctions::doNothing
-                                            ));
-
         delay += DELAY_RECHECK;
 
         final InventoryCitizen inventory = worker.getInventoryCitizen();
         final int hutLevel = worker.getWorkBuilding().getBuildingLevel();
         final boolean isUsable = InventoryUtils.isToolInItemHandler(new InvWrapper(inventory), Utils.PICKAXE, minlevel, hutLevel);
 
-        if (!isUsable)
+        if (isUsable)
         {
-            getOwnBuilding().setNeedsPickaxe(true);
+            getOwnBuilding().setNeedsTool(Utils.NONE);
         }
-        if (getOwnBuilding().needsPickaxe())
+        else
         {
-            getOwnBuilding().setNeedsPickaxeLevel(minlevel);
+            getOwnBuilding().setNeedsTool(Utils.PICKAXE, minlevel);
             if (walkToBuilding())
             {
                 return false;
@@ -920,13 +908,14 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     public boolean checkForWeapon()
     {
-        //Check for a pickaxe
-        getOwnBuilding().setNeedsWeapon(!InventoryFunctions
+        final boolean needsWeapon = !InventoryFunctions
                                                  .matchFirstInProvider(
                                                          worker,
                                              stack -> stack != null && Utils.doesItemServeAsWeapon(stack),
                                              InventoryFunctions::doNothing
-                                           ));
+                                           );
+
+        getOwnBuilding().setNeedsTool(needsWeapon ? Utils.WEAPON : Utils.NONE);
 
         delay += DELAY_RECHECK;
 

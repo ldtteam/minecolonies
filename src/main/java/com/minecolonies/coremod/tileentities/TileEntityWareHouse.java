@@ -348,7 +348,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
 
         if(building != null)
         {
-            if(InventoryUtils.isToolInProvider(building.getTileEntity(), tool, requestingBuilding.getNeededPickaxeLevel(), requestingBuilding.getBuildingLevel()))
+            if(InventoryUtils.isToolInProvider(building.getTileEntity(), tool, requestingBuilding.getNeededToolLevel(), requestingBuilding.getBuildingLevel()))
             {
                 return true;
             }
@@ -357,7 +357,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             {
                 @Nullable final TileEntity entity = world.getTileEntity(pos);
                 if(entity instanceof TileEntityChest
-                    && InventoryUtils.isToolInProvider(entity, tool, requestingBuilding.getNeededPickaxeLevel(), requestingBuilding.getBuildingLevel()))
+                    && InventoryUtils.isToolInProvider(entity, tool, requestingBuilding.getNeededToolLevel(), requestingBuilding.getBuildingLevel()))
                 {
                     return true;
                 }

@@ -436,7 +436,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return true;
         }
 
-        return InventoryUtils.isToolInItemHandler(new InvWrapper(worker.getInventoryCitizen()), requiredTool, buildingToDeliver.getNeededPickaxeLevel(), buildingToDeliver.getBuildingLevel());
+        return InventoryUtils.isToolInItemHandler(new InvWrapper(worker.getInventoryCitizen()), requiredTool, buildingToDeliver.getNeededToolLevel(), buildingToDeliver.getBuildingLevel());
     }
 
     /**
@@ -472,7 +472,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             final String tool = buildingToDeliver.getRequiredTool();
             position = wareHouse.getTileEntity()
                          .getPositionOfChestWithTool(tool,
-                           Utils.PICKAXE.equals(tool) ? buildingToDeliver.getNeededPickaxeLevel() : buildingToDeliver.getBuildingLevel(),
+                           Utils.PICKAXE.equals(tool) ? buildingToDeliver.getNeededToolLevel() : buildingToDeliver.getBuildingLevel(),
                            buildingToDeliver);
         }
         else

@@ -36,6 +36,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
+import static com.minecolonies.coremod.util.constants.ToolLevelConstants.*;
+
 /**
  * Base building class, has all the foundation for what a building stores and does.
  */
@@ -147,29 +149,13 @@ public abstract class AbstractBuilding
     @NotNull
     private List<ItemStack> itemsCurrentlyNeeded = new ArrayList<>();
     /**
-     * This flag tells if we need a shovel, will be set on tool needs.
+     * the tool currenly needed by the worker.
      */
-    private boolean         needsShovel          = false;
+    private String          needsTool            = Utils.NONE;
     /**
-     * This flag tells if we need an axe, will be set on tool needs.
+     * The minimum tool level we need to fulfill the tool request.
      */
-    private boolean         needsAxe             = false;
-    /**
-     * This flag tells if we need a hoe, will be set on tool needs.
-     */
-    private boolean         needsHoe             = false;
-    /**
-     * This flag tells if we need a pickaxe, will be set on tool needs.
-     */
-    private boolean         needsPickaxe         = false;
-    /**
-     * This flag tells if we need a weapon, will be set on tool needs.
-     */
-    private boolean         needsWeapon          = false;
-    /**
-     * The minimum pickaxe level we need to fulfill the tool request.
-     */
-    private int             needsPickaxeLevel    = -1;
+    private int             needsToolLevel       = TOOL_LEVEL_HAND;
     /**
      * Checks if there is a ongoing delivery for the currentItem.
      */
@@ -938,7 +924,7 @@ public abstract class AbstractBuilding
      */
     public boolean needsAnything()
     {
-        return !itemsCurrentlyNeeded.isEmpty() || needsShovel || needsAxe || needsHoe || needsWeapon || needsPickaxe;
+        return !itemsCurrentlyNeeded.isEmpty() || !needsTool.equals(Utils.NONE);
     }
 
     /**
@@ -958,7 +944,7 @@ public abstract class AbstractBuilding
      */
     public boolean needsShovel()
     {
-        return needsShovel;
+        return needsTool.equals(Utils.SHOVEL);
     }
 
     /**
@@ -968,7 +954,7 @@ public abstract class AbstractBuilding
      */
     public boolean needsAxe()
     {
-        return needsAxe;
+        return needsTool.equals(Utils.AXE);
     }
 
     /**
@@ -978,7 +964,7 @@ public abstract class AbstractBuilding
      */
     public boolean needsHoe()
     {
-        return needsHoe;
+        return needsTool.equals(Utils.HOE);
     }
 
     /**
@@ -988,7 +974,7 @@ public abstract class AbstractBuilding
      */
     public boolean needsPickaxe()
     {
-        return needsPickaxe;
+        return needsTool.equals(Utils.PICKAXE);
     }
 
     /**
@@ -998,67 +984,28 @@ public abstract class AbstractBuilding
      */
     public boolean needsWeapon()
     {
-        return needsWeapon;
+        return needsTool.equals(Utils.WEAPON);
     }
 
     /**
-     * Check the required pickaxe level..
+     * Set which tool the worker needs.
      *
-     * @return the mining level of the pickaxe.
+     * @param needsTool which tool is needed, use Utils.
      */
-    public int getNeededPickaxeLevel()
+    public void setNeedsTool(final String needsTool, final int minimalLevel)
     {
-        return needsPickaxeLevel;
+        this.needsTool = needsTool;
+        this.needsToolLevel = minimalLevel;
     }
 
-    /**
-     * Set if the worker needs a shovel.
-     *
-     * @param needsShovel true or false.
-     */
-    public void setNeedsShovel(final boolean needsShovel)
+    public void setNeedsTool(final String needsTool)
     {
-        this.needsShovel = needsShovel;
+        setNeedsTool(needsTool, TOOL_LEVEL_WOOD_OR_GOLD);
     }
 
-    /**
-     * Set if the worker needs a axe.
-     *
-     * @param needsAxe true or false.
-     */
-    public void setNeedsAxe(final boolean needsAxe)
+    public int getNeededToolLevel()
     {
-        this.needsAxe = needsAxe;
-    }
-
-    /**
-     * Set if the worker needs a hoe.
-     *
-     * @param needsHoe true or false.
-     */
-    public void setNeedsHoe(final boolean needsHoe)
-    {
-        this.needsHoe = needsHoe;
-    }
-
-    /**
-     * Set if the worker needs a pickaxe.
-     *
-     * @param needsPickaxe true or false.
-     */
-    public void setNeedsPickaxe(final boolean needsPickaxe)
-    {
-        this.needsPickaxe = needsPickaxe;
-    }
-
-    /**
-     * Set if the worker needs a weapon.
-     *
-     * @param needsWeapon true or false.
-     */
-    public void setNeedsWeapon(final boolean needsWeapon)
-    {
-        this.needsWeapon = needsWeapon;
+        return needsToolLevel;
     }
 
     /**
@@ -1121,48 +1068,13 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Set the needed pickaxe level of the worker.
-     *
-     * @param needsPickaxeLevel the mining level.
-     */
-    public void setNeedsPickaxeLevel(final int needsPickaxeLevel)
-    {
-        this.needsPickaxeLevel = needsPickaxeLevel;
-    }
-
-    /**
      * Check for the required tool and return the describing string.
      *
      * @return the string of the required tool.
      */
     public String getRequiredTool()
     {
-        if (needsHoe)
-        {
-            return Utils.HOE;
-        }
-
-        if (needsAxe)
-        {
-            return Utils.AXE;
-        }
-
-        if (needsPickaxe)
-        {
-            return Utils.PICKAXE;
-        }
-
-        if (needsShovel)
-        {
-            return Utils.SHOVEL;
-        }
-
-        if (needsWeapon)
-        {
-            return Utils.WEAPON;
-        }
-
-        return "";
+        return needsTool;
     }
 
     /**

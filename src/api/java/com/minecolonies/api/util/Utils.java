@@ -21,6 +21,7 @@ import java.util.Objects;
  */
 public final class Utils
 {
+    public static final String NONE    = "";
     public static final String PICKAXE = "pickaxe";
     public static final String SHOVEL  = "shovel";
     public static final String AXE     = "axe";
