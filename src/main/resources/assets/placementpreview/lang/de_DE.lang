@@ -1,0 +1,8 @@
+language.name=Deutsch
+language.region=DE
+language.code=de_DE
+
+category.placementpreview=Platzierungsvorschau
+placementpreview.key.toggle.enabled=Ansicht umschalten
+placementpreview.key.toggle.ghost=Geisterblöcke umschalten
+placementpreview.key.toggle.wire=Wireframe umschalten
