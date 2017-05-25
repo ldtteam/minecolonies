@@ -51,10 +51,10 @@ authors of previous versions.
 modified versions of the software inside them, although the manufacturer
 can do so.  This is fundamentally incompatible with the aim of
 protecting users' freedom to change the software.  The systematic
-pattern of such abuse occurs in the area of bakingProducts for individuals to
+pattern of such abuse occurs in the area of products for individuals to
 use, which is precisely where it is most unacceptable.  Therefore, we
 have designed this version of the GPL to prohibit the practice for those
-bakingProducts.  If such problems arise substantially in other domains, we
+products.  If such problems arise substantially in other domains, we
 stand ready to extend this provision to those domains in future versions
 of the GPL, as needed to protect the freedom of users.
 
@@ -249,18 +249,18 @@ of sections 4 and 5, provided that you also convey the
 machine-readable Corresponding Source under the terms of this License,
 in one of these ways:
 
-    a) Convey the object code in, or embodied in, a physical bakingProduct
+    a) Convey the object code in, or embodied in, a physical products
     (including a physical distribution medium), accompanied by the
     Corresponding Source fixed on a durable physical medium
     customarily used for software interchange.
 
-    b) Convey the object code in, or embodied in, a physical bakingProduct
+    b) Convey the object code in, or embodied in, a physical products
     (including a physical distribution medium), accompanied by a
     written offer, valid for at least three years and valid for as
-    long as you offer spare parts or customer support for that bakingProduct
+    long as you offer spare parts or customer support for that products
     model, to give anyone who possesses the object code either (1) a
     copy of the Corresponding Source for all the software in the
-    bakingProduct that is covered by this License, on a durable physical
+    products that is covered by this License, on a durable physical
     medium customarily used for software interchange, for a price no
     more than your reasonable cost of physically performing this
     conveying of source, or (2) access to copy the
@@ -294,18 +294,18 @@ in one of these ways:
 from the Corresponding Source as a System Library, need not be
 included in conveying the object code work.
 
-  A "User Product" is either (1) a "consumer bakingProduct", which means any
+  A "User Product" is either (1) a "consumer products", which means any
 tangible personal property which is normally used for personal, family,
 or household purposes, or (2) anything designed or sold for incorporation
-into a dwelling.  In determining whether a bakingProduct is a consumer bakingProduct,
+into a dwelling.  In determining whether a products is a consumer products,
 doubtful cases shall be resolved in favor of coverage.  For a particular
-bakingProduct received by a particular user, "normally used" refers to a
-typical or common use of that class of bakingProduct, regardless of the status
+products received by a particular user, "normally used" refers to a
+typical or common use of that class of products, regardless of the status
 of the particular user or of the way in which the particular user
-actually uses, or expects or is expected to use, the bakingProduct.  A bakingProduct
-is a consumer bakingProduct regardless of whether the bakingProduct has substantial
+actually uses, or expects or is expected to use, the products.  A products
+is a consumer products regardless of whether the products has substantial
 commercial, industrial or non-consumer uses, unless such uses represent
-the only significant mode of use of the bakingProduct.
+the only significant mode of use of the products.
 
   "Installation Information" for a User Product means any methods,
 procedures, authorization keys, or other information required to install
@@ -529,7 +529,7 @@ the work, and under which the third party grants, to any of the
 parties who would receive the covered work from you, a discriminatory
 patent license (a) in connection with copies of the covered work
 conveyed by you (or copies made from those copies), or (b) primarily
-for and in connection with specific bakingProducts or compilations that
+for and in connection with specific products or compilations that
 contain the covered work, unless you entered into that arrangement,
 or that patent license was granted, prior to 28 March 2007.
 

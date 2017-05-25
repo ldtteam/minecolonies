@@ -1731,6 +1731,7 @@ public final class InventoryUtils
             if(slot == -1)
             {
                 success = false;
+                i++;
                 continue;
             }
 
