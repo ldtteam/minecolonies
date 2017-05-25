@@ -114,7 +114,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
                 new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
                 new AITarget(PREPARING, this::prepareForBaking),
                 new AITarget(BAKER_KNEADING, this::kneadTheDough),
-                new AITarget(BAKER_BAKING, this::bakeBread),
+                new AITarget(BAKER_BAKING, this::bake),
                 new AITarget(BAKER_TAKE_OUT_OF_OVEN, this::takeFromOven),
                 new AITarget(BAKER_FINISHING, this::finishing)
         );
@@ -132,6 +132,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
             final List<BakingProduct> bakingProducts = getOwnBuilding().getTasks().get(ProductState.BAKED);
             if (bakingProducts == null || bakingProducts.isEmpty())
             {
+                getOwnBuilding().removeFromTasks(ProductState.BAKED, null);
                 return PREPARING;
             }
             currentBakingProduct = bakingProducts.get(0);
@@ -305,8 +306,8 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     {
         for (final @Nullable ItemStack tempStack : list)
         {
-            if (InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), tempStack::isItemEqual) > tempStack.stackSize
-                    || (!isInHut(tempStack) && shouldRequest()))
+            if (InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), tempStack::isItemEqual) < tempStack.stackSize
+                    && !isInHut(tempStack) && shouldRequest())
             {
                 chatSpamFilter.requestTextStringWithoutSpam(tempStack.getDisplayName());
             }
@@ -391,7 +392,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
      *
      * @return the next AIState
      */
-    private AIState bakeBread()
+    private AIState bake()
     {
         final BuildingBaker building = getOwnBuilding();
         if (currentFurnace == null || building.getFurnacesWithProduct().get(currentFurnace) != null)

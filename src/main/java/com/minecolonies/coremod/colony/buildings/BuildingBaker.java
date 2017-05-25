@@ -203,17 +203,20 @@ public class BuildingBaker extends AbstractBuildingWorker
         @NotNull final NBTTagList tasksTagList = new NBTTagList();
         for (@NotNull final Map.Entry<ProductState, List<BakingProduct>> entry : tasks.entrySet())
         {
-            @NotNull final NBTTagCompound taskCompound = new NBTTagCompound();
-            taskCompound.setInteger(TAG_STATE, entry.getKey().ordinal());
-
-            @NotNull final NBTTagList productsTaskList = new NBTTagList();
-            for (@NotNull final BakingProduct bakingProduct : entry.getValue())
+            if(!entry.getValue().isEmpty())
             {
-                @NotNull final NBTTagCompound productCompound = new NBTTagCompound();
-                bakingProduct.writeToNBT(productCompound);
+                @NotNull final NBTTagCompound taskCompound = new NBTTagCompound();
+                taskCompound.setInteger(TAG_STATE, entry.getKey().ordinal());
+
+                @NotNull final NBTTagList productsTaskList = new NBTTagList();
+                for (@NotNull final BakingProduct bakingProduct : entry.getValue())
+                {
+                    @NotNull final NBTTagCompound productCompound = new NBTTagCompound();
+                    bakingProduct.writeToNBT(productCompound);
+                }
+                taskCompound.setTag(TAG_PRODUCTS, productsTaskList);
+                tasksTagList.appendTag(taskCompound);
             }
-            taskCompound.setTag(TAG_PRODUCTS, productsTaskList);
-            tasksTagList.appendTag(taskCompound);
         }
         compound.setTag(TAG_TASKS, tasksTagList);
 
