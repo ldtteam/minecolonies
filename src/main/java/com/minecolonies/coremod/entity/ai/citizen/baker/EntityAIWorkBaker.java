@@ -52,7 +52,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     /**
      * Times the dough needs to be kneaded.
      */
-    private static final int KNEADING_TIME = 10;
+    private static final int KNEADING_TIME = 5;
 
     /**
      * Time the worker delays until the next hit.
@@ -67,7 +67,22 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     /**
      * Make this amount of products until dumping
      */
-    private static final int UNTIL_DUMP = 3;
+    private static final int UNTIL_DUMP          = 3;
+
+    /**
+     * Increase this value to make the product creation progress way slower.
+     */
+    private static final int PROGRESS_MULTIPLIER = 25;
+
+    /**
+     * Max level which should have an effect on the speed of the worker.
+     */
+    private static final int MAX_LEVEL      = 50;
+
+    /**
+     * Experience per product the baker gains.
+     */
+    private static final double XP_PER_PRODUCT = 10.0;
 
     /**
      * Current furnace to walk to.
@@ -140,7 +155,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
             {
                 InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), stack);
             }
-
+            worker.addExperience(XP_PER_PRODUCT);
             incrementActionsDone();
             progress = 0;
             currentProduct = null;
@@ -266,7 +281,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
             list.add(copy);
         }
 
-        if (checkOrRequestItems(true,false, list.toArray(new ItemStack[list.size()])))
+        if (checkOrRequestItems(true, false, shouldRequest() , list.toArray(new ItemStack[list.size()])))
         {
             return getState();
         }
@@ -277,6 +292,28 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         InventoryUtils.removeStacksFromItemHandler(new InvWrapper(worker.getInventoryCitizen()), list);
 
         return getState();
+    }
+
+    /**
+     * Determines if the Baker should request to the chat.
+     * @return true if he has nothing to do at the moment.
+     */
+    private boolean shouldRequest()
+    {
+        final BuildingBaker bakerBuilding = getOwnBuilding();
+        for(final Product product: bakerBuilding.getFurnacesWithProduct().values())
+        {
+            if(product != null)
+            {
+                return true;
+            }
+        }
+
+        final List list1 = bakerBuilding.getTasks().get(Product.ProductState.PREPARED);
+        final List list2 = bakerBuilding.getTasks().get(Product.ProductState.BAKING);
+        final List list3 = bakerBuilding.getTasks().get(Product.ProductState.BAKED);
+
+        return list1 != null && !list1.isEmpty() && list2 != null && !list2.isEmpty() && list3 != null && !list3.isEmpty();
     }
 
     /**
@@ -316,7 +353,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         {
             final List<RecipeStorage> recipes = BakerRecipes.getRecipes();
             final List<ItemStack> lastRecipe = recipes.get(recipes.size() - 1).getInput();
-            checkOrRequestItems(true, false, lastRecipe.toArray(new ItemStack[lastRecipe.size()]));
+            checkOrRequestItems(true, false, shouldRequest(), lastRecipe.toArray(new ItemStack[lastRecipe.size()]));
             setDelay(UNABLE_TO_CRAFT_DELAY);
             return PREPARING;
         }
@@ -472,6 +509,6 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 
     private int getRequiredProgressForKneading()
     {
-        return KNEADING_TIME - getOwnBuilding().getBuildingLevel();
+        return PROGRESS_MULTIPLIER / Math.min(worker.getLevel(), MAX_LEVEL) * KNEADING_TIME;
     }
 }

@@ -19,7 +19,7 @@ public class TileEntityBakerBuilding extends TileEntityColonyBuilding
     /**
      * Wait this amount of ticks before checking again.
      */
-    private static final int WAIT_TICKS = 60;
+    private static final int WAIT_TICKS = 120;
 
     /**
      * Ticks past since the last check.

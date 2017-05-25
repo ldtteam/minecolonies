@@ -1162,7 +1162,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     public boolean checkOrRequestItems(@Nullable final ItemStack... items)
     {
-        return checkOrRequestItems(true, true, items);
+        return checkOrRequestItems(true, true, false, items);
     }
 
     /**
@@ -1176,7 +1176,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     public boolean checkOrRequestItems(final boolean useItemDamage, @Nullable final ItemStack... items)
     {
-        return checkOrRequestItems(useItemDamage, true, items);
+        return checkOrRequestItems(useItemDamage, true, false, items);
     }
 
     /**
@@ -1186,10 +1186,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @param useItemDamage compare the itemDamage of the values.
      * @param waitForRequest wait for the request.
+     * @param talkOutLoad determine if the worker should request to the player.
      * @param items         the items needed
      * @return false if they are in inventory
      */
-    public boolean checkOrRequestItems(final boolean useItemDamage, boolean waitForRequest, @Nullable final ItemStack... items)
+    public boolean checkOrRequestItems(final boolean useItemDamage, boolean waitForRequest, boolean talkOutLoad, @Nullable final ItemStack... items)
     {
         if (items == null)
         {
@@ -1235,7 +1236,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             for (final @Nullable ItemStack tempStack : items)
             {
-                if(isInHut(tempStack))
+                if(isInHut(tempStack) && talkOutLoad)
                 {
                     requestWithoutSpam(tempStack.getDisplayName());
                 }
