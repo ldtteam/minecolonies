@@ -60,9 +60,9 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
 
     private static void writeMD5MapToByteBuf(@NotNull final ByteBuf buf)
     {
-        Map<String, String> md5s = Structures.getMD5s();
+        final Map<String, String> md5s = Structures.getMD5s();
         buf.writeInt(md5s.size());
-        for (Map.Entry<String, String> entry : md5s.entrySet())
+        for (final Map.Entry<String, String> entry : md5s.entrySet())
         {
             ByteBufUtils.writeUTF8String(buf, entry.getKey());
             ByteBufUtils.writeUTF8String(buf, entry.getValue());

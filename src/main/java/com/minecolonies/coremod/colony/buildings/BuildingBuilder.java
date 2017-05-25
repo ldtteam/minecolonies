@@ -177,7 +177,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
      * @param buf the used ByteBuffer.
      */
     @Override
-    public void serializeToView(@NotNull ByteBuf buf)
+    public void serializeToView(@NotNull final ByteBuf buf)
     {
         super.serializeToView(buf);
 

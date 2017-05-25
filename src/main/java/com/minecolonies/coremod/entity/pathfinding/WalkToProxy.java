@@ -62,7 +62,7 @@ public class WalkToProxy
      *
      * @param worker the worker.
      */
-    public WalkToProxy(EntityCitizen worker)
+    public WalkToProxy(final EntityCitizen worker)
     {
         this.worker = worker;
     }
@@ -74,7 +74,7 @@ public class WalkToProxy
      * @param range  the range.
      * @return true if arrived.
      */
-    public boolean walkToBlock(@NotNull BlockPos target, int range)
+    public boolean walkToBlock(@NotNull final BlockPos target, final int range)
     {
         return walkToBlock(target, range, false);
     }
@@ -87,7 +87,7 @@ public class WalkToProxy
      * @param onMove worker on move or not?
      * @return true if arrived.
      */
-    private boolean takeTheDirectPath(@NotNull BlockPos target, int range, boolean onMove)
+    private boolean takeTheDirectPath(@NotNull final BlockPos target, final int range, final boolean onMove)
     {
         if (onMove)
         {
@@ -109,7 +109,7 @@ public class WalkToProxy
      * @param onMove worker on move or not?
      * @return true if arrived.
      */
-    public boolean walkToBlock(@NotNull BlockPos target, int range, boolean onMove)
+    public boolean walkToBlock(@NotNull final BlockPos target, final int range, final boolean onMove)
     {
         if (!target.equals(this.target))
         {
@@ -179,9 +179,9 @@ public class WalkToProxy
      * @return the first position to path to.
      */
     @NotNull
-    private BlockPos fillProxyList(@NotNull BlockPos target, double distanceToPath)
+    private BlockPos fillProxyList(@NotNull final BlockPos target, final double distanceToPath)
     {
-        BlockPos proxyPoint;
+        final BlockPos proxyPoint;
 
         final AbstractBuildingWorker building = worker.getWorkBuilding();
         if (worker.getColonyJob() != null && worker.getColonyJob() instanceof JobMiner && building instanceof BuildingMiner)
@@ -256,7 +256,7 @@ public class WalkToProxy
             else if (targetY <= levelDepth && workerY > levelDepth)
             {
                 final BlockPos buildingPos = building.getLocation();
-                BlockPos newProxy;
+                final BlockPos newProxy;
 
                 //First calculate way to miner building.
                 newProxy = getProxy(buildingPos, worker.getPosition(), BlockPosUtil.getDistanceSquared(worker.getPosition(), buildingPos));
@@ -347,7 +347,7 @@ public class WalkToProxy
      * @return a proxy or, if not applicable null.
      */
     @NotNull
-    private BlockPos getProxy(@NotNull BlockPos target, @NotNull BlockPos position, double distanceToPath)
+    private BlockPos getProxy(@NotNull final BlockPos target, @NotNull final BlockPos position, final double distanceToPath)
     {
         if (worker.getColony() == null)
         {
@@ -357,7 +357,7 @@ public class WalkToProxy
         double weight = Double.MAX_VALUE;
         BlockPos proxyPoint = null;
 
-        for (BlockPos wayPoint : worker.getColony().getWayPoints(position, target))
+        for (final BlockPos wayPoint : worker.getColony().getWayPoints(position, target))
         {
             final double simpleDistance = BlockPosUtil.getDistanceSquared(position, wayPoint);
             final double currentWeight = simpleDistance * simpleDistance + BlockPosUtil.getDistanceSquared(wayPoint, target);

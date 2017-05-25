@@ -70,7 +70,7 @@ public class ItemIcon extends Pane
     /**
      * Modified from GuiContainer
      */
-    private void drawItemStack(ItemStack stack, int x, int y)
+    private void drawItemStack(final ItemStack stack, final int x, final int y)
     {
         final RenderItem itemRender = mc.getRenderItem();
 

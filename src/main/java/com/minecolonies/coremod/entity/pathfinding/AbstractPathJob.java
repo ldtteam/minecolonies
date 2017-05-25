@@ -295,7 +295,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param onPath     checks if the node is on a path.
      * @return cost to move from the parent to the new position.
      */
-    protected static double computeCost(@NotNull BlockPos dPos, boolean isSwimming, boolean onPath)
+    protected static double computeCost(@NotNull final BlockPos dPos, final boolean isSwimming, final boolean onPath)
     {
         double cost = 1D;
 
@@ -418,7 +418,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         return path;
     }
 
-    private void handleDebugOptions(Node currentNode)
+    private void handleDebugOptions(final Node currentNode)
     {
         if (debugDrawEnabled)
         {

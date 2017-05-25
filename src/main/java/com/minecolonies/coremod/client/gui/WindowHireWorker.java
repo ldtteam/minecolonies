@@ -185,7 +185,7 @@ public class WindowHireWorker extends Window implements ButtonHandler
         return "";
     }
 
-    private static String createAttributeText(String color, String text)
+    private static String createAttributeText(final String color, final String text)
     {
         return color + text + ColorConstants.WHITE;
     }

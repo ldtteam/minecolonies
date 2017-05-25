@@ -55,7 +55,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand
     }
 
     @Override
-    public void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender, @NotNull String... args) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
         if (SPAWN_NO_TP >= LOWER_BOUNDS)
         {
@@ -178,7 +178,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand
     }
 
     @Override
-    public boolean isUsernameIndex(@NotNull String[] args, int index)
+    public boolean isUsernameIndex(@NotNull final String[] args, final int index)
     {
         return index == 0;
     }
