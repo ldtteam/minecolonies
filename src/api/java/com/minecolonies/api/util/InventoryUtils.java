@@ -801,7 +801,7 @@ public class InventoryUtils
      * with the given minimal Level.
      *
      * @param provider     The {@link ICapabilityProvider} to scan.
-     * @param toolTypeName The toolTypeName of the tool to find.
+     * @param toolType     The toolTypeName of the tool to find.
      * @param minimalLevel The minimal level to find.
      * @param maximumLevel The maximum level to find.
      * @return True if a Tool with the given toolTypeName was found in the given
@@ -1348,8 +1348,8 @@ public class InventoryUtils
      * Verifies if there is one tool with an acceptable level
      * in a worker's inventory.
      *
-     * @param toolTypeName  the type of tool needed
      * @param itemHandler   the worker's inventory
+     * @param toolType      the type of tool needed
      * @param requiredLevel the minimum tool level
      * @param maximumLevel  the worker's hut level
      * @return true if tool is acceptable

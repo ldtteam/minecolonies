@@ -937,6 +937,7 @@ public abstract class AbstractBuilding
     /**
      * Check if the worker requires a specific tool.
      *
+     * @param toolType type of tool to check for
      * @return true if so.
      */
     public boolean needsTool(final ToolType toolType)
@@ -947,7 +948,7 @@ public abstract class AbstractBuilding
     /**
      * Set which tool the worker needs.
      *
-     * @param needsTool    which tool is needed
+     * @param neededTool    which tool is needed
      * @param minimalLevel which minimal level for the tool
      */
     public void setNeedsTool(final ToolType neededTool, final int minimalLevel)
