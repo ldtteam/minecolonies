@@ -133,7 +133,7 @@ public class InventoryUtils
     @NotNull
     public static Boolean isItemStackEmpty(@Nullable final ItemStack stack)
     {
-        return stack == null || stack == EMPTY || stack.getItem() != null || stack.getCount() <= 0;
+        return stack == null || stack == EMPTY || stack.getCount() <= 0;
     }
 
     /**
