@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.tileentities;
 
 import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.Utils;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.*;
 import com.minecolonies.coremod.inventory.InventoryCitizen;

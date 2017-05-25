@@ -649,9 +649,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                                                    worker,
                                        stack -> Utils.isTool(stack, toolType));
 
-        final int hutLevel = worker.getWorkBuilding().getBuildingLevel();
+        final int maxToolLevel = worker.getWorkBuilding().getMaxToolLevel();
         final InventoryCitizen inventory = worker.getInventoryCitizen();
-        final boolean isUsable = InventoryUtils.isToolInItemHandler(new InvWrapper(inventory), toolType, TOOL_LEVEL_WOOD_OR_GOLD, hutLevel);
+        final boolean isUsable = InventoryUtils.isToolInItemHandler(new InvWrapper(inventory), toolType, TOOL_LEVEL_WOOD_OR_GOLD, maxToolLevel);
 
 
         if (!needsTool && isUsable)
@@ -669,7 +669,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
         if (!getOwnBuilding().hasOnGoingDelivery())
         {
-            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_TOOLREQUEST, toolType, InventoryUtils.swapToolGrade(hutLevel));
+            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_TOOLREQUEST, toolType, InventoryUtils.swapToolGrade(maxToolLevel));
         }
         return true;
     }
@@ -830,8 +830,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         delay += DELAY_RECHECK;
 
         final InventoryCitizen inventory = worker.getInventoryCitizen();
-        final int hutLevel = worker.getWorkBuilding().getBuildingLevel();
-        final boolean isUsable = InventoryUtils.isToolInItemHandler(new InvWrapper(inventory), ToolType.PICKAXE, minlevel, hutLevel);
+        final int maxToolLevel = worker.getWorkBuilding().getMaxToolLevel();
+        final boolean isUsable = InventoryUtils.isToolInItemHandler(new InvWrapper(inventory), ToolType.PICKAXE, minlevel, maxToolLevel);
 
         if (isUsable)
         {
@@ -850,16 +850,16 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             }
             if (!getOwnBuilding().hasOnGoingDelivery())
             {
-                if (minlevel > hutLevel)
+                if (minlevel > maxToolLevel)
                 {
                     chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUESTBETTERHUT,
-                      InventoryUtils.swapToolGrade(hutLevel));
+                      InventoryUtils.swapToolGrade(maxToolLevel));
                 }
                 else
                 {
                     chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUEST,
                       InventoryUtils.swapToolGrade(minlevel),
-                      InventoryUtils.swapToolGrade(hutLevel));
+                      InventoryUtils.swapToolGrade(maxToolLevel));
                 }
             }
         }
@@ -1306,7 +1306,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         int bestSlot = -1;
         int bestLevel = Integer.MAX_VALUE;
         @NotNull final InventoryCitizen inventory = worker.getInventoryCitizen();
-        final int hutLevel = worker.getWorkBuilding().getBuildingLevel();
+        final int maxToolLevel = worker.getWorkBuilding().getMaxToolLevel();
 
         for (int i = 0; i < new InvWrapper(worker.getInventoryCitizen()).getSlots(); i++)
         {
@@ -1314,7 +1314,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             final int level = Utils.getMiningLevel(item, toolType);
             if (level >= required && level < bestLevel)
             {
-                if (toolType == ToolType.NONE || InventoryUtils.verifyToolLevel(item, level, required, hutLevel))
+                if (toolType == ToolType.NONE || InventoryUtils.verifyToolLevel(item, level, required, maxToolLevel))
                 {
                     bestSlot = i;
                     bestLevel = level;

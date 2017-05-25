@@ -211,6 +211,21 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         }
     }
 
+
+    /**
+     * Get the max tool level useable by the worker.
+     *
+     * @return the integer.
+     */
+    public int getMaxToolLevel()
+    {
+        if (getBuildingLevel()>=getMaxBuildingLevel())
+        {
+            return Integer.MAX_VALUE;
+        }
+        return getBuildingLevel();
+    }
+
     /**
      * @see AbstractBuilding#onUpgradeComplete(int)
      */
