@@ -586,18 +586,16 @@ public class CitizenData
     @Nullable
     public <J extends AbstractJob> J getJob(@NotNull final Class<J> type)
     {
-        try
+        if (type.isInstance(job))
         {
             return type.cast(job);
         }
-        catch (final ClassCastException ignored)
-        {
-            return null;
-        }
+
+        return null;
     }
 
     /**
-     * Writes the citiizen data to an NBT-compound.
+     * Writes the citizen data to an NBT-compound.
      *
      * @param compound NBT-Tag compound.
      */
