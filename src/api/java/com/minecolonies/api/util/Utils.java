@@ -358,8 +358,8 @@ public final class Utils
     /**
      * Calculate the mining level an item has as a tool of certain type.
      *
-     * @param stack the stack to test.
-     * @param tool  the tool category.
+     * @param stack    the stack to test.
+     * @param toolType the tool category.
      * @return integer value for mining level &gt;= 0 is okay.
      */
     @SuppressWarnings(DEPRECATION)

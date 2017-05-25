@@ -148,7 +148,7 @@ public abstract class AbstractBuilding
     /**
      * the tool currenly needed by the worker.
      */
-    private ToolType          needsTool    = ToolType.NONE;
+    private ToolType        neededTool           = ToolType.NONE;
     /**
      * The minimum tool level we need to fulfill the tool request.
      */
@@ -921,7 +921,7 @@ public abstract class AbstractBuilding
      */
     public boolean needsAnything()
     {
-        return !itemsCurrentlyNeeded.isEmpty() || needsTool != ToolType.NONE;
+        return !itemsCurrentlyNeeded.isEmpty() || neededTool != ToolType.NONE;
     }
 
     /**
@@ -941,25 +941,36 @@ public abstract class AbstractBuilding
      */
     public boolean needsTool(final ToolType toolType)
     {
-        return needsTool.equals(toolType);
+        return neededTool.equals(toolType);
     }
 
     /**
      * Set which tool the worker needs.
      *
-     * @param needsTool which tool is needed, use Utils.
+     * @param needsTool    which tool is needed
+     * @param minimalLevel which minimal level for the tool
      */
-    public void setNeedsTool(final ToolType needsTool, final int minimalLevel)
+    public void setNeedsTool(final ToolType neededTool, final int minimalLevel)
     {
-        this.needsTool = needsTool;
+        this.neededTool     = neededTool;
         this.needsToolLevel = minimalLevel;
     }
 
+    /**
+     * Set which tool the worker needs.
+     *
+     * @param needsTool    which tool is needed
+     */
     public void setNeedsTool(final ToolType needsTool)
     {
         setNeedsTool(needsTool, TOOL_LEVEL_WOOD_OR_GOLD);
     }
 
+    /**
+     * Get which tool level the worker needs.
+     *
+     * @return the tool level needed by the worker
+     */
     public int getNeededToolLevel()
     {
         return needsToolLevel;

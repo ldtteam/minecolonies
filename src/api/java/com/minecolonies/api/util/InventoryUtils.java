@@ -318,7 +318,7 @@ public class InventoryUtils
      * in a worker's inventory.
      *
      * @param stack        the stack to test.
-     * @param toolName     the type of tool needed
+     * @param toolType     the type of tool needed
      * @param minimalLevel the minimum level for the tool to find.
      * @param maximumLevel the maximum level for the tool to find.
      * @return true if tool is acceptable
@@ -1281,7 +1281,7 @@ public class InventoryUtils
      *
      * @param provider     The {@link ICapabilityProvider} to scan.
      * @param facing       The side to check for.
-     * @param toolTypeName The toolTypeName of the tool to find.
+     * @param toolType     The tool type to find.
      * @param minimalLevel The minimal level to find.
      * @param maximumLevel The maximum level to find.
      * @return True if a Tool with the given toolTypeName was found in the given
@@ -1332,8 +1332,8 @@ public class InventoryUtils
      * Returns a slot number if an {@link IItemHandler} contains given tool
      * type.
      *
-     * @param itemHandler the {@link IItemHandler} to get the slot from.
-     * @param tool        the tool type to look for.
+     * @param itemHandler  the {@link IItemHandler} to get the slot from.
+     * @param toolType     the tool type to look for.
      * @return slot number if found, -1 if not found.
      */
     public static int getFirstSlotOfItemHandlerContainingTool(@NotNull final IItemHandler itemHandler, @NotNull final ToolType toolType)
