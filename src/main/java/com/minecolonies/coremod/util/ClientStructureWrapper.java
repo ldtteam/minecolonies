@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.util;
 
+import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.structures.helpers.Settings;
 import com.minecolonies.structures.helpers.Structure;
@@ -61,7 +63,7 @@ public final class ClientStructureWrapper
      *
      * @param maxSize is the maximum size allowed in bytes.
      */
-    public static void sendMessageSchematicTooBig(int maxSize)
+    public static void sendMessageSchematicTooBig(final int maxSize)
     {
         LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "com.minecolonies.coremod.network.messages.schematicsavemessage.toobig", maxSize);
     }

@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.util;
 
 import com.minecolonies.api.util.EntityUtils;
+import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.pathfinding.PathResult;
@@ -153,7 +154,7 @@ public final class WorkerUtil
      * @param citizen    the citizen.
      * @return true if succesful.
      */
-    public static boolean setSpawnPoint(@Nullable BlockPos spawnPoint, @NotNull EntityCitizen citizen)
+    public static boolean setSpawnPoint(@Nullable final BlockPos spawnPoint, @NotNull final EntityCitizen citizen)
     {
         if (spawnPoint == null)
         {

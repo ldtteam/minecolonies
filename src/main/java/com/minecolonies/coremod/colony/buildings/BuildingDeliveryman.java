@@ -51,7 +51,7 @@ public class BuildingDeliveryman extends AbstractBuildingWorker
      *
      * @param building building to deliver to.
      */
-    public void setBuildingToDeliver(AbstractBuilding building)
+    public void setBuildingToDeliver(final AbstractBuilding building)
     {
         this.buildingToDeliver = building;
     }

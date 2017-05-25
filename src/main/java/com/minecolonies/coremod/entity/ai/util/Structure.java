@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.entity.ai.util;
 
-import com.minecolonies.coremod.blocks.ModBlocks;
-import com.minecolonies.coremod.configuration.Configurations;
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockUtils;
+import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
@@ -251,7 +251,7 @@ public class Structure
             throw new StructureException(String.format("Some parameters were null! (targetWorld: %s), (buildingLocation: %s), (schematicFileName: %s)",
               targetWorld, buildingLocation, schematicFileName));
         }
-        @Nullable StructureWrapper tempSchematic;
+        @Nullable final StructureWrapper tempSchematic;
         //failsafe for faulty structure files
         try
         {
@@ -308,7 +308,7 @@ public class Structure
         return stage;
     }
 
-    public void setStage(Stage stage)
+    public void setStage(final Stage stage)
     {
         this.stage = stage;
     }

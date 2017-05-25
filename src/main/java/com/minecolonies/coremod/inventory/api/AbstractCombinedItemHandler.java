@@ -127,7 +127,7 @@ public abstract class AbstractCombinedItemHandler
      *                          handler was not expecting.
      **/
     @Override
-    public void setStackInSlot(int slot, final ItemStack stack)
+    public void setStackInSlot(final int slot, final ItemStack stack)
     {
         int activeSlot = slot;
 
@@ -182,7 +182,7 @@ public abstract class AbstractCombinedItemHandler
      * @return ItemStack in given slot. May be null.
      **/
     @Override
-    public ItemStack getStackInSlot(int slot)
+    public ItemStack getStackInSlot(final int slot)
     {
         int activeSlot = slot;
 
@@ -212,7 +212,7 @@ public abstract class AbstractCombinedItemHandler
      * ItemStack if unchanged, otherwise a new ItemStack.
      **/
     @Override
-    public ItemStack insertItem(int slot, final ItemStack stack, final boolean simulate)
+    public ItemStack insertItem(final int slot, final ItemStack stack, final boolean simulate)
     {
         int activeSlot = slot;
 
@@ -242,7 +242,7 @@ public abstract class AbstractCombinedItemHandler
      * be extracted
      **/
     @Override
-    public ItemStack extractItem(int slot, final int amount, final boolean simulate)
+    public ItemStack extractItem(final int slot, final int amount, final boolean simulate)
     {
         int activeSlot = slot;
 

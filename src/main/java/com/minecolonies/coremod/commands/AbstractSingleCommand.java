@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.commands;
 
+import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.api.colony.permissions.Rank;
-import com.minecolonies.coremod.configuration.Configurations;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -99,7 +99,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
      * @return boolean
      */
     @NotNull
-    public boolean isPlayerOpped(@NotNull final ICommandSender sender, String cmdName)
+    public boolean isPlayerOpped(@NotNull final ICommandSender sender, final String cmdName)
     {
         if (sender instanceof EntityPlayer)
         {
@@ -115,7 +115,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
      * @param theCommand which command to check if the player can use it
      * @return boolean
      */
-    public boolean canCommandSenderUseCommand(Commands theCommand)
+    public boolean canCommandSenderUseCommand(final Commands theCommand)
     {
         switch (theCommand)
         {

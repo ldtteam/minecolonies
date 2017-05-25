@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.Label;
@@ -7,10 +9,8 @@ import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.BuildingGuardTower;
-import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.network.messages.GuardScepterMessage;
 import com.minecolonies.coremod.network.messages.GuardTaskMessage;
-import com.minecolonies.coremod.util.LanguageHandler;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;

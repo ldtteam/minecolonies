@@ -1,20 +1,17 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.BlockUtils;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.Utils;
+import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
-import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.ai.util.Structure;
 import com.minecolonies.coremod.placementhandlers.IPlacementHandler;
 import com.minecolonies.coremod.placementhandlers.PlacementHandlers;
-import com.minecolonies.coremod.util.*;
+import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -43,6 +40,7 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static com.minecolonies.api.util.constant.Suppression.MULTIPLE_LOOPS_OVER_THE_SAME_SET_SHOULD_BE_COMBINED;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 import static com.minecolonies.coremod.placementhandlers.IPlacementHandler.ActionProcessingResult.ACCEPT;
 import static com.minecolonies.coremod.placementhandlers.IPlacementHandler.ActionProcessingResult.DENY;
@@ -345,7 +343,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     /**
      * Switches the structures stage after the current one has been completed.
      */
-    private void switchStage(AIState state)
+    private void switchStage(final AIState state)
     {
         if (state.equals(AIState.BUILDING_STEP))
         {
@@ -396,7 +394,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * @param position    the position to set it.
      * @param isMirrored  is the structure mirroed?
      */
-    public void loadStructure(@NotNull final String name, int rotateTimes, BlockPos position, boolean isMirrored)
+    public void loadStructure(@NotNull final String name, final int rotateTimes, final BlockPos position, final boolean isMirrored)
     {
         if (job instanceof AbstractJobStructure)
         {
@@ -591,7 +589,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         final ItemStack item = BlockUtils.getItemStackFromBlockState(blockState);
         worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item == null ? InventoryUtils.EMPTY : item);
         final IBlockState decrease;
-        for(IPlacementHandler handlers :PlacementHandlers.handlers)
+        for(final IPlacementHandler handlers :PlacementHandlers.handlers)
         {
             final Object result = handlers.handle(world, coords, blockState, this);
             if(result instanceof IPlacementHandler.ActionProcessingResult)
@@ -633,7 +631,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
     private boolean decreaseInventory(@NotNull final BlockPos pos, final Block block, @NotNull final IBlockState state)
     {
-        @NotNull IBlockState stateToPlace = state;
+        @NotNull final IBlockState stateToPlace = state;
 
         //Move out of the way when placing blocks
         if (MathHelper.floor(worker.posX) == pos.getX()
@@ -644,7 +642,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             worker.getNavigator().moveAwayFromXYZ(pos, RUN_AWAY_SPEED, 1.0);
         }
 
-        @NotNull Block blockToPlace = block;
+        @NotNull final Block blockToPlace = block;
         connectBlockToBuildingIfNecessary(blockToPlace, pos);
 
         //It will crash at blocks like water which is actually free, we don't have to decrease the stacks we have.
@@ -737,13 +735,13 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * @return the output object or null.
      */
     @Nullable
-    public Entity getEntityFromEntityInfoOrNull(Template.EntityInfo entityInfo)
+    public Entity getEntityFromEntityInfoOrNull(final Template.EntityInfo entityInfo)
     {
         try
         {
             return EntityList.createEntityFromNBT(entityInfo.entityData, world);
         }
-        catch (RuntimeException e)
+        catch (final RuntimeException e)
         {
             Log.getLogger().info("Couldn't restore entitiy", e);
             return null;
@@ -765,7 +763,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * The rule thinks we can merge the two forge loops iterating over resources
      * But in this case the rule does not apply because that would destroy the logic.
      */
-    @SuppressWarnings("squid:S3047")
+    @SuppressWarnings(MULTIPLE_LOOPS_OVER_THE_SAME_SET_SHOULD_BE_COMBINED)
     private Boolean spawnEntity(@NotNull final Structure.StructureBlock currentBlock)
     {
         final Template.EntityInfo entityInfo = currentBlock.entity;

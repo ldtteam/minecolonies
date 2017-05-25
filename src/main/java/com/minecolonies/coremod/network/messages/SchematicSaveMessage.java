@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Structures;
-import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.util.ClientStructureWrapper;
-import com.minecolonies.coremod.util.Log;
 import com.minecolonies.structures.helpers.Structure;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.text.TextComponentString;
@@ -43,7 +43,7 @@ public class SchematicSaveMessage implements IMessage, IMessageHandler<Schematic
     @Override
     public void fromBytes(@NotNull final ByteBuf buf)
     {
-        int length = buf.readInt();
+        final int length = buf.readInt();
         final byte[] compressedData = new byte[length];
         buf.readBytes(compressedData);
         data = Structure.uncompress(compressedData);
@@ -91,7 +91,7 @@ public class SchematicSaveMessage implements IMessage, IMessageHandler<Schematic
             return null;
         }
 
-        boolean schematicSent;
+        final boolean schematicSent;
         if (message.data == null)
         {
             Log.getLogger().error("Received empty schematic file");

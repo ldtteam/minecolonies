@@ -1,7 +1,7 @@
 package com.minecolonies.structures.helpers;
 
-import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
@@ -207,7 +207,7 @@ public class StructureProxy
      * @param rotatePos the pos to rotateWithMirror it around.
      * @param mirror    the mirror
      */
-    public void rotateWithMirror(final int times, World world, BlockPos rotatePos, Mirror mirror)
+    public void rotateWithMirror(final int times, final World world, final BlockPos rotatePos, final Mirror mirror)
     {
         final Rotation rotation;
         switch (times)
@@ -303,7 +303,7 @@ public class StructureProxy
      *
      * @param foundHut if false update.
      */
-    private void updateOffSetIfDecoration(final boolean foundHut, final BlockPos size, int rotation, int minX, int minY, int minZ)
+    private void updateOffSetIfDecoration(final boolean foundHut, final BlockPos size, final int rotation, final int minX, final int minY, final int minZ)
     {
         if (!foundHut)
         {

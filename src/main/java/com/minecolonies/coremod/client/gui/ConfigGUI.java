@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.minecolonies.coremod.configuration.ConfigurationHandler;
-import com.minecolonies.coremod.lib.Constants;
+import com.minecolonies.api.configuration.ConfigurationHandler;
+import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.common.config.ConfigElement;
@@ -22,7 +22,7 @@ public class ConfigGUI extends GuiConfig
      *
      * @param parentScreen the parent GuiScreen object.
      */
-    public ConfigGUI(GuiScreen parentScreen)
+    public ConfigGUI(final GuiScreen parentScreen)
     {
         /* The parentScreen. */
         super(parentScreen,
@@ -56,7 +56,7 @@ public class ConfigGUI extends GuiConfig
     /**
      * Creates a button linking to another screen where all options of the category are available.
      */
-    private static IConfigElement categoryElement(String category, String name, String tooltipKey)
+    private static IConfigElement categoryElement(final String category, final String name, final String tooltipKey)
     {
         return new DummyConfigElement.DummyCategoryElement(name, tooltipKey,
                                                             new ConfigElement(ConfigurationHandler.getConfiguration().getCategory(category)).getChildElements());

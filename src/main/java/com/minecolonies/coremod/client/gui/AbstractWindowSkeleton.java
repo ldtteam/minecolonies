@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.util.Log;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.ButtonHandler;
 import com.minecolonies.blockout.views.Window;
-import com.minecolonies.coremod.util.Log;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -35,7 +35,7 @@ public abstract class AbstractWindowSkeleton extends Window implements ButtonHan
      * @param id     Button ID.
      * @param action Consumer with the action to be performed.
      */
-    public final void registerButton(String id, Runnable action)
+    public final void registerButton(final String id, final Runnable action)
     {
         registerButton(id, (button) -> action.run());
     }

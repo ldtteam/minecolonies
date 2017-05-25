@@ -177,7 +177,7 @@ public class Level
      *
      * @param rotation the rotation of the node.
      */
-    public void closeNextNode(int rotation)
+    public void closeNextNode(final int rotation)
     {
         final Node tempNode = openNodes.poll();
         final List<Point2D.Double> nodeCenterList = new ArrayList<>();
@@ -222,7 +222,7 @@ public class Level
      * @param additionalRotation the additional rotation.
      * @return center of the new node.
      */
-    private static Point2D.Double getNextNodePositionFromNodeWithRotation(Node node, int rotation, int additionalRotation)
+    private static Point2D.Double getNextNodePositionFromNodeWithRotation(final Node node, final int rotation, final int additionalRotation)
     {
         final int realRotation = Math.floorMod(rotation + additionalRotation, MAX_ROTATIONS);
         switch (realRotation)

@@ -7,8 +7,8 @@ import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.EntityAIWorkLumberjack;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
-import net.minecraft.util.DamageSource;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.DamageSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -1,8 +1,11 @@
 package com.minecolonies.coremod.entity;
 
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.Utils;
+import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.colony.permissions.Player;
+import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.*;
@@ -10,16 +13,11 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
-import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.colony.permissions.Player;
-import com.minecolonies.api.colony.permissions.Rank;
-import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.minimal.*;
 import com.minecolonies.coremod.entity.pathfinding.PathNavigate;
 import com.minecolonies.coremod.entity.pathfinding.WalkToProxy;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
-import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.network.messages.BlockParticleEffectMessage;
 import com.minecolonies.coremod.util.*;
 import net.minecraft.block.Block;
@@ -61,6 +59,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.*;
+
+import static com.minecolonies.api.util.constant.Suppression.INCREMENT_AND_DECREMENT_OPERATORS_SHOULD_NOT_BE_USED_IN_A_METHOD_CALL_OR_MIXED_WITH_OTHER_OPERATORS_IN_AN_EXPRESSION;
 
 /**
  * The Class used to represent the citizen entities.
@@ -338,7 +338,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * The rule thinks we should extract ++priority in a proper statement.
      * But in this case the rule does not apply because that would remove the readability.
      */
-    @SuppressWarnings("squid:S881")
+    @SuppressWarnings(INCREMENT_AND_DECREMENT_OPERATORS_SHOULD_NOT_BE_USED_IN_A_METHOD_CALL_OR_MIXED_WITH_OTHER_OPERATORS_IN_AN_EXPRESSION)
     private void initTasks()
     {
         int priority = 0;
@@ -979,7 +979,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         {
             updateColonyServer();
         }
-        NBTTagList nbttaglist = compound.getTagList("Inventory", 10);
+        final NBTTagList nbttaglist = compound.getTagList("Inventory", 10);
         this.inventory.readFromNBT(nbttaglist);
 
         inventory.setHeldItem(compound.getInteger(TAG_HELD_ITEM_SLOT));
@@ -1355,7 +1355,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      *
      * @param jobName the job he last had.
      */
-    public void setLastJob(@NotNull String jobName)
+    public void setLastJob(@NotNull final String jobName)
     {
         this.lastJob = jobName;
     }
@@ -1517,7 +1517,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         final ItemStack stack = inventory.getStackInSlot(slot);
         if(!InventoryUtils.isItemStackEmpty(stack) && stack.getItem() instanceof ItemFood && citizenData != null)
         {
-            int heal = ((ItemFood) stack.getItem()).getHealAmount(stack);
+            final int heal = ((ItemFood) stack.getItem()).getHealAmount(stack);
             citizenData.increaseSaturation(heal);
             inventory.decrStackSize(slot, 1);
             citizenData.markDirty();
@@ -1599,7 +1599,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param itemDamage the damage value
      * @return the slot.
      */
-    public int findFirstSlotInInventoryWith(final Item targetItem, int itemDamage)
+    public int findFirstSlotInInventoryWith(final Item targetItem, final int itemDamage)
     {
         return InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(getInventoryCitizen()), targetItem, itemDamage);
     }
@@ -1611,7 +1611,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param itemDamage the damage value
      * @return the slot.
      */
-    public int findFirstSlotInInventoryWith(final Block block, int itemDamage)
+    public int findFirstSlotInInventoryWith(final Block block, final int itemDamage)
     {
         return InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(getInventoryCitizen()), block, itemDamage);
     }
@@ -1623,7 +1623,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param itemDamage the damage value
      * @return the quantity.
      */
-    public int getItemCountInInventory(final Block block, int itemDamage)
+    public int getItemCountInInventory(final Block block, final int itemDamage)
     {
         return InventoryUtils.getItemCountInItemHandler(new InvWrapper(getInventoryCitizen()), block, itemDamage);
     }
@@ -1635,7 +1635,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param itemDamage the damage value.
      * @return the quantity.
      */
-    public int getItemCountInInventory(final Item targetItem, int itemDamage)
+    public int getItemCountInInventory(final Item targetItem, final int itemDamage)
     {
         return InventoryUtils.getItemCountInItemHandler(new InvWrapper(getInventoryCitizen()), targetItem, itemDamage);
     }
@@ -1647,7 +1647,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param itemDamage the damage value
      * @return true if so.
      */
-    public boolean hasItemInInventory(final Block block, int itemDamage)
+    public boolean hasItemInInventory(final Block block, final int itemDamage)
     {
         return InventoryUtils.hasItemInItemHandler(new InvWrapper(getInventoryCitizen()), block, itemDamage);
     }
@@ -1659,7 +1659,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param itemDamage the damage value
      * @return true if so.
      */
-    public boolean hasItemInInventory(final Item item, int itemDamage)
+    public boolean hasItemInInventory(final Item item, final int itemDamage)
     {
         return InventoryUtils.hasItemInItemHandler(new InvWrapper(getInventoryCitizen()), item, itemDamage);
     }
@@ -1876,7 +1876,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         citizenDescription.appendText(this.getCustomNameTag()).appendText(": ");
         final TextComponentString colonyDescription = new TextComponentString(" at " + this.getColony().getName() + ":");
 
-        List<EntityPlayer> players = new ArrayList<>(colony.getMessageEntityPlayers());
+        final List<EntityPlayer> players = new ArrayList<>(colony.getMessageEntityPlayers());
         final EntityPlayer owner = ServerUtils.getPlayerFromUUID(world, this.getColony().getPermissions().getOwner());
         if (owner != null)
         {

@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.colony.workorders;
 
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.WorkOrderView;
-import com.minecolonies.coremod.util.Log;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -15,12 +15,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED;
+
 /**
  * General information between WorkOrders.
  */
 public abstract class AbstractWorkOrder
 {
-    private static final String                                          TAG_TYPE       = "type";
+    private static final String TAG_TYPE = "type";
     private static final String                                          TAG_ID         = "id";
     private static final String                                          TAG_CLAIMED_BY = "claimedBy";
     //  Job and View Class Mapping
@@ -291,7 +293,7 @@ public abstract class AbstractWorkOrder
      * @param colony The colony that owns the Work Order
      * @return True if the WorkOrder is still valid, or False if it should be deleted
      */
-    @SuppressWarnings("squid:S1172")
+    @SuppressWarnings(UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED)
     public boolean isValid(final Colony colony)
     {
         return true;

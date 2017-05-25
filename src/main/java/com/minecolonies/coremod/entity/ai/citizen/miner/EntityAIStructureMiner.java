@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.entity.ai.citizen.miner;
 
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.buildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
-import com.minecolonies.coremod.util.Log;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLadder;
 import net.minecraft.block.BlockOre;
@@ -597,7 +597,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
      * @param rotateTimes  The amount of time to rotate the structure.
      * @param structurePos The position of the structure.
      */
-    private void initStructure(final Node mineNode, final int rotateTimes, BlockPos structurePos)
+    private void initStructure(final Node mineNode, final int rotateTimes, final BlockPos structurePos)
     {
         if (mineNode == null)
         {
@@ -750,7 +750,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
      * @return BlockPos position to work from.
      */
     @Override
-    public BlockPos getWorkingPosition(BlockPos targetPosition)
+    public BlockPos getWorkingPosition(final BlockPos targetPosition)
     {
         return getNodeMiningPosition(targetPosition);
     }
@@ -778,7 +778,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     }
 
     @Override
-    public IBlockState getSolidSubstitution(BlockPos ignored)
+    public IBlockState getSolidSubstitution(final BlockPos ignored)
     {
         return Blocks.COBBLESTONE.getDefaultState();
     }
@@ -789,7 +789,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
      * @param blockToMine block which should be mined or placed.
      * @return the save position.
      */
-    private BlockPos getNodeMiningPosition(BlockPos blockToMine)
+    private BlockPos getNodeMiningPosition(final BlockPos blockToMine)
     {
         final BuildingMiner buildingMiner = getOwnBuilding();
         if (buildingMiner.getCurrentLevel() == null || buildingMiner.getCurrentLevel().getRandomNode() == null)

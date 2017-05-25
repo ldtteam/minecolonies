@@ -10,7 +10,6 @@ import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.coremod.util.*;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -840,7 +839,7 @@ public abstract class AbstractBuilding
      * @param block to be registered
      * @param pos of the block
      */
-    public void registerBlockPosition(@NotNull Block block, @NotNull final BlockPos pos)
+    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos)
     {
         if (block instanceof BlockContainer)
         {
@@ -866,7 +865,7 @@ public abstract class AbstractBuilding
      *
      * @param pos position to remove.
      */
-    public void removeContainerPosition(BlockPos pos)
+    public void removeContainerPosition(final BlockPos pos)
     {
         containerList.remove(pos);
     }
@@ -910,7 +909,7 @@ public abstract class AbstractBuilding
      *
      * @param valueToSet true or false
      */
-    public void setOnGoingDelivery(boolean valueToSet)
+    public void setOnGoingDelivery(final boolean valueToSet)
     {
         this.onGoingDelivery = valueToSet;
     }
@@ -971,7 +970,7 @@ public abstract class AbstractBuilding
      *
      * @param stack the stack to add.
      */
-    public void addNeededItems(@Nullable ItemStack stack)
+    public void addNeededItems(@Nullable final ItemStack stack)
     {
         if (stack != null)
         {
@@ -1020,7 +1019,7 @@ public abstract class AbstractBuilding
      *
      * @param newList the new list to set.
      */
-    public void setItemsCurrentlyNeeded(@NotNull List<ItemStack> newList)
+    public void setItemsCurrentlyNeeded(@NotNull final List<ItemStack> newList)
     {
         this.itemsCurrentlyNeeded = new ArrayList<>(newList);
     }
@@ -1046,7 +1045,7 @@ public abstract class AbstractBuilding
     {
         if (tileEntity == null || InventoryUtils.isProviderFull(tileEntity))
         {
-            Iterator<BlockPos> posIterator = containerList.iterator();
+            final Iterator<BlockPos> posIterator = containerList.iterator();
             @NotNull ItemStack resultStack = stack.copy();
 
             while (posIterator.hasNext() && !InventoryUtils.isItemStackEmpty(resultStack))

@@ -1,14 +1,13 @@
 package com.minecolonies.coremod.colony;
 
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.EntityUtils;
+import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.buildings.*;
 import com.minecolonies.coremod.colony.permissions.Permissions;
-import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
-import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.farmer.Field;
@@ -16,7 +15,9 @@ import com.minecolonies.coremod.network.messages.*;
 import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.coremod.util.*;
+import com.minecolonies.coremod.util.AchievementUtils;
+import com.minecolonies.coremod.util.ColonyUtils;
+import com.minecolonies.coremod.util.ServerUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -526,7 +527,7 @@ public class Colony implements IColony
      *
      * @param statistic the statistic.
      */
-    public void incrementStatistic(@NotNull String statistic)
+    public void incrementStatistic(@NotNull final String statistic)
     {
         final int statisticAmount = this.getStatisticAmount(statistic);
         incrementStatisticAmount(statistic);
@@ -558,7 +559,7 @@ public class Colony implements IColony
      * @param statistic the statistic.
      * @return amount of statistic.
      */
-    private int getStatisticAmount(@NotNull String statistic)
+    private int getStatisticAmount(@NotNull final String statistic)
     {
         switch (statistic)
         {
@@ -592,7 +593,7 @@ public class Colony implements IColony
      *
      * @param statistic the statistic.
      */
-    private void incrementStatisticAmount(@NotNull String statistic)
+    private void incrementStatisticAmount(@NotNull final String statistic)
     {
         switch (statistic)
         {
@@ -1099,7 +1100,7 @@ public class Colony implements IColony
             increaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * HAPPINESS_FACTOR);
         }
 
-        int relation = workers/guards;
+        final int relation = workers/guards;
 
         if(relation > 1)
         {
@@ -1800,7 +1801,7 @@ public class Colony implements IColony
      * @param point the waypoint to add.
      * @param block the block at the waypoint.
      */
-    public void addWayPoint(final BlockPos point, IBlockState block)
+    public void addWayPoint(final BlockPos point, final IBlockState block)
     {
         wayPoints.put(point, block);
         markDirty();
@@ -1854,7 +1855,7 @@ public class Colony implements IColony
      * Increase the overall happiness by an amount, cap at max.
      * @param amount the amount.
      */
-    public void increaseOverallHappiness(double amount)
+    public void increaseOverallHappiness(final double amount)
     {
         this.overallHappiness = Math.min(this.overallHappiness + Math.abs(amount), MAX_OVERALL_HAPPINESS);
         this.markDirty();
@@ -1864,7 +1865,7 @@ public class Colony implements IColony
      * Decrease the overall happiness by an amount, cap at min.
      * @param amount the amount.
      */
-    public void decreaseOverallHappiness(double amount)
+    public void decreaseOverallHappiness(final double amount)
     {
         this.overallHappiness = Math.max(this.overallHappiness - Math.abs(amount), MIN_OVERALL_HAPPINESS);
         this.markDirty();

@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.BlockUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.BlockConstructionTape;
 import com.minecolonies.coremod.blocks.BlockConstructionTapeCorner;
 import com.minecolonies.coremod.blocks.BlockHutField;
-import com.minecolonies.coremod.configuration.Configurations;
-import com.minecolonies.api.util.BlockUtils;
-import com.minecolonies.coremod.util.Log;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -295,7 +295,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param onPath     checks if the node is on a path.
      * @return cost to move from the parent to the new position.
      */
-    protected static double computeCost(@NotNull BlockPos dPos, boolean isSwimming, boolean onPath)
+    protected static double computeCost(@NotNull final BlockPos dPos, final boolean isSwimming, final boolean onPath)
     {
         double cost = 1D;
 
@@ -418,7 +418,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         return path;
     }
 
-    private void handleDebugOptions(Node currentNode)
+    private void handleDebugOptions(final Node currentNode)
     {
         if (debugDrawEnabled)
         {

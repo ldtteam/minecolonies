@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.items;
 
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingGuardTower;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.util.LanguageHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -50,7 +50,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
                                        final float hitY,
                                        final float hitZ)
     {
-        ItemStack scepter = playerIn.getHeldItem(hand);
+        final ItemStack scepter = playerIn.getHeldItem(hand);
         // if server world, do nothing
         if (worldIn.isRemote)
         {

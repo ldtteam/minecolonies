@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
@@ -8,8 +10,6 @@ import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.Utils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -177,7 +177,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
      * @param buf the used ByteBuffer.
      */
     @Override
-    public void serializeToView(@NotNull ByteBuf buf)
+    public void serializeToView(@NotNull final ByteBuf buf)
     {
         super.serializeToView(buf);
 

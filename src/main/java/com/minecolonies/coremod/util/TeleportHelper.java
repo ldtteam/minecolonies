@@ -20,7 +20,7 @@ public final class TeleportHelper
         // Intentionally left empty.
     }
 
-    public static boolean teleportCitizen(EntityCitizen citizen, World world, BlockPos location)
+    public static boolean teleportCitizen(final EntityCitizen citizen, final World world, final BlockPos location)
     {
         if (citizen == null || world == null)
         {

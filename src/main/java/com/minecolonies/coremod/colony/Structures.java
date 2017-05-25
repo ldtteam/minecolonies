@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.colony;
 
+import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
-import com.minecolonies.coremod.configuration.Configurations;
-import com.minecolonies.coremod.lib.Constants;
-import com.minecolonies.coremod.util.LanguageHandler;
-import com.minecolonies.coremod.util.Log;
 import com.minecolonies.structures.helpers.Structure;
 import net.minecraft.block.Block;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -25,6 +25,8 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+
+import static com.minecolonies.api.util.constant.Suppression.EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS;
 
 /**
  * StructureProxy class.
@@ -120,7 +122,7 @@ public final class Structures
      * Puts these in {@link #md5Map}, with key being the fullname of the structure (schematics/stone/Builder1).
      */
     // The same exception will be triggered in the 2nd catch with logging this time.
-    @SuppressWarnings("squid:S1166")
+    @SuppressWarnings(EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS)
     private static void loadStyleMaps()
     {
         if (!Configurations.ignoreSchematicsFromJar)
@@ -161,7 +163,7 @@ public final class Structures
         {
             uri = ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI();
         }
-        catch (@NotNull URISyntaxException e)
+        catch (@NotNull final URISyntaxException e)
         {
             Log.getLogger().error("loadStyleMaps : ",e);
             return;
@@ -183,7 +185,7 @@ public final class Structures
                     Log.getLogger().info("Load huts or decorations from jar");
                     loadSchematicsForPrefix(basePath, SCHEMATICS_PREFIX);
                 }
-                catch (@NotNull IOException e2)
+                catch (@NotNull final IOException e2)
                 {
                     Log.getLogger().warn("loadStyleMaps: Could not load the schematics from the jar.", e2);
                 }
@@ -260,7 +262,7 @@ public final class Structures
                 }
             }
         }
-        catch (@NotNull IOException e)
+        catch (@NotNull final IOException e)
         {
             Log.getLogger().warn("loadSchematicsForPrefix: Could not load schematics from " + basePath.resolve(prefix), e);
         }
@@ -329,7 +331,7 @@ public final class Structures
      * @param allowed True if the server allow it otherwise False
      */
     @SideOnly(Side.CLIENT)
-    public static void setAllowPlayerSchematics(boolean allowed)
+    public static void setAllowPlayerSchematics(final boolean allowed)
     {
         allowPlayerSchematics = allowed;
     }
@@ -340,7 +342,7 @@ public final class Structures
      * @param structureName the structure to add
      */
     @SideOnly(Side.CLIENT)
-    private static void addSchematic(@NotNull StructureName structureName)
+    private static void addSchematic(@NotNull final StructureName structureName)
     {
         if (structureName.getPrefix().equals(SCHEMATICS_CACHE))
         {
@@ -700,7 +702,7 @@ public final class Structures
         {
             if (isHut())
             {
-                Matcher matcher = levelPattern.matcher(schematic);
+                final Matcher matcher = levelPattern.matcher(schematic);
                 if (matcher.find())
                 {
                     final int level = Integer.parseInt(matcher.group(1));
@@ -748,7 +750,7 @@ public final class Structures
      *
      * @param md5 hash of the structure
      */
-    public static void addMD5ToCache(@NotNull String md5)
+    public static void addMD5ToCache(@NotNull final String md5)
     {
         markDirty();
         md5Map.put(Structures.SCHEMATICS_CACHE + SCHEMATICS_SEPARATOR + md5, md5);
@@ -895,7 +897,7 @@ public final class Structures
         }
 
         //md5Set containd only the unused one
-        Iterator<String> iterator = md5Set.iterator();
+        final Iterator<String> iterator = md5Set.iterator();
         while (iterator.hasNext() && md5Set.size() + countInUseStructures >= Configurations.maxCachedSchematics)
         {
             final StructureName sn = new StructureName(iterator.next());

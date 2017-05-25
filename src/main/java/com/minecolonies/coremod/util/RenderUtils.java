@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.util;
 
+import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.configuration.Configurations;
-import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.structures.helpers.Settings;
 import com.minecolonies.structures.helpers.Structure;
 import com.minecolonies.structures.lib.ModelHolder;
@@ -110,7 +110,7 @@ public final class RenderUtils
             final IBlockState iblockstate = block.getDefaultState();
             final IBlockState iBlockExtendedState = block.getExtendedState(iblockstate, clientWorld, pos);
             final IBakedModel ibakedmodel = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(iblockstate);
-            TileEntity tileentity = null;
+            final TileEntity tileentity = null;
 
             final ModelHolder models = new ModelHolder(pos, iblockstate, iBlockExtendedState, tileentity, ibakedmodel);
             Structure.getQuads(models, models.quads);
@@ -136,9 +136,9 @@ public final class RenderUtils
 
         for ( double degrees = 0; degrees < WHOLE_CIRCLE; degrees += 1 )
         {
-            double rads = degrees / HALF_A_CIRCLE * Math.PI;
-            double x = Math.round( center.getX( ) + radius * Math.sin( rads ) );
-            double z = Math.round( center.getZ( ) + radius * Math.cos( rads ) );
+            final double rads = degrees / HALF_A_CIRCLE * Math.PI;
+            final double x = Math.round( center.getX( ) + radius * Math.sin( rads ) );
+            final double z = Math.round( center.getZ( ) + radius * Math.cos( rads ) );
             colonyBorder.add(BlockPosUtil.getFloor(new BlockPos(x, center.getY(), z), theWorld).up());
         }
     }

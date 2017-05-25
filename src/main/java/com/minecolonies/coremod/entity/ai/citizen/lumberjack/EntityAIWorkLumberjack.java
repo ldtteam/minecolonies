@@ -2,13 +2,14 @@ package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.pathfinding.PathJobFindTree;
-import com.minecolonies.coremod.util.*;
+import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSapling;
 import net.minecraft.block.SoundType;
@@ -23,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 /**
@@ -530,7 +532,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     }
 
     //todo: we need to use a different way to get Metadata
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings(DEPRECATION)
     private void placeSaplings(final int saplingSlot, @NotNull final ItemStack stack, @NotNull final Block block)
     {
         while (!job.tree.getStumpLocations().isEmpty())
@@ -552,7 +554,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     }
 
     //todo: we need to use a different way to get Metadata
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings(DEPRECATION)
     /**
      * Checks if this is the correct Sapling.
      * @param stack incoming stack.

@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
+import com.minecolonies.api.util.InventoryFunctions;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
-import com.minecolonies.api.util.InventoryFunctions;
-import com.minecolonies.api.util.Utils;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.MoverType;
@@ -112,7 +112,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         {
             return AIState.GUARD_SEARCH_TARGET;
         }
-        InventoryFunctions.matchFirstInProvider(worker, stack -> stack != null && Utils.doesItemServeAsWeapon(stack), worker::setHeldItem);
+        InventoryFunctions.matchFirstInProviderWithSimpleAction(worker, stack -> stack != null && Utils.doesItemServeAsWeapon(stack), worker::setHeldItem);
         return super.searchTarget();
     }
 
@@ -138,7 +138,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         if (worker.canEntityBeSeen(targetEntity) && worker.getDistanceToEntity(targetEntity) <= MIN_ATTACK_DISTANCE)
         {
             worker.resetActiveHand();
-            boolean killedEnemy = attackEntity(targetEntity, (float) DAMAGE_PER_ATTACK);
+            final boolean killedEnemy = attackEntity(targetEntity, (float) DAMAGE_PER_ATTACK);
             setDelay(getReloadTime());
             attacksExecuted += 1;
             currentSearchDistance = START_SEARCH_DISTANCE;

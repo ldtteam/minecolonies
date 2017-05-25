@@ -1,14 +1,14 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Loader;
-import com.minecolonies.blockout.controls.ButtonHandler;
-import com.minecolonies.blockout.views.OverlayView;
 import com.minecolonies.blockout.controls.Button;
+import com.minecolonies.blockout.controls.ButtonHandler;
 import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.controls.Text;
+import com.minecolonies.blockout.views.OverlayView;
 import com.minecolonies.blockout.views.Window;
-import com.minecolonies.coremod.lib.Constants;
-import com.minecolonies.coremod.util.Log;
 
 import java.util.function.ObjIntConsumer;
 
@@ -120,7 +120,7 @@ public class DialogDoneCancel extends OverlayView implements ButtonHandler
      *
      * @param button which have been clicked on.
      */
-    public void onButtonClicked(Button button)
+    public void onButtonClicked(final Button button)
     {
         this.setVisible(false);
         if (handler == null)

@@ -1,6 +1,6 @@
-package com.minecolonies.coremod.configuration;
+package com.minecolonies.api.configuration;
 
-import com.minecolonies.coremod.lib.Constants;
+import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.io.File;
 
-import static com.minecolonies.coremod.configuration.Configurations.*;
+import static com.minecolonies.api.configuration.Configurations.*;
 
 /**
  * Configuration Handler.
@@ -172,7 +172,7 @@ public final class ConfigurationHandler
      * @param eventArgs An instance to the event. 
      */
     @SubscribeEvent
-    public void onConfigChanged(OnConfigChangedEvent eventArgs) 
+    public void onConfigChanged(final OnConfigChangedEvent eventArgs)
     {
         if(eventArgs.getModID().equalsIgnoreCase(Constants.MOD_ID)) 
         {

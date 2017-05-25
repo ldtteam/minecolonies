@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.coremod.colony.Structures;
-import com.minecolonies.coremod.configuration.Configurations;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -60,9 +60,9 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
 
     private static void writeMD5MapToByteBuf(@NotNull final ByteBuf buf)
     {
-        Map<String, String> md5s = Structures.getMD5s();
+        final Map<String, String> md5s = Structures.getMD5s();
         buf.writeInt(md5s.size());
-        for (Map.Entry<String, String> entry : md5s.entrySet())
+        for (final Map.Entry<String, String> entry : md5s.entrySet())
         {
             ByteBufUtils.writeUTF8String(buf, entry.getKey());
             ByteBufUtils.writeUTF8String(buf, entry.getValue());

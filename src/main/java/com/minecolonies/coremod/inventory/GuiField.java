@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.inventory;
 
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.entity.ai.citizen.farmer.Field;
-import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;

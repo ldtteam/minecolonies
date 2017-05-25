@@ -1,12 +1,14 @@
 package com.minecolonies.coremod.blocks;
 
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
-import com.minecolonies.coremod.lib.Constants;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+
+import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 
 /**
  * This block is used as a substitution block for the Builder.
@@ -63,7 +65,7 @@ public class BlockSolidSubstitution extends Block
      * @return true
      */
     //todo: remove once we no longer need to support this
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings(DEPRECATION)
     @Override
     public boolean isOpaqueCube(final IBlockState state)
     {

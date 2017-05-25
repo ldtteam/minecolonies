@@ -16,6 +16,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
+
 /**
  * General purpose utilities class.
  * todo: split up into logically distinct parts
@@ -361,7 +363,7 @@ public final class Utils
      * @param tool  the tool category.
      * @return integer value for mining level &gt;= 0 is okay.
      */
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings(DEPRECATION)
     public static int getMiningLevel(@Nullable final ItemStack stack, @Nullable final ToolType toolType)
     {
         if (toolType == ToolType.NONE)

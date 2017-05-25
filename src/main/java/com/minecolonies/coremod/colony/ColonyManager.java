@@ -1,16 +1,16 @@
 package com.minecolonies.coremod.colony;
 
+import com.minecolonies.api.colony.permissions.Player;
+import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.api.colony.permissions.Player;
-import com.minecolonies.api.colony.permissions.Rank;
-import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.util.AchievementUtils;
-import com.minecolonies.coremod.util.LanguageHandler;
-import com.minecolonies.coremod.util.Log;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -144,7 +144,7 @@ public final class ColonyManager
         return colony;
     }
 
-    private static void addColonyByWorld(Colony colony)
+    private static void addColonyByWorld(final Colony colony)
     {
         coloniesByWorld.computeIfAbsent(colony.getDimension(), ArrayList::new).add(colony);
     }
@@ -713,7 +713,7 @@ public final class ColonyManager
         {
             Files.copy(file.toPath(), targetFile.toPath());
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             e.printStackTrace();
             return false;
@@ -775,7 +775,7 @@ public final class ColonyManager
      * @return Save file for minecolonies.
      */
     @NotNull
-    private static File getBackupSaveLocation(Date date)
+    private static File getBackupSaveLocation(final Date date)
     {
         @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
         return new File(saveDir, String.format(FILENAME_MINECOLONIES_BACKUP, new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(date)));
@@ -1046,7 +1046,7 @@ public final class ColonyManager
      *
      * @param downloaded True if a new schematic have been received.
      */
-    public static void setSchematicDownloaded(boolean downloaded)
+    public static void setSchematicDownloaded(final boolean downloaded)
     {
         schematicDownloaded = downloaded;
     }

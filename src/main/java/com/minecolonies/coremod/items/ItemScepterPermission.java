@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.items;
 
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.network.messages.ChangeFreeToInteractBlockMessage;
-import com.minecolonies.coremod.util.LanguageHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -81,7 +81,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
             final float hitY,
             final float hitZ)
     {
-        ItemStack scepter = playerIn.getHeldItem(hand);
+        final ItemStack scepter = playerIn.getHeldItem(hand);
 
         if (worldIn.isRemote)
         {
@@ -118,7 +118,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
             final EntityPlayer playerIn,
             final EnumHand hand)
     {
-        ItemStack scepter = playerIn.getHeldItem(hand);
+        final ItemStack scepter = playerIn.getHeldItem(hand);
 
         if (worldIn.isRemote)
         {
@@ -204,7 +204,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
             final BlockPos pos,
             final ColonyView colonyView)
     {
-        ChangeFreeToInteractBlockMessage message = new ChangeFreeToInteractBlockMessage(colonyView, pos, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK);
+        final ChangeFreeToInteractBlockMessage message = new ChangeFreeToInteractBlockMessage(colonyView, pos, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK);
         MineColonies.getNetwork().sendToServer(message);
 
         return EnumActionResult.SUCCESS;

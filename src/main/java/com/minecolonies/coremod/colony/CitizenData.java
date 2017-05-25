@@ -1,14 +1,14 @@
 package com.minecolonies.coremod.colony;
 
+import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.util.Log;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -297,7 +297,7 @@ public class CitizenData
         experience = 0;
         level = 0;
         saturation = MAX_SATURATION;
-        int levelCap = (int) colony.getOverallHappiness();
+        final int levelCap = (int) colony.getOverallHappiness();
         @NotNull final Random random = new Random();
 
         if(levelCap <= 1)
@@ -586,18 +586,16 @@ public class CitizenData
     @Nullable
     public <J extends AbstractJob> J getJob(@NotNull final Class<J> type)
     {
-        try
+        if (type.isInstance(job))
         {
             return type.cast(job);
         }
-        catch (final ClassCastException ignored)
-        {
-            return null;
-        }
+
+        return null;
     }
 
     /**
-     * Writes the citiizen data to an NBT-compound.
+     * Writes the citizen data to an NBT-compound.
      *
      * @param compound NBT-Tag compound.
      */

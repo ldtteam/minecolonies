@@ -1,14 +1,14 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.inventory.InventoryField;
-import com.minecolonies.api.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntityChest;

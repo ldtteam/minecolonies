@@ -9,7 +9,6 @@ import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.pathfinding.WalkToProxy;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
-import com.minecolonies.coremod.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -27,8 +26,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
-import static com.minecolonies.coremod.util.constants.TranslationConstants.*;
 import static com.minecolonies.coremod.util.constants.ToolLevelConstants.*;
 
 /**
@@ -201,7 +200,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             // fix for printing the actual exception
             e.printStackTrace();
         }
-        catch (RuntimeException exp)
+        catch (final RuntimeException exp)
         {
             Log.getLogger().error("Welp reporting crashed:");
             exp.printStackTrace();
@@ -648,9 +647,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         final boolean needsTool = !InventoryFunctions
                                            .matchFirstInProvider(
                                                    worker,
-                                       stack -> Utils.isTool(stack, toolType),
-                                       InventoryFunctions::doNothing
-                                     );
+                                       stack -> Utils.isTool(stack, toolType));
 
         final int hutLevel = worker.getWorkBuilding().getBuildingLevel();
         final InventoryCitizen inventory = worker.getInventoryCitizen();
@@ -821,6 +818,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private boolean checkForPickaxe(final int minlevel)
     {
+        //Check for a pickaxe
+        final boolean needsPickAxe = !InventoryFunctions.matchFirstInProvider(
+                                          worker,
+                                          stack -> Utils.checkIfPickaxeQualifies(
+                                          minlevel,
+                                          Utils.getMiningLevel(stack, ToolType.PICKAXE)));
+
+        getOwnBuilding().setNeedsTool(needsPickAxe ? ToolType.PICKAXE : ToolType.NONE);
+
         delay += DELAY_RECHECK;
 
         final InventoryCitizen inventory = worker.getInventoryCitizen();
@@ -908,12 +914,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     public boolean checkForWeapon()
     {
-        final boolean needsWeapon = !InventoryFunctions
-                                                 .matchFirstInProvider(
-                                                         worker,
-                                             stack -> stack != null && Utils.doesItemServeAsWeapon(stack),
-                                             InventoryFunctions::doNothing
-                                           );
+        final boolean needsWeapon = !InventoryFunctions.matchFirstInProvider(
+                                             worker,
+                                             stack -> stack != null && Utils.doesItemServeAsWeapon(stack));
 
         getOwnBuilding().setNeedsTool(needsWeapon ? ToolType.WEAPON : ToolType.NONE);
 

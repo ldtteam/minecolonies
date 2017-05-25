@@ -159,7 +159,7 @@ public final class BlockPosUtil
                 final int z = Integer.parseInt(strings[2]);
                 return new BlockPos(x, y, z);
             }
-            catch (NumberFormatException e)
+            catch (final NumberFormatException e)
             {
                 /**
                  * Empty for a purpose.
@@ -177,7 +177,7 @@ public final class BlockPosUtil
      * @param sender   uses the player to get the world
      * @return isSafe true=safe false=water or lava
      */
-    public static boolean isPositionSafe(@NotNull ICommandSender sender, BlockPos blockPos)
+    public static boolean isPositionSafe(@NotNull final ICommandSender sender, final BlockPos blockPos)
     {
         return sender.getEntityWorld().getBlockState(blockPos).getBlock() != Blocks.AIR
                 && !sender.getEntityWorld().getBlockState(blockPos).getMaterial().isLiquid()
@@ -401,7 +401,7 @@ public final class BlockPosUtil
      * @return returns BlockPos position with air above.
      */
     @NotNull
-    public static BlockPos getFloor(@NotNull BlockPos position, @NotNull final World world)
+    public static BlockPos getFloor(@NotNull final BlockPos position, @NotNull final World world)
     {
         final BlockPos floor = getFloor(position, 0, world);
         if (floor == null)
@@ -420,7 +420,7 @@ public final class BlockPosUtil
      * @return returns BlockPos position with air above.
      */
     @Nullable
-    private static BlockPos getFloor(@NotNull final BlockPos position, int depth, @NotNull final World world)
+    private static BlockPos getFloor(@NotNull final BlockPos position, final int depth, @NotNull final World world)
     {
         if (depth > MAX_DEPTH)
         {

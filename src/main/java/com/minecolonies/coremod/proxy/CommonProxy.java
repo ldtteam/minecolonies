@@ -1,14 +1,14 @@
 package com.minecolonies.coremod.proxy;
 
+import com.minecolonies.api.configuration.ConfigurationHandler;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
-import com.minecolonies.coremod.configuration.ConfigurationHandler;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.event.FMLEventHandler;
 import com.minecolonies.coremod.inventory.GuiHandler;
-import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.sounds.ModSoundEvents;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
@@ -97,8 +97,8 @@ public class CommonProxy implements IProxy
     @Override
     public void registerEntities()
     {
-        ResourceLocation locationCitizen = new ResourceLocation(Constants.MOD_ID, "Citizen");
-        ResourceLocation locationFishHook = new ResourceLocation(Constants.MOD_ID, "Fishhook");
+        final ResourceLocation locationCitizen = new ResourceLocation(Constants.MOD_ID, "Citizen");
+        final ResourceLocation locationFishHook = new ResourceLocation(Constants.MOD_ID, "Fishhook");
 
         // Half as much tracking range and same update frequency as a player
         // See EntityTracker.addEntityToTracker for more default values

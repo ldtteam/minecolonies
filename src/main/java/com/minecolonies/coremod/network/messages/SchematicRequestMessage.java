@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.util.Log;
 import com.minecolonies.structures.helpers.Structure;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -66,7 +66,7 @@ public class SchematicRequestMessage extends AbstractMessage<SchematicRequestMes
         else
         {
             Log.getLogger().info("Request: player " + player.getName() + " is requesting schematic " + message.filename);
-            byte[] schematic = Structure.getStreamAsByteArray(stream);
+            final byte[] schematic = Structure.getStreamAsByteArray(stream);
             MineColonies.getNetwork().sendTo(new SchematicSaveMessage(schematic), player);
         }
     }

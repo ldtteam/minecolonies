@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.entity.ai.citizen.builder;
 
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
-import com.minecolonies.coremod.configuration.Configurations;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
@@ -42,7 +42,7 @@ public final class ConstructionTapeHelper
      * @param building the building.
      * @param world    the world.
      */
-    public static void placeConstructionTape(@NotNull AbstractBuilding building, @NotNull World world)
+    public static void placeConstructionTape(@NotNull final AbstractBuilding building, @NotNull final World world)
     {
         placeConstructionTape(new WorkOrderBuild(building, 1), world);
     }
@@ -54,7 +54,7 @@ public final class ConstructionTapeHelper
      * @param world     the world.
      */
 
-    public static void placeConstructionTape(@NotNull WorkOrderBuildDecoration workOrder, @NotNull World world)
+    public static void placeConstructionTape(@NotNull final WorkOrderBuildDecoration workOrder, @NotNull final World world)
     {
         if (Configurations.builderPlaceConstructionTape)
         {
@@ -146,7 +146,7 @@ public final class ConstructionTapeHelper
      * @return The new Y position.
      */
 
-    public static int checkIfPlaceable(@NotNull int x, @NotNull int y, @NotNull int z, @NotNull World world)
+    public static int checkIfPlaceable(@NotNull final int x, @NotNull final int y, @NotNull final int z, @NotNull final World world)
     {
         int newY = y;
         boolean working = true;
@@ -179,7 +179,7 @@ public final class ConstructionTapeHelper
      * @param building the building.
      * @param world    the world.
      */
-    public static void removeConstructionTape(@NotNull AbstractBuilding building, @NotNull World world)
+    public static void removeConstructionTape(@NotNull final AbstractBuilding building, @NotNull final World world)
     {
         removeConstructionTape(new WorkOrderBuild(building, 1), world);
     }
@@ -191,7 +191,7 @@ public final class ConstructionTapeHelper
      * @param world     the world.
      */
 
-    public static void removeConstructionTape(@NotNull WorkOrderBuildDecoration workOrder, @NotNull World world)
+    public static void removeConstructionTape(@NotNull final WorkOrderBuildDecoration workOrder, @NotNull final World world)
     {
         final StructureWrapper wrapper = new StructureWrapper(world, workOrder.getStructureName());
         final BlockPos pos = workOrder.getBuildingLocation();
@@ -257,7 +257,7 @@ public final class ConstructionTapeHelper
      * @param block            the block.
      * @param tapeOrTapeCorner Is the checked block supposed to be ConstructionTape or ConstructionTapeCorner.
      */
-    public static void removeTapeIfNecessary(@NotNull World world, @NotNull BlockPos block, @NotNull Block tapeOrTapeCorner)
+    public static void removeTapeIfNecessary(@NotNull final World world, @NotNull final BlockPos block, @NotNull final Block tapeOrTapeCorner)
     {
         for (int y = MINHEIGHT; y <= MAXHEIGHT; y++)
         {

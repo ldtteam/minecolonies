@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.items;
 
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
-import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.network.messages.SaveScanMessage;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.util.LanguageHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -52,7 +52,7 @@ public class ItemScanTool extends AbstractItemMinecolonies
                                        final float hitY,
                                        final float hitZ)
     {
-        ItemStack stack = playerIn.getHeldItem(hand);
+        final ItemStack stack = playerIn.getHeldItem(hand);
         if (!stack.hasTagCompound())
         {
             stack.setTagCompound(new NBTTagCompound());
