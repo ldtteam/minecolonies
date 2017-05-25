@@ -309,7 +309,7 @@ public final class ColonyManager
      * @return a list of colonies.
      */
     @NotNull
-    public static List<Colony> getColonies(final int abandonedSince)
+    public static List<Colony> getColoniesAbandonedSince(final int abandonedSince)
     {
         final List<Colony> sortedList = new ArrayList<>();
         for (final Colony colony : colonies.getCopyAsList())

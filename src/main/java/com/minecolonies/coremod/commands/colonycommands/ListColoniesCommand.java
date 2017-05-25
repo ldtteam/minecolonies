@@ -74,7 +74,7 @@ public class ListColoniesCommand extends AbstractSingleCommand
         final List<Colony> colonies;
         if(abandonedSince > 0)
         {
-           colonies = ColonyManager.getColonies(abandonedSince);
+           colonies = ColonyManager.getColoniesAbandonedSince(abandonedSince);
         }
         else
         {

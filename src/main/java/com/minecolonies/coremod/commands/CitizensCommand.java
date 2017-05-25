@@ -1,10 +1,7 @@
 package com.minecolonies.coremod.commands;
 
 import com.google.common.collect.ImmutableMap;
-import com.minecolonies.coremod.commands.citizencommands.CitizenInfoCommand;
-import com.minecolonies.coremod.commands.citizencommands.KillCitizenCommand;
-import com.minecolonies.coremod.commands.citizencommands.ListCitizensCommand;
-import com.minecolonies.coremod.commands.citizencommands.RespawnCitizenCommand;
+import com.minecolonies.coremod.commands.citizencommands.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
