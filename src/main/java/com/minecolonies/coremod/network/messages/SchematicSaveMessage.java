@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Structures;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.coremod.util.ClientStructureWrapper;
 import com.minecolonies.structures.helpers.Structure;
 import io.netty.buffer.ByteBuf;

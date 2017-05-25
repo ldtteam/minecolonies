@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.LanguageHandler;
@@ -13,7 +14,6 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.coremod.event.EventHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
