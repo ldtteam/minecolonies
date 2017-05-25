@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.util;
 
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.permissions.Permissions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

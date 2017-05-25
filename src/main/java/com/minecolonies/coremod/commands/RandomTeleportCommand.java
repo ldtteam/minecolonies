@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.commands;
 
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;

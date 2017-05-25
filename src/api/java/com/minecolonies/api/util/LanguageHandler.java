@@ -142,7 +142,7 @@ public final class LanguageHandler
             return;
         }
 
-        ITextComponent textComponent = buildChatComponent(key, message);
+        final ITextComponent textComponent = buildChatComponent(key, message);
 
         for (@NotNull final EntityPlayer player : players)
         {

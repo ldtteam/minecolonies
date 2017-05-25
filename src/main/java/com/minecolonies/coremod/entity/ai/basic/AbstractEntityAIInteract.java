@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
 import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.api.configuration.Configurations;
 import net.minecraft.block.Block;
