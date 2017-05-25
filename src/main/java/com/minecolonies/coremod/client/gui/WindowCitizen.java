@@ -1,19 +1,19 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Alignment;
-import com.minecolonies.blockout.controls.ButtonHandler;
-import com.minecolonies.blockout.views.View;
 import com.minecolonies.blockout.controls.Button;
+import com.minecolonies.blockout.controls.ButtonHandler;
 import com.minecolonies.blockout.controls.Image;
 import com.minecolonies.blockout.controls.Label;
+import com.minecolonies.blockout.views.View;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.CitizenDataView;
-import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.util.ExperienceUtils;
-import com.minecolonies.coremod.util.LanguageHandler;
 import net.minecraft.client.gui.Gui;
 import org.jetbrains.annotations.NotNull;
 

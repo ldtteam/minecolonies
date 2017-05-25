@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.util.Log;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.ButtonHandler;
 import com.minecolonies.blockout.views.Window;
-import com.minecolonies.coremod.util.Log;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;

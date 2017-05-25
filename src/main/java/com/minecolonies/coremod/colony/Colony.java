@@ -1,14 +1,13 @@
 package com.minecolonies.coremod.colony;
 
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.EntityUtils;
+import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.buildings.*;
 import com.minecolonies.coremod.colony.permissions.Permissions;
-import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
-import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.farmer.Field;
@@ -16,7 +15,9 @@ import com.minecolonies.coremod.network.messages.*;
 import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.coremod.util.*;
+import com.minecolonies.coremod.util.AchievementUtils;
+import com.minecolonies.coremod.util.ColonyUtils;
+import com.minecolonies.coremod.util.ServerUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -1826,14 +1827,15 @@ public class Colony implements IColony
         final double minX = Math.min(position.getX(), target.getX());
         final double minZ = Math.min(position.getZ(), target.getZ());
 
-        final List<BlockPos> wayPointsCopy = new ArrayList<>(tempWayPoints);
-        for (final BlockPos p : wayPointsCopy)
+        final Iterator<BlockPos> iterator = tempWayPoints.iterator();
+        while (iterator.hasNext())
         {
+            final BlockPos p = iterator.next();
             final int x = p.getX();
             final int z = p.getZ();
             if (x < minX || x > maxX || z < minZ || z > maxZ)
             {
-                tempWayPoints.remove(p);
+                iterator.remove();
             }
         }
 

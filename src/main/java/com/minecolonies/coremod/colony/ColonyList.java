@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.colony;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.minecolonies.coremod.util.Log;
+import com.minecolonies.api.util.Log;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
