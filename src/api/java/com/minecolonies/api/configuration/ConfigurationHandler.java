@@ -172,7 +172,7 @@ public final class ConfigurationHandler
      * @param eventArgs An instance to the event. 
      */
     @SubscribeEvent
-    public void onConfigChanged(OnConfigChangedEvent eventArgs) 
+    public void onConfigChanged(final OnConfigChangedEvent eventArgs)
     {
         if(eventArgs.getModID().equalsIgnoreCase(Constants.MOD_ID)) 
         {
