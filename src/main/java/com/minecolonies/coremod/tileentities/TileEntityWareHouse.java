@@ -20,6 +20,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Predicate;
 
@@ -34,6 +36,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      * Queue which contains the currentTasks to be executed by the deliveryman.
      */
     private final Queue<AbstractBuilding> taskQueue = new ConcurrentLinkedQueue<>();
+    private final Set<AbstractBuilding>   taskSet   = ConcurrentHashMap.newKeySet();
 
     /**
      * Wait this amount of ticks before checking again.
@@ -94,7 +97,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             {
                 if (i == index)
                 {
-                    if(!taskQueue.contains(buildingEntry.getValue())
+                    if(!taskSet.contains(buildingEntry.getValue())
                             && buildingEntry.getValue().needsAnything())
                     {
                         checkInWareHouse(buildingEntry.getValue(), true);
@@ -116,13 +119,15 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                 {
                     buildingEntry.setOnGoingDelivery(true);
                     taskQueue.add(buildingEntry);
+                    taskSet.add(buildingEntry);
                 }
                 return true;
             }
 
-            if (taskQueue.contains(buildingEntry))
+            if (taskSet.contains(buildingEntry))
             {
                 taskQueue.remove(buildingEntry);
+                taskSet.remove(buildingEntry);
                 buildingEntry.setOnGoingDelivery(false);
             }
         }
@@ -136,7 +141,14 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     @Nullable
     public AbstractBuilding getTask()
     {
-        return taskQueue.poll();
+        final AbstractBuilding task = taskQueue.poll();
+        if (task == null)
+        {
+            return null;
+        }
+
+        taskSet.remove(task);
+        return task;
     }
 
     /**
@@ -164,14 +176,16 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                     {
                         buildingEntry.setOnGoingDelivery(true);
                         taskQueue.add(buildingEntry);
+                        taskSet.add(buildingEntry);
                     }
                     return true;
                 }
             }
 
-            if (taskQueue.contains(buildingEntry))
+            if (taskSet.contains(buildingEntry))
             {
                 taskQueue.remove(buildingEntry);
+                taskSet.remove(buildingEntry);
                 buildingEntry.setOnGoingDelivery(false);
             }
         }
@@ -185,13 +199,15 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                 {
                     buildingEntry.setOnGoingDelivery(true);
                     taskQueue.add(buildingEntry);
+                    taskSet.add(buildingEntry);
                 }
                 return true;
             }
 
-            if (taskQueue.contains(buildingEntry))
+            if (taskSet.contains(buildingEntry))
             {
                 taskQueue.remove(buildingEntry);
+                taskSet.remove(buildingEntry);
                 buildingEntry.setOnGoingDelivery(false);
             }
         }
