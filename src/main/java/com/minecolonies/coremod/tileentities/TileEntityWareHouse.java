@@ -356,12 +356,10 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             for(final BlockPos pos : building.getAdditionalCountainers())
             {
                 @Nullable final TileEntity entity = world.getTileEntity(pos);
-                if(entity instanceof TileEntityChest)
+                if(entity instanceof TileEntityChest
+                    && InventoryUtils.isToolInProvider(entity, tool, requestingBuilding.getNeededPickaxeLevel(), requestingBuilding.getBuildingLevel()))
                 {
-                    if(InventoryUtils.isToolInProvider(entity, tool, requestingBuilding.getNeededPickaxeLevel(), requestingBuilding.getBuildingLevel()))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
         }
