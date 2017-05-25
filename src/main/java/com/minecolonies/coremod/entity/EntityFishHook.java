@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.entity;
 
-import com.minecolonies.coremod.util.MathUtils;
+import com.minecolonies.api.util.MathUtils;
 import net.minecraft.block.material.Material;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;

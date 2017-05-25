@@ -1,12 +1,8 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.BlockUtils;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.Utils;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.configuration.Configurations;
-import com.minecolonies.coremod.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;

@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.util.ClientStructureWrapper;
-import com.minecolonies.coremod.util.Log;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import net.minecraft.nbt.CompressedStreamTools;
