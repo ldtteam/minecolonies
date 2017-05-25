@@ -52,6 +52,8 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import static com.minecolonies.api.util.constant.Suppression.RESOURCES_SHOULD_BE_CLOSED;
+
 /**
  * Structure class, used to store, create, get structures.
  */
@@ -199,7 +201,7 @@ public class Structure
      * @param structureName name of the structure to load
      * @return the input stream or null
      */
-    @SuppressWarnings("squid:S2095")
+    @SuppressWarnings(RESOURCES_SHOULD_BE_CLOSED)
     @Nullable
     public static InputStream getStream(final String structureName)
     {

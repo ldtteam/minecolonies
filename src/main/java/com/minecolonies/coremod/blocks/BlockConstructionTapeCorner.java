@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
+import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 import static net.minecraft.util.EnumFacing.*;
 
 /**
@@ -309,7 +310,7 @@ public class BlockConstructionTapeCorner extends Block
         return BlockRenderLayer.SOLID;
     }
 
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings(DEPRECATION)
     @NotNull
     @Override
     public IBlockState getStateForPlacement(

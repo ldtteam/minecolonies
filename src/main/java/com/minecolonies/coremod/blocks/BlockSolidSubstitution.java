@@ -8,6 +8,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
+import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
+
 /**
  * This block is used as a substitution block for the Builder.
  * Every solid block can be substituted by this block in schematics.
@@ -63,7 +65,7 @@ public class BlockSolidSubstitution extends Block
      * @return true
      */
     //todo: remove once we no longer need to support this
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings(DEPRECATION)
     @Override
     public boolean isOpaqueCube(final IBlockState state)
     {

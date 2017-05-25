@@ -20,6 +20,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
+import static com.minecolonies.api.util.constant.Suppression.CLASSES_SHOULD_NOT_ACCESS_STATIC_MEMBERS_OF_THEIR_OWN_SUBCLASSES_DURING_INITIALIZATION;
+
 /**
  * Basic job information.
  * <p>
@@ -28,10 +30,10 @@ import java.util.*;
  * But in this case the rule does not apply because
  * We are only mapping classes and that is reasonable
  */
-@SuppressWarnings("squid:S2390")
+@SuppressWarnings(CLASSES_SHOULD_NOT_ACCESS_STATIC_MEMBERS_OF_THEIR_OWN_SUBCLASSES_DURING_INITIALIZATION)
 public abstract class AbstractJob
 {
-    private static final String TAG_TYPE         = "type";
+    private static final String TAG_TYPE = "type";
     private static final String TAG_ITEMS_NEEDED = "itemsNeeded";
 
     private static final String MAPPING_PLACEHOLDER = "Placeholder";

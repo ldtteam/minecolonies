@@ -14,6 +14,8 @@ import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
+
 //TODO extend list/collection
 
 /**
@@ -121,8 +123,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
      * @return The Colony associated with the provided id.
      */
     @Nullable
-    // no way to remove this, java does it too
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     public T get(final int index)
     {
         if (index < 1 || index >= list.length)

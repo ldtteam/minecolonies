@@ -26,6 +26,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import static com.minecolonies.api.util.constant.Suppression.EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS;
+
 /**
  * StructureProxy class.
  */
@@ -120,7 +122,7 @@ public final class Structures
      * Puts these in {@link #md5Map}, with key being the fullname of the structure (schematics/stone/Builder1).
      */
     // The same exception will be triggered in the 2nd catch with logging this time.
-    @SuppressWarnings("squid:S1166")
+    @SuppressWarnings(EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS)
     private static void loadStyleMaps()
     {
         if (!Configurations.ignoreSchematicsFromJar)

@@ -9,6 +9,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
+
 /**
  * Default implementation of a FactoryController
  * Singleton.
@@ -66,7 +68,7 @@ public final class StandardFactoryController implements IFactoryController
      * @throws IllegalArgumentException is thrown when the given input class is unknown to this Factory Controller.
      */
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     public <Input> IFactory<Input, ?> getFactoryForInput(@NotNull final Class<? extends Input> clazz) throws IllegalArgumentException
     {
         if (!inputMappings.containsKey(clazz))
@@ -86,7 +88,7 @@ public final class StandardFactoryController implements IFactoryController
      * @throws IllegalArgumentException is thrown when the given output class is unknown to this Factory Controller.
      */
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     public <Output> IFactory<?, Output> getFactoryForOutput(@NotNull final Class<? extends Output> clazz) throws IllegalArgumentException
     {
         if (!inputMappings.containsKey(clazz))
@@ -133,7 +135,7 @@ public final class StandardFactoryController implements IFactoryController
      * @throws IllegalArgumentException is thrown when the output type is unknown to this controller.
      */
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     public <Output> NBTTagCompound serialize(@NotNull final Output object) throws IllegalArgumentException
     {
         final NBTTagCompound compound = new NBTTagCompound();
@@ -155,7 +157,7 @@ public final class StandardFactoryController implements IFactoryController
      * @throws IllegalArgumentException is thrown when the type stored in the data is unknown to this controller.
      */
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     public <Output> Output deserialize(@NotNull final NBTTagCompound compound) throws IllegalArgumentException
     {
         final String className = compound.getString(NBT_TYPE);
@@ -175,7 +177,7 @@ public final class StandardFactoryController implements IFactoryController
      * @throws ClassCastException       thrown when a Factory is known for the given input, but does not produce the given output.
      */
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     public <Input, Output> Output getNewInstance(@NotNull final Input input, @NotNull final Object... context) throws IllegalArgumentException, ClassCastException
     {
         final IFactory<Input, Output> factory = (IFactory<Input, Output>) getFactoryForInput((Class<? extends Input>) input.getClass());
