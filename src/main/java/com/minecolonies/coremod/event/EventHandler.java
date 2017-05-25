@@ -6,7 +6,7 @@ import com.minecolonies.coremod.blocks.BlockHutWareHouse;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.IColony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Log;
@@ -99,7 +99,7 @@ public class EventHandler
                 return;
             }
 
-            if (!building.getColony().getPermissions().hasPermission(event.getPlayer(), Permissions.Action.BREAK_HUTS))
+            if (!building.getColony().getPermissions().hasPermission(event.getPlayer(), Action.BREAK_HUTS))
             {
                 event.setCanceled(true);
                 return;
@@ -134,7 +134,7 @@ public class EventHandler
             {
                 final IColony colony = ColonyManager.getIColony(world, event.getPos());
                 if (colony != null
-                      && !colony.getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS))
+                      && !colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
                 {
                     event.setCanceled(true);
                 }
@@ -261,7 +261,7 @@ public class EventHandler
             }
             return false;
         }
-        else if (!colony.getPermissions().hasPermission(player, Permissions.Action.PLACE_HUTS))
+        else if (!colony.getPermissions().hasPermission(player, Action.PLACE_HUTS))
         {
             //  No permission to place hut in colony
             LanguageHandler.sendPlayerMessage(player, "tile.blockHut.messageNoPermission", colony.getName());
@@ -306,7 +306,7 @@ public class EventHandler
                 return false;
             }
 
-            if (!closestColony.getPermissions().hasPermission(player, Permissions.Action.PLACE_HUTS))
+            if (!closestColony.getPermissions().hasPermission(player, Action.PLACE_HUTS))
             {
                 //  No permission to place hut in colony
                 LanguageHandler.sendPlayerMessage(player, "tile.blockHut.messageNoPermissionPlace", closestColony.getName());
