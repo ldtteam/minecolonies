@@ -63,7 +63,7 @@ public final class ClientStructureWrapper
      *
      * @param maxSize is the maximum size allowed in bytes.
      */
-    public static void sendMessageSchematicTooBig(int maxSize)
+    public static void sendMessageSchematicTooBig(final int maxSize)
     {
         LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "com.minecolonies.coremod.network.messages.schematicsavemessage.toobig", maxSize);
     }

@@ -203,7 +203,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             // fix for printing the actual exception
             e.printStackTrace();
         }
-        catch (RuntimeException exp)
+        catch (final RuntimeException exp)
         {
             Log.getLogger().error("Welp reporting crashed:");
             exp.printStackTrace();
@@ -495,7 +495,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param is     the itemStack.
      * @return true if found the stack.
      */
-    public boolean isInTileEntity(TileEntityChest entity, ItemStack is)
+    public boolean isInTileEntity(final TileEntityChest entity, final ItemStack is)
     {
         return is != null
                 && InventoryFunctions
@@ -516,7 +516,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param itemStackSelectionPredicate the criteria.
      * @return true if found the stack.
      */
-    public boolean isInTileEntity(TileEntityChest entity, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    public boolean isInTileEntity(final TileEntityChest entity, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
         return InventoryFunctions
                 .matchFirstInProviderWithAction(
@@ -583,7 +583,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param toolLevel the min tool level.
      * @return true if found the tool.
      */
-    public boolean isToolInTileEntity(TileEntityChest entity, final String tool, int toolLevel)
+    public boolean isToolInTileEntity(final TileEntityChest entity, final String tool, final int toolLevel)
     {
         return InventoryFunctions.matchFirstInProviderWithAction(
                 entity,
@@ -600,7 +600,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param provider  The provider to take from.
      * @param slotIndex The slot to take.
      */
-    public void takeItemStackFromProvider(@NotNull ICapabilityProvider provider, int slotIndex)
+    public void takeItemStackFromProvider(@NotNull final ICapabilityProvider provider, final int slotIndex)
     {
         InventoryUtils.transferItemStackIntoNextFreeSlotFromProvider(provider, slotIndex, new InvWrapper(worker.getInventoryCitizen()));
     }
@@ -639,7 +639,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param tool tool required for block
      * @return true if we have a tool
      */
-    private boolean checkForTool(@NotNull String tool)
+    private boolean checkForTool(@NotNull final String tool)
     {
         final boolean needsTool = !InventoryFunctions
                                            .matchFirstInProvider(
@@ -719,7 +719,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param tool   the tool.
      * @return true if found the tool.
      */
-    public boolean isToolInTileEntity(TileEntityChest entity, final String tool)
+    public boolean isToolInTileEntity(final TileEntityChest entity, final String tool)
     {
         return InventoryFunctions.matchFirstInProviderWithAction(
                 entity,
@@ -1359,7 +1359,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param targetPosition the position to work at.
      * @return BlockPos position to work from.
      */
-    public BlockPos getWorkingPosition(BlockPos targetPosition)
+    public BlockPos getWorkingPosition(final BlockPos targetPosition)
     {
         return targetPosition;
     }

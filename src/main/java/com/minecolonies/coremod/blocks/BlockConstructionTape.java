@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
+import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 import static net.minecraft.util.EnumFacing.EAST;
 import static net.minecraft.util.EnumFacing.WEST;
 
@@ -140,6 +141,7 @@ public class BlockConstructionTape extends Block
      *
      * @deprecated (Remove this as soon as minecraft offers anything better).
      */
+    @SuppressWarnings(DEPRECATION)
     @NotNull
     @Override
     @Deprecated
@@ -164,6 +166,7 @@ public class BlockConstructionTape extends Block
     /**
      * @deprecated (Remove this as soon as minecraft offers anything better).
      */
+    @SuppressWarnings(DEPRECATION)
     @Override
     @Deprecated
     public boolean isFullCube(final IBlockState state)
@@ -180,6 +183,7 @@ public class BlockConstructionTape extends Block
     /**
      * @deprecated (Remove this as soon as minecraft offers anything better).
      */
+    @SuppressWarnings(DEPRECATION)
     @Override
     @Deprecated
     public AxisAlignedBB getBoundingBox(final IBlockState state, final IBlockAccess source, final BlockPos pos)
@@ -208,10 +212,11 @@ public class BlockConstructionTape extends Block
     /**
      * @deprecated (Remove this as soon as minecraft offers anything better).
      */
+    @SuppressWarnings(DEPRECATION)
     @SideOnly(Side.CLIENT)
     @Override
     @Deprecated
-    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
+    public boolean shouldSideBeRendered(final IBlockState blockState, final IBlockAccess blockAccess, final BlockPos pos, final EnumFacing side)
     {
         return true;
     }
@@ -219,7 +224,8 @@ public class BlockConstructionTape extends Block
     /**
      * @deprecated (Remove this as soon as minecraft offers anything better).
      */
-    @javax.annotation.Nullable
+    @SuppressWarnings(DEPRECATION)
+    @Nullable
     @Deprecated
     @Override
     public AxisAlignedBB getCollisionBoundingBox(final IBlockState blockState, final IBlockAccess worldIn, final BlockPos pos)
@@ -230,6 +236,7 @@ public class BlockConstructionTape extends Block
     /**
      * @deprecated (Remove this as soon as minecraft offers anything better).
      */
+    @SuppressWarnings(DEPRECATION)
     @Override
     @Deprecated
     public boolean isOpaqueCube(final IBlockState state)
@@ -252,18 +259,18 @@ public class BlockConstructionTape extends Block
         return BlockRenderLayer.SOLID;
     }
 
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings(DEPRECATION)
     @NotNull
     @Override
     public IBlockState getStateForPlacement(
-                                                   final World worldIn,
-                                                   final BlockPos pos,
-                                                   final EnumFacing facing,
-                                                   final float hitX,
-                                                   final float hitY,
-                                                   final float hitZ,
-                                                   final int meta,
-                                                   final EntityLivingBase placer)
+                                             final World worldIn,
+                                             final BlockPos pos,
+                                             final EnumFacing facing,
+                                             final float hitX,
+                                             final float hitY,
+                                             final float hitZ,
+                                             final int meta,
+                                             final EntityLivingBase placer)
     {
         @NotNull final EnumFacing enumFacing = (placer == null) ? EnumFacing.NORTH : EnumFacing.fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);

@@ -15,7 +15,7 @@ public interface ButtonHandler extends Consumer<Button>
      */
     void onButtonClicked(Button button);
 
-    default void accept(Button button)
+    default void accept(final Button button)
     {
         onButtonClicked(button);
     }

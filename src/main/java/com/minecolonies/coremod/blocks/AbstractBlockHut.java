@@ -30,6 +30,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
+
 /**
  * Abstract class for all minecolonies blocks.
  * <p>
@@ -91,6 +93,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     /**
      * @deprecated (Remove this as soon as minecraft offers anything better).
      */
+    @SuppressWarnings(DEPRECATION)
     @Override
     @Deprecated
     public boolean isFullBlock(final IBlockState state)
@@ -103,6 +106,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
      *
      * @deprecated (Remove this as soon as minecraft offers anything better).
      */
+    @SuppressWarnings(DEPRECATION)
     @NotNull
     @Override
     @Deprecated
@@ -136,6 +140,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
      *
      * @deprecated (Remove this as soon as minecraft offers anything better).
      */
+    @SuppressWarnings(DEPRECATION)
     @NotNull
     @Override
     @Deprecated
@@ -147,6 +152,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     /**
      * @deprecated (Remove this as soon as minecraft offers anything better).
      */
+    @SuppressWarnings(DEPRECATION)
     @NotNull
     @Override
     @Deprecated
@@ -158,6 +164,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     /**
      * @deprecated (Remove this as soon as minecraft offers anything better).
      */
+    @SuppressWarnings(DEPRECATION)
     @Override
     @Deprecated
     public boolean isFullCube(final IBlockState state)
@@ -168,6 +175,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     /**
      * @deprecated (Remove this as soon as minecraft offers anything better).
      */
+    @SuppressWarnings(DEPRECATION)
     @Override
     @Deprecated
     public boolean isOpaqueCube(final IBlockState state)
@@ -212,7 +220,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         return true;
     }
 
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings(DEPRECATION)
     @NotNull
     @Override
     public IBlockState getStateForPlacement(

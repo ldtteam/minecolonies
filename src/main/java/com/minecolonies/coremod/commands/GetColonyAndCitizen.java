@@ -44,14 +44,14 @@ public final class GetColonyAndCitizen
      */
     public static int getColonyId(@NotNull final UUID mayorID, @NotNull final World world, @NotNull final String... args)
     {
-        int colonyId;
+        final int colonyId;
         if (args.length == NORMAL_ARGUMENT_LENGTH || args.length == ID_AND_NAME_ARGUMENT_LENGTH)
         {
             try
             {
                 colonyId = Integer.parseInt(args[ARGUMENT_ZERO]);
             }
-            catch (NumberFormatException e)
+            catch (final NumberFormatException e)
             {
                 throw new IllegalArgumentException(String.format(ONLY_NUMBERS, "colony"));
             }
@@ -91,10 +91,10 @@ public final class GetColonyAndCitizen
      * @param args     The given arguments
      * @return Returns citizen ID
      */
-    public static int getCitizenId(@NotNull int colonyId, @NotNull final String... args)
+    public static int getCitizenId(@NotNull final int colonyId, @NotNull final String... args)
     {
         int citizenId;
-        String citizenName;
+        final String citizenName;
         citizenId = STANDARD_CITIZEN_ID;
         if (args.length == NORMAL_ARGUMENT_LENGTH)
         {
@@ -102,7 +102,7 @@ public final class GetColonyAndCitizen
             {
                 citizenId = Integer.parseInt(args[ARGUMENT_ONE]);
             }
-            catch (NumberFormatException e)
+            catch (final NumberFormatException e)
             {
                 throw new IllegalArgumentException(String.format(ONLY_NUMBERS, "citizen"));
             }
@@ -113,7 +113,7 @@ public final class GetColonyAndCitizen
             {
                 citizenId = Integer.parseInt(args[ARGUMENT_ZERO]);
             }
-            catch (NumberFormatException e)
+            catch (final NumberFormatException e)
             {
                 throw new IllegalArgumentException(String.format(ONLY_NUMBERS, "citizen"));
             }

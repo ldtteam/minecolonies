@@ -138,7 +138,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         if (worker.canEntityBeSeen(targetEntity) && worker.getDistanceToEntity(targetEntity) <= MIN_ATTACK_DISTANCE)
         {
             worker.resetActiveHand();
-            boolean killedEnemy = attackEntity(targetEntity, (float) DAMAGE_PER_ATTACK);
+            final boolean killedEnemy = attackEntity(targetEntity, (float) DAMAGE_PER_ATTACK);
             setDelay(getReloadTime());
             attacksExecuted += 1;
             currentSearchDistance = START_SEARCH_DISTANCE;

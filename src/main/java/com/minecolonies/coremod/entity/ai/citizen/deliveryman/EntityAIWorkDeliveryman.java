@@ -240,7 +240,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      * @param localAlreadyKept already kept resources.
      * @return true if required.
      */
-    public static boolean workerRequiresItem(AbstractBuilding building, ItemStack stack, List<ItemStorage> localAlreadyKept)
+    public static boolean workerRequiresItem(final AbstractBuilding building, final ItemStack stack, final List<ItemStorage> localAlreadyKept)
     {
         return (building instanceof AbstractBuildingWorker && ((AbstractBuildingWorker) building).neededForWorker(stack))
                  || buildingRequiresCertainAmountOfItem(building, stack, localAlreadyKept);
@@ -255,7 +255,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      * @param localAlreadyKept already kept items.
      * @return true if deliveryman should leave it behind.
      */
-    private static boolean buildingRequiresCertainAmountOfItem(AbstractBuilding building, ItemStack stack, List<ItemStorage> localAlreadyKept)
+    private static boolean buildingRequiresCertainAmountOfItem(final AbstractBuilding building, final ItemStack stack, final List<ItemStorage> localAlreadyKept)
     {
         for (final Map.Entry<ItemStorage, Integer> entry : building.getRequiredItemsAndAmount().entrySet())
         {
@@ -442,7 +442,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      * @param buildingToDeliver the building to deliver to.
      * @return true if is ready to deliver.
      */
-    private boolean hasFood(AbstractBuilding buildingToDeliver)
+    private boolean hasFood(final AbstractBuilding buildingToDeliver)
     {
         return InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()),
                 stack -> !InventoryUtils.isItemStackEmpty(stack) && stack.getItem() instanceof ItemFood) > buildingToDeliver.getBuildingLevel();
