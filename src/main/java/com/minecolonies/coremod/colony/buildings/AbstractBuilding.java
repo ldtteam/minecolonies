@@ -938,53 +938,13 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Check if the worker requires a shovel.
+     * Check if the worker requires a specific tool.
      *
      * @return true if so.
      */
-    public boolean needsShovel()
+    public boolean needsTool(final String tool)
     {
-        return needsTool.equals(Utils.SHOVEL);
-    }
-
-    /**
-     * Check if the worker requires a axe.
-     *
-     * @return true if so.
-     */
-    public boolean needsAxe()
-    {
-        return needsTool.equals(Utils.AXE);
-    }
-
-    /**
-     * Check if the worker requires a hoe.
-     *
-     * @return true if so.
-     */
-    public boolean needsHoe()
-    {
-        return needsTool.equals(Utils.HOE);
-    }
-
-    /**
-     * Check if the worker requires a pickaxe.
-     *
-     * @return true if so.
-     */
-    public boolean needsPickaxe()
-    {
-        return needsTool.equals(Utils.PICKAXE);
-    }
-
-    /**
-     * Check if the worker requires a weapon.
-     *
-     * @return true if so.
-     */
-    public boolean needsWeapon()
-    {
-        return needsTool.equals(Utils.WEAPON);
+        return needsTool.equals(tool);
     }
 
     /**

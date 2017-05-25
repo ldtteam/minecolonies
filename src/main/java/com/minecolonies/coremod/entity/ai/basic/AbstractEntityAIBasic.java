@@ -146,11 +146,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 /*
                  * Wait for different tools.
                  */
-          new AITarget(() -> this.getOwnBuilding().needsShovel(), this::waitForShovel),
-          new AITarget(() -> this.getOwnBuilding().needsAxe(), this::waitForAxe),
-          new AITarget(() -> this.getOwnBuilding().needsHoe(), this::waitForHoe),
-          new AITarget(() -> this.getOwnBuilding().needsPickaxe(), this::waitForPickaxe),
-          new AITarget(() -> this.getOwnBuilding().needsWeapon(), this::waitForWeapon),
+          new AITarget(() -> this.getOwnBuilding().needsTool(Utils.SHOVEL), this::waitForShovel),
+          new AITarget(() -> this.getOwnBuilding().needsTool(Utils.AXE), this::waitForAxe),
+          new AITarget(() -> this.getOwnBuilding().needsTool(Utils.HOE), this::waitForHoe),
+          new AITarget(() -> this.getOwnBuilding().needsTool(Utils.PICKAXE), this::waitForPickaxe),
+          new AITarget(() -> this.getOwnBuilding().needsTool(Utils.WEAPON), this::waitForWeapon),
 
                 /*
                  * Dumps inventory as long as needs be.
@@ -633,7 +633,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             getOwnBuilding().setNeedsTool(Utils.SHOVEL);
         }
 
-        return getOwnBuilding().needsShovel();
+        return getOwnBuilding().needsTool(Utils.SHOVEL);
     }
 
     /**
@@ -762,7 +762,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             getOwnBuilding().setNeedsTool(Utils.AXE);
         }
-        return getOwnBuilding().needsAxe();
+        return getOwnBuilding().needsTool(Utils.AXE);
     }
 
     /**
@@ -793,7 +793,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             getOwnBuilding().setNeedsTool(Utils.HOE);
         }
-        return getOwnBuilding().needsHoe();
+        return getOwnBuilding().needsTool(Utils.HOE);
     }
 
     /**
@@ -858,7 +858,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             }
         }
 
-        return getOwnBuilding().needsPickaxe();
+        return getOwnBuilding().needsTool(Utils.PICKAXE);
     }
 
     /**
@@ -919,7 +919,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         delay += DELAY_RECHECK;
 
-        if (getOwnBuilding().needsWeapon())
+        if (getOwnBuilding().needsTool(Utils.WEAPON))
         {
             if (walkToBuilding())
             {
@@ -931,7 +931,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             }
             requestWithoutSpam(new TextComponentTranslation("com.minecolonies.coremod.job.guard.needWeapon"));
         }
-        return getOwnBuilding().needsWeapon();
+        return getOwnBuilding().needsTool(Utils.WEAPON);
     }
 
     /**
