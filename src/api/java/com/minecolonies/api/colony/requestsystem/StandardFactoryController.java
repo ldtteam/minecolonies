@@ -7,12 +7,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Default implementation of a FactoryController
  * Singleton.
  */
-public class StandardFactoryController implements IFactoryController
+public final class StandardFactoryController implements IFactoryController
 {
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
@@ -23,17 +24,17 @@ public class StandardFactoryController implements IFactoryController
     /**
      * Instance variable.
      */
-    private static final StandardFactoryController INSTANCE = new StandardFactoryController();
+    private static final StandardFactoryController INSTANCE       = new StandardFactoryController();
     /**
      * Input mappings.
      */
     @NotNull
-    private final HashMap<Class, IFactory> inputMappings = new HashMap<>();
+    private final        Map<Class, IFactory>      inputMappings  = new HashMap<>();
     /**
      * Output mappings.
      */
     @NotNull
-    private final HashMap<Class, IFactory> outputMappings = new HashMap<>();
+    private final        Map<Class, IFactory>      outputMappings = new HashMap<>();
 
     /**
      * Private constructor. Throws IllegalStateException if already created.
@@ -65,6 +66,7 @@ public class StandardFactoryController implements IFactoryController
      * @throws IllegalArgumentException is thrown when the given input class is unknown to this Factory Controller.
      */
     @Override
+    @SuppressWarnings("unchecked")
     public <Input> IFactory<Input, ?> getFactoryForInput(@NotNull final Class<? extends Input> clazz) throws IllegalArgumentException
     {
         if (!inputMappings.containsKey(clazz))
@@ -84,6 +86,7 @@ public class StandardFactoryController implements IFactoryController
      * @throws IllegalArgumentException is thrown when the given output class is unknown to this Factory Controller.
      */
     @Override
+    @SuppressWarnings("unchecked")
     public <Output> IFactory<?, Output> getFactoryForOutput(@NotNull final Class<? extends Output> clazz) throws IllegalArgumentException
     {
         if (!inputMappings.containsKey(clazz))
