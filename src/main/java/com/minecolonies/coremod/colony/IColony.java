@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony;
 
-import com.minecolonies.coremod.colony.permissions.IPermissions;
+import com.minecolonies.api.colony.permissions.IPermissions;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 

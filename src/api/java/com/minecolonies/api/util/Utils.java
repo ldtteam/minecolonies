@@ -1,6 +1,6 @@
-package com.minecolonies.coremod.util;
+package com.minecolonies.api.util;
 
-import com.minecolonies.compatibility.Compatibility;
+import com.minecolonies.api.compatibility.Compatibility;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemHoe;

@@ -1,7 +1,6 @@
-package com.minecolonies.coremod.util;
+package com.minecolonies.api.util;
 
 import net.minecraft.block.Block;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
