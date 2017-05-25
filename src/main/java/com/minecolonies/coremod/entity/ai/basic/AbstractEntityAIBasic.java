@@ -68,10 +68,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private static final int             HIT_EVERY_X_TICKS             = 5;
     /**
-     * Diamond pickaxe level.
-     */
-    private static final int             DIAMOND_LEVEL                 = 3;
-    /**
      * The list of all items and their quantity that were requested by the worker.
      * Warning: This list does not change, if you need to see what is currently missing,
      * look at @see #itemsCurrentlyNeeded for things the miner needs.
@@ -632,7 +628,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private boolean checkForShovel()
     {
-        getOwnBuilding().setNeedsShovel(checkForNeededTool(Utils.SHOVEL));
+        if (checkForNeededTool(Utils.SHOVEL))
+        {
+            getOwnBuilding().setNeedsShovel(true);
+            getOwnBuilding().setNeedsPickaxeLevel(TOOL_LEVEL_WOOD_OR_GOLD);
+        }
+
         return getOwnBuilding().needsShovel();
     }
 
@@ -758,7 +759,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     protected boolean checkForAxe()
     {
-        getOwnBuilding().setNeedsAxe(checkForNeededTool(Utils.AXE));
+        if (checkForNeededTool(Utils.AXE))
+        {
+            getOwnBuilding().setNeedsAxe(true);
+            getOwnBuilding().setNeedsPickaxeLevel(TOOL_LEVEL_WOOD_OR_GOLD);
+        }
         return getOwnBuilding().needsAxe();
     }
 
@@ -786,7 +791,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     protected boolean checkForHoe()
     {
-        getOwnBuilding().setNeedsHoe(checkForNeededTool(Utils.HOE));
+        if (checkForNeededTool(Utils.HOE))
+        {
+            getOwnBuilding().setNeedsHoe(true);
+            getOwnBuilding().setNeedsPickaxeLevel(TOOL_LEVEL_WOOD_OR_GOLD);
+        }
         return getOwnBuilding().needsHoe();
     }
 
@@ -1285,7 +1294,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 checkForPickaxe(required);
                 break;
             default:
-                checkForPickaxe(DIAMOND_LEVEL);
+                checkForPickaxe(TOOL_LEVEL_DIAMOND);
                 Log.getLogger().error("Invalid tool " + tool + " not implemented as tool will require pickaxe level 4 instead.");
         }
     }

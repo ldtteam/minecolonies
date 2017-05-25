@@ -318,9 +318,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
 
         if(building != null)
         {
-            if((minLevel != TOOL_LEVEL_HAND
-                    && InventoryUtils.isPickaxeInProvider(building.getTileEntity(), minLevel, requestingBuilding.getBuildingLevel()))
-                    || InventoryUtils.isToolInProvider(building.getTileEntity(), tool, minLevel, requestingBuilding.getBuildingLevel()))
+            if(InventoryUtils.isToolInProvider(building.getTileEntity(), tool, minLevel, requestingBuilding.getBuildingLevel()))
             {
                 return building.getLocation();
             }
@@ -329,8 +327,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             {
                 final TileEntity entity = world.getTileEntity(pos);
                 if (entity instanceof TileEntityChest
-                        && ((minLevel != TOOL_LEVEL_HAND && InventoryUtils.isPickaxeInProvider(entity, minLevel, requestingBuilding.getBuildingLevel()))
-                        || InventoryUtils.isToolInProvider(entity, tool, minLevel, requestingBuilding.getBuildingLevel())))
+                        && InventoryUtils.isToolInProvider(entity, tool, minLevel, requestingBuilding.getBuildingLevel()))
                 {
                     return pos;
                 }
@@ -349,19 +346,9 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     {
         @Nullable final AbstractBuilding building = getBuilding();
 
-        boolean hasItem;
         if(building != null)
         {
-            if(tool.equals(Utils.PICKAXE))
-            {
-                hasItem = InventoryUtils.isPickaxeInProvider(building.getTileEntity(), requestingBuilding.getNeededPickaxeLevel(), requestingBuilding.getBuildingLevel());
-            }
-            else
-            {
-                hasItem = InventoryUtils.isToolInProvider(building.getTileEntity(), tool, TOOL_LEVEL_WOOD_OR_GOLD, requestingBuilding.getBuildingLevel());
-            }
-
-            if(hasItem)
+            if(InventoryUtils.isToolInProvider(building.getTileEntity(), tool, requestingBuilding.getNeededPickaxeLevel(), requestingBuilding.getBuildingLevel()))
             {
                 return true;
             }
@@ -371,16 +358,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                 @Nullable final TileEntity entity = world.getTileEntity(pos);
                 if(entity instanceof TileEntityChest)
                 {
-                    if(tool.equals(Utils.PICKAXE))
-                    {
-                        hasItem = InventoryUtils.isPickaxeInProvider(entity, requestingBuilding.getNeededPickaxeLevel(), requestingBuilding.getBuildingLevel());
-                    }
-                    else
-                    {
-                        hasItem = InventoryUtils.isToolInProvider(entity, tool, TOOL_LEVEL_WOOD_OR_GOLD, requestingBuilding.getBuildingLevel());
-                    }
-
-                    if(hasItem)
+                    if(InventoryUtils.isToolInProvider(entity, tool, requestingBuilding.getNeededPickaxeLevel(), requestingBuilding.getBuildingLevel()))
                     {
                         return true;
                     }

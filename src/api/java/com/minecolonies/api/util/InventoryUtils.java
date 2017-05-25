@@ -302,8 +302,6 @@ public class InventoryUtils
                 .orElse(-1);
     }
 
-
-
     /**
      * Returns if the {@link IItemHandler} is full.
      *
@@ -313,39 +311,6 @@ public class InventoryUtils
     public static boolean isItemHandlerFull(@NotNull final IItemHandler itemHandler)
     {
         return getFirstOpenSlotFromItemHandler(itemHandler) == -1;
-    }
-
-
-
-    /**
-     * Looks for a {@link ItemPickaxe} to mine a block of {@code requiredLevel},
-     * in the given {@link IItemHandler}.
-     *
-     * @param itemHandler   {@link IItemHandler} to check in.
-     * @param requiredLevel The minimal required {@link ItemPickaxe} level
-     * @return True if the {@link IItemHandler} contains a {@link ItemPickaxe}
-     * with the given minimal required level.
-     */
-    public static boolean isPickaxeInItemHandler(IItemHandler itemHandler, final int requiredLevel)
-    {
-        return hasItemInItemHandler(itemHandler, (ItemStack stack) -> Utils.checkIfPickaxeQualifies(requiredLevel, Utils.getMiningLevel(stack, Utils.PICKAXE)));
-    }
-
-    /**
-     * Looks for a {@link ItemPickaxe} to mine a block of {@code requiredLevel},
-     * in the given {@link IItemHandler}. The {@link ItemPickaxe} tool level
-     * cannot exceed the given {@code maximalLevel}.
-     *
-     * @param itemHandler   {@link IItemHandler} to check in.
-     * @param requiredLevel The minimal required {@link ItemPickaxe} level
-     * @param maximalLevel  The maximal tool level of the {@link ItemPickaxe}
-     * @return True if the {@link IItemHandler} contains a {@link ItemPickaxe}
-     * with the given minimal required level.
-     */
-    public static boolean isPickaxeInItemHandler(final IItemHandler itemHandler, final int requiredLevel, final int maximalLevel)
-    {
-        return hasItemInItemHandler(itemHandler, (ItemStack stack) -> Utils.checkIfPickaxeQualifies(requiredLevel, Utils.getMiningLevel(stack, Utils.PICKAXE))
-                                                                        && InventoryUtils.hasToolLevel(stack, Utils.PICKAXE, requiredLevel, maximalLevel));
     }
 
     /**
@@ -841,37 +806,6 @@ public class InventoryUtils
     public static boolean isToolInProvider(@NotNull final ICapabilityProvider provider, @NotNull final String toolTypeName, final int minimalLevel, final int maximumLevel)
     {
         return hasItemInProvider(provider, (ItemStack stack) -> Utils.isTool(stack, toolTypeName) && InventoryUtils.hasToolLevel(stack, toolTypeName, minimalLevel, maximumLevel));
-    }
-
-    /**
-     * Looks for a {@link ItemPickaxe} to mine a block of {@code requiredLevel},
-     * in the given {@link ICapabilityProvider}.
-     *
-     * @param provider      {@link ICapabilityProvider} to check in.
-     * @param requiredLevel The minimal required {@link ItemPickaxe} level
-     * @return True if the {@link ICapabilityProvider} contains a {@link
-     * ItemPickaxe} with the given minimal required level.
-     */
-    public static boolean isPickaxeInProvider(ICapabilityProvider provider, final int requiredLevel)
-    {
-        return hasItemInProvider(provider, (ItemStack stack) -> Utils.checkIfPickaxeQualifies(requiredLevel, Utils.getMiningLevel(stack, Utils.PICKAXE)));
-    }
-
-    /**
-     * Looks for a {@link ItemPickaxe} to mine a block of {@code requiredLevel},
-     * in the given {@link ICapabilityProvider}. The {@link ItemPickaxe} tool
-     * level cannot exceed the given {@code maximalLevel}.
-     *
-     * @param provider      {@link ICapabilityProvider} to check in.
-     * @param requiredLevel The minimal required {@link ItemPickaxe} level
-     * @param maximalLevel  The maximal tool level of the {@link ItemPickaxe}
-     * @return True if the {@link ICapabilityProvider} contains a {@link
-     * ItemPickaxe} with the given minimal required level.
-     */
-    public static boolean isPickaxeInProvider(ICapabilityProvider provider, final int requiredLevel, final int maximalLevel)
-    {
-        return hasItemInProvider(provider, (ItemStack stack) -> Utils.checkIfPickaxeQualifies(requiredLevel, Utils.getMiningLevel(stack, Utils.PICKAXE))
-                                                                  && InventoryUtils.hasToolLevel(stack, Utils.PICKAXE, requiredLevel, maximalLevel));
     }
 
     /**
