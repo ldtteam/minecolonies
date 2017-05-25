@@ -1,12 +1,10 @@
 package com.minecolonies.coremod.entity.ai.citizen.builder;
 
-import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.configuration.Configurations;
-import com.minecolonies.coremod.util.BlockUtils;
 import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
@@ -56,30 +54,16 @@ public final class ConstructionTapeHelper
      * @param world     the world.
      */
 
-    public static void placeConstructionTape(@NotNull WorkOrderBuild workOrder, @NotNull World world)
+    public static void placeConstructionTape(@NotNull WorkOrderBuildDecoration workOrder, @NotNull World world)
     {
         if (Configurations.builderPlaceConstructionTape)
         {
             final StructureWrapper wrapper = new StructureWrapper(world, workOrder.getStructureName());
             final BlockPos pos = workOrder.getBuildingLocation();
-            int tempRotation = 0;
             final IBlockState constructionTape = ModBlocks.blockConstructionTape.getDefaultState();
             final IBlockState constructionTapeCorner = ModBlocks.blockConstructionTapeCorner.getDefaultState();
 
-            if (workOrder.getRotation() == 0 && !(workOrder instanceof WorkOrderBuildDecoration))
-            {
-                final IBlockState blockState = world.getBlockState(pos);
-                if (blockState.getBlock() instanceof AbstractBlockHut)
-                {
-                    tempRotation = BlockUtils.getRotationFromFacing(blockState.getValue(AbstractBlockHut.FACING));
-                }
-            }
-            else
-            {
-                tempRotation = workOrder.getRotation();
-            }
-
-            wrapper.rotate(tempRotation, world, workOrder.getBuildingLocation(), workOrder.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE);
+            wrapper.rotate(workOrder.getRotation(world), world, workOrder.getBuildingLocation(), workOrder.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE);
             wrapper.setPosition(pos);
 
             final int x1 = wrapper.getPosition().getX() - wrapper.getOffset().getX() - 1;
@@ -207,23 +191,11 @@ public final class ConstructionTapeHelper
      * @param world     the world.
      */
 
-    public static void removeConstructionTape(@NotNull WorkOrderBuild workOrder, @NotNull World world)
+    public static void removeConstructionTape(@NotNull WorkOrderBuildDecoration workOrder, @NotNull World world)
     {
         final StructureWrapper wrapper = new StructureWrapper(world, workOrder.getStructureName());
         final BlockPos pos = workOrder.getBuildingLocation();
-        int tempRotation = 0;
-        if (workOrder.getRotation() == 0 && !(workOrder instanceof WorkOrderBuildDecoration))
-        {
-            final IBlockState blockState = world.getBlockState(pos);
-            if (blockState.getBlock() instanceof AbstractBlockHut)
-            {
-                tempRotation = BlockUtils.getRotationFromFacing(blockState.getValue(AbstractBlockHut.FACING));
-            }
-        }
-        else
-        {
-            tempRotation = workOrder.getRotation();
-        }
+        final int tempRotation =  workOrder.getRotation(world);
         wrapper.rotate(tempRotation, world, workOrder.getBuildingLocation(), workOrder.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE);
         wrapper.setPosition(pos);
         final int x1 = wrapper.getPosition().getX() - wrapper.getOffset().getX() - 1;

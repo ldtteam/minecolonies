@@ -3,12 +3,14 @@ package com.minecolonies.coremod.colony.jobs;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.util.Log;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +22,13 @@ import java.util.*;
 
 /**
  * Basic job information.
+ * <p>
+ * Suppressing Sonar Rule squid:S2390
+ * This rule does "Classes should not access static members of their own subclasses during initialization"
+ * But in this case the rule does not apply because
+ * We are only mapping classes and that is reasonable
  */
+@SuppressWarnings("squid:S2390")
 public abstract class AbstractJob
 {
     private static final String TAG_TYPE         = "type";
@@ -45,6 +53,7 @@ public abstract class AbstractJob
     private static final Map<String, Class<? extends AbstractJob>> nameToClassMap = new HashMap<>();
     @NotNull
     private static final Map<Class<? extends AbstractJob>, String> classToNameMap = new HashMap<>();
+    //fix for the annotation
     static
     {
         addMapping(MAPPING_PLACEHOLDER, JobPlaceholder.class);
@@ -135,7 +144,7 @@ public abstract class AbstractJob
             catch (final RuntimeException ex)
             {
                 Log.getLogger().error(String.format("A Job %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-                  compound.getString(TAG_TYPE), oclass.getName()), ex);
+                        compound.getString(TAG_TYPE), oclass.getName()), ex);
                 job = null;
             }
         }
@@ -267,7 +276,7 @@ public abstract class AbstractJob
     {
         for (@NotNull final ItemStack neededItem : itemsNeeded)
         {
-            if ((stack.getItem().isDamageable() && stack.getItem() == neededItem.getItem()) || stack.isItemEqual(neededItem))
+            if (stack.isItemEqualIgnoreDurability(neededItem))
             {
                 neededItem.setCount(neededItem.getCount() + stack.getCount());
                 return;
@@ -296,7 +305,7 @@ public abstract class AbstractJob
 
         for (@NotNull final ItemStack neededItem : itemsNeeded)
         {
-            if ((stack.getItem().isDamageable() && stack.getItem() == neededItem.getItem()) || stack.isItemEqual(neededItem))
+            if (stack.isItemEqualIgnoreDurability(neededItem))
             {
                 //todo make this sofisticated as soon as material handling has been implemented.
                 //final int itemsToRemove = Math.min(neededItem.getCount(), stackCopy.getCount());
@@ -329,9 +338,15 @@ public abstract class AbstractJob
 
     /**
      * Generate your AI class to register.
+     * <p>
+     * Suppressing Sonar Rule squid:S1452
+     * This rule does "Generic wildcard types should not be used in return parameters"
+     * But in this case the rule does not apply because
+     * We are fine with all AbstractJob implementations and need generics only for java
      *
      * @return your personal AI instance.
      */
+    @SuppressWarnings("squid:S1452")
     public abstract AbstractAISkeleton<? extends AbstractJob> generateAI();
 
     /**
@@ -374,5 +389,26 @@ public abstract class AbstractJob
     public SoundEvent getBadWeatherSound()
     {
         return null;
+    }
+
+    /**
+     * Override this to let the worker return a hostile move away sound.
+     *
+     * @return soundEvent to be played.
+     */
+    public SoundEvent getMoveAwaySound()
+    {
+        return null;
+    }
+
+    /**
+     * Override this to implement Job specific death achievements.
+     *
+     * @param source  of the death
+     * @param citizen which just died
+     */
+    public void triggerDeathAchievement(final DamageSource source, final EntityCitizen citizen)
+    {
+
     }
 }

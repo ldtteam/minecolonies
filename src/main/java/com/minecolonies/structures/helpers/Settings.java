@@ -29,8 +29,14 @@ public final class Settings
     private             String                   structureName  = null;
     private             boolean                  isPendingReset = false;
 
+    /**
+     * Private constructor to hide implicit one.
+     */
     private Settings()
     {
+        /**
+         * Intentionally left empty.
+         */
     }
 
     /**

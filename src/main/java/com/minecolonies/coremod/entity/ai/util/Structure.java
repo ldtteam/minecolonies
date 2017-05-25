@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.ai.util;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.util.BlockPosUtil;
+import com.minecolonies.coremod.util.BlockUtils;
 import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
@@ -148,7 +149,8 @@ public class Structure
             {
                 return structureBlock == worldBlockState.getBlock();
             }
-            else if (structureBlock instanceof BlockStairs && structureBlockState.equals(worldBlockState))
+            else if ((structureBlock instanceof BlockStairs && structureBlockState.equals(worldBlockState))
+                    || BlockUtils.isGrassOrDirt(structureBlock, worldBlock, structureBlockState, worldBlockState))
             {
                 return true;
             }
@@ -158,6 +160,13 @@ public class Structure
             }
 
             return structureBlockState.equals(worldBlockState);
+        }
+
+        private static boolean structureBlockEqualsWorldBlock(@NotNull final Block structureBlock,
+                @NotNull final Block worldBlock, @NotNull final IBlockState worldMetadata)
+        {
+            return structureBlock == ModBlocks.blockSubstitution || (structureBlock == ModBlocks.blockSolidSubstitution
+                    && worldMetadata.getMaterial().isSolid() && !(worldBlock instanceof BlockOre) && worldBlock != Blocks.AIR);
         }
     }
 
@@ -408,6 +417,25 @@ public class Structure
     public int getLength()
     {
         return this.structure.getLength();
+    }
+
+    /**
+     * Calculates the height of this structure.
+     *
+     * @return the height as an int
+     */
+    public int getHeight()
+    {
+        return this.structure.getHeight();
+    }
+
+    /**
+     * Get the center position of the structure.
+     * @return the blockPos.
+     */
+    public BlockPos getCenter()
+    {
+        return this.structure.getPosition();
     }
 
     /**

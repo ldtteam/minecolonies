@@ -2,13 +2,9 @@ package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.blocks.*;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
-import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
@@ -16,6 +12,7 @@ import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.*;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockContainer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
@@ -851,13 +848,30 @@ public abstract class AbstractBuilding
     }
 
     /**
+     * register a block and position.
+     *
+     * @param block to be registered
+     * @param pos of the block
+     */
+    public void registerBlockPosition(@NotNull Block block, @NotNull final BlockPos pos)
+    {
+        if (block instanceof BlockContainer)
+        {
+            addContainerPosition(pos);
+        }
+    }
+
+    /**
      * Add a new container to the building.
      *
      * @param pos position to add.
      */
-    public void addContainerPosition(BlockPos pos)
+    public void addContainerPosition(@NotNull final BlockPos pos)
     {
-        containerList.add(pos);
+        if (!containerList.contains(pos))
+        {
+            containerList.add(pos);
+        }
     }
 
     /**
@@ -1058,13 +1072,16 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Getter for the neededItems.
+     * This method makes a copy of the itemsCurrentlyNeeded.
+     * Currently every call to this method needs a copy, if for some reason an outside
+     * class needs this list and a copy isn't desired, a new method should be created,
+     * and this doc should be changed to point to that new method.
      *
-     * @return an unmodifiable list.
+     * @return a copy of the itemsCurrentlyNeeded list.
      */
-    public List<ItemStack> getNeededItems()
+    public List<ItemStack> getCopyOfNeededItems()
     {
-        return Collections.unmodifiableList(itemsCurrentlyNeeded);
+        return new ArrayList<>(itemsCurrentlyNeeded);
     }
 
     /**
@@ -1150,26 +1167,31 @@ public abstract class AbstractBuilding
      *
      * @param stack the stack to transfer.
      * @param world the world to do it in.
-     * @return true if was able to.
+     * @return The {@link ItemStack} as that is left over, might be {@link InventoryUtils#EMPTY} if the stack was completely accepted
      */
-    public boolean transferStack(@NotNull final ItemStack stack, @NotNull final World world)
+    public ItemStack transferStack(@NotNull final ItemStack stack, @NotNull final World world)
     {
         if (tileEntity == null || InventoryUtils.isProviderFull(tileEntity))
         {
-            for (final BlockPos pos : containerList)
+            Iterator<BlockPos> posIterator = containerList.iterator();
+            @NotNull ItemStack resultStack = stack.copy();
+
+            while (posIterator.hasNext() && !InventoryUtils.isItemStackEmpty(resultStack))
             {
+                final BlockPos pos = posIterator.next();
                 final TileEntity tempTileEntity = world.getTileEntity(pos);
                 if (tempTileEntity instanceof TileEntityChest && !InventoryUtils.isProviderFull(tempTileEntity))
                 {
-                    return InventoryUtils.addItemStackToProvider(tempTileEntity, stack);
+                    resultStack = InventoryUtils.addItemStackToProviderWithResult(tempTileEntity, stack);
                 }
             }
+
+            return resultStack;
         }
         else
         {
-            return InventoryUtils.addItemStackToProvider(tileEntity, stack);
+            return InventoryUtils.addItemStackToProviderWithResult(tileEntity, stack);
         }
-        return false;
     }
 
     /**
@@ -1177,7 +1199,7 @@ public abstract class AbstractBuilding
      *
      * @param stack the stack to transfer.
      * @param world the world to do it in.
-     * @return the itemStack which has been replaced
+     * @return the itemStack which has been replaced or the itemStack which could not be transfered
      */
     @Nullable
     public ItemStack forceTransferStack(final ItemStack stack, final World world)
@@ -1197,7 +1219,7 @@ public abstract class AbstractBuilding
         {
             return forceItemStackToProvider(tileEntity, stack);
         }
-        return null;
+        return stack;
     }
 
     @Nullable

@@ -281,7 +281,7 @@ public final class StructureWrapper
                 return false;
             }
         }
-        while (doesStructureBlockEqualWorldBlock() && count < Configurations.maxBlocksCheckedByBuilder);
+        while (isStructureBlockEqualWorldBlock() && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
     }
@@ -321,7 +321,7 @@ public final class StructureWrapper
      *
      * @return true if the structure block equals the world block.
      */
-    public boolean doesStructureBlockEqualWorldBlock()
+    public boolean isStructureBlockEqualWorldBlock()
     {
         final IBlockState structureBlockState = structure.getBlockState(this.getLocalPosition());
         final Block structureBlock = structureBlockState.getBlock();
@@ -336,13 +336,19 @@ public final class StructureWrapper
 
         final IBlockState worldBlockState = world.getBlockState(worldPos);
 
+        if(structureBlock == ModBlocks.blockSolidSubstitution && worldBlockState.getMaterial().isSolid())
+        {
+            return true;
+        }
+
         //list of things to only check block for.
         //For the time being any flower pot is equal to each other.
         if (structureBlock instanceof BlockDoor || structureBlock == Blocks.FLOWER_POT)
         {
             return structureBlock == worldBlockState.getBlock();
         }
-        else if (structureBlock instanceof BlockStairs && structureBlockState == worldBlockState)
+        else if ((structureBlock instanceof BlockStairs && structureBlockState == worldBlockState)
+                || BlockUtils.isGrassOrDirt(structureBlock, worldBlockState.getBlock(), structureBlockState, worldBlockState))
         {
             return true;
         }
@@ -452,7 +458,7 @@ public final class StructureWrapper
             }
         }
         //Check for air blocks and if blocks below the hut are different from the structure
-        while ((worldBlockAir() || doesStructureBlockEqualWorldBlock()) && count < Configurations.maxBlocksCheckedByBuilder);
+        while ((worldBlockAir() || isStructureBlockEqualWorldBlock()) && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
     }
@@ -473,7 +479,7 @@ public final class StructureWrapper
                 return false;
             }
         }
-        while ((doesStructureBlockEqualWorldBlock() || isBlockNonSolid()) && count < Configurations.maxBlocksCheckedByBuilder);
+        while ((isStructureBlockEqualWorldBlock() || isBlockNonSolid()) && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
     }
@@ -515,7 +521,7 @@ public final class StructureWrapper
                 return false;
             }
         }
-        while ((doesStructureBlockEqualWorldBlock() || isBlockSolid()) && count < Configurations.maxBlocksCheckedByBuilder);
+        while ((isStructureBlockEqualWorldBlock() || isBlockSolid()) && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
     }

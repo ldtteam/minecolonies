@@ -1,10 +1,13 @@
 package com.minecolonies.coremod.colony.jobs;
 
+import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.miner.EntityAIStructureMiner;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.DamageSource;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -69,4 +72,19 @@ public class JobMiner extends AbstractJobStructure
         }
         addItemNeeded(stack);
     }
+
+    @Override
+    public void triggerDeathAchievement(final DamageSource source, final EntityCitizen citizen)
+    {
+        super.triggerDeathAchievement(source, citizen);
+        if (source == DamageSource.LAVA || source == DamageSource.IN_FIRE || source == DamageSource.ON_FIRE)
+        {
+            citizen.getColony().triggerAchievement(ModAchievements.achievementMinerDeathLava);
+        }
+        if (source.equals(DamageSource.FALL))
+        {
+            citizen.getColony().triggerAchievement(ModAchievements.achievementMinerDeathFall);
+        }
+    }
+
 }

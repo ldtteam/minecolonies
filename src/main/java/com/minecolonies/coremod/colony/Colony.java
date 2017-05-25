@@ -2,10 +2,7 @@ package com.minecolonies.coremod.colony;
 
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.BuildingFarmer;
-import com.minecolonies.coremod.colony.buildings.BuildingHome;
-import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
+import com.minecolonies.coremod.colony.buildings.*;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.configuration.Configurations;
@@ -64,28 +61,54 @@ public class Colony implements IColony
     private static final String TAG_FREE_POSITIONS             = "freePositions";
 
     //statistics tags
-    private static final String TAG_STATISTICS            = "statistics";
-    private static final String TAG_MINER_STATISTICS      = "minerStatistics";
-    private static final String TAG_MINER_ORES            = "ores";
-    private static final String TAG_MINER_DIAMONDS        = "diamonds";
-    private static final String TAG_FARMER_STATISTICS     = "farmerStatistics";
-    private static final String TAG_FARMER_WHEAT          = "wheat";
-    private static final String TAG_FARMER_POTATOES       = "potatoes";
+    private static final String TAG_STATISTICS        = "statistics";
+    private static final String TAG_MINER_STATISTICS  = "minerStatistics";
+    private static final String TAG_MINER_ORES        = "ores";
+    private static final String TAG_MINER_DIAMONDS    = "diamonds";
+    private static final String TAG_FARMER_STATISTICS = "farmerStatistics";
+    private static final String TAG_FARMER_WHEAT      = "wheat";
+    private static final String TAG_FARMER_POTATOES   = "potatoes";
     private static final String TAG_FARMER_CARROTS        = "carrots";
-    private static final String TAG_GUARD_STATISTICS              = "guardStatistics";
-    private static final String TAG_GUARD_MOBS                    = "mobs";
-    private static final String TAG_BUILDER_STATISTICS            = "builderStatistics";
-    private static final String TAG_BUILDER_HUTS                  = "huts";
-    private static final String TAG_FISHERMAN_STATISTICS          = "fishermanStatistics";
-    private static final String TAG_FISHERMAN_FISH                = "fish";
-    private static final String TAG_LUMBERJACK_STATISTICS         = "lumberjackStatistics";
-    private static final String TAG_LUMBERJACK_TREES              = "trees";
-    private static final String TAG_LUMBERJACK_SAPLINGS           = "saplings";
-    private static final int    NUM_ACHIEVEMENT_FIRST             = 1;
-    private static final int    NUM_ACHIEVEMENT_SECOND            = 25;
-    private static final int    NUM_ACHIEVEMENT_THIRD             = 100;
-    private static final int    NUM_ACHIEVEMENT_FOURTH            = 500;
-    private static final int    NUM_ACHIEVEMENT_FIFTH             = 1000;
+    private static final String TAG_GUARD_STATISTICS      = "guardStatistics";
+    private static final String TAG_GUARD_MOBS            = "mobs";
+    private static final String TAG_BUILDER_STATISTICS    = "builderStatistics";
+    private static final String TAG_BUILDER_HUTS          = "huts";
+    private static final String TAG_FISHERMAN_STATISTICS  = "fishermanStatistics";
+    private static final String TAG_FISHERMAN_FISH        = "fish";
+    private static final String TAG_LUMBERJACK_STATISTICS = "lumberjackStatistics";
+    private static final String TAG_LUMBERJACK_TREES      = "trees";
+    private static final String TAG_LUMBERJACK_SAPLINGS   = "saplings";
+    private static final int    NUM_ACHIEVEMENT_FIRST    = 1;
+    private static final int    NUM_ACHIEVEMENT_SECOND    = 25;
+    private static final int    NUM_ACHIEVEMENT_THIRD     = 100;
+    private static final int    NUM_ACHIEVEMENT_FOURTH    = 500;
+    private static final int    NUM_ACHIEVEMENT_FIFTH     = 1000;
+
+    /**
+     * Bonus happiness each factor added.
+     */
+    private static final double HAPPINESS_FACTOR         = 0.1;
+
+    /**
+     * Saturation at which a citizen starts being happy.
+     */
+    private static final int WELL_SATURATED_LIMIT = 5;
+
+    /**
+     * Variable to determine if its currently day or night.
+     */
+    private boolean isDay = true;
+
+    /**
+     * Max overall happiness.
+     */
+    private static final double MAX_OVERALL_HAPPINESS = 10;
+
+    /**
+     * Min overall happiness.
+     */
+    private static final double MIN_OVERALL_HAPPINESS = 1;
+
     //private int autoHostile = 0;//Off
     private static final String TAG_FIELDS                        = "fields";
     private static final int    CHECK_WAYPOINT_EVERY              = 100;
@@ -98,6 +121,12 @@ public class Colony implements IColony
     private final Map<BlockPos, Field>       fields    = new HashMap<>();
     //Additional Waypoints.
     private final Map<BlockPos, IBlockState> wayPoints = new HashMap<>();
+
+    /**
+     * The warehouse building position. Initially null.
+     */
+    private BuildingWareHouse wareHouse = null;
+
     @NotNull
     private final List<Achievement> colonyAchievements;
     //  Workload and Jobs
@@ -145,6 +174,8 @@ public class Colony implements IColony
     private BuildingTownHall townHall;
     private int topCitizenId = 0;
     private int maxCitizens  = Configurations.maxCitizens;
+
+    private double overallHappiness = 5;
 
     /**
      * Constructor for a newly created Colony.
@@ -335,6 +366,11 @@ public class Colony implements IColony
         if (building instanceof BuildingTownHall && townHall == null)
         {
             townHall = (BuildingTownHall) building;
+        }
+
+        if(building instanceof BuildingWareHouse && wareHouse == null)
+        {
+            wareHouse = (BuildingWareHouse) building;
         }
     }
 
@@ -951,7 +987,11 @@ public class Colony implements IColony
     {
         if (event.world != getWorld())
         {
-            throw new IllegalStateException("Colony's world does not match the event.");
+            /**
+             * If the event world is not the colony world ignore. This might happen in interactions with other mods.
+             * This should not be a problem for minecolonies as long as we take care to do nothing in that moment.
+             */
+            return;
         }
 
         if (event.phase == TickEvent.Phase.START)
@@ -995,6 +1035,81 @@ public class Colony implements IColony
             building.onWorldTick(event);
         }
 
+        if(isDay && !world.isDaytime())
+        {
+            isDay = false;
+            updateOverallHappiness();
+        }
+        else if(!isDay && world.isDaytime())
+        {
+            isDay = true;
+        }
+
+        updateWayPoints();
+        workManager.onWorldTick(event);
+    }
+
+    private void updateOverallHappiness()
+    {
+        int guards = 1;
+        int housing = 0;
+        int workers = 1;
+        double saturation = 0;
+        for(final CitizenData citizen: citizens.values())
+        {
+            final AbstractBuildingWorker buildingWorker = citizen.getWorkBuilding();
+            if(buildingWorker != null)
+            {
+                if(buildingWorker instanceof BuildingGuardTower)
+                {
+                    guards += buildingWorker.getBuildingLevel();
+                }
+                else
+                {
+                    workers += buildingWorker.getBuildingLevel();
+                }
+            }
+
+            final BuildingHome home = citizen.getHomeBuilding();
+            if(home != null)
+            {
+                housing += home.getBuildingLevel();
+            }
+
+            saturation += citizen.getSaturation();
+        }
+
+        final int averageHousing = housing/Math.max(1, citizens.size());
+
+        if(averageHousing > 1)
+        {
+            increaseOverallHappiness(averageHousing * HAPPINESS_FACTOR);
+        }
+
+        final int averageSaturation = (int) (saturation/citizens.size());
+        if(averageSaturation < WELL_SATURATED_LIMIT)
+        {
+            decreaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * -HAPPINESS_FACTOR);
+        }
+        else if(averageSaturation > WELL_SATURATED_LIMIT)
+        {
+            increaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * HAPPINESS_FACTOR);
+        }
+
+        int relation = workers/guards;
+
+        if(relation > 1)
+        {
+            decreaseOverallHappiness(relation * HAPPINESS_FACTOR);
+        }
+        markDirty();
+    }
+
+    /**
+     * Update the waypoints after worldTicks.
+     */
+    private void updateWayPoints()
+    {
         final Random rand = new Random();
         if (rand.nextInt(CHECK_WAYPOINT_EVERY) <= 1 && wayPoints.size() > 0)
         {
@@ -1009,11 +1124,10 @@ public class Colony implements IColony
                 if (world != null && world.getBlockState(key).getBlock() != (value.getBlock()))
                 {
                     wayPoints.remove(key);
+                    markDirty();
                 }
             }
         }
-
-        workManager.onWorldTick(event);
     }
 
     /**
@@ -1164,6 +1278,12 @@ public class Colony implements IColony
     public int getID()
     {
         return id;
+    }
+
+    @Override
+    public boolean hasWarehouse()
+    {
+        return wareHouse != null;
     }
 
     /**
@@ -1539,6 +1659,10 @@ public class Colony implements IColony
         {
             townHall = null;
         }
+        else if(building instanceof BuildingWareHouse)
+        {
+            wareHouse = null;
+        }
 
         //Allow Citizens to fix up any data that wasn't fixed up by the AbstractBuilding's own onDestroyed
         for (@NotNull final CitizenData citizen : citizens.values())
@@ -1676,6 +1800,7 @@ public class Colony implements IColony
     public void addWayPoint(final BlockPos point, IBlockState block)
     {
         wayPoints.put(point, block);
+        markDirty();
     }
 
     /**
@@ -1713,6 +1838,35 @@ public class Colony implements IColony
     }
 
     /**
+     * Getter for overall happiness.
+     * @return the overall happiness.
+     */
+    public double getOverallHappiness()
+    {
+        return this.overallHappiness;
+    }
+
+    /**
+     * Increase the overall happiness by an amount, cap at max.
+     * @param amount the amount.
+     */
+    public void increaseOverallHappiness(double amount)
+    {
+        this.overallHappiness = Math.min(this.overallHappiness + Math.abs(amount), MAX_OVERALL_HAPPINESS);
+        this.markDirty();
+    }
+
+    /**
+     * Decrease the overall happiness by an amount, cap at min.
+     * @param amount the amount.
+     */
+    public void decreaseOverallHappiness(double amount)
+    {
+        this.overallHappiness = Math.max(this.overallHappiness - Math.abs(amount), MIN_OVERALL_HAPPINESS);
+        this.markDirty();
+    }
+
+    /**
      * Returns a map with all buildings within the colony.
      * Key is ID (Coordinates), value is building object.
      *
@@ -1722,5 +1876,14 @@ public class Colony implements IColony
     public Map<BlockPos, AbstractBuilding> getBuildings()
     {
         return Collections.unmodifiableMap(buildings);
+    }
+
+    /**
+     * Get all the waypoints of the colony.
+     * @return copy of hashmap.
+     */
+    public Map<BlockPos, IBlockState> getWayPoints()
+    {
+        return new HashMap<>(wayPoints);
     }
 }

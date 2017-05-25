@@ -27,6 +27,7 @@ import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.coremod.util.constants.TranslationConstants.*;
 
 /**
  * This class provides basic ai functionality.
@@ -36,7 +37,12 @@ import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends AbstractAISkeleton<J>
 {
     /**
-     * Timout until the next exception can be thrown.
+     * Buffer time in ticks he will accept a last attacker as valid.
+     */
+    protected static final int ATTACK_TIME_BUFFER = 50;
+
+    /**
+     * The maximum range to keep from the current building place.
      */
     public static final  int             EXCEPTION_TIMEOUT             = 100;
     /**
@@ -495,9 +501,39 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 && InventoryFunctions
                            .matchFirstInProviderWithAction(
                         entity,
-                        stack -> stack != null && is.isItemEqual(stack),
+                        stack -> stack != null && is.isItemEqualIgnoreDurability(stack),
                         this::takeItemStackFromProvider
-                           );
+                      );
+    }
+
+    /**
+     * Finds the first @see ItemStack the type of {@code is}.
+     * It will be taken from the chest and placed in the workers inventory.
+     * Make sure that the worker stands next the chest to not break immersion.
+     * Also make sure to have inventory space for the stack.
+     *
+     * @param entity the tileEntity chest or building.
+     * @param itemStackSelectionPredicate the criteria.
+     * @return true if found the stack.
+     */
+    public boolean isInTileEntity(TileEntityChest entity, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    {
+        return InventoryFunctions
+                .matchFirstInProviderWithAction(
+                        entity,
+                        itemStackSelectionPredicate,
+                        this::takeItemStackFromProvider
+                );
+    }
+
+    /**
+     * Request an Item without spamming the chat.
+     *
+     * @param chat the Item Name
+     */
+    private void requestWithoutSpam(@NotNull final TextComponentBase chat)
+    {
+        chatSpamFilter.requestTextComponentWithoutSpam(chat);
     }
 
     /**
@@ -632,7 +668,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
         if (!getOwnBuilding().hasOnGoingDelivery())
         {
-            chatSpamFilter.talkWithoutSpam("entity.worker.toolRequest", tool, InventoryUtils.swapToolGrade(hutLevel));
+            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_TOOLREQUEST, tool, InventoryUtils.swapToolGrade(hutLevel));
         }
         return true;
     }
@@ -807,9 +843,17 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             }
             if (!getOwnBuilding().hasOnGoingDelivery())
             {
-                chatSpamFilter.talkWithoutSpam("entity.worker.pickaxeRequest",
-                  InventoryUtils.swapToolGrade(minlevel),
-                  InventoryUtils.swapToolGrade(hutLevel));
+                if (minlevel > hutLevel)
+                {
+                    chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUESTBETTERHUT,
+                      InventoryUtils.swapToolGrade(hutLevel));
+                }
+                else
+                {
+                    chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUEST,
+                      InventoryUtils.swapToolGrade(minlevel),
+                      InventoryUtils.swapToolGrade(hutLevel));
+                }
             }
         }
 
@@ -908,16 +952,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Request an Item without spamming the chat.
-     *
-     * @param chat the Item Name
-     */
-    private void requestWithoutSpam(@NotNull final TextComponentBase chat)
-    {
-        chatSpamFilter.requestTextComponentWithoutSpam(chat);
-    }
-
-    /**
      * Walk to building and dump inventory.
      * If inventory is dumped, continue execution
      * so that the state can be resolved.
@@ -939,7 +973,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
         if (isInventoryAndChestFull())
         {
-            chatSpamFilter.talkWithoutSpam("entity.worker.inventoryFullChestFull");
+            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST);
         }
         //collect items that are nice to have if they are available
         this.itemsNiceToHave().forEach(this::isInHut);
@@ -1031,7 +1065,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         int amountToKeep = 0;
         if (keptEnough(alreadyKept, shouldKeep, stack))
         {
-            returnStack = InventoryUtils.addItemStackToProviderWithResult(buildingWorker.getTileEntity(), stack);
+            returnStack = InventoryUtils.addItemStackToProviderWithResult(buildingWorker.getTileEntity(), stack.copy());
         }
         else
         {
@@ -1044,7 +1078,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             amountToKeep = stack.getCount() - tempStorage.getAmount();
             returnStack = InventoryUtils.addItemStackToProviderWithResult(buildingWorker.getTileEntity(), tempStack);
         }
-        if (returnStack == null)
+        if (InventoryUtils.isItemStackEmpty(returnStack))
         {
             new InvWrapper(worker.getInventoryCitizen()).extractItem(slot, stack.getCount() - amountToKeep, false);
             return amountToKeep == 0;
@@ -1123,7 +1157,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param items the items needed
      * @return false if they are in inventory
      */
-    protected boolean checkOrRequestItems(@Nullable final ItemStack... items)
+    public boolean checkOrRequestItems(@Nullable final ItemStack... items)
     {
         return checkOrRequestItems(true, items);
     }
@@ -1137,7 +1171,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param items         the items needed
      * @return false if they are in inventory
      */
-    protected boolean checkOrRequestItems(final boolean useItemDamage, @Nullable final ItemStack... items)
+    public boolean checkOrRequestItems(final boolean useItemDamage, @Nullable final ItemStack... items)
     {
         if (items == null)
         {
@@ -1162,7 +1196,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             if (countOfItem < 1)
             {
                 final int itemsLeft = stack.getCount() - countOfItem;
-                @NotNull final ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft);
+                @NotNull final ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft, -1);
                 getOwnBuilding().addNeededItems(requiredStack);
                 allClear = false;
             }
@@ -1199,7 +1233,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param target the block to mine
      * @return true if we have a tool for the job
      */
-    protected final boolean holdEfficientTool(@NotNull final Block target)
+    public final boolean holdEfficientTool(@NotNull final Block target)
     {
         final int bestSlot = getMostEfficientTool(target);
         if (bestSlot >= 0)
@@ -1367,7 +1401,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             }
         }
 
-        //if necessary we can could implement calling getWorkingPosition recursively and add some "offset" to the sides.
+        //if necessary we call it recursively and add some "offset" to the sides.
         return getWorkingPosition(distance, targetPos, offset + 1);
     }
 

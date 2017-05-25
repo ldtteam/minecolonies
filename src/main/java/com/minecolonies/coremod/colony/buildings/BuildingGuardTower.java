@@ -29,6 +29,11 @@ import java.util.List;
 public class BuildingGuardTower extends AbstractBuildingWorker
 {
     /**
+     * Worker gets this distance times building level away from his building to patrol.
+     */
+    public static final int PATROL_DISTANCE = 40;
+
+    /**
      * Name description of the guard hat.
      */
     private static final String GUARD_TOWER = "GuardTower";
@@ -196,6 +201,16 @@ public class BuildingGuardTower extends AbstractBuildingWorker
             return (getBuildingLevel() - MAX_VISION_BONUS_MULTIPLIER) * HEALTH_MULTIPLIER;
         }
         return 0;
+    }
+
+    /**
+     * Getter for the patrol distance the guard currently has.
+     *
+     * @return the distance in whole numbers.
+     */
+    public int getPatrolDistance()
+    {
+        return this.getBuildingLevel() * PATROL_DISTANCE;
     }
 
     /**
