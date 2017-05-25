@@ -115,7 +115,7 @@ public class IItemHandlerToIInventoryWrapper implements IInventory
      * Container
      */
     @Override
-    public boolean isUsableByPlayer(EntityPlayer player)
+    public boolean isUsableByPlayer(final EntityPlayer player)
     {
         return true;
     }

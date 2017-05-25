@@ -99,7 +99,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
      * @return boolean
      */
     @NotNull
-    public boolean isPlayerOpped(@NotNull final ICommandSender sender, String cmdName)
+    public boolean isPlayerOpped(@NotNull final ICommandSender sender, final String cmdName)
     {
         if (sender instanceof EntityPlayer)
         {
@@ -115,7 +115,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
      * @param theCommand which command to check if the player can use it
      * @return boolean
      */
-    public boolean canCommandSenderUseCommand(Commands theCommand)
+    public boolean canCommandSenderUseCommand(final Commands theCommand)
     {
         switch (theCommand)
         {

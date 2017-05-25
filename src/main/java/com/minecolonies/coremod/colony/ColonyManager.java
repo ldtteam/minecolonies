@@ -144,7 +144,7 @@ public final class ColonyManager
         return colony;
     }
 
-    private static void addColonyByWorld(Colony colony)
+    private static void addColonyByWorld(final Colony colony)
     {
         coloniesByWorld.computeIfAbsent(colony.getDimension(), ArrayList::new).add(colony);
     }
@@ -713,7 +713,7 @@ public final class ColonyManager
         {
             Files.copy(file.toPath(), targetFile.toPath());
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             e.printStackTrace();
             return false;
@@ -775,7 +775,7 @@ public final class ColonyManager
      * @return Save file for minecolonies.
      */
     @NotNull
-    private static File getBackupSaveLocation(Date date)
+    private static File getBackupSaveLocation(final Date date)
     {
         @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
         return new File(saveDir, String.format(FILENAME_MINECOLONIES_BACKUP, new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(date)));
@@ -1046,7 +1046,7 @@ public final class ColonyManager
      *
      * @param downloaded True if a new schematic have been received.
      */
-    public static void setSchematicDownloaded(boolean downloaded)
+    public static void setSchematicDownloaded(final boolean downloaded)
     {
         schematicDownloaded = downloaded;
     }

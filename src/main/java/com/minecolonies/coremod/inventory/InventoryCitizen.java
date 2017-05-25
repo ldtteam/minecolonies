@@ -211,9 +211,9 @@ public class InventoryCitizen implements IInventory
      *
      * @param index the slot.
      */
-    public void pickItem(int index)
+    public void pickItem(final int index)
     {
-        ItemStack itemstack = this.mainInventory.get(this.currentItem);
+        final ItemStack itemstack = this.mainInventory.get(this.currentItem);
         this.mainInventory.set(this.currentItem, this.mainInventory.get(index));
         this.mainInventory.set(index, itemstack);
     }
@@ -237,7 +237,7 @@ public class InventoryCitizen implements IInventory
      * @return the slot it is in.
      */
     @SideOnly(Side.CLIENT)
-    public int getSlotFor(ItemStack stack)
+    public int getSlotFor(final ItemStack stack)
     {
         for (int i = 0; i < this.mainInventory.size(); ++i)
         {
@@ -253,7 +253,7 @@ public class InventoryCitizen implements IInventory
     /**
      * Checks item, NBT, and meta if the item is not damageable
      */
-    private static boolean stackEqualExact(ItemStack stack1, ItemStack stack2)
+    private static boolean stackEqualExact(final ItemStack stack1, final ItemStack stack2)
     {
         return stack1.getItem() == stack2.getItem()
                  && (!stack1.getHasSubtypes() || stack1.getMetadata() == stack2.getMetadata()) && ItemStack.areItemStackTagsEqual(stack1, stack2);
@@ -279,19 +279,19 @@ public class InventoryCitizen implements IInventory
      * @param itemNBT     The NBT data to match, null ignores.
      * @return The number of items removed from the inventory.
      */
-    public int clearMatchingItems(@javax.annotation.Nullable Item itemIn, int metadataIn, int removeCount, @javax.annotation.Nullable NBTTagCompound itemNBT)
+    public int clearMatchingItems(@javax.annotation.Nullable final Item itemIn, final int metadataIn, final int removeCount, @javax.annotation.Nullable final NBTTagCompound itemNBT)
     {
         int i = 0;
 
         for (int j = 0; j < this.getSizeInventory(); ++j)
         {
-            ItemStack itemstack = this.getStackInSlot(j);
+            final ItemStack itemstack = this.getStackInSlot(j);
 
             if (!itemstack.isEmpty() && (itemIn == null || itemstack.getItem() == itemIn)
                   && (metadataIn <= NO_SLOT || itemstack.getMetadata() == metadataIn) && (itemNBT == null || NBTUtil
                                                                                                                .areNBTEquals(itemNBT, itemstack.getTagCompound(), true)))
             {
-                int k = removeCount <= 0 ? itemstack.getCount() : Math.min(removeCount - i, itemstack.getCount());
+                final int k = removeCount <= 0 ? itemstack.getCount() : Math.min(removeCount - i, itemstack.getCount());
                 i += k;
 
                 if (removeCount != 0)
@@ -328,7 +328,7 @@ public class InventoryCitizen implements IInventory
                 return i;
             }
 
-            int l = removeCount <= 0 ? this.itemStack.getCount() : Math.min(removeCount - i, this.itemStack.getCount());
+            final int l = removeCount <= 0 ? this.itemStack.getCount() : Math.min(removeCount - i, this.itemStack.getCount());
             i += l;
 
             if (removeCount != 0)
@@ -369,7 +369,7 @@ public class InventoryCitizen implements IInventory
     @Override
     public boolean isEmpty()
     {
-        for (ItemStack itemstack : this.mainInventory)
+        for (final ItemStack itemstack : this.mainInventory)
         {
             if (!itemstack.isEmpty())
             {
@@ -377,7 +377,7 @@ public class InventoryCitizen implements IInventory
             }
         }
 
-        for (ItemStack itemstack1 : this.armorInventory)
+        for (final ItemStack itemstack1 : this.armorInventory)
         {
             if (!itemstack1.isEmpty())
             {
@@ -385,7 +385,7 @@ public class InventoryCitizen implements IInventory
             }
         }
 
-        for (ItemStack itemstack2 : this.offHandInventory)
+        for (final ItemStack itemstack2 : this.offHandInventory)
         {
             if (!itemstack2.isEmpty())
             {
@@ -403,11 +403,11 @@ public class InventoryCitizen implements IInventory
      * @return the stack.
      */
     @Override
-    public ItemStack getStackInSlot(int index)
+    public ItemStack getStackInSlot(final int index)
     {
         List<ItemStack> list = null;
         int tempIndex = index;
-        for (NonNullList<ItemStack> nonnulllist : this.allInventories)
+        for (final NonNullList<ItemStack> nonnulllist : this.allInventories)
         {
             if (tempIndex < nonnulllist.size())
             {
@@ -429,11 +429,11 @@ public class InventoryCitizen implements IInventory
      * @return the new stack.
      */
     @Override
-    public ItemStack decrStackSize(int index, int count)
+    public ItemStack decrStackSize(final int index, final int count)
     {
         List<ItemStack> list = null;
         int tempIndex = index;
-        for (NonNullList<ItemStack> nonnulllist : this.allInventories)
+        for (final NonNullList<ItemStack> nonnulllist : this.allInventories)
         {
             if (tempIndex < nonnulllist.size())
             {
@@ -454,11 +454,11 @@ public class InventoryCitizen implements IInventory
      * @return the stack.
      */
     @Override
-    public ItemStack removeStackFromSlot(int index)
+    public ItemStack removeStackFromSlot(final int index)
     {
         NonNullList<ItemStack> nonnulllist = null;
         int tempIndex = index;
-        for (NonNullList<ItemStack> nonnulllist1 : this.allInventories)
+        for (final NonNullList<ItemStack> nonnulllist1 : this.allInventories)
         {
             if (tempIndex < nonnulllist1.size())
             {
@@ -471,7 +471,7 @@ public class InventoryCitizen implements IInventory
 
         if (nonnulllist != null && !(nonnulllist.get(tempIndex)).isEmpty())
         {
-            ItemStack itemstack = nonnulllist.get(tempIndex);
+            final ItemStack itemstack = nonnulllist.get(tempIndex);
             nonnulllist.set(tempIndex, ItemStack.EMPTY);
             return itemstack;
         }
@@ -488,11 +488,11 @@ public class InventoryCitizen implements IInventory
      * @param stack the stack.
      */
     @Override
-    public void setInventorySlotContents(int index, ItemStack stack)
+    public void setInventorySlotContents(final int index, final ItemStack stack)
     {
         NonNullList<ItemStack> nonnulllist = null;
         int tempIndex = index;
-        for (NonNullList<ItemStack> nonnulllist1 : this.allInventories)
+        for (final NonNullList<ItemStack> nonnulllist1 : this.allInventories)
         {
             if (tempIndex < nonnulllist1.size())
             {
@@ -638,7 +638,7 @@ public class InventoryCitizen implements IInventory
     @Override
     public void clear()
     {
-        for (List<ItemStack> list : this.allInventories)
+        for (final List<ItemStack> list : this.allInventories)
         {
             list.clear();
         }
@@ -650,7 +650,7 @@ public class InventoryCitizen implements IInventory
      */
     public void decrementAnimations()
     {
-        for (NonNullList<ItemStack> nonnulllist : this.allInventories)
+        for (final NonNullList<ItemStack> nonnulllist : this.allInventories)
         {
             for (int i = 0; i < nonnulllist.size(); ++i)
             {
@@ -680,7 +680,7 @@ public class InventoryCitizen implements IInventory
             {
                 if (itemStackIn.isItemDamaged())
                 {
-                    int j = this.getFirstEmptyStack();
+                    final int j = this.getFirstEmptyStack();
 
                     if (j >= 0)
                     {
@@ -712,10 +712,10 @@ public class InventoryCitizen implements IInventory
                     return itemStackIn.getCount() < i;
                 }
             }
-            catch (RuntimeException exception)
+            catch (final RuntimeException exception)
             {
-                CrashReport crashreport = CrashReport.makeCrashReport(exception, "Adding item to inventory");
-                CrashReportCategory crashreportcategory = crashreport.makeCategory("Item being added");
+                final CrashReport crashreport = CrashReport.makeCrashReport(exception, "Adding item to inventory");
+                final CrashReportCategory crashreportcategory = crashreport.makeCategory("Item being added");
                 crashreportcategory.addCrashSection("Item ID", Item.getIdFromItem(itemStackIn.getItem()));
                 crashreportcategory.addCrashSection("Item data", itemStackIn.getMetadata());
                 crashreportcategory.setDetail("Item name", itemStackIn::getDisplayName);
@@ -749,7 +749,7 @@ public class InventoryCitizen implements IInventory
      * @param itemStackIn the itemStack to store.
      * @return the quantity of left over items.
      */
-    private int storePartialItemStack(ItemStack itemStackIn)
+    private int storePartialItemStack(final ItemStack itemStackIn)
     {
         int i = itemStackIn.getCount();
         int j = this.storeItemStack(itemStackIn);
@@ -810,7 +810,7 @@ public class InventoryCitizen implements IInventory
     /**
      * stores an itemstack in the users inventory
      */
-    private int storeItemStack(ItemStack itemStackIn)
+    private int storeItemStack(final ItemStack itemStackIn)
     {
         if (this.canMergeStacks(this.getStackInSlot(this.currentItem), itemStackIn))
         {
@@ -834,7 +834,7 @@ public class InventoryCitizen implements IInventory
         }
     }
 
-    private boolean canMergeStacks(ItemStack stack1, ItemStack stack2)
+    private boolean canMergeStacks(final ItemStack stack1, final ItemStack stack2)
     {
         return !stack1.isEmpty() && InventoryCitizen.stackEqualExact(stack1, stack2) && stack1.isStackable()
                  && stack1.getCount() < stack1.getMaxStackSize() && stack1.getCount() < this.getInventoryStackLimit();
@@ -845,9 +845,9 @@ public class InventoryCitizen implements IInventory
      *
      * @param stack stack to delete.
      */
-    public void deleteStack(ItemStack stack)
+    public void deleteStack(final ItemStack stack)
     {
-        for (NonNullList<ItemStack> nonnulllist : this.allInventories)
+        for (final NonNullList<ItemStack> nonnulllist : this.allInventories)
         {
             for (int i = 0; i < nonnulllist.size(); ++i)
             {
@@ -866,7 +866,7 @@ public class InventoryCitizen implements IInventory
      * @param state the block.
      * @return the float value.
      */
-    public float getStrVsBlock(IBlockState state)
+    public float getStrVsBlock(final IBlockState state)
     {
         float f = 1.0F;
 
@@ -885,13 +885,13 @@ public class InventoryCitizen implements IInventory
      * @param nbtTagListIn the taglist in.
      * @return the filled list.
      */
-    public NBTTagList writeToNBT(NBTTagList nbtTagListIn)
+    public NBTTagList writeToNBT(final NBTTagList nbtTagListIn)
     {
         for (int i = 0; i < this.mainInventory.size(); ++i)
         {
             if (!(this.mainInventory.get(i)).isEmpty())
             {
-                NBTTagCompound nbttagcompound = new NBTTagCompound();
+                final NBTTagCompound nbttagcompound = new NBTTagCompound();
                 nbttagcompound.setByte("Slot", (byte) i);
                 (this.mainInventory.get(i)).writeToNBT(nbttagcompound);
                 nbtTagListIn.appendTag(nbttagcompound);
@@ -902,7 +902,7 @@ public class InventoryCitizen implements IInventory
         {
             if (!(this.armorInventory.get(j)).isEmpty())
             {
-                NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+                final NBTTagCompound nbttagcompound1 = new NBTTagCompound();
                 nbttagcompound1.setByte("Slot", (byte) (j + 100));
                 (this.armorInventory.get(j)).writeToNBT(nbttagcompound1);
                 nbtTagListIn.appendTag(nbttagcompound1);
@@ -913,7 +913,7 @@ public class InventoryCitizen implements IInventory
         {
             if (!(this.offHandInventory.get(k)).isEmpty())
             {
-                NBTTagCompound nbttagcompound2 = new NBTTagCompound();
+                final NBTTagCompound nbttagcompound2 = new NBTTagCompound();
                 nbttagcompound2.setByte("Slot", (byte) (k + 150));
                 (this.offHandInventory.get(k)).writeToNBT(nbttagcompound2);
                 nbtTagListIn.appendTag(nbttagcompound2);
@@ -928,7 +928,7 @@ public class InventoryCitizen implements IInventory
      *
      * @param nbtTagListIn the tag list.
      */
-    public void readFromNBT(NBTTagList nbtTagListIn)
+    public void readFromNBT(final NBTTagList nbtTagListIn)
     {
         this.mainInventory.clear();
         this.armorInventory.clear();
@@ -936,9 +936,9 @@ public class InventoryCitizen implements IInventory
 
         for (int i = 0; i < nbtTagListIn.tagCount(); ++i)
         {
-            NBTTagCompound nbttagcompound = nbtTagListIn.getCompoundTagAt(i);
-            int j = nbttagcompound.getByte("Slot") & 255;
-            ItemStack itemstack = new ItemStack(nbttagcompound);
+            final NBTTagCompound nbttagcompound = nbtTagListIn.getCompoundTagAt(i);
+            final int j = nbttagcompound.getByte("Slot") & 255;
+            final ItemStack itemstack = new ItemStack(nbttagcompound);
 
             if (!itemstack.isEmpty())
             {
@@ -964,7 +964,7 @@ public class InventoryCitizen implements IInventory
      * @param state the block.
      * @return true if so.
      */
-    public boolean canHarvestBlock(IBlockState state)
+    public boolean canHarvestBlock(final IBlockState state)
     {
         if (state.getMaterial().isToolNotRequired())
         {
@@ -972,7 +972,7 @@ public class InventoryCitizen implements IInventory
         }
         else
         {
-            ItemStack itemstack = this.getStackInSlot(this.currentItem);
+            final ItemStack itemstack = this.getStackInSlot(this.currentItem);
             return !itemstack.isEmpty() && itemstack.canHarvestBlock(state);
         }
     }
@@ -983,7 +983,7 @@ public class InventoryCitizen implements IInventory
      * @param slotIn the slot.
      * @return the itemStack.
      */
-    public ItemStack armorItemInSlot(int slotIn)
+    public ItemStack armorItemInSlot(final int slotIn)
     {
         return this.armorInventory.get(slotIn);
     }
@@ -993,11 +993,11 @@ public class InventoryCitizen implements IInventory
      */
     public void dropAllItems()
     {
-        for (List<ItemStack> list : this.allInventories)
+        for (final List<ItemStack> list : this.allInventories)
         {
             for (int i = 0; i < list.size(); ++i)
             {
-                ItemStack itemstack = list.get(i);
+                final ItemStack itemstack = list.get(i);
 
                 if (!itemstack.isEmpty())
                 {
@@ -1023,7 +1023,7 @@ public class InventoryCitizen implements IInventory
      *
      * @param itemStackIn the stack to set.
      */
-    public void setItemStack(ItemStack itemStackIn)
+    public void setItemStack(final ItemStack itemStackIn)
     {
         this.itemStack = itemStackIn;
     }
@@ -1034,13 +1034,13 @@ public class InventoryCitizen implements IInventory
      * @param itemStackIn the stack to be searched for.
      * @return true if it exists.
      */
-    public boolean hasItemStack(ItemStack itemStackIn)
+    public boolean hasItemStack(final ItemStack itemStackIn)
     {
         label19:
 
-        for (List<ItemStack> list : this.allInventories)
+        for (final List<ItemStack> list : this.allInventories)
         {
-            Iterator<ItemStack> iterator = list.iterator();
+            final Iterator<ItemStack> iterator = list.iterator();
 
             while (true)
             {
@@ -1049,7 +1049,7 @@ public class InventoryCitizen implements IInventory
                     continue label19;
                 }
 
-                ItemStack itemstack = iterator.next();
+                final ItemStack itemstack = iterator.next();
 
                 if (!itemstack.isEmpty() && itemstack.isItemEqual(itemStackIn))
                 {
@@ -1068,7 +1068,7 @@ public class InventoryCitizen implements IInventory
      *
      * @param inventoryCitizen the citizens inventory to copy.
      */
-    public void copyInventory(InventoryPlayer inventoryCitizen)
+    public void copyInventory(final InventoryPlayer inventoryCitizen)
     {
         for (int i = 0; i < this.getSizeInventory(); ++i)
         {

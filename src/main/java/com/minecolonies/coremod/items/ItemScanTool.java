@@ -52,7 +52,7 @@ public class ItemScanTool extends AbstractItemMinecolonies
                                        final float hitY,
                                        final float hitZ)
     {
-        ItemStack stack = playerIn.getHeldItem(hand);
+        final ItemStack stack = playerIn.getHeldItem(hand);
         if (!stack.hasTagCompound())
         {
             stack.setTagCompound(new NBTTagCompound());

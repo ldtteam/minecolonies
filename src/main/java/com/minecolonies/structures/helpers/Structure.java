@@ -311,10 +311,10 @@ public class Structure
         }
         try
         {
-            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
             int nRead;
-            byte[] data = new byte[BUFFER_SIZE];
+            final byte[] data = new byte[BUFFER_SIZE];
 
             while ((nRead = stream.read(data, 0, data.length)) != -1)
             {
@@ -358,7 +358,7 @@ public class Structure
             final MessageDigest md = MessageDigest.getInstance("MD5");
             return DatatypeConverter.printHexBinary(md.digest(bytes));
         }
-        catch (@NotNull NoSuchAlgorithmException e)
+        catch (@NotNull final NoSuchAlgorithmException e)
         {
             Log.getLogger().trace(e);
         }
@@ -398,7 +398,7 @@ public class Structure
 
     public static byte[] uncompress(final byte[] data)
     {
-        byte[] buffer = new byte[BUFFER_SIZE];
+        final byte[] buffer = new byte[BUFFER_SIZE];
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         try (ByteArrayInputStream byteStream = new ByteArrayInputStream(data);
              GZIPInputStream zipStream = new GZIPInputStream(byteStream))
@@ -835,7 +835,7 @@ public class Structure
      * @param previousYaw       the previous rotation yaw.
      * @return the new rotation yaw.
      */
-    public double getRotatedYaw(Rotation transformRotation, double previousYaw)
+    public double getRotatedYaw(final Rotation transformRotation, final double previousYaw)
     {
         switch (transformRotation)
         {

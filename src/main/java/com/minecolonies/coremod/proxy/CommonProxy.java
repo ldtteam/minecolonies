@@ -97,8 +97,8 @@ public class CommonProxy implements IProxy
     @Override
     public void registerEntities()
     {
-        ResourceLocation locationCitizen = new ResourceLocation(Constants.MOD_ID, "Citizen");
-        ResourceLocation locationFishHook = new ResourceLocation(Constants.MOD_ID, "Fishhook");
+        final ResourceLocation locationCitizen = new ResourceLocation(Constants.MOD_ID, "Citizen");
+        final ResourceLocation locationFishHook = new ResourceLocation(Constants.MOD_ID, "Fishhook");
 
         // Half as much tracking range and same update frequency as a player
         // See EntityTracker.addEntityToTracker for more default values
