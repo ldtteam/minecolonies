@@ -13,6 +13,7 @@ public class Configurations
     public static       boolean builderInfiniteResources     = false;
     public static       int     builderBuildBlockDelay       = 0;
     public static       int     blockMiningDelayModifier     = 1000;
+    public static       boolean limitToOneWareHousePerColony = true;
 
     public static boolean enableColonyProtection      = true;
     public static boolean turnOffExplosionsInColonies = true;

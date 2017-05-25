@@ -27,5 +27,5 @@ public interface IPlacementHandler
      * @param placer the placer of the block.
      * @return ACCEPT, DENY or IGNORE.
      */
-    Object handle(@NotNull World world, @NotNull BlockPos pos, @NotNull IBlockState blockState, @Nullable AbstractEntityAIStructure placer);
+    Object handle(@NotNull World world, @NotNull BlockPos pos, @NotNull IBlockState blockState, @Nullable AbstractEntityAIStructure<?> placer);
 }

@@ -61,4 +61,10 @@ public interface IColony
      * @return an int representing the id.
      */
     int getID();
+
+    /**
+     * Check if the colony has a warehouse.
+     * @return true if so.
+     */
+    boolean hasWarehouse();
 }

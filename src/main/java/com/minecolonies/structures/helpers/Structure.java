@@ -1,11 +1,11 @@
 package com.minecolonies.structures.helpers;
 
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.lib.Constants;
-import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.util.BlockUtils;
 import com.minecolonies.coremod.util.Log;
 import com.minecolonies.structures.fake.FakeEntity;
@@ -44,12 +44,13 @@ import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
+import javax.xml.bind.DatatypeConverter;
 import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
-import java.util.zip.*;
-import javax.xml.bind.DatatypeConverter;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * Structure class, used to store, create, get structures.
@@ -106,35 +107,39 @@ public class Structure
         }
 
         InputStream inputStream = null;
-        //Try the cache first
-        if (Structures.hasMD5(correctStructureName))
-        {
-            inputStream = Structure.getStream(Structures.SCHEMATICS_CACHE + '/' + Structures.getMD5(correctStructureName));
-            if (inputStream != null)
-            {
-                correctStructureName = Structures.SCHEMATICS_CACHE + '/' + Structures.getMD5(correctStructureName);
-            }
-        }
-
-        if (inputStream == null)
-        {
-            inputStream = Structure.getStream(correctStructureName);
-        }
-
-        if (inputStream == null)
-        {
-            Log.getLogger().warn(String.format("Failed to load template %s", correctStructureName));
-            return;
-        }
-
         try
         {
-            this.md5 = Structure.calculateMD5(Structure.getStream(correctStructureName));
-            this.template = readTemplateFromStream(inputStream);
-        }
-        catch (final IOException e)
-        {
-            Log.getLogger().warn(String.format("Failed to load template %s", correctStructureName), e);
+
+            //Try the cache first
+            if (Structures.hasMD5(correctStructureName))
+            {
+                inputStream = Structure.getStream(Structures.SCHEMATICS_CACHE + '/' + Structures.getMD5(correctStructureName));
+                if (inputStream != null)
+                {
+                    correctStructureName = Structures.SCHEMATICS_CACHE + '/' + Structures.getMD5(correctStructureName);
+                }
+            }
+
+            if (inputStream == null)
+            {
+                inputStream = Structure.getStream(correctStructureName);
+            }
+
+            if (inputStream == null)
+            {
+                Log.getLogger().warn(String.format("Failed to load template %s", correctStructureName));
+                return;
+            }
+
+            try
+            {
+                this.md5 = Structure.calculateMD5(Structure.getStream(correctStructureName));
+                this.template = readTemplateFromStream(inputStream);
+            }
+            catch (final IOException e)
+            {
+                Log.getLogger().warn(String.format("Failed to load template %s", correctStructureName), e);
+            }
         }
         finally
         {
@@ -184,11 +189,17 @@ public class Structure
      * - cache
      * - schematics folder
      * - jar
-     * It should be the exact oppsite that the way used to buikd the list.
+     * It should be the exact opposite that the way used to build the list.
+     *
+     * Suppressing Sonar Rule squid:S2095
+     * This rule enforces "Close this InputStream"
+     * But in this case the rule does not apply because
+     * We are returning the stream and that is reasonable
      *
      * @param structureName name of the structure to load
      * @return the input stream or null
      */
+    @SuppressWarnings("squid:S2095")
     @Nullable
     public static InputStream getStream(final String structureName)
     {
@@ -635,7 +646,7 @@ public class Structure
         return entityList;
     }
 
-    private static void getQuads(final ModelHolder holder, final List<BakedQuad> quads)
+    public static void getQuads(final ModelHolder holder, final List<BakedQuad> quads)
     {
         if (holder.actualState.getRenderType() == EnumBlockRenderType.MODEL)
         {
@@ -660,7 +671,7 @@ public class Structure
         }
     }
 
-    private void renderGhost(final World world, final ModelHolder holder, final EntityPlayer player, final float partialTicks)
+    public void renderGhost(final World world, final ModelHolder holder, final EntityPlayer player, final float partialTicks)
     {
         final boolean existingModel = !this.mc.theWorld.isAirBlock(holder.pos);
 

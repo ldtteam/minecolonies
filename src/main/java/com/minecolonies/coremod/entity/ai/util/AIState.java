@@ -74,6 +74,10 @@ public enum AIState
      * Completes the building.
      */
     COMPLETE_BUILD,
+    /**
+     * Pick up left over items after building.
+     */
+    PICK_UP_RESIDUALS,
     /*
 ###FISHERMAN###
      */

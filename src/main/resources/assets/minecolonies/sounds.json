@@ -729,5 +729,303 @@
         "stream": false
       }
     ]
+  },
+
+  "mob.deliveryman.female.generalPhrases": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/deliveryman/female/NotEnoughRoomToLiveHere1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/WareHouseIsAMess1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/WareHouseIsFillingUpNicely1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/BeBackWithTheGoods1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/DeliveryComingThrough1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/DeliveryComingThrough2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/DoingTheRounds1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/HeavyForYouLetMeCarry1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/HereIsYourPackage1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/HereIsYourPackage2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/OnASpecialDelivery1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/RunningPackagesIsImportantWork1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/WhatOnEarth1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/WhatWouldYouEver1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/AwYeah1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/Back2Work1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/Good2SeeYou1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/Good2SeeYou2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/Goodbye1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/GoodDayToYou1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/HelloThere1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/HelloThere2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/Hi1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/Hi2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/HowsTheWork1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/HowsTheWork2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/IfYouSaySo1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/IfYouSaySo2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/ITakeCareOfIt1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/No1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/NotGoodEnough1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/RightAway1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/RightAway2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/ToTheFineAfternoon1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/ToTheFineDay1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/UhhBetterNot1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/What1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/WhatCanIDoForYou1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/WhatIsThis1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/WhatsItSayThen1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/Yes1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/YesMyLord1",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.deliveryman.female.noise": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/deliveryman/female/Whistle1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/Yawning1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/InhaleExhale1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/Coughing1",
+        "stream": false
+      }
+    ]
+  },
+  "mob.deliveryman.female.hostile": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/deliveryman/female/Help1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/Help2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/Close1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/Close2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/Close3",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/HealMe1",
+        "stream": false
+      }
+    ]
+  },
+  "mob.deliveryman.female.saturationVeryLow": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/deliveryman/female/Starving1",
+        "stream": false
+      }
+    ]
+  },
+  "mob.deliveryman.female.saturationLow": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/deliveryman/female/Starving1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/ImHungry1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/ImHungry2",
+        "stream": false
+      }
+    ]
+  },
+  "mob.deliveryman.female.saturationHigh": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/deliveryman/female/HusbandSaysIEat2Much1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/HusbandSaysIEat2Much2",
+        "stream": false
+      }
+    ]
+  },
+  "mob.deliveryman.female.badWeather": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/deliveryman/female/IWontWorkDuringRain1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/LovelyWeather2Day1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/LovelyWeather2Day2",
+        "stream": false
+      }
+    ]
+  },
+  "mob.deliveryman.female.offToBed": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/deliveryman/female/Time2Go2Sleep1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/Time2Go2Sleep2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/deliveryman/female/Time2Go2Sleep3",
+        "stream": false
+      }
+    ]
   }
 }
