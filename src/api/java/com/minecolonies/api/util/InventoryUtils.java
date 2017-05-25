@@ -133,7 +133,7 @@ public class InventoryUtils
     @NotNull
     public static Boolean isItemStackEmpty(@Nullable ItemStack stack)
     {
-        return !(stack != EMPTY && stack.getItem() != null && stack.getCount() > 0);
+        return stack == null || stack == EMPTY || stack.getCount() <= 0;
     }
 
     /**
@@ -579,11 +579,11 @@ public class InventoryUtils
     @NotNull
     public static List<IItemHandler> getItemHandlersFromProvider(@NotNull ICapabilityProvider provider)
     {
-        final ArrayList<IItemHandler> handlerList = Arrays.stream(EnumFacing.VALUES)
+        final List<IItemHandler> handlerList = Arrays.stream(EnumFacing.VALUES)
                                                       .filter(facing -> provider.hasCapability(ITEM_HANDLER_CAPABILITY, facing))
                                                       .map(facing -> provider.getCapability(ITEM_HANDLER_CAPABILITY, facing))
                                                       .distinct()
-                                                      .collect(Collectors.toCollection(ArrayList::new));
+                                                      .collect(Collectors.toList());
 
         if (provider.hasCapability(ITEM_HANDLER_CAPABILITY, null))
         {
@@ -821,7 +821,11 @@ public class InventoryUtils
      */
     public static int getFirstOpenSlotFromProvider(@NotNull final ICapabilityProvider provider)
     {
-        return getItemHandlersFromProvider(provider).stream().mapToInt(InventoryUtils::getFirstOpenSlotFromItemHandler).filter(slotIndex -> slotIndex > -1).findFirst().orElse(-1);
+        return getItemHandlersFromProvider(provider).stream()
+                .mapToInt(InventoryUtils::getFirstOpenSlotFromItemHandler)
+                .filter(slotIndex -> slotIndex > -1)
+                .findFirst()
+                .orElse(-1);
     }
 
     /**
