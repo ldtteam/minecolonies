@@ -1,7 +1,8 @@
-package com.minecolonies.coremod.commands;
+package com.minecolonies.coremod.commands.colonycommands;
 
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
@@ -59,24 +60,34 @@ public class ListColoniesCommand extends AbstractSingleCommand
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
         int page = 1;
-        final List<Colony> colonies = ColonyManager.getColonies();
+        int abandonedSince = 0;
+        if (args.length != 0)
+        {
+            page = getIthArgument(args, 0, 1);
+        }
+
+        if(args.length > 1)
+        {
+            abandonedSince = getIthArgument(args, 1, 0);
+        }
+
+        final List<Colony> colonies;
+        if(abandonedSince > 0)
+        {
+           colonies = ColonyManager.getColonies(abandonedSince);
+        }
+        else
+        {
+            colonies = ColonyManager.getColonies();
+        }
+
         final int colonyCount = colonies.size();
 
         // check to see if we have to add one page to show the half page
         final int halfPage = (colonyCount % COLONIES_ON_PAGE == 0) ? 0 : 1;
         final int pageCount = ((colonyCount) / COLONIES_ON_PAGE) + halfPage;
 
-        if (args.length != 0)
-        {
-            try
-            {
-                page = Integer.parseInt(args[0]);
-            }
-            catch (final NumberFormatException e)
-            {
-                //ignore and keep page 1.
-            }
-        }
+
         if (page < 1 || page > pageCount)
         {
             page = 1;

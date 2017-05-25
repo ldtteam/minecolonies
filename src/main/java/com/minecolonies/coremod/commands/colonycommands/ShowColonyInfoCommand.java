@@ -1,8 +1,9 @@
-package com.minecolonies.coremod.commands;
+package com.minecolonies.coremod.commands.colonycommands;
 
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.IColony;
+import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -33,6 +34,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
     private static final String CITIZENS                   = "§2Citizens: §f";
     private static final String NO_COLONY_FOUND_MESSAGE    = "Colony with mayor %s not found.";
     private static final String NO_COLONY_FOUND_MESSAGE_ID = "Colony with ID %d not found.";
+    private static final String LAST_CONTACT_TEXT          = "Last contact with Owner of Officer: %d hours ago!";
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -122,6 +124,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
         sender.addChatMessage(new TextComponentString(MAYOR_TEXT + mayor));
         sender.addChatMessage(new TextComponentString(CITIZENS + colony.getCitizens().size() + "/" + colony.getMaxCitizens()));
         sender.addChatMessage(new TextComponentString(COORDINATES_TEXT + String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
+        sender.addChatMessage(new TextComponentString(String.format(LAST_CONTACT_TEXT, colony.getLastContactInHours())));
     }
 
     @NotNull
