@@ -26,7 +26,7 @@ public class BakerRecipes
     /**
      * Amount of milk buckets required for the recipe.
      */
-    private static final int REQUIRED_MILK = 1;
+    private static final int REQUIRED_MILK = 3;
 
     /**
      * Amount of sugar required for a recipe.
@@ -62,8 +62,6 @@ public class BakerRecipes
     {
         final List<ItemStack> inputCake = new ArrayList<>();
         inputCake.add(new ItemStack(Items.WHEAT, REQUIRED_WHEAT));
-        inputCake.add(new ItemStack(Items.MILK_BUCKET, REQUIRED_MILK));
-        inputCake.add(new ItemStack(Items.MILK_BUCKET, REQUIRED_MILK));
         inputCake.add(new ItemStack(Items.MILK_BUCKET, REQUIRED_MILK));
         inputCake.add(new ItemStack(Items.SUGAR, REQUIRED_SUGAR));
         inputCake.add(new ItemStack(Items.EGG, REQUIRED_EGGS));
