@@ -237,12 +237,6 @@ public class BuildingHome extends AbstractBuildingHut
         return residents.contains(citizen);
     }
 
-    @Override
-    public boolean needsAnything()
-    {
-        return isFoodNeeded;
-    }
-
     /**
      * The view of the citizen hut.
      */
