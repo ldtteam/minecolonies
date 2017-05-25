@@ -1,7 +1,9 @@
 package com.minecolonies.coremod.colony.buildings;
 
-import com.minecolonies.api.util.constants.ToolType;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
@@ -17,7 +19,6 @@ import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.network.messages.AssignFieldMessage;
 import com.minecolonies.coremod.network.messages.AssignmentModeMessage;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import com.minecolonies.coremod.util.LanguageHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -32,11 +33,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-
-import static com.minecolonies.coremod.util.constants.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER;
-import static com.minecolonies.coremod.util.constants.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER_NOONE;
-import static com.minecolonies.api.util.constants.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER_NOONE;
+import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
  * Class which handles the farmer building.

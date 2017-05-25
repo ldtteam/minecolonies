@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.lib;
+package com.minecolonies.api.util.constant;
 
 /**
  * Stores some literals used in many places of the code.

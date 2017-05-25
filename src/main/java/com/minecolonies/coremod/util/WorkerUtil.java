@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.util;
 
 import com.minecolonies.api.util.EntityUtils;
+import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.pathfinding.PathResult;
