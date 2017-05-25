@@ -1753,7 +1753,7 @@ public final class InventoryUtils
 
     /**
      * Remove a list of stacks from a given provider
-     * @param handler the provider.
+     * @param provider the provider.
      * @param input the list of stacks.
      * @return true if succesful.
      */

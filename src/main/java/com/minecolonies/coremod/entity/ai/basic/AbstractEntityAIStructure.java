@@ -298,6 +298,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      *
      * @param worldBlock    the worldblock.
      * @param worldMetadata the world metadata.
+     * @return true if should be overwritten.
      */
     public abstract boolean shallReplaceSolidSubstitutionBlock(final Block worldBlock, final IBlockState worldMetadata);
 
