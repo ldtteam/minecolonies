@@ -3,8 +3,7 @@ package com.minecolonies.coremod.tileentities;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.*;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
-import com.minecolonies.api.util.InventoryFunctions;
-import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.api.util.Utils;
 import net.minecraft.item.ItemFood;
@@ -178,8 +177,8 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             }
         }
 
-        final String tool = buildingEntry.getRequiredTool();
-        if(!tool.isEmpty())
+        final ToolType tool = buildingEntry.getRequiredTool();
+        if(tool != ToolType.NONE)
         {
             if(isToolInHut(tool, buildingEntry))
             {
@@ -308,11 +307,11 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     /**
      * Check for a certain item and return the position of the chest containing it.
      * @param tool the tool to search for.
-     * @param minLevel the minLevel of the pickaxe
+     * @param minLevel the minLevel of the tool
      * @param requestingBuilding the building requesting it.
      * @return the position or null.
      */
-    public BlockPos getPositionOfChestWithTool(@NotNull final String tool,final int minLevel, @NotNull final AbstractBuilding requestingBuilding)
+    public BlockPos getPositionOfChestWithTool(@NotNull final ToolType tool, final int minLevel, @NotNull final AbstractBuilding requestingBuilding)
     {
         @Nullable final AbstractBuilding building = getBuilding();
 
@@ -342,13 +341,13 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      * @param requestingBuilding the building requesting it.
      * @return true if a stack of that type was found
      */
-    private boolean isToolInHut(final String tool, @NotNull final AbstractBuilding requestingBuilding)
+    private boolean isToolInHut(final ToolType toolType, @NotNull final AbstractBuilding requestingBuilding)
     {
         @Nullable final AbstractBuilding building = getBuilding();
 
         if(building != null)
         {
-            if(InventoryUtils.isToolInProvider(building.getTileEntity(), tool, requestingBuilding.getNeededToolLevel(), requestingBuilding.getBuildingLevel()))
+            if(InventoryUtils.isToolInProvider(building.getTileEntity(), toolType, requestingBuilding.getNeededToolLevel(), requestingBuilding.getBuildingLevel()))
             {
                 return true;
             }
@@ -357,7 +356,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             {
                 @Nullable final TileEntity entity = world.getTileEntity(pos);
                 if(entity instanceof TileEntityChest
-                    && InventoryUtils.isToolInProvider(entity, tool, requestingBuilding.getNeededToolLevel(), requestingBuilding.getBuildingLevel()))
+                    && InventoryUtils.isToolInProvider(entity, toolType, requestingBuilding.getNeededToolLevel(), requestingBuilding.getBuildingLevel()))
                 {
                     return true;
                 }

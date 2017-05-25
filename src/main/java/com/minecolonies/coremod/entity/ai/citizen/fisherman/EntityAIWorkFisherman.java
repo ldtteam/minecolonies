@@ -10,6 +10,7 @@ import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.pathfinding.PathJobFindWater;
 import com.minecolonies.coremod.sounds.FishermanSounds;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ToolType;
 import com.minecolonies.coremod.util.SoundUtils;
 import com.minecolonies.api.util.Utils;
 import net.minecraft.entity.player.EntityPlayer;
@@ -86,11 +87,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      * The maximum amount of adjusts of his rotation until the fisherman discards a fishing location.
      */
     private static final int MAX_ROTATIONS = 6;
-
-    /**
-     * The tool used by the fisherman.
-     */
-    private static final String TOOL_TYPE_ROD = "rod";
 
     /**
      * The range in which the fisherman searches water.
@@ -583,7 +579,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private int getRodSlot()
     {
-        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), TOOL_TYPE_ROD);
+        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), ToolType.FISHINGROD);
     }
 
     /**

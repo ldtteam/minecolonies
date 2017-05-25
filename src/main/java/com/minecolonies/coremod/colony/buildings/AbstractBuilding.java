@@ -1,8 +1,6 @@
 package com.minecolonies.coremod.colony.buildings;
 
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.Utils;
+import com.minecolonies.api.util.*;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.blocks.*;
 import com.minecolonies.coremod.colony.*;
@@ -151,7 +149,7 @@ public abstract class AbstractBuilding
     /**
      * the tool currenly needed by the worker.
      */
-    private String          needsTool            = Utils.NONE;
+    private ToolType          needsTool    = ToolType.NONE;
     /**
      * The minimum tool level we need to fulfill the tool request.
      */
@@ -924,7 +922,7 @@ public abstract class AbstractBuilding
      */
     public boolean needsAnything()
     {
-        return !itemsCurrentlyNeeded.isEmpty() || !needsTool.equals(Utils.NONE);
+        return !itemsCurrentlyNeeded.isEmpty() || needsTool != ToolType.NONE;
     }
 
     /**
@@ -942,9 +940,9 @@ public abstract class AbstractBuilding
      *
      * @return true if so.
      */
-    public boolean needsTool(final String tool)
+    public boolean needsTool(final ToolType toolType)
     {
-        return needsTool.equals(tool);
+        return needsTool == toolType;
     }
 
     /**
@@ -952,13 +950,13 @@ public abstract class AbstractBuilding
      *
      * @param needsTool which tool is needed, use Utils.
      */
-    public void setNeedsTool(final String needsTool, final int minimalLevel)
+    public void setNeedsTool(final ToolType needsTool, final int minimalLevel)
     {
         this.needsTool = needsTool;
         this.needsToolLevel = minimalLevel;
     }
 
-    public void setNeedsTool(final String needsTool)
+    public void setNeedsTool(final ToolType needsTool)
     {
         setNeedsTool(needsTool, TOOL_LEVEL_WOOD_OR_GOLD);
     }
@@ -1032,7 +1030,7 @@ public abstract class AbstractBuilding
      *
      * @return the string of the required tool.
      */
-    public String getRequiredTool()
+    public ToolType getRequiredTool()
     {
         return needsTool;
     }

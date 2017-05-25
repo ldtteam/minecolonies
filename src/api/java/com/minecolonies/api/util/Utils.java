@@ -1,6 +1,7 @@
 package com.minecolonies.api.util;
 
 import com.minecolonies.api.compatibility.Compatibility;
+import com.minecolonies.api.util.ToolType;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemHoe;
@@ -21,13 +22,6 @@ import java.util.Objects;
  */
 public final class Utils
 {
-    public static final String NONE    = "";
-    public static final String PICKAXE = "pickaxe";
-    public static final String SHOVEL  = "shovel";
-    public static final String AXE     = "axe";
-    public static final String HOE     = "hoe";
-    public static final String WEAPON  = "weapon";
-
     /**
      * The compound id for fortune enchantment.
      */
@@ -139,7 +133,7 @@ public final class Utils
      */
     public static boolean isStackAxe(@Nullable final ItemStack stack)
     {
-        return stack != null && stack.getItem().getToolClasses(stack).contains(AXE);
+        return stack != null && stack.getItem().getToolClasses(stack).contains(ToolType.AXE.toString());
     }
 
     /**
@@ -334,7 +328,7 @@ public final class Utils
      */
     public static boolean isShovel(@Nullable final ItemStack itemStack)
     {
-        return isTool(itemStack, SHOVEL);
+        return isTool(itemStack, ToolType.SHOVEL);
     }
 
     /**
@@ -345,7 +339,7 @@ public final class Utils
      */
     public static boolean isHoe(@Nullable final ItemStack itemStack)
     {
-        return isTool(itemStack, HOE);
+        return isTool(itemStack, ToolType.HOE);
     }
 
     /**
@@ -355,9 +349,9 @@ public final class Utils
      * @param toolType  Type of the tool.
      * @return true if item can be used, otherwise false.
      */
-    public static boolean isTool(@Nullable final ItemStack itemStack, final String toolType)
+    public static boolean isTool(@Nullable final ItemStack itemStack, final ToolType toolType)
     {
-        return getMiningLevel(itemStack, toolType) >= 0 || (itemStack != null && itemStack.getItem() instanceof ItemHoe && "hoe".equals(toolType));
+        return getMiningLevel(itemStack, toolType) >= 0 || (itemStack != null && itemStack.getItem() instanceof ItemHoe && "hoe".equals(toolType.toString()));
     }
 
     /**
@@ -368,9 +362,9 @@ public final class Utils
      * @return integer value for mining level &gt;= 0 is okay.
      */
     @SuppressWarnings("deprecation")
-    public static int getMiningLevel(@Nullable final ItemStack stack, @Nullable final String tool)
+    public static int getMiningLevel(@Nullable final ItemStack stack, @Nullable final ToolType toolType)
     {
-        if (tool == null)
+        if (toolType == ToolType.NONE)
         {
             //empty hand is best on blocks who don't care (0 better 1)
             return stack == null ? 0 : 1;
@@ -379,12 +373,12 @@ public final class Utils
         {
             return -1;
         }
-        if (!Compatibility.getMiningLevelCompatibility(stack, tool))
+        if (!Compatibility.getMiningLevelCompatibility(stack, toolType.toString()))
         {
             return -1;
         }
         //todo: use 'better' version of this thing
-        return stack.getItem().getHarvestLevel(stack, tool, null, null);
+        return stack.getItem().getHarvestLevel(stack, toolType.toString(), null, null);
     }
 
     /**
@@ -395,7 +389,7 @@ public final class Utils
      */
     public static boolean isAxe(@Nullable final ItemStack itemStack)
     {
-        return isTool(itemStack, AXE);
+        return isTool(itemStack, ToolType.AXE);
     }
 
     /**
@@ -406,7 +400,7 @@ public final class Utils
      */
     public static boolean isPickaxe(@Nullable final ItemStack itemStack)
     {
-        return isTool(itemStack, PICKAXE);
+        return isTool(itemStack, ToolType.PICKAXE);
     }
 
     /**

@@ -9,8 +9,7 @@ import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.Utils;
+import com.minecolonies.api.util.*;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -430,8 +429,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private boolean hasTools(@NotNull final AbstractBuilding buildingToDeliver)
     {
-        final String requiredTool = buildingToDeliver.getRequiredTool();
-        if (requiredTool.isEmpty())
+        final ToolType requiredTool = buildingToDeliver.getRequiredTool();
+        if (requiredTool == ToolType.NONE)
         {
             return true;
         }
@@ -469,10 +468,10 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
         else if (itemsToDeliver.isEmpty())
         {
-            final String tool = buildingToDeliver.getRequiredTool();
+            final ToolType toolType = buildingToDeliver.getRequiredTool();
             position = wareHouse.getTileEntity()
-                         .getPositionOfChestWithTool(tool,
-                           Utils.PICKAXE.equals(tool) ? buildingToDeliver.getNeededToolLevel() : buildingToDeliver.getBuildingLevel(),
+                         .getPositionOfChestWithTool(toolType,
+                           buildingToDeliver.getNeededToolLevel(),
                            buildingToDeliver);
         }
         else
