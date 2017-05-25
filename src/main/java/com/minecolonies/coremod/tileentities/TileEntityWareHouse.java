@@ -218,7 +218,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                     if(building instanceof BuildingDeliveryman)
                     {
                         return ((BuildingDeliveryman) building).getBuildingToDeliver() != null
-                                && ((BuildingDeliveryman) building).getBuildingToDeliver().getLocation() == buildingEntry.getLocation();
+                                && ((BuildingDeliveryman) building).getBuildingToDeliver().getLocation().equals(buildingEntry.getLocation());
                     }
                 }
             }
@@ -399,27 +399,12 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      * @param itemStackSelectionPredicate the itemStack predicate.
      * @return true if found the stack.
      */
-    private boolean isInTileEntity(final TileEntityChest entity, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    private static boolean isInTileEntity(final TileEntityChest entity, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
         return InventoryFunctions
-                .matchFirstInProviderWithAction(
+                .matchFirstInProvider(
                         entity,
-                        itemStackSelectionPredicate,
-                        InventoryFunctions::doNothing);
-    }
-
-    @Override
-    public void readFromNBT(final NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
-    }
-
-    @NotNull
-    @Override
-    public NBTTagCompound writeToNBT(@NotNull final NBTTagCompound compound)
-    {
-        super.writeToNBT(compound);
-        return compound;
+                        itemStackSelectionPredicate);
     }
 
     /**

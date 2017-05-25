@@ -645,9 +645,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         final boolean needsTool = !InventoryFunctions
                                            .matchFirstInProvider(
                                                    worker,
-                                       stack -> Utils.isTool(stack, tool),
-                                       InventoryFunctions::doNothing
-                                     );
+                                       stack -> Utils.isTool(stack, tool));
 
         final int hutLevel = worker.getWorkBuilding().getBuildingLevel();
         final InventoryCitizen inventory = worker.getInventoryCitizen();
@@ -813,13 +811,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private boolean checkForPickaxe(final int minlevel)
     {
         //Check for a pickaxe
-        getOwnBuilding().setNeedsPickaxe(!InventoryFunctions
-                                                  .matchFirstInProvider(
-                                                          worker,
-                                              stack -> Utils.checkIfPickaxeQualifies(
-                                                minlevel, Utils.getMiningLevel(stack, Utils.PICKAXE)),
-                                              InventoryFunctions::doNothing
-                                            ));
+        getOwnBuilding().setNeedsPickaxe(
+                !InventoryFunctions.matchFirstInProvider(
+                        worker,
+                        stack -> Utils.checkIfPickaxeQualifies(
+                                minlevel,
+                                Utils.getMiningLevel(stack, Utils.PICKAXE))));
 
         delay += DELAY_RECHECK;
 
@@ -909,12 +906,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     public boolean checkForWeapon()
     {
         //Check for a pickaxe
-        getOwnBuilding().setNeedsWeapon(!InventoryFunctions
-                                                 .matchFirstInProvider(
-                                                         worker,
-                                             stack -> stack != null && Utils.doesItemServeAsWeapon(stack),
-                                             InventoryFunctions::doNothing
-                                           ));
+        getOwnBuilding().setNeedsWeapon(
+                !InventoryFunctions.matchFirstInProvider(
+                        worker,
+                        stack -> stack != null && Utils.doesItemServeAsWeapon(stack)));
 
         delay += DELAY_RECHECK;
 
