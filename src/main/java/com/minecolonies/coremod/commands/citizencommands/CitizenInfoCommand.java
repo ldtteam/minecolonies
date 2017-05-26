@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.commands;
+package com.minecolonies.coremod.commands.citizencommands;
 
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;

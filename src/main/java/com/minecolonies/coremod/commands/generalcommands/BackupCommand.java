@@ -1,6 +1,7 @@
-package com.minecolonies.coremod.commands;
+package com.minecolonies.coremod.commands.generalcommands;
 
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
