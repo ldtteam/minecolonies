@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.miner;
 
-import com.minecolonies.coremod.util.Vec2i;
+import com.minecolonies.api.util.Vec2i;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.Constants;
