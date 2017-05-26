@@ -585,7 +585,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         return InventoryFunctions.matchFirstInProviderWithAction(
                 entity,
-                stack -> Utils.isTool(stack, toolType) && InventoryUtils.hasToolLevel(stack, toolType, minLevel, maxLevel),
+                stack -> InventoryUtils.hasToolLevel(stack, toolType, minLevel, maxLevel),
                 this::takeItemStackFromProvider
         );
     }

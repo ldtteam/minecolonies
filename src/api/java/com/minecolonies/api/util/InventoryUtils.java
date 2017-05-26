@@ -809,7 +809,7 @@ public class InventoryUtils
      */
     public static boolean isToolInProvider(@NotNull final ICapabilityProvider provider, @NotNull final ToolType toolType, final int minimalLevel, final int maximumLevel)
     {
-        return hasItemInProvider(provider, (ItemStack stack) -> Utils.isTool(stack, toolType) && InventoryUtils.hasToolLevel(stack, toolType, minimalLevel, maximumLevel));
+        return hasItemInProvider(provider, (ItemStack stack) -> InventoryUtils.hasToolLevel(stack, toolType, minimalLevel, maximumLevel));
     }
 
     /**
