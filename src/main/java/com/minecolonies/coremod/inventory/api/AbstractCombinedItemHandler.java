@@ -16,6 +16,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
+import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
+import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
+
 /**
  * Abstract class wrapping around multiple IItemHandler.
  */
@@ -62,6 +65,7 @@ public abstract class AbstractCombinedItemHandler
         this.defaultName = defaultName;
     }
 
+    @SuppressWarnings(RAWTYPES)
     @Override
     public NBTTagCompound serializeNBT()
     {
@@ -92,6 +96,7 @@ public abstract class AbstractCombinedItemHandler
         return compound;
     }
 
+    @SuppressWarnings({RAWTYPES, UNCHECKED})
     @Override
     public void deserializeNBT(final NBTTagCompound nbt)
     {
