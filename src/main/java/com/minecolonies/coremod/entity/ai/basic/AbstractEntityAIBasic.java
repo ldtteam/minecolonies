@@ -627,12 +627,21 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private boolean checkForShovel()
     {
-        if (checkForNeededTool(ToolType.SHOVEL))
+        return checkForTool(ToolType.SHOVEL);
+    }
+
+    private boolean checkForTool(@NotNull final ToolType toolType)
+    {
+        if (checkForNeededTool(toolType))
         {
-            getOwnBuilding().setNeedsTool(ToolType.SHOVEL);
+            getOwnBuilding().setNeedsTool(toolType);
+        }
+        else if(getOwnBuilding().needsTool(toolType))
+        {
+            getOwnBuilding().setNeedsTool(ToolType.NONE);
         }
 
-        return getOwnBuilding().needsTool(ToolType.SHOVEL);
+        return getOwnBuilding().needsTool(toolType);
     }
 
     /**
@@ -644,20 +653,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private boolean checkForNeededTool(@NotNull final ToolType toolType)
     {
-        final boolean needsTool = !InventoryFunctions
-                                           .matchFirstInProvider(
-                                                   worker,
-                                       stack -> Utils.isTool(stack, toolType));
-
         final int maxToolLevel = worker.getWorkBuilding().getMaxToolLevel();
         final InventoryCitizen inventory = worker.getInventoryCitizen();
-        final boolean isUsable = InventoryUtils.isToolInItemHandler(new InvWrapper(inventory), toolType, TOOL_LEVEL_WOOD_OR_GOLD, maxToolLevel);
-
-
-        if (!needsTool && isUsable)
+        if (InventoryUtils.isToolInItemHandler(new InvWrapper(inventory), toolType, TOOL_LEVEL_WOOD_OR_GOLD, maxToolLevel))
         {
             return false;
         }
+
         delay += DELAY_RECHECK;
         if (walkToBuilding())
         {
@@ -755,11 +757,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     protected boolean checkForAxe()
     {
-        if (checkForNeededTool(ToolType.AXE))
-        {
-            getOwnBuilding().setNeedsTool(ToolType.AXE);
-        }
-        return getOwnBuilding().needsTool(ToolType.AXE);
+        return checkForTool(ToolType.AXE);
     }
 
     /**
@@ -786,11 +784,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     protected boolean checkForHoe()
     {
-        if (checkForNeededTool(ToolType.HOE))
-        {
-            getOwnBuilding().setNeedsTool(ToolType.HOE);
-        }
-        return getOwnBuilding().needsTool(ToolType.HOE);
+        return checkForTool(ToolType.HOE);
     }
 
     /**
