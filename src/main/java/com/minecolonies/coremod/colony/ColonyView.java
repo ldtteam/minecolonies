@@ -78,6 +78,11 @@ public final class ColonyView implements IColony
     private double overallHappiness = 5;
 
     /**
+     * The hours the colony is without contact with its players.
+     */
+    private int lastContactInHours = 0;
+
+    /**
      * Base constructor for a colony.
      *
      * @param id The current id for the colony.
@@ -139,6 +144,8 @@ public final class ColonyView implements IColony
         {
             BlockPosUtil.writeToByteBuf(buf, block);
         }
+
+        buf.writeInt(colony.getLastContactInHours());
         //  Citizens are sent as a separate packet
     }
 
@@ -401,6 +408,7 @@ public final class ColonyView implements IColony
         {
             wayPoints.add(BlockPosUtil.readFromByteBuf(buf));
         }
+        lastContactInHours = buf.readInt();
         return null;
     }
 
@@ -618,5 +626,11 @@ public final class ColonyView implements IColony
     public boolean hasWarehouse()
     {
         return hasWarehouse;
+    }
+
+    @Override
+    public int getLastContactInHours()
+    {
+        return lastContactInHours;
     }
 }
