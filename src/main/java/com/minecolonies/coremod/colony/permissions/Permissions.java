@@ -717,8 +717,15 @@ public class Permissions implements IPermissions
             return false;
         }
         final GameProfile gameprofile = world.getMinecraftServer().getPlayerProfileCache().getGameProfileForUsername(player);
-        //Check if the player already exists so that their rank isn't overridden
-        return gameprofile != null && !getOwner().equals(gameprofile.getId()) && addPlayer(gameprofile, rank);
+        //Check if the player is the owner  so that their rank isn't overridden
+        return gameprofile != null && !gameprofile.getId().equals(getOwner()) && addPlayer(gameprofile, rank);
+    }
+
+    public boolean isPlayerPermissionDefined(@NotNull final String player, final World world)
+    {
+        final GameProfile gameProfile = world.getMinecraftServer().getPlayerProfileCache().getGameProfileForUsername(player);
+
+        return gameProfile != null && players.containsKey(gameProfile.getId());
     }
 
     /**
