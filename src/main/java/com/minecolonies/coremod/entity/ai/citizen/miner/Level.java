@@ -212,7 +212,7 @@ public class Level
         nodes.get(new Vec2i(tempNode.getX(), tempNode.getZ())).setStatus(Node.NodeStatus.COMPLETED);
     }
 
-    private Node.NodeType getRandomNodeType()
+    private static Node.NodeType getRandomNodeType()
     {
         final int randNumber = rand.nextInt(RANDOM_TYPES);
         if (randNumber <= 1)
