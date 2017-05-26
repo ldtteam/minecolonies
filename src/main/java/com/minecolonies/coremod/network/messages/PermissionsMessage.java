@@ -227,9 +227,12 @@ public class PermissionsMessage
         {
             final Colony colony = ColonyManager.getColony(message.colonyID);
 
-            if (colony != null && colony.getPermissions().hasPermission(player, Action.CAN_PROMOTE) && colony.getWorld() != null)
+            if (colony != null && colony.getWorld() != null)
             {
-                colony.getPermissions().addPlayer(message.playerName, Rank.NEUTRAL, colony.getWorld());
+                if (!colony.getPermissions().isPlayerPermissionDefined(message.playerName, colony.getWorld()))
+                {
+                    colony.getPermissions().addPlayer(message.playerName, Rank.NEUTRAL, colony.getWorld());
+                }
             }
             else
             {

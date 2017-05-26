@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.commands;
 
 import com.google.common.collect.ImmutableMap;
+import com.minecolonies.coremod.commands.colonycommands.ListColoniesCommand;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;

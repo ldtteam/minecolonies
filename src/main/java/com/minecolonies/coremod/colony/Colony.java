@@ -60,6 +60,7 @@ public class Colony implements IColony
     private static final String TAG_FREE_BLOCKS                = "freeBlocks";
     private static final String TAG_FREE_POSITIONS             = "freePositions";
     private static final String TAG_HAPPINESS                  = "happiness";
+    private static final String TAG_ABANDONED                  = "abandoned";
 
     //statistics tags
     private static final String TAG_STATISTICS        = "statistics";
@@ -94,6 +95,16 @@ public class Colony implements IColony
     private static final int    NUM_ACHIEVEMENT_THIRD     = 100;
     private static final int    NUM_ACHIEVEMENT_FOURTH    = 500;
     private static final int    NUM_ACHIEVEMENT_FIFTH     = 1000;
+
+    /**
+     * Amount of ticks that pass/hour.
+     */
+    private static final int TICKS_HOUR = 20 * 60 * 60;
+
+    /**
+     * The hours the colony is without contact with its players.
+     */
+    private int lastContactInHours = 0;
 
     /**
      * Bonus happiness each factor added.
@@ -184,6 +195,11 @@ public class Colony implements IColony
      * The Blocks which players can freely interact with.
      */
     private final Set<Block> freeBlocks = new HashSet<>();
+
+    /**
+     * Amount of ticks passed.
+     */
+    private int ticksPassed = 0;
 
     /**
      * Constructor for a newly created Colony.
@@ -367,6 +383,7 @@ public class Colony implements IColony
         {
             this.overallHappiness = AVERAGE_HAPPINESS;
         }
+        lastContactInHours = compound.getInteger(TAG_ABANDONED);
     }
 
     /**
@@ -525,6 +542,7 @@ public class Colony implements IColony
         compound.setTag(TAG_FREE_POSITIONS, freePositionsTagList);
 
         compound.setDouble(TAG_HAPPINESS, overallHappiness);
+        compound.setInteger(TAG_ABANDONED, lastContactInHours);
     }
 
     /**
@@ -844,6 +862,20 @@ public class Colony implements IColony
           .stream()
           .filter(permissions::isSubscriber)
           .forEachOrdered(subscribers::add);
+
+        if(subscribers.isEmpty())
+        {
+            if(ticksPassed >= TICKS_HOUR)
+            {
+                ticksPassed = 0;
+                lastContactInHours++;
+            }
+            ticksPassed++;
+        }
+        else
+        {
+            ticksPassed = 0;
+        }
 
         //  Add nearby players
         for (final EntityPlayer o : world.playerEntities)
@@ -1305,8 +1337,6 @@ public class Colony implements IColony
             }
         }
 
-        removedBuildings.forEach(AbstractBuilding::destroy);
-
         @NotNull final ArrayList<Field> tempFields = new ArrayList<>(fields.values());
 
         for (@NotNull final Field field : tempFields)
@@ -1325,7 +1355,7 @@ public class Colony implements IColony
             }
         }
 
-        markFieldsDirty();
+        removedBuildings.forEach(AbstractBuilding::destroy);
     }
 
     /**
@@ -1907,5 +1937,11 @@ public class Colony implements IColony
     public Map<BlockPos, IBlockState> getWayPoints()
     {
         return new HashMap<>(wayPoints);
+    }
+
+    @Override
+    public int getLastContactInHours()
+    {
+        return lastContactInHours;
     }
 }

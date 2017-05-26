@@ -1,6 +1,8 @@
-package com.minecolonies.coremod.commands;
+package com.minecolonies.coremod.commands.generalcommands;
 
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.commands.AbstractSingleCommand;
+import com.minecolonies.coremod.commands.MinecoloniesCommand;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import com.minecolonies.coremod.util.ServerUtils;
