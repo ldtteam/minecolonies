@@ -10,11 +10,10 @@ import org.jetbrains.annotations.NotNull;
  */
 public class Vec2i
 {
-    private int x;
+    private final int x;
+    private final int z;
 
-    private int z;
-
-    public Vec2i(int x, int z)
+    public Vec2i(final int x, final int z)
     {
         this.x = x;
         this.z = z;
@@ -30,12 +29,12 @@ public class Vec2i
         return z;
     }
 
-    public long distanceSq(@NotNull Vec2i vec2i)
+    public long distanceSq(@NotNull final Vec2i vec2i)
     {
         return distanceSq(vec2i.getX(), vec2i.getZ());
     }
 
-    public long distanceSq(int x, int y)
+    public long distanceSq(final int x, final int y)
     {
         final long xDiff = (long) this.getX() - x;
         final long zDiff = (long) this.getZ() - y;
@@ -44,7 +43,7 @@ public class Vec2i
     }
 
     @Override
-    public boolean equals(Object o)
+    public boolean equals(final Object o)
     {
         if (this == o)
         {
@@ -55,7 +54,7 @@ public class Vec2i
             return false;
         }
 
-        Vec2i vec2i = (Vec2i) o;
+        final Vec2i vec2i = (Vec2i) o;
 
         return x == vec2i.x && z == vec2i.z;
     }

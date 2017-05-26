@@ -7,7 +7,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -53,7 +52,7 @@ public class Level
      * The hashMap of nodes, check for nodes with the tuple of the parent x and z.
      */
     @NotNull
-    private final        HashMap<Vec2i, Node> nodes           = new HashMap<>();
+    private final        Map<Vec2i, Node> nodes               = new HashMap<>();
     /**
      * The queue of open Nodes. Get a new node to work on here.
      */
@@ -206,12 +205,26 @@ public class Level
                 continue;
             }
             final Node tempNodeToAdd = new Node(pos.getX(), pos.getZ(), new Vec2i(tempNode.getX(), tempNode.getZ()));
-            final int randNumber = rand.nextInt(RANDOM_TYPES);
-            tempNodeToAdd.setStyle(randNumber <= 1 ? TUNNEL : (randNumber == 2 ? BEND : CROSSROAD));
+            tempNodeToAdd.setStyle(getRandomNodeType());
             nodes.put(pos, tempNodeToAdd);
             openNodes.add(tempNodeToAdd);
         }
         nodes.get(new Vec2i(tempNode.getX(), tempNode.getZ())).setStatus(Node.NodeStatus.COMPLETED);
+    }
+
+    private Node.NodeType getRandomNodeType()
+    {
+        final int randNumber = rand.nextInt(RANDOM_TYPES);
+        if (randNumber <= 1)
+        {
+            return TUNNEL;
+        }
+        else if (randNumber == 2)
+        {
+            return BEND;
+        }
+
+        return CROSSROAD;
     }
 
     /**

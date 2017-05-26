@@ -340,7 +340,7 @@ public class WalkToProxy
         return getProxy(target, worker.getPosition(), distanceToPath);
     }
 
-    private boolean nodeDoesntEqualParent(@NotNull Node node)
+    private boolean nodeDoesntEqualParent(@NotNull final Node node)
     {
         final Vec2i parent = node.getParent();
         return parent != null && node.getX() != parent.getX() && node.getZ() != parent.getZ();
