@@ -1,10 +1,11 @@
 package com.minecolonies.coremod.entity.ai.citizen.miner;
 
+import com.minecolonies.coremod.util.Vec2i;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.awt.geom.Point2D;
 
 /**
  * Miner Node Data Structure.
@@ -33,27 +34,30 @@ public class Node
     /**
      * X position of the Node.
      */
-    private final double x;
+    private final int x;
 
     /**
      * Z position of the node.
      */
-    private final double     z;
+    private final int z;
+
     /**
      * Central position of parent node.
      */
     @Nullable
-    private final Point2D    parent;
+    private final Vec2i parent;
+
     /**
      * Style of the node.
      */
     @NotNull
-    private       NodeType   style;
+    private NodeType style;
+
     /**
      * Status of the node.
      */
     @NotNull
-    private       NodeStatus status;
+    private NodeStatus status;
 
     /**
      * Initializes the node.
@@ -63,7 +67,7 @@ public class Node
      * @param z      Z-coordinate in the node
      * @param parent the parent of the node.
      */
-    public Node(final double x, final double z, @Nullable final Point2D parent)
+    public Node(final int x, final int z, @Nullable final Vec2i parent)
     {
         this.x = x;
         this.z = z;
@@ -82,17 +86,43 @@ public class Node
     @NotNull
     public static Node createFromNBT(@NotNull final NBTTagCompound compound)
     {
-        final double x = compound.getDouble(TAG_X);
-        final double z = compound.getDouble(TAG_Z);
+        // for backwards compatibility check if the types are doubles
+        final boolean hasDoubles = compound.hasKey(TAG_X, Constants.NBT.TAG_DOUBLE);
+
+        int x;
+        int z;
+        if (hasDoubles)
+        {
+            x = MathHelper.floor(compound.getDouble(TAG_X));
+            z = MathHelper.floor(compound.getDouble(TAG_Z));
+        }
+        else
+        {
+            x = compound.getInteger(TAG_X);
+            z = compound.getInteger(TAG_Z);
+        }
 
         final NodeType style = NodeType.valueOf(compound.getString(TAG_STYLE));
 
         final NodeStatus status = NodeStatus.valueOf(compound.getString(TAG_STATUS));
 
-        final Point2D tempParent = compound.hasKey(TAG_PARENTX) ? new Point2D.Double(compound.getDouble(TAG_PARENTX), compound.getDouble(TAG_PARENTZ)) : null;
+        Vec2i parent = null;
+        if (compound.hasKey(TAG_PARENTX))
+        {
+            if (hasDoubles)
+            {
+                parent = new Vec2i(
+                        MathHelper.floor(compound.getDouble(TAG_PARENTX)),
+                        MathHelper.floor(compound.getDouble(TAG_PARENTZ)));
+            }
+            else
+            {
+                parent = new Vec2i(compound.getInteger(TAG_PARENTX), compound.getInteger(TAG_PARENTZ));
+            }
+        }
 
         //Set the node status in all directions.
-        @NotNull final Node node = new Node(x, z, tempParent);
+        @NotNull final Node node = new Node(x, z, parent);
         node.setStyle(style);
         node.setStatus(status);
 
@@ -106,16 +136,16 @@ public class Node
      */
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
-        compound.setDouble(TAG_X, x);
-        compound.setDouble(TAG_Z, z);
+        compound.setInteger(TAG_X, x);
+        compound.setInteger(TAG_Z, z);
 
         compound.setString(TAG_STYLE, style.name());
         compound.setString(TAG_STATUS, status.name());
 
         if (parent != null)
         {
-            compound.setDouble(TAG_PARENTX, parent.getX());
-            compound.setDouble(TAG_PARENTZ, parent.getY());
+            compound.setInteger(TAG_PARENTX, parent.getX());
+            compound.setInteger(TAG_PARENTZ, parent.getZ());
         }
     }
 
@@ -146,7 +176,7 @@ public class Node
      * @return tuple of parent position.
      */
     @Nullable
-    public Point2D getParent()
+    public Vec2i getParent()
     {
         return this.parent;
     }
@@ -184,21 +214,11 @@ public class Node
     }
 
     /**
-     * Calculates the next Node north.
-     *
-     * @return position of the new Node.
-     */
-    public Point2D.Double getNorthNodeCenter()
-    {
-        return new Point2D.Double(getX(), getZ() - DISTANCE_TO_NEXT_NODE);
-    }
-
-    /**
      * Returns the x-coordinate in the node.
      *
      * @return x-coordinate
      */
-    public double getX()
+    public int getX()
     {
         return x;
     }
@@ -208,9 +228,19 @@ public class Node
      *
      * @return z-coordinate
      */
-    public double getZ()
+    public int getZ()
     {
         return z;
+    }
+
+    /**
+     * Calculates the next Node north.
+     *
+     * @return position of the new Node.
+     */
+    public Vec2i getNorthNodeCenter()
+    {
+        return new Vec2i(getX(), getZ() - DISTANCE_TO_NEXT_NODE);
     }
 
     /**
@@ -218,9 +248,9 @@ public class Node
      *
      * @return position of the new Node.
      */
-    public Point2D.Double getSouthNodeCenter()
+    public Vec2i getSouthNodeCenter()
     {
-        return new Point2D.Double(getX(), getZ() + DISTANCE_TO_NEXT_NODE);
+        return new Vec2i(getX(), getZ() + DISTANCE_TO_NEXT_NODE);
     }
 
     /**
@@ -228,9 +258,9 @@ public class Node
      *
      * @return position of the new Node.
      */
-    public Point2D.Double getEastNodeCenter()
+    public Vec2i getEastNodeCenter()
     {
-        return new Point2D.Double(getX() + DISTANCE_TO_NEXT_NODE, getZ());
+        return new Vec2i(getX() + DISTANCE_TO_NEXT_NODE, getZ());
     }
 
     /**
@@ -238,9 +268,9 @@ public class Node
      *
      * @return position of the new Node.
      */
-    public Point2D.Double getWesthNodeCenter()
+    public Vec2i getWestNodeCenter()
     {
-        return new Point2D.Double(getX() - DISTANCE_TO_NEXT_NODE, getZ());
+        return new Vec2i(getX() - DISTANCE_TO_NEXT_NODE, getZ());
     }
 
     /**
