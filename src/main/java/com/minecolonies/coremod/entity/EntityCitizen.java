@@ -61,6 +61,7 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 import static com.minecolonies.api.util.constant.Suppression.INCREMENT_AND_DECREMENT_OPERATORS_SHOULD_NOT_BE_USED_IN_A_METHOD_CALL_OR_MIXED_WITH_OTHER_OPERATORS_IN_AN_EXPRESSION;
+import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 
 /**
  * The Class used to represent the citizen entities.
@@ -853,6 +854,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         return colony;
     }
 
+    @SuppressWarnings(UNCHECKED)
     @Override
     public <T> T getCapability(final Capability<T> capability, final EnumFacing facing)
     {
