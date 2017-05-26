@@ -307,10 +307,11 @@ public class BuildingFarmer extends AbstractBuildingWorker
             {
                 tempField.setTaken(false);
                 tempField.setOwner("");
-                final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) getColony().getWorld().getTileEntity(field.getID());
 
-                if(getColony() != null && getColony().getWorld() != null)
+                if(getColony().getWorld() != null)
                 {
+                    final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) getColony().getWorld().getTileEntity(field.getID());
+
                     getColony().getWorld()
                       .notifyBlockUpdate(scarecrowTileEntity.getPos(),
                         getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),

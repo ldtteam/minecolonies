@@ -1337,8 +1337,6 @@ public class Colony implements IColony
             }
         }
 
-        removedBuildings.forEach(AbstractBuilding::destroy);
-
         @NotNull final ArrayList<Field> tempFields = new ArrayList<>(fields.values());
 
         for (@NotNull final Field field : tempFields)
@@ -1357,7 +1355,7 @@ public class Colony implements IColony
             }
         }
 
-        markFieldsDirty();
+        removedBuildings.forEach(AbstractBuilding::destroy);
     }
 
     /**
