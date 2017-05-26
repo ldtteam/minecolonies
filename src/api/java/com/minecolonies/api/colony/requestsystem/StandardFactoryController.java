@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.minecolonies.api.util.constant.Suppression.*;
-import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 
 /**
  * Default implementation of a FactoryController
