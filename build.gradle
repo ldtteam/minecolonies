@@ -149,6 +149,16 @@ compileJava {
     options.compilerArgs << "-Xlint"
 }
 
+compileApiJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << "-Xlint"
+}
+
+compileBlockOutJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << "-Xlint"
+}
+
 task apiJar(type: Jar) {
     from sourceSets.api.output
     classifier 'api'

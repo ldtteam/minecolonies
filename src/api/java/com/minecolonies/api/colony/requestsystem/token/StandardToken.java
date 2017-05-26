@@ -5,6 +5,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
+import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
+
 /**
  * Internal implementation of the IToken interface.
  * Uses UUID to store the ID of the request.
@@ -71,6 +73,7 @@ public class StandardToken implements IToken<UUID, NBTTagCompound>
     }
 
     @Override
+    @SuppressWarnings(RAWTYPES)
     public boolean equals(final Object o)
     {
         if (this == o)

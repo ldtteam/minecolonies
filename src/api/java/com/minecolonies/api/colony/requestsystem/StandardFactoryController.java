@@ -3,12 +3,14 @@ package com.minecolonies.api.colony.requestsystem;
 import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.Suppression;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.minecolonies.api.util.constant.Suppression.*;
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 
 /**
@@ -30,11 +32,13 @@ public final class StandardFactoryController implements IFactoryController
     /**
      * Input mappings.
      */
+    @SuppressWarnings(RAWTYPES)
     @NotNull
     private final        Map<Class, IFactory>      inputMappings  = new HashMap<>();
     /**
      * Output mappings.
      */
+    @SuppressWarnings(RAWTYPES)
     @NotNull
     private final        Map<Class, IFactory>      outputMappings = new HashMap<>();
 
@@ -88,7 +92,7 @@ public final class StandardFactoryController implements IFactoryController
      * @throws IllegalArgumentException is thrown when the given output class is unknown to this Factory Controller.
      */
     @Override
-    @SuppressWarnings(UNCHECKED)
+    @SuppressWarnings({UNCHECKED, RAWTYPES})
     public <Output> IFactory<?, Output> getFactoryForOutput(@NotNull final Class<? extends Output> clazz) throws IllegalArgumentException
     {
         if (!inputMappings.containsKey(clazz))

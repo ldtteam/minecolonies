@@ -3,6 +3,8 @@ package com.minecolonies.api.colony.requestsystem.factory;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
+
 /**
  * Interface used to describe classes that function as Factory controllers.
  */
@@ -18,6 +20,7 @@ public interface IFactoryController
      *
      * @throws IllegalArgumentException is thrown when the given input name is unknown to this Factory Controller.
      */
+    @SuppressWarnings(UNCHECKED)
     default <Input> IFactory<Input, ?> getFactoryForInput(@NotNull final String className) throws IllegalArgumentException
     {
         //Simple default implementation grabs the class from a given name and casts it to the proper type.
@@ -56,6 +59,7 @@ public interface IFactoryController
      *
      * @throws IllegalArgumentException is thrown when the given Output name is unknown to this Factory Controller.
      */
+    @SuppressWarnings(UNCHECKED)
     default <Output> IFactory<?, Output> getFactoryForOutput(@NotNull final String className) throws IllegalArgumentException
     {
         //Simple default implementation grabs the class from a given name and casts it to the proper type.
