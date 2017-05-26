@@ -221,7 +221,7 @@ public final class ModAchievements
                                                                                                  achievementCatch25Fish).registerStat();
     public static final Achievement achievementKill100Mobs        = new MineColoniesAchievement("guard.mobsKilled.100", 8, 7, Items.GUNPOWDER,
                                                                                                  achievementKill25Mobs).registerStat();
-    public static final Achievement achievementMine100Ores        = new MineColoniesAchievement("miner.oresMined.100", 8, 9, Blocks.REDSTONE_ORE,
+    public static final Achievement achievementMine100Ores        = new MineColoniesAchievement("miner.oresMined.100", 8, 9, Blocks.GOLD_ORE,
                                                                                                  achievementMine25Ores).registerStat();
     public static final Achievement achievementMine100Diamonds    = new MineColoniesAchievement("miner.diamondsMined.100", 8, 10, Items.DIAMOND,
                                                                                                  achievementMine25Diamonds).registerStat();
@@ -245,7 +245,7 @@ public final class ModAchievements
                                                                                                  achievementCatch100Fish).registerStat();
     public static final Achievement achievementKill500Mobs        = new MineColoniesAchievement("guard.mobsKilled.500", 10, 7, Items.ENDER_PEARL,
                                                                                                  achievementKill100Mobs).registerStat();
-    public static final Achievement achievementMine500Ores        = new MineColoniesAchievement("miner.oresMined.500", 10, 9, Blocks.GOLD_ORE,
+    public static final Achievement achievementMine500Ores        = new MineColoniesAchievement("miner.oresMined.500", 10, 9, Blocks.REDSTONE_ORE,
                                                                                                  achievementMine100Ores).registerStat();
     public static final Achievement achievementMine500Diamonds    = new MineColoniesAchievement("miner.diamondsMined.500", 10, 10, Items.DIAMOND,
                                                                                                  achievementMine100Diamonds).registerStat();
