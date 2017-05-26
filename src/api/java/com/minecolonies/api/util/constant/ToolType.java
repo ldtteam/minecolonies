@@ -8,8 +8,6 @@ public enum ToolType implements IToolType
     AXE ("axe"),
     HOE ("hoe"),
     WEAPON ("weapon"),
-    BOW ("bow"),
-    FISHINGROD("rod");
 
     private final String name;
 
