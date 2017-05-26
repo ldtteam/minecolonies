@@ -345,22 +345,34 @@ public class InventoryUtils
      */
     public static boolean verifyToolLevel(@NotNull final ItemStack itemStack, final int toolLevel, final int minimalLevel, final int maximumLevel)
     {
-        if (isItemStackEmpty(itemStack))
-        {
-            //We can always use a bare hand
-            return true;
-        }
-        else if (toolLevel < minimalLevel || toolLevel > maximumLevel)
+        if (toolLevel < minimalLevel)
         {
             return false;
         }
-        //Check that we can use a enchanted item
-        else if (itemStack.isItemEnchanted() && maximumLevel < EFFECT_TOOL_CHOICE_LEVEL)
-        {
-            return false;
-        }
+        //tool level + max enchentment  should not exceed maximumLevel
+        return (toolLevel + getMaxEnchantmentLevel(itemStack) <= maximumLevel);
+    }
 
-        return true;
+    /**
+     * Returns the level of enchantment on the ItemStack passed.
+     */
+    public static int getMaxEnchantmentLevel(final ItemStack itemStack)
+    {
+        int maxLevel = 0;
+        if (itemStack != null)
+        {
+            final NBTTagList nbttaglist = itemStack.getEnchantmentTagList();
+
+            if (nbttaglist != null)
+            {
+                for (int j = 0; j < nbttaglist.tagCount(); ++j)
+                {
+                    final short level = ((NBTTagCompound)nbttaglist.tagAt(j)).getShort("lvl");
+                    maxLevel = level > maxLevel ? level : maxLevel;
+                }
+            }
+        }
+        return maxLevel;
     }
 
     /**
