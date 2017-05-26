@@ -56,12 +56,7 @@ public class RecipeStorage
      */
     public List<ItemStack> getInput()
     {
-        final List<ItemStack> copy = new ArrayList<>();
-        for(final ItemStack stack: input)
-        {
-            copy.add(stack.copy());
-        }
-        return copy;
+        return InventoryUtils.hardCopyListOfItemStacks(input);
     }
 
     /**
@@ -70,7 +65,7 @@ public class RecipeStorage
      */
     public List<ItemStack> getSecondaryOutput()
     {
-        return new ArrayList<>(secondaryOutput);
+        return InventoryUtils.hardCopyListOfItemStacks(secondaryOutput);
     }
 
     /**

@@ -174,6 +174,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         );
         worker.setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
                 + CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma());
+        worker.setCanPickUpLoot(true);
     }
 
     /**
