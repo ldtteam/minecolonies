@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony;
 
-import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
