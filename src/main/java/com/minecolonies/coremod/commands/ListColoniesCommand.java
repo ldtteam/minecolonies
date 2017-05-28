@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -135,7 +136,7 @@ public class ListColoniesCommand extends AbstractSingleCommand
                                                  @NotNull final String[] args,
                                                  @Nullable final BlockPos pos)
     {
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 
     @Override
