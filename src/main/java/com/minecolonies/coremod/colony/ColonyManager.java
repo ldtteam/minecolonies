@@ -768,7 +768,7 @@ public final class ColonyManager
 
     private static void addColonyByWorld(final Colony colony)
     {
-        if(colony.getDimension() > 0)
+        if(colony.getDimension() >= 0)
         {
             coloniesByWorld.computeIfAbsent(colony.getDimension(), ArrayList::new).add(colony);
         }
