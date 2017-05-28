@@ -15,10 +15,10 @@ public class ModelEntityBakerMale extends ModelBiped
     {
         textureWidth = 128;
         textureHeight = 64;
-
+        
         bipedRightArm = new ModelRenderer(this, 40, 16);
-        bipedRightArm.addBox(-1F, -2F, -2F, 4, 12, 4);
-        bipedRightArm.setRotationPoint(-7F, 2F, 0F);
+        bipedRightArm.addBox(-3F, -2F, -2F, 4, 12, 4);
+        bipedRightArm.setRotationPoint(-5F, 2F, 0F);
         bipedRightArm.setTextureSize(128, 64);
         bipedRightArm.mirror = true;
         setRotation(bipedRightArm, 0F, 0F, 0F);
