@@ -26,7 +26,7 @@ Compiling MineColonies
 
 IMPORTANT: Please report any issues you have, there might be some problems with the documentation! Also make sure you know EXACTLY what you're doing! It's not any of our faults if your OS crashes, becomes corrupted, etc.
 
-####Setup Java
+#### Setup Java
 The Java JDK is used to compile MineColonies
 
 1. Download and install the Java JDK 8.
@@ -46,7 +46,7 @@ The Java JDK is used to compile MineColonies
     * Append `;%JAVA_HOME%\bin` EXACTLY AS SHOWN and click `OK`.  Make sure the location is correct; double-check just to make sure.
 3. Open up your command line and run `javac`.  If it spews out a bunch of possible options and the usage, then you're good to go.  If not, either try the steps again.
 
-####Setup Gradle (Optional)
+#### Setup Gradle (Optional)
 Gradle is used to execute the various build tasks when compiling MineColonies
 
 1. Download and install Gradle.
@@ -64,13 +64,13 @@ Gradle is used to execute the various build tasks when compiling MineColonies
 	* Scroll down to `Path` again, and append `;%GRADLE_HOME%\bin` EXACTLY AS SHOWN and click `Ok`.  Once again, double-check the location.
 3. Open up your command line and run `gradle`.  If it says "Welcome to Gradle [version].", then you're good to go.  If not, either try the steps again.
 
-####Setup Git
+#### Setup Git
 Git is used to clone MineColonies and update your local copy.
 
 1. Download and install Git [here](http://git-scm.com/download/).
 2. *Optional*: Download and install a Git GUI client, such as SourceTree, Github for Windows/Mac, SmartGitHg, TortoiseGit, etc.  A nice list is available [here](http://git-scm.com/downloads/guis).
 
-####Setup MineColonies
+#### Setup MineColonies
 This section assumes that you're using the command-line version of Git.
 
 1. Open up your command line.
@@ -84,7 +84,7 @@ This section assumes that you're using the command-line version of Git.
 		\-MineColonies' files (should have `build.gradle`)
 ***
 
-####Compile MineColonies
+#### Compile MineColonies
 1. Execute `gradlew setupDecompWorkspace`. This sets up Forge and downloads the necessary libraries to build MineColonies.  This might take some time, be patient.
     * You will generally only have to do this once until the Forge version in `build.properties` changes.
 2. Execute `gradlew build`. If you did everything right, `BUILD SUCCESSFUL` will be displayed after it finishes.  This should be relatively quick.
@@ -93,7 +93,7 @@ This section assumes that you're using the command-line version of Git.
     *  You should see a `.jar` file named `MineColonies-universal--0.0.#.jar`, where # is the `build_number` value in `build.properties`.
 4. Copy the jar into your Minecraft mods folder, and you are done!
 
-####Updating Your Repository
+#### Updating Your Repository
 In order to get the most up-to-date builds, you'll have to periodically update your local repository.
 
 1. Open up your command line.
@@ -102,9 +102,9 @@ In order to get the most up-to-date builds, you'll have to periodically update y
 	* If you have, try reverting them to the status that they were when you last updated your repository.
 4. Execute `git pull master`.  This pulls all commits from the official repository that do not yet exist on your local repository and updates it.
 
-###Contributing
+### Contributing
 ***
-####Submitting a PR
+#### Submitting a PR
 So you found a bug in our code?  Think you can make it more efficient?  Want to help in general?  Great!
 
 1. If you haven't already, create a BitBucket account.
@@ -115,7 +115,7 @@ So you found a bug in our code?  Think you can make it more efficient?  Want to 
 5. Click `Click to create a pull request for this comparison`, enter your PR's title, and create a detailed description telling us what you changed.
 6. Click `Create pull request`, and wait for feedback!
 
-####Creating an Issue
+#### Creating an Issue
 MineColonies crashes every time?  Have a suggestion?  Found a bug?  Create an issue now!
 
 1. Make sure your issue hasn't already been answered or fixed.  Also think about whether your issue is a valid one before submitting it.
