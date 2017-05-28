@@ -4,7 +4,8 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.api.colony.permissions.Player;
+import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.util.AchievementUtils;
@@ -127,7 +128,7 @@ public final class ColonyManager
 
         final String colonyName = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.defaultName", player.getDisplayNameString());
         colony.setName(colonyName);
-        colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Permissions.Rank.OWNER, w);
+        colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Rank.OWNER, w);
 
         colony.triggerAchievement(ModAchievements.achievementGetSupply);
         colony.triggerAchievement(ModAchievements.achievementTownhall);
@@ -303,6 +304,27 @@ public final class ColonyManager
     }
 
     /**
+     * Get all colonies in all worlds.
+     * @param abandonedSince time in hours since the last contact.
+     * @return a list of colonies.
+     */
+    @NotNull
+    public static List<Colony> getColoniesAbandonedSince(final int abandonedSince)
+    {
+        final List<Colony> sortedList = new ArrayList<>();
+        for (final Colony colony : colonies.getCopyAsList())
+        {
+            if(colony.getLastContactInHours() >= abandonedSince)
+            {
+                sortedList.add(colony);
+            }
+        }
+
+        return sortedList;
+    }
+
+
+    /**
      * Get a AbstractBuilding by position.
      *
      * @param pos Block position.
@@ -475,8 +497,8 @@ public final class ColonyManager
     {
         for (@NotNull final ColonyView c : colonyViews)
         {
-            final Permissions.Player p = c.getPlayers().get(owner);
-            if (p != null && p.getRank().equals(Permissions.Rank.OWNER))
+            final Player p = c.getPlayers().get(owner);
+            if (p != null && p.getRank().equals(Rank.OWNER))
             {
                 return c;
             }

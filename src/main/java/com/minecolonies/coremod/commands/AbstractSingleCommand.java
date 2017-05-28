@@ -2,7 +2,7 @@ package com.minecolonies.coremod.commands;
 
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.configuration.Configurations;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,13 +14,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class AbstractSingleCommand implements ISubCommand
 {
-
-    private final String[] parents;
     public static final String NOT_PERMITTED = "You are not allowed to do that!";
-    enum Commands
-    {
-        CITIZENINFO, COLONYTP, RTP, DELETECOLONY, KILLCITIZENS, LISTCITIZENS, RESPAWNCITIZENS, SHOWCOLONYINFO, ADDOFFICER, CHANGE_COLONY_OWNER, REFRESH_COLONY, HOMETP, MC_BACKUP
-    }
+    private final String[] parents;
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -95,15 +90,21 @@ public abstract class AbstractSingleCommand implements ISubCommand
     }
 
     /**
-     * Checks if the player has the permission to use the command.
-     * By default officer and owner, overwrite this if other required.
-     * @param colony the colony.
-     * @param player the player.
-     * @return true if so.
+     * Will check to see if play is Opped for the given command name.
+     *
+     * @param sender  to check the player using the command.
+     * @param cmdName the name of the command to be checked.
+     * @return boolean
      */
-    public boolean canRankUseCommand(@NotNull final Colony colony, @NotNull final EntityPlayer player)
+    @NotNull
+    public boolean isPlayerOpped(@NotNull final ICommandSender sender, String cmdName)
     {
-        return colony.getPermissions().getRank(player).equals(Permissions.Rank.OFFICER) || colony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER);
+        if (sender instanceof EntityPlayer)
+        {
+            return FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList()
+                     .canSendCommands(((EntityPlayer) sender).getGameProfile());
+        }
+        return true;
     }
 
     /**
@@ -146,20 +147,32 @@ public abstract class AbstractSingleCommand implements ISubCommand
     }
 
     /**
-     * Will check to see if play is Opped for the given command name.
+     * Checks if the player has the permission to use the command.
+     * By default officer and owner, overwrite this if other required.
      *
-     * @param sender to check the player using the command.
-     * @param cmdName the name of the command to be checked.
-     * @return boolean
+     * @param colony the colony.
+     * @param player the player.
+     * @return true if so.
      */
-    @NotNull
-    public boolean isPlayerOpped(@NotNull final ICommandSender sender, String cmdName)
+    public boolean canRankUseCommand(@NotNull final Colony colony, @NotNull final EntityPlayer player)
     {
-        if(sender instanceof EntityPlayer)
-        {
-            return FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList()
-                    .canSendCommands(((EntityPlayer) sender).getGameProfile());
-        }
-        return true;
+        return colony.getPermissions().getRank(player).equals(Rank.OFFICER) || colony.getPermissions().getRank(player).equals(Rank.OWNER);
+    }
+
+    public enum Commands
+    {
+        CITIZENINFO,
+        COLONYTP,
+        RTP,
+        DELETECOLONY,
+        KILLCITIZENS,
+        LISTCITIZENS,
+        RESPAWNCITIZENS,
+        SHOWCOLONYINFO,
+        ADDOFFICER,
+        CHANGE_COLONY_OWNER,
+        REFRESH_COLONY,
+        HOMETP,
+        MC_BACKUP
     }
 }

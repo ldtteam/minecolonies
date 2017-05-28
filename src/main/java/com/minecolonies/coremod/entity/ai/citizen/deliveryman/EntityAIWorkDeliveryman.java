@@ -239,9 +239,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     public static boolean workerRequiresItem(AbstractBuilding building, ItemStack stack, List<ItemStorage> localAlreadyKept)
     {
-        return (building instanceof BuildingBuilder && ((BuildingBuilder) building).requiresResourceForBuilding(stack))
-                || (building instanceof AbstractBuildingWorker && ((AbstractBuildingWorker) building).neededForWorker(stack))
-                || buildingRequiresCertainAmountOfItem(building, stack, localAlreadyKept);
+        return (building instanceof AbstractBuildingWorker && ((AbstractBuildingWorker) building).neededForWorker(stack))
+                 || buildingRequiresCertainAmountOfItem(building, stack, localAlreadyKept);
     }
 
     /**
@@ -350,7 +349,9 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         {
             ((BuildingHome) buildingToDeliver).setFoodNeeded(false);
         }
-        return START_WORKING;
+
+        gatherTarget = buildingToDeliver.getLocation();
+        return GATHERING;
     }
 
     /**
@@ -367,22 +368,14 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             final AbstractBuilding buildingToDeliver = ((BuildingDeliveryman) ownBuilding).getBuildingToDeliver();
             if (buildingToDeliver != null)
             {
-                final boolean ableToDeliver;
-                if (buildingToDeliver instanceof BuildingHome)
-                {
-                    ableToDeliver = wareHouse.getTileEntity().checkInWareHouseForFood((BuildingHome) buildingToDeliver, false);
-                }
-                else
-                {
-                    ableToDeliver = wareHouse.getTileEntity().checkInWareHouse(buildingToDeliver, false);
-                }
+                final boolean ableToDeliver = wareHouse.getTileEntity().checkInWareHouse(buildingToDeliver, false);
 
                 if (!ableToDeliver)
                 {
                     buildingToDeliver.setOnGoingDelivery(false);
                     return START_WORKING;
                 }
-                itemsToDeliver = new ArrayList<>(buildingToDeliver.getNeededItems());
+                itemsToDeliver = buildingToDeliver.getCopyOfNeededItems();
                 return GATHER_IN_WAREHOUSE;
             }
         }

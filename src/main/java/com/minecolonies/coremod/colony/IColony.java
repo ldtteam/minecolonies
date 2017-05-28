@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony;
 
-import com.minecolonies.coremod.colony.permissions.IPermissions;
+import com.minecolonies.api.colony.permissions.IPermissions;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -67,4 +67,10 @@ public interface IColony
      * @return true if so.
      */
     boolean hasWarehouse();
+
+    /**
+     * Get the last contact of a player to the colony in hours.
+     * @return an integer with a describing value.
+     */
+    int getLastContactInHours();
 }
