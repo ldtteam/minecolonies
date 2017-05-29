@@ -1061,7 +1061,7 @@ public abstract class AbstractBuilding
      *
      * @param stack the stack to transfer.
      * @param world the world to do it in.
-     * @return The {@link ItemStack} as that is left over, might be {@link InventoryUtils#EMPTY} if the stack was completely accepted
+     * @return The {@link ItemStack} as that is left over, might be {@link ItemStackUtils#EMPTY} if the stack was completely accepted
      */
     public ItemStack transferStack(@NotNull final ItemStack stack, @NotNull final World world)
     {

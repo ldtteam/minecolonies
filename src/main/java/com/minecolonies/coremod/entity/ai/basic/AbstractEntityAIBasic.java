@@ -640,10 +640,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }*/
 
     /**
-     * Ensures that we have a shovel available.
-     * Will set {@code needsShovel} accordingly.
+     * Ensures that we have a appropriate tool available.
+     * Will set {@code needsTool} accordingly.
      *
-     * @return true if we have a shovel
+     * @return true if we have the tool
      */
     protected boolean checkForTool(@NotNull final ToolType toolType)
     {

@@ -263,11 +263,7 @@ public class ItemStackUtils
      * Calculates the max level enchantment this tool has.
      *
      * @param itemStack the tool to check.
-     * @return fortune level.
-     */
-
-    /**
-     * Returns the level of enchantment on the ItemStack passed.
+     * @return max enchantment level.
      */
     public static int getMaxEnchantmentLevel(final ItemStack itemStack)
     {
