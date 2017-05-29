@@ -69,4 +69,10 @@ public interface IColony
      * @return true if so.
      */
     boolean hasWarehouse();
+
+    /**
+     * Get the last contact of a player to the colony in hours.
+     * @return an integer with a describing value.
+     */
+    int getLastContactInHours();
 }

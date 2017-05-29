@@ -161,7 +161,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
         return colony.getPermissions().getRank(player).equals(Rank.OFFICER) || colony.getPermissions().getRank(player).equals(Rank.OWNER);
     }
 
-    enum Commands
+    public enum Commands
     {
         CITIZENINFO,
         COLONYTP,
