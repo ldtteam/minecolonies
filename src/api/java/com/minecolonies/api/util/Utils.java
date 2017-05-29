@@ -249,46 +249,4 @@ public final class Utils
         return data ^ flag;
     }
 
-    /**
-     * Checks if a pickaxe can be used for that mining level.
-     *
-     * @param requiredLevel the level needs to have.
-     * @param toolLevel     the level it has.
-     * @return whether the pickaxe qualifies.
-     */
-    public static boolean checkIfPickaxeQualifies(final int requiredLevel, final int toolLevel)
-    {
-        return checkIfPickaxeQualifies(requiredLevel, toolLevel, false);
-    }
-
-    /**
-     * Checks if a pickaxe can be used for that mining level.
-     * Be aware, it will return false for mining stone.
-     * with an expensive pickaxe. So set {@code beEfficient} to false.
-     * for that if you need it the other way around.
-     *
-     * @param requiredLevel        the level needs to have.
-     * @param toolLevel            the level it has.
-     * @param requireEfficientTool if he should stop using diamond picks on
-     *                             stone.
-     * @return whether the pickaxe qualifies.
-     */
-    public static boolean checkIfPickaxeQualifies(final int requiredLevel, final int toolLevel, final boolean requireEfficientTool)
-    {
-        //Minecraft handles this as "everything is allowed"
-        if (requiredLevel < 0)
-        {
-            return true;
-        }
-        if (requireEfficientTool && requiredLevel == 0)
-        {
-            //Code to not overuse on high level pickaxes
-            return toolLevel >= 0 && toolLevel <= 1;
-        }
-        return toolLevel >= requiredLevel;
-    }
-
-
-
-
 }

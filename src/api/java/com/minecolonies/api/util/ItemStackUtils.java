@@ -223,8 +223,6 @@ public final class ItemStackUtils
             return false;
         }
         Log.getLogger().info("verifyToolLevel2("+itemStack+", "+toolLevel+", "+ minimalLevel+", "+maximumLevel+")=>"+(toolLevel  <= maximumLevel));
-        //tool level + max enchentment  should not exceed maximumLevel
-//        return (toolLevel  <= maximumLevel);
 
         return (toolLevel + getMaxEnchantmentLevel(itemStack) <= maximumLevel);
     }
