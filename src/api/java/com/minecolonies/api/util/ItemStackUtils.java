@@ -249,7 +249,7 @@ public class ItemStackUtils
 
             for (int i = 0; i < t.tagCount(); i++)
             {
-                final short id = t.getCompoundTagAt(i).getShort("id");
+                final int id = t.getCompoundTagAt(i).getShort("id");
                 if (id == FORTUNE_ENCHANT_ID)
                 {
                     fortune = t.getCompoundTagAt(i).getShort("lvl");
@@ -280,7 +280,7 @@ public class ItemStackUtils
             {
                 for (int j = 0; j < nbttaglist.tagCount(); ++j)
                 {
-                    final short level = nbttaglist.getCompoundTagAt(j).getShort("lvl");
+                    final int level = nbttaglist.getCompoundTagAt(j).getShort("lvl");
                     maxLevel = level > maxLevel ? level : maxLevel;
                 }
             }
@@ -342,6 +342,12 @@ public class ItemStackUtils
         return existingStack.getMaxStackSize() >= (getItemStackSize(existingStack) + getItemStackSize(mergingStack));
     }
 
+    /**
+     * get the size of the stack.
+     *
+     * @param stack to get the size from
+     * @return the size of the stack
+     */
     @NotNull
     public static int getItemStackSize(final ItemStack stack)
     {

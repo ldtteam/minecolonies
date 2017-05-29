@@ -27,11 +27,6 @@ import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABI
  */
 public class InventoryUtils
 {
-
-    public static final int FREE_TOOL_CHOICE_LEVEL   = 4;
-    public static final int EFFECT_TOOL_CHOICE_LEVEL = 2;
-
-
     /**
      * Private constructor to hide the implicit one.
      */
