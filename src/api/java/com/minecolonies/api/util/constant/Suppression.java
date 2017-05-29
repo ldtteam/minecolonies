@@ -17,6 +17,14 @@ public final class Suppression
     public static final String UNCHECKED = "unchecked";
 
     /**
+     * Suppress warnings for raw type annotation.
+     * <p>
+     * We sometimes need this for complicated typings.
+     */
+    @NonNls
+    public static final String RAWTYPES = "rawtypes";
+
+    /**
      * Suppress warnings for deprecations.
      * <p>
      * We sometimes need this for minecraft methods we have to keep support for.
@@ -87,6 +95,7 @@ public final class Suppression
      */
     @NonNls
     public static final String RESOURCES_SHOULD_BE_CLOSED = "squid:S2095 ";
+
 
     private Suppression()
     {
