@@ -122,18 +122,15 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
         if (!ItemStackUtils.isItemStackEmpty(remainingItemStack))
         {
             //If we still have some to drop, let's try the additional chests now
-            if (ItemStackUtils.getItemStackSize(remainingItemStack) > 0)
+            final World world = colony.getWorld();
+            for (final BlockPos pos : building.getAdditionalCountainers())
             {
-                final World world = colony.getWorld();
-                for (final BlockPos pos : building.getAdditionalCountainers())
-                {
-                    final TileEntity entity = world.getTileEntity(pos);
-                    remainingItemStack = InventoryUtils.addItemStackToProviderWithResult(entity, remainingItemStack);
+                final TileEntity entity = world.getTileEntity(pos);
+                remainingItemStack = InventoryUtils.addItemStackToProviderWithResult(entity, remainingItemStack);
 
-                    if (ItemStackUtils.isItemStackEmpty(remainingItemStack))
-                    {
-                        break;
-                    }
+                if (ItemStackUtils.isItemStackEmpty(remainingItemStack))
+                {
+                    break;
                 }
             }
         }

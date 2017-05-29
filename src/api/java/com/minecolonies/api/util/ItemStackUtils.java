@@ -18,7 +18,7 @@ import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 /**
  * Utility methods for the inventories.
  */
-public class ItemStackUtils
+public final class ItemStackUtils
 {
     /**
      * Variable representing the empty itemstack in 1.10.
