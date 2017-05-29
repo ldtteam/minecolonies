@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.baker;
 
 import com.minecolonies.coremod.entity.ai.util.RecipeStorage;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
@@ -11,7 +10,7 @@ import java.util.List;
 /**
  * Contains all recipes the baker can use.
  */
-public class BakerRecipes
+public final class BakerRecipes
 {
     /**
      * The grid size the baker can use.
@@ -56,8 +55,8 @@ public class BakerRecipes
     /**
      * Amount of buckets he should give back after a cake
      */
-    private static final int BUCKET_COUNT = 3 ;
-    
+    private static final int BUCKET_COUNT = 3;
+
     static
     {
         final List<ItemStack> inputCake = new ArrayList<>();
@@ -77,9 +76,19 @@ public class BakerRecipes
         recipes.add(new RecipeStorage(inputCake, GRID_SIZE, new ItemStack(Items.CAKE, 1), new ItemStack(Items.BUCKET, BUCKET_COUNT)));
         recipes.add(new RecipeStorage(inputBread, GRID_SIZE, new ItemStack(Items.BREAD, 1)));
     }
+    /**
+     * Private constructor to hide implicit one.
+     */
+    private BakerRecipes()
+    {
+        /**
+         * Intentionally left empty.
+         */
+    }
 
     /**
      * Get the list of recipes from the class.
+     *
      * @return a copy of the recipes.
      */
     public static List<RecipeStorage> getRecipes()

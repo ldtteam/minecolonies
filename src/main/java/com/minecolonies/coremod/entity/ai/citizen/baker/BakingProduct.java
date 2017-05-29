@@ -40,14 +40,14 @@ public class BakingProduct
     /**
      * The recipe id of the product.
      */
-    private int recipeId = 0;
+    private final int recipeId;
 
     /**
      * Instantiates the BakingProduct, requires the end product of it.
      * @param endProduct the product when finished.
      * @param recipeId the id of the used recipe for this product.
      */
-    public BakingProduct(@NotNull final ItemStack endProduct, int recipeId)
+    public BakingProduct(@NotNull final ItemStack endProduct, final int recipeId)
     {
         this.endProduct = endProduct;
         this.recipeId = recipeId;
@@ -177,12 +177,7 @@ public class BakingProduct
         {
             return false;
         }
-        if (!endProduct.equals(bakingProduct.endProduct))
-        {
-            return false;
-        }
-
-        return true;
+        return endProduct.equals(bakingProduct.endProduct);
     }
 
     @Override

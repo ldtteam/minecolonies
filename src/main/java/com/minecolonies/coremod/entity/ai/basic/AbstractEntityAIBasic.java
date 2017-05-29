@@ -1189,7 +1189,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param items         the items needed
      * @return false if they are in inventory
      */
-    public boolean checkOrRequestItems(final boolean useItemDamage, boolean waitForRequest, @Nullable final ItemStack... items)
+    public boolean checkOrRequestItems(final boolean useItemDamage, final boolean waitForRequest, @Nullable final ItemStack... items)
     {
         if (items == null)
         {

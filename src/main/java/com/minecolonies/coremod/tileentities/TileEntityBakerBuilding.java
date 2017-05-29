@@ -7,7 +7,6 @@ import com.minecolonies.coremod.entity.ai.citizen.baker.BakingProduct;
 import net.minecraft.block.BlockFurnace;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.crafting.RecipesFood;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 

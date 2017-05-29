@@ -152,7 +152,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
             getOwnBuilding().removeFromTasks(ProductState.BAKED, currentBakingProduct);
             InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), currentBakingProduct.getEndProduct());
 
-            RecipeStorage storage = BakerRecipes.getRecipes().get(currentBakingProduct.getRecipeId());
+            final RecipeStorage storage = BakerRecipes.getRecipes().get(currentBakingProduct.getRecipeId());
             for (final ItemStack stack : storage.getSecondaryOutput())
             {
                 InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), stack);
