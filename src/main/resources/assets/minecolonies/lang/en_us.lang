@@ -217,6 +217,7 @@ com.minecolonies.coremod.workerHuts.recallFail=Recall failed - Please make more 
 tile.minecolonies.blockSolidSubstitution.name=Solid-Placeholderblock
 entity.worker.toolRequest=I need a %s of a maximum grade of %s.
 entity.worker.pickaxeRequest=I need a pickaxe of at least %s grade and at maximum %s grade.
+entity.worker.onePickaxeRequest=I need a %s pickaxe.
 entity.worker.pickaxeRequestBetterHut=I need a hut level %d to handle stronger pickaxes.
 com.minecolonies.coremod.wareHouse.full=The Warehouse is full, please upgrade or make space.
 com.minecolonies.coremod.job.deliveryman.noWarehouse=Please upgrade or build a Warehouse for me to work at.

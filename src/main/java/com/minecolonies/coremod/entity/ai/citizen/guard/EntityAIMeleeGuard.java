@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
 import com.minecolonies.api.util.InventoryFunctions;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
 import com.minecolonies.coremod.entity.ai.util.AIState;
@@ -112,7 +113,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         {
             return AIState.GUARD_SEARCH_TARGET;
         }
-        InventoryFunctions.matchFirstInProviderWithSimpleAction(worker, stack -> stack != null && Utils.doesItemServeAsWeapon(stack), worker::setHeldItem);
+        InventoryFunctions.matchFirstInProviderWithSimpleAction(worker, stack -> stack != null && ItemStackUtils.doesItemServeAsWeapon(stack), worker::setHeldItem);
         return super.searchTarget();
     }
 
@@ -179,7 +180,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         final ItemStack heldItem = worker.getHeldItem(EnumHand.MAIN_HAND);
         if (heldItem != null)
         {
-            if (Utils.doesItemServeAsWeapon(heldItem) && heldItem.getItem() instanceof ItemSword)
+            if (ItemStackUtils.doesItemServeAsWeapon(heldItem) && heldItem.getItem() instanceof ItemSword)
             {
                 damgeToBeDealt += ((ItemSword) heldItem.getItem()).getDamageVsEntity();
             }

@@ -161,7 +161,7 @@ public class ItemStackUtils
             case BOW:
                 isATool = itemStack.getItem() instanceof ItemBow;
                 break;
-            case WEAPON:
+            case SWORD:
                 isATool = itemStack.getItem() instanceof ItemSword;
                 break;
             case FISHINGROD:
@@ -201,7 +201,7 @@ public class ItemStackUtils
             return -1;
         }
         //todo: use 'better' version of this thing
-        Log.getLogger().info("getMiningLevel harvest => " + stack.getItem().getHarvestLevel(stack, toolType.getName(), null, null));
+        //Log.getLogger().info("getMiningLevel harvest => " + stack.getItem().getHarvestLevel(stack, toolType.getName(), null, null));
         return stack.getItem().getHarvestLevel(stack, toolType.getName(), null, null);
     }
 
@@ -302,6 +302,88 @@ public class ItemStackUtils
     public static boolean doesItemServeAsWeapon(@NotNull final ItemStack stack)
     {
         return stack.getItem() instanceof ItemSword || stack.getItem() instanceof ItemTool;
+    }
+
+
+    /**
+     * Assigns a string containing the grade of the toolGrade.
+     *
+     * @param toolGrade the number of the grade of a tool
+     * @return a string corresponding to the tool
+     */
+    public static String swapToolGrade(final int toolGrade)
+    {
+        switch (toolGrade)
+        {
+            case 0:
+                return "Wood or Gold";
+            case 1:
+                return "Stone";
+            case 2:
+                return "Iron";
+            case 3:
+                return "Diamond";
+            default:
+                return "Better than Diamond";
+        }
+    }
+
+    /**
+     * Method to check if two ItemStacks can be merged together.
+     *
+     * @param existingStack The existing stack.
+     * @param mergingStack  The merging stack
+     * @return True when they can be merged, false when not.
+     */
+    @NotNull
+    public static Boolean areItemStacksMergable(final ItemStack existingStack, final ItemStack mergingStack)
+    {
+        if (!compareItemStacksIgnoreStackSize(existingStack, mergingStack))
+        {
+            return false;
+        }
+
+        return existingStack.getMaxStackSize() >= (getItemStackSize(existingStack) + getItemStackSize(mergingStack));
+    }
+
+    @NotNull
+    public static int getItemStackSize(final ItemStack stack)
+    {
+        if (ItemStackUtils.isItemStackEmpty(stack))
+        {
+            return 0;
+        }
+
+        return stack.getCount();
+    }
+
+    /**
+     * Method to compare to stacks, ignoring their stacksize.
+     *
+     * @param itemStack1 The left stack to compare.
+     * @param itemStack2 The right stack to compare.
+     * @return True when they are equal except the stacksize, false when not.
+     */
+    @NotNull
+    public static Boolean compareItemStacksIgnoreStackSize(final ItemStack itemStack1, final ItemStack itemStack2)
+    {
+        if (!ItemStackUtils.isItemStackEmpty(itemStack1) &&
+            !ItemStackUtils.isItemStackEmpty(itemStack2) &&
+            itemStack1.getItem() == itemStack2.getItem() &&
+            itemStack1.getItemDamage() == itemStack2.getItemDamage())
+        {
+            // Then sort on NBT
+            if (itemStack1.hasTagCompound() && itemStack2.hasTagCompound())
+            {
+                // Then sort on stack size
+                return ItemStack.areItemStackTagsEqual(itemStack1, itemStack2);
+            }
+            else
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }
 

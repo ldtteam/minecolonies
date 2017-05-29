@@ -149,7 +149,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
           new AITarget(() -> this.getOwnBuilding().needsTool(ToolType.AXE), this::waitForAxe),
           new AITarget(() -> this.getOwnBuilding().needsTool(ToolType.HOE), this::waitForHoe),
           new AITarget(() -> this.getOwnBuilding().needsTool(ToolType.PICKAXE), this::waitForPickaxe),
-          new AITarget(() -> this.getOwnBuilding().needsTool(ToolType.WEAPON), this::waitForWeapon),
+          new AITarget(() -> this.getOwnBuilding().needsTool(ToolType.SWORD), this::waitForWeapon),
 
                 /*
                  * Dumps inventory as long as needs be.
@@ -585,7 +585,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         return InventoryFunctions.matchFirstInProviderWithAction(
                 entity,
-                stack -> InventoryUtils.hasToolLevel(stack, toolType, minLevel, maxLevel),
+                stack -> ItemStackUtils.hasToolLevel(stack, toolType, minLevel, maxLevel),
                 this::takeItemStackFromProvider
         );
     }
@@ -627,10 +627,20 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private boolean checkForShovel()
     {
-        return checkForTool(ToolType.SHOVEL);
+        Log.getLogger().info("checkForShovel");
+        boolean result = checkForTool(ToolType.SHOVEL);
+        Log.getLogger().info("checkForShovel => " + result);
+        return result;
+//        return checkForTool(ToolType.SHOVEL);
     }
 
-    private boolean checkForTool(@NotNull final ToolType toolType)
+    /**
+     * Ensures that we have a shovel available.
+     * Will set {@code needsShovel} accordingly.
+     *
+     * @return true if we have a shovel
+     */
+    protected boolean checkForTool(@NotNull final ToolType toolType)
     {
         if (checkForNeededTool(toolType))
         {
@@ -653,10 +663,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private boolean checkForNeededTool(@NotNull final ToolType toolType)
     {
+        Log.getLogger().info("checkForNeededTool("+toolType+")");
         final int maxToolLevel = worker.getWorkBuilding().getMaxToolLevel();
         final InventoryCitizen inventory = worker.getInventoryCitizen();
         if (InventoryUtils.isToolInItemHandler(new InvWrapper(inventory), toolType, TOOL_LEVEL_WOOD_OR_GOLD, maxToolLevel))
         {
+            Log.getLogger().info("checkForNeededTool("+toolType+") In worker inventory");
             return false;
         }
 
@@ -671,7 +683,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
         if (!getOwnBuilding().hasOnGoingDelivery())
         {
-            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_TOOLREQUEST, toolType, InventoryUtils.swapToolGrade(maxToolLevel));
+            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_TOOLREQUEST, toolType, ItemStackUtils.swapToolGrade(maxToolLevel));
         }
         return true;
     }
@@ -684,12 +696,14 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     public boolean isToolInHut(final ToolType toolType)
     {
+        Log.getLogger().info("isToolInHut("+toolType+")");
         @Nullable final AbstractBuildingWorker building = getOwnBuilding();
 
         boolean hasItem;
         if (building != null)
         {
             hasItem = isToolInTileEntity(building.getTileEntity(), toolType);
+            Log.getLogger().info("isToolInHut("+toolType+") not in main chest ? => " + hasItem);
 
             if (hasItem)
             {
@@ -728,7 +742,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         return InventoryFunctions.matchFirstInProviderWithAction(
                 entity,
-                stack -> Utils.isTool(stack, toolType),
+                stack -> ItemStackUtils.isTool(stack, toolType),
                 this::takeItemStackFromProvider
         );
     }
@@ -817,7 +831,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                                           worker,
                                           stack -> Utils.checkIfPickaxeQualifies(
                                           minlevel,
-                                          Utils.getMiningLevel(stack, ToolType.PICKAXE)));
+                                          ItemStackUtils.getMiningLevel(stack, ToolType.PICKAXE)));
 
         getOwnBuilding().setNeedsTool(needsPickAxe ? ToolType.PICKAXE : ToolType.NONE);
 
@@ -847,13 +861,18 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 if (minlevel > maxToolLevel)
                 {
                     chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUESTBETTERHUT,
-                      InventoryUtils.swapToolGrade(maxToolLevel));
+                      ItemStackUtils.swapToolGrade(maxToolLevel));
+                }
+                else if (minlevel == maxToolLevel)
+                {
+                    chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUEST,
+                      ItemStackUtils.swapToolGrade(maxToolLevel));
                 }
                 else
                 {
                     chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUEST,
-                      InventoryUtils.swapToolGrade(minlevel),
-                      InventoryUtils.swapToolGrade(maxToolLevel));
+                      ItemStackUtils.swapToolGrade(minlevel),
+                      ItemStackUtils.swapToolGrade(maxToolLevel));
                 }
             }
         }
@@ -878,7 +897,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
           buildingWorker.getTileEntity(),
           stack -> Utils.checkIfPickaxeQualifies(
             minlevel,
-            Utils.getMiningLevel(stack, ToolType.PICKAXE)
+            ItemStackUtils.getMiningLevel(stack, ToolType.PICKAXE)
           ),
                 this::takeItemStackFromProvider
         );
@@ -910,13 +929,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         final boolean needsWeapon = !InventoryFunctions.matchFirstInProvider(
                                              worker,
-                                             stack -> stack != null && Utils.doesItemServeAsWeapon(stack));
+                                             stack -> stack != null && ItemStackUtils.doesItemServeAsWeapon(stack));
 
-        getOwnBuilding().setNeedsTool(needsWeapon ? ToolType.WEAPON : ToolType.NONE);
+        getOwnBuilding().setNeedsTool(needsWeapon ? ToolType.SWORD : ToolType.NONE);
 
         delay += DELAY_RECHECK;
 
-        if (getOwnBuilding().needsTool(ToolType.WEAPON))
+        if (getOwnBuilding().needsTool(ToolType.SWORD))
         {
             if (walkToBuilding())
             {
@@ -928,7 +947,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             }
             requestWithoutSpam(new TextComponentTranslation("com.minecolonies.coremod.job.guard.needWeapon"));
         }
-        return getOwnBuilding().needsTool(ToolType.WEAPON);
+        return getOwnBuilding().needsTool(ToolType.SWORD);
     }
 
     /**
@@ -945,7 +964,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         return buildingWorker != null
                 && InventoryFunctions.matchFirstInProviderWithAction(
           buildingWorker.getTileEntity(),
-          stack -> stack != null && (Utils.doesItemServeAsWeapon(stack)),
+          stack -> stack != null && (ItemStackUtils.doesItemServeAsWeapon(stack)),
                 this::takeItemStackFromProvider
         );
     }
@@ -1043,7 +1062,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         return buildingWorker != null
                 && (walkToBuilding()
                 || InventoryFunctions.matchFirstInProvider(worker,
-                (slot, stack) -> !(InventoryUtils.isItemStackEmpty(stack) || keepIt.test(stack)) && shouldDumpItem(alreadyKept, shouldKeep, buildingWorker, stack, slot)));
+                (slot, stack) -> !(ItemStackUtils.isItemStackEmpty(stack) || keepIt.test(stack)) && shouldDumpItem(alreadyKept, shouldKeep, buildingWorker, stack, slot)));
     }
 
     /**
@@ -1070,14 +1089,14 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             final ItemStorage tempStorage = new ItemStorage(stack.getItem(), stack.getItemDamage(), stack.getCount(), false);
             final ItemStack tempStack = handleKeepX(alreadyKept, shouldKeep, tempStorage);
-            if (InventoryUtils.isItemStackEmpty(tempStack))
+            if (ItemStackUtils.isItemStackEmpty(tempStack))
             {
                 return false;
             }
             amountToKeep = stack.getCount() - tempStorage.getAmount();
             returnStack = InventoryUtils.addItemStackToProviderWithResult(buildingWorker.getTileEntity(), tempStack);
         }
-        if (InventoryUtils.isItemStackEmpty(returnStack))
+        if (ItemStackUtils.isItemStackEmpty(returnStack))
         {
             new InvWrapper(worker.getInventoryCitizen()).extractItem(slot, stack.getCount() - amountToKeep, false);
             return amountToKeep == 0;
@@ -1139,7 +1158,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         if (shouldKeep.get(tempStorage) >= (tempStorage.getAmount() + amountKept))
         {
             alreadyKept.put(tempStorage, tempStorage.getAmount() + amountKept);
-            return InventoryUtils.EMPTY;
+            return ItemStackUtils.EMPTY;
         }
         alreadyKept.put(tempStorage, shouldKeep.get(tempStorage));
         final int dump = tempStorage.getAmount() + amountKept - shouldKeep.get(tempStorage);
@@ -1179,7 +1198,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         boolean allClear = true;
         for (final @Nullable ItemStack stack : items)
         {
-            if (InventoryUtils.isItemStackEmpty(stack))
+            if (ItemStackUtils.isItemStackEmpty(stack))
             {
                 continue;
             }
@@ -1305,10 +1324,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         for (int i = 0; i < new InvWrapper(worker.getInventoryCitizen()).getSlots(); i++)
         {
             final ItemStack item = inventory.getStackInSlot(i);
-            final int level = Utils.getMiningLevel(item, toolType);
+            final int level = ItemStackUtils.getMiningLevel(item, toolType);
             if (level >= required && level < bestLevel)
             {
-                if (toolType == ToolType.NONE || InventoryUtils.verifyToolLevel(item, level, required, maxToolLevel))
+                if (toolType == ToolType.NONE || ItemStackUtils.verifyToolLevel(item, level, required, maxToolLevel))
                 {
                     bestSlot = i;
                     bestLevel = level;

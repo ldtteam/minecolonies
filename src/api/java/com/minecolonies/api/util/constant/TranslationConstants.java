@@ -47,6 +47,8 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUEST          = "entity.worker.pickaxeRequest";
     @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_ONEPICKAXEREQUEST       = "entity.worker.onePickaxeRequest";
+    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUESTBETTERHUT = "entity.worker.pickaxeRequestBetterHut";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_TOOLREQUEST             = "entity.worker.toolRequest";

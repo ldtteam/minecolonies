@@ -2,10 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.guard;
 
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
@@ -168,7 +165,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
             {
                 final ItemStack stack = chest.getStackInSlot(i);
 
-                if (InventoryUtils.isItemStackEmpty(stack))
+                if (ItemStackUtils.isItemStackEmpty(stack))
                 {
                     continue;
                 }
@@ -176,7 +173,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
                 if (stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).armorType) == null)
                 {
                     final int emptySlot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(worker.getInventoryCitizen()),
-                      InventoryUtils::isItemStackEmpty);
+                      ItemStackUtils::isItemStackEmpty);
 
                     if (emptySlot != -1)
                     {
@@ -222,7 +219,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
         {
             final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(i);
 
-            if (InventoryUtils.isItemStackEmpty(stack))
+            if (ItemStackUtils.isItemStackEmpty(stack))
             {
                 new InvWrapper(worker.getInventoryCitizen()).extractItem(i, Integer.MAX_VALUE, false);
                 continue;

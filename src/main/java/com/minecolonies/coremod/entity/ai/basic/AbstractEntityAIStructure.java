@@ -460,7 +460,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             //We need to deal with materials
             if (Configurations.builderInfiniteResources || currentBlock.worldMetadata.getMaterial().isLiquid())
             {
-                worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, InventoryUtils.EMPTY);
+                worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
                 world.setBlockToAir(currentBlock.blockPosition);
                 world.setBlockState(currentBlock.blockPosition, Blocks.AIR.getDefaultState());
                 worker.swingArm(worker.getActiveHand());
@@ -587,7 +587,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     private boolean placeBlockAt(@NotNull final IBlockState blockState, @NotNull final BlockPos coords)
     {
         final ItemStack item = BlockUtils.getItemStackFromBlockState(blockState);
-        worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item == null ? InventoryUtils.EMPTY : item);
+        worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item == null ? ItemStackUtils.EMPTY : item);
         final IBlockState decrease;
         for(final IPlacementHandler handlers :PlacementHandlers.handlers)
         {
@@ -652,7 +652,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
 
         @Nullable final ItemStack stack = BlockUtils.getItemStackFromBlockState(stateToPlace);
-        if (InventoryUtils.isItemStackEmpty(stack))
+        if (ItemStackUtils.isItemStackEmpty(stack))
         {
             Log.getLogger().error("Block causes NPE: " + stateToPlace.getBlock());
             return false;
@@ -664,7 +664,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
         for (final ItemStack tempStack : itemList)
         {
-            if (!InventoryUtils.isItemStackEmpty(tempStack))
+            if (!ItemStackUtils.isItemStackEmpty(tempStack))
             {
                 final int slot = worker.findFirstSlotInInventoryWith(tempStack.getItem(), tempStack.getItemDamage());
                 if (slot != -1)

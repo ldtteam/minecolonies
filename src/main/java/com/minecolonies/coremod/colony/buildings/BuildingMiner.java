@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony.buildings;
 
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.Utils;
+import com.minecolonies.api.util.*;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutMiner;
@@ -284,7 +283,7 @@ public class BuildingMiner extends AbstractBuildingWorker
     @Override
     public boolean neededForWorker(@Nullable final ItemStack stack)
     {
-        return Utils.isPickaxe(stack) || Utils.isShovel(stack) || Utils.isAxe(stack);
+        return ItemStackUtils.isPickaxe(stack) || ItemStackUtils.isShovel(stack) || ItemStackUtils.isAxe(stack);
     }
 
     /**

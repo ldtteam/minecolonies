@@ -314,13 +314,13 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         for (int i = 0; i < new InvWrapper(worker.getInventoryCitizen()).getSlots(); i++)
         {
             final ItemStack stack = workerInventory.extractItem(i, Integer.MAX_VALUE, false);
-            if (InventoryUtils.isItemStackEmpty(stack))
+            if (ItemStackUtils.isItemStackEmpty(stack))
             {
                 continue;
             }
 
             final ItemStack insertionResultStack = buildingToDeliver.forceTransferStack(stack, world);
-            if (!InventoryUtils.isItemStackEmpty(insertionResultStack))
+            if (!ItemStackUtils.isItemStackEmpty(insertionResultStack))
             {
                 if (ItemStack.areItemStacksEqual(insertionResultStack, stack))
                 {
@@ -442,7 +442,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     private boolean hasFood(final AbstractBuilding buildingToDeliver)
     {
         return InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()),
-                stack -> !InventoryUtils.isItemStackEmpty(stack) && stack.getItem() instanceof ItemFood) > buildingToDeliver.getBuildingLevel();
+                stack -> !ItemStackUtils.isItemStackEmpty(stack) && stack.getItem() instanceof ItemFood) > buildingToDeliver.getBuildingLevel();
     }
 
     /**
@@ -458,7 +458,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         if (buildingToDeliver instanceof BuildingHome)
         {
             position = wareHouse.getTileEntity().getPositionOfChestWithItemStack(
-                    itemStack -> !InventoryUtils.isItemStackEmpty(itemStack) && itemStack.getItem() instanceof ItemFood);
+                    itemStack -> !ItemStackUtils.isItemStackEmpty(itemStack) && itemStack.getItem() instanceof ItemFood);
         }
         else if (itemsToDeliver.isEmpty())
         {
@@ -523,7 +523,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 //Tries to extract a certain amount of the item of the chest.
                 if (InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
                         tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null),
-                        itemStack -> !InventoryUtils.isItemStackEmpty(itemStack) && itemStack.getItem() instanceof ItemFood,
+                        itemStack -> !ItemStackUtils.isItemStackEmpty(itemStack) && itemStack.getItem() instanceof ItemFood,
                         buildingToDeliver.getBuildingLevel() + extraFood,
                         new InvWrapper(worker.getInventoryCitizen())))
                 {

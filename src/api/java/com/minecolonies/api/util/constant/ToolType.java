@@ -7,7 +7,7 @@ public enum ToolType implements IToolType
     SHOVEL ("shovel"),
     AXE ("axe"),
     HOE ("hoe"),
-    WEAPON ("weapon"),
+    SWORD ("weapon"),
     BOW ("bow"),
     FISHINGROD("rod");
 

@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.api.util.Utils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
@@ -246,7 +246,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
     @Override
     public boolean neededForWorker(@Nullable final ItemStack stack)
     {
-        return stack != null && Utils.isHoe(stack);
+        return stack != null &&  ItemStackUtils.isHoe(stack);
     }
 
     //we have to update our field from the colony!

@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony.buildings;
 
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.Utils;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
@@ -126,7 +125,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
     @Override
     public boolean neededForWorker(@Nullable final ItemStack stack)
     {
-        return Utils.isPickaxe(stack) || Utils.isShovel(stack) || Utils.isAxe(stack) || neededResources.containsKey(stack.getUnlocalizedName());
+        return ItemStackUtils.isPickaxe(stack) || ItemStackUtils.isShovel(stack) || ItemStackUtils.isAxe(stack) || neededResources.containsKey(stack.getUnlocalizedName());
     }
 
     @Override
@@ -318,7 +317,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
     {
         @NotNull final ItemStack resultStack = super.transferStack(stack, world);
 
-        if (InventoryUtils.isItemStackEmpty(resultStack))
+        if (ItemStackUtils.isItemStackEmpty(resultStack))
         {
             this.markDirty();
         }
@@ -330,7 +329,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
     public ItemStack forceTransferStack(final ItemStack stack, final World world)
     {
         final ItemStack itemStack = super.forceTransferStack(stack, world);
-        if (InventoryUtils.isItemStackEmpty(itemStack))
+        if (ItemStackUtils.isItemStackEmpty(itemStack))
         {
             this.markDirty();
         }
