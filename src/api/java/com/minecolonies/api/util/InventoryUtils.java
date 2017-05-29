@@ -1235,7 +1235,7 @@ public class InventoryUtils
     {
         Log.getLogger().info("isToolInItemHandler("+itemHandler+", "+ toolType+", "+minimalLevel+", "+maximumLevel+")");
         return hasItemInItemHandler(itemHandler, (ItemStack stack) -> 
-                                    ItemStackUtils.isTool(stack, toolType) && ItemStackUtils.hasToolLevel(stack, toolType, minimalLevel, maximumLevel));
+                                    ItemStackUtils.hasToolLevel(stack, toolType, minimalLevel, maximumLevel));
     }
 
     /**
@@ -1257,14 +1257,15 @@ public class InventoryUtils
      *
      * @param itemHandler  the {@link IItemHandler} to get the slot from.
      * @param toolType     the tool type to look for.
+     * @param minimalLevel The minimal level to find.
+     * @param maximumLevel The maximum level to find.
      * @return slot number if found, -1 if not found.
      */
-    public static int getFirstSlotOfItemHandlerContainingTool(@NotNull final IItemHandler itemHandler, @NotNull final ToolType toolType)
+    public static int getFirstSlotOfItemHandlerContainingTool(@NotNull final IItemHandler itemHandler, @NotNull final ToolType toolType, final int minimalLevel,
+                                                                final int maximumLevel)
     {
         return findFirstSlotInItemHandlerWith(itemHandler,
-          (ItemStack stack) -> (!ItemStackUtils.isItemStackEmpty(stack) && (stack.getItem().getToolClasses(stack).contains(toolType.getName()) || ("hoe".equals(toolType.getName()) && stack.getUnlocalizedName()
-                                                                                                                                              .contains("hoe"))
-                                                               || ("rod".equals(toolType.getName()) && stack.getUnlocalizedName().contains("fishingRod")))));
+          (ItemStack stack) -> ItemStackUtils.hasToolLevel(stack, toolType, minimalLevel, maximumLevel));
     }
 
     /**

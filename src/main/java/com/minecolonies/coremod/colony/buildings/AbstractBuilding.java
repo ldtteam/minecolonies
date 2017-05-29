@@ -968,6 +968,16 @@ public abstract class AbstractBuilding
     }
 
     /**
+     * Get which tool the worker needs.
+     *
+     * @return which tool is needed
+     */
+    public ToolType getNeedsTool()
+    {
+        return neededTool;
+    }
+
+    /**
      * Get which tool level the worker needs.
      *
      * @return the tool level needed by the worker

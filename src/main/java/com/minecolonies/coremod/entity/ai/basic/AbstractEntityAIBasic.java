@@ -611,7 +611,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     @NotNull
     private AIState waitForShovel()
     {
-        if (checkForShovel())
+        if (checkForTool(ToolType.SHOVEL))
         {
             delay += DELAY_RECHECK;
             return NEEDS_SHOVEL;
@@ -620,19 +620,24 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Ensures that we have a shovel available.
-     * Will set {@code needsShovel} accordingly.
+     * Wait for a needed shovel.
      *
-     * @return true if we have a shovel
+     * @return NEEDS_SHOVEL
      */
-    private boolean checkForShovel()
+    /*@NotNull
+    private AIState waitForTool()
     {
-        Log.getLogger().info("checkForShovel");
-        boolean result = checkForTool(ToolType.SHOVEL);
-        Log.getLogger().info("checkForShovel => " + result);
-        return result;
-//        return checkForTool(ToolType.SHOVEL);
-    }
+        final ToolType toolType = getNeedsTool();
+        if (toolType != ToolType.NONE)
+        {
+            if (checkForTool(toolType))
+            {
+                delay += DELAY_RECHECK;
+                return NEEDS_TOOL;
+            }
+        }
+        return IDLE;
+    }*/
 
     /**
      * Ensures that we have a shovel available.
@@ -755,23 +760,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     @NotNull
     private AIState waitForAxe()
     {
-        if (checkForAxe())
+        if (checkForTool(ToolType.AXE))
         {
             delay += DELAY_RECHECK;
             return NEEDS_AXE;
         }
         return IDLE;
-    }
-
-    /**
-     * Ensures that we have an axe available.
-     * Will set {@code needsAxe} accordingly.
-     *
-     * @return true if we have an axe
-     */
-    protected boolean checkForAxe()
-    {
-        return checkForTool(ToolType.AXE);
     }
 
     /**
@@ -782,23 +776,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     @NotNull
     private AIState waitForHoe()
     {
-        if (checkForHoe())
+        if (checkForTool(ToolType.HOE))
         {
             delay += DELAY_RECHECK;
             return NEEDS_HOE;
         }
         return IDLE;
-    }
-
-    /**
-     * Ensures that we have a hoe available.
-     * Will set {@code needsHoe} accordingly.
-     *
-     * @return true if we have a hoe
-     */
-    protected boolean checkForHoe()
-    {
-        return checkForTool(ToolType.HOE);
     }
 
     /**
@@ -1287,13 +1270,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         switch (toolType)
         {
             case AXE:
-                checkForAxe();
-                break;
             case SHOVEL:
-                checkForShovel();
-                break;
             case HOE:
-                checkForHoe();
+                checkForTool(toolType);
                 break;
             case PICKAXE:
                 checkForPickaxe(required);

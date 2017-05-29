@@ -28,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Random;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.coremod.util.constants.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
  * Fisherman AI class.
@@ -579,7 +580,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private int getRodSlot()
     {
-        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), ToolType.FISHINGROD);
+        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), ToolType.FISHINGROD, 
+                                                                        TOOL_LEVEL_WOOD_OR_GOLD, getOwnBuilding().getMaxToolLevel());
     }
 
     /**
