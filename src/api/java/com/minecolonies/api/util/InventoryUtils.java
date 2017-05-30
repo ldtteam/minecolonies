@@ -888,9 +888,8 @@ public class InventoryUtils
      *
      * @param provider The provider to check for.
      * @return True when the provider has multiple distinct IItemHandler of
-     * different sides (sidedness {@link TileEntityFurnace#hasCapability(Capability,
-     * EnumFacing)}), false when not {@link TileEntityChest#hasCapability(Capability,
-     * EnumFacing)}
+     * different sides (sidedness {@link ICapabilityProvider#hasCapability(Capability,
+     * EnumFacing)}), false when not
      */
     @NotNull
     public static boolean isProviderSided(@NotNull final ICapabilityProvider provider)
