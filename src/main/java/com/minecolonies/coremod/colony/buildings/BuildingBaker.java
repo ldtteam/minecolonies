@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.buildings;
 
-import com.google.common.collect.ImmutableMap;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutBaker;
 import com.minecolonies.coremod.colony.CitizenData;
@@ -8,9 +7,8 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
-import com.minecolonies.coremod.entity.ai.citizen.baker.BakerEnums;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakingProduct;
-import com.minecolonies.coremod.entity.ai.citizen.baker.BakerEnums.ProductState;
+import com.minecolonies.coremod.entity.ai.citizen.baker.ProductState;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFurnace;
@@ -209,7 +207,7 @@ public class BuildingBaker extends AbstractBuildingWorker
      */
     public Map<ProductState, List<BakingProduct>> getTasks()
     {
-        return Collections.unmodifiableMap(tasks);
+        return Collections.unmodifiableMap(new HashMap<>(tasks));
     }
 
     @Override
@@ -356,7 +354,7 @@ public class BuildingBaker extends AbstractBuildingWorker
             }
 
             final BakingProduct bakingProduct = entry.getValue();
-            if(bakingProduct != null && bakingProduct.getState() == BakerEnums.ProductState.BAKING)
+            if(bakingProduct != null && bakingProduct.getState() == ProductState.BAKING)
             {
                 bakingProduct.increaseBakingProgress();
                 worldObj.setBlockState(entry.getKey(), Blocks.LIT_FURNACE.getDefaultState().withProperty(BlockFurnace.FACING, furnace.getValue(BlockFurnace.FACING)));

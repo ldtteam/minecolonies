@@ -3,7 +3,7 @@ package com.minecolonies.coremod.entity.ai.citizen.baker;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
-import com.minecolonies.coremod.entity.ai.citizen.baker.BakerEnums.ProductState;
+import com.minecolonies.coremod.entity.ai.citizen.baker.ProductState;
 
 public class BakingProduct
 {
