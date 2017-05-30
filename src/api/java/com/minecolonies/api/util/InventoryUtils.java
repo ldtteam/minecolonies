@@ -1225,8 +1225,7 @@ public class InventoryUtils
      */
     public static boolean isToolInItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final ToolType toolType, final int minimalLevel, final int maximumLevel)
     {
-        Log.getLogger().info("isToolInItemHandler("+itemHandler+", "+ toolType+", "+minimalLevel+", "+maximumLevel+")");
-        return hasItemInItemHandler(itemHandler, (ItemStack stack) -> 
+        return hasItemInItemHandler(itemHandler, (ItemStack stack) ->
                                     ItemStackUtils.hasToolLevel(stack, toolType, minimalLevel, maximumLevel));
     }
 

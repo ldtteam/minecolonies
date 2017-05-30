@@ -673,12 +673,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private boolean checkForNeededTool(@NotNull final ToolType toolType, final int minimalLevel)
     {
-        Log.getLogger().info("checkForNeededTool("+toolType+")");
         final int maxToolLevel = worker.getWorkBuilding().getMaxToolLevel();
         final InventoryCitizen inventory = worker.getInventoryCitizen();
         if (InventoryUtils.isToolInItemHandler(new InvWrapper(inventory), toolType, minimalLevel, maxToolLevel))
         {
-            Log.getLogger().info("checkForNeededTool("+toolType+") In worker inventory");
             return false;
         }
 
@@ -739,7 +737,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     public boolean isToolInHut(final ToolType toolType, final int minimalLevel)
     {
-        Log.getLogger().info("isToolInHut("+toolType+")");
         @Nullable final AbstractBuildingWorker building = getOwnBuilding();
 
         if (building != null)
