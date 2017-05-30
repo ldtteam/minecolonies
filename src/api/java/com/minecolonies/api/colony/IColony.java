@@ -584,4 +584,11 @@ public interface IColony
      */
     @NotNull
     IFactoryController getFactoryController();
+
+    /**
+     * Is called when the colony is deleted. Should:
+     *      * remove all citizens
+     *      * destroy all buildings
+     */
+    void OnDeletion();
 }

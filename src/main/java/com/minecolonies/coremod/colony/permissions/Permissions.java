@@ -457,11 +457,7 @@ public class Permissions implements IPermissions
         return true;
     }
 
-    /**
-     * Returns the owner of this permission instance.
-     *
-     * @return UUID of the owner.
-     */
+    @Override
     @Nullable
     public UUID getOwner()
     {
@@ -1056,6 +1052,19 @@ public class Permissions implements IPermissions
         public boolean isColonyMember(@NotNull final EntityPlayer player)
         {
             return players.containsKey(player.getUniqueID());
+        }
+
+        @Nullable
+        @Override
+        public UUID getOwner()
+        {
+            Player owner = getPlayersByRank(Rank.OWNER).stream().findFirst().orElse(null);
+
+            if (owner == null) {
+                return null;
+            }
+
+            return owner.getID();
         }
     }
 

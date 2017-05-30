@@ -2,6 +2,7 @@ package com.minecolonies.api.colony.permissions;
 
 import net.minecraft.entity.player.EntityPlayer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.UUID;
@@ -27,6 +28,14 @@ public interface IPermissions
      * @return true if the player is a member of the colony.
      */
     boolean isColonyMember(EntityPlayer player);
+
+    /**
+     * Returns the owner of this permission instance.
+     *
+     * @return UUID of the owner.
+     */
+    @Nullable
+    UUID getOwner();
 
     /**
      * Returns an unmodifiable map of the players list.

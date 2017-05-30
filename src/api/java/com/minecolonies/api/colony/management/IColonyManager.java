@@ -17,7 +17,7 @@ import java.util.UUID;
 /**
  * Objects that implement this interface function as
  */
-public interface IColonyManager<B extends IBuilding, C extends IColony>
+public interface IColonyManager
 {
     /**
      * Create a new Colony in the given world and at that location.
@@ -28,7 +28,7 @@ public interface IColonyManager<B extends IBuilding, C extends IColony>
      * @return The created colony.
      */
     @NotNull
-    C createColony(@NotNull World w, BlockPos pos, @NotNull EntityPlayer player);
+    IColony createColony(@NotNull World w, BlockPos pos, @NotNull EntityPlayer player);
 
     /**
      * Specify that colonies should be saved.
@@ -36,19 +36,27 @@ public interface IColonyManager<B extends IBuilding, C extends IColony>
     void markDirty();
 
     /**
+     * Indicates if this {@link IColonyManager} needs to be saved.
+     * @return True when he needs to be saved, false when not.
+     */
+    boolean isDirty();
+
+    /**
      * Delete a colony and kill all citizens/purge all buildings.
      *
      * @param id the colonies id.
+     * @throws IllegalArgumentException when the given id is unknown.
      */
-    void deleteColony(IToken id);
+    void deleteColony(IToken id) throws IllegalArgumentException;
 
     /**
      * Get Colony by UUID.
      *
      * @param id ID of colony.
-     * @return Colony with given ID.
+     * @return Colony with given ID, or null if she is unknown.
      */
-    C getColony(IToken id);
+    @Nullable
+    IColony getColony(IToken id);
 
     /**
      * Syncs the achievements for all colonies.
@@ -62,7 +70,7 @@ public interface IColonyManager<B extends IBuilding, C extends IColony>
      * @param pos Block position.
      * @return AbstractBuilding at the given location.
      */
-    B getBuilding(@NotNull World w, @NotNull BlockPos pos);
+    IBuilding getBuilding(@NotNull World w, @NotNull BlockPos pos);
 
     /**
      * Get colony that contains a given coordinate.
@@ -71,7 +79,7 @@ public interface IColonyManager<B extends IBuilding, C extends IColony>
      * @param pos coordinates.
      * @return Colony at the given location.
      */
-    C getColony(@NotNull World w, @NotNull BlockPos pos);
+    IColony getColony(@NotNull World w, @NotNull BlockPos pos);
 
     /**
      * Get all colonies in this world.
@@ -80,7 +88,7 @@ public interface IColonyManager<B extends IBuilding, C extends IColony>
      * @return a list of colonies.
      */
     @NotNull
-    ImmutableList<C> getColonies(@NotNull World w);
+    ImmutableList<IColony> getColonies(@NotNull World w);
 
     /**
      * Get all colonies in all worlds.
@@ -88,7 +96,7 @@ public interface IColonyManager<B extends IBuilding, C extends IColony>
      * @return a list of colonies.
      */
     @NotNull
-    ImmutableList<C> getColonies();
+    ImmutableList<IColony> getColonies();
 
     /**
      * Side neutral method to get colony.
@@ -102,7 +110,7 @@ public interface IColonyManager<B extends IBuilding, C extends IColony>
      * coordinates.
      */
     @Nullable
-    C getClosestColony(@NotNull World w, @NotNull BlockPos pos);
+    IColony getClosestColony(@NotNull World w, @NotNull BlockPos pos);
 
     /**
      * Side neutral method to get colony.
@@ -116,7 +124,7 @@ public interface IColonyManager<B extends IBuilding, C extends IColony>
      * @return C belonging to specific player.
      */
     @Nullable
-    C getColonyByOwner(@NotNull World w, @NotNull EntityPlayer owner);
+    IColony getColonyByOwner(@NotNull World w, @NotNull EntityPlayer owner);
 
     /**
      * Side neutral method to get colony.
@@ -130,7 +138,7 @@ public interface IColonyManager<B extends IBuilding, C extends IColony>
      * @return C belonging to specific player.
      */
     @Nullable
-    C getColonyByOwner(@NotNull World w, UUID owner);
+    IColony getColonyByOwner(@NotNull World w, UUID owner);
 
     /**
      * Returns the minimum distance between two town halls, to not make colonies
