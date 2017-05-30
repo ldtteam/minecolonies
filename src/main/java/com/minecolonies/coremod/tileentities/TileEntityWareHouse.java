@@ -2,7 +2,10 @@ package com.minecolonies.coremod.tileentities;
 
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.*;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.BuildingDeliveryman;
+import com.minecolonies.coremod.colony.buildings.BuildingHome;
+import com.minecolonies.coremod.colony.buildings.BuildingWareHouse;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;

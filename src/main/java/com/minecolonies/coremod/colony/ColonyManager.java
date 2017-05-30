@@ -313,6 +313,27 @@ public final class ColonyManager
     }
 
     /**
+     * Get all colonies in all worlds.
+     * @param abandonedSince time in hours since the last contact.
+     * @return a list of colonies.
+     */
+    @NotNull
+    public static List<Colony> getColoniesAbandonedSince(final int abandonedSince)
+    {
+        final List<Colony> sortedList = new ArrayList<>();
+        for (final Colony colony : colonies.getCopyAsList())
+        {
+            if(colony.getLastContactInHours() >= abandonedSince)
+            {
+                sortedList.add(colony);
+            }
+        }
+
+        return sortedList;
+    }
+
+
+    /**
      * Get a AbstractBuilding by position.
      *
      * @param pos Block position.
