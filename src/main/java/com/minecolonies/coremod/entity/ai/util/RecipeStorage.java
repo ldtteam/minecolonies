@@ -44,20 +44,23 @@ public class RecipeStorage
      */
     public RecipeStorage(final List<ItemStack> input, final int gridSize, final ItemStack primaryOutput, final ItemStack...secondaryOutput)
     {
-        this.input = new ArrayList<>(input);
+        this.input = Collections.unmodifiableList(input);
         this.primaryOutput = primaryOutput;
-        this.secondaryOutput = new ArrayList<>(Arrays.asList(secondaryOutput));
+        this.secondaryOutput = Collections.unmodifiableList(Arrays.asList(secondaryOutput));
         this.gridSize = gridSize;
     }
 
     /**
      * Get the list of input items.
-     * Make a real copy of the itemStack so we're able to request and handle them without changing the recipe.
-     * @return the copy of the list.
+     * Suppressing Sonar Rule Squid:S2384
+     * The rule thinks we should return a copy of the list and not the list itself.
+     * But in this case the rule does not apply because the list is an unmodifiable list already
+     * @return the list.
      */
+    @SuppressWarnings("squid:S2384")
     public List<ItemStack> getInput()
     {
-        return new ArrayList<>(input);
+        return input;
     }
 
     /**
