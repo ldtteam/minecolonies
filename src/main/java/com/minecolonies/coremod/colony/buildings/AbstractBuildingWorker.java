@@ -223,7 +223,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         {
             return Integer.MAX_VALUE;
         }
-        return getBuildingLevel();
+        else if (getBuildingLevel() < 1)
+        {
+            return 0;
+        }
+        return getBuildingLevel()-1;
     }
 
     /**

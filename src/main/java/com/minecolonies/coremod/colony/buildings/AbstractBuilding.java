@@ -958,16 +958,6 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Set which tool the worker needs.
-     *
-     * @param needsTool    which tool is needed
-     */
-    public void setNeedsTool(final ToolType needsTool)
-    {
-        setNeedsTool(needsTool, TOOL_LEVEL_WOOD_OR_GOLD);
-    }
-
-    /**
      * Get which tool the worker needs.
      *
      * @return which tool is needed

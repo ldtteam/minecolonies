@@ -71,7 +71,6 @@ public final class ItemStackUtils
         }
 
         final int level = getMiningLevel(stack, toolType);
-        Log.getLogger().info("hasToolLevel("+stack+", "+toolType+", "+ minimalLevel+", "+maximumLevel+") => level=" + level);
         return isTool(stack, toolType) && verifyToolLevel(stack, level, minimalLevel, maximumLevel);
     }
 
@@ -197,12 +196,35 @@ public final class ItemStackUtils
         }
         if (!Compatibility.getMiningLevelCompatibility(stack, toolType.toString()))
         {
-            Log.getLogger().info("getMiningLevelCompatibility->-1");
             return -1;
         }
         //todo: use 'better' version of this thing
-        //Log.getLogger().info("getMiningLevel harvest => " + stack.getItem().getHarvestLevel(stack, toolType.getName(), null, null));
-        return stack.getItem().getHarvestLevel(stack, toolType.getName(), null, null);
+        int level = -1;
+        switch(toolType)
+        {
+            case HOE:
+                if (stack.getItem() instanceof ItemHoe)
+                {
+                    final ItemHoe itemHoe = (ItemHoe)stack.getItem();
+                    level = getToolLevel(itemHoe.getMaterialName());
+                }
+                break;
+            case SWORD:
+                if (stack.getItem() instanceof ItemSword)
+                {
+                    final ItemSword itemSword = (ItemSword)stack.getItem();
+                    level = getToolLevel(itemSword.getToolMaterialName());
+                }
+                break;
+            case BOW:
+            case FISHINGROD:
+                level = 0;
+                break;
+            default:
+                stack.getItem().getHarvestLevel(stack, toolType.getName(), null, null);
+                break;
+        }
+        return level;
     }
 
 
@@ -217,13 +239,10 @@ public final class ItemStackUtils
      */
     public static boolean verifyToolLevel(@NotNull final ItemStack itemStack, final int toolLevel, final int minimalLevel, final int maximumLevel)
     {
-        Log.getLogger().info("verifyToolLevel("+itemStack+", "+toolLevel+", "+ minimalLevel+", "+maximumLevel+")");
         if (toolLevel < minimalLevel)
         {
             return false;
         }
-        Log.getLogger().info("verifyToolLevel2("+itemStack+", "+toolLevel+", "+ minimalLevel+", "+maximumLevel+")=>"+(toolLevel  <= maximumLevel));
-
         return (toolLevel + getMaxEnchantmentLevel(itemStack) <= maximumLevel);
     }
 
@@ -310,16 +329,39 @@ public final class ItemStackUtils
         switch (toolGrade)
         {
             case 0:
-                return "Wood or Gold";
             case 1:
-                return "Stone";
+                return "Wood or Gold";
             case 2:
-                return "Iron";
+                return "Stone";
             case 3:
+                return "Iron";
+            case 4:
                 return "Diamond";
             default:
                 return "Better than Diamond";
         }
+    }
+
+    private static int getToolLevel(final String material)
+    {
+        if ("WOOD".equals(material)
+            || "GOLD".equals(material))
+        {
+            return 0;
+        }
+        else if ("STONE".equals(material))
+        {
+            return 1;
+        }
+        else if ("IRON".equals(material))
+        {
+            return 2;
+        }
+        else if ("DIAMOND".equals(material))
+        {
+            return 3;
+        }
+        return -1;
     }
 
     /**

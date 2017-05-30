@@ -654,11 +654,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         if (checkForNeededTool(toolType, minimalLevel))
         {
-            getOwnBuilding().setNeedsTool(toolType);
+            getOwnBuilding().setNeedsTool(toolType, minimalLevel);
         }
         else if(getOwnBuilding().needsTool(toolType))
         {
-            getOwnBuilding().setNeedsTool(ToolType.NONE);
+            getOwnBuilding().setNeedsTool(ToolType.NONE, TOOL_LEVEL_HAND);
         }
 
         return getOwnBuilding().needsTool(toolType);
@@ -703,9 +703,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         switch(toolType)
         {
-            case SWORD:
-                requestWithoutSpam(new TextComponentTranslation("com.minecolonies.coremod.job.guard.needWeapon"));
-                break;
             case PICKAXE:
                 if (minimalLevel > maximumLevel)
                 {
@@ -724,8 +721,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                       ItemStackUtils.swapToolGrade(maximumLevel));
                 }
                 break;
+            case BOW:
+            case FISHINGROD:
+                chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_BASIC_ENCHTOOLREQUEST, toolType.getName(), maximumLevel<1?0:maximumLevel-1);
+                break;
             default:
-                chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_TOOLREQUEST, toolType, ItemStackUtils.swapToolGrade(maximumLevel));
+                chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_TOOLREQUEST, toolType.getName(), ItemStackUtils.swapToolGrade(maximumLevel));
                 break;
         }
     }
