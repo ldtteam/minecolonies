@@ -75,28 +75,6 @@ public final class ItemStackUtils
     }
 
     /**
-     * Checks if this ItemStack can be used as an Axe.
-     *
-     * @param itemStack Item to check.
-     * @return True if item is axe, otherwise false.
-     */
-    public static boolean isAxe(@Nullable final ItemStack itemStack)
-    {
-        return isTool(itemStack, ToolType.AXE);
-    }
-
-    /**
-     * Checks if this ItemStack can be used as a Hoe.
-     *
-     * @param itemStack Item to check.
-     * @return True if item is hoe, otherwise false.
-     */
-    public static boolean isHoe(@Nullable final ItemStack itemStack)
-    {
-        return isTool(itemStack, ToolType.HOE);
-    }
-
-    /**
      * Wrapper method to check if a stack is empty.
      * Used for easy updating to 1.11.
      *
@@ -107,29 +85,6 @@ public final class ItemStackUtils
     public static Boolean isItemStackEmpty(@Nullable final ItemStack stack)
     {
         return stack == null || stack == EMPTY || stack.getCount() <= 0;
-    }
-
-    /**
-     * Checks if this ItemStack can be used as a Pick axe.
-     *
-     * @param itemStack Item to check.
-     * @return True if item is a pick axe, otherwise false.
-     */
-    public static boolean isPickaxe(@Nullable final ItemStack itemStack)
-    {
-        return isTool(itemStack, ToolType.PICKAXE);
-    }
-
-
-    /**
-     * Checks if this ItemStack can be used as a Shovel.
-     *
-     * @param itemStack Item to check.
-     * @return True if item is shovel, otherwise false.
-     */
-    public static boolean isShovel(@Nullable final ItemStack itemStack)
-    {
-        return isTool(itemStack, ToolType.SHOVEL);
     }
 
     /**
