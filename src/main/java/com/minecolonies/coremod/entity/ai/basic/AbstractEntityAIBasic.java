@@ -747,7 +747,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Check all chests in the worker hut for a required tool.
      *
      * @param toolType the type of tool requested (amount is ignored)
-     * @param mimimalLevel the minimal level the tool should have.
+     * @param minimalLevel the minimal level the tool should have.
      * @return true if a stack of that type was found
      */
     public boolean isToolInHut(final ToolType toolType, final int minimalLevel)
