@@ -67,9 +67,10 @@ public class RecipeStorage
      * Get the list of output items.
      * @return the copy of the list.
      */
+    @SuppressWarnings("squid:S2384")
     public List<ItemStack> getSecondaryOutput()
     {
-        return new ArrayList<>(secondaryOutput);
+        return secondaryOutput;
     }
 
     /**
