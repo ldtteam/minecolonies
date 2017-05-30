@@ -721,7 +721,14 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 break;
             case BOW:
             case FISHINGROD:
-                chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_BASIC_ENCHTOOLREQUEST, toolType.getName(), maximumLevel<1?0:maximumLevel-1);
+                if (maximumLevel<1)
+                {
+                    chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_SIMPLETOOLREQUEST, toolType.getName());
+                }
+                else
+                {
+                    chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_ENCHTOOLREQUEST, toolType.getName(), maximumLevel-1);
+                }
                 break;
             default:
                 chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_TOOLREQUEST, toolType.getName(), ItemStackUtils.swapToolGrade(maximumLevel));
