@@ -21,7 +21,6 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.minecolonies.coremod.entity.ai.citizen.baker.ProductState;
 
 import java.util.ArrayList;
 import java.util.List;
