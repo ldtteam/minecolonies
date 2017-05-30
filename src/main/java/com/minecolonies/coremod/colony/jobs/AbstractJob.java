@@ -285,7 +285,7 @@ public abstract class AbstractJob
             }
         }
 
-        itemsNeeded.add(stack);
+        itemsNeeded.add(stack.copy());
     }
 
     /**

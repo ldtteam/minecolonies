@@ -1769,19 +1769,4 @@ public final class InventoryUtils
 
         return true;
     }
-
-    /**
-     * Create a hard copy of the itemStack list also creating new ItemStack copies.
-     * @param list the list to be copied.
-     * @return the new list.
-     */
-    public static List<ItemStack> hardCopyListOfItemStacks(final List<ItemStack> list)
-    {
-        final List<ItemStack> copy = new ArrayList<>(list.size());
-        for(final ItemStack stack: list)
-        {
-            copy.add(stack.copy());
-        }
-        return copy;
-    }
 }

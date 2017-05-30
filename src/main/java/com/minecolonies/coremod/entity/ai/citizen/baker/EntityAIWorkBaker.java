@@ -154,7 +154,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
             final RecipeStorage storage = BakerRecipes.getRecipes().get(currentBakingProduct.getRecipeId());
             for (final ItemStack stack : storage.getSecondaryOutput())
             {
-                InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), stack);
+                InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), stack.copy());
             }
             worker.addExperience(XP_PER_PRODUCT);
             incrementActionsDone();
@@ -227,7 +227,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
             return PREPARING;
         }
 
-        worker.setHeldItem(EnumHand.MAIN_HAND, storage.getInput().get(worker.getRandom().nextInt(storage.getInput().size())));
+        worker.setHeldItem(EnumHand.MAIN_HAND, storage.getInput().get(worker.getRandom().nextInt(storage.getInput().size())).copy());
         worker.hitBlockWithToolInHand(getOwnBuilding().getLocation());
 
         if (progress >= getRequiredProgressForKneading())

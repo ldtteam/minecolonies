@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -56,7 +57,7 @@ public class RecipeStorage
      */
     public List<ItemStack> getInput()
     {
-        return InventoryUtils.hardCopyListOfItemStacks(input);
+        return new ArrayList<>(input);
     }
 
     /**
@@ -65,7 +66,7 @@ public class RecipeStorage
      */
     public List<ItemStack> getSecondaryOutput()
     {
-        return InventoryUtils.hardCopyListOfItemStacks(secondaryOutput);
+        return new ArrayList<>(secondaryOutput);
     }
 
     /**
