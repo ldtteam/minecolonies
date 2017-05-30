@@ -27,17 +27,6 @@ public class JobBaker extends AbstractJob
     }
 
     /**
-     * Restore the Job from an NBTTagCompound.
-     *
-     * @param compound NBTTagCompound containing saved Job data.
-     */
-    @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
-    }
-
-    /**
      * Return a Localization textContent for the Job.
      *
      * @return localization textContent String.
@@ -59,17 +48,6 @@ public class JobBaker extends AbstractJob
     public RenderBipedCitizen.Model getModel()
     {
         return RenderBipedCitizen.Model.BAKER;
-    }
-
-    /**
-     * Save the Job to an NBTTagCompound.
-     *
-     * @param compound NBTTagCompound to save the Job to.
-     */
-    @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
-    {
-        super.writeToNBT(compound);
     }
 
     /**

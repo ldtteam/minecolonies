@@ -23,7 +23,7 @@ public class BakingProduct
     private static final int FINISHED_BAKING_PROGRESS = 10;
 
     /**
-     * Current state of the product, intantiated at raw.
+     * Current state of the product, intantiated at uncrafted.
      */
     private ProductState state = ProductState.UNCRAFTED;
 

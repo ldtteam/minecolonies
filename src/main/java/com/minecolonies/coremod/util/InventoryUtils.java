@@ -1777,7 +1777,7 @@ public final class InventoryUtils
      */
     public static List<ItemStack> hardCopyListOfItemStacks(final List<ItemStack> list)
     {
-        final List<ItemStack> copy = new ArrayList<>();
+        final List<ItemStack> copy = new ArrayList<>(list.size());
         for(final ItemStack stack: list)
         {
             copy.add(stack.copy());

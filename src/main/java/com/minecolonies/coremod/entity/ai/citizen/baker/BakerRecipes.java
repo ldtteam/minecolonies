@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.baker;
 
+import com.google.common.collect.ImmutableList;
 import com.minecolonies.coremod.entity.ai.util.RecipeStorage;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -50,7 +51,7 @@ public final class BakerRecipes
     /**
      * List of recipes the Baker can know.
      */
-    private static final List<RecipeStorage> recipes = new ArrayList<>();
+    private static final ImmutableList<RecipeStorage> recipes;
 
     /**
      * Amount of buckets he should give back after a cake
@@ -72,9 +73,10 @@ public final class BakerRecipes
         final List<ItemStack> inputBread = new ArrayList<>();
         inputBread.add(new ItemStack(Items.WHEAT, REQUIRED_WHEAT));
 
-        recipes.add(new RecipeStorage(inputCookie, GRID_SIZE, new ItemStack(Items.COOKIE, 1)));
-        recipes.add(new RecipeStorage(inputCake, GRID_SIZE, new ItemStack(Items.CAKE, 1), new ItemStack(Items.BUCKET, BUCKET_COUNT)));
-        recipes.add(new RecipeStorage(inputBread, GRID_SIZE, new ItemStack(Items.BREAD, 1)));
+        recipes = new ImmutableList.Builder<RecipeStorage>()
+                .add(new RecipeStorage(inputCookie, GRID_SIZE, new ItemStack(Items.COOKIE, 1)))
+                .add(new RecipeStorage(inputCake, GRID_SIZE, new ItemStack(Items.CAKE, 1), new ItemStack(Items.BUCKET, BUCKET_COUNT)))
+                .add(new RecipeStorage(inputBread, GRID_SIZE, new ItemStack(Items.BREAD, 1))).build();
     }
     /**
      * Private constructor to hide implicit one.
@@ -93,6 +95,6 @@ public final class BakerRecipes
      */
     public static List<RecipeStorage> getRecipes()
     {
-        return new ArrayList<>(recipes);
+        return recipes;
     }
 }

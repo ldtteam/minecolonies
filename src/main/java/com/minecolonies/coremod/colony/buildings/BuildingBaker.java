@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.google.common.collect.ImmutableMap;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutBaker;
 import com.minecolonies.coremod.colony.CitizenData;
@@ -7,15 +8,20 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
+import com.minecolonies.coremod.entity.ai.citizen.baker.BakerEnums;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakingProduct;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakerEnums.ProductState;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFurnace;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -69,6 +75,16 @@ public class BuildingBaker extends AbstractBuildingWorker
      * Map of tasks for the baker to work on.
      */
     private final Map<ProductState, List<BakingProduct>> tasks = new EnumMap(ProductState.class);
+
+    /**
+     * Wait this amount of ticks before checking again.
+     */
+    private static final int WAIT_TICKS = 160;
+
+    /**
+     * Ticks past since the last check.
+     */
+    private int ticksPassed = 0;
 
     /**
      * Constructor for the baker building.
@@ -183,7 +199,7 @@ public class BuildingBaker extends AbstractBuildingWorker
      */
     public Map<BlockPos, BakingProduct> getFurnacesWithProduct()
     {
-        return new HashMap<>(furnaces);
+        return Collections.unmodifiableMap(furnaces);
     }
 
     /**
@@ -297,7 +313,58 @@ public class BuildingBaker extends AbstractBuildingWorker
             final List<BakingProduct> bakingProducts = new ArrayList<>();
             bakingProducts.add(bakingProduct);
             tasks.put(state, bakingProducts);
-            markDirty();
+        }
+        markDirty();
+    }
+
+    @Override
+    public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
+    {
+        super.onWorldTick(event);
+
+        if(ticksPassed != WAIT_TICKS)
+        {
+            ticksPassed++;
+            return;
+        }
+        ticksPassed = 0;
+
+
+        checkFurnaces();
+    }
+
+    /**
+     * Checks the furnaces of the baker if they're ready.
+     * @param building the building they belong to.
+     */
+    private void checkFurnaces()
+    {
+        final World worldObj = getColony().getWorld();
+
+        if(worldObj == null)
+        {
+            return;
+        }
+
+        for(final Map.Entry<BlockPos, BakingProduct> entry: this.getFurnacesWithProduct().entrySet())
+        {
+            final IBlockState furnace = worldObj.getBlockState(entry.getKey());
+            if(!(furnace.getBlock() instanceof BlockFurnace))
+            {
+                this.removeFromFurnaces(entry.getKey());
+                continue;
+            }
+
+            final BakingProduct bakingProduct = entry.getValue();
+            if(bakingProduct != null && bakingProduct.getState() == BakerEnums.ProductState.BAKING)
+            {
+                bakingProduct.increaseBakingProgress();
+                worldObj.setBlockState(entry.getKey(), Blocks.LIT_FURNACE.getDefaultState().withProperty(BlockFurnace.FACING, furnace.getValue(BlockFurnace.FACING)));
+            }
+            else
+            {
+                worldObj.setBlockState(entry.getKey(), Blocks.FURNACE.getDefaultState().withProperty(BlockFurnace.FACING, furnace.getValue(BlockFurnace.FACING)));
+            }
         }
     }
 
@@ -315,8 +382,8 @@ public class BuildingBaker extends AbstractBuildingWorker
             if (tasks.get(state).isEmpty())
             {
                 tasks.remove(state);
-                markDirty();
             }
+            markDirty();
         }
     }
 

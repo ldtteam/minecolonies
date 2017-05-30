@@ -266,7 +266,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
             }
             else
             {
-                copy = stack;
+                copy = stack.copy();
             }
         }
 
@@ -285,7 +285,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 
         if (checkOrRequestItems(true, false, list.toArray(new ItemStack[list.size()])))
         {
-            trytoTakeFromListOrRequest(list);
+            tryToTakeFromListOrRequest(list);
             return getState();
         }
 
@@ -302,7 +302,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
      * Try to take a list of items from the hut chest and request if neccessary.
      * @param list the list to retrieve.
      */
-    private void trytoTakeFromListOrRequest(final List<ItemStack> list)
+    private void tryToTakeFromListOrRequest(final List<ItemStack> list)
     {
         for (final @Nullable ItemStack tempStack : list)
         {
@@ -375,7 +375,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
             final List<ItemStack> lastRecipe = recipes.get(recipes.size() - 1).getInput();
             if(checkOrRequestItems(true, false, lastRecipe.toArray(new ItemStack[lastRecipe.size()])))
             {
-                trytoTakeFromListOrRequest(lastRecipe);
+                tryToTakeFromListOrRequest(lastRecipe);
             }
             setDelay(UNABLE_TO_CRAFT_DELAY);
             return PREPARING;
@@ -407,16 +407,20 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 
         final IBlockState furnace = world.getBlockState(currentFurnace);
         final List<BakingProduct> bakingProducts = building.getTasks().get(ProductState.PREPARED);
-        if (!(furnace.getBlock() instanceof BlockFurnace) || bakingProducts.isEmpty())
+        if (!(furnace.getBlock() instanceof BlockFurnace))
         {
-            if (!(furnace.getBlock() instanceof BlockFurnace))
-            {
-                building.removeFromFurnaces(currentFurnace);
-            }
-            else
+            if (bakingProducts.isEmpty())
             {
                 building.removeFromTasks(ProductState.PREPARED, null);
             }
+            else
+            {
+                building.removeFromFurnaces(currentFurnace);
+            }
+            return START_WORKING;
+        }
+        else if (bakingProducts.isEmpty())
+        {
             return START_WORKING;
         }
 

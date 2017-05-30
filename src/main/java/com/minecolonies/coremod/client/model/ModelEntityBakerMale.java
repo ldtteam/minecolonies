@@ -86,28 +86,7 @@ public class ModelEntityBakerMale extends ModelBiped
         bipedHeadwear.isHidden = true;
     }
 
-    @Override
-    public void render( final Entity entityIn, final float limbSwing,
-            final float limbSwingAmount,
-            final float ageInTicks,
-            final float netHeadYaw,
-            final float headPitch,
-            final float scaleFactor
-    )
-    {
-        setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entityIn);
-        bipedHead.render(scaleFactor);
-        bipedBody.render(scaleFactor);
-        bipedLeftArm.render(scaleFactor);
-        bipedRightArm.render(scaleFactor);
-        bipedRightLeg.render(scaleFactor);
-        bipedLeftLeg.render(scaleFactor);
-        base.render(scaleFactor);
-        middle.render(scaleFactor);
-        top.render(scaleFactor);
-    }
-
-    private void setRotation(final ModelRenderer model, float x, float y, float z)
+    private void setRotation(final ModelRenderer model, final float x, final float y, final float z)
     {
         model.rotateAngleX = x;
         model.rotateAngleY = y;
@@ -128,8 +107,8 @@ public class ModelEntityBakerMale extends ModelBiped
         final float headX = bipedHead.rotateAngleX;
         bipedBody.rotateAngleX = bodyX;
         bipedHead.rotateAngleX = headX;
-        base.rotateAngleX = bodyX;
-        middle.rotateAngleX = bodyX;
+        base.rotateAngleX = headX;
+        middle.rotateAngleX = headX;
         top.rotateAngleX = headX;
         super.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entityIn);
     }
