@@ -712,7 +712,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 if (minimalLevel > maximumLevel)
                 {
                     chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUESTBETTERHUT,
-                      ItemStackUtils.swapToolGrade(maximumLevel));
+                      minimalLevel);
                 }
                 else if (minimalLevel == maximumLevel)
                 {

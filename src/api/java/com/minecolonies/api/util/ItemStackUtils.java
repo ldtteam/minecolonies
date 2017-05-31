@@ -176,7 +176,7 @@ public final class ItemStackUtils
                 level = 0;
                 break;
             default:
-                stack.getItem().getHarvestLevel(stack, toolType.getName(), null, null);
+                level = stack.getItem().getHarvestLevel(stack, toolType.getName(), null, null);
                 break;
         }
         return level;
@@ -284,13 +284,12 @@ public final class ItemStackUtils
         switch (toolGrade)
         {
             case 0:
-            case 1:
                 return "Wood or Gold";
-            case 2:
+            case 1:
                 return "Stone";
-            case 3:
+            case 2:
                 return "Iron";
-            case 4:
+            case 3:
                 return "Diamond";
             default:
                 return "Better than Diamond";
