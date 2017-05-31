@@ -1,5 +1,4 @@
-
-package com.minecolonies.api.util;
+package com.minecolonies.api.util.constant;
 
 public interface IToolType
 {
