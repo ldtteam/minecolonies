@@ -768,7 +768,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         if (building != null)
         {
-            //TODO check last 2 parameters
             if (isToolInTileEntity(building.getTileEntity(), toolType, minimalLevel, getOwnBuilding().getMaxToolLevel()))
             {
                 return true;
@@ -779,7 +778,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 final TileEntity entity = world.getTileEntity(pos);
                 if (entity instanceof TileEntityChest)
                 {
-                    //TODO check last 2 parameters
                     if (isToolInTileEntity((TileEntityChest) entity, toolType, minimalLevel, getOwnBuilding().getMaxToolLevel()))
                     {
                         return true;
