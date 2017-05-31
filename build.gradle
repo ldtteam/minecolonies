@@ -78,6 +78,7 @@ dependencies {
     testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
 
     compile 'com.intellij:annotations:+@jar'
+    compile 'es.usc.citius.hipster:hipster-all:1.0.1'
 }
 
 ext.configFile = file "build.properties"
