@@ -9,8 +9,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-//import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
-
 /**
  * General purpose utilities class.
  * todo: split up into logically distinct parts
