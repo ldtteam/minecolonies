@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.item.handling;
 
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -42,6 +43,18 @@ public class ItemStorage
         this.damageValue = damageValue;
         this.amount = amount;
         this.ignoreDamageValue = ignoreDamageValue;
+    }
+
+    /**
+     * Creates an instance of the storage.
+     * @param requiredStack the itemstack.
+     */
+    public ItemStorage(final ItemStack requiredStack)
+    {
+        this.item = requiredStack.getItem();
+        this.damageValue = requiredStack.getItemDamage();
+        this.amount = requiredStack.stackSize;
+        this.ignoreDamageValue = false;
     }
 
     /**
