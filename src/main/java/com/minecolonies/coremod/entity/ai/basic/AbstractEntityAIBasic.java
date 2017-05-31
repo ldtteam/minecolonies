@@ -1217,7 +1217,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 final int itemsLeft = stack.stackSize - countOfItem;
                 @NotNull final ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft, -1);
 
-                if(!getOwnBuilding().getRequiredItemsAndAmount().containsKey(new ItemStorage(requiredStack)))
+                if(!requiredStack.isItemEqual(getOwnBuilding().getFirstNeededItem()))
                 {
                     getOwnBuilding().addNeededItems(requiredStack);
                 }
