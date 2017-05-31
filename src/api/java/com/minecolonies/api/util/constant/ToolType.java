@@ -1,21 +1,37 @@
 package com.minecolonies.api.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public enum ToolType implements IToolType
 {
-    NONE (""),
-    PICKAXE ("pickaxe"),
-    SHOVEL ("shovel"),
-    AXE ("axe"),
-    HOE ("hoe"),
-    SWORD ("weapon"),
-    BOW ("bow"),
-    FISHINGROD("rod");
+    NONE       ("",        false),
+    PICKAXE    ("pickaxe", true),
+    SHOVEL     ("shovel",  true),
+    AXE        ("axe",     true),
+    HOE        ("hoe",     true),
+    SWORD      ("weapon",  true),
+    BOW        ("bow",     false),
+    FISHINGROD ("rod",     false),
+    SHEARS     ("shears",  false),
+    SHIELD     ("shield",  false);
 
+    static final private Map<String,IToolType> tools = new HashMap<>();
     private final String name;
+    private final boolean material;
 
-    private ToolType(final String s)
+    static
     {
-        name = s;
+        for(ToolType type : values())
+        {
+            tools.put(type.getName(), type);
+        }
+    }
+
+    private ToolType(final String name, final boolean material)
+    {
+        this.name = name;
+        this.material = material;
     }
 
     public String getName()
@@ -23,14 +39,16 @@ public enum ToolType implements IToolType
         return this.name;
     }
 
-    public static ToolType getToolType(final String tool)
+    public boolean hasMaterial()
     {
-        for (final ToolType toolType : ToolType.values())
+        return material;
+    }
+
+    public static IToolType getToolType(final String tool)
+    {
+        if (tools.containsKey(tool))
         {
-             if (toolType.getName().equals(tool))
-             {
-                 return toolType;
-             }
+            return tools.get(tool);
         }
         return NONE;
     }

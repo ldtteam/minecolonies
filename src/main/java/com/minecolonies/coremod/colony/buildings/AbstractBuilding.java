@@ -148,7 +148,7 @@ public abstract class AbstractBuilding
     /**
      * the tool currenly needed by the worker.
      */
-    private ToolType        neededTool           = ToolType.NONE;
+    private IToolType        neededTool          = ToolType.NONE;
     /**
      * The minimum tool level we need to fulfill the tool request.
      */
@@ -940,7 +940,7 @@ public abstract class AbstractBuilding
      * @param toolType type of tool to check for
      * @return true if so.
      */
-    public boolean needsTool(final ToolType toolType)
+    public boolean needsTool(final IToolType toolType)
     {
         return neededTool.equals(toolType);
     }
@@ -951,7 +951,7 @@ public abstract class AbstractBuilding
      * @param neededTool    which tool is needed
      * @param minimalLevel which minimal level for the tool
      */
-    public void setNeedsTool(final ToolType neededTool, final int minimalLevel)
+    public void setNeedsTool(final IToolType neededTool, final int minimalLevel)
     {
         this.neededTool     = neededTool;
         this.needsToolLevel = minimalLevel;
@@ -962,7 +962,7 @@ public abstract class AbstractBuilding
      *
      * @return which tool is needed
      */
-    public ToolType getNeedsTool()
+    public IToolType getNeedsTool()
     {
         return neededTool;
     }
@@ -1041,7 +1041,7 @@ public abstract class AbstractBuilding
      *
      * @return the string of the required tool.
      */
-    public ToolType getRequiredTool()
+    public IToolType getRequiredTool()
     {
         return neededTool;
     }

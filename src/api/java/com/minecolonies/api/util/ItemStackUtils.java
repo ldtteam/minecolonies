@@ -63,7 +63,7 @@ public final class ItemStackUtils
      * @param maximumLevel the maximum level for the tool to find.
      * @return true if tool is acceptable
      */
-    public static boolean hasToolLevel(@Nullable final ItemStack stack, final ToolType toolType, final int minimalLevel, final int maximumLevel)
+    public static boolean hasToolLevel(@Nullable final ItemStack stack, final IToolType toolType, final int minimalLevel, final int maximumLevel)
     {
         if (isItemStackEmpty(stack))
         {
@@ -94,7 +94,7 @@ public final class ItemStackUtils
      * @param toolType  Type of the tool.
      * @return true if item can be used, otherwise false.
      */
-    public static boolean isTool(@Nullable final ItemStack itemStack, final ToolType toolType)
+    public static boolean isTool(@Nullable final ItemStack itemStack, final IToolType toolType)
     {
         if (isItemStackEmpty(itemStack))
         {
@@ -102,29 +102,29 @@ public final class ItemStackUtils
         }
 
         boolean isATool = false;
-        switch (toolType)
+        if (ToolType.AXE.equals(toolType) || ToolType.SHOVEL.equals(toolType) || ToolType.PICKAXE.equals(toolType))
         {
-            case AXE:
-            case SHOVEL:
-            case PICKAXE:
-                isATool = getMiningLevel(itemStack, toolType) >= 0;
-                break;
-            case HOE:
-                isATool = itemStack.getItem() instanceof ItemHoe;
-                break;
-            case BOW:
-                isATool = itemStack.getItem() instanceof ItemBow;
-                break;
-            case SWORD:
-                isATool = itemStack.getItem() instanceof ItemSword;
-                break;
-            case FISHINGROD:
-                isATool = itemStack.getItem() instanceof ItemFishingRod;
-                break;
-            case NONE:
-            default:
-                isATool = false;
-                break;
+            isATool = getMiningLevel(itemStack, toolType) >= 0;
+        }
+        else if (ToolType.HOE.equals(toolType))
+        {
+            isATool = itemStack.getItem() instanceof ItemHoe;
+        }
+        else if (ToolType.BOW.equals(toolType))
+        {
+            isATool = itemStack.getItem() instanceof ItemBow;
+        }
+        else if (ToolType.SWORD.equals(toolType))
+        {
+            isATool = itemStack.getItem() instanceof ItemSword;
+        }
+        else if (ToolType.FISHINGROD.equals(toolType))
+        {
+            isATool = itemStack.getItem() instanceof ItemFishingRod;
+        }
+        else if (ToolType.HOE.equals(toolType))
+        {
+            isATool=false;
         }
         return isATool;
     }
@@ -138,7 +138,7 @@ public final class ItemStackUtils
      * @return integer value for mining level &gt;= 0 is okay.
      */
     @SuppressWarnings(DEPRECATION)
-    public static int getMiningLevel(@Nullable final ItemStack stack, @Nullable final ToolType toolType)
+    public static int getMiningLevel(@Nullable final ItemStack stack, @Nullable final IToolType toolType)
     {
         if (toolType == ToolType.NONE)
         {
@@ -155,29 +155,29 @@ public final class ItemStackUtils
         }
         //todo: use 'better' version of this thing
         int level = -1;
-        switch(toolType)
+        if (ToolType.HOE.equals(toolType))
         {
-            case HOE:
-                if (stack.getItem() instanceof ItemHoe)
-                {
-                    final ItemHoe itemHoe = (ItemHoe)stack.getItem();
-                    level = getToolLevel(itemHoe.getMaterialName());
-                }
-                break;
-            case SWORD:
-                if (stack.getItem() instanceof ItemSword)
-                {
-                    final ItemSword itemSword = (ItemSword)stack.getItem();
-                    level = getToolLevel(itemSword.getToolMaterialName());
-                }
-                break;
-            case BOW:
-            case FISHINGROD:
-                level = 0;
-                break;
-            default:
-                level = stack.getItem().getHarvestLevel(stack, toolType.getName(), null, null);
-                break;
+             if (stack.getItem() instanceof ItemHoe)
+             {
+                 final ItemHoe itemHoe = (ItemHoe)stack.getItem();
+                 level = getToolLevel(itemHoe.getMaterialName());
+             }
+        }
+        else if (ToolType.SWORD.equals(toolType))
+        {
+            if (stack.getItem() instanceof ItemSword)
+            {
+                final ItemSword itemSword = (ItemSword)stack.getItem();
+                level = getToolLevel(itemSword.getToolMaterialName());
+            }
+        }
+        else if (ToolType.BOW.equals(toolType) || ToolType.FISHINGROD.equals(toolType))
+        {
+            level = 0;
+        }
+        else
+        {
+            level = stack.getItem().getHarvestLevel(stack, toolType.getName(), null, null);
         }
         return level;
     }

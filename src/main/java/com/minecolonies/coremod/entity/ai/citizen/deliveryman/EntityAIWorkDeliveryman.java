@@ -426,13 +426,13 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private boolean hasTools(@NotNull final AbstractBuilding buildingToDeliver)
     {
-        final ToolType requiredTool = buildingToDeliver.getRequiredTool();
+        final IToolType requiredTool = buildingToDeliver.getRequiredTool();
         if (requiredTool == ToolType.NONE)
         {
             return true;
         }
 
-        return InventoryUtils.isToolInItemHandler(new InvWrapper(worker.getInventoryCitizen()), requiredTool, buildingToDeliver.getNeededToolLevel(), 
+        return InventoryUtils.isToolInItemHandler(new InvWrapper(worker.getInventoryCitizen()), requiredTool, buildingToDeliver.getNeededToolLevel(),
                 buildingToDeliver.getBuildingLevel());
     }
 
@@ -465,7 +465,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
         else if (itemsToDeliver.isEmpty())
         {
-            final ToolType toolType = buildingToDeliver.getRequiredTool();
+            final IToolType toolType = buildingToDeliver.getRequiredTool();
             position = wareHouse.getTileEntity()
                          .getPositionOfChestWithTool(toolType,
                            buildingToDeliver.getNeededToolLevel(),

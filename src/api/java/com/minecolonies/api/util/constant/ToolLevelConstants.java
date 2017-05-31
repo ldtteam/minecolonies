@@ -37,6 +37,11 @@ public final class ToolLevelConstants
      */
     @NonNls
     public static final int TOOL_LEVEL_BETTER_THAN_DIAMOND = 4;
+    /**
+     * Tool level for maximum.
+     */
+    @NonNls
+    public static final int TOOL_LEVEL_MAXIMUM = Integer.SIZE;
 
     private ToolLevelConstants()
     {

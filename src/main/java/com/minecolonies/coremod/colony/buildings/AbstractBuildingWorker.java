@@ -13,6 +13,9 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_MAXIMUM;
+
 /**
  * The abstract class for each worker building.
  */
@@ -221,11 +224,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     {
         if (getBuildingLevel()>=getMaxBuildingLevel())
         {
-            return Integer.MAX_VALUE;
+            return TOOL_LEVEL_MAXIMUM;
         }
         else if (getBuildingLevel() < 1)
         {
-            return 0;
+            return TOOL_LEVEL_WOOD_OR_GOLD;
         }
         return getBuildingLevel()-1;
     }

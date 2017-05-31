@@ -28,12 +28,15 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_HAND;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_WORKER_ENCHTOOLREQUEST;
+import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_MAXIMUM;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_WORKER_ENCHTOOLREQUEST;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUEST;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUESTBETTERHUT;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_WORKER_SIMPLETOOLREQUEST;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_WORKER_SPECIFICTOOLREQUEST;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_WORKER_TOOLREQUEST;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_WORKER_TOOLATLEASTREQUEST;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 /**
@@ -587,7 +590,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param maxLevel the max tool lev	el.
      * @return true if found the tool.
      */
-    public boolean isToolInTileEntity(final TileEntityChest entity, final ToolType toolType, final int minLevel, final int maxLevel)
+    public boolean isToolInTileEntity(final TileEntityChest entity, final IToolType toolType, final int minLevel, final int maxLevel)
     {
         return InventoryFunctions.matchFirstInProviderWithAction(
                 entity,
@@ -652,12 +655,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param toolType type of tool we check for.
      * @return true if we have the tool
      */
-    protected boolean checkForTool(@NotNull final ToolType toolType)
+    protected boolean checkForTool(@NotNull final IToolType toolType)
     {
         return checkForTool(toolType, TOOL_LEVEL_WOOD_OR_GOLD);
     }
 
-    protected boolean checkForTool(@NotNull final ToolType toolType, final int minimalLevel)
+    protected boolean checkForTool(@NotNull final IToolType toolType, final int minimalLevel)
     {
         if (checkForNeededTool(toolType, minimalLevel))
         {
@@ -678,7 +681,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param tool tool required for block
      * @return true if we need a tool
      */
-    private boolean checkForNeededTool(@NotNull final ToolType toolType, final int minimalLevel)
+    private boolean checkForNeededTool(@NotNull final IToolType toolType, final int minimalLevel)
     {
         final int maxToolLevel = worker.getWorkBuilding().getMaxToolLevel();
         final InventoryCitizen inventory = worker.getInventoryCitizen();
@@ -704,42 +707,51 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         return true;
     }
 
-    private void chatRequestTool(@NotNull final ToolType toolType, final int minimalLevel, final int maximumLevel)
+    private void chatRequestTool(@NotNull final IToolType toolType, final int minimalLevel, final int maximumLevel)
     {
-        switch(toolType)
+        if (minimalLevel == TOOL_LEVEL_WOOD_OR_GOLD)
         {
-            case PICKAXE:
-                if (minimalLevel > maximumLevel)
+            if (maximumLevel == TOOL_LEVEL_MAXIMUM)
+            {
+                //Any tool level will do
+                chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_SIMPLETOOLREQUEST, toolType.getName());
+            }
+            else
+            {
+                // tools at most ...
+                if (toolType.hasMaterial())
                 {
-                    chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUESTBETTERHUT,
-                      minimalLevel);
-                }
-                else if (minimalLevel == maximumLevel)
-                {
-                    chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUEST,
-                      ItemStackUtils.swapToolGrade(maximumLevel));
-                }
-                else
-                {
-                    chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUEST,
-                      ItemStackUtils.swapToolGrade(minimalLevel),
-                      ItemStackUtils.swapToolGrade(maximumLevel));
-                }
-                break;
-            case BOW:
-            case FISHINGROD:
-                if (maximumLevel<1)
-                {
-                    chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_SIMPLETOOLREQUEST, toolType.getName());
+                    chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_TOOLREQUEST, toolType.getName(), ItemStackUtils.swapToolGrade(maximumLevel));
                 }
                 else
                 {
                     chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_ENCHTOOLREQUEST, toolType.getName(), maximumLevel-1);
                 }
-                break;
-            default:
-                chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_TOOLREQUEST, toolType.getName(), ItemStackUtils.swapToolGrade(maximumLevel));
-                break;
+            }
+        }
+        else if (maximumLevel == TOOL_LEVEL_MAXIMUM)
+        {
+            // at least
+            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_TOOLATLEASTREQUEST, toolType.getName(), minimalLevel);
+
+        }
+        else if (minimalLevel > maximumLevel)
+        {
+            // need to upgrade the worker's hut
+            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUESTBETTERHUT, minimalLevel - 1);
+        }
+        else if (minimalLevel == maximumLevel)
+        {
+            // we need a specific grade
+            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_SPECIFICTOOLREQUEST, toolType.getName());
+        }
+        else
+        {
+           // at least and at most
+           chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUEST,
+               ItemStackUtils.swapToolGrade(minimalLevel),
+               ItemStackUtils.swapToolGrade(maximumLevel));
+
         }
     }
 
@@ -750,7 +762,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param minimalLevel the minimal level the tool should have.
      * @return true if a stack of that type was found
      */
-    public boolean isToolInHut(final ToolType toolType, final int minimalLevel)
+    public boolean isToolInHut(final IToolType toolType, final int minimalLevel)
     {
         @Nullable final AbstractBuildingWorker building = getOwnBuilding();
 
@@ -1155,7 +1167,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private void requestTool(@NotNull final Block target)
     {
-        final ToolType toolType = ToolType.getToolType(target.getHarvestTool(target.getDefaultState()));
+        final IToolType toolType = ToolType.getToolType(target.getHarvestTool(target.getDefaultState()));
         final int required = target.getHarvestLevel(target.getDefaultState());
         updateToolFlag(toolType, required);
     }
@@ -1167,24 +1179,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param tool     the tool needed
      * @param required the level needed (for pickaxe only)
      */
-    private void updateToolFlag(@NotNull final ToolType toolType, final int required)
+    private void updateToolFlag(@NotNull final IToolType toolType, final int required)
     {
-        switch (toolType)
+        if (ToolType.PICKAXE.equals(toolType))
         {
-            case AXE:
-            case SHOVEL:
-            case HOE:
-            case BOW:
-            case SWORD:
-                checkForTool(toolType);
-                break;
-            case PICKAXE:
-                checkForTool(toolType, required);
-                break;
-            default:
-                //TODO checkForTool(TOOL_LEVEL_DIAMOND);
-                Log.getLogger().error("Invalid tool " + toolType.getName() + " not implemented as tool will require pickaxe level 4 instead.");
-                break;
+            checkForTool(toolType, required);
+        }
+        else
+        {
+            checkForTool(toolType);
         }
     }
 
@@ -1197,7 +1200,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private int getMostEfficientTool(@NotNull final Block target)
     {
-        final ToolType toolType = ToolType.getToolType(target.getHarvestTool(target.getDefaultState()));
+        final IToolType toolType = ToolType.getToolType(target.getHarvestTool(target.getDefaultState()));
         final int required = target.getHarvestLevel(target.getDefaultState());
         int bestSlot = -1;
         int bestLevel = Integer.MAX_VALUE;

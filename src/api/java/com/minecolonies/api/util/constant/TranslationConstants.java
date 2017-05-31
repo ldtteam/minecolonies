@@ -57,6 +57,10 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_ENCHTOOLREQUEST         = "entity.morker.enchantedToolRequest";
     @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_SPECIFICTOOLREQUEST     = "entity.morker.specificToolRequest";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_TOOLATLEASTREQUEST      = "entity.morker.toolAtLeastRequest";
+    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL             = "com.minecolonies.coremod.job.deliveryman.workerChestFull";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NAMEDCHESTFULL        = "com.minecolonies.coremod.job.deliveryman.namedWorkerChestFull";

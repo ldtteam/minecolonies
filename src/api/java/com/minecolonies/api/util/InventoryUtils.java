@@ -721,7 +721,7 @@ public class InventoryUtils
      * @return True if a Tool with the given toolTypeName was found in the given
      * {@link ICapabilityProvider}, false when not.
      */
-    public static boolean isToolInProvider(@NotNull final ICapabilityProvider provider, @NotNull final ToolType toolType, final int minimalLevel, final int maximumLevel)
+    public static boolean isToolInProvider(@NotNull final ICapabilityProvider provider, @NotNull final IToolType toolType, final int minimalLevel, final int maximumLevel)
     {
         return hasItemInProvider(provider, (ItemStack stack) -> ItemStackUtils.hasToolLevel(stack, toolType, minimalLevel, maximumLevel));
     }
@@ -1200,7 +1200,7 @@ public class InventoryUtils
      * @return True if a Tool with the given toolTypeName was found in the given
      * {@link ICapabilityProvider}, false when not.
      */
-    public static boolean isToolInProviderForSide(@NotNull final ICapabilityProvider provider, @Nullable final EnumFacing facing, @NotNull final ToolType toolType,
+    public static boolean isToolInProviderForSide(@NotNull final ICapabilityProvider provider, @Nullable final EnumFacing facing, @NotNull final IToolType toolType,
                                                   final int minimalLevel, final int maximumLevel)
     {
         if (!provider.hasCapability(ITEM_HANDLER_CAPABILITY, facing))
@@ -1222,7 +1222,7 @@ public class InventoryUtils
      * @return True if a Tool with the given toolTypeName was found in the given
      * {@link IItemHandler}, false when not.
      */
-    public static boolean isToolInItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final ToolType toolType, final int minimalLevel, final int maximumLevel)
+    public static boolean isToolInItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final IToolType toolType, final int minimalLevel, final int maximumLevel)
     {
         return hasItemInItemHandler(itemHandler, (ItemStack stack) ->
                                     ItemStackUtils.hasToolLevel(stack, toolType, minimalLevel, maximumLevel));
@@ -1251,7 +1251,7 @@ public class InventoryUtils
      * @param maximumLevel The maximum level to find.
      * @return slot number if found, -1 if not found.
      */
-    public static int getFirstSlotOfItemHandlerContainingTool(@NotNull final IItemHandler itemHandler, @NotNull final ToolType toolType, final int minimalLevel,
+    public static int getFirstSlotOfItemHandlerContainingTool(@NotNull final IItemHandler itemHandler, @NotNull final IToolType toolType, final int minimalLevel,
                                                                 final int maximumLevel)
     {
         return findFirstSlotInItemHandlerWith(itemHandler,
@@ -1268,7 +1268,7 @@ public class InventoryUtils
      * @param maximumLevel  the worker's hut level
      * @return true if tool is acceptable
      */
-    public static boolean hasItemHandlerToolWithLevel(@NotNull final IItemHandler itemHandler, final ToolType toolType, final int requiredLevel, final int maximumLevel)
+    public static boolean hasItemHandlerToolWithLevel(@NotNull final IItemHandler itemHandler, final IToolType toolType, final int requiredLevel, final int maximumLevel)
     {
         return findFirstSlotInItemHandlerWith(itemHandler,
           (ItemStack stack) -> (!ItemStackUtils.isItemStackEmpty(stack) && (ItemStackUtils.isTool(stack, toolType) && ItemStackUtils.verifyToolLevel(stack,

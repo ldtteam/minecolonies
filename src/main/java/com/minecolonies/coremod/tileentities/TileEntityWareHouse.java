@@ -190,7 +190,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             }
         }
 
-        final ToolType tool = buildingEntry.getRequiredTool();
+        final IToolType tool = buildingEntry.getRequiredTool();
         if(tool != ToolType.NONE)
         {
             if(isToolInHut(tool, buildingEntry))
@@ -327,7 +327,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      * @param requestingBuilding the building requesting it.
      * @return the position or null.
      */
-    public BlockPos getPositionOfChestWithTool(@NotNull final ToolType tool, final int minLevel, @NotNull final AbstractBuilding requestingBuilding)
+    public BlockPos getPositionOfChestWithTool(@NotNull final IToolType tool, final int minLevel, @NotNull final AbstractBuilding requestingBuilding)
     {
         @Nullable final AbstractBuilding building = getBuilding();
 
@@ -357,7 +357,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      * @param requestingBuilding the building requesting it.
      * @return true if a stack of that type was found
      */
-    private boolean isToolInHut(final ToolType toolType, @NotNull final AbstractBuilding requestingBuilding)
+    private boolean isToolInHut(final IToolType toolType, @NotNull final AbstractBuilding requestingBuilding)
     {
         @Nullable final AbstractBuilding building = getBuilding();
 
