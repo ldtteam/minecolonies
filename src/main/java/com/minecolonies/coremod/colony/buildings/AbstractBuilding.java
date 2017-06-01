@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.IToolType;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.blocks.*;
 import com.minecolonies.coremod.colony.*;

@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
@@ -163,7 +164,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
     @Override
     protected AIState searchTarget()
     {
-        if (checkForTool(ToolType.BOW))
+        if (checkForToolOrWeapon(ToolType.BOW))
         {
             return AIState.GUARD_SEARCH_TARGET;
         }
@@ -183,7 +184,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
             targetEntity = this.worker.getLastAttacker();
         }
 
-        if (!targetEntity.isEntityAlive() || checkForTool(ToolType.BOW))
+        if (!targetEntity.isEntityAlive() || checkForToolOrWeapon(ToolType.BOW))
         {
             targetEntity = null;
             worker.setAIMoveSpeed((float) 1.0D);

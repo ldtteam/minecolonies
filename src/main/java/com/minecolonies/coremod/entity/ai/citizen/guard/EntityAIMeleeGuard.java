@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.guard;
 
 import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
@@ -108,7 +109,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
     @Override
     protected AIState searchTarget()
     {
-        if (checkForWeapon())
+        if (checkForToolOrWeapon(ToolType.SWORD))
         {
             return AIState.GUARD_SEARCH_TARGET;
         }
@@ -128,7 +129,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
             targetEntity = this.worker.getLastAttacker();
         }
 
-        if (!targetEntity.isEntityAlive() || checkForWeapon())
+        if (!targetEntity.isEntityAlive() || checkForToolOrWeapon(ToolType.SWORD))
         {
             targetEntity = null;
             worker.setAIMoveSpeed((float) 1.0D);

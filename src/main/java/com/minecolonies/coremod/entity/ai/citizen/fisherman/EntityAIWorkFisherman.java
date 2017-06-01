@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.fisherman;
 
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ToolType;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.coremod.colony.buildings.BuildingFisherman;
 import com.minecolonies.coremod.colony.jobs.JobFisherman;
@@ -191,7 +191,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private AIState prepareForFishing()
     {
-        if (checkForTool(ToolType.FISHINGROD))
+        if (checkForToolOrWeapon(ToolType.FISHINGROD))
         {
             playNeedRodSound();
             return getState();

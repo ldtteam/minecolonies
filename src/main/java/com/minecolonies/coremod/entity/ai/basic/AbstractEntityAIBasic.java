@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.IToolType;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
@@ -154,12 +156,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 /*
                  * Wait for different tools.
                  */
-          new AITarget(() -> this.getOwnBuilding().needsTool(ToolType.SHOVEL), this::waitForShovel),
-          new AITarget(() -> this.getOwnBuilding().needsTool(ToolType.AXE), this::waitForAxe),
-          new AITarget(() -> this.getOwnBuilding().needsTool(ToolType.HOE), this::waitForHoe),
-          new AITarget(() -> this.getOwnBuilding().needsTool(ToolType.PICKAXE), this::waitForPickaxe),
-          new AITarget(() -> this.getOwnBuilding().needsTool(ToolType.SWORD), this::waitForWeapon),
-
+          new AITarget(() -> !this.getOwnBuilding().needsTool(ToolType.NONE), this::waitForToolOrWeapon),
                 /*
                  * Dumps inventory as long as needs be.
                  * If inventory is dumped, execution continues
@@ -613,40 +610,24 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Wait for a needed shovel.
+     * Wait for a needed tool or weapon.
      *
      * @return NEEDS_SHOVEL
      */
     @NotNull
-    private AIState waitForShovel()
+    private AIState waitForToolOrWeapon()
     {
-        if (checkForTool(ToolType.SHOVEL))
-        {
-            delay += DELAY_RECHECK;
-            return NEEDS_SHOVEL;
-        }
-        return IDLE;
-    }
-
-    /**
-     * Wait for a needed shovel.
-     *
-     * @return NEEDS_SHOVEL
-     */
-    /*@NotNull
-    private AIState waitForTool()
-    {
-        final ToolType toolType = getNeedsTool();
+        final IToolType toolType = worker.getWorkBuilding().getNeedsTool();
         if (toolType != ToolType.NONE)
         {
-            if (checkForTool(toolType))
+            if (checkForToolOrWeapon(toolType))
             {
                 delay += DELAY_RECHECK;
                 return NEEDS_TOOL;
             }
         }
         return IDLE;
-    }*/
+    }
 
     /**
      * Ensures that we have a appropriate tool available.
@@ -655,12 +636,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param toolType type of tool we check for.
      * @return true if we have the tool
      */
-    protected boolean checkForTool(@NotNull final IToolType toolType)
+    protected boolean checkForToolOrWeapon(@NotNull final IToolType toolType)
     {
-        return checkForTool(toolType, TOOL_LEVEL_WOOD_OR_GOLD);
+        return checkForToolOrWeapon(toolType, TOOL_LEVEL_WOOD_OR_GOLD);
     }
 
-    protected boolean checkForTool(@NotNull final IToolType toolType, final int minimalLevel)
+    protected boolean checkForToolOrWeapon(@NotNull final IToolType toolType, final int minimalLevel)
     {
         if (checkForNeededTool(toolType, minimalLevel))
         {
@@ -787,81 +768,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
 
         return false;
-    }
-
-    /**
-     * Wait for a needed axe.
-     *
-     * @return NEEDS_AXE
-     */
-    @NotNull
-    private AIState waitForAxe()
-    {
-        if (checkForTool(ToolType.AXE))
-        {
-            delay += DELAY_RECHECK;
-            return NEEDS_AXE;
-        }
-        return IDLE;
-    }
-
-    /**
-     * Wait for a needed hoe.
-     *
-     * @return NEEDS_HOE
-     */
-    @NotNull
-    private AIState waitForHoe()
-    {
-        if (checkForTool(ToolType.HOE))
-        {
-            delay += DELAY_RECHECK;
-            return NEEDS_HOE;
-        }
-        return IDLE;
-    }
-
-    /**
-     * Wait for a needed pickaxe.
-     *
-     * @return NEEDS_PICKAXE
-     */
-    @NotNull
-    private AIState waitForPickaxe()
-    {
-        if (checkForTool(ToolType.PICKAXE, getOwnBuilding().getNeededToolLevel()))
-        {
-            delay += DELAY_RECHECK;
-            return NEEDS_PICKAXE;
-        }
-        return IDLE;
-    }
-
-    /**
-     * Wait for a needed pickaxe.
-     *
-     * @return NEEDS_PICKAXE
-     */
-    @NotNull
-    private AIState waitForWeapon()
-    {
-        if (checkForWeapon())
-        {
-            delay += DELAY_RECHECK;
-            return NEEDS_WEAPON;
-        }
-        return IDLE;
-    }
-
-    /**
-     * Ensures that we have a pickaxe available.
-     * Will set {@code needsPickaxe} accordingly.
-     *
-     * @return true if we have a pickaxe
-     */
-    public boolean checkForWeapon()
-    {
-        return checkForTool(ToolType.SWORD);
     }
 
     /**
@@ -1181,11 +1087,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         if (ToolType.PICKAXE.equals(toolType))
         {
-            checkForTool(toolType, required);
+            checkForToolOrWeapon(toolType, required);
         }
         else
         {
-            checkForTool(toolType);
+            checkForToolOrWeapon(toolType);
         }
     }
 

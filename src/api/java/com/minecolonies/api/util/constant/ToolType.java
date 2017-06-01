@@ -1,4 +1,4 @@
-package com.minecolonies.api.util;
+package com.minecolonies.api.util.constant;
 
 import java.util.HashMap;
 import java.util.Map;

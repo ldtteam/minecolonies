@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.api.util.Utils;
@@ -201,7 +202,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private AIState prepareForWoodcutting()
     {
-        if (checkForTool(ToolType.AXE))
+        if (checkForToolOrWeapon(ToolType.AXE))
         {
             return getState();
         }
@@ -291,7 +292,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private AIState chopWood()
     {
-        if (checkForTool(ToolType.AXE))
+        if (checkForToolOrWeapon(ToolType.AXE))
         {
             return IDLE;
         }

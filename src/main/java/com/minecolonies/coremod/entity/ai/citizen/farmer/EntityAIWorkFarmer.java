@@ -2,7 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.farmer;
 
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.Utils;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.blocks.BlockHutField;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.BuildingFarmer;
@@ -160,7 +160,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                 walkToBlock(currentField.getLocation());
                 return AIState.FARMER_OBSERVE;
             }
-            else if (canGoPlanting(currentField, building) && !checkForTool(ToolType.HOE))
+            else if (canGoPlanting(currentField, building) && !checkForToolOrWeapon(ToolType.HOE))
             {
                 return walkToBlock(currentField.getLocation()) ? AIState.PREPARING : AIState.FARMER_INITIALIZE;
             }
@@ -382,7 +382,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         @Nullable final BuildingFarmer buildingFarmer = getOwnBuilding();
 
-        if (buildingFarmer == null || checkForTool(ToolType.HOE) || buildingFarmer.getCurrentField() == null)
+        if (buildingFarmer == null || checkForToolOrWeapon(ToolType.HOE) || buildingFarmer.getCurrentField() == null)
         {
             return AIState.PREPARING;
         }
@@ -503,7 +503,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         @Nullable final BuildingFarmer buildingFarmer = getOwnBuilding();
 
-        if (buildingFarmer == null || checkForTool(ToolType.HOE) || buildingFarmer.getCurrentField() == null)
+        if (buildingFarmer == null || checkForToolOrWeapon(ToolType.HOE) || buildingFarmer.getCurrentField() == null)
         {
             return AIState.PREPARING;
         }
@@ -568,7 +568,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private boolean hoeIfAble(final BlockPos position, final Field field)
     {
-        if (shouldHoe(position, field) && !checkForTool(ToolType.HOE))
+        if (shouldHoe(position, field) && !checkForToolOrWeapon(ToolType.HOE))
         {
             equipHoe();
             worker.swingArm(worker.getActiveHand());
@@ -666,7 +666,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         @Nullable final BuildingFarmer buildingFarmer = getOwnBuilding();
 
-        if (buildingFarmer == null || checkForTool(ToolType.HOE)  || buildingFarmer.getCurrentField() == null)
+        if (buildingFarmer == null || checkForToolOrWeapon(ToolType.HOE)  || buildingFarmer.getCurrentField() == null)
         {
             return AIState.PREPARING;
         }
