@@ -274,12 +274,8 @@ public class CitizenData implements ICitizenData
         return id;
     }
 
-    /**
-     * Create a CitizenData given a CitizenEntity.
-     *
-     * @param entity Entity to initialize from.
-     */
-    public void initializeFromEntity(@NotNull final EntityCitizen entity)
+    @Override
+    public void initializeFromEntity(@NotNull final Citizen entity)
     {
         final Random rand = entity.getRNG();
 

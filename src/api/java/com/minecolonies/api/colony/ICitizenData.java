@@ -43,6 +43,13 @@ public interface ICitizenData
     int getId();
 
     /**
+     * Create a CitizenData given a CitizenEntity.
+     *
+     * @param entity Entity to initialize from.
+     */
+    void initializeFromEntity(@NotNull Citizen entity);
+
+    /**
      * Getter for the name of the Citizen.
      *
      * @return The name of the citizen.

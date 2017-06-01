@@ -1,16 +1,24 @@
 package com.minecolonies.coremod.colony;
 
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.minecolonies.api.IAPI;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.handlers.IColonyEventHandler;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.requestsystem.IRequestManager;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.StandardRequestManager;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.colony.workorder.IWorkOrder;
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.entity.Citizen;
 import com.minecolonies.api.entity.ai.citizen.farmer.Field;
+import com.minecolonies.api.entity.ai.citizen.farmer.IScarecrow;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
@@ -18,6 +26,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
+import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.buildings.*;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -46,6 +55,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -57,7 +67,7 @@ import java.util.stream.Collectors;
  * This class describes a colony and contains all the data and methods for
  * manipulating a Colony.
  */
-public class Colony implements IColony
+public class Colony implements IColony<AbstractBuilding>
 {
     //  Settings
     private static final int    CITIZEN_CLEANUP_TICK_INCREMENT = 5 * 20;
@@ -130,7 +140,7 @@ public class Colony implements IColony
     private static final int    CHECK_WAYPOINT_EVERY              = 100;
     private static final double MAX_SQ_DIST_SUBSCRIBER_UPDATE     = MathUtils.square(Configurations.workingRangeTownHall + 16D);
     private static final double MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE = MathUtils.square(Configurations.workingRangeTownHall * 2D);
-    private final int id;
+    private final IToken id;
     //  General Attributes
     private final int dimensionId;
     //  Buildings
@@ -140,22 +150,22 @@ public class Colony implements IColony
     @NotNull
     private final List<Achievement> colonyAchievements;
     //  Workload and Jobs
-    private final WorkManager                     workManager       = new WorkManager(this);
+    private final WorkManager                     workManager   = new WorkManager(this);
     @NotNull
-    private final Map<BlockPos, AbstractBuilding> buildings         = new HashMap<>();
+    private final Map<BlockPos, AbstractBuilding> buildings     = new HashMap<>();
     //  Citizenry
     @NotNull
-    private final Map<Integer, CitizenData>       citizens          = new HashMap<>();
+    private final Map<Integer, CitizenData>           citizens      = new HashMap<>();
     /**
      * The Positions which players can freely interact.
      */
-    private final Set<BlockPos>                   freePositions     = new HashSet<>();
+    private final Set<BlockPos>                   freePositions = new HashSet<>();
     /**
      * The Blocks which players can freely interact with.
      */
-    private final Set<Block>                      freeBlocks        = new HashSet<>();
-    private       int                             minedOres         = 0;
-    private       int                             minedDiamonds     = 0;
+    private final Set<Block>                      freeBlocks    = new HashSet<>();
+    private       int                             minedOres     = 0;
+    private       int                             minedDiamonds = 0;
     private       int                             harvestedWheat    = 0;
     private       int                             harvestedPotatoes = 0;
     private       int                             harvestedCarrots  = 0;
@@ -197,7 +207,7 @@ public class Colony implements IColony
      * @param w  The world the colony exists in.
      * @param c  The center of the colony (location of Town Hall).
      */
-    Colony(final int id, @NotNull final World w, final BlockPos c)
+    Colony(final IToken id, @NotNull final World w, final BlockPos c)
     {
         this(id, w.provider.getDimension());
         center = c;
@@ -211,7 +221,7 @@ public class Colony implements IColony
      * @param id  The current id for the colony.
      * @param dim The world the colony exists in.
      */
-    protected Colony(final int id, final int dim)
+    protected Colony(final IToken id, final int dim)
     {
         this.id = id;
         this.dimensionId = dim;
@@ -248,7 +258,14 @@ public class Colony implements IColony
     @NotNull
     public static Colony loadColony(@NotNull final NBTTagCompound compound)
     {
-        final int id = compound.getInteger(TAG_ID);
+        IToken id;
+
+        if (compound.getTag(TAG_ID).getId() == NBT.TAG_INT) {
+            id = StandardFactoryController.getInstance().getNewInstance(UUID.randomUUID());
+        } else {
+            id = StandardFactoryController.getInstance().deserialize(compound.getCompoundTag(TAG_ID));
+        }
+
         final int dimensionId = compound.getInteger(TAG_DIMENSION);
         @NotNull final Colony c = new Colony(id, dimensionId);
         c.readFromNBT(compound);
@@ -384,7 +401,7 @@ public class Colony implements IColony
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         //  Core attributes
-        compound.setInteger(TAG_ID, id);
+        compound.setTag(TAG_ID, StandardFactoryController.getInstance().serialize(id));
         compound.setInteger(TAG_DIMENSION, dimensionId);
 
         //  Basic data
@@ -610,18 +627,20 @@ public class Colony implements IColony
     }
 
     @Override
-    public void onWorldLoad(@NotNull final World w)
+    public void onWorldLoad(@NotNull final WorldEvent.Load event)
     {
-        if (w.provider.getDimension() == dimensionId)
+        if (event.getWorld().provider.getDimension() != dimensionId)
         {
-            world = w;
+            throw new IllegalStateException("World loading called for colony that is not in the loaded Dimension.");
         }
+
+        world = event.getWorld();
     }
 
     @Override
-    public void onWorldUnload(@NotNull final World w)
+    public void onWorldUnload(@NotNull final WorldEvent.Unload event)
     {
-        if (!w.equals(world))
+        if (!event.getWorld().equals(world))
         {
             throw new IllegalStateException("Colony's world does not match the event.");
         }
@@ -629,14 +648,20 @@ public class Colony implements IColony
         world = null;
     }
 
+    @NotNull
+    @Override
+    public ImmutableCollection<IColonyEventHandler> getCombinedHandlers()
+    {
+        return ImmutableSet.copyOf(getBuildings().values());
+    }
+
     @Override
     public void onServerTick(@NotNull final TickEvent.ServerTickEvent event)
     {
-        for (@NotNull final AbstractBuilding b : buildings.values())
-        {
-            b.onServerTick(event);
-        }
+        //Since we cannot do super.onServerTick to use the default behaviour first. We need to call this extra.
+        getCombinedHandlers().forEach(iColonyEventHandler -> iColonyEventHandler.onServerTick(event));
 
+        //Now we can update the subscribers.
         if (event.phase == TickEvent.Phase.END)
         {
             updateSubscribers();
@@ -956,7 +981,7 @@ public class Colony implements IColony
         double saturation = 0;
         for (final CitizenData citizen : citizens.values())
         {
-            final AbstractBuildingWorker buildingWorker = citizen.getWorkBuilding();
+            final IBuilding buildingWorker = citizen.getWorkBuilding();
             if (buildingWorker != null)
             {
                 if (buildingWorker instanceof BuildingGuardTower)
@@ -1037,7 +1062,6 @@ public class Colony implements IColony
         return world;
     }
 
-    @Override
     public boolean areAllColonyChunksLoaded(@NotNull final TickEvent.WorldTickEvent event)
     {
         final int distanceFromCenter = Configurations.workingRangeTownHall + 48 /* 3 chunks */ + 15 /* round up a chunk */;
@@ -1054,7 +1078,6 @@ public class Colony implements IColony
         return true;
     }
 
-    @Override
     public void cleanUpBuildings(@NotNull final TickEvent.WorldTickEvent event)
     {
         @Nullable final List<AbstractBuilding> removedBuildings = new ArrayList<>();
@@ -1164,7 +1187,7 @@ public class Colony implements IColony
      * @return Colony ID.
      */
     @Override
-    public int getID()
+    public IToken getID()
     {
         return id;
     }
@@ -1176,7 +1199,7 @@ public class Colony implements IColony
     }
 
     @Override
-    public void spawnCitizen(final CitizenData data)
+    public void spawnCitizen(ICitizenData data)
     {
         final BlockPos townHallLocation = townHall.getLocation().getInDimensionLocation();
         if (!world.isBlockLoaded(townHallLocation))
@@ -1191,8 +1214,7 @@ public class Colony implements IColony
         {
             final EntityCitizen entity = new EntityCitizen(world);
 
-            CitizenData citizenData = data;
-            if (citizenData == null)
+            if (data == null)
             {
                 //This ensures that citizen IDs are getting reused.
                 //That's needed to prevent bugs when calling IDs that are not used.
@@ -1205,7 +1227,7 @@ public class Colony implements IColony
                     }
                 }
 
-                citizenData = new CitizenData(topCitizenId, this);
+                final CitizenData citizenData = new CitizenData(topCitizenId, this);
                 citizenData.initializeFromEntity(entity);
 
                 citizens.put(citizenData.getId(), citizenData);
@@ -1217,8 +1239,11 @@ public class Colony implements IColony
                       this.getMessageEntityPlayers(),
                       "tile.blockHutTownHall.messageMaxSize");
                 }
+
+                data = citizenData;
             }
-            entity.setColony(this, citizenData);
+
+            entity.setColony(this, data);
 
             entity.setPosition(spawnPoint.getX() + 0.5D, spawnPoint.getY() + 0.1D, spawnPoint.getZ() + 0.5D);
             world.spawnEntity(entity);
@@ -1302,7 +1327,7 @@ public class Colony implements IColony
     }
 
     @Override
-    public void spawnCitizenIfNull(@NotNull final CitizenData data)
+    public void spawnCitizenIfNull(@NotNull final ICitizenData data)
     {
         if (data.getCitizen() == null)
         {
@@ -1313,7 +1338,7 @@ public class Colony implements IColony
 
     @Override
     @Nullable
-    public IBuilding getTownHall()
+    public AbstractBuilding getTownHall()
     {
         return townHall;
     }
@@ -1376,7 +1401,7 @@ public class Colony implements IColony
     }
 
     @Override
-    public void addNewField(final ScarecrowTileEntity tileEntity, final InventoryPlayer inventoryPlayer, final BlockPos pos, final World world)
+    public void addNewField(final IScarecrow tileEntity, final InventoryPlayer inventoryPlayer, final BlockPos pos, final World world)
     {
         @NotNull final Field field = new Field(tileEntity, inventoryPlayer, world, pos);
         //field.setCustomName(LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user", LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user.noone")));
@@ -1419,7 +1444,10 @@ public class Colony implements IColony
         }
 
         calculateMaxCitizens();
-        ColonyManager.markDirty();
+
+        //TODO Target the controller not the manager
+        //Makes it a tick more specific on what to save and what not to.
+        IAPI.Holder.getApi().getColonyManager().markDirty();
 
         return building;
     }
@@ -1474,7 +1502,7 @@ public class Colony implements IColony
 
         calculateMaxCitizens();
 
-        ColonyManager.markDirty();
+        IAPI.Holder.getApi().getColonyManager().markDirty();
     }
 
     @Override
@@ -1491,7 +1519,7 @@ public class Colony implements IColony
     }
 
     @Override
-    public void removeCitizen(@NotNull final CitizenData citizen)
+    public void removeCitizen(@NotNull final ICitizenData citizen)
     {
         //Remove the Citizen
         citizens.remove(citizen.getId());
@@ -1648,5 +1676,36 @@ public class Colony implements IColony
     public IFactoryController getFactoryController()
     {
         return getRequestManager().getFactoryController();
+    }
+
+    @Override
+    public void OnDeletion()
+    {
+        Log.getLogger().info("Removing citizens for " + id);
+        for (final ICitizenData citizenData : new ArrayList<>(getCitizens().values()))
+        {
+            Log.getLogger().info("Kill Citizen " + citizenData.getName());
+            final Citizen entityCitizen = citizenData.getCitizen();
+            if (entityCitizen != null)
+            {
+                final World world = entityCitizen.getEntityWorld();
+                citizenData.getCitizen().onDeath(IAPI.Holder.getApi().getConsoleDamageSource());
+            }
+        }
+        Log.getLogger().info("Removing buildings for " + id);
+        for (final IBuilding buildingCore : new ArrayList<>(getBuildings().values()))
+        {
+            AbstractBuilding building = (AbstractBuilding) buildingCore;
+
+            final BlockPos location = building.getLocation().getInDimensionLocation();
+            Log.getLogger().info("Delete Building at " + location);
+            building.destroy();
+
+            if (getWorld().getBlockState(location).getBlock() instanceof AbstractBlockHut)
+            {
+                Log.getLogger().info("Found Block, deleting " + world.getBlockState(location).getBlock());
+                getWorld().setBlockToAir(location);
+            }
+        }
     }
 }

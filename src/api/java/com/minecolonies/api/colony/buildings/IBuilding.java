@@ -3,6 +3,7 @@ package com.minecolonies.api.colony.buildings;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.handlers.IColonyEventHandler;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -14,9 +15,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * Created by marcf on 3/7/2017.
+ * A building in a colony. Can request objects in the request system and process events that happen in the world.
  */
-public interface IBuilding extends IRequester
+public interface IBuilding extends IRequester, IColonyEventHandler
 {
 
     /**
@@ -52,6 +53,13 @@ public interface IBuilding extends IRequester
      * @return true if the building is building, upgrading or repairing.
      */
     boolean hasWorkOrder();
+
+    /**
+     * Method to remove a citizen.
+     *
+     * @param citizen Citizen to be removed.
+     */
+    void removeCitizen(ICitizenData citizen);
 
     /**
      * Children must return their max building level.

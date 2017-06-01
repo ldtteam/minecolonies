@@ -1,6 +1,7 @@
 package com.minecolonies.api;
 
 import com.minecolonies.api.colony.management.IColonyManager;
+import net.minecraft.util.DamageSource;
 import net.minecraftforge.fml.relauncher.Side;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,4 +47,7 @@ public interface IAPI
      */
     @NotNull
     IColonyManager getColonyManagerForSpecificSide(@NotNull Side side);
+
+    @NotNull
+    DamageSource getConsoleDamageSource();
 }

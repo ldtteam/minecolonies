@@ -2,6 +2,7 @@ package com.minecolonies.api.colony;
 
 import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.handlers.ICombiningColonyEventHandler;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.requestsystem.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
@@ -18,7 +19,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.stats.Achievement;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,13 +30,8 @@ import java.util.Set;
  * Interface of the Colony and ColonyView which will have to implement the
  * following methods.
  */
-public interface IColony
+public interface IColony<B extends IBuilding> extends ICombiningColonyEventHandler
 {
-
-    boolean areAllColonyChunksLoaded(@NotNull TickEvent.WorldTickEvent event);
-
-    void cleanUpBuildings(@NotNull TickEvent.WorldTickEvent event);
-
     /**
      * Spawn a brand new Citizen.
      */
@@ -120,7 +115,7 @@ public interface IColony
      *
      * @param building AbstractBuilding to add to the colony.
      */
-    void addBuilding(@NotNull IBuilding building);
+    void addBuilding(@NotNull B building);
 
     /**
      * Add a Building to the Colony.
@@ -169,27 +164,6 @@ public interface IColony
      * Marks building data dirty.
      */
     void markBuildingsDirty();
-
-    /**
-     * When the Colony's world is loaded, associate with it.
-     *
-     * @param w World object.
-     */
-    void onWorldLoad(@NotNull World w);
-
-    /**
-     * Unsets the world if the world unloads.
-     *
-     * @param w World object.
-     */
-    void onWorldUnload(@NotNull World w);
-
-    /**
-     * Any per-server-tick logic should be performed here.
-     *
-     * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent}
-     */
-    void onServerTick(@NotNull TickEvent.ServerTickEvent event);
 
     /**
      * Update Subscribers with Colony, Citizen, and AbstractBuilding Views.
@@ -294,15 +268,6 @@ public interface IColony
      */
     void removeFreeBlock(@NotNull Block block);
 
-    /**
-     * Any per-world-tick logic should be performed here.
-     * NOTE: If the Colony's world isn't loaded, it won't have a world tick.
-     * Use onServerTick for logic that should _always_ run.
-     *
-     * @param event {@link TickEvent.WorldTickEvent}
-     */
-    void onWorldTick(@NotNull TickEvent.WorldTickEvent event);
-
     void updateOverallHappiness();
 
     /**
@@ -382,7 +347,7 @@ public interface IColony
      * @return Town hall of the colony.
      */
     @Nullable
-    IBuilding getTownHall();
+    B getTownHall();
 
     /**
      * Getter of a unmodifiable version of the farmerFields map.
@@ -409,7 +374,7 @@ public interface IColony
     @Nullable
     Field getFreeField(String owner);
 
-    IBuilding getBuilding(BlockPos pos);
+    B getBuilding(BlockPos pos);
 
     /**
      * Get citizen by ID.
@@ -425,11 +390,11 @@ public interface IColony
      *
      * @param buildingId ID (coordinates) of the building to get.
      * @param type       Type of building.
-     * @param <B>        Building class.
+     * @param <S>        Building class.
      * @return the building with the specified id.
      */
     @Nullable
-    <B extends IBuilding> B getBuilding(BlockPos buildingId, @NotNull Class<B> type);
+    <S extends B> S getBuilding(BlockPos buildingId, @NotNull Class<S> type);
 
     /**
      * Creates a field from a tile entity and adds it to the colony.
@@ -448,7 +413,7 @@ public interface IColony
      * @return AbstractBuilding that was created and added.
      */
     @Nullable
-    IBuilding addNewBuilding(@NotNull TileEntityColonyBuilding tileEntity);
+    B addNewBuilding(@NotNull TileEntityColonyBuilding tileEntity);
 
     /**
      * Recalculates how many citizen can be in the colony.
@@ -460,7 +425,7 @@ public interface IColony
      *
      * @param building AbstractBuilding to remove.
      */
-    void removeBuilding(@NotNull IBuilding building);
+    void removeBuilding(@NotNull B building);
 
     /**
      * Getter which checks if jobs should be manually allocated.

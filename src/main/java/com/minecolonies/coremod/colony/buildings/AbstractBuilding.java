@@ -11,7 +11,6 @@ import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.blocks.*;
-import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView;
@@ -740,12 +739,8 @@ public abstract class AbstractBuilding implements IBuilding
         return colony;
     }
 
-    /**
-     * Method to remove a citizen.
-     *
-     * @param citizen Citizen to be removed.
-     */
-    public void removeCitizen(final CitizenData citizen)
+    @Override
+    public void removeCitizen(final ICitizenData citizen)
     {
         // Can be overridden by other buildings.
     }
@@ -1559,6 +1554,12 @@ public abstract class AbstractBuilding implements IBuilding
         public boolean hasWorkOrder()
         {
             return workOrderLevel != NO_WORK_ORDER;
+        }
+
+        @Override
+        public void removeCitizen(final ICitizenData citizen)
+        {
+
         }
 
         /**
