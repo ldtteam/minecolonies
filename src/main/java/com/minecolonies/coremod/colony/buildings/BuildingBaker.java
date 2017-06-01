@@ -7,13 +7,17 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
+import com.minecolonies.coremod.entity.ai.citizen.baker.BakerRecipes;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakingProduct;
 import com.minecolonies.coremod.entity.ai.citizen.baker.ProductState;
+import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
+import com.minecolonies.coremod.entity.ai.util.RecipeStorage;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFurnace;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
@@ -80,9 +84,19 @@ public class BuildingBaker extends AbstractBuildingWorker
     private static final int WAIT_TICKS = 160;
 
     /**
+     * Always try to keep at least 2 stacks of wheat in the inventory and in the workers chest.
+     */
+    private static final int WHEAT_TO_KEEP = 128;
+
+    /**
      * Ticks past since the last check.
      */
     private int ticksPassed = 0;
+
+    /**
+     * List of items the worker should keep.
+     */
+    private final Map<ItemStorage, Integer> keepX = new HashMap<>();
 
     /**
      * Constructor for the baker building.
@@ -93,6 +107,27 @@ public class BuildingBaker extends AbstractBuildingWorker
     public BuildingBaker(final Colony c, final BlockPos l)
     {
         super(c, l);
+        for(final RecipeStorage storage: BakerRecipes.getRecipes())
+        {
+            for(final ItemStack stack: storage.getInput())
+            {
+                keepX.put(new ItemStorage(stack.getItem(), stack.getItemDamage(), 0, false), WHEAT_TO_KEEP);
+            }
+        }
+    }
+
+
+    /**
+     * Override this method if you want to keep an amount of items in inventory and at the workers chest.
+     * When the inventory is full, everything get's dumped into the building chest.
+     * But you can use this method to hold some stacks back.
+     *
+     * @return a list of objects which should be kept.
+     */
+    @Override
+    public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
+    {
+        return keepX;
     }
 
     /**

@@ -86,6 +86,9 @@ public class BuildingFarmer extends AbstractBuildingWorker
      */
     private static final int SEEDS_TO_KEEP = 64;
 
+    /**
+     * List of items the farmer should keep.
+     */
     private final Map<ItemStorage, Integer> keepX = new HashMap<>();
 
     /**

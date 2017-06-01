@@ -1162,21 +1162,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     public boolean checkOrRequestItems(@Nullable final ItemStack... items)
     {
-        return checkOrRequestItems(true, true, items);
-    }
-
-    /**
-     * Require that items are in the workers inventory.
-     * This safeguard ensures you have said items before you execute a task.
-     * Please stop execution on false returned.
-     *
-     * @param useItemDamage use item damage?
-     * @param items the items needed
-     * @return false if they are in inventory
-     */
-    public boolean checkOrRequestItems(final boolean useItemDamage, @Nullable final ItemStack... items)
-    {
-        return checkOrRequestItems(useItemDamage, true, items);
+        return checkOrRequestItems(true, items);
     }
 
     /**
@@ -1185,11 +1171,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Please stop execution on false returned.
      *
      * @param useItemDamage compare the itemDamage of the values.
-     * @param waitForRequest wait for the request.
      * @param items         the items needed
      * @return false if they are in inventory
      */
-    public boolean checkOrRequestItems(final boolean useItemDamage, final boolean waitForRequest, @Nullable final ItemStack... items)
+    public boolean checkOrRequestItems(final boolean useItemDamage, @Nullable final ItemStack... items)
     {
         if (items == null)
         {
@@ -1203,21 +1188,63 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             {
                 continue;
             }
-            final int countOfItem;
-            if (useItemDamage)
+            final int itemDamage = useItemDamage ? stack.getItemDamage() : -1;
+            final int countOfItem = worker.getItemCountInInventory(stack.getItem(), itemDamage);
+
+            if (countOfItem < 1)
             {
-                countOfItem = worker.getItemCountInInventory(stack.getItem(), stack.getItemDamage());
+                final int itemsLeft = stack.stackSize - countOfItem;
+                @NotNull final ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft, itemDamage);
+                getOwnBuilding().addNeededItems(requiredStack);
+                allClear = false;
             }
             else
             {
-                countOfItem = worker.getItemCountInInventory(stack.getItem(), -1);
+                getOwnBuilding().clearNeededItems();
             }
-            if (countOfItem < 1 || (countOfItem < tempStack.stackSize && !waitForRequest))
+        }
+        if (allClear)
+        {
+            return false;
+        }
+        itemsNeeded.clear();
+        Collections.addAll(itemsNeeded, items);
+        this.waitForRequest = waitForRequest;
+        return true;
+    }
+
+    /**
+     * Require that items are in the workers inventory.
+     * This safeguard ensures you have said items before you execute a task.
+     * Please stop execution on false returned.
+     *
+     * @param useItemDamage compare the itemDamage of the values.
+     * @param waitForRequest wait for the request.
+     * @param items         the items needed
+     * @return false if they are in inventory
+     */
+    public boolean checkOrRequestItemsAsynch(final boolean useItemDamage, @Nullable final ItemStack... items)
+    {
+        if (items == null)
+        {
+            return false;
+        }
+        boolean allClear = true;
+        for (final @Nullable ItemStack tempStack : items)
+        {
+            final ItemStack stack = tempStack.copy();
+            if (stack == null || stack.getItem() == null)
+            {
+                continue;
+            }
+            final int itemDamage = useItemDamage ? stack.getItemDamage() : -1;
+            final int countOfItem = worker.getItemCountInInventory(stack.getItem(), itemDamage);
+            if (countOfItem < tempStack.stackSize)
             {
                 final int itemsLeft = stack.stackSize - countOfItem;
-                @NotNull final ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft, -1);
+                @NotNull final ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft, itemDamage);
 
-                if(!requiredStack.isItemEqual(getOwnBuilding().getFirstNeededItem()))
+                if(!isInNeededItems(tempStack))
                 {
                     getOwnBuilding().addNeededItems(requiredStack);
                 }
@@ -1234,8 +1261,25 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
         itemsNeeded.clear();
         Collections.addAll(itemsNeeded, items);
-        this.waitForRequest = waitForRequest;
+        this.waitForRequest = true;
         return true;
+    }
+
+    /**
+     * Check if a certain itemStack is already in the neededItems list.
+     * @param tempStack the stack to test for.
+     * @return true if so.
+     */
+    private boolean isInNeededItems(final ItemStack tempStack)
+    {
+        for(final ItemStack compareStack : getOwnBuilding().getCopyOfNeededItems())
+        {
+            if(compareStack.isItemEqual(tempStack))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
