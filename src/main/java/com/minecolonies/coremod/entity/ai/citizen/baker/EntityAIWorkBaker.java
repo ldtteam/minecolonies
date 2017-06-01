@@ -282,7 +282,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
             list.add(copy);
         }
 
-        if (checkOrRequestItems(true, false, list.toArray(new ItemStack[list.size()])))
+        if (checkOrRequestItemsAsynch(true, list.toArray(new ItemStack[list.size()])))
         {
             tryToTakeFromListOrRequest(list);
             return getState();
@@ -372,7 +372,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         {
             final List<RecipeStorage> recipes = BakerRecipes.getRecipes();
             final List<ItemStack> lastRecipe = recipes.get(recipes.size() - 1).getInput();
-            if(checkOrRequestItems(true, false, lastRecipe.toArray(new ItemStack[lastRecipe.size()])))
+            if(checkOrRequestItemsAsynch(true, lastRecipe.toArray(new ItemStack[lastRecipe.size()])))
             {
                 tryToTakeFromListOrRequest(lastRecipe);
             }
