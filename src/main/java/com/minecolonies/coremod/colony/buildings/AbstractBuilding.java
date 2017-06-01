@@ -1039,16 +1039,6 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Check for the required tool and return the describing string.
-     *
-     * @return the string of the required tool.
-     */
-    public IToolType getRequiredTool()
-    {
-        return neededTool;
-    }
-
-    /**
      * Try to transfer a stack to one of the inventories of the building.
      *
      * @param stack the stack to transfer.

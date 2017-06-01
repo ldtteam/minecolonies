@@ -427,7 +427,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private boolean hasTools(@NotNull final AbstractBuilding buildingToDeliver)
     {
-        final IToolType requiredTool = buildingToDeliver.getRequiredTool();
+        final IToolType requiredTool = buildingToDeliver.getNeedsTool();
         if (requiredTool == ToolType.NONE)
         {
             return true;
@@ -466,7 +466,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
         else if (itemsToDeliver.isEmpty())
         {
-            final IToolType toolType = buildingToDeliver.getRequiredTool();
+            final IToolType toolType = buildingToDeliver.getNeedsTool();
             position = wareHouse.getTileEntity()
                          .getPositionOfChestWithTool(toolType,
                            buildingToDeliver.getNeededToolLevel(),
@@ -540,7 +540,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 itemsToDeliver.clear();
                 return START_WORKING;
             }
-            else if (itemsToDeliver.isEmpty() && !isToolInTileEntity((TileEntityChest) tileEntity, buildingToDeliver.getRequiredTool(), TOOL_LEVEL_WOOD_OR_GOLD,
+            else if (itemsToDeliver.isEmpty() && !isToolInTileEntity((TileEntityChest) tileEntity, buildingToDeliver.getNeedsTool(), TOOL_LEVEL_WOOD_OR_GOLD,
                     buildingToDeliver.getBuildingLevel()))
             {
                 ((BuildingDeliveryman) getOwnBuilding()).setBuildingToDeliver(null);

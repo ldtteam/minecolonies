@@ -192,7 +192,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             }
         }
 
-        final IToolType tool = buildingEntry.getRequiredTool();
+        final IToolType tool = buildingEntry.getNeedsTool();
         if(tool != ToolType.NONE)
         {
             if(isToolInHut(tool, buildingEntry))
