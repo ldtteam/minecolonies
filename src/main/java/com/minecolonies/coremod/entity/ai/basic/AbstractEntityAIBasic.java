@@ -620,8 +620,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         final IToolType toolType = worker.getWorkBuilding().getNeedsTool();
         if (toolType != ToolType.NONE && checkForToolOrWeapon(toolType))
         {
-                delay += DELAY_RECHECK;
-                return NEEDS_TOOL;
+            delay += DELAY_RECHECK;
+            return NEEDS_TOOL;
         }
         return IDLE;
     }
@@ -1112,8 +1112,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             if (level >= required && level < bestLevel
                 && (toolType == ToolType.NONE || ItemStackUtils.verifyToolLevel(item, level, required, maxToolLevel)))
             {
-                    bestSlot = i;
-                    bestLevel = level;
+                bestSlot = i;
+                bestLevel = level;
             }
         }
 
