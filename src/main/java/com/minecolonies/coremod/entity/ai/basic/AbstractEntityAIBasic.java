@@ -1216,10 +1216,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Require that items are in the workers inventory.
      * This safeguard ensures you have said items before you execute a task.
-     * Please stop execution on false returned.
+     * This doesn't stop execution on false returned.
+     * It does request asynchronously and make sure nothing is added twice.
      *
      * @param useItemDamage compare the itemDamage of the values.
-     * @param waitForRequest wait for the request.
      * @param items         the items needed
      * @return false if they are in inventory
      */
