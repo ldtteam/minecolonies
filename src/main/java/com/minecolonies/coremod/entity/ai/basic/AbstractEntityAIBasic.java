@@ -618,13 +618,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private AIState waitForToolOrWeapon()
     {
         final IToolType toolType = worker.getWorkBuilding().getNeedsTool();
-        if (toolType != ToolType.NONE)
+        if (toolType != ToolType.NONE && checkForToolOrWeapon(toolType))
         {
-            if (checkForToolOrWeapon(toolType))
-            {
                 delay += DELAY_RECHECK;
                 return NEEDS_TOOL;
-            }
         }
         return IDLE;
     }
@@ -757,12 +754,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             for (final BlockPos pos : building.getAdditionalCountainers())
             {
                 final TileEntity entity = world.getTileEntity(pos);
-                if (entity instanceof TileEntityChest)
+                if (entity instanceof TileEntityChest && isToolInTileEntity((TileEntityChest) entity, toolType, minimalLevel, getOwnBuilding().getMaxToolLevel()))
                 {
-                    if (isToolInTileEntity((TileEntityChest) entity, toolType, minimalLevel, getOwnBuilding().getMaxToolLevel()))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
         }
@@ -1115,13 +1109,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             final ItemStack item = inventory.getStackInSlot(i);
             final int level = ItemStackUtils.getMiningLevel(item, toolType);
-            if (level >= required && level < bestLevel)
+            if (level >= required && level < bestLevel
+                && (toolType == ToolType.NONE || ItemStackUtils.verifyToolLevel(item, level, required, maxToolLevel)))
             {
-                if (toolType == ToolType.NONE || ItemStackUtils.verifyToolLevel(item, level, required, maxToolLevel))
-                {
                     bestSlot = i;
                     bestLevel = level;
-                }
             }
         }
 

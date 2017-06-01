@@ -3,7 +3,6 @@ package com.minecolonies.coremod.entity.ai.citizen.deliveryman;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.Utils;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.*;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
