@@ -5,7 +5,6 @@ import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
