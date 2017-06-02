@@ -397,3 +397,7 @@ com.minecolonies.coremod.item.permissionscepter.addposition.success=Added locati
 com.minecolonies.coremod.item.permissionscepter.removeblock.success=Removed block '%s'
 com.minecolonies.coremod.item.permissionscepter.removelocation.success=Removed location '%d %d %d'
 tile.blockHut.warehouse.limit=The amount of warehouses is limited to 1 per colony.
+
+com.minecolonies.coremod.gui.workerHuts.baker=Baker
+com.minecolonies.coremod.baker.noFurnace=My building doesn't have any furnaces, please repair it.
+com.minecolonies.coremod.job.baker=Baker
