@@ -1209,7 +1209,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
         itemsNeeded.clear();
         Collections.addAll(itemsNeeded, items);
-        this.waitForRequest = waitForRequest;
         return true;
     }
 
