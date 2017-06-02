@@ -265,5 +265,30 @@ public enum AIState
     /**
      * Dump inventory over chests in warehouse.
      */
-    DUMPING;
+    DUMPING,
+
+ /*
+###Baker###
+    */
+
+    /**
+     * Knead the dough.
+     */
+    BAKER_KNEADING,
+
+    /**
+     * Bake the dough.
+     */
+    BAKER_BAKING,
+
+    /**
+     * Finish up the product.
+     */
+    BAKER_FINISHING,
+
+    /**
+     * Take the product out of the oven.
+     */
+    BAKER_TAKE_OUT_OF_OVEN
+
 }

@@ -19,7 +19,6 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Objects;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
@@ -174,6 +173,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         );
         worker.setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
                 + CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma());
+        worker.setCanPickUpLoot(true);
     }
 
     /**
@@ -623,7 +623,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     {
         if (getItemsForPickUp() == null)
         {
-            searchForItems();
+            fillItemsList();
         }
 
         if (getItemsForPickUp() != null && !getItemsForPickUp().isEmpty())

@@ -1,5 +1,8 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.colony.permissions.Player;
+import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.Label;
@@ -10,9 +13,6 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.WorkOrderView;
 import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
-import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.colony.permissions.Player;
-import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.network.messages.*;
 import com.minecolonies.coremod.util.BlockPosUtil;

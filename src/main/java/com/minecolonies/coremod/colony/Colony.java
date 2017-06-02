@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.colony;
 
+import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.buildings.*;
 import com.minecolonies.coremod.colony.permissions.Permissions;
-import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.EntityCitizen;

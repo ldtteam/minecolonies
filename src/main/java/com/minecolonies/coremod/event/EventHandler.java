@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.event;
 
+import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockHutTownHall;
 import com.minecolonies.coremod.blocks.BlockHutWareHouse;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.IColony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Log;

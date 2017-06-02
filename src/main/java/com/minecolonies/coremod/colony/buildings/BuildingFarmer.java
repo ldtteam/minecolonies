@@ -15,6 +15,7 @@ import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.network.messages.AssignFieldMessage;
 import com.minecolonies.coremod.network.messages.AssignmentModeMessage;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
+import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Utils;
 import io.netty.buffer.ByteBuf;
@@ -85,6 +86,9 @@ public class BuildingFarmer extends AbstractBuildingWorker
      */
     private static final int SEEDS_TO_KEEP = 64;
 
+    /**
+     * List of items the farmer should keep.
+     */
     private final Map<ItemStorage, Integer> keepX = new HashMap<>();
 
     /**
@@ -105,7 +109,6 @@ public class BuildingFarmer extends AbstractBuildingWorker
         keepX.put(new ItemStorage(stackCarrot.getItem(), stackCarrot.getItemDamage(), 0, false), SEEDS_TO_KEEP);
         keepX.put(new ItemStorage(stackPotatoe.getItem(), stackPotatoe.getItemDamage(), 0, false), SEEDS_TO_KEEP);
         keepX.put(new ItemStorage(stackReed.getItem(), stackReed.getItemDamage(), 0, false), SEEDS_TO_KEEP);
-
     }
 
     /**
@@ -191,7 +194,16 @@ public class BuildingFarmer extends AbstractBuildingWorker
     @Override
     public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
     {
-        return keepX;
+        final Map<ItemStorage, Integer> toKeep = new HashMap(keepX);
+        for(final Field field: farmerFields)
+        {
+            if(!InventoryUtils.isItemStackEmpty(field.getSeed()))
+            {
+                final ItemStack seedStack = field.getSeed();
+                toKeep.put(new ItemStorage(seedStack.getItem(), seedStack.getItemDamage(), 0, false), SEEDS_TO_KEEP);
+            }
+        }
+        return toKeep;
     }
 
     @NotNull

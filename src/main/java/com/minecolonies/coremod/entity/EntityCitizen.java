@@ -1,5 +1,8 @@
 package com.minecolonies.coremod.entity;
 
+import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.colony.permissions.Player;
+import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.*;
@@ -7,9 +10,6 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
-import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.colony.permissions.Player;
-import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.minimal.*;
@@ -262,7 +262,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private BlockPos currentPosition = null;
 
     /**
-     * Time the entitiy is at the same position already.
+     * Time the entity is at the same position already.
      */
     private int stuckTime = 0;
 

@@ -7,8 +7,8 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.entity.ai.util.AIState;
@@ -40,7 +40,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
-import static com.minecolonies.coremod.util.constants.TranslationConstants.*;
+import static com.minecolonies.coremod.util.constants.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE;
+import static com.minecolonies.coremod.util.constants.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART;
 
 /**
  * AI class for the builder.

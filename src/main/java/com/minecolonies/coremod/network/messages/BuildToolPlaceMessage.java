@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockHutTownHall;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.event.EventHandler;

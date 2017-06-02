@@ -23,7 +23,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Predicate;
 
-import static com.minecolonies.coremod.util.constants.TranslationConstants.*;
+import static com.minecolonies.coremod.util.constants.TranslationConstants.COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL;
 
 /**
  * Class which handles the tileEntity of our colonyBuildings.

@@ -284,6 +284,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     /**
      * Search for all items around the worker.
      * and store them in the items list.
+     * @return the list of items.
      */
     public List<BlockPos> searchForItems()
     {

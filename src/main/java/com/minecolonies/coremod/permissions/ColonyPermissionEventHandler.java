@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.permissions;
 
+import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
-import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -16,7 +16,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemPotion;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
