@@ -76,7 +76,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
 
     public boolean canPlayerUseCommand(final EntityPlayer player, final Commands theCommand, final int colonyId)
     {
-        if (isPlayerOpped(player, theCommand.toString()))
+        if (isPlayerOpped(player))
         {
             return true;
         }
@@ -94,11 +94,10 @@ public abstract class AbstractSingleCommand implements ISubCommand
      * Will check to see if play is Opped for the given command name.
      *
      * @param sender  to check the player using the command.
-     * @param cmdName the name of the command to be checked.
      * @return boolean
      */
     @NotNull
-    public boolean isPlayerOpped(@NotNull final ICommandSender sender, final String cmdName)
+    public static boolean isPlayerOpped(@NotNull final ICommandSender sender)
     {
         if (sender instanceof EntityPlayer)
         {
