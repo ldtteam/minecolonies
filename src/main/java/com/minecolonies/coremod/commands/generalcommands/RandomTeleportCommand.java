@@ -79,7 +79,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand
         }
 
         //If the arguments aren't empty, the sender probably wants to teleport another player.
-        if (args.length != 0 && isPlayerOpped(sender, "ctp"))
+        if (args.length != 0 && isPlayerOpped(sender))
         {
             final World world = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld();
             playerToTeleport =

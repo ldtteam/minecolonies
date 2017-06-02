@@ -39,7 +39,7 @@ public class BackupCommand extends AbstractSingleCommand
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
 
-        if (isPlayerOpped(sender, String.valueOf(MC_BACKUP)))
+        if (isPlayerOpped(sender))
         {
             server.addScheduledTask(() -> {
                 if (ColonyManager.backupColonyData())

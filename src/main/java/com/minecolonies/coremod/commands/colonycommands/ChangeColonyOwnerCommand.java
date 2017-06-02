@@ -57,7 +57,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
             return;
         }
 
-        if (!isPlayerOpped(sender, String.valueOf(CHANGE_COLONY_OWNER)))
+        if (!isPlayerOpped(sender))
         {
             return;
         }
