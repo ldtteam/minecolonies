@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class AbstractSingleCommand implements ISubCommand
 {
-
     public static final String NOT_PERMITTED = "You are not allowed to do that!";
     private final String[] parents;
 
@@ -88,7 +87,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
             return false;
         }
         return canCommandSenderUseCommand(theCommand)
-                 && canRankUseCommand(chkColony, player);
+                && canRankUseCommand(chkColony, player);
     }
 
     /**
@@ -104,7 +103,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
         if (sender instanceof EntityPlayer)
         {
             return FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList()
-                     .canSendCommands(((EntityPlayer) sender).getGameProfile());
+                    .canSendCommands(((EntityPlayer) sender).getGameProfile());
         }
         return true;
     }
