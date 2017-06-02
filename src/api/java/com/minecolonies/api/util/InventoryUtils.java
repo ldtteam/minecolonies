@@ -1667,7 +1667,7 @@ public class InventoryUtils
         while(i < list.size() && tries < maxTries)
         {
             final ItemStack stack = list.get(i);
-            int slot = findFirstSlotInItemHandlerNotEmptyWith(handler, stack::isItemEqual);
+            final int slot = findFirstSlotInItemHandlerNotEmptyWith(handler, stack::isItemEqual);
 
             if(slot == -1)
             {
@@ -1676,7 +1676,7 @@ public class InventoryUtils
                 continue;
             }
 
-            int removedSize = handler.extractItem(slot, stack.getCount(), false).getCount();
+            final int removedSize = handler.extractItem(slot, stack.getCount(), false).getCount();
 
             if(removedSize == stack.getCount())
             {
@@ -1700,7 +1700,7 @@ public class InventoryUtils
      */
     public static boolean removeStacksFromProvider(final ICapabilityProvider provider, final List<ItemStack> input)
     {
-        for (IItemHandler handler : getItemHandlersFromProvider(provider))
+        for (final IItemHandler handler : getItemHandlersFromProvider(provider))
         {
             if(!removeStacksFromItemHandler(handler, input))
             {
