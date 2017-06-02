@@ -136,7 +136,7 @@ public class BakingProduct
         {
             final ProductState state = ProductState.values()[productCompound.getInteger(TAG_STATE)];
             final int recipeId = productCompound.getInteger(TAG_RECIPE_ID);
-            final BakingProduct bakingProduct = new BakingProduct(ItemStack.loadItemStackFromNBT(productCompound), recipeId);
+            final BakingProduct bakingProduct = new BakingProduct(new ItemStack(productCompound), recipeId);
             bakingProduct.setState(state);
             return bakingProduct;
         }

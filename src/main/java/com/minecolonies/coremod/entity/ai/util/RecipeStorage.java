@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.entity.ai.util;
 
-import com.minecolonies.coremod.util.InventoryUtils;
+import com.minecolonies.api.util.InventoryUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -100,7 +100,7 @@ public class RecipeStorage
     {
         for(final ItemStack stack: input)
         {
-            int amountNeeded = stack.stackSize;
+            int amountNeeded = stack.getCount();
             boolean hasStack = false;
             for(final IItemHandler handler: inventories)
             {
