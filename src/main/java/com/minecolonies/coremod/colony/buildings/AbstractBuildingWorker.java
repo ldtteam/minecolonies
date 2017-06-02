@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.colony.buildings;
 
+
+import  com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
@@ -13,6 +15,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_HAND;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_MAXIMUM;
 
@@ -82,6 +85,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
             {
                 tempCitizen.setLastJob(getJobName());
             }
+            setNeedsTool(ToolType.NONE, TOOL_LEVEL_HAND);
         }
 
         worker = citizen;
