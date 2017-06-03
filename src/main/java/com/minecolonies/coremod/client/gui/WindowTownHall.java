@@ -519,7 +519,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      * @param Second
      * @return
      */
-    private int returnSecondOrFirst(WorkOrderView First, WorkOrderView Second)
+    private int returnSecondOrFirst(final WorkOrderView First, final WorkOrderView Second)
     {
             return Second.getPriority() < First.getPriority() ? -1 : 0;
     }
