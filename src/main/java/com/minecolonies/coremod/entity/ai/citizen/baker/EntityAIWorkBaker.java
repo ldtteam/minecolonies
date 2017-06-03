@@ -282,35 +282,19 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
             list.add(copy);
         }
 
-        if (checkOrRequestItemsAsynch(true, list.toArray(new ItemStack[list.size()])))
+        final ItemStack[] arrayToRequestAndRetrieve = list.toArray(new ItemStack[list.size()]);
+        if (checkOrRequestItemsAsynch(true, arrayToRequestAndRetrieve))
         {
-            tryToTakeFromListOrRequest(list);
+            tryToTakeFromListOrRequest(shouldRequest(), arrayToRequestAndRetrieve);
             return getState();
         }
 
         InventoryUtils.removeStacksFromItemHandler(new InvWrapper(worker.getInventoryCitizen()), list);
         currentBakingProduct.nextState();
-
         getOwnBuilding().removeFromTasks(ProductState.UNCRAFTED, currentBakingProduct);
         getOwnBuilding().addToTasks(ProductState.RAW, currentBakingProduct);
 
         return getState();
-    }
-
-    /**
-     * Try to take a list of items from the hut chest and request if neccessary.
-     * @param list the list to retrieve.
-     */
-    private void tryToTakeFromListOrRequest(final List<ItemStack> list)
-    {
-        for (final @Nullable ItemStack tempStack : list)
-        {
-            if (InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), tempStack::isItemEqual) < tempStack.stackSize
-                    && !isInHut(tempStack) && shouldRequest())
-            {
-                chatSpamFilter.requestTextStringWithoutSpam(tempStack.getDisplayName());
-            }
-        }
     }
 
     /**
@@ -372,9 +356,10 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         {
             final List<RecipeStorage> recipes = BakerRecipes.getRecipes();
             final List<ItemStack> lastRecipe = recipes.get(recipes.size() - 1).getInput();
-            if(checkOrRequestItemsAsynch(true, lastRecipe.toArray(new ItemStack[lastRecipe.size()])))
+            final ItemStack[] arrayToRequestAndRetrieve = lastRecipe.toArray(new ItemStack[lastRecipe.size()]);
+            if(checkOrRequestItemsAsynch(true, arrayToRequestAndRetrieve))
             {
-                tryToTakeFromListOrRequest(lastRecipe);
+                tryToTakeFromListOrRequest(shouldRequest(), arrayToRequestAndRetrieve);
             }
             setDelay(UNABLE_TO_CRAFT_DELAY);
             return PREPARING;

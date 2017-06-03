@@ -217,16 +217,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             }
             if (!walkToBuilding())
             {
-                if (isInHut(seeds))
-                {
-                    requestSeeds = false;
-                    isInHut(seeds);
-                }
+                checkOrRequestItemsAsynch(true, seeds);
+                requestSeeds = tryToTakeFromListOrRequest(requestSeeds, seeds);
                 shouldTryToGetSeed = requestSeeds;
-                if (requestSeeds)
-                {
-                    chatSpamFilter.talkWithoutSpam("entity.farmer.NeedSeed", seeds.getItem().getItemStackDisplayName(seeds));
-                }
             }
         }
 
@@ -653,7 +646,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         {
             if (containsPlants(field))
             {
-                field.setNeedsWork(false);
+                field.setNeedsWork(true);
                 return AIState.PREPARING;
             }
             else

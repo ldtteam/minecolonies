@@ -1265,6 +1265,25 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
+     * Try to take a list of items from the hut chest and request if neccessary.
+     * @param list the list of items to retrieve.
+     * @param shouldRequest determines if the request to the player should be made.
+     */
+    public boolean tryToTakeFromListOrRequest(final boolean shouldRequest, final ItemStack...list)
+    {
+        for (final @Nullable ItemStack tempStack : list)
+        {
+            if (InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), tempStack::isItemEqual) < tempStack.stackSize
+                    && !isInHut(tempStack) && shouldRequest)
+            {
+                chatSpamFilter.requestTextStringWithoutSpam(tempStack.getDisplayName());
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Check if a certain itemStack is already in the neededItems list.
      * @param tempStack the stack to test for.
      * @return true if so.
