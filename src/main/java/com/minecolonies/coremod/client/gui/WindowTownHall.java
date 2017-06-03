@@ -19,7 +19,6 @@ import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
 import com.minecolonies.coremod.network.messages.*;
 import net.minecraft.block.Block;
 import net.minecraft.util.math.BlockPos;
-import org.apache.http.util.LangUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
