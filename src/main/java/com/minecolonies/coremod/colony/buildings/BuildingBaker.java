@@ -379,7 +379,8 @@ public class BuildingBaker extends AbstractBuildingWorker
             return;
         }
 
-        for(final Map.Entry<BlockPos, BakingProduct> entry: this.getFurnacesWithProduct().entrySet())
+        final List<Map.Entry<BlockPos, BakingProduct>> copyOfList = new ArrayList<>(this.getFurnacesWithProduct().entrySet());
+        for(final Map.Entry<BlockPos, BakingProduct> entry: copyOfList)
         {
             final IBlockState furnace = worldObj.getBlockState(entry.getKey());
             if(!(furnace.getBlock() instanceof BlockFurnace))
