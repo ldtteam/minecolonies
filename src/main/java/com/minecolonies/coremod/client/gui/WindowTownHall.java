@@ -19,6 +19,7 @@ import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
 import com.minecolonies.coremod.network.messages.*;
 import net.minecraft.block.Block;
 import net.minecraft.util.math.BlockPos;
+import org.apache.http.util.LangUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -180,7 +181,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * Id of the current specializations label in the GUI.
      */
-    private static final String HAPPYNESS_LABEL = "happiness";
+    private static final String HAPPINESS_LABEL = "happiness";
 
     /**
      * Id of the total citizens label in the GUI.
@@ -201,6 +202,31 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      * Id of the total deliverymen label in the GUI.
      */
     private static final String DELIVERY_MAN_LABEL = "deliverymen";
+
+    /**
+     * Id of the total miners label in the GUI.
+     */
+    private static final String MINERS_LABEL = "miners";
+
+    /**
+     * Id of the total fishermen label in the GUI.
+     */
+    private static final String FISHERMEN_LABEL = "fishermen";
+
+    /**
+     * Id of the total guards label in the GUI.
+     */
+    private static final String GUARDS_LABEL = "Guards";
+
+    /**
+     * Id of the total lumberjacks label in the GUI.
+     */
+    private static final String LUMBERJACKS_LABEL = "lumberjacks";
+
+    /**
+     * Id of the total farmers label in the GUI.
+     */
+    private static final String FARMERS_LABEL = "farmers";
 
     /**
      * Id of the total assignee label in the GUI.
@@ -236,6 +262,31 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      * The deliverymen job description string.
      */
     private static final String DELIVERYMEN_JOB = "com.minecolonies.coremod.job.Deliveryman";
+
+    /**
+     * The Miners job description string.
+     */
+    private static final String MINER_JOB = "com.minecolonies.coremod.job.Miner";
+
+    /**
+     * The Fishermans job description string.
+     */
+    private static final String FISHERMAN_JOB = "com.minecolonies.coremod.job.Fisherman";
+
+    /**
+     * The Guards job description string.
+     */
+    private static final String GUARD_JOB = "com.minecolonies.coremod.job.Guard";
+
+    /**
+     * The Lumberjacks job description string.
+     */
+    private static final String LUMBERJACK_JOB = "com.minecolonies.coremod.job.Lumberjack";
+
+    /**
+     * The Farmers job description string.
+     */
+    private static final String FARMER_JOB = "com.minecolonies.coremod.job.Farmer";
 
     /**
      * The button to go to the previous permission settings page.
@@ -790,6 +841,11 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         int workers = 0;
         int builders = 0;
         int deliverymen = 0;
+        int miners = 0;
+        int fishermen = 0;
+        int guards = 0;
+        int lumberjacks = 0;
+        int farmers = 0;
 
         for (@NotNull final CitizenDataView citizen : citizens)
         {
@@ -801,6 +857,21 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 case DELIVERYMEN_JOB:
                     deliverymen++;
                     break;
+                case MINER_JOB:
+                    miners++;
+                    break;
+                case FISHERMAN_JOB:
+                    fishermen++;
+                    break;
+                case LUMBERJACK_JOB:
+                    lumberjacks++;
+                    break;
+                case FARMER_JOB:
+                    farmers++;
+                    break;
+                case GUARD_JOB:
+                    guards++;
+                    break;
                 case "":
                     break;
                 default:
@@ -808,19 +879,30 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             }
         }
 
-        workers += deliverymen + builders;
+        workers += deliverymen + builders + miners + fishermen + lumberjacks + farmers + guards;
 
         final String numberOfCitizens =
           LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.totalCitizens", citizensSize, townHall.getColony().getMaxCitizens());
         final String numberOfUnemployed = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.unemployed", citizensSize - workers);
         final String numberOfBuilders = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.builders", builders);
         final String numberOfDeliverymen = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.deliverymen", deliverymen);
+        final String numberOfMiners = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.miners", miners);
+        final String numberOfFishermen = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.fishermen", fishermen);
+        final String numberOfGuards = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.Guards", guards);
+        final String numberOfLumberjacks = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.lumberjacks", lumberjacks);
+        final String numberOfFarmers = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.farmers", farmers);
+        final int roundedHappiness = (int) Math.round(building.getColony().getOverallHappiness());
 
-        findPaneOfTypeByID(HAPPYNESS_LABEL, Label.class).setLabelText(Double.toString(building.getColony().getOverallHappiness()));
+        findPaneOfTypeByID(HAPPINESS_LABEL, Label.class).setLabelText(Integer.toString(roundedHappiness));
         findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText(numberOfCitizens);
         findPaneOfTypeByID(UNEMP_CITIZENS_LABEL, Label.class).setLabelText(numberOfUnemployed);
         findPaneOfTypeByID(BUILDERS_LABEL, Label.class).setLabelText(numberOfBuilders);
         findPaneOfTypeByID(DELIVERY_MAN_LABEL, Label.class).setLabelText(numberOfDeliverymen);
+        findPaneOfTypeByID(MINERS_LABEL, Label.class).setLabelText(numberOfMiners);
+        findPaneOfTypeByID(FISHERMEN_LABEL, Label.class).setLabelText(numberOfFishermen);
+        findPaneOfTypeByID(GUARDS_LABEL, Label.class).setLabelText(numberOfGuards);
+        findPaneOfTypeByID(LUMBERJACKS_LABEL, Label.class).setLabelText(numberOfLumberjacks);
+        findPaneOfTypeByID(FARMERS_LABEL, Label.class).setLabelText(numberOfFarmers);
     }
 
     /**
