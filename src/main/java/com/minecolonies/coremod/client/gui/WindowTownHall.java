@@ -513,13 +513,33 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     }
 
     /**
+     * Takes WorkOrderView and compares their priorities, and spits out a nummber accordingly for use in the sortWorkOrders function
+     *  - It's here because Sonar doesn't like nested ternary operations. I'd say it's ugly but it works - (i.e. feel free to replace it if it annoys you)
+     * @param First
+     * @param Second
+     * @return
+     */
+    private int returnSecondOrFirst(WorkOrderView First, WorkOrderView Second)
+    {
+            return Second.getPriority() < First.getPriority() ? -1 : 0;
+    }
+
+    /**
+     * Re-sorts the WorkOrders list according to the priorities inside the list.
+     */
+    private void sortWorkOrders()
+    {
+        workOrders.sort((first, second) -> second.getPriority() > first.getPriority() ? 1 : returnSecondOrFirst(first,second));
+    }
+
+    /**
      * Clears and resets all citizens.
      */
     private void updateWorkOrders()
     {
         workOrders.clear();
         workOrders.addAll(townHall.getColony().getWorkOrders());
-        workOrders.sort((first, second) -> second.getPriority() > first.getPriority() ? 1 : (second.getPriority() < first.getPriority() ? -1 : 0));
+        sortWorkOrders();
     }
 
     private void removeBlock(final Button button)
@@ -775,7 +795,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                     MineColonies.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, false, workOrder.getPriority()));
                 }
 
-                workOrders.sort((first, second) -> second.getPriority() > first.getPriority() ? 1 : (second.getPriority() < first.getPriority() ? -1 : 0));
+                sortWorkOrders();
                 window.findPaneOfTypeByID(LIST_WORKORDER, ScrollingList.class).refreshElementPanes();
                 return;
             }
