@@ -485,10 +485,15 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      */
     private void sortWorkOrders()
     {
-        workOrders.sort((first, second) ->
-            second.getPriority() > first.getPriority() ? 1 :
-                    (second.getPriority() < first.getPriority() ? -1 : 0)
-        );
+        workOrders.sort((first, second) -> {
+            if (second.getPriority() > first.getPriority() == true) {
+                return 1;
+            } else if (second.getPriority() < first.getPriority() == true) {
+                return -1;
+            } else {
+                return 0;
+            }
+    });
     }
 
     /**
@@ -870,7 +875,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         final String numberOfLumberjacks = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.lumberjacks", lumberjacks);
         final String numberOfFarmers = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.farmers", farmers);
 
-        DecimalFormat df = new DecimalFormat("#.#");
+        final DecimalFormat df = new DecimalFormat("#.#");
         df.setRoundingMode(RoundingMode.CEILING);
         final String roundedHappiness = df.format(building.getColony().getOverallHappiness());
 
