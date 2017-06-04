@@ -9,12 +9,7 @@ import java.util.UUID;
  * Internal implementation of the IToken interface.
  * Uses UUID to store the ID of the request.
  */
-public class StandardToken implements IToken<UUID, NBTTagCompound> {
-
-    ////// --------------------------- NBTConstants --------------------------- \\\\\\
-    private static final String NBT_MSB = "Id_MSB";
-    private static final String NBT_LSB = "Id_LSB";
-    ////// --------------------------- NBTConstants --------------------------- \\\\\\
+public class StandardToken implements IToken<UUID> {
 
     @NotNull
     private UUID id;
@@ -45,18 +40,8 @@ public class StandardToken implements IToken<UUID, NBTTagCompound> {
     }
 
     @Override
-    public NBTTagCompound serializeNBT() {
-        NBTTagCompound compound = new NBTTagCompound();
-
-        compound.setLong(NBT_LSB, id.getLeastSignificantBits());
-        compound.setLong(NBT_MSB, id.getMostSignificantBits());
-
-        return compound;
-    }
-
-    @Override
-    public void deserializeNBT(NBTTagCompound nbt) {
-        this.id = new UUID(nbt.getLong(NBT_MSB), nbt.getLong(NBT_LSB));
+    public int hashCode() {
+        return id.hashCode();
     }
 
     @Override
@@ -67,11 +52,6 @@ public class StandardToken implements IToken<UUID, NBTTagCompound> {
         IToken that = (IToken) o;
 
         return id.equals(that.getIdentifier());
-    }
-
-    @Override
-    public int hashCode() {
-        return id.hashCode();
     }
 
     @Override

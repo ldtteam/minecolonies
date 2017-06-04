@@ -19,6 +19,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.stats.Achievement;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +31,7 @@ import java.util.Set;
  * Interface of the Colony and ColonyView which will have to implement the
  * following methods.
  */
-public interface IColony<B extends IBuilding> extends ICombiningColonyEventHandler
+public interface IColony<B extends IBuilding> extends ICombiningColonyEventHandler, INBTSerializable<NBTTagCompound>
 {
     /**
      * Spawn a brand new Citizen.

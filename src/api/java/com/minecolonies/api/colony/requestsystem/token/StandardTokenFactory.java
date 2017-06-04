@@ -11,6 +11,13 @@ import java.util.UUID;
  */
 public class StandardTokenFactory implements ITokenFactory<UUID, StandardToken>
 {
+
+    ////// --------------------------- NBTConstants --------------------------- \\\\\\
+    private static final String NBT_MSB = "Id_MSB";
+    private static final String NBT_LSB = "Id_LSB";
+    ////// --------------------------- NBTConstants --------------------------- \\\\\\
+
+
     /**
      * Method to get the request type this factory can produce.
      *
@@ -43,7 +50,12 @@ public class StandardTokenFactory implements ITokenFactory<UUID, StandardToken>
     @NotNull
     @Override
     public NBTTagCompound serialize(@NotNull IFactoryController controller, @NotNull StandardToken request) {
-        return request.serializeNBT();
+        NBTTagCompound compound = new NBTTagCompound();
+
+        compound.setLong(NBT_LSB, request.getIdentifier().getLeastSignificantBits());
+        compound.setLong(NBT_MSB, request.getIdentifier().getMostSignificantBits());
+
+        return compound;
     }
 
     /**
@@ -56,9 +68,9 @@ public class StandardTokenFactory implements ITokenFactory<UUID, StandardToken>
     @NotNull
     @Override
     public StandardToken deserialize(@NotNull IFactoryController controller, @NotNull NBTTagCompound nbt) {
-        StandardToken token = new StandardToken();
-        token.deserializeNBT(nbt);
-        return token;
+        UUID id = new UUID(nbt.getLong(NBT_MSB), nbt.getLong(NBT_LSB));
+
+        return new StandardToken(id);
     }
 
     /**

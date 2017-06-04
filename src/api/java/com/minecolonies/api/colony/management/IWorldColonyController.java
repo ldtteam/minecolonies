@@ -6,7 +6,10 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.handlers.ICombiningColonyEventHandler;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,8 +18,14 @@ import java.util.UUID;
 /**
  * A {@link IWorldColonyController} is an Object that manages Colonies in a given World.
  */
-public interface IWorldColonyController<B extends IBuilding, C extends IColony> extends ICombiningColonyEventHandler
+public interface IWorldColonyController<B extends IBuilding, C extends IColony<B>> extends ICombiningColonyEventHandler, INBTSerializable<NBTTagCompound>
 {
+
+    /**
+     * Method to get the world that the controller belongs to.
+     * @return The world of the controller.
+     */
+    World getWorld();
 
     /**
      * Create a new Colony in the given world and at that location.

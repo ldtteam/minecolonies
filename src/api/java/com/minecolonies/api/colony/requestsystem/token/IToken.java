@@ -11,7 +11,7 @@ import net.minecraftforge.common.util.INBTSerializable;
  *
  * Also extends INBTSerializable to make writing the data to disk a lot easier.
  */
-public interface IToken<T, D extends NBTBase> extends INBTSerializable<D> {
+public interface IToken<T>{
 
     /**
      * The identifier used to represent a request.
