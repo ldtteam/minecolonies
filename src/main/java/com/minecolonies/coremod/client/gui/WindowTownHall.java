@@ -483,7 +483,8 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * Re-sorts the WorkOrders list according to the priorities inside the list.
      */
-    private void sortWorkOrders() {
+    private void sortWorkOrders()
+    {
         workOrders.sort((first, second) ->
         {
             if (second.getPriority() > first.getPriority())
