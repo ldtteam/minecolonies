@@ -640,7 +640,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
     protected boolean checkForToolOrWeapon(@NotNull final IToolType toolType, final int minimalLevel)
     {
-        Log.getLogger().info("checkForToolOrWeapon(" + toolType + ", " + minimalLevel+ ")");
         if (checkForNeededTool(toolType, minimalLevel))
         {
             getOwnBuilding().setNeedsTool(toolType, minimalLevel);
@@ -662,7 +661,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private boolean checkForNeededTool(@NotNull final IToolType toolType, final int minimalLevel)
     {
-        Log.getLogger().info("checkForNeededTool(" + toolType + ", " + minimalLevel+ ")");
         final int maxToolLevel = worker.getWorkBuilding().getMaxToolLevel();
         final InventoryCitizen inventory = worker.getInventoryCitizen();
         if (InventoryUtils.isToolInItemHandler(new InvWrapper(inventory), toolType, minimalLevel, maxToolLevel))
@@ -699,7 +697,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             else
             {
                 // tools at most ...
-                if (toolType.hasMaterial())
+                if (toolType.hasVariableMaterials())
                 {
                     chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_TOOLREQUEST, toolType.getName(), ItemStackUtils.swapToolGrade(maximumLevel));
                 }

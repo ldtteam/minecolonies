@@ -41,6 +41,16 @@ public final class ItemStackUtils
     public static final Predicate<ItemStack> NOT_EMPTY_PREDICATE = EMPTY_PREDICATE.negate();
 
     /**
+     * The compound tag for fortune enchantment id.
+     */
+    private static final String NBT_TAG_ENCHANT_ID = "id";
+
+    /**
+     * The compound tag for fortune enchantment level.
+     */
+    private static final String NBT_TAG_ENCHANT_LEVEL = "lvl";
+
+    /**
      * The compound id for fortune enchantment.
      */
     private static final int FORTUNE_ENCHANT_ID = 35;
@@ -173,7 +183,7 @@ public final class ItemStackUtils
                 level = getToolLevel(itemSword.getToolMaterialName());
             }
         }
-        else if (!toolType.hasMaterial())
+        else if (!toolType.hasVariableMaterials())
         {
             //We need a hut level 1 minimum
             level = 1;
@@ -224,10 +234,10 @@ public final class ItemStackUtils
 
             for (int i = 0; i < t.tagCount(); i++)
             {
-                final int id = t.getCompoundTagAt(i).getShort("id");
+                final int id = t.getCompoundTagAt(i).getShort(NBT_TAG_ENCHANT_ID);
                 if (id == FORTUNE_ENCHANT_ID)
                 {
-                    fortune = t.getCompoundTagAt(i).getShort("lvl");
+                    fortune = t.getCompoundTagAt(i).getShort(NBT_TAG_ENCHANT_LEVEL);
                 }
             }
         }

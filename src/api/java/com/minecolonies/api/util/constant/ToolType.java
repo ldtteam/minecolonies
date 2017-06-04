@@ -18,7 +18,7 @@ public enum ToolType implements IToolType
 
     static final private Map<String,IToolType> tools = new HashMap<>();
     private final String name;
-    private final boolean material;
+    private final boolean variableMaterials;
 
     static
     {
@@ -28,10 +28,10 @@ public enum ToolType implements IToolType
         }
     }
 
-    private ToolType(final String name, final boolean material)
+    private ToolType(final String name, final boolean variableMaterials)
     {
         this.name = name;
-        this.material = material;
+        this.variableMaterials = variableMaterials;
     }
 
     public String getName()
@@ -39,9 +39,9 @@ public enum ToolType implements IToolType
         return this.name;
     }
 
-    public boolean hasMaterial()
+    public boolean hasVariableMaterials()
     {
-        return material;
+        return variableMaterials;
     }
 
     public static IToolType getToolType(final String tool)

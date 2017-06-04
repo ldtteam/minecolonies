@@ -9,6 +9,6 @@ public interface IToolType
      * such as wood, gold, stone, iron or diamond
      * @return true if using material
      */
-    public boolean hasMaterial();
+    public boolean hasVariableMaterials();
 }
 
