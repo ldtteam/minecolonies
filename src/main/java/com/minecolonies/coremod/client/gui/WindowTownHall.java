@@ -486,13 +486,16 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private void sortWorkOrders() {
         workOrders.sort((first, second) ->
         {
-            if (second.getPriority() > first.getPriority()) {
+            if (second.getPriority() > first.getPriority())
+            {
                 return 1;
             }
-            else if (second.getPriority() < first.getPriority()) {
+            else if (second.getPriority() < first.getPriority())
+            {
                 return -1;
             }
-            else {
+            else
+            {
                 return 0;
             }
         });
