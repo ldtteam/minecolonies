@@ -17,6 +17,7 @@ import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.WorkOrderView;
 import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
 import com.minecolonies.coremod.network.messages.*;
+import com.sun.tools.hat.internal.util.Comparer;
 import net.minecraft.block.Block;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -485,21 +486,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      */
     private void sortWorkOrders()
     {
-        workOrders.sort((first, second) ->
-        {
-            if (second.getPriority() > first.getPriority())
-            {
-                return 1;
-            }
-            else if (second.getPriority() < first.getPriority())
-            {
-                return -1;
-            }
-            else
-            {
-                return 0;
-            }
-        });
+        workOrders.sort(Comparator.comparing(WorkOrderView::getPriority, Comparator.reverseOrder()));
     }
 
     /**
