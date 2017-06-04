@@ -42,6 +42,8 @@ public class StandardSidelessWorldColonyController<B extends IBuilding, C extend
     {
         this.world = world;
         this.savedData = savedData;
+
+        this.savedData.setController(this);
     }
 
     @NotNull
@@ -65,13 +67,8 @@ public class StandardSidelessWorldColonyController<B extends IBuilding, C extend
         data.setInteger(TAG_DIMENSION, world.provider.getDimension());
 
         return data;
-    }    @Override
-    public World getWorld()
-    {
-        return world;
     }
-
-    @Override
+@Override
     public void deserializeNBT(final NBTTagCompound nbt)
     {
         if (world.provider.getDimension() != nbt.getInteger(TAG_DIMENSION))
@@ -89,7 +86,13 @@ public class StandardSidelessWorldColonyController<B extends IBuilding, C extend
         }
 
         markDirty();
-    }    @NotNull
+    }@Override
+    public World getWorld()
+    {
+        return world;
+    }
+
+        @NotNull
     @Override
     public C createColony(@NotNull final BlockPos pos, @NotNull final EntityPlayer player)
     {
