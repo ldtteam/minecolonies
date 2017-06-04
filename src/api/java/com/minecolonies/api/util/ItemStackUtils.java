@@ -134,10 +134,6 @@ public final class ItemStackUtils
         {
             isATool = itemStack.getItem() instanceof ItemFishingRod;
         }
-        else if (ToolType.HOE.equals(toolType))
-        {
-            isATool=false;
-        }
         return isATool;
     }
 
