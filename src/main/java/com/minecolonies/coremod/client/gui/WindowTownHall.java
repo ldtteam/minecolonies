@@ -20,7 +20,10 @@ import com.minecolonies.coremod.network.messages.*;
 import net.minecraft.block.Block;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.*;
 
 /**
@@ -251,41 +254,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      * Link to the xml file of the window.
      */
     private static final String TOWNHALL_RESOURCE_SUFFIX = ":gui/windowtownhall.xml";
-
-    /**
-     * The builders job description string.
-     */
-    private static final String BUILDER_JOB = "com.minecolonies.coremod.job.Builder";
-
-    /**
-     * The deliverymen job description string.
-     */
-    private static final String DELIVERYMEN_JOB = "com.minecolonies.coremod.job.Deliveryman";
-
-    /**
-     * The Miners job description string.
-     */
-    private static final String MINER_JOB = "com.minecolonies.coremod.job.Miner";
-
-    /**
-     * The Fishermans job description string.
-     */
-    private static final String FISHERMAN_JOB = "com.minecolonies.coremod.job.Fisherman";
-
-    /**
-     * The Guards job description string.
-     */
-    private static final String GUARD_JOB = "com.minecolonies.coremod.job.Guard";
-
-    /**
-     * The Lumberjacks job description string.
-     */
-    private static final String LUMBERJACK_JOB = "com.minecolonies.coremod.job.Lumberjack";
-
-    /**
-     * The Farmers job description string.
-     */
-    private static final String FARMER_JOB = "com.minecolonies.coremod.job.Farmer";
 
     /**
      * The button to go to the previous permission settings page.
@@ -519,7 +487,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     {
         workOrders.sort((first, second) ->
             second.getPriority() > first.getPriority() ? 1 :
-                    second.getPriority() < first.getPriority() ? -1 : 0
+                    (second.getPriority() < first.getPriority() ? -1 : 0)
         );
     }
 
@@ -861,25 +829,25 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         {
             switch (citizen.getJob())
             {
-                case BUILDER_JOB:
+                case COM_MINECOLONIES_COREMOD_JOB_BUILDER:
                     builders++;
                     break;
-                case DELIVERYMEN_JOB:
+                case COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN:
                     deliverymen++;
                     break;
-                case MINER_JOB:
+                case COM_MINECOLONIES_COREMOD_JOB_MINER:
                     miners++;
                     break;
-                case FISHERMAN_JOB:
+                case COM_MINECOLONIES_COREMOD_JOB_FISHERMAN:
                     fishermen++;
                     break;
-                case LUMBERJACK_JOB:
+                case COM_MINECOLONIES_COREMOD_JOB_LUMBERJACK:
                     lumberjacks++;
                     break;
-                case FARMER_JOB:
+                case COM_MINECOLONIES_COREMOD_JOB_FARMER:
                     farmers++;
                     break;
-                case GUARD_JOB:
+                case COM_MINECOLONIES_COREMOD_JOB_GUARD:
                     guards++;
                     break;
                 case "":
@@ -901,9 +869,12 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         final String numberOfGuards = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.Guards", guards);
         final String numberOfLumberjacks = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.lumberjacks", lumberjacks);
         final String numberOfFarmers = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.farmers", farmers);
-        final int roundedHappiness = (int) Math.round(building.getColony().getOverallHappiness());
 
-        findPaneOfTypeByID(HAPPINESS_LABEL, Label.class).setLabelText(Integer.toString(roundedHappiness));
+        DecimalFormat df = new DecimalFormat("#.#");
+        df.setRoundingMode(RoundingMode.CEILING);
+        final String roundedHappiness = df.format(building.getColony().getOverallHappiness());
+
+        findPaneOfTypeByID(HAPPINESS_LABEL, Label.class).setLabelText(roundedHappiness);
         findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText(numberOfCitizens);
         findPaneOfTypeByID(UNEMP_CITIZENS_LABEL, Label.class).setLabelText(numberOfUnemployed);
         findPaneOfTypeByID(BUILDERS_LABEL, Label.class).setLabelText(numberOfBuilders);
