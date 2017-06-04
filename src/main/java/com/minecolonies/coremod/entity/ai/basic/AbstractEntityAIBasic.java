@@ -618,7 +618,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private AIState waitForToolOrWeapon()
     {
         final IToolType toolType = worker.getWorkBuilding().getNeedsTool();
-        if (toolType != ToolType.NONE && checkForToolOrWeapon(toolType))
+        if (toolType != ToolType.NONE && checkForToolOrWeapon(toolType, worker.getWorkBuilding().getNeededToolLevel()))
         {
             delay += DELAY_RECHECK;
             return NEEDS_TOOL;
@@ -640,6 +640,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
     protected boolean checkForToolOrWeapon(@NotNull final IToolType toolType, final int minimalLevel)
     {
+        Log.getLogger().info("checkForToolOrWeapon(" + toolType + ", " + minimalLevel+ ")");
         if (checkForNeededTool(toolType, minimalLevel))
         {
             getOwnBuilding().setNeedsTool(toolType, minimalLevel);
@@ -661,6 +662,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private boolean checkForNeededTool(@NotNull final IToolType toolType, final int minimalLevel)
     {
+        Log.getLogger().info("checkForNeededTool(" + toolType + ", " + minimalLevel+ ")");
         final int maxToolLevel = worker.getWorkBuilding().getMaxToolLevel();
         final InventoryCitizen inventory = worker.getInventoryCitizen();
         if (InventoryUtils.isToolInItemHandler(new InvWrapper(inventory), toolType, minimalLevel, maxToolLevel))
@@ -703,25 +705,25 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 }
                 else
                 {
-                    chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_ENCHTOOLREQUEST, toolType.getName(), maximumLevel);
+                    chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_ENCHTOOLREQUEST, toolType.getName(), maximumLevel-1);
                 }
             }
         }
         else if (maximumLevel == TOOL_LEVEL_MAXIMUM)
         {
             // at least
-            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_TOOLATLEASTREQUEST, toolType.getName(), minimalLevel);
+            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_TOOLATLEASTREQUEST, toolType.getName(), ItemStackUtils.swapToolGrade(minimalLevel));
 
         }
         else if (minimalLevel > maximumLevel)
         {
             // need to upgrade the worker's hut
-            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUESTBETTERHUT, minimalLevel - 1);
+            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUESTBETTERHUT, minimalLevel+AbstractBuildingWorker.WOOD_HUT_LEVEL);
         }
         else if (minimalLevel == maximumLevel)
         {
             // we need a specific grade
-            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_SPECIFICTOOLREQUEST, toolType.getName());
+            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_SPECIFICTOOLREQUEST, toolType.getName(), ItemStackUtils.swapToolGrade(maximumLevel));
         }
         else
         {

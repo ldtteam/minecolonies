@@ -173,9 +173,10 @@ public final class ItemStackUtils
                 level = getToolLevel(itemSword.getToolMaterialName());
             }
         }
-        else if (ToolType.BOW.equals(toolType) || ToolType.FISHINGROD.equals(toolType))
+        else if (!toolType.hasMaterial())
         {
-            level = 0;
+            //We need a hut level 1 minimum
+            level = 1;
         }
         else
         {

@@ -25,6 +25,11 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_M
 public abstract class AbstractBuildingWorker extends AbstractBuildingHut
 {
     /**
+     * Minimal level to ask for wood tools. (WOOD_HUT_LEVEL + 1 == stone)
+     */
+    public static final int WOOD_HUT_LEVEL = 0;
+
+    /**
      * Tag used to store the worker to nbt.
      */
     private static final String TAG_WORKER = "worker";
@@ -230,11 +235,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         {
             return TOOL_LEVEL_MAXIMUM;
         }
-        else if (getBuildingLevel() < 1)
+        else if (getBuildingLevel() <= WOOD_HUT_LEVEL)
         {
             return TOOL_LEVEL_WOOD_OR_GOLD;
         }
-        return getBuildingLevel()-1;
+        return getBuildingLevel()-WOOD_HUT_LEVEL;
     }
 
     /**
