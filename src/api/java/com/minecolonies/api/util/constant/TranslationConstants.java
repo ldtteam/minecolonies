@@ -76,6 +76,20 @@ public final class TranslationConstants
     public static final String COM_MINECOLONIES_COREMOD_SATURATION_5                          = "com.minecolonies.coremod.saturation.5";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_SATURATION_7                          = "com.minecolonies.coremod.saturation.7";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_JOB_BUILDER                           = "com.minecolonies.coremod.job.Builder";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN                       = "com.minecolonies.coremod.job.Deliveryman";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_JOB_MINER                             = "com.minecolonies.coremod.job.Miner";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_JOB_FISHERMAN                         = "com.minecolonies.coremod.job.Fisherman";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_JOB_GUARD                             = "com.minecolonies.coremod.job.Guard";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_JOB_LUMBERJACK                        = "com.minecolonies.coremod.job.Lumberjack";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_JOB_FARMER                            = "com.minecolonies.coremod.job.Farmer";
 
     private TranslationConstants()
     {

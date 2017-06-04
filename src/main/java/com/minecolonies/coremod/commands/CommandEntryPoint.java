@@ -1,8 +1,10 @@
 package com.minecolonies.coremod.commands;
 
+import com.minecolonies.api.configuration.Configurations;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +33,22 @@ public class CommandEntryPoint extends CommandBase
     {
         super();
         root = new MinecoloniesCommand();
+    }
+
+    /**
+     *
+     * @param server
+     * @param sender
+     * @return
+     */
+    @Override
+    public boolean checkPermission(final MinecraftServer server, final ICommandSender sender)
+    {
+        if(sender instanceof EntityPlayer)
+        {
+            return AbstractSingleCommand.isPlayerOpped(sender) || Configurations.opLevelForServer <= 0;
+        }
+        return true;
     }
 
     @NotNull
