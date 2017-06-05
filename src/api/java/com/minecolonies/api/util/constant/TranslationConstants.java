@@ -2,6 +2,8 @@ package com.minecolonies.api.util.constant;
 
 import org.jetbrains.annotations.NonNls;
 
+import javax.annotation.Nonnull;
+
 /**
  * Constants for translation
  */
@@ -80,6 +82,8 @@ public final class TranslationConstants
     public static final String COM_MINECOLONIES_COREMOD_JOB_LUMBERJACK                        = "com.minecolonies.coremod.job.Lumberjack";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_JOB_FARMER                            = "com.minecolonies.coremod.job.Farmer";
+    @Nonnull
+    public static final String COM_MINECOLONIES_COREMOD_JOB_BAKER                             = "com.minecolonies.coremod.job.Baker";
 
     private TranslationConstants()
     {

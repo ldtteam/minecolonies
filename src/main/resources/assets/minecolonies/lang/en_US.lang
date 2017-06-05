@@ -124,6 +124,7 @@ com.minecolonies.coremod.gui.townHall.population.fishermen=Fishermen: %d
 com.minecolonies.coremod.gui.townHall.population.Guards=Guards: %d
 com.minecolonies.coremod.gui.townHall.population.lumberjacks=Lumberjacks: %d
 com.minecolonies.coremod.gui.townHall.population.farmers=Farmers: %d
+com.minecolonies.coremod.gui.townHall.population.bakers=Bakers: %d
 com.minecolonies.coremod.gui.workerHuts.upgradeUnavailable=No Upgrade Available
 com.minecolonies.coremod.gui.townHall.actions=Actions
 com.minecolonies.coremod.gui.warehouse.toStonemason=Deliver to Stonemason:
