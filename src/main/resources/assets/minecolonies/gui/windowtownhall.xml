@@ -57,7 +57,7 @@
                        id="name" textalign="MIDDLE" color="black"/>
             </group>
 
-            <group spacing="4" size="100% 92" pos="0 29">
+            <group spacing="4" size="100% 120" pos="0 29">
                 <button id="build" align="TOP_MIDDLE" size="116 20"
                         label="$(com.minecolonies.coremod.gui.townHall.build)"
                 />
@@ -67,8 +67,12 @@
                         label="$(com.minecolonies.coremod.gui.townHall.recall)"/>
                 <button id="changeSpec" align="TOP_MIDDLE" size="116 20"
                         label="$(com.minecolonies.coremod.gui.townHall.togglespec)"/>
+                <button id="rename" align="TOP_MIDDLE" size="116 20"
+                        label="$(com.minecolonies.coremod.gui.townHall.rename)" />
             </group>
 
+        </view>
+        <view id="pageInfo">
             <group size="100% 22" pos="0 129">
                 <label size="100% 11"
                        label="$(com.minecolonies.coremod.gui.townHall.currentHappiness)" color="black"
@@ -77,17 +81,17 @@
                        color="black" textalign="MIDDLE"/>
             </group>
 
-            <button id="rename" size="116 20" pos="0 153"
-                    label="$(com.minecolonies.coremod.gui.townHall.rename)"
-                    align="TOP_MIDDLE"/>
-        </view>
-        <view id="pageInfo">
             <group align="TOP_MIDDLE" size="80% 100%" pos="0 11">
                 <label id="totalCitizens" label="Unknown" size="100% 11" textalign="MIDDLE_LEFT" color="black"/>
                 <label size="100% 11"/>
                 <label id="unemployedCitizens" label="Unknown" size="100% 11" textalign="MIDDLE_LEFT" color="black"/>
                 <label id="builders" label="Unknown" size="100% 11" textalign="MIDDLE_LEFT" color="black"/>
                 <label id="deliverymen" label="Unknown" size="100% 11" textalign="MIDDLE_LEFT" color="black"/>
+                <label id="miners" label="Unknown" size="100% 11" textalign="MIDDLE_LEFT" color="black"/>
+                <label id="fishermen" label="Unknown" size="100% 11" textalign="MIDDLE_LEFT" color="black"/>
+                <label id="lumberjacks" label="Unkown" size="100% 11" textalign="MIDDLE_LEFT" color="black"/>
+                <label id="farmers" label="Unkown" size="100% 11" textalign="MIDDLE_LEFT" color="black"/>
+                <label id="Guards" label="Unknown" size="100% 11" textalign="MIDDLE_LEFT" color="black"/>
             </group>
         </view>
         <view id="pagePermissions">
@@ -98,14 +102,14 @@
             <switch id="permPages" size="100% 200px" pos="0 7">
                 <view id="pageAddPlayer">
                     <list id="users" size="140 150" pos="15 30">
-                         <box size="100% 30" linewidth="2">
-                         <label id="name" size="100 12" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
-                         <button id="removePlayer" size="12 12" pos="5 2" align="TOP_RIGHT" label="X"/>
+                        <box size="100% 30" linewidth="2">
+                            <label id="name" size="100 12" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
+                            <button id="removePlayer" size="12 12" pos="5 2" align="TOP_RIGHT" label="X"/>
 
-                          <button id="demote" size="12 12" pos="5 16" label="-"/>
-                          <button id="promote" size="12 12" pos="20 16" label="+"/>
-                          <label id="rank" size="50 12" pos="35 16" textalign="MIDDLE_LEFT" color="black"/>
-                      </box>
+                            <button id="demote" size="12 12" pos="5 16" label="-"/>
+                            <button id="promote" size="12 12" pos="20 16" label="+"/>
+                            <label id="rank" size="50 12" pos="35 16" textalign="MIDDLE_LEFT" color="black"/>
+                        </box>
                     </list>
 
                     <label size="100 11" pos="15 170" textalign="TOP_LEFT" color="black" label="$(com.minecolonies.coremod.gui.townHall.addPlayer)"/>
