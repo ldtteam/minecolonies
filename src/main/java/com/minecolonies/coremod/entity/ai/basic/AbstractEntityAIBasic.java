@@ -376,6 +376,14 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     @NotNull
     private AIState lookForNeededItems()
     {
+        /*
+        * "syncNeededItemsWithInventory()" causes "itemsCurrentlyNeeded.isEmpty()" to be always true.
+        * as the result "if (itemsCurrentlyNeeded.isEmpty()) {return IDLE}" will ever match. 
+        * therefore never checking his chest and requesting materials when in the block placement process
+        *
+        * DO NOT DELETE THIS FUNCTION
+        * or the builder will be unable to continue building since his inventory will not be updated
+        */
         syncNeededItemsWithInventory();
         if (!getOwnBuilding().areItemsNeeded())
         {
@@ -403,6 +411,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
     /**
      * Updates the itemsCurrentlyNeeded with current values.
+     * 
+     * This function seems bugged, as it gives itemsCurrentlyNeeded = isEmpty 
      */
     private void syncNeededItemsWithInventory()
     {
@@ -1206,6 +1216,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
         itemsNeeded.clear();
         Collections.addAll(itemsNeeded, items);
+        /*
+        * emergency workaround so the worker will tell what he needs (ignoring the content of his chest)
+        * since he is not able to check it in the issued state
+        */
+        if (!itemsCurrentlyNeeded.isEmpty()){
+            final ItemStack itn = itemsCurrentlyNeeded.get(0);
+            requestWithoutSpam(itn.getCount() + " " + itn.getDisplayName()+" Please put it in my Inventory");
+        };
+        //end of workaround
         return true;
     }
 
