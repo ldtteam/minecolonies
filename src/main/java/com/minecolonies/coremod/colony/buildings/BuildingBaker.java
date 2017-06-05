@@ -76,7 +76,7 @@ public class BuildingBaker extends AbstractBuildingWorker
     /**
      * Map of tasks for the baker to work on.
      */
-    private final Map<ProductState, List<BakingProduct>> tasks = new EnumMap(ProductState.class);
+    private final Map<ProductState, List<BakingProduct>> tasks = new EnumMap<>(ProductState.class);
 
     /**
      * Wait this amount of ticks before checking again.
