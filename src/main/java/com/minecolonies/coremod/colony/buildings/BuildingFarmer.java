@@ -194,7 +194,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
     @Override
     public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
     {
-        final Map<ItemStorage, Integer> toKeep = new HashMap(keepX);
+        final Map<ItemStorage, Integer> toKeep = new HashMap<>(keepX);
         for(final Field field: farmerFields)
         {
             if(!InventoryUtils.isItemStackEmpty(field.getSeed()))
