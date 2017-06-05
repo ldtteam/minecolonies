@@ -40,7 +40,7 @@ import static com.minecolonies.api.entity.ai.util.AIState.*;
 
 /**
  * This class provides basic ai functionality.
- *
+ * <p>
  * TODO: Disentangle this class and move to API package.
  *
  * @param <J> The job this ai has to fulfil
@@ -48,14 +48,13 @@ import static com.minecolonies.api.entity.ai.util.AIState.*;
 public abstract class AbstractEntityAIBasic<J extends IJob> extends AbstractAISkeleton<J>
 {
     /**
-     * Buffer time in ticks he will accept a last attacker as valid.
-     */
-    protected static final int ATTACK_TIME_BUFFER = 50;
-
-    /**
      * The maximum range to keep from the current building place.
      */
     public static final  int EXCEPTION_TIMEOUT             = 100;
+    /**
+     * Buffer time in ticks he will accept a last attacker as valid.
+     */
+    protected static final int ATTACK_TIME_BUFFER = 50;
     /**
      * The maximum range to keep from the current building place.
      */
@@ -527,37 +526,6 @@ public abstract class AbstractEntityAIBasic<J extends IJob> extends AbstractAISk
     }
 
     /**
-
-     * Finds the first @see ItemStack the type of {@code is}.
-
-     * It will be taken from the chest and placed in the workers inventory.
-
-     * Make sure that the worker stands next the chest to not break immersion.
-
-     * Also make sure to have inventory space for the stack.
-
-     *
-
-     * @param entity    the tileEntity chest or building.
-
-     * @param tool      the tool.
-
-     * @param toolLevel the min tool level.
-
-     * @return true if found the tool.
-
-     */
-
-    public boolean isToolInProvider(ICapabilityProvider entity, final String tool, int toolLevel)
-    {
-        return InventoryFunctions.matchFirstInProviderWithAction(
-          entity,
-          stack -> Utils.isTool(stack, tool) && InventoryUtils.hasToolLevel(stack, tool, toolLevel),
-          this::takeItemStackFromProvider
-        );
-    }
-
-    /**
      * Takes whatever is in that slot of the workers chest and puts it in his inventory.
      * If the inventory is full, only the fitting part will be moved.
      * Beware this method shouldn't be private, because the generic access won't work within a lambda won't work else.
@@ -608,9 +576,9 @@ public abstract class AbstractEntityAIBasic<J extends IJob> extends AbstractAISk
         final boolean missingTool = !InventoryFunctions
                                        .matchFirstInProvider(
                                          worker,
-                                       stack -> Utils.isTool(stack, tool),
-                                       InventoryFunctions::doNothing
-                                     );
+                                         stack -> Utils.isTool(stack, tool),
+                                         InventoryFunctions::doNothing
+                                       );
 
         final int hutLevel = worker.getWorkBuilding().getBuildingLevel();
         final InventoryCitizen inventory = worker.getInventoryCitizen();
@@ -685,6 +653,30 @@ public abstract class AbstractEntityAIBasic<J extends IJob> extends AbstractAISk
         }
 
         return false;
+    }
+
+    /**
+     * Finds the first @see ItemStack the type of {@code is}.
+     * <p>
+     * It will be taken from the chest and placed in the workers inventory.
+     * <p>
+     * Make sure that the worker stands next the chest to not break immersion.
+     * <p>
+     * Also make sure to have inventory space for the stack.
+     *
+     * @param entity    the tileEntity chest or building.
+     * @param tool      the tool.
+     * @param toolLevel the min tool level.
+     * @return true if found the tool.
+     */
+
+    public boolean isToolInProvider(ICapabilityProvider entity, final String tool, int toolLevel)
+    {
+        return InventoryFunctions.matchFirstInProviderWithAction(
+          entity,
+          stack -> Utils.isTool(stack, tool) && InventoryUtils.hasToolLevel(stack, tool, toolLevel),
+          this::takeItemStackFromProvider
+        );
     }
 
     /**
@@ -770,10 +762,10 @@ public abstract class AbstractEntityAIBasic<J extends IJob> extends AbstractAISk
         boolean missing = (!InventoryFunctions
                               .matchFirstInProvider(
                                 worker,
-                                              stack -> Utils.checkIfPickaxeQualifies(
-                                                minlevel, Utils.getMiningLevel(stack, Utils.PICKAXE)),
-                                              InventoryFunctions::doNothing
-                                            ));
+                                stack -> Utils.checkIfPickaxeQualifies(
+                                  minlevel, Utils.getMiningLevel(stack, Utils.PICKAXE)),
+                                InventoryFunctions::doNothing
+                              ));
 
         delay += DELAY_RECHECK;
 
@@ -856,9 +848,9 @@ public abstract class AbstractEntityAIBasic<J extends IJob> extends AbstractAISk
         boolean missing = (!InventoryFunctions
                               .matchFirstInProvider(
                                 worker,
-                                             stack -> stack != null && Utils.doesItemServeAsWeapon(stack),
-                                             InventoryFunctions::doNothing
-                                           ));
+                                stack -> stack != null && Utils.doesItemServeAsWeapon(stack),
+                                InventoryFunctions::doNothing
+                              ));
 
         delay += DELAY_RECHECK;
 

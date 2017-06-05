@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.api.entity.ai.basic.AbstractAISkeleton;
+import com.minecolonies.coremod.colony.CitizenData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

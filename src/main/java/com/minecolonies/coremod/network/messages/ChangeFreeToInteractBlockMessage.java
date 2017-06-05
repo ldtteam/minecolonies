@@ -22,27 +22,6 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
 {
 
     /**
-     * Enums for Message Type for the freeBlock message.
-     * <p>
-     * ADD_BLOCK       Add a block or pos.
-     * REMOVE_BLOCK    Removing a block or pos.
-     */
-    public enum MessageType
-    {
-        REMOVE_BLOCK,
-        ADD_BLOCK,
-    }
-
-    /**
-     * Enums of modes this message exists.
-     */
-    public enum MessageMode
-    {
-        LOCATION,
-        BLOCK,
-    }
-
-    /**
      * The id of the colony.
      */
     private int colonyId;
@@ -58,9 +37,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
      * The type of the message.
      */
     private MessageType type;
-
     private MessageMode mode;
-
     /**
      * Empty public constructor.
      */
@@ -191,5 +168,26 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
                 }
             }
         }
+    }
+
+    /**
+     * Enums for Message Type for the freeBlock message.
+     * <p>
+     * ADD_BLOCK       Add a block or pos.
+     * REMOVE_BLOCK    Removing a block or pos.
+     */
+    public enum MessageType
+    {
+        REMOVE_BLOCK,
+        ADD_BLOCK,
+    }
+
+    /**
+     * Enums of modes this message exists.
+     */
+    public enum MessageMode
+    {
+        LOCATION,
+        BLOCK,
     }
 }

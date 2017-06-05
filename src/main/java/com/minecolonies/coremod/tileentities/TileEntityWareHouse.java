@@ -30,15 +30,13 @@ import java.util.function.Predicate;
 public class TileEntityWareHouse extends TileEntityColonyBuilding
 {
     /**
-     * List which contains the currentTasks to be executed by the deliveryman.
-     */
-    private final CopyOnWriteArrayList<AbstractBuilding> list = new CopyOnWriteArrayList<>();
-
-    /**
      * Wait this amount of ticks before checking again.
      */
     private static final int WAIT_TICKS = 5;
-
+    /**
+     * List which contains the currentTasks to be executed by the deliveryman.
+     */
+    private final CopyOnWriteArrayList<AbstractBuilding> list = new CopyOnWriteArrayList<>();
     /**
      * Index of last controlled building.
      */
@@ -62,6 +60,20 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     public NBTTagCompound getUpdateTag()
     {
         return writeToNBT(new NBTTagCompound());
+    }
+
+    @Override
+    public void readFromNBT(final NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+    }
+
+    @NotNull
+    @Override
+    public NBTTagCompound writeToNBT(@NotNull final NBTTagCompound compound)
+    {
+        super.writeToNBT(compound);
+        return compound;
     }
 
     @Override
@@ -110,48 +122,11 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         }
     }
 
-    public boolean checkInWareHouseForFood(final BuildingHome buildingEntry, final boolean addToList)
-    {
-        if (buildingEntry.isFoodNeeded())
-        {
-            if (isInHut(itemStack -> !InventoryUtils.isItemStackEmpty(itemStack) && itemStack.getItem() instanceof ItemFood))
-            {
-                if (addToList)
-                {
-                    buildingEntry.setOnGoingDelivery(true);
-                    list.add(buildingEntry);
-                }
-                return true;
-            }
-
-            if (list.contains(buildingEntry))
-            {
-                list.remove(buildingEntry);
-                buildingEntry.setOnGoingDelivery(false);
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Get the first task in the list.
-     *
-     * @return the building which needs a delivery.
-     */
-    @Nullable
-    public AbstractBuilding getTask()
-    {
-        if (list.isEmpty())
-        {
-            return null;
-        }
-        return list.remove(0);
-    }
-
     /**
      * Check if the required items by the building are in the wareHouse.
+     *
      * @param buildingEntry the building requesting.
-     * @param addToList if is in warehouse should add to the list?
+     * @param addToList     if is in warehouse should add to the list?
      * @return true if has something in warehouse to deliver.
      */
     public boolean checkInWareHouse(@NotNull final IBuilding buildingEntry, boolean addToList)
@@ -205,8 +180,32 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         return false;
     }
 
+    public boolean checkInWareHouseForFood(final BuildingHome buildingEntry, final boolean addToList)
+    {
+        if (buildingEntry.isFoodNeeded())
+        {
+            if (isInHut(itemStack -> !InventoryUtils.isItemStackEmpty(itemStack) && itemStack.getItem() instanceof ItemFood))
+            {
+                if (addToList)
+                {
+                    buildingEntry.setOnGoingDelivery(true);
+                    list.add(buildingEntry);
+                }
+                return true;
+            }
+
+            if (list.contains(buildingEntry))
+            {
+                list.remove(buildingEntry);
+                buildingEntry.setOnGoingDelivery(false);
+            }
+        }
+        return false;
+    }
+
     /**
      * Check if a building is being delivery by on of the warehouses deliverymen.
+     *
      * @param buildingEntry the building to check.
      * @return true if so.
      */
@@ -234,6 +233,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
 
     /**
      * Check all chests in the worker hut for a required item.
+     *
      * @param is the type of item requested (amount is ignored)
      * @return true if a stack of that type was found
      */
@@ -253,6 +253,59 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                 if (entity instanceof TileEntityChest && isInTileEntity((TileEntityChest) entity, is))
                 {
                     return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Check all chests in the worker hut for a required tool.
+     *
+     * @param tool               the type of tool requested (amount is ignored)
+     * @param requestingBuilding the building requesting it.
+     * @return true if a stack of that type was found
+     */
+    public boolean isToolInHut(final String tool, @NotNull final AbstractBuilding requestingBuilding)
+    {
+        @Nullable final AbstractBuilding building = getBuilding();
+
+        boolean hasItem;
+        if (building != null)
+        {
+            if (tool.equals(Utils.PICKAXE))
+            {
+                hasItem = InventoryUtils.isPickaxeInProvider(building.getTileEntity(), requestingBuilding.getNeededPickaxeLevel(), requestingBuilding.getBuildingLevel());
+            }
+            else
+            {
+                hasItem = InventoryUtils.isToolInProvider(building.getTileEntity(), tool, requestingBuilding.getBuildingLevel());
+            }
+
+            if (hasItem)
+            {
+                return true;
+            }
+
+            for (final BlockPos pos : building.getAdditionalContainers())
+            {
+                @Nullable final TileEntity entity = world.getTileEntity(pos);
+                if (entity instanceof TileEntityChest)
+                {
+                    if (tool.equals(Utils.PICKAXE))
+                    {
+                        hasItem = InventoryUtils.isPickaxeInProvider(entity, requestingBuilding.getNeededPickaxeLevel(), requestingBuilding.getBuildingLevel());
+                    }
+                    else
+                    {
+                        hasItem = InventoryUtils.isToolInProvider(entity, tool, requestingBuilding.getBuildingLevel());
+                    }
+
+                    if (hasItem)
+                    {
+                        return true;
+                    }
                 }
             }
         }
@@ -287,6 +340,62 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         }
 
         return false;
+    }
+
+    /**
+     * Finds the first @see ItemStack the type of {@code is}.
+     * It will be taken from the chest and placed in the workers inventory.
+     * Make sure that the worker stands next the chest to not break immersion.
+     * Also make sure to have inventory space for the stack.
+     *
+     * @param entity the tileEntity chest or building.
+     * @param is     the itemStack.
+     * @return true if found the stack.
+     */
+    public boolean isInTileEntity(TileEntityChest entity, ItemStack is)
+    {
+        return is != null
+                 && InventoryFunctions
+                      .matchFirstInProviderWithAction(
+                        entity,
+                        stack -> stack != null && is.isItemEqual(stack),
+                        InventoryFunctions::doNothing
+                      );
+    }
+
+    /**
+     * Finds the first @see ItemStack the type of {@code is}.
+     * It will be taken from the chest and placed in the workers inventory.
+     * Make sure that the worker stands next the chest to not break immersion.
+     * Also make sure to have inventory space for the stack.
+     *
+     * @param entity                      the tileEntity chest or building.
+     * @param itemStackSelectionPredicate the itemStack predicate.
+     * @return true if found the stack.
+     */
+    public boolean isInTileEntity(final TileEntityChest entity, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    {
+        return InventoryFunctions
+                 .matchFirstInProviderWithAction(
+                   entity,
+                   itemStackSelectionPredicate,
+                   InventoryFunctions::doNothing
+                 );
+    }
+
+    /**
+     * Get the first task in the list.
+     *
+     * @return the building which needs a delivery.
+     */
+    @Nullable
+    public AbstractBuilding getTask()
+    {
+        if (list.isEmpty())
+        {
+            return null;
+        }
+        return list.remove(0);
     }
 
     /**
@@ -385,114 +494,9 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     }
 
     /**
-     * Check all chests in the worker hut for a required tool.
-     * @param tool the type of tool requested (amount is ignored)
-     * @param requestingBuilding the building requesting it.
-     * @return true if a stack of that type was found
-     */
-    public boolean isToolInHut(final String tool, @NotNull final AbstractBuilding requestingBuilding)
-    {
-        @Nullable final AbstractBuilding building = getBuilding();
-
-        boolean hasItem;
-        if (building != null)
-        {
-            if (tool.equals(Utils.PICKAXE))
-            {
-                hasItem = InventoryUtils.isPickaxeInProvider(building.getTileEntity(), requestingBuilding.getNeededPickaxeLevel(), requestingBuilding.getBuildingLevel());
-            }
-            else
-            {
-                hasItem = InventoryUtils.isToolInProvider(building.getTileEntity(), tool, requestingBuilding.getBuildingLevel());
-            }
-
-            if (hasItem)
-            {
-                return true;
-            }
-
-            for (final BlockPos pos : building.getAdditionalContainers())
-            {
-                @Nullable final TileEntity entity = world.getTileEntity(pos);
-                if (entity instanceof TileEntityChest)
-                {
-                    if (tool.equals(Utils.PICKAXE))
-                    {
-                        hasItem = InventoryUtils.isPickaxeInProvider(entity, requestingBuilding.getNeededPickaxeLevel(), requestingBuilding.getBuildingLevel());
-                    }
-                    else
-                    {
-                        hasItem = InventoryUtils.isToolInProvider(entity, tool, requestingBuilding.getBuildingLevel());
-                    }
-
-                    if (hasItem)
-                    {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Finds the first @see ItemStack the type of {@code is}.
-     * It will be taken from the chest and placed in the workers inventory.
-     * Make sure that the worker stands next the chest to not break immersion.
-     * Also make sure to have inventory space for the stack.
-     * @param entity the tileEntity chest or building.
-     * @param is the itemStack.
-     * @return true if found the stack.
-     */
-    public boolean isInTileEntity(TileEntityChest entity, ItemStack is)
-    {
-        return is != null
-                 && InventoryFunctions
-                      .matchFirstInProviderWithAction(
-                        entity,
-                        stack -> stack != null && is.isItemEqual(stack),
-                        InventoryFunctions::doNothing
-                      );
-    }
-
-    /**
-     * Finds the first @see ItemStack the type of {@code is}.
-     * It will be taken from the chest and placed in the workers inventory.
-     * Make sure that the worker stands next the chest to not break immersion.
-     * Also make sure to have inventory space for the stack.
-     *
-     * @param entity                      the tileEntity chest or building.
-     * @param itemStackSelectionPredicate the itemStack predicate.
-     * @return true if found the stack.
-     */
-    public boolean isInTileEntity(final TileEntityChest entity, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
-    {
-        return InventoryFunctions
-                 .matchFirstInProviderWithAction(
-                   entity,
-                   itemStackSelectionPredicate,
-                   InventoryFunctions::doNothing
-                 );
-    }
-
-    @Override
-    public void readFromNBT(final NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
-    }
-
-    @NotNull
-    @Override
-    public NBTTagCompound writeToNBT(@NotNull final NBTTagCompound compound)
-    {
-        super.writeToNBT(compound);
-        return compound;
-    }
-
-    /**
      * Dump the inventory of a citizen into the warehouse.
      * Go through all items and search the right chest to dump it in.
+     *
      * @param inventoryCitizen the inventory of the citizen
      */
     public void dumpInventoryIntoWareHouse(@NotNull final InventoryCitizen inventoryCitizen)
@@ -512,11 +516,11 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             }
             InventoryUtils.transferItemStackIntoNextFreeSlotInProvider(new InvWrapper(inventoryCitizen), i, chest);
         }
-
     }
 
     /**
      * Search the right chest for an itemStack.
+     *
      * @param stack the stack to dump.
      * @return the tile entity of the chest
      */
@@ -545,6 +549,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
 
     /**
      * Searches a chest with a similar item as the incoming stack.
+     *
      * @param stack the stack.
      * @return the entity of the chest.
      */
@@ -566,6 +571,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
 
     /**
      * Search for the chest with the least items in it.
+     *
      * @return the tileEntity of this chest.
      */
     @Nullable

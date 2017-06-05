@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutFisherman;
@@ -8,7 +9,6 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobFisherman;
-import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import net.minecraft.init.Items;
 import net.minecraft.util.math.BlockPos;
@@ -70,6 +70,19 @@ public class BuildingFisherman extends AbstractBuildingWorker
     }
 
     /**
+     * Override this method if you want to keep an amount of items in inventory.
+     * When the inventory is full, everything get's dumped into the building chest.
+     * But you can use this method to hold some stacks back.
+     *
+     * @return a list of objects which should be kept.
+     */
+    @Override
+    public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
+    {
+        return keepX;
+    }
+
+    /**
      * @see AbstractBuilding#onUpgradeComplete(int)
      */
     @Override
@@ -85,19 +98,6 @@ public class BuildingFisherman extends AbstractBuildingWorker
         {
             this.getColony().triggerAchievement(ModAchievements.achievementUpgradeFisherMax);
         }
-    }
-
-    /**
-     * Override this method if you want to keep an amount of items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
-     *
-     * @return a list of objects which should be kept.
-     */
-    @Override
-    public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
-    {
-        return keepX;
     }
 
     /**

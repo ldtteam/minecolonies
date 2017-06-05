@@ -25,7 +25,7 @@ import java.util.Random;
 /**
  * ------------ Class not Documented ------------
  */
-public abstract class Citizen extends EntityAgeable implements ICommandSender, ICapabilitySerializable<NBTTagCompound>,INpc
+public abstract class Citizen extends EntityAgeable implements ICommandSender, ICapabilitySerializable<NBTTagCompound>, INpc
 {
     public Citizen(final World worldIn)
     {
@@ -344,7 +344,6 @@ public abstract class Citizen extends EntityAgeable implements ICommandSender, I
 
     /**
      * Method to get the world from a Citizen.
-     * @return
      */
     public abstract World getWorld();
 }

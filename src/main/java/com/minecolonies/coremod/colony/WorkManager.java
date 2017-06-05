@@ -2,12 +2,12 @@ package com.minecolonies.coremod.colony;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IWorkManager;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.api.colony.workorder.IWorkOrder;
+import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrderBuild;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
-import com.minecolonies.api.util.Log;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants.NBT;

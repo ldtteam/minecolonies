@@ -39,10 +39,9 @@ public class AbstractWorkOrderBuild extends AbstractWorkOrder implements IWorkOr
     protected String   structureName;
     protected String   md5;
     protected boolean  cleared;
+    protected String   workOrderName;
     private   int      upgradeLevel;
     private   String   upgradeName;
-    protected String   workOrderName;
-
     private boolean hasSentMessageForThisWorkOrder = false;
     private boolean requested;
 
@@ -100,6 +99,66 @@ public class AbstractWorkOrderBuild extends AbstractWorkOrder implements IWorkOr
     public String getName()
     {
         return workOrderName;
+    }
+
+    @Override
+    public int getUpgradeLevel()
+    {
+        return upgradeLevel;
+    }
+
+    @Override
+    public BlockPos getBuildingLocation()
+    {
+        return buildingLocation;
+    }
+
+    @Override
+    public String getStructureName()
+    {
+        return structureName;
+    }
+
+    @Override
+    public int getRotation()
+    {
+        return buildingRotation;
+    }
+
+    @Override
+    public boolean isCleared()
+    {
+        return cleared;
+    }
+
+    @Override
+    public void setCleared(final boolean cleared)
+    {
+        this.cleared = cleared;
+    }
+
+    @Override
+    public boolean isRequested()
+    {
+        return requested;
+    }
+
+    @Override
+    public void setRequested(final boolean requested)
+    {
+        this.requested = requested;
+    }
+
+    @Override
+    public boolean isMirrored()
+    {
+        return isMirrored;
+    }
+
+    @Override
+    public boolean isDecoration()
+    {
+        return false;
     }
 
     /**
@@ -192,6 +251,19 @@ public class AbstractWorkOrderBuild extends AbstractWorkOrder implements IWorkOr
         return colony.getBuilding(buildingLocation) != null;
     }
 
+    @NotNull
+    @Override
+    protected WorkOrderType getType()
+    {
+        return WorkOrderType.BUILD;
+    }
+
+    @Override
+    protected String getValue()
+    {
+        return upgradeName;
+    }
+
     /**
      * Attempt to fulfill the Work Order.
      * Override this with an implementation for the Work Order to find a Citizen to perform the job
@@ -245,19 +317,6 @@ public class AbstractWorkOrderBuild extends AbstractWorkOrder implements IWorkOr
         sendBuilderMessage(colony, hasBuilder, sendMessage);
     }
 
-    @NotNull
-    @Override
-    protected WorkOrderType getType()
-    {
-        return WorkOrderType.BUILD;
-    }
-
-    @Override
-    protected String getValue()
-    {
-        return upgradeName;
-    }
-
     /**
      * Checks if a builder may accept this workOrder.
      *
@@ -296,65 +355,5 @@ public class AbstractWorkOrderBuild extends AbstractWorkOrder implements IWorkOr
     private static boolean isLocationTownhall(@NotNull final IColony colony, final BlockPos buildingLocation)
     {
         return colony.hasTownHall() && colony.getTownHall() != null && colony.getTownHall().getID().equals(buildingLocation);
-    }
-
-    @Override
-    public int getUpgradeLevel()
-    {
-        return upgradeLevel;
-    }
-
-    @Override
-    public BlockPos getBuildingLocation()
-    {
-        return buildingLocation;
-    }
-
-    @Override
-    public String getStructureName()
-    {
-        return structureName;
-    }
-
-    @Override
-    public int getRotation()
-    {
-        return buildingRotation;
-    }
-
-    @Override
-    public boolean isCleared()
-    {
-        return cleared;
-    }
-
-    @Override
-    public void setCleared(final boolean cleared)
-    {
-        this.cleared = cleared;
-    }
-
-    @Override
-    public boolean isRequested()
-    {
-        return requested;
-    }
-
-    @Override
-    public void setRequested(final boolean requested)
-    {
-        this.requested = requested;
-    }
-
-    @Override
-    public boolean isMirrored()
-    {
-        return isMirrored;
-    }
-
-    @Override
-    public boolean isDecoration()
-    {
-        return false;
     }
 }

@@ -91,6 +91,22 @@ public class EntityCitizen extends Citizen
      * Base movement speed of every citizen.
      */
     public static final  double                 BASE_MOVEMENT_SPEED  = 0.3D;
+    /**
+     * The middle saturation point. smaller than this = bad and bigger than this = good.
+     */
+    public static final int AVERAGE_SATURATION = 5;
+    /**
+     * Lower than this is low saturation.
+     */
+    public static final int LOW_SATURATION = 3;
+    /**
+     * Higher than this is high saturation.
+     */
+    public static final int HIGH_SATURATION = 7;
+    /**
+     * Full saturation amount.
+     */
+    public static final double FULL_SATURATION = 10;
     private static final DataParameter<Integer> DATA_TEXTURE         = EntityDataManager.createKey(EntityCitizen.class, DataSerializers.VARINT);
     private static final DataParameter<Integer> DATA_LEVEL           = EntityDataManager.createKey(EntityCitizen.class, DataSerializers.VARINT);
     private static final DataParameter<Integer> DATA_IS_FEMALE       = EntityDataManager.createKey(EntityCitizen.class, DataSerializers.VARINT);
@@ -98,7 +114,6 @@ public class EntityCitizen extends Citizen
     private static final DataParameter<Integer> DATA_CITIZEN_ID      = EntityDataManager.createKey(EntityCitizen.class, DataSerializers.VARINT);
     private static final DataParameter<String>  DATA_MODEL           = EntityDataManager.createKey(EntityCitizen.class, DataSerializers.STRING);
     private static final DataParameter<String>  DATA_RENDER_METADATA = EntityDataManager.createKey(EntityCitizen.class, DataSerializers.STRING);
-
     /**
      * The movement speed for the citizen to run away.
      */
@@ -120,12 +135,6 @@ public class EntityCitizen extends Citizen
     private static final String TAG_STATUS          = "status";
     private static final String TAG_LAST_JOB        = "lastJob";
     private static final String TAG_DAY             = "day";
-
-    /**
-     * The middle saturation point. smaller than this = bad and bigger than this = good.
-     */
-    public static final int AVERAGE_SATURATION = 5;
-
     /**
      * The delta yaw value for looking at things.
      */
@@ -195,62 +204,38 @@ public class EntityCitizen extends Citizen
      * If the entitiy is stuck for 2 minutes do something.
      */
     private static final int    MAX_STUCK_TIME             = 20 * 60 * 2;
-
     /**
      * Distance from mobs the entity should hold.
      */
     private static final double DISTANCE_OF_ENTITY_AVOID = 8.0D;
-
     /**
      * Initital speed while running away from entities.
      */
     private static final double INITIAL_RUN_SPEED_AVOID = 1.6D;
-
     /**
      * Later run speed while running away from entities.
      */
     private static final double LATER_RUN_SPEED_AVOID = 0.6D;
-
     /**
      * Happiness penalty for citizen death.
      */
     private static final double CITIZEN_DEATH_PENALTY = 0.2;
-
     /**
      * Happiness penalty for citizen kill.
      */
     private static final double CITIZEN_KILL_PENALTY = 9;
-
-    /**
-     * Lower than this is low saturation.
-     */
-    public static final int LOW_SATURATION = 3;
-
-    /**
-     * Higher than this is high saturation.
-     */
-    public static final int HIGH_SATURATION = 7;
-
     /**
      * Big multiplier in extreme saturation situations.
      */
     private static final double BIG_SATURATION_FACTOR = 0.25;
-
     /**
      * Small multiplier in average saturation situation.s
      */
     private static final double LOW_SATURATION_FACTOR = 0.1;
-
     /**
      * Decrease by this * buildingLevel each new night.
      */
     private static final double SATURATION_DECREASE_FACTOR = 0.2;
-
-    /**
-     * Full saturation amount.
-     */
-    public static final double FULL_SATURATION = 10;
-
     private static Field            navigatorField;
     private final  InventoryCitizen inventory;
     @NotNull
@@ -276,7 +261,7 @@ public class EntityCitizen extends Citizen
      * Skill modifier defines how fast a citizen levels in a certain skill.
      */
     private double skillModifier = 0;
-    private boolean     female;
+    private boolean      female;
     @Nullable
     private IColony      colony;
     @Nullable
@@ -598,18 +583,6 @@ public class EntityCitizen extends Citizen
     }
 
     /**
-     * Defines the area in which the citizen automatically gathers experience.
-     *
-     * @return a list of xp orbs around the entity.
-     */
-    private List<EntityXPOrb> getXPOrbsOnGrid()
-    {
-        @NotNull final AxisAlignedBB bb = new AxisAlignedBB(posX - 2, posY - 2, posZ - 2, posX + 2, posY + 2, posZ + 2);
-
-        return world.getEntitiesWithinAABB(EntityXPOrb.class, bb);
-    }
-
-    /**
      * Add experience points to citizen.
      * Increases the citizen level if he has sufficient experience.
      * This will reset the experience.
@@ -681,11 +654,6 @@ public class EntityCitizen extends Citizen
         }
     }
 
-    private BuildingHome getHomeBuilding()
-    {
-        return (citizenData == null) ? null : citizenData.getHomeBuilding();
-    }
-
     /**
      * ExperienceLevel getter.
      *
@@ -699,6 +667,661 @@ public class EntityCitizen extends Citizen
             return citizenData.getLevel();
         }
         return 0;
+    }
+
+    /**
+     * Trigger the corresponding death achievement.
+     *
+     * @param source The damage source.
+     * @param job    The job of the citizen.
+     */
+    @Override
+    public void triggerDeathAchievement(final DamageSource source, final IJob job)
+    {
+        if (job instanceof JobMiner)
+        {
+            if (source == DamageSource.LAVA || source == DamageSource.IN_FIRE || source == DamageSource.ON_FIRE)
+            {
+                this.getColony().triggerAchievement(ModAchievements.achievementMinerDeathLava);
+            }
+            if (source.equals(DamageSource.FALL))
+            {
+                this.getColony().triggerAchievement(ModAchievements.achievementMinerDeathFall);
+            }
+        }
+        if (job instanceof JobLumberjack && source == DamageSource.IN_WALL)
+        {
+            this.getColony().triggerAchievement(ModAchievements.achievementLumberjackDeathTree);
+        }
+        if (job instanceof JobFisherman && source.getEntity() instanceof EntityGuardian)
+        {
+            this.getColony().triggerAchievement(ModAchievements.achievementFisherDeathGuardian);
+        }
+        if (job instanceof JobGuard && source.getEntity() instanceof EntityEnderman)
+        {
+            this.getColony().triggerAchievement(ModAchievements.achievementGuardDeathEnderman);
+        }
+    }
+
+    @Override
+    @Nullable
+    public CitizenData getCitizenData()
+    {
+        return citizenData;
+    }
+
+    @Override
+    @Nullable
+    public Colony getColony()
+    {
+        return colony;
+    }
+
+    @Override
+    public int getOffsetTicks()
+    {
+        return this.ticksExisted + OFFSET_TICK_MULTIPLIER * this.getEntityId();
+    }
+
+    @Override
+    public Model getModelID()
+    {
+        return modelId;
+    }
+
+    /**
+     * Server-specific update for the EntityCitizen.
+     */
+    @Override
+    public void updateColonyServer()
+    {
+        if (colonyId == 0)
+        {
+            setDead();
+            return;
+        }
+
+        if (colony == null)
+        {
+            handleNullColony();
+        }
+    }
+
+    /**
+     * Assigns a citizen to a colony.
+     *
+     * @param c    the colony.
+     * @param data the data of the new citizen.
+     */
+    @Override
+    public void setColony(@Nullable final IColony c, @Nullable final ICitizenData data)
+    {
+        if (c == null)
+        {
+            colony = null;
+            colonyId = 0;
+            citizenId = 0;
+            citizenData = null;
+            setDead();
+            return;
+        }
+
+        colony = c;
+        colonyId = colony.getID();
+        citizenId = data.getId();
+        citizenData = data;
+
+        setCustomNameTag(citizenData.getName());
+
+        female = citizenData.isFemale();
+        textureId = citizenData.getTextureId();
+
+        dataManager.set(DATA_COLONY_ID, colonyId);
+        dataManager.set(DATA_CITIZEN_ID, citizenId);
+        dataManager.set(DATA_IS_FEMALE, female ? 1 : 0);
+        dataManager.set(DATA_TEXTURE, textureId);
+        updateLevel();
+
+        citizenData.setCitizenEntity(this);
+
+        onJobChanged(getColonyJob());
+    }
+
+    /**
+     * Getter for the last job.
+     *
+     * @return the last job he had.
+     */
+    @Override
+    @NotNull
+    public String getLastJob()
+    {
+        return this.lastJob;
+    }
+
+    /**
+     * Sets the last job of the citizen.
+     *
+     * @param jobName the job he last had.
+     */
+    @Override
+    public void setLastJob(@NotNull String jobName)
+    {
+        this.lastJob = jobName;
+    }
+
+    /**
+     * Getter of the citizens random object.
+     *
+     * @return random object.
+     */
+    @Override
+    public Random getRandom()
+    {
+        return rand;
+    }
+
+    /**
+     * Return this citizens inventory.
+     *
+     * @return the inventory this citizen has.
+     */
+    @Override
+    @NotNull
+    public InventoryCitizen getInventoryCitizen()
+    {
+        return inventory;
+    }
+
+    /**
+     * Getter of the resource location of the texture.
+     *
+     * @return location of the texture.
+     */
+    @Override
+    public ResourceLocation getTexture()
+    {
+        return texture;
+    }
+
+    /**
+     * Getter which checks if the citizen is female.
+     *
+     * @return true if female.
+     */
+    @Override
+    public boolean isFemale()
+    {
+        return female;
+    }
+
+    /**
+     * Clears the colony of the citizen.
+     */
+    @Override
+    public void clearColony()
+    {
+        setColony(null, null);
+    }
+
+    @Override
+    public boolean isAtHome()
+    {
+        @Nullable final BlockPos homePosition = getHomePosition();
+        return homePosition != null && homePosition.distanceSq((int) Math.floor(posX), (int) posY, (int) Math.floor(posZ)) <= RANGE_TO_BE_HOME;
+    }
+
+    /**
+     * Returns the home position of each citizen (His house or town hall).
+     *
+     * @return location
+     */
+    @Nullable
+    @Override
+    public BlockPos getHomePosition()
+    {
+        @Nullable final BuildingHome homeBuilding = getHomeBuilding();
+        if (homeBuilding != null)
+        {
+            return homeBuilding.getLocation().getInDimensionLocation();
+        }
+        else if (getColony() != null && getColony().getTownHall() != null)
+        {
+            return getColony().getTownHall().getLocation().getInDimensionLocation();
+        }
+
+        return null;
+    }
+
+    private BuildingHome getHomeBuilding()
+    {
+        return (citizenData == null) ? null : citizenData.getHomeBuilding();
+    }
+
+    @Override
+    public boolean isInventoryFull()
+    {
+        return InventoryUtils.isProviderFull(this);
+    }
+
+    /**
+     * Lets the citizen tryToEat to replentish saturation.
+     */
+    @Override
+    public void tryToEat()
+    {
+        final int slot = InventoryUtils.findFirstSlotInProviderWith(this,
+          itemStack -> !InventoryUtils.isItemStackEmpty(itemStack) && itemStack.getItem() instanceof ItemFood);
+
+        if (slot == -1)
+        {
+            return;
+        }
+
+        final ItemStack stack = inventory.getStackInSlot(slot);
+        if (!InventoryUtils.isItemStackEmpty(stack) && stack.getItem() instanceof ItemFood && citizenData != null)
+        {
+            int heal = ((ItemFood) stack.getItem()).getHealAmount(stack);
+            citizenData.increaseSaturation(heal);
+            inventory.decrStackSize(slot, 1);
+            citizenData.markDirty();
+        }
+    }
+
+    @Override
+    @NotNull
+    public DesiredCitizenActivity getDesiredActivity()
+    {
+        if (this.getColonyJob() instanceof JobGuard)
+        {
+            return DesiredCitizenActivity.WORK;
+        }
+
+        if (!world.isDaytime())
+        {
+            if (isDay && citizenData != null)
+            {
+                isDay = false;
+                final AbstractBuildingWorker buildingWorker = getWorkBuilding();
+                final double decreaseBy = buildingWorker == null || buildingWorker.getBuildingLevel() == 0 ? 0.1
+                                            : (SATURATION_DECREASE_FACTOR * Math.pow(2, buildingWorker.getBuildingLevel() - 1.0));
+                citizenData.decreaseSaturation(decreaseBy);
+                citizenData.markDirty();
+            }
+            return DesiredCitizenActivity.SLEEP;
+        }
+
+        isDay = true;
+
+        if (world.isRaining() && !shouldWorkWhileRaining())
+        {
+            return DesiredCitizenActivity.IDLE;
+        }
+        else
+        {
+            if (this.getNavigator() != null && (this.getNavigator().getPath() != null && this.getNavigator().getPath().getCurrentPathLength() == 0))
+            {
+                this.getNavigator().clearPathEntity();
+            }
+            return DesiredCitizenActivity.WORK;
+        }
+    }
+
+    /**
+     * Checks if the citizen should work even when it rains.
+     *
+     * @return true if his building level is bigger than 5.
+     */
+    private boolean shouldWorkWhileRaining()
+    {
+        return this.getWorkBuilding() != null && (this.getWorkBuilding().getBuildingLevel() >= BONUS_BUILDING_LEVEL);
+    }
+
+    /**
+     * Returns the first slot in the inventory with a specific item.
+     *
+     * @param targetItem the item.
+     * @param itemDamage the damage value
+     * @return the slot.
+     */
+    @Override
+    public int findFirstSlotInInventoryWith(final Item targetItem, int itemDamage)
+    {
+        return InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(getInventoryCitizen()), targetItem, itemDamage);
+    }
+
+    /**
+     * Returns the first slot in the inventory with a specific block.
+     *
+     * @param block      the block.
+     * @param itemDamage the damage value
+     * @return the slot.
+     */
+    @Override
+    public int findFirstSlotInInventoryWith(final Block block, int itemDamage)
+    {
+        return InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(getInventoryCitizen()), block, itemDamage);
+    }
+
+    /**
+     * Returns the amount of a certain block in the inventory.
+     *
+     * @param block      the block.
+     * @param itemDamage the damage value
+     * @return the quantity.
+     */
+    @Override
+    public int getItemCountInInventory(final Block block, int itemDamage)
+    {
+        return InventoryUtils.getItemCountInItemHandler(new InvWrapper(getInventoryCitizen()), block, itemDamage);
+    }
+
+    /**
+     * Returns the amount of a certain item in the inventory.
+     *
+     * @param targetItem the block.
+     * @param itemDamage the damage value.
+     * @return the quantity.
+     */
+    @Override
+    public int getItemCountInInventory(final Item targetItem, int itemDamage)
+    {
+        return InventoryUtils.getItemCountInItemHandler(new InvWrapper(getInventoryCitizen()), targetItem, itemDamage);
+    }
+
+    /**
+     * Checks if citizen has a certain block in the inventory.
+     *
+     * @param block      the block.
+     * @param itemDamage the damage value
+     * @return true if so.
+     */
+    @Override
+    public boolean hasItemInInventory(final Block block, int itemDamage)
+    {
+        return InventoryUtils.hasItemInItemHandler(new InvWrapper(getInventoryCitizen()), block, itemDamage);
+    }
+
+    /**
+     * Checks if citizen has a certain item in the inventory.
+     *
+     * @param item       the item.
+     * @param itemDamage the damage value
+     * @return true if so.
+     */
+    @Override
+    public boolean hasItemInInventory(final Item item, int itemDamage)
+    {
+        return InventoryUtils.hasItemInItemHandler(new InvWrapper(getInventoryCitizen()), item, itemDamage);
+    }
+
+    /**
+     * Removes the currently held item.
+     */
+    @Override
+    public void removeHeldItem()
+    {
+        setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStack.EMPTY);
+    }
+
+    /**
+     * Sets the currently held item.
+     *
+     * @param slot from the inventory slot.
+     */
+    @Override
+    public void setHeldItem(final int slot)
+    {
+        inventory.setHeldItem(slot);
+        setItemStackToSlot(EntityEquipmentSlot.MAINHAND, inventory.getStackInSlot(slot));
+    }
+
+    /**
+     * Swing entity arm, create sound and particle effects.
+     * <p>
+     * Will not break the block.
+     *
+     * @param blockPos Block position.
+     */
+    @Override
+    public void hitBlockWithToolInHand(@Nullable final BlockPos blockPos)
+    {
+        if (blockPos == null)
+        {
+            return;
+        }
+        hitBlockWithToolInHand(blockPos, false);
+    }
+
+    /**
+     * Swing entity arm, create sound and particle effects.
+     * <p>
+     * If breakBlock is true then it will break the block (different sound and
+     * particles), and damage the tool in the citizens hand.
+     *
+     * @param blockPos   Block position.
+     * @param breakBlock if we want to break this block.
+     */
+    private void hitBlockWithToolInHand(@Nullable final BlockPos blockPos, final boolean breakBlock)
+    {
+        if (blockPos == null)
+        {
+            return;
+        }
+
+        this.getLookHelper().setLookPosition(blockPos.getX(), blockPos.getY(), blockPos.getZ(), FACING_DELTA_YAW, getVerticalFaceSpeed());
+
+        this.swingArm(this.getActiveHand());
+
+        final IBlockState blockState = world.getBlockState(blockPos);
+        final Block block = blockState.getBlock();
+        if (breakBlock)
+        {
+            if (!world.isRemote)
+            {
+                MineColonies.getNetwork().sendToAllAround(
+                  new BlockParticleEffectMessage(blockPos, world.getBlockState(blockPos), BlockParticleEffectMessage.BREAK_BLOCK),
+                  new NetworkRegistry.TargetPoint(world.provider.getDimension(), blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_SOUND_RANGE));
+            }
+            world.playSound(null,
+              blockPos,
+              block.getSoundType(blockState, world, blockPos, this).getBreakSound(),
+              SoundCategory.BLOCKS,
+              block.getSoundType(blockState, world, blockPos, this).getVolume(),
+              block.getSoundType(blockState, world, blockPos, this).getPitch());
+            world.setBlockToAir(blockPos);
+
+            damageItemInHand(1);
+        }
+        else
+        {
+            //todo: might remove this
+            if (!world.isRemote)
+            {
+                MineColonies.getNetwork().sendToAllAround(
+                  //todo: correct side
+                  new BlockParticleEffectMessage(blockPos, world.getBlockState(blockPos), 1),
+                  new NetworkRegistry.TargetPoint(world.provider.getDimension(), blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE));
+            }
+            world.playSound(null,
+              blockPos,
+              block.getSoundType(blockState, world, blockPos, this).getBreakSound(),
+              SoundCategory.BLOCKS,
+              block.getSoundType(blockState, world, blockPos, this).getVolume(),
+              block.getSoundType(blockState, world, blockPos, this).getPitch());
+        }
+    }
+
+    /**
+     * Damage the current held item.
+     *
+     * @param damage amount of damage.
+     */
+    @Override
+    public void damageItemInHand(final int damage)
+    {
+        final ItemStack heldItem = inventory.getHeldItemMainhand();
+        //If we hit with bare hands, ignore
+        if (heldItem == null)
+        {
+            return;
+        }
+        heldItem.damageItem(damage, this);
+
+        //check if tool breaks
+        if (heldItem.getCount() < 1)
+        {
+            getInventoryCitizen().setInventorySlotContents(getInventoryCitizen().getHeldItemSlot(), ItemStack.EMPTY);
+            this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStack.EMPTY);
+        }
+    }
+
+    /**
+     * Swing entity arm, create sound and particle effects.
+     * <p>
+     * This will break the block (different sound and particles),
+     * and damage the tool in the citizens hand.
+     *
+     * @param blockPos Block position.
+     */
+    @Override
+    public void breakBlockWithToolInHand(@Nullable final BlockPos blockPos)
+    {
+        if (blockPos == null)
+        {
+            return;
+        }
+        hitBlockWithToolInHand(blockPos, true);
+    }
+
+    /**
+     * Sends a localized message from the citizen containing a language string
+     * with a key and arguments.
+     *
+     * @param key  the key to retrieve the string.
+     * @param args additional arguments.
+     */
+    @Override
+    public void sendLocalizedChat(final String key, final Object... args)
+    {
+        sendChat(key, args);
+    }
+
+    /**
+     * Sends a chat string close to the citizen.
+     *
+     * @param msg the message string.
+     */
+    private void sendChat(final String key, @Nullable final Object... msg)
+    {
+        if (msg == null || statusMessages.containsKey(key))
+        {
+            return;
+        }
+
+        final TextComponentTranslation requiredItem;
+
+        if (msg.length == 0)
+        {
+            requiredItem = new TextComponentTranslation(key);
+        }
+        else
+        {
+            statusMessages.put(key + msg[0], ticksExisted);
+            requiredItem = new TextComponentTranslation(key, msg);
+        }
+
+        final TextComponentString citizenDescription = new TextComponentString(" ");
+        citizenDescription.appendText(this.getCustomNameTag()).appendText(": ");
+        final TextComponentString colonyDescription = new TextComponentString(" at " + this.getColony().getName() + ":");
+
+        LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
+          this.getColonyJob() == null ? "" : this.getColonyJob().getName(), colonyDescription, citizenDescription, requiredItem);
+    }
+
+    /**
+     * Intelligence getter.
+     *
+     * @return citizen intelligence value.
+     */
+    @Override
+    public int getIntelligence()
+    {
+        return citizenData.getIntelligence();
+    }
+
+    /**
+     * Charisma getter.
+     *
+     * @return citizen Charisma value.
+     */
+    @Override
+    public int getCharisma()
+    {
+        return citizenData.getCharisma();
+    }
+
+    /**
+     * Strength getter.
+     *
+     * @return citizen Strength value.
+     */
+    @Override
+    public int getStrength()
+    {
+        return citizenData.getStrength();
+    }
+
+    /**
+     * Endurance getter.
+     *
+     * @return citizen Endurance value.
+     */
+    @Override
+    public int getEndurance()
+    {
+        return citizenData.getEndurance();
+    }
+
+    /**
+     * Dexterity getter.
+     *
+     * @return citizen Dexterity value.
+     */
+    @Override
+    public int getDexterity()
+    {
+        return citizenData.getDexterity();
+    }
+
+    /**
+     * Set the skill modifier which defines how fast a citizen levels in a
+     * certain skill.
+     *
+     * @param modifier input modifier.
+     */
+    @Override
+    public void setSkillModifier(final int modifier)
+    {
+        skillModifier = modifier;
+    }
+
+    /**
+     * Called when the citizen wakes up.
+     */
+    @Override
+    public void onWakeUp()
+    {
+        if (this.getWorkBuilding() instanceof BuildingFarmer)
+        {
+            ((BuildingFarmer) this.getWorkBuilding()).resetFields();
+        }
+    }
+
+    @Override
+    public World getWorld()
+    {
+        return world;
     }
 
     /**
@@ -837,47 +1460,6 @@ public class EntityCitizen extends Citizen
     }
 
     /**
-     * Trigger the corresponding death achievement.
-     *
-     * @param source The damage source.
-     * @param job    The job of the citizen.
-     */
-    @Override
-    public void triggerDeathAchievement(final DamageSource source, final IJob job)
-    {
-        if (job instanceof JobMiner)
-        {
-            if (source == DamageSource.LAVA || source == DamageSource.IN_FIRE || source == DamageSource.ON_FIRE)
-            {
-                this.getColony().triggerAchievement(ModAchievements.achievementMinerDeathLava);
-            }
-            if (source.equals(DamageSource.FALL))
-            {
-                this.getColony().triggerAchievement(ModAchievements.achievementMinerDeathFall);
-            }
-        }
-        if (job instanceof JobLumberjack && source == DamageSource.IN_WALL)
-        {
-            this.getColony().triggerAchievement(ModAchievements.achievementLumberjackDeathTree);
-        }
-        if (job instanceof JobFisherman && source.getEntity() instanceof EntityGuardian)
-        {
-            this.getColony().triggerAchievement(ModAchievements.achievementFisherDeathGuardian);
-        }
-        if (job instanceof JobGuard && source.getEntity() instanceof EntityEnderman)
-        {
-            this.getColony().triggerAchievement(ModAchievements.achievementGuardDeathEnderman);
-        }
-    }
-
-    @Override
-    @Nullable
-    public CitizenData getCitizenData()
-    {
-        return citizenData;
-    }
-
-    /**
      * Get the experience points the entity currently has.
      * <p>
      *
@@ -886,13 +1468,6 @@ public class EntityCitizen extends Citizen
     private double getExperiencePoints()
     {
         return citizenData.getExperience();
-    }
-
-    @Override
-    @Nullable
-    public Colony getColony()
-    {
-        return colony;
     }
 
     @Override
@@ -1242,34 +1817,18 @@ public class EntityCitizen extends Citizen
         texture = new ResourceLocation(Constants.MOD_ID, textureBase + moddedTextureId + renderMetadata + ".png");
     }
 
-    @Override
-    public int getOffsetTicks()
-    {
-        return this.ticksExisted + OFFSET_TICK_MULTIPLIER * this.getEntityId();
-    }
-
-    @Override
-    public Model getModelID()
-    {
-        return modelId;
-    }
+    //todo resolve problem if citizen don't get to replentish at home.
 
     /**
-     * Server-specific update for the EntityCitizen.
+     * Defines the area in which the citizen automatically gathers experience.
+     *
+     * @return a list of xp orbs around the entity.
      */
-    @Override
-    public void updateColonyServer()
+    private List<EntityXPOrb> getXPOrbsOnGrid()
     {
-        if (colonyId == 0)
-        {
-            setDead();
-            return;
-        }
+        @NotNull final AxisAlignedBB bb = new AxisAlignedBB(posX - 2, posY - 2, posZ - 2, posX + 2, posY + 2, posZ + 2);
 
-        if (colony == null)
-        {
-            handleNullColony();
-        }
+        return world.getEntitiesWithinAABB(EntityXPOrb.class, bb);
     }
 
     /**
@@ -1327,46 +1886,6 @@ public class EntityCitizen extends Citizen
     }
 
     /**
-     * Assigns a citizen to a colony.
-     *
-     * @param c    the colony.
-     * @param data the data of the new citizen.
-     */
-    @Override
-    public void setColony(@Nullable final IColony c, @Nullable final ICitizenData data)
-    {
-        if (c == null)
-        {
-            colony = null;
-            colonyId = 0;
-            citizenId = 0;
-            citizenData = null;
-            setDead();
-            return;
-        }
-
-        colony = c;
-        colonyId = colony.getID();
-        citizenId = data.getId();
-        citizenData = data;
-
-        setCustomNameTag(citizenData.getName());
-
-        female = citizenData.isFemale();
-        textureId = citizenData.getTextureId();
-
-        dataManager.set(DATA_COLONY_ID, colonyId);
-        dataManager.set(DATA_CITIZEN_ID, citizenId);
-        dataManager.set(DATA_IS_FEMALE, female ? 1 : 0);
-        dataManager.set(DATA_TEXTURE, textureId);
-        updateLevel();
-
-        citizenData.setCitizenEntity(this);
-
-        onJobChanged(getColonyJob());
-    }
-
-    /**
      * Getter of the dataview, the clientside representation of the citizen.
      *
      * @return the view.
@@ -1383,40 +1902,6 @@ public class EntityCitizen extends Citizen
         }
 
         return null;
-    }
-
-    /**
-     * Getter for the last job.
-     *
-     * @return the last job he had.
-     */
-    @Override
-    @NotNull
-    public String getLastJob()
-    {
-        return this.lastJob;
-    }
-
-    /**
-     * Sets the last job of the citizen.
-     *
-     * @param jobName the job he last had.
-     */
-    @Override
-    public void setLastJob(@NotNull String jobName)
-    {
-        this.lastJob = jobName;
-    }
-
-    /**
-     * Getter of the citizens random object.
-     *
-     * @return random object.
-     */
-    @Override
-    public Random getRandom()
-    {
-        return rand;
     }
 
     /**
@@ -1468,18 +1953,6 @@ public class EntityCitizen extends Citizen
     }
 
     /**
-     * Return this citizens inventory.
-     *
-     * @return the inventory this citizen has.
-     */
-    @Override
-    @NotNull
-    public InventoryCitizen getInventoryCitizen()
-    {
-        return inventory;
-    }
-
-    /**
      * Handles the dropping of items from the entity.
      *
      * @param itemstack to drop.
@@ -1488,145 +1961,6 @@ public class EntityCitizen extends Citizen
     private EntityItem entityDropItem(@NotNull final ItemStack itemstack)
     {
         return entityDropItem(itemstack, 0.0F);
-    }
-
-    /**
-     * Getter of the resource location of the texture.
-     *
-     * @return location of the texture.
-     */
-    @Override
-    public ResourceLocation getTexture()
-    {
-        return texture;
-    }
-
-    /**
-     * Getter which checks if the citizen is female.
-     *
-     * @return true if female.
-     */
-    @Override
-    public boolean isFemale()
-    {
-        return female;
-    }
-
-    /**
-     * Clears the colony of the citizen.
-     */
-    @Override
-    public void clearColony()
-    {
-        setColony(null, null);
-    }
-
-    @Override
-    public boolean isAtHome()
-    {
-        @Nullable final BlockPos homePosition = getHomePosition();
-        return homePosition != null && homePosition.distanceSq((int) Math.floor(posX), (int) posY, (int) Math.floor(posZ)) <= RANGE_TO_BE_HOME;
-    }
-
-    /**
-     * Returns the home position of each citizen (His house or town hall).
-     *
-     * @return location
-     */
-    @Nullable
-    @Override
-    public BlockPos getHomePosition()
-    {
-        @Nullable final BuildingHome homeBuilding = getHomeBuilding();
-        if (homeBuilding != null)
-        {
-            return homeBuilding.getLocation().getInDimensionLocation();
-        }
-        else if (getColony() != null && getColony().getTownHall() != null)
-        {
-            return getColony().getTownHall().getLocation().getInDimensionLocation();
-        }
-
-        return null;
-    }
-
-    @Override
-    public boolean isInventoryFull()
-    {
-        return InventoryUtils.isProviderFull(this);
-    }
-
-    /**
-     * Lets the citizen tryToEat to replentish saturation.
-     */
-    @Override
-    public void tryToEat()
-    {
-        final int slot = InventoryUtils.findFirstSlotInProviderWith(this,
-          itemStack -> !InventoryUtils.isItemStackEmpty(itemStack) && itemStack.getItem() instanceof ItemFood);
-
-        if (slot == -1)
-        {
-            return;
-        }
-
-        final ItemStack stack = inventory.getStackInSlot(slot);
-        if (!InventoryUtils.isItemStackEmpty(stack) && stack.getItem() instanceof ItemFood && citizenData != null)
-        {
-            int heal = ((ItemFood) stack.getItem()).getHealAmount(stack);
-            citizenData.increaseSaturation(heal);
-            inventory.decrStackSize(slot, 1);
-            citizenData.markDirty();
-        }
-    }
-
-    @Override
-    @NotNull
-    public DesiredCitizenActivity getDesiredActivity()
-    {
-        if (this.getColonyJob() instanceof JobGuard)
-        {
-            return DesiredCitizenActivity.WORK;
-        }
-
-        if (!world.isDaytime())
-        {
-            if (isDay && citizenData != null)
-            {
-                isDay = false;
-                final AbstractBuildingWorker buildingWorker = getWorkBuilding();
-                final double decreaseBy = buildingWorker == null || buildingWorker.getBuildingLevel() == 0 ? 0.1
-                                            : (SATURATION_DECREASE_FACTOR * Math.pow(2, buildingWorker.getBuildingLevel() - 1.0));
-                citizenData.decreaseSaturation(decreaseBy);
-                citizenData.markDirty();
-            }
-            return DesiredCitizenActivity.SLEEP;
-        }
-
-        isDay = true;
-
-        if (world.isRaining() && !shouldWorkWhileRaining())
-        {
-            return DesiredCitizenActivity.IDLE;
-        }
-        else
-        {
-            if (this.getNavigator() != null && (this.getNavigator().getPath() != null && this.getNavigator().getPath().getCurrentPathLength() == 0))
-            {
-                this.getNavigator().clearPathEntity();
-            }
-            return DesiredCitizenActivity.WORK;
-        }
-    }
-
-    /**
-     * Checks if the citizen should work even when it rains.
-     *
-     * @return true if his building level is bigger than 5.
-     */
-    private boolean shouldWorkWhileRaining()
-    {
-        return this.getWorkBuilding() != null && (this.getWorkBuilding().getBuildingLevel() >= BONUS_BUILDING_LEVEL);
     }
 
     /**
@@ -1647,84 +1981,6 @@ public class EntityCitizen extends Citizen
     public BlockPos getPosition()
     {
         return new BlockPos(posX, posY, posZ);
-    }
-
-    /**
-     * Returns the first slot in the inventory with a specific item.
-     *
-     * @param targetItem the item.
-     * @param itemDamage the damage value
-     * @return the slot.
-     */
-    @Override
-    public int findFirstSlotInInventoryWith(final Item targetItem, int itemDamage)
-    {
-        return InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(getInventoryCitizen()), targetItem, itemDamage);
-    }
-
-    /**
-     * Returns the first slot in the inventory with a specific block.
-     *
-     * @param block      the block.
-     * @param itemDamage the damage value
-     * @return the slot.
-     */
-    @Override
-    public int findFirstSlotInInventoryWith(final Block block, int itemDamage)
-    {
-        return InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(getInventoryCitizen()), block, itemDamage);
-    }
-
-    /**
-     * Returns the amount of a certain block in the inventory.
-     *
-     * @param block      the block.
-     * @param itemDamage the damage value
-     * @return the quantity.
-     */
-    @Override
-    public int getItemCountInInventory(final Block block, int itemDamage)
-    {
-        return InventoryUtils.getItemCountInItemHandler(new InvWrapper(getInventoryCitizen()), block, itemDamage);
-    }
-
-    /**
-     * Returns the amount of a certain item in the inventory.
-     *
-     * @param targetItem the block.
-     * @param itemDamage the damage value.
-     * @return the quantity.
-     */
-    @Override
-    public int getItemCountInInventory(final Item targetItem, int itemDamage)
-    {
-        return InventoryUtils.getItemCountInItemHandler(new InvWrapper(getInventoryCitizen()), targetItem, itemDamage);
-    }
-
-    /**
-     * Checks if citizen has a certain block in the inventory.
-     *
-     * @param block      the block.
-     * @param itemDamage the damage value
-     * @return true if so.
-     */
-    @Override
-    public boolean hasItemInInventory(final Block block, int itemDamage)
-    {
-        return InventoryUtils.hasItemInItemHandler(new InvWrapper(getInventoryCitizen()), block, itemDamage);
-    }
-
-    /**
-     * Checks if citizen has a certain item in the inventory.
-     *
-     * @param item       the item.
-     * @param itemDamage the damage value
-     * @return true if so.
-     */
-    @Override
-    public boolean hasItemInInventory(final Item item, int itemDamage)
-    {
-        return InventoryUtils.hasItemInItemHandler(new InvWrapper(getInventoryCitizen()), item, itemDamage);
     }
 
     /**
@@ -1761,276 +2017,5 @@ public class EntityCitizen extends Citizen
                 }
             }
         }
-    }
-
-    /**
-     * Removes the currently held item.
-     */
-    @Override
-    public void removeHeldItem()
-    {
-        setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStack.EMPTY);
-    }
-
-    /**
-     * Sets the currently held item.
-     *
-     * @param slot from the inventory slot.
-     */
-    @Override
-    public void setHeldItem(final int slot)
-    {
-        inventory.setHeldItem(slot);
-        setItemStackToSlot(EntityEquipmentSlot.MAINHAND, inventory.getStackInSlot(slot));
-    }
-
-    /**
-     * Swing entity arm, create sound and particle effects.
-     * <p>
-     * Will not break the block.
-     *
-     * @param blockPos Block position.
-     */
-    @Override
-    public void hitBlockWithToolInHand(@Nullable final BlockPos blockPos)
-    {
-        if (blockPos == null)
-        {
-            return;
-        }
-        hitBlockWithToolInHand(blockPos, false);
-    }
-
-    /**
-     * Swing entity arm, create sound and particle effects.
-     * <p>
-     * If breakBlock is true then it will break the block (different sound and
-     * particles), and damage the tool in the citizens hand.
-     *
-     * @param blockPos   Block position.
-     * @param breakBlock if we want to break this block.
-     */
-    private void hitBlockWithToolInHand(@Nullable final BlockPos blockPos, final boolean breakBlock)
-    {
-        if (blockPos == null)
-        {
-            return;
-        }
-
-        this.getLookHelper().setLookPosition(blockPos.getX(), blockPos.getY(), blockPos.getZ(), FACING_DELTA_YAW, getVerticalFaceSpeed());
-
-        this.swingArm(this.getActiveHand());
-
-        final IBlockState blockState = world.getBlockState(blockPos);
-        final Block block = blockState.getBlock();
-        if (breakBlock)
-        {
-            if (!world.isRemote)
-            {
-                MineColonies.getNetwork().sendToAllAround(
-                  new BlockParticleEffectMessage(blockPos, world.getBlockState(blockPos), BlockParticleEffectMessage.BREAK_BLOCK),
-                  new NetworkRegistry.TargetPoint(world.provider.getDimension(), blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_SOUND_RANGE));
-            }
-            world.playSound(null,
-              blockPos,
-              block.getSoundType(blockState, world, blockPos, this).getBreakSound(),
-              SoundCategory.BLOCKS,
-              block.getSoundType(blockState, world, blockPos, this).getVolume(),
-              block.getSoundType(blockState, world, blockPos, this).getPitch());
-            world.setBlockToAir(blockPos);
-
-            damageItemInHand(1);
-        }
-        else
-        {
-            //todo: might remove this
-            if (!world.isRemote)
-            {
-                MineColonies.getNetwork().sendToAllAround(
-                  //todo: correct side
-                  new BlockParticleEffectMessage(blockPos, world.getBlockState(blockPos), 1),
-                  new NetworkRegistry.TargetPoint(world.provider.getDimension(), blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE));
-            }
-            world.playSound(null,
-              blockPos,
-              block.getSoundType(blockState, world, blockPos, this).getBreakSound(),
-              SoundCategory.BLOCKS,
-              block.getSoundType(blockState, world, blockPos, this).getVolume(),
-              block.getSoundType(blockState, world, blockPos, this).getPitch());
-        }
-    }
-
-    //todo resolve problem if citizen don't get to replentish at home.
-
-    /**
-     * Damage the current held item.
-     *
-     * @param damage amount of damage.
-     */
-    @Override
-    public void damageItemInHand(final int damage)
-    {
-        final ItemStack heldItem = inventory.getHeldItemMainhand();
-        //If we hit with bare hands, ignore
-        if (heldItem == null)
-        {
-            return;
-        }
-        heldItem.damageItem(damage, this);
-
-        //check if tool breaks
-        if (heldItem.getCount() < 1)
-        {
-            getInventoryCitizen().setInventorySlotContents(getInventoryCitizen().getHeldItemSlot(), ItemStack.EMPTY);
-            this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStack.EMPTY);
-        }
-    }
-
-    /**
-     * Swing entity arm, create sound and particle effects.
-     * <p>
-     * This will break the block (different sound and particles),
-     * and damage the tool in the citizens hand.
-     *
-     * @param blockPos Block position.
-     */
-    @Override
-    public void breakBlockWithToolInHand(@Nullable final BlockPos blockPos)
-    {
-        if (blockPos == null)
-        {
-            return;
-        }
-        hitBlockWithToolInHand(blockPos, true);
-    }
-
-    /**
-     * Sends a localized message from the citizen containing a language string
-     * with a key and arguments.
-     *
-     * @param key  the key to retrieve the string.
-     * @param args additional arguments.
-     */
-    @Override
-    public void sendLocalizedChat(final String key, final Object... args)
-    {
-        sendChat(key, args);
-    }
-
-    /**
-     * Sends a chat string close to the citizen.
-     *
-     * @param msg the message string.
-     */
-    private void sendChat(final String key, @Nullable final Object... msg)
-    {
-        if (msg == null || statusMessages.containsKey(key))
-        {
-            return;
-        }
-
-        final TextComponentTranslation requiredItem;
-
-        if (msg.length == 0)
-        {
-            requiredItem = new TextComponentTranslation(key);
-        }
-        else
-        {
-            statusMessages.put(key + msg[0], ticksExisted);
-            requiredItem = new TextComponentTranslation(key, msg);
-        }
-
-        final TextComponentString citizenDescription = new TextComponentString(" ");
-        citizenDescription.appendText(this.getCustomNameTag()).appendText(": ");
-        final TextComponentString colonyDescription = new TextComponentString(" at " + this.getColony().getName() + ":");
-
-        LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
-          this.getColonyJob() == null ? "" : this.getColonyJob().getName(), colonyDescription, citizenDescription, requiredItem);
-    }
-
-    /**
-     * Intelligence getter.
-     *
-     * @return citizen intelligence value.
-     */
-    @Override
-    public int getIntelligence()
-    {
-        return citizenData.getIntelligence();
-    }
-
-    /**
-     * Charisma getter.
-     *
-     * @return citizen Charisma value.
-     */
-    @Override
-    public int getCharisma()
-    {
-        return citizenData.getCharisma();
-    }
-
-    /**
-     * Strength getter.
-     *
-     * @return citizen Strength value.
-     */
-    @Override
-    public int getStrength()
-    {
-        return citizenData.getStrength();
-    }
-
-    /**
-     * Endurance getter.
-     *
-     * @return citizen Endurance value.
-     */
-    @Override
-    public int getEndurance()
-    {
-        return citizenData.getEndurance();
-    }
-
-    /**
-     * Dexterity getter.
-     *
-     * @return citizen Dexterity value.
-     */
-    @Override
-    public int getDexterity()
-    {
-        return citizenData.getDexterity();
-    }
-
-    /**
-     * Set the skill modifier which defines how fast a citizen levels in a
-     * certain skill.
-     *
-     * @param modifier input modifier.
-     */
-    @Override
-    public void setSkillModifier(final int modifier)
-    {
-        skillModifier = modifier;
-    }
-
-    /**
-     * Called when the citizen wakes up.
-     */
-    @Override
-    public void onWakeUp()
-    {
-        if (this.getWorkBuilding() instanceof BuildingFarmer)
-        {
-            ((BuildingFarmer) this.getWorkBuilding()).resetFields();
-        }
-    }
-
-    @Override
-    public World getWorld()
-    {
-        return world;
     }
 }

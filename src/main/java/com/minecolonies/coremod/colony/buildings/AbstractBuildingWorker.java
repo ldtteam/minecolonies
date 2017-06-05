@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
@@ -176,6 +176,15 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         return worker != null;
     }
 
+    @Override
+    public void removeCitizen(final CitizenData citizen)
+    {
+        if (isWorker(citizen))
+        {
+            setWorker(null);
+        }
+    }
+
     /**
      * Returns if the {@link CitizenData} is the same as {@link #worker}.
      *
@@ -194,15 +203,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
      */
     @NotNull
     public abstract String getJobName();
-
-    @Override
-    public void removeCitizen(final CitizenData citizen)
-    {
-        if (isWorker(citizen))
-        {
-            setWorker(null);
-        }
-    }
 
     /**
      * @see AbstractBuilding#onUpgradeComplete(int)

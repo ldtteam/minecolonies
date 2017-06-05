@@ -68,7 +68,8 @@ public interface IJob
 
     /**
      * Method used to create a request in the workers building.
-     * @param request The request to create.
+     *
+     * @param request   The request to create.
      * @param <Request> The type of request.
      */
     <Request> void createRequest(@NotNull Request request);

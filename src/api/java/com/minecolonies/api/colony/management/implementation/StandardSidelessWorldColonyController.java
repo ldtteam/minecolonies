@@ -25,20 +25,21 @@ import java.util.UUID;
 /**
  * A sideless implementation of a {@link IWorldColonyController}
  */
-public class StandardSidelessWorldColonyController<B extends IBuilding, C extends IColony<B>> implements IWorldColonyController<B,C>
+public class StandardSidelessWorldColonyController<B extends IBuilding, C extends IColony<B>> implements IWorldColonyController<B, C>
 {
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
-    private static final String TAG_COLONIES = "Colonies";
+    private static final String TAG_COLONIES  = "Colonies";
     private static final String TAG_DIMENSION = "Dimension";
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
-    private final World world;
+
+    private final World                                       world;
     private final StandardWorldColonyControllerWorldSavedData savedData;
     private HashMap<IToken<?>, C> colonyMap = new HashMap<>();
 
     public StandardSidelessWorldColonyController(
-                                                   final World world,
-                                                   final StandardWorldColonyControllerWorldSavedData savedData)
+                                                  final World world,
+                                                  final StandardWorldColonyControllerWorldSavedData savedData)
     {
         this.world = world;
         this.savedData = savedData;
@@ -59,7 +60,8 @@ public class StandardSidelessWorldColonyController<B extends IBuilding, C extend
         NBTTagCompound data = new NBTTagCompound();
         NBTTagList colonyDataList = new NBTTagList();
 
-        getColonies().forEach(c -> {
+        getColonies().forEach(c ->
+        {
             colonyDataList.appendTag(c.serializeNBT());
         });
 
@@ -68,7 +70,8 @@ public class StandardSidelessWorldColonyController<B extends IBuilding, C extend
 
         return data;
     }
-@Override
+
+    @Override
     public void deserializeNBT(final NBTTagCompound nbt)
     {
         if (world.provider.getDimension() != nbt.getInteger(TAG_DIMENSION))
@@ -86,13 +89,15 @@ public class StandardSidelessWorldColonyController<B extends IBuilding, C extend
         }
 
         markDirty();
-    }@Override
+    }
+
+    @Override
     public World getWorld()
     {
         return world;
     }
 
-        @NotNull
+    @NotNull
     @Override
     public C createColony(@NotNull final BlockPos pos, @NotNull final EntityPlayer player)
     {
@@ -119,7 +124,8 @@ public class StandardSidelessWorldColonyController<B extends IBuilding, C extend
     @Override
     public void deleteColony(@NotNull final IToken id) throws IllegalArgumentException
     {
-        if (!colonyMap.containsKey(id)) {
+        if (!colonyMap.containsKey(id))
+        {
             throw new IllegalArgumentException("Id is unknown");
         }
 
@@ -188,8 +194,4 @@ public class StandardSidelessWorldColonyController<B extends IBuilding, C extend
     {
         return Objects.nonNull(getColony(pos));
     }
-
-
-
-
 }

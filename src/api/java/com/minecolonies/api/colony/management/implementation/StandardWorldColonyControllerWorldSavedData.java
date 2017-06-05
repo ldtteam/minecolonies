@@ -2,7 +2,6 @@ package com.minecolonies.api.colony.management.implementation;
 
 import com.minecolonies.api.colony.management.IWorldColonyController;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 
 /**
@@ -19,7 +18,6 @@ public class StandardWorldColonyControllerWorldSavedData extends WorldSavedData
     public static final String TAG_CONTROLLER = "Controller";
     ////// --------------------------- String Constants --------------------------- \\\\\\
 
-
     private IWorldColonyController controller;
 
     public StandardWorldColonyControllerWorldSavedData(final String name)
@@ -27,7 +25,8 @@ public class StandardWorldColonyControllerWorldSavedData extends WorldSavedData
         this();
     }
 
-    public StandardWorldColonyControllerWorldSavedData() {
+    public StandardWorldColonyControllerWorldSavedData()
+    {
         super(WORLD_SAVED_DATA_PREFIX);
     }
 

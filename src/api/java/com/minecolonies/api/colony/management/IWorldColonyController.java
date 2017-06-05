@@ -23,6 +23,7 @@ public interface IWorldColonyController<B extends IBuilding, C extends IColony<B
 
     /**
      * Method to get the world that the controller belongs to.
+     *
      * @return The world of the controller.
      */
     World getWorld();
@@ -44,6 +45,7 @@ public interface IWorldColonyController<B extends IBuilding, C extends IColony<B
 
     /**
      * Indicates if this {@link IWorldColonyController} needs to be saved.
+     *
      * @return True when he needs to be saved, false when not.
      */
     boolean isDirty();
@@ -124,7 +126,7 @@ public interface IWorldColonyController<B extends IBuilding, C extends IColony<B
     /**
      * Check if a given coordinate is inside any other colony.
      *
-     * @param pos   the position to check.
+     * @param pos the position to check.
      * @return true if a colony has been found.
      */
     boolean isCoordinateInAnyColony(@NotNull BlockPos pos);

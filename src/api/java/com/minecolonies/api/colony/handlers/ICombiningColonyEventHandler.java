@@ -13,18 +13,19 @@ import org.jetbrains.annotations.NotNull;
 public interface ICombiningColonyEventHandler extends IColonyEventHandler
 {
 
-    /**
-     * Method used to get all the child handlers.
-     * @return An ImmutableCollection with all the child handlers.
-     */
-    @NotNull
-    ImmutableCollection<IColonyEventHandler> getCombinedHandlers();
-
     @Override
     default void onServerTick(@NotNull TickEvent.ServerTickEvent event)
     {
         getCombinedHandlers().forEach(iColonyEventHandler -> iColonyEventHandler.onServerTick(event));
     }
+
+    /**
+     * Method used to get all the child handlers.
+     *
+     * @return An ImmutableCollection with all the child handlers.
+     */
+    @NotNull
+    ImmutableCollection<IColonyEventHandler> getCombinedHandlers();
 
     @Override
     default void onClientTick(@NotNull TickEvent.ClientTickEvent event)

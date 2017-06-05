@@ -174,8 +174,8 @@ public final class BlockPosUtil
     public static boolean isPositionSafe(@NotNull ICommandSender sender, BlockPos blockPos)
     {
         return sender.getEntityWorld().getBlockState(blockPos).getBlock() != Blocks.AIR
-                && !sender.getEntityWorld().getBlockState(blockPos).getMaterial().isLiquid()
-                && !sender.getEntityWorld().getBlockState(blockPos.up()).getMaterial().isLiquid();
+                 && !sender.getEntityWorld().getBlockState(blockPos).getMaterial().isLiquid()
+                 && !sender.getEntityWorld().getBlockState(blockPos.up()).getMaterial().isLiquid();
     }
 
     /**

@@ -18,6 +18,7 @@ public class BuildingBuilderResource extends ItemStorage
 {
     private int amountAvailable;
     private int amountPlayer;
+
     /**
      * Constructor for a resource.
      *

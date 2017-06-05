@@ -170,17 +170,6 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
         return super.searchTarget();
     }
 
-    public boolean huntDownlastAttacker()
-    {
-        if(this.worker.getLastAttacker() != null && this.worker.getLastAttackerTime() >= worker.ticksExisted - ATTACK_TIME_BUFFER
-             && this.worker.getLastAttacker().isEntityAlive())
-        {
-            return this.worker.getLastAttacker() != null && this.worker.canEntityBeSeen(this.worker.getLastAttacker());
-        }
-        worker.setLastAttacker(null);
-        return false;
-    }
-
     /**
      * Follow the target and kill it.
      *
@@ -224,6 +213,17 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
         worker.isWorkerAtSiteWithMove(targetEntity.getPosition(), MOVE_CLOSE);
 
         return AIState.GUARD_SEARCH_TARGET;
+    }
+
+    public boolean huntDownlastAttacker()
+    {
+        if (this.worker.getLastAttacker() != null && this.worker.getLastAttackerTime() >= worker.ticksExisted - ATTACK_TIME_BUFFER
+              && this.worker.getLastAttacker().isEntityAlive())
+        {
+            return this.worker.getLastAttacker() != null && this.worker.canEntityBeSeen(this.worker.getLastAttacker());
+        }
+        worker.setLastAttacker(null);
+        return false;
     }
 
     @Override

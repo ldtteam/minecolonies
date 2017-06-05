@@ -216,18 +216,6 @@ public class InventoryCitizen implements IInventory
     }
 
     /**
-     * Get the name of this object. For citizens this returns their name.
-     *
-     * @return the name of the inventory.
-     */
-    @NotNull
-    @Override
-    public String getName()
-    {
-        return this.hasCustomName() ? this.customName : "citizen.inventory";
-    }
-
-    /**
      * Finds the stack or an equivalent one in the main inventory
      *
      * @param stack the stack to get the slot for.
@@ -246,7 +234,6 @@ public class InventoryCitizen implements IInventory
 
         return NO_SLOT;
     }
-
     /**
      * Checks item, NBT, and meta if the item is not damageable
      */
@@ -254,17 +241,16 @@ public class InventoryCitizen implements IInventory
     {
         return stack1.getItem() == stack2.getItem()
                  && (!stack1.getHasSubtypes() || stack1.getMetadata() == stack2.getMetadata()) && ItemStack.areItemStackTagsEqual(stack1, stack2);
-    }
-
-    /**
-     * Checks if the inventory is named.
+    }/**
+     * Get the name of this object. For citizens this returns their name.
      *
-     * @return true if the inventory has a custom name.
+     * @return the name of the inventory.
      */
+    @NotNull
     @Override
-    public boolean hasCustomName()
+    public String getName()
     {
-        return this.customName != null;
+        return this.hasCustomName() ? this.customName : "citizen.inventory";
     }
 
     /**
@@ -347,7 +333,7 @@ public class InventoryCitizen implements IInventory
         return i;
     }
 
-    /**
+/**
      * Returns the number of slots in the inventory.
      *
      * @return the size of the inventory.
@@ -358,7 +344,7 @@ public class InventoryCitizen implements IInventory
         return this.mainInventory.size();
     }
 
-    /**
+        /**
      * Checks if the inventory is empty.
      *
      * @return true if so.
@@ -392,7 +378,6 @@ public class InventoryCitizen implements IInventory
 
         return true;
     }
-
     /**
      * Returns the stack in the given slot.
      *
@@ -416,6 +401,15 @@ public class InventoryCitizen implements IInventory
         }
 
         return list == null ? ItemStack.EMPTY : list.get(tempIndex);
+    }/**
+     * Checks if the inventory is named.
+     *
+     * @return true if the inventory has a custom name.
+     */
+    @Override
+    public boolean hasCustomName()
+    {
+        return this.customName != null;
     }
 
     /**
@@ -532,16 +526,6 @@ public class InventoryCitizen implements IInventory
     }
 
     /**
-     * Get the formatted TextComponent that will be used for the sender's username in chat.
-     */
-    @NotNull
-    @Override
-    public ITextComponent getDisplayName()
-    {
-        return this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName());
-    }
-
-    /**
      * Do not give this method the name canInteractWith because it clashes with Container.
      *
      * @param player the player acessing the inventory.
@@ -566,7 +550,7 @@ public class InventoryCitizen implements IInventory
          */
     }
 
-    /**
+/**
      * Called after the inventory has been closed by a player.
      *
      * @param player the player who opened the inventory.
@@ -592,7 +576,7 @@ public class InventoryCitizen implements IInventory
         return true;
     }
 
-    /**
+        /**
      * This may be used in order to return values of different GUI areas like the ones in the beacon.
      *
      * @param id the id of the field.
@@ -603,7 +587,6 @@ public class InventoryCitizen implements IInventory
     {
         return 0;
     }
-
     /**
      * This may be used to set GUI areas with a certain id and value.
      *
@@ -616,6 +599,14 @@ public class InventoryCitizen implements IInventory
         /*
          * We currently need no fields.
          */
+    }/**
+     * Get the formatted TextComponent that will be used for the sender's username in chat.
+     */
+    @NotNull
+    @Override
+    public ITextComponent getDisplayName()
+    {
+        return this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName());
     }
 
     /**
@@ -639,24 +630,6 @@ public class InventoryCitizen implements IInventory
         {
             list.clear();
         }
-    }
-
-    /**
-     * Returns the first item stack that is empty.
-     *
-     * @return the first empty slot.
-     */
-    public int getFirstEmptyStack()
-    {
-        for (int i = 0; i < this.mainInventory.size(); ++i)
-        {
-            if ((this.mainInventory.get(i)).isEmpty())
-            {
-                return i;
-            }
-        }
-
-        return NO_SLOT;
     }
 
     /**
@@ -749,6 +722,24 @@ public class InventoryCitizen implements IInventory
 
             return NO_SLOT;
         }
+    }
+
+    /**
+     * Returns the first item stack that is empty.
+     *
+     * @return the first empty slot.
+     */
+    public int getFirstEmptyStack()
+    {
+        for (int i = 0; i < this.mainInventory.size(); ++i)
+        {
+            if ((this.mainInventory.get(i)).isEmpty())
+            {
+                return i;
+            }
+        }
+
+        return NO_SLOT;
     }
 
     private boolean canMergeStacks(ItemStack stack1, ItemStack stack2)
@@ -974,6 +965,12 @@ public class InventoryCitizen implements IInventory
 
         this.currentItem = inventoryCitizen.currentItem;
     }
+
+
+
+
+
+
 
 
 

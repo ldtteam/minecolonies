@@ -172,61 +172,50 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      * Rotation to rotateWithMirror left.
      */
     private static final int ROTATE_LEFT = 3;
-
+    /**
+     * Button to rename a scanned schematic.
+     */
+    private final Button renameButton;
+    /**
+     * Button to delete a scanned schematic.
+     */
+    private final Button deleteButton;
     /**
      * List of section.
      */
     @NotNull
     private List<String> sections = new ArrayList<>();
-
     /**
      * List of style for the section.
      */
     @NotNull
     private List<String> styles = new ArrayList<>();
-
     /**
      * List of decorations or level possible to make with the style.
      */
     @NotNull
     private List<String> schematics = new ArrayList<>();
-
     /**
      * Current position the hut/decoration is rendered at.
      */
     @NotNull
     private BlockPos pos = new BlockPos(0, 0, 0);
-
     /**
      * Current rotation of the hut/decoration.
      */
     private int rotation = 0;
-
     /**
      * Drop down list for section.
      */
     private DropDownList sectionsDropDownList;
-
     /**
      * Drop down list for style.
      */
     private DropDownList stylesDropDownList;
-
     /**
      * Drop down list for schematic.
      */
     private DropDownList schematicsDropDownList;
-
-    /**
-     * Button to rename a scanned schematic.
-     */
-    private final Button renameButton;
-
-    /**
-     * Button to delete a scanned schematic.
-     */
-    private final Button deleteButton;
-
     /**
      * Confirmation dialog when deleting a scanned schematic.
      */
@@ -277,34 +266,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         registerButton(BUTTON_DELETE, this::deleteClicked);
         renameButton = findPaneOfTypeByID(BUTTON_RENAME, Button.class);
         deleteButton = findPaneOfTypeByID(BUTTON_DELETE, Button.class);
-    }
-
-    /**
-     * Drop down class for sections.
-     */
-    private class SectionDropDownList implements DropDownList.DataProvider
-    {
-        @Override
-        public int getElementCount()
-        {
-            return sections.size();
-        }
-
-        @Override
-        public String getLabel(final int index)
-        {
-            final String name = sections.get(index);
-            if (Structures.SCHEMATICS_SCAN.equals(name))
-            {
-                return LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.scans");
-            }
-            else if (Structures.SCHEMATICS_PREFIX.equals(name))
-            {
-                return LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.decorations");
-            }
-            //should be a hut
-            return LanguageHandler.format("tile.minecolonies.blockHut" + name + ".name");
-        }
     }
 
     /**
@@ -383,6 +344,22 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     }
 
     /**
+     * Move the schematic up.
+     */
+    private static void moveUpClicked()
+    {
+        Settings.instance.moveTo(new BlockPos(0, 1, 0));
+    }
+
+    /**
+     * Move the structure down.
+     */
+    private static void moveDownClicked()
+    {
+        Settings.instance.moveTo(new BlockPos(0, -1, 0));
+    }
+
+    /**
      * Called when the window is opened.
      * Sets up the buttons for either hut mode or decoration mode.
      */
@@ -405,18 +382,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         setStructureName(Settings.instance.getStructureName());
     }
 
-    @Override
-    public void onUpdate()
-    {
-        super.onUpdate();
-
-        if (ColonyManager.isSchematicDownloaded())
-        {
-            ColonyManager.setSchematicDownloaded(false);
-            changeSchematic();
-        }
-    }
-
     /**
      * Called when the window is closed.
      * If there is a current structure, its information is stored in {@link Settings}.
@@ -436,155 +401,22 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
 
     /**
-     * Change to the next section, Builder, Citizen ... Decorations and Scan.
-     */
-    private void nextSection()
-    {
-        sectionsDropDownList.selectNext();
-    }
-
-    /**
-     * Change to the previous section, Builder, Citizen ... Decorations and Scan.
-     */
-    private void previousSection()
-    {
-        sectionsDropDownList.selectPrevious();
-    }
-
-    /**
-     * Change to the next style.
-     */
-    private void nextStyle()
-    {
-        stylesDropDownList.selectNext();
-    }
-
-    /**
-     * Change to the previous style.
-     */
-    private void previousStyle()
-    {
-        stylesDropDownList.selectPrevious();
-    }
-
-    /**
-     * Update the styles list but try to keep the same one.
-     */
-    private void updateStyles()
-    {
-        String currentStyle = "";
-        if (stylesDropDownList.getSelectedIndex() > -1 && stylesDropDownList.getSelectedIndex() < styles.size())
-        {
-            currentStyle = styles.get(stylesDropDownList.getSelectedIndex());
-        }
-        styles = Structures.getStylesFor(sections.get(sectionsDropDownList.getSelectedIndex()));
-        int newIndex = styles.indexOf(currentStyle);
-        if (newIndex == -1)
-        {
-            newIndex = 0;
-        }
-
-        final boolean enabled = styles.size() > 1;
-        findPaneOfTypeByID(BUTTON_PREVIOUS_STYLE_ID, Button.class).setEnabled(enabled);
-        findPaneOfTypeByID(DROPDOWN_STYLE_ID, DropDownList.class).setEnabled(enabled);
-        findPaneOfTypeByID(BUTTON_NEXT_STYLE_ID, Button.class).setEnabled(enabled);
-        stylesDropDownList.setSelectedIndex(newIndex);
-    }
-
-    /*
-     * ---------------- Button Handling -----------------
-     */
-
-    /**
-     * Go to the next schematic.
-     */
-    private void nextSchematic()
-    {
-        schematicsDropDownList.selectNext();
-    }
-
-    /**
-     * Go to the previous schematic.
-     */
-    private void previousSchematic()
-    {
-        schematicsDropDownList.selectPrevious();
-    }
-
-    /**
-     * Update the list a available schematics.
-     */
-    private void updateSchematics()
-    {
-        String schematic = "";
-        if (schematicsDropDownList.getSelectedIndex() > -1 && schematicsDropDownList.getSelectedIndex() < schematics.size())
-        {
-            schematic = schematics.get(schematicsDropDownList.getSelectedIndex());
-        }
-        final String currentSchematic = schematic.isEmpty() ? "" : (new Structures.StructureName(schematic)).getSchematic();
-        String section = sections.get(sectionsDropDownList.getSelectedIndex());
-        String style = styles.get(stylesDropDownList.getSelectedIndex());
-        schematics = Structures.getSchematicsFor(section, style);
-        int newIndex = -1;
-        for (int i = 0; i < schematics.size(); i++)
-        {
-            Structures.StructureName sn = new Structures.StructureName(schematics.get(i));
-            if (sn.getSchematic().equals(currentSchematic))
-            {
-                newIndex = i;
-                break;
-            }
-        }
-
-        if (newIndex == -1)
-        {
-            newIndex = 0;
-        }
-
-        final boolean enabled = schematics.size() > 1;
-        findPaneOfTypeByID(BUTTON_PREVIOUS_SCHEMATIC_ID, Button.class).setEnabled(enabled);
-        findPaneOfTypeByID(DROPDOWN_SCHEMATIC_ID, DropDownList.class).setEnabled(enabled);
-        findPaneOfTypeByID(BUTTON_NEXT_SCHEMATIC_ID, Button.class).setEnabled(enabled);
-        schematicsDropDownList.setSelectedIndex(newIndex);
-    }
-
-    /**
-     * called every time one of the dropdownlist changed.
+     * Check if the player inventory has a certain hut.
      *
-     * @param list the dropdown list which change
+     * @param inventory the player inventory.
+     * @param hut       the hut.
+     * @return true if so.
      */
-    private void onDropDownListChanged(final DropDownList list)
+    private static boolean inventoryHasHut(@NotNull final InventoryPlayer inventory, final String hut)
     {
-        if (list == sectionsDropDownList)
-        {
-            final String name = sections.get(sectionsDropDownList.getSelectedIndex());
-            if (Structures.SCHEMATICS_SCAN.equals(name))
-            {
-                renameButton.setVisible(true);
-                deleteButton.setVisible(true);
-            }
-            else
-            {
-                renameButton.setVisible(false);
-                deleteButton.setVisible(false);
-            }
-            updateStyles();
-        }
-        else if (list == stylesDropDownList)
-        {
-            updateSchematics();
-        }
-        else if (list == schematicsDropDownList)
-        {
-            changeSchematic();
-        }
+        return inventory.hasItemStack(new ItemStack(Block.getBlockFromName(Constants.MOD_ID + HUT_PREFIX + hut)));
     }
 
     /**
      * Set the structure name.
      *
      * @param structureName name of the structure name
-     *               Ex: schematics/wooden/Builder2
+     *                      Ex: schematics/wooden/Builder2
      */
     private void setStructureName(final String structureName)
     {
@@ -615,92 +447,17 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         schematicsDropDownList.setSelectedIndex(0);
     }
 
-    /**
-     * Check if the player inventory has a certain hut.
-     *
-     * @param inventory the player inventory.
-     * @param hut       the hut.
-     * @return true if so.
-     */
-    private static boolean inventoryHasHut(@NotNull final InventoryPlayer inventory, final String hut)
+    @Override
+    public void onUpdate()
     {
-        return inventory.hasItemStack(new ItemStack(Block.getBlockFromName(Constants.MOD_ID + HUT_PREFIX + hut)));
+        super.onUpdate();
+
+        if (ColonyManager.isSchematicDownloaded())
+        {
+            ColonyManager.setSchematicDownloaded(false);
+            changeSchematic();
+        }
     }
-
-    /*
-     * ---------------- Button Handling -----------------
-     */
-
-    /**
-     * Move the schematic up.
-     */
-    private static void moveUpClicked()
-    {
-        Settings.instance.moveTo(new BlockPos(0, 1, 0));
-    }
-
-    /**
-     * Move the structure down.
-     */
-    private static void moveDownClicked()
-    {
-        Settings.instance.moveTo(new BlockPos(0, -1, 0));
-    }
-
-    /**
-     * Move the structure left.
-     */
-    private void moveLeftClicked()
-    {
-        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.player.getHorizontalFacing().rotateYCCW()));
-    }
-
-    /**
-     * Move the structure right.
-     */
-    private void moveRightClicked()
-    {
-        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.player.getHorizontalFacing().rotateY()));
-    }
-
-    /**
-     * Move the structure forward.
-     */
-    private void moveForwardClicked()
-    {
-        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.player.getHorizontalFacing()));
-    }
-
-    /**
-     * Move the structure back.
-     */
-    private void moveBackClicked()
-    {
-        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.player.getHorizontalFacing().getOpposite()));
-    }
-
-    /**
-     * Rotate the structure clockwise.
-     */
-    private void rotateRightClicked()
-    {
-        rotation = (rotation + ROTATE_RIGHT) % POSSIBLE_ROTATIONS;
-        updateRotation(rotation);
-    }
-
-    /**
-     * Rotate the structure counter clockwise.
-     */
-    private void rotateLeftClicked()
-    {
-        rotation = (rotation + ROTATE_LEFT) % POSSIBLE_ROTATIONS;
-        updateRotation(rotation);
-    }
-
-
-    /*
-     * ---------------- Miscellaneous ----------------
-     */
 
     /**
      * Changes the current structure.
@@ -746,6 +503,266 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         {
             Settings.instance.setPosition(this.pos);
         }
+    }
+
+    /**
+     * Change to the next section, Builder, Citizen ... Decorations and Scan.
+     */
+    private void nextSection()
+    {
+        sectionsDropDownList.selectNext();
+    }
+
+    /*
+     * ---------------- Button Handling -----------------
+     */
+
+    /**
+     * Change to the previous section, Builder, Citizen ... Decorations and Scan.
+     */
+    private void previousSection()
+    {
+        sectionsDropDownList.selectPrevious();
+    }
+
+    /**
+     * Change to the next style.
+     */
+    private void nextStyle()
+    {
+        stylesDropDownList.selectNext();
+    }
+
+    /**
+     * Change to the previous style.
+     */
+    private void previousStyle()
+    {
+        stylesDropDownList.selectPrevious();
+    }
+
+    /**
+     * Go to the next schematic.
+     */
+    private void nextSchematic()
+    {
+        schematicsDropDownList.selectNext();
+    }
+
+    /**
+     * Go to the previous schematic.
+     */
+    private void previousSchematic()
+    {
+        schematicsDropDownList.selectPrevious();
+    }
+
+    /**
+     * called every time one of the dropdownlist changed.
+     *
+     * @param list the dropdown list which change
+     */
+    private void onDropDownListChanged(final DropDownList list)
+    {
+        if (list == sectionsDropDownList)
+        {
+            final String name = sections.get(sectionsDropDownList.getSelectedIndex());
+            if (Structures.SCHEMATICS_SCAN.equals(name))
+            {
+                renameButton.setVisible(true);
+                deleteButton.setVisible(true);
+            }
+            else
+            {
+                renameButton.setVisible(false);
+                deleteButton.setVisible(false);
+            }
+            updateStyles();
+        }
+        else if (list == stylesDropDownList)
+        {
+            updateSchematics();
+        }
+        else if (list == schematicsDropDownList)
+        {
+            changeSchematic();
+        }
+    }
+
+    /*
+     * ---------------- Button Handling -----------------
+     */
+
+    /**
+     * Update the styles list but try to keep the same one.
+     */
+    private void updateStyles()
+    {
+        String currentStyle = "";
+        if (stylesDropDownList.getSelectedIndex() > -1 && stylesDropDownList.getSelectedIndex() < styles.size())
+        {
+            currentStyle = styles.get(stylesDropDownList.getSelectedIndex());
+        }
+        styles = Structures.getStylesFor(sections.get(sectionsDropDownList.getSelectedIndex()));
+        int newIndex = styles.indexOf(currentStyle);
+        if (newIndex == -1)
+        {
+            newIndex = 0;
+        }
+
+        final boolean enabled = styles.size() > 1;
+        findPaneOfTypeByID(BUTTON_PREVIOUS_STYLE_ID, Button.class).setEnabled(enabled);
+        findPaneOfTypeByID(DROPDOWN_STYLE_ID, DropDownList.class).setEnabled(enabled);
+        findPaneOfTypeByID(BUTTON_NEXT_STYLE_ID, Button.class).setEnabled(enabled);
+        stylesDropDownList.setSelectedIndex(newIndex);
+    }
+
+    /**
+     * Update the list a available schematics.
+     */
+    private void updateSchematics()
+    {
+        String schematic = "";
+        if (schematicsDropDownList.getSelectedIndex() > -1 && schematicsDropDownList.getSelectedIndex() < schematics.size())
+        {
+            schematic = schematics.get(schematicsDropDownList.getSelectedIndex());
+        }
+        final String currentSchematic = schematic.isEmpty() ? "" : (new Structures.StructureName(schematic)).getSchematic();
+        String section = sections.get(sectionsDropDownList.getSelectedIndex());
+        String style = styles.get(stylesDropDownList.getSelectedIndex());
+        schematics = Structures.getSchematicsFor(section, style);
+        int newIndex = -1;
+        for (int i = 0; i < schematics.size(); i++)
+        {
+            Structures.StructureName sn = new Structures.StructureName(schematics.get(i));
+            if (sn.getSchematic().equals(currentSchematic))
+            {
+                newIndex = i;
+                break;
+            }
+        }
+
+        if (newIndex == -1)
+        {
+            newIndex = 0;
+        }
+
+        final boolean enabled = schematics.size() > 1;
+        findPaneOfTypeByID(BUTTON_PREVIOUS_SCHEMATIC_ID, Button.class).setEnabled(enabled);
+        findPaneOfTypeByID(DROPDOWN_SCHEMATIC_ID, DropDownList.class).setEnabled(enabled);
+        findPaneOfTypeByID(BUTTON_NEXT_SCHEMATIC_ID, Button.class).setEnabled(enabled);
+        schematicsDropDownList.setSelectedIndex(newIndex);
+    }
+
+    /**
+     * Move the structure left.
+     */
+    private void moveLeftClicked()
+    {
+        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.player.getHorizontalFacing().rotateYCCW()));
+    }
+
+    /**
+     * Move the structure right.
+     */
+    private void moveRightClicked()
+    {
+        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.player.getHorizontalFacing().rotateY()));
+    }
+
+    /**
+     * Move the structure forward.
+     */
+    private void moveForwardClicked()
+    {
+        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.player.getHorizontalFacing()));
+    }
+
+    /**
+     * Move the structure back.
+     */
+    private void moveBackClicked()
+    {
+        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.player.getHorizontalFacing().getOpposite()));
+    }
+
+    /**
+     * Rotate the structure clockwise.
+     */
+    private void rotateRightClicked()
+    {
+        rotation = (rotation + ROTATE_RIGHT) % POSSIBLE_ROTATIONS;
+        updateRotation(rotation);
+    }
+
+    /**
+     * Updates the rotation of the structure depending on the input.
+     *
+     * @param rotation the rotation to be set.
+     */
+    private static void updateRotation(final int rotation)
+    {
+        final PlacementSettings settings = new PlacementSettings();
+        switch (rotation)
+        {
+            case ROTATE_RIGHT:
+                settings.setRotation(Rotation.CLOCKWISE_90);
+                break;
+            case ROTATE_180:
+                settings.setRotation(Rotation.CLOCKWISE_180);
+                break;
+            case ROTATE_LEFT:
+                settings.setRotation(Rotation.COUNTERCLOCKWISE_90);
+                break;
+            default:
+                settings.setRotation(Rotation.NONE);
+        }
+        Settings.instance.setRotation(rotation);
+
+        if (Settings.instance.getActiveStructure() != null)
+        {
+            Settings.instance.getActiveStructure().setPlacementSettings(settings.setMirror(Settings.instance.getMirror()));
+        }
+    }
+
+
+    /*
+     * ---------------- Miscellaneous ----------------
+     */
+
+    /**
+     * Rotate the structure counter clockwise.
+     */
+    private void rotateLeftClicked()
+    {
+        rotation = (rotation + ROTATE_LEFT) % POSSIBLE_ROTATIONS;
+        updateRotation(rotation);
+    }
+
+    /**
+     * Send a packet telling the server to place the current structure.
+     */
+    private void confirmClicked()
+    {
+        final Structures.StructureName structureName = new Structures.StructureName(schematics.get(schematicsDropDownList.getSelectedIndex()));
+        if (structureName.getPrefix().equals(Structures.SCHEMATICS_SCAN) && FMLCommonHandler.instance().getMinecraftServerInstance() == null)
+        {
+            //We need to check that the server have it too using the md5
+            requestScannedSchematic(structureName);
+        }
+        else
+        {
+            MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(
+                                                                              structureName.toString(),
+                                                                              structureName.toString(),
+                                                                              Settings.instance.getPosition(),
+                                                                              Settings.instance.getRotation(),
+                                                                              structureName.isHut(),
+                                                                              Settings.instance.getMirror()));
+        }
+
+        Settings.instance.reset();
+        close();
     }
 
     /**
@@ -797,68 +814,12 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     }
 
     /**
-     * Send a packet telling the server to place the current structure.
-     */
-    private void confirmClicked()
-    {
-        final Structures.StructureName structureName = new Structures.StructureName(schematics.get(schematicsDropDownList.getSelectedIndex()));
-        if (structureName.getPrefix().equals(Structures.SCHEMATICS_SCAN) && FMLCommonHandler.instance().getMinecraftServerInstance() == null)
-        {
-            //We need to check that the server have it too using the md5
-            requestScannedSchematic(structureName);
-        }
-        else
-        {
-            MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(
-                                                                              structureName.toString(),
-                                                                              structureName.toString(),
-                                                                              Settings.instance.getPosition(),
-                                                                              Settings.instance.getRotation(),
-                                                                              structureName.isHut(),
-                                                                              Settings.instance.getMirror()));
-        }
-
-        Settings.instance.reset();
-        close();
-    }
-
-    /**
      * Cancel the current structure.
      */
     private void cancelClicked()
     {
         Settings.instance.reset();
         close();
-    }
-
-    /**
-     * Updates the rotation of the structure depending on the input.
-     *
-     * @param rotation the rotation to be set.
-     */
-    private static void updateRotation(final int rotation)
-    {
-        final PlacementSettings settings = new PlacementSettings();
-        switch (rotation)
-        {
-            case ROTATE_RIGHT:
-                settings.setRotation(Rotation.CLOCKWISE_90);
-                break;
-            case ROTATE_180:
-                settings.setRotation(Rotation.CLOCKWISE_180);
-                break;
-            case ROTATE_LEFT:
-                settings.setRotation(Rotation.COUNTERCLOCKWISE_90);
-                break;
-            default:
-                settings.setRotation(Rotation.NONE);
-        }
-        Settings.instance.setRotation(rotation);
-
-        if (Settings.instance.getActiveStructure() != null)
-        {
-            Settings.instance.getActiveStructure().setPlacementSettings(settings.setMirror(Settings.instance.getMirror()));
-        }
     }
 
     /**
@@ -913,6 +874,34 @@ public class WindowBuildTool extends AbstractWindowSkeleton
                     sectionsDropDownList.selectNext();
                 }
             }
+        }
+    }
+
+    /**
+     * Drop down class for sections.
+     */
+    private class SectionDropDownList implements DropDownList.DataProvider
+    {
+        @Override
+        public int getElementCount()
+        {
+            return sections.size();
+        }
+
+        @Override
+        public String getLabel(final int index)
+        {
+            final String name = sections.get(index);
+            if (Structures.SCHEMATICS_SCAN.equals(name))
+            {
+                return LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.scans");
+            }
+            else if (Structures.SCHEMATICS_PREFIX.equals(name))
+            {
+                return LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.decorations");
+            }
+            //should be a hut
+            return LanguageHandler.format("tile.minecolonies.blockHut" + name + ".name");
         }
     }
 }

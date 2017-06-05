@@ -30,14 +30,6 @@ import java.util.List;
 public final class PlacementHandlers
 {
     public static final List<IPlacementHandler> handlers = new ArrayList<>();
-
-    private PlacementHandlers()
-    {
-        /**
-         * Intentionally left empty.
-         */
-    }
-
     static
     {
         handlers.add(new AirPlacementHandler());
@@ -52,6 +44,13 @@ public final class PlacementHandlers
         handlers.add(new StairBlockPlacementHandler());
         handlers.add(new BlockSolidSubstitutionPlacementHandler());
         handlers.add(new GeneralBlockPlacementHandler());
+    }
+
+    private PlacementHandlers()
+    {
+        /**
+         * Intentionally left empty.
+         */
     }
 
     //If he woudln't count the bracket spaces we'd be under 25 easily.

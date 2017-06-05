@@ -52,18 +52,6 @@ public class KillCitizenCommand extends AbstractCitizensCommands
         return super.getCommandUsage(sender) + "<ColonyId> <CitizenId>";
     }
 
-    @Override
-    void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final Colony colony, final int citizenId)
-    {
-        final CitizenData citizenData = (CitizenData) colony.getCitizen(citizenId);
-        final EntityCitizen entityCitizen = citizenData.getCitizen();
-        sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, citizenData.getId(), citizenData.getName())));
-        final BlockPos position = entityCitizen.getPosition();
-        sender.sendMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
-        sender.sendMessage(new TextComponentString(REMOVED_MESSAGE));
-        server.addScheduledTask(() -> entityCitizen.onDeath(CONSOLE_DAMAGE_SOURCE));
-    }
-
     @NotNull
     @Override
     public List<String> getTabCompletionOptions(
@@ -85,6 +73,18 @@ public class KillCitizenCommand extends AbstractCitizensCommands
     public Commands getCommand()
     {
         return KILLCITIZENS;
+    }
+
+    @Override
+    void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final Colony colony, final int citizenId)
+    {
+        final CitizenData citizenData = (CitizenData) colony.getCitizen(citizenId);
+        final EntityCitizen entityCitizen = citizenData.getCitizen();
+        sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, citizenData.getId(), citizenData.getName())));
+        final BlockPos position = entityCitizen.getPosition();
+        sender.sendMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
+        sender.sendMessage(new TextComponentString(REMOVED_MESSAGE));
+        server.addScheduledTask(() -> entityCitizen.onDeath(CONSOLE_DAMAGE_SOURCE));
     }
 
     @Override

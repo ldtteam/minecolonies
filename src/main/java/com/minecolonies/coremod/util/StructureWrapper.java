@@ -106,40 +106,6 @@ public final class StructureWrapper
     }
 
     /**
-     * Load a structure into this world
-     * and place it in the right position and rotation.
-     *
-     * @param worldObj  the world to load it in
-     * @param name      the structures name
-     * @param pos       coordinates
-     * @param rotations number of times rotated
-     * @param mirror    the mirror used.
-     * @return true if succesful.
-     */
-
-    public static boolean tryToLoadAndPlaceSupplyCampWithRotation(
-                                                                   final World worldObj, @NotNull final String name,
-                                                                   @NotNull final BlockPos pos, final int rotations, @NotNull final Mirror mirror)
-    {
-        try
-        {
-            @NotNull final StructureWrapper structureWrapper = new StructureWrapper(worldObj, name);
-            structureWrapper.rotate(rotations, worldObj, pos, mirror);
-            if (structureWrapper.checkForFreeSpace(pos))
-            {
-                structureWrapper.placeStructure(pos);
-                return true;
-            }
-            return false;
-        }
-        catch (final IllegalStateException e)
-        {
-            Log.getLogger().warn("Could not load structure!", e);
-        }
-        return false;
-    }
-
-    /**
      * Rotates the structure x times.
      *
      * @param times     times to rotateWithMirror.
@@ -150,46 +116,6 @@ public final class StructureWrapper
     public void rotate(final int times, @NotNull final World world, @NotNull final BlockPos rotatePos, @NotNull final Mirror mirror)
     {
         structure.rotateWithMirror(times, world, rotatePos, mirror);
-    }
-
-    /**
-     * Place a structure into the world.
-     *
-     * @param pos coordinates
-     */
-    private boolean checkForFreeSpace(@NotNull final BlockPos pos)
-    {
-        setLocalPosition(pos);
-        //structure.getBlockInfo()[0].pos
-        for (int j = 0; j < structure.getHeight(); j++)
-        {
-            for (int k = 0; k < structure.getLength(); k++)
-            {
-                for (int i = 0; i < structure.getWidth(); i++)
-                {
-                    @NotNull final BlockPos localPos = new BlockPos(i, j, k);
-
-                    final BlockPos worldPos = pos.add(localPos);
-
-                    if (worldPos.getY() <= pos.getY() && !world.getBlockState(worldPos.down()).getMaterial().isSolid())
-                    {
-                        return false;
-                    }
-
-                    final IBlockState worldState = world.getBlockState(worldPos);
-                    if (worldState.getBlock() == Blocks.BEDROCK)
-                    {
-                        return false;
-                    }
-
-                    if (worldPos.getY() > pos.getY() && worldState.getBlock() != Blocks.AIR)
-                    {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
     }
 
     /**
@@ -267,6 +193,80 @@ public final class StructureWrapper
             }
             localBlock.onBlockAdded(world, worldPos, localState);
         }
+    }
+
+    /**
+     * Load a structure into this world
+     * and place it in the right position and rotation.
+     *
+     * @param worldObj  the world to load it in
+     * @param name      the structures name
+     * @param pos       coordinates
+     * @param rotations number of times rotated
+     * @param mirror    the mirror used.
+     * @return true if succesful.
+     */
+
+    public static boolean tryToLoadAndPlaceSupplyCampWithRotation(
+                                                                   final World worldObj, @NotNull final String name,
+                                                                   @NotNull final BlockPos pos, final int rotations, @NotNull final Mirror mirror)
+    {
+        try
+        {
+            @NotNull final StructureWrapper structureWrapper = new StructureWrapper(worldObj, name);
+            structureWrapper.rotate(rotations, worldObj, pos, mirror);
+            if (structureWrapper.checkForFreeSpace(pos))
+            {
+                structureWrapper.placeStructure(pos);
+                return true;
+            }
+            return false;
+        }
+        catch (final IllegalStateException e)
+        {
+            Log.getLogger().warn("Could not load structure!", e);
+        }
+        return false;
+    }
+
+    /**
+     * Place a structure into the world.
+     *
+     * @param pos coordinates
+     */
+    private boolean checkForFreeSpace(@NotNull final BlockPos pos)
+    {
+        setLocalPosition(pos);
+        //structure.getBlockInfo()[0].pos
+        for (int j = 0; j < structure.getHeight(); j++)
+        {
+            for (int k = 0; k < structure.getLength(); k++)
+            {
+                for (int i = 0; i < structure.getWidth(); i++)
+                {
+                    @NotNull final BlockPos localPos = new BlockPos(i, j, k);
+
+                    final BlockPos worldPos = pos.add(localPos);
+
+                    if (worldPos.getY() <= pos.getY() && !world.getBlockState(worldPos.down()).getMaterial().isSolid())
+                    {
+                        return false;
+                    }
+
+                    final IBlockState worldState = world.getBlockState(worldPos);
+                    if (worldState.getBlock() == Blocks.BEDROCK)
+                    {
+                        return false;
+                    }
+
+                    if (worldPos.getY() > pos.getY() && worldState.getBlock() != Blocks.AIR)
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     /**

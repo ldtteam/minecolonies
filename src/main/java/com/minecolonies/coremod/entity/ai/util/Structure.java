@@ -123,6 +123,14 @@ public class Structure
             this.worldMetadata = worldMetadata;
         }
 
+        private static boolean structureBlockEqualsWorldBlock(
+                                                               @NotNull final Block structureBlock,
+                                                               @NotNull final Block worldBlock, @NotNull final IBlockState worldMetadata)
+        {
+            return structureBlock == ModBlocks.blockSubstitution || (structureBlock == ModBlocks.blockSolidSubstitution
+                                                                       && worldMetadata.getMaterial().isSolid() && !(worldBlock instanceof BlockOre) && worldBlock != Blocks.AIR);
+        }
+
         /**
          * Checks if the structureBlock equals the worldBlock.
          *
@@ -160,14 +168,6 @@ public class Structure
             }
 
             return structureBlockState.equals(worldBlockState);
-        }
-
-        private static boolean structureBlockEqualsWorldBlock(
-                                                               @NotNull final Block structureBlock,
-                                                               @NotNull final Block worldBlock, @NotNull final IBlockState worldMetadata)
-        {
-            return structureBlock == ModBlocks.blockSubstitution || (structureBlock == ModBlocks.blockSolidSubstitution
-                                                                       && worldMetadata.getMaterial().isSolid() && !(worldBlock instanceof BlockOre) && worldBlock != Blocks.AIR);
         }
     }
 

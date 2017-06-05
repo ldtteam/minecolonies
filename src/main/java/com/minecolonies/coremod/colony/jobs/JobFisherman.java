@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.colony.jobs;
 
 import com.minecolonies.api.client.render.Model;
-import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.api.entity.ai.basic.AbstractAISkeleton;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.entity.ai.citizen.fisherman.EntityAIWorkFisherman;
 import com.minecolonies.coremod.sounds.FishermanSounds;
-import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.SoundEvent;
@@ -77,18 +77,6 @@ public class JobFisherman extends AbstractJob
     }
 
     /**
-     * Return a Localization textContent for the Job.
-     *
-     * @return localization textContent String.
-     */
-    @NotNull
-    @Override
-    public String getName()
-    {
-        return "com.minecolonies.coremod.job.Fisherman";
-    }
-
-    /**
      * Get the RenderBipedCitizen.Model to use when the Citizen performs this job role.
      *
      * @return Model of the citizen.
@@ -125,18 +113,6 @@ public class JobFisherman extends AbstractJob
     }
 
     /**
-     * Generate your AI class to register.
-     *
-     * @return your personal AI instance.
-     */
-    @NotNull
-    @Override
-    public AbstractAISkeleton<JobFisherman> generateAI()
-    {
-        return new EntityAIWorkFisherman(this);
-    }
-
-    /**
      * Override this to let the worker return a bedTimeSound.
      *
      * @return soundEvent to be played.
@@ -164,6 +140,30 @@ public class JobFisherman extends AbstractJob
             return getCitizen().isFemale() ? FishermanSounds.Female.badWeather : FishermanSounds.Male.badWeather;
         }
         return null;
+    }
+
+    /**
+     * Return a Localization textContent for the Job.
+     *
+     * @return localization textContent String.
+     */
+    @NotNull
+    @Override
+    public String getName()
+    {
+        return "com.minecolonies.coremod.job.Fisherman";
+    }
+
+    /**
+     * Generate your AI class to register.
+     *
+     * @return your personal AI instance.
+     */
+    @NotNull
+    @Override
+    public AbstractAISkeleton<JobFisherman> generateAI()
+    {
+        return new EntityAIWorkFisherman(this);
     }
 
     /**

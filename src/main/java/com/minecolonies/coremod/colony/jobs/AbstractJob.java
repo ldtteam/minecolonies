@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.colony.jobs;
 
 import com.minecolonies.api.client.render.Model;
-import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundEvent;
@@ -65,7 +65,7 @@ public abstract class AbstractJob implements IJob
     }
 
     private final CitizenData citizen;
-    private       String          nameTag     = "";
+    private String nameTag = "";
 
     /**
      * Initialize citizen data.
@@ -227,7 +227,8 @@ public abstract class AbstractJob implements IJob
 
     /**
      * Method used to create a request in the workers building.
-     * @param request The request to create.
+     *
+     * @param request   The request to create.
      * @param <Request> The type of request.
      */
     @Override

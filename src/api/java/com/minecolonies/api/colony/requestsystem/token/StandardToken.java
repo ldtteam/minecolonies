@@ -1,6 +1,5 @@
 package com.minecolonies.api.colony.requestsystem.token;
 
-import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -9,7 +8,8 @@ import java.util.UUID;
  * Internal implementation of the IToken interface.
  * Uses UUID to store the ID of the request.
  */
-public class StandardToken implements IToken<UUID> {
+public class StandardToken implements IToken<UUID>
+{
 
     @NotNull
     private UUID id;
@@ -17,15 +17,16 @@ public class StandardToken implements IToken<UUID> {
     /**
      * Creates a new token with a random id.
      */
-    public StandardToken() {
+    public StandardToken()
+    {
         this(UUID.randomUUID());
     }
 
     /**
      * Creates a new token with the given id.
-     * @param id
      */
-    public StandardToken(@NotNull UUID id) {
+    public StandardToken(@NotNull UUID id)
+    {
         this.id = id;
     }
 
@@ -35,19 +36,28 @@ public class StandardToken implements IToken<UUID> {
      * @return The identifier of the request that this token represents.
      */
     @Override
-    public UUID getIdentifier() {
+    public UUID getIdentifier()
+    {
         return id;
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         return id.hashCode();
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof IToken)) return false;
+    public boolean equals(Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (!(o instanceof IToken))
+        {
+            return false;
+        }
 
         IToken that = (IToken) o;
 
@@ -55,9 +65,10 @@ public class StandardToken implements IToken<UUID> {
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "StandardToken{" +
-                "id=" + id +
-                '}';
+                 "id=" + id +
+                 '}';
     }
 }

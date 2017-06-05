@@ -97,6 +97,13 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
         }
     }
 
+    @NotNull
+    @Override
+    public String getBuildingName()
+    {
+        return "com.minecolonies.coremod.gui.workerHuts.minerHut";
+    }
+
     @Override
     public void onButtonClicked(@NotNull final Button button)
     {
@@ -113,13 +120,6 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
         {
             super.onButtonClicked(button);
         }
-    }
-
-    @NotNull
-    @Override
-    public String getBuildingName()
-    {
-        return "com.minecolonies.coremod.gui.workerHuts.minerHut";
     }
 }
 

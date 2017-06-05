@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.colony.jobs;
 
 import com.minecolonies.api.client.render.Model;
+import com.minecolonies.api.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingGuardTower;
-import com.minecolonies.api.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.guard.EntityAIMeleeGuard;
 import com.minecolonies.coremod.entity.ai.citizen.guard.EntityAIRangeGuard;
 import org.jetbrains.annotations.NotNull;
@@ -36,6 +36,26 @@ public class JobGuard extends AbstractJob
     public String getName()
     {
         return "com.minecolonies.coremod.job.Guard";
+    }
+
+    /**
+     * Override to add Job-specific AI tasks to the given EntityAITask list.
+     */
+    @NotNull
+    @Override
+    public AbstractAISkeleton<? extends AbstractJob> generateAI()
+    {
+        final AbstractBuilding building = getCitizen().getWorkBuilding();
+        if (building instanceof BuildingGuardTower)
+        {
+            final BuildingGuardTower.GuardJob job = ((BuildingGuardTower) building).getJob();
+            if (job == BuildingGuardTower.GuardJob.KNIGHT)
+            {
+                return new EntityAIMeleeGuard(this);
+            }
+            return new EntityAIRangeGuard(this);
+        }
+        return new EntityAIRangeGuard(this);
     }
 
     @NotNull
@@ -77,25 +97,5 @@ public class JobGuard extends AbstractJob
         }
         building.setJob(BuildingGuardTower.GuardJob.RANGER);
         return BuildingGuardTower.GuardJob.RANGER;
-    }
-
-    /**
-     * Override to add Job-specific AI tasks to the given EntityAITask list.
-     */
-    @NotNull
-    @Override
-    public AbstractAISkeleton<? extends AbstractJob> generateAI()
-    {
-        final AbstractBuilding building = getCitizen().getWorkBuilding();
-        if (building instanceof BuildingGuardTower)
-        {
-            final BuildingGuardTower.GuardJob job = ((BuildingGuardTower) building).getJob();
-            if (job == BuildingGuardTower.GuardJob.KNIGHT)
-            {
-                return new EntityAIMeleeGuard(this);
-            }
-            return new EntityAIRangeGuard(this);
-        }
-        return new EntityAIRangeGuard(this);
     }
 }

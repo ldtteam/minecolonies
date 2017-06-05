@@ -4,15 +4,8 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.handlers.ICombiningColonyEventHandler;
-import com.minecolonies.api.colony.requestsystem.token.IToken;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -24,12 +17,14 @@ public interface IColonyManager<B extends IBuilding, C extends IColony<B>> exten
 
     /**
      * Indicates if this {@link IColonyManager} needs to be saved.
+     *
      * @return True when he needs to be saved, false when not.
      */
     boolean isDirty();
 
     /**
      * Method to get a {@link IWorldColonyController} for a given world
+     *
      * @param world The world to get the controller for.
      * @return The {@link IWorldColonyController} associated with that world.
      */

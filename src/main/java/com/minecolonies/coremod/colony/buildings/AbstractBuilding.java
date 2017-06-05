@@ -115,16 +115,6 @@ public abstract class AbstractBuilding implements IBuilding
     private static final String TAG_REQUEST_TOKEN = "token";
 
     private static final int NO_WORK_ORDER = 0;
-
-    /**
-     * List of all open requests made by this building.
-     *
-     * The key in this map is the class for the request type.
-     * The value is a list of tokens that represent the open requests inside the colony.
-     */
-    @NotNull
-    private final Map<Class, List<IToken>> openRequests = new HashMap<>();
-
     /**
      * Map to resolve names to class.
      */
@@ -164,6 +154,14 @@ public abstract class AbstractBuilding implements IBuilding
         addMapping("GuardTower", BuildingGuardTower.class, BuildingGuardTower.View.class, BlockHutGuardTower.class);
         addMapping("WareHouse", BuildingWareHouse.class, BuildingWareHouse.View.class, BlockHutWareHouse.class);
     }
+    /**
+     * List of all open requests made by this building.
+     * <p>
+     * The key in this map is the class for the request type.
+     * The value is a list of tokens that represent the open requests inside the colony.
+     */
+    @NotNull
+    private final Map<Class, List<IToken>> openRequests = new HashMap<>();
     /**
      * A list which contains the position of all containers which belong to the
      * worker building.
@@ -336,7 +334,7 @@ public abstract class AbstractBuilding implements IBuilding
         catch (final RuntimeException ex)
         {
             Log.getLogger().error(String.format("A Building %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-                    compound.getString(TAG_BUILDING_TYPE), oclass.getName()), ex);
+              compound.getString(TAG_BUILDING_TYPE), oclass.getName()), ex);
             building = null;
         }
 
@@ -470,6 +468,38 @@ public abstract class AbstractBuilding implements IBuilding
     }
 
     /**
+     * Children must return the name of their structure.
+     *
+     * @return StructureProxy name.
+     */
+    public abstract String getSchematicName();
+
+    /**
+     * Internal method used to register a new Request to the request maps.
+     * Helper method.
+     *
+     * @param citizenId    The id of the citizen.
+     * @param requestToken The {@link IToken} that is used to represent the request.
+     * @param requested    The class of the type that has been requested eg. {@code ItemStack.class}
+     */
+    private void addRequestToMaps(@NotNull Integer citizenId, @NotNull IToken requestToken, @NotNull Class requested)
+    {
+        if (!openRequests.containsKey(requested))
+        {
+            openRequests.put(requested, new ArrayList<>());
+        }
+        openRequests.get(requested).add(requestToken);
+
+        requestsByCitizen.put(requestToken, citizenId);
+
+        if (!citizensByRequests.containsKey(citizenId))
+        {
+            citizensByRequests.put(citizenId, new ArrayList<>());
+        }
+        citizensByRequests.get(citizenId).add(requestToken);
+    }
+
+    /**
      * Create a Building given it's TileEntity.
      *
      * @param colony The owning colony.
@@ -512,9 +542,9 @@ public abstract class AbstractBuilding implements IBuilding
     /**
      * Create a AbstractBuilding View given it's saved NBTTagCompound.
      *
-     * @param colony The owning colony.
-     * @param location     Chunk coordinate of the block a view is created for.
-     * @param buf    The network data.
+     * @param colony   The owning colony.
+     * @param location Chunk coordinate of the block a view is created for.
+     * @param buf      The network data.
      * @return {@link AbstractBuilding.View} created from reading the buf.
      */
     @Nullable
@@ -552,20 +582,13 @@ public abstract class AbstractBuilding implements IBuilding
         catch (final IndexOutOfBoundsException ex)
         {
             Log.getLogger().error(
-                    String.format("A AbstractBuilding View (%s) has thrown an exception during deserializing, its state cannot be restored. Report this to the mod author",
-                            oclass.getName()), ex);
+              String.format("A AbstractBuilding View (%s) has thrown an exception during deserializing, its state cannot be restored. Report this to the mod author",
+                oclass.getName()), ex);
             return null;
         }
 
         return view;
     }
-
-    /**
-     * Children must return the name of their structure.
-     *
-     * @return StructureProxy name.
-     */
-    public abstract String getSchematicName();
 
     /**
      * Checks if a block matches the current object.
@@ -726,8 +749,15 @@ public abstract class AbstractBuilding implements IBuilding
     {
         tileEntity = te;
     }
-
-    /**
+/**
+     * On tick of the server.
+     *
+     * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent}
+     */
+    public void onServerTick(final TickEvent.ServerTickEvent event)
+    {
+        // Can be overridden by other buildings.
+    }/**
      * Returns the colony of the building.
      *
      * @return {@link com.minecolonies.coremod.colony.Colony} of the current object.
@@ -739,23 +769,7 @@ public abstract class AbstractBuilding implements IBuilding
         return colony;
     }
 
-    @Override
-    public void removeCitizen(final ICitizenData citizen)
-    {
-        // Can be overridden by other buildings.
-    }
-
-    /**
-     * On tick of the server.
-     *
-     * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent}
-     */
-    public void onServerTick(final TickEvent.ServerTickEvent event)
-    {
-        // Can be overridden by other buildings.
-    }
-
-    /**
+        /**
      * On tick of the world.
      *
      * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent}
@@ -764,7 +778,6 @@ public abstract class AbstractBuilding implements IBuilding
     {
         // Can be overridden by other buildings.
     }
-
     /**
      * Requests an upgrade for the current building.
      */
@@ -774,14 +787,11 @@ public abstract class AbstractBuilding implements IBuilding
         {
             requestWorkOrder(buildingLevel + 1);
         }
+    }@Override
+    public void removeCitizen(final ICitizenData citizen)
+    {
+        // Can be overridden by other buildings.
     }
-
-    /**
-     * Children must return their max building level.
-     *
-     * @return Max building level.
-     */
-    public abstract int getMaxBuildingLevel();
 
     /**
      * Adds work orders to the {@link Colony#workManager}.
@@ -803,53 +813,7 @@ public abstract class AbstractBuilding implements IBuilding
         markDirty();
     }
 
-    /**
-     * Returns the {@link BlockPos} of the current object, also used as ID.
-     *
-     * @return {@link BlockPos} of the current object.
-     */
-    @Override
-    public IToken getID()
-    {
-        return id;
-    }
-
-    @Override
-    public final void markDirty()
-    {
-        dirty = true;
-        colony.markBuildingsDirty();
-    }
-
-    /**
-     * Checks if this building have a work order.
-     *
-     * @return true if the building is building, upgrading or repairing.
-     */
-    public boolean hasWorkOrder()
-    {
-        return getCurrentWorkOrderLevel() != NO_WORK_ORDER;
-    }
-
-    /**
-     * Get the current level of the work order.
-     *
-     * @return NO_WORK_ORDER if not current work otherwise the level requested.
-     */
-    private int getCurrentWorkOrderLevel()
-    {
-        for (@NotNull final AbstractWorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(AbstractWorkOrderBuild.class))
-        {
-            if (o.getBuildingLocation().equals(getID()))
-            {
-                return o.getUpgradeLevel();
-            }
-        }
-
-        return NO_WORK_ORDER;
-    }
-
-    /**
+/**
      * Requests a repair for the current building.
      */
     public void requestRepair()
@@ -887,8 +851,7 @@ public abstract class AbstractBuilding implements IBuilding
     {
         return rotation;
     }
-
-    /**
+/**
      * Sets the rotation of the current building.
      *
      * @param rotation integer value of the rotation.
@@ -896,9 +859,14 @@ public abstract class AbstractBuilding implements IBuilding
     public void setRotation(final int rotation)
     {
         this.rotation = rotation;
-    }
+    }/**
+     * Children must return their max building level.
+     *
+     * @return Max building level.
+     */
+    public abstract int getMaxBuildingLevel();
 
-    /**
+/**
      * Returns the style of the current building.
      *
      * @return String representation of the current building-style
@@ -917,13 +885,6 @@ public abstract class AbstractBuilding implements IBuilding
     {
         this.style = style;
     }
-
-    @Override
-    public void onUpgradeComplete(final int newLevel)
-    {
-        // Does nothing here
-    }
-
     /**
      * Serializes to view.
      * Sends 3 integers.
@@ -939,33 +900,18 @@ public abstract class AbstractBuilding implements IBuilding
         buf.writeInt(getBuildingLevel());
         buf.writeInt(getMaxBuildingLevel());
         buf.writeInt(getCurrentWorkOrderLevel());
-    }
-
-    /**
-     * Returns the level of the current object.
+    }/**
+     * Returns the {@link BlockPos} of the current object, also used as ID.
      *
-     * @return Level of the current object.
+     * @return {@link BlockPos} of the current object.
      */
     @Override
-    public int getBuildingLevel()
+    public IToken getID()
     {
-        return buildingLevel;
+        return id;
     }
 
-    @Override
-    public void setBuildingLevel(final int level)
-    {
-        if (level > getMaxBuildingLevel())
-        {
-            return;
-        }
-
-        buildingLevel = level;
-        markDirty();
-        IAPI.Holder.getApi().getColonyManager().markDirty();
-    }
-
-    /**
+        /**
      * Add a new container to the building.
      *
      * @param pos position to add.
@@ -974,7 +920,6 @@ public abstract class AbstractBuilding implements IBuilding
     {
         containerList.add(pos);
     }
-
     /**
      * Remove a container from the building.
      *
@@ -983,17 +928,14 @@ public abstract class AbstractBuilding implements IBuilding
     public void removeContainerPosition(BlockPos pos)
     {
         containerList.remove(pos);
-    }
-
-    @Override
-    public List<BlockPos> getAdditionalContainers()
+    }@Override
+    public final void markDirty()
     {
-        return new ArrayList<>(containerList);
+        dirty = true;
+        colony.markBuildingsDirty();
     }
 
-    //------------------------- Starting Required Tools/Item handling -------------------------//
-
-    /**
+        /**
      * Override this method if you want to keep an amount of items in inventory.
      * When the inventory is full, everything get's dumped into the building chest.
      * But you can use this method to hold some stacks back.
@@ -1004,43 +946,22 @@ public abstract class AbstractBuilding implements IBuilding
     {
         return Collections.emptyMap();
     }
-
-    @Override
-    public boolean needsAnything()
-    {
-        return !openRequests.isEmpty();
-    }
-
-    @Override
-    public boolean areItemsNeeded()
-    {
-        return !openRequests.get(ItemStack.class).isEmpty();
-    }
-
-    @Override
-    public boolean requiresTool(String toolClass) {
-        if (openRequests.get(Tool.class).isEmpty())
-            return false;
-
-        List<IToken> tokenList = openRequests.get(Tool.class);
-        for(IToken token : tokenList) {
-            IRequest<Tool> toolIRequest = colony.getRequestManager().getRequestForToken(token);
-
-            if (toolIRequest.getRequest().getToolClass().equals(toolClass))
-                return true;
-        }
-
-        return false;
-    }
-
     /**
      * Check if the worker requires a shovel.
      *
      * @return true if so.
      */
-    public boolean needsShovel() { return requiresTool(Utils.SHOVEL); }
+    public boolean needsShovel() { return requiresTool(Utils.SHOVEL); }/**
+     * Checks if this building have a work order.
+     *
+     * @return true if the building is building, upgrading or repairing.
+     */
+    public boolean hasWorkOrder()
+    {
+        return getCurrentWorkOrderLevel() != NO_WORK_ORDER;
+    }
 
-    /**
+        /**
      * Check if the worker requires a axe.
      *
      * @return true if so.
@@ -1049,8 +970,7 @@ public abstract class AbstractBuilding implements IBuilding
     {
         return requiresTool(Utils.AXE);
     }
-
-    /**
+/**
      * Check if the worker requires a hoe.
      *
      * @return true if so.
@@ -1058,6 +978,22 @@ public abstract class AbstractBuilding implements IBuilding
     public boolean needsHoe()
     {
         return requiresTool(Utils.HOE);
+    }/**
+     * Get the current level of the work order.
+     *
+     * @return NO_WORK_ORDER if not current work otherwise the level requested.
+     */
+    private int getCurrentWorkOrderLevel()
+    {
+        for (@NotNull final AbstractWorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(AbstractWorkOrderBuild.class))
+        {
+            if (o.getBuildingLocation().equals(getID()))
+            {
+                return o.getUpgradeLevel();
+            }
+        }
+
+        return NO_WORK_ORDER;
     }
 
     /**
@@ -1070,7 +1006,7 @@ public abstract class AbstractBuilding implements IBuilding
         return requiresTool(Utils.PICKAXE);
     }
 
-    /**
+/**
      * Check if the worker requires a weapon.
      *
      * @return true if so.
@@ -1080,23 +1016,7 @@ public abstract class AbstractBuilding implements IBuilding
         return requiresTool(Utils.WEAPON);
     }
 
-    @Nullable
-    public Tool getRequestedToolForClass(String toolClass) {
-        if (!requiresTool(toolClass))
-            return null;
-
-        List<IToken> tokenList = openRequests.get(Tool.class);
-        for(IToken token : tokenList) {
-            IRequest<Tool> toolIRequest = colony.getRequestManager().getRequestForToken(token);
-
-            if (toolIRequest.getRequest().getToolClass().equals(toolClass))
-                return toolIRequest.getRequest();
-        }
-
-        return null;
-    }
-
-    /**
+/**
      * Check the required pickaxe level..
      *
      * @return the mining level of the pickaxe.
@@ -1110,6 +1030,28 @@ public abstract class AbstractBuilding implements IBuilding
         }
 
         return getRequestedToolForClass(Utils.PICKAXE).getMinLevel();
+    }
+
+    @Nullable
+    public Tool getRequestedToolForClass(String toolClass)
+    {
+        if (!requiresTool(toolClass))
+        {
+            return null;
+        }
+
+        List<IToken> tokenList = openRequests.get(Tool.class);
+        for (IToken token : tokenList)
+        {
+            IRequest<Tool> toolIRequest = colony.getRequestManager().getRequestForToken(token);
+
+            if (toolIRequest.getRequest().getToolClass().equals(toolClass))
+            {
+                return toolIRequest.getRequest();
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -1130,7 +1072,7 @@ public abstract class AbstractBuilding implements IBuilding
         return firstOpenToolRequest.getRequest().getToolClass();
     }
 
-    /**
+/**
      * Try to transfer a stack to one of the inventories of the building.
      *
      * @param stack the stack to transfer.
@@ -1162,7 +1104,7 @@ public abstract class AbstractBuilding implements IBuilding
         }
     }
 
-    /**
+        /**
      * Try to transfer a stack to one of the inventories of the building and force the transfer.
      *
      * @param stack the stack to transfer.
@@ -1189,15 +1131,18 @@ public abstract class AbstractBuilding implements IBuilding
         }
         return stack;
     }
-
-    @Nullable
+@Nullable
     private ItemStack forceItemStackToProvider(@NotNull final ICapabilityProvider provider, @NotNull final ItemStack itemStack)
     {
         final List<ItemStorage> localAlreadyKept = new ArrayList<>();
         return InventoryUtils.forceItemStackToProvider(provider, itemStack, (ItemStack stack) -> EntityAIWorkDeliveryman.workerRequiresItem(this, stack, localAlreadyKept));
+    }@Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        // Does nothing here
     }
 
-    /**
+/**
      * Returns the mirror of the current building.
      *
      * @return boolean value of the mirror.
@@ -1207,8 +1152,6 @@ public abstract class AbstractBuilding implements IBuilding
         return isMirrored;
     }
 
-    //------------------------- Ending Required Tools/Item handling -------------------------//
-
     /**
      * Sets the mirror of the current building.
      */
@@ -1216,130 +1159,6 @@ public abstract class AbstractBuilding implements IBuilding
     {
         this.isMirrored = !isMirrored;
     }
-
-    @Override
-    public <Request> void createRequest(@NotNull ICitizenData citizenData, @NotNull Request requested)
-    {
-        IToken requestToken = colony.getRequestManager().createAndAssignRequest(this, requested);
-
-        addRequestToMaps(citizenData.getId(), requestToken, requested.getClass());
-    }
-
-    /**
-     * Internal method used to register a new Request to the request maps.
-     * Helper method.
-     *
-     * @param citizenId    The id of the citizen.
-     * @param requestToken The {@link IToken} that is used to represent the request.
-     * @param requested    The class of the type that has been requested eg. {@code ItemStack.class}
-     */
-    private void addRequestToMaps(@NotNull Integer citizenId, @NotNull IToken requestToken, @NotNull Class requested)
-    {
-        if (!openRequests.containsKey(requested))
-        {
-            openRequests.put(requested, new ArrayList<>());
-        }
-        openRequests.get(requested).add(requestToken);
-
-        requestsByCitizen.put(requestToken, citizenId);
-
-        if (!citizensByRequests.containsKey(citizenId))
-        {
-            citizensByRequests.put(citizenId, new ArrayList<>());
-        }
-        citizensByRequests.get(citizenId).add(requestToken);
-    }
-
-    @NotNull
-    @Override
-    public void onRequestComplete(@NotNull final IToken token)
-    {
-        Integer citizenThatRequested = requestsByCitizen.remove(token);
-        citizensByRequests.get(citizenThatRequested).remove(token);
-
-        if (citizensByRequests.get(citizenThatRequested).isEmpty())
-        {
-            citizensByRequests.remove(citizenThatRequested);
-        }
-
-        IRequest requestThatCompleted = getColony().getRequestManager().getRequestForToken(token);
-        openRequests.get(requestThatCompleted.getRequestType()).remove(token);
-
-        if (openRequests.get(requestThatCompleted.getRequestType()).isEmpty())
-        {
-            openRequests.remove(requestThatCompleted.getRequestType());
-        }
-
-        if (!citizensByCompletedRequests.containsKey(citizenThatRequested))
-        {
-            citizensByCompletedRequests.put(citizenThatRequested, new ArrayList<>());
-        }
-        citizensByCompletedRequests.get(citizenThatRequested).add(token);
-
-        getColony().getCitizen(citizenThatRequested);
-    }
-
-    @Override
-    public boolean hasWorkerOpenRequests(@NotNull ICitizenData citizen)
-    {
-        return !getOpenRequests(citizen).isEmpty();
-    }
-
-    @Override
-    public <Request> boolean hasWorkerOpenRequestsOfType(@NotNull final ICitizenData citizenData, final Class<Request> requestType)
-    {
-        return getOpenRequests(citizenData).stream()
-                 .map(getColony().getRequestManager()::getRequestForToken)
-                 .anyMatch(request -> request.getRequestType().equals(requestType));
-    }
-
-    @Override
-    public ImmutableList<IToken> getOpenRequests(@NotNull final ICitizenData data)
-    {
-        if (!citizensByRequests.containsKey(data.getId()))
-        {
-            return ImmutableList.of();
-        }
-
-        return ImmutableList.copyOf(citizensByRequests.get(data.getId()));
-    }
-
-    @Override
-    public <Request> ImmutableList<IRequest<Request>> getOpenRequestsOfType(@NotNull final ICitizenData citizenData, final Class<Request> requestType)
-    {
-        return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
-                                      .map(getColony().getRequestManager()::getRequestForToken)
-                                      .filter(request -> request.getRequestType().equals(requestType))
-                                      .map(request -> (IRequest<Request>) request)
-                                      .iterator());
-    }
-
-    @Override
-    public ImmutableList<IToken> getCompletedRequestsForCitizen(@NotNull final ICitizenData data)
-    {
-        if (!citizensByCompletedRequests.containsKey(data.getId()))
-        {
-            return ImmutableList.of();
-        }
-
-        return ImmutableList.copyOf(citizensByCompletedRequests.get(data.getId()));
-    }
-
-    @Override
-    public void markRequestAsAccepted(@NotNull final ICitizenData data, @NotNull final IToken token) throws IllegalArgumentException
-    {
-        if (!citizensByCompletedRequests.containsKey(data.getId()) || !citizensByCompletedRequests.get(data).contains(token))
-        {
-            throw new IllegalArgumentException("The given token " + token + " is not known as a completed request waiting for acceptance by the citizen.");
-        }
-
-        citizensByCompletedRequests.get(data.getId()).remove(token);
-        if (citizensByCompletedRequests.get(data.getId()).isEmpty())
-        {
-            citizensByCompletedRequests.remove(data.getId());
-        }
-    }
-
     /**
      * The AbstractBuilding View is the client-side representation of a AbstractBuilding.
      * Views contain the AbstractBuilding's data that is relevant to a Client, in a more client-friendly form.
@@ -1371,6 +1190,23 @@ public abstract class AbstractBuilding implements IBuilding
         }
 
         /**
+         * Checks if this building is at its max level.
+         *
+         * @return true if the building is at its max level.
+         */
+        public boolean isBuildingMaxLevel()
+        {
+            return buildingLevel >= buildingMaxLevel;
+        }
+/**
+         * Get the current work order level.
+         *
+         * @return 0 if none, othewise the current level worked on
+         */
+        public int getCurrentWorkOrderLevel()
+        {
+            return workOrderLevel;
+        }/**
          * Gets the id for this building.
          *
          * @return A BlockPos because the building ID is its location.
@@ -1382,13 +1218,42 @@ public abstract class AbstractBuilding implements IBuilding
             return id;
         }
 
-        @Override
+        public boolean isBuilding()
+        {
+            return workOrderLevel != NO_WORK_ORDER && workOrderLevel > buildingLevel;
+        }
+public boolean isRepairing()
+        {
+            return workOrderLevel != NO_WORK_ORDER && workOrderLevel == buildingLevel;
+        }@Override
         public void onUpgradeComplete(final int newLevel)
         {
             //Noop
         }
 
         /**
+         * Open the associated BlockOut window for this building.
+         */
+        @SideOnly(Side.CLIENT)
+        public void openGui()
+        {
+            @Nullable final Window window = getWindow();
+            if (window != null)
+            {
+                window.open();
+            }
+        }
+/**
+         * Will return the window if this building has an associated BlockOut window.
+         *
+         * @return BlockOut window.
+         */
+        @Nullable
+        @SideOnly(Side.CLIENT)
+        public Window getWindow()
+        {
+            return null;
+        }/**
          * Gets the location of this building.
          *
          * @return A BlockPos, where this building is.
@@ -1399,7 +1264,17 @@ public abstract class AbstractBuilding implements IBuilding
             return location;
         }
 
-        @NotNull
+        /**
+         * Read this view from a {@link ByteBuf}.
+         *
+         * @param buf The buffer to read this view from.
+         */
+        public void deserialize(@NotNull final ByteBuf buf)
+        {
+            buildingLevel = buf.readInt();
+            buildingMaxLevel = buf.readInt();
+            workOrderLevel = buf.readInt();
+        }        @NotNull
         @Override
         public void onRequestComplete(@NotNull final IToken token)
         {
@@ -1407,19 +1282,19 @@ public abstract class AbstractBuilding implements IBuilding
             //NOOP: On the client side this should never be called.
         }
 
-        @Override
+                @Override
         public TileEntity getTileEntity()
         {
             return null;
         }
 
-        @Override
+                @Override
         public void setTileEntity(final TileEntityColonyBuilding te)
         {
 
         }
 
-        /**
+                /**
          * Gets the ColonyView that this building belongs to.
          *
          * @return ColonyView, client side interpretations of Colony.
@@ -1526,25 +1401,9 @@ public abstract class AbstractBuilding implements IBuilding
             throw new IllegalStateException("Requests cannot be marked as accepted on the client side");
         }
 
-        /**
-         * Checks if this building is at its max level.
-         *
-         * @return true if the building is at its max level.
-         */
-        public boolean isBuildingMaxLevel()
-        {
-            return buildingLevel >= buildingMaxLevel;
-        }
 
-        /**
-         * Get the current work order level.
-         *
-         * @return 0 if none, othewise the current level worked on
-         */
-        public int getCurrentWorkOrderLevel()
-        {
-            return workOrderLevel;
-        }
+
+
 
         /**
          * Get the current work order level.
@@ -1568,55 +1427,219 @@ public abstract class AbstractBuilding implements IBuilding
          * @return Max building level.
          */
         @Override
-        public int getMaxBuildingLevel() {
+        public int getMaxBuildingLevel()
+        {
             return buildingMaxLevel;
         }
 
-        public boolean isBuilding()
+
+
+
+
+
+
+
+
+
+    }/**
+     * Returns the level of the current object.
+     *
+     * @return Level of the current object.
+     */
+    @Override
+    public int getBuildingLevel()
+    {
+        return buildingLevel;
+    }
+
+        @Override
+    public void setBuildingLevel(final int level)
+    {
+        if (level > getMaxBuildingLevel())
         {
-            return workOrderLevel != NO_WORK_ORDER && workOrderLevel > buildingLevel;
+            return;
         }
 
-        public boolean isRepairing()
+        buildingLevel = level;
+        markDirty();
+        IAPI.Holder.getApi().getColonyManager().markDirty();
+    }
+
+
+
+
+
+        @Override
+    public List<BlockPos> getAdditionalContainers()
+    {
+        return new ArrayList<>(containerList);
+    }
+
+    //------------------------- Starting Required Tools/Item handling -------------------------//
+
+
+
+        @Override
+    public boolean needsAnything()
+    {
+        return !openRequests.isEmpty();
+    }
+
+        @Override
+    public boolean areItemsNeeded()
+    {
+        return !openRequests.get(ItemStack.class).isEmpty();
+    }
+
+        @Override
+    public boolean requiresTool(String toolClass)
+    {
+        if (openRequests.get(Tool.class).isEmpty())
         {
-            return workOrderLevel != NO_WORK_ORDER && workOrderLevel == buildingLevel;
+            return false;
         }
 
-        /**
-         * Open the associated BlockOut window for this building.
-         */
-        @SideOnly(Side.CLIENT)
-        public void openGui()
+        List<IToken> tokenList = openRequests.get(Tool.class);
+        for (IToken token : tokenList)
         {
-            @Nullable final Window window = getWindow();
-            if (window != null)
+            IRequest<Tool> toolIRequest = colony.getRequestManager().getRequestForToken(token);
+
+            if (toolIRequest.getRequest().getToolClass().equals(toolClass))
             {
-                window.open();
+                return true;
             }
         }
 
-        /**
-         * Will return the window if this building has an associated BlockOut window.
-         *
-         * @return BlockOut window.
-         */
-        @Nullable
-        @SideOnly(Side.CLIENT)
-        public Window getWindow()
+        return false;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //------------------------- Ending Required Tools/Item handling -------------------------//
+
+
+
+    @Override
+    public <Request> void createRequest(@NotNull ICitizenData citizenData, @NotNull Request requested)
+    {
+        IToken requestToken = colony.getRequestManager().createAndAssignRequest(this, requested);
+
+        addRequestToMaps(citizenData.getId(), requestToken, requested.getClass());
+    }
+
+
+
+    @NotNull
+    @Override
+    public void onRequestComplete(@NotNull final IToken token)
+    {
+        Integer citizenThatRequested = requestsByCitizen.remove(token);
+        citizensByRequests.get(citizenThatRequested).remove(token);
+
+        if (citizensByRequests.get(citizenThatRequested).isEmpty())
         {
-            return null;
+            citizensByRequests.remove(citizenThatRequested);
         }
 
-        /**
-         * Read this view from a {@link ByteBuf}.
-         *
-         * @param buf The buffer to read this view from.
-         */
-        public void deserialize(@NotNull final ByteBuf buf)
+        IRequest requestThatCompleted = getColony().getRequestManager().getRequestForToken(token);
+        openRequests.get(requestThatCompleted.getRequestType()).remove(token);
+
+        if (openRequests.get(requestThatCompleted.getRequestType()).isEmpty())
         {
-            buildingLevel = buf.readInt();
-            buildingMaxLevel = buf.readInt();
-            workOrderLevel = buf.readInt();
+            openRequests.remove(requestThatCompleted.getRequestType());
+        }
+
+        if (!citizensByCompletedRequests.containsKey(citizenThatRequested))
+        {
+            citizensByCompletedRequests.put(citizenThatRequested, new ArrayList<>());
+        }
+        citizensByCompletedRequests.get(citizenThatRequested).add(token);
+
+        getColony().getCitizen(citizenThatRequested);
+    }
+
+    @Override
+    public boolean hasWorkerOpenRequests(@NotNull ICitizenData citizen)
+    {
+        return !getOpenRequests(citizen).isEmpty();
+    }
+
+    @Override
+    public <Request> boolean hasWorkerOpenRequestsOfType(@NotNull final ICitizenData citizenData, final Class<Request> requestType)
+    {
+        return getOpenRequests(citizenData).stream()
+                 .map(getColony().getRequestManager()::getRequestForToken)
+                 .anyMatch(request -> request.getRequestType().equals(requestType));
+    }
+
+    @Override
+    public ImmutableList<IToken> getOpenRequests(@NotNull final ICitizenData data)
+    {
+        if (!citizensByRequests.containsKey(data.getId()))
+        {
+            return ImmutableList.of();
+        }
+
+        return ImmutableList.copyOf(citizensByRequests.get(data.getId()));
+    }
+
+    @Override
+    public <Request> ImmutableList<IRequest<Request>> getOpenRequestsOfType(@NotNull final ICitizenData citizenData, final Class<Request> requestType)
+    {
+        return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
+                                      .map(getColony().getRequestManager()::getRequestForToken)
+                                      .filter(request -> request.getRequestType().equals(requestType))
+                                      .map(request -> (IRequest<Request>) request)
+                                      .iterator());
+    }
+
+    @Override
+    public ImmutableList<IToken> getCompletedRequestsForCitizen(@NotNull final ICitizenData data)
+    {
+        if (!citizensByCompletedRequests.containsKey(data.getId()))
+        {
+            return ImmutableList.of();
+        }
+
+        return ImmutableList.copyOf(citizensByCompletedRequests.get(data.getId()));
+    }
+
+    @Override
+    public void markRequestAsAccepted(@NotNull final ICitizenData data, @NotNull final IToken token) throws IllegalArgumentException
+    {
+        if (!citizensByCompletedRequests.containsKey(data.getId()) || !citizensByCompletedRequests.get(data).contains(token))
+        {
+            throw new IllegalArgumentException("The given token " + token + " is not known as a completed request waiting for acceptance by the citizen.");
+        }
+
+        citizensByCompletedRequests.get(data.getId()).remove(token);
+        if (citizensByCompletedRequests.get(data.getId()).isEmpty())
+        {
+            citizensByCompletedRequests.remove(data.getId());
         }
     }
+
+
 }

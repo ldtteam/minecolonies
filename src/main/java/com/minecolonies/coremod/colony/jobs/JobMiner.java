@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.colony.jobs;
 
 import com.minecolonies.api.client.render.Model;
-import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.api.entity.ai.basic.AbstractAISkeleton;
+import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.entity.ai.citizen.miner.EntityAIStructureMiner;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,13 +28,6 @@ public class JobMiner extends AbstractJobStructure
         return "com.minecolonies.coremod.job.Miner";
     }
 
-    @NotNull
-    @Override
-    public Model getModel()
-    {
-        return Model.MINER;
-    }
-
     /**
      * Generate your AI class to register.
      *
@@ -45,5 +38,12 @@ public class JobMiner extends AbstractJobStructure
     public AbstractAISkeleton<JobMiner> generateAI()
     {
         return new EntityAIStructureMiner(this);
+    }
+
+    @NotNull
+    @Override
+    public Model getModel()
+    {
+        return Model.MINER;
     }
 }

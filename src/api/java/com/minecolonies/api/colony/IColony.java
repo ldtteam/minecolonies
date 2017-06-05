@@ -538,6 +538,7 @@ public interface IColony<B extends IBuilding> extends ICombiningColonyEventHandl
 
     /**
      * Returns the request manager for the colony.
+     *
      * @return The request manager.
      */
     @NotNull
@@ -553,8 +554,8 @@ public interface IColony<B extends IBuilding> extends ICombiningColonyEventHandl
 
     /**
      * Is called when the colony is deleted. Should:
-     *      * remove all citizens
-     *      * destroy all buildings
+     * * remove all citizens
+     * * destroy all buildings
      */
     void OnDeletion();
 }

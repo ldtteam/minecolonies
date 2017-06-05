@@ -48,87 +48,87 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     /**
      * If no trees are found, increment the range.
      */
-    private static final int SEARCH_INCREMENT = 5;
+    private static final int    SEARCH_INCREMENT        = 5;
     /**
      * If this limit is reached, no trees are found.
      */
-    private static final int SEARCH_LIMIT = 150;
+    private static final int    SEARCH_LIMIT            = 150;
     /**
      * Number of ticks to wait before coming to the conclusion of being stuck.
      */
-    private static final int STUCK_WAIT_TIME = 10;
+    private static final int    STUCK_WAIT_TIME         = 10;
     /**
      * Number of ticks until he gives up destroying leaves
      * and walks a bit back to try a new path.
      */
-    private static final int WALKING_BACK_WAIT_TIME = 60;
+    private static final int    WALKING_BACK_WAIT_TIME  = 60;
     /**
      * How much he backs away when really not finding any path.
      */
-    private static final double WALK_BACK_RANGE = 3.0;
+    private static final double WALK_BACK_RANGE         = 3.0;
     /**
      * The speed in which he backs away.
      */
-    private static final double WALK_BACK_SPEED = 1.0;
+    private static final double WALK_BACK_SPEED         = 1.0;
     /**
      * The standard range the lumberjack should reach until his target.
      */
-    private static final int STANDARD_WORKING_RANGE = 1;
+    private static final int    STANDARD_WORKING_RANGE  = 1;
     /**
      * The minimum range the lumberjack has to reach in order to construct or clear.
      */
-    private static final int MIN_WORKING_RANGE = 1;
+    private static final int    MIN_WORKING_RANGE       = 1;
     /**
      * Time in ticks to wait before placing a sapling.
      * Is used to collect falling saplings from the ground.
      */
-    private static final int WAIT_BEFORE_SAPLING = 50;
+    private static final int    WAIT_BEFORE_SAPLING     = 50;
     /**
      * Time in ticks to wait before placing a sapling.
      * Is used to collect falling saplings from the ground.
      */
-    private static final int MAX_WAITING_TIME = 100;
+    private static final int    MAX_WAITING_TIME        = 100;
     /**
      * Number of ticks to wait for tree.
      */
-    private static final int   TIMEOUT_DELAY           = 10;
-    private static final int   LEAVES_RADIUS           = 3;
-    private static final int   ITEM_PICKUP_RANGE       = 3;
-    private static final int   STUCK_WAIT_TICKS        = 20;
+    private static final int    TIMEOUT_DELAY           = 10;
+    private static final int    LEAVES_RADIUS           = 3;
+    private static final int    ITEM_PICKUP_RANGE       = 3;
+    private static final int    STUCK_WAIT_TICKS        = 20;
     /**
      * Time in ticks to wait before rechecking
      * if there are trees in the
      * range of the lumberjack.
      */
-    private static final int   WAIT_BEFORE_SEARCH      = 100;
+    private static final int    WAIT_BEFORE_SEARCH      = 100;
     /**
      * Time in ticks before incrementing the search radius.
      */
-    private static final int   WAIT_BEFORE_INCREMENT   = 20;
+    private static final int    WAIT_BEFORE_INCREMENT   = 20;
     /**
      * The amount of time to wait while walking to items.
      */
-    private static final int   WAIT_WHILE_WALKING      = 5;
+    private static final int    WAIT_WHILE_WALKING      = 5;
     /**
      * Horizontal range in which the lumberjack picks up items.
      */
-    private static final float RANGE_HORIZONTAL_PICKUP = 45.0F;
+    private static final float  RANGE_HORIZONTAL_PICKUP = 45.0F;
     /**
      * Vertical range in which the lumberjack picks up items.
      */
-    private static final float RANGE_VERTICAL_PICKUP   = 3.0F;
+    private static final float  RANGE_VERTICAL_PICKUP   = 3.0F;
     /**
      * How often should strength factor into the lumberjacks skill modifier.
      */
-    private static final int   STRENGTH_MULTIPLIER     = 2;
+    private static final int    STRENGTH_MULTIPLIER     = 2;
     /**
      * How often should charisma factor into the lumberjacks skill modifier.
      */
-    private static final int   CHARISMA_MULTIPLIER     = 1;
+    private static final int    CHARISMA_MULTIPLIER     = 1;
     /**
      * Return to chest after half a stack.
      */
-    private static final int   MAX_BLOCKS_MINED        = 32;
+    private static final int    MAX_BLOCKS_MINED        = 32;
     /**
      * Position where the Builders constructs from.
      */

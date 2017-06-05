@@ -93,6 +93,45 @@ public class ScarecrowTileEntity extends TileEntityChest implements com.minecolo
 
     ///////////---- Following methods are used to update the tileEntity between client and server ----///////////
 
+    /**
+     * Returns the type of the scarecrow (Important for the rendering).
+     *
+     * @return the enum type.
+     */
+    @Override
+    public ScareCrowType getType()
+    {
+        if (this.type == null)
+        {
+            this.type = ScareCrowType.values()[this.random.nextInt(2)];
+        }
+        return this.type;
+    }
+
+    /**
+     * Get the inventory connected with the scarecrow.
+     *
+     * @return the inventory field of this scarecrow
+     */
+    @Override
+    public ItemStackHandler getInventoryField()
+    {
+        return inventoryField;
+    }
+
+    /////////////--------------------------- End Synchronization-area ---------------------------- /////////////
+
+    /**
+     * Set the inventory connected with the scarecrow.
+     *
+     * @param inventoryField the field to set it to
+     */
+    @Override
+    public final void setInventoryField(final ItemStackHandler inventoryField)
+    {
+        this.inventoryField = inventoryField;
+    }
+
     @NotNull
     @Override
     public SPacketUpdateTileEntity getUpdatePacket()
@@ -107,8 +146,6 @@ public class ScarecrowTileEntity extends TileEntityChest implements com.minecolo
     {
         readFromNBT(pkt.getNbtCompound());
     }
-
-    /////////////--------------------------- End Synchronization-area ---------------------------- /////////////
 
     @Override
     public void onLoad()
@@ -148,42 +185,5 @@ public class ScarecrowTileEntity extends TileEntityChest implements com.minecolo
         compound.setTag(Constants.MOD_ID + TAG_INVENTORY, getInventoryField().serializeNBT());
         compound.setString(TAG_NAME, name);
         return compound;
-    }
-
-    /**
-     * Returns the type of the scarecrow (Important for the rendering).
-     *
-     * @return the enum type.
-     */
-    @Override
-    public ScareCrowType getType()
-    {
-        if (this.type == null)
-        {
-            this.type = ScareCrowType.values()[this.random.nextInt(2)];
-        }
-        return this.type;
-    }
-
-    /**
-     * Get the inventory connected with the scarecrow.
-     *
-     * @return the inventory field of this scarecrow
-     */
-    @Override
-    public ItemStackHandler getInventoryField()
-    {
-        return inventoryField;
-    }
-
-    /**
-     * Set the inventory connected with the scarecrow.
-     *
-     * @param inventoryField the field to set it to
-     */
-    @Override
-    public final void setInventoryField(final ItemStackHandler inventoryField)
-    {
-        this.inventoryField = inventoryField;
     }
 }

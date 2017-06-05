@@ -186,6 +186,33 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
     }
 
     /**
+     * Creates the {@link AbstractWorkOrderBuildDecoration} to start building the decoration.
+     *
+     * @param world         The world the decoration is being built in.
+     * @param player        The player who placed the decoration.
+     * @param sn            The name of the structure.
+     * @param workOrderName The style of the decoration.
+     * @param rotation      The number of times the decoration is rotated.
+     * @param buildPos      The location the decoration will be built.
+     * @param mirror        Whether or not the strcture is mirrored.
+     */
+    private static void handleDecoration(
+                                          @NotNull final World world, @NotNull final EntityPlayer player,
+                                          final Structures.StructureName sn, final String workOrderName,
+                                          final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
+    {
+        @Nullable final Colony colony = ColonyManager.getColony(world, buildPos);
+        if (colony != null && colony.getPermissions().hasPermission(player, Action.PLACE_HUTS))
+        {
+            colony.getWorkManager().addWorkOrder(new AbstractWorkOrderBuildDecoration(sn.toString(), workOrderName, rotation, buildPos, mirror));
+        }
+        else
+        {
+            Log.getLogger().error("handleDecoration: Could not build " + sn);
+        }
+    }
+
+    /**
      * setup the building once it has been placed.
      *
      * @param world         World the hut is being placed into.
@@ -227,33 +254,6 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
             {
                 building.setMirror();
             }
-        }
-    }
-
-    /**
-     * Creates the {@link AbstractWorkOrderBuildDecoration} to start building the decoration.
-     *
-     * @param world         The world the decoration is being built in.
-     * @param player        The player who placed the decoration.
-     * @param sn            The name of the structure.
-     * @param workOrderName The style of the decoration.
-     * @param rotation      The number of times the decoration is rotated.
-     * @param buildPos      The location the decoration will be built.
-     * @param mirror        Whether or not the strcture is mirrored.
-     */
-    private static void handleDecoration(
-                                          @NotNull final World world, @NotNull final EntityPlayer player,
-                                          final Structures.StructureName sn, final String workOrderName,
-                                          final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
-    {
-        @Nullable final Colony colony = ColonyManager.getColony(world, buildPos);
-        if (colony != null && colony.getPermissions().hasPermission(player, Action.PLACE_HUTS))
-        {
-            colony.getWorkManager().addWorkOrder(new AbstractWorkOrderBuildDecoration(sn.toString(), workOrderName, rotation, buildPos, mirror));
-        }
-        else
-        {
-            Log.getLogger().error("handleDecoration: Could not build " + sn);
         }
     }
 }

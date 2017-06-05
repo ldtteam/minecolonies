@@ -122,6 +122,27 @@ public class CitizenDataView implements ICitizenData
     }
 
     /**
+     * Get the entities work building.
+     *
+     * @return the work coordinates.
+     */
+    @Nullable
+    public BlockPos getWorkBuilding()
+    {
+        return workBuilding;
+    }
+
+    /**
+     * Entity job getter.
+     *
+     * @return the job as a string.
+     */
+    public String getJob()
+    {
+        return job;
+    }
+
+    /**
      * Entity level getter.
      *
      * @return the citizens level.
@@ -139,38 +160,6 @@ public class CitizenDataView implements ICitizenData
     public double getExperience()
     {
         return experience;
-    }
-
-    /**
-     * Entity job getter.
-     *
-     * @return the job as a string.
-     */
-    public String getJob()
-    {
-        return job;
-    }
-
-    /**
-     * Get the entities home building.
-     *
-     * @return the home coordinates.
-     */
-    @Nullable
-    public BlockPos getHomeBuilding()
-    {
-        return homeBuilding;
-    }
-
-    /**
-     * Get the entities work building.
-     *
-     * @return the work coordinates.
-     */
-    @Nullable
-    public BlockPos getWorkBuilding()
-    {
-        return workBuilding;
     }
 
     /**
@@ -204,14 +193,6 @@ public class CitizenDataView implements ICitizenData
     }
 
     /**
-     * Get the saturation of the citizen.
-     */
-    public double getSaturation()
-    {
-        return saturation;
-    }
-
-    /**
      * Intelligence getter.
      *
      * @return citizen Intelligence value.
@@ -229,6 +210,25 @@ public class CitizenDataView implements ICitizenData
     public int getDexterity()
     {
         return dexterity;
+    }
+
+    /**
+     * Get the saturation of the citizen.
+     */
+    public double getSaturation()
+    {
+        return saturation;
+    }
+
+    /**
+     * Get the entities home building.
+     *
+     * @return the home coordinates.
+     */
+    @Nullable
+    public BlockPos getHomeBuilding()
+    {
+        return homeBuilding;
     }
 
     /**

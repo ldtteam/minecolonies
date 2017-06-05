@@ -17,5 +17,4 @@ public class ServerProxy extends CommonProxy
         return new File(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
                           + "/" + Constants.MOD_ID);
     }
-
 }

@@ -18,7 +18,6 @@ public interface IRequester
 
     /**
      * Method to get the location of this locatable.
-     * @return
      */
     @NotNull
     ILocation getLocation();

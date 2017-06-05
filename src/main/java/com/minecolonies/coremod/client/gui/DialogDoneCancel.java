@@ -1,13 +1,13 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.lib.Constants;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.blockout.Loader;
 import com.minecolonies.blockout.OverlayView;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.controls.Text;
 import com.minecolonies.blockout.views.Window;
-import com.minecolonies.api.lib.Constants;
-import com.minecolonies.api.util.Log;
 
 import java.util.function.ObjIntConsumer;
 
@@ -75,16 +75,6 @@ public class DialogDoneCancel extends OverlayView implements Button.Handler
     }
 
     /**
-     * Set the title of the dialog.
-     *
-     * @param title for the dialog
-     */
-    public void setTitle(final String title)
-    {
-        titleLabel.setLabelText(title);
-    }
-
-    /**
      * Get the title of the dialog.
      *
      * @return title for the dialog
@@ -95,13 +85,13 @@ public class DialogDoneCancel extends OverlayView implements Button.Handler
     }
 
     /**
-     * Set the textual content of the dialog.
+     * Set the title of the dialog.
      *
-     * @param content to display in the dialog
+     * @param title for the dialog
      */
-    public void setTextContent(final String content)
+    public void setTitle(final String title)
     {
-        contentText.setTextContent(content);
+        titleLabel.setLabelText(title);
     }
 
     /**
@@ -112,6 +102,16 @@ public class DialogDoneCancel extends OverlayView implements Button.Handler
     public String getTextContent()
     {
         return contentText.getTextContent();
+    }
+
+    /**
+     * Set the textual content of the dialog.
+     *
+     * @param content to display in the dialog
+     */
+    public void setTextContent(final String content)
+    {
+        contentText.setTextContent(content);
     }
 
     /**

@@ -1,7 +1,7 @@
 package com.minecolonies.api.colony.workorder;
 
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;

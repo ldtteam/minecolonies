@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.colony.jobs;
 
 import com.minecolonies.api.client.render.Model;
-import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.ai.basic.AbstractAISkeleton;
-import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -40,13 +40,6 @@ public class JobDeliveryman extends AbstractJob
 
     @NotNull
     @Override
-    public String getName()
-    {
-        return "com.minecolonies.coremod.job.Deliveryman";
-    }
-
-    @NotNull
-    @Override
     public Model getModel()
     {
         return Model.DELIVERYMAN;
@@ -63,6 +56,23 @@ public class JobDeliveryman extends AbstractJob
     }
 
     /**
+     * Returns whether or not the job has a destination.
+     *
+     * @return true if has destination, otherwise false.
+     */
+    public boolean hasDestination()
+    {
+        return destination != null;
+    }
+
+    @NotNull
+    @Override
+    public String getName()
+    {
+        return "com.minecolonies.coremod.job.Deliveryman";
+    }
+
+    /**
      * Generate your AI class to register.
      *
      * @return your personal AI instance.
@@ -72,16 +82,6 @@ public class JobDeliveryman extends AbstractJob
     public AbstractAISkeleton<JobDeliveryman> generateAI()
     {
         return new EntityAIWorkDeliveryman(this);
-    }
-
-    /**
-     * Returns whether or not the job has a destination.
-     *
-     * @return true if has destination, otherwise false.
-     */
-    public boolean hasDestination()
-    {
-        return destination != null;
     }
 
     public boolean isNeeded()

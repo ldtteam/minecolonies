@@ -8,20 +8,17 @@ import com.minecolonies.api.colony.handlers.IColonyEventHandler;
 import com.minecolonies.api.colony.management.IColonyManager;
 import com.minecolonies.api.colony.management.IWorldColonyController;
 import com.minecolonies.api.configuration.Configurations;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class StandardSidelessColonyManager<B extends IBuilding, C extends IColony<B>> implements IColonyManager<B, C>
 {
 
-    HashMap<World, IWorldColonyController<B,C>> worldColonyControllerMap = new HashMap<>();
+    HashMap<World, IWorldColonyController<B, C>> worldColonyControllerMap = new HashMap<>();
 
     @Override
     public boolean isDirty()
@@ -33,11 +30,15 @@ public class StandardSidelessColonyManager<B extends IBuilding, C extends IColon
     @Override
     public IWorldColonyController<B, C> getControllerForWorld(@NotNull final World world)
     {
-        if (!worldColonyControllerMap.containsKey(world)) {
+        if (!worldColonyControllerMap.containsKey(world))
+        {
             //Unknown world
             //Get the save data from the world.
-            StandardWorldColonyControllerWorldSavedData worldData = (StandardWorldColonyControllerWorldSavedData) world.getPerWorldStorage().getOrLoadData(StandardWorldColonyControllerWorldSavedData.class, StandardWorldColonyControllerWorldSavedData.WORLD_SAVED_DATA_PREFIX);
-            if (worldData  == null) {
+            StandardWorldColonyControllerWorldSavedData worldData = (StandardWorldColonyControllerWorldSavedData) world.getPerWorldStorage()
+                                                                                                                    .getOrLoadData(StandardWorldColonyControllerWorldSavedData.class,
+                                                                                                                      StandardWorldColonyControllerWorldSavedData.WORLD_SAVED_DATA_PREFIX);
+            if (worldData == null)
+            {
                 //Brand new world
                 worldData = new StandardWorldColonyControllerWorldSavedData();
             }

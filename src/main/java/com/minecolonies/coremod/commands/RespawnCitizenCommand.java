@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.commands;
 
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.api.util.Log;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -44,27 +44,6 @@ public class RespawnCitizenCommand extends AbstractCitizensCommands
         return super.getCommandUsage(sender) + "<ColonyId> <CitizenId>";
     }
 
-    @Override
-    void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final Colony colony, final int citizenId)
-    {
-        final CitizenData citizenData = (CitizenData) colony.getCitizen(citizenId);
-        final EntityCitizen entityCitizen = citizenData.getCitizen();
-        sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, citizenData.getId(), citizenData.getName())));
-
-        if (entityCitizen == null)
-        {
-            colony.spawnCitizen(citizenData);
-            return;
-        }
-
-        final BlockPos position = entityCitizen.getPosition();
-        sender.sendMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
-        sender.sendMessage(new TextComponentString(REMOVED_MESSAGE));
-
-        Log.getLogger().info("client? " + sender.getEntityWorld().isRemote);
-        server.addScheduledTask(entityCitizen::setDead);
-    }
-
     @NotNull
     @Override
     public List<String> getTabCompletionOptions(
@@ -86,5 +65,26 @@ public class RespawnCitizenCommand extends AbstractCitizensCommands
     public Commands getCommand()
     {
         return RESPAWNCITIZENS;
+    }
+
+    @Override
+    void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final Colony colony, final int citizenId)
+    {
+        final CitizenData citizenData = (CitizenData) colony.getCitizen(citizenId);
+        final EntityCitizen entityCitizen = citizenData.getCitizen();
+        sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, citizenData.getId(), citizenData.getName())));
+
+        if (entityCitizen == null)
+        {
+            colony.spawnCitizen(citizenData);
+            return;
+        }
+
+        final BlockPos position = entityCitizen.getPosition();
+        sender.sendMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
+        sender.sendMessage(new TextComponentString(REMOVED_MESSAGE));
+
+        Log.getLogger().info("client? " + sender.getEntityWorld().isRemote);
+        server.addScheduledTask(entityCitizen::setDead);
     }
 }

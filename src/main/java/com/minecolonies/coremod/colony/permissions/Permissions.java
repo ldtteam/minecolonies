@@ -457,21 +457,6 @@ public class Permissions implements IPermissions
         return true;
     }
 
-    @Override
-    @Nullable
-    public UUID getOwner()
-    {
-        if (ownerUUID == null)
-        {
-            final Map.Entry<UUID, Player> owner = getOwnerEntry();
-            if (owner != null)
-            {
-                ownerUUID = owner.getKey();
-            }
-        }
-        return ownerUUID;
-    }
-
     /**
      * Save the permissionMap to a NBT.
      *
@@ -522,14 +507,6 @@ public class Permissions implements IPermissions
 
         compound.setBoolean(TAG_UPDATE, updatedPermissionAlready);
     }
-
-    @Override
-    @NotNull
-    public Map<UUID, Player> getPlayers()
-    {
-        return Collections.unmodifiableMap(players);
-    }
-
     /**
      * Returns a set of UUID's that have permission to send (and receive) messages.
      *
@@ -541,9 +518,22 @@ public class Permissions implements IPermissions
                  .filter(player -> hasPermission(player.getRank(), Action.RECEIVE_MESSAGES))
                  .map(Player::getID)
                  .collect(Collectors.toSet());
+    }@Override
+    @Nullable
+    public UUID getOwner()
+    {
+        if (ownerUUID == null)
+        {
+            final Map.Entry<UUID, Player> owner = getOwnerEntry();
+            if (owner != null)
+            {
+                ownerUUID = owner.getKey();
+            }
+        }
+        return ownerUUID;
     }
 
-    /**
+/**
      * Checks if a rank can perform an action.
      *
      * @param rank   Rank you want to check.
@@ -556,7 +546,7 @@ public class Permissions implements IPermissions
                  || Utils.testFlag(permissionMap.get(rank), action.getFlag());
     }
 
-    /**
+        /**
      * Gets all player by a certain rank.
      *
      * @param rank the rank.
@@ -568,7 +558,6 @@ public class Permissions implements IPermissions
                  .filter(player -> player.getRank().equals(rank))
                  .collect(Collectors.toSet());
     }
-
     /**
      * Gets all player by a set of ranks.
      *
@@ -580,6 +569,11 @@ public class Permissions implements IPermissions
         return this.players.values().stream()
                  .filter(player -> ranks.contains(player.getRank()))
                  .collect(Collectors.toSet());
+    }@Override
+    @NotNull
+    public Map<UUID, Player> getPlayers()
+    {
+        return Collections.unmodifiableMap(players);
     }
 
     /**
@@ -635,20 +629,6 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * Returns the rank belonging to the UUID.
-     *
-     * @param id UUID that you want to check rank of.
-     * @return Rank of the UUID.
-     */
-    @NotNull
-    @Override
-    public Rank getRank(final UUID id)
-    {
-        final Player player = players.get(id);
-        return player != null ? player.getRank() : Rank.NEUTRAL;
-    }
-
-    /**
      * Sets the player's rank to a given rank.
      *
      * @param id    UUID of the player of the new rank.
@@ -699,7 +679,7 @@ public class Permissions implements IPermissions
         return true;
     }
 
-    /**
+/**
      * Add a player to the rankings.
      *
      * @param player String playername of the player to add.
@@ -737,7 +717,7 @@ public class Permissions implements IPermissions
         return false;
     }
 
-    /**
+        /**
      * Returns the name of the owner of this permission instance.
      *
      * @return Name of the owner.
@@ -755,7 +735,6 @@ public class Permissions implements IPermissions
         }
         return ownerName;
     }
-
     /**
      * Checks if a user is a subscriber.
      *
@@ -765,6 +744,18 @@ public class Permissions implements IPermissions
     public boolean isSubscriber(@NotNull final EntityPlayer player)
     {
         return isSubscriber(player.getGameProfile().getId());
+    }/**
+     * Returns the rank belonging to the UUID.
+     *
+     * @param id UUID that you want to check rank of.
+     * @return Rank of the UUID.
+     */
+    @NotNull
+    @Override
+    public Rank getRank(final UUID id)
+    {
+        final Player player = players.get(id);
+        return player != null ? player.getRank() : Rank.NEUTRAL;
     }
 
     /**
@@ -786,12 +777,6 @@ public class Permissions implements IPermissions
     public boolean isDirty()
     {
         return dirty;
-    }
-
-    @Override
-    public boolean isColonyMember(@NotNull final EntityPlayer player)
-    {
-        return players.containsKey(player.getGameProfile().getId());
     }
 
     /**
@@ -855,7 +840,7 @@ public class Permissions implements IPermissions
         }
     }
 
-    /**
+/**
      * A client side representation of the permissions.
      */
     public static class View implements IPermissions
@@ -869,29 +854,6 @@ public class Permissions implements IPermissions
         public Rank getUserRank()
         {
             return userRank;
-        }
-
-        @Override
-        @NotNull
-        public Map<UUID, Player> getPlayers()
-        {
-            return Collections.unmodifiableMap(players);
-        }
-
-        /**
-         * Gets all player by a certain rank.
-         *
-         * @param rank the rank.
-         * @return set of players.
-         */
-        @NotNull
-        public Set<Player> getPlayersByRank(final Rank rank)
-        {
-            return Collections.unmodifiableSet(
-              this.players.values()
-                .stream()
-                .filter(player -> player.getRank() == rank)
-                .collect(Collectors.toSet()));
         }
 
         /**
@@ -909,14 +871,18 @@ public class Permissions implements IPermissions
                 .filter(player -> ranks.contains(player.getRank()))
                 .collect(Collectors.toSet()));
         }
-
-        @NotNull
+@NotNull
         public Map<Rank, Integer> getPermissions()
         {
             return permissions;
+        }@Override
+        @NotNull
+        public Map<UUID, Player> getPlayers()
+        {
+            return Collections.unmodifiableMap(players);
         }
 
-        /**
+                /**
          * Checks if the player has the permission to do an action.
          *
          * @param id     the id of the player.
@@ -927,7 +893,6 @@ public class Permissions implements IPermissions
         {
             return hasPermission(getRank(id), action);
         }
-
         /**
          * Checks if the rank has the permission to do an action.
          *
@@ -939,6 +904,20 @@ public class Permissions implements IPermissions
         {
             return (rank == OWNER && action != GUARDS_ATTACK)
                      || Utils.testFlag(permissions.get(rank), action.getFlag());
+        }/**
+         * Gets all player by a certain rank.
+         *
+         * @param rank the rank.
+         * @return set of players.
+         */
+        @NotNull
+        public Set<Player> getPlayersByRank(final Rank rank)
+        {
+            return Collections.unmodifiableSet(
+              this.players.values()
+                .stream()
+                .filter(player -> player.getRank() == rank)
+                .collect(Collectors.toSet()));
         }
 
         /**
@@ -1022,6 +1001,14 @@ public class Permissions implements IPermissions
             }
         }
 
+
+
+
+
+
+
+
+
         /**
          * Get the rank of a certain player.
          *
@@ -1060,13 +1047,28 @@ public class Permissions implements IPermissions
         {
             Player owner = getPlayersByRank(Rank.OWNER).stream().findFirst().orElse(null);
 
-            if (owner == null) {
+            if (owner == null)
+            {
                 return null;
             }
 
             return owner.getID();
         }
     }
+
+
+
+
+
+        @Override
+    public boolean isColonyMember(@NotNull final EntityPlayer player)
+    {
+        return players.containsKey(player.getGameProfile().getId());
+    }
+
+
+
+
 
 
 

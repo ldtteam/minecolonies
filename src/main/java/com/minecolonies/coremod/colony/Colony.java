@@ -119,22 +119,14 @@ public class Colony implements IColony<AbstractBuilding>
      * Saturation at which a citizen starts being happy.
      */
     private static final int WELL_SATURATED_LIMIT = 5;
-
-    /**
-     * Variable to determine if its currently day or night.
-     */
-    private boolean isDay = true;
-
     /**
      * Max overall happiness.
      */
     private static final double MAX_OVERALL_HAPPINESS = 10;
-
     /**
      * Min overall happiness.
      */
     private static final double MIN_OVERALL_HAPPINESS = 1;
-
     //private int autoHostile = 0;//Off
     private static final String TAG_FIELDS                        = "fields";
     private static final int    CHECK_WAYPOINT_EVERY              = 100;
@@ -142,7 +134,7 @@ public class Colony implements IColony<AbstractBuilding>
     private static final double MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE = MathUtils.square(Configurations.workingRangeTownHall * 2D);
     private final IToken id;
     //  General Attributes
-    private final int dimensionId;
+    private final int    dimensionId;
     //  Buildings
     private final Map<BlockPos, Field>       fields    = new HashMap<>();
     //Additional Waypoints.
@@ -150,22 +142,29 @@ public class Colony implements IColony<AbstractBuilding>
     @NotNull
     private final List<Achievement> colonyAchievements;
     //  Workload and Jobs
-    private final WorkManager                     workManager   = new WorkManager(this);
+    private final WorkManager                     workManager       = new WorkManager(this);
     @NotNull
-    private final Map<BlockPos, AbstractBuilding> buildings     = new HashMap<>();
+    private final Map<BlockPos, AbstractBuilding> buildings         = new HashMap<>();
     //  Citizenry
     @NotNull
-    private final Map<Integer, CitizenData>           citizens      = new HashMap<>();
+    private final Map<Integer, CitizenData>       citizens          = new HashMap<>();
     /**
      * The Positions which players can freely interact.
      */
-    private final Set<BlockPos>                   freePositions = new HashSet<>();
+    private final Set<BlockPos>                   freePositions     = new HashSet<>();
     /**
      * The Blocks which players can freely interact with.
      */
-    private final Set<Block>                      freeBlocks    = new HashSet<>();
-    private       int                             minedOres     = 0;
-    private       int                             minedDiamonds = 0;
+    private final Set<Block>                      freeBlocks        = new HashSet<>();
+    @NotNull
+    //TODO: Serialization of requestmanagers.
+    private final IRequestManager requestManager   = new StandardRequestManager(this);
+    /**
+     * Variable to determine if its currently day or night.
+     */
+    private boolean isDay = true;
+    private       int                             minedOres         = 0;
+    private       int                             minedDiamonds     = 0;
     private       int                             harvestedWheat    = 0;
     private       int                             harvestedPotatoes = 0;
     private       int                             harvestedCarrots  = 0;
@@ -193,12 +192,8 @@ public class Colony implements IColony<AbstractBuilding>
     private BuildingTownHall townHall;
     private int topCitizenId = 0;
     private int maxCitizens  = Configurations.maxCitizens;
-
     private       double          overallHappiness = 5;
     private       int             killedMobs       = 0;
-    @NotNull
-    //TODO: Serialization of requestmanagers.
-    private final IRequestManager requestManager   = new StandardRequestManager(this);
 
     /**
      * Constructor for a newly created Colony.
@@ -260,9 +255,12 @@ public class Colony implements IColony<AbstractBuilding>
     {
         IToken id;
 
-        if (compound.getTag(TAG_ID).getId() == NBT.TAG_INT) {
+        if (compound.getTag(TAG_ID).getId() == NBT.TAG_INT)
+        {
             id = StandardFactoryController.getInstance().getNewInstance(UUID.randomUUID());
-        } else {
+        }
+        else
+        {
             id = StandardFactoryController.getInstance().deserialize(compound.getCompoundTag(TAG_ID));
         }
 
@@ -270,6 +268,245 @@ public class Colony implements IColony<AbstractBuilding>
         @NotNull final Colony c = new Colony(id, dimensionId);
         c.readFromNBT(compound);
         return c;
+    }
+
+    @Override
+    public void onServerTick(@NotNull final TickEvent.ServerTickEvent event)
+    {
+        //Since we cannot do super.onServerTick to use the default behaviour first. We need to call this extra.
+        getCombinedHandlers().forEach(iColonyEventHandler -> iColonyEventHandler.onServerTick(event));
+
+        //Now we can update the subscribers.
+        if (event.phase == TickEvent.Phase.END)
+        {
+            updateSubscribers();
+        }
+    }
+
+    @NotNull
+    @Override
+    public ImmutableCollection<IColonyEventHandler> getCombinedHandlers()
+    {
+        return ImmutableSet.copyOf(getBuildings().values());
+    }
+
+    @Override
+    public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
+    {
+        if (event.world != getWorld())
+        {
+            /**
+             * If the event world is not the colony world ignore. This might happen in interactions with other mods.
+             * This should not be a problem for minecolonies as long as we take care to do nothing in that moment.
+             */
+            return;
+        }
+
+        if (event.phase == TickEvent.Phase.START)
+        {
+            //  Detect CitizenData whose EntityCitizen no longer exist in world, and clear the mapping
+            //  Consider handing this in an ChunkUnload Event instead?
+            citizens.values()
+              .stream()
+              .filter(ColonyUtils::isCitizenMissingFromWorld)
+              .forEach(CitizenData::clearCitizenEntity);
+
+            //  Cleanup disappeared citizens
+            //  It would be really nice if we didn't have to do this... but Citizens can disappear without dying!
+            //  Every CITIZEN_CLEANUP_TICK_INCREMENT, cleanup any 'lost' citizens
+            if ((event.world.getWorldTime() % CITIZEN_CLEANUP_TICK_INCREMENT) == 0 && areAllColonyChunksLoaded(event) && townHall != null)
+            {
+                //  All chunks within a good range of the colony should be loaded, so all citizens should be loaded
+                //  If we don't have any references to them, destroy the citizen
+                citizens.values().forEach(this::spawnCitizenIfNull);
+            }
+
+            //  Cleanup Buildings whose Blocks have gone AWOL
+            cleanUpBuildings(event);
+
+            //  Spawn Citizens
+            if (townHall != null && citizens.size() < maxCitizens)
+            {
+                int respawnInterval = Configurations.citizenRespawnInterval * 20;
+                respawnInterval -= (60 * townHall.getBuildingLevel());
+
+                if (event.world.getWorldTime() % respawnInterval == 0)
+                {
+                    spawnCitizen();
+                }
+            }
+        }
+
+        //  Tick Buildings
+        for (@NotNull final AbstractBuilding building : buildings.values())
+        {
+            building.onWorldTick(event);
+        }
+
+        if (isDay && !world.isDaytime())
+        {
+            isDay = false;
+            updateOverallHappiness();
+        }
+        else if (!isDay && world.isDaytime())
+        {
+            isDay = true;
+        }
+
+        updateWayPoints();
+        workManager.onWorldTick(event);
+    }
+
+    @Override
+    public void onWorldLoad(@NotNull final WorldEvent.Load event)
+    {
+        if (event.getWorld().provider.getDimension() != dimensionId)
+        {
+            throw new IllegalStateException("World loading called for colony that is not in the loaded Dimension.");
+        }
+
+        world = event.getWorld();
+    }
+
+    @Override
+    public void onWorldUnload(@NotNull final WorldEvent.Unload event)
+    {
+        if (!event.getWorld().equals(world))
+        {
+            throw new IllegalStateException("Colony's world does not match the event.");
+        }
+
+        world = null;
+    }
+
+    public boolean areAllColonyChunksLoaded(@NotNull final TickEvent.WorldTickEvent event)
+    {
+        final int distanceFromCenter = Configurations.workingRangeTownHall + 48 /* 3 chunks */ + 15 /* round up a chunk */;
+        for (int x = -distanceFromCenter; x <= distanceFromCenter; x += 16)
+        {
+            for (int z = -distanceFromCenter; z <= distanceFromCenter; z += 16)
+            {
+                if (!event.world.isBlockLoaded(new BlockPos(getCenter().getX() + x, 128, getCenter().getZ() + z)))
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public void cleanUpBuildings(@NotNull final TickEvent.WorldTickEvent event)
+    {
+        @Nullable final List<AbstractBuilding> removedBuildings = new ArrayList<>();
+
+        //Need this list, we may enter he while we add a building in the real world.
+        final List<AbstractBuilding> tempBuildings = new ArrayList<>(buildings.values());
+
+        for (@NotNull final AbstractBuilding building : tempBuildings)
+        {
+            final BlockPos loc = building.getLocation().getInDimensionLocation();
+            if (event.world.isBlockLoaded(loc) && !building.isMatchingBlock(event.world.getBlockState(loc).getBlock()))
+            {
+                //  Sanity cleanup
+                removedBuildings.add(building);
+            }
+        }
+
+        removedBuildings.forEach(AbstractBuilding::destroy);
+
+        @NotNull final ArrayList<Field> tempFields = new ArrayList<>(fields.values());
+
+        for (@NotNull final Field field : tempFields)
+        {
+            if (event.world.isBlockLoaded(field.getLocation()))
+            {
+                final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) event.world.getTileEntity(field.getID());
+                if (scarecrow == null)
+                {
+                    fields.remove(field.getID());
+                }
+                else
+                {
+                    field.setInventoryField(scarecrow.getInventoryField());
+                }
+            }
+        }
+
+        markFieldsDirty();
+    }
+
+    @Override
+    public void spawnCitizen()
+    {
+        spawnCitizen(null);
+    }
+
+    /**
+     * Returns the center of the colony.
+     *
+     * @return Chunk Coordinates of the center of the colony.
+     */
+    @Override
+    public BlockPos getCenter()
+    {
+        return center;
+    }
+
+    @Override
+    public String getName()
+    {
+        return name;
+    }
+
+    @Override
+    public void setName(final String n)
+    {
+        name = n;
+        markDirty();
+    }
+
+    @Override
+    public void markDirty()
+    {
+        isDirty = true;
+    }
+
+    @NotNull
+    @Override
+    public Permissions getPermissions()
+    {
+        return permissions;
+    }
+
+    @Override
+    public boolean isCoordInColony(@NotNull final World w, @NotNull final BlockPos pos)
+    {
+        //  Perform a 2D distance calculation, so pass center.posY as the Y
+        return w.equals(getWorld())
+                 && BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ())) <= MathUtils.square(Configurations.workingRangeTownHall);
+    }
+
+    @Override
+    public long getDistanceSquared(@NotNull final BlockPos pos)
+    {
+        return BlockPosUtil.getDistanceSquared2D(center, pos);
+    }
+
+    @Override
+    public boolean hasTownHall()
+    {
+        return townHall != null;
+    }
+
+    /**
+     * Returns the ID of the colony.
+     *
+     * @return Colony ID.
+     */
+    @Override
+    public IToken getID()
+    {
+        return id;
     }
 
     @Override
@@ -627,48 +864,6 @@ public class Colony implements IColony<AbstractBuilding>
     }
 
     @Override
-    public void onWorldLoad(@NotNull final WorldEvent.Load event)
-    {
-        if (event.getWorld().provider.getDimension() != dimensionId)
-        {
-            throw new IllegalStateException("World loading called for colony that is not in the loaded Dimension.");
-        }
-
-        world = event.getWorld();
-    }
-
-    @Override
-    public void onWorldUnload(@NotNull final WorldEvent.Unload event)
-    {
-        if (!event.getWorld().equals(world))
-        {
-            throw new IllegalStateException("Colony's world does not match the event.");
-        }
-
-        world = null;
-    }
-
-    @NotNull
-    @Override
-    public ImmutableCollection<IColonyEventHandler> getCombinedHandlers()
-    {
-        return ImmutableSet.copyOf(getBuildings().values());
-    }
-
-    @Override
-    public void onServerTick(@NotNull final TickEvent.ServerTickEvent event)
-    {
-        //Since we cannot do super.onServerTick to use the default behaviour first. We need to call this extra.
-        getCombinedHandlers().forEach(iColonyEventHandler -> iColonyEventHandler.onServerTick(event));
-
-        //Now we can update the subscribers.
-        if (event.phase == TickEvent.Phase.END)
-        {
-            updateSubscribers();
-        }
-    }
-
-    @Override
     public void updateSubscribers()
     {
         // If the world or server is null, don't try to update the subscribers this tick.
@@ -906,73 +1101,6 @@ public class Colony implements IColony<AbstractBuilding>
     }
 
     @Override
-    public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
-    {
-        if (event.world != getWorld())
-        {
-            /**
-             * If the event world is not the colony world ignore. This might happen in interactions with other mods.
-             * This should not be a problem for minecolonies as long as we take care to do nothing in that moment.
-             */
-            return;
-        }
-
-        if (event.phase == TickEvent.Phase.START)
-        {
-            //  Detect CitizenData whose EntityCitizen no longer exist in world, and clear the mapping
-            //  Consider handing this in an ChunkUnload Event instead?
-            citizens.values()
-              .stream()
-              .filter(ColonyUtils::isCitizenMissingFromWorld)
-              .forEach(CitizenData::clearCitizenEntity);
-
-            //  Cleanup disappeared citizens
-            //  It would be really nice if we didn't have to do this... but Citizens can disappear without dying!
-            //  Every CITIZEN_CLEANUP_TICK_INCREMENT, cleanup any 'lost' citizens
-            if ((event.world.getWorldTime() % CITIZEN_CLEANUP_TICK_INCREMENT) == 0 && areAllColonyChunksLoaded(event) && townHall != null)
-            {
-                //  All chunks within a good range of the colony should be loaded, so all citizens should be loaded
-                //  If we don't have any references to them, destroy the citizen
-                citizens.values().forEach(this::spawnCitizenIfNull);
-            }
-
-            //  Cleanup Buildings whose Blocks have gone AWOL
-            cleanUpBuildings(event);
-
-            //  Spawn Citizens
-            if (townHall != null && citizens.size() < maxCitizens)
-            {
-                int respawnInterval = Configurations.citizenRespawnInterval * 20;
-                respawnInterval -= (60 * townHall.getBuildingLevel());
-
-                if (event.world.getWorldTime() % respawnInterval == 0)
-                {
-                    spawnCitizen();
-                }
-            }
-        }
-
-        //  Tick Buildings
-        for (@NotNull final AbstractBuilding building : buildings.values())
-        {
-            building.onWorldTick(event);
-        }
-
-        if (isDay && !world.isDaytime())
-        {
-            isDay = false;
-            updateOverallHappiness();
-        }
-        else if (!isDay && world.isDaytime())
-        {
-            isDay = true;
-        }
-
-        updateWayPoints();
-        workManager.onWorldTick(event);
-    }
-
-    @Override
     public void updateOverallHappiness()
     {
         int guards = 1;
@@ -1062,136 +1190,6 @@ public class Colony implements IColony<AbstractBuilding>
         return world;
     }
 
-    public boolean areAllColonyChunksLoaded(@NotNull final TickEvent.WorldTickEvent event)
-    {
-        final int distanceFromCenter = Configurations.workingRangeTownHall + 48 /* 3 chunks */ + 15 /* round up a chunk */;
-        for (int x = -distanceFromCenter; x <= distanceFromCenter; x += 16)
-        {
-            for (int z = -distanceFromCenter; z <= distanceFromCenter; z += 16)
-            {
-                if (!event.world.isBlockLoaded(new BlockPos(getCenter().getX() + x, 128, getCenter().getZ() + z)))
-                {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    public void cleanUpBuildings(@NotNull final TickEvent.WorldTickEvent event)
-    {
-        @Nullable final List<AbstractBuilding> removedBuildings = new ArrayList<>();
-
-        //Need this list, we may enter he while we add a building in the real world.
-        final List<AbstractBuilding> tempBuildings = new ArrayList<>(buildings.values());
-
-        for (@NotNull final AbstractBuilding building : tempBuildings)
-        {
-            final BlockPos loc = building.getLocation().getInDimensionLocation();
-            if (event.world.isBlockLoaded(loc) && !building.isMatchingBlock(event.world.getBlockState(loc).getBlock()))
-            {
-                //  Sanity cleanup
-                removedBuildings.add(building);
-            }
-        }
-
-        removedBuildings.forEach(AbstractBuilding::destroy);
-
-        @NotNull final ArrayList<Field> tempFields = new ArrayList<>(fields.values());
-
-        for (@NotNull final Field field : tempFields)
-        {
-            if (event.world.isBlockLoaded(field.getLocation()))
-            {
-                final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) event.world.getTileEntity(field.getID());
-                if (scarecrow == null)
-                {
-                    fields.remove(field.getID());
-                }
-                else
-                {
-                    field.setInventoryField(scarecrow.getInventoryField());
-                }
-            }
-        }
-
-        markFieldsDirty();
-    }
-
-    @Override
-    public void spawnCitizen()
-    {
-        spawnCitizen(null);
-    }
-
-    /**
-     * Returns the center of the colony.
-     *
-     * @return Chunk Coordinates of the center of the colony.
-     */
-    @Override
-    public BlockPos getCenter()
-    {
-        return center;
-    }
-
-    @Override
-    public String getName()
-    {
-        return name;
-    }
-
-    @Override
-    public void setName(final String n)
-    {
-        name = n;
-        markDirty();
-    }
-
-    @Override
-    public void markDirty()
-    {
-        isDirty = true;
-    }
-
-    @NotNull
-    @Override
-    public Permissions getPermissions()
-    {
-        return permissions;
-    }
-
-    @Override
-    public boolean isCoordInColony(@NotNull final World w, @NotNull final BlockPos pos)
-    {
-        //  Perform a 2D distance calculation, so pass center.posY as the Y
-        return w.equals(getWorld())
-                 && BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ())) <= MathUtils.square(Configurations.workingRangeTownHall);
-    }
-
-    @Override
-    public long getDistanceSquared(@NotNull final BlockPos pos)
-    {
-        return BlockPosUtil.getDistanceSquared2D(center, pos);
-    }
-
-    @Override
-    public boolean hasTownHall()
-    {
-        return townHall != null;
-    }
-
-    /**
-     * Returns the ID of the colony.
-     *
-     * @return Colony ID.
-     */
-    @Override
-    public IToken getID()
-    {
-        return id;
-    }
-
     @Override
     public void markFieldsDirty()
     {
@@ -1258,12 +1256,6 @@ public class Colony implements IColony<AbstractBuilding>
     public int getMaxCitizens()
     {
         return maxCitizens;
-    }
-
-    @Override
-    public ICitizenData getCitizen(final int citizenId)
-    {
-        return citizens.get(citizenId);
     }
 
     @Override
@@ -1383,6 +1375,12 @@ public class Colony implements IColony<AbstractBuilding>
     public AbstractBuilding getBuilding(final BlockPos buildingId)
     {
         return buildings.get(buildingId);
+    }
+
+    @Override
+    public ICitizenData getCitizen(final int citizenId)
+    {
+        return citizens.get(citizenId);
     }
 
     @Override
@@ -1667,7 +1665,8 @@ public class Colony implements IColony<AbstractBuilding>
      */
     @NotNull
     @Override
-    public IRequestManager getRequestManager() {
+    public IRequestManager getRequestManager()
+    {
         return requestManager;
     }
 

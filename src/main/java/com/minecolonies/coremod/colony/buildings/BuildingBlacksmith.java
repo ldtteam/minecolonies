@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.CitizenData;
@@ -7,7 +8,6 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobPlaceholder;
-import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -85,7 +85,7 @@ public class BuildingBlacksmith extends AbstractBuildingWorker
          */
         public View(final ColonyView c, @NotNull final BlockPos l, @NotNull final IToken id)
         {
-            super(c,l,id);
+            super(c, l, id);
         }
 
         @NotNull

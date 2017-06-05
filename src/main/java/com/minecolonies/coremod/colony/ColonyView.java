@@ -151,107 +151,6 @@ public final class ColonyView implements IColony
     }
 
     /**
-     * Get a copy of the freePositions list.
-     *
-     * @return the list of free to interact positions.
-     */
-    public List<BlockPos> getFreePositions()
-    {
-        return new ArrayList<>(freePositions);
-    }
-
-    /**
-     * Get a copy of the freeBlocks list.
-     *
-     * @return the list of free to interact blocks.
-     */
-    public List<Block> getFreeBlocks()
-    {
-        return new ArrayList<>(freeBlocks);
-    }
-
-    /**
-     * Add a new free to interact position.
-     *
-     * @param pos position to add.
-     */
-    public void addFreePosition(@NotNull final BlockPos pos)
-    {
-        freePositions.add(pos);
-    }
-
-    /**
-     * Add a new free to interact block.
-     *
-     * @param block block to add.
-     */
-    public void addFreeBlock(@NotNull final Block block)
-    {
-        freeBlocks.add(block);
-    }
-
-    /**
-     * Remove a free to interact position.
-     *
-     * @param pos position to remove.
-     */
-    public void removeFreePosition(@NotNull final BlockPos pos)
-    {
-        freePositions.remove(pos);
-    }
-
-    /**
-     * Remove a free to interact block.
-     *
-     * @param block state to remove.
-     */
-    public void removeFreeBlock(@NotNull final Block block)
-    {
-        freeBlocks.remove(block);
-    }
-
-    /**
-     * Returns the dimension ID of the view.
-     *
-     * @return dimension ID of the view.
-     */
-    public int getDimension()
-    {
-        return dimensionId;
-    }
-
-    /**
-     * Getter for the manual hiring or not.
-     *
-     * @return the boolean true or false.
-     */
-    public boolean isManualHiring()
-    {
-        return manualHiring;
-    }
-
-    /**
-     * Sets if workers should be hired manually.
-     *
-     * @param manualHiring true if manually.
-     */
-    public void setManualHiring(final boolean manualHiring)
-    {
-        this.manualHiring = manualHiring;
-    }
-
-    /**
-     * Get the town hall View for this ColonyView.
-     *
-     * @return {@link BuildingTownHall.View} of the colony.
-     */
-    @Nullable
-    public BuildingTownHall.View getTownHall()
-    {
-        return townHall;
-    }
-
-    /**
      * Get a AbstractBuilding.View for a given building (by coordinate-id) using
      * raw x,y,z.
      *
@@ -264,19 +163,6 @@ public final class ColonyView implements IColony
     public AbstractBuilding.View getBuilding(final int x, final int y, final int z)
     {
         return getBuilding(new BlockPos(x, y, z));
-    }
-
-    /**
-     * Get a AbstractBuilding.View for a given building (by coordinate-id) using
-     * ChunkCoordinates.
-     *
-     * @param buildingId Coordinates/ID of the AbstractBuilding.
-     * @return {@link AbstractBuilding.View} of a AbstractBuilding for the given
-     * Coordinates/ID, or null.
-     */
-    public AbstractBuilding.View getBuilding(final BlockPos buildingId)
-    {
-        return buildings.get(buildingId);
     }
 
     /**
@@ -334,26 +220,6 @@ public final class ColonyView implements IColony
     }
 
     /**
-     * Returns the maximum amount of citizen in the colony.
-     *
-     * @return maximum amount of citizens.
-     */
-    public int getMaxCitizens()
-    {
-        return maxCitizens;
-    }
-
-    /**
-     * Getter for the citizens map.
-     *
-     * @return a unmodifiable Map of the citizen.
-     */
-    public Map<Integer, CitizenDataView> getCitizens()
-    {
-        return Collections.unmodifiableMap(citizens);
-    }
-
-    /**
      * Getter for the workOrders.
      *
      * @return a unmodifiable Collection of the workOrders.
@@ -361,29 +227,6 @@ public final class ColonyView implements IColony
     public Collection<WorkOrderView> getWorkOrders()
     {
         return Collections.unmodifiableCollection(workOrders.values());
-    }
-
-    /**
-     * Gets the CitizenDataView for a citizen id.
-     *
-     * @param id the citizen id.
-     * @return CitizenDataView for the citizen.
-     */
-    public ICitizenData getCitizen(final int id)
-    {
-        return citizens.get(id);
-    }
-
-    @Override
-    public List<BlockPos> getDeliverymanRequired()
-    {
-        return null;
-    }
-
-    @Override
-    public void onBuildingUpgradeComplete(@NotNull final IBuilding building, final int level)
-    {
-
     }
 
     /**
@@ -544,8 +387,6 @@ public final class ColonyView implements IColony
      * packet. This uses a full-replacement - buildings do not get updated and
      * are instead overwritten.
      *
-     *
-     * @param buildingLocation
      * @param buildingId location of the building.
      * @param buf        buffer containing ColonyBuilding information.
      * @return null == no response.
@@ -585,16 +426,6 @@ public final class ColonyView implements IColony
     public void removePlayer(final UUID player)
     {
         MineColonies.getNetwork().sendToServer(new PermissionsMessage.RemovePlayer(this, player));
-    }
-
-    /**
-     * Getter for the overall happiness.
-     *
-     * @return the happiness, a double.
-     */
-    public double getOverallHappiness()
-    {
-        return overallHappiness;
     }
 
     @Override
@@ -658,6 +489,16 @@ public final class ColonyView implements IColony
         return id;
     }
 
+    /**
+     * Returns the dimension ID of the view.
+     *
+     * @return dimension ID of the view.
+     */
+    public int getDimension()
+    {
+        return dimensionId;
+    }
+
     @Override
     public void incrementStatistic(@NotNull final String statistic)
     {
@@ -672,14 +513,162 @@ public final class ColonyView implements IColony
     }
 
     /**
+     * Get a copy of the freePositions list.
+     *
+     * @return the list of free to interact positions.
+     */
+    public List<BlockPos> getFreePositions()
+    {
+        return new ArrayList<>(freePositions);
+    }
+
+    /**
+     * Get a copy of the freeBlocks list.
+     *
+     * @return the list of free to interact blocks.
+     */
+    public List<Block> getFreeBlocks()
+    {
+        return new ArrayList<>(freeBlocks);
+    }
+
+    /**
+     * Add a new free to interact position.
+     *
+     * @param pos position to add.
+     */
+    public void addFreePosition(@NotNull final BlockPos pos)
+    {
+        freePositions.add(pos);
+    }
+
+    /**
+     * Add a new free to interact block.
+     *
+     * @param block block to add.
+     */
+    public void addFreeBlock(@NotNull final Block block)
+    {
+        freeBlocks.add(block);
+    }
+
+    /**
+     * Remove a free to interact position.
+     *
+     * @param pos position to remove.
+     */
+    public void removeFreePosition(@NotNull final BlockPos pos)
+    {
+        freePositions.remove(pos);
+    }
+
+    /**
+     * Remove a free to interact block.
+     *
+     * @param block state to remove.
+     */
+    public void removeFreeBlock(@NotNull final Block block)
+    {
+        freeBlocks.remove(block);
+    }
+
+    /**
      * returns the World the colony is in.
      *
      * @return the World the colony is in.
      */
     @Nullable
     @Override
-    public World getWorld() {
+    public World getWorld()
+    {
         return null;
+    }
+
+    /**
+     * Returns the maximum amount of citizen in the colony.
+     *
+     * @return maximum amount of citizens.
+     */
+    public int getMaxCitizens()
+    {
+        return maxCitizens;
+    }
+
+    /**
+     * Getter for the citizens map.
+     *
+     * @return a unmodifiable Map of the citizen.
+     */
+    public Map<Integer, CitizenDataView> getCitizens()
+    {
+        return Collections.unmodifiableMap(citizens);
+    }
+
+    /**
+     * Get the town hall View for this ColonyView.
+     *
+     * @return {@link BuildingTownHall.View} of the colony.
+     */
+    @Nullable
+    public BuildingTownHall.View getTownHall()
+    {
+        return townHall;
+    }
+
+    /**
+     * Get a AbstractBuilding.View for a given building (by coordinate-id) using
+     * ChunkCoordinates.
+     *
+     * @param buildingId Coordinates/ID of the AbstractBuilding.
+     * @return {@link AbstractBuilding.View} of a AbstractBuilding for the given
+     * Coordinates/ID, or null.
+     */
+    public AbstractBuilding.View getBuilding(final BlockPos buildingId)
+    {
+        return buildings.get(buildingId);
+    }
+
+    /**
+     * Gets the CitizenDataView for a citizen id.
+     *
+     * @param id the citizen id.
+     * @return CitizenDataView for the citizen.
+     */
+    public ICitizenData getCitizen(final int id)
+    {
+        return citizens.get(id);
+    }
+
+    /**
+     * Getter for the manual hiring or not.
+     *
+     * @return the boolean true or false.
+     */
+    public boolean isManualHiring()
+    {
+        return manualHiring;
+    }
+
+    /**
+     * Sets if workers should be hired manually.
+     *
+     * @param manualHiring true if manually.
+     */
+    public void setManualHiring(final boolean manualHiring)
+    {
+        this.manualHiring = manualHiring;
+    }
+
+    @Override
+    public List<BlockPos> getDeliverymanRequired()
+    {
+        return null;
+    }
+
+    @Override
+    public void onBuildingUpgradeComplete(@NotNull final IBuilding building, final int level)
+    {
+
     }
 
     @NotNull
@@ -690,13 +679,24 @@ public final class ColonyView implements IColony
     }
 
     /**
+     * Getter for the overall happiness.
+     *
+     * @return the happiness, a double.
+     */
+    public double getOverallHappiness()
+    {
+        return overallHappiness;
+    }
+
+    /**
      * Returns the buildings in the colony
      *
      * @return The buildings in the colony
      */
     @NotNull
     @Override
-    public ImmutableMap<BlockPos, IBuilding> getBuildings() {
+    public ImmutableMap<BlockPos, IBuilding> getBuildings()
+    {
         return ImmutableMap.copyOf(buildings);
     }
 

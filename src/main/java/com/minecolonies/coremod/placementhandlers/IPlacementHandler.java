@@ -12,14 +12,6 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface IPlacementHandler
 {
-    enum ActionProcessingResult
-    {
-        ACCEPT,
-        DENY,
-        IGNORE,
-        REQUEST
-    }
-
     /**
      * Method used to handle the processing of a Placement of a block.
      *
@@ -30,4 +22,12 @@ public interface IPlacementHandler
      * @return ACCEPT, DENY or IGNORE.
      */
     Object handle(@NotNull World world, @NotNull BlockPos pos, @NotNull IBlockState blockState, @Nullable AbstractEntityAIStructure<?> placer);
+
+    enum ActionProcessingResult
+    {
+        ACCEPT,
+        DENY,
+        IGNORE,
+        REQUEST
+    }
 }

@@ -27,7 +27,6 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-
 /**
  * CommonProxy of the minecolonies mod (Server and Client).
  */
@@ -177,6 +176,12 @@ public class CommonProxy implements IProxy
          */
     }
 
+    @Override
+    public File getSchematicsFolder()
+    {
+        return null;
+    }
+
     /**
      * Used for entity IDs, starts at 0 & increments for each call.
      */
@@ -184,11 +189,4 @@ public class CommonProxy implements IProxy
     {
         return nextEntityId++;
     }
-
-    @Override
-    public File getSchematicsFolder()
-    {
-        return null;
-    }
-
 }

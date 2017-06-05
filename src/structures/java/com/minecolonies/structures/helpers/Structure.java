@@ -147,40 +147,6 @@ public class Structure
     }
 
     /**
-     * Get the file representation of the cached schematics' folder.
-     *
-     * @return the folder for the cached schematics
-     */
-    @Nullable
-    public static File getCachedSchematicsFolder()
-    {
-        if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
-        {
-            if (StructuresConfiguration.getServerID() != null)
-            {
-                return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + "/" + StructuresConfiguration.getServerID());
-            }
-            else
-            {
-                Log.getLogger().error("ColonyManager.getServerUUID() => null this should not happen");
-                return null;
-            }
-        }
-        return new File(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
-                          + "/" + Constants.MOD_ID);
-    }
-
-    /**
-     * get the schematic folder for the client.
-     *
-     * @return the client folder.
-     */
-    public static File getClientSchematicsFolder()
-    {
-        return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID);
-    }
-
-    /**
      * get a InputStream for a give structureName.
      * <p>
      * Look into the following director (in order):
@@ -235,6 +201,33 @@ public class Structure
     }
 
     /**
+     * Calculate the MD5 hash for a template from an inputstream.
+     *
+     * @param stream to which we want the MD5 hash
+     * @return the MD5 hash string or null
+     */
+    public static String calculateMD5(final InputStream stream)
+    {
+        if (stream == null)
+        {
+            Log.getLogger().error("Structure.calculateMD5: stream is null, this should not happen");
+            return null;
+        }
+        return calculateMD5(getStreamAsByteArray(stream));
+    }
+
+    /**
+     * Reads a template from an inputstream.
+     */
+    private static Template readTemplateFromStream(final InputStream stream) throws IOException
+    {
+        final NBTTagCompound nbttagcompound = CompressedStreamTools.readCompressed(stream);
+        final Template template = new Template();
+        template.read(nbttagcompound);
+        return template;
+    }
+
+    /**
      * get a input stream for a schematic within a specif folder.
      *
      * @param folder        where to load it from.
@@ -274,6 +267,40 @@ public class Structure
     }
 
     /**
+     * Get the file representation of the cached schematics' folder.
+     *
+     * @return the folder for the cached schematics
+     */
+    @Nullable
+    public static File getCachedSchematicsFolder()
+    {
+        if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
+        {
+            if (StructuresConfiguration.getServerID() != null)
+            {
+                return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + "/" + StructuresConfiguration.getServerID());
+            }
+            else
+            {
+                Log.getLogger().error("ColonyManager.getServerUUID() => null this should not happen");
+                return null;
+            }
+        }
+        return new File(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
+                          + "/" + Constants.MOD_ID);
+    }
+
+    /**
+     * get the schematic folder for the client.
+     *
+     * @return the client folder.
+     */
+    public static File getClientSchematicsFolder()
+    {
+        return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID);
+    }
+
+    /**
      * get a input stream for a schematic from jar.
      *
      * @param structureName name of the structure to load from the jar.
@@ -286,13 +313,24 @@ public class Structure
     }
 
     /**
-     * get the Template from the structure.
+     * Calculate the MD5 hash of a byte array
      *
-     * @return The templae for the structure
+     * @param bytes array
+     * @return the MD5 hash string or null
      */
-    public Template getTemplate()
+    public static String calculateMD5(final byte[] bytes)
     {
-        return this.template;
+        try
+        {
+            final MessageDigest md = MessageDigest.getInstance("MD5");
+            return DatatypeConverter.printHexBinary(md.digest(bytes));
+        }
+        catch (@NotNull NoSuchAlgorithmException e)
+        {
+            Log.getLogger().trace(e);
+        }
+
+        return null;
     }
 
     /**
@@ -326,59 +364,6 @@ public class Structure
             Log.getLogger().trace(e);
         }
         return new byte[0];
-    }
-
-    /**
-     * Calculate the MD5 hash for a template from an inputstream.
-     *
-     * @param stream to which we want the MD5 hash
-     * @return the MD5 hash string or null
-     */
-    public static String calculateMD5(final InputStream stream)
-    {
-        if (stream == null)
-        {
-            Log.getLogger().error("Structure.calculateMD5: stream is null, this should not happen");
-            return null;
-        }
-        return calculateMD5(getStreamAsByteArray(stream));
-    }
-
-    /**
-     * Calculate the MD5 hash of a byte array
-     *
-     * @param bytes array
-     * @return the MD5 hash string or null
-     */
-    public static String calculateMD5(final byte[] bytes)
-    {
-        try
-        {
-            final MessageDigest md = MessageDigest.getInstance("MD5");
-            return DatatypeConverter.printHexBinary(md.digest(bytes));
-        }
-        catch (@NotNull NoSuchAlgorithmException e)
-        {
-            Log.getLogger().trace(e);
-        }
-
-        return null;
-    }
-
-    /**
-     * Compare the md5 from the structure with an other md5 hash.
-     *
-     * @param otherMD5 to compare with
-     * @return whether the otherMD5 match, return false if md5 is null
-     */
-    public boolean isCorrectMD5(final String otherMD5)
-    {
-        Log.getLogger().info("isCorrectMD5: md5:" + md5 + " other:" + otherMD5);
-        if (md5 == null || otherMD5 == null)
-        {
-            return false;
-        }
-        return md5.compareTo(otherMD5) == 0;
     }
 
     public static byte[] compress(final byte[] data)
@@ -417,14 +402,29 @@ public class Structure
     }
 
     /**
-     * Reads a template from an inputstream.
+     * get the Template from the structure.
+     *
+     * @return The templae for the structure
      */
-    private static Template readTemplateFromStream(final InputStream stream) throws IOException
+    public Template getTemplate()
     {
-        final NBTTagCompound nbttagcompound = CompressedStreamTools.readCompressed(stream);
-        final Template template = new Template();
-        template.read(nbttagcompound);
-        return template;
+        return this.template;
+    }
+
+    /**
+     * Compare the md5 from the structure with an other md5 hash.
+     *
+     * @param otherMD5 to compare with
+     * @return whether the otherMD5 match, return false if md5 is null
+     */
+    public boolean isCorrectMD5(final String otherMD5)
+    {
+        Log.getLogger().info("isCorrectMD5: md5:" + md5 + " other:" + otherMD5);
+        if (md5 == null || otherMD5 == null)
+        {
+            return false;
+        }
+        return md5.compareTo(otherMD5) == 0;
     }
 
     /**

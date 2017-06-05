@@ -27,6 +27,10 @@ import java.util.Random;
  */
 public class CitizenData implements ICitizenData
 {
+    /**
+     * Maximum saturation of a citizen.
+     */
+    public static final int MAX_SATURATION = 10;
     private static final float  MAX_HEALTH              = 20.0F;
     /**
      * Max level of an attribute a citizen may initially have.
@@ -51,42 +55,30 @@ public class CitizenData implements ICitizenData
     private static final String TAG_SKILL_INTELLIGENCE  = "intelligence";
     private static final String TAG_SKILL_DEXTERITY     = "dexterity";
     private static final String TAG_SATURATION          = "saturation";
-
     /**
      * Minimum saturation of a citizen.
      */
     private static final int MIN_SATURATION = 0;
-
-    /**
-     * Maximum saturation of a citizen.
-     */
-    public static final int MAX_SATURATION = 10;
-
     /**
      * The unique citizen id.
      */
     private final int id;
-
-    /**
-     * The name of the citizen.
-     */
-    private String name;
-
-    /**
-     * Boolean gender, true = female, false = male.
-     */
-    private boolean female;
-
-    /**
-     * The id of the citizens texture.
-     */
-    private int textureId;
-
     /**
      * The colony the citizen belongs to.
      */
     private final Colony colony;
-
+    /**
+     * The name of the citizen.
+     */
+    private String name;
+    /**
+     * Boolean gender, true = female, false = male.
+     */
+    private boolean female;
+    /**
+     * The id of the citizens texture.
+     */
+    private int textureId;
     /**
      * The home building of the citizen.
      */
@@ -218,41 +210,6 @@ public class CitizenData implements ICitizenData
     }
 
     /**
-     * Marks the instance dirty.
-     */
-    public void markDirty()
-    {
-        dirty = true;
-        colony.markCitizensDirty();
-    }
-
-    /**
-     * Create a CitizenData View given it's saved NBTTagCompound.
-     *
-     * @param id  The citizen's id.
-     * @param buf The network data.
-     * @return View object of the citizen.
-     */
-    @Nullable
-    public static CitizenDataView createCitizenDataView(final int id, final ByteBuf buf)
-    {
-        @Nullable CitizenDataView citizenDataView = new CitizenDataView(id);
-
-        try
-        {
-            citizenDataView.deserialize(buf);
-        }
-        catch (final RuntimeException ex)
-        {
-            Log.getLogger().error(String.format("A CitizenData.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-              citizenDataView.getID()), ex);
-            citizenDataView = null;
-        }
-
-        return citizenDataView;
-    }
-
-    /**
      * Returns the colony of the citizen.
      *
      * @return colony of the citizen.
@@ -316,58 +273,6 @@ public class CitizenData implements ICitizenData
     }
 
     /**
-     * Generates a random name from a set of names.
-     *
-     * @param rand Random object.
-     * @return Name of the citizen.
-     */
-    private String generateName(@NotNull final Random rand)
-    {
-        String citizenName;
-        if (female)
-        {
-            citizenName = String.format("%s %s. %s", getRandomElement(rand, Configurations.femaleFirstNames), getRandomLetter(rand),
-              getRandomElement(rand, Configurations.lastNames));
-        }
-        else
-        {
-            citizenName = String.format("%s %s. %s", getRandomElement(rand, Configurations.maleFirstNames), getRandomLetter(rand),
-              getRandomElement(rand, Configurations.lastNames));
-        }
-        for (int i = 1; i <= this.getColony().getMaxCitizens(); i++)
-        {
-            if (this.getColony().getCitizen(i) != null && this.getColony().getCitizen(i).getName().equals(citizenName))
-            {
-                citizenName = generateName(rand);
-            }
-        }
-        return citizenName;
-    }
-
-    /**
-     * Returns a random element in a list.
-     *
-     * @param rand  Random object.
-     * @param array Array to select from.
-     * @return Random element from array.
-     */
-    private static String getRandomElement(@NotNull final Random rand, @NotNull final String[] array)
-    {
-        return array[rand.nextInt(array.length)];
-    }
-
-    /**
-     * Returns a random capital letter from the alphabet.
-     *
-     * @param rand Random object.
-     * @return Random capital letter.
-     */
-    private static char getRandomLetter(@NotNull final Random rand)
-    {
-        return (char) (rand.nextInt(LETTERS_IN_THE_ALPHABET) + 'A');
-    }
-
-    /**
      * Returns the name of the citizen.
      *
      * @return name of the citizen.
@@ -398,6 +303,259 @@ public class CitizenData implements ICitizenData
     public int getTextureId()
     {
         return textureId;
+    }
+
+    @Override
+    @Nullable
+    public IBuilding getWorkBuilding()
+    {
+        return workBuilding;
+    }
+
+    /**
+     * Sets the work building of a citizen.
+     *
+     * @param building work building.
+     */
+    public void setWorkBuilding(@Nullable final AbstractBuildingWorker building)
+    {
+        if (workBuilding != null && building != null && workBuilding != building)
+        {
+            throw new IllegalStateException("CitizenData.setWorkBuilding() - already assigned a work building when setting a new work building");
+        }
+        else if (workBuilding != building)
+        {
+            workBuilding = building;
+
+            if (workBuilding != null)
+            {
+                //  We have a place to work, do we have the assigned Job?
+                if (job == null)
+                {
+                    //  No job, create one!
+                    setJob(workBuilding.createJob(this));
+                    colony.getWorkManager().clearWorkForCitizen(this);
+                }
+            }
+            else if (job != null)
+            {
+                final Citizen citizen = getCitizen();
+                if (citizen != null)
+                {
+                    citizen.tasks.removeTask(citizen.tasks.taskEntries.stream().filter(task -> task.action instanceof AbstractAISkeleton).findFirst().orElse(null).action);
+                }
+                //  No place of employment, get rid of our job
+                setJob(null);
+                colony.getWorkManager().clearWorkForCitizen(this);
+            }
+
+            markDirty();
+        }
+    }
+
+    @Override
+    public IJob getJob()
+    {
+        return job;
+    }
+
+    @Override
+    public void setJob(final IJob job)
+    {
+        this.job = job;
+
+        @Nullable final Citizen localEntity = getCitizen();
+        if (localEntity != null)
+        {
+            localEntity.onJobChanged(job);
+        }
+
+        markDirty();
+    }
+
+    /**
+     * Returns the level of the citizen.
+     *
+     * @return level of the citizen.
+     */
+    @Override
+    public int getLevel()
+    {
+        return level;
+    }
+
+    /**
+     * Sets the level of the citizen.
+     *
+     * @param lvl the new level for the citizen.
+     */
+    public void setLevel(final int lvl)
+    {
+        this.level = lvl;
+    }
+
+    /**
+     * Returns the experience of the citizen.
+     *
+     * @return experience of the citizen.
+     */
+    @Override
+    public double getExperience()
+    {
+        return experience;
+    }
+
+    /**
+     * Strength getter.
+     *
+     * @return citizen Strength value.
+     */
+    @Override
+    public int getStrength()
+    {
+        return strength;
+    }
+
+    /**
+     * Endurance getter.
+     *
+     * @return citizen Endurance value.
+     */
+    @Override
+    public int getEndurance()
+    {
+        return endurance;
+    }
+
+    /**
+     * Charisma getter.
+     *
+     * @return citizen Charisma value.
+     */
+    @Override
+    public int getCharisma()
+    {
+        return charisma;
+    }
+
+    /**
+     * Intelligence getter.
+     *
+     * @return citizen Intelligence value.
+     */
+    @Override
+    public int getIntelligence()
+    {
+        return intelligence;
+    }
+
+    /**
+     * Dexterity getter.
+     *
+     * @return citizen Dexterity value.
+     */
+    @Override
+    public int getDexterity()
+    {
+        return dexterity;
+    }
+
+    /**
+     * Getter for the saturation.
+     *
+     * @return the saturation.
+     */
+    @Override
+    public double getSaturation()
+    {
+        return this.saturation;
+    }
+
+    /**
+     * Marks the instance dirty.
+     */
+    public void markDirty()
+    {
+        dirty = true;
+        colony.markCitizensDirty();
+    }
+
+    /**
+     * Create a CitizenData View given it's saved NBTTagCompound.
+     *
+     * @param id  The citizen's id.
+     * @param buf The network data.
+     * @return View object of the citizen.
+     */
+    @Nullable
+    public static CitizenDataView createCitizenDataView(final int id, final ByteBuf buf)
+    {
+        @Nullable CitizenDataView citizenDataView = new CitizenDataView(id);
+
+        try
+        {
+            citizenDataView.deserialize(buf);
+        }
+        catch (final RuntimeException ex)
+        {
+            Log.getLogger().error(String.format("A CitizenData.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
+              citizenDataView.getID()), ex);
+            citizenDataView = null;
+        }
+
+        return citizenDataView;
+    }
+
+    /**
+     * Returns a random element in a list.
+     *
+     * @param rand  Random object.
+     * @param array Array to select from.
+     * @return Random element from array.
+     */
+    private static String getRandomElement(@NotNull final Random rand, @NotNull final String[] array)
+    {
+        return array[rand.nextInt(array.length)];
+    }
+
+    /**
+     * Returns a random capital letter from the alphabet.
+     *
+     * @param rand Random object.
+     * @return Random capital letter.
+     */
+    private static char getRandomLetter(@NotNull final Random rand)
+    {
+        return (char) (rand.nextInt(LETTERS_IN_THE_ALPHABET) + 'A');
+    }
+
+    /**
+     * Generates a random name from a set of names.
+     *
+     * @param rand Random object.
+     * @return Name of the citizen.
+     */
+    private String generateName(@NotNull final Random rand)
+    {
+        String citizenName;
+        if (female)
+        {
+            citizenName = String.format("%s %s. %s", getRandomElement(rand, Configurations.femaleFirstNames), getRandomLetter(rand),
+              getRandomElement(rand, Configurations.lastNames));
+        }
+        else
+        {
+            citizenName = String.format("%s %s. %s", getRandomElement(rand, Configurations.maleFirstNames), getRandomLetter(rand),
+              getRandomElement(rand, Configurations.lastNames));
+        }
+        for (int i = 1; i <= this.getColony().getMaxCitizens(); i++)
+        {
+            if (this.getColony().getCitizen(i) != null && this.getColony().getCitizen(i).getName().equals(citizenName))
+            {
+                citizenName = generateName(rand);
+            }
+        }
+        return citizenName;
     }
 
     /**
@@ -485,80 +643,12 @@ public class CitizenData implements ICitizenData
         }
     }
 
-    @Override
-    @Nullable
-    public IBuilding getWorkBuilding()
-    {
-        return workBuilding;
-    }
-
-    /**
-     * Sets the work building of a citizen.
-     *
-     * @param building work building.
-     */
-    public void setWorkBuilding(@Nullable final AbstractBuildingWorker building)
-    {
-        if (workBuilding != null && building != null && workBuilding != building)
-        {
-            throw new IllegalStateException("CitizenData.setWorkBuilding() - already assigned a work building when setting a new work building");
-        }
-        else if (workBuilding != building)
-        {
-            workBuilding = building;
-
-            if (workBuilding != null)
-            {
-                //  We have a place to work, do we have the assigned Job?
-                if (job == null)
-                {
-                    //  No job, create one!
-                    setJob(workBuilding.createJob(this));
-                    colony.getWorkManager().clearWorkForCitizen(this);
-                }
-            }
-            else if (job != null)
-            {
-                final Citizen citizen = getCitizen();
-                if (citizen != null)
-                {
-                    citizen.tasks.removeTask(citizen.tasks.taskEntries.stream().filter(task -> task.action instanceof AbstractAISkeleton).findFirst().orElse(null).action);
-                }
-                //  No place of employment, get rid of our job
-                setJob(null);
-                colony.getWorkManager().clearWorkForCitizen(this);
-            }
-
-            markDirty();
-        }
-    }
-
     /**
      * Sets {@link EntityCitizen} to null for the instance.
      */
     public void clearCitizenEntity()
     {
         entity = null;
-    }
-
-    @Override
-    public IJob getJob()
-    {
-        return job;
-    }
-
-    @Override
-    public void setJob(final IJob job)
-    {
-        this.job = job;
-
-        @Nullable final Citizen localEntity = getCitizen();
-        if (localEntity != null)
-        {
-            localEntity.onJobChanged(job);
-        }
-
-        markDirty();
     }
 
     /**
@@ -648,27 +738,6 @@ public class CitizenData implements ICitizenData
     }
 
     /**
-     * Returns the level of the citizen.
-     *
-     * @return level of the citizen.
-     */
-    @Override
-    public int getLevel()
-    {
-        return level;
-    }
-
-    /**
-     * Sets the level of the citizen.
-     *
-     * @param lvl the new level for the citizen.
-     */
-    public void setLevel(final int lvl)
-    {
-        this.level = lvl;
-    }
-
-    /**
      * Getter for the saturation.
      *
      * @param extraSaturation the extra saturation
@@ -695,82 +764,5 @@ public class CitizenData implements ICitizenData
     {
         this.level = 0;
         this.experience = 0;
-    }
-
-    /**
-     * Returns the experience of the citizen.
-     *
-     * @return experience of the citizen.
-     */
-    @Override
-    public double getExperience()
-    {
-        return experience;
-    }
-
-    /**
-     * Strength getter.
-     *
-     * @return citizen Strength value.
-     */
-    @Override
-    public int getStrength()
-    {
-        return strength;
-    }
-
-    /**
-     * Endurance getter.
-     *
-     * @return citizen Endurance value.
-     */
-    @Override
-    public int getEndurance()
-    {
-        return endurance;
-    }
-
-    /**
-     * Charisma getter.
-     *
-     * @return citizen Charisma value.
-     */
-    @Override
-    public int getCharisma()
-    {
-        return charisma;
-    }
-
-    /**
-     * Intelligence getter.
-     *
-     * @return citizen Intelligence value.
-     */
-    @Override
-    public int getIntelligence()
-    {
-        return intelligence;
-    }
-
-    /**
-     * Dexterity getter.
-     *
-     * @return citizen Dexterity value.
-     */
-    @Override
-    public int getDexterity()
-    {
-        return dexterity;
-    }
-
-    /**
-     * Getter for the saturation.
-     *
-     * @return the saturation.
-     */
-    @Override
-    public double getSaturation()
-    {
-        return this.saturation;
     }
 }

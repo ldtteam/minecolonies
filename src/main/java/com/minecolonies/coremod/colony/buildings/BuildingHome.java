@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHomeBuilding;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.api.colony.requestsystem.token.IToken;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
@@ -93,16 +93,6 @@ public class BuildingHome extends AbstractBuildingHut
     }
 
     @Override
-    public void removeCitizen(@NotNull final CitizenData citizen)
-    {
-        if (residents.contains(citizen))
-        {
-            citizen.setHomeBuilding(null);
-            residents.remove(citizen);
-        }
-    }
-
-    @Override
     public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
     {
         if (event.phase != TickEvent.Phase.END)
@@ -115,26 +105,6 @@ public class BuildingHome extends AbstractBuildingHut
             // 'Capture' as many citizens into this house as possible
             addHomelessCitizens();
         }
-    }
-
-    /**
-     * Set food requirements for the building.
-     *
-     * @param foodNeeded set true if required.
-     */
-    public void setFoodNeeded(final boolean foodNeeded)
-    {
-        isFoodNeeded = foodNeeded;
-    }
-
-    /**
-     * Check food requirements of the building.
-     *
-     * @return true of false.
-     */
-    public boolean isFoodNeeded()
-    {
-        return isFoodNeeded;
     }
 
     @Override
@@ -169,6 +139,16 @@ public class BuildingHome extends AbstractBuildingHut
         }
     }
 
+    @Override
+    public void removeCitizen(@NotNull final CitizenData citizen)
+    {
+        if (residents.contains(citizen))
+        {
+            citizen.setHomeBuilding(null);
+            residents.remove(citizen);
+        }
+    }
+
     /**
      * Adds the citizen to the building.
      *
@@ -189,6 +169,18 @@ public class BuildingHome extends AbstractBuildingHut
     }
 
     @Override
+    public void serializeToView(@NotNull final ByteBuf buf)
+    {
+        super.serializeToView(buf);
+
+        buf.writeInt(residents.size());
+        for (@NotNull final CitizenData citizen : residents)
+        {
+            buf.writeInt(citizen.getId());
+        }
+    }
+
+    @Override
     public void onUpgradeComplete(final int newLevel)
     {
         super.onUpgradeComplete(newLevel);
@@ -204,22 +196,30 @@ public class BuildingHome extends AbstractBuildingHut
     }
 
     @Override
-    public void serializeToView(@NotNull final ByteBuf buf)
-    {
-        super.serializeToView(buf);
-
-        buf.writeInt(residents.size());
-        for (@NotNull final CitizenData citizen : residents)
-        {
-            buf.writeInt(citizen.getId());
-        }
-    }
-
-    @Override
     public void setBuildingLevel(final int level)
     {
         super.setBuildingLevel(level);
         getColony().calculateMaxCitizens();
+    }
+
+    /**
+     * Check food requirements of the building.
+     *
+     * @return true of false.
+     */
+    public boolean isFoodNeeded()
+    {
+        return isFoodNeeded;
+    }
+
+    /**
+     * Set food requirements for the building.
+     *
+     * @param foodNeeded set true if required.
+     */
+    public void setFoodNeeded(final boolean foodNeeded)
+    {
+        isFoodNeeded = foodNeeded;
     }
 
     /**

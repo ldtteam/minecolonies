@@ -32,17 +32,15 @@ public class EntityAIGoHome extends EntityAIBase
      * Damage source if has to kill citizen.
      */
     private static final DamageSource CLEANUP_DAMAGE = new DamageSource("CleanUpTask");
-
-    /**
-     * The citizen.
-     */
-    private final EntityCitizen citizen;
-
     /**
      * Filter to allow citizen requesting without spam.
      */
     @NotNull
     protected final ChatSpamFilter chatSpamFilter;
+    /**
+     * The citizen.
+     */
+    private final EntityCitizen citizen;
 
     /**
      * Constructor for the task, creates task.
@@ -123,6 +121,26 @@ public class EntityAIGoHome extends EntityAIBase
         handleSaturation(pos);
     }
 
+    @Override
+    public void setMutexBits(final int mutexBitsIn)
+    {
+        super.setMutexBits(1);
+    }
+
+    /**
+     * While going home play a goHome sound for the specific worker by chance.
+     */
+    private void playGoHomeSounds()
+    {
+        final int chance = citizen.getRandom().nextInt(CHANCE);
+
+        if (chance <= 1 && citizen.getWorkBuilding() != null && citizen.getColonyJob() != null)
+        {
+            SoundUtils.playSoundAtCitizenWithChance(citizen.world, citizen.getPosition(), citizen.getColonyJob().getBedTimeSound(), 1);
+            //add further workers as soon as available.
+        }
+    }
+
     /**
      * Handle the saturation of the citizen.
      *
@@ -197,26 +215,6 @@ public class EntityAIGoHome extends EntityAIBase
         if (home instanceof BuildingHome)
         {
             ((BuildingHome) home).setFoodNeeded(true);
-        }
-    }
-
-    @Override
-    public void setMutexBits(final int mutexBitsIn)
-    {
-        super.setMutexBits(1);
-    }
-
-    /**
-     * While going home play a goHome sound for the specific worker by chance.
-     */
-    private void playGoHomeSounds()
-    {
-        final int chance = citizen.getRandom().nextInt(CHANCE);
-
-        if (chance <= 1 && citizen.getWorkBuilding() != null && citizen.getColonyJob() != null)
-        {
-            SoundUtils.playSoundAtCitizenWithChance(citizen.world, citizen.getPosition(), citizen.getColonyJob().getBedTimeSound(), 1);
-            //add further workers as soon as available.
         }
     }
 }

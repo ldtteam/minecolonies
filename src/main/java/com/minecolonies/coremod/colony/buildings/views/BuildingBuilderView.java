@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.colony.buildings.views;
 
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutBuilder;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
-import com.minecolonies.api.colony.requestsystem.token.IToken;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -31,7 +31,7 @@ public class BuildingBuilderView extends AbstractBuildingWorker.View
      */
     public BuildingBuilderView(final ColonyView c, @NotNull final BlockPos l, @NotNull final IToken id)
     {
-        super(c,l,id);
+        super(c, l, id);
     }
 
     /**

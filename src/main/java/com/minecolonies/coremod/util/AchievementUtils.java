@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.util;
 
-import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.coremod.achievements.ModAchievements;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.stats.Achievement;
 import org.jetbrains.annotations.NotNull;

@@ -133,6 +133,16 @@ public class TileEntityColonyBuilding extends TileEntityChest
     }
 
     /**
+     * Returns the position of the tile entity.
+     *
+     * @return Block Coordinates of the tile entity.
+     */
+    public BlockPos getPosition()
+    {
+        return pos;
+    }
+
+    /**
      * Sets the colony of the tile entity.
      *
      * @param c Colony to set in references.
@@ -184,16 +194,6 @@ public class TileEntityColonyBuilding extends TileEntityChest
         {
             building.setTileEntity(null);
         }
-    }
-
-    /**
-     * Returns the position of the tile entity.
-     *
-     * @return Block Coordinates of the tile entity.
-     */
-    public BlockPos getPosition()
-    {
-        return pos;
     }
 
     /**

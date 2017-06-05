@@ -10,14 +10,16 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Location described by an immutable blockpos and a dimension.
  */
-public class StaticLocation implements ILocation {
+public class StaticLocation implements ILocation
+{
 
     @NotNull
     private final BlockPos pos;
     @NotNull
-    private final int dimension;
+    private final int      dimension;
 
-    public StaticLocation(@NotNull BlockPos pos, @NotNull int dimension) {
+    public StaticLocation(@NotNull BlockPos pos, @NotNull int dimension)
+    {
         this.pos = pos;
         this.dimension = dimension;
     }
@@ -41,7 +43,8 @@ public class StaticLocation implements ILocation {
      */
     @NotNull
     @Override
-    public int getDimension() {
+    public int getDimension()
+    {
         return dimension;
     }
 
@@ -52,14 +55,16 @@ public class StaticLocation implements ILocation {
      * @return True when reachable, false when not.
      */
     @Override
-    public boolean isReachableFromLocation(@NotNull ILocation location) {
+    public boolean isReachableFromLocation(@NotNull ILocation location)
+    {
         return location.getDimension() == getDimension();
     }
 
     /**
      * Internal factory class.
      */
-    public static class Factory implements ILocationFactory<StaticLocation, StaticLocation> {
+    public static class Factory implements ILocationFactory<StaticLocation, StaticLocation>
+    {
 
         ////// --------------------------- NBTConstants --------------------------- \\\\\\
         private static final String NBT_POS = "Pos";
@@ -73,7 +78,8 @@ public class StaticLocation implements ILocation {
          */
         @NotNull
         @Override
-        public Class<? extends StaticLocation> getFactoryOutputType() {
+        public Class<? extends StaticLocation> getFactoryOutputType()
+        {
             return StaticLocation.class;
         }
 
@@ -84,7 +90,8 @@ public class StaticLocation implements ILocation {
          */
         @NotNull
         @Override
-        public Class<? extends StaticLocation> getFactoryInputType() {
+        public Class<? extends StaticLocation> getFactoryInputType()
+        {
             return StaticLocation.class;
         }
 
@@ -97,7 +104,8 @@ public class StaticLocation implements ILocation {
          */
         @NotNull
         @Override
-        public NBTTagCompound serialize(@NotNull IFactoryController controller, @NotNull StaticLocation request) {
+        public NBTTagCompound serialize(@NotNull IFactoryController controller, @NotNull StaticLocation request)
+        {
             NBTTagCompound compound = new NBTTagCompound();
             compound.setLong(NBT_POS, request.getInDimensionLocation().toLong());
             compound.setInteger(NBT_DIM, request.getDimension());
@@ -113,7 +121,8 @@ public class StaticLocation implements ILocation {
          */
         @NotNull
         @Override
-        public StaticLocation deserialize(@NotNull IFactoryController controller, @NotNull NBTTagCompound nbt) {
+        public StaticLocation deserialize(@NotNull IFactoryController controller, @NotNull NBTTagCompound nbt)
+        {
             BlockPos pos = BlockPos.fromLong(nbt.getLong(NBT_POS));
             Integer dim = nbt.getInteger(NBT_DIM);
             return new StaticLocation(pos, dim);
@@ -127,7 +136,8 @@ public class StaticLocation implements ILocation {
          */
         @NotNull
         @Override
-        public StaticLocation getNewInstance(@NotNull StaticLocation input) {
+        public StaticLocation getNewInstance(@NotNull StaticLocation input)
+        {
             return new StaticLocation(input.getInDimensionLocation(), input.getDimension());
         }
     }

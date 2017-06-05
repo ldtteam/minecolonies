@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.colony.jobs;
 
 import com.minecolonies.api.client.render.Model;
-import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.api.entity.ai.basic.AbstractAISkeleton;
+import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.EntityAIWorkLumberjack;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
 import net.minecraft.nbt.NBTTagCompound;
@@ -48,18 +48,6 @@ public class JobLumberjack extends AbstractJob
     }
 
     /**
-     * Return a Localization textContent for the Job.
-     *
-     * @return localization textContent String.
-     */
-    @NotNull
-    @Override
-    public String getName()
-    {
-        return "com.minecolonies.coremod.job.Lumberjack";
-    }
-
-    /**
      * Get the RenderBipedCitizen.Model to use when the Citizen performs this job role.
      *
      * @return Model of the citizen.
@@ -87,6 +75,18 @@ public class JobLumberjack extends AbstractJob
         {
             tree.writeToNBT(treeTag);
         }
+    }
+
+    /**
+     * Return a Localization textContent for the Job.
+     *
+     * @return localization textContent String.
+     */
+    @NotNull
+    @Override
+    public String getName()
+    {
+        return "com.minecolonies.coremod.job.Lumberjack";
     }
 
     /**

@@ -29,17 +29,17 @@ public abstract class AbstractRequestResolver<Requested> implements IRequestReso
         this.token = token;
     }
 
+    @Override
+    public IToken getID()
+    {
+        return token;
+    }
+
     @NotNull
     @Override
     public ILocation getLocation()
     {
         return location;
-    }
-
-    @Override
-    public IToken getID()
-    {
-        return token;
     }
 
     @Override

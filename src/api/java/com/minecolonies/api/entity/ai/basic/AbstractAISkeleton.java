@@ -15,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-
 /**
  * Skeleton class for worker ai.
  * Here general target execution will be handled.

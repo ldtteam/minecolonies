@@ -6,7 +6,8 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Class used to represent tools inside the request system.
  */
-public class Tool {
+public class Tool
+{
 
     @NotNull
     private final String toolClass;
@@ -20,11 +21,13 @@ public class Tool {
     @NotNull
     private final ItemStack result;
 
-    public Tool(@NotNull String toolClass, @NotNull Integer minLevel, @NotNull Integer maxLevel) {
+    public Tool(@NotNull String toolClass, @NotNull Integer minLevel, @NotNull Integer maxLevel)
+    {
         this(toolClass, minLevel, maxLevel, ItemStack.EMPTY);
     }
 
-    public Tool(@NotNull String toolClass, @NotNull Integer minLevel, @NotNull Integer maxLevel, @NotNull ItemStack result) {
+    public Tool(@NotNull String toolClass, @NotNull Integer minLevel, @NotNull Integer maxLevel, @NotNull ItemStack result)
+    {
         this.toolClass = toolClass;
         this.minLevel = minLevel;
         this.maxLevel = maxLevel;
@@ -33,37 +36,45 @@ public class Tool {
 
     /**
      * Returns the tool class that is requested.
+     *
      * @return The tool class that is requested.
      */
     @NotNull
-    public String getToolClass() {
+    public String getToolClass()
+    {
         return toolClass;
     }
 
     /**
      * The minimal tool level requested.
+     *
      * @return The minimal tool level requested.
      */
     @NotNull
-    public Integer getMinLevel() {
+    public Integer getMinLevel()
+    {
         return minLevel;
     }
 
     /**
      * The maximum tool level requested.
+     *
      * @return The maximum tool level requested.
      */
     @NotNull
-    public Integer getMaxLevel() {
+    public Integer getMaxLevel()
+    {
         return maxLevel;
     }
 
     /**
      * The resulting stack if set during creation, else ItemStack.Empty.
+     *
      * @return The resulting stack.
      */
     @NotNull
-    public ItemStack getResult() {
+    public ItemStack getResult()
+    {
         return result;
     }
 }

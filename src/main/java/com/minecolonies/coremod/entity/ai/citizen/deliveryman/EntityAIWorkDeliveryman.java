@@ -329,7 +329,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 //buildingToDeliver.setOnGoingDelivery(false);
 
 
-
                 ((BuildingDeliveryman) ownBuilding).setBuildingToDeliver(null);
 
                 if (buildingToDeliver instanceof BuildingHome)
@@ -377,17 +376,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             }
         }
         return START_WORKING;
-    }
-
-    /**
-     * Check if food has to be delivered to a certain building.
-     *
-     * @param building building to check.
-     * @return true if so.
-     */
-    private boolean needsToDeliverFood(@NotNull final AbstractBuilding building)
-    {
-        return building instanceof BuildingHome && ((BuildingHome) building).isFoodNeeded() && !hasFood(building);
     }
 
     private AIState gatherItemsFromWareHouse()
@@ -441,15 +429,14 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     }
 
     /**
-     * Check if the deliveryman has all the tools to make the delivery.
+     * Check if food has to be delivered to a certain building.
      *
-     * @param buildingToDeliver the building to deliver to.
-     * @return true if is ready to deliver.
+     * @param building building to check.
+     * @return true if so.
      */
-    private boolean hasFood(AbstractBuilding buildingToDeliver)
+    private boolean needsToDeliverFood(@NotNull final AbstractBuilding building)
     {
-        return InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()),
-          stack -> !InventoryUtils.isItemStackEmpty(stack) && stack.getItem() instanceof ItemFood) > buildingToDeliver.getBuildingLevel();
+        return building instanceof BuildingHome && ((BuildingHome) building).isFoodNeeded() && !hasFood(building);
     }
 
     /**
@@ -493,6 +480,18 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
 
         return gatherItems(buildingToDeliver, position);
+    }
+
+    /**
+     * Check if the deliveryman has all the tools to make the delivery.
+     *
+     * @param buildingToDeliver the building to deliver to.
+     * @return true if is ready to deliver.
+     */
+    private boolean hasFood(AbstractBuilding buildingToDeliver)
+    {
+        return InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()),
+          stack -> !InventoryUtils.isItemStackEmpty(stack) && stack.getItem() instanceof ItemFood) > buildingToDeliver.getBuildingLevel();
     }
 
     /**

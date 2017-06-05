@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.lib.Constants;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.coremod.colony.buildings.BuildingDeliveryman;
-import com.minecolonies.api.lib.Constants;
 import org.jetbrains.annotations.NotNull;
 
 /**

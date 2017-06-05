@@ -16,7 +16,8 @@ import java.util.UUID;
 /**
  * Location described by an Entity.
  */
-public class EntityLocation implements ILocation {
+public class EntityLocation implements ILocation
+{
 
     @NotNull
     private final UUID uuid;
@@ -24,11 +25,21 @@ public class EntityLocation implements ILocation {
     @Nullable
     private WeakReference<Entity> entity;
 
-    public EntityLocation(@NotNull UUID uuid) {
+    public EntityLocation(@NotNull UUID uuid)
+    {
         this.uuid = uuid;
         checkEntity();
     }
 
+    private void checkEntity()
+    {
+        if (entity != null)
+        {
+            return;
+        }
+
+        entity = new WeakReference<Entity>(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityFromUuid(uuid));
+    }
 
     /**
      * Method to get the location in the dimension
@@ -41,7 +52,9 @@ public class EntityLocation implements ILocation {
     {
         checkEntity();
         if (entity == null || entity.get() == null)
+        {
             return BlockPos.ORIGIN;
+        }
 
         return entity.get().getPosition();
     }
@@ -53,10 +66,13 @@ public class EntityLocation implements ILocation {
      */
     @NotNull
     @Override
-    public int getDimension() {
+    public int getDimension()
+    {
         checkEntity();
         if (entity == null || entity.get() == null)
+        {
             return 0;
+        }
 
         return entity.get().dimension;
     }
@@ -68,22 +84,19 @@ public class EntityLocation implements ILocation {
      * @return True when reachable, false when not.
      */
     @Override
-    public boolean isReachableFromLocation(@NotNull ILocation location) {
+    public boolean isReachableFromLocation(@NotNull ILocation location)
+    {
         checkEntity();
         if (entity == null || entity.get() == null)
+        {
             return false;
+        }
 
         return location.getDimension() == getDimension();
     }
 
-    private void checkEntity() {
-        if (entity != null)
-            return;
-
-        entity = new WeakReference<Entity>(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityFromUuid(uuid));
-    }
-
-    public static class Factory implements ILocationFactory<Entity, EntityLocation> {
+    public static class Factory implements ILocationFactory<Entity, EntityLocation>
+    {
 
         ////// --------------------------- NBTConstants --------------------------- \\\\\\
         private static final String NBT_MSB = "Id_MSB";
@@ -97,7 +110,8 @@ public class EntityLocation implements ILocation {
          */
         @NotNull
         @Override
-        public Class<? extends EntityLocation> getFactoryOutputType() {
+        public Class<? extends EntityLocation> getFactoryOutputType()
+        {
             return EntityLocation.class;
         }
 
@@ -108,7 +122,8 @@ public class EntityLocation implements ILocation {
          */
         @NotNull
         @Override
-        public Class<? extends Entity> getFactoryInputType() {
+        public Class<? extends Entity> getFactoryInputType()
+        {
             return Entity.class;
         }
 
@@ -121,7 +136,8 @@ public class EntityLocation implements ILocation {
          */
         @NotNull
         @Override
-        public NBTTagCompound serialize(@NotNull IFactoryController controller, @NotNull EntityLocation request) {
+        public NBTTagCompound serialize(@NotNull IFactoryController controller, @NotNull EntityLocation request)
+        {
             NBTTagCompound compound = new NBTTagCompound();
 
             compound.setLong(NBT_LSB, request.uuid.getLeastSignificantBits());
@@ -139,7 +155,8 @@ public class EntityLocation implements ILocation {
          */
         @NotNull
         @Override
-        public EntityLocation deserialize(@NotNull IFactoryController controller, @NotNull NBTTagCompound nbt) {
+        public EntityLocation deserialize(@NotNull IFactoryController controller, @NotNull NBTTagCompound nbt)
+        {
             UUID uuid = new UUID(nbt.getLong(NBT_MSB), nbt.getLong(NBT_LSB));
 
             return new EntityLocation(uuid);
@@ -153,7 +170,8 @@ public class EntityLocation implements ILocation {
          */
         @NotNull
         @Override
-        public EntityLocation getNewInstance(@NotNull Entity input) {
+        public EntityLocation getNewInstance(@NotNull Entity input)
+        {
             return new EntityLocation(input.getPersistentID());
         }
     }

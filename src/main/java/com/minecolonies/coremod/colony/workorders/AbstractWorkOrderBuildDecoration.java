@@ -20,11 +20,11 @@ public class AbstractWorkOrderBuildDecoration extends AbstractWorkOrderBuild
     /**
      * Create a new work order telling the building to build a decoration.
      *
-     * @param structureName  The name of the decoration.
-     * @param workOrderName  The user friendly name of the decoration.
-     * @param rotation       The number of times the decoration was rotated.
-     * @param location       The location where the decoration should be built.
-     * @param mirror         Is the decoration mirrored?
+     * @param structureName The name of the decoration.
+     * @param workOrderName The user friendly name of the decoration.
+     * @param rotation      The number of times the decoration was rotated.
+     * @param location      The location where the decoration should be built.
+     * @param mirror        Is the decoration mirrored?
      */
     public AbstractWorkOrderBuildDecoration(final String structureName, final String workOrderName, final int rotation, final BlockPos location, final boolean mirror)
     {
@@ -40,6 +40,12 @@ public class AbstractWorkOrderBuildDecoration extends AbstractWorkOrderBuild
     }
 
     @Override
+    public boolean isDecoration()
+    {
+        return true;
+    }
+
+    @Override
     public boolean isValid(final IColony colony)
     {
         return true;
@@ -49,11 +55,5 @@ public class AbstractWorkOrderBuildDecoration extends AbstractWorkOrderBuild
     protected String getValue()
     {
         return workOrderName;
-    }
-
-    @Override
-    public boolean isDecoration()
-    {
-        return true;
     }
 }

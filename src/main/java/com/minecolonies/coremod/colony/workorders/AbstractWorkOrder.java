@@ -2,10 +2,11 @@ package com.minecolonies.coremod.colony.workorders;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.coremod.colony.*;
 import com.minecolonies.api.colony.workorder.IWorkOrder;
 import com.minecolonies.api.colony.workorder.WorkOrderType;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.WorkOrderView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -132,31 +133,6 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     {
         id = compound.getInteger(TAG_ID);
         claimedBy = compound.getInteger(TAG_CLAIMED_BY);
-    }
-
-    /**
-     * Create a AbstractWorkOrder View from a buffer.
-     *
-     * @param buf The network data
-     * @return View object of the workOrder
-     */
-    @Nullable
-    public static WorkOrderView createWorkOrderView(final ByteBuf buf)
-    {
-        @Nullable WorkOrderView workOrderView = new WorkOrderView();
-
-        try
-        {
-            workOrderView.deserialize(buf);
-        }
-        catch (final RuntimeException ex)
-        {
-            Log.getLogger().error(String.format("A AbstractWorkOrder.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-              workOrderView.getId()), ex);
-            workOrderView = null;
-        }
-
-        return workOrderView;
     }
 
     /**
@@ -332,4 +308,30 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * @return a description string.
      */
     protected abstract String getValue();
+
+    /**
+     * Create a AbstractWorkOrder View from a buffer.
+     *
+     * @param buf The network data
+     * @return View object of the workOrder
+     */
+    @Nullable
+    public static WorkOrderView createWorkOrderView(final ByteBuf buf)
+    {
+        @Nullable WorkOrderView workOrderView = new WorkOrderView();
+
+        try
+        {
+            workOrderView.deserialize(buf);
+        }
+        catch (final RuntimeException ex)
+        {
+            Log.getLogger()
+              .error(String.format("A AbstractWorkOrder.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
+                workOrderView.getId()), ex);
+            workOrderView = null;
+        }
+
+        return workOrderView;
+    }
 }

@@ -7,7 +7,8 @@ import java.util.ArrayList;
 /**
  * Enum used to describe the state of a Request.
  */
-public enum RequestState {
+public enum RequestState
+{
     /**
      * Default state for a not registered request.
      */
@@ -57,34 +58,40 @@ public enum RequestState {
      * Index list used to read and write from NBT
      */
     static ArrayList<RequestState> indexList = new ArrayList<>();
-
-    static {
+    static
+    {
         /**
          * This should never be changed! It is used to read and write from NBT so it has to
          * persist between mod versions.
          */
-        for(RequestState state : RequestState.values())
+        for (RequestState state : RequestState.values())
+        {
             indexList.add(state);
+        }
     }
-
-    RequestState() {
-    }
-
-    /**
-     * Method used to serialize a state to NBT.
-     * @return The NBT representation of the state.
-     */
-    public NBTTagInt serializeNBT() {
-        return new NBTTagInt(indexList.indexOf(this));
+    RequestState()
+    {
     }
 
     /**
      * Method used to deserialize a RequestState from NBT
+     *
      * @param nbt The nbt to deserialize from.
      * @return The RequestState that is stored in the given NBT.
      */
-    public static RequestState deserializeNBT(NBTTagInt nbt) {
+    public static RequestState deserializeNBT(NBTTagInt nbt)
+    {
         return indexList.get(nbt.getInt());
+    }
+
+    /**
+     * Method used to serialize a state to NBT.
+     *
+     * @return The NBT representation of the state.
+     */
+    public NBTTagInt serializeNBT()
+    {
+        return new NBTTagInt(indexList.indexOf(this));
     }
 
 

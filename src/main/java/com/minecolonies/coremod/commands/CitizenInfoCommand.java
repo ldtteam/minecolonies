@@ -53,6 +53,29 @@ public class CitizenInfoCommand extends AbstractCitizensCommands
         return super.getCommandUsage(sender) + "<ColonyId> <CitizenId>";
     }
 
+    @NotNull
+    @Override
+    public List<String> getTabCompletionOptions(
+                                                 @NotNull final MinecraftServer server,
+                                                 @NotNull final ICommandSender sender,
+                                                 @NotNull final String[] args,
+                                                 @Nullable final BlockPos pos)
+    {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public boolean isUsernameIndex(@NotNull final String[] args, final int index)
+    {
+        return false;
+    }
+
+    @Override
+    public Commands getCommand()
+    {
+        return CITIZENINFO;
+    }
+
     @Override
     void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final Colony colony, final int citizenId)
     {
@@ -115,29 +138,6 @@ public class CitizenInfoCommand extends AbstractCitizensCommands
               entityCitizen.getDesiredActivity(),
               entityCitizen.getColonyJob().getNameTagDescription())));
         }
-    }
-
-    @NotNull
-    @Override
-    public List<String> getTabCompletionOptions(
-                                                 @NotNull final MinecraftServer server,
-                                                 @NotNull final ICommandSender sender,
-                                                 @NotNull final String[] args,
-                                                 @Nullable final BlockPos pos)
-    {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public boolean isUsernameIndex(@NotNull final String[] args, final int index)
-    {
-        return false;
-    }
-
-    @Override
-    public Commands getCommand()
-    {
-        return CITIZENINFO;
     }
 }
 

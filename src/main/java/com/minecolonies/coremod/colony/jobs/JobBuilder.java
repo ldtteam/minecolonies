@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.colony.jobs;
 
 import com.minecolonies.api.client.render.Model;
+import com.minecolonies.api.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrderBuild;
-import com.minecolonies.api.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.builder.EntityAIStructureBuilder;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
@@ -49,13 +49,6 @@ public class JobBuilder extends AbstractJobStructure
 
     @NotNull
     @Override
-    public String getName()
-    {
-        return "com.minecolonies.coremod.job.Builder";
-    }
-
-    @NotNull
-    @Override
     public Model getModel()
     {
         return Model.BUILDER;
@@ -69,6 +62,13 @@ public class JobBuilder extends AbstractJobStructure
         {
             compound.setInteger(TAG_WORK_ORDER, workOrderId);
         }
+    }
+
+    @NotNull
+    @Override
+    public String getName()
+    {
+        return "com.minecolonies.coremod.job.Builder";
     }
 
     @NotNull

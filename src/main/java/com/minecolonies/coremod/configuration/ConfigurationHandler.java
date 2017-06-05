@@ -19,12 +19,11 @@ import static com.minecolonies.api.configuration.Configurations.*;
 public final class ConfigurationHandler
 {
 
-    private static Configuration config;
-
     public static final  String CATEGORY_GAMEPLAY    = "gameplay";
     public static final  String CATEGORY_PATHFINDING = "pathfinding";
     public static final  String CATEGORY_NAMES       = "names";
     private static final String FORMAT_RANGE         = "%s (range: %s ~ %s, default: %s)";
+    private static Configuration config;
 
     public ConfigurationHandler()
     {
@@ -139,6 +138,25 @@ public final class ConfigurationHandler
     }
 
     /**
+     * Returns the value in the config for <code>key</code>.
+     *
+     * @param config       {@link Configuration} object.
+     * @param category     Category of the value to read.
+     * @param key          Key of the value to read.
+     * @param defaultValue Default value for the value to read.
+     * @param min          Minimum accepted value.
+     * @param max          Maximum accepted value.
+     * @param comment      Comment in config file.
+     * @return Value in the configuration file.
+     */
+    private static int getClampedInt(
+                                      final Configuration config, final String category, final String key,
+                                      final int defaultValue, final int min, final int max, final String comment)
+    {
+        return MathHelper.clamp(config.get(category, key, defaultValue, String.format(FORMAT_RANGE, comment, min, max, defaultValue), min, max).getInt(), min, max);
+    }
+
+    /**
      * load configuration related to Path finding.
      */
     private static synchronized void loadPathFindingConfigurations()
@@ -164,6 +182,11 @@ public final class ConfigurationHandler
           "Last Names").getStringList();
     }
 
+    public static Configuration getConfiguration()
+    {
+        return config;
+    }
+
     /**
      * This event will be called when the config gets changed through
      * the in-game GUI.
@@ -178,29 +201,5 @@ public final class ConfigurationHandler
             // resync configs
             loadConfiguration();
         }
-    }
-
-    /**
-     * Returns the value in the config for <code>key</code>.
-     *
-     * @param config       {@link Configuration} object.
-     * @param category     Category of the value to read.
-     * @param key          Key of the value to read.
-     * @param defaultValue Default value for the value to read.
-     * @param min          Minimum accepted value.
-     * @param max          Maximum accepted value.
-     * @param comment      Comment in config file.
-     * @return Value in the configuration file.
-     */
-    private static int getClampedInt(
-                                      final Configuration config, final String category, final String key,
-                                      final int defaultValue, final int min, final int max, final String comment)
-    {
-        return MathHelper.clamp(config.get(category, key, defaultValue, String.format(FORMAT_RANGE, comment, min, max, defaultValue), min, max).getInt(), min, max);
-    }
-
-    public static Configuration getConfiguration()
-    {
-        return config;
     }
 }
