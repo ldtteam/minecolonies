@@ -20,7 +20,7 @@ import com.minecolonies.coremod.util.LanguageHandler;
 import net.minecraft.block.Block;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.coremod.util.constants.TranslationConstants.*;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
