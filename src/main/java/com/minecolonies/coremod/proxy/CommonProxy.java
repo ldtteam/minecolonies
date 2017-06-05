@@ -6,6 +6,9 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
+import com.minecolonies.coremod.entity.ai.mobs.EntityArcherBarbarian;
+import com.minecolonies.coremod.entity.ai.mobs.EntityBarbarian;
+import com.minecolonies.coremod.entity.ai.mobs.EntityChiefBarbarian;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.event.FMLEventHandler;
 import com.minecolonies.coremod.inventory.GuiHandler;
@@ -20,6 +23,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import scala.collection.immutable.Stream;
 
 import java.io.File;
 import java.util.HashMap;
@@ -99,11 +103,17 @@ public class CommonProxy implements IProxy
     {
         final ResourceLocation locationCitizen = new ResourceLocation(Constants.MOD_ID, "Citizen");
         final ResourceLocation locationFishHook = new ResourceLocation(Constants.MOD_ID, "Fishhook");
+        final ResourceLocation locationBarbarian = new ResourceLocation(Constants.MOD_ID, "Barbarian");
+        final ResourceLocation locationChiefBarbarian = new ResourceLocation(Constants.MOD_ID, "ChiefBarbarian");
+        final ResourceLocation locationArcherBarbarian = new ResourceLocation(Constants.MOD_ID, "ArcherBarbarian");
 
         // Half as much tracking range and same update frequency as a player
         // See EntityTracker.addEntityToTracker for more default values
         EntityRegistry.registerModEntity(locationCitizen, EntityCitizen.class, "Citizen", getNextEntityId(), MineColonies.instance, 256, 2, true);
         EntityRegistry.registerModEntity(locationFishHook, EntityFishHook.class, "Fishhook", getNextEntityId(), MineColonies.instance, 250, 5, true);
+        EntityRegistry.registerModEntity(locationBarbarian, EntityBarbarian.class, "Barbarian", getNextEntityId(), MineColonies.instance, 250, 2, true);
+        EntityRegistry.registerModEntity(locationChiefBarbarian, EntityChiefBarbarian.class, "ChiefBarbarian", getNextEntityId(), MineColonies.instance, 250,2, true);
+        EntityRegistry.registerModEntity(locationArcherBarbarian, EntityArcherBarbarian.class, "ArcherBarbarian", getNextEntityId(), MineColonies.instance, 250,2, true);
     }
 
     @Override

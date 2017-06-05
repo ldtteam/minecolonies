@@ -100,6 +100,9 @@ item.minecolonies.scepterGuard.name=Guard-scepter
 
 com.minecolonies.configgui.title=MineColonies Config
 
+com.minecolonies.coremod.mob.archerbarbarian=Barbarian Archer
+com.minecolonies.coremod.mob.chiefbarbarian=Barbarian Chief
+com.minecolonies.coremod.mob.barbarian=Barbarian
 com.minecolonies.coremod.gui.townHall.rename=Rename Colony
 com.minecolonies.coremod.gui.workerHuts.minerMineNode=Mine Level
 com.minecolonies.coremod.gui.workerHuts.buildType=Build Type:
