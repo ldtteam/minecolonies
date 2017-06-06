@@ -1644,4 +1644,70 @@ public class InventoryUtils
 
         return existingStack.getMaxStackSize() >= (getItemStackSize(existingStack) + getItemStackSize(mergingStack));
     }
+
+    /**
+     * Remove a list of stacks from a given Itemhandler
+     * @param handler the itemHandler.
+     * @param input the list of stacks.
+     * @return true if succesful.
+     */
+    public static boolean removeStacksFromItemHandler(final IItemHandler handler, final List<ItemStack> input)
+    {
+        final List<ItemStack> list = new ArrayList<>();
+        int maxTries = 0;
+        for(final ItemStack stack: input)
+        {
+            maxTries+= stack.getCount();
+            list.add(stack.copy());
+        }
+
+        boolean success = true;
+        int i = 0;
+        int tries = 0;
+        while(i < list.size() && tries < maxTries)
+        {
+            final ItemStack stack = list.get(i);
+            final int slot = findFirstSlotInItemHandlerNotEmptyWith(handler, stack::isItemEqual);
+
+            if(slot == -1)
+            {
+                success = false;
+                i++;
+                continue;
+            }
+
+            final int removedSize = handler.extractItem(slot, stack.getCount(), false).getCount();
+
+            if(removedSize == stack.getCount())
+            {
+                i++;
+            }
+            else
+            {
+                stack.setCount(stack.getCount() - removedSize);
+            }
+            tries++;
+        }
+
+        return success && i >= list.size();
+    }
+
+    /**
+     * Remove a list of stacks from a given provider
+     * @param provider the provider.
+     * @param input the list of stacks.
+     * @return true if succesful.
+     */
+    public static boolean removeStacksFromProvider(final ICapabilityProvider provider, final List<ItemStack> input)
+    {
+        for (final IItemHandler handler : getItemHandlersFromProvider(provider))
+        {
+            if(!removeStacksFromItemHandler(handler, input))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

@@ -114,6 +114,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private int exceptionTimer = 1;
 
     /**
+     * Check to see if the worker wants to stand still waiting for the request to be fullfilled.
+     */
+    private boolean waitForRequest = true;
+
+    /**
      * Sets up some important skeleton stuff for every ai.
      *
      * @param job the job class
@@ -144,7 +149,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                  * If yes, transition to NEEDS_ITEM.
                  * and wait for new items.
                  */
-          new AITarget(() -> this.getOwnBuilding().areItemsNeeded(), this::waitForNeededItems),
+          new AITarget(() -> this.getOwnBuilding().areItemsNeeded() && waitForRequest, this::waitForNeededItems),
                 /*
                  * Wait for different tools.
                  */
@@ -1173,25 +1178,21 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             return false;
         }
         boolean allClear = true;
-        for (final @Nullable ItemStack stack : items)
+        for (final @Nullable ItemStack tempStack : items)
         {
+            final ItemStack stack = tempStack.copy();
             if (InventoryUtils.isItemStackEmpty(stack))
             {
                 continue;
             }
-            final int countOfItem;
-            if (useItemDamage)
-            {
-                countOfItem = worker.getItemCountInInventory(stack.getItem(), stack.getItemDamage());
-            }
-            else
-            {
-                countOfItem = worker.getItemCountInInventory(stack.getItem(), -1);
-            }
+
+            final int itemDamage = useItemDamage ? stack.getItemDamage() : -1;
+            final int countOfItem = worker.getItemCountInInventory(stack.getItem(), itemDamage);
+
             if (countOfItem < 1)
             {
                 final int itemsLeft = stack.getCount() - countOfItem;
-                @NotNull final ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft, -1);
+                @NotNull final ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft, itemDamage);
                 getOwnBuilding().addNeededItems(requiredStack);
                 allClear = false;
             }
@@ -1207,6 +1208,74 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         itemsNeeded.clear();
         Collections.addAll(itemsNeeded, items);
         return true;
+    }
+
+    /**
+     * Require that items are in the workers inventory.
+     * This safeguard ensures you have said items before you execute a task.
+     * This doesn't stop execution on false returned.
+     * It does request asynchronously and make sure nothing is added twice.
+     *
+     * @param useItemDamage compare the itemDamage of the values.
+     * @param items         the items needed
+     * @return false if they are in inventory
+     */
+    public boolean checkOrRequestItemsAsynch(final boolean useItemDamage, @Nullable final ItemStack... items)
+    {
+        if (items == null)
+        {
+            return false;
+        }
+        boolean allClear = true;
+        for (final @Nullable ItemStack tempStack : items)
+        {
+            final ItemStack stack = tempStack.copy();
+            if (stack == null || stack.getItem() == null)
+            {
+                continue;
+            }
+            final int itemDamage = useItemDamage ? stack.getItemDamage() : -1;
+            final int countOfItem = worker.getItemCountInInventory(stack.getItem(), itemDamage);
+            if (countOfItem < tempStack.getCount())
+            {
+                final int itemsLeft = stack.getCount() - countOfItem;
+                @NotNull final ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft, -1);
+                if(!isInNeededItems(tempStack))
+                {
+                    getOwnBuilding().addNeededItems(requiredStack);
+                }
+                allClear = false;
+            }
+            else
+            {
+                getOwnBuilding().clearNeededItems();
+            }
+        }
+        if (allClear)
+        {
+            return false;
+        }
+        itemsNeeded.clear();
+        Collections.addAll(itemsNeeded, items);
+        this.waitForRequest = true;
+        return true;
+    }
+
+    /**
+     * Check if a certain itemStack is already in the neededItems list.
+     * @param tempStack the stack to test for.
+     * @return true if so.
+     */
+    private boolean isInNeededItems(final ItemStack tempStack)
+    {
+        for(final ItemStack compareStack : getOwnBuilding().getCopyOfNeededItems())
+        {
+            if(compareStack.isItemEqual(tempStack))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
