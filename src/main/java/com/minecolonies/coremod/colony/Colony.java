@@ -817,7 +817,10 @@ public class Colony implements IColony
     {
         if (!w.equals(world))
         {
-            throw new IllegalStateException("Colony's world does not match the event.");
+            /**
+             * It's not very good to crash here. We should simply log this so we can remove this colony.
+             */
+            Log.getLogger().error("Colony %d has the wrong world, colony probably should be removed if this is being spammed.", id);
         }
 
         world = null;
