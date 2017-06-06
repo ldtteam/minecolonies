@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.entity.ai.mobs;
 
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -11,6 +13,7 @@ import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
 
@@ -71,12 +74,41 @@ public class EntityBarbarian extends EntityMob
     }
 
     @Override
+    public boolean getCanSpawnHere() {
+        final Colony colony = ColonyManager.getClosestColony(world, this.getPosition());
+        BlockPos location = colony.getCenter();
+        final double distance = this.getDistance(location.getX(), location.getY(), location.getZ());
+        final boolean innerBounds = (!(distance < 120) && !(distance > 160));
+        if (innerBounds && !world.isDaytime()) //Not Inside Colony //Within range of Colony (directionX <= 160 && directionZ <= 160 ,, !(directionX < 120 && directionZ < 120))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    @Override
     protected boolean isValidLightLevel() {
         return true;
+        //return super.isValidLightLevel();
     }
 
     @Override
     public int getMaxSpawnedInChunk() {
         return 5;
+    }
+
+    @Override
+    protected boolean canDespawn() {
+        if (world.isDaytime())
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }

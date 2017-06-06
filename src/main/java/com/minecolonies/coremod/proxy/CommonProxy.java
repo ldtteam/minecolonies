@@ -16,6 +16,8 @@ import com.minecolonies.coremod.sounds.ModSoundEvents;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
+import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.init.Biomes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -23,7 +25,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import scala.collection.immutable.Stream;
 
 import java.io.File;
 import java.util.HashMap;
@@ -114,6 +115,9 @@ public class CommonProxy implements IProxy
         EntityRegistry.registerModEntity(locationBarbarian, EntityBarbarian.class, "Barbarian", getNextEntityId(), MineColonies.instance, 250, 2, true);
         EntityRegistry.registerModEntity(locationChiefBarbarian, EntityChiefBarbarian.class, "ChiefBarbarian", getNextEntityId(), MineColonies.instance, 250,2, true);
         EntityRegistry.registerModEntity(locationArcherBarbarian, EntityArcherBarbarian.class, "ArcherBarbarian", getNextEntityId(), MineColonies.instance, 250,2, true);
+        EntityRegistry.addSpawn(EntityBarbarian.class, 100, 3, 5, EnumCreatureType.MONSTER,Biomes.PLAINS);
+        EntityRegistry.addSpawn(EntityArcherBarbarian.class, 50, 3, 5, EnumCreatureType.MONSTER,Biomes.PLAINS);
+        EntityRegistry.addSpawn(EntityChiefBarbarian.class, 20, 1, 1, EnumCreatureType.MONSTER,Biomes.PLAINS);
     }
 
     @Override
