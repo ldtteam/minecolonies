@@ -1,8 +1,7 @@
 package com.minecolonies.coremod.colony.buildings;
 
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
