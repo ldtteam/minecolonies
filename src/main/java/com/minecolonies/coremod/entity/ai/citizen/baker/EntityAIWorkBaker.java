@@ -329,8 +329,8 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
             }
         }
 
-        final List preparedList = bakerBuilding.getTasks().get(ProductState.PREPARED);
-        final List bakedList = bakerBuilding.getTasks().get(ProductState.BAKED);
+        final List<BakingProduct> preparedList = bakerBuilding.getTasks().get(ProductState.PREPARED);
+        final List<BakingProduct> bakedList = bakerBuilding.getTasks().get(ProductState.BAKED);
 
         return (preparedList == null || preparedList.isEmpty()) && (bakedList == null || bakedList.isEmpty());
     }
