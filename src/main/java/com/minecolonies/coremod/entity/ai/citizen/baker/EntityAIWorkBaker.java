@@ -8,6 +8,7 @@ import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.ai.util.RecipeStorage;
 import com.minecolonies.coremod.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.block.BlockFurnace;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -147,7 +148,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 
         if (progress >= getRequiredProgressForKneading())
         {
-            worker.setHeldItem(EnumHand.MAIN_HAND, InventoryUtils.EMPTY);
+            worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
             getOwnBuilding().removeFromTasks(ProductState.BAKED, currentBakingProduct);
             InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), currentBakingProduct.getEndProduct());
 
@@ -232,7 +233,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 
         if (progress >= getRequiredProgressForKneading())
         {
-            worker.setHeldItem(EnumHand.MAIN_HAND, InventoryUtils.EMPTY);
+            worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
             progress = 0;
             currentBakingProduct.nextState();
             getOwnBuilding().removeFromTasks(ProductState.RAW, currentBakingProduct);

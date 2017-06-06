@@ -25,11 +25,7 @@ public enum AIState
     /**
      * The ai needs one of the tools.
      */
-    NEEDS_SHOVEL,
-    NEEDS_AXE,
-    NEEDS_HOE,
-    NEEDS_PICKAXE,
-    NEEDS_WEAPON,
+    NEEDS_TOOL,
     /**
      * Inventory has to be dumped.
      */
