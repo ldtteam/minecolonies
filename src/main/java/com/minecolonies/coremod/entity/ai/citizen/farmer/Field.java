@@ -424,7 +424,7 @@ public class Field extends Container
 
     public void nextState()
     {
-        if(getFieldStage().ordinal() + 1 > FieldStage.values().length)
+        if(getFieldStage().ordinal() + 1 >= FieldStage.values().length)
         {
             needsWork = false;
             setFieldStage(FieldStage.values()[1]);

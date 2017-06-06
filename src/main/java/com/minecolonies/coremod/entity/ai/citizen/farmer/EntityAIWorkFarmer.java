@@ -22,6 +22,8 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.Predicate;
+
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 /**
@@ -49,11 +51,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      * The EXP Earned per harvest.
      */
     private static final double XP_PER_HARVEST = 0.5;
-
-    /**
-     * How long to wait after looking to decide what to do.
-     */
-    private static final int LOOK_WAIT = 100;
 
     /**
      * Changed after finished harvesting in order to dump the inventory.
@@ -155,7 +152,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         @Nullable final Field currentField = building.getCurrentField();
         if (currentField.needsWork())
         {
-            if (currentField.getFieldStage() == Field.FieldStage.EMPTY)
+            if (currentField.getFieldStage() == Field.FieldStage.EMPTY && checkIfShouldExecute(currentField, this::shouldHoe))
             {
                 return AIState.FARMER_HOE;
             }
@@ -163,10 +160,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             {
                 return AIState.FARMER_PLANT;
             }
-            else if(currentField.getFieldStage() == Field.FieldStage.PLANTED)
+            else if(currentField.getFieldStage() == Field.FieldStage.PLANTED && checkIfShouldExecute(currentField, this::shouldHarvest))
             {
                 return AIState.FARMER_HARVEST;
             }
+            currentField.nextState();
         }
         else
         {
@@ -207,7 +205,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             return false;
         }
 
-        if (shouldTryToGetSeed)
+        if (shouldTryToGetSeed && !containsPlants(currentField))
         {
             final ItemStack seeds = currentField.getSeed();
             final int slot = worker.findFirstSlotInInventoryWith(seeds.getItem(), seeds.getItemDamage());
@@ -306,12 +304,13 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
     /**
      * Handles the offset of the field for the farmer.
-     * Skips to the next harvestable crop, returns true if one was found.
+     * Checks if the field needs a certain operation checked with a given predicate.
      *
      * @param field the field object.
+     * @param predicate the predicate to test.
      * @return true if a harvestable crop was found.
      */
-    private boolean handleOffsetHarvest(@NotNull final Field field)
+    private boolean checkIfShouldExecute(@NotNull final Field field, @NotNull final Predicate<BlockPos> predicate)
     {
         if (workingOffset == null)
         {
@@ -320,7 +319,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
         BlockPos position = field.getLocation().down().south(workingOffset.getZ()).east(workingOffset.getX());
 
-        while (!shouldHarvest(position))
+        while (!predicate.test(position))
         {
             if (!handleOffset(field))
             {
@@ -368,9 +367,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         @Nullable final BuildingFarmer buildingFarmer = getOwnBuilding();
         if (buildingFarmer == null || checkForHoe() || buildingFarmer.getCurrentField() == null)
         {
-            return AIState.PREPARING;
+            return PREPARING;
         }
-        AIState nextState = null;
         @Nullable final Field field = buildingFarmer.getCurrentField();
         if (workingOffset != null)
         {
@@ -380,20 +378,27 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             {
                 return getState();
             }
+            setDelay(getLevelDelay());
 
             switch (getState())
             {
                 case FARMER_HOE:
-                    nextState = tryToHoe(field, position);
+                    if(!hoeIfAble(position))
+                    {
+                        return getState();
+                    }
                     break;
                 case FARMER_PLANT:
-                    nextState = tryToPlant(field, position);
+                    tryToPlant(field, position);
                     break;
                 case FARMER_HARVEST:
-                    nextState = tryToHarvest(position);
+                    if(!harvestIfAble(position))
+                    {
+                        return getState();
+                    }
                     break;
                 default:
-                    nextState = getState();
+                    return PREPARING;
             }
         }
 
@@ -405,8 +410,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             return AIState.IDLE;
         }
 
-        setDelay(getLevelDelay());
-        return nextState;
+        return getState();
     }
 
     /**
@@ -426,33 +430,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     }
 
     /**
-     * Try to hoe the field at a certain position.
-     * @param field the field to try to hoe.
-     * @param position the position to try.
-     * @return the next state to go to.
-     */
-    private AIState tryToHoe(final Field field, final BlockPos position)
-    {
-        // hoe the block if able to.
-        hoeIfAble(position, field);
-        return AIState.FARMER_HOE;
-    }
-
-    /**
-     * Try to harvest at a certain position.
-     * @param position the position to try.
-     * @return the next state to go to.
-     */
-    private AIState tryToHarvest(final BlockPos position)
-    {
-        harvestIfAble(position);
-        return AIState.FARMER_HARVEST;
-    }
-
-    /**
      * Checks if we can harvest, and does so if we can.
      *
-     * @return true if we harvested.
+     * @return true if we harvested or not supposed to.
      */
     private boolean harvestIfAble(final BlockPos position)
     {
@@ -463,8 +443,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             {
                 return true;
             }
+            return false;
         }
-        return false;
+        return true;
     }
 
     /**
@@ -472,20 +453,23 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      *
      * @param position the position to check.
      * @param field    the field that we are working with.
-     * @return true if the farmer should hoe.
+     * @return true if the farmer should move on.
      */
-    private boolean hoeIfAble(final BlockPos position, final Field field)
+    private boolean hoeIfAble(final BlockPos position)
     {
-        if (shouldHoe(position, field) && !checkForHoe())
+        if (shouldHoe(position) && !checkForHoe())
         {
-            equipHoe();
-            worker.swingArm(worker.getActiveHand());
-            world.setBlockState(position, Blocks.FARMLAND.getDefaultState());
-            worker.damageItemInHand(1);
-            mineBlock(position.up());
-            return true;
+            if(mineBlock(position.up()))
+            {
+                equipHoe();
+                worker.swingArm(worker.getActiveHand());
+                world.setBlockState(position, Blocks.FARMLAND.getDefaultState());
+                worker.damageItemInHand(1);
+                return true;
+            }
+            return false;
         }
-        return false;
+        return true;
     }
 
     /**
@@ -537,10 +521,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      * @param field    the field close to this position.
      * @return true if should be hoed.
      */
-    private boolean shouldHoe(@NotNull final BlockPos position, @NotNull final Field field)
+    private boolean shouldHoe(@NotNull final BlockPos position)
     {
-        return !field.isNoPartOfField(world, position)
-                && !BlockUtils.isBlockSeed(world, position.up())
+        return !BlockUtils.isBlockSeed(world, position.up())
                 && !(world.getBlockState(position).getBlock() instanceof BlockHutField)
                 && (world.getBlockState(position).getBlock() == Blocks.DIRT || world.getBlockState(position).getBlock() == Blocks.GRASS);
     }

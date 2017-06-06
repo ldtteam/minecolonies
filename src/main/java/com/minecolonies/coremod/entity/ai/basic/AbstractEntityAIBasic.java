@@ -788,6 +788,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     protected boolean checkForHoe()
     {
+        //todo request hoe correctly
         getOwnBuilding().setNeedsHoe(checkForTool(Utils.HOE));
         return getOwnBuilding().needsHoe();
     }
