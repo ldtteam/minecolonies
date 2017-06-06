@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
@@ -65,15 +66,12 @@ public class BuildingFarmer extends AbstractBuildingWorker
      * Flag used to be notified about block updates.
      */
     private static final int                       BLOCK_UPDATE_FLAG = 3;
-    /**
-     * Sets the amount of saplings the lumberjack should keep.
-     */
-    private static final int                       SEEDS_TO_KEEP     = 64;
+
     /**
      * The list of the fields the farmer manages.
      */
     private final        ArrayList<Field>          farmerFields      = new ArrayList<>();
-    private final        Map<ItemStorage, Integer> keepX             = new HashMap<>();
+
     /**
      * The field the farmer is currently working on.
      */
@@ -83,6 +81,16 @@ public class BuildingFarmer extends AbstractBuildingWorker
      * Fields should be assigned manually to the farmer.
      */
     private boolean assignManually = false;
+
+    /**
+     * Sets the amount of saplings the lumberjack should keep.
+     */
+    private static final int SEEDS_TO_KEEP = 64;
+
+    /**
+     * List of items the farmer should keep.
+     */
+    private final Map<ItemStorage, Integer> keepX = new HashMap<>();
 
     /**
      * Public constructor which instantiates the building.
@@ -177,6 +185,28 @@ public class BuildingFarmer extends AbstractBuildingWorker
         return null;
     }
 
+    /**
+     * Override this method if you want to keep an amount of items in inventory.
+     * When the inventory is full, everything get's dumped into the building chest.
+     * But you can use this method to hold some stacks back.
+     *
+     * @return a list of objects which should be kept.
+     */
+    @Override
+    public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
+    {
+        final Map<ItemStorage, Integer> toKeep = new HashMap<>(keepX);
+        for(final Field field: farmerFields)
+        {
+            if(!ItemStackUtils.isItemStackEmpty(field.getSeed()))
+            {
+                final ItemStack seedStack = field.getSeed();
+                toKeep.put(new ItemStorage(seedStack.getItem(), seedStack.getItemDamage(), 0, false), SEEDS_TO_KEEP);
+            }
+        }
+        return toKeep;
+    }
+
     @NotNull
     @Override
     public String getSchematicName()
@@ -203,19 +233,6 @@ public class BuildingFarmer extends AbstractBuildingWorker
         {
             getColony().triggerAchievement(ModAchievements.achievementUpgradeFarmerMax);
         }
-    }
-
-    /**
-     * Override this method if you want to keep an amount of items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
-     *
-     * @return a list of objects which should be kept.
-     */
-    @Override
-    public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
-    {
-        return keepX;
     }
 
     @NotNull
