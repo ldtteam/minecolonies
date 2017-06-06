@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.colony.buildings;
 
-import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.api.util.Utils;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
@@ -34,6 +34,7 @@ import java.util.*;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER_NOONE;
+import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
  * Class which handles the farmer building.
@@ -193,10 +194,10 @@ public class BuildingFarmer extends AbstractBuildingWorker
     @Override
     public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
     {
-        final Map<ItemStorage, Integer> toKeep = new HashMap(keepX);
+        final Map<ItemStorage, Integer> toKeep = new HashMap<>(keepX);
         for(final Field field: farmerFields)
         {
-            if(!InventoryUtils.isItemStackEmpty(field.getSeed()))
+            if(!ItemStackUtils.isItemStackEmpty(field.getSeed()))
             {
                 final ItemStack seedStack = field.getSeed();
                 toKeep.put(new ItemStorage(seedStack.getItem(), seedStack.getItemDamage(), 0, false), SEEDS_TO_KEEP);
@@ -263,7 +264,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
     @Override
     public boolean neededForWorker(@Nullable final ItemStack stack)
     {
-        return stack != null && Utils.isHoe(stack);
+        return stack != null &&  ItemStackUtils.hasToolLevel(stack, ToolType.HOE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel());
     }
 
     //we have to update our field from the colony!

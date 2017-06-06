@@ -1,11 +1,11 @@
 package com.minecolonies.api.util;
 
+import com.minecolonies.api.util.constant.IToolType;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -25,28 +25,6 @@ import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABI
  */
 public class InventoryUtils
 {
-
-    public static final int FREE_TOOL_CHOICE_LEVEL   = 4;
-    public static final int EFFECT_TOOL_CHOICE_LEVEL = 2;
-
-    /**
-     * Variable representing the empty itemstack in 1.10.
-     * Used for easy updating to 1.11
-     */
-    public static final ItemStack EMPTY = ItemStack.EMPTY;
-
-    /**
-     * Predicate to check if an itemStack is empty.
-     */
-    @NotNull
-    private static final Predicate<ItemStack> EMPTY_PREDICATE = InventoryUtils::isItemStackEmpty;
-
-    /**
-     * Negation of the itemStack empty predicate (not empty).
-     */
-    @NotNull
-    private static final Predicate<ItemStack> NOT_EMPTY_PREDICATE = EMPTY_PREDICATE.negate();
-
     /**
      * Private constructor to hide the implicit one.
      */
@@ -90,7 +68,7 @@ public class InventoryUtils
         for (int slot = 0; slot < itemHandler.getSlots(); slot++)
         {
             final ItemStack stack = itemHandler.getStackInSlot(slot);
-            if (!isItemStackEmpty(stack) && itemStackSelectionPredicate.test(stack))
+            if (!ItemStackUtils.isItemStackEmpty(stack) && itemStackSelectionPredicate.test(stack))
             {
                 filtered.add(stack);
             }
@@ -109,7 +87,7 @@ public class InventoryUtils
      */
     private static boolean compareItems(@Nullable final ItemStack itemStack, final Item targetItem, final int itemDamage)
     {
-        return !isItemStackEmpty(itemStack) && itemStack.getItem() == targetItem && (itemStack.getItemDamage() == itemDamage || itemDamage == -1);
+        return !ItemStackUtils.isItemStackEmpty(itemStack) && itemStack.getItem() == targetItem && (itemStack.getItemDamage() == itemDamage || itemDamage == -1);
     }
 
     /**
@@ -121,19 +99,6 @@ public class InventoryUtils
     public static Item getItemFromBlock(final Block block)
     {
         return Item.getItemFromBlock(block);
-    }
-
-    /**
-     * Wrapper method to check if a stack is empty.
-     * Used for easy updating to 1.11.
-     *
-     * @param stack The stack to check.
-     * @return True when the stack is empty, false when not.
-     */
-    @NotNull
-    public static Boolean isItemStackEmpty(@Nullable final ItemStack stack)
-    {
-        return stack == null || stack == EMPTY || stack.getCount() <= 0;
     }
 
     /**
@@ -241,7 +206,7 @@ public class InventoryUtils
      */
     public static int getItemCountInItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        return filterItemHandler(itemHandler, itemStackSelectionPredicate).stream().mapToInt(InventoryUtils::getItemStackSize).sum();
+        return filterItemHandler(itemHandler, itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getItemStackSize).sum();
     }
 
     /**
@@ -297,12 +262,10 @@ public class InventoryUtils
     {
         //Test with two different ItemStacks to insert in simulation mode.
         return IntStream.range(0, itemHandler.getSlots())
-                .filter(slot -> isItemStackEmpty(itemHandler.getStackInSlot(slot)))
+                .filter(slot -> ItemStackUtils.isItemStackEmpty(itemHandler.getStackInSlot(slot)))
                 .findFirst()
                 .orElse(-1);
     }
-
-
 
     /**
      * Returns if the {@link IItemHandler} is full.
@@ -315,86 +278,6 @@ public class InventoryUtils
         return getFirstOpenSlotFromItemHandler(itemHandler) == -1;
     }
 
-
-
-    /**
-     * Looks for a {@link ItemPickaxe} to mine a block of {@code requiredLevel},
-     * in the given {@link IItemHandler}.
-     *
-     * @param itemHandler   {@link IItemHandler} to check in.
-     * @param requiredLevel The minimal required {@link ItemPickaxe} level
-     * @return True if the {@link IItemHandler} contains a {@link ItemPickaxe}
-     * with the given minimal required level.
-     */
-    public static boolean isPickaxeInItemHandler(final IItemHandler itemHandler, final int requiredLevel)
-    {
-        return hasItemInItemHandler(itemHandler, (ItemStack stack) -> Utils.checkIfPickaxeQualifies(requiredLevel, Utils.getMiningLevel(stack, Utils.PICKAXE)));
-    }
-
-    /**
-     * Looks for a {@link ItemPickaxe} to mine a block of {@code requiredLevel},
-     * in the given {@link IItemHandler}. The {@link ItemPickaxe} tool level
-     * cannot exceed the given {@code maximalLevel}.
-     *
-     * @param itemHandler   {@link IItemHandler} to check in.
-     * @param requiredLevel The minimal required {@link ItemPickaxe} level
-     * @param maximalLevel  The maximal tool level of the {@link ItemPickaxe}
-     * @return True if the {@link IItemHandler} contains a {@link ItemPickaxe}
-     * with the given minimal required level.
-     */
-    public static boolean isPickaxeInItemHandler(final IItemHandler itemHandler, final int requiredLevel, final int maximalLevel)
-    {
-        return hasItemInItemHandler(itemHandler, (ItemStack stack) -> Utils.checkIfPickaxeQualifies(requiredLevel, Utils.getMiningLevel(stack, Utils.PICKAXE))
-                                                                        && InventoryUtils.hasToolLevel(stack, Utils.PICKAXE, maximalLevel));
-    }
-
-    /**
-     * Verifies if there is one tool with an acceptable level
-     * in a worker's inventory.
-     *
-     * @param toolName     the type of tool needed
-     * @param stack        the stack to test.
-     * @param minimalLevel the worker's hut level
-     * @return true if tool is acceptable
-     */
-    public static boolean hasToolLevel(@Nullable final ItemStack stack, final String toolName, final int minimalLevel)
-    {
-        if (isItemStackEmpty(stack))
-        {
-            return false;
-        }
-
-        final int level = Utils.getMiningLevel(stack, toolName);
-        if (Utils.isTool(stack, toolName) && verifyToolLevel(stack, level, minimalLevel))
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Verifies if an item has an appropriated grade.
-     *
-     * @param itemStack    the type of tool needed
-     * @param toolLevel    the type of tool needed
-     * @param minimalLevel the worker's hut level
-     * @return true if tool is acceptable
-     */
-    public static boolean verifyToolLevel(@NotNull final ItemStack itemStack, final int toolLevel, final int minimalLevel)
-    {
-        if (isItemStackEmpty(itemStack) || minimalLevel > FREE_TOOL_CHOICE_LEVEL || minimalLevel >= toolLevel)
-        {
-            return true;
-        }
-        else if (itemStack.isItemEnchanted() && minimalLevel <= EFFECT_TOOL_CHOICE_LEVEL)
-        {
-            return false;
-        }
-
-        return false;
-    }
-
     /**
      * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#addItemStackToInventory(ItemStack)}.
      *
@@ -404,7 +287,7 @@ public class InventoryUtils
      */
     public static boolean addItemStackToItemHandler(@NotNull final IItemHandler itemHandler, @Nullable final ItemStack itemStack)
     {
-        if (!isItemStackEmpty(itemStack))
+        if (!ItemStackUtils.isItemStackEmpty(itemStack))
         {
             int slot;
 
@@ -426,17 +309,17 @@ public class InventoryUtils
             {
                 ItemStack resultStack = itemStack;
                 slot = itemHandler.getSlots() == 0 ? -1 : 0;
-                while (!isItemStackEmpty(resultStack) && slot != -1 && slot != itemHandler.getSlots())
+                while (!ItemStackUtils.isItemStackEmpty(resultStack) && slot != -1 && slot != itemHandler.getSlots())
                 {
                     resultStack = itemHandler.insertItem(slot, resultStack, false);
-                    if (!isItemStackEmpty(resultStack))
+                    if (!ItemStackUtils.isItemStackEmpty(resultStack))
                     {
                         slot++;
                     }
                 }
 
 
-                return isItemStackEmpty(resultStack);
+                return ItemStackUtils.isItemStackEmpty(resultStack);
             }
         }
         else
@@ -465,17 +348,17 @@ public class InventoryUtils
     {
         final ItemStack standardInsertionResult = addItemStackToItemHandlerWithResult(itemHandler, itemStack);
 
-        if (!isItemStackEmpty(standardInsertionResult))
+        if (!ItemStackUtils.isItemStackEmpty(standardInsertionResult))
         {
-            for (int i = 0; i < itemHandler.getSlots() && !isItemStackEmpty(standardInsertionResult); i++)
+            for (int i = 0; i < itemHandler.getSlots() && !ItemStackUtils.isItemStackEmpty(standardInsertionResult); i++)
             {
                 final ItemStack localStack = itemHandler.getStackInSlot(i);
-                if (isItemStackEmpty(localStack) || !itemStackToKeepPredicate.test(localStack))
+                if (ItemStackUtils.isItemStackEmpty(localStack) || !itemStackToKeepPredicate.test(localStack))
                 {
                     final ItemStack removedStack = itemHandler.extractItem(i, Integer.MAX_VALUE, false);
                     final ItemStack localInsertionResult = itemHandler.insertItem(i, standardInsertionResult, false);
 
-                    if (isItemStackEmpty(localInsertionResult))
+                    if (ItemStackUtils.isItemStackEmpty(localInsertionResult))
                     {
                         //Insertion successful. Returning the extracted stack.
                         return removedStack.copy();
@@ -699,7 +582,7 @@ public class InventoryUtils
      */
     public static int findFirstSlotInItemHandlerNotEmptyWith(@NotNull final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        @NotNull final Predicate<ItemStack> firstWorthySlotPredicate = NOT_EMPTY_PREDICATE.and(itemStackSelectionPredicate);
+        @NotNull final Predicate<ItemStack> firstWorthySlotPredicate = ItemStackUtils.NOT_EMPTY_PREDICATE.and(itemStackSelectionPredicate);
 
         for (int slot = 0; slot < itemHandler.getSlots(); slot++)
         {
@@ -753,7 +636,7 @@ public class InventoryUtils
     public static int getItemCountInProvider(@NotNull final ICapabilityProvider provider, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
         return getItemHandlersFromProvider(provider).stream()
-                 .mapToInt(handler -> filterItemHandler(handler, itemStackSelectionPredicate).stream().mapToInt(InventoryUtils::getItemStackSize).sum())
+                 .mapToInt(handler -> filterItemHandler(handler, itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getItemStackSize).sum())
                  .sum();
     }
 
@@ -833,45 +716,15 @@ public class InventoryUtils
      * with the given minimal Level.
      *
      * @param provider     The {@link ICapabilityProvider} to scan.
-     * @param toolTypeName The toolTypeName of the tool to find.
+     * @param toolType     The toolTypeName of the tool to find.
      * @param minimalLevel The minimal level to find.
+     * @param maximumLevel The maximum level to find.
      * @return True if a Tool with the given toolTypeName was found in the given
      * {@link ICapabilityProvider}, false when not.
      */
-    public static boolean isToolInProvider(@NotNull final ICapabilityProvider provider, @NotNull final String toolTypeName, final int minimalLevel)
+    public static boolean isToolInProvider(@NotNull final ICapabilityProvider provider, @NotNull final IToolType toolType, final int minimalLevel, final int maximumLevel)
     {
-        return hasItemInProvider(provider, (ItemStack stack) -> Utils.isTool(stack, toolTypeName) && InventoryUtils.hasToolLevel(stack, toolTypeName, minimalLevel));
-    }
-
-    /**
-     * Looks for a {@link ItemPickaxe} to mine a block of {@code requiredLevel},
-     * in the given {@link ICapabilityProvider}.
-     *
-     * @param provider      {@link ICapabilityProvider} to check in.
-     * @param requiredLevel The minimal required {@link ItemPickaxe} level
-     * @return True if the {@link ICapabilityProvider} contains a {@link
-     * ItemPickaxe} with the given minimal required level.
-     */
-    public static boolean isPickaxeInProvider(final ICapabilityProvider provider, final int requiredLevel)
-    {
-        return hasItemInProvider(provider, (ItemStack stack) -> Utils.checkIfPickaxeQualifies(requiredLevel, Utils.getMiningLevel(stack, Utils.PICKAXE)));
-    }
-
-    /**
-     * Looks for a {@link ItemPickaxe} to mine a block of {@code requiredLevel},
-     * in the given {@link ICapabilityProvider}. The {@link ItemPickaxe} tool
-     * level cannot exceed the given {@code maximalLevel}.
-     *
-     * @param provider      {@link ICapabilityProvider} to check in.
-     * @param requiredLevel The minimal required {@link ItemPickaxe} level
-     * @param maximalLevel  The maximal tool level of the {@link ItemPickaxe}
-     * @return True if the {@link ICapabilityProvider} contains a {@link
-     * ItemPickaxe} with the given minimal required level.
-     */
-    public static boolean isPickaxeInProvider(final ICapabilityProvider provider, final int requiredLevel, final int maximalLevel)
-    {
-        return hasItemInProvider(provider, (ItemStack stack) -> Utils.checkIfPickaxeQualifies(requiredLevel, Utils.getMiningLevel(stack, Utils.PICKAXE))
-                                                                  && InventoryUtils.hasToolLevel(stack, Utils.PICKAXE, maximalLevel));
+        return hasItemInProvider(provider, (ItemStack stack) -> ItemStackUtils.hasToolLevel(stack, toolType, minimalLevel, maximumLevel));
     }
 
     /**
@@ -897,9 +750,9 @@ public class InventoryUtils
     {
         ItemStack activeStack = itemStack;
 
-        if (isItemStackEmpty(activeStack))
+        if (ItemStackUtils.isItemStackEmpty(activeStack))
         {
-            return EMPTY;
+            return ItemStackUtils.EMPTY;
         }
 
         for (final IItemHandler handler : getItemHandlersFromProvider(provider))
@@ -919,7 +772,7 @@ public class InventoryUtils
      */
     public static ItemStack addItemStackToItemHandlerWithResult(@NotNull final IItemHandler itemHandler, @Nullable final ItemStack itemStack)
     {
-        if (!isItemStackEmpty(itemStack))
+        if (!ItemStackUtils.isItemStackEmpty(itemStack))
         {
             int slot;
 
@@ -930,7 +783,7 @@ public class InventoryUtils
                 if (slot >= 0)
                 {
                     itemHandler.insertItem(slot, itemStack, false);
-                    return EMPTY;
+                    return ItemStackUtils.EMPTY;
                 }
                 else
                 {
@@ -941,10 +794,10 @@ public class InventoryUtils
             {
                 ItemStack resultStack = itemStack;
                 slot = itemHandler.getSlots() == 0 ? -1 : 0;
-                while (!isItemStackEmpty(resultStack) && slot != -1 && slot != itemHandler.getSlots())
+                while (!ItemStackUtils.isItemStackEmpty(resultStack) && slot != -1 && slot != itemHandler.getSlots())
                 {
                     resultStack = itemHandler.insertItem(slot, resultStack, false);
-                    if (!isItemStackEmpty(resultStack))
+                    if (!ItemStackUtils.isItemStackEmpty(resultStack))
                     {
                         slot++;
                     }
@@ -978,11 +831,11 @@ public class InventoryUtils
     {
         final ItemStack standardInsertionResult = addItemStackToProviderWithResult(provider, itemStack);
 
-        if (!isItemStackEmpty(standardInsertionResult))
+        if (!ItemStackUtils.isItemStackEmpty(standardInsertionResult))
         {
             ItemStack resultStack = standardInsertionResult.copy();
             final Iterator<IItemHandler> iterator = getItemHandlersFromProvider(provider).iterator();
-            while (iterator.hasNext() && !isItemStackEmpty(resultStack))
+            while (iterator.hasNext() && !ItemStackUtils.isItemStackEmpty(resultStack))
             {
                 resultStack = forceItemStackToItemHandler(iterator.next(), resultStack, itemStackToKeepPredicate);
             }
@@ -990,7 +843,7 @@ public class InventoryUtils
             return resultStack;
         }
 
-        return EMPTY;
+        return ItemStackUtils.EMPTY;
     }
 
     /**
@@ -1036,9 +889,8 @@ public class InventoryUtils
      *
      * @param provider The provider to check for.
      * @return True when the provider has multiple distinct IItemHandler of
-     * different sides (sidedness {@link TileEntityFurnace#hasCapability(Capability,
-     * EnumFacing)}), false when not {@link TileEntityChest#hasCapability(Capability,
-     * EnumFacing)}
+     * different sides (sidedness {@link ICapabilityProvider#hasCapability(Capability,
+     * EnumFacing)}), false when not
      */
     @NotNull
     public static boolean isProviderSided(@NotNull final ICapabilityProvider provider)
@@ -1247,7 +1099,7 @@ public class InventoryUtils
             return 0;
         }
 
-        return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing), itemStackSelectionPredicate).stream().mapToInt(InventoryUtils::getItemStackSize).sum();
+        return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing), itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getItemStackSize).sum();
     }
 
     /**
@@ -1343,19 +1195,21 @@ public class InventoryUtils
      *
      * @param provider     The {@link ICapabilityProvider} to scan.
      * @param facing       The side to check for.
-     * @param toolTypeName The toolTypeName of the tool to find.
+     * @param toolType     The tool type to find.
      * @param minimalLevel The minimal level to find.
+     * @param maximumLevel The maximum level to find.
      * @return True if a Tool with the given toolTypeName was found in the given
      * {@link ICapabilityProvider}, false when not.
      */
-    public static boolean isToolInProviderForSide(@NotNull final ICapabilityProvider provider, @Nullable final EnumFacing facing, @NotNull final String toolTypeName, final int minimalLevel)
+    public static boolean isToolInProviderForSide(@NotNull final ICapabilityProvider provider, @Nullable final EnumFacing facing, @NotNull final IToolType toolType,
+                                                  final int minimalLevel, final int maximumLevel)
     {
         if (!provider.hasCapability(ITEM_HANDLER_CAPABILITY, facing))
         {
             return false;
         }
 
-        return isToolInItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing), toolTypeName, minimalLevel);
+        return isToolInItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing), toolType, minimalLevel, maximumLevel);
     }
 
     /**
@@ -1363,14 +1217,16 @@ public class InventoryUtils
      * the given minimal Level.
      *
      * @param itemHandler  The {@link IItemHandler} to scan.
-     * @param toolTypeName The toolTypeName of the tool to find.
+     * @param toolType     The toolType of the tool to find.
      * @param minimalLevel The minimal level to find.
+     * @param maximumLevel The maximum level to find.
      * @return True if a Tool with the given toolTypeName was found in the given
      * {@link IItemHandler}, false when not.
      */
-    public static boolean isToolInItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final String toolTypeName, final int minimalLevel)
+    public static boolean isToolInItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final IToolType toolType, final int minimalLevel, final int maximumLevel)
     {
-        return hasItemInItemHandler(itemHandler, (ItemStack stack) -> Utils.isTool(stack, toolTypeName) && InventoryUtils.hasToolLevel(stack, toolTypeName, minimalLevel));
+        return hasItemInItemHandler(itemHandler, (ItemStack stack) ->
+                                    ItemStackUtils.hasToolLevel(stack, toolType, minimalLevel, maximumLevel));
     }
 
     /**
@@ -1390,33 +1246,35 @@ public class InventoryUtils
      * Returns a slot number if an {@link IItemHandler} contains given tool
      * type.
      *
-     * @param itemHandler the {@link IItemHandler} to get the slot from.
-     * @param tool        the tool type to look for.
+     * @param itemHandler  the {@link IItemHandler} to get the slot from.
+     * @param toolType     the tool type to look for.
+     * @param minimalLevel The minimal level to find.
+     * @param maximumLevel The maximum level to find.
      * @return slot number if found, -1 if not found.
      */
-    public static int getFirstSlotOfItemHandlerContainingTool(@NotNull final IItemHandler itemHandler, @NotNull final String tool)
+    public static int getFirstSlotOfItemHandlerContainingTool(@NotNull final IItemHandler itemHandler, @NotNull final IToolType toolType, final int minimalLevel,
+                                                                final int maximumLevel)
     {
         return findFirstSlotInItemHandlerWith(itemHandler,
-          (ItemStack stack) -> (!isItemStackEmpty(stack) && (stack.getItem().getToolClasses(stack).contains(tool) || ("hoe".equals(tool) && stack.getUnlocalizedName()
-                                                                                                                                              .contains("hoe"))
-                                                               || ("rod".equals(tool) && stack.getUnlocalizedName().contains("fishingRod")))));
+          (ItemStack stack) -> ItemStackUtils.hasToolLevel(stack, toolType, minimalLevel, maximumLevel));
     }
 
     /**
      * Verifies if there is one tool with an acceptable level
      * in a worker's inventory.
      *
-     * @param toolTypeName  the type of tool needed
      * @param itemHandler   the worker's inventory
-     * @param requiredLevel the worker's hut level
+     * @param toolType      the type of tool needed
+     * @param requiredLevel the minimum tool level
+     * @param maximumLevel  the worker's hut level
      * @return true if tool is acceptable
      */
-    public static boolean hasItemHandlerToolWithLevel(@NotNull final IItemHandler itemHandler, final String toolTypeName, final int requiredLevel)
+    public static boolean hasItemHandlerToolWithLevel(@NotNull final IItemHandler itemHandler, final IToolType toolType, final int requiredLevel, final int maximumLevel)
     {
         return findFirstSlotInItemHandlerWith(itemHandler,
-          (ItemStack stack) -> (!isItemStackEmpty(stack) && (Utils.isTool(stack, toolTypeName) && verifyToolLevel(stack,
-            Utils.getMiningLevel(stack, toolTypeName),
-            requiredLevel)))) > -1;
+          (ItemStack stack) -> (!ItemStackUtils.isItemStackEmpty(stack) && (ItemStackUtils.isTool(stack, toolType) && ItemStackUtils.verifyToolLevel(stack,
+            ItemStackUtils.getMiningLevel(stack, toolType),
+            requiredLevel, maximumLevel)))) > -1;
     }
 
     /**
@@ -1458,7 +1316,7 @@ public class InventoryUtils
             return false;
         }
         final ItemStack returnStack = sourceHandler.extractItem(desiredItemSlot, amount, false);
-        if(InventoryUtils.isItemStackEmpty(returnStack))
+        if(ItemStackUtils.isItemStackEmpty(returnStack))
         {
             return false;
         }
@@ -1482,61 +1340,21 @@ public class InventoryUtils
         for (int i = 0; i < targetHandler.getSlots(); i++)
         {
             sourceStack = targetHandler.insertItem(i, sourceStack, false);
-            if (isItemStackEmpty(sourceStack))
+            if (ItemStackUtils.isItemStackEmpty(sourceStack))
             {
                 sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, false);
                 return true;
             }
         }
 
-        if (!ItemStack.areItemStacksEqual(sourceStack, originalStack) && compareItemStacksIgnoreStackSize(sourceStack, originalStack))
+        if (!ItemStack.areItemStacksEqual(sourceStack, originalStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(sourceStack, originalStack))
         {
-            final int usedAmount = getItemStackSize(sourceStack) - getItemStackSize(originalStack);
+            final int usedAmount = ItemStackUtils.getItemStackSize(sourceStack) - ItemStackUtils.getItemStackSize(originalStack);
             sourceHandler.extractItem(sourceIndex, usedAmount, false);
             return true;
         }
 
         return false;
-    }
-
-    /**
-     * Method to compare to stacks, ignoring their stacksize.
-     *
-     * @param itemStack1 The left stack to compare.
-     * @param itemStack2 The right stack to compare.
-     * @return True when they are equal except the stacksize, false when not.
-     */
-    @NotNull
-    public static Boolean compareItemStacksIgnoreStackSize(final ItemStack itemStack1, final ItemStack itemStack2)
-    {
-        if (!isItemStackEmpty(itemStack1) &&
-            !isItemStackEmpty(itemStack2) &&
-            itemStack1.getItem() == itemStack2.getItem() &&
-            itemStack1.getItemDamage() == itemStack2.getItemDamage())
-        {
-            // Then sort on NBT
-            if (itemStack1.hasTagCompound() && itemStack2.hasTagCompound())
-            {
-                // Then sort on stack size
-                return ItemStack.areItemStackTagsEqual(itemStack1, itemStack2);
-            }
-            else
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @NotNull
-    public static int getItemStackSize(final ItemStack stack)
-    {
-        if (isItemStackEmpty(stack))
-        {
-            return 0;
-        }
-
-        return stack.getCount();
     }
 
     /**
@@ -1588,7 +1406,7 @@ public class InventoryUtils
         final ItemStack sourceStack = sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, true);
 
         final ItemStack resultSourceSimulationInsertion = targetHandler.insertItem(targetIndex, sourceStack, true);
-        if (isItemStackEmpty(resultSourceSimulationInsertion) || isItemStackEmpty(targetStack))
+        if (ItemStackUtils.isItemStackEmpty(resultSourceSimulationInsertion) || ItemStackUtils.isItemStackEmpty(targetStack))
         {
             targetHandler.insertItem(targetIndex, sourceStack, false);
             sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, false);
@@ -1602,47 +1420,6 @@ public class InventoryUtils
 
             return false;
         }
-    }
-
-    /**
-     * Assigns a string containing the grade of the toolGrade.
-     *
-     * @param toolGrade the number of the grade of a tool
-     * @return a string corresponding to the tool
-     */
-    public static String swapToolGrade(final int toolGrade)
-    {
-        switch (toolGrade)
-        {
-            case 0:
-                return "Wood or Gold";
-            case 1:
-                return "Stone";
-            case 2:
-                return "Iron";
-            case 3:
-                return "Diamond";
-            default:
-                return "Better than Diamond";
-        }
-    }
-
-    /**
-     * Method to check if two ItemStacks can be merged together.
-     *
-     * @param existingStack The existing stack.
-     * @param mergingStack  The merging stack
-     * @return True when they can be merged, false when not.
-     */
-    @NotNull
-    public static Boolean areItemStacksMergable(final ItemStack existingStack, final ItemStack mergingStack)
-    {
-        if (!compareItemStacksIgnoreStackSize(existingStack, mergingStack))
-        {
-            return false;
-        }
-
-        return existingStack.getMaxStackSize() >= (getItemStackSize(existingStack) + getItemStackSize(mergingStack));
     }
 
     /**

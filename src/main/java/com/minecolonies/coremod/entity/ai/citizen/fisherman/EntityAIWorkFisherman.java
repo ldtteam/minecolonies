@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.fisherman;
 
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.coremod.colony.buildings.BuildingFisherman;
 import com.minecolonies.coremod.colony.jobs.JobFisherman;
@@ -27,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Random;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
  * Fisherman AI class.
@@ -86,11 +88,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      * The maximum amount of adjusts of his rotation until the fisherman discards a fishing location.
      */
     private static final int MAX_ROTATIONS = 6;
-
-    /**
-     * The tool used by the fisherman.
-     */
-    private static final String TOOL_TYPE_ROD = "rod";
 
     /**
      * The range in which the fisherman searches water.
@@ -194,7 +191,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private AIState prepareForFishing()
     {
-        if (checkOrRequestItems(false, new ItemStack(Items.FISHING_ROD)))
+        if (checkForToolOrWeapon(ToolType.FISHINGROD))
         {
             playNeedRodSound();
             return getState();
@@ -583,7 +580,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private int getRodSlot()
     {
-        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), TOOL_TYPE_ROD);
+        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), ToolType.FISHINGROD, 
+                                                                        TOOL_LEVEL_WOOD_OR_GOLD, getOwnBuilding().getMaxToolLevel());
     }
 
     /**

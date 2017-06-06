@@ -1509,7 +1509,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     public void tryToEat()
     {
         final int slot = InventoryUtils.findFirstSlotInProviderWith(this,
-                itemStack -> !InventoryUtils.isItemStackEmpty(itemStack) && itemStack.getItem() instanceof ItemFood);
+                itemStack -> !ItemStackUtils.isItemStackEmpty(itemStack) && itemStack.getItem() instanceof ItemFood);
 
         if(slot == -1)
         {
@@ -1517,7 +1517,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
 
         final ItemStack stack = inventory.getStackInSlot(slot);
-        if(!InventoryUtils.isItemStackEmpty(stack) && stack.getItem() instanceof ItemFood && citizenData != null)
+        if(!ItemStackUtils.isItemStackEmpty(stack) && stack.getItem() instanceof ItemFood && citizenData != null)
         {
             final int heal = ((ItemFood) stack.getItem()).getHealAmount(stack);
             citizenData.increaseSaturation(heal);
@@ -1683,8 +1683,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
             final ItemStack itemStack = entityItem.getEntityItem();
 
             final ItemStack resultStack = InventoryUtils.addItemStackToItemHandlerWithResult(new InvWrapper(getInventoryCitizen()), itemStack.copy());
-            final int resultingStackSize = InventoryUtils.isItemStackEmpty(resultStack) ? 0 : resultStack.getCount();
-            if (InventoryUtils.isItemStackEmpty(resultStack) || InventoryUtils.compareItemStacksIgnoreStackSize(itemStack, resultStack))
+            final int resultingStackSize = ItemStackUtils.isItemStackEmpty(resultStack) ? 0 : resultStack.getCount();
+            if (ItemStackUtils.isItemStackEmpty(resultStack) || ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, resultStack))
             {
                 this.world.playSound((EntityPlayer) null,
                         this.getPosition(),
@@ -1694,7 +1694,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
                         (float) ((this.rand.nextGaussian() * 0.7D + 1.0D) * 2.0D));
                 this.onItemPickup(entityItem, itemStack.getCount() - resultingStackSize);
 
-                if (InventoryUtils.isItemStackEmpty(resultStack))
+                if (ItemStackUtils.isItemStackEmpty(resultStack))
                 {
                     entityItem.setDead();
                 }

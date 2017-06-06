@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.colony.buildings;
 
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.Utils;
+import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
@@ -26,6 +26,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE;
+
 
 /**
  * The builders building.
@@ -126,7 +130,10 @@ public class BuildingBuilder extends AbstractBuildingWorker
     @Override
     public boolean neededForWorker(@Nullable final ItemStack stack)
     {
-        return Utils.isPickaxe(stack) || Utils.isShovel(stack) || Utils.isAxe(stack) || neededResources.containsKey(stack.getUnlocalizedName());
+        return ItemStackUtils.hasToolLevel(stack, ToolType.PICKAXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel())
+            || ItemStackUtils.hasToolLevel(stack, ToolType.SHOVEL, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel())
+            || ItemStackUtils.hasToolLevel(stack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel())
+            || neededResources.containsKey(stack.getUnlocalizedName());
     }
 
     @Override
@@ -318,7 +325,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
     {
         @NotNull final ItemStack resultStack = super.transferStack(stack, world);
 
-        if (InventoryUtils.isItemStackEmpty(resultStack))
+        if (ItemStackUtils.isItemStackEmpty(resultStack))
         {
             this.markDirty();
         }
@@ -330,7 +337,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
     public ItemStack forceTransferStack(final ItemStack stack, final World world)
     {
         final ItemStack itemStack = super.forceTransferStack(stack, world);
-        if (InventoryUtils.isItemStackEmpty(itemStack))
+        if (ItemStackUtils.isItemStackEmpty(itemStack))
         {
             this.markDirty();
         }

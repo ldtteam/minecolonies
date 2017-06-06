@@ -1,13 +1,7 @@
 package com.minecolonies.api.util;
 
-import com.minecolonies.api.compatibility.Compatibility;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemHoe;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
-import net.minecraft.item.ItemTool;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -15,25 +9,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
-
 /**
  * General purpose utilities class.
  * todo: split up into logically distinct parts
  */
 public final class Utils
 {
-    public static final String PICKAXE = "pickaxe";
-    public static final String SHOVEL  = "shovel";
-    public static final String AXE     = "axe";
-    public static final String HOE     = "hoe";
-    public static final String WEAPON  = "weapon";
-
-    /**
-     * The compound id for fortune enchantment.
-     */
-    private static final int FORTUNE_ENCHANT_ID = 35;
-
     /**
      * Private constructor to hide the implicit public one.
      */
@@ -130,28 +111,6 @@ public final class Utils
             }
         }
         return false;
-    }
-
-    /**
-     * Check if a stack is an axe.
-     *
-     * @param stack the stack to check.
-     * @return true if an axe.
-     */
-    public static boolean isStackAxe(@Nullable final ItemStack stack)
-    {
-        return stack != null && stack.getItem().getToolClasses(stack).contains(AXE);
-    }
-
-    /**
-     * Checks if an item serves as a weapon.
-     *
-     * @param stack the stack to analyze.
-     * @return true if it is a tool or sword.
-     */
-    public static boolean doesItemServeAsWeapon(@NotNull final ItemStack stack)
-    {
-        return stack.getItem() instanceof ItemSword || stack.getItem() instanceof ItemTool;
     }
 
     /**
@@ -288,155 +247,4 @@ public final class Utils
         return data ^ flag;
     }
 
-    /**
-     * Checks if a pickaxe can be used for that mining level.
-     *
-     * @param requiredLevel the level needs to have.
-     * @param toolLevel     the level it has.
-     * @return whether the pickaxe qualifies.
-     */
-    public static boolean checkIfPickaxeQualifies(final int requiredLevel, final int toolLevel)
-    {
-        return checkIfPickaxeQualifies(requiredLevel, toolLevel, false);
-    }
-
-    /**
-     * Checks if a pickaxe can be used for that mining level.
-     * Be aware, it will return false for mining stone.
-     * with an expensive pickaxe. So set {@code beEfficient} to false.
-     * for that if you need it the other way around.
-     *
-     * @param requiredLevel        the level needs to have.
-     * @param toolLevel            the level it has.
-     * @param requireEfficientTool if he should stop using diamond picks on
-     *                             stone.
-     * @return whether the pickaxe qualifies.
-     */
-    public static boolean checkIfPickaxeQualifies(final int requiredLevel, final int toolLevel, final boolean requireEfficientTool)
-    {
-        //Minecraft handles this as "everything is allowed"
-        if (requiredLevel < 0)
-        {
-            return true;
-        }
-        if (requireEfficientTool && requiredLevel == 0)
-        {
-            //Code to not overuse on high level pickaxes
-            return toolLevel >= 0 && toolLevel <= 1;
-        }
-        return toolLevel >= requiredLevel;
-    }
-
-    /**
-     * Checks if this ItemStack can be used as a Shovel.
-     *
-     * @param itemStack Item to check.
-     * @return True if item is shovel, otherwise false.
-     */
-    public static boolean isShovel(@Nullable final ItemStack itemStack)
-    {
-        return isTool(itemStack, SHOVEL);
-    }
-
-    /**
-     * Checks if this ItemStack can be used as a Hoe.
-     *
-     * @param itemStack Item to check.
-     * @return True if item is hoe, otherwise false.
-     */
-    public static boolean isHoe(@Nullable final ItemStack itemStack)
-    {
-        return isTool(itemStack, HOE);
-    }
-
-    /**
-     * Checks if this ItemStack can be used as a Tool of type.
-     *
-     * @param itemStack Item to check.
-     * @param toolType  Type of the tool.
-     * @return true if item can be used, otherwise false.
-     */
-    public static boolean isTool(@Nullable final ItemStack itemStack, final String toolType)
-    {
-        return getMiningLevel(itemStack, toolType) >= 0 || (itemStack != null && itemStack.getItem() instanceof ItemHoe && "hoe".equals(toolType));
-    }
-
-    /**
-     * Calculate the mining level an item has as a tool of certain type.
-     *
-     * @param stack the stack to test.
-     * @param tool  the tool category.
-     * @return integer value for mining level &gt;= 0 is okay.
-     */
-    @SuppressWarnings(DEPRECATION)
-    public static int getMiningLevel(@Nullable final ItemStack stack, @Nullable final String tool)
-    {
-        if (tool == null)
-        {
-            //empty hand is best on blocks who don't care (0 better 1)
-            return stack == null ? 0 : 1;
-        }
-        if (stack == null || stack == ItemStack.EMPTY)
-        {
-            return -1;
-        }
-        if (!Compatibility.getMiningLevelCompatibility(stack, tool))
-        {
-            return -1;
-        }
-        //todo: use 'better' version of this thing
-        return stack.getItem().getHarvestLevel(stack, tool, null, null);
-    }
-
-    /**
-     * Checks if this ItemStack can be used as an Axe.
-     *
-     * @param itemStack Item to check.
-     * @return True if item is axe, otherwise false.
-     */
-    public static boolean isAxe(@Nullable final ItemStack itemStack)
-    {
-        return isTool(itemStack, AXE);
-    }
-
-    /**
-     * Checks if this ItemStack can be used as a Pick axe.
-     *
-     * @param itemStack Item to check.
-     * @return True if item is a pick axe, otherwise false.
-     */
-    public static boolean isPickaxe(@Nullable final ItemStack itemStack)
-    {
-        return isTool(itemStack, PICKAXE);
-    }
-
-    /**
-     * Calculates the fortune level this tool has.
-     *
-     * @param tool the tool to check.
-     * @return fortune level.
-     */
-    public static int getFortuneOf(@Nullable final ItemStack tool)
-    {
-        if (tool == null)
-        {
-            return 0;
-        }
-        //calculate fortune enchantment
-        int fortune = 0;
-        if (tool.isItemEnchanted())
-        {
-            final NBTTagList t = tool.getEnchantmentTagList();
-
-            for (int i = 0; i < t.tagCount(); i++)
-            {
-                final short id = t.getCompoundTagAt(i).getShort("id");
-                if (id == FORTUNE_ENCHANT_ID)
-                {
-                    fortune = t.getCompoundTagAt(i).getShort("lvl");
-                }
-            }
-        }
-        return fortune;
-    }
 }

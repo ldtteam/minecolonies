@@ -3,6 +3,7 @@ package com.minecolonies.coremod.placementhandlers;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.blocks.BlockSolidSubstitution;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
@@ -75,8 +76,8 @@ public final class PlacementHandlers
                 final EntityCitizen citizen = placer.getWorker();
                 final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(new InvWrapper(citizen.getInventoryCitizen()), s ->
                         s.getItem() == Items.FLINT_AND_STEEL);
-                final ItemStack item = slot == -1 ? InventoryUtils.EMPTY : citizen.getInventoryCitizen().getStackInSlot(slot);
-                if (InventoryUtils.isItemStackEmpty(item) || !(item.getItem() instanceof ItemFlintAndSteel))
+                final ItemStack item = slot == -1 ? ItemStackUtils.EMPTY : citizen.getInventoryCitizen().getStackInSlot(slot);
+                if (ItemStackUtils.isItemStackEmpty(item) || !(item.getItem() instanceof ItemFlintAndSteel))
                 {
                     return ActionProcessingResult.DENY;
                 }
@@ -268,7 +269,7 @@ public final class PlacementHandlers
         {
             if (blockState.getBlock() instanceof BlockAir)
             {
-                placer.getWorker().setItemStackToSlot(EntityEquipmentSlot.MAINHAND, InventoryUtils.EMPTY);
+                placer.getWorker().setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
 
                 placer.handleBuildingOverBlock(pos);
                 world.setBlockToAir(pos);

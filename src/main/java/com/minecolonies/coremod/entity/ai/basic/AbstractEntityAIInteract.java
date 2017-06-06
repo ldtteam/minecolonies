@@ -155,7 +155,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         final ItemStack tool = worker.getHeldItemMainhand();
 
         //calculate fortune enchantment
-        final int fortune = Utils.getFortuneOf(tool);
+        final int fortune = ItemStackUtils.getFortuneOf(tool);
 
         //get all item drops
         final List<ItemStack> localItems = BlockPosUtil.getBlockDrops(world, blockToMine, fortune);
