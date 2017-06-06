@@ -21,7 +21,7 @@ public class BlockSolidSubstitution extends Block
     /**
      * The hardness this block has.
      */
-    private static final float BLOCK_HARDNESS = 5F;
+    private static final float BLOCK_HARDNESS = 0.0F;
 
     /**
      * This blocks name.
