@@ -1,9 +1,8 @@
 package com.minecolonies.coremod.entity.ai.mobs;
 
-import net.minecraft.entity.EntityLiving;
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ColonyManager;
 import net.minecraft.entity.IEntityLivingData;
-import net.minecraft.entity.monster.EntityCreeper;
-import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntitySpectralArrow;
 import net.minecraft.entity.projectile.EntityTippedArrow;
@@ -11,14 +10,10 @@ import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.datafix.DataFixer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
-import net.minecraft.world.storage.loot.LootTableList;
 
 import javax.annotation.Nullable;
 
@@ -26,7 +21,6 @@ import javax.annotation.Nullable;
  * Created by Asher on 5/6/17.
  */
 public class EntityArcherBarbarian extends AbstractArcherBarbarian {
-
 
     public EntityArcherBarbarian(World worldIn) {
         super(worldIn);
@@ -68,6 +62,46 @@ public class EntityArcherBarbarian extends AbstractArcherBarbarian {
             }
 
             return entityarrow;
+        }
+    }
+
+
+    @Override
+    public boolean getCanSpawnHere() {
+        final Colony colony = ColonyManager.getClosestColony(world, this.getPosition());
+        BlockPos location = colony.getCenter();
+        final double distance = this.getDistance(location.getX(), location.getY(), location.getZ());
+        final boolean innerBounds = (!(distance < 120) && !(distance > 160));
+        if (innerBounds && !world.isDaytime()) //Not Inside Colony //Within range of Colony (directionX <= 160 && directionZ <= 160 ,, !(directionX < 120 && directionZ < 120))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    @Override
+    protected boolean isValidLightLevel() {
+        return true;
+        //return super.isValidLightLevel();
+    }
+
+    @Override
+    public int getMaxSpawnedInChunk() {
+        return 5;
+    }
+
+    @Override
+    protected boolean canDespawn() {
+        if (world.isDaytime())
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 }
