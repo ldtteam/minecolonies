@@ -47,7 +47,7 @@ public final class ItemStackUtils
 
     /**
      * The compound tag for fortune enchantment level.
-     */
+    */
     private static final String NBT_TAG_ENCHANT_LEVEL = "lvl";
 
     /**
@@ -162,13 +162,12 @@ public final class ItemStackUtils
             return -1;
         }
         //todo: use 'better' version of this thing
-        int level = -1;
         if (ToolType.HOE.equals(toolType))
         {
              if (stack.getItem() instanceof ItemHoe)
              {
                  final ItemHoe itemHoe = (ItemHoe)stack.getItem();
-                 level = getToolLevel(itemHoe.getMaterialName());
+                 return getToolLevel(itemHoe.getMaterialName());
              }
         }
         else if (ToolType.SWORD.equals(toolType))
@@ -176,19 +175,19 @@ public final class ItemStackUtils
             if (stack.getItem() instanceof ItemSword)
             {
                 final ItemSword itemSword = (ItemSword)stack.getItem();
-                level = getToolLevel(itemSword.getToolMaterialName());
+                return getToolLevel(itemSword.getToolMaterialName());
             }
         }
         else if (!toolType.hasVariableMaterials())
         {
             //We need a hut level 1 minimum
-            level = 1;
+            return 1;
         }
         else
         {
-            level = stack.getItem().getHarvestLevel(stack, toolType.getName(), null, null);
+            return stack.getItem().getHarvestLevel(stack, toolType.getName(), null, null);
         }
-        return level;
+        return -1;
     }
 
 
