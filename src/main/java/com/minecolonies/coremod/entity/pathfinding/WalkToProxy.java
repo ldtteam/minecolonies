@@ -10,7 +10,6 @@ import com.minecolonies.coremod.entity.ai.citizen.miner.Node;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import com.minecolonies.coremod.util.EntityUtils;
 import com.minecolonies.api.util.Vec2i;
-import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 

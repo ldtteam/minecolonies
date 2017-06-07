@@ -61,13 +61,6 @@ public class Node
     private NodeStatus status;
 
     /**
-     * Central position of parent node.
-     */
-    @Nullable
-    private final Point2D parent;
-
-
-    /**
      * Initializes the node.
      * Requires a location in the node as parameters
      *
@@ -101,8 +94,8 @@ public class Node
         int z;
         if (hasDoubles)
         {
-            x = MathHelper.floor(compound.getDouble(TAG_X));
-            z = MathHelper.floor(compound.getDouble(TAG_Z));
+            x = MathHelper.floor_double(compound.getDouble(TAG_X));
+            z = MathHelper.floor_double(compound.getDouble(TAG_Z));
         }
         else
         {
@@ -120,8 +113,8 @@ public class Node
             if (hasDoubles)
             {
                 parent = new Vec2i(
-                        MathHelper.floor(compound.getDouble(TAG_PARENTX)),
-                        MathHelper.floor(compound.getDouble(TAG_PARENTZ)));
+                        MathHelper.floor_double(compound.getDouble(TAG_PARENTX)),
+                        MathHelper.floor_double(compound.getDouble(TAG_PARENTZ)));
             }
             else
             {
@@ -156,26 +149,6 @@ public class Node
             compound.setInteger(TAG_PARENTX, parent.getX());
             compound.setInteger(TAG_PARENTZ, parent.getZ());
         }
-    }
-
-    /**
-     * Returns the x-coordinate in the node.
-     *
-     * @return x-coordinate
-     */
-    public double getX()
-    {
-        return x;
-    }
-
-    /**
-     * Returns the z-coordinate in the node.
-     *
-     * @return z-coordinate
-     */
-    public double getZ()
-    {
-        return z;
     }
 
     /**

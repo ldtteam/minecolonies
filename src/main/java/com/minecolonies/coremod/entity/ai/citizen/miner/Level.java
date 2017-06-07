@@ -31,33 +31,25 @@ public class Level
     /**
      * Possible rotations.
      */
-    private static final int ROTATE_ONCE        = 1;
-    private static final int ROTATE_TWICE       = 2;
-    private static final int ROTATE_THREE_TIMES = 3;
-    private static final int MAX_ROTATIONS      = 4;
-
-
-    /**
-     * The depth of the level stored as the y coordinate.
-     */
-    private int depth;
-
+    private static final int                    ROTATE_ONCE        = 1;
+    private static final int                    ROTATE_TWICE       = 2;
+    private static final int                    ROTATE_THREE_TIMES = 3;
+    private static final int                    MAX_ROTATIONS      = 4;
     /**
      * Random object needed for some tasks.
      */
-    private static final Random rand = new Random();
-
+    private static final Random                 rand               = new Random();
     /**
      * Number to choose random types. It's random.nextInt(RANDOM_TYPES),
      */
     private static final int                  RANDOM_TYPES    = 4;
     /**
-     * The hashMap of nodes, check for nodes with the tuple of the parent x and z.
+     * Comparator to compare two nodes, for the priority queue.
      */
     @NotNull
     private static final Comparator<Node>     NODE_COMPARATOR = (Node n1, Node n2) -> rand.nextInt(100) > 50 ? 1 : -1;
     /**
-     * Comparator to compare two nodes, for the priority queue.
+     * The hashMap of nodes, check for nodes with the tuple of the parent x and z.
      */
     @NotNull
     private final        Map<Vec2i, Node> nodes               = new HashMap<>();
@@ -114,7 +106,7 @@ public class Level
 
         for (final Vec2i pos : nodeCenterList)
         {
-            if(cobbleCenter.equals(pos) || ladderCenter.equals(pos))
+            if (cobbleCenter.equals(pos) || ladderCenter.equals(pos))
             {
                 continue;
             }
@@ -148,8 +140,8 @@ public class Level
         int ladderZ;
         if (hasDoubles)
         {
-            ladderX = MathHelper.floor(compound.getDouble(TAG_LADDERX));
-            ladderZ = MathHelper.floor(compound.getDouble(TAG_LADDERZ));
+            ladderX = MathHelper.floor_double(compound.getDouble(TAG_LADDERX));
+            ladderZ = MathHelper.floor_double(compound.getDouble(TAG_LADDERZ));
         }
         else
         {
@@ -170,6 +162,7 @@ public class Level
 
     /**
      * Getter for a random Node in the level.
+     *
      * @return any random node.
      */
     public Node getRandomNode()
@@ -180,14 +173,15 @@ public class Level
     /**
      * Closes the first Node in the list (Has been returned previously probably).
      * Then creates the new nodes connected to it.
+     *
      * @param rotation the rotation of the node.
      */
-    public void closeNextNode(int rotation)
+    public void closeNextNode(final int rotation)
     {
         final Node tempNode = openNodes.poll();
         final List<Vec2i> nodeCenterList = new ArrayList<>(3);
 
-        switch(tempNode.getStyle())
+        switch (tempNode.getStyle())
         {
             case TUNNEL:
                 nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, 0));
@@ -206,7 +200,7 @@ public class Level
 
         for (final Vec2i pos : nodeCenterList)
         {
-            if(nodes.containsKey(pos))
+            if (nodes.containsKey(pos))
             {
                 continue;
             }
@@ -235,15 +229,16 @@ public class Level
 
     /**
      * GEts the next node position from the currentNode the rotation of it and the additional rotation.
-     * @param node the node.
-     * @param rotation the rotation.
+     *
+     * @param node               the node.
+     * @param rotation           the rotation.
      * @param additionalRotation the additional rotation.
      * @return center of the new node.
      */
     private static Vec2i getNextNodePositionFromNodeWithRotation(final Node node, final int rotation, final int additionalRotation)
     {
         final int realRotation = Math.floorMod(rotation + additionalRotation, MAX_ROTATIONS);
-        switch(realRotation)
+        switch (realRotation)
         {
             case ROTATE_ONCE:
                 return node.getSouthNodeCenter();
@@ -254,41 +249,6 @@ public class Level
             default:
                 return node.getEastNodeCenter();
         }
-    }
-
-    /**
-     * Create a level from nbt.
-     *
-     * @param compound compound to use.
-     * @return a new level.
-     */
-    @NotNull
-    public static Level createFromNBT(@NotNull final NBTTagCompound compound)
-    {
-        @NotNull final Level level = new Level();
-
-        level.depth = compound.getInteger(TAG_DEPTH);
-
-        final NBTTagList nodeTagList = compound.getTagList(TAG_NODES, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < nodeTagList.tagCount(); i++)
-        {
-            @NotNull final Node node = Node.createFromNBT(nodeTagList.getCompoundTagAt(i));
-            level.nodes.put(new Point2D.Double(node.getX(), node.getZ()), node);
-        }
-        final double ladderX = compound.getDouble(TAG_LADDERX);
-        final double ladderZ = compound.getDouble(TAG_LADDERZ);
-
-        level.ladderNode = level.nodes.get(new Point2D.Double(ladderX, ladderZ));
-
-
-        final NBTTagList openNodeTagList = compound.getTagList(TAG_OPEN_NODES, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < openNodeTagList.tagCount(); i++)
-        {
-            @NotNull final Node node = Node.createFromNBT(openNodeTagList.getCompoundTagAt(i));
-            level.openNodes.add(node);
-        }
-
-        return level;
     }
 
     @NotNull
@@ -327,7 +287,6 @@ public class Level
             openNodeTagList.appendTag(nodeCompound);
         }
         compound.setTag(TAG_OPEN_NODES, openNodeTagList);
-
     }
 
     @NotNull
@@ -364,6 +323,7 @@ public class Level
 
     /**
      * Returns a node by its key from the map.
+     *
      * @param key the Point2D key.
      * @return the Node.
      */
