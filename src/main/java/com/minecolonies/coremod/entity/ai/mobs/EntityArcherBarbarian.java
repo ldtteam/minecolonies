@@ -22,18 +22,21 @@ import javax.annotation.Nullable;
  */
 public class EntityArcherBarbarian extends AbstractArcherBarbarian {
 
-    public EntityArcherBarbarian(World worldIn) {
+    public EntityArcherBarbarian(World worldIn)
+    {
         super(worldIn);
     }
 
     @Nullable
     @Override
-    public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, @Nullable IEntityLivingData livingdata) {
+    public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, @Nullable IEntityLivingData livingdata)
+    {
         this.setEquipment();
         return super.onInitialSpawn(difficulty, livingdata);
     }
 
-    protected void setEquipment() {
+    protected void setEquipment()
+    {
         this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
     }
 
@@ -67,7 +70,8 @@ public class EntityArcherBarbarian extends AbstractArcherBarbarian {
 
 
     @Override
-    public boolean getCanSpawnHere() {
+    public boolean getCanSpawnHere()
+    {
         final Colony colony = ColonyManager.getClosestColony(world, this.getPosition());
         BlockPos location = colony.getCenter();
         final double distance = this.getDistance(location.getX(), location.getY(), location.getZ());
@@ -83,18 +87,21 @@ public class EntityArcherBarbarian extends AbstractArcherBarbarian {
     }
 
     @Override
-    protected boolean isValidLightLevel() {
+    protected boolean isValidLightLevel()
+    {
         return true;
         //return super.isValidLightLevel();
     }
 
     @Override
-    public int getMaxSpawnedInChunk() {
+    public int getMaxSpawnedInChunk()
+    {
         return 5;
     }
 
     @Override
-    protected boolean canDespawn() {
+    protected boolean canDespawn()
+    {
         if (world.isDaytime())
         {
             return true;
