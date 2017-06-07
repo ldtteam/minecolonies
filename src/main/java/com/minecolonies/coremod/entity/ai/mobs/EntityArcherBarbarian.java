@@ -35,7 +35,7 @@ public class EntityArcherBarbarian extends AbstractArcherBarbarian {
         return super.onInitialSpawn(difficulty, livingdata);
     }
 
-    protected void setEquipment()
+    private void setEquipment()
     {
         this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
     }
@@ -76,14 +76,7 @@ public class EntityArcherBarbarian extends AbstractArcherBarbarian {
         BlockPos location = colony.getCenter();
         final double distance = this.getDistance(location.getX(), location.getY(), location.getZ());
         final boolean innerBounds = (!(distance < 120) && !(distance > 160));
-        if (innerBounds && !world.isDaytime()) //Not Inside Colony //Within range of Colony (directionX <= 160 && directionZ <= 160 ,, !(directionX < 120 && directionZ < 120))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return (innerBounds && !world.isDaytime());
     }
 
     @Override
@@ -102,13 +95,6 @@ public class EntityArcherBarbarian extends AbstractArcherBarbarian {
     @Override
     protected boolean canDespawn()
     {
-        if (world.isDaytime())
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return (world.isDaytime());
     }
 }

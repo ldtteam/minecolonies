@@ -24,20 +24,24 @@ import javax.annotation.Nullable;
  */
 public class EntityChiefBarbarian extends EntityMob
 {
-    public EntityChiefBarbarian(World worldIn) {
+    public EntityChiefBarbarian(World worldIn)
+    {
         super(worldIn);
         this.getAlwaysRenderNameTag();
     }
 
     @Nullable
     @Override
-    public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, @Nullable IEntityLivingData livingdata) {
+    public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, @Nullable IEntityLivingData livingdata)
+    {
         this.setCustomNameTag("Chief Asherslab");
+        this.setAlwaysRenderNameTag(true);
         this.setEquipment();
         return super.onInitialSpawn(difficulty, livingdata);
     }
 
-    protected void setEquipment() {
+    protected void setEquipment()
+    {
         this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_SWORD));
         this.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(Items.DIAMOND_CHESTPLATE));
         this.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(Items.DIAMOND_LEGGINGS));
@@ -45,12 +49,14 @@ public class EntityChiefBarbarian extends EntityMob
     }
 
     @Override
-    protected void entityInit() {
+    protected void entityInit()
+    {
         super.entityInit();
     }
 
     @Override
-    protected void applyEntityAttributes() {
+    protected void applyEntityAttributes()
+    {
         super.applyEntityAttributes();
         // Here we set various attributes for our mob. Like maximum health, armor, speed, ...
         this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(35.0D);
@@ -60,7 +66,8 @@ public class EntityChiefBarbarian extends EntityMob
     }
 
     @Override
-    protected void initEntityAI() {
+    protected void initEntityAI()
+    {
         this.tasks.addTask(0, new EntityAISwimming(this));
         this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
         this.tasks.addTask(3, new EntityAIAttackMelee(this, 2.3D, true));
@@ -70,41 +77,39 @@ public class EntityChiefBarbarian extends EntityMob
         this.applyEntityAI();
     }
 
-    private void applyEntityAI() {
+    private void applyEntityAI()
+    {
         this.tasks.addTask(6, new EntityAIMoveThroughVillage(this, 1.0D, false));
         this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
         this.targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntityCitizen.class, true));
     }
 
     @Override
-    public boolean getCanSpawnHere() {
+    public boolean getCanSpawnHere()
+    {
         final Colony colony = ColonyManager.getClosestColony(world, this.getPosition());
         BlockPos location = colony.getCenter();
         final double distance = this.getDistance(location.getX(), location.getY(), location.getZ());
         final boolean innerBounds = (!(distance < 120) && !(distance > 160));
-        if (innerBounds && !world.isDaytime() && (this.getDistanceToEntity(this) >= 300)) //Not Inside Colony //Within range of Colony (directionX <= 160 && directionZ <= 160 ,, !(directionX < 120 && directionZ < 120))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return (innerBounds && !world.isDaytime());
     }
 
     @Override
-    protected boolean isValidLightLevel() {
+    protected boolean isValidLightLevel()
+    {
         return true;
         //return super.isValidLightLevel();
     }
 
     @Override
-    public int getMaxSpawnedInChunk() {
+    public int getMaxSpawnedInChunk()
+    {
         return 1;
     }
 
     @Override
-    protected boolean canDespawn() {
+    protected boolean canDespawn()
+    {
         if (world.isDaytime())
         {
             return true;
