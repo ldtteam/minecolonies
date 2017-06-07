@@ -7,12 +7,10 @@ import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.monster.EntityPigZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
@@ -61,7 +59,7 @@ public class EntityBarbarian extends EntityMob
         this.tasks.addTask(0, new EntityAISwimming(this));
         this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
         this.tasks.addTask(3, new EntityAIAttackMelee(this, 2.3D, true));
-        this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
+        this.tasks.addTask(3, new EntityAIWalkToRandomHuts(this, 3.0D));
         this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
         this.tasks.addTask(8, new EntityAILookIdle(this));
         this.applyEntityAI();
@@ -90,6 +88,11 @@ public class EntityBarbarian extends EntityMob
     }
 
     @Override
+    public World getEntityWorld() {
+        return world;
+    }
+
+    @Override
     protected boolean isValidLightLevel() {
         return true;
         //return super.isValidLightLevel();
@@ -111,4 +114,6 @@ public class EntityBarbarian extends EntityMob
             return false;
         }
     }
+
+
 }

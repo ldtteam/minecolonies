@@ -63,8 +63,8 @@ public class EntityChiefBarbarian extends EntityMob
     protected void initEntityAI() {
         this.tasks.addTask(0, new EntityAISwimming(this));
         this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
-        this.tasks.addTask(3, new EntityAIAttackMelee(this, 2.5D, true));
-        this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
+        this.tasks.addTask(3, new EntityAIAttackMelee(this, 2.3D, true));
+        this.tasks.addTask(3, new EntityAIWalkToRandomHuts(this, 3.0D));
         this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
         this.tasks.addTask(8, new EntityAILookIdle(this));
         this.applyEntityAI();
