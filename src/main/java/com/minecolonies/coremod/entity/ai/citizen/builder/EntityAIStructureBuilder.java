@@ -433,7 +433,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     {
         final AbstractBuildingWorker buildingWorker = getOwnBuilding();
 
-        if(stack == null || stack.getItem() == null)
+        if(ItemStackUtils.isEmpty(stack))
         {
             return null;
         }

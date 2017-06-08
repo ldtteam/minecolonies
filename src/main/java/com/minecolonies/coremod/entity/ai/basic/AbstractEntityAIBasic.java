@@ -1039,7 +1039,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         for (final @Nullable ItemStack tempStack : items)
         {
             final ItemStack stack = tempStack.copy();
-            if (stack == null || stack.getItem() == null)
+            if (ItemStackUtils.isEmpty(stack))
             {
                 continue;
             }

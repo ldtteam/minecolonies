@@ -100,7 +100,7 @@ public class BlockBarrel extends Block
             return true;
         }
 
-        if (itemstack == null)
+        if (ItemStackUtils.isEmpty(itemstack))
         {
             return true;
         }

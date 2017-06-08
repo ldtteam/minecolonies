@@ -886,7 +886,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         for (final ItemStack stack : this.getArmorInventoryList())
         {
-            if (stack == null || stack.getItem() == null || !(stack.getItem() instanceof ItemArmor))
+            if (ItemStackUtils.isEmpty(stack) || !(stack.getItem() instanceof ItemArmor))
             {
                 continue;
             }

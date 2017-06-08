@@ -811,7 +811,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 //Surpress
                 for (final ItemStack stack : request)
                 {
-                    if (stack == null)
+                    if (ItemStackUtils.isEmpty(stack))
                     {
                         continue;
                     }
