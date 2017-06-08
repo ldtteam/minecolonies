@@ -178,7 +178,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
                     if (emptySlot != -1)
                     {
                         new InvWrapper(worker.getInventoryCitizen()).insertItem(emptySlot, stack, false);
-                        chest.setInventorySlotContents(i, ItemStack.EMPTY);
+                        chest.setInventorySlotContents(i, ItemStackUtils.EMPTY);
                     }
                 }
                 dumpAfterActions = DUMP_BASE * workBuilding.getBuildingLevel();
@@ -210,10 +210,10 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
      */
     protected void updateArmor()
     {
-        worker.setItemStackToSlot(EntityEquipmentSlot.CHEST, ItemStack.EMPTY);
-        worker.setItemStackToSlot(EntityEquipmentSlot.FEET, ItemStack.EMPTY);
-        worker.setItemStackToSlot(EntityEquipmentSlot.HEAD, ItemStack.EMPTY);
-        worker.setItemStackToSlot(EntityEquipmentSlot.LEGS, ItemStack.EMPTY);
+        worker.setItemStackToSlot(EntityEquipmentSlot.CHEST, ItemStackUtils.EMPTY);
+        worker.setItemStackToSlot(EntityEquipmentSlot.FEET, ItemStackUtils.EMPTY);
+        worker.setItemStackToSlot(EntityEquipmentSlot.HEAD, ItemStackUtils.EMPTY);
+        worker.setItemStackToSlot(EntityEquipmentSlot.LEGS, ItemStackUtils.EMPTY);
 
         for (int i = 0; i < new InvWrapper(worker.getInventoryCitizen()).getSlots(); i++)
         {
@@ -225,7 +225,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
                 continue;
             }
 
-            if (stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).armorType) == ItemStack.EMPTY)
+            if (stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).armorType) == ItemStackUtils.EMPTY)
             {
                 worker.setItemStackToSlot(((ItemArmor) stack.getItem()).armorType, stack);
             }
