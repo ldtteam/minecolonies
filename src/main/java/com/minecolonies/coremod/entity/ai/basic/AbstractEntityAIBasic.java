@@ -9,7 +9,7 @@ import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
-import com.minecolonies.coremod.entity.pathfinding.WalkToProxy;
+import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -105,7 +105,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Walk to proxy.
      */
-    private WalkToProxy proxy;
+    private EntityCitizenWalkToProxy proxy;
 
     /**
      * This will count up and progressively disable the entity
@@ -546,7 +546,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         if (proxy == null)
         {
-            proxy = new WalkToProxy(worker);
+            proxy = new EntityCitizenWalkToProxy(worker);
         }
         if (proxy.walkToBlock(stand, range))
         {
