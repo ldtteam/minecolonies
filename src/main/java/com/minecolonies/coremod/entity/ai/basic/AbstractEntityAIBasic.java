@@ -394,7 +394,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
             if (!getOwnBuilding().hasOnGoingDelivery())
             {
-                requestWithoutSpam(ItemStackUtils.getItemStackSize(first) + " " + first.getDisplayName());
+                requestWithoutSpam(ItemStackUtils.getSize(first) + " " + first.getDisplayName());
             }
         }
         return NEEDS_ITEM;
@@ -878,25 +878,25 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
         else
         {
-            final ItemStorage tempStorage = new ItemStorage(stack.getItem(), stack.getItemDamage(), ItemStackUtils.getItemStackSize(stack), false);
+            final ItemStorage tempStorage = new ItemStorage(stack.getItem(), stack.getItemDamage(), ItemStackUtils.getSize(stack), false);
             final ItemStack tempStack = handleKeepX(alreadyKept, shouldKeep, tempStorage);
             if (ItemStackUtils.isEmpty(tempStack))
             {
                 return false;
             }
-            amountToKeep = ItemStackUtils.getItemStackSize(stack) - tempStorage.getAmount();
+            amountToKeep = ItemStackUtils.getSize(stack) - tempStorage.getAmount();
             returnStack = InventoryUtils.addItemStackToProviderWithResult(buildingWorker.getTileEntity(), tempStack);
         }
         if (ItemStackUtils.isEmpty(returnStack))
         {
-            new InvWrapper(worker.getInventoryCitizen()).extractItem(slot, ItemStackUtils.getItemStackSize(stack) - amountToKeep, false);
+            new InvWrapper(worker.getInventoryCitizen()).extractItem(slot, ItemStackUtils.getSize(stack) - amountToKeep, false);
             return amountToKeep == 0;
         }
 
-        new InvWrapper(worker.getInventoryCitizen()).extractItem(slot, ItemStackUtils.getItemStackSize(stack) - ItemStackUtils.getItemStackSize(returnStack) - amountToKeep, false);
+        new InvWrapper(worker.getInventoryCitizen()).extractItem(slot, ItemStackUtils.getSize(stack) - ItemStackUtils.getSize(returnStack) - amountToKeep, false);
 
         //Check that we are not inserting into a full inventory.
-        return ItemStackUtils.getItemStackSize(stack) != ItemStackUtils.getItemStackSize(returnStack);
+        return ItemStackUtils.getSize(stack) != ItemStackUtils.getSize(returnStack);
     }
 
     /**
@@ -1000,7 +1000,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
             if (countOfItem < 1)
             {
-                final int itemsLeft = ItemStackUtils.getItemStackSize(stack) - countOfItem;
+                final int itemsLeft = ItemStackUtils.getSize(stack) - countOfItem;
                 @NotNull final ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft, itemDamage);
                 getOwnBuilding().addNeededItems(requiredStack);
                 allClear = false;
@@ -1045,9 +1045,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             }
             final int itemDamage = useItemDamage ? stack.getItemDamage() : -1;
             final int countOfItem = worker.getItemCountInInventory(stack.getItem(), itemDamage);
-            if (countOfItem < ItemStackUtils.getItemStackSize(tempStack))
+            if (countOfItem < ItemStackUtils.getSize(tempStack))
             {
-                final int itemsLeft = ItemStackUtils.getItemStackSize(stack) - countOfItem;
+                final int itemsLeft = ItemStackUtils.getSize(stack) - countOfItem;
                 @NotNull final ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft, -1);
                 if(!isInNeededItems(tempStack))
                 {

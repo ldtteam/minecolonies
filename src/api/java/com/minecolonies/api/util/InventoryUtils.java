@@ -206,7 +206,7 @@ public class InventoryUtils
      */
     public static int getItemCountInItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        return filterItemHandler(itemHandler, itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getItemStackSize).sum();
+        return filterItemHandler(itemHandler, itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getSize).sum();
     }
 
     /**
@@ -636,7 +636,7 @@ public class InventoryUtils
     public static int getItemCountInProvider(@NotNull final ICapabilityProvider provider, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
         return getItemHandlersFromProvider(provider).stream()
-                 .mapToInt(handler -> filterItemHandler(handler, itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getItemStackSize).sum())
+                 .mapToInt(handler -> filterItemHandler(handler, itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getSize).sum())
                  .sum();
     }
 
@@ -1099,7 +1099,7 @@ public class InventoryUtils
             return 0;
         }
 
-        return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing), itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getItemStackSize).sum();
+        return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing), itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getSize).sum();
     }
 
     /**
@@ -1349,7 +1349,7 @@ public class InventoryUtils
 
         if (!ItemStack.areItemStacksEqual(sourceStack, originalStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(sourceStack, originalStack))
         {
-            final int usedAmount = ItemStackUtils.getItemStackSize(sourceStack) - ItemStackUtils.getItemStackSize(originalStack);
+            final int usedAmount = ItemStackUtils.getSize(sourceStack) - ItemStackUtils.getSize(originalStack);
             sourceHandler.extractItem(sourceIndex, usedAmount, false);
             return true;
         }
@@ -1434,7 +1434,7 @@ public class InventoryUtils
         int maxTries = 0;
         for(final ItemStack stack: input)
         {
-            maxTries+= ItemStackUtils.getItemStackSize(stack);
+            maxTries+= ItemStackUtils.getSize(stack);
             list.add(stack.copy());
         }
 
@@ -1453,15 +1453,15 @@ public class InventoryUtils
                 continue;
             }
 
-            final int removedSize = ItemStackUtils.getItemStackSize(handler.extractItem(slot, ItemStackUtils.getItemStackSize(stack), false));
+            final int removedSize = ItemStackUtils.getSize(handler.extractItem(slot, ItemStackUtils.getSize(stack), false));
 
-            if(removedSize == ItemStackUtils.getItemStackSize(stack))
+            if(removedSize == ItemStackUtils.getSize(stack))
             {
                 i++;
             }
             else
             {
-                stack.setCount(ItemStackUtils.getItemStackSize(stack) - removedSize);
+                stack.setCount(ItemStackUtils.getSize(stack) - removedSize);
             }
             tries++;
         }

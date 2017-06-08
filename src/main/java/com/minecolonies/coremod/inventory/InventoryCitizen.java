@@ -292,7 +292,7 @@ public class InventoryCitizen implements IInventory
                   && (metadataIn <= NO_SLOT || itemstack.getMetadata() == metadataIn) && (itemNBT == null || NBTUtil
                                                                                                                .areNBTEquals(itemNBT, itemstack.getTagCompound(), true)))
             {
-                final int k = removeCount <= 0 ? ItemStackUtils.getItemStackSize(itemstack) : Math.min(removeCount - i, ItemStackUtils.getItemStackSize(itemstack));
+                final int k = removeCount <= 0 ? ItemStackUtils.getSize(itemstack) : Math.min(removeCount - i, ItemStackUtils.getSize(itemstack));
                 i += k;
 
                 if (removeCount != 0)
@@ -329,7 +329,7 @@ public class InventoryCitizen implements IInventory
                 return i;
             }
 
-            final int l = removeCount <= 0 ? ItemStackUtils.getItemStackSize(this.itemStack) : Math.min(removeCount - i, ItemStackUtils.getItemStackSize(this.itemStack));
+            final int l = removeCount <= 0 ? ItemStackUtils.getSize(this.itemStack) : Math.min(removeCount - i, ItemStackUtils.getSize(this.itemStack));
             i += l;
 
             if (removeCount != 0)
@@ -701,16 +701,16 @@ public class InventoryCitizen implements IInventory
 
                     while (true)
                     {
-                        i = ItemStackUtils.getItemStackSize(itemStackIn);
+                        i = ItemStackUtils.getSize(itemStackIn);
                         itemStackIn.setCount(this.storePartialItemStack(itemStackIn));
 
-                        if (ItemStackUtils.getItemStackSize(itemStackIn) >= i)
+                        if (ItemStackUtils.getSize(itemStackIn) >= i)
                         {
                             break;
                         }
                     }
 
-                    return ItemStackUtils.getItemStackSize(itemStackIn) < i;
+                    return ItemStackUtils.getSize(itemStackIn) < i;
                 }
             }
             catch (final RuntimeException exception)
@@ -752,7 +752,7 @@ public class InventoryCitizen implements IInventory
      */
     private int storePartialItemStack(final ItemStack itemStackIn)
     {
-        int i = ItemStackUtils.getItemStackSize(itemStackIn);
+        int i = ItemStackUtils.getSize(itemStackIn);
         int j = this.storeItemStack(itemStackIn);
 
         if (j == NO_SLOT)
@@ -784,14 +784,14 @@ public class InventoryCitizen implements IInventory
 
             int k = i;
 
-            if (i > itemstack.getMaxStackSize() - ItemStackUtils.getItemStackSize(itemstack))
+            if (i > itemstack.getMaxStackSize() - ItemStackUtils.getSize(itemstack))
             {
-                k = itemstack.getMaxStackSize() - ItemStackUtils.getItemStackSize(itemstack);
+                k = itemstack.getMaxStackSize() - ItemStackUtils.getSize(itemstack);
             }
 
-            if (k > this.getInventoryStackLimit() - ItemStackUtils.getItemStackSize(itemstack))
+            if (k > this.getInventoryStackLimit() - ItemStackUtils.getSize(itemstack))
             {
-                k = this.getInventoryStackLimit() - ItemStackUtils.getItemStackSize(itemstack);
+                k = this.getInventoryStackLimit() - ItemStackUtils.getSize(itemstack);
             }
 
             if (k == 0)
@@ -838,7 +838,7 @@ public class InventoryCitizen implements IInventory
     private boolean canMergeStacks(final ItemStack stack1, final ItemStack stack2)
     {
         return !stack1.isEmpty() && InventoryCitizen.stackEqualExact(stack1, stack2) && stack1.isStackable()
-                 && ItemStackUtils.getItemStackSize(stack1) < stack1.getMaxStackSize() && ItemStackUtils.getItemStackSize(stack1) < this.getInventoryStackLimit();
+                 && ItemStackUtils.getSize(stack1) < stack1.getMaxStackSize() && ItemStackUtils.getSize(stack1) < this.getInventoryStackLimit();
     }
 
     /**
@@ -1002,7 +1002,7 @@ public class InventoryCitizen implements IInventory
 
                 if (!itemstack.isEmpty())
                 {
-                    this.citizen.dropItem(itemstack.getItem(), ItemStackUtils.getItemStackSize(itemstack));
+                    this.citizen.dropItem(itemstack.getItem(), ItemStackUtils.getSize(itemstack));
                     list.set(i, ItemStack.EMPTY);
                 }
             }

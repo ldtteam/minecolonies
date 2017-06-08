@@ -135,19 +135,19 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
             }
         }
 
-        if (ItemStackUtils.isEmpty(remainingItemStack) || ItemStackUtils.getItemStackSize(remainingItemStack) != ItemStackUtils.getItemStackSize(itemStackToTake))
+        if (ItemStackUtils.isEmpty(remainingItemStack) || ItemStackUtils.getSize(remainingItemStack) != ItemStackUtils.getSize(itemStackToTake))
         {
             //Only doing this at the moment as the additional chest do not detect new content
             building.getTileEntity().markDirty();
         }
 
-        int amountToRemoveFromPlayer = amountToTake - ItemStackUtils.getItemStackSize(remainingItemStack);
+        int amountToRemoveFromPlayer = amountToTake - ItemStackUtils.getSize(remainingItemStack);
 
         while (amountToRemoveFromPlayer > 0)
         {
             final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory), item, message.itemStack.getItemDamage());
             final ItemStack itemsTaken = player.inventory.decrStackSize(slot, amountToRemoveFromPlayer);
-            amountToRemoveFromPlayer-=ItemStackUtils.getItemStackSize(itemsTaken);
+            amountToRemoveFromPlayer-=ItemStackUtils.getSize(itemsTaken);
         }
 
     }

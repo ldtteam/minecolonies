@@ -111,7 +111,7 @@ public class BlockBarrel extends Block
         {
             Log.getLogger().info("item Consumed");
 
-            itemstack.setCount(ItemStackUtils.getItemStackSize(itemstack) - 1);
+            itemstack.setCount(ItemStackUtils.getSize(itemstack) - 1);
 
             fullness += 1;
             if (fullness >= MAX_FULLNESS)

@@ -263,14 +263,14 @@ public class Field extends Container
             playerIn.inventory.addItemStackToInventory(inventory.getStackInSlot(0));
             inventory.setStackInSlot(0, ItemStack.EMPTY);
         }
-        else if (inventory.getStackInSlot(0) == ItemStack.EMPTY || ItemStackUtils.getItemStackSize(inventory.getStackInSlot(0)) == 0)
+        else if (inventory.getStackInSlot(0) == ItemStack.EMPTY || ItemStackUtils.getSize(inventory.getStackInSlot(0)) == 0)
         {
             final int playerIndex = slotIndex < MAX_INVENTORY_INDEX ? (slotIndex + INVENTORY_BAR_SIZE) : (slotIndex - MAX_INVENTORY_INDEX);
             if (playerIn.inventory.getStackInSlot(playerIndex) != ItemStack.EMPTY)
             {
                 @NotNull final ItemStack stack = playerIn.inventory.getStackInSlot(playerIndex).splitStack(1);
                 inventory.setStackInSlot(0, stack);
-                if (ItemStackUtils.getItemStackSize(playerIn.inventory.getStackInSlot(playerIndex)) == 0)
+                if (ItemStackUtils.getSize(playerIn.inventory.getStackInSlot(playerIndex)) == 0)
                 {
                     playerIn.inventory.removeStackFromSlot(playerIndex);
                 }
