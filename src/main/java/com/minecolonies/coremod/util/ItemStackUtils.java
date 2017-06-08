@@ -56,6 +56,31 @@ public final class ItemStackUtils
     private static final int FORTUNE_ENCHANT_ID = 35;
 
     /**
+     * material for wood.
+     */
+    private static final String MATERIAL_WOOD    = "WOOD";
+
+    /**
+     * material for gold.
+     */
+    private static final String MATERIAL_GOLD    = "GOLD";
+
+    /**
+     * material for stone.
+     */
+    private static final String MATERIAL_STONE   = "STONE";
+
+    /**
+     * material for iron.
+     */
+    private static final String MATERIAL_IRON    = "IRON";
+
+    /**
+     * material for diamond.
+     */
+    private static final String MATERIAL_DIAMOND = "DIAMOND";
+
+    /**
      * Private constructor to hide the implicit one.
      */
     private ItemStackUtils()
@@ -307,20 +332,20 @@ public final class ItemStackUtils
 
     private static int getToolLevel(final String material)
     {
-        if ("WOOD".equals(material)
-            || "GOLD".equals(material))
+        if (MATERIAL_WOOD.equals(material)
+            || MATERIAL_GOLD.equals(material))
         {
             return TOOL_LEVEL_WOOD_OR_GOLD;
         }
-        else if ("STONE".equals(material))
+        else if (MATERIAL_STONE.equals(material))
         {
             return TOOL_LEVEL_STONE;
         }
-        else if ("IRON".equals(material))
+        else if (MATERIAL_IRON.equals(material))
         {
             return TOOL_LEVEL_IRON;
         }
-        else if ("DIAMOND".equals(material))
+        else if (MATERIAL_DIAMOND.equals(material))
         {
             return TOOL_LEVEL_DIAMOND;
         }
