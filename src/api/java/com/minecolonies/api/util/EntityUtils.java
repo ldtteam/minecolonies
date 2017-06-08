@@ -226,38 +226,38 @@ public final class EntityUtils
     }
 
     /**
-     * {@link #isWorkerAtSiteWithMove(EntityCitizen, int, int, int, int)}.
+     * {@link #isLivingAtSiteWithMove(EntityCitizen, int, int, int, int)}.
      *
-     * @param worker Worker to check
+     * @param entity entity to check
      * @param x      X-coordinate
      * @param y      Y-coordinate
      * @param z      Z-coordinate
-     * @return True if worker is at site, otherwise false
+     * @return True if entity is at site, otherwise false
      */
-    public static boolean isLivingAtSiteWithMove(@NotNull final EntityLiving worker, final int x, final int y, final int z)
+    public static boolean isLivingAtSiteWithMove(@NotNull final EntityLiving entity, final int x, final int y, final int z)
     {
         //Default range of 3 works better
-        //Range of 2 get some workers stuck
-        return isLivingAtSiteWithMove(worker, x, y, z, DEFAULT_MOVE_RANGE);
+        //Range of 2 get some entitys stuck
+        return isLivingAtSiteWithMove(entity, x, y, z, DEFAULT_MOVE_RANGE);
     }
 
     /**
-     * Checks if a worker is at his working site.
+     * Checks if a entity is at his working site.
      * If he isn't, sets it's path to the location.
      *
-     * @param worker Worker to check
+     * @param entity entity to check
      * @param x      X-coordinate
      * @param y      Y-coordinate
      * @param z      Z-coordinate
      * @param range  Range to check in
-     * @return True if worker is at site, otherwise false.
+     * @return True if entity is at site, otherwise false.
      */
-    public static boolean isLivingAtSiteWithMove(@NotNull final EntityLiving worker, final int x, final int y, final int z, final int range)
+    public static boolean isLivingAtSiteWithMove(@NotNull final EntityLiving entity, final int x, final int y, final int z, final int range)
     {
-        if (!isLivingAtSite(worker, x, y, z, TELEPORT_RANGE))
+        if (!isLivingAtSite(entity, x, y, z, TELEPORT_RANGE))
         {
             final BlockPos spawnPoint =
-                    Utils.scanForBlockNearPoint(worker.getEntityWorld(),
+                    Utils.scanForBlockNearPoint(entity.getEntityWorld(),
                             new BlockPos(x, y, z),
                             SCAN_RADIUS, SCAN_RADIUS, SCAN_RADIUS, 2,
                             Blocks.AIR,
@@ -267,31 +267,31 @@ public final class EntityUtils
                             Blocks.YELLOW_FLOWER,
                             Blocks.CARPET);
 
-            worker.setLocationAndAngles(
+            entity.setLocationAndAngles(
                     spawnPoint.getX() + MIDDLE_BLOCK_OFFSET,
                     spawnPoint.getY(),
                     spawnPoint.getZ() + MIDDLE_BLOCK_OFFSET,
-                    worker.rotationYaw,
-                    worker.rotationPitch);
+                    entity.rotationYaw,
+                    entity.rotationPitch);
             return true;
         }
 
-        return EntityUtils.isLivingAtSite(worker, x, y, z, range);
+        return EntityUtils.isLivingAtSite(entity, x, y, z, range);
     }
 
     /**
-     * Returns whether or not the worker is within a specific range of his
+     * Returns whether or not the entity is within a specific range of his
      * working site.
      *
-     * @param worker Worker to check
+     * @param entityLiving entity to check
      * @param x      X-coordinate
      * @param y      Y-coordinate
      * @param z      Z-coordinate
      * @param range  Range to check in
-     * @return True if worker is at site, otherwise false
+     * @return True if entity is at site, otherwise false
      */
-    public static boolean isLivingAtSite(@NotNull final EntityLiving worker, final int x, final int y, final int z, final int range)
+    public static boolean isLivingAtSite(@NotNull final EntityLiving entityLiving, final int x, final int y, final int z, final int range)
     {
-        return worker.getPosition().distanceSq(new Vec3i(x, y, z)) < MathUtils.square(range);
+        return entityLiving.getPosition().distanceSq(new Vec3i(x, y, z)) < MathUtils.square(range);
     }
 }

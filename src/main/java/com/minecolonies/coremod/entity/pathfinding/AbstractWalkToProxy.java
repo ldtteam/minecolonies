@@ -17,17 +17,17 @@ import java.util.Set;
 public abstract class AbstractWalkToProxy
 {
     /**
-     * The distance the worker can path directly without the proxy.
+     * The distance the entity can path directly without the proxy.
      */
     private static final int MIN_RANGE_FOR_DIRECT_PATH = 400;
 
     /**
-     * The min distance a worker has to have to a proxy.
+     * The min distance a entity has to have to a proxy.
      */
     private static final int MIN_DISTANCE = 25;
 
     /**
-     * The worker entity associated with the proxy.
+     * The entity entity associated with the proxy.
      */
     private final EntityLiving entity;
 
@@ -37,19 +37,19 @@ public abstract class AbstractWalkToProxy
     private BlockPos currentProxy;
 
     /**
-     * List of proxies the worker has to follow.
+     * List of proxies the entity has to follow.
      */
     private final List<BlockPos> proxyList = new ArrayList<>();
 
     /**
-     * Current target the worker has.
+     * Current target the entity has.
      */
     private BlockPos target;
 
     /**
-     * Creates a walkToProxy for a certain worker.
+     * Creates a walkToProxy for a certain entity.
      *
-     * @param worker the worker.
+     * @param entity the entity.
      */
     protected AbstractWalkToProxy(final EntityLiving entity)
     {
@@ -57,7 +57,7 @@ public abstract class AbstractWalkToProxy
     }
 
     /**
-     * Leads the worker to a certain position due to proxies.
+     * Leads the entity to a certain position due to proxies.
      *
      * @param target the position.
      * @param range  the range.
@@ -73,7 +73,7 @@ public abstract class AbstractWalkToProxy
      *
      * @param target the target position.
      * @param range  the range.
-     * @param onMove worker on move or not?
+     * @param onMove entity on move or not?
      * @return true if arrived.
      */
     private boolean takeTheDirectPath(@NotNull final BlockPos target, final int range, final boolean onMove)
@@ -91,11 +91,11 @@ public abstract class AbstractWalkToProxy
     }
 
     /**
-     * Leads the worker to a certain position due to proxies.
+     * Leads the entity to a certain position due to proxies.
      *
      * @param target the target position.
      * @param range  the range.
-     * @param onMove worker on move or not?
+     * @param onMove entity on move or not?
      * @return true if arrived.
      */
     public boolean walkToBlock(@NotNull final BlockPos target, final int range, final boolean onMove)
@@ -161,7 +161,7 @@ public abstract class AbstractWalkToProxy
     }
 
     /**
-     * Calculates a list of proxies to a certain target for a worker.
+     * Calculates a list of proxies to a certain target for a entity.
      *
      * @param target         the target.
      * @param distanceToPath the complete distance.

@@ -29,6 +29,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
 
     /**
      * Creates a walkToProxy for a certain worker.
+     * @param entity the citizen entity.
      */
     public EntityCitizenWalkToProxy(final EntityCitizen entity)
     {
