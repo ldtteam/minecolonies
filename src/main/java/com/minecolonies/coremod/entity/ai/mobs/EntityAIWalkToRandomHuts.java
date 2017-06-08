@@ -106,11 +106,16 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
 
         final Collection<AbstractBuilding> buildingList = colony.getBuildings().values();
         final Object[] buildingArray = buildingList.toArray();
+        if (buildingArray != null && buildingArray.length != 0) {
+            final int random = new Random().nextInt(buildingArray.length);
+            final AbstractBuilding building = (AbstractBuilding) buildingArray[random];
 
-        final int random = new Random().nextInt(buildingArray.length);
-        final AbstractBuilding building = (AbstractBuilding) buildingArray[random];
-
-        return building.getLocation();
+            return building.getLocation();
+        }
+        else
+        {
+            return null;
+        }
     }
 
 }

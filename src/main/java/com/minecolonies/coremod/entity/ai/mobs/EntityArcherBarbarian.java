@@ -73,10 +73,17 @@ public class EntityArcherBarbarian extends AbstractArcherBarbarian {
     public boolean getCanSpawnHere()
     {
         final Colony colony = ColonyManager.getClosestColony(world, this.getPosition());
-        BlockPos location = colony.getCenter();
-        final double distance = this.getDistance(location.getX(), location.getY(), location.getZ());
-        final boolean innerBounds = (!(distance < 120) && !(distance > 160));
-        return (innerBounds && !world.isDaytime());
+        if (colony != null)
+        {
+            BlockPos location = colony.getCenter();
+            final double distance = this.getDistance(location.getX(), location.getY(), location.getZ());
+            final boolean innerBounds = (!(distance < 120) && !(distance > 160));
+            return (innerBounds && !world.isDaytime());
+        }
+        else
+        {
+            return false;
+        }
     }
 
     @Override

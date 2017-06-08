@@ -110,10 +110,17 @@ public class EntityBarbarian extends EntityMob
     @Override
     public boolean getCanSpawnHere()
     {
-        BlockPos location = colony.getCenter();
-        final double distance = this.getDistance(location.getX(), location.getY(), location.getZ());
-        final boolean innerBounds = (!(distance < 120) && !(distance > 160));
-        return (innerBounds && !world.isDaytime()); //Not Inside Colony but within 160 blocks of colony
+        if (colony != null)
+        {
+            BlockPos location = colony.getCenter();
+            final double distance = this.getDistance(location.getX(), location.getY(), location.getZ());
+            final boolean innerBounds = (!(distance < 120) && !(distance > 160));
+            return (innerBounds && !world.isDaytime()); //Not Inside Colony but within 160 blocks of colony
+        }
+        else
+        {
+            return false;
+        }
     }
 
     @Override
