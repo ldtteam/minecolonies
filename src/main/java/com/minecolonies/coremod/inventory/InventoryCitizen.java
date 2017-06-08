@@ -687,7 +687,7 @@ public class InventoryCitizen implements IInventory
                     {
                         this.mainInventory.set(j, itemStackIn.copy());
                         (this.mainInventory.get(j)).setAnimationsToGo(5);
-                        itemStackIn.setCount(0);
+                        ItemStackUtils.setSize(itemStackIn, 0);
                         return true;
                     }
                     else
@@ -702,7 +702,7 @@ public class InventoryCitizen implements IInventory
                     while (true)
                     {
                         i = ItemStackUtils.getSize(itemStackIn);
-                        itemStackIn.setCount(this.storePartialItemStack(itemStackIn));
+                        ItemStackUtils.setSize(itemStackIn, this.storePartialItemStack(itemStackIn));
 
                         if (ItemStackUtils.getSize(itemStackIn) >= i)
                         {
@@ -772,7 +772,7 @@ public class InventoryCitizen implements IInventory
             {
                 // Forge: Replace Item clone above to preserve item capabilities when picking the item up.
                 itemstack = itemStackIn.copy();
-                itemstack.setCount(0);
+                ItemStackUtils.setSize(itemstack, 0);
 
                 if (itemStackIn.hasTagCompound())
                 {
