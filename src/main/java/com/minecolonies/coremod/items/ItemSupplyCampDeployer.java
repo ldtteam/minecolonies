@@ -100,7 +100,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
 
             fillChest((TileEntityChest) worldIn.getTileEntity(pos.up()));
 
-            ItemStackUtils.setSize(stack, ItemStackUtils.getSize(stack)-1);
+            ItemStackUtils.increaseOrDecreaseSize(stack, -1);
             player.addStat(ModAchievements.achievementGetSupply);
 
             return EnumActionResult.SUCCESS;

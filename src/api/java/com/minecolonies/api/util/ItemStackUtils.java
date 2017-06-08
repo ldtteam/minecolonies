@@ -375,6 +375,17 @@ public final class ItemStackUtils
         stack.setCount(size);
     }
 
+    /**
+     * Increase or decrease the stack size.
+     *
+     * @param stack to set the size to
+     * @param amount to increase the stack's size of (negative value to decrease)
+     */
+    public static void increaseOrDecreaseSize(@NotNull final ItemStack stack, final int amount)
+    {
+        stack.setCount(stack.getCount() + amount);
+    }
+
 
     /**
      * Method to compare to stacks, ignoring their stacksize.
