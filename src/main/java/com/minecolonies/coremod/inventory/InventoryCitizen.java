@@ -2,6 +2,7 @@ package com.minecolonies.coremod.inventory;
 
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.util.ItemStackUtils;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.player.EntityPlayer;
@@ -179,7 +180,7 @@ public class InventoryCitizen implements IInventory
         }
         else
         {
-            ItemStackUtils.increaseOrDecrease(this.stacks[i], -1);
+            ItemStackUtils.increaseOrDecreaseSize(this.stacks[i], -1);
             if (ItemStackUtils.isEmpty(this.stacks[i]))
             {
                 this.stacks[i] = ItemStackUtils.EMPTY;
@@ -331,7 +332,7 @@ public class InventoryCitizen implements IInventory
             else
             {
                 i = i - k;
-                ItemStackUtils.increaseOrDecreaseSize(this.stacks[j], k)
+                ItemStackUtils.increaseOrDecreaseSize(this.stacks[j], k);
 
                 return i;
             }

@@ -101,7 +101,7 @@ public class RecipeStorage
     {
         for(final ItemStack stack: input)
         {
-            int amountNeeded = stack.stackSize;
+            int amountNeeded = ItemStackUtils.getSize(stack);
             boolean hasStack = false;
             for(final IItemHandler handler: inventories)
             {

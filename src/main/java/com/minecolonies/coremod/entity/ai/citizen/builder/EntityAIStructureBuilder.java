@@ -269,7 +269,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                     final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
                     if (!ItemStackUtils.isEmpty(stack))
                     {
-                        stack.stackSize = 1;
+                        ItemStackUtils.setSize(stack, 1);
                         request.add(stack);
                         request.add(new ItemStack(Items.ITEM_FRAME, 1));
                     }
@@ -291,7 +291,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 for (final ItemStack stack : request)
                 {
                     final BuildingBuilder building = (BuildingBuilder) getOwnBuilding();
-                    if (stack != null && stack.getItem() != null)
+                    if (ItemStackUtils.isEmpty(stack))
                     {
                         building.addNeededResource(stack, 1);
                     }

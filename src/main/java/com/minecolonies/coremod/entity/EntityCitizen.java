@@ -1808,7 +1808,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         heldItem.damageItem(damage, this);
 
         //check if tool breaks
-        if (heldItem.stackSize < 1)
+        if (ItemStackUtils.getSize(heldItem) < 1)
         {
             getInventoryCitizen().setInventorySlotContents(getInventoryCitizen().getHeldItemSlot(), null);
             this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, null);
