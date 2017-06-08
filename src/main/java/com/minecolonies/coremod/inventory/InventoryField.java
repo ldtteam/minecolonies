@@ -2,7 +2,6 @@ package com.minecolonies.coremod.inventory;
 
 import com.minecolonies.coremod.util.ItemStackUtils;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemSeeds;
 import net.minecraft.item.ItemStack;

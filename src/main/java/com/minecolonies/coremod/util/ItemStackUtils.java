@@ -118,7 +118,6 @@ public final class ItemStackUtils
      * @param stack The stack to check.
      * @return True when the stack is empty, false when not.
      */
-    @NotNull
     public static Boolean isEmpty(@Nullable final ItemStack stack)
     {
         return stack == EMPTY || stack.getItem() == null || stack.stackSize <= 0;
