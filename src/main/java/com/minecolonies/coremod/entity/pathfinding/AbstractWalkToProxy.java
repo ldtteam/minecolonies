@@ -2,7 +2,6 @@ package com.minecolonies.coremod.entity.pathfinding;
 
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.EntityUtils;
-import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +39,7 @@ public abstract class AbstractWalkToProxy
     /**
      * List of proxies the worker has to follow.
      */
-    private final ArrayList<BlockPos> proxyList = new ArrayList<>();
+    private final List<BlockPos> proxyList = new ArrayList<>();
 
     /**
      * Current target the worker has.
@@ -64,7 +63,7 @@ public abstract class AbstractWalkToProxy
      * @param range  the range.
      * @return true if arrived.
      */
-    public boolean walkToBlock(@NotNull BlockPos target, int range)
+    public boolean walkToBlock(@NotNull final BlockPos target, final int range)
     {
         return walkToBlock(target, range, false);
     }
@@ -77,7 +76,7 @@ public abstract class AbstractWalkToProxy
      * @param onMove worker on move or not?
      * @return true if arrived.
      */
-    private boolean takeTheDirectPath(@NotNull BlockPos target, int range, boolean onMove)
+    private boolean takeTheDirectPath(@NotNull final BlockPos target, final int range, final boolean onMove)
     {
         if (onMove)
         {
@@ -99,7 +98,7 @@ public abstract class AbstractWalkToProxy
      * @param onMove worker on move or not?
      * @return true if arrived.
      */
-    public boolean walkToBlock(@NotNull BlockPos target, int range, boolean onMove)
+    public boolean walkToBlock(@NotNull final BlockPos target, final int range, final boolean onMove)
     {
         if (!target.equals(this.target))
         {

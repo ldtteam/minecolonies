@@ -276,11 +276,7 @@ public final class EntityUtils
             return true;
         }
 
-        if (!EntityUtils.isLivingAtSite(worker, x, y, z, range))
-        {
-            return false;
-        }
-        return true;
+        return EntityUtils.isLivingAtSite(worker, x, y, z, range);
     }
 
     /**
