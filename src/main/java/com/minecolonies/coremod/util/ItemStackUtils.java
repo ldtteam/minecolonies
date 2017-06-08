@@ -94,7 +94,7 @@ public final class ItemStackUtils
     @NotNull
     public static Boolean isItemStackEmpty(@Nullable final ItemStack stack)
     {
-        return stack == null || stack == EMPTY || stack.stackSize <= 0;
+        return stack == EMPTY || stack.stackSize <= 0;
     }
 
     /**
@@ -151,7 +151,7 @@ public final class ItemStackUtils
             //empty hand is best on blocks who don't care (0 better 1)
             return stack == null ? 0 : 1;
         }
-        if (stack == null || stack == EMPTY)
+        if (isItemStackEmpty(stack))
         {
             return -1;
         }
@@ -162,11 +162,11 @@ public final class ItemStackUtils
         //todo: use 'better' version of this thing
         if (ToolType.HOE.equals(toolType))
         {
-             if (stack.getItem() instanceof ItemHoe)
-             {
-                 final ItemHoe itemHoe = (ItemHoe)stack.getItem();
-                 return getToolLevel(itemHoe.getMaterialName());
-             }
+            if (stack.getItem() instanceof ItemHoe)
+            {
+                final ItemHoe itemHoe = (ItemHoe)stack.getItem();
+                return getToolLevel(itemHoe.getMaterialName());
+            }
         }
         else if (ToolType.SWORD.equals(toolType))
         {
@@ -351,7 +351,7 @@ public final class ItemStackUtils
     @NotNull
     public static int getItemStackSize(final ItemStack stack)
     {
-        if (ItemStackUtils.isItemStackEmpty(stack))
+        if (isItemStackEmpty(stack))
         {
             return 0;
         }
@@ -369,8 +369,8 @@ public final class ItemStackUtils
     @NotNull
     public static Boolean compareItemStacksIgnoreStackSize(final ItemStack itemStack1, final ItemStack itemStack2)
     {
-        if (!ItemStackUtils.isItemStackEmpty(itemStack1) &&
-            !ItemStackUtils.isItemStackEmpty(itemStack2) &&
+        if (!isItemStackEmpty(itemStack1) &&
+            !isItemStackEmpty(itemStack2) &&
             itemStack1.getItem() == itemStack2.getItem() &&
             itemStack1.getItemDamage() == itemStack2.getItemDamage())
         {

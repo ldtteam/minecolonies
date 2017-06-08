@@ -7,7 +7,6 @@ import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.util.constants.ToolType;
 import com.minecolonies.coremod.util.InventoryFunctions;
 import com.minecolonies.coremod.util.ItemStackUtils;
-import com.minecolonies.coremod.util.Utils;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.SoundEvents;

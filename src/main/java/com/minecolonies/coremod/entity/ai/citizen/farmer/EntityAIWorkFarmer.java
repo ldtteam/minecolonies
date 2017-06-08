@@ -10,7 +10,6 @@ import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.util.BlockUtils;
 import com.minecolonies.coremod.util.InventoryUtils;
-import com.minecolonies.coremod.util.Utils;
 import com.minecolonies.coremod.util.constants.ToolType;
 import net.minecraft.block.BlockCrops;
 import net.minecraft.block.IGrowable;

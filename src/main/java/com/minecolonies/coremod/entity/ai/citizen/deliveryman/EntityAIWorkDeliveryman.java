@@ -11,7 +11,6 @@ import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.ItemStackUtils;
 import com.minecolonies.coremod.util.InventoryUtils;
-import com.minecolonies.coremod.util.Utils;
 import com.minecolonies.coremod.util.constants.IToolType;
 import com.minecolonies.coremod.util.constants.ToolType;
 import net.minecraft.item.ItemFood;

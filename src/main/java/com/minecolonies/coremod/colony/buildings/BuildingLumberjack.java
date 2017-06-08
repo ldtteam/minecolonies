@@ -11,7 +11,6 @@ import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.util.constants.ToolType;
 import com.minecolonies.coremod.util.ItemStackUtils;
-import com.minecolonies.coremod.util.Utils;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;

@@ -16,13 +16,13 @@ public enum ToolType implements IToolType
     SHEARS     ("shears",  false),
     SHIELD     ("shield",  false);
 
-    static final private Map<String,IToolType> tools = new HashMap<>();
+    private static final Map<String,IToolType> tools = new HashMap<>();
     private final String name;
     private final boolean variableMaterials;
 
     static
     {
-        for(ToolType type : values())
+        for(final ToolType type : values())
         {
             tools.put(type.getName(), type);
         }

@@ -13,7 +13,6 @@ import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import com.minecolonies.coremod.util.constants.ToolType;
 import com.minecolonies.coremod.util.ItemStackUtils;
-import com.minecolonies.coremod.util.Utils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSlab;
