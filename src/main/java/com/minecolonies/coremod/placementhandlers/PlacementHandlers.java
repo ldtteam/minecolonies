@@ -77,7 +77,7 @@ public final class PlacementHandlers
                 final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(new InvWrapper(citizen.getInventoryCitizen()), s ->
                         s.getItem() == Items.FLINT_AND_STEEL);
                 final ItemStack item = slot == -1 ? ItemStackUtils.EMPTY : citizen.getInventoryCitizen().getStackInSlot(slot);
-                if (ItemStackUtils.isItemStackEmpty(item) || !(item.getItem() instanceof ItemFlintAndSteel))
+                if (ItemStackUtils.isEmpty(item) || !(item.getItem() instanceof ItemFlintAndSteel))
                 {
                     return ActionProcessingResult.DENY;
                 }

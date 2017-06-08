@@ -197,7 +197,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
         final Map<ItemStorage, Integer> toKeep = new HashMap<>(keepX);
         for(final Field field: farmerFields)
         {
-            if(!ItemStackUtils.isItemStackEmpty(field.getSeed()))
+            if(!ItemStackUtils.isEmpty(field.getSeed()))
             {
                 final ItemStack seedStack = field.getSeed();
                 toKeep.put(new ItemStorage(seedStack.getItem(), seedStack.getItemDamage(), 0, false), SEEDS_TO_KEEP);

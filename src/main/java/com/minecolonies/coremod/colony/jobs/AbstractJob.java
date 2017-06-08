@@ -324,7 +324,7 @@ public abstract class AbstractJob
             }
         }
 
-        return ItemStackUtils.isItemStackEmpty(stackCopy) ? ItemStackUtils.EMPTY : stackCopy;
+        return ItemStackUtils.isEmpty(stackCopy) ? ItemStackUtils.EMPTY : stackCopy;
     }
 
     /**

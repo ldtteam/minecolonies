@@ -165,7 +165,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
             {
                 final ItemStack stack = chest.getStackInSlot(i);
 
-                if (ItemStackUtils.isItemStackEmpty(stack))
+                if (ItemStackUtils.isEmpty(stack))
                 {
                     continue;
                 }
@@ -173,7 +173,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
                 if (stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).armorType) == null)
                 {
                     final int emptySlot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(worker.getInventoryCitizen()),
-                      ItemStackUtils::isItemStackEmpty);
+                      ItemStackUtils::isEmpty);
 
                     if (emptySlot != -1)
                     {
@@ -219,7 +219,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
         {
             final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(i);
 
-            if (ItemStackUtils.isItemStackEmpty(stack))
+            if (ItemStackUtils.isEmpty(stack))
             {
                 new InvWrapper(worker.getInventoryCitizen()).extractItem(i, Integer.MAX_VALUE, false);
                 continue;

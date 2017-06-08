@@ -653,7 +653,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
 
         @Nullable final ItemStack stack = BlockUtils.getItemStackFromBlockState(stateToPlace);
-        if (ItemStackUtils.isItemStackEmpty(stack))
+        if (ItemStackUtils.isEmpty(stack))
         {
             Log.getLogger().error("Block causes NPE: " + stateToPlace.getBlock());
             return false;
@@ -665,7 +665,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
         for (final ItemStack tempStack : itemList)
         {
-            if (!ItemStackUtils.isItemStackEmpty(tempStack))
+            if (!ItemStackUtils.isEmpty(tempStack))
             {
                 final int slot = worker.findFirstSlotInInventoryWith(tempStack.getItem(), tempStack.getItemDamage());
                 if (slot != -1)

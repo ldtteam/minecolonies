@@ -88,7 +88,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
         }
 
         final ItemStack stack = player.getHeldItem(hand);
-        if (worldIn.isRemote || ItemStackUtils.isItemStackEmpty(stack) || !isFirstPlacing(player))
+        if (worldIn.isRemote || ItemStackUtils.isEmpty(stack) || !isFirstPlacing(player))
         {
             return EnumActionResult.FAIL;
         }
