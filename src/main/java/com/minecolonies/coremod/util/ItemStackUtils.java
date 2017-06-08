@@ -367,7 +367,7 @@ public final class ItemStackUtils
             return false;
         }
 
-        return existingStack.getMaxStackSize() >= (getItemStackSize(existingStack) + getItemStackSize(mergingStack));
+        return existingStack.getMaxStackSize() >= (getSize(existingStack) + getSize(mergingStack));
     }
 
     /**
@@ -393,8 +393,7 @@ public final class ItemStackUtils
      * @param stack to set the size to
      * @return the size of the stack
      */
-    @NotNull
-    public static int setSize(final ItemStack stack, final int size)
+    public static void setSize(@NotNull final ItemStack stack, final int size)
     {
         stack.stackSize = size;
     }

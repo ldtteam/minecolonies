@@ -105,11 +105,11 @@ public class RecipeStorage
             boolean hasStack = false;
             for(final IItemHandler handler: inventories)
             {
-                hasStack = InventoryUtils.hasItemInItemHandler(handler, itemStack -> !ItemStackUtils.isItemStackEmpty(itemStack) && itemStack.isItemEqual(stack));
+                hasStack = InventoryUtils.hasItemInItemHandler(handler, itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.isItemEqual(stack));
 
                 if(hasStack)
                 {
-                    final int count = InventoryUtils.getItemCountInItemHandler(handler, itemStack -> !ItemStackUtils.isItemStackEmpty(itemStack) && itemStack.isItemEqual(stack));
+                    final int count = InventoryUtils.getItemCountInItemHandler(handler, itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.isItemEqual(stack));
                     if(count >= amountNeeded)
                     {
                         break;

@@ -113,7 +113,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     {
         if (buildingEntry.isFoodNeeded())
         {
-            if (isInHut(itemStack -> !ItemStackUtils.isItemStackEmpty(itemStack) && itemStack.getItem() instanceof ItemFood))
+            if (isInHut(itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemFood))
             {
                 if (addToList)
                 {
@@ -410,7 +410,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         for (int i = 0; i < new InvWrapper(inventoryCitizen).getSlots(); i++)
         {
             final ItemStack stack = inventoryCitizen.getStackInSlot(i);
-            if(ItemStackUtils.isItemStackEmpty(stack))
+            if(ItemStackUtils.isEmpty(stack))
             {
                 continue;
             }

@@ -141,7 +141,7 @@ public class EntityAIGoHome extends EntityAIBase
                 if (slot != -1)
                 {
                     final ItemStack stack = home.getTileEntity().getStackInSlot(slot);
-                    if (!ItemStackUtils.isItemStackEmpty(stack))
+                    if (!ItemStackUtils.isEmpty(stack))
                     {
                         final int slotToSet = InventoryUtils.getFirstOpenSlotFromItemHandler(new InvWrapper(citizen.getInventoryCitizen()));
 

@@ -849,7 +849,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         return buildingWorker != null
                 && (walkToBuilding()
                 || InventoryFunctions.matchFirstInProvider(worker,
-                (slot, stack) -> !(ItemStackUtils.isItemStackEmpty(stack) || keepIt.test(stack)) && shouldDumpItem(alreadyKept, shouldKeep, buildingWorker, stack, slot)));
+                (slot, stack) -> !(ItemStackUtils.isEmpty(stack) || keepIt.test(stack)) && shouldDumpItem(alreadyKept, shouldKeep, buildingWorker, stack, slot)));
     }
 
     /**
@@ -878,7 +878,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             final ItemStorage tempStorage = new ItemStorage(stack.getItem(), stack.getItemDamage(), stack.stackSize, false);
             final ItemStack tempStack = handleKeepX(alreadyKept, shouldKeep, tempStorage);
-            if (ItemStackUtils.isItemStackEmpty(tempStack))
+            if (ItemStackUtils.isEmpty(tempStack))
             {
                 return false;
             }
@@ -886,7 +886,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             returnStack = InventoryUtils.addItemStackToProviderWithResult(buildingWorker.getTileEntity(), tempStack);
         }
 
-        if (ItemStackUtils.isItemStackEmpty(returnStack))
+        if (ItemStackUtils.isEmpty(returnStack))
         {
             new InvWrapper(worker.getInventoryCitizen()).extractItem(slot, stack.stackSize - amountToKeep, false);
             return amountToKeep == 0;
@@ -988,7 +988,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         for (final @Nullable ItemStack tempStack : items)
         {
             final ItemStack stack = tempStack.copy();
-            if (ItemStackUtils.isItemStackEmpty(stack))
+            if (ItemStackUtils.isEmpty(stack))
             {
                 continue;
             }
