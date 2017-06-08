@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.inventory;
 
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.crash.CrashReport;
@@ -291,7 +292,7 @@ public class InventoryCitizen implements IInventory
                   && (metadataIn <= NO_SLOT || itemstack.getMetadata() == metadataIn) && (itemNBT == null || NBTUtil
                                                                                                                .areNBTEquals(itemNBT, itemstack.getTagCompound(), true)))
             {
-                final int k = removeCount <= 0 ? itemstack.getCount() : Math.min(removeCount - i, itemstack.getCount());
+                final int k = removeCount <= 0 ? ItemStackUtils.getItemStackSize(itemstack) : Math.min(removeCount - i, ItemStackUtils.getItemStackSize(itemstack));
                 i += k;
 
                 if (removeCount != 0)
@@ -328,7 +329,7 @@ public class InventoryCitizen implements IInventory
                 return i;
             }
 
-            final int l = removeCount <= 0 ? this.itemStack.getCount() : Math.min(removeCount - i, this.itemStack.getCount());
+            final int l = removeCount <= 0 ? ItemStackUtils.getItemStackSize(this.itemStack) : Math.min(removeCount - i, ItemStackUtils.getItemStackSize(this.itemStack));
             i += l;
 
             if (removeCount != 0)
@@ -700,16 +701,16 @@ public class InventoryCitizen implements IInventory
 
                     while (true)
                     {
-                        i = itemStackIn.getCount();
+                        i = ItemStackUtils.getItemStackSize(itemStackIn);
                         itemStackIn.setCount(this.storePartialItemStack(itemStackIn));
 
-                        if (itemStackIn.isEmpty() || itemStackIn.getCount() >= i)
+                        if (ItemStackUtils.getItemStackSize(itemStackIn) >= i)
                         {
                             break;
                         }
                     }
 
-                    return itemStackIn.getCount() < i;
+                    return ItemStackUtils.getItemStackSize(itemStackIn) < i;
                 }
             }
             catch (final RuntimeException exception)
@@ -751,7 +752,7 @@ public class InventoryCitizen implements IInventory
      */
     private int storePartialItemStack(final ItemStack itemStackIn)
     {
-        int i = itemStackIn.getCount();
+        int i = ItemStackUtils.getItemStackSize(itemStackIn);
         int j = this.storeItemStack(itemStackIn);
 
         if (j == NO_SLOT)
@@ -783,14 +784,14 @@ public class InventoryCitizen implements IInventory
 
             int k = i;
 
-            if (i > itemstack.getMaxStackSize() - itemstack.getCount())
+            if (i > itemstack.getMaxStackSize() - ItemStackUtils.getItemStackSize(itemstack))
             {
-                k = itemstack.getMaxStackSize() - itemstack.getCount();
+                k = itemstack.getMaxStackSize() - ItemStackUtils.getItemStackSize(itemstack);
             }
 
-            if (k > this.getInventoryStackLimit() - itemstack.getCount())
+            if (k > this.getInventoryStackLimit() - ItemStackUtils.getItemStackSize(itemstack))
             {
-                k = this.getInventoryStackLimit() - itemstack.getCount();
+                k = this.getInventoryStackLimit() - ItemStackUtils.getItemStackSize(itemstack);
             }
 
             if (k == 0)
@@ -837,7 +838,7 @@ public class InventoryCitizen implements IInventory
     private boolean canMergeStacks(final ItemStack stack1, final ItemStack stack2)
     {
         return !stack1.isEmpty() && InventoryCitizen.stackEqualExact(stack1, stack2) && stack1.isStackable()
-                 && stack1.getCount() < stack1.getMaxStackSize() && stack1.getCount() < this.getInventoryStackLimit();
+                 && ItemStackUtils.getItemStackSize(stack1) < stack1.getMaxStackSize() && ItemStackUtils.getItemStackSize(stack1) < this.getInventoryStackLimit();
     }
 
     /**
@@ -1001,7 +1002,7 @@ public class InventoryCitizen implements IInventory
 
                 if (!itemstack.isEmpty())
                 {
-                    this.citizen.dropItem(itemstack.getItem(), itemstack.getCount());
+                    this.citizen.dropItem(itemstack.getItem(), ItemStackUtils.getItemStackSize(itemstack));
                     list.set(i, ItemStack.EMPTY);
                 }
             }
