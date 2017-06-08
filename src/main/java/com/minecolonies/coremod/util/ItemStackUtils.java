@@ -15,6 +15,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.function.Predicate;
 
+import static com.minecolonies.coremod.util.constants.ToolLevelConstants.*;
+
 /**
  * Utility methods for the inventories.
  */
@@ -138,12 +140,16 @@ public final class ItemStackUtils
 
     /**
      * Calculate the mining level an item has as a tool of certain type.
+     * Suppressing Sonar Rule squid:S1142
+     * This rule does "Methods should not have too many return statements"
+     * I could limit the number of return by using a variable and only one return
+     * but it will not make the code clearer
      *
      * @param stack    the stack to test.
      * @param toolType the tool category.
      * @return integer value for mining level &gt;= 0 is okay.
      */
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings({"deprecation", "squid:S1142"})
     public static int getMiningLevel(@Nullable final ItemStack stack, @Nullable final IToolType toolType)
     {
         if (toolType == ToolType.NONE)
@@ -245,22 +251,19 @@ public final class ItemStackUtils
      */
     public static int getMaxEnchantmentLevel(final ItemStack itemStack)
     {
-        if (itemStack == null)
+        if (isItemStackEmpty(itemStack))
         {
             return 0;
         }
         int maxLevel = 0;
-        if (itemStack != null)
-        {
-            final NBTTagList nbttaglist = itemStack.getEnchantmentTagList();
+        final NBTTagList nbttaglist = itemStack.getEnchantmentTagList();
 
-            if (nbttaglist != null)
+        if (nbttaglist != null)
+        {
+            for (int j = 0; j < nbttaglist.tagCount(); ++j)
             {
-                for (int j = 0; j < nbttaglist.tagCount(); ++j)
-                {
-                    final int level = nbttaglist.getCompoundTagAt(j).getShort("lvl");
-                    maxLevel = level > maxLevel ? level : maxLevel;
-                }
+                final int level = nbttaglist.getCompoundTagAt(j).getShort("lvl");
+                maxLevel = level > maxLevel ? level : maxLevel;
             }
         }
         return maxLevel;
@@ -289,13 +292,13 @@ public final class ItemStackUtils
     {
         switch (toolGrade)
         {
-            case 0:
+            case TOOL_LEVEL_WOOD_OR_GOLD:
                 return "Wood or Gold";
-            case 1:
+            case TOOL_LEVEL_STONE:
                 return "Stone";
-            case 2:
+            case TOOL_LEVEL_IRON:
                 return "Iron";
-            case 3:
+            case TOOL_LEVEL_DIAMOND:
                 return "Diamond";
             default:
                 return "Better than Diamond";
@@ -307,19 +310,19 @@ public final class ItemStackUtils
         if ("WOOD".equals(material)
             || "GOLD".equals(material))
         {
-            return 0;
+            return TOOL_LEVEL_WOOD_OR_GOLD;
         }
         else if ("STONE".equals(material))
         {
-            return 1;
+            return TOOL_LEVEL_STONE;
         }
         else if ("IRON".equals(material))
         {
-            return 2;
+            return TOOL_LEVEL_IRON;
         }
         else if ("DIAMOND".equals(material))
         {
-            return 3;
+            return TOOL_LEVEL_DIAMOND;
         }
         return -1;
     }

@@ -28,7 +28,7 @@ public enum ToolType implements IToolType
         }
     }
 
-    private ToolType(final String name, final boolean variableMaterials)
+    ToolType(final String name, final boolean variableMaterials)
     {
         this.name = name;
         this.variableMaterials = variableMaterials;

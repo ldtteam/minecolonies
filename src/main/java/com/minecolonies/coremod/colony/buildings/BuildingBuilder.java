@@ -149,6 +149,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
             final NBTTagCompound neededRes = neededResTagList.getCompoundTagAt(i);
             final ItemStack stack = ItemStack.loadItemStackFromNBT(neededRes);
             final BuildingBuilderResource resource = new BuildingBuilderResource(stack.getItem(),stack.getItemDamage(), stack.stackSize);
+            neededResources.put(stack.getUnlocalizedName(), resource);
         }
     }
 

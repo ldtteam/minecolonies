@@ -876,13 +876,13 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         for (final ItemStack stack : this.getArmorInventoryList())
         {
-            if (stack == null || stack.getItem() == null || !(stack.getItem() instanceof ItemArmor))
+            if (ItemStackUtils.isItemStackEmpty(stack) || !(stack.getItem() instanceof ItemArmor))
             {
                 continue;
             }
             stack.damageItem((int) (damage / 2), this);
 
-            if (stack.stackSize < 1)
+            if (ItemStackUtils.getItemStackSize(stack) < 1)
             {
                 setItemStackToSlot(getSlotForItemStack(stack), null);
             }
@@ -1399,7 +1399,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         for (int i = 0; i < new InvWrapper(getInventoryCitizen()).getSlots(); i++)
         {
             final ItemStack itemstack = inventory.getStackInSlot(i);
-            if (itemstack != null && itemstack.stackSize > 0)
+            if (!ItemStackUtils.isItemStackEmpty(itemstack))
             {
                 entityDropItem(itemstack);
             }
@@ -1686,7 +1686,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
                         SoundCategory.AMBIENT,
                         0.2F,
                         (float) ((this.rand.nextGaussian() * 0.7D + 1.0D) * 2.0D));
-                this.onItemPickup(entityItem, itemStack.stackSize - resultingStackSize);
+                this.onItemPickup(entityItem, ItemStackUtils.getItemStackSize(itemStack) - resultingStackSize);
 
                 if (ItemStackUtils.isItemStackEmpty(resultStack))
                 {
