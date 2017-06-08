@@ -157,7 +157,7 @@ public class EntityAIGoHome extends EntityAIBase
                             citizen.getInventoryCitizen().setInventorySlotContents(slotToSet, new ItemStack(stack.getItem(), 1));
                         }
                         tookFood = true;
-                        stack.setCount(stack.getCount() - 1);
+                        stack.setCount(ItemStackUtils.getItemStackSize(stack) - 1);
                     }
                     ((BuildingHome) home).setFoodNeeded(false);
                 }

@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.ai.citizen.farmer;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.inventory.InventoryField;
@@ -262,14 +263,14 @@ public class Field extends Container
             playerIn.inventory.addItemStackToInventory(inventory.getStackInSlot(0));
             inventory.setStackInSlot(0, ItemStack.EMPTY);
         }
-        else if (inventory.getStackInSlot(0) == ItemStack.EMPTY || inventory.getStackInSlot(0).getCount() == 0)
+        else if (inventory.getStackInSlot(0) == ItemStack.EMPTY || ItemStackUtils.getItemStackSize(inventory.getStackInSlot(0)) == 0)
         {
             final int playerIndex = slotIndex < MAX_INVENTORY_INDEX ? (slotIndex + INVENTORY_BAR_SIZE) : (slotIndex - MAX_INVENTORY_INDEX);
             if (playerIn.inventory.getStackInSlot(playerIndex) != ItemStack.EMPTY)
             {
                 @NotNull final ItemStack stack = playerIn.inventory.getStackInSlot(playerIndex).splitStack(1);
                 inventory.setStackInSlot(0, stack);
-                if (playerIn.inventory.getStackInSlot(playerIndex).getCount() == 0)
+                if (ItemStackUtils.getItemStackSize(playerIn.inventory.getStackInSlot(playerIndex)) == 0)
                 {
                     playerIn.inventory.removeStackFromSlot(playerIndex);
                 }
