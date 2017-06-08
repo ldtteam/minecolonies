@@ -370,7 +370,7 @@ public final class ItemStackUtils
      * @param size of the stack
      */
     @NotNull
-    public static int getSize(@NotNull final ItemStack stack, final int size)
+    public static void setSize(@NotNull final ItemStack stack, final int size)
     {
         stack.setCount(size);
     }
