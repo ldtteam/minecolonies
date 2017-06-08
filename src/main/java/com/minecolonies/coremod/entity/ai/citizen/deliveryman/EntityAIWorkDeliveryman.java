@@ -194,7 +194,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
 
         final ItemStack stack = building.getTileEntity().getStackInSlot(currentSlot);
-        if (stack == null || workerRequiresItem(building, stack, alreadyKept)
+        if (ItemStackUtils.isEmpty(stack) || workerRequiresItem(building, stack, alreadyKept)
                 || (building instanceof BuildingHome && stack.getItem() instanceof ItemFood))
         {
             return false;

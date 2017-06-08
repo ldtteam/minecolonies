@@ -194,7 +194,7 @@ public class InventoryCitizen implements IInventory
     {
         for (int i = 0; i < this.stacks.length; ++i)
         {
-            if (this.stacks[i] != null && this.stacks[i].getItem() == itemIn)
+            if (!ItemStackUtils.isEmpty(this.stacks[i]) && this.stacks[i].getItem() == itemIn)
             {
                 return i;
             }
@@ -277,7 +277,7 @@ public class InventoryCitizen implements IInventory
     {
         for (int i = 0; i < this.stacks.length; ++i)
         {
-            if (this.stacks[i] == null)
+            if (ItemStackUtils.isEmpty(this.stacks[i]))
             {
                 return i;
             }
@@ -306,7 +306,7 @@ public class InventoryCitizen implements IInventory
         }
         else
         {
-            if (this.stacks[j] == null)
+            if (ItemStackUtils.isEmpty(this.stacks[j]))
             {
                 // Forge: Replace Item clone above to preserve item capabilities when picking the item up.
                 this.stacks[j] = itemStackIn.copy();
@@ -346,7 +346,7 @@ public class InventoryCitizen implements IInventory
     {
         for (int i = 0; i < this.stacks.length; ++i)
         {
-            if (this.stacks[i] != null && this.stacks[i].getItem() == itemStackIn.getItem() && this.stacks[i].isStackable()
+            if (!ItemStackUtils.isEmpty(this.stacks[i]) && this.stacks[i].getItem() == itemStackIn.getItem() && this.stacks[i].isStackable()
                   && ItemStackUtils.getSize(this.stacks[i]) < this.stacks[i].getMaxStackSize() && ItemStackUtils.getSize(this.stacks[i]) < this.getInventoryStackLimit()
                   && (!this.stacks[i].getHasSubtypes() || this.stacks[i].getMetadata() == itemStackIn.getMetadata())
                   && ItemStack.areItemStackTagsEqual(this.stacks[i], itemStackIn))
@@ -388,7 +388,7 @@ public class InventoryCitizen implements IInventory
      */
     public boolean isSlotEmpty(final int index)
     {
-        return getStackInSlot(index) == null;
+        return ItemStackUtils.isEmpty(getStackInSlot(index));
     }
 
     /**

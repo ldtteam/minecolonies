@@ -410,7 +410,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             for (int i = 0; i < ((TileEntityLockable) tileEntity).getSizeInventory(); i++)
             {
                 final ItemStack stack = ((TileEntityLockable) tileEntity).getStackInSlot(i);
-                if (stack != null)
+                if (!ItemStackUtils.isEmpty(stack))
                 {
                     items.add(stack);
                 }
@@ -431,9 +431,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     {
         final AbstractBuildingWorker buildingWorker = getOwnBuilding();
 
-        if(stack == null || stack.getItem() == null)
+        if(ItemStackUtils.isEmpty(stack))
         {
-            return null;
+            return ItemStackUtils.EMPTY;
         }
         final BuildingBuilderResource resource = ((BuildingBuilder) buildingWorker).getNeededResources().get(stack.getUnlocalizedName());
         return resource == null ? stack : new ItemStack(resource.getItem(), resource.getAmount(), resource.getDamageValue());

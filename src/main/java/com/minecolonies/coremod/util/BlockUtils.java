@@ -186,7 +186,7 @@ public final class BlockUtils
     public static boolean isBlockSeed(@NotNull final World world, @NotNull final BlockPos pos)
     {
         final ItemStack stack = BlockUtils.getItemStackFromBlockState(world.getBlockState(pos.up()));
-        return  stack != null && stack.getItem() instanceof ItemSeeds;
+        return !ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof ItemSeeds;
     }
 
     /**
@@ -280,7 +280,7 @@ public final class BlockUtils
         else if (blockState.getBlock() instanceof BlockCrops)
         {
             final ItemStack stack = ((BlockCrops) blockState.getBlock()).getItem(null, null, blockState);
-            if (stack != null)
+            if (!ItemStackUtils.isEmpty(stack))
             {
                 return stack.getItem();
             }
@@ -367,7 +367,7 @@ public final class BlockUtils
         else if (blockState.getBlock() instanceof BlockStem)
         {
             final ItemStack stack = ((BlockStem) blockState.getBlock()).getItem(null, null, blockState);
-            if (stack != null)
+            if (!ItemStackUtils.isEmpty(stack))
             {
                 return stack.getItem();
             }

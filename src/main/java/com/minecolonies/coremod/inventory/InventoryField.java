@@ -135,15 +135,15 @@ public class InventoryField implements IInventory
     @Override
     public ItemStack decrStackSize(final int index, final int count)
     {
-        if (this.stackResult[index] == null)
+        if (ItemStackUtils.isEmpty(this.stackResult[index]))
         {
-            return null;
+            return ItemStackUtils.EMPTY;
         }
 
         if (ItemStackUtils.getSize(this.stackResult[index]) <= count)
         {
             final ItemStack itemStack1 = this.stackResult[index];
-            this.stackResult[index] = null;
+            this.stackResult[index] = ItemStackUtils.EMPTY;
             this.markDirty();
             return itemStack1;
         }
@@ -165,13 +165,13 @@ public class InventoryField implements IInventory
     @Override
     public ItemStack removeStackFromSlot(final int index)
     {
-        if (this.stackResult[index] == null)
+        if (ItemStackUtils.isEmpty(this.stackResult[index]))
         {
-            return null;
+            return ItemStackUtils.EMPTY;
         }
 
         final ItemStack itemstack = this.stackResult[index];
-        this.stackResult[index] = null;
+        this.stackResult[index] = ItemStackUtils.EMPTY;
         return itemstack;
     }
 
@@ -186,7 +186,7 @@ public class InventoryField implements IInventory
     {
         this.stackResult[index] = stack;
 
-        if (stack != null && ItemStackUtils.getSize(stack) > this.getInventoryStackLimit())
+        if (!ItemStackUtils.isEmpty(stack) && ItemStackUtils.getSize(stack) > this.getInventoryStackLimit())
         {
             ItemStackUtils.setSize(stack, this.getInventoryStackLimit());
         }
@@ -241,7 +241,7 @@ public class InventoryField implements IInventory
     @Override
     public boolean isItemValidForSlot(final int index, @Nullable final ItemStack itemStack)
     {
-        return index == 0 && itemStack != null && itemStack.getItem() instanceof ItemSeeds;
+        return index == 0 && ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemSeeds;
     }
 
     /**
@@ -289,7 +289,7 @@ public class InventoryField implements IInventory
     {
         for (int i = 0; i < this.stackResult.length; ++i)
         {
-            this.stackResult[i] = null;
+            this.stackResult[i] = ItemStackUtils.EMPTY;
         }
     }
 
@@ -304,7 +304,7 @@ public class InventoryField implements IInventory
 
         for (int i = 0; i < this.stackResult.length; ++i)
         {
-            if (this.stackResult[i] != null)
+            if (!ItemStackUtils.isEmpty(stackResult[i]))
             {
                 @NotNull final NBTTagCompound nbttagcompound = new NBTTagCompound();
                 nbttagcompound.setByte(TAG_SLOT, (byte) i);

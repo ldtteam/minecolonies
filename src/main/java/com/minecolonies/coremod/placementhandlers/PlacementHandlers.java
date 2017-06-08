@@ -237,7 +237,7 @@ public final class PlacementHandlers
 
                 for (final ItemStack stack : itemList)
                 {
-                    if (stack != null && placer.checkOrRequestItems(placer.getTotalAmount(stack)))
+                    if (!ItemStackUtils.isEmpty(stack) && placer.checkOrRequestItems(placer.getTotalAmount(stack)))
                     {
                         return ActionProcessingResult.DENY;
                     }
@@ -367,7 +367,7 @@ public final class PlacementHandlers
 
                 for (final ItemStack stack : itemList)
                 {
-                    if (stack != null && placer.checkOrRequestItems(placer.getTotalAmount(stack)))
+                    if (!ItemStackUtils.isEmpty(stack) && placer.checkOrRequestItems(placer.getTotalAmount(stack)))
                     {
                         return ActionProcessingResult.DENY;
                     }

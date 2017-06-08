@@ -988,7 +988,7 @@ public abstract class AbstractBuilding
      */
     public void addNeededItems(@Nullable ItemStack stack)
     {
-        if(stack != null)
+        if(!ItemStackUtils.isEmpty(stack))
         {
             itemsCurrentlyNeeded.add(stack);
         }
