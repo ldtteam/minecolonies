@@ -32,7 +32,7 @@ public final class ItemStackUtils
      * Predicate to check if an itemStack is empty.
      */
     @NotNull
-    public static final Predicate<ItemStack> EMPTY_PREDICATE = ItemStackUtils::isItemStackEmpty;
+    public static final Predicate<ItemStack> EMPTY_PREDICATE = ItemStackUtils::isEmpty;
 
     /**
      * Negation of the itemStack empty predicate (not empty).
@@ -102,7 +102,7 @@ public final class ItemStackUtils
      */
     public static boolean hasToolLevel(@Nullable final ItemStack stack, final IToolType toolType, final int minimalLevel, final int maximumLevel)
     {
-        if (isItemStackEmpty(stack))
+        if (isEmpty(stack))
         {
             return false;
         }
@@ -119,7 +119,7 @@ public final class ItemStackUtils
      * @return True when the stack is empty, false when not.
      */
     @NotNull
-    public static Boolean isItemStackEmpty(@Nullable final ItemStack stack)
+    public static Boolean isEmpty(@Nullable final ItemStack stack)
     {
         return stack == EMPTY || stack.stackSize <= 0;
     }
@@ -133,7 +133,7 @@ public final class ItemStackUtils
      */
     public static boolean isTool(@Nullable final ItemStack itemStack, final IToolType toolType)
     {
-        if (isItemStackEmpty(itemStack))
+        if (isEmpty(itemStack))
         {
             return false;
         }
@@ -182,7 +182,7 @@ public final class ItemStackUtils
             //empty hand is best on blocks who don't care (0 better 1)
             return stack == null ? 0 : 1;
         }
-        if (isItemStackEmpty(stack))
+        if (isEmpty(stack))
         {
             return -1;
         }
@@ -276,7 +276,7 @@ public final class ItemStackUtils
      */
     public static int getMaxEnchantmentLevel(final ItemStack itemStack)
     {
-        if (isItemStackEmpty(itemStack))
+        if (isEmpty(itemStack))
         {
             return 0;
         }
@@ -377,15 +377,28 @@ public final class ItemStackUtils
      * @return the size of the stack
      */
     @NotNull
-    public static int getItemStackSize(final ItemStack stack)
+    public static int getSize(final ItemStack stack)
     {
-        if (isItemStackEmpty(stack))
+        if (isEmpty(stack))
         {
             return 0;
         }
 
         return stack.stackSize;
     }
+
+    /**
+     * set the size of the stack.
+     *
+     * @param stack to set the size to
+     * @return the size of the stack
+     */
+    @NotNull
+    public static int setSize(final ItemStack stack, final int size)
+    {
+        stack.stackSize = size;
+    }
+
 
     /**
      * Method to compare to stacks, ignoring their stacksize.
@@ -397,8 +410,8 @@ public final class ItemStackUtils
     @NotNull
     public static Boolean compareItemStacksIgnoreStackSize(final ItemStack itemStack1, final ItemStack itemStack2)
     {
-        if (!isItemStackEmpty(itemStack1) &&
-            !isItemStackEmpty(itemStack2) &&
+        if (!isEmpty(itemStack1) &&
+            !isEmpty(itemStack2) &&
             itemStack1.getItem() == itemStack2.getItem() &&
             itemStack1.getItemDamage() == itemStack2.getItemDamage())
         {

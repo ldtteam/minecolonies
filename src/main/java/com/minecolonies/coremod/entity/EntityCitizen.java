@@ -882,7 +882,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             }
             stack.damageItem((int) (damage / 2), this);
 
-            if (ItemStackUtils.getItemStackSize(stack) < 1)
+            if (ItemStackUtils.getSize(stack) < 1)
             {
                 setItemStackToSlot(getSlotForItemStack(stack), null);
             }
@@ -1677,7 +1677,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             final ItemStack itemStack = entityItem.getEntityItem();
 
             final ItemStack resultStack = InventoryUtils.addItemStackToItemHandlerWithResult(new InvWrapper(getInventoryCitizen()), itemStack.copy());
-            final int resultingStackSize = ItemStackUtils.getItemStackSize(resultStack);
+            final int resultingStackSize = ItemStackUtils.getSize(resultStack);
             if (ItemStackUtils.isItemStackEmpty(resultStack) || ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, resultStack))
             {
                 this.worldObj.playSound((EntityPlayer) null,
@@ -1686,7 +1686,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
                         SoundCategory.AMBIENT,
                         0.2F,
                         (float) ((this.rand.nextGaussian() * 0.7D + 1.0D) * 2.0D));
-                this.onItemPickup(entityItem, ItemStackUtils.getItemStackSize(itemStack) - resultingStackSize);
+                this.onItemPickup(entityItem, ItemStackUtils.getSize(itemStack) - resultingStackSize);
 
                 if (ItemStackUtils.isItemStackEmpty(resultStack))
                 {

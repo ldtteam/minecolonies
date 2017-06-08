@@ -216,7 +216,7 @@ public final class InventoryUtils
      */
     public static int getItemCountInItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        return filterItemHandler(itemHandler, itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getItemStackSize).sum();
+        return filterItemHandler(itemHandler, itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getSize).sum();
     }
 
     /**
@@ -596,7 +596,7 @@ public final class InventoryUtils
     public static int getItemCountInProvider(@NotNull final ICapabilityProvider provider, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
         return getItemHandlersFromProvider(provider).stream()
-                 .mapToInt(handler -> filterItemHandler(handler, itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getItemStackSize).sum())
+                 .mapToInt(handler -> filterItemHandler(handler, itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getSize).sum())
                  .sum();
     }
 
@@ -1093,7 +1093,7 @@ public final class InventoryUtils
             return 0;
         }
 
-        return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing), itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getItemStackSize).sum();
+        return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing), itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getSize).sum();
     }
 
     /**
@@ -1343,7 +1343,7 @@ public final class InventoryUtils
 
         if (!ItemStack.areItemStacksEqual(sourceStack, originalStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(sourceStack, originalStack))
         {
-            final int usedAmount = ItemStackUtils.getItemStackSize(sourceStack) - ItemStackUtils.getItemStackSize(originalStack);
+            final int usedAmount = ItemStackUtils.getSize(sourceStack) - ItemStackUtils.getSize(originalStack);
             sourceHandler.extractItem(sourceIndex, usedAmount, false);
             return true;
         }
