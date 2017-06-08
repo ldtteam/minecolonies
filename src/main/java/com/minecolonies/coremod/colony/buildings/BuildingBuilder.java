@@ -223,7 +223,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
      */
     public void addNeededResource(@Nullable final ItemStack res, final int amount)
     {
-        if (res == null || res.getItem() == null || res.stackSize == 0 || amount == 0)
+        if (res == null || res.getItem() == null || ItemStackUtils.isEmpty() || amount == 0)
         {
             return;
         }
