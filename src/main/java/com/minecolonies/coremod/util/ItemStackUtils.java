@@ -391,11 +391,22 @@ public final class ItemStackUtils
      * set the size of the stack.
      *
      * @param stack to set the size to
-     * @return the size of the stack
+     * @param the size of the stack
      */
     public static void setSize(@NotNull final ItemStack stack, final int size)
     {
         stack.stackSize = size;
+    }
+
+    /**
+     * Increase or decrease the stack size.
+     *
+     * @param stack to set the size to
+     * @param the amount to increase the size of the stack (negative value to decrease)
+     */
+    public static void increaseOrDecreaseSize(@NotNull final ItemStack stack, final int amount)
+    {
+        stack.stackSize += amount;
     }
 
 

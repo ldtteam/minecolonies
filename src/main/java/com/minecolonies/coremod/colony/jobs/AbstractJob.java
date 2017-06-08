@@ -5,6 +5,7 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
+import com.minecolonies.coremod.util.ItemStackUtils;
 import com.minecolonies.coremod.util.Log;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.item.ItemStack;
@@ -280,7 +281,7 @@ public abstract class AbstractJob
         {
             if (stack.isItemEqualIgnoreDurability(neededItem))
             {
-                neededItem.stackSize += stack.stackSize;
+                ItemStackUtils.increaseOrDecreaseSize(neededItem, ItemStackUtils.getSize(stack));
                 return;
             }
         }
@@ -303,9 +304,9 @@ public abstract class AbstractJob
         {
             if (stack.isItemEqualIgnoreDurability(neededItem))
             {
-                final int itemsToRemove = Math.min(neededItem.stackSize, stackCopy.stackSize);
-                neededItem.stackSize -= itemsToRemove;
-                stackCopy.stackSize -= itemsToRemove;
+                final int itemsToRemove = Math.min(ItemStackUtils.getSize(neededItem), ItemStackUtils.getSize(stackCopy));
+                ItemStackUtils.increaseOrDecreaseSize(neededItem, -itemsToRemove);
+                ItemStackUtils.increaseOrDecreaseSize(stackCopy, -itemsToRemove);
 
                 //Deativate this if for now in order to keep working even if not all items are given. previously checked if stackSize is 0 and only removed then.
                 itemsNeeded.remove(neededItem);
@@ -314,7 +315,7 @@ public abstract class AbstractJob
             }
         }
 
-        return stackCopy.stackSize == 0 ? null : stackCopy;
+        return ItemStackUtils.isEmpty(stackCopy) ? ItemStackUtils.EMPTY : stackCopy;
     }
 
     /**

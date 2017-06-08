@@ -1426,7 +1426,7 @@ public final class InventoryUtils
         int maxTries = 0;
         for(final ItemStack stack: input)
         {
-            maxTries+= stack.stackSize;
+            maxTries+= ItemStackUtils.getSize(stack);
             list.add(stack.copy());
         }
 
@@ -1445,15 +1445,15 @@ public final class InventoryUtils
                 continue;
             }
 
-            int removedSize = handler.extractItem(slot, stack.stackSize, false).stackSize;
+            int removedSize = ItemStackUtils.getSize(handler.extractItem(slot, ItemStackUtils.getSize(stack), false));
 
-            if(removedSize == stack.stackSize)
+            if(removedSize == ItemStackUtils.getSize(stack))
             {
                 i++;
             }
             else
             {
-                stack.stackSize -= removedSize;
+                ItemStackUtils.setSize(stack, ItemStackUtils.getSize(stack) - removedSize);
             }
             tries++;
         }

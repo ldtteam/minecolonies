@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.inventory;
 
+import com.minecolonies.coremod.util.ItemStackUtils;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemSeeds;
@@ -138,7 +140,7 @@ public class InventoryField implements IInventory
             return null;
         }
 
-        if (this.stackResult[index].stackSize <= count)
+        if (ItemStackUtils.getSize(this.stackResult[index]) <= count)
         {
             final ItemStack itemStack1 = this.stackResult[index];
             this.stackResult[index] = null;
@@ -149,9 +151,9 @@ public class InventoryField implements IInventory
         {
             @NotNull final ItemStack itemstack = this.stackResult[index].splitStack(count);
 
-            if (this.stackResult[index].stackSize == 0)
+            if (ItemStackUtils.isEmpty(this.stackResult[index]))
             {
-                this.stackResult[index] = null;
+                this.stackResult[index] = ItemStackUtils.EMPTY;
             }
 
             this.markDirty();
@@ -184,9 +186,9 @@ public class InventoryField implements IInventory
     {
         this.stackResult[index] = stack;
 
-        if (stack != null && stack.stackSize > this.getInventoryStackLimit())
+        if (stack != null && ItemStackUtils.getSize(stack) > this.getInventoryStackLimit())
         {
-            stack.stackSize = this.getInventoryStackLimit();
+            ItemStackUtils.setSize(stack, this.getInventoryStackLimit());
         }
 
         this.markDirty();
