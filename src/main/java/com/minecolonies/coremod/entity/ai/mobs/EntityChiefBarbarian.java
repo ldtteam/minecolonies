@@ -24,45 +24,34 @@ import javax.annotation.Nullable;
  */
 public class EntityChiefBarbarian extends EntityMob
 {
+    final Colony colony = ColonyManager.getClosestColony(world, this.getPosition());
+
     public EntityChiefBarbarian(World worldIn)
     {
         super(worldIn);
         this.getAlwaysRenderNameTag();
     }
 
-    @Nullable
-    @Override
-    public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, @Nullable IEntityLivingData livingdata)
-    {
-        this.setCustomNameTag("Chief Asherslab");
-        this.setAlwaysRenderNameTag(true);
-        this.setEquipment();
-        return super.onInitialSpawn(difficulty, livingdata);
-    }
-
-    protected void setEquipment()
-    {
-        this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_SWORD));
-        this.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(Items.DIAMOND_CHESTPLATE));
-        this.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(Items.DIAMOND_LEGGINGS));
-        this.setItemStackToSlot(EntityEquipmentSlot.FEET, new ItemStack(Items.DIAMOND_BOOTS));
-    }
-
-    @Override
-    protected void entityInit()
-    {
-        super.entityInit();
-    }
 
     @Override
     protected void applyEntityAttributes()
     {
         super.applyEntityAttributes();
-        // Here we set various attributes for our mob. Like maximum health, armor, speed, ...
         this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(35.0D);
         this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.13D);
-        this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(3.0D);
+        this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(2.0D);
         this.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(2.0D);
+        this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(this.getHealthBasedOnRaidLevel());
+    }
+
+    protected double getHealthBasedOnRaidLevel()
+    {
+        if (colony != null)
+        {
+            int raidLevel = (int) (colony.getRaidLevel()*1.5);
+            return 25+raidLevel;
+        }
+        return 25.0D;
     }
 
     @Override
@@ -85,23 +74,6 @@ public class EntityChiefBarbarian extends EntityMob
     }
 
     @Override
-    public boolean getCanSpawnHere()
-    {
-        final Colony colony = ColonyManager.getClosestColony(world, this.getPosition());
-        if (colony != null)
-        {
-            BlockPos location = colony.getCenter();
-            final double distance = this.getDistance(location.getX(), location.getY(), location.getZ());
-            final boolean innerBounds = (!(distance < 120) && !(distance > 160));
-            return (innerBounds && !world.isDaytime());
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    @Override
     protected boolean isValidLightLevel()
     {
         return true;
@@ -117,13 +89,7 @@ public class EntityChiefBarbarian extends EntityMob
     @Override
     protected boolean canDespawn()
     {
-        if (world.isDaytime())
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return world.isDaytime();
+
     }
 }

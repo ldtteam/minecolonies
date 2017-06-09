@@ -1,8 +1,5 @@
 package com.minecolonies.coremod.entity.ai.mobs;
 
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntitySpectralArrow;
 import net.minecraft.entity.projectile.EntityTippedArrow;
@@ -11,33 +8,16 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
 
-import javax.annotation.Nullable;
-
 /**
- * Created by Asher on 5/6/17.
+ * Created by Asherslab on 5/6/17.
  */
 public class EntityArcherBarbarian extends AbstractArcherBarbarian {
 
     public EntityArcherBarbarian(World worldIn)
     {
         super(worldIn);
-    }
-
-    @Nullable
-    @Override
-    public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, @Nullable IEntityLivingData livingdata)
-    {
-        this.setEquipment();
-        return super.onInitialSpawn(difficulty, livingdata);
-    }
-
-    private void setEquipment()
-    {
-        this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
     }
 
     SoundEvent getStepSound()
@@ -66,31 +46,6 @@ public class EntityArcherBarbarian extends AbstractArcherBarbarian {
 
             return entityarrow;
         }
-    }
-
-
-    @Override
-    public boolean getCanSpawnHere()
-    {
-        final Colony colony = ColonyManager.getClosestColony(world, this.getPosition());
-        if (colony != null)
-        {
-            BlockPos location = colony.getCenter();
-            final double distance = this.getDistance(location.getX(), location.getY(), location.getZ());
-            final boolean innerBounds = (!(distance < 120) && !(distance > 160));
-            return (innerBounds && !world.isDaytime());
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    @Override
-    protected boolean isValidLightLevel()
-    {
-        return true;
-        //return super.isValidLightLevel();
     }
 
     @Override

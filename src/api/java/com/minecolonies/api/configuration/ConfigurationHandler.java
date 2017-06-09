@@ -127,6 +127,16 @@ public final class ConfigurationHandler
             freeToInteractBlocks = config.get(CATEGORY_GAMEPLAY, "freeToInteractBlocks", freeToInteractBlocks,
                     "Blocks players should be able to interact with inside any colony.").getStringList();
 
+            maxBarbarianHordeSize = getClampedInt(config,CATEGORY_GAMEPLAY ,
+                    "maxBarbarianHordeSize", maxBarbarianHordeSize, MIN_BARBARIAN_HORDE_SIZE, MAX_BARBARIAN_HORDE_SIZE,
+                    "Sets the barbarian horde's max amount of barbarians");
+
+            doBarbariansSpawn = config.get(CATEGORY_GAMEPLAY, "doBarbariansSpawn", doBarbariansSpawn,
+                    "Enables or disables barbarian horde's spawning").getBoolean();
+
+            barbarianHordeDifficulty = getClampedInt(config,CATEGORY_GAMEPLAY,
+                    "barbarianHordeDifficulty", barbarianHordeDifficulty, 1, 10,
+                    "Sets the barbarian horde's attack strength");
             loadPathFindingConfigurations();
             loadNamesConfigurations();
         }
@@ -197,7 +207,8 @@ public final class ConfigurationHandler
                                       final Configuration config, final String category, final String key,
                                       final int defaultValue, final int min, final int max, final String comment)
     {
-        return MathHelper.clamp(config.get(category, key, defaultValue, String.format(FORMAT_RANGE, comment, min, max, defaultValue), min, max).getInt(), min, max);
+        return MathHelper.clamp(config.get(category, key, defaultValue, comment, min, max).getInt(), min, max);
+        //String.format(FORMAT_RANGE, comment, min, max, defaultValue)
     }
 
     public static Configuration getConfiguration()

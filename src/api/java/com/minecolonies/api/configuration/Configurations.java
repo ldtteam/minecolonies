@@ -14,6 +14,11 @@ public class Configurations
     public static       boolean limitToOneWareHousePerColony = true;
     public static       int     builderBuildBlockDelay       = 15;
     public static       int     blockMiningDelayModifier     = 125;
+    public static       int     maxBarbarianHordeSize        = 40;
+    public static       boolean doBarbariansSpawn            = true;
+    public static       int     barbarianHordeDifficulty     = 5;
+    public static final int     MAX_BARBARIAN_HORDE_SIZE     = 60;
+    public static final int     MIN_BARBARIAN_HORDE_SIZE     = 5;
 
     public static boolean enableColonyProtection      = true;
     public static boolean turnOffExplosionsInColonies = true;

@@ -28,6 +28,9 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.Items;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
@@ -96,6 +99,13 @@ public class Colony implements IColony {
     private static final int NUM_ACHIEVEMENT_THIRD = 100;
     private static final int NUM_ACHIEVEMENT_FOURTH = 500;
     private static final int NUM_ACHIEVEMENT_FIFTH = 1000;
+
+    /**
+     * ResourceLocations for barbarians
+     */
+    ResourceLocation barbarian = EntityList.getKey(EntityBarbarian.class);
+    ResourceLocation archer = EntityList.getKey(EntityArcherBarbarian.class);
+    ResourceLocation chief = EntityList.getKey(EntityChiefBarbarian.class);
 
     /**
      * Boolean for wether a raid event has executed this night
@@ -209,6 +219,9 @@ public class Colony implements IColony {
     private BuildingTownHall townHall;
     private int topCitizenId = 0;
     private int maxCitizens = Configurations.maxCitizens;
+    private int raidLevel = 0;
+    private int currentBarbarianSubtractor = 0;
+    private int currentArcherSubtractor = 0;
 
     private double overallHappiness = 5;
 
@@ -951,21 +964,40 @@ public class Colony implements IColony {
     }
 
     /**
-     * Return the colonies amount of workers.
+     * Return the colony's amount of workers.
      */
-    public int numberOfWorkers() {
-        int workers = 0;
+    private int numberOfWorkerLevels()
+    {
+        int levels = 0;
 
+        citizensList.clear();
         citizensList.addAll(this.getCitizens().values());
 
         for (@NotNull final CitizenData citizen : citizensList) {
-            if (citizen.getJob() != null) {
-                workers++;
+            if (citizen.getJob() != null && citizen.getWorkBuilding() != null) {
+                int buildingLevel = citizen.getWorkBuilding().getBuildingLevel();
+                levels += buildingLevel;
             }
         }
 
-        return workers;
+        if (this.getTownHall() != null)
+        {
+            return (levels + this.getTownHall().getBuildingLevel()); // Divided by two because levels is always double the real value
+        }
+        else
+        {
+            return 0;
+        }
     }
+
+    /**
+     * Return the colony's raid index
+     */
+    public int getRaidLevel()
+    {
+        return raidLevel;
+    }
+
 
     /**
      * Any per-world-tick logic should be performed here.
@@ -1013,13 +1045,19 @@ public class Colony implements IColony {
                 }
             }
 
-            if (!RAID_HAS_HAPPENED && world != null && !world.isDaytime()) {
-                final int raidLevel = this.numberOfWorkers();
+            if (!RAID_HAS_HAPPENED && !subscribers.isEmpty() && world != null && !world.isDaytime() && Configurations.doBarbariansSpawn)
+            {
+                raidLevel = this.numberOfWorkerLevels();
+                if (citizens.size() < 5)
+                {
+                    raidLevel = 1;
+                }
                 this.eventRaid(world, raidLevel);
                 RAID_HAS_HAPPENED = true;
             }
 
-            if (world != null && world.isDaytime()) {
+            if (world != null && world.isDaytime())
+            {
                 RAID_HAS_HAPPENED = false;
             }
 
@@ -1042,23 +1080,51 @@ public class Colony implements IColony {
     }
 
     private void eventRaid(World raidingWorld, int level) {
-        Entity entity;
 
-        //colony = this;
+        if (level == 1)
+        {
+            return;
+        }
 
-        ResourceLocation barbarian = EntityList.getKey(EntityBarbarian.class); // placeholder for barbarian
-        ResourceLocation archer = EntityList.getKey(EntityArcherBarbarian.class); // placeholder for archer
-        ResourceLocation chief = EntityList.getKey(EntityChiefBarbarian.class); // placeholder for chief
+        int numberOfBarbarians = level;
+        int numberOfArcherBarbarians = (int) (0.75 * level);
+        int numberOfChiefBarbarians = (int) (0.25 * level);
 
-        int numberOfBarbarians = 3 * level;
-        int numberOfArcherBarbarians = (int) (1.3 * level);
-        int numberofChiefBarbarians = (int) (0.3 * level);
+        int hordeTotal = numberOfArcherBarbarians + numberOfBarbarians + numberOfChiefBarbarians;
+
+        if (hordeTotal > Configurations.maxBarbarianHordeSize)
+        {
+            final int maxSize = Configurations.maxBarbarianHordeSize;
+            if (hordeTotal > 40 && maxSize == 40)
+            {
+                numberOfBarbarians = 20;
+                numberOfArcherBarbarians = 15;
+                numberOfChiefBarbarians = 5;
+            }
+
+            numberOfBarbarians = hordeTotal - maxSize;
+            if (numberOfBarbarians < 0) {numberOfBarbarians = 0;} //For error handling and correct hordeTotal
+            hordeTotal = numberOfArcherBarbarians + numberOfBarbarians + numberOfChiefBarbarians;
+            if (hordeTotal > maxSize)
+            {
+                numberOfArcherBarbarians = hordeTotal - maxSize;
+                if (numberOfArcherBarbarians < 0) {numberOfArcherBarbarians = 0;} //For error handling and correct hordeTotal
+                hordeTotal = numberOfArcherBarbarians + numberOfBarbarians + numberOfChiefBarbarians;
+                if (hordeTotal > maxSize)
+                {
+                    numberOfChiefBarbarians = hordeTotal - maxSize;
+                    if (numberOfChiefBarbarians < 0) { numberOfChiefBarbarians = 0; //For error handling's sake, shouldn't ever happen, but would prefer not to crash if it does.
+                }
+                }
+            }
+        }
 
         int x = this.getCenter().getX();
         int y = this.getCenter().getY();
         int z = this.getCenter().getZ();
 
-        switch(world.rand.nextInt(7))
+        assert raidingWorld != null; //Make sure world isn't null
+        switch(raidingWorld.rand.nextInt(7))
         {
             case 0:
                 x += Configurations.workingRangeTownHall+20;
@@ -1092,11 +1158,11 @@ public class Colony implements IColony {
                 break;
         }
 
-        y = world.getTopSolidOrLiquidBlock(new BlockPos.MutableBlockPos(x,y,z)).getY(); //Make sure mob spawns on surface.
+        y = raidingWorld.getTopSolidOrLiquidBlock(new BlockPos.MutableBlockPos(x,y,z)).getY(); //Make sure mob spawns on surface.
 
         spawn(barbarian, numberOfBarbarians,x,y,z);
         spawn(archer, numberOfArcherBarbarians,x,y,z);
-        spawn(chief, numberofChiefBarbarians,x,y,z);
+        spawn(chief, numberOfChiefBarbarians,x,y,z);
     }
 
     private void spawn(ResourceLocation entityToSpawn, int numberOfSpawns,int x, int y, int z) {
@@ -1105,6 +1171,18 @@ public class Colony implements IColony {
                 if (world != null) {
                     Entity entity = EntityList.createEntityByIDFromName(entityToSpawn, world);
                     if (entity != null) {
+                        if (entityToSpawn == barbarian) {
+                            entity.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.STONE_AXE));
+                        }
+                        if (entityToSpawn == archer) {
+                            entity.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
+                        }
+                        if (entityToSpawn == chief) {
+                            entity.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_SWORD));
+                            entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(Items.CHAINMAIL_CHESTPLATE));
+                            entity.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(Items.CHAINMAIL_LEGGINGS));
+                            entity.setItemStackToSlot(EntityEquipmentSlot.FEET, new ItemStack(Items.CHAINMAIL_BOOTS));
+                        }
                         entity.setLocationAndAngles(x, y, z, MathHelper.wrapDegrees(world.rand.nextFloat() * 360.0F), 0.0F);
                         world.spawnEntity(entity);
                     }
