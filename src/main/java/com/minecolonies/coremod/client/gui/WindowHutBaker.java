@@ -4,7 +4,7 @@ import com.minecolonies.coremod.colony.buildings.BuildingBaker;
 import com.minecolonies.coremod.lib.Constants;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.coremod.util.constants.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BAKER;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BAKER;
 
 /**
  * Window for the fisherman hut.
