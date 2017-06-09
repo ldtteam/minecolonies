@@ -10,6 +10,8 @@ import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.pathfinding.WalkToProxy;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.*;
+import com.minecolonies.coremod.util.constants.IToolType;
+import com.minecolonies.coremod.util.constants.ToolType;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -28,6 +30,7 @@ import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.coremod.util.constants.ToolLevelConstants.*;
 import static com.minecolonies.coremod.util.constants.TranslationConstants.*;
 
 /**
@@ -66,10 +69,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Hit a block every x ticks when mining.
      */
     private static final int             HIT_EVERY_X_TICKS       = 5;
-    /**
-     * Diamond pickaxe level.
-     */
-    private static final int DIAMOND_LEVEL                       = 3;
     /**
      * The list of all items and their quantity that were requested by the worker.
      * Warning: This list does not change, if you need to see what is currently missing,
@@ -154,12 +153,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 /*
                  * Wait for different tools.
                  */
-          new AITarget(() -> this.getOwnBuilding().needsShovel(), this::waitForShovel),
-          new AITarget(() -> this.getOwnBuilding().needsAxe(), this::waitForAxe),
-          new AITarget(() -> this.getOwnBuilding().needsHoe(), this::waitForHoe),
-          new AITarget(() -> this.getOwnBuilding().needsPickaxe(), this::waitForPickaxe),
-          new AITarget(() -> this.getOwnBuilding().needsWeapon(), this::waitForWeapon),
-
+          new AITarget(() -> !this.getOwnBuilding().needsTool(ToolType.NONE), this::waitForToolOrWeapon),
                 /*
                  * Dumps inventory as long as needs be.
                  * If inventory is dumped, execution continues
@@ -471,83 +465,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Check all chests in the worker hut for a required tool.
-     *
-     * @param tool the type of tool requested (amount is ignored)
-     * @return true if a stack of that type was found
-     */
-    public boolean isToolInHut(final String tool)
-    {
-        @Nullable final AbstractBuildingWorker building = getOwnBuilding();
-
-        boolean hasItem;
-        if (building != null)
-        {
-            hasItem = isToolInTileEntity(building.getTileEntity(), tool);
-
-            if (hasItem)
-            {
-                return true;
-            }
-
-            for (final BlockPos pos : building.getAdditionalCountainers())
-            {
-                final TileEntity entity = world.getTileEntity(pos);
-                if (entity instanceof TileEntityChest)
-                {
-                    hasItem = isToolInTileEntity((TileEntityChest) entity, tool);
-
-                    if (hasItem)
-                    {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Finds the first @see ItemStack the type of {@code is}.
-     * It will be taken from the chest and placed in the workers inventory.
-     * Make sure that the worker stands next the chest to not break immersion.
-     * Also make sure to have inventory space for the stack.
-     *
-     * @param entity the tileEntity chest or building.
-     * @param tool   the tool.
-     * @return true if found the tool.
-     */
-    public boolean isToolInTileEntity(TileEntityChest entity, final String tool)
-    {
-        return InventoryFunctions.matchFirstInProviderWithAction(
-          entity,
-          stack -> Utils.isTool(stack, tool),
-          this::takeItemStackFromProvider
-        );
-    }
-
-    /**
-     * Finds the first @see ItemStack the type of {@code is}.
-     * It will be taken from the chest and placed in the workers inventory.
-     * Make sure that the worker stands next the chest to not break immersion.
-     * Also make sure to have inventory space for the stack.
-     *
-     * @param entity    the tileEntity chest or building.
-     * @param tool      the tool.
-     * @param toolLevel the min tool level.
-     * @return true if found the tool.
-     */
-    public boolean isToolInTileEntity(TileEntityChest entity, final String tool, int toolLevel)
-    {
-        return InventoryFunctions.matchFirstInProviderWithAction(
-          entity,
-          stack -> Utils.isTool(stack, tool) && InventoryUtils.hasToolLevel(stack, tool, toolLevel),
-          this::takeItemStackFromProvider
-        );
-    }
-
-    /**
      * Finds the first @see ItemStack the type of {@code is}.
      * It will be taken from the chest and placed in the workers inventory.
      * Make sure that the worker stands next the chest to not break immersion.
@@ -656,6 +573,27 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
+     * Finds the first @see ItemStack the type of {@code is}.
+     * It will be taken from the chest and placed in the workers inventory.
+     * Make sure that the worker stands next the chest to not break immersion.
+     * Also make sure to have inventory space for the stack.
+     *
+     * @param entity   the tileEntity chest or building.
+     * @param toolType the type of tool.
+     * @param minLevel the min tool level.
+     * @param maxLevel the max tool lev	el.
+     * @return true if found the tool.
+     */
+    public boolean isToolInTileEntity(final TileEntityChest entity, final IToolType toolType, final int minLevel, final int maxLevel)
+    {
+        return InventoryFunctions.matchFirstInProviderWithAction(
+                entity,
+                stack -> ItemStackUtils.hasToolLevel(stack, toolType, minLevel, maxLevel),
+                this::takeItemStackFromProvider
+        );
+    }
+
+    /**
      * Takes whatever is in that slot of the workers chest and puts it in his inventory.
      * If the inventory is full, only the fitting part will be moved.
      * Beware this method shouldn't be private, because the generic access won't work within a lambda won't work else.
@@ -669,293 +607,158 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Wait for a needed shovel.
+     * Wait for a needed tool or weapon.
      *
      * @return NEEDS_SHOVEL
      */
     @NotNull
-    private AIState waitForShovel()
+    private AIState waitForToolOrWeapon()
     {
-        if (checkForShovel())
+        final IToolType toolType = worker.getWorkBuilding().getNeedsTool();
+        if (toolType != ToolType.NONE && checkForToolOrWeapon(toolType, worker.getWorkBuilding().getNeededToolLevel()))
         {
             delay += DELAY_RECHECK;
-            return NEEDS_SHOVEL;
+            return NEEDS_TOOL;
         }
         return IDLE;
     }
 
     /**
-     * Ensures that we have a shovel available.
-     * Will set {@code needsShovel} accordingly.
+     * Ensures that we have a appropriate tool available.
+     * Will set {@code needsTool} accordingly.
      *
-     * @return true if we have a shovel
+     * @param toolType type of tool we check for.
+     * @return true if we have the tool
      */
-    private boolean checkForShovel()
+    protected boolean checkForToolOrWeapon(@NotNull final IToolType toolType)
     {
-        getOwnBuilding().setNeedsShovel(checkForTool(Utils.SHOVEL));
-        return getOwnBuilding().needsShovel();
+        return checkForToolOrWeapon(toolType, TOOL_LEVEL_WOOD_OR_GOLD);
+    }
+
+    protected boolean checkForToolOrWeapon(@NotNull final IToolType toolType, final int minimalLevel)
+    {
+        if (checkForNeededTool(toolType, minimalLevel))
+        {
+            getOwnBuilding().setNeedsTool(toolType, minimalLevel);
+        }
+        else if(getOwnBuilding().needsTool(toolType))
+        {
+            getOwnBuilding().setNeedsTool(ToolType.NONE, TOOL_LEVEL_HAND);
+        }
+
+        return getOwnBuilding().needsTool(toolType);
     }
 
     /**
-     * Ensures that we have a tool available.
+     * Check if we need a tool.
      *
+     * Do not use it to find a pickaxe as it need a minimum level
      * @param tool tool required for block
-     * @return true if we have a tool
+     * @return true if we need a tool
      */
-    private boolean checkForTool(@NotNull String tool)
+    private boolean checkForNeededTool(@NotNull final IToolType toolType, final int minimalLevel)
     {
-        final boolean needsTool = !InventoryFunctions
-                                     .matchFirstInProvider(
-                                       worker,
-                                       stack -> Utils.isTool(stack, tool),
-                                       InventoryFunctions::doNothing
-                                     );
-
-        final int hutLevel = worker.getWorkBuilding().getBuildingLevel();
+        final int maxToolLevel = worker.getWorkBuilding().getMaxToolLevel();
         final InventoryCitizen inventory = worker.getInventoryCitizen();
-        final boolean isUsable = InventoryUtils.isToolInItemHandler(new InvWrapper(inventory), tool, hutLevel);
-
-
-        if (!needsTool && isUsable)
+        if (InventoryUtils.isToolInItemHandler(new InvWrapper(inventory), toolType, minimalLevel, maxToolLevel))
         {
             return false;
         }
+
         delay += DELAY_RECHECK;
         if (walkToBuilding())
         {
             return true;
         }
-        if (isToolInHut(tool))
+        if (isToolInHut(toolType, minimalLevel))
         {
             return false;
         }
         if (!getOwnBuilding().hasOnGoingDelivery())
         {
-            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_TOOLREQUEST, tool, InventoryUtils.swapToolGrade(hutLevel));
+            chatRequestTool(toolType, minimalLevel, maxToolLevel);
+
         }
         return true;
     }
 
-    /**
-     * Wait for a needed axe.
-     *
-     * @return NEEDS_AXE
-     */
-    @NotNull
-    private AIState waitForAxe()
+    private void chatRequestTool(@NotNull final IToolType toolType, final int minimalLevel, final int maximumLevel)
     {
-        if (checkForAxe())
+        if (minimalLevel == TOOL_LEVEL_WOOD_OR_GOLD)
         {
-            delay += DELAY_RECHECK;
-            return NEEDS_AXE;
-        }
-        return IDLE;
-    }
-
-    /**
-     * Ensures that we have an axe available.
-     * Will set {@code needsAxe} accordingly.
-     *
-     * @return true if we have an axe
-     */
-    protected boolean checkForAxe()
-    {
-        getOwnBuilding().setNeedsAxe(checkForTool(Utils.AXE));
-        return getOwnBuilding().needsAxe();
-    }
-
-    /**
-     * Wait for a needed hoe.
-     *
-     * @return NEEDS_HOE
-     */
-    @NotNull
-    private AIState waitForHoe()
-    {
-        if (checkForHoe())
-        {
-            delay += DELAY_RECHECK;
-            return NEEDS_HOE;
-        }
-        return IDLE;
-    }
-
-    /**
-     * Ensures that we have a hoe available.
-     * Will set {@code needsHoe} accordingly.
-     *
-     * @return true if we have a hoe
-     */
-    protected boolean checkForHoe()
-    {
-        //todo request hoe correctly
-        getOwnBuilding().setNeedsHoe(checkForTool(Utils.HOE));
-        return getOwnBuilding().needsHoe();
-    }
-
-    /**
-     * Wait for a needed pickaxe.
-     *
-     * @return NEEDS_PICKAXE
-     */
-    @NotNull
-    private AIState waitForPickaxe()
-    {
-        if (checkForPickaxe(getOwnBuilding().getNeededPickaxeLevel()))
-        {
-            delay += DELAY_RECHECK;
-            return NEEDS_PICKAXE;
-        }
-        return IDLE;
-    }
-
-    /**
-     * Ensures that we have a pickaxe available.
-     * Will set {@code needsPickaxe} accordingly.
-     *
-     * @param minlevel the minimum pickaxe level needed.
-     * @return true if we have a pickaxe
-     */
-    private boolean checkForPickaxe(final int minlevel)
-    {
-        //Check for a pickaxe
-        getOwnBuilding().setNeedsPickaxe(!InventoryFunctions
-                                            .matchFirstInProvider(
-                                              worker,
-                                              stack -> Utils.checkIfPickaxeQualifies(
-                                                minlevel, Utils.getMiningLevel(stack, Utils.PICKAXE)),
-                                              InventoryFunctions::doNothing
-                                            ));
-
-        delay += DELAY_RECHECK;
-
-        final InventoryCitizen inventory = worker.getInventoryCitizen();
-        final int hutLevel = worker.getWorkBuilding().getBuildingLevel();
-        final boolean isUsable = InventoryUtils.isToolInItemHandler(new InvWrapper(inventory), Utils.PICKAXE, hutLevel);
-
-        if (!isUsable)
-        {
-            getOwnBuilding().setNeedsPickaxe(true);
-        }
-        if (getOwnBuilding().needsPickaxe())
-        {
-            getOwnBuilding().setNeedsPickaxeLevel(minlevel);
-            if (walkToBuilding())
+            if (maximumLevel == TOOL_LEVEL_MAXIMUM)
             {
-                return false;
+                //Any tool level will do
+                chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_SIMPLETOOLREQUEST, toolType.getName());
             }
-            if (isPickaxeInHut(minlevel))
+            else
             {
-                return true;
-            }
-            if (!getOwnBuilding().hasOnGoingDelivery())
-            {
-                if (minlevel > hutLevel)
+                // tools at most ...
+                if (toolType.hasVariableMaterials())
                 {
-                    chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUESTBETTERHUT,
-                      InventoryUtils.swapToolGrade(hutLevel));
+                    chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_TOOLREQUEST, toolType.getName(), ItemStackUtils.swapToolGrade(maximumLevel));
                 }
                 else
                 {
-                    chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUEST,
-                      InventoryUtils.swapToolGrade(minlevel),
-                      InventoryUtils.swapToolGrade(hutLevel));
+                    chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_ENCHTOOLREQUEST, toolType.getName(), maximumLevel-1);
+                }
+            }
+        }
+        else if (maximumLevel == TOOL_LEVEL_MAXIMUM)
+        {
+            // at least
+            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_TOOLATLEASTREQUEST, toolType.getName(), ItemStackUtils.swapToolGrade(minimalLevel));
+
+        }
+        else if (minimalLevel > maximumLevel)
+        {
+            // need to upgrade the worker's hut
+            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUESTBETTERHUT, minimalLevel+AbstractBuildingWorker.WOOD_HUT_LEVEL);
+        }
+        else if (minimalLevel == maximumLevel)
+        {
+            // we need a specific grade
+            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_SPECIFICTOOLREQUEST, toolType.getName(), ItemStackUtils.swapToolGrade(maximumLevel));
+        }
+        else
+        {
+            // at least and at most
+            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUEST,
+               ItemStackUtils.swapToolGrade(minimalLevel),
+               ItemStackUtils.swapToolGrade(maximumLevel));
+
+        }
+    }
+
+    /**
+     * Check all chests in the worker hut for a required tool.
+     *
+     * @param toolType the type of tool requested (amount is ignored)
+     * @param minimalLevel the minimal level the tool should have.
+     * @return true if a stack of that type was found
+     */
+    public boolean isToolInHut(final IToolType toolType, final int minimalLevel)
+    {
+        @Nullable final AbstractBuildingWorker building = getOwnBuilding();
+
+        if (building != null)
+        {
+            if (isToolInTileEntity(building.getTileEntity(), toolType, minimalLevel, getOwnBuilding().getMaxToolLevel()))
+            {
+                return true;
+            }
+
+            for (final BlockPos pos : building.getAdditionalCountainers())
+            {
+                final TileEntity entity = world.getTileEntity(pos);
+                if (entity instanceof TileEntityChest && isToolInTileEntity((TileEntityChest) entity, toolType, minimalLevel, getOwnBuilding().getMaxToolLevel()))
+                {
+                    return true;
                 }
             }
         }
 
-        return getOwnBuilding().needsPickaxe();
-    }
-
-    /**
-     * Looks for a pickaxe to mine a block of {@code minLevel}.
-     * The pickaxe will be taken from the chest.
-     * Make sure that the worker stands next the chest to not break immersion.
-     * Also make sure to have inventory space for the pickaxe.
-     *
-     * @param minlevel the needed pickaxe level
-     * @return true if a pickaxe was found
-     */
-    private boolean isPickaxeInHut(final int minlevel)
-    {
-        @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
-        return buildingWorker != null
-                 && InventoryFunctions.matchFirstInProviderWithAction(
-          buildingWorker.getTileEntity(),
-          stack -> Utils.checkIfPickaxeQualifies(
-            minlevel,
-            Utils.getMiningLevel(stack, Utils.PICKAXE)
-          ),
-          this::takeItemStackFromProvider
-        );
-    }
-
-    /**
-     * Wait for a needed pickaxe.
-     *
-     * @return NEEDS_PICKAXE
-     */
-    @NotNull
-    private AIState waitForWeapon()
-    {
-        if (checkForWeapon())
-        {
-            delay += DELAY_RECHECK;
-            return NEEDS_WEAPON;
-        }
-        return IDLE;
-    }
-
-    /**
-     * Ensures that we have a pickaxe available.
-     * Will set {@code needsPickaxe} accordingly.
-     *
-     * @return true if we have a pickaxe
-     */
-    public boolean checkForWeapon()
-    {
-        //Check for a pickaxe
-        getOwnBuilding().setNeedsWeapon(!InventoryFunctions
-                                           .matchFirstInProvider(
-                                             worker,
-                                             stack -> stack != null && Utils.doesItemServeAsWeapon(stack),
-                                             InventoryFunctions::doNothing
-                                           ));
-
-        delay += DELAY_RECHECK;
-
-        if (getOwnBuilding().needsWeapon())
-        {
-            if (walkToBuilding())
-            {
-                return false;
-            }
-            if (isWeaponInHut())
-            {
-                return true;
-            }
-            requestWithoutSpam(new TextComponentTranslation("com.minecolonies.coremod.job.guard.needWeapon"));
-        }
-        return getOwnBuilding().needsWeapon();
-    }
-
-    /**
-     * Looks for a weapon.
-     * The pickaxe will be taken from the chest.
-     * Make sure that the worker stands next the chest to not break immersion.
-     * Also make sure to have inventory space for the sword.
-     *
-     * @return true if a weapon was found
-     */
-    private boolean isWeaponInHut()
-    {
-        @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
-        return buildingWorker != null
-                 && InventoryFunctions.matchFirstInProviderWithAction(
-          buildingWorker.getTileEntity(),
-          stack -> stack != null && (Utils.doesItemServeAsWeapon(stack)),
-          this::takeItemStackFromProvider
-        );
+        return false;
     }
 
     /**
@@ -1044,9 +847,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
 
         return buildingWorker != null
-                 && (walkToBuilding()
-                       || InventoryFunctions.matchFirstInProvider(worker,
-          (slot, stack) -> !(InventoryUtils.isItemStackEmpty(stack) || keepIt.test(stack)) && shouldDumpItem(alreadyKept, shouldKeep, buildingWorker, stack, slot)));
+                && (walkToBuilding()
+                || InventoryFunctions.matchFirstInProvider(worker,
+                (slot, stack) -> !(ItemStackUtils.isItemStackEmpty(stack) || keepIt.test(stack)) && shouldDumpItem(alreadyKept, shouldKeep, buildingWorker, stack, slot)));
     }
 
     /**
@@ -1075,7 +878,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             final ItemStorage tempStorage = new ItemStorage(stack.getItem(), stack.getItemDamage(), stack.stackSize, false);
             final ItemStack tempStack = handleKeepX(alreadyKept, shouldKeep, tempStorage);
-            if (InventoryUtils.isItemStackEmpty(tempStack))
+            if (ItemStackUtils.isItemStackEmpty(tempStack))
             {
                 return false;
             }
@@ -1083,7 +886,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             returnStack = InventoryUtils.addItemStackToProviderWithResult(buildingWorker.getTileEntity(), tempStack);
         }
 
-        if (returnStack == null)
+        if (ItemStackUtils.isItemStackEmpty(returnStack))
         {
             new InvWrapper(worker.getInventoryCitizen()).extractItem(slot, stack.stackSize - amountToKeep, false);
             return amountToKeep == 0;
@@ -1144,7 +947,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         if (shouldKeep.get(tempStorage) >= (tempStorage.getAmount() + amountKept))
         {
             alreadyKept.put(tempStorage, tempStorage.getAmount() + amountKept);
-            return InventoryUtils.EMPTY;
+            return ItemStackUtils.EMPTY;
         }
         alreadyKept.put(tempStorage, shouldKeep.get(tempStorage));
         final int dump = tempStorage.getAmount() + amountKept - shouldKeep.get(tempStorage);
@@ -1185,7 +988,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         for (final @Nullable ItemStack tempStack : items)
         {
             final ItemStack stack = tempStack.copy();
-            if (stack == null || stack.getItem() == null)
+            if (ItemStackUtils.isItemStackEmpty(stack))
             {
                 continue;
             }
@@ -1339,9 +1142,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private void requestTool(@NotNull final Block target)
     {
-        final String tool = target.getHarvestTool(target.getDefaultState());
+        final IToolType toolType = ToolType.getToolType(target.getHarvestTool(target.getDefaultState()));
         final int required = target.getHarvestLevel(target.getDefaultState());
-        updateToolFlag(tool, required);
+        updateToolFlag(toolType, required);
     }
 
     /**
@@ -1351,25 +1154,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param tool     the tool needed
      * @param required the level needed (for pickaxe only)
      */
-    private void updateToolFlag(@NotNull final String tool, final int required)
+    private void updateToolFlag(@NotNull final IToolType toolType, final int required)
     {
-        switch (tool)
+        if (ToolType.PICKAXE.equals(toolType))
         {
-            case Utils.AXE:
-                checkForAxe();
-                break;
-            case Utils.SHOVEL:
-                checkForShovel();
-                break;
-            case Utils.HOE:
-                checkForHoe();
-                break;
-            case Utils.PICKAXE:
-                checkForPickaxe(required);
-                break;
-            default:
-                checkForPickaxe(DIAMOND_LEVEL);
-                Log.getLogger().error("Invalid tool " + tool + " not implemented as tool will require pickaxe level 4 instead.");
+            checkForToolOrWeapon(toolType, required);
+        }
+        else
+        {
+            checkForToolOrWeapon(toolType);
         }
     }
 
@@ -1382,29 +1175,31 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private int getMostEfficientTool(@NotNull final Block target)
     {
-        final String tool;
+        final IToolType toolType;
         final int required;
+        //TODO this should not be here
         if (Compatibility.isSlimeBlock(target) || Compatibility.isSlimeLeaf(target))
         {
-            tool = "axe";
+            toolType = ToolType.AXE;
             required = 0;
         }
         else
         {
-            tool = target.getHarvestTool(target.getDefaultState());
+            toolType = ToolType.getToolType(target.getHarvestTool(target.getDefaultState()));
             required = target.getHarvestLevel(target.getDefaultState());
         }
+
         int bestSlot = -1;
         int bestLevel = Integer.MAX_VALUE;
         @NotNull final InventoryCitizen inventory = worker.getInventoryCitizen();
-        final int hutLevel = worker.getWorkBuilding().getBuildingLevel();
+        final int maxToolLevel = worker.getWorkBuilding().getMaxToolLevel();
 
         for (int i = 0; i < new InvWrapper(worker.getInventoryCitizen()).getSlots(); i++)
         {
             final ItemStack item = inventory.getStackInSlot(i);
-            final int level = Utils.getMiningLevel(item, tool);
-
-            if ((level >= required && level < bestLevel) && (tool == null || InventoryUtils.verifyToolLevel(item, level, hutLevel)))
+            final int level = ItemStackUtils.getMiningLevel(item, toolType);
+            if (level >= required && level < bestLevel
+                && (toolType == ToolType.NONE || ItemStackUtils.verifyToolLevel(item, level, required, maxToolLevel)))
             {
                 bestSlot = i;
                 bestLevel = level;
@@ -1451,11 +1246,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Calculates the working position.
      * <p>
-     * Takes a min distance from width and length.
+     * Takes the position where the worker would like to work on and return the most appropriate position for it.
      * <p>
      * Then finds the floor level at that distance and then check if it does contain two air levels.
      * @param targetPosition the position to work at.
-     * @return BlockPos position to work from.
+     * @return BlockPos most appropiate position to work from.
      */
     public BlockPos getWorkingPosition(BlockPos targetPosition)
     {

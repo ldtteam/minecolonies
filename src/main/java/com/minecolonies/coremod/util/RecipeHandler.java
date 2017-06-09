@@ -73,6 +73,7 @@ public final class RecipeHandler
 
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutWareHouse, 1), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', "chest")); // check
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutDeliveryman, 1), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', Items.LEATHER_BOOTS));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutBaker, 1), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', Items.WHEAT));
 
         //enableInDevelopmentFeatures(enableInDevelopmentFeatures);
         addSupplyChestRecipes(supplyChests);
@@ -82,7 +83,6 @@ public final class RecipeHandler
     {
         if (enable)
         {
-            GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutBaker, 1), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', Items.WHEAT));
             GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutBlacksmith, 1), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', "ingotIron"));
             GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutStonemason, 1), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#',
                     Blocks.STONEBRICK));

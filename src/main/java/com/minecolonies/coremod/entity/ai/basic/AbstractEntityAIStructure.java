@@ -591,8 +591,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     private boolean placeBlockAt(@NotNull final IBlockState blockState, @NotNull final BlockPos coords)
     {
         final ItemStack item = BlockUtils.getItemStackFromBlockState(blockState);
-        worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item == null ? null : item);
-
+        worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item == null ? ItemStackUtils.EMPTY : item);
         final IBlockState decrease;
         for(IPlacementHandler handlers :PlacementHandlers.handlers)
         {
@@ -657,7 +656,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
 
         @Nullable final ItemStack stack = BlockUtils.getItemStackFromBlockState(stateToPlace);
-        if (stack == null)
+        if (ItemStackUtils.isItemStackEmpty(stack))
         {
             Log.getLogger().error("Block causes NPE: " + stateToPlace.getBlock());
             return false;
@@ -669,7 +668,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
         for (final ItemStack tempStack : itemList)
         {
-            if (tempStack != null)
+            if (!ItemStackUtils.isItemStackEmpty(tempStack))
             {
                 final int slot = worker.findFirstSlotInInventoryWith(tempStack.getItem(), tempStack.getItemDamage());
                 if (slot != -1)

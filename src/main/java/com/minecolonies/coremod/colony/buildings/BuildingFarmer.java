@@ -15,9 +15,9 @@ import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.network.messages.AssignFieldMessage;
 import com.minecolonies.coremod.network.messages.AssignmentModeMessage;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import com.minecolonies.coremod.util.InventoryUtils;
+import com.minecolonies.coremod.util.constants.ToolType;
+import com.minecolonies.coremod.util.ItemStackUtils;
 import com.minecolonies.coremod.util.LanguageHandler;
-import com.minecolonies.coremod.util.Utils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -32,8 +32,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+
 import static com.minecolonies.coremod.util.constants.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER;
 import static com.minecolonies.coremod.util.constants.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER_NOONE;
+import static com.minecolonies.coremod.util.constants.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+
 
 /**
  * Class which handles the farmer building.
@@ -194,10 +197,10 @@ public class BuildingFarmer extends AbstractBuildingWorker
     @Override
     public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
     {
-        final Map<ItemStorage, Integer> toKeep = new HashMap(keepX);
+        final Map<ItemStorage, Integer> toKeep = new HashMap<>(keepX);
         for(final Field field: farmerFields)
         {
-            if(!InventoryUtils.isItemStackEmpty(field.getSeed()))
+            if(!ItemStackUtils.isItemStackEmpty(field.getSeed()))
             {
                 final ItemStack seedStack = field.getSeed();
                 toKeep.put(new ItemStorage(seedStack.getItem(), seedStack.getItemDamage(), 0, false), SEEDS_TO_KEEP);
@@ -234,20 +237,6 @@ public class BuildingFarmer extends AbstractBuildingWorker
         }
     }
 
-    /**
-     * Override this method if you want to keep some items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
-     *
-     * @param stack the stack to decide on
-     * @return true if the stack should remain in inventory
-     */
-    @Override
-    public boolean neededForWorker(@Nullable final ItemStack stack)
-    {
-        return stack != null && Utils.isHoe(stack);
-    }
-
     @NotNull
     @Override
     public String getJobName()
@@ -272,6 +261,20 @@ public class BuildingFarmer extends AbstractBuildingWorker
             }
         }
         return new JobFarmer(citizen);
+    }
+
+    /**
+     * Override this method if you want to keep some items in inventory.
+     * When the inventory is full, everything get's dumped into the building chest.
+     * But you can use this method to hold some stacks back.
+     *
+     * @param stack the stack to decide on
+     * @return true if the stack should remain in inventory
+     */
+    @Override
+    public boolean neededForWorker(@Nullable final ItemStack stack)
+    {
+        return stack != null &&  ItemStackUtils.hasToolLevel(stack, ToolType.HOE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel());
     }
 
     //we have to update our field from the colony!

@@ -3,10 +3,12 @@ package com.minecolonies.coremod.tileentities;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.*;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
+import com.minecolonies.coremod.util.constants.IToolType;
+import com.minecolonies.coremod.util.constants.ToolType;
 import com.minecolonies.coremod.util.InventoryFunctions;
+import com.minecolonies.coremod.util.ItemStackUtils;
 import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.LanguageHandler;
-import com.minecolonies.coremod.util.Utils;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -111,7 +113,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     {
         if (buildingEntry.isFoodNeeded())
         {
-            if (isInHut(itemStack -> !InventoryUtils.isItemStackEmpty(itemStack) && itemStack.getItem() instanceof ItemFood))
+            if (isInHut(itemStack -> !ItemStackUtils.isItemStackEmpty(itemStack) && itemStack.getItem() instanceof ItemFood))
             {
                 if (addToList)
                 {
@@ -177,8 +179,8 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             }
         }
 
-        final String tool = buildingEntry.getRequiredTool();
-        if(!tool.isEmpty())
+        final IToolType tool = buildingEntry.getNeedsTool();
+        if(tool != ToolType.NONE)
         {
             if(isToolInHut(tool, buildingEntry))
             {
@@ -307,19 +309,17 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     /**
      * Check for a certain item and return the position of the chest containing it.
      * @param tool the tool to search for.
-     * @param minLevel the minLevel of the pickaxe
+     * @param minLevel the minLevel of the tool
      * @param requestingBuilding the building requesting it.
      * @return the position or null.
      */
-    public BlockPos getPositionOfChestWithTool(@NotNull final String tool,final int minLevel, @NotNull final AbstractBuilding requestingBuilding)
+    public BlockPos getPositionOfChestWithTool(@NotNull final IToolType tool, final int minLevel, @NotNull final AbstractBuilding requestingBuilding)
     {
         @Nullable final AbstractBuilding building = getBuilding();
 
         if(building != null)
         {
-            if((minLevel != -1
-                    && InventoryUtils.isPickaxeInProvider(building.getTileEntity(), minLevel, requestingBuilding.getBuildingLevel()))
-                    || InventoryUtils.isToolInProvider(building.getTileEntity(), tool, requestingBuilding.getBuildingLevel()))
+            if(InventoryUtils.isToolInProvider(building.getTileEntity(), tool, minLevel, requestingBuilding.getBuildingLevel()))
             {
                 return building.getLocation();
             }
@@ -328,8 +328,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             {
                 final TileEntity entity = worldObj.getTileEntity(pos);
                 if (entity instanceof TileEntityChest
-                        && ((minLevel != -1 && InventoryUtils.isPickaxeInProvider(entity, minLevel, requestingBuilding.getBuildingLevel()))
-                        || InventoryUtils.isToolInProvider(entity, tool, requestingBuilding.getBuildingLevel())))
+                        && InventoryUtils.isToolInProvider(entity, tool, minLevel, requestingBuilding.getBuildingLevel()))
                 {
                     return pos;
                 }
@@ -344,23 +343,13 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      * @param requestingBuilding the building requesting it.
      * @return true if a stack of that type was found
      */
-    private boolean isToolInHut(final String tool, @NotNull final AbstractBuilding requestingBuilding)
+    private boolean isToolInHut(final IToolType toolType, @NotNull final AbstractBuilding requestingBuilding)
     {
         @Nullable final AbstractBuilding building = getBuilding();
 
-        boolean hasItem;
         if(building != null)
         {
-            if(tool.equals(Utils.PICKAXE))
-            {
-                hasItem = InventoryUtils.isPickaxeInProvider(building.getTileEntity(), requestingBuilding.getNeededPickaxeLevel(), requestingBuilding.getBuildingLevel());
-            }
-            else
-            {
-                hasItem = InventoryUtils.isToolInProvider(building.getTileEntity(), tool, requestingBuilding.getBuildingLevel());
-            }
-
-            if(hasItem)
+            if(InventoryUtils.isToolInProvider(building.getTileEntity(), toolType, requestingBuilding.getNeededToolLevel(), requestingBuilding.getBuildingLevel()))
             {
                 return true;
             }
@@ -368,21 +357,10 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             for(final BlockPos pos : building.getAdditionalCountainers())
             {
                 @Nullable final TileEntity entity = worldObj.getTileEntity(pos);
-                if(entity instanceof TileEntityChest)
+                if(entity instanceof TileEntityChest
+                    && InventoryUtils.isToolInProvider(entity, toolType, requestingBuilding.getNeededToolLevel(), requestingBuilding.getBuildingLevel()))
                 {
-                    if(tool.equals(Utils.PICKAXE))
-                    {
-                        hasItem = InventoryUtils.isPickaxeInProvider(entity, requestingBuilding.getNeededPickaxeLevel(), requestingBuilding.getBuildingLevel());
-                    }
-                    else
-                    {
-                        hasItem = InventoryUtils.isToolInProvider(entity, tool, requestingBuilding.getBuildingLevel());
-                    }
-
-                    if(hasItem)
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
         }
@@ -432,8 +410,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         for (int i = 0; i < new InvWrapper(inventoryCitizen).getSlots(); i++)
         {
             final ItemStack stack = inventoryCitizen.getStackInSlot(i);
-
-            if(stack == null || stack.getItem() == null || stack.stackSize == 0)
+            if(ItemStackUtils.isItemStackEmpty(stack))
             {
                 continue;
             }

@@ -9,9 +9,11 @@ import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.pathfinding.PathJobFindWater;
 import com.minecolonies.coremod.sounds.FishermanSounds;
+import com.minecolonies.coremod.util.constants.ToolType;
 import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.SoundUtils;
 import com.minecolonies.coremod.util.Utils;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -27,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Random;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.coremod.util.constants.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
  * Fisherman AI class.
@@ -86,11 +89,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      * The maximum amount of adjusts of his rotation until the fisherman discards a fishing location.
      */
     private static final int MAX_ROTATIONS = 6;
-
-    /**
-     * The tool used by the fisherman.
-     */
-    private static final String TOOL_TYPE_ROD = "rod";
 
     /**
      * The range in which the fisherman searches water.
@@ -200,7 +198,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private AIState prepareForFishing()
     {
-        if (checkOrRequestItems(false, new ItemStack(Items.FISHING_ROD)))
+        if (checkForToolOrWeapon(ToolType.FISHINGROD))
         {
             playNeedRodSound();
             return getState();
@@ -589,7 +587,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private int getRodSlot()
     {
-        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), TOOL_TYPE_ROD);
+        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), ToolType.FISHINGROD, 
+                                                                        TOOL_LEVEL_WOOD_OR_GOLD, getOwnBuilding().getMaxToolLevel());
     }
 
     /**

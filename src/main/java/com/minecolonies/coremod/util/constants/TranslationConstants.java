@@ -47,9 +47,19 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUEST          = "entity.worker.pickaxeRequest";
     @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_ONEPICKAXEREQUEST       = "entity.worker.onePickaxeRequest";
+    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUESTBETTERHUT = "entity.worker.pickaxeRequestBetterHut";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_TOOLREQUEST             = "entity.worker.toolRequest";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_SIMPLETOOLREQUEST       = "entity.worker.simpleToolRequest";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_ENCHTOOLREQUEST         = "entity.worker.enchantedToolRequest";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_SPECIFICTOOLREQUEST     = "entity.worker.specificToolRequest";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_TOOLATLEASTREQUEST      = "entity.worker.toolAtLeastRequest";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL             = "com.minecolonies.coremod.job.deliveryman.workerChestFull";
     @NonNls
@@ -71,7 +81,21 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_BAKER                             = "com.minecolonies.coremod.gui.workerHuts.baker";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_JOB_BAKER                             = "com.minecolonies.coremod.job.baker";
+    public static final String COM_MINECOLONIES_COREMOD_JOB_BUILDER                           = "com.minecolonies.coremod.job.Builder";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN                       = "com.minecolonies.coremod.job.Deliveryman";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_JOB_MINER                             = "com.minecolonies.coremod.job.Miner";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_JOB_FISHERMAN                         = "com.minecolonies.coremod.job.Fisherman";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_JOB_GUARD                             = "com.minecolonies.coremod.job.Guard";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_JOB_LUMBERJACK                        = "com.minecolonies.coremod.job.Lumberjack";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_JOB_FARMER                            = "com.minecolonies.coremod.job.Farmer";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_JOB_BAKER                             = "com.minecolonies.coremod.job.Baker";
 
     private TranslationConstants()
     {

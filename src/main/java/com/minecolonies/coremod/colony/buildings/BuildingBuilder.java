@@ -8,6 +8,8 @@ import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
+import com.minecolonies.coremod.util.constants.ToolType;
+import com.minecolonies.coremod.util.ItemStackUtils;
 import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.Utils;
 import io.netty.buffer.ByteBuf;
@@ -26,6 +28,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.minecolonies.coremod.util.constants.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.coremod.util.constants.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE;
+
 
 /**
  * The builders building.
@@ -103,17 +109,6 @@ public class BuildingBuilder extends AbstractBuildingWorker
         }
     }
 
-    /**
-     * Getter of the job description.
-     *
-     * @return the description of the builder job.
-     */
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return BUILDER;
-    }
 
     /**
      * Create the job for the builder.
@@ -126,6 +121,22 @@ public class BuildingBuilder extends AbstractBuildingWorker
     public AbstractJob createJob(final CitizenData citizen)
     {
         return new JobBuilder(citizen);
+    }
+
+    /**
+     * Can be overriden by implementations to specify which tools are useful for the worker.
+     * When dumping he will keep these.
+     *
+     * @param stack the stack to decide on
+     * @return if should be kept or not.
+     */
+    @Override
+    public boolean neededForWorker(@Nullable final ItemStack stack)
+    {
+        return ItemStackUtils.hasToolLevel(stack, ToolType.PICKAXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel())
+            || ItemStackUtils.hasToolLevel(stack, ToolType.SHOVEL, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel())
+            || ItemStackUtils.hasToolLevel(stack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel())
+            || neededResources.containsKey(stack.getUnlocalizedName());
     }
 
     @Override
@@ -156,6 +167,18 @@ public class BuildingBuilder extends AbstractBuildingWorker
             neededResTagList.appendTag(neededRes);
         }
         compound.setTag(TAG_RESOURCE_LIST, neededResTagList);
+    }
+
+    /**
+     * Getter of the job description.
+     *
+     * @return the description of the builder job.
+     */
+    @NotNull
+    @Override
+    public String getJobName()
+    {
+        return BUILDER;
     }
 
     /**
@@ -215,19 +238,6 @@ public class BuildingBuilder extends AbstractBuildingWorker
         }
         this.neededResources.put(res.getUnlocalizedName(), resource);
         this.markDirty();
-    }
-
-    /**
-     * Can be overriden by implementations to specify which tools are useful for the worker.
-     * When dumping he will keep these.
-     *
-     * @param stack the stack to decide on
-     * @return if should be kept or not.
-     */
-    @Override
-    public boolean neededForWorker(@Nullable final ItemStack stack)
-    {
-        return Utils.isPickaxe(stack) || Utils.isShovel(stack) || Utils.isAxe(stack) || neededResources.containsKey(stack.getUnlocalizedName());
     }
 
     /**
@@ -329,7 +339,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
     {
         @NotNull final ItemStack resultStack = super.transferStack(stack, world);
 
-        if (InventoryUtils.isItemStackEmpty(resultStack))
+        if (ItemStackUtils.isItemStackEmpty(resultStack))
         {
             this.markDirty();
         }
@@ -341,7 +351,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
     public ItemStack forceTransferStack(final ItemStack stack, final World world)
     {
         final ItemStack itemStack = super.forceTransferStack(stack, world);
-        if (InventoryUtils.isItemStackEmpty(itemStack))
+        if (ItemStackUtils.isItemStackEmpty(itemStack))
         {
             this.markDirty();
         }
