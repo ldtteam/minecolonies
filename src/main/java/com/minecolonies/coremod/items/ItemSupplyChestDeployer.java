@@ -127,7 +127,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         if (enumfacing != EnumFacing.DOWN)
         {
             spawnShip(worldIn, pos, enumfacing);
-            ItemStackUtils.increaseOrDecreaseSize(stack, -1 );
+            ItemStackUtils.changeSize(stack, -1 );
 
             playerIn.addStat(ModAchievements.achievementGetSupply);
 

@@ -69,7 +69,7 @@ public class ItemCompost extends AbstractItemMinecolonies
                         igrowable.grow(worldIn, worldIn.rand, pos, iblockstate);
                     }
 
-                    ItemStackUtils.increaseOrDecreaseSize(stack, -1);
+                    ItemStackUtils.changeSize(stack, -1);
                 }
             }
         }
