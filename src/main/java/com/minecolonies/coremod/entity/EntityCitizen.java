@@ -886,15 +886,15 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         for (final ItemStack stack : this.getArmorInventoryList())
         {
-            if (stack == null || stack.getItem() == null || !(stack.getItem() instanceof ItemArmor))
+            if (ItemStackUtils.isEmpty(stack) || !(stack.getItem() instanceof ItemArmor))
             {
                 continue;
             }
             stack.damageItem((int) (damage / 2), this);
 
-            if (stack.getCount() < 1)
+            if (ItemStackUtils.getSize(stack) < 1)
             {
-                setItemStackToSlot(getSlotForItemStack(stack), ItemStack.EMPTY);
+                setItemStackToSlot(getSlotForItemStack(stack), ItemStackUtils.EMPTY);
             }
             setItemStackToSlot(getSlotForItemStack(stack), stack);
         }
@@ -1404,7 +1404,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         for (int i = 0; i < new InvWrapper(getInventoryCitizen()).getSlots(); i++)
         {
             final ItemStack itemstack = inventory.getStackInSlot(i);
-            if (itemstack != null && itemstack.getCount() > 0)
+            if (ItemStackUtils.getSize(itemstack) > 0)
             {
                 entityDropItem(itemstack);
             }
@@ -1509,7 +1509,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     public void tryToEat()
     {
         final int slot = InventoryUtils.findFirstSlotInProviderWith(this,
-                itemStack -> !ItemStackUtils.isItemStackEmpty(itemStack) && itemStack.getItem() instanceof ItemFood);
+                itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemFood);
 
         if(slot == -1)
         {
@@ -1517,7 +1517,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
 
         final ItemStack stack = inventory.getStackInSlot(slot);
-        if(!ItemStackUtils.isItemStackEmpty(stack) && stack.getItem() instanceof ItemFood && citizenData != null)
+        if(!ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof ItemFood && citizenData != null)
         {
             final int heal = ((ItemFood) stack.getItem()).getHealAmount(stack);
             citizenData.increaseSaturation(heal);
@@ -1683,8 +1683,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
             final ItemStack itemStack = entityItem.getEntityItem();
 
             final ItemStack resultStack = InventoryUtils.addItemStackToItemHandlerWithResult(new InvWrapper(getInventoryCitizen()), itemStack.copy());
-            final int resultingStackSize = ItemStackUtils.isItemStackEmpty(resultStack) ? 0 : resultStack.getCount();
-            if (ItemStackUtils.isItemStackEmpty(resultStack) || ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, resultStack))
+            final int resultingStackSize = ItemStackUtils.isEmpty(resultStack) ? 0 : ItemStackUtils.getSize(resultStack);
+            if (ItemStackUtils.isEmpty(resultStack) || ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, resultStack))
             {
                 this.world.playSound((EntityPlayer) null,
                         this.getPosition(),
@@ -1692,9 +1692,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
                         SoundCategory.AMBIENT,
                         0.2F,
                         (float) ((this.rand.nextGaussian() * 0.7D + 1.0D) * 2.0D));
-                this.onItemPickup(entityItem, itemStack.getCount() - resultingStackSize);
+                this.onItemPickup(entityItem, ItemStackUtils.getSize(itemStack) - resultingStackSize);
 
-                if (ItemStackUtils.isItemStackEmpty(resultStack))
+                if (ItemStackUtils.isEmpty(resultStack))
                 {
                     entityItem.setDead();
                 }
@@ -1707,7 +1707,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public void removeHeldItem()
     {
-        setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStack.EMPTY);
+        setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
     }
 
     /**
@@ -1814,10 +1814,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
         heldItem.damageItem(damage, this);
 
         //check if tool breaks
-        if (heldItem.getCount() < 1)
+        if (ItemStackUtils.getSize(heldItem) < 1)
         {
-            getInventoryCitizen().setInventorySlotContents(getInventoryCitizen().getHeldItemSlot(), ItemStack.EMPTY);
-            this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStack.EMPTY);
+            getInventoryCitizen().setInventorySlotContents(getInventoryCitizen().getHeldItemSlot(), ItemStackUtils.EMPTY);
+            this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
         }
     }
 

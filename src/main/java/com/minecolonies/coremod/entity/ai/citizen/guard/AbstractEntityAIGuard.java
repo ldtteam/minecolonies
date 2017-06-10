@@ -165,7 +165,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
             {
                 final ItemStack stack = chest.getStackInSlot(i);
 
-                if (ItemStackUtils.isItemStackEmpty(stack))
+                if (ItemStackUtils.isEmpty(stack))
                 {
                     continue;
                 }
@@ -173,12 +173,12 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
                 if (stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).armorType) == null)
                 {
                     final int emptySlot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(worker.getInventoryCitizen()),
-                      ItemStackUtils::isItemStackEmpty);
+                      ItemStackUtils::isEmpty);
 
                     if (emptySlot != -1)
                     {
                         new InvWrapper(worker.getInventoryCitizen()).insertItem(emptySlot, stack, false);
-                        chest.setInventorySlotContents(i, ItemStack.EMPTY);
+                        chest.setInventorySlotContents(i, ItemStackUtils.EMPTY);
                     }
                 }
                 dumpAfterActions = DUMP_BASE * workBuilding.getBuildingLevel();
@@ -210,22 +210,22 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
      */
     protected void updateArmor()
     {
-        worker.setItemStackToSlot(EntityEquipmentSlot.CHEST, ItemStack.EMPTY);
-        worker.setItemStackToSlot(EntityEquipmentSlot.FEET, ItemStack.EMPTY);
-        worker.setItemStackToSlot(EntityEquipmentSlot.HEAD, ItemStack.EMPTY);
-        worker.setItemStackToSlot(EntityEquipmentSlot.LEGS, ItemStack.EMPTY);
+        worker.setItemStackToSlot(EntityEquipmentSlot.CHEST, ItemStackUtils.EMPTY);
+        worker.setItemStackToSlot(EntityEquipmentSlot.FEET, ItemStackUtils.EMPTY);
+        worker.setItemStackToSlot(EntityEquipmentSlot.HEAD, ItemStackUtils.EMPTY);
+        worker.setItemStackToSlot(EntityEquipmentSlot.LEGS, ItemStackUtils.EMPTY);
 
         for (int i = 0; i < new InvWrapper(worker.getInventoryCitizen()).getSlots(); i++)
         {
             final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(i);
 
-            if (ItemStackUtils.isItemStackEmpty(stack))
+            if (ItemStackUtils.isEmpty(stack))
             {
                 new InvWrapper(worker.getInventoryCitizen()).extractItem(i, Integer.MAX_VALUE, false);
                 continue;
             }
 
-            if (stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).armorType) == ItemStack.EMPTY)
+            if (stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).armorType) == ItemStackUtils.EMPTY)
             {
                 worker.setItemStackToSlot(((ItemArmor) stack.getItem()).armorType, stack);
             }

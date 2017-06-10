@@ -2,6 +2,7 @@ package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -99,7 +100,7 @@ public class BlockBarrel extends Block
             return true;
         }
 
-        if (itemstack == null)
+        if (ItemStackUtils.isEmpty(itemstack))
         {
             return true;
         }
@@ -110,7 +111,7 @@ public class BlockBarrel extends Block
         {
             Log.getLogger().info("item Consumed");
 
-            itemstack.setCount(itemstack.getCount() - 1);
+            ItemStackUtils.changeSize(itemstack, -1);
 
             fullness += 1;
             if (fullness >= MAX_FULLNESS)

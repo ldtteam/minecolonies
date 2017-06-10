@@ -394,7 +394,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
             if (!getOwnBuilding().hasOnGoingDelivery())
             {
-                requestWithoutSpam(first.getCount() + " " + first.getDisplayName());
+                requestWithoutSpam(ItemStackUtils.getSize(first) + " " + first.getDisplayName());
             }
         }
         return NEEDS_ITEM;
@@ -853,7 +853,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         return buildingWorker != null
                 && (walkToBuilding()
                 || InventoryFunctions.matchFirstInProvider(worker,
-                (slot, stack) -> !(ItemStackUtils.isItemStackEmpty(stack) || keepIt.test(stack)) && shouldDumpItem(alreadyKept, shouldKeep, buildingWorker, stack, slot)));
+                (slot, stack) -> !(ItemStackUtils.isEmpty(stack) || keepIt.test(stack)) && shouldDumpItem(alreadyKept, shouldKeep, buildingWorker, stack, slot)));
     }
 
     /**
@@ -878,25 +878,25 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
         else
         {
-            final ItemStorage tempStorage = new ItemStorage(stack.getItem(), stack.getItemDamage(), stack.getCount(), false);
+            final ItemStorage tempStorage = new ItemStorage(stack.getItem(), stack.getItemDamage(), ItemStackUtils.getSize(stack), false);
             final ItemStack tempStack = handleKeepX(alreadyKept, shouldKeep, tempStorage);
-            if (ItemStackUtils.isItemStackEmpty(tempStack))
+            if (ItemStackUtils.isEmpty(tempStack))
             {
                 return false;
             }
-            amountToKeep = stack.getCount() - tempStorage.getAmount();
+            amountToKeep = ItemStackUtils.getSize(stack) - tempStorage.getAmount();
             returnStack = InventoryUtils.addItemStackToProviderWithResult(buildingWorker.getTileEntity(), tempStack);
         }
-        if (ItemStackUtils.isItemStackEmpty(returnStack))
+        if (ItemStackUtils.isEmpty(returnStack))
         {
-            new InvWrapper(worker.getInventoryCitizen()).extractItem(slot, stack.getCount() - amountToKeep, false);
+            new InvWrapper(worker.getInventoryCitizen()).extractItem(slot, ItemStackUtils.getSize(stack) - amountToKeep, false);
             return amountToKeep == 0;
         }
 
-        new InvWrapper(worker.getInventoryCitizen()).extractItem(slot, stack.getCount() - returnStack.getCount() - amountToKeep, false);
+        new InvWrapper(worker.getInventoryCitizen()).extractItem(slot, ItemStackUtils.getSize(stack) - ItemStackUtils.getSize(returnStack) - amountToKeep, false);
 
         //Check that we are not inserting into a full inventory.
-        return stack.getCount() != returnStack.getCount();
+        return ItemStackUtils.getSize(stack) != ItemStackUtils.getSize(returnStack);
     }
 
     /**
@@ -990,7 +990,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         for (final @Nullable ItemStack tempStack : items)
         {
             final ItemStack stack = tempStack.copy();
-            if (ItemStackUtils.isItemStackEmpty(stack))
+            if (ItemStackUtils.isEmpty(stack))
             {
                 continue;
             }
@@ -1000,7 +1000,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
             if (countOfItem < 1)
             {
-                final int itemsLeft = stack.getCount() - countOfItem;
+                final int itemsLeft = ItemStackUtils.getSize(stack) - countOfItem;
                 @NotNull final ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft, itemDamage);
                 getOwnBuilding().addNeededItems(requiredStack);
                 allClear = false;
@@ -1039,15 +1039,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         for (final @Nullable ItemStack tempStack : items)
         {
             final ItemStack stack = tempStack.copy();
-            if (stack == null || stack.getItem() == null)
+            if (ItemStackUtils.isEmpty(stack))
             {
                 continue;
             }
             final int itemDamage = useItemDamage ? stack.getItemDamage() : -1;
             final int countOfItem = worker.getItemCountInInventory(stack.getItem(), itemDamage);
-            if (countOfItem < tempStack.getCount())
+            if (countOfItem < ItemStackUtils.getSize(tempStack))
             {
-                final int itemsLeft = stack.getCount() - countOfItem;
+                final int itemsLeft = ItemStackUtils.getSize(stack) - countOfItem;
                 @NotNull final ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft, -1);
                 if(!isInNeededItems(tempStack))
                 {
