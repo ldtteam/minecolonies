@@ -180,10 +180,15 @@ public final class BlockUtils
     /**
      * Checks if a certain block returns a seed as the item.
      *
+     * Suppressing Sonar Rule squid:S2259
+     * This rule does "Null pointers should not be dereferenced"
+     * But in this case the rule does not apply because
+     * ItemStackUtils.isEmpty return true is stack is null
      * @param world the world the block is in.
      * @param pos   the position the block is at.
      * @return true if is a seed.
      */
+    @SuppressWarnings("squid:S2259")
     public static boolean isBlockSeed(@NotNull final World world, @NotNull final BlockPos pos)
     {
         final ItemStack stack = BlockUtils.getItemStackFromBlockState(world.getBlockState(pos.up()));
