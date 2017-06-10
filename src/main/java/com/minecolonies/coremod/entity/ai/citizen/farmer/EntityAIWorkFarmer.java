@@ -157,8 +157,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             {
                 return AIState.FARMER_HOE;
             }
-            else if (canGoPlanting(currentField, building) && !checkForToolOrWeapon(ToolType.HOE))
-            else if (currentField.getFieldStage() == Field.FieldStage.HOED && canGoPlanting(currentField, building) && !checkForHoe())
+            else if (currentField.getFieldStage() == Field.FieldStage.HOED && canGoPlanting(currentField, building) && !checkForToolOrWeapon(ToolType.HOE))
             {
                 return AIState.FARMER_PLANT;
             }
@@ -207,6 +206,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             return false;
         }
 
+        //todo have to change shouldTryToGetSeeds handling.
+        //todo don't even need this here I guess only check if is in inv, if not check at building
+        //todo if not at building and !containsPlants(currentField) then return false
+        //todo put this here in planting as well
         if (shouldTryToGetSeed && !containsPlants(currentField))
         {
             final ItemStack seeds = currentField.getSeed();
@@ -424,6 +427,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private AIState tryToPlant(final Field field, final BlockPos position)
     {
+        //todo check if shouldGoAndGetSeeds here
         if (shouldPlant(position, field) && !plantCrop(field.getSeed(), position))
         {
             resetVariables();
@@ -460,7 +464,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private boolean hoeIfAble(final BlockPos position)
     {
-        if (shouldHoe(position, field) && !checkForToolOrWeapon(ToolType.HOE))
+        if (shouldHoe(position) && !checkForToolOrWeapon(ToolType.HOE))
         {
             if(mineBlock(position.up()))
             {

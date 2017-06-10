@@ -427,7 +427,7 @@ public class Field extends Container
         if(getFieldStage().ordinal() + 1 >= FieldStage.values().length)
         {
             needsWork = false;
-            setFieldStage(FieldStage.values()[1]);
+            setFieldStage(FieldStage.values()[0]);
             return;
         }
         setFieldStage(FieldStage.values()[getFieldStage().ordinal() + 1]);
