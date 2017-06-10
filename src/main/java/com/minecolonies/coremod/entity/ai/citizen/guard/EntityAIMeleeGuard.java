@@ -4,8 +4,9 @@ import com.minecolonies.compatibility.Compatibility;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
+import com.minecolonies.coremod.util.constants.ToolType;
 import com.minecolonies.coremod.util.InventoryFunctions;
-import com.minecolonies.coremod.util.Utils;
+import com.minecolonies.coremod.util.ItemStackUtils;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.SoundEvents;
@@ -108,7 +109,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
     @Override
     protected AIState searchTarget()
     {
-        if (checkForWeapon())
+        if (checkForToolOrWeapon(ToolType.SWORD))
         {
             return AIState.GUARD_SEARCH_TARGET;
         }
@@ -128,7 +129,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
             targetEntity = this.worker.getLastAttacker();
         }
 
-        if (!targetEntity.isEntityAlive() || checkForWeapon())
+        if (!targetEntity.isEntityAlive() || checkForToolOrWeapon(ToolType.SWORD))
         {
             targetEntity = null;
             worker.setAIMoveSpeed((float) 1.0D);
@@ -179,7 +180,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         final ItemStack heldItem = worker.getHeldItem(EnumHand.MAIN_HAND);
         if (heldItem != null)
         {
-            if (Utils.doesItemServeAsWeapon(heldItem))
+            if (ItemStackUtils.doesItemServeAsWeapon(heldItem) && heldItem.getItem() instanceof ItemSword)
             {
                 if(heldItem.getItem() instanceof ItemSword)
                 {
