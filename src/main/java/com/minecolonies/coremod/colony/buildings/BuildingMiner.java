@@ -2,7 +2,7 @@ package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.Utils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutMiner;
@@ -13,7 +13,6 @@ import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
-import com.minecolonies.api.util.ItemStackUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSlab;

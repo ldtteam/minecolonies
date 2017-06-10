@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.api.util.Utils;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
