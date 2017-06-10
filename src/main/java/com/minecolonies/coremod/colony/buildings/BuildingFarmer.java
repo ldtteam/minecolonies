@@ -200,7 +200,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
         final Map<ItemStorage, Integer> toKeep = new HashMap<>(keepX);
         for(final Field field: farmerFields)
         {
-            if(!ItemStackUtils.isItemStackEmpty(field.getSeed()))
+            if(!ItemStackUtils.isEmpty(field.getSeed()))
             {
                 final ItemStack seedStack = field.getSeed();
                 toKeep.put(new ItemStorage(seedStack.getItem(), seedStack.getItemDamage(), 0, false), SEEDS_TO_KEEP);
@@ -274,7 +274,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
     @Override
     public boolean neededForWorker(@Nullable final ItemStack stack)
     {
-        return stack != null &&  ItemStackUtils.hasToolLevel(stack, ToolType.HOE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel());
+        return !ItemStackUtils.isEmpty(stack) &&  ItemStackUtils.hasToolLevel(stack, ToolType.HOE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel());
     }
 
     //we have to update our field from the colony!
