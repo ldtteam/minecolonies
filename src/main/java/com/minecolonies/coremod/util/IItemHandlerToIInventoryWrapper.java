@@ -126,7 +126,7 @@ public class IItemHandlerToIInventoryWrapper implements IInventory
     @Override
     public boolean isItemValidForSlot(final int index, final ItemStack stack)
     {
-        return wrapped.insertItem(index, stack, true) == InventoryUtils.EMPTY;
+        return wrapped.insertItem(index, stack, true) == ItemStackUtils.EMPTY;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.util;
 
 import com.minecolonies.coremod.util.InventoryUtils;
+import com.minecolonies.coremod.util.ItemStackUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -104,11 +105,11 @@ public class RecipeStorage
             boolean hasStack = false;
             for(final IItemHandler handler: inventories)
             {
-                hasStack = InventoryUtils.hasItemInItemHandler(handler, itemStack -> !InventoryUtils.isItemStackEmpty(itemStack) && itemStack.isItemEqual(stack));
+                hasStack = InventoryUtils.hasItemInItemHandler(handler, itemStack -> !ItemStackUtils.isItemStackEmpty(itemStack) && itemStack.isItemEqual(stack));
 
                 if(hasStack)
                 {
-                    final int count = InventoryUtils.getItemCountInItemHandler(handler, itemStack -> !InventoryUtils.isItemStackEmpty(itemStack) && itemStack.isItemEqual(stack));
+                    final int count = InventoryUtils.getItemCountInItemHandler(handler, itemStack -> !ItemStackUtils.isItemStackEmpty(itemStack) && itemStack.isItemEqual(stack));
                     if(count >= amountNeeded)
                     {
                         break;
