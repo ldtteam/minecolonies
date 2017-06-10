@@ -1087,8 +1087,8 @@ public class Colony implements IColony {
         }
 
         int numberOfBarbarians = level;
-        int numberOfArcherBarbarians = (int) (0.75 * level);
-        int numberOfChiefBarbarians = (int) (0.25 * level);
+        int numberOfArcherBarbarians = (int) (0.5 * level);
+        int numberOfChiefBarbarians = (int) (0.1 * level);
 
         int hordeTotal = numberOfArcherBarbarians + numberOfBarbarians + numberOfChiefBarbarians;
 
@@ -1096,11 +1096,11 @@ public class Colony implements IColony {
         {
             final int maxSize = Configurations.maxBarbarianHordeSize;
             if (hordeTotal > 40 && maxSize == 40)
-            {
-                numberOfBarbarians = 20;
-                numberOfArcherBarbarians = 15;
-                numberOfChiefBarbarians = 5;
-            }
+        {
+            numberOfBarbarians = 22;
+            numberOfArcherBarbarians = 16;
+            numberOfChiefBarbarians = 2;
+        }
 
             numberOfBarbarians = hordeTotal - maxSize;
             if (numberOfBarbarians < 0) {numberOfBarbarians = 0;} //For error handling and correct hordeTotal

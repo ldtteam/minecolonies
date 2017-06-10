@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.mobs;
 
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -37,7 +38,7 @@ public class EntityBarbarian extends EntityMob
     {
         if (colony != null)
         {
-            int raidLevel = (int) (colony.getRaidLevel()*1.5);
+            int raidLevel = (int) (colony.getRaidLevel()*(Configurations.barbarianHordeDifficulty * 0.2));
             return 25+raidLevel;
         }
         return 25.0D;
