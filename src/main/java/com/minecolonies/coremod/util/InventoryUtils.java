@@ -328,7 +328,6 @@ public final class InventoryUtils
                     }
                 }
 
-
                 return ItemStackUtils.isEmpty(resultStack);
             }
         }

@@ -142,7 +142,6 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
         }
 
         int amountToRemoveFromPlayer = amountToTake - ItemStackUtils.getSize(remainingItemStack);
-
         while (amountToRemoveFromPlayer > 0)
         {
             final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory), item, message.itemStack.getItemDamage());

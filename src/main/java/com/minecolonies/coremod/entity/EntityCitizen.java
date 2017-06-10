@@ -1505,7 +1505,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         final int slot = InventoryUtils.findFirstSlotInProviderWith(this,
                 itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemFood);
-
         if(slot == -1)
         {
             return;
