@@ -283,7 +283,7 @@ public abstract class AbstractJob
         {
             if (stack.isItemEqualIgnoreDurability(neededItem))
             {
-                ItemStackUtils.increaseOrDecreaseSize(neededItem, ItemStackUtils.getSize(stack));
+                ItemStackUtils.changeSize(neededItem, ItemStackUtils.getSize(stack));
                 return;
             }
         }
@@ -314,8 +314,8 @@ public abstract class AbstractJob
             {
                 //todo make this sofisticated as soon as material handling has been implemented.
                 //final int itemsToRemove = Math.min(ItemStackUtils.getSize(neededItem), ItemStackUtils.getSize(stackCopy));
-                //ItemStackUtils.increaseOrDecreaseSize(neededItem, -itemsToRemove);
-                //ItemStackUtils.increaseOrDecreaseSize(stackCopy, -itemsToRemove);
+                //ItemStackUtils.changeSize(neededItem, -itemsToRemove);
+                //ItemStackUtils.changeSize(stackCopy, -itemsToRemove);
 
                 //Deativate this if for now in order to keep working even if not all items are given. previously checked if stackSize is 0 and only removed then.
                 itemsNeeded.remove(neededItem);

@@ -1461,7 +1461,7 @@ public class InventoryUtils
             }
             else
             {
-                ItemStackUtils.increaseOrDecreaseSize(stack, -removedSize);
+                ItemStackUtils.changeSize(stack, -removedSize);
             }
             tries++;
         }

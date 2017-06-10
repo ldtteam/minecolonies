@@ -381,7 +381,7 @@ public final class ItemStackUtils
      * @param stack to set the size to
      * @param amount to increase the stack's size of (negative value to decrease)
      */
-    public static void increaseOrDecreaseSize(@NotNull final ItemStack stack, final int amount)
+    public static void changeSize(@NotNull final ItemStack stack, final int amount)
     {
         stack.setCount(stack.getCount() + amount);
     }

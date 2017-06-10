@@ -445,7 +445,7 @@ public class InventoryCitizen implements IInventory
             tempIndex -= nonnulllist.size();
         }
 
-        return list != null && !(list.get(tempIndex)).isEmpty() ? ItemStackHelper.getAndSplit(list, tempIndex, count) : ItemStackUtils.EMPTY;
+        return list != null && !ItemStackUtils.isEmpty(list.get(tempIndex)) ? ItemStackHelper.getAndSplit(list, tempIndex, count) : ItemStackUtils.EMPTY;
     }
 
     /**
@@ -470,7 +470,7 @@ public class InventoryCitizen implements IInventory
             tempIndex -= nonnulllist1.size();
         }
 
-        if (nonnulllist != null && !(nonnulllist.get(tempIndex)).isEmpty())
+        if (nonnulllist != null && !ItemStackUtils.isEmpty(nonnulllist.get(tempIndex)))
         {
             final ItemStack itemstack = nonnulllist.get(tempIndex);
             nonnulllist.set(tempIndex, ItemStackUtils.EMPTY);
@@ -837,7 +837,7 @@ public class InventoryCitizen implements IInventory
 
     private boolean canMergeStacks(final ItemStack stack1, final ItemStack stack2)
     {
-        return !stack1.isEmpty() && InventoryCitizen.stackEqualExact(stack1, stack2) && stack1.isStackable()
+        return !ItemStackUtils.isEmpty(stack1) && InventoryCitizen.stackEqualExact(stack1, stack2) && stack1.isStackable()
                  && ItemStackUtils.getSize(stack1) < stack1.getMaxStackSize() && ItemStackUtils.getSize(stack1) < this.getInventoryStackLimit();
     }
 
@@ -1000,7 +1000,7 @@ public class InventoryCitizen implements IInventory
             {
                 final ItemStack itemstack = list.get(i);
 
-                if (!itemstack.isEmpty())
+                if (!ItemStackUtils.isEmpty(itemstack))
                 {
                     this.citizen.dropItem(itemstack.getItem(), ItemStackUtils.getSize(itemstack));
                     list.set(i, ItemStackUtils.EMPTY);
