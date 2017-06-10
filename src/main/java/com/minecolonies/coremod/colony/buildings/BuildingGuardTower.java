@@ -9,6 +9,7 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
 import com.minecolonies.coremod.util.BlockPosUtil;
+import com.minecolonies.coremod.util.ItemStackUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
@@ -336,7 +337,7 @@ public class BuildingGuardTower extends AbstractBuildingWorker
     @Override
     public boolean neededForWorker(@Nullable final ItemStack stack)
     {
-        return stack != null
+        return !ItemStackUtils.isEmpty(stack)
                 && (stack.getItem() instanceof ItemArmor
                 || stack.getItem() instanceof ItemTool
                 || stack.getItem() instanceof ItemSword
