@@ -267,9 +267,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 if (entity instanceof EntityItemFrame)
                 {
                     final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
-                    if (!ItemStackUtils.isItemStackEmpty(stack))
+                    if (!ItemStackUtils.isEmpty(stack))
                     {
-                        stack.stackSize = 1;
+                        ItemStackUtils.setSize(stack, 1);
                         request.add(stack);
                         request.add(new ItemStack(Items.ITEM_FRAME, 1));
                     }
@@ -291,7 +291,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 for (final ItemStack stack : request)
                 {
                     final BuildingBuilder building = (BuildingBuilder) getOwnBuilding();
-                    if (stack != null && stack.getItem() != null)
+                    if (ItemStackUtils.isEmpty(stack))
                     {
                         building.addNeededResource(stack, 1);
                     }
@@ -410,7 +410,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             for (int i = 0; i < ((TileEntityLockable) tileEntity).getSizeInventory(); i++)
             {
                 final ItemStack stack = ((TileEntityLockable) tileEntity).getStackInSlot(i);
-                if (stack != null)
+                if (!ItemStackUtils.isEmpty(stack))
                 {
                     items.add(stack);
                 }
@@ -431,9 +431,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     {
         final AbstractBuildingWorker buildingWorker = getOwnBuilding();
 
-        if(stack == null || stack.getItem() == null)
+        if(ItemStackUtils.isEmpty(stack))
         {
-            return null;
+            return ItemStackUtils.EMPTY;
         }
         final BuildingBuilderResource resource = ((BuildingBuilder) buildingWorker).getNeededResources().get(stack.getUnlocalizedName());
         return resource == null ? stack : new ItemStack(resource.getItem(), resource.getAmount(), resource.getDamageValue());
