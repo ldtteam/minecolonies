@@ -1878,14 +1878,15 @@ public class Colony implements IColony
         final double minX = Math.min(position.getX(), target.getX());
         final double minZ = Math.min(position.getZ(), target.getZ());
 
-        final List<BlockPos> wayPointsCopy = new ArrayList<>(tempWayPoints);
-        for (final BlockPos p : wayPointsCopy)
+        final Iterator<BlockPos> iterator = tempWayPoints.iterator();
+        while (iterator.hasNext())
         {
+            final BlockPos p = iterator.next();
             final int x = p.getX();
             final int z = p.getZ();
             if (x < minX || x > maxX || z < minZ || z > maxZ)
             {
-                tempWayPoints.remove(p);
+                iterator.remove();
             }
         }
 

@@ -1,12 +1,11 @@
 package com.minecolonies.coremod.colony.buildings;
 
-
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.api.util.constant.ToolType;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.Vec2i;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
@@ -12,7 +13,6 @@ import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -113,7 +113,7 @@ public class WalkToProxy
     {
         if(!target.equals(this.target))
         {
-            reset();
+            this.resetProxyList();
             this.target = target;
         }
 
@@ -131,7 +131,7 @@ public class WalkToProxy
                 currentProxy = target;
             }
 
-            proxyList = new ArrayList<>();
+            this.resetProxyList();
             return takeTheDirectPath(target, range, onMove);
         }
 
@@ -204,10 +204,10 @@ public class WalkToProxy
     /**
      * Reset the proxy.
      */
-    public void reset()
+    private void resetProxyList()
     {
         currentProxy = null;
-        proxyList = new ArrayList<>();
+        proxyList.clear();
     }
 
     /**
@@ -235,8 +235,9 @@ public class WalkToProxy
             {
                 if(level.getRandomNode() != null && level.getRandomNode().getParent() != null)
                 {
-                    com.minecolonies.coremod.entity.ai.citizen.miner.Node currentNode = level.getNode(level.getRandomNode().getParent());
-                    while (new Point2D.Double(currentNode.getX(), currentNode.getZ()) != currentNode.getParent() && currentNode.getParent() != null)
+                    Node currentNode = level.getNode(level.getRandomNode().getParent());
+
+                    while (nodeDoesntEqualParent(currentNode))
                     {
                         proxyList.add(new BlockPos(currentNode.getX(), levelDepth, currentNode.getZ()));
                         currentNode = level.getNode(currentNode.getParent());
@@ -272,8 +273,9 @@ public class WalkToProxy
                 if(level.getRandomNode() != null && level.getRandomNode().getParent() != null)
                 {
                     final List<BlockPos> nodesToTarget = new ArrayList<>();
-                    com.minecolonies.coremod.entity.ai.citizen.miner.Node currentNode = level.getNode(level.getRandomNode().getParent());
-                    while (new Point2D.Double(currentNode.getX(), currentNode.getZ()) != currentNode.getParent() && currentNode.getParent() != null)
+                    Node currentNode = level.getNode(level.getRandomNode().getParent());
+
+                    while (nodeDoesntEqualParent(currentNode))
                     {
                         nodesToTarget.add(new BlockPos(currentNode.getX(), levelDepth, currentNode.getZ()));
                         currentNode = level.getNode(currentNode.getParent());
@@ -290,12 +292,12 @@ public class WalkToProxy
             //If he is on the same Y level as his target and both underground.
             else if (targetY <= levelDepth)
             {
-                double closestNode = Double.MAX_VALUE;
+                long closestNode = Long.MAX_VALUE;
                 Node lastNode = null;
-                for(final Map.Entry<Point2D, Node> node : level.getNodes().entrySet())
+                for (final Map.Entry<Vec2i, Node> node : level.getNodes().entrySet())
                 {
-                    final double distanceToNode = node.getKey().distance(worker.getPosition().getX(), worker.getPosition().getZ());
-                    if(distanceToNode < closestNode)
+                    final long distanceToNode = node.getKey().distanceSq(worker.getPosition().getX(), worker.getPosition().getZ());
+                    if (distanceToNode < closestNode)
                     {
                         lastNode = node.getValue();
                         closestNode = distanceToNode;
@@ -304,8 +306,9 @@ public class WalkToProxy
 
                 if(lastNode != null && lastNode.getParent() != null)
                 {
-                    com.minecolonies.coremod.entity.ai.citizen.miner.Node currentNode = level.getNode(lastNode.getParent());
-                    while (new Point2D.Double(currentNode.getX(), currentNode.getZ()) != currentNode.getParent() && currentNode.getParent() != null)
+                    Node currentNode = level.getNode(lastNode.getParent());
+
+                    while (nodeDoesntEqualParent(currentNode))
                     {
                         proxyList.add(new BlockPos(currentNode.getX(), levelDepth, currentNode.getZ()));
                         currentNode = level.getNode(currentNode.getParent());
@@ -315,8 +318,9 @@ public class WalkToProxy
                 if(level.getRandomNode().getParent() != null)
                 {
                     final List<BlockPos> nodesToTarget = new ArrayList<>();
-                    com.minecolonies.coremod.entity.ai.citizen.miner.Node currentNode = level.getNode(level.getRandomNode().getParent());
-                    while (new Point2D.Double(currentNode.getX(), currentNode.getZ()) != currentNode.getParent() && currentNode.getParent() != null)
+                    Node currentNode = level.getNode(level.getRandomNode().getParent());
+
+                    while (nodeDoesntEqualParent(currentNode))
                     {
                         nodesToTarget.add(new BlockPos(currentNode.getX(), levelDepth, currentNode.getZ()));
                         currentNode = level.getNode(currentNode.getParent());
@@ -337,6 +341,12 @@ public class WalkToProxy
         }
 
         return getProxy(target, worker.getPosition(), distanceToPath);
+    }
+
+    private boolean nodeDoesntEqualParent(@NotNull final Node node)
+    {
+        final Vec2i parent = node.getParent();
+        return parent != null && node.getX() != parent.getX() && node.getZ() != parent.getZ();
     }
 
     /**
