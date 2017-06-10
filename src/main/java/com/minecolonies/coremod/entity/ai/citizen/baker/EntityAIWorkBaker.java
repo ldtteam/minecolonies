@@ -279,7 +279,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
             {
                 req = form < 0 ? -worker.getRandom().nextInt(Math.abs(form)) : worker.getRandom().nextInt(form);
             }
-            ItemStackUtils.increaseOrDecreaseSize(copy, req);
+            ItemStackUtils.changeSize(copy, req);
             list.add(copy);
         }
 

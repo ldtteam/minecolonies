@@ -180,7 +180,7 @@ public class InventoryCitizen implements IInventory
         }
         else
         {
-            ItemStackUtils.increaseOrDecreaseSize(this.stacks[i], -1);
+            ItemStackUtils.changeSize(this.stacks[i], -1);
             if (ItemStackUtils.isEmpty(this.stacks[i]))
             {
                 this.stacks[i] = ItemStackUtils.EMPTY;
@@ -332,7 +332,7 @@ public class InventoryCitizen implements IInventory
             else
             {
                 i = i - k;
-                ItemStackUtils.increaseOrDecreaseSize(this.stacks[j], k);
+                ItemStackUtils.changeSize(this.stacks[j], k);
 
                 return i;
             }
