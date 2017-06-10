@@ -345,8 +345,7 @@ public class BuildingMiner extends AbstractBuildingWorker
         final NBTTagList levelTagList = compound.getTagList(TAG_LEVELS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < levelTagList.tagCount(); i++)
         {
-            final Level level = Level.createFromNBT(levelTagList.getCompoundTagAt(i));
-            this.levels.add(level);
+            this.levels.add(new Level(levelTagList.getCompoundTagAt(i)));
         }
     }
 
