@@ -2,7 +2,6 @@ package com.minecolonies.coremod.entity.ai.citizen.farmer;
 
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.colony.Colony;

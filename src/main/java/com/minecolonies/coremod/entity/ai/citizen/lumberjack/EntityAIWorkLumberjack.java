@@ -3,7 +3,6 @@ package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MathUtils;
