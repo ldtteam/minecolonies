@@ -15,8 +15,8 @@ import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.minimal.*;
+import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.entity.pathfinding.PathNavigate;
-import com.minecolonies.coremod.entity.pathfinding.WalkToProxy;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.network.messages.BlockParticleEffectMessage;
 import com.minecolonies.coremod.util.*;
@@ -247,12 +247,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private ResourceLocation texture;
     private int              colonyId;
     private int citizenId = 0;
-    private int         level;
-    private int         textureId;
+    private int                      level;
+    private int                      textureId;
     /**
      * Walk to proxy.
      */
-    private WalkToProxy proxy;
+    private EntityCitizenWalkToProxy proxy;
     /**
      * Skill modifier defines how fast a citizen levels in a certain skill.
      */
@@ -493,7 +493,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         if (proxy == null)
         {
-            proxy = new WalkToProxy(this);
+            proxy = new EntityCitizenWalkToProxy(this);
         }
         return proxy.walkToBlock(site, range, true);
     }

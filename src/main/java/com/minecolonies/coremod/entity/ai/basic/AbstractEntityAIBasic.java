@@ -9,7 +9,7 @@ import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
-import com.minecolonies.coremod.entity.pathfinding.WalkToProxy;
+import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -19,7 +19,6 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentBase;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -105,7 +104,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Walk to proxy.
      */
-    private WalkToProxy proxy;
+    private EntityCitizenWalkToProxy proxy;
 
     /**
      * This will count up and progressively disable the entity
@@ -546,7 +545,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         if (proxy == null)
         {
-            proxy = new WalkToProxy(worker);
+            proxy = new EntityCitizenWalkToProxy(worker);
         }
         if (proxy.walkToBlock(stand, range))
         {
@@ -652,7 +651,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Check if we need a tool.
      *
      * Do not use it to find a pickaxe as it need a minimum level
-     * @param tool tool required for block
+     * @param toolType required for block
      * @return true if we need a tool
      */
     private boolean checkForNeededTool(@NotNull final IToolType toolType, final int minimalLevel)

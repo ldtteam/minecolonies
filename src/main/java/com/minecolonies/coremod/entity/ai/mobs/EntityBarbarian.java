@@ -2,12 +2,20 @@ package com.minecolonies.coremod.entity.ai.mobs;
 
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.coremod.colony.*;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
+import com.minecolonies.coremod.entity.pathfinding.GeneralEntityWalkToProxy;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
+import java.util.Random;
 
 
 /**
@@ -15,6 +23,12 @@ import net.minecraft.world.World;
  */
 public class EntityBarbarian extends EntityMob
 {
+
+    /**
+     * Walk to proxy.
+     */
+    private GeneralEntityWalkToProxy proxy;
+    BlockPos targetBlock;
 
     final Colony colony = ColonyManager.getClosestColony(world, this.getPosition());
 
@@ -45,12 +59,43 @@ public class EntityBarbarian extends EntityMob
     }
 
     @Override
+    public void onLivingUpdate() {
+        super.onLivingUpdate();
+        if(targetBlock != null)
+        {
+            this.isWorkerAtSiteWithMove(targetBlock, 2);
+        }
+        else
+        {
+            targetBlock = getRandomBuilding();
+            this.isWorkerAtSiteWithMove(targetBlock, 2);
+        }
+    }
+
+    /**
+     * Checks if a worker is at his working site.
+     * If he isn't, sets it's path to the location
+     *
+     * @param site  the place where he should walk to
+     * @param range Range to check in
+     * @return True if worker is at site, otherwise false.
+     */
+    public boolean isWorkerAtSiteWithMove(@NotNull final BlockPos site, final int range)
+    {
+        if (proxy == null)
+        {
+            proxy = new GeneralEntityWalkToProxy(this);
+        }
+        return proxy.walkToBlock(site, range, true);
+    }
+
+    @Override
     protected void initEntityAI()
     {
         this.tasks.addTask(0, new EntityAISwimming(this));
         this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
         this.tasks.addTask(3, new EntityAIAttackMelee(this, 2.3D, true));
-        this.tasks.addTask(3, new EntityAIWalkToRandomHuts(this, 2.0D));
+        //this.tasks.addTask(3, new EntityAIWalkToRandomHuts(this, 2.0D));
         this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
         this.tasks.addTask(8, new EntityAILookIdle(this));
         this.applyEntityAI();
@@ -79,5 +124,26 @@ public class EntityBarbarian extends EntityMob
     protected boolean canDespawn()
     {
         return world.isDaytime();
+    }
+
+    private BlockPos getRandomBuilding()
+    {
+        if (colony == null)
+        {
+            return null;
+        }
+
+        final Collection<AbstractBuilding> buildingList = colony.getBuildings().values();
+        final Object[] buildingArray = buildingList.toArray();
+        if (buildingArray != null && buildingArray.length != 0) {
+            final int random = new Random().nextInt(buildingArray.length);
+            final AbstractBuilding building = (AbstractBuilding) buildingArray[random];
+
+            return building.getLocation();
+        }
+        else
+        {
+            return null;
+        }
     }
 }
