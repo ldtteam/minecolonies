@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.util;
 
-import com.minecolonies.compatibility.Compatibility;
+import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.coremod.util.constants.IToolType;
 import com.minecolonies.coremod.util.constants.ToolType;
 import net.minecraft.item.ItemBow;

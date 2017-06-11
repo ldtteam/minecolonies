@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
-import com.minecolonies.compatibility.Compatibility;
+import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockNewLog;

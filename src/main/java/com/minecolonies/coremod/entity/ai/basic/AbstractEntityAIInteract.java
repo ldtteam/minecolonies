@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
+import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.util.BlockUtils;
-import com.minecolonies.compatibility.Compatibility;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.util.*;

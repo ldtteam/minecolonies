@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
-import com.minecolonies.compatibility.Compatibility;
+import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.util.AIState;
