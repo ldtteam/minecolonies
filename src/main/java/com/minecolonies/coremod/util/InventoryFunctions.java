@@ -31,7 +31,6 @@ public class InventoryFunctions
      *
      * @param provider the provider to search in
      * @param tester   the function to use for testing slots
-     * @param action   the function to use if a slot matches
      * @return true if it found a stack
      */
     public static boolean matchFirstInProvider(final ICapabilityProvider provider, @NotNull final Predicate<ItemStack> tester)
