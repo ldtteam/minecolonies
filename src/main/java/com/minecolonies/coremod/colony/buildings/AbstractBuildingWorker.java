@@ -1,12 +1,11 @@
 package com.minecolonies.coremod.colony.buildings;
 
-
+import com.minecolonies.api.util.constants.ToolType;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.util.constants.ToolType;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,9 +14,9 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.minecolonies.coremod.util.constants.ToolLevelConstants.TOOL_LEVEL_HAND;
-import static com.minecolonies.coremod.util.constants.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static com.minecolonies.coremod.util.constants.ToolLevelConstants.TOOL_LEVEL_MAXIMUM;
+import static com.minecolonies.api.util.constants.ToolLevelConstants.TOOL_LEVEL_HAND;
+import static com.minecolonies.api.util.constants.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constants.ToolLevelConstants.TOOL_LEVEL_MAXIMUM;
 
 /**
  * The abstract class for each worker building.

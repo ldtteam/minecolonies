@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.util.constants;
+package com.minecolonies.api.util.constants;
 
 public interface IToolType
 {

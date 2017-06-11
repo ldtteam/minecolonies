@@ -1,6 +1,6 @@
-package com.minecolonies.compatibility.tinkers;
+package com.minecolonies.api.compatibility.tinkers;
 
-import com.minecolonies.coremod.util.ItemStackUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Optional;
 import org.jetbrains.annotations.NotNull;

@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.farmer;
 
-import com.minecolonies.coremod.util.BlockPosUtil;
+import com.minecolonies.api.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.Item;
 import net.minecraft.util.math.BlockPos;

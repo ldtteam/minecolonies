@@ -1,6 +1,6 @@
-package com.minecolonies.coremod.util;
+package com.minecolonies.api.util;
 
-import com.minecolonies.coremod.util.constants.IToolType;
+import com.minecolonies.api.util.constants.IToolType;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -652,7 +652,11 @@ public final class InventoryUtils
      */
     public static int getFirstOpenSlotFromProvider(@NotNull final ICapabilityProvider provider)
     {
-        return getItemHandlersFromProvider(provider).stream().mapToInt(InventoryUtils::getFirstOpenSlotFromItemHandler).filter(slotIndex -> slotIndex > -1).findFirst().orElse(-1);
+        return getItemHandlersFromProvider(provider).stream()
+                .mapToInt(InventoryUtils::getFirstOpenSlotFromItemHandler)
+                .filter(slotIndex -> slotIndex > -1)
+                .findFirst()
+                .orElse(-1);
     }
 
     /**
@@ -845,11 +849,11 @@ public final class InventoryUtils
     @NotNull
     public static List<IItemHandler> getItemHandlersFromProvider(@NotNull ICapabilityProvider provider)
     {
-        final ArrayList<IItemHandler> handlerList = Arrays.stream(EnumFacing.VALUES)
+        final List<IItemHandler> handlerList = Arrays.stream(EnumFacing.VALUES)
                 .filter(facing -> provider.hasCapability(ITEM_HANDLER_CAPABILITY, facing))
                 .map(facing -> provider.getCapability(ITEM_HANDLER_CAPABILITY, facing))
                 .distinct()
-                .collect(Collectors.toCollection(ArrayList::new));
+                .collect(Collectors.toList());
 
         if (provider.hasCapability(ITEM_HANDLER_CAPABILITY, null))
         {
