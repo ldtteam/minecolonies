@@ -67,6 +67,7 @@ public class EntityBarbarian extends EntityMob
         }
         else
         {
+            //todo targetBlock is still nullable, this might crash.
             targetBlock = getRandomBuilding();
             this.isWorkerAtSiteWithMove(targetBlock, 2);
         }
@@ -86,7 +87,8 @@ public class EntityBarbarian extends EntityMob
         {
             proxy = new GeneralEntityWalkToProxy(this);
         }
-        return proxy.walkToBlock(site, range, true);
+        //this here should do it, you shouldn't need the onMove in this case.
+        return proxy.walkToBlock(site, range);
     }
 
     @Override
