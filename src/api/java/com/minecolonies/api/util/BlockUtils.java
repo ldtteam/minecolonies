@@ -1,6 +1,6 @@
-package com.minecolonies.coremod.util;
+package com.minecolonies.api.util;
 
-import com.minecolonies.coremod.blocks.AbstractBlockHut;
+import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
@@ -77,7 +77,8 @@ public final class BlockUtils
     /**
      * Get the filler block at a certain location.
      * If block follows gravity laws return dirt.
-     * @param world the world the block is in.
+     *
+     * @param world    the world the block is in.
      * @param location the location it is at.
      * @return the IBlockState of the filler block.
      */
@@ -101,8 +102,8 @@ public final class BlockUtils
      */
     public static boolean shouldNeverBeMessedWith(final Block block)
     {
-        return block instanceof AbstractBlockHut
-                || Objects.equals(block, Blocks.BEDROCK);
+        return block instanceof IBuilderUndestroyable
+                 || Objects.equals(block, Blocks.BEDROCK);
     }
 
     /**
@@ -185,67 +186,8 @@ public final class BlockUtils
      */
     public static boolean isBlockSeed(@NotNull final World world, @NotNull final BlockPos pos)
     {
-        final ItemStack stack = BlockUtils.getItemStackFromBlockState(world.getBlockState(pos.up()));
-        return  stack != null && stack.getItem() instanceof ItemSeeds;
+        return BlockUtils.getItem(world.getBlockState(pos.up())) instanceof ItemSeeds;
     }
-
-    /**
-     * Mimics pick block.
-     *
-     * @param blockState the block and state we are creating an ItemStack for.
-     * @return ItemStack fromt the BlockState.
-     */
-    public static ItemStack getItemStackFromBlockState(@NotNull final IBlockState blockState)
-    {
-        final Item item = getItem(blockState);
-        if (item == null)
-        {
-            if(blockState.getBlock() instanceof BlockFire)
-            {
-                return null;
-            }
-
-            return null;
-        }
-
-        Block block = blockState.getBlock();
-        if (item instanceof ItemBlock)
-        {
-            block = Block.getBlockFromItem(item);
-        }
-
-        return new ItemStack(item, 1, getDamageValue(block, blockState));
-    }
-
-    /**
-     * Compares two blocks and checks if they are equally dirt.
-     * Meaning dirt and grass are equal. But podzol and coarse dirt not.
-     *
-     * @param structureBlock the block of the structure.
-     * @param worldBlock the world block.
-     * @param structureMetaData the structure metadata.
-     * @param worldMetadata the world metadata.
-     * @return true if equal.
-     */
-    public static boolean isGrassOrDirt(@NotNull final Block structureBlock, @NotNull final Block worldBlock,
-            @NotNull final IBlockState structureMetaData, @NotNull final IBlockState worldMetadata)
-    {
-        if((structureBlock == Blocks.DIRT || structureBlock == Blocks.GRASS) && (worldBlock == Blocks.DIRT || worldBlock == Blocks.GRASS))
-        {
-            if(structureBlock == Blocks.DIRT
-                    && (structureMetaData.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.COARSE_DIRT
-                    || structureMetaData.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.PODZOL))
-            {
-                return false;
-            }
-
-            return worldBlock != Blocks.DIRT
-                    || (worldMetadata.getValue(BlockDirt.VARIANT) != BlockDirt.DirtType.COARSE_DIRT
-                    && worldMetadata.getValue(BlockDirt.VARIANT) != BlockDirt.DirtType.PODZOL);
-        }
-        return  false;
-    }
-
 
     private static Item getItem(@NotNull final IBlockState blockState)
     {
@@ -280,6 +222,7 @@ public final class BlockUtils
         else if (blockState.getBlock() instanceof BlockCrops)
         {
             final ItemStack stack = ((BlockCrops) blockState.getBlock()).getItem(null, null, blockState);
+            //TODO ItemStackUtils.isEmpty(stack)
             if (stack != null)
             {
                 return stack.getItem();
@@ -308,9 +251,13 @@ public final class BlockUtils
         {
             return Item.getItemFromBlock(Blocks.DIRT);
         }
+        else if(blockState.getBlock() instanceof BlockFire)
+        {
+            return Items.FLINT_AND_STEEL;
+        }
         else if (blockState.getBlock() instanceof BlockFlowerPot)
         {
-             return Items.FLOWER_POT;
+            return Items.FLOWER_POT;
         }
         else if (blockState.getBlock() instanceof BlockFurnace)
         {
@@ -367,6 +314,7 @@ public final class BlockUtils
         else if (blockState.getBlock() instanceof BlockStem)
         {
             final ItemStack stack = ((BlockStem) blockState.getBlock()).getItem(null, null, blockState);
+            //TODO if (!ItemStackUtils.isEmpty(stack))
             if (stack != null)
             {
                 return stack.getItem();
@@ -402,19 +350,78 @@ public final class BlockUtils
     }
 
     /**
-     * Get the damage value from a block and blockState, where the block is the placeable and obtainable block.
-     * The blockstate might differ from the block.
-     * @param block the block.
+     * Mimics pick block.
+     *
+     * @param blockState the block and state we are creating an ItemStack for.
+     * @return ItemStack fromt the BlockState.
+     */
+    public static ItemStack getItemStackFromBlockState(@NotNull final IBlockState blockState)
+    {
+        final Item item = getItem(blockState);
+
+        if (item == null)
+        {
+            return null;
+        }
+
+        Block block = blockState.getBlock();
+        if (item instanceof ItemBlock)
+        {
+            block = Block.getBlockFromItem(item);
+        }
+
+        return new ItemStack(item, 1, getDamageValue(block, blockState));
+    }
+
+    /**
+     * Compares two blocks and checks if they are equally dirt.
+     * Meaning dirt and grass are equal. But podzol and coarse dirt not.
+     *
+     * @param structureBlock the block of the structure.
+     * @param worldBlock the world block.
+     * @param structureMetaData the structure metadata.
+     * @param worldMetadata the world metadata.
+     * @return true if equal.
+     */
+    public static boolean isGrassOrDirt(@NotNull final Block structureBlock, @NotNull final Block worldBlock,
+            @NotNull final IBlockState structureMetaData, @NotNull final IBlockState worldMetadata)
+    {
+        if((structureBlock == Blocks.DIRT || structureBlock == Blocks.GRASS) && (worldBlock == Blocks.DIRT || worldBlock == Blocks.GRASS))
+        {
+            if(structureBlock == Blocks.DIRT
+                    && (structureMetaData.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.COARSE_DIRT
+                    || structureMetaData.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.PODZOL))
+            {
+                return false;
+            }
+
+            return worldBlock != Blocks.DIRT
+                    || (worldMetadata.getValue(BlockDirt.VARIANT) != BlockDirt.DirtType.COARSE_DIRT
+                    && worldMetadata.getValue(BlockDirt.VARIANT) != BlockDirt.DirtType.PODZOL);
+        }
+        return  false;
+    }
+
+    /**
+     * Get the damage value from a block and blockState, where the block is the
+     * placeable and obtainable block. The blockstate might differ from the
+     * block.
+     *
+     * @param block      the block.
      * @param blockState the state.
      * @return the int damage value.
      */
     private static int getDamageValue(final Block block, @NotNull final IBlockState blockState)
     {
+        if (block instanceof BlockFarmland || blockState.getBlock() instanceof BlockFarmland)
+        {
+            return 0;
+        }
         if (block instanceof BlockCocoa)
         {
             return EnumDyeColor.BROWN.getDyeDamage();
         }
-        else if (block instanceof BlockDirt && !(blockState.getBlock() instanceof BlockFarmland))
+        else if (block instanceof BlockDirt)
         {
             if (blockState.getBlock() instanceof BlockGrassPath)
             {
@@ -446,6 +453,7 @@ public final class BlockUtils
         }
         else
         {
+            //todo farmland doesn't have damage at all, sucker!
             return block.damageDropped(blockState);
         }
     }
@@ -458,6 +466,6 @@ public final class BlockUtils
      */
     public static boolean isPathBlock(final Block block)
     {
-        return block == Blocks.GRAVEL || block == Blocks.STONEBRICK || block instanceof BlockGrassPath;
+        return block == Blocks.GRAVEL || block == Blocks.STONEBRICK || block == Blocks.GRASS_PATH;
     }
 }

@@ -1,6 +1,6 @@
 package com.minecolonies.structures.event;
 
-import com.minecolonies.coremod.util.BlockUtils;
+import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.structures.helpers.Settings;
 import com.minecolonies.structures.helpers.Structure;
 import net.minecraft.client.Minecraft;

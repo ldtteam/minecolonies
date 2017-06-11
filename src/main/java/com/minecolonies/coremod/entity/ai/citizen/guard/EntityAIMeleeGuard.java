@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
-import com.minecolonies.compatibility.Compatibility;
+import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
@@ -113,7 +113,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         {
             return AIState.GUARD_SEARCH_TARGET;
         }
-        InventoryFunctions.matchFirstInProvider(worker, stack -> stack != null && ItemStackUtils.doesItemServeAsWeapon(stack), worker::setHeldItem);
+        InventoryFunctions.matchFirstInProviderWithSimpleAction(worker, stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.doesItemServeAsWeapon(stack), worker::setHeldItem);
         return super.searchTarget();
     }
 

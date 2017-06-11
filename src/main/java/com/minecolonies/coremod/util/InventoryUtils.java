@@ -94,7 +94,7 @@ public final class InventoryUtils
         for (int slot = 0; slot < itemHandler.getSlots(); slot++)
         {
             final ItemStack stack = itemHandler.getStackInSlot(slot);
-            if (!ItemStackUtils.isItemStackEmpty(stack) && itemStackSelectionPredicate.test(stack))
+            if (!ItemStackUtils.isEmpty(stack) && itemStackSelectionPredicate.test(stack))
             {
                 filtered.add(stack);
             }
@@ -113,7 +113,7 @@ public final class InventoryUtils
      */
     private static boolean compareItems(@Nullable final ItemStack itemStack, final Item targetItem, final int itemDamage)
     {
-        return !ItemStackUtils.isItemStackEmpty(itemStack) && itemStack.getItem() == targetItem && (itemStack.getItemDamage() == itemDamage || itemDamage == -1);
+        return !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() == targetItem && (itemStack.getItemDamage() == itemDamage || itemDamage == -1);
     }
 
     /**
@@ -216,7 +216,7 @@ public final class InventoryUtils
      */
     public static int getItemCountInItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        return filterItemHandler(itemHandler, itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getItemStackSize).sum();
+        return filterItemHandler(itemHandler, itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getSize).sum();
     }
 
     /**
@@ -272,7 +272,7 @@ public final class InventoryUtils
     {
         //Test with two different ItemStacks to insert in simulation mode.
         return IntStream.range(0, itemHandler.getSlots())
-                .filter(slot -> ItemStackUtils.isItemStackEmpty(itemHandler.getStackInSlot(slot)))
+                .filter(slot -> ItemStackUtils.isEmpty(itemHandler.getStackInSlot(slot)))
                 .findFirst()
                 .orElse(-1);
     }
@@ -297,7 +297,7 @@ public final class InventoryUtils
      */
     public static boolean addItemStackToItemHandler(@NotNull final IItemHandler itemHandler, @Nullable final ItemStack itemStack)
     {
-        if (!ItemStackUtils.isItemStackEmpty(itemStack))
+        if (!ItemStackUtils.isEmpty(itemStack))
         {
             int slot;
 
@@ -319,17 +319,16 @@ public final class InventoryUtils
             {
                 ItemStack resultStack = itemStack;
                 slot = itemHandler.getSlots() == 0 ? -1 : 0;
-                while (!ItemStackUtils.isItemStackEmpty(resultStack) && slot != -1 && slot != itemHandler.getSlots())
+                while (!ItemStackUtils.isEmpty(resultStack) && slot != -1 && slot != itemHandler.getSlots())
                 {
                     resultStack = itemHandler.insertItem(slot, resultStack, false);
-                    if (!ItemStackUtils.isItemStackEmpty(resultStack))
+                    if (!ItemStackUtils.isEmpty(resultStack))
                     {
                         slot++;
                     }
                 }
 
-
-                return ItemStackUtils.isItemStackEmpty(resultStack);
+                return ItemStackUtils.isEmpty(resultStack);
             }
         }
         else
@@ -358,17 +357,17 @@ public final class InventoryUtils
     {
         ItemStack standardInsertionResult = addItemStackToItemHandlerWithResult(itemHandler, itemStack);
 
-        if (!ItemStackUtils.isItemStackEmpty(standardInsertionResult))
+        if (!ItemStackUtils.isEmpty(standardInsertionResult))
         {
-            for (int i = 0; i < itemHandler.getSlots() && !ItemStackUtils.isItemStackEmpty(standardInsertionResult); i++)
+            for (int i = 0; i < itemHandler.getSlots() && !ItemStackUtils.isEmpty(standardInsertionResult); i++)
             {
                 final ItemStack localStack = itemHandler.getStackInSlot(i);
-                if (ItemStackUtils.isItemStackEmpty(localStack) || !itemStackToKeepPredicate.test(localStack))
+                if (ItemStackUtils.isEmpty(localStack) || !itemStackToKeepPredicate.test(localStack))
                 {
                     final ItemStack removedStack = itemHandler.extractItem(i, Integer.MAX_VALUE, false);
                     ItemStack localInsertionResult = itemHandler.insertItem(i, standardInsertionResult, false);
 
-                    if (ItemStackUtils.isItemStackEmpty(localInsertionResult))
+                    if (ItemStackUtils.isEmpty(localInsertionResult))
                     {
                         //Insertion successful. Returning the extracted stack.
                         return removedStack.copy();
@@ -596,7 +595,7 @@ public final class InventoryUtils
     public static int getItemCountInProvider(@NotNull final ICapabilityProvider provider, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
         return getItemHandlersFromProvider(provider).stream()
-                 .mapToInt(handler -> filterItemHandler(handler, itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getItemStackSize).sum())
+                 .mapToInt(handler -> filterItemHandler(handler, itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getSize).sum())
                  .sum();
     }
 
@@ -653,7 +652,11 @@ public final class InventoryUtils
      */
     public static int getFirstOpenSlotFromProvider(@NotNull final ICapabilityProvider provider)
     {
-        return getItemHandlersFromProvider(provider).stream().mapToInt(InventoryUtils::getFirstOpenSlotFromItemHandler).filter(slotIndex -> slotIndex > -1).findFirst().orElse(-1);
+        return getItemHandlersFromProvider(provider).stream()
+                .mapToInt(InventoryUtils::getFirstOpenSlotFromItemHandler)
+                .filter(slotIndex -> slotIndex > -1)
+                .findFirst()
+                .orElse(-1);
     }
 
     /**
@@ -706,7 +709,7 @@ public final class InventoryUtils
     {
         ItemStack activeStack = itemStack;
 
-        if (ItemStackUtils.isItemStackEmpty(activeStack))
+        if (ItemStackUtils.isEmpty(activeStack))
         {
             return ItemStackUtils.EMPTY;
         }
@@ -728,7 +731,7 @@ public final class InventoryUtils
      */
     public static ItemStack addItemStackToItemHandlerWithResult(@NotNull final IItemHandler itemHandler, @Nullable final ItemStack itemStack)
     {
-        if (!ItemStackUtils.isItemStackEmpty(itemStack))
+        if (!ItemStackUtils.isEmpty(itemStack))
         {
             int slot;
 
@@ -750,10 +753,10 @@ public final class InventoryUtils
             {
                 ItemStack resultStack = itemStack;
                 slot = itemHandler.getSlots() == 0 ? -1 : 0;
-                while (!ItemStackUtils.isItemStackEmpty(resultStack) && slot != -1 && slot != itemHandler.getSlots())
+                while (!ItemStackUtils.isEmpty(resultStack) && slot != -1 && slot != itemHandler.getSlots())
                 {
                     resultStack = itemHandler.insertItem(slot, resultStack, false);
-                    if (!ItemStackUtils.isItemStackEmpty(resultStack))
+                    if (!ItemStackUtils.isEmpty(resultStack))
                     {
                         slot++;
                     }
@@ -787,11 +790,11 @@ public final class InventoryUtils
     {
         final ItemStack standardInsertionResult = addItemStackToProviderWithResult(provider, itemStack);
 
-        if (!ItemStackUtils.isItemStackEmpty(standardInsertionResult))
+        if (!ItemStackUtils.isEmpty(standardInsertionResult))
         {
             ItemStack resultStack = standardInsertionResult.copy();
             final Iterator<IItemHandler> iterator = getItemHandlersFromProvider(provider).iterator();
-            while (iterator.hasNext() && !ItemStackUtils.isItemStackEmpty(resultStack))
+            while (iterator.hasNext() && !ItemStackUtils.isEmpty(resultStack))
             {
                 resultStack = forceItemStackToItemHandler(iterator.next(), resultStack, itemStackToKeepPredicate);
             }
@@ -846,11 +849,11 @@ public final class InventoryUtils
     @NotNull
     public static List<IItemHandler> getItemHandlersFromProvider(@NotNull ICapabilityProvider provider)
     {
-        final ArrayList<IItemHandler> handlerList = Arrays.stream(EnumFacing.VALUES)
+        final List<IItemHandler> handlerList = Arrays.stream(EnumFacing.VALUES)
                 .filter(facing -> provider.hasCapability(ITEM_HANDLER_CAPABILITY, facing))
                 .map(facing -> provider.getCapability(ITEM_HANDLER_CAPABILITY, facing))
                 .distinct()
-                .collect(Collectors.toCollection(ArrayList::new));
+                .collect(Collectors.toList());
 
         if (provider.hasCapability(ITEM_HANDLER_CAPABILITY, null))
         {
@@ -1093,7 +1096,7 @@ public final class InventoryUtils
             return 0;
         }
 
-        return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing), itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getItemStackSize).sum();
+        return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing), itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getSize).sum();
     }
 
     /**
@@ -1266,7 +1269,7 @@ public final class InventoryUtils
     public static boolean hasItemHandlerToolWithLevel(@NotNull final IItemHandler itemHandler, final IToolType toolType, final int requiredLevel, final int maximumLevel)
     {
         return findFirstSlotInItemHandlerWith(itemHandler,
-          (ItemStack stack) -> (!ItemStackUtils.isItemStackEmpty(stack) && (ItemStackUtils.isTool(stack, toolType) && ItemStackUtils.verifyToolLevel(stack,
+          (ItemStack stack) -> (!ItemStackUtils.isEmpty(stack) && (ItemStackUtils.isTool(stack, toolType) && ItemStackUtils.verifyToolLevel(stack,
             ItemStackUtils.getMiningLevel(stack, toolType),
             requiredLevel, maximumLevel)))) > -1;
     }
@@ -1310,7 +1313,7 @@ public final class InventoryUtils
             return false;
         }
         final ItemStack returnStack = sourceHandler.extractItem(desiredItemSlot, amount, false);
-        if(ItemStackUtils.isItemStackEmpty(returnStack))
+        if(ItemStackUtils.isEmpty(returnStack))
         {
             return false;
         }
@@ -1334,7 +1337,7 @@ public final class InventoryUtils
         for (int i = 0; i < targetHandler.getSlots(); i++)
         {
             sourceStack = targetHandler.insertItem(i, sourceStack, false);
-            if (ItemStackUtils.isItemStackEmpty(sourceStack))
+            if (ItemStackUtils.isEmpty(sourceStack))
             {
                 sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, false);
                 return true;
@@ -1343,7 +1346,7 @@ public final class InventoryUtils
 
         if (!ItemStack.areItemStacksEqual(sourceStack, originalStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(sourceStack, originalStack))
         {
-            final int usedAmount = ItemStackUtils.getItemStackSize(sourceStack) - ItemStackUtils.getItemStackSize(originalStack);
+            final int usedAmount = ItemStackUtils.getSize(sourceStack) - ItemStackUtils.getSize(originalStack);
             sourceHandler.extractItem(sourceIndex, usedAmount, false);
             return true;
         }
@@ -1398,7 +1401,7 @@ public final class InventoryUtils
         ItemStack sourceStack = sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, true);
 
         final ItemStack resultSourceSimulationInsertion = targetHandler.insertItem(targetIndex, sourceStack, true);
-        if (ItemStackUtils.isItemStackEmpty(resultSourceSimulationInsertion) || ItemStackUtils.isItemStackEmpty(targetStack))
+        if (ItemStackUtils.isEmpty(resultSourceSimulationInsertion) || ItemStackUtils.isEmpty(targetStack))
         {
             targetHandler.insertItem(targetIndex, sourceStack, false);
             sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, false);
@@ -1426,7 +1429,7 @@ public final class InventoryUtils
         int maxTries = 0;
         for(final ItemStack stack: input)
         {
-            maxTries+= stack.stackSize;
+            maxTries+= ItemStackUtils.getSize(stack);
             list.add(stack.copy());
         }
 
@@ -1445,15 +1448,15 @@ public final class InventoryUtils
                 continue;
             }
 
-            int removedSize = handler.extractItem(slot, stack.stackSize, false).stackSize;
+            int removedSize = ItemStackUtils.getSize(handler.extractItem(slot, ItemStackUtils.getSize(stack), false));
 
-            if(removedSize == stack.stackSize)
+            if(removedSize == ItemStackUtils.getSize(stack))
             {
                 i++;
             }
             else
             {
-                stack.stackSize -= removedSize;
+                ItemStackUtils.setSize(stack, ItemStackUtils.getSize(stack) - removedSize);
             }
             tries++;
         }

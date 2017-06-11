@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.placementhandlers;
 
+import com.minecolonies.api.util.BlockUtils;
+import com.minecolonies.coremod.util.ItemStackUtils;
 import com.minecolonies.coremod.blocks.BlockSolidSubstitution;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
-import com.minecolonies.coremod.util.BlockUtils;
-import com.minecolonies.coremod.util.ItemStackUtils;
 import com.minecolonies.coremod.util.InventoryUtils;
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
@@ -77,7 +77,7 @@ public final class PlacementHandlers
                 final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(new InvWrapper(citizen.getInventoryCitizen()), s ->
                         s.getItem() == Items.FLINT_AND_STEEL);
                 final ItemStack item = slot == -1 ? ItemStackUtils.EMPTY : citizen.getInventoryCitizen().getStackInSlot(slot);
-                if (ItemStackUtils.isItemStackEmpty(item) || !(item.getItem() instanceof ItemFlintAndSteel))
+                if (ItemStackUtils.isEmpty(item) || !(item.getItem() instanceof ItemFlintAndSteel))
                 {
                     return ActionProcessingResult.DENY;
                 }
@@ -237,7 +237,7 @@ public final class PlacementHandlers
 
                 for (final ItemStack stack : itemList)
                 {
-                    if (stack != null && placer.checkOrRequestItems(placer.getTotalAmount(stack)))
+                    if (!ItemStackUtils.isEmpty(stack) && placer.checkOrRequestItems(placer.getTotalAmount(stack)))
                     {
                         return ActionProcessingResult.DENY;
                     }
@@ -367,7 +367,7 @@ public final class PlacementHandlers
 
                 for (final ItemStack stack : itemList)
                 {
-                    if (stack != null && placer.checkOrRequestItems(placer.getTotalAmount(stack)))
+                    if (!ItemStackUtils.isEmpty(stack) && placer.checkOrRequestItems(placer.getTotalAmount(stack)))
                     {
                         return ActionProcessingResult.DENY;
                     }

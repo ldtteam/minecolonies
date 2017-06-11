@@ -12,7 +12,7 @@ import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.util.BlockPosUtil;
-import com.minecolonies.coremod.util.BlockUtils;
+import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Log;
 import io.netty.buffer.ByteBuf;

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
+import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
@@ -656,7 +657,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
 
         @Nullable final ItemStack stack = BlockUtils.getItemStackFromBlockState(stateToPlace);
-        if (ItemStackUtils.isItemStackEmpty(stack))
+        if (ItemStackUtils.isEmpty(stack))
         {
             Log.getLogger().error("Block causes NPE: " + stateToPlace.getBlock());
             return false;
@@ -668,7 +669,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
         for (final ItemStack tempStack : itemList)
         {
-            if (!ItemStackUtils.isItemStackEmpty(tempStack))
+            if (!ItemStackUtils.isEmpty(tempStack))
             {
                 final int slot = worker.findFirstSlotInInventoryWith(tempStack.getItem(), tempStack.getItemDamage());
                 if (slot != -1)
@@ -792,9 +793,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             if (entity instanceof EntityItemFrame)
             {
                 final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
-                if (stack != null)
+                if (!ItemStackUtils.isEmpty(stack))
                 {
-                    stack.stackSize++;
+                    ItemStackUtils.changeSize(stack, 1);
                     request.add(stack);
                 }
                 request.add(new ItemStack(Items.ITEM_FRAME, 1));
@@ -822,7 +823,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 //Surpress
                 for (final ItemStack stack : request)
                 {
-                    if (stack == null)
+                    if (ItemStackUtils.isEmpty(stack))
                     {
                         continue;
                     }

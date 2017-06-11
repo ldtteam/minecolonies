@@ -273,13 +273,13 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         if (copy != null)
         {
             //Wheat will be reduced by chance only (Between 3 and 6- getBuildingLevel, meaning 3-5, 3-4, 3-3, 3-2, 3-1)
-            final int form = (getOwnBuilding().getMaxBuildingLevel() + 1) - (getOwnBuilding().getBuildingLevel() + copy.stackSize);
+            final int form = (getOwnBuilding().getMaxBuildingLevel() + 1) - (getOwnBuilding().getBuildingLevel() + ItemStackUtils.getSize(copy));
             int req = 0;
             if (form != 0)
             {
                 req = form < 0 ? -worker.getRandom().nextInt(Math.abs(form)) : worker.getRandom().nextInt(form);
             }
-            copy.stackSize += req;
+            ItemStackUtils.changeSize(copy, req);
             list.add(copy);
         }
 

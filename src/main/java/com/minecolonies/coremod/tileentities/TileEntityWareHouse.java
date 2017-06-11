@@ -22,6 +22,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Predicate;
 
@@ -36,6 +38,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      * Queue which contains the currentTasks to be executed by the deliveryman.
      */
     private final Queue<AbstractBuilding> taskQueue = new ConcurrentLinkedQueue<>();
+    private final Set<AbstractBuilding>   taskSet   = ConcurrentHashMap.newKeySet();
 
     /**
      * Wait this amount of ticks before checking again.
@@ -96,9 +99,8 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             {
                 if (i == index)
                 {
-                    if(buildingEntry.getValue() instanceof AbstractBuildingWorker
-                            && !taskQueue.contains(buildingEntry.getValue())
-                            && (buildingEntry.getValue()).needsAnything())
+                    if(!taskSet.contains(buildingEntry.getValue())
+                            && buildingEntry.getValue().needsAnything())
                     {
                         checkInWareHouse(buildingEntry.getValue(), true);
                     }
@@ -113,19 +115,21 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     {
         if (buildingEntry.isFoodNeeded())
         {
-            if (isInHut(itemStack -> !ItemStackUtils.isItemStackEmpty(itemStack) && itemStack.getItem() instanceof ItemFood))
+            if (isInHut(itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemFood))
             {
                 if (addToList)
                 {
                     buildingEntry.setOnGoingDelivery(true);
                     taskQueue.add(buildingEntry);
+                    taskSet.add(buildingEntry);
                 }
                 return true;
             }
 
-            if (taskQueue.contains(buildingEntry))
+            if (taskSet.contains(buildingEntry))
             {
                 taskQueue.remove(buildingEntry);
+                taskSet.remove(buildingEntry);
                 buildingEntry.setOnGoingDelivery(false);
             }
         }
@@ -139,7 +143,14 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     @Nullable
     public AbstractBuilding getTask()
     {
-        return taskQueue.poll();
+        final AbstractBuilding task = taskQueue.poll();
+        if (task == null)
+        {
+            return null;
+        }
+
+        taskSet.remove(task);
+        return task;
     }
 
     /**
@@ -154,7 +165,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         {
             for(final ItemStack stack : buildingEntry.getCopyOfNeededItems())
             {
-                if(stack == null
+                if(ItemStackUtils.isEmpty(stack)
                      || (deliveryManHasBuildingAsTask(buildingEntry)
                            && addToList))
                 {
@@ -167,14 +178,16 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                     {
                         buildingEntry.setOnGoingDelivery(true);
                         taskQueue.add(buildingEntry);
+                        taskSet.add(buildingEntry);
                     }
                     return true;
                 }
             }
 
-            if (taskQueue.contains(buildingEntry))
+            if (taskSet.contains(buildingEntry))
             {
                 taskQueue.remove(buildingEntry);
+                taskSet.remove(buildingEntry);
                 buildingEntry.setOnGoingDelivery(false);
             }
         }
@@ -188,17 +201,20 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                 {
                     buildingEntry.setOnGoingDelivery(true);
                     taskQueue.add(buildingEntry);
+                    taskSet.add(buildingEntry);
                 }
                 return true;
             }
 
-            if (taskQueue.contains(buildingEntry))
+            if (taskSet.contains(buildingEntry))
             {
                 taskQueue.remove(buildingEntry);
+                taskSet.remove(buildingEntry);
                 buildingEntry.setOnGoingDelivery(false);
             }
         }
-        return false;
+
+        return buildingEntry instanceof BuildingHome && checkInWareHouse((BuildingHome) buildingEntry, addToList);
     }
 
     /**
@@ -220,7 +236,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                     if(building instanceof BuildingDeliveryman)
                     {
                         return ((BuildingDeliveryman) building).getBuildingToDeliver() != null
-                                && ((BuildingDeliveryman) building).getBuildingToDeliver().getLocation() == buildingEntry.getLocation();
+                                && ((BuildingDeliveryman) building).getBuildingToDeliver().getLocation().equals(buildingEntry.getLocation());
                     }
                 }
             }
@@ -235,7 +251,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      */
     private boolean isInHut(@Nullable final ItemStack is)
     {
-        return is != null && isInHut(stack -> stack != null && is.isItemEqual(stack));
+        return !ItemStackUtils.isEmpty(is) && isInHut(stack -> !ItemStackUtils.isEmpty(stack) && is.isItemEqual(stack));
     }
 
     /**
@@ -274,7 +290,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     @Nullable
     public BlockPos getPositionOfChestWithItemStack(@NotNull final ItemStack is)
     {
-        return getPositionOfChestWithItemStack(stack -> stack != null && is.isItemEqual(stack));
+        return getPositionOfChestWithItemStack(stack -> !ItemStackUtils.isEmpty(stack) && is.isItemEqual(stack));
     }
 
     /**
@@ -377,27 +393,12 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      * @param itemStackSelectionPredicate the itemStack predicate.
      * @return true if found the stack.
      */
-    private boolean isInTileEntity(final TileEntityChest entity, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    private static boolean isInTileEntity(final TileEntityChest entity, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
         return InventoryFunctions
-                .matchFirstInProviderWithAction(
+                .matchFirstInProvider(
                         entity,
-                        itemStackSelectionPredicate,
-                        InventoryFunctions::doNothing);
-    }
-
-    @Override
-    public void readFromNBT(final NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
-    }
-
-    @NotNull
-    @Override
-    public NBTTagCompound writeToNBT(@NotNull final NBTTagCompound compound)
-    {
-        super.writeToNBT(compound);
-        return compound;
+                        itemStackSelectionPredicate);
     }
 
     /**
@@ -410,7 +411,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         for (int i = 0; i < new InvWrapper(inventoryCitizen).getSlots(); i++)
         {
             final ItemStack stack = inventoryCitizen.getStackInSlot(i);
-            if(ItemStackUtils.isItemStackEmpty(stack))
+            if(ItemStackUtils.isEmpty(stack))
             {
                 continue;
             }

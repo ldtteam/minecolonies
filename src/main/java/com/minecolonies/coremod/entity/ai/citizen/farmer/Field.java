@@ -6,6 +6,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.inventory.InventoryField;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.util.BlockPosUtil;
+import com.minecolonies.coremod.util.ItemStackUtils;
 import com.minecolonies.coremod.util.LanguageHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -246,14 +247,14 @@ public class Field extends Container
             playerIn.inventory.addItemStackToInventory(inventory.getStackInSlot(0));
             inventory.setInventorySlotContents(0, null);
         }
-        else if (inventory.getStackInSlot(0) == null)
+        else if (ItemStackUtils.isEmpty(inventory.getStackInSlot(0)))
         {
             final int playerIndex = slotIndex < MAX_INVENTORY_INDEX ? (slotIndex + INVENTORY_BAR_SIZE) : (slotIndex - MAX_INVENTORY_INDEX);
-            if (playerIn.inventory.getStackInSlot(playerIndex) != null)
+            if (!ItemStackUtils.isEmpty(playerIn.inventory.getStackInSlot(playerIndex)))
             {
                 @NotNull final ItemStack stack = playerIn.inventory.getStackInSlot(playerIndex).splitStack(1);
                 inventory.setInventorySlotContents(0, stack);
-                if (playerIn.inventory.getStackInSlot(playerIndex).stackSize == 0)
+                if (ItemStackUtils.isEmpty(playerIn.inventory.getStackInSlot(playerIndex)))
                 {
                     playerIn.inventory.removeStackFromSlot(playerIndex);
                 }
