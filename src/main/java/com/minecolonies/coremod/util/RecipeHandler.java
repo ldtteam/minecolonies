@@ -48,33 +48,33 @@ public final class RecipeHandler
           'S', Items.STICK, 'W', new ItemStack(Blocks.WOOL, 1, Constants.YELLOW));
         GameRegistry.addShapelessRecipe(new ItemStack(ModBlocks.blockConstructionTapeCorner, 1),ModBlocks.blockConstructionTape);
         GameRegistry.addShapelessRecipe(new ItemStack(ModBlocks.blockConstructionTape, 1),ModBlocks.blockConstructionTapeCorner);
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutMiner, 1), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', Items.WOODEN_PICKAXE));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutMiner, 2), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', Items.STONE_PICKAXE));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutLumberjack, 1), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', Items.WOODEN_AXE));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutLumberjack, 2), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', Items.STONE_AXE));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutBuilder, 1), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', Items.ACACIA_DOOR));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutBuilder, 1), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', Items.BIRCH_DOOR));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutBuilder, 1), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', Items.DARK_OAK_DOOR));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutBuilder, 1), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', Items.JUNGLE_DOOR));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutBuilder, 1), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', Items.OAK_DOOR));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutBuilder, 1), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', Items.SPRUCE_DOOR));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutCitizen, 1), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', "torch"));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutFisherman, 1), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', Items.FISHING_ROD));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutMiner, 1), "XBX", "X#X", "XXX", 'B', ModItems.buildTool, 'X', PLANK_WOOD, '#', Items.WOODEN_PICKAXE));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutMiner, 2), "XBX", "X#X", "XXX", 'B', ModItems.buildTool, 'X', PLANK_WOOD, '#', Items.STONE_PICKAXE));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutLumberjack, 1), "XBX", "X#X", "XXX", 'B', ModItems.buildTool, 'X', PLANK_WOOD, '#', Items.WOODEN_AXE));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutLumberjack, 2), "XBX", "X#X", "XXX", 'B', ModItems.buildTool, 'X', PLANK_WOOD, '#', Items.STONE_AXE));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutBuilder, 1), "XBX", "X#X", "XXX", 'B', ModItems.buildTool, 'X', PLANK_WOOD, '#', Items.ACACIA_DOOR));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutBuilder, 1), "XBX", "X#X", "XXX", 'B', ModItems.buildTool, 'X', PLANK_WOOD, '#', Items.BIRCH_DOOR));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutBuilder, 1), "XBX", "X#X", "XXX", 'B', ModItems.buildTool, 'X', PLANK_WOOD, '#', Items.DARK_OAK_DOOR));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutBuilder, 1), "XBX", "X#X", "XXX", 'B', ModItems.buildTool, 'X', PLANK_WOOD, '#', Items.JUNGLE_DOOR));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutBuilder, 1), "XBX", "X#X", "XXX", 'B', ModItems.buildTool, 'X', PLANK_WOOD, '#', Items.OAK_DOOR));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutBuilder, 1), "XBX", "X#X", "XXX", 'B', ModItems.buildTool, 'X', PLANK_WOOD, '#', Items.SPRUCE_DOOR));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutCitizen, 1), "XBX", "X#X", "XXX", 'B', ModItems.buildTool, 'X', PLANK_WOOD, '#', "torch"));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutFisherman, 1), "XBX", "X#X", "XXX", 'B', ModItems.buildTool, 'X', PLANK_WOOD, '#', Items.FISHING_ROD));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.scanTool, 1), "  I", " S ", "S  ", 'I', Items.IRON_INGOT, 'S', WOODEN_STICK));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.buildTool, 1), "  C", " S ", "S  ", 'C', "cobblestone", 'S', WOODEN_STICK));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockSubstitution, ONE_FORTH_OF_A_STACK), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', ModItems.scanTool));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockSolidSubstitution, ONE_FORTH_OF_A_STACK),
                 "XXX", "X#X", "XXX", 'X', "logWood", '#', ModItems.scanTool));
 
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutFarmer, 1), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', Items.WOODEN_HOE));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutFarmer, 2), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', Items.STONE_HOE));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutFarmer, 1), "XBX", "X#X", "XXX", 'B', ModItems.buildTool, 'X', PLANK_WOOD, '#', Items.WOODEN_HOE));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutFarmer, 2), "XBX", "X#X", "XXX", 'B', ModItems.buildTool, 'X', PLANK_WOOD, '#', Items.STONE_HOE));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutField, 1), " Y ", "X#X", " X ", 'X', WOODEN_STICK, '#', Items.LEATHER, 'Y', Blocks.HAY_BLOCK));
         GameRegistry.addRecipe(new ItemStack(Blocks.WEB, 1), "X X", " X ", "X X", 'X', Items.STRING);
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutGuardTower, 2), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', Items.BOW));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutGuardTower, 2), "XBX", "X#X", "XXX", 'B', ModItems.buildTool, 'X', PLANK_WOOD, '#', Items.BOW));
 
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutWareHouse, 1), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', "chest")); // check
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutDeliveryman, 1), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', Items.LEATHER_BOOTS));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutBaker, 1), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', Items.WHEAT));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutWareHouse, 1), "XBX", "X#X", "XXX", 'B', ModItems.buildTool, 'X', PLANK_WOOD, '#', "chest")); // check
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutDeliveryman, 1), "XBX", "X#X", "XXX", 'B', ModItems.buildTool, 'X', PLANK_WOOD, '#', Items.LEATHER_BOOTS));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutBaker, 1), "XBX", "X#X", "XXX", 'B', ModItems.buildTool, 'X', PLANK_WOOD, '#', Items.WHEAT));
         //enableInDevelopmentFeatures(enableInDevelopmentFeatures);
         addSupplyChestRecipes(supplyChests);
     }
@@ -84,8 +84,8 @@ public final class RecipeHandler
         if (enable)
         {
 
-            GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutBlacksmith, 1), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', "ingotIron"));
-            GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutStonemason, 1), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#',
+            GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutBlacksmith, 1), "XBX", "X#X", "XXX", 'B', ModItems.buildTool, 'X', PLANK_WOOD, '#', "ingotIron"));
+            GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutStonemason, 1), "XBX", "X#X", "XXX", 'B', ModItems.buildTool, 'X', PLANK_WOOD, '#',
                     Blocks.STONEBRICK));
         }
     }
