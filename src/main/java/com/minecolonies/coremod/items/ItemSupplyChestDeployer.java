@@ -5,6 +5,7 @@ import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -102,7 +103,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
                                        final float hitZ)
     {
         final ItemStack stack = playerIn.getHeldItem(hand);
-        if (worldIn.isRemote || stack.getCount() == 0 || !isFirstPlacing(playerIn))
+        if (worldIn.isRemote || ItemStackUtils.isEmpty(stack) || !isFirstPlacing(playerIn))
         {
             return EnumActionResult.FAIL;
         }
@@ -111,7 +112,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         if (enumfacing != EnumFacing.DOWN)
         {
             spawnShip(worldIn, pos, enumfacing);
-            stack.setCount(stack.getCount() - 1);
+            ItemStackUtils.changeSize(stack, -1);
 
             playerIn.addStat(ModAchievements.achievementGetSupply);
 

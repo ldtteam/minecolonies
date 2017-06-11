@@ -141,7 +141,7 @@ public class EntityAIGoHome extends EntityAIBase
                 if (slot != -1)
                 {
                     final ItemStack stack = home.getTileEntity().getStackInSlot(slot);
-                    if (!ItemStackUtils.isItemStackEmpty(stack))
+                    if (!ItemStackUtils.isEmpty(stack))
                     {
                         final int slotToSet = InventoryUtils.getFirstOpenSlotFromItemHandler(new InvWrapper(citizen.getInventoryCitizen()));
 
@@ -157,7 +157,7 @@ public class EntityAIGoHome extends EntityAIBase
                             citizen.getInventoryCitizen().setInventorySlotContents(slotToSet, new ItemStack(stack.getItem(), 1));
                         }
                         tookFood = true;
-                        stack.setCount(stack.getCount() - 1);
+                        ItemStackUtils.changeSize(stack, -1);
                     }
                     ((BuildingHome) home).setFoodNeeded(false);
                 }

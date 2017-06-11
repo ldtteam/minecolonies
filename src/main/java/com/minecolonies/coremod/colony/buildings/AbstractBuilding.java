@@ -1052,7 +1052,7 @@ public abstract class AbstractBuilding
             final Iterator<BlockPos> posIterator = containerList.iterator();
             @NotNull ItemStack resultStack = stack.copy();
 
-            while (posIterator.hasNext() && !ItemStackUtils.isItemStackEmpty(resultStack))
+            while (posIterator.hasNext() && !ItemStackUtils.isEmpty(resultStack))
             {
                 final BlockPos pos = posIterator.next();
                 final TileEntity tempTileEntity = world.getTileEntity(pos);

@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.ai.citizen.farmer;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.inventory.InventoryField;
@@ -260,23 +261,23 @@ public class Field extends Container
         if (slotIndex == 0)
         {
             playerIn.inventory.addItemStackToInventory(inventory.getStackInSlot(0));
-            inventory.setStackInSlot(0, ItemStack.EMPTY);
+            inventory.setStackInSlot(0, ItemStackUtils.EMPTY);
         }
-        else if (inventory.getStackInSlot(0) == ItemStack.EMPTY || inventory.getStackInSlot(0).getCount() == 0)
+        else if (inventory.getStackInSlot(0) == ItemStackUtils.EMPTY || ItemStackUtils.getSize(inventory.getStackInSlot(0)) == 0)
         {
             final int playerIndex = slotIndex < MAX_INVENTORY_INDEX ? (slotIndex + INVENTORY_BAR_SIZE) : (slotIndex - MAX_INVENTORY_INDEX);
-            if (playerIn.inventory.getStackInSlot(playerIndex) != ItemStack.EMPTY)
+            if (playerIn.inventory.getStackInSlot(playerIndex) != ItemStackUtils.EMPTY)
             {
                 @NotNull final ItemStack stack = playerIn.inventory.getStackInSlot(playerIndex).splitStack(1);
                 inventory.setStackInSlot(0, stack);
-                if (playerIn.inventory.getStackInSlot(playerIndex).getCount() == 0)
+                if (ItemStackUtils.getSize(playerIn.inventory.getStackInSlot(playerIndex)) == 0)
                 {
                     playerIn.inventory.removeStackFromSlot(playerIndex);
                 }
             }
         }
 
-        return ItemStack.EMPTY;
+        return ItemStackUtils.EMPTY;
     }
 
     @Override
@@ -508,7 +509,7 @@ public class Field extends Container
     @Nullable
     public ItemStack getSeed()
     {
-        if (inventory.getStackInSlot(0) != ItemStack.EMPTY && inventory.getStackInSlot(0).getItem() instanceof IPlantable)
+        if (inventory.getStackInSlot(0) != ItemStackUtils.EMPTY && inventory.getStackInSlot(0).getItem() instanceof IPlantable)
         {
             return inventory.getStackInSlot(0);
         }

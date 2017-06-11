@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.jobs;
 
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
@@ -282,7 +283,7 @@ public abstract class AbstractJob
         {
             if (stack.isItemEqualIgnoreDurability(neededItem))
             {
-                neededItem.setCount(neededItem.getCount() + stack.getCount());
+                ItemStackUtils.changeSize(neededItem, ItemStackUtils.getSize(stack));
                 return;
             }
         }
@@ -312,9 +313,9 @@ public abstract class AbstractJob
             if (stack.isItemEqualIgnoreDurability(neededItem))
             {
                 //todo make this sofisticated as soon as material handling has been implemented.
-                //final int itemsToRemove = Math.min(neededItem.getCount(), stackCopy.getCount());
-                //neededItem.setCount(stackCopy.getCount() - itemsToRemove);
-                //stackCopy.setCount(stackCopy.getCount() - itemsToRemove);
+                //final int itemsToRemove = Math.min(ItemStackUtils.getSize(neededItem), ItemStackUtils.getSize(stackCopy));
+                //ItemStackUtils.changeSize(neededItem, -itemsToRemove);
+                //ItemStackUtils.changeSize(stackCopy, -itemsToRemove);
 
                 //Deativate this if for now in order to keep working even if not all items are given. previously checked if stackSize is 0 and only removed then.
                 itemsNeeded.remove(neededItem);
@@ -323,7 +324,7 @@ public abstract class AbstractJob
             }
         }
 
-        return stackCopy.getCount() == 0 ? ItemStack.EMPTY : stackCopy;
+        return ItemStackUtils.isEmpty(stackCopy) ? ItemStackUtils.EMPTY : stackCopy;
     }
 
     /**

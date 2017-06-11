@@ -32,7 +32,7 @@ public final class ItemStackUtils
      * Predicate to check if an itemStack is empty.
      */
     @NotNull
-    public static final Predicate<ItemStack> EMPTY_PREDICATE = ItemStackUtils::isItemStackEmpty;
+    public static final Predicate<ItemStack> EMPTY_PREDICATE = ItemStackUtils::isEmpty;
 
     /**
      * Negation of the itemStack empty predicate (not empty).
@@ -77,7 +77,7 @@ public final class ItemStackUtils
      */
     public static boolean hasToolLevel(@Nullable final ItemStack stack, final IToolType toolType, final int minimalLevel, final int maximumLevel)
     {
-        if (isItemStackEmpty(stack))
+        if (isEmpty(stack))
         {
             return false;
         }
@@ -94,7 +94,7 @@ public final class ItemStackUtils
      * @return True when the stack is empty, false when not.
      */
     @NotNull
-    public static Boolean isItemStackEmpty(@Nullable final ItemStack stack)
+    public static Boolean isEmpty(@Nullable final ItemStack stack)
     {
         return stack == null || stack == EMPTY || stack.getCount() <= 0;
     }
@@ -108,7 +108,7 @@ public final class ItemStackUtils
      */
     public static boolean isTool(@Nullable final ItemStack itemStack, final IToolType toolType)
     {
-        if (isItemStackEmpty(itemStack))
+        if (isEmpty(itemStack))
         {
             return false;
         }
@@ -341,25 +341,51 @@ public final class ItemStackUtils
             return false;
         }
 
-        return existingStack.getMaxStackSize() >= (getItemStackSize(existingStack) + getItemStackSize(mergingStack));
+        return existingStack.getMaxStackSize() >= (getSize(existingStack) + getSize(mergingStack));
     }
 
     /**
      * get the size of the stack.
+     * This is for compatibility between 1.10 and 1.11
      *
      * @param stack to get the size from
      * @return the size of the stack
      */
     @NotNull
-    public static int getItemStackSize(final ItemStack stack)
+    public static int getSize(final ItemStack stack)
     {
-        if (ItemStackUtils.isItemStackEmpty(stack))
+        if (ItemStackUtils.isEmpty(stack))
         {
             return 0;
         }
 
         return stack.getCount();
     }
+
+    /**
+     * set the size of the stack.
+     * This is for compatibility between 1.10 and 1.11
+     *
+     * @param stack to set the size to
+     * @param size of the stack
+     */
+    @NotNull
+    public static void setSize(@NotNull final ItemStack stack, final int size)
+    {
+        stack.setCount(size);
+    }
+
+    /**
+     * Increase or decrease the stack size.
+     *
+     * @param stack to set the size to
+     * @param amount to increase the stack's size of (negative value to decrease)
+     */
+    public static void changeSize(@NotNull final ItemStack stack, final int amount)
+    {
+        stack.setCount(stack.getCount() + amount);
+    }
+
 
     /**
      * Method to compare to stacks, ignoring their stacksize.
@@ -371,8 +397,8 @@ public final class ItemStackUtils
     @NotNull
     public static Boolean compareItemStacksIgnoreStackSize(final ItemStack itemStack1, final ItemStack itemStack2)
     {
-        if (!ItemStackUtils.isItemStackEmpty(itemStack1) &&
-            !ItemStackUtils.isItemStackEmpty(itemStack2) &&
+        if (!isEmpty(itemStack1) &&
+            !isEmpty(itemStack2) &&
             itemStack1.getItem() == itemStack2.getItem() &&
             itemStack1.getItemDamage() == itemStack2.getItemDamage())
         {
