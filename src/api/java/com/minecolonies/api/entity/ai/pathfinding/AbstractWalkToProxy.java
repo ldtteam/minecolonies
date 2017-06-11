@@ -14,7 +14,7 @@ import java.util.Set;
 /**
  * Abstract class for the walkToProxy.
  */
-public abstract class AbstractWalkToProxy
+public abstract class AbstractWalkToProxy implements IWalkToProxy
 {
     /**
      * The distance the entity can path directly without the proxy.
