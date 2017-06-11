@@ -95,7 +95,7 @@ public class EntityBarbarian extends EntityMob
         this.tasks.addTask(0, new EntityAISwimming(this));
         this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
         this.tasks.addTask(3, new EntityAIAttackMelee(this, 2.3D, true));
-        this.tasks.addTask(3, new EntityAIWalkToRandomHuts(this, 2.0D));
+        //this.tasks.addTask(3, new EntityAIWalkToRandomHuts(this, 2.0D));
         this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
         this.tasks.addTask(8, new EntityAILookIdle(this));
         this.applyEntityAI();
