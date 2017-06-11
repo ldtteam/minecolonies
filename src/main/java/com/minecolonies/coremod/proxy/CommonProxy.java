@@ -21,6 +21,7 @@ import net.minecraft.init.Biomes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.storage.loot.LootTableList;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
@@ -115,6 +116,9 @@ public class CommonProxy implements IProxy
         EntityRegistry.registerModEntity(locationBarbarian, EntityBarbarian.class, "Barbarian", getNextEntityId(), MineColonies.instance, 250, 2, true);
         EntityRegistry.registerModEntity(locationChiefBarbarian, EntityChiefBarbarian.class, "ChiefBarbarian", getNextEntityId(), MineColonies.instance, 250,2, true);
         EntityRegistry.registerModEntity(locationArcherBarbarian, EntityArcherBarbarian.class, "ArcherBarbarian", getNextEntityId(), MineColonies.instance, 250,2, true);
+
+        //Add in the loot tables for teh mobs
+        LootTableList.register(EntityChiefBarbarian.LOOT);
     }
 
     @Override

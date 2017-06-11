@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.entity.ai.mobs;
 
+import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -13,6 +15,7 @@ import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
@@ -32,6 +35,7 @@ public class EntityChiefBarbarian extends EntityMob
         this.getAlwaysRenderNameTag();
     }
 
+    public static final ResourceLocation LOOT = new ResourceLocation(Constants.MOD_ID, "EntityChiefBarbarianDrops");
 
     @Override
     protected void applyEntityAttributes()
