@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.entity.ai.util;
 
-import com.minecolonies.coremod.util.InventoryUtils;
-import com.minecolonies.coremod.util.ItemStackUtils;
+import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;

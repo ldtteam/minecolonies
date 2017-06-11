@@ -222,8 +222,7 @@ public final class BlockUtils
         else if (blockState.getBlock() instanceof BlockCrops)
         {
             final ItemStack stack = ((BlockCrops) blockState.getBlock()).getItem(null, null, blockState);
-            //TODO ItemStackUtils.isEmpty(stack)
-            if (stack != null)
+            if (!ItemStackUtils.isEmpty(stack))
             {
                 return stack.getItem();
             }
@@ -314,8 +313,7 @@ public final class BlockUtils
         else if (blockState.getBlock() instanceof BlockStem)
         {
             final ItemStack stack = ((BlockStem) blockState.getBlock()).getItem(null, null, blockState);
-            //TODO if (!ItemStackUtils.isEmpty(stack))
-            if (stack != null)
+            if (!ItemStackUtils.isEmpty(stack))
             {
                 return stack.getItem();
             }
