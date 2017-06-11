@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.items;
 
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -7,7 +8,6 @@ import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.lib.Constants;
-import com.minecolonies.coremod.util.ItemStackUtils;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Log;
 import com.minecolonies.coremod.util.StructureWrapper;

@@ -1,6 +1,7 @@
 package com.minecolonies.api.util;
 
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
+import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
@@ -222,8 +223,7 @@ public final class BlockUtils
         else if (blockState.getBlock() instanceof BlockCrops)
         {
             final ItemStack stack = ((BlockCrops) blockState.getBlock()).getItem(null, null, blockState);
-            //TODO ItemStackUtils.isEmpty(stack)
-            if (stack != null)
+            if (!ItemStackUtils.isEmpty(stack))
             {
                 return stack.getItem();
             }
@@ -314,8 +314,7 @@ public final class BlockUtils
         else if (blockState.getBlock() instanceof BlockStem)
         {
             final ItemStack stack = ((BlockStem) blockState.getBlock()).getItem(null, null, blockState);
-            //TODO if (!ItemStackUtils.isEmpty(stack))
-            if (stack != null)
+            if (!ItemStackUtils.isEmpty(stack))
             {
                 return stack.getItem();
             }

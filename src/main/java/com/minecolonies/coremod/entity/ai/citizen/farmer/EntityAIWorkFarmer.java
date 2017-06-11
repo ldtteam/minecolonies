@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.entity.ai.citizen.farmer;
 
 import com.minecolonies.api.util.BlockUtils;
-import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constants.ToolType;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.blocks.BlockHutField;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.BuildingFarmer;
