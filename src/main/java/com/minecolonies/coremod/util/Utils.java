@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.util;
 
-import com.minecolonies.api.compatibility.Compatibility;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
