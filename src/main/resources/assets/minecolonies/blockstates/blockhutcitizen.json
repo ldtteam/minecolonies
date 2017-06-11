@@ -5,19 +5,19 @@
     },
     "facing=east": {
       "model": "minecolonies:blockHutCitizen",
-      "y": 0
+      "y": 180
     },
     "facing=south": {
       "model": "minecolonies:blockHutCitizen",
-      "y": 90
+      "y": 270
     },
     "facing=west": {
       "model": "minecolonies:blockHutCitizen",
-      "y": 180
+      "y": 0
     },
     "facing=north": {
       "model": "minecolonies:blockHutCitizen",
-      "y": 270
+      "y": 90
     }
   }
 }
