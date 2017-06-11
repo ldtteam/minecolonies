@@ -96,4 +96,10 @@ public class EntityChiefBarbarian extends EntityMob
         return world.isDaytime();
 
     }
+
+    @Override
+    @Nullable
+    protected ResourceLocation getLootTable() {
+        return LOOT;
+    }
 }
