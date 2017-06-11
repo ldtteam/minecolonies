@@ -148,7 +148,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         {
             final NBTTagCompound neededRes = neededResTagList.getCompoundTagAt(i);
             final ItemStack stack = ItemStack.loadItemStackFromNBT(neededRes);
-            final BuildingBuilderResource resource = new BuildingBuilderResource(stack.getItem(),stack.getItemDamage(), stack.stackSize);
+            final BuildingBuilderResource resource = new BuildingBuilderResource(stack.getItem(),stack.getItemDamage(), ItemStackUtils.getSize(stack));
             neededResources.put(stack.getUnlocalizedName(), resource);
         }
     }
@@ -223,7 +223,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
      */
     public void addNeededResource(@Nullable final ItemStack res, final int amount)
     {
-        if (res == null || res.getItem() == null || res.stackSize == 0 || amount == 0)
+        if (ItemStackUtils.isEmpty(res) || amount == 0)
         {
             return;
         }
@@ -339,7 +339,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
     {
         @NotNull final ItemStack resultStack = super.transferStack(stack, world);
 
-        if (ItemStackUtils.isItemStackEmpty(resultStack))
+        if (ItemStackUtils.isEmpty(resultStack))
         {
             this.markDirty();
         }
@@ -351,7 +351,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
     public ItemStack forceTransferStack(final ItemStack stack, final World world)
     {
         final ItemStack itemStack = super.forceTransferStack(stack, world);
-        if (ItemStackUtils.isItemStackEmpty(itemStack))
+        if (ItemStackUtils.isEmpty(itemStack))
         {
             this.markDirty();
         }

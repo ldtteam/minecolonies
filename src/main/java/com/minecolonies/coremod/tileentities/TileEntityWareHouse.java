@@ -115,7 +115,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     {
         if (buildingEntry.isFoodNeeded())
         {
-            if (isInHut(itemStack -> !ItemStackUtils.isItemStackEmpty(itemStack) && itemStack.getItem() instanceof ItemFood))
+            if (isInHut(itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemFood))
             {
                 if (addToList)
                 {
@@ -165,7 +165,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         {
             for(final ItemStack stack : buildingEntry.getCopyOfNeededItems())
             {
-                if(stack == null
+                if(ItemStackUtils.isEmpty(stack)
                      || (deliveryManHasBuildingAsTask(buildingEntry)
                            && addToList))
                 {
@@ -251,7 +251,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      */
     private boolean isInHut(@Nullable final ItemStack is)
     {
-        return is != null && isInHut(stack -> stack != null && is.isItemEqual(stack));
+        return !ItemStackUtils.isEmpty(is) && isInHut(stack -> !ItemStackUtils.isEmpty(stack) && is.isItemEqual(stack));
     }
 
     /**
@@ -290,7 +290,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     @Nullable
     public BlockPos getPositionOfChestWithItemStack(@NotNull final ItemStack is)
     {
-        return getPositionOfChestWithItemStack(stack -> stack != null && is.isItemEqual(stack));
+        return getPositionOfChestWithItemStack(stack -> !ItemStackUtils.isEmpty(stack) && is.isItemEqual(stack));
     }
 
     /**
@@ -411,7 +411,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         for (int i = 0; i < new InvWrapper(inventoryCitizen).getSlots(); i++)
         {
             final ItemStack stack = inventoryCitizen.getStackInSlot(i);
-            if(ItemStackUtils.isItemStackEmpty(stack))
+            if(ItemStackUtils.isEmpty(stack))
             {
                 continue;
             }

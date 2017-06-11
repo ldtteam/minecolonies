@@ -119,7 +119,7 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
 
         ItemStack remainingItemStack = InventoryUtils.addItemStackToProviderWithResult(building.getTileEntity(), itemStackToTake);
 
-        if (!ItemStackUtils.isItemStackEmpty(remainingItemStack))
+        if (!ItemStackUtils.isEmpty(remainingItemStack))
         {
             //If we still have some to drop, let's try the additional chests now
             final World world = colony.getWorld();
@@ -128,26 +128,25 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
                 final TileEntity entity = world.getTileEntity(pos);
                 remainingItemStack = InventoryUtils.addItemStackToProviderWithResult(entity, remainingItemStack);
 
-                if (ItemStackUtils.isItemStackEmpty(remainingItemStack))
+                if (ItemStackUtils.isEmpty(remainingItemStack))
                 {
                     break;
                 }
             }
         }
 
-        if (ItemStackUtils.isItemStackEmpty(remainingItemStack) || ItemStackUtils.getItemStackSize(remainingItemStack) != ItemStackUtils.getItemStackSize(itemStackToTake))
+        if (ItemStackUtils.isEmpty(remainingItemStack) || ItemStackUtils.getSize(remainingItemStack) != ItemStackUtils.getSize(itemStackToTake))
         {
             //Only doing this at the moment as the additional chest do not detect new content
             building.getTileEntity().markDirty();
         }
 
-        int amountToRemoveFromPlayer = amountToTake - ItemStackUtils.getItemStackSize(remainingItemStack);
-
+        int amountToRemoveFromPlayer = amountToTake - ItemStackUtils.getSize(remainingItemStack);
         while (amountToRemoveFromPlayer > 0)
         {
             final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory), item, message.itemStack.getItemDamage());
             final ItemStack itemsTaken = player.inventory.decrStackSize(slot, amountToRemoveFromPlayer);
-            amountToRemoveFromPlayer-=ItemStackUtils.getItemStackSize(itemsTaken);
+            amountToRemoveFromPlayer-=ItemStackUtils.getSize(itemsTaken);
         }
 
     }

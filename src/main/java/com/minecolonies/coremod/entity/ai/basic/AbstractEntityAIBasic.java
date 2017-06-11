@@ -499,7 +499,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 && InventoryFunctions
                 .matchFirstInProviderWithAction(
                         entity,
-                        stack -> stack != null && is.isItemEqualIgnoreDurability(stack),
+                        stack -> !ItemStackUtils.isEmpty(stack) && is.isItemEqualIgnoreDurability(stack),
                         this::takeItemStackFromProvider
                 );
     }
@@ -886,6 +886,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             amountToKeep = ItemStackUtils.getSize(stack) - tempStorage.getAmount();
             returnStack = InventoryUtils.addItemStackToProviderWithResult(buildingWorker.getTileEntity(), tempStack);
         }
+
         if (ItemStackUtils.isEmpty(returnStack))
         {
             new InvWrapper(worker.getInventoryCitizen()).extractItem(slot, ItemStackUtils.getSize(stack) - amountToKeep, false);

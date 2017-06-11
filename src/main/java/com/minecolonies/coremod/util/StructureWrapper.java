@@ -611,7 +611,7 @@ public final class StructureWrapper
 
         final ItemStack stack = BlockUtils.getItemStackFromBlockState(blockState);
 
-        if(stack != null)
+        if(!ItemStackUtils.isEmpty(stack))
         {
             return stack.getItem();
         }
