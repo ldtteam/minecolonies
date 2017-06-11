@@ -1,7 +1,6 @@
 package com.minecolonies.api.util;
 
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
-import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;

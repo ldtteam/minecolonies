@@ -1,9 +1,7 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.Vec2i;
-
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;

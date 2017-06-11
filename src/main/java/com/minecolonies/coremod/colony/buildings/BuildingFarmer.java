@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.util.constants.ToolType;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Utils;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
