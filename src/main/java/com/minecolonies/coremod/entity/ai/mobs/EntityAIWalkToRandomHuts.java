@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.ai.mobs;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.entity.pathfinding.GeneralEntityWalkToProxy;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.RandomPositionGenerator;
@@ -31,6 +32,11 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
     protected final Colony colony;
     protected Vec3d vec3d;
 
+    /**
+     * Walk to proxy.
+     */
+    private GeneralEntityWalkToProxy proxy;
+
     public EntityAIWalkToRandomHuts(EntityCreature creatureIn, double speedIn)
     {
         this.entity = creatureIn;
@@ -52,15 +58,11 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
         {
             return false;
         }
-        else
-        {
+        else {
             Vec3d vec3d = RandomPositionGenerator.findRandomTargetBlockTowards(this.entity, 16, 7, new Vec3d(this.targetBlock.getX(), this.targetBlock.getY(), this.targetBlock.getZ()));
-            if (vec3d == null)
-            {
+            if (vec3d == null) {
                 return false;
-            }
-            else
-            {
+            } else {
                 this.movePosX = vec3d.xCoord;
                 this.movePosY = vec3d.yCoord;
                 this.movePosZ = vec3d.zCoord;
