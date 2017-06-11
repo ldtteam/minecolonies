@@ -29,6 +29,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -127,6 +128,7 @@ public class ClientProxy extends CommonProxy
         itemModelMesher.register(ModItems.scepterGuard, 0, new ModelResourceLocation(ModItems.scepterGuard.getRegistryName(), INVENTORY));
         itemModelMesher.register(ModItems.supplyChest, 0, new ModelResourceLocation(ModItems.supplyChest.getRegistryName(), INVENTORY));
         itemModelMesher.register(ModItems.supplyCamp, 0, new ModelResourceLocation(ModItems.supplyCamp.getRegistryName(), INVENTORY));
+        itemModelMesher.register(ModItems.permTool, 0, new ModelResourceLocation(ModItems.permTool.getRegistryName(), INVENTORY));
 
 
         // Achievement proxy Items
