@@ -65,16 +65,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     private BlockPos workingOffset;
 
     /**
-     * Defines if the farmer should request seeds for the current field.
-     */
-    private boolean requestSeeds = true;
-
-    /**
-     * Defines if the farmer should try to get the seeds from his chest.
-     */
-    private boolean shouldTryToGetSeed = true;
-
-    /**
      * Variables used in handleOffset.
      */
     private int     totalDis;
@@ -153,17 +143,21 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         @Nullable final Field currentField = building.getCurrentField();
         if (currentField.needsWork())
         {
-            if (currentField.getFieldStage() == Field.FieldStage.EMPTY && checkIfShouldExecute(currentField, this::shouldHoe))
+            if(currentField.getFieldStage() == Field.FieldStage.PLANTED && checkIfShouldExecute(currentField, this::shouldHarvest))
+            {
+                return AIState.FARMER_HARVEST;
+            }
+            else if (currentField.getFieldStage() == Field.FieldStage.EMPTY && checkIfShouldExecute(currentField, this::shouldHoe))
             {
                 return AIState.FARMER_HOE;
             }
-            else if (currentField.getFieldStage() == Field.FieldStage.HOED && canGoPlanting(currentField, building) && !checkForToolOrWeapon(ToolType.HOE))
+            else if (currentField.getFieldStage() == Field.FieldStage.HOED && !checkForToolOrWeapon(ToolType.HOE))
             {
+                if(!canGoPlanting(currentField, building, true) )
+                {
+                    return PREPARING;
+                }
                 return AIState.FARMER_PLANT;
-            }
-            else if(currentField.getFieldStage() == Field.FieldStage.PLANTED && checkIfShouldExecute(currentField, this::shouldHarvest))
-            {
-                return AIState.FARMER_HARVEST;
             }
             currentField.nextState();
         }
@@ -195,9 +189,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      * Checks if the farmer is ready to plant.
      *
      * @param currentField the field to plant.
+     * @param buildingFarmer the farmer building.
+     * @param checkField check if the field has been planted.
      * @return true if he is ready.
      */
-    private boolean canGoPlanting(@NotNull final Field currentField, @NotNull final BuildingFarmer buildingFarmer)
+    private boolean canGoPlanting(@NotNull final Field currentField, @NotNull final BuildingFarmer buildingFarmer, final boolean checkField)
     {
         if (currentField.getSeed() == null)
         {
@@ -206,27 +202,24 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             return false;
         }
 
-        //todo have to change shouldTryToGetSeeds handling.
-        //todo don't even need this here I guess only check if is in inv, if not check at building
-        //todo if not at building and !containsPlants(currentField) then return false
-        //todo put this here in planting as well
-        if (shouldTryToGetSeed && !containsPlants(currentField))
+        final ItemStack seeds = currentField.getSeed();
+        final int slot = worker.findFirstSlotInInventoryWith(seeds.getItem(), seeds.getItemDamage());
+        if (slot != -1)
         {
-            final ItemStack seeds = currentField.getSeed();
-            final int slot = worker.findFirstSlotInInventoryWith(seeds.getItem(), seeds.getItemDamage());
-            if (slot != -1)
-            {
-                requestSeeds = false;
-            }
-            if (!walkToBuilding())
-            {
-                checkOrRequestItemsAsynch(true, seeds);
-                requestSeeds = tryToTakeFromListOrRequest(requestSeeds, seeds);
-                shouldTryToGetSeed = requestSeeds;
-            }
+            return true;
         }
 
-        return !shouldTryToGetSeed;
+        if(walkToBuilding())
+        {
+            return false;
+        }
+
+        if (checkOrRequestItemsAsynch(true, seeds))
+        {
+            tryToTakeFromListOrRequest(checkField ? !containsPlants(currentField) : false, seeds);
+        }
+
+        return false;
     }
 
     /**
@@ -427,8 +420,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private AIState tryToPlant(final Field field, final BlockPos position)
     {
-        //todo check if shouldGoAndGetSeeds here
-        if (shouldPlant(position, field) && !plantCrop(field.getSeed(), position))
+        if ((shouldPlant(position, field) && !plantCrop(field.getSeed(), position)) || !canGoPlanting(field, getOwnBuilding(), false))
         {
             resetVariables();
             return AIState.PREPARING;
@@ -446,11 +438,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         if (shouldHarvest(position))
         {
             worker.addExperience(XP_PER_HARVEST);
-            if (mineBlock(position.up()))
-            {
-                return true;
-            }
-            return false;
+            return mineBlock(position.up());
         }
         return true;
     }
