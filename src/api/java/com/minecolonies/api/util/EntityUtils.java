@@ -7,6 +7,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +28,14 @@ public final class EntityUtils
      * How many blocks the citizen needs to stand safe.
      */
     private static final int    AIR_SPACE_ABOVE_TO_CHECK = 2;
+
+    /**
+     * Default range for moving to something until we stop.
+     */
+    private static final int    DEFAULT_MOVE_RANGE       = 3;
+    private static final int    TELEPORT_RANGE      = 512;
+    private static final double MIDDLE_BLOCK_OFFSET = 0.5D;
+    private static final int    SCAN_RADIUS         = 5;
 
     /**
      * Private constructor to hide the implicit public one.
@@ -214,5 +223,75 @@ public final class EntityUtils
     public static boolean tryMoveLivingToXYZ(@NotNull final EntityLiving living, final int x, final int y, final int z, final double speed)
     {
         return living.getNavigator().tryMoveToXYZ(x, y, z, speed);
+    }
+
+    /**
+     * {@link #isLivingAtSiteWithMove(EntityLiving, int, int, int)}
+     *
+     * @param entity entity to check
+     * @param x      X-coordinate
+     * @param y      Y-coordinate
+     * @param z      Z-coordinate
+     * @return True if entity is at site, otherwise false
+     */
+    public static boolean isLivingAtSiteWithMove(@NotNull final EntityLiving entity, final int x, final int y, final int z)
+    {
+        //Default range of 3 works better
+        //Range of 2 get some entitys stuck
+        return isLivingAtSiteWithMove(entity, x, y, z, DEFAULT_MOVE_RANGE);
+    }
+
+    /**
+     * Checks if a entity is at his working site.
+     * If he isn't, sets it's path to the location.
+     *
+     * @param entity entity to check
+     * @param x      X-coordinate
+     * @param y      Y-coordinate
+     * @param z      Z-coordinate
+     * @param range  Range to check in
+     * @return True if entity is at site, otherwise false.
+     */
+    public static boolean isLivingAtSiteWithMove(@NotNull final EntityLiving entity, final int x, final int y, final int z, final int range)
+    {
+        if (!isLivingAtSite(entity, x, y, z, TELEPORT_RANGE))
+        {
+            final BlockPos spawnPoint =
+                    Utils.scanForBlockNearPoint(entity.getEntityWorld(),
+                            new BlockPos(x, y, z),
+                            SCAN_RADIUS, SCAN_RADIUS, SCAN_RADIUS, 2,
+                            Blocks.AIR,
+                            Blocks.SNOW_LAYER,
+                            Blocks.TALLGRASS,
+                            Blocks.RED_FLOWER,
+                            Blocks.YELLOW_FLOWER,
+                            Blocks.CARPET);
+
+            entity.setLocationAndAngles(
+                    spawnPoint.getX() + MIDDLE_BLOCK_OFFSET,
+                    spawnPoint.getY(),
+                    spawnPoint.getZ() + MIDDLE_BLOCK_OFFSET,
+                    entity.rotationYaw,
+                    entity.rotationPitch);
+            return true;
+        }
+
+        return EntityUtils.isLivingAtSite(entity, x, y, z, range);
+    }
+
+    /**
+     * Returns whether or not the entity is within a specific range of his
+     * working site.
+     *
+     * @param entityLiving entity to check
+     * @param x      X-coordinate
+     * @param y      Y-coordinate
+     * @param z      Z-coordinate
+     * @param range  Range to check in
+     * @return True if entity is at site, otherwise false
+     */
+    public static boolean isLivingAtSite(@NotNull final EntityLiving entityLiving, final int x, final int y, final int z, final int range)
+    {
+        return entityLiving.getPosition().distanceSq(new Vec3i(x, y, z)) < MathUtils.square(range);
     }
 }
