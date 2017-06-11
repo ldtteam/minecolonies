@@ -11,10 +11,13 @@ import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.util.BlockUtils;
 import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.constants.ToolType;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockCrops;
+import net.minecraft.block.BlockStem;
 import net.minecraft.block.IGrowable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.IPlantable;
@@ -63,6 +66,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     @Nullable
     private BlockPos workingOffset;
+
+    /**
+     * The previous position which has been worked at.
+     */
+    @Nullable
+    private BlockPos prevPos;
 
     /**
      * Variables used in handleOffset.
@@ -147,17 +156,13 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             {
                 return AIState.FARMER_HARVEST;
             }
+            else if (currentField.getFieldStage() == Field.FieldStage.HOED && !checkForToolOrWeapon(ToolType.HOE))
+            {
+                return canGoPlanting(currentField, building, true);
+            }
             else if (currentField.getFieldStage() == Field.FieldStage.EMPTY && checkIfShouldExecute(currentField, this::shouldHoe))
             {
                 return AIState.FARMER_HOE;
-            }
-            else if (currentField.getFieldStage() == Field.FieldStage.HOED && !checkForToolOrWeapon(ToolType.HOE))
-            {
-                if(!canGoPlanting(currentField, building, true) )
-                {
-                    return PREPARING;
-                }
-                return AIState.FARMER_PLANT;
             }
             currentField.nextState();
         }
@@ -193,25 +198,25 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      * @param checkField check if the field has been planted.
      * @return true if he is ready.
      */
-    private boolean canGoPlanting(@NotNull final Field currentField, @NotNull final BuildingFarmer buildingFarmer, final boolean checkField)
+    private AIState canGoPlanting(@NotNull final Field currentField, @NotNull final BuildingFarmer buildingFarmer, final boolean checkField)
     {
         if (currentField.getSeed() == null)
         {
             chatSpamFilter.talkWithoutSpam("entity.farmer.noSeedSet");
             buildingFarmer.setCurrentField(null);
-            return false;
+            return PREPARING;
         }
 
         final ItemStack seeds = currentField.getSeed();
         final int slot = worker.findFirstSlotInInventoryWith(seeds.getItem(), seeds.getItemDamage());
         if (slot != -1)
         {
-            return true;
+            return FARMER_PLANT;
         }
 
         if(walkToBuilding())
         {
-            return false;
+            return PREPARING;
         }
 
         if (checkOrRequestItemsAsynch(true, seeds))
@@ -219,7 +224,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             tryToTakeFromListOrRequest(checkField ? !containsPlants(currentField) : false, seeds);
         }
 
-        return false;
+        currentField.nextState();
+        return PREPARING;
     }
 
     /**
@@ -329,15 +335,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     }
 
     /**
-     * Resets the basic variables of the class.
-     */
-    private void resetVariables()
-    {
-        requestSeeds = true;
-        shouldTryToGetSeed = true;
-    }
-
-    /**
      * Checks if the crop should be harvested.
      *
      * @param position the position to check.
@@ -346,11 +343,17 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     private boolean shouldHarvest(@NotNull final BlockPos position)
     {
         final IBlockState state = world.getBlockState(position.up());
+        final Block block = state.getBlock();
 
-        if (state.getBlock() instanceof IGrowable && state.getBlock() instanceof BlockCrops)
+        if(block == Blocks.PUMPKIN || block == Blocks.MELON_BLOCK)
         {
-            @NotNull final BlockCrops block = (BlockCrops) state.getBlock();
-            return !block.canGrow(world, position.up(), state, false);
+            return true;
+        }
+
+        if (block instanceof IGrowable && block instanceof BlockCrops && !(block instanceof BlockStem))
+        {
+            @NotNull final BlockCrops crop = (BlockCrops) block;
+            return !crop.canGrow(world, position.up(), state, false);
         }
 
         return false;
@@ -388,7 +391,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                     }
                     break;
                 case FARMER_PLANT:
-                    tryToPlant(field, position);
+                    if(!tryToPlant(field, position))
+                    {
+                        return PREPARING;
+                    }
                     break;
                 case FARMER_HARVEST:
                     if(!harvestIfAble(position))
@@ -399,13 +405,14 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                 default:
                     return PREPARING;
             }
+            prevPos = position;
         }
 
         if (!handleOffset(field))
         {
-            resetVariables();
             shouldDumpInventory = true;
             field.nextState();
+            prevPos = null;
             return AIState.IDLE;
         }
 
@@ -418,14 +425,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      * @param position the position to try.
      * @return the next state to go to.
      */
-    private AIState tryToPlant(final Field field, final BlockPos position)
+    private boolean tryToPlant(final Field field, final BlockPos position)
     {
-        if ((shouldPlant(position, field) && !plantCrop(field.getSeed(), position)) || !canGoPlanting(field, getOwnBuilding(), false))
-        {
-            resetVariables();
-            return AIState.PREPARING;
-        }
-        return AIState.FARMER_PLANT;
+        return !shouldPlant(position, field) || plantCrop(field.getSeed(), position);
     }
 
     /**
@@ -476,13 +478,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private boolean shouldPlant(@NotNull final BlockPos position, @NotNull final Field field)
     {
-        @Nullable final ItemStack itemStack = BlockUtils.getItemStackFromBlockState(world.getBlockState(position.up()));
-
-        if (itemStack != null && itemStack.getItem() == field.getSeed().getItem())
-        {
-            requestSeeds = false;
-        }
-
         return !field.isNoPartOfField(world, position) && !(world.getBlockState(position.up()).getBlock() instanceof BlockCrops)
                 && !(world.getBlockState(position).getBlock() instanceof BlockHutField) && world.getBlockState(position).getBlock() == Blocks.FARMLAND;
     }
@@ -503,9 +498,13 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         }
 
         @NotNull final IPlantable seed = (IPlantable) item.getItem();
+        if((seed == Items.MELON_SEEDS || seed == Items.PUMPKIN_SEEDS) && prevPos != null && !world.isAirBlock(prevPos.up()))
+        {
+            return true;
+        }
+
         world.setBlockState(position.up(), seed.getPlant(world, position));
         new InvWrapper(getInventory()).extractItem(slot, 1, false);
-        requestSeeds = false;
         return true;
     }
 
