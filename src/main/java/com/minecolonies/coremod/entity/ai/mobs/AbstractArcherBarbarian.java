@@ -3,7 +3,6 @@ package com.minecolonies.coremod.entity.ai.mobs;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import net.minecraft.block.Block;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.EntityMob;
@@ -22,8 +21,6 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.stats.AchievementList;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.EnumDifficulty;
@@ -108,13 +105,6 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
         super.entityInit();
         this.dataManager.register(SWINGING_ARMS, Boolean.valueOf(false));
     }
-
-    protected void playStepSound(BlockPos pos, Block blockIn)
-    {
-        this.playSound(this.getStepSound(), 0.15F, 1.0F);
-    }
-
-    abstract SoundEvent getStepSound();
 
     /**
      * Get this Entity's EnumCreatureAttribute

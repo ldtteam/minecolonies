@@ -5,6 +5,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.sounds.BarbarianSounds;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
@@ -16,6 +17,7 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
@@ -78,23 +80,26 @@ public class EntityChiefBarbarian extends EntityMob
     }
 
     @Override
-    protected boolean isValidLightLevel()
-    {
-        return true;
-        //return super.isValidLightLevel();
-    }
-
-    @Override
-    public int getMaxSpawnedInChunk()
-    {
-        return 1;
-    }
-
-    @Override
     protected boolean canDespawn()
     {
         return world.isDaytime();
 
+    }
+
+    @Override
+    protected SoundEvent getHurtSound() {
+        return BarbarianSounds.barbarianHurt;
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return BarbarianSounds.barbarianDeath;
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return BarbarianSounds.barbarianSay;
     }
 
     @Override

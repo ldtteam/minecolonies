@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.mobs;
 
+import com.minecolonies.coremod.sounds.BarbarianSounds;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntitySpectralArrow;
 import net.minecraft.entity.projectile.EntityTippedArrow;
@@ -9,6 +10,8 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
+
+import javax.annotation.Nullable;
 
 /**
  * Created by Asherslab on 5/6/17.
@@ -58,5 +61,21 @@ public class EntityArcherBarbarian extends AbstractArcherBarbarian {
     protected boolean canDespawn()
     {
         return (world.isDaytime());
+    }
+
+    @Override
+    protected SoundEvent getHurtSound() {
+        return BarbarianSounds.barbarianHurt;
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return BarbarianSounds.barbarianDeath;
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return BarbarianSounds.barbarianSay;
     }
 }

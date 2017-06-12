@@ -6,14 +6,18 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.entity.pathfinding.GeneralEntityWalkToProxy;
+import com.minecolonies.coremod.sounds.BarbarianSounds;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Random;
 
@@ -46,6 +50,22 @@ public class EntityBarbarian extends EntityMob
         this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(2.0D);
         this.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(2.0D);
         this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(this.getHealthBasedOnRaidLevel());
+    }
+
+    @Override
+    protected SoundEvent getHurtSound() {
+        return BarbarianSounds.barbarianHurt;
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return BarbarianSounds.barbarianDeath;
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return BarbarianSounds.barbarianSay;
     }
 
     protected double getHealthBasedOnRaidLevel()
@@ -114,12 +134,6 @@ public class EntityBarbarian extends EntityMob
     public World getEntityWorld()
     {
         return world;
-    }
-
-    @Override
-    public int getMaxSpawnedInChunk()
-    {
-        return 5;
     }
 
     @Override
