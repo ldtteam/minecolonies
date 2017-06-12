@@ -25,6 +25,9 @@ item.minecolonies.supplyChestDeployer.name=SupplyShip Chest
 item.minecolonies.supplyCampDeployer.name=SupplyCamp Chest
 item.minecolonies.ancientTome.name=Ancient Tome
 
+entity.Barbarian.name=Barbarian
+entity.ArcherBarbarian.name=Archer Barbarian
+entity.ChiefBarbarian.name=Chief Barbarian
 item.minecolonies.scepterGold.name=Building Tool
 item.minecolonies.scepterSteel.name=Scan Tool
 item.minecolonies.caliper.name=Caliper
