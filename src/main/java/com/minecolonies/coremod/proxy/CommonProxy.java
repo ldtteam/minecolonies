@@ -115,6 +115,11 @@ public class CommonProxy implements IProxy
         EntityRegistry.registerModEntity(locationChiefBarbarian, EntityChiefBarbarian.class, "ChiefBarbarian", getNextEntityId(), MineColonies.instance, 256,2, true);
         EntityRegistry.registerModEntity(locationArcherBarbarian, EntityArcherBarbarian.class, "ArcherBarbarian", getNextEntityId(), MineColonies.instance, 256,2, true);
 
+        //Adds spawnEggs for the mobs.
+        EntityRegistry.registerEgg(locationBarbarian, 5, 700);
+        EntityRegistry.registerEgg(locationChiefBarbarian, 5, 700);
+        EntityRegistry.registerEgg(locationArcherBarbarian, 5, 700);
+
         //Add in the loot tables for teh mobs
         LootTableList.register(EntityChiefBarbarian.LOOT);
     }
