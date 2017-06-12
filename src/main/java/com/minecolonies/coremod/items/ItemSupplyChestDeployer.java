@@ -2,7 +2,6 @@ package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
