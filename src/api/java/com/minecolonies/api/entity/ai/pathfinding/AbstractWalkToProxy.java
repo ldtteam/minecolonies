@@ -295,7 +295,12 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
      */
     public boolean isLivingAtSiteWithMove(final EntityLiving entity, final int x, final int y, final int z, final int range)
     {
-        return EntityUtils.isLivingAtSiteWithMove(entity, x, y, z, range);
+        if(!EntityUtils.isLivingAtSiteWithMove(entity, x, y, z, range))
+        {
+            EntityUtils.tryMoveLivingToXYZ(entity, x, y, z);
+            return false;
+        }
+        return true;
     }
 
     /**

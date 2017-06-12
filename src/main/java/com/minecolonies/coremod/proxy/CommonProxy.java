@@ -16,8 +16,6 @@ import com.minecolonies.coremod.sounds.ModSoundEvents;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
-import net.minecraft.entity.EnumCreatureType;
-import net.minecraft.init.Biomes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -112,10 +110,10 @@ public class CommonProxy implements IProxy
         // Half as much tracking range and same update frequency as a player
         // See EntityTracker.addEntityToTracker for more default values
         EntityRegistry.registerModEntity(locationCitizen, EntityCitizen.class, "Citizen", getNextEntityId(), MineColonies.instance, 256, 2, true);
-        EntityRegistry.registerModEntity(locationFishHook, EntityFishHook.class, "Fishhook", getNextEntityId(), MineColonies.instance, 250, 5, true);
-        EntityRegistry.registerModEntity(locationBarbarian, EntityBarbarian.class, "Barbarian", getNextEntityId(), MineColonies.instance, 250, 2, true);
-        EntityRegistry.registerModEntity(locationChiefBarbarian, EntityChiefBarbarian.class, "ChiefBarbarian", getNextEntityId(), MineColonies.instance, 250,2, true);
-        EntityRegistry.registerModEntity(locationArcherBarbarian, EntityArcherBarbarian.class, "ArcherBarbarian", getNextEntityId(), MineColonies.instance, 250,2, true);
+        EntityRegistry.registerModEntity(locationFishHook, EntityFishHook.class, "Fishhook", getNextEntityId(), MineColonies.instance, 256, 5, true);
+        EntityRegistry.registerModEntity(locationBarbarian, EntityBarbarian.class, "Barbarian", getNextEntityId(), MineColonies.instance, 256, 2, true);
+        EntityRegistry.registerModEntity(locationChiefBarbarian, EntityChiefBarbarian.class, "ChiefBarbarian", getNextEntityId(), MineColonies.instance, 256,2, true);
+        EntityRegistry.registerModEntity(locationArcherBarbarian, EntityArcherBarbarian.class, "ArcherBarbarian", getNextEntityId(), MineColonies.instance, 256,2, true);
 
         //Adds spawnEggs for the mobs.
         EntityRegistry.registerEgg(locationBarbarian, 5, 700);
