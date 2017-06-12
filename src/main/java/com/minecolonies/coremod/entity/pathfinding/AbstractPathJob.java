@@ -2,7 +2,6 @@ package com.minecolonies.coremod.entity.pathfinding;
 
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.BlockConstructionTape;
 import com.minecolonies.coremod.blocks.BlockConstructionTapeCorner;
