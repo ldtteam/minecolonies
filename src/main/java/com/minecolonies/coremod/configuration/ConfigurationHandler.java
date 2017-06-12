@@ -74,6 +74,8 @@ public final class ConfigurationHandler
                     "Turn off explosions inside the colonies radius?").getBoolean();
             limitToOneWareHousePerColony = config.get(CATEGORY_GAMEPLAY, "limitToOneWareHousePerColony", limitToOneWareHousePerColony,
                     "Limit the Colony to 1 Warehouse per Colony?").getBoolean();
+            workersAlwaysWorkInRain = config.get(CATEGORY_GAMEPLAY, "workersAlwaysWorkInRain", workersAlwaysWorkInRain,
+                    "Set wether workers work in rain regardless of hut level").getBoolean();
             
             /* schematics usage */
             ignoreSchematicsFromJar = config.get(CATEGORY_GAMEPLAY, "ignoreSchematicsFromJar", ignoreSchematicsFromJar,
