@@ -9,6 +9,7 @@ import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import org.jetbrains.annotations.NotNull;
@@ -88,6 +89,17 @@ public final class ItemStackUtils
         /*
          * Intentionally left empty.
          */
+    }
+
+    /**
+     * create a ItemStack from a compound
+     *
+     * @param compound with wich we create the ItemStack
+     * @return the newly created ItemStack
+     */
+    public static ItemStack loadItemStackFromNBT(final NBTTagCompound compound)
+    {
+        return ItemStack.loadItemStackFromNBT(compound);
     }
 
     /**
