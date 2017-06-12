@@ -8,7 +8,6 @@ import org.apache.logging.log4j.Logger;
  */
 public final class Log
 {
-
     /**
      * Mod logger.
      */
