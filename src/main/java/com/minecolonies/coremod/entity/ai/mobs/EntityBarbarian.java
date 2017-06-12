@@ -68,8 +68,8 @@ public class EntityBarbarian extends EntityMob
         else
         {
             //todo targetBlock is still nullable, this might crash.
+            // I think that fixed it?
             targetBlock = getRandomBuilding();
-            this.isWorkerAtSiteWithMove(targetBlock, 2);
         }
     }
 
