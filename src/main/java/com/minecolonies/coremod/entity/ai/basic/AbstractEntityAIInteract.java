@@ -35,7 +35,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     /**
      * The amount of xp the entity gains per block mined.
      */
-    private static final double XP_PER_BLOCK         = 0.05D;
+    public static final double XP_PER_BLOCK         = 0.05D;
 
     /**
      * The percentage of time needed if we are one level higher.

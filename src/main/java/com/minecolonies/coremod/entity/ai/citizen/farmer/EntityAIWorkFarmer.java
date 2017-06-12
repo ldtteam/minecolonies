@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.entity.ai.citizen.farmer;
 
+import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.util.BlockUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.blocks.BlockHutField;
@@ -25,6 +27,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.function.Predicate;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
@@ -353,7 +356,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         if (block instanceof IGrowable && block instanceof BlockCrops && !(block instanceof BlockStem))
         {
             @NotNull final BlockCrops crop = (BlockCrops) block;
-            return !crop.canGrow(world, position.up(), state, false);
+            return !crop.isMaxAge(state);
         }
 
         return false;
@@ -440,9 +443,39 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         if (shouldHarvest(position))
         {
             worker.addExperience(XP_PER_HARVEST);
+            if(Compatibility.isPamsInstalled())
+            {
+                harvestCrop(position.up());
+                return true;
+            }
+
             return mineBlock(position.up());
         }
         return true;
+    }
+
+    /**
+     * Harvest the crop (only if pams is installed).
+     * @param pos the position to harvest.
+     */
+    private void harvestCrop(@NotNull final BlockPos pos)
+    {
+        final ItemStack tool = worker.getHeldItemMainhand();
+
+        int fortune = ItemStackUtils.getFortuneOf(tool);
+        final IBlockState state = world.getBlockState(pos);
+        final BlockCrops crops = (BlockCrops) state.getBlock();
+
+        final List<ItemStack> drops = crops.getDrops(world, pos, state, fortune);
+        world.setBlockState(pos, crops.withAge(0));
+
+        for (final ItemStack item : drops)
+        {
+            InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), item);
+        }
+
+        worker.addExperience(XP_PER_BLOCK);
+        this.incrementActionsDone();
     }
 
     /**
