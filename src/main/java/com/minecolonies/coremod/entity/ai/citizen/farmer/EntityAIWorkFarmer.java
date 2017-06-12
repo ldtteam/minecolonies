@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.farmer;
 
 import com.minecolonies.api.util.BlockUtils;
-import com.minecolonies.api.util.constants.ToolType;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.blocks.BlockHutField;
 import com.minecolonies.coremod.colony.Colony;
@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
-import static com.minecolonies.api.util.constants.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
  * Farmer AI class.

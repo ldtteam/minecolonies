@@ -7,7 +7,7 @@ import com.minecolonies.coremod.entity.ai.citizen.baker.EntityAIWorkBaker;
 import net.minecraft.util.SoundEvent;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.coremod.util.constants.TranslationConstants.COM_MINECOLONIES_COREMOD_JOB_BAKER;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_JOB_BAKER;
 
 /**
  * The fisherman's job class.

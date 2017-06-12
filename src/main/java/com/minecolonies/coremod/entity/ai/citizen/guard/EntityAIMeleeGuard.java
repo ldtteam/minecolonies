@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
 import com.minecolonies.api.compatibility.Compatibility;
-import com.minecolonies.api.util.constants.ToolType;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
