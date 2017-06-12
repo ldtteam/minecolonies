@@ -1566,7 +1566,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     private boolean shouldWorkWhileRaining()
     {
-        return this.getWorkBuilding() != null && (this.getWorkBuilding().getBuildingLevel() >= BONUS_BUILDING_LEVEL);
+        return (this.getWorkBuilding() != null && (this.getWorkBuilding().getBuildingLevel() >= BONUS_BUILDING_LEVEL)) || Configurations.workersAlwaysWorkInRain;
     }
 
     /**
