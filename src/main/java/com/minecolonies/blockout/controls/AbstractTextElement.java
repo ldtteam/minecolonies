@@ -69,7 +69,7 @@ public abstract class AbstractTextElement extends Pane
         textColor = c;
     }
 
-    public boolean getShadow()
+    public boolean hasShadow()
     {
         return shadow;
     }

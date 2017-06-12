@@ -1,10 +1,9 @@
 package com.minecolonies.blockout.views;
 
-import com.minecolonies.blockout.OverlayView;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.PaneParams;
-import com.minecolonies.blockout.View;
 import com.minecolonies.blockout.controls.Button;
+import com.minecolonies.blockout.controls.ButtonHandler;
 import com.minecolonies.blockout.controls.ButtonVanilla;
 import com.minecolonies.blockout.controls.Label;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +13,7 @@ import java.util.function.Consumer;
 /**
  * A DropDownList is a Button which when click display a ScrollingList below it.
  */
-public class DropDownList extends View implements Button.Handler
+public class DropDownList extends View implements ButtonHandler
 {
     /**
      * View in which the list will be displayed.
