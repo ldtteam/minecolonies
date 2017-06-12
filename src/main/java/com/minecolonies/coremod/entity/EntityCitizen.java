@@ -3,6 +3,8 @@ package com.minecolonies.coremod.entity;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.*;
@@ -16,7 +18,6 @@ import com.minecolonies.coremod.entity.ai.minimal.*;
 import com.minecolonies.coremod.entity.pathfinding.PathNavigate;
 import com.minecolonies.coremod.entity.pathfinding.WalkToProxy;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
-import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.network.messages.BlockParticleEffectMessage;
 import com.minecolonies.coremod.util.*;
 import net.minecraft.block.Block;
@@ -1139,7 +1140,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
                                         Blocks.YELLOW_FLOWER,
                                         Blocks.CARPET);
 
-                EntityUtils.setSpawnPoint(spawnPoint, this);
+                WorkerUtil.setSpawnPoint(spawnPoint, this);
                 if (colony != null)
                 {
                     Log.getLogger().info("Teleported stuck citizen " + this.getName() + " from colony: " + colony.getID() + " to target location");

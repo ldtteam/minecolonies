@@ -1,5 +1,8 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.IToolType;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.blocks.*;
 import com.minecolonies.coremod.colony.*;
@@ -9,9 +12,6 @@ import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.coremod.util.*;
-import com.minecolonies.coremod.util.constants.IToolType;
-import com.minecolonies.coremod.util.constants.ToolType;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -35,7 +35,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-import static com.minecolonies.coremod.util.constants.ToolLevelConstants.TOOL_LEVEL_HAND;
+import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_HAND;
 
 /**
  * Base building class, has all the foundation for what a building stores and does.

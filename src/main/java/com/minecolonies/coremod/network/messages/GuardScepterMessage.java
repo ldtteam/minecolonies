@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.items.ModItems;
-import com.minecolonies.coremod.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;

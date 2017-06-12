@@ -1,8 +1,8 @@
-package com.minecolonies.coremod.util;
+package com.minecolonies.api.util;
 
 import com.minecolonies.api.compatibility.Compatibility;
-import com.minecolonies.coremod.util.constants.IToolType;
-import com.minecolonies.coremod.util.constants.ToolType;
+import com.minecolonies.api.util.constant.IToolType;
+import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.item.ItemBow;
 import net.minecraft.item.ItemFishingRod;
 import net.minecraft.item.ItemHoe;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.function.Predicate;
 
-import static com.minecolonies.coremod.util.constants.ToolLevelConstants.*;
+import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
 
 /**
  * Utility methods for the inventories.

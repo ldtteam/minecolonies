@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.util;
 
+import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

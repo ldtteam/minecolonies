@@ -1,5 +1,9 @@
 package com.minecolonies.coremod.entity.ai.citizen.deliveryman;
 
+import com.minecolonies.api.util.constant.IToolType;
+import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.*;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
@@ -9,10 +13,6 @@ import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.coremod.util.ItemStackUtils;
-import com.minecolonies.coremod.util.InventoryUtils;
-import com.minecolonies.coremod.util.constants.IToolType;
-import com.minecolonies.coremod.util.constants.ToolType;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -29,9 +29,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
-import static com.minecolonies.coremod.util.constants.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static com.minecolonies.coremod.util.constants.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
  * Performs deliveryman work.
@@ -194,7 +194,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
 
         final ItemStack stack = building.getTileEntity().getStackInSlot(currentSlot);
-        if (workerRequiresItem(building, stack, alreadyKept)
+        if (ItemStackUtils.isEmpty(stack) || workerRequiresItem(building, stack, alreadyKept)
                 || (building instanceof BuildingHome && stack.getItem() instanceof ItemFood))
         {
             return false;

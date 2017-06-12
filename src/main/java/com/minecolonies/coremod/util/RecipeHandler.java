@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.util;
 
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.items.ModItems;
-import com.minecolonies.coremod.lib.Constants;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;

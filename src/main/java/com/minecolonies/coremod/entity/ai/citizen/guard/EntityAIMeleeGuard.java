@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
 import com.minecolonies.api.compatibility.Compatibility;
+import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.util.InventoryFunctions;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
-import com.minecolonies.coremod.util.constants.ToolType;
-import com.minecolonies.coremod.util.InventoryFunctions;
-import com.minecolonies.coremod.util.ItemStackUtils;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.SoundEvents;

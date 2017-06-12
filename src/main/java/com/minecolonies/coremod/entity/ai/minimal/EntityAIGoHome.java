@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
+import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.util.ChatSpamFilter;
-import com.minecolonies.coremod.util.ItemStackUtils;
-import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.item.ItemFood;
@@ -15,7 +15,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.coremod.util.constants.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * EntityCitizen go home AI.
