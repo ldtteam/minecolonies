@@ -1,11 +1,13 @@
 package com.minecolonies.coremod.entity.ai.mobs;
 
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.entity.pathfinding.GeneralEntityWalkToProxy;
+import com.minecolonies.coremod.entity.pathfinding.PathNavigate;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.EntityMob;
@@ -14,9 +16,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Random;
-
 
 /**
  * Created by Asherslab on 5/6/17.
@@ -28,13 +30,24 @@ public class EntityBarbarian extends EntityMob
      * Walk to proxy.
      */
     private GeneralEntityWalkToProxy proxy;
-    BlockPos targetBlock;
+    private BlockPos targetBlock;
+
+    /**
+     * The navigator for this entity.
+     */
+    private final PathNavigate newNavigator;
+
+    private static Field            navigatorField;
 
     final Colony colony = ColonyManager.getClosestColony(world, this.getPosition());
 
     public EntityBarbarian(World worldIn)
     {
         super(worldIn);
+        this.newNavigator = new PathNavigate(this, world);
+        updateNavigatorField();
+        this.newNavigator.setCanSwim(true);
+        this.newNavigator.setEnterDoors(false);
     }
 
     @Override
@@ -42,33 +55,86 @@ public class EntityBarbarian extends EntityMob
     {
         super.applyEntityAttributes();
         this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(35.0D);
-        this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.13D);
+        this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.2D);
         this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(2.0D);
         this.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(2.0D);
         this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(this.getHealthBasedOnRaidLevel());
+    }
+
+    @Override
+    protected void initEntityAI()
+    {
+        this.tasks.addTask(0, new EntityAISwimming(this));
+        this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
+        this.tasks.addTask(3, new EntityAIAttackMelee(this, 2.3D, true));
+        //this.tasks.addTask(3, new EntityAIWalkToRandomHuts(this, 2.0D));
+        this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
+        this.tasks.addTask(8, new EntityAILookIdle(this));
+        this.applyEntityAI();
+    }
+
+    private synchronized void updateNavigatorField()
+    {
+        if (navigatorField == null)
+        {
+            final Field[] fields = EntityLiving.class.getDeclaredFields();
+            for (@NotNull final Field field : fields)
+            {
+                if (field.getType().equals(net.minecraft.pathfinding.PathNavigate.class))
+                {
+                    field.setAccessible(true);
+                    navigatorField = field;
+                    break;
+                }
+            }
+        }
+
+        if (navigatorField == null)
+        {
+            throw new IllegalStateException("Navigator field should not be null, contact developers.");
+        }
+
+        try
+        {
+            navigatorField.set(this, this.newNavigator);
+        }
+        catch (final IllegalAccessException e)
+        {
+            Log.getLogger().error("Navigator error", e);
+        }
+    }
+
+    @NotNull
+    @Override
+    public PathNavigate getNavigator()
+    {
+        if(newNavigator == null)
+        {
+            return new PathNavigate(this, world);
+        }
+        return newNavigator;
     }
 
     protected double getHealthBasedOnRaidLevel()
     {
         if (colony != null)
         {
-            int raidLevel = (int) (colony.getRaidLevel()*(Configurations.barbarianHordeDifficulty * 0.2));
-            return 25+raidLevel;
+            int raidLevel = (int) (colony.getRaidLevel() * (Configurations.barbarianHordeDifficulty * 0.2));
+            return 25 + raidLevel;
         }
         return 25.0D;
     }
 
     @Override
-    public void onLivingUpdate() {
+    public void onLivingUpdate()
+    {
         super.onLivingUpdate();
-        if(targetBlock != null)
+        if (targetBlock != null)
         {
             this.isWorkerAtSiteWithMove(targetBlock, 2);
         }
         else
         {
-            //todo targetBlock is still nullable, this might crash.
-            // I think that fixed it?
             targetBlock = getRandomBuilding();
         }
     }
@@ -89,18 +155,6 @@ public class EntityBarbarian extends EntityMob
         }
         //this here should do it, you shouldn't need the onMove in this case.
         return proxy.walkToBlock(site, range);
-    }
-
-    @Override
-    protected void initEntityAI()
-    {
-        this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
-        this.tasks.addTask(3, new EntityAIAttackMelee(this, 2.3D, true));
-        //this.tasks.addTask(3, new EntityAIWalkToRandomHuts(this, 2.0D));
-        this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
-        this.tasks.addTask(8, new EntityAILookIdle(this));
-        this.applyEntityAI();
     }
 
     private void applyEntityAI()
@@ -137,7 +191,8 @@ public class EntityBarbarian extends EntityMob
 
         final Collection<AbstractBuilding> buildingList = colony.getBuildings().values();
         final Object[] buildingArray = buildingList.toArray();
-        if (buildingArray != null && buildingArray.length != 0) {
+        if (buildingArray != null && buildingArray.length != 0)
+        {
             final int random = new Random().nextInt(buildingArray.length);
             final AbstractBuilding building = (AbstractBuilding) buildingArray[random];
 
