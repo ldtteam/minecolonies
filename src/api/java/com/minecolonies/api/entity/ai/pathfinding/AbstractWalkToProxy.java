@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.entity.pathfinding;
+package com.minecolonies.api.entity.ai.pathfinding;
 
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.EntityUtils;
@@ -14,7 +14,7 @@ import java.util.Set;
 /**
  * Abstract class for the walkToProxy.
  */
-public abstract class AbstractWalkToProxy
+public abstract class AbstractWalkToProxy implements IWalkToProxy
 {
     /**
      * The distance the entity can path directly without the proxy.
