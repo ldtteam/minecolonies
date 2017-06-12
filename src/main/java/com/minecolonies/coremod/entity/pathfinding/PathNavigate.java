@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.entity.EntityCitizen;

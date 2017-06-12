@@ -2,7 +2,6 @@ package com.minecolonies.coremod.tileentities;
 
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.inventory.InventoryField;
