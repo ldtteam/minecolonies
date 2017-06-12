@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.network.messages;
 
-import com.minecolonies.blockout.Log;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.util.ClientStructureWrapper;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
