@@ -2,6 +2,7 @@ package com.minecolonies.api.colony.requestsystem.requestable;
 
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
@@ -38,7 +39,7 @@ public class Delivery
     {
         ILocation start = controller.deserialize(compound.getCompoundTag(NBT_START));
         ILocation target = controller.deserialize(compound.getCompoundTag(NBT_TARGET));
-        ItemStack stack = new ItemStack(compound.getCompoundTag(NBT_STACK));
+        ItemStack stack = ItemStackUtils.loadItemStackFromNBT(compound.getCompoundTag(NBT_STACK));
 
         return new Delivery(start, target, stack);
     }
