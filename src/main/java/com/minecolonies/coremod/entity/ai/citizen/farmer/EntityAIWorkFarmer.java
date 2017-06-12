@@ -479,6 +479,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     private boolean shouldPlant(@NotNull final BlockPos position, @NotNull final Field field)
     {
         return !field.isNoPartOfField(world, position) && !(world.getBlockState(position.up()).getBlock() instanceof BlockCrops)
+                && !(world.getBlockState(position.up()) instanceof BlockStem)
                 && !(world.getBlockState(position).getBlock() instanceof BlockHutField) && world.getBlockState(position).getBlock() == Blocks.FARMLAND;
     }
 
@@ -518,7 +519,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     private boolean shouldHoe(@NotNull final BlockPos position)
     {
         return !BlockUtils.isBlockSeed(world, position.up())
-                && !(world.getBlockState(position).getBlock() instanceof BlockHutField)
+                && !(world.getBlockState(position.up()).getBlock() instanceof BlockHutField)
                 && (world.getBlockState(position).getBlock() == Blocks.DIRT || world.getBlockState(position).getBlock() == Blocks.GRASS);
     }
 
