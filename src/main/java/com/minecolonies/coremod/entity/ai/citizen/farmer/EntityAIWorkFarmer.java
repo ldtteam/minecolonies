@@ -130,7 +130,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         @Nullable final BuildingFarmer building = getOwnBuilding();
         if (building == null || building.getBuildingLevel() < 1)
         {
-            return AIState.PREPARING;
+            return PREPARING;
         }
 
         building.syncWithColony(world);
@@ -142,14 +142,14 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         if (building.hasNoFields())
         {
             chatSpamFilter.talkWithoutSpam("entity.farmer.noFreeFields");
-            return AIState.PREPARING;
+            return PREPARING;
         }
 
         //If the farmer has no currentField and there is no field which needs work, check fields.
         if (building.getCurrentField() == null && building.getFieldToWorkOn() == null)
         {
             building.resetFields();
-            return AIState.IDLE;
+            return IDLE;
         }
 
         @Nullable final Field currentField = building.getCurrentField();
@@ -157,7 +157,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         {
             if(currentField.getFieldStage() == Field.FieldStage.PLANTED && checkIfShouldExecute(currentField, this::shouldHarvest))
             {
-                return AIState.FARMER_HARVEST;
+                return FARMER_HARVEST;
             }
             else if (currentField.getFieldStage() == Field.FieldStage.HOED && !checkForToolOrWeapon(ToolType.HOE))
             {
@@ -165,7 +165,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             }
             else if (currentField.getFieldStage() == Field.FieldStage.EMPTY && checkIfShouldExecute(currentField, this::shouldHoe))
             {
-                return AIState.FARMER_HOE;
+                return FARMER_HOE;
             }
             currentField.nextState();
         }
@@ -173,7 +173,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         {
             getOwnBuilding().setCurrentField(null);
         }
-        return AIState.PREPARING;
+        return PREPARING;
     }
 
     /**
@@ -416,7 +416,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             shouldDumpInventory = true;
             field.nextState();
             prevPos = null;
-            return AIState.IDLE;
+            return IDLE;
         }
 
         return getState();
