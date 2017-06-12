@@ -224,7 +224,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
         if (checkOrRequestItemsAsynch(true, seeds))
         {
-            tryToTakeFromListOrRequest(checkField ? !containsPlants(currentField) : false, seeds);
+            tryToTakeFromListOrRequest(checkField && !containsPlants(currentField), seeds);
         }
 
         currentField.nextState();
@@ -462,7 +462,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         final ItemStack tool = worker.getHeldItemMainhand();
 
-        int fortune = ItemStackUtils.getFortuneOf(tool);
+        final int fortune = ItemStackUtils.getFortuneOf(tool);
         final IBlockState state = world.getBlockState(pos);
         final BlockCrops crops = (BlockCrops) state.getBlock();
 
