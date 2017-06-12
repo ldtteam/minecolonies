@@ -14,6 +14,7 @@ public class Configurations
     public static       boolean limitToOneWareHousePerColony = true;
     public static       int     builderBuildBlockDelay       = 15;
     public static       int     blockMiningDelayModifier     = 125;
+    public static       boolean workersAlwaysWorkInRain      = false;
 
     public static boolean enableColonyProtection      = true;
     public static boolean turnOffExplosionsInColonies = true;
