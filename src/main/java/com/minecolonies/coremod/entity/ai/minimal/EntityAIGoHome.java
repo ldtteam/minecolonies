@@ -50,7 +50,7 @@ public class EntityAIGoHome extends EntityAIBase
      *
      * @param citizen the citizen to assign to this task.
      */
-    public EntityAIGoHome(EntityCitizen citizen)
+    public EntityAIGoHome(final EntityCitizen citizen)
     {
         super();
         this.citizen = citizen;
