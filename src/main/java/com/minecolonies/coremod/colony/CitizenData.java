@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony;
 
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
@@ -270,7 +271,7 @@ public class CitizenData
         female = rand.nextBoolean();
         name = generateName(rand);
 
-        textureId = entity.worldObj.rand.nextInt(Integer.MAX_VALUE);
+        textureId = CompatibilityUtils.getWorld(entity).rand.nextInt(Integer.MAX_VALUE);
         health = entity.getHealth();
         maxHealth = entity.getMaxHealth();
         experience = 0;

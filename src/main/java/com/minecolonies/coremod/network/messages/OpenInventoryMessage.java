@@ -2,6 +2,7 @@ package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -153,7 +154,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
 
     private static void doCitizenInventory(final OpenInventoryMessage message, final EntityPlayerMP player)
     {
-        @Nullable final EntityCitizen citizen = (EntityCitizen) player.worldObj.getEntityByID(message.entityID);
+        @Nullable final EntityCitizen citizen = (EntityCitizen) CompatibilityUtils.getWorld(player).getEntityByID(message.entityID);
         if (citizen != null && checkPermissions(citizen.getColony(), player))
         {
             if (!StringUtils.isNullOrEmpty(message.name))
@@ -171,7 +172,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
 
         if (checkPermissions(ColonyManager.getClosestColony(player.getEntityWorld(), message.tePos), player))
         {
-            @NotNull final TileEntityChest chest = (TileEntityChest) BlockPosUtil.getTileEntity(player.worldObj, message.tePos);
+            @NotNull final TileEntityChest chest = (TileEntityChest) BlockPosUtil.getTileEntity(CompatibilityUtils.getWorld(player), message.tePos);
             if (!StringUtils.isNullOrEmpty(message.name))
             {
                 chest.setCustomName(message.name);

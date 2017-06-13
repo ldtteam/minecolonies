@@ -129,11 +129,11 @@ public class TileEntityColonyBuilding extends TileEntityChest
      */
     private void updateColonyReferences()
     {
-        if (colony == null && worldObj != null)
+        if (colony == null && getWorld() != null)
         {
             if (colonyId == 0)
             {
-                colony = ColonyManager.getColony(worldObj, this.getPos());
+                colony = ColonyManager.getColony(getWorld(), this.getPos());
             }
             else
             {
@@ -143,7 +143,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
             if (colony == null)
             {
                 //we tried to update the colony it is still missing... so we...
-                if (worldObj.isRemote)
+                if (getWorld().isRemote)
                 {
                     /*
                      * It's most probably previewed building, please don't spam it here.
@@ -154,7 +154,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
                     //log on the server
                     Log.getLogger()
                       .warn(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] had colony.",
-                        worldObj.getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ()));
+                        getWorld().getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ()));
                 }
             }
         }
@@ -162,7 +162,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
         if (building == null && colony != null)
         {
             building = colony.getBuilding(getPosition());
-            if (building != null && (worldObj == null || !worldObj.isRemote))
+            if (building != null && (getWorld() == null || !getWorld().isRemote))
             {
                 building.setTileEntity(this);
             }
@@ -174,9 +174,9 @@ public class TileEntityColonyBuilding extends TileEntityChest
     {
         super.update();
 
-        if (!worldObj.isRemote && colonyId == 0)
+        if (!getWorld().isRemote && colonyId == 0)
         {
-            final Colony tempColony = ColonyManager.getColony(worldObj, this.getPosition());
+            final Colony tempColony = ColonyManager.getColony(getWorld(), this.getPosition());
             if (tempColony != null)
             {
                 colonyId = tempColony.getID();
