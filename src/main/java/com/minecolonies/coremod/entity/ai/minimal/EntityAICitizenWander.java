@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
+import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.RandomPositionGenerator;
@@ -91,14 +92,14 @@ public class EntityAICitizenWander extends EntityAIBase
             returnHeight = 0;
         }
 
-        while (returnHeight >= 1 && citizen.worldObj.isAirBlock(new BlockPos(MathHelper.floor_double(position.xCoord),
+        while (returnHeight >= 1 && CompatibilityUtils.getWorld(citizen).isAirBlock(new BlockPos(MathHelper.floor_double(position.xCoord),
                                                                               (int) returnHeight,
                                                                               MathHelper.floor_double(position.zCoord))))
         {
             returnHeight -= 1.0D;
         }
 
-        while (!citizen.worldObj.isAirBlock(new BlockPos(MathHelper.floor_double(position.xCoord), (int) returnHeight, MathHelper.floor_double(position.zCoord))))
+        while (!CompatibilityUtils.getWorld(citizen).isAirBlock(new BlockPos(MathHelper.floor_double(position.xCoord), (int) returnHeight, MathHelper.floor_double(position.zCoord))))
         {
             returnHeight += 1.0D;
         }
