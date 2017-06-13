@@ -1,17 +1,22 @@
 package com.minecolonies.coremod.entity.ai.mobs;
 
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.entity.pathfinding.GeneralEntityWalkToProxy;
+import com.minecolonies.coremod.entity.pathfinding.PathNavigate;
 import net.minecraft.entity.EntityCreature;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Random;
 
@@ -37,12 +42,23 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
      */
     private GeneralEntityWalkToProxy proxy;
 
+    /**
+     * The navigator for this entity.
+     */
+    private PathNavigate newNavigator;
+
+    private Field navigatorField;
+
     public EntityAIWalkToRandomHuts(EntityCreature creatureIn, double speedIn)
     {
         this.entity = creatureIn;
         this.speed = speedIn;
         this.world = creatureIn.getEntityWorld();
         this.colony = ColonyManager.getClosestColony(world, creatureIn.getPosition());
+        this.newNavigator = new PathNavigate(entity, world);
+        updateNavigatorField();
+        this.newNavigator.setCanSwim(true);
+        this.newNavigator.setEnterDoors(false);
         this.setMutexBits(1);
     }
 
@@ -54,21 +70,47 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
         this.targetBlock = getRandomBuilding();
         }
 
-        if (this.targetBlock == null)
+        return !(this.targetBlock == null);
+    }
+
+    private synchronized void updateNavigatorField()
+    {
+        if (navigatorField == null)
         {
-            return false;
-        }
-        else {
-            Vec3d vec3d = RandomPositionGenerator.findRandomTargetBlockTowards(this.entity, 16, 7, new Vec3d(this.targetBlock.getX(), this.targetBlock.getY(), this.targetBlock.getZ()));
-            if (vec3d == null) {
-                return false;
-            } else {
-                this.movePosX = vec3d.xCoord;
-                this.movePosY = vec3d.yCoord;
-                this.movePosZ = vec3d.zCoord;
-                return true;
+            final Field[] fields = EntityLiving.class.getDeclaredFields();
+            for (@NotNull final Field field : fields)
+            {
+                if (field.getType().equals(net.minecraft.pathfinding.PathNavigate.class))
+                {
+                    field.setAccessible(true);
+                    navigatorField = field;
+                    break;
+                }
             }
         }
+
+        if (navigatorField == null)
+        {
+            throw new IllegalStateException("Navigator field should not be null, contact developers.");
+        }
+
+        try
+        {
+            navigatorField.set(entity, this.newNavigator);
+        }
+        catch (final IllegalAccessException e)
+        {
+            Log.getLogger().error("Navigator error", e);
+        }
+    }
+
+    public boolean isWorkerAtSiteWithMove(@NotNull final BlockPos site, final int range)
+    {
+        if (proxy == null)
+        {
+            proxy = new GeneralEntityWalkToProxy(entity);
+        }
+        return proxy.walkToBlock(site, range);
     }
 
     @Nullable
@@ -90,15 +132,17 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
 
     public void startExecuting()
     {
-        this.entity.getNavigator().tryMoveToXYZ(this.movePosX, this.movePosY, this.movePosZ, this.speed);
+        //this.entity.getNavigator().tryMoveToXYZ(this.movePosX, this.movePosY, this.movePosZ, this.speed);
+        if (targetBlock != null)
+        {
+            this.isWorkerAtSiteWithMove(targetBlock, 2);
+        }
+        else
+        {
+            targetBlock = getRandomBuilding();
+        }
     }
 
-    public void makeUpdate()
-    {
-        this.mustUpdate = true;
-    }
-
-    @org.jetbrains.annotations.Nullable
     private BlockPos getRandomBuilding()
     {
         if (colony == null)
