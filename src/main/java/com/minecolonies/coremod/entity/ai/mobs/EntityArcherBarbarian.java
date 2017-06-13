@@ -21,7 +21,7 @@ public class EntityArcherBarbarian extends AbstractArcherBarbarian {
 
     public static final ResourceLocation LOOT = new ResourceLocation(Constants.MOD_ID, "EntityArcherBarbarianDrops");
 
-    public EntityArcherBarbarian(World worldIn)
+    public EntityArcherBarbarian(final World worldIn)
     {
         super(worldIn);
     }

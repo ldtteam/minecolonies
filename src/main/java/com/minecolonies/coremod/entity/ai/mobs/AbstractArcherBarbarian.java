@@ -103,7 +103,7 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
     protected void entityInit()
     {
         super.entityInit();
-        this.dataManager.register(SWINGING_ARMS, Boolean.valueOf(false));
+        this.dataManager.register(SWINGING_ARMS, Boolean.FALSE);
     }
 
     /**
@@ -123,7 +123,7 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
 
         if (this.getRidingEntity() instanceof EntityCreature)
         {
-            EntityCreature entitycreature = (EntityCreature)this.getRidingEntity();
+            final EntityCreature entitycreature = (EntityCreature)this.getRidingEntity();
             this.renderYawOffset = entitycreature.renderYawOffset;
         }
     }
@@ -137,7 +137,7 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
 
         if (cause.getSourceOfDamage() instanceof EntityArrow && cause.getEntity() instanceof EntityPlayer)
         {
-            EntityPlayer entityplayer = (EntityPlayer)cause.getEntity();
+            final EntityPlayer entityplayer = (EntityPlayer)cause.getEntity();
             final double d0 = entityplayer.posX - this.posX;
             final double d1 = entityplayer.posZ - this.posZ;
 
@@ -164,9 +164,9 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
      * when entity is reloaded from nbt. Mainly used for initializing attributes and inventory
      */
     @Nullable
-    public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, @Nullable IEntityLivingData livingdata)
+    public IEntityLivingData onInitialSpawn(final DifficultyInstance difficulty, @Nullable IEntityLivingData living)
     {
-        livingdata = super.onInitialSpawn(difficulty, livingdata);
+        IEntityLivingData livingdata = super.onInitialSpawn(difficulty, living);
         this.setEquipmentBasedOnDifficulty(difficulty);
         this.setEnchantmentBasedOnDifficulty(difficulty);
         this.setCombatTask();
@@ -195,7 +195,7 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
         {
             this.tasks.removeTask(this.aiAttackOnCollide);
             this.tasks.removeTask(this.aiArrowAttack);
-            ItemStack itemstack = this.getHeldItemMainhand();
+            final ItemStack itemstack = this.getHeldItemMainhand();
 
             if (itemstack.getItem() == Items.BOW)
             {
@@ -219,7 +219,7 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
     /**
      * Attack the specified entity using a ranged attack.
      */
-    public void attackEntityWithRangedAttack(EntityLivingBase target, float distanceFactor)
+    public void attackEntityWithRangedAttack(EntityLivingBase target,final float distanceFactor)
     {
         final EntityArrow entityarrow = this.getArrow(distanceFactor);
         final double d0 = target.posX - this.posX;
@@ -276,7 +276,7 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
         return ((Boolean)this.dataManager.get(SWINGING_ARMS)).booleanValue();
     }
 
-    public void setSwingingArms(boolean swingingArms)
+    public void setSwingingArms(final boolean swingingArms)
     {
         this.dataManager.set(SWINGING_ARMS, Boolean.valueOf(swingingArms));
     }

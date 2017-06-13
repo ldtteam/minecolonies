@@ -99,18 +99,19 @@ public class Colony implements IColony {
     private static final int NUM_ACHIEVEMENT_THIRD = 100;
     private static final int NUM_ACHIEVEMENT_FOURTH = 500;
     private static final int NUM_ACHIEVEMENT_FIFTH = 1000;
+    private static final int CITIZEN_MINIMUM_FOR_RAID = 5;
 
     /**
      * ResourceLocations for barbarians
      */
-    /* default */ ResourceLocation barbarian = EntityList.getKey(EntityBarbarian.class);
-    /* default */ ResourceLocation archer = EntityList.getKey(EntityArcherBarbarian.class);
-    /* default */ ResourceLocation chief = EntityList.getKey(EntityChiefBarbarian.class);
+    /* default */ private ResourceLocation barbarian = EntityList.getKey(EntityBarbarian.class);
+    /* default */ private ResourceLocation archer = EntityList.getKey(EntityArcherBarbarian.class);
+    /* default */ private ResourceLocation chief = EntityList.getKey(EntityChiefBarbarian.class);
 
     /**
      * Boolean for wether a raid event has executed this night
      */
-    private boolean RAID_HAS_HAPPENED = true;
+    private boolean raidHasHappened = true;
 
     /**
      * Amount of ticks that pass/hour.
@@ -973,7 +974,7 @@ public class Colony implements IColony {
 
         for (@NotNull final CitizenData citizen : citizensList) {
             if (citizen.getJob() != null && citizen.getWorkBuilding() != null) {
-                int buildingLevel = citizen.getWorkBuilding().getBuildingLevel();
+                final int buildingLevel = citizen.getWorkBuilding().getBuildingLevel();
                 levels += buildingLevel;
             }
         }
@@ -1043,20 +1044,20 @@ public class Colony implements IColony {
                 }
             }
 
-            if (!RAID_HAS_HAPPENED && !subscribers.isEmpty() && world != null && !world.isDaytime() && Configurations.doBarbariansSpawn)
+            if (!raidHasHappened && !subscribers.isEmpty() && world != null && !world.isDaytime() && Configurations.doBarbariansSpawn)
             {
                 raidLevel = this.numberOfWorkerLevels();
-                if (citizens.size() < 5)
+                if (citizens.size() < CITIZEN_MINIMUM_FOR_RAID)
                 {
                     raidLevel = 1;
                 }
                 this.eventRaid(world, raidLevel);
-                RAID_HAS_HAPPENED = true;
+                raidHasHappened = true;
             }
 
             if (world != null && world.isDaytime())
             {
-                RAID_HAS_HAPPENED = false;
+                raidHasHappened = false;
             }
 
         }
@@ -1077,9 +1078,10 @@ public class Colony implements IColony {
         workManager.onWorldTick(event);
     }
 
-    private void eventRaid(World raidingWorld, int level) {
-
-        if (level == 1)
+    private void eventRaid(World raidingWorld,final int level)
+    {
+        int levelAtWhichToNotTriggerRaid = 1;
+        if (level == levelAtWhichToNotTriggerRaid)
         {
             return;
         }
@@ -1164,19 +1166,18 @@ public class Colony implements IColony {
         spawn(chief, numberOfChiefBarbarians,x,y,z);
     }
 
-    private void spawn(ResourceLocation entityToSpawn, int numberOfSpawns,int x, int y, int z) {
+    private void spawn(final ResourceLocation entityToSpawn, int numberOfSpawns,int x, int y, int z) {
         IntStream.range(0, numberOfSpawns).forEach($ -> {
-            if (entityToSpawn != null) {
-                if (world != null) {
-                    Entity entity = EntityList.createEntityByIDFromName(entityToSpawn, world);
+            if (entityToSpawn != null && world != null) {
+                    final Entity entity = EntityList.createEntityByIDFromName(entityToSpawn, world);
                     if (entity != null) {
-                        if (entityToSpawn == barbarian) {
+                        if (entityToSpawn.equals(barbarian)) {
                             entity.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.STONE_AXE));
                         }
-                        if (entityToSpawn == archer) {
+                        if (entityToSpawn.equals(archer)) {
                             entity.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
                         }
-                        if (entityToSpawn == chief) {
+                        if (entityToSpawn.equals(chief)) {
                             entity.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_SWORD));
                             entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(Items.CHAINMAIL_CHESTPLATE));
                             entity.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(Items.CHAINMAIL_LEGGINGS));
@@ -1185,7 +1186,6 @@ public class Colony implements IColony {
                         entity.setLocationAndAngles(x, y, z, MathHelper.wrapDegrees(world.rand.nextFloat() * 360.0F), 0.0F);
                         world.spawnEntity(entity);
                     }
-                }
             }
         });
     }

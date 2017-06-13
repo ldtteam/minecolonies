@@ -21,8 +21,9 @@ public class EntityAIAttackRangedBowBarbarian extends EntityAIBase
     private boolean strafingBackwards;
     private int strafingTime = -1;
 
-    public EntityAIAttackRangedBowBarbarian(AbstractArcherBarbarian archer, double speedAmplifier, int delay, float maxDistance)
+    public EntityAIAttackRangedBowBarbarian(final AbstractArcherBarbarian archer, double speedAmplifier, int delay, float maxDistance)
     {
+        super();
         this.entity = archer;
         this.moveSpeedAmp = speedAmplifier;
         this.attackCooldown = delay;
@@ -30,7 +31,7 @@ public class EntityAIAttackRangedBowBarbarian extends EntityAIBase
         this.setMutexBits(3);
     }
 
-    public void setAttackCooldown(int p_189428_1_)
+    public void setAttackCooldown(final int p_189428_1_)
     {
         this.attackCooldown = p_189428_1_;
     }
@@ -40,7 +41,11 @@ public class EntityAIAttackRangedBowBarbarian extends EntityAIBase
      */
     public boolean shouldExecute()
     {
-        return this.entity.getAttackTarget() == null ? false : this.isBowInMainhand();
+        if (this.entity.getAttackTarget() == null)
+        {
+            return false;
+        }
+        return this.isBowInMainhand();
     }
 
     protected boolean isBowInMainhand()
@@ -82,13 +87,13 @@ public class EntityAIAttackRangedBowBarbarian extends EntityAIBase
      */
     public void updateTask()
     {
-        EntityLivingBase entitylivingbase = this.entity.getAttackTarget();
+        final EntityLivingBase entitylivingbase = this.entity.getAttackTarget();
 
         if (entitylivingbase != null)
         {
-            double d0 = this.entity.getDistanceSq(entitylivingbase.posX, entitylivingbase.getEntityBoundingBox().minY, entitylivingbase.posZ);
-            boolean flag = this.entity.getEntitySenses().canSee(entitylivingbase);
-            boolean flag1 = this.seeTime > 0;
+            final double d0 = this.entity.getDistanceSq(entitylivingbase.posX, entitylivingbase.getEntityBoundingBox().minY, entitylivingbase.posZ);
+            final boolean flag = this.entity.getEntitySenses().canSee(entitylivingbase);
+            final boolean flag1 = this.seeTime > 0;
 
             if (flag != flag1)
             {
@@ -115,14 +120,18 @@ public class EntityAIAttackRangedBowBarbarian extends EntityAIBase
                 this.strafingTime = -1;
             }
 
-            if (this.strafingTime >= 20)
+            int strafeTime = 20;
+
+            if (this.strafingTime >= strafeTime)
             {
-                if ((double)this.entity.getRNG().nextFloat() < 0.3D)
+                double maxRNG = 0.3D;
+
+                if ((double)this.entity.getRNG().nextFloat() < maxRNG)
                 {
                     this.strafingClockwise = !this.strafingClockwise;
                 }
 
-                if ((double)this.entity.getRNG().nextFloat() < 0.3D)
+                if ((double)this.entity.getRNG().nextFloat() < maxRNG)
                 {
                     this.strafingBackwards = !this.strafingBackwards;
                 }
@@ -157,9 +166,11 @@ public class EntityAIAttackRangedBowBarbarian extends EntityAIBase
                 }
                 else if (flag)
                 {
-                    int i = this.entity.getItemInUseMaxCount();
+                    final int i = this.entity.getItemInUseMaxCount();
 
-                    if (i >= 20)
+                    int maxCount = 20;
+
+                    if (i >= maxCount)
                     {
                         this.entity.resetActiveHand();
                         this.entity.attackEntityWithRangedAttack(entitylivingbase, ItemBow.getArrowVelocity(i));
