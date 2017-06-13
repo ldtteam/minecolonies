@@ -39,8 +39,8 @@ import org.jetbrains.annotations.Nullable;
 public class EventHandler
 {
     /**
-     * Event when the debug screen is opened.
-     * Event gets called by displayed text on the screen, we only need it when f3 is clicked.
+     * Event when the debug screen is opened. Event gets called by displayed
+     * text on the screen, we only need it when f3 is clicked.
      *
      * @param event {@link net.minecraftforge.client.event.RenderGameOverlayEvent.Text}
      */
@@ -53,8 +53,8 @@ public class EventHandler
             final Minecraft mc = Minecraft.getMinecraft();
             if (mc.gameSettings.showDebugInfo)
             {
-                final WorldClient world = mc.theWorld;
-                final EntityPlayerSP player = mc.thePlayer;
+                final WorldClient world = mc.world;
+                final EntityPlayerSP player = mc.player;
                 IColony colony = ColonyManager.getIColony(world, player.getPosition());
                 final double minDistance = ColonyManager.getMinimumDistanceBetweenTownHalls();
 
@@ -111,8 +111,8 @@ public class EventHandler
 
     /**
      * Event when a player right clicks a block, or right clicks with an item.
-     * Event gets cancelled when player has no permission.
-     * Event gets cancelled when the player has no permission to place a hut, and tried it.
+     * Event gets cancelled when player has no permission. Event gets cancelled
+     * when the player has no permission to place a hut, and tried it.
      *
      * @param event {@link PlayerInteractEvent.RightClickBlock}
      */
@@ -141,11 +141,11 @@ public class EventHandler
 
                 return;
             }
-            else if(event.getEntityPlayer() != null
-                    && "pmardle".equalsIgnoreCase(event.getEntityPlayer().getName())
-                    && event.getItemStack() != null && Block.getBlockFromItem(event.getItemStack().getItem()) instanceof BlockSilverfish)
+            else if (event.getEntityPlayer() != null
+                       && "pmardle".equalsIgnoreCase(event.getEntityPlayer().getName())
+                       && event.getItemStack() != null && Block.getBlockFromItem(event.getItemStack().getItem()) instanceof BlockSilverfish)
             {
-                LanguageHandler.sendPlayerMessage(event.getEntityPlayer(),"Stop that you twat!!!");
+                LanguageHandler.sendPlayerMessage(event.getEntityPlayer(), "Stop that you twat!!!");
                 event.setCanceled(true);
             }
 
@@ -188,7 +188,8 @@ public class EventHandler
     }
 
     /**
-     * Called when a player tries to place a AbstractBlockHut. Returns true if successful and false to cancel the block placement.
+     * Called when a player tries to place a AbstractBlockHut. Returns true if
+     * successful and false to cancel the block placement.
      *
      * @param world  The world the player is in
      * @param player The player
