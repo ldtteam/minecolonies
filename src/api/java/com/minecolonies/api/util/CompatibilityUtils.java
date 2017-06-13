@@ -7,7 +7,7 @@ import net.minecraft.world.World;
 /**
  * This class group method use to insure compatibility between minecraft version.
  *
- * This is the 1.10 version
+ * This is the 1.11 version
  */
 public final class CompatibilityUtils
 {
