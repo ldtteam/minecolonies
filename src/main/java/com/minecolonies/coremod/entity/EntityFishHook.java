@@ -449,7 +449,8 @@ public final class EntityFishHook extends Entity
             int fishingProgressStep = 1;
 
             if (this.rand.nextDouble() < NO_CLEAR_SKY_CHANCE
-                  && !CompatibilityUtils.getWorld(this).canBlockSeeSky(new BlockPos(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY) + 1, MathHelper.floor_double(this.posZ))))
+                  && !CompatibilityUtils.getWorld(this).canBlockSeeSky(
+                          new BlockPos(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY) + 1, MathHelper.floor_double(this.posZ))))
             {
                 --fishingProgressStep;
             }

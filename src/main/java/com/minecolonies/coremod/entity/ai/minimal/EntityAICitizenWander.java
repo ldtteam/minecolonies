@@ -99,7 +99,8 @@ public class EntityAICitizenWander extends EntityAIBase
             returnHeight -= 1.0D;
         }
 
-        while (!CompatibilityUtils.getWorld(citizen).isAirBlock(new BlockPos(MathHelper.floor_double(position.xCoord), (int) returnHeight, MathHelper.floor_double(position.zCoord))))
+        while (!CompatibilityUtils.getWorld(citizen).isAirBlock(
+              new BlockPos(MathHelper.floor_double(position.xCoord), (int) returnHeight, MathHelper.floor_double(position.zCoord))))
         {
             returnHeight += 1.0D;
         }
