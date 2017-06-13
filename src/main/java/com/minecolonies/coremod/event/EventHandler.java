@@ -2,7 +2,6 @@ package com.minecolonies.coremod.event;
 
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MathUtils;
@@ -358,7 +357,7 @@ public class EventHandler
     /*@SubscribeEvent
     public void onLivingDeath(@NotNull LivingDeathEvent event)
     {
-        if (!CompatibilityUtils.getWolrd(event.getEntity()).isRemote && event.getEntity() instanceof EntityPlayer)
+        if (!event.getEntity().worldObj.isRemote && event.getEntity() instanceof EntityPlayer)
         {
             PlayerProperties.saveProxyData((EntityPlayer) event.getEntity());
         }
@@ -373,7 +372,7 @@ public class EventHandler
     /*@SubscribeEvent
     public void onEntityJoinWorld(@NotNull EntityJoinWorldEvent event)
     {
-        if (!CompatibilityUtils.getWolrd(event.getEntity()).isRemote && event.getEntity() instanceof EntityPlayer)
+        if (!event.getEntity().worldObj.isRemote && event.getEntity() instanceof EntityPlayer)
         {
             PlayerProperties.loadProxyData((EntityPlayer) event.getEntity());
         }
