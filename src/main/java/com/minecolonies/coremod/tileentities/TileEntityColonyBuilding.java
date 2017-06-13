@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.tileentities;
 
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -130,11 +129,11 @@ public class TileEntityColonyBuilding extends TileEntityChest
      */
     private void updateColonyReferences()
     {
-        if (colony == null && CompatibilityUtils.getWorld(this) != null)
+        if (colony == null && getWorld() != null)
         {
             if (colonyId == 0)
             {
-                colony = ColonyManager.getColony(CompatibilityUtils.getWorld(this), this.getPos());
+                colony = ColonyManager.getColony(getWorld(), this.getPos());
             }
             else
             {
@@ -144,7 +143,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
             if (colony == null)
             {
                 //we tried to update the colony it is still missing... so we...
-                if (CompatibilityUtils.getWorld(this).isRemote)
+                if (getWorld().isRemote)
                 {
                     /*
                      * It's most probably previewed building, please don't spam it here.
@@ -155,7 +154,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
                     //log on the server
                     Log.getLogger()
                       .warn(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] had colony.",
-                        CompatibilityUtils.getWorld(this).getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ()));
+                        getWorld().getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ()));
                 }
             }
         }
@@ -163,7 +162,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
         if (building == null && colony != null)
         {
             building = colony.getBuilding(getPosition());
-            if (building != null && (CompatibilityUtils.getWorld(this) == null || !CompatibilityUtils.getWorld(this).isRemote))
+            if (building != null && (getWorld() == null || !getWorld().isRemote))
             {
                 building.setTileEntity(this);
             }
@@ -175,9 +174,9 @@ public class TileEntityColonyBuilding extends TileEntityChest
     {
         super.update();
 
-        if (!CompatibilityUtils.getWorld(this).isRemote && colonyId == 0)
+        if (!getWorld().isRemote && colonyId == 0)
         {
-            final Colony tempColony = ColonyManager.getColony(CompatibilityUtils.getWorld(this), this.getPosition());
+            final Colony tempColony = ColonyManager.getColony(getWorld(), this.getPosition());
             if (tempColony != null)
             {
                 colonyId = tempColony.getID();

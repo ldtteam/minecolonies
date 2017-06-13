@@ -24,16 +24,4 @@ public final class CompatibilityUtils
         return entity.worldObj;
     }
 
-    /**
-     * get the wolrd from the entity.
-     *
-     * This method is aiming to hide the difference between 1.10.2 and 1.11.2
-     * @param tileEntity to which we get the wolrd from
-     * @return the world
-     */
-    public static World getWorld(final TileEntity tileEntity)
-    {
-        return tileEntity.getWorld();
-    }
-
 }

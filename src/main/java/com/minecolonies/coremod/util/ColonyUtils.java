@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.util;
 
+import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -22,7 +23,7 @@ public class ColonyUtils
     {
         final EntityCitizen entity = citizen.getCitizenEntity();
 
-        return entity != null && entity.worldObj.getEntityByID(entity.getEntityId()) != entity;
+        return entity != null && CompatibilityUtils.getWorld(entity).getEntityByID(entity.getEntityId()) != entity;
     }
 
     /**
