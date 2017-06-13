@@ -220,7 +220,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
     @Override
     public void attackEntityWithRangedAttack(@NotNull final EntityLivingBase entityToAttack, final float baseDamage)
     {
-        final EntityTippedArrow arrowEntity = new GuardArrow(this.worker.world, worker);
+        final EntityTippedArrow arrowEntity = new GuardArrow(CompatibilityUtils.getWorld(worker), worker);
         final double xVector = entityToAttack.posX - worker.posX;
         final double yVector = entityToAttack.getEntityBoundingBox().minY + entityToAttack.height / AIM_HEIGHT - arrowEntity.posY;
         final double zVector = entityToAttack.posZ - worker.posZ;
@@ -272,10 +272,10 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
         final int powerEntchantment = EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.POWER, worker);
         final int punchEntchantment = EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.PUNCH, worker);
 
-        final DifficultyInstance difficulty = this.worker.world.getDifficultyForLocation(new BlockPos(worker));
+        final DifficultyInstance difficulty = CompatibilityUtils.getWorld(worker).getDifficultyForLocation(new BlockPos(worker));
         arrowEntity.setDamage((baseDamage * BASE_DAMAGE_MULTIPLIER)
                                 + worker.getRandom().nextGaussian() * RANDOM_DAMAGE_MULTPLIER
-                                + this.worker.world.getDifficulty().getDifficultyId() * DIFFICULTY_DAMAGE_INCREASE);
+                                + CompatibilityUtils.getWorld(worker).getDifficulty().getDifficultyId() * DIFFICULTY_DAMAGE_INCREASE);
 
         if (powerEntchantment > 0)
         {
