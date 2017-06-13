@@ -383,7 +383,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             {
                 return getState();
             }
-            setDelay(getLevelDelay());
 
             switch (getState())
             {
@@ -410,6 +409,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             }
             prevPos = position;
         }
+        setDelay(getLevelDelay());
 
         if (!handleOffset(field))
         {
