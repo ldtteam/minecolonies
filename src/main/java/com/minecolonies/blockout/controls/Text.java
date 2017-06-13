@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -143,7 +144,7 @@ public class Text extends AbstractTextElement
                 formattedText = Collections.unmodifiableList(
                   mc.fontRendererObj.listFormattedStringToWidth(textContent, (int) (getWidth() / scale))
                     .stream()
-                    .filter(s -> s != null)
+                    .filter(Objects::nonNull)
                     .collect(Collectors.toList()));
             }
 

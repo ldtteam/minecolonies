@@ -1,6 +1,6 @@
 About BlockOut
 --------------
-BlockOut is a data-driven GUI library for Minecraft (currently 1.7 only).
+BlockOut is a data-driven GUI library for Minecraft.
 
 BlockOut uses a hierarchical structure, consisting of a root Window, which contains one or more Panes and Views.  Views
 are a type of Pane which can contain other Panes (and Views).
@@ -28,7 +28,7 @@ If a Window requires no special code, you can directly instantiate `com.blockout
 Java class that extends com.blockout.views.Window.  Override Window methods to add additional behavior, such as click
 handling.
 
-If your Window subclass implements com.blockout.controls.Button.Handler, it will automatically receive button events via
+If your Window subclass implements com.blockout.controls.ButtonHandler, it will automatically receive button events via
 the `onButtonClicked()`
 
 

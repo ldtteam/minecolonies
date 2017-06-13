@@ -2,7 +2,7 @@ package com.minecolonies.blockout.controls;
 
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.PaneParams;
-import com.minecolonies.blockout.View;
+import com.minecolonies.blockout.views.View;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -38,6 +38,8 @@ public class TextField extends Pane
     protected int scrollOffset       = 0;
     protected int selectionEnd       = 0;
     protected int cursorBlinkCounter = 0;
+
+    private static final int RECT_COLOR = -3_092_272;
 
     /**
      * Simple public constructor to instantiate.
@@ -315,10 +317,10 @@ public class TextField extends Pane
         cursorBlinkCounter = 0;
     }
 
-    @Override
     /**
      * Draw itself at positions mx and my.
      */
+    @Override
     protected void drawSelf(final int mx, final int my)
     {
         final int color = enabled ? textColor : textColorDisabled;
@@ -354,13 +356,10 @@ public class TextField extends Pane
         {
             cursorX = relativeCursorPosition > 0 ? (drawX + width) : drawX;
         }
-        else if (cursorBeforeEnd)
+        else if (cursorBeforeEnd && shadow)
         {
-            if (shadow)
-            {
-                textX -= 1;
-            }
-            cursorX = textX;
+            textX -= 1;
+            cursorX -= 1;
         }
 
         //  Draw string after cursor
@@ -375,7 +374,7 @@ public class TextField extends Pane
         {
             if (cursorBeforeEnd)
             {
-                drawRect(cursorX, drawY - 1, cursorX + 1, drawY + 1 + mc.fontRendererObj.FONT_HEIGHT, -3092272);
+                drawRect(cursorX, drawY - 1, cursorX + 1, drawY + 1 + mc.fontRendererObj.FONT_HEIGHT, RECT_COLOR);
             }
             else
             {
