@@ -212,5 +212,4 @@ public final class EntityUtils
     {
         return living.getNavigator().tryMoveToXYZ(x, y, z, speed);
     }
-
 }
