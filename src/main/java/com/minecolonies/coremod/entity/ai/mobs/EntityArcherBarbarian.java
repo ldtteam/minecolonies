@@ -5,7 +5,6 @@ import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntitySpectralArrow;
 import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.Items;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundEvent;
@@ -21,11 +20,6 @@ public class EntityArcherBarbarian extends AbstractArcherBarbarian {
     public EntityArcherBarbarian(World worldIn)
     {
         super(worldIn);
-    }
-
-    SoundEvent getStepSound()
-    {
-        return SoundEvents.ENTITY_ZOMBIE_STEP;
     }
 
     protected EntityArrow getArrow(float p_190726_1_)

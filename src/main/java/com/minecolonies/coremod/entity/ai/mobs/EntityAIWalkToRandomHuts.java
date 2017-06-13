@@ -9,9 +9,7 @@ import com.minecolonies.coremod.entity.pathfinding.PathNavigate;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,13 +27,8 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
     protected final EntityCreature entity;
     private BlockPos targetBlock;
     protected final World world;
-    private double movePosX;
-    private double movePosY;
-    private double movePosZ;
     protected final double speed;
-    protected boolean mustUpdate;
     protected final Colony colony;
-    protected Vec3d vec3d;
 
     /**
      * Walk to proxy.
@@ -116,10 +109,8 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
     @Nullable
     protected BlockPos getPosition()
     {
-        //colony.getCenter();
         colony.getBuildings();
         return colony.getCenter();
-        //return RandomPositionGenerator.findRandomTarget(this.entity, 10, 7);
     }
 
     /**
@@ -132,10 +123,13 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
 
     public void startExecuting()
     {
-        //this.entity.getNavigator().tryMoveToXYZ(this.movePosX, this.movePosY, this.movePosZ, this.speed);
+        updateNavigatorField();
         if (targetBlock != null)
         {
-            this.isWorkerAtSiteWithMove(targetBlock, 2);
+            if(this.isWorkerAtSiteWithMove(targetBlock, 2))
+            {
+                targetBlock = getRandomBuilding();
+            }
         }
         else
         {

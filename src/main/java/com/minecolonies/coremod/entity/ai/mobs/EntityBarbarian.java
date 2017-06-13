@@ -1,41 +1,23 @@
 package com.minecolonies.coremod.entity.ai.mobs;
 
 import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.*;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.pathfinding.GeneralEntityWalkToProxy;
-import com.minecolonies.coremod.entity.pathfinding.PathNavigate;
-import net.minecraft.entity.EntityLiving;
 import com.minecolonies.coremod.sounds.BarbarianSounds;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.Random;
 
 /**
  * Created by Asherslab on 5/6/17.
  */
 public class EntityBarbarian extends EntityMob
 {
-
-    /**
-     * Walk to proxy.
-     */
-    private GeneralEntityWalkToProxy proxy;
-    private BlockPos targetBlock;
-
     private final Colony colony = ColonyManager.getClosestColony(world, this.getPosition());
 
     public EntityBarbarian(World worldIn)
@@ -59,7 +41,7 @@ public class EntityBarbarian extends EntityMob
     {
         this.tasks.addTask(0, new EntityAISwimming(this));
         this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
-        this.tasks.addTask(3, new EntityAIAttackMelee(this, 2.3D, true));
+        this.tasks.addTask(2, new EntityAIBarbarianAttackMelee(this));
         this.tasks.addTask(4, new EntityAIWalkToRandomHuts(this, 2.0D));
         this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
         this.tasks.addTask(8, new EntityAILookIdle(this));
@@ -82,7 +64,7 @@ public class EntityBarbarian extends EntityMob
         return BarbarianSounds.barbarianSay;
     }
 
-    protected double getHealthBasedOnRaidLevel()
+    private double getHealthBasedOnRaidLevel()
     {
         if (colony != null)
         {
@@ -100,36 +82,8 @@ public class EntityBarbarian extends EntityMob
     }
 
     @Override
-    public World getEntityWorld()
-    {
-        return world;
-    }
-
-    @Override
     protected boolean canDespawn()
     {
         return world.isDaytime();
-    }
-
-    private BlockPos getRandomBuilding()
-    {
-        if (colony == null)
-        {
-            return null;
-        }
-
-        final Collection<AbstractBuilding> buildingList = colony.getBuildings().values();
-        final Object[] buildingArray = buildingList.toArray();
-        if (buildingArray != null && buildingArray.length != 0)
-        {
-            final int random = new Random().nextInt(buildingArray.length);
-            final AbstractBuilding building = (AbstractBuilding) buildingArray[random];
-
-            return building.getLocation();
-        }
-        else
-        {
-            return null;
-        }
     }
 }
