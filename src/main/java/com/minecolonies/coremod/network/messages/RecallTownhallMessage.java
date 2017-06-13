@@ -2,10 +2,12 @@ package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -72,7 +74,16 @@ public class RecallTownhallMessage extends AbstractMessage<RecallTownhallMessage
                 final World world = colony.getWorld();
                 for (CitizenData citizenData : colony.getCitizens().values())
                 {
-                    if (!TeleportHelper.teleportCitizen(citizenData.getCitizenEntity(), world, location))
+                    EntityCitizen citizen = citizenData.getCitizenEntity();
+                    if(citizen == null)
+                    {
+
+                        Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", colony.getID(), citizenData.getId()));
+                        colony.spawnCitizen(citizenData);
+                        citizen = citizenData.getCitizenEntity();
+                    }
+
+                    if (!TeleportHelper.teleportCitizen(citizen, world, location))
                     {
                         LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.workerHuts.recallFail");
                     }
