@@ -47,7 +47,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     /**
      * The smallest delay the farmer should have.
      */
-    private static final int SMALLEST_DELAY = 5;
+    private static final int SMALLEST_DELAY = 1;
 
     /**
      * The bonus the farmer gains each update is level/divider.
@@ -341,7 +341,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      * Checks if the crop should be harvested.
      *
      * @param position the position to check.
-     * @return true if should be hoed.
+     * @return true if should be harvested.
      */
     private boolean shouldHarvest(@NotNull final BlockPos position)
     {
@@ -356,7 +356,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         if (block instanceof IGrowable && block instanceof BlockCrops && !(block instanceof BlockStem))
         {
             @NotNull final BlockCrops crop = (BlockCrops) block;
-            return !crop.isMaxAge(state);
+            return crop.isMaxAge(state);
         }
 
         return false;
