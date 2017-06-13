@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.mobs;
 
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.sounds.BarbarianSounds;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntitySpectralArrow;
@@ -7,6 +8,7 @@ import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 
@@ -21,6 +23,8 @@ public class EntityArcherBarbarian extends AbstractArcherBarbarian {
     {
         super(worldIn);
     }
+
+    public static final ResourceLocation LOOT = new ResourceLocation(Constants.MOD_ID, "EntityArcherBarbarianDrops");
 
     protected EntityArrow getArrow(float p_190726_1_)
     {
@@ -71,5 +75,11 @@ public class EntityArcherBarbarian extends AbstractArcherBarbarian {
     @Override
     protected SoundEvent getAmbientSound() {
         return BarbarianSounds.barbarianSay;
+    }
+
+    @Override
+    @Nullable
+    protected ResourceLocation getLootTable() {
+        return LOOT;
     }
 }

@@ -121,7 +121,9 @@ public class CommonProxy implements IProxy
         EntityRegistry.registerEgg(locationArcherBarbarian, 5, 700);
 
         //Add in the loot tables for teh mobs
+        LootTableList.register(EntityBarbarian.LOOT);
         LootTableList.register(EntityChiefBarbarian.LOOT);
+        LootTableList.register(EntityArcherBarbarian.LOOT);
     }
 
     @Override

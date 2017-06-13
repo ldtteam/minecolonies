@@ -1,7 +1,7 @@
 {
   "pools": [
     {
-      "name": "minecolonies: ChiefBarbarian",
+      "name": "minecolonies: Barbarian",
       "rolls": 1,
       "entries": [
         {
@@ -39,7 +39,7 @@
       ]
     },
     {
-      "name": "minecolonies: ChiefBarbarian",
+      "name": "minecolonies: Barbarian",
       "rolls": 1,
       "entries": [
         {
@@ -77,7 +77,7 @@
       ]
     },
     {
-      "name": "minecolonies: ChiefBarbarian",
+      "name": "minecolonies: Barbarian",
       "rolls": 1,
       "entries": [
         {
@@ -115,7 +115,7 @@
       ]
     },
     {
-      "name": "minecolonies: ChiefBarbarian",
+      "name": "minecolonies: Barbarian",
       "rolls": 1,
       "entries": [
         {
@@ -153,13 +153,13 @@
       ]
     },
     {
-      "name": "minecolonies: ChiefBarbarian",
+      "name": "minecolonies: Barbarian",
       "rolls": 1,
       "entries": [
         {
           "type": "item",
           "weight": 1,
-          "name": "minecolonies:ancienttome",
+          "name": "minecraft:wooden_sword",
           "functions": [
             {
               "function": "set_count",
@@ -183,7 +183,7 @@
           "conditions": [
             {
               "condition": "random_chance_with_looting",
-              "chance": 0.5,
+              "chance": 0.075,
               "looting_multiplier": 0
             }
           ]

@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.mobs;
 
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.sounds.BarbarianSounds;
@@ -8,6 +9,7 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 
@@ -19,6 +21,8 @@ import javax.annotation.Nullable;
 public class EntityBarbarian extends EntityMob
 {
     private final Colony colony = ColonyManager.getClosestColony(world, this.getPosition());
+
+    public static final ResourceLocation LOOT = new ResourceLocation(Constants.MOD_ID, "EntityBarbarianDrops");
 
     public EntityBarbarian(World worldIn)
     {
@@ -85,5 +89,11 @@ public class EntityBarbarian extends EntityMob
     protected boolean canDespawn()
     {
         return world.isDaytime();
+    }
+
+    @Override
+    @Nullable
+    protected ResourceLocation getLootTable() {
+        return LOOT;
     }
 }
