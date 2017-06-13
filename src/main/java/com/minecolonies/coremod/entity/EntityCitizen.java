@@ -1766,7 +1766,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
             {
                 MineColonies.getNetwork().sendToAllAround(
                         new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorld(this).getBlockState(blockPos), BlockParticleEffectMessage.BREAK_BLOCK),
-                        new NetworkRegistry.TargetPoint(CompatibilityUtils.getWorld(this).provider.getDimension(), blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_SOUND_RANGE));
+                        new NetworkRegistry.TargetPoint(CompatibilityUtils.getWorld(this).provider.getDimension(),
+                        blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_SOUND_RANGE));
             }
             CompatibilityUtils.getWorld(this).playSound(null,
                     blockPos,
@@ -1786,7 +1787,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 MineColonies.getNetwork().sendToAllAround(
                         //todo: correct side
                         new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorld(this).getBlockState(blockPos), 1),
-                        new NetworkRegistry.TargetPoint(CompatibilityUtils.getWorld(this).provider.getDimension(), blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE));
+                        new NetworkRegistry.TargetPoint(CompatibilityUtils.getWorld(this).provider.getDimension(), blockPos.getX(),
+                                                        blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE));
             }
             CompatibilityUtils.getWorld(this).playSound((EntityPlayer) null,
                     blockPos,
