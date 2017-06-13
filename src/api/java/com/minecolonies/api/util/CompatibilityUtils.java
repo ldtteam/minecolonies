@@ -12,6 +12,11 @@ import net.minecraft.world.World;
 public final class CompatibilityUtils
 {
 
+    private CompatibilityUtils()
+    {
+        //hide the constructor
+    }
+
     /**
      * get the world from the entity.
      *
