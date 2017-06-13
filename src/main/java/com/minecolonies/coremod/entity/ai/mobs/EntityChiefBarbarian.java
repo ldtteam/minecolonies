@@ -20,15 +20,14 @@ import javax.annotation.Nullable;
  */
 public class EntityChiefBarbarian extends EntityMob
 {
-    final Colony colony = ColonyManager.getClosestColony(world, this.getPosition());
+    /* default */ final private Colony colony = ColonyManager.getClosestColony(world, this.getPosition());
+    public static final ResourceLocation LOOT = new ResourceLocation(Constants.MOD_ID, "EntityChiefBarbarianDrops");
 
-    public EntityChiefBarbarian(World worldIn)
+    public EntityChiefBarbarian(final World worldIn)
     {
         super(worldIn);
         this.getAlwaysRenderNameTag();
     }
-
-    public static final ResourceLocation LOOT = new ResourceLocation(Constants.MOD_ID, "EntityChiefBarbarianDrops");
 
     @Override
     protected void applyEntityAttributes()
@@ -45,7 +44,7 @@ public class EntityChiefBarbarian extends EntityMob
     {
         if (colony != null)
         {
-            int raidLevel = (int) (colony.getRaidLevel()*1.5);
+            final int raidLevel = (int) (colony.getRaidLevel()*1.5);
             return 25+raidLevel;
         }
         return 25.0D;

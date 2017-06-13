@@ -19,26 +19,26 @@ import javax.annotation.Nullable;
  */
 public class EntityArcherBarbarian extends AbstractArcherBarbarian {
 
+    public static final ResourceLocation LOOT = new ResourceLocation(Constants.MOD_ID, "EntityArcherBarbarianDrops");
+
     public EntityArcherBarbarian(World worldIn)
     {
         super(worldIn);
     }
 
-    public static final ResourceLocation LOOT = new ResourceLocation(Constants.MOD_ID, "EntityArcherBarbarianDrops");
-
-    protected EntityArrow getArrow(float p_190726_1_)
+    protected EntityArrow getArrow(final float p_190726_1_)
     {
-        ItemStack itemstack = this.getItemStackFromSlot(EntityEquipmentSlot.OFFHAND);
+        final ItemStack itemstack = this.getItemStackFromSlot(EntityEquipmentSlot.OFFHAND);
 
         if (itemstack.getItem() == Items.SPECTRAL_ARROW)
         {
-            EntitySpectralArrow entityspectralarrow = new EntitySpectralArrow(this.world, this);
+            final EntitySpectralArrow entityspectralarrow = new EntitySpectralArrow(this.world, this);
             entityspectralarrow.setEnchantmentEffectsFromEntity(this, p_190726_1_);
             return entityspectralarrow;
         }
         else
         {
-            EntityArrow entityarrow = super.getArrow(p_190726_1_);
+            final EntityArrow entityarrow = super.getArrow(p_190726_1_);
 
             if (itemstack.getItem() == Items.TIPPED_ARROW && entityarrow instanceof EntityTippedArrow)
             {

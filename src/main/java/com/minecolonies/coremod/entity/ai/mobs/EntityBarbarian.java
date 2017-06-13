@@ -24,7 +24,7 @@ public class EntityBarbarian extends EntityMob
 
     public static final ResourceLocation LOOT = new ResourceLocation(Constants.MOD_ID, "EntityBarbarianDrops");
 
-    public EntityBarbarian(World worldIn)
+    public EntityBarbarian(final World worldIn)
     {
         super(worldIn);
     }
@@ -72,7 +72,7 @@ public class EntityBarbarian extends EntityMob
     {
         if (colony != null)
         {
-            int raidLevel = (int) (colony.getRaidLevel() * (Configurations.barbarianHordeDifficulty * 0.2));
+            final int raidLevel = (int) (colony.getRaidLevel() * (Configurations.barbarianHordeDifficulty * 0.2));
             return 25 + raidLevel;
         }
         return 25.0D;

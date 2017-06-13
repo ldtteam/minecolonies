@@ -103,9 +103,9 @@ public class Colony implements IColony {
     /**
      * ResourceLocations for barbarians
      */
-    ResourceLocation barbarian = EntityList.getKey(EntityBarbarian.class);
-    ResourceLocation archer = EntityList.getKey(EntityArcherBarbarian.class);
-    ResourceLocation chief = EntityList.getKey(EntityChiefBarbarian.class);
+    /* default */ ResourceLocation barbarian = EntityList.getKey(EntityBarbarian.class);
+    /* default */ ResourceLocation archer = EntityList.getKey(EntityArcherBarbarian.class);
+    /* default */ ResourceLocation chief = EntityList.getKey(EntityChiefBarbarian.class);
 
     /**
      * Boolean for wether a raid event has executed this night
@@ -220,8 +220,6 @@ public class Colony implements IColony {
     private int topCitizenId = 0;
     private int maxCitizens = Configurations.maxCitizens;
     private int raidLevel = 0;
-    private int currentBarbarianSubtractor = 0;
-    private int currentArcherSubtractor = 0;
 
     private double overallHappiness = 5;
 
@@ -1153,6 +1151,7 @@ public class Colony implements IColony {
             case 7:
                 x -= Configurations.workingRangeTownHall+20;
                 z -= Configurations.workingRangeTownHall+20;
+                break;
             default:
                 x += Configurations.workingRangeTownHall+20;
                 break;

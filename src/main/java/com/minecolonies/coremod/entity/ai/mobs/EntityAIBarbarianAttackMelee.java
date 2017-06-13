@@ -16,12 +16,13 @@ import net.minecraft.util.EnumHand;
 public class EntityAIBarbarianAttackMelee extends EntityAIBase
 {
 
-    private EntityCreature entity;
+    final private EntityCreature entity;
     private EntityLivingBase target;
     private int LastAttack = 0;
 
-    public EntityAIBarbarianAttackMelee(EntityCreature creatureIn)
+    public EntityAIBarbarianAttackMelee(final EntityCreature creatureIn)
     {
+        super();
         this.entity = creatureIn;
         this.setMutexBits(3);
     }
@@ -30,7 +31,7 @@ public class EntityAIBarbarianAttackMelee extends EntityAIBase
     public boolean shouldExecute()
     {
         target = entity.getAttackTarget();
-        return !(target == null);
+        return target != null;
     }
 
     /**
@@ -51,20 +52,20 @@ public class EntityAIBarbarianAttackMelee extends EntityAIBase
         attack(target);
     }
 
-    public void attack(EntityLivingBase target)
+    public void attack(final EntityLivingBase target)
     {
         double damageToBeDealt = 0;
 
+        final ItemStack heldItem = entity.getHeldItem(EnumHand.MAIN_HAND);
+        if (heldItem != null)
+
         if (target != null)
         {
-            final ItemStack heldItem = entity.getHeldItem(EnumHand.MAIN_HAND);
-            if (heldItem != null)
+            if (ItemStackUtils.doesItemServeAsWeapon(heldItem) && heldItem.getItem() instanceof ItemSword)
             {
-                if (ItemStackUtils.doesItemServeAsWeapon(heldItem) && heldItem.getItem() instanceof ItemSword)
-                {
-                    damageToBeDealt += ((ItemSword) heldItem.getItem()).getDamageVsEntity();
-                }
+                damageToBeDealt += ((ItemSword) heldItem.getItem()).getDamageVsEntity();
             }
+
 
             if(damageToBeDealt == 0)
             {

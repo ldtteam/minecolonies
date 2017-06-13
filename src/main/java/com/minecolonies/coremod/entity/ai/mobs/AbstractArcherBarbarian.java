@@ -36,7 +36,7 @@ import java.util.Calendar;
  */
 public abstract class AbstractArcherBarbarian extends EntityMob implements IRangedAttackMob
 {
-    final Colony colony = ColonyManager.getClosestColony(world, this.getPosition());
+    /* default */ final Colony colony = ColonyManager.getClosestColony(world, this.getPosition());
     private static final DataParameter<Boolean> SWINGING_ARMS = EntityDataManager.<Boolean>createKey(AbstractArcherBarbarian.class, DataSerializers.BOOLEAN);
     private final EntityAIAttackRangedBowBarbarian aiArrowAttack = new EntityAIAttackRangedBowBarbarian(this, 1.0D, 20, 15.0F);
     private final EntityAIAttackMelee aiAttackOnCollide = new EntityAIAttackMelee(this, 1.2D, false)

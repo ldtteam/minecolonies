@@ -19,11 +19,11 @@ import javax.annotation.Nonnull;
  */
 public class RenderChiefBarbarianMob extends RenderLiving<EntityChiefBarbarian>
 {
-    private ResourceLocation mobTexture = new ResourceLocation("minecolonies:textures/entity/chiefbarbarian1.png");
+    final private ResourceLocation mobTexture = new ResourceLocation("minecolonies:textures/entity/chiefbarbarian1.png");
 
     public static final RenderChiefBarbarianMob.Factory FACTORY = new RenderChiefBarbarianMob.Factory();
 
-    public RenderChiefBarbarianMob(RenderManager renderManagerIn) {
+    public RenderChiefBarbarianMob(final RenderManager renderManagerIn) {
         // We use the vanilla zombie model here and we simply
         // re-texture it. Of course you can make your own model
         super(renderManagerIn, new ModelBiped(), 0.5F);
@@ -33,14 +33,14 @@ public class RenderChiefBarbarianMob extends RenderLiving<EntityChiefBarbarian>
 
     @Override
     @Nonnull
-    protected ResourceLocation getEntityTexture(@Nonnull EntityChiefBarbarian entity) {
+    protected ResourceLocation getEntityTexture(@Nonnull final EntityChiefBarbarian entity) {
         return mobTexture;
     }
 
     public static class Factory implements IRenderFactory<EntityChiefBarbarian> {
 
         @Override
-        public Render<? super EntityChiefBarbarian> createRenderFor(RenderManager manager) {
+        public Render<? super EntityChiefBarbarian> createRenderFor(final RenderManager manager) {
             return new RenderChiefBarbarianMob(manager);
         }
 
