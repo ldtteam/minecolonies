@@ -38,12 +38,13 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
     /**
      * The navigator for this entity.
      */
-    private PathNavigate newNavigator;
+    final private PathNavigate newNavigator;
 
     private Field navigatorField;
 
-    public EntityAIWalkToRandomHuts(EntityCreature creatureIn, double speedIn)
+    public EntityAIWalkToRandomHuts(final EntityCreature creatureIn,final double speedIn)
     {
+        super();
         this.entity = creatureIn;
         this.speed = speedIn;
         this.world = creatureIn.getEntityWorld();
@@ -63,7 +64,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
         this.targetBlock = getRandomBuilding();
         }
 
-        return !(this.targetBlock == null);
+        return this.targetBlock != null;
     }
 
     private synchronized void updateNavigatorField()

@@ -57,7 +57,6 @@ public class EntityAIBarbarianAttackMelee extends EntityAIBase
         double damageToBeDealt = 0;
 
         final ItemStack heldItem = entity.getHeldItem(EnumHand.MAIN_HAND);
-        if (heldItem != null)
 
         if (target != null)
         {

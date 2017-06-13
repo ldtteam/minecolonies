@@ -36,7 +36,7 @@ import java.util.Calendar;
  */
 public abstract class AbstractArcherBarbarian extends EntityMob implements IRangedAttackMob
 {
-    /* default */ final Colony colony = ColonyManager.getClosestColony(world, this.getPosition());
+    /* default */ final private Colony colony = ColonyManager.getClosestColony(world, this.getPosition());
     private static final DataParameter<Boolean> SWINGING_ARMS = EntityDataManager.<Boolean>createKey(AbstractArcherBarbarian.class, DataSerializers.BOOLEAN);
     private final EntityAIAttackRangedBowBarbarian aiArrowAttack = new EntityAIAttackRangedBowBarbarian(this, 1.0D, 20, 15.0F);
     private final EntityAIAttackMelee aiAttackOnCollide = new EntityAIAttackMelee(this, 1.2D, false)
@@ -59,7 +59,7 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
         }
     };
 
-    public AbstractArcherBarbarian(World worldIn)
+    public AbstractArcherBarbarian(final World worldIn)
     {
         super(worldIn);
         this.setSize(0.6F, 1.99F);
@@ -94,7 +94,7 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
     {
         if (colony != null)
         {
-            int raidLevel = (int) (colony.getRaidLevel()*1.5);
+            final int raidLevel = (int) (colony.getRaidLevel()*1.5);
             return 25+raidLevel;
         }
         return 25.0D;
@@ -131,17 +131,19 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
     /**
      * Called when the mob's health reaches 0.
      */
-    public void onDeath(DamageSource cause)
+    public void onDeath(final DamageSource cause)
     {
         super.onDeath(cause);
 
         if (cause.getSourceOfDamage() instanceof EntityArrow && cause.getEntity() instanceof EntityPlayer)
         {
             EntityPlayer entityplayer = (EntityPlayer)cause.getEntity();
-            double d0 = entityplayer.posX - this.posX;
-            double d1 = entityplayer.posZ - this.posZ;
+            final double d0 = entityplayer.posX - this.posX;
+            final double d1 = entityplayer.posZ - this.posZ;
 
-            if (d0 * d0 + d1 * d1 >= 2500.0D)
+            final double distance = 2500.0D;
+
+            if (d0 * d0 + d1 * d1 >= distance)
             {
                 entityplayer.addStat(AchievementList.SNIPE_SKELETON);
             }
@@ -151,7 +153,7 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
     /**
      * Gives armor or weapon for entity based on given DifficultyInstance
      */
-    protected void setEquipmentBasedOnDifficulty(DifficultyInstance difficulty)
+    protected void setEquipmentBasedOnDifficulty(final DifficultyInstance difficulty)
     {
         super.setEquipmentBasedOnDifficulty(difficulty);
         this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
@@ -172,7 +174,7 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
 
         if (this.getItemStackFromSlot(EntityEquipmentSlot.HEAD).isEmpty())
         {
-            Calendar calendar = this.world.getCurrentDate();
+            final Calendar calendar = this.world.getCurrentDate();
 
             if (calendar.get(2) + 1 == 10 && calendar.get(5) == 31 && this.rand.nextFloat() < 0.25F)
             {
@@ -219,19 +221,19 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
      */
     public void attackEntityWithRangedAttack(EntityLivingBase target, float distanceFactor)
     {
-        EntityArrow entityarrow = this.getArrow(distanceFactor);
-        double d0 = target.posX - this.posX;
-        double d1 = target.getEntityBoundingBox().minY + (double)(target.height / 3.0F) - entityarrow.posY;
-        double d2 = target.posZ - this.posZ;
-        double d3 = (double) MathHelper.sqrt(d0 * d0 + d2 * d2);
+        final EntityArrow entityarrow = this.getArrow(distanceFactor);
+        final double d0 = target.posX - this.posX;
+        final double d1 = target.getEntityBoundingBox().minY + (double)(target.height / 3.0F) - entityarrow.posY;
+        final double d2 = target.posZ - this.posZ;
+        final double d3 = (double) MathHelper.sqrt(d0 * d0 + d2 * d2);
         entityarrow.setThrowableHeading(d0, d1 + d3 * 0.20000000298023224D, d2, 1.6F, (float)(14 - this.world.getDifficulty().getDifficultyId() * 4));
         this.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.getRNG().nextFloat() * 0.4F + 0.8F));
         this.world.spawnEntity(entityarrow);
     }
 
-    protected EntityArrow getArrow(float p_190726_1_)
+    protected EntityArrow getArrow(final float p_190726_1_)
     {
-        EntityTippedArrow entitytippedarrow = new EntityTippedArrow(this.world, this);
+        final EntityTippedArrow entitytippedarrow = new EntityTippedArrow(this.world, this);
         entitytippedarrow.setEnchantmentEffectsFromEntity(this, p_190726_1_);
         return entitytippedarrow;
     }
@@ -239,13 +241,13 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      */
-    public void readEntityFromNBT(NBTTagCompound compound)
+    public void readEntityFromNBT(final NBTTagCompound compound)
     {
         super.readEntityFromNBT(compound);
         this.setCombatTask();
     }
 
-    public void setItemStackToSlot(EntityEquipmentSlot slotIn, ItemStack stack)
+    public void setItemStackToSlot(final EntityEquipmentSlot slotIn,final ItemStack stack)
     {
         super.setItemStackToSlot(slotIn, stack);
 
