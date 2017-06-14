@@ -20,26 +20,27 @@ import javax.annotation.Nullable;
 public class EntityArcherBarbarian extends AbstractArcherBarbarian
 {
 
-    public static final ResourceLocation LOOT = new ResourceLocation(Constants.MOD_ID, "EntityArcherBarbarianDrops");
+    /* default */ public static final ResourceLocation LOOT = new ResourceLocation(Constants.MOD_ID, "EntityArcherBarbarianDrops");
 
     public EntityArcherBarbarian(final World worldIn)
     {
         super(worldIn);
     }
 
-    protected EntityArrow getArrow(final float p_190726_1_)
+    @Override
+    protected EntityArrow getArrow(final float distanceFactor)
     {
         final ItemStack itemstack = this.getItemStackFromSlot(EntityEquipmentSlot.OFFHAND);
 
         if (itemstack.getItem() == Items.SPECTRAL_ARROW)
         {
             final EntitySpectralArrow entityspectralarrow = new EntitySpectralArrow(this.world, this);
-            entityspectralarrow.setEnchantmentEffectsFromEntity(this, p_190726_1_);
+            entityspectralarrow.setEnchantmentEffectsFromEntity(this, distanceFactor);
             return entityspectralarrow;
         }
         else
         {
-            final EntityArrow entityarrow = super.getArrow(p_190726_1_);
+            final EntityArrow entityarrow = super.getArrow(distanceFactor);
 
             if (itemstack.getItem() == Items.TIPPED_ARROW && entityarrow instanceof EntityTippedArrow)
             {
@@ -48,12 +49,6 @@ public class EntityArcherBarbarian extends AbstractArcherBarbarian
 
             return entityarrow;
         }
-    }
-
-    @Override
-    public int getMaxSpawnedInChunk()
-    {
-        return 5;
     }
 
     @Override

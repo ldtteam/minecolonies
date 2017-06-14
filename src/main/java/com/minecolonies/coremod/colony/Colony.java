@@ -1152,12 +1152,12 @@ public class Colony implements IColony
             building.onWorldTick(event);
         }
 
-        if (isDay && !world.isDaytime())
+        if ( world != null && isDay && !world.isDaytime())
         {
             isDay = false;
             updateOverallHappiness();
         }
-        else if (!isDay && world.isDaytime())
+        else if (world != null && !isDay && world.isDaytime())
         {
             isDay = true;
         }

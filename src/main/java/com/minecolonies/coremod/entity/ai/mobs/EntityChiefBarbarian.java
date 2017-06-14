@@ -20,8 +20,8 @@ import javax.annotation.Nullable;
  */
 public class EntityChiefBarbarian extends EntityMob
 {
-    /* default */ final private Colony colony = ColonyManager.getClosestColony(world, this.getPosition());
-    public static final ResourceLocation LOOT = new ResourceLocation(Constants.MOD_ID, "EntityChiefBarbarianDrops");
+    /* default */ private final       Colony           colony = ColonyManager.getClosestColony(world, this.getPosition());
+    /* default */ public static final ResourceLocation LOOT   = new ResourceLocation(Constants.MOD_ID, "EntityChiefBarbarianDrops");
 
     public EntityChiefBarbarian(final World worldIn)
     {
