@@ -2,7 +2,8 @@ package com.minecolonies.coremod.entity.ai.mobs;
 
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.colony.*;
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.sounds.BarbarianSounds;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -53,18 +54,21 @@ public class EntityBarbarian extends EntityMob
     }
 
     @Override
-    protected SoundEvent getHurtSound() {
+    protected SoundEvent getHurtSound()
+    {
         return BarbarianSounds.barbarianHurt;
     }
 
     @Override
-    protected SoundEvent getDeathSound() {
+    protected SoundEvent getDeathSound()
+    {
         return BarbarianSounds.barbarianDeath;
     }
 
     @Nullable
     @Override
-    protected SoundEvent getAmbientSound() {
+    protected SoundEvent getAmbientSound()
+    {
         return BarbarianSounds.barbarianSay;
     }
 
@@ -93,7 +97,8 @@ public class EntityBarbarian extends EntityMob
 
     @Override
     @Nullable
-    protected ResourceLocation getLootTable() {
+    protected ResourceLocation getLootTable()
+    {
         return LOOT;
     }
 }

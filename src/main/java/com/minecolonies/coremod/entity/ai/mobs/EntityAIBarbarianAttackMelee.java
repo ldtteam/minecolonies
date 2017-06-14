@@ -16,8 +16,8 @@ import net.minecraft.util.EnumHand;
 public class EntityAIBarbarianAttackMelee extends EntityAIBase
 {
 
-    final private EntityCreature entity;
-    private EntityLivingBase target;
+    final private EntityCreature   entity;
+    private       EntityLivingBase target;
     private int LastAttack = 0;
 
     public EntityAIBarbarianAttackMelee(final EntityCreature creatureIn)
@@ -39,7 +39,7 @@ public class EntityAIBarbarianAttackMelee extends EntityAIBase
      */
     public boolean continueExecuting()
     {
-        if(target.isEntityAlive() && entity.isEntityAlive() && !target.getIsInvulnerable())
+        if (target.isEntityAlive() && entity.isEntityAlive() && !target.getIsInvulnerable())
         {
             attack(target);
             return true;
@@ -66,7 +66,7 @@ public class EntityAIBarbarianAttackMelee extends EntityAIBase
             }
 
 
-            if(damageToBeDealt == 0)
+            if (damageToBeDealt == 0)
             {
                 damageToBeDealt = 3;
             }

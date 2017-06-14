@@ -44,8 +44,8 @@ public class EntityChiefBarbarian extends EntityMob
     {
         if (colony != null)
         {
-            final int raidLevel = (int) (colony.getRaidLevel()*1.5);
-            return 25+raidLevel;
+            final int raidLevel = (int) (colony.getRaidLevel() * 1.5);
+            return 25 + raidLevel;
         }
         return 25.0D;
     }
@@ -73,28 +73,31 @@ public class EntityChiefBarbarian extends EntityMob
     protected boolean canDespawn()
     {
         return world.isDaytime();
-
     }
 
     @Override
-    protected SoundEvent getHurtSound() {
+    protected SoundEvent getHurtSound()
+    {
         return BarbarianSounds.barbarianHurt;
     }
 
     @Override
-    protected SoundEvent getDeathSound() {
+    protected SoundEvent getDeathSound()
+    {
         return BarbarianSounds.barbarianDeath;
     }
 
     @Nullable
     @Override
-    protected SoundEvent getAmbientSound() {
+    protected SoundEvent getAmbientSound()
+    {
         return BarbarianSounds.barbarianSay;
     }
 
     @Override
     @Nullable
-    protected ResourceLocation getLootTable() {
+    protected ResourceLocation getLootTable()
+    {
         return LOOT;
     }
 }

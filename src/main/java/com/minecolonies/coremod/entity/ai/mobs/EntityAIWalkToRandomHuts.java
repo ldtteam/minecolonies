@@ -25,10 +25,10 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
 {
 
     protected final EntityCreature entity;
-    private BlockPos targetBlock;
-    protected final World world;
-    protected final double speed;
-    protected final Colony colony;
+    private         BlockPos       targetBlock;
+    protected final World          world;
+    protected final double         speed;
+    protected final Colony         colony;
 
     /**
      * Walk to proxy.
@@ -42,7 +42,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
 
     private Field navigatorField;
 
-    public EntityAIWalkToRandomHuts(final EntityCreature creatureIn,final double speedIn)
+    public EntityAIWalkToRandomHuts(final EntityCreature creatureIn, final double speedIn)
     {
         super();
         this.entity = creatureIn;
@@ -61,7 +61,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
     {
         if (this.targetBlock == null)
         {
-        this.targetBlock = getRandomBuilding();
+            this.targetBlock = getRandomBuilding();
         }
 
         return this.targetBlock != null;
@@ -127,7 +127,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
         updateNavigatorField();
         if (targetBlock != null)
         {
-            if(this.isWorkerAtSiteWithMove(targetBlock, 2))
+            if (this.isWorkerAtSiteWithMove(targetBlock, 2))
             {
                 targetBlock = getRandomBuilding();
             }
@@ -147,7 +147,8 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
 
         final Collection<AbstractBuilding> buildingList = colony.getBuildings().values();
         final Object[] buildingArray = buildingList.toArray();
-        if (buildingArray != null && buildingArray.length != 0) {
+        if (buildingArray != null && buildingArray.length != 0)
+        {
             final int random = new Random().nextInt(buildingArray.length);
             final AbstractBuilding building = (AbstractBuilding) buildingArray[random];
 
@@ -158,5 +159,4 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
             return null;
         }
     }
-
 }

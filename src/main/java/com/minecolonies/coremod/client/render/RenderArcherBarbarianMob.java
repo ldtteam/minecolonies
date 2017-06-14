@@ -21,7 +21,8 @@ public class RenderArcherBarbarianMob extends RenderLiving<EntityArcherBarbarian
 
     public static final RenderArcherBarbarianMob.Factory FACTORY = new RenderArcherBarbarianMob.Factory();
 
-    public RenderArcherBarbarianMob(final RenderManager renderManagerIn) {
+    public RenderArcherBarbarianMob(final RenderManager renderManagerIn)
+    {
         // We use the vanilla zombie model here and we simply
         // re-texture it. Of course you can make your own model
         super(renderManagerIn, new ModelBarbarian(), 0.5F);
@@ -32,16 +33,18 @@ public class RenderArcherBarbarianMob extends RenderLiving<EntityArcherBarbarian
 
     @Override
     @Nonnull
-    protected ResourceLocation getEntityTexture(@Nonnull final EntityArcherBarbarian entity) {
+    protected ResourceLocation getEntityTexture(@Nonnull final EntityArcherBarbarian entity)
+    {
         return mobTexture;
     }
 
-    public static class Factory implements IRenderFactory<EntityArcherBarbarian> {
+    public static class Factory implements IRenderFactory<EntityArcherBarbarian>
+    {
 
         @Override
-        public Render<? super EntityArcherBarbarian> createRenderFor(final RenderManager manager) {
+        public Render<? super EntityArcherBarbarian> createRenderFor(final RenderManager manager)
+        {
             return new RenderArcherBarbarianMob(manager);
         }
-
     }
 }

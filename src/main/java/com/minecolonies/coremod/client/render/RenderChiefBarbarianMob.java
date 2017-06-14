@@ -1,9 +1,7 @@
 package com.minecolonies.coremod.client.render;
 
-import com.minecolonies.coremod.entity.ai.mobs.EntityBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.EntityChiefBarbarian;
 import net.minecraft.client.model.ModelBiped;
-import net.minecraft.client.model.ModelPlayer;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -23,7 +21,8 @@ public class RenderChiefBarbarianMob extends RenderLiving<EntityChiefBarbarian>
 
     public static final RenderChiefBarbarianMob.Factory FACTORY = new RenderChiefBarbarianMob.Factory();
 
-    public RenderChiefBarbarianMob(final RenderManager renderManagerIn) {
+    public RenderChiefBarbarianMob(final RenderManager renderManagerIn)
+    {
         // We use the vanilla zombie model here and we simply
         // re-texture it. Of course you can make your own model
         super(renderManagerIn, new ModelBiped(), 0.5F);
@@ -33,16 +32,18 @@ public class RenderChiefBarbarianMob extends RenderLiving<EntityChiefBarbarian>
 
     @Override
     @Nonnull
-    protected ResourceLocation getEntityTexture(@Nonnull final EntityChiefBarbarian entity) {
+    protected ResourceLocation getEntityTexture(@Nonnull final EntityChiefBarbarian entity)
+    {
         return mobTexture;
     }
 
-    public static class Factory implements IRenderFactory<EntityChiefBarbarian> {
+    public static class Factory implements IRenderFactory<EntityChiefBarbarian>
+    {
 
         @Override
-        public Render<? super EntityChiefBarbarian> createRenderFor(final RenderManager manager) {
+        public Render<? super EntityChiefBarbarian> createRenderFor(final RenderManager manager)
+        {
             return new RenderChiefBarbarianMob(manager);
         }
-
     }
 }
