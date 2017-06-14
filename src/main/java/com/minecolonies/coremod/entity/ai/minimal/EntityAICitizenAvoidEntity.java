@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
+import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.entity.Entity;
@@ -70,11 +71,11 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     {
         if (targetEntityClass == EntityPlayer.class)
         {
-            return theEntity.world.getClosestPlayerToEntity(theEntity, (double) distanceFromEntity);
+            return CompatibilityUtils.getWorld(theEntity).getClosestPlayerToEntity(theEntity, (double) distanceFromEntity);
         }
         else
         {
-            final Optional<Entity> entityOptional = theEntity.world.getEntitiesInAABBexcluding(
+            final Optional<Entity> entityOptional = CompatibilityUtils.getWorld(theEntity).getEntitiesInAABBexcluding(
               theEntity,
               theEntity.getEntityBoundingBox().expand(
                 (double) distanceFromEntity,

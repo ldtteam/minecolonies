@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.util.AIState;
@@ -54,7 +55,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
         setMutexBits(MUTEX_MASK);
         this.job = job;
         this.worker = this.job.getCitizen().getCitizenEntity();
-        this.world = this.worker.world;
+        this.world = CompatibilityUtils.getWorld(this.worker);
         this.chatSpamFilter = new ChatSpamFilter(worker);
         this.state = AIState.INIT;
     }
