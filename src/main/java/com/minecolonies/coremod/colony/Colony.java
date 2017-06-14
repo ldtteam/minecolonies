@@ -11,26 +11,19 @@ import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.farmer.Field;
-import com.minecolonies.coremod.entity.ai.mobs.EntityArcherBarbarian;
-import com.minecolonies.coremod.entity.ai.mobs.EntityBarbarian;
-import com.minecolonies.coremod.entity.ai.mobs.EntityChiefBarbarian;
 import com.minecolonies.coremod.network.messages.*;
 import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.AchievementUtils;
+import com.minecolonies.coremod.util.BarbarianUtils;
 import com.minecolonies.coremod.util.ColonyUtils;
 import com.minecolonies.coremod.util.ServerUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.init.Items;
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
@@ -38,9 +31,7 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.stats.Achievement;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatList;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -50,7 +41,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * This class describes a colony and contains all the data and methods for
@@ -101,13 +91,6 @@ public class Colony implements IColony
     private static final int    NUM_ACHIEVEMENT_FOURTH    = 500;
     private static final int    NUM_ACHIEVEMENT_FIFTH     = 1000;
     private static final int    CITIZEN_MINIMUM_FOR_RAID  = 5;
-
-    /**
-     * ResourceLocations for barbarians
-     */
-    /* default */ private ResourceLocation barbarian = EntityList.getKey(EntityBarbarian.class);
-    /* default */ private ResourceLocation archer    = EntityList.getKey(EntityArcherBarbarian.class);
-    /* default */ private ResourceLocation chief     = EntityList.getKey(EntityChiefBarbarian.class);
 
     /**
      * Boolean for wether a raid event has executed this night
@@ -1058,7 +1041,7 @@ public class Colony implements IColony
     }
 
     /**
-     * Return the colony's amount of workers.
+     * Return the colony's sum of WorkerBuildingLevels (currently with a worker) and TownHallLevels
      */
     private int numberOfWorkerLevels()
     {
@@ -1078,7 +1061,7 @@ public class Colony implements IColony
 
         if (this.getTownHall() != null)
         {
-            return (levels + this.getTownHall().getBuildingLevel()); // Divided by two because levels is always double the real value
+            return (levels + this.getTownHall().getBuildingLevel());
         }
         else
         {
@@ -1153,7 +1136,7 @@ public class Colony implements IColony
                 {
                     raidLevel = 1;
                 }
-                this.eventRaid(world, raidLevel);
+                BarbarianUtils.doRaid(world, raidLevel, this);
                 raidHasHappened = true;
             }
 
@@ -1181,143 +1164,6 @@ public class Colony implements IColony
 
         updateWayPoints();
         workManager.onWorldTick(event);
-    }
-
-    private void eventRaid(World raidingWorld, final int level)
-    {
-        int levelAtWhichToNotTriggerRaid = 1;
-        if (level == levelAtWhichToNotTriggerRaid)
-        {
-            return;
-        }
-
-        int numberOfBarbarians = level;
-        int numberOfArcherBarbarians = (int) (0.5 * level);
-        int numberOfChiefBarbarians = (int) (0.1 * level);
-
-        int hordeTotal = numberOfArcherBarbarians + numberOfBarbarians + numberOfChiefBarbarians;
-
-        if (hordeTotal > Configurations.maxBarbarianHordeSize)
-        {
-            final int maxSize = Configurations.maxBarbarianHordeSize;
-            if (hordeTotal > 40 && maxSize == 40)
-            {
-                numberOfBarbarians = 22;
-                numberOfArcherBarbarians = 16;
-                numberOfChiefBarbarians = 2;
-            }
-
-            numberOfBarbarians = hordeTotal - maxSize;
-
-            //For error handling and correct hordeTotal
-            if (numberOfBarbarians < 0)
-            {
-                numberOfBarbarians = 0;
-            }
-            hordeTotal = numberOfArcherBarbarians + numberOfBarbarians + numberOfChiefBarbarians;
-            if (hordeTotal > maxSize)
-            {
-                numberOfArcherBarbarians = hordeTotal - maxSize;
-
-                //For error handling and correct hordeTotal
-                if (numberOfArcherBarbarians < 0)
-                {
-                    numberOfArcherBarbarians = 0;
-                }
-                hordeTotal = numberOfArcherBarbarians + numberOfBarbarians + numberOfChiefBarbarians;
-                if (hordeTotal > maxSize)
-                {
-                    numberOfChiefBarbarians = hordeTotal - maxSize;
-
-                    //For error handling's sake a d correct hordeTotal
-                    if (numberOfChiefBarbarians < 0)
-                    {
-                        numberOfChiefBarbarians = 0;
-                    }
-                }
-            }
-        }
-
-        int x = this.getCenter().getX();
-        int y = this.getCenter().getY();
-        int z = this.getCenter().getZ();
-
-        //Make sure world isn't null
-        if (raidingWorld == null)
-        {
-            return;
-        }
-        switch (raidingWorld.rand.nextInt(7))
-        {
-            case 0:
-                x += Configurations.workingRangeTownHall + 20;
-                break;
-            case 1:
-                x -= Configurations.workingRangeTownHall + 20;
-                break;
-            case 2:
-                z += Configurations.workingRangeTownHall + 20;
-                break;
-            case 3:
-                z -= Configurations.workingRangeTownHall + 20;
-                break;
-            case 4:
-                x += Configurations.workingRangeTownHall + 20;
-                z += Configurations.workingRangeTownHall + 20;
-                break;
-            case 5:
-                x += Configurations.workingRangeTownHall + 20;
-                z -= Configurations.workingRangeTownHall + 20;
-                break;
-            case 6:
-                x -= Configurations.workingRangeTownHall + 20;
-                z += Configurations.workingRangeTownHall + 20;
-                break;
-            case 7:
-                x -= Configurations.workingRangeTownHall + 20;
-                z -= Configurations.workingRangeTownHall + 20;
-                break;
-            default:
-                x += Configurations.workingRangeTownHall + 20;
-                break;
-        }
-
-        y = raidingWorld.getTopSolidOrLiquidBlock(new BlockPos.MutableBlockPos(x, y, z)).getY(); //Make sure mob spawns on surface.
-
-        spawn(barbarian, numberOfBarbarians, x, y, z);
-        spawn(archer, numberOfArcherBarbarians, x, y, z);
-        spawn(chief, numberOfChiefBarbarians, x, y, z);
-    }
-
-    private void spawn(final ResourceLocation entityToSpawn, int numberOfSpawns, int x, int y, int z)
-    {
-        IntStream.range(0, numberOfSpawns).forEach($ ->
-        {
-            if (entityToSpawn != null && world != null)
-            {
-                final Entity entity = EntityList.createEntityByIDFromName(entityToSpawn, world);
-                if (entity != null)
-                {
-                    if (entityToSpawn.equals(barbarian))
-                    {
-                        entity.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.STONE_AXE));
-                    }
-                    if (entityToSpawn.equals(archer))
-                    {
-                        entity.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
-                    }
-                    if (entityToSpawn.equals(chief))
-                    {
-                        entity.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_SWORD));
-                        entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(Items.CHAINMAIL_CHESTPLATE));
-                        entity.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(Items.CHAINMAIL_LEGGINGS));
-                        entity.setItemStackToSlot(EntityEquipmentSlot.FEET, new ItemStack(Items.CHAINMAIL_BOOTS));
-                    }
-                    entity.setLocationAndAngles(x, y, z, MathHelper.wrapDegrees(world.rand.nextFloat() * 360.0F), 0.0F);
-                    world.spawnEntity(entity);
-                }
-            }
-        });
     }
 
     private void updateOverallHappiness()
