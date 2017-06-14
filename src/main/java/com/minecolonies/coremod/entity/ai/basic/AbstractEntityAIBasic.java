@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
+import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
@@ -9,7 +10,7 @@ import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
-import com.minecolonies.coremod.entity.pathfinding.WalkToProxy;
+import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -19,7 +20,6 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentBase;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -105,7 +105,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Walk to proxy.
      */
-    private WalkToProxy proxy;
+    private IWalkToProxy proxy;
 
     /**
      * This will count up and progressively disable the entity
@@ -546,7 +546,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         if (proxy == null)
         {
-            proxy = new WalkToProxy(worker);
+            proxy = new EntityCitizenWalkToProxy(worker);
         }
         if (proxy.walkToBlock(stand, range))
         {
@@ -989,11 +989,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         boolean allClear = true;
         for (final @Nullable ItemStack tempStack : items)
         {
-            final ItemStack stack = tempStack.copy();
-            if (ItemStackUtils.isEmpty(stack))
+            if (ItemStackUtils.isEmpty(tempStack))
             {
                 continue;
             }
+            final ItemStack stack = tempStack.copy();
 
             final int itemDamage = useItemDamage ? stack.getItemDamage() : -1;
             final int countOfItem = worker.getItemCountInInventory(stack.getItem(), itemDamage);

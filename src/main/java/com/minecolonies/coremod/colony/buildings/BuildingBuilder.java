@@ -241,7 +241,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
             {
                 for (final BlockPos pos : getAdditionalCountainers())
                 {
-                    final TileEntity entity = builder.world.getTileEntity(pos);
+                    final TileEntity entity = CompatibilityUtils.getWorld(builder).getTileEntity(pos);
                     if (entity instanceof TileEntityChest)
                     {
                         resource.addAvailable(InventoryUtils.getItemCountInProvider(entity, resource.getItem(), resource.getDamageValue()));

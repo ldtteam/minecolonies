@@ -36,10 +36,10 @@ public class CommandEntryPoint extends CommandBase
     }
 
     /**
-     *
-     * @param server
-     * @param sender
-     * @return
+     * Check the permissions of the player.
+     * @param server the server to check them at.
+     * @param sender the sender of the mssage
+     * @return true if he has the permission.
      */
     @Override
     public boolean checkPermission(final MinecraftServer server, final ICommandSender sender)
