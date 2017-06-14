@@ -64,16 +64,20 @@ public class ItemBuildTool extends AbstractItemMinecolonies
     }
 
     @Override
-    public ItemStack getContainerItem(ItemStack itemStack)
+    public ItemStack getContainerItem(final ItemStack itemStack)
     {
         //we want to return the build tool when use for crafting
+        if (ItemStackUtils.isEmpty(stack))
+        {
+            return ItemStackUtils.EMPTY;
+        }
         return itemStack.copy();
     }
 
     @Override
-    public boolean hasContainerItem(ItemStack stack)
+    public boolean hasContainerItem(final ItemStack stack)
     {
         //we want to return the build tool when use for crafting
-        return true;
+        return !ItemStackUtils.isEmpty(stack);
     }
 }
