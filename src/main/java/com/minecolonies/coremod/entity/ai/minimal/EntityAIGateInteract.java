@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
+import com.minecolonies.api.util.CompatibilityUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFenceGate;
 import net.minecraft.block.material.Material;
@@ -138,11 +139,11 @@ public class EntityAIGateInteract extends EntityAIBase
      */
     private BlockFenceGate getBlockFence(@NotNull final BlockPos pos)
     {
-        final IBlockState blockState = this.theEntity.worldObj.getBlockState(pos);
+        final IBlockState blockState = CompatibilityUtils.getWorld(this.theEntity).getBlockState(pos);
         Block block = blockState.getBlock();
         if (!(block instanceof BlockFenceGate && blockState.getMaterial() == Material.WOOD))
         {
-            block = this.theEntity.worldObj.getBlockState(this.theEntity.getPosition()).getBlock();
+            block = CompatibilityUtils.getWorld(this.theEntity).getBlockState(this.theEntity.getPosition()).getBlock();
             gatePosition = this.theEntity.getPosition();
         }
         return block instanceof BlockFenceGate && blockState.getMaterial() == Material.WOOD ? (BlockFenceGate) block : null;
