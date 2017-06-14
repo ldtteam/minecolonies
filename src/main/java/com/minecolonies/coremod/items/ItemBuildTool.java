@@ -62,4 +62,18 @@ public class ItemBuildTool extends AbstractItemMinecolonies
 
         return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
     }
+
+    @Override
+    public ItemStack getContainerItem(ItemStack itemStack)
+    {
+        //we want to return the build tool when use for crafting
+        return itemStack.copy();
+    }
+
+    @Override
+    public boolean hasContainerItem(ItemStack stack)
+    {
+        //we want to return the build tool when use for crafting
+        return true;
+    }
 }
