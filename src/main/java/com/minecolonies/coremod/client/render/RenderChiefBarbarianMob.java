@@ -27,7 +27,7 @@ public class RenderChiefBarbarianMob extends RenderLiving<EntityChiefBarbarian>
     {
         // We use the vanilla zombie model here and we simply
         // re-texture it. Of course you can make your own model
-        super(renderManagerIn, new ModelBiped(), 0.5F);
+        super(renderManagerIn, new ModelBiped(), SHADOW_SIZE);
         this.addLayer(new LayerHeldItem(this));
         this.addLayer(new LayerBipedArmor(this));
     }

@@ -24,7 +24,7 @@ public class RenderBarbarianMob extends RenderLiving<EntityBarbarian>
 
     public RenderBarbarianMob(final RenderManager renderManagerIn)
     {
-        super(renderManagerIn, new ModelBiped(), 0.5F);
+        super(renderManagerIn, new ModelBiped(), SHADOW_SIZE);
         this.addLayer(new LayerHeldItem(this));
     }
 

@@ -23,7 +23,7 @@ import java.util.stream.IntStream;
 /**
  * Utils for The Barbarian Raid Event
  */
-public class BarbarianUtils
+public final class BarbarianUtils
 {
 
     /**

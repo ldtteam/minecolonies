@@ -74,7 +74,7 @@ public class EntityAIBarbarianAttackMelee extends EntityAIBase
             }
 
 
-            if (damageToBeDealt == 0D)
+            if (damageToBeDealt == 0)
             {
                 damageToBeDealt = DEFAULT_DAMAGE;
             }
