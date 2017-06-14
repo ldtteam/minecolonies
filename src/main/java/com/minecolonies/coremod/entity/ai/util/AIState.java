@@ -186,16 +186,6 @@ public enum AIState
     FARMER_HARVEST,
 
     /**
-     * Work field.
-     */
-    FARMER_WORK,
-
-    /**
-     * Initialize field.
-     */
-    FARMER_INITIALIZE,
-
-    /**
      * Looks at the field.
      */
     FARMER_OBSERVE,
