@@ -153,7 +153,6 @@ public final class ItemStackUtils
             //empty hand is best on blocks who don't care (0 better 1)
             return stack == null ? 0 : 1;
         }
-        if (stack == null || stack == ItemStack.EMPTY)
         {
             return -1;
         }
