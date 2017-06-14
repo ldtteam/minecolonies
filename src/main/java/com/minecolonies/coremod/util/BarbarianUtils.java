@@ -29,8 +29,8 @@ public class BarbarianUtils
     /* default */ public static ResourceLocation archer    = EntityList.getKey(EntityArcherBarbarian.class);
     /* default */ public static ResourceLocation chief     = EntityList.getKey(EntityChiefBarbarian.class);
 
-    final static int LEVEL_AT_WHICH_TO_NOT_TRIGGER_RAID = 1;
-    final static int MAX_SIZE                           = Configurations.maxBarbarianHordeSize;
+    /* default */ private final static int LEVEL_AT_WHICH_TO_NOT_TRIGGER_RAID = 1;
+    /* default */ private final static int MAX_SIZE                           = Configurations.maxBarbarianHordeSize;
 
     public static void doRaid(final World world, final int level, final Colony colony)
     {
