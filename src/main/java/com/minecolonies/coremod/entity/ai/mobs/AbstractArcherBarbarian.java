@@ -165,9 +165,9 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
      * when entity is reloaded from nbt. Mainly used for initializing attributes and inventory
      */
     @Nullable
-    public IEntityLivingData onInitialSpawn(final DifficultyInstance difficulty, @Nullable IEntityLivingData living)
+    public IEntityLivingData onInitialSpawn(final DifficultyInstance difficulty, @Nullable final IEntityLivingData living)
     {
-        IEntityLivingData livingdata = super.onInitialSpawn(difficulty, living);
+        final IEntityLivingData livingdata = super.onInitialSpawn(difficulty, living);
         this.setEquipmentBasedOnDifficulty(difficulty);
         this.setEnchantmentBasedOnDifficulty(difficulty);
         this.setCombatTask();
@@ -220,7 +220,7 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
     /**
      * Attack the specified entity using a ranged attack.
      */
-    public void attackEntityWithRangedAttack(EntityLivingBase target, final float distanceFactor)
+    public void attackEntityWithRangedAttack(final EntityLivingBase target, final float distanceFactor)
     {
         final EntityArrow entityarrow = this.getArrow(distanceFactor);
         final double d0 = target.posX - this.posX;

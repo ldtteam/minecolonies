@@ -29,23 +29,21 @@ public class BarbarianUtils
     /* default */ public static ResourceLocation archer    = EntityList.getKey(EntityArcherBarbarian.class);
     /* default */ public static ResourceLocation chief     = EntityList.getKey(EntityChiefBarbarian.class);
 
-    public static void doRaid(World world, final int level, Colony colony)
+    final static int LEVEL_AT_WHICH_TO_NOT_TRIGGER_RAID = 1;
+    final static int MAX_SIZE                           = Configurations.maxBarbarianHordeSize;
+
+    public void doRaid(final World world, final int level, final Colony colony)
     {
         eventRaid(world, level, colony);
     }
 
     /**
      * Commences a Raid event in a specific colony, with a specific RaidLevel
-     *
-     * @param raidingWorld
-     * @param level
-     * @param colony
      */
 
-    private static void eventRaid(World raidingWorld, final int level, Colony colony)
+    private static void eventRaid(final World raidingWorld, final int level, final Colony colony)
     {
-        int levelAtWhichToNotTriggerRaid = 1;
-        if (level == levelAtWhichToNotTriggerRaid)
+        if (level == LEVEL_AT_WHICH_TO_NOT_TRIGGER_RAID)
         {
             return;
         }
@@ -56,37 +54,45 @@ public class BarbarianUtils
 
         int hordeTotal = numberOfArcherBarbarians + numberOfBarbarians + numberOfChiefBarbarians;
 
+        if (hordeTotal > 40 && MAX_SIZE == 40 && hordeTotal > MAX_SIZE)
+        {
+            numberOfBarbarians = 22;
+            numberOfArcherBarbarians = 16;
+            numberOfChiefBarbarians = 2;
+        }
+
         if (hordeTotal > Configurations.maxBarbarianHordeSize)
         {
-            final int maxSize = Configurations.maxBarbarianHordeSize;
-            if (hordeTotal > 40 && maxSize == 40)
-            {
-                numberOfBarbarians = 22;
-                numberOfArcherBarbarians = 16;
-                numberOfChiefBarbarians = 2;
-            }
 
-            numberOfBarbarians = hordeTotal - maxSize;
+            numberOfBarbarians = hordeTotal - MAX_SIZE;
 
             //For error handling and correct hordeTotal
             if (numberOfBarbarians < 0)
             {
                 numberOfBarbarians = 0;
             }
+
+            //Re-asses hordeTotal to see if it is now below or at MAX_SIZE
             hordeTotal = numberOfArcherBarbarians + numberOfBarbarians + numberOfChiefBarbarians;
-            if (hordeTotal > maxSize)
+
+            if (hordeTotal > MAX_SIZE)
             {
-                numberOfArcherBarbarians = hordeTotal - maxSize;
+
+                numberOfArcherBarbarians = hordeTotal - MAX_SIZE;
 
                 //For error handling and correct hordeTotal
                 if (numberOfArcherBarbarians < 0)
                 {
                     numberOfArcherBarbarians = 0;
                 }
+
+                //Re-asses hordeTotal to see if it is now below or at MAX_SIZE
                 hordeTotal = numberOfArcherBarbarians + numberOfBarbarians + numberOfChiefBarbarians;
-                if (hordeTotal > maxSize)
+
+                if (hordeTotal > MAX_SIZE)
                 {
-                    numberOfChiefBarbarians = hordeTotal - maxSize;
+
+                    numberOfChiefBarbarians = hordeTotal - MAX_SIZE;
 
                     //For error handling and correct hordeTotal
                     if (numberOfChiefBarbarians < 0)
@@ -97,15 +103,16 @@ public class BarbarianUtils
             }
         }
 
-        int x = colony.getCenter().getX();
-        int y = colony.getCenter().getY();
-        int z = colony.getCenter().getZ();
-
         //Make sure world isn't null
         if (raidingWorld == null)
         {
             return;
         }
+
+        int x = colony.getCenter().getX();
+        int y = colony.getCenter().getY();
+        int z = colony.getCenter().getZ();
+
         switch (raidingWorld.rand.nextInt(7))
         {
             case 0:
@@ -141,7 +148,8 @@ public class BarbarianUtils
                 break;
         }
 
-        y = raidingWorld.getTopSolidOrLiquidBlock(new BlockPos.MutableBlockPos(x, y, z)).getY(); //Make sure mob spawns on surface.
+        //Make sure mob spawns on surface.
+        y = raidingWorld.getTopSolidOrLiquidBlock(new BlockPos.MutableBlockPos(x, y, z)).getY();
 
         spawn(BarbarianUtils.barbarian, numberOfBarbarians, x, y, z, raidingWorld);
         spawn(BarbarianUtils.archer, numberOfArcherBarbarians, x, y, z, raidingWorld);
@@ -150,16 +158,9 @@ public class BarbarianUtils
 
     /**
      * Spawns EntityToSPawn at the X, Y, Z
-     *
-     * @param entityToSpawn
-     * @param numberOfSpawns
-     * @param x
-     * @param y
-     * @param z
-     * @param world
      */
 
-    public static void spawn(final ResourceLocation entityToSpawn, int numberOfSpawns, int x, int y, int z, final World world)
+    public static void spawn(final ResourceLocation entityToSpawn,final int numberOfSpawns,final int x,final int y,final int z, final World world)
     {
         IntStream.range(0, numberOfSpawns).forEach($ ->
         {

@@ -21,7 +21,7 @@ public class EntityAIAttackRangedBowBarbarian extends EntityAIBase
     private boolean strafingBackwards;
     private int strafingTime = -1;
 
-    public EntityAIAttackRangedBowBarbarian(final AbstractArcherBarbarian archer, double speedAmplifier, int delay, float maxDistance)
+    public EntityAIAttackRangedBowBarbarian(final AbstractArcherBarbarian archer,final double speedAmplifier,final int delay,final float maxDistance)
     {
         super();
         this.entity = archer;
@@ -120,11 +120,11 @@ public class EntityAIAttackRangedBowBarbarian extends EntityAIBase
                 this.strafingTime = -1;
             }
 
-            int strafeTime = 20;
+            final int strafeTime = 20;
 
             if (this.strafingTime >= strafeTime)
             {
-                double maxRNG = 0.3D;
+                final double maxRNG = 0.3D;
 
                 if ((double) this.entity.getRNG().nextFloat() < maxRNG)
                 {
@@ -158,6 +158,8 @@ public class EntityAIAttackRangedBowBarbarian extends EntityAIBase
                 this.entity.getLookHelper().setLookPositionWithEntity(entitylivingbase, 30.0F, 30.0F);
             }
 
+            final int alternateAttackTime = --this.attackTime;
+
             if (this.entity.isHandActive())
             {
                 if (!flag && this.seeTime < -60)
@@ -168,7 +170,7 @@ public class EntityAIAttackRangedBowBarbarian extends EntityAIBase
                 {
                     final int i = this.entity.getItemInUseMaxCount();
 
-                    int maxCount = 20;
+                    final int maxCount = 20;
 
                     if (i >= maxCount)
                     {
@@ -178,7 +180,7 @@ public class EntityAIAttackRangedBowBarbarian extends EntityAIBase
                     }
                 }
             }
-            else if (--this.attackTime <= 0 && this.seeTime >= -60)
+            else if (alternateAttackTime <= 0 && this.seeTime >= -60)
             {
                 this.entity.setActiveHand(EnumHand.MAIN_HAND);
             }
