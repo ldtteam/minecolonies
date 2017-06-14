@@ -16,15 +16,23 @@ import net.minecraft.util.EnumHand;
 public class EntityAIBarbarianAttackMelee extends EntityAIBase
 {
 
-    final private EntityCreature   entity;
+    private final EntityCreature   entity;
     private       EntityLivingBase target;
-    private int LastAttack = 0;
+    private int lastAttack = 0;
+    /* default */ private static final int    CYCLES_TO_WAIT          = 16;
+    /* default */ private static final double PITCH_MULTIPLIER        = 0.4;
+    /* default */ private static final double PITCH_ADDER             = 0.8;
+    /* default */ private static final double DEFAULT_DAMAGE          = 3.0;
+    /* default */ private static final double HALF_ROTATION           = 180;
+    /* default */ private static final double MIN_DISTANCE_FOR_ATTACK = 2.5;
+    /* default */ private static final double ATTACK_SPEED            = 1.3;
+    /* default */ private static final int    MUTEX_BITS              = 3;
 
     public EntityAIBarbarianAttackMelee(final EntityCreature creatureIn)
     {
         super();
         this.entity = creatureIn;
-        this.setMutexBits(3);
+        this.setMutexBits(MUTEX_BITS);
     }
 
     @Override
@@ -66,33 +74,33 @@ public class EntityAIBarbarianAttackMelee extends EntityAIBase
             }
 
 
-            if (damageToBeDealt == 0)
+            if (damageToBeDealt == 0D)
             {
-                damageToBeDealt = 3;
+                damageToBeDealt = DEFAULT_DAMAGE;
             }
 
-            if (entity.getDistanceToEntity(target) <= 2.5 && LastAttack <= 0)
+            if (entity.getDistanceToEntity(target) <= MIN_DISTANCE_FOR_ATTACK && lastAttack <= 0)
             {
                 target.attackEntityFrom(new DamageSource(entity.getName()), (float) damageToBeDealt);
                 entity.swingArm(EnumHand.MAIN_HAND);
                 entity.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, (float) 1.0D, (float) getRandomPitch());
                 target.setRevengeTarget(entity);
-                LastAttack = 16;
+                lastAttack = CYCLES_TO_WAIT;
             }
-            if (LastAttack > 0)
+            if (lastAttack > 0)
             {
-                LastAttack -= 1;
+                lastAttack -= 1;
             }
 
-            entity.faceEntity(target, (float) 180D, (float) 180D);
-            entity.getLookHelper().setLookPositionWithEntity(target, (float) 180D, (float) 180D);
+            entity.faceEntity(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
+            entity.getLookHelper().setLookPositionWithEntity(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
 
-            entity.getNavigator().tryMoveToEntityLiving(target, 1.3D);
+            entity.getNavigator().tryMoveToEntityLiving(target, ATTACK_SPEED);
         }
     }
 
     private double getRandomPitch()
     {
-        return 1.0D / (entity.getRNG().nextDouble() * 0.4D + 0.8D);
+        return 1.0D / (entity.getRNG().nextDouble() * PITCH_MULTIPLIER + PITCH_ADDER);
     }
 }

@@ -23,6 +23,9 @@ public class EntityBarbarian extends EntityMob
 {
     private final Colony colony = ColonyManager.getClosestColony(world, this.getPosition());
 
+    /* default */ private static final int BARBARIAN_BASE_HEALTH = 25;
+    /* default */ private static final double BARBARIAN_FOLLOW_RANGE = 35;
+
     public static final ResourceLocation LOOT = new ResourceLocation(Constants.MOD_ID, "EntityBarbarianDrops");
 
     public EntityBarbarian(final World worldIn)
@@ -34,7 +37,7 @@ public class EntityBarbarian extends EntityMob
     protected void applyEntityAttributes()
     {
         super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(35.0D);
+        this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(BARBARIAN_FOLLOW_RANGE);
         this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.2D);
         this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(2.0D);
         this.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(2.0D);
@@ -77,9 +80,9 @@ public class EntityBarbarian extends EntityMob
         if (colony != null)
         {
             final int raidLevel = (int) (colony.getRaidLevel() * (Configurations.barbarianHordeDifficulty * 0.2));
-            return 25 + raidLevel;
+            return BARBARIAN_BASE_HEALTH + raidLevel;
         }
-        return 25.0D;
+        return BARBARIAN_BASE_HEALTH;
     }
 
     private void applyEntityAI()

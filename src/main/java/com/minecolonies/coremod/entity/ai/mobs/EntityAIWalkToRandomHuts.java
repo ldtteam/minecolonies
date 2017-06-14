@@ -38,7 +38,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
     /**
      * The navigator for this entity.
      */
-    final private PathNavigate newNavigator;
+    private final PathNavigate newNavigator;
 
     private Field navigatorField;
 

@@ -22,6 +22,14 @@ import java.util.stream.IntStream;
  */
 public class BarbarianUtils
 {
+
+    /**
+     * Private constructor to hide the implicit public one.
+     */
+    private BarbarianUtils()
+    {
+    }
+
     /**
      * ResourceLocations for barbarians
      */
@@ -29,8 +37,14 @@ public class BarbarianUtils
     /* default */ public static ResourceLocation archer    = EntityList.getKey(EntityArcherBarbarian.class);
     /* default */ public static ResourceLocation chief     = EntityList.getKey(EntityChiefBarbarian.class);
 
-    /* default */ private final static int LEVEL_AT_WHICH_TO_NOT_TRIGGER_RAID = 1;
-    /* default */ private final static int MAX_SIZE                           = Configurations.maxBarbarianHordeSize;
+    /* default */ private static final int LEVEL_AT_WHICH_TO_NOT_TRIGGER_RAID = 1;
+    /* default */ private static final int MAX_SIZE                           = Configurations.maxBarbarianHordeSize;
+    /* default */ private static final int NUMBER_OF_BLOCKS_OUTSIDE_RADIUS    = 20;
+    /* default */ private static final double ARCHER_BARBARIANS_MULTIPLIER = 0.5;
+    /* default */ private static final double CHIEF_BARBARIANS_MULTIPLIER = 0.1;
+    /* default */ private static final int NUMBER_OF_POSSIBLE_CASES = 7;
+    /* default */ private static final int PREFERED_MAX_HORDE_SIZE = 40;
+    /* default */ private static final float WHOLE_CIRCLE = 360.0F;
 
     public static void doRaid(final World world, final int level, final Colony colony)
     {
@@ -49,12 +63,12 @@ public class BarbarianUtils
         }
 
         int numberOfBarbarians = level;
-        int numberOfArcherBarbarians = (int) (0.5 * level);
-        int numberOfChiefBarbarians = (int) (0.1 * level);
+        int numberOfArcherBarbarians = (int) (ARCHER_BARBARIANS_MULTIPLIER * level);
+        int numberOfChiefBarbarians = (int) (CHIEF_BARBARIANS_MULTIPLIER * level);
 
         int hordeTotal = numberOfArcherBarbarians + numberOfBarbarians + numberOfChiefBarbarians;
 
-        if (hordeTotal > 40 && MAX_SIZE == 40 && hordeTotal > MAX_SIZE)
+        if (hordeTotal > PREFERED_MAX_HORDE_SIZE && MAX_SIZE == PREFERED_MAX_HORDE_SIZE && hordeTotal > MAX_SIZE)
         {
             numberOfBarbarians = 22;
             numberOfArcherBarbarians = 16;
@@ -113,38 +127,38 @@ public class BarbarianUtils
         int y = colony.getCenter().getY();
         int z = colony.getCenter().getZ();
 
-        switch (raidingWorld.rand.nextInt(7))
+        switch (raidingWorld.rand.nextInt(NUMBER_OF_POSSIBLE_CASES))
         {
             case 0:
-                x += Configurations.workingRangeTownHall + 20;
+                x += Configurations.workingRangeTownHall + NUMBER_OF_BLOCKS_OUTSIDE_RADIUS;
                 break;
             case 1:
-                x -= Configurations.workingRangeTownHall + 20;
+                x -= Configurations.workingRangeTownHall + NUMBER_OF_BLOCKS_OUTSIDE_RADIUS;
                 break;
             case 2:
-                z += Configurations.workingRangeTownHall + 20;
+                z += Configurations.workingRangeTownHall + NUMBER_OF_BLOCKS_OUTSIDE_RADIUS;
                 break;
             case 3:
-                z -= Configurations.workingRangeTownHall + 20;
+                z -= Configurations.workingRangeTownHall + NUMBER_OF_BLOCKS_OUTSIDE_RADIUS;
                 break;
             case 4:
-                x += Configurations.workingRangeTownHall + 20;
-                z += Configurations.workingRangeTownHall + 20;
+                x += Configurations.workingRangeTownHall + NUMBER_OF_BLOCKS_OUTSIDE_RADIUS;
+                z += Configurations.workingRangeTownHall + NUMBER_OF_BLOCKS_OUTSIDE_RADIUS;
                 break;
             case 5:
-                x += Configurations.workingRangeTownHall + 20;
-                z -= Configurations.workingRangeTownHall + 20;
+                x += Configurations.workingRangeTownHall + NUMBER_OF_BLOCKS_OUTSIDE_RADIUS;
+                z -= Configurations.workingRangeTownHall + NUMBER_OF_BLOCKS_OUTSIDE_RADIUS;
                 break;
             case 6:
-                x -= Configurations.workingRangeTownHall + 20;
-                z += Configurations.workingRangeTownHall + 20;
+                x -= Configurations.workingRangeTownHall + NUMBER_OF_BLOCKS_OUTSIDE_RADIUS;
+                z += Configurations.workingRangeTownHall + NUMBER_OF_BLOCKS_OUTSIDE_RADIUS;
                 break;
             case 7:
-                x -= Configurations.workingRangeTownHall + 20;
-                z -= Configurations.workingRangeTownHall + 20;
+                x -= Configurations.workingRangeTownHall + NUMBER_OF_BLOCKS_OUTSIDE_RADIUS;
+                z -= Configurations.workingRangeTownHall + NUMBER_OF_BLOCKS_OUTSIDE_RADIUS;
                 break;
             default:
-                x += Configurations.workingRangeTownHall + 20;
+                x += Configurations.workingRangeTownHall + NUMBER_OF_BLOCKS_OUTSIDE_RADIUS;
                 break;
         }
 
@@ -160,9 +174,9 @@ public class BarbarianUtils
      * Spawns EntityToSPawn at the X, Y, Z
      */
 
-    public static void spawn(final ResourceLocation entityToSpawn,final int numberOfSpawns,final int x,final int y,final int z, final World world)
+    public static void spawn(final ResourceLocation entityToSpawn, final int numberOfSpawns, final int x, final int y, final int z, final World world)
     {
-        IntStream.range(0, numberOfSpawns).forEach($ ->
+        IntStream.range(0, numberOfSpawns).forEach(theInteger ->
         {
             if (entityToSpawn != null && world != null)
             {
@@ -184,7 +198,7 @@ public class BarbarianUtils
                         entity.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(Items.CHAINMAIL_LEGGINGS));
                         entity.setItemStackToSlot(EntityEquipmentSlot.FEET, new ItemStack(Items.CHAINMAIL_BOOTS));
                     }
-                    entity.setLocationAndAngles(x, y, z, MathHelper.wrapDegrees(world.rand.nextFloat() * 360.0F), 0.0F);
+                    entity.setLocationAndAngles(x, y, z, MathHelper.wrapDegrees(world.rand.nextFloat() * WHOLE_CIRCLE), 0.0F);
                     world.spawnEntity(entity);
                 }
             }

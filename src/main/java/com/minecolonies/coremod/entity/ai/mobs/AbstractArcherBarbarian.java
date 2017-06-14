@@ -36,10 +36,24 @@ import java.util.Calendar;
  */
 public abstract class AbstractArcherBarbarian extends EntityMob implements IRangedAttackMob
 {
-    /* default */ final private Colony colony = ColonyManager.getClosestColony(world, this.getPosition());
-    private static final DataParameter<Boolean>           SWINGING_ARMS     = EntityDataManager.<Boolean>createKey(AbstractArcherBarbarian.class, DataSerializers.BOOLEAN);
-    private final        EntityAIAttackRangedBowBarbarian aiArrowAttack     = new EntityAIAttackRangedBowBarbarian(this, 1.0D, 20, 15.0F);
-    private final        EntityAIAttackMelee              aiAttackOnCollide = new EntityAIAttackMelee(this, 1.2D, false)
+    /* default */ private final        Colony                           colony                = ColonyManager.getClosestColony(world, this.getPosition());
+    /* default */ private static final DataParameter<Boolean>           SWINGING_ARMS         =
+      EntityDataManager.<Boolean>createKey(AbstractArcherBarbarian.class, DataSerializers.BOOLEAN);
+    /* default */ private final        EntityAIAttackRangedBowBarbarian aiArrowAttack         = new EntityAIAttackRangedBowBarbarian(this, 1.0D, 20, 15.0F);
+    /* default */ private static final float                            ENTITY_WIDTH          = 0.6F;
+    /* default */ private static final float                            ENTITY_HEIGHT         = 1.99F;
+    /* default */ private static final int                              BARBARIAN_BASE_HEALTH = 25;
+    /* default */ private static final int                              DIFFICULTY_SUBTRACTER = 14;
+    /* default */ private static final int                              DIFFICULTY_MULTIPLIER = 4;
+    /* default */ private static final int                              BOW_DAMAGE            = 20;
+    /* default */ private static final int                              BOW_DAMAGE_HARD       = 40;
+    /* default */ private static final double                           GRAVITY_MULTIPLIER    = 0.20000000298023224D;
+    /* default */ private static final float                            ARROW_VELOCITY        = 1.6F;
+    /* default */ private static final float                            SOUND_MULTIPLIER      = 0.4F;
+    /* default */ private static final float                            SOUND_ADDER           = 0.8F;
+    /* default */ private static final float                            ENTITY_EYE_HEIGHT     = 1.74F;
+
+    private final EntityAIAttackMelee aiAttackOnCollide = new EntityAIAttackMelee(this, 1.2D, false)
     {
         /**
          * Resets the task
@@ -63,7 +77,7 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
     public AbstractArcherBarbarian(final World worldIn)
     {
         super(worldIn);
-        this.setSize(0.6F, 1.99F);
+        this.setSize(ENTITY_WIDTH, ENTITY_HEIGHT);
         this.setCombatTask();
     }
 
@@ -96,9 +110,9 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
         if (colony != null)
         {
             final int raidLevel = (int) (colony.getRaidLevel() * 1.5);
-            return 25 + raidLevel;
+            return BARBARIAN_BASE_HEALTH + raidLevel;
         }
-        return 25.0D;
+        return BARBARIAN_BASE_HEALTH;
     }
 
     protected void entityInit()
@@ -200,11 +214,11 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
 
             if (itemstack.getItem() == Items.BOW)
             {
-                int i = 20;
+                int i = BOW_DAMAGE;
 
                 if (this.world.getDifficulty() != EnumDifficulty.HARD)
                 {
-                    i = 40;
+                    i = BOW_DAMAGE_HARD;
                 }
 
                 this.aiArrowAttack.setAttackCooldown(i);
@@ -227,8 +241,12 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
         final double d1 = target.getEntityBoundingBox().minY + (double) (target.height / 3.0F) - entityarrow.posY;
         final double d2 = target.posZ - this.posZ;
         final double d3 = (double) MathHelper.sqrt(d0 * d0 + d2 * d2);
-        entityarrow.setThrowableHeading(d0, d1 + d3 * 0.20000000298023224D, d2, 1.6F, (float) (14 - this.world.getDifficulty().getDifficultyId() * 4));
-        this.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.getRNG().nextFloat() * 0.4F + 0.8F));
+        entityarrow.setThrowableHeading(d0,
+          d1 + d3 * GRAVITY_MULTIPLIER,
+          d2,
+          ARROW_VELOCITY,
+          (float) (DIFFICULTY_SUBTRACTER - this.world.getDifficulty().getDifficultyId() * DIFFICULTY_MULTIPLIER));
+        this.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.getRNG().nextFloat() * SOUND_MULTIPLIER + SOUND_ADDER));
         this.world.spawnEntity(entityarrow);
     }
 
@@ -260,7 +278,7 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
 
     public float getEyeHeight()
     {
-        return 1.74F;
+        return ENTITY_EYE_HEIGHT;
     }
 
     /**

@@ -17,7 +17,9 @@ import javax.annotation.Nonnull;
  */
 public class RenderArcherBarbarianMob extends RenderLiving<EntityArcherBarbarian>
 {
-    final private ResourceLocation mobTexture = new ResourceLocation("minecolonies:textures/entity/barbarian1.png");
+    /* default */ private final ResourceLocation mobTexture = new ResourceLocation("minecolonies:textures/entity/barbarian1.png");
+
+    /* default */ private static final float SHADOW_SIZE = 0.5F;
 
     public static final RenderArcherBarbarianMob.Factory FACTORY = new RenderArcherBarbarianMob.Factory();
 
@@ -25,7 +27,7 @@ public class RenderArcherBarbarianMob extends RenderLiving<EntityArcherBarbarian
     {
         // We use the vanilla zombie model here and we simply
         // re-texture it. Of course you can make your own model
-        super(renderManagerIn, new ModelBarbarian(), 0.5F);
+        super(renderManagerIn, new ModelBarbarian(), SHADOW_SIZE);
         this.addLayer(new LayerHeldItem(this));
         this.addLayer(new LayerBipedArmor(this));
         // 0.0F, false
