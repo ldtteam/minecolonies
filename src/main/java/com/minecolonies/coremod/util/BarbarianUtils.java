@@ -32,7 +32,7 @@ public class BarbarianUtils
     final static int LEVEL_AT_WHICH_TO_NOT_TRIGGER_RAID = 1;
     final static int MAX_SIZE                           = Configurations.maxBarbarianHordeSize;
 
-    public void doRaid(final World world, final int level, final Colony colony)
+    public static void doRaid(final World world, final int level, final Colony colony)
     {
         eventRaid(world, level, colony);
     }
