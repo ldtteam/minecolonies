@@ -1079,7 +1079,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         for (final @Nullable ItemStack tempStack : list)
         {
-            if (InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), tempStack::isItemEqual) < tempStack.stackSize
+            if (InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), tempStack::isItemEqual) <
+                    ItemStackUtils.getSize(tempStack)
                     && !isInHut(tempStack) && shouldRequest)
             {
                 chatSpamFilter.requestTextStringWithoutSpam(tempStack.getDisplayName());
