@@ -209,8 +209,7 @@ public final class ConfigurationHandler
                                       final Configuration config, final String category, final String key,
                                       final int defaultValue, final int min, final int max, final String comment)
     {
-        return MathHelper.clamp(config.get(category, key, defaultValue, comment, min, max).getInt(), min, max);
-        //String.format(FORMAT_RANGE, comment, min, max, defaultValue)
+        return MathHelper.clamp(config.get(category, key, defaultValue, String.format(FORMAT_RANGE, comment, min, max, defaultValue), min, max).getInt(), min, max);
     }
 
     public static Configuration getConfiguration()

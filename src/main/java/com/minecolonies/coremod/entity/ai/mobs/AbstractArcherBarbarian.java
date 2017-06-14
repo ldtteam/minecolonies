@@ -32,14 +32,14 @@ import javax.annotation.Nullable;
 import java.util.Calendar;
 
 /**
- * Created by Asherslab on 5/6/17.
+ * Abstract Class implementing the Archer Barbarian
  */
 public abstract class AbstractArcherBarbarian extends EntityMob implements IRangedAttackMob
 {
     /* default */ final private Colony colony = ColonyManager.getClosestColony(world, this.getPosition());
-    private static final DataParameter<Boolean> SWINGING_ARMS = EntityDataManager.<Boolean>createKey(AbstractArcherBarbarian.class, DataSerializers.BOOLEAN);
-    private final EntityAIAttackRangedBowBarbarian aiArrowAttack = new EntityAIAttackRangedBowBarbarian(this, 1.0D, 20, 15.0F);
-    private final EntityAIAttackMelee aiAttackOnCollide = new EntityAIAttackMelee(this, 1.2D, false)
+    private static final DataParameter<Boolean>           SWINGING_ARMS     = EntityDataManager.<Boolean>createKey(AbstractArcherBarbarian.class, DataSerializers.BOOLEAN);
+    private final        EntityAIAttackRangedBowBarbarian aiArrowAttack     = new EntityAIAttackRangedBowBarbarian(this, 1.0D, 20, 15.0F);
+    private final        EntityAIAttackMelee              aiAttackOnCollide = new EntityAIAttackMelee(this, 1.2D, false)
     {
         /**
          * Resets the task
@@ -49,6 +49,7 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
             super.resetTask();
             AbstractArcherBarbarian.this.setSwingingArms(false);
         }
+
         /**
          * Execute a one shot task or start executing a continuous task
          */
@@ -94,8 +95,8 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
     {
         if (colony != null)
         {
-            final int raidLevel = (int) (colony.getRaidLevel()*1.5);
-            return 25+raidLevel;
+            final int raidLevel = (int) (colony.getRaidLevel() * 1.5);
+            return 25 + raidLevel;
         }
         return 25.0D;
     }
@@ -123,7 +124,7 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
 
         if (this.getRidingEntity() instanceof EntityCreature)
         {
-            final EntityCreature entitycreature = (EntityCreature)this.getRidingEntity();
+            final EntityCreature entitycreature = (EntityCreature) this.getRidingEntity();
             this.renderYawOffset = entitycreature.renderYawOffset;
         }
     }
@@ -137,7 +138,7 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
 
         if (cause.getSourceOfDamage() instanceof EntityArrow && cause.getEntity() instanceof EntityPlayer)
         {
-            final EntityPlayer entityplayer = (EntityPlayer)cause.getEntity();
+            final EntityPlayer entityplayer = (EntityPlayer) cause.getEntity();
             final double d0 = entityplayer.posX - this.posX;
             final double d1 = entityplayer.posZ - this.posZ;
 
@@ -219,14 +220,14 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
     /**
      * Attack the specified entity using a ranged attack.
      */
-    public void attackEntityWithRangedAttack(EntityLivingBase target,final float distanceFactor)
+    public void attackEntityWithRangedAttack(EntityLivingBase target, final float distanceFactor)
     {
         final EntityArrow entityarrow = this.getArrow(distanceFactor);
         final double d0 = target.posX - this.posX;
-        final double d1 = target.getEntityBoundingBox().minY + (double)(target.height / 3.0F) - entityarrow.posY;
+        final double d1 = target.getEntityBoundingBox().minY + (double) (target.height / 3.0F) - entityarrow.posY;
         final double d2 = target.posZ - this.posZ;
         final double d3 = (double) MathHelper.sqrt(d0 * d0 + d2 * d2);
-        entityarrow.setThrowableHeading(d0, d1 + d3 * 0.20000000298023224D, d2, 1.6F, (float)(14 - this.world.getDifficulty().getDifficultyId() * 4));
+        entityarrow.setThrowableHeading(d0, d1 + d3 * 0.20000000298023224D, d2, 1.6F, (float) (14 - this.world.getDifficulty().getDifficultyId() * 4));
         this.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.getRNG().nextFloat() * 0.4F + 0.8F));
         this.world.spawnEntity(entityarrow);
     }
@@ -247,7 +248,7 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
         this.setCombatTask();
     }
 
-    public void setItemStackToSlot(final EntityEquipmentSlot slotIn,final ItemStack stack)
+    public void setItemStackToSlot(final EntityEquipmentSlot slotIn, final ItemStack stack)
     {
         super.setItemStackToSlot(slotIn, stack);
 
@@ -273,7 +274,7 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
     @SideOnly(Side.CLIENT)
     public boolean isSwingingArms()
     {
-        return ((Boolean)this.dataManager.get(SWINGING_ARMS)).booleanValue();
+        return ((Boolean) this.dataManager.get(SWINGING_ARMS)).booleanValue();
     }
 
     public void setSwingingArms(final boolean swingingArms)

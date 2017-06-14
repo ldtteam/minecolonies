@@ -15,9 +15,10 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 
 /**
- * Created by Asherslab on 5/6/17.
+ * Implements the Archer Barbarian Entity
  */
-public class EntityArcherBarbarian extends AbstractArcherBarbarian {
+public class EntityArcherBarbarian extends AbstractArcherBarbarian
+{
 
     public static final ResourceLocation LOOT = new ResourceLocation(Constants.MOD_ID, "EntityArcherBarbarianDrops");
 
@@ -42,7 +43,7 @@ public class EntityArcherBarbarian extends AbstractArcherBarbarian {
 
             if (itemstack.getItem() == Items.TIPPED_ARROW && entityarrow instanceof EntityTippedArrow)
             {
-                ((EntityTippedArrow)entityarrow).setPotionEffect(itemstack);
+                ((EntityTippedArrow) entityarrow).setPotionEffect(itemstack);
             }
 
             return entityarrow;
@@ -62,24 +63,28 @@ public class EntityArcherBarbarian extends AbstractArcherBarbarian {
     }
 
     @Override
-    protected SoundEvent getHurtSound() {
+    protected SoundEvent getHurtSound()
+    {
         return BarbarianSounds.barbarianHurt;
     }
 
     @Override
-    protected SoundEvent getDeathSound() {
+    protected SoundEvent getDeathSound()
+    {
         return BarbarianSounds.barbarianDeath;
     }
 
     @Nullable
     @Override
-    protected SoundEvent getAmbientSound() {
+    protected SoundEvent getAmbientSound()
+    {
         return BarbarianSounds.barbarianSay;
     }
 
     @Override
     @Nullable
-    protected ResourceLocation getLootTable() {
+    protected ResourceLocation getLootTable()
+    {
         return LOOT;
     }
 }

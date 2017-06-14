@@ -7,16 +7,16 @@ import net.minecraft.item.ItemBow;
 import net.minecraft.util.EnumHand;
 
 /**
- * Created by Asher on 5/6/17.
+ * Class implementing the AI for the Archer Barbarians ranged attack.
  */
 public class EntityAIAttackRangedBowBarbarian extends EntityAIBase
 {
     private final AbstractArcherBarbarian entity;
-    private final double moveSpeedAmp;
-    private int attackCooldown;
-    private final float maxAttackDistance;
+    private final double                  moveSpeedAmp;
+    private       int                     attackCooldown;
+    private final float                   maxAttackDistance;
     private int attackTime = -1;
-    private int seeTime;
+    private int     seeTime;
     private boolean strafingClockwise;
     private boolean strafingBackwards;
     private int strafingTime = -1;
@@ -109,7 +109,7 @@ public class EntityAIAttackRangedBowBarbarian extends EntityAIBase
                 --this.seeTime;
             }
 
-            if (d0 <= (double)this.maxAttackDistance && this.seeTime >= 20)
+            if (d0 <= (double) this.maxAttackDistance && this.seeTime >= 20)
             {
                 this.entity.getNavigator().clearPathEntity();
                 ++this.strafingTime;
@@ -126,12 +126,12 @@ public class EntityAIAttackRangedBowBarbarian extends EntityAIBase
             {
                 double maxRNG = 0.3D;
 
-                if ((double)this.entity.getRNG().nextFloat() < maxRNG)
+                if ((double) this.entity.getRNG().nextFloat() < maxRNG)
                 {
                     this.strafingClockwise = !this.strafingClockwise;
                 }
 
-                if ((double)this.entity.getRNG().nextFloat() < maxRNG)
+                if ((double) this.entity.getRNG().nextFloat() < maxRNG)
                 {
                     this.strafingBackwards = !this.strafingBackwards;
                 }
@@ -141,11 +141,11 @@ public class EntityAIAttackRangedBowBarbarian extends EntityAIBase
 
             if (this.strafingTime > -1)
             {
-                if (d0 > (double)(this.maxAttackDistance * 0.75F))
+                if (d0 > (double) (this.maxAttackDistance * 0.75F))
                 {
                     this.strafingBackwards = false;
                 }
-                else if (d0 < (double)(this.maxAttackDistance * 0.25F))
+                else if (d0 < (double) (this.maxAttackDistance * 0.25F))
                 {
                     this.strafingBackwards = true;
                 }
