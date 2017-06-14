@@ -196,9 +196,9 @@ public class BuildingFarmer extends AbstractBuildingWorker
     public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
     {
         final Map<ItemStorage, Integer> toKeep = new HashMap<>(keepX);
-        for(final Field field: farmerFields)
+        for (final Field field : farmerFields)
         {
-            if(!ItemStackUtils.isEmpty(field.getSeed()))
+            if (!ItemStackUtils.isEmpty(field.getSeed()))
             {
                 final ItemStack seedStack = field.getSeed();
                 toKeep.put(new ItemStorage(seedStack.getItem(), seedStack.getItemDamage(), 0, false), SEEDS_TO_KEEP);
@@ -272,7 +272,8 @@ public class BuildingFarmer extends AbstractBuildingWorker
     @Override
     public boolean neededForWorker(@Nullable final ItemStack stack)
     {
-        return !ItemStackUtils.isEmpty(stack) &&  ItemStackUtils.hasToolLevel(stack, ToolType.HOE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel());
+        return !ItemStackUtils.isEmpty(stack) && (ItemStackUtils.hasToolLevel(stack, ToolType.HOE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel())
+                || ItemStackUtils.hasToolLevel(stack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()));
     }
 
     //we have to update our field from the colony!
@@ -321,17 +322,17 @@ public class BuildingFarmer extends AbstractBuildingWorker
                 tempField.setTaken(false);
                 tempField.setOwner("");
 
-                if(getColony().getWorld() != null)
+                if (getColony().getWorld() != null)
                 {
                     final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) getColony().getWorld().getTileEntity(field.getID());
 
                     getColony().getWorld()
-                      .notifyBlockUpdate(scarecrowTileEntity.getPos(),
-                        getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
-                        getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
-                        BLOCK_UPDATE_FLAG);
+                            .notifyBlockUpdate(scarecrowTileEntity.getPos(),
+                                    getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
+                                    getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
+                                    BLOCK_UPDATE_FLAG);
                     scarecrowTileEntity.setName(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER,
-                      LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER_NOONE)));
+                            LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER_NOONE)));
                 }
             }
         }
@@ -426,11 +427,11 @@ public class BuildingFarmer extends AbstractBuildingWorker
                 {
                     scarecrow.setName(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER, getWorker().getName()));
                     getColony().getWorld()
-                      .notifyBlockUpdate(scarecrow.getPos(),
-                        getColony().getWorld().getBlockState(scarecrow.getPos()),
-                        getColony().getWorld().getBlockState(scarecrow
-                                                               .getPos()),
-                        BLOCK_UPDATE_FLAG);
+                            .notifyBlockUpdate(scarecrow.getPos(),
+                                    getColony().getWorld().getBlockState(scarecrow.getPos()),
+                                    getColony().getWorld().getBlockState(scarecrow
+                                            .getPos()),
+                                    BLOCK_UPDATE_FLAG);
                     field.setInventoryField(scarecrow.getInventoryField());
                     if (currentField != null && currentField.getID() == field.getID())
                     {
@@ -481,12 +482,12 @@ public class BuildingFarmer extends AbstractBuildingWorker
             field.setOwner("");
             final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) getColony().getWorld().getTileEntity(field.getID());
             getColony().getWorld()
-              .notifyBlockUpdate(scarecrowTileEntity.getPos(),
-                getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
-                getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
-                BLOCK_UPDATE_FLAG);
+                    .notifyBlockUpdate(scarecrowTileEntity.getPos(),
+                            getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
+                            getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
+                            BLOCK_UPDATE_FLAG);
             scarecrowTileEntity.setName(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER,
-              LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER_NOONE)));
+                    LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER_NOONE)));
         }
     }
 
