@@ -935,7 +935,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param tempStorage item to analyze.
      * @return InventoryUtils.EMPTY if should be kept entirely, else itemStack with amount which should be dumped.
      */
-    @NotNull
+    @Nullable
     private static ItemStack handleKeepX(
             @NotNull final Map<ItemStorage, Integer> alreadyKept,
             @NotNull final Map<ItemStorage, Integer> shouldKeep, @NotNull final ItemStorage tempStorage)
@@ -1066,7 +1066,26 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
         itemsNeeded.clear();
         Collections.addAll(itemsNeeded, items);
-        this.waitForRequest = true;
+        this.waitForRequest = false;
+        return true;
+    }
+
+    /**
+     * Try to take a list of items from the hut chest and request if neccessary.
+     * @param list the list of items to retrieve.
+     * @param shouldRequest determines if the request to the player should be made.
+     */
+    public boolean tryToTakeFromListOrRequest(final boolean shouldRequest, final ItemStack...list)
+    {
+        for (final @Nullable ItemStack tempStack : list)
+        {
+            if (InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), tempStack::isItemEqual) < tempStack.stackSize
+                    && !isInHut(tempStack) && shouldRequest)
+            {
+                chatSpamFilter.requestTextStringWithoutSpam(tempStack.getDisplayName());
+                return false;
+            }
+        }
         return true;
     }
 
