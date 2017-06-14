@@ -27,6 +27,7 @@ public class EntityAIBarbarianAttackMelee extends EntityAIBase
     /* default */ private static final double MIN_DISTANCE_FOR_ATTACK = 2.5;
     /* default */ private static final double ATTACK_SPEED            = 1.3;
     /* default */ private static final int    MUTEX_BITS              = 3;
+    /* default */ private static final double IS_ZERO = 0;
 
     public EntityAIBarbarianAttackMelee(final EntityCreature creatureIn)
     {
@@ -74,7 +75,7 @@ public class EntityAIBarbarianAttackMelee extends EntityAIBase
             }
 
 
-            if (damageToBeDealt == 0)
+            if (damageToBeDealt == IS_ZERO)
             {
                 damageToBeDealt = DEFAULT_DAMAGE;
             }

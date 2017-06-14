@@ -35,6 +35,18 @@ import java.util.Map;
 public class CommonProxy implements IProxy
 {
     /**
+     * Constants used for Registering Entities and Eggs
+     */
+    /* default */ private static final int TRACKING_RANGE            = 256;
+    /* default */ private static final int UPDATE_FREQUENCY          = 2;
+    /* default */ private static final int UPDATE_FREQUENCY_FISHHOOK = 5;
+    /**
+     * feel free to change the following if you want different colored spawn eggs
+     */
+    /* default */ private static final int PRIMARY_COLOR             = 5;
+    /* default */ private static final int SECONDARY_COLOR           = 700;
+
+    /**
      * Used to store IExtendedEntityProperties data temporarily between player
      * death and respawn.
      */
@@ -108,16 +120,16 @@ public class CommonProxy implements IProxy
 
         // Half as much tracking range and same update frequency as a player
         // See EntityTracker.addEntityToTracker for more default values
-        EntityRegistry.registerModEntity(locationCitizen, EntityCitizen.class, "Citizen", getNextEntityId(), MineColonies.instance, 256, 2, true);
-        EntityRegistry.registerModEntity(locationFishHook, EntityFishHook.class, "Fishhook", getNextEntityId(), MineColonies.instance, 256, 5, true);
-        EntityRegistry.registerModEntity(locationBarbarian, EntityBarbarian.class, "Barbarian", getNextEntityId(), MineColonies.instance, 256, 2, true);
-        EntityRegistry.registerModEntity(locationChiefBarbarian, EntityChiefBarbarian.class, "ChiefBarbarian", getNextEntityId(), MineColonies.instance, 256, 2, true);
-        EntityRegistry.registerModEntity(locationArcherBarbarian, EntityArcherBarbarian.class, "ArcherBarbarian", getNextEntityId(), MineColonies.instance, 256, 2, true);
+        EntityRegistry.registerModEntity(locationCitizen, EntityCitizen.class, "Citizen", getNextEntityId(), MineColonies.instance, TRACKING_RANGE, UPDATE_FREQUENCY, true);
+        EntityRegistry.registerModEntity(locationFishHook, EntityFishHook.class, "Fishhook", getNextEntityId(), MineColonies.instance, TRACKING_RANGE, UPDATE_FREQUENCY_FISHHOOK, true);
+        EntityRegistry.registerModEntity(locationBarbarian, EntityBarbarian.class, "Barbarian", getNextEntityId(), MineColonies.instance, TRACKING_RANGE, UPDATE_FREQUENCY, true);
+        EntityRegistry.registerModEntity(locationChiefBarbarian, EntityChiefBarbarian.class, "ChiefBarbarian", getNextEntityId(), MineColonies.instance, TRACKING_RANGE, UPDATE_FREQUENCY, true);
+        EntityRegistry.registerModEntity(locationArcherBarbarian, EntityArcherBarbarian.class, "ArcherBarbarian", getNextEntityId(), MineColonies.instance, TRACKING_RANGE, UPDATE_FREQUENCY, true);
 
         //Adds spawnEggs for the mobs.
-        EntityRegistry.registerEgg(locationBarbarian, 5, 700);
-        EntityRegistry.registerEgg(locationChiefBarbarian, 5, 700);
-        EntityRegistry.registerEgg(locationArcherBarbarian, 5, 700);
+        EntityRegistry.registerEgg(locationBarbarian, PRIMARY_COLOR, SECONDARY_COLOR);
+        EntityRegistry.registerEgg(locationChiefBarbarian, PRIMARY_COLOR, SECONDARY_COLOR);
+        EntityRegistry.registerEgg(locationArcherBarbarian, PRIMARY_COLOR, SECONDARY_COLOR);
 
         //Add in the loot tables for teh mobs
         LootTableList.register(EntityBarbarian.LOOT);

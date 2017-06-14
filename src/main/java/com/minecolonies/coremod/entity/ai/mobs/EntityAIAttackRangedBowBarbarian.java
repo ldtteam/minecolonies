@@ -14,26 +14,33 @@ public class EntityAIAttackRangedBowBarbarian extends EntityAIBase
     private final AbstractArcherBarbarian entity;
     private final double                  moveSpeedAmp;
     private       int                     attackCooldown;
-    private final float                   maxAttackDistance;
+    private final double                  maxAttackDistance;
     private int attackTime = -1;
     private int     seeTime;
     private boolean strafingClockwise;
     private boolean strafingBackwards;
     private int strafingTime = -1;
+    /* default */ private        final int    ONE_MINUTE           = 60;
+    /* default */ private        final int    TWENTY_SECONDS       = 20;
+    /* default */ private        final double ONE_QUARTER_BLOCK    = 0.25D;
+    /* default */ private        final float  HALF_BLOCK           = 0.5F;
+    /* default */ private        final double THREE_QUARTERS_BLOCK = 0.75D;
+    /* default */ private        final float  MAX_DEGREES          = 30.0F;
+    /* default */ private static final int    MUTEX_BITS           = 3;
 
-    public EntityAIAttackRangedBowBarbarian(final AbstractArcherBarbarian archer,final double speedAmplifier,final int delay,final float maxDistance)
+    public EntityAIAttackRangedBowBarbarian(final AbstractArcherBarbarian archer, final double speedAmplifier, final int delay, final double maxDistance)
     {
         super();
         this.entity = archer;
         this.moveSpeedAmp = speedAmplifier;
         this.attackCooldown = delay;
         this.maxAttackDistance = maxDistance * maxDistance;
-        this.setMutexBits(3);
+        this.setMutexBits(MUTEX_BITS);
     }
 
-    public void setAttackCooldown(final int p_189428_1_)
+    public void setAttackCooldown(final int coolDown)
     {
-        this.attackCooldown = p_189428_1_;
+        this.attackCooldown = coolDown;
     }
 
     /**
@@ -109,7 +116,7 @@ public class EntityAIAttackRangedBowBarbarian extends EntityAIBase
                 --this.seeTime;
             }
 
-            if (d0 <= (double) this.maxAttackDistance && this.seeTime >= 20)
+            if (d0 <= (double) this.maxAttackDistance && this.seeTime >= TWENTY_SECONDS)
             {
                 this.entity.getNavigator().clearPathEntity();
                 ++this.strafingTime;
@@ -120,7 +127,7 @@ public class EntityAIAttackRangedBowBarbarian extends EntityAIBase
                 this.strafingTime = -1;
             }
 
-            final int strafeTime = 20;
+            final int strafeTime = TWENTY_SECONDS;
 
             if (this.strafingTime >= strafeTime)
             {
@@ -141,28 +148,28 @@ public class EntityAIAttackRangedBowBarbarian extends EntityAIBase
 
             if (this.strafingTime > -1)
             {
-                if (d0 > (double) (this.maxAttackDistance * 0.75F))
+                if (d0 > (this.maxAttackDistance * THREE_QUARTERS_BLOCK))
                 {
                     this.strafingBackwards = false;
                 }
-                else if (d0 < (double) (this.maxAttackDistance * 0.25F))
+                else if (d0 < (this.maxAttackDistance * ONE_QUARTER_BLOCK))
                 {
                     this.strafingBackwards = true;
                 }
 
-                this.entity.getMoveHelper().strafe(this.strafingBackwards ? -0.5F : 0.5F, this.strafingClockwise ? 0.5F : -0.5F);
-                this.entity.faceEntity(entitylivingbase, 30.0F, 30.0F);
+                this.entity.getMoveHelper().strafe(this.strafingBackwards ? -HALF_BLOCK : HALF_BLOCK, this.strafingClockwise ? HALF_BLOCK : -HALF_BLOCK);
+                this.entity.faceEntity(entitylivingbase, MAX_DEGREES, MAX_DEGREES);
             }
             else
             {
-                this.entity.getLookHelper().setLookPositionWithEntity(entitylivingbase, 30.0F, 30.0F);
+                this.entity.getLookHelper().setLookPositionWithEntity(entitylivingbase, MAX_DEGREES, MAX_DEGREES);
             }
 
             final int alternateAttackTime = --this.attackTime;
 
             if (this.entity.isHandActive())
             {
-                if (!flag && this.seeTime < -60)
+                if (!flag && this.seeTime < -ONE_MINUTE)
                 {
                     this.entity.resetActiveHand();
                 }
@@ -180,7 +187,7 @@ public class EntityAIAttackRangedBowBarbarian extends EntityAIBase
                     }
                 }
             }
-            else if (alternateAttackTime <= 0 && this.seeTime >= -60)
+            else if (alternateAttackTime <= 0 && this.seeTime >= -ONE_MINUTE)
             {
                 this.entity.setActiveHand(EnumHand.MAIN_HAND);
             }

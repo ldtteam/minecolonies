@@ -23,8 +23,25 @@ public class EntityBarbarian extends EntityMob
 {
     private final Colony colony = ColonyManager.getClosestColony(world, this.getPosition());
 
-    /* default */ private static final int BARBARIAN_BASE_HEALTH = 25;
-    /* default */ private static final double BARBARIAN_FOLLOW_RANGE = 35;
+    /**
+     * defines the default values for the Entity's attributes.
+     */
+    /* default */ private static final double FOLLOW_RANGE          = 35.0D;
+    /* default */ private static final double MOVEMENT_SPEED        = 0.2D;
+    /* default */ private static final double ATTACK_DAMAGE         = 2.0D;
+    /* default */ private static final double ARMOR                 = 2.0D;
+    /* default */ private static final double BARBARIAN_BASE_HEALTH = 25;
+
+    /**
+     * Defines the default values for the various AI Task's priorities.
+     */
+    /* default */ private static final int PRIORITY_ZERO   = 1;
+    /* default */ private static final int PRIORITY_TWO   = 2;
+    /* default */ private static final int PRIORITY_THREE = 3;
+    /* default */ private static final int PRIORITY_FOUR = 4;
+    /* default */ private static final int PRIORITY_FIVE = 5;
+    /* default */ private static final int PRIORITY_SIX   = 6;
+    /* default */ private static final int PRIORITY_EIGHT  = 8;
 
     public static final ResourceLocation LOOT = new ResourceLocation(Constants.MOD_ID, "EntityBarbarianDrops");
 
@@ -37,23 +54,25 @@ public class EntityBarbarian extends EntityMob
     protected void applyEntityAttributes()
     {
         super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(BARBARIAN_FOLLOW_RANGE);
-        this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.2D);
-        this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(2.0D);
-        this.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(2.0D);
+        this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE);
+        this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(MOVEMENT_SPEED);
+        this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(ATTACK_DAMAGE);
+        this.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(ARMOR);
         this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(this.getHealthBasedOnRaidLevel());
     }
 
     @Override
     protected void initEntityAI()
     {
-        this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
-        this.tasks.addTask(2, new EntityAIBarbarianAttackMelee(this));
-        this.tasks.addTask(4, new EntityAIWalkToRandomHuts(this, 2.0D));
-        this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
-        this.tasks.addTask(8, new EntityAILookIdle(this));
-        this.applyEntityAI();
+        this.tasks.addTask(PRIORITY_ZERO, new EntityAISwimming(this));
+        this.tasks.addTask(PRIORITY_FIVE, new EntityAIMoveTowardsRestriction(this, 1.0D));
+        this.tasks.addTask(PRIORITY_TWO, new EntityAIBarbarianAttackMelee(this));
+        this.tasks.addTask(PRIORITY_FOUR, new EntityAIWalkToRandomHuts(this, 2.0D));
+        this.tasks.addTask(PRIORITY_EIGHT, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
+        this.tasks.addTask(PRIORITY_EIGHT, new EntityAILookIdle(this));
+        this.tasks.addTask(PRIORITY_SIX, new EntityAIMoveThroughVillage(this, 1.0D, false));
+        this.targetTasks.addTask(PRIORITY_TWO, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
+        this.targetTasks.addTask(PRIORITY_THREE, new EntityAINearestAttackableTarget(this, EntityCitizen.class, true));
     }
 
     @Override
@@ -83,13 +102,6 @@ public class EntityBarbarian extends EntityMob
             return BARBARIAN_BASE_HEALTH + raidLevel;
         }
         return BARBARIAN_BASE_HEALTH;
-    }
-
-    private void applyEntityAI()
-    {
-        this.tasks.addTask(6, new EntityAIMoveThroughVillage(this, 1.0D, false));
-        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
-        this.targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntityCitizen.class, true));
     }
 
     @Override

@@ -10,7 +10,6 @@ import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityTippedArrow;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -29,7 +28,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
-import java.util.Calendar;
 
 /**
  * Abstract Class implementing the Archer Barbarian
@@ -42,16 +40,37 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
     /* default */ private final        EntityAIAttackRangedBowBarbarian aiArrowAttack         = new EntityAIAttackRangedBowBarbarian(this, 1.0D, 20, 15.0F);
     /* default */ private static final float                            ENTITY_WIDTH          = 0.6F;
     /* default */ private static final float                            ENTITY_HEIGHT         = 1.99F;
-    /* default */ private static final int                              BARBARIAN_BASE_HEALTH = 25;
     /* default */ private static final int                              DIFFICULTY_SUBTRACTER = 14;
     /* default */ private static final int                              DIFFICULTY_MULTIPLIER = 4;
     /* default */ private static final int                              BOW_DAMAGE            = 20;
     /* default */ private static final int                              BOW_DAMAGE_HARD       = 40;
     /* default */ private static final double                           GRAVITY_MULTIPLIER    = 0.20000000298023224D;
+    /* default */ private static final double                           ENTITY_Y_OFFSET       = -0.6D;
     /* default */ private static final float                            ARROW_VELOCITY        = 1.6F;
     /* default */ private static final float                            SOUND_MULTIPLIER      = 0.4F;
     /* default */ private static final float                            SOUND_ADDER           = 0.8F;
     /* default */ private static final float                            ENTITY_EYE_HEIGHT     = 1.74F;
+    /* default */ private static final float                            RANDOM_FLOAT_EQUATER  = 0.55F;
+
+    /**
+     * Defines the default values for the Entity's attributes.
+     */
+    /* default */ private static final double FOLLOW_RANGE          = 35.0D;
+    /* default */ private static final double MOVEMENT_SPEED        = 0.2D;
+    /* default */ private static final double ATTACK_DAMAGE         = 1.0D;
+    /* default */ private static final double ARMOR                 = 2.0D;
+    /* default */ private static final double BARBARIAN_BASE_HEALTH = 25;
+
+    /**
+     * Defines the default values for the various AI Task's properties
+     */
+    /* default */ private static final int   PRIORITY_ONE       = 1;
+    /* default */ private static final int   PRIORITY_TWO       = 2;
+    /* default */ private static final int   PRIORITY_THREE     = 3;
+    /* default */ private static final int   PRIORITY_FOUR      = 3;
+    /* default */ private static final int   PRIORITY_FIVE      = 5;
+    /* default */ private static final int   PRIORITY_SIX       = 6;
+    /* default */ private static final float MAX_WATCH_DISTANCE = 8.0F;
 
     private final EntityAIAttackMelee aiAttackOnCollide = new EntityAIAttackMelee(this, 1.2D, false)
     {
@@ -78,30 +97,29 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
     {
         super(worldIn);
         this.setSize(ENTITY_WIDTH, ENTITY_HEIGHT);
-        this.setCombatTask();
     }
 
     protected void initEntityAI()
     {
-        this.tasks.addTask(1, new EntityAISwimming(this));
-        this.tasks.addTask(2, new EntityAIRestrictSun(this));
-        this.tasks.addTask(3, new EntityAIAvoidEntity(this, EntityWolf.class, 6.0F, 1.0D, 1.2D));
-        this.tasks.addTask(5, new EntityAIWalkToRandomHuts(this, 2.0D));
-        this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
-        this.tasks.addTask(6, new EntityAILookIdle(this));
-        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false, new Class[0]));
-        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
-        this.targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntityCitizen.class, true));
+        this.tasks.addTask(PRIORITY_ONE, new EntityAISwimming(this));
+        this.tasks.addTask(PRIORITY_TWO, new EntityAIRestrictSun(this));
+        this.tasks.addTask(PRIORITY_THREE, new EntityAIAvoidEntity(this, EntityWolf.class, 6.0F, 1.0D, 1.2D));
+        this.tasks.addTask(PRIORITY_FIVE, new EntityAIWalkToRandomHuts(this, 2.0D));
+        this.tasks.addTask(PRIORITY_SIX, new EntityAIWatchClosest(this, EntityPlayer.class, MAX_WATCH_DISTANCE));
+        this.tasks.addTask(PRIORITY_SIX, new EntityAILookIdle(this));
+        this.targetTasks.addTask(PRIORITY_ONE, new EntityAIHurtByTarget(this, false, new Class[0]));
+        this.targetTasks.addTask(PRIORITY_TWO, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
+        this.targetTasks.addTask(PRIORITY_THREE, new EntityAINearestAttackableTarget(this, EntityCitizen.class, true));
     }
 
     @Override
     protected void applyEntityAttributes()
     {
         super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(35.0D);
-        this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.2D);
-        this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(1.0D);
-        this.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(2.0D);
+        this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE);
+        this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(MOVEMENT_SPEED);
+        this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(ATTACK_DAMAGE);
+        this.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(ARMOR);
         this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(this.getHealthBasedOnRaidLevel());
     }
 
@@ -185,18 +203,7 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
         this.setEquipmentBasedOnDifficulty(difficulty);
         this.setEnchantmentBasedOnDifficulty(difficulty);
         this.setCombatTask();
-        this.setCanPickUpLoot(this.rand.nextFloat() < 0.55F * difficulty.getClampedAdditionalDifficulty());
-
-        if (this.getItemStackFromSlot(EntityEquipmentSlot.HEAD).isEmpty())
-        {
-            final Calendar calendar = this.world.getCurrentDate();
-
-            if (calendar.get(2) + 1 == 10 && calendar.get(5) == 31 && this.rand.nextFloat() < 0.25F)
-            {
-                this.setItemStackToSlot(EntityEquipmentSlot.HEAD, new ItemStack(this.rand.nextFloat() < 0.1F ? Blocks.LIT_PUMPKIN : Blocks.PUMPKIN));
-                this.inventoryArmorDropChances[EntityEquipmentSlot.HEAD.getIndex()] = 0.0F;
-            }
-        }
+        this.setCanPickUpLoot(this.rand.nextFloat() < RANDOM_FLOAT_EQUATER * difficulty.getClampedAdditionalDifficulty());
 
         return livingdata;
     }
@@ -222,11 +229,11 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
                 }
 
                 this.aiArrowAttack.setAttackCooldown(i);
-                this.tasks.addTask(4, this.aiArrowAttack);
+                this.tasks.addTask(PRIORITY_FOUR, this.aiArrowAttack);
             }
             else
             {
-                this.tasks.addTask(4, this.aiAttackOnCollide);
+                this.tasks.addTask(PRIORITY_FOUR, this.aiAttackOnCollide);
             }
         }
     }
@@ -250,10 +257,10 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
         this.world.spawnEntity(entityarrow);
     }
 
-    protected EntityArrow getArrow(final float p_190726_1_)
+    protected EntityArrow getArrow(final float arrow)
     {
         final EntityTippedArrow entitytippedarrow = new EntityTippedArrow(this.world, this);
-        entitytippedarrow.setEnchantmentEffectsFromEntity(this, p_190726_1_);
+        entitytippedarrow.setEnchantmentEffectsFromEntity(this, arrow);
         return entitytippedarrow;
     }
 
@@ -286,7 +293,7 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
      */
     public double getYOffset()
     {
-        return -0.6D;
+        return ENTITY_Y_OFFSET;
     }
 
     @SideOnly(Side.CLIENT)
