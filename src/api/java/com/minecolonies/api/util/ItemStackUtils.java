@@ -1,21 +1,22 @@
 package com.minecolonies.api.util;
 
 import com.minecolonies.api.compatibility.Compatibility;
-import com.minecolonies.api.util.constants.IToolType;
-import com.minecolonies.api.util.constants.ToolType;
+import com.minecolonies.api.util.constant.IToolType;
+import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.item.ItemBow;
 import net.minecraft.item.ItemFishingRod;
 import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.util.constants.ToolLevelConstants.*;
+import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
 
 /**
  * Utility methods for the inventories.
@@ -88,6 +89,17 @@ public final class ItemStackUtils
         /*
          * Intentionally left empty.
          */
+    }
+
+    /**
+     * create a ItemStack from a compound
+     *
+     * @param compound with wich we create the ItemStack
+     * @return the newly created ItemStack
+     */
+    public static ItemStack loadItemStackFromNBT(final NBTTagCompound compound)
+    {
+        return ItemStack.loadItemStackFromNBT(compound);
     }
 
     /**

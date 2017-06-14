@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.client.render;
 
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.BlockHutField;
 import com.minecolonies.coremod.client.model.ModelScarecrowBoth;
-import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;

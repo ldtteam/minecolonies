@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.configuration;
+package com.minecolonies.api.configuration;
 
 public class Configurations
 {
@@ -14,6 +14,7 @@ public class Configurations
     public static       int     builderBuildBlockDelay       = 0;
     public static       int     blockMiningDelayModifier     = 1000;
     public static       boolean limitToOneWareHousePerColony = true;
+    public static       boolean workersAlwaysWorkInRain      = false;
 
     public static boolean enableColonyProtection      = true;
     public static boolean turnOffExplosionsInColonies = true;

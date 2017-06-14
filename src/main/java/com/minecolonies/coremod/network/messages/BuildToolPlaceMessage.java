@@ -1,8 +1,9 @@
 package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.BlockUtils;
+import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockHutTownHall;
 import com.minecolonies.coremod.colony.Colony;
@@ -10,11 +11,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
-import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.event.EventHandler;
-import com.minecolonies.coremod.lib.Constants;
-import com.minecolonies.coremod.util.LanguageHandler;
-import com.minecolonies.coremod.util.Log;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -133,11 +130,11 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
 
         if (message.isHut)
         {
-            handleHut(player.worldObj, player, sn, message.rotation, message.pos, message.mirror);
+            handleHut(CompatibilityUtils.getWorld(player), player, sn, message.rotation, message.pos, message.mirror);
         }
         else
         {
-            handleDecoration(player.worldObj, player, sn, message.workOrderName, message.rotation, message.pos, message.mirror);
+            handleDecoration(CompatibilityUtils.getWorld(player), player, sn, message.workOrderName, message.rotation, message.pos, message.mirror);
         }
     }
 

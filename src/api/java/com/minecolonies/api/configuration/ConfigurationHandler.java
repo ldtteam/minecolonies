@@ -1,6 +1,6 @@
-package com.minecolonies.coremod.configuration;
+package com.minecolonies.api.configuration;
 
-import com.minecolonies.coremod.lib.Constants;
+import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.io.File;
 
-import static com.minecolonies.coremod.configuration.Configurations.*;
+import static com.minecolonies.api.configuration.Configurations.*;
 
 /**
  * Configuration Handler.
@@ -74,6 +74,8 @@ public final class ConfigurationHandler
                     "Turn off explosions inside the colonies radius?").getBoolean();
             limitToOneWareHousePerColony = config.get(CATEGORY_GAMEPLAY, "limitToOneWareHousePerColony", limitToOneWareHousePerColony,
                     "Limit the Colony to 1 Warehouse per Colony?").getBoolean();
+            workersAlwaysWorkInRain = config.get(CATEGORY_GAMEPLAY, "workersAlwaysWorkInRain", workersAlwaysWorkInRain,
+                    "Set wether workers work in rain regardless of hut level").getBoolean();
             
             /* schematics usage */
             ignoreSchematicsFromJar = config.get(CATEGORY_GAMEPLAY, "ignoreSchematicsFromJar", ignoreSchematicsFromJar,

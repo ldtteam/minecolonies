@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
+import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -15,7 +16,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.coremod.util.constants.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * EntityCitizen go home AI.
@@ -49,7 +50,7 @@ public class EntityAIGoHome extends EntityAIBase
      *
      * @param citizen the citizen to assign to this task.
      */
-    public EntityAIGoHome(EntityCitizen citizen)
+    public EntityAIGoHome(final EntityCitizen citizen)
     {
         super();
         this.citizen = citizen;
@@ -212,7 +213,7 @@ public class EntityAIGoHome extends EntityAIBase
 
         if (chance <= 1 && citizen.getWorkBuilding() != null && citizen.getColonyJob() != null)
         {
-            SoundUtils.playSoundAtCitizenWithChance(citizen.worldObj, citizen.getPosition(), citizen.getColonyJob().getBedTimeSound(), 1);
+            SoundUtils.playSoundAtCitizenWithChance(CompatibilityUtils.getWorld(citizen), citizen.getPosition(), citizen.getColonyJob().getBedTimeSound(), 1);
             //add further workers as soon as available.
         }
     }
