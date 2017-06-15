@@ -20,28 +20,28 @@ import javax.annotation.Nullable;
  */
 public class EntityChiefBarbarian extends EntityMob
 {
-    /* default */ private final       Colony           colony = ColonyManager.getClosestColony(world, this.getPosition());
-    /* default */ public static final ResourceLocation LOOT   = new ResourceLocation(Constants.MOD_ID, "EntityChiefBarbarianDrops");
+    private final       Colony           colony = ColonyManager.getClosestColony(world, this.getPosition());
+    public static final ResourceLocation LOOT   = new ResourceLocation(Constants.MOD_ID, "EntityChiefBarbarianDrops");
 
     /**
      * defines the default values for the Entity's attributes.
      */
-    /* default */ private static final double FOLLOW_RANGE          = 35.0D;
-    /* default */ private static final double MOVEMENT_SPEED        = 0.2D;
-    /* default */ private static final double ATTACK_DAMAGE         = 2.0D;
-    /* default */ private static final double ARMOR                 = 2.0D;
-    /* default */ private static final double BARBARIAN_BASE_HEALTH = 25;
+    private static final double FOLLOW_RANGE          = 35.0D;
+    private static final double MOVEMENT_SPEED        = 0.2D;
+    private static final double ATTACK_DAMAGE         = 2.0D;
+    private static final double ARMOR                 = 2.0D;
+    private static final double BARBARIAN_BASE_HEALTH = 25;
 
     /**
      * Defines the default values for the various AI Task's priorities.
      */
-    /* default */ private static final int PRIORITY_ZERO   = 1;
-    /* default */ private static final int PRIORITY_TWO   = 2;
-    /* default */ private static final int PRIORITY_THREE = 3;
-    /* default */ private static final int PRIORITY_FOUR = 4;
-    /* default */ private static final int PRIORITY_FIVE = 5;
-    /* default */ private static final int PRIORITY_SIX   = 6;
-    /* default */ private static final int PRIORITY_EIGHT  = 8;
+    private static final int PRIORITY_ZERO   = 1;
+    private static final int PRIORITY_TWO   = 2;
+    private static final int PRIORITY_THREE = 3;
+    private static final int PRIORITY_FOUR = 4;
+    private static final int PRIORITY_FIVE = 5;
+    private static final int PRIORITY_SIX   = 6;
+    private static final int PRIORITY_EIGHT  = 8;
 
     public EntityChiefBarbarian(final World worldIn)
     {

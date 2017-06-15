@@ -20,7 +20,7 @@ import javax.annotation.Nullable;
 public class EntityArcherBarbarian extends AbstractArcherBarbarian
 {
 
-    /* default */ public static final ResourceLocation LOOT = new ResourceLocation(Constants.MOD_ID, "EntityArcherBarbarianDrops");
+    public static final ResourceLocation LOOT = new ResourceLocation(Constants.MOD_ID, "EntityArcherBarbarianDrops");
 
     public EntityArcherBarbarian(final World worldIn)
     {

@@ -34,43 +34,43 @@ import javax.annotation.Nullable;
  */
 public abstract class AbstractArcherBarbarian extends EntityMob implements IRangedAttackMob
 {
-    /* default */ private final        Colony                           colony                = ColonyManager.getClosestColony(world, this.getPosition());
-    /* default */ private static final DataParameter<Boolean>           SWINGING_ARMS         =
+    private final        Colony                           colony                = ColonyManager.getClosestColony(world, this.getPosition());
+    private static final DataParameter<Boolean>           SWINGING_ARMS         =
       EntityDataManager.<Boolean>createKey(AbstractArcherBarbarian.class, DataSerializers.BOOLEAN);
-    /* default */ private final        EntityAIAttackRangedBowBarbarian aiArrowAttack         = new EntityAIAttackRangedBowBarbarian(this, 1.0D, 20, 15.0F);
-    /* default */ private static final float                            ENTITY_WIDTH          = 0.6F;
-    /* default */ private static final float                            ENTITY_HEIGHT         = 1.99F;
-    /* default */ private static final int                              DIFFICULTY_SUBTRACTER = 14;
-    /* default */ private static final int                              DIFFICULTY_MULTIPLIER = 4;
-    /* default */ private static final int                              BOW_DAMAGE            = 20;
-    /* default */ private static final int                              BOW_DAMAGE_HARD       = 40;
-    /* default */ private static final double                           GRAVITY_MULTIPLIER    = 0.20000000298023224D;
-    /* default */ private static final double                           ENTITY_Y_OFFSET       = -0.6D;
-    /* default */ private static final float                            ARROW_VELOCITY        = 1.6F;
-    /* default */ private static final float                            SOUND_MULTIPLIER      = 0.4F;
-    /* default */ private static final float                            SOUND_ADDER           = 0.8F;
-    /* default */ private static final float                            ENTITY_EYE_HEIGHT     = 1.74F;
-    /* default */ private static final float                            RANDOM_FLOAT_EQUATER  = 0.55F;
+    private final        EntityAIAttackRangedBowBarbarian aiArrowAttack         = new EntityAIAttackRangedBowBarbarian(this, 1.0D, 20, 15.0F);
+    private static final float                            ENTITY_WIDTH          = 0.6F;
+    private static final float                            ENTITY_HEIGHT         = 1.99F;
+    private static final int                              DIFFICULTY_SUBTRACTER = 14;
+    private static final int                              DIFFICULTY_MULTIPLIER = 4;
+    private static final int                              BOW_DAMAGE            = 20;
+    private static final int                              BOW_DAMAGE_HARD       = 40;
+    private static final double                           GRAVITY_MULTIPLIER    = 0.20000000298023224D;
+    private static final double                           ENTITY_Y_OFFSET       = -0.6D;
+    private static final float                            ARROW_VELOCITY        = 1.6F;
+    private static final float                            SOUND_MULTIPLIER      = 0.4F;
+    private static final float                            SOUND_ADDER           = 0.8F;
+    private static final float                            ENTITY_EYE_HEIGHT     = 1.74F;
+    private static final float                            RANDOM_FLOAT_EQUATER  = 0.55F;
 
     /**
      * Defines the default values for the Entity's attributes.
      */
-    /* default */ private static final double FOLLOW_RANGE          = 35.0D;
-    /* default */ private static final double MOVEMENT_SPEED        = 0.2D;
-    /* default */ private static final double ATTACK_DAMAGE         = 1.0D;
-    /* default */ private static final double ARMOR                 = 2.0D;
-    /* default */ private static final double BARBARIAN_BASE_HEALTH = 25;
+    private static final double FOLLOW_RANGE          = 35.0D;
+    private static final double MOVEMENT_SPEED        = 0.2D;
+    private static final double ATTACK_DAMAGE         = 1.0D;
+    private static final double ARMOR                 = 2.0D;
+    private static final double BARBARIAN_BASE_HEALTH = 25;
 
     /**
      * Defines the default values for the various AI Task's properties
      */
-    /* default */ private static final int   PRIORITY_ONE       = 1;
-    /* default */ private static final int   PRIORITY_TWO       = 2;
-    /* default */ private static final int   PRIORITY_THREE     = 3;
-    /* default */ private static final int   PRIORITY_FOUR      = 3;
-    /* default */ private static final int   PRIORITY_FIVE      = 5;
-    /* default */ private static final int   PRIORITY_SIX       = 6;
-    /* default */ private static final float MAX_WATCH_DISTANCE = 8.0F;
+    private static final int   PRIORITY_ONE       = 1;
+    private static final int   PRIORITY_TWO       = 2;
+    private static final int   PRIORITY_THREE     = 3;
+    private static final int   PRIORITY_FOUR      = 3;
+    private static final int   PRIORITY_FIVE      = 5;
+    private static final int   PRIORITY_SIX       = 6;
+    private static final float MAX_WATCH_DISTANCE = 8.0F;
 
     private final EntityAIAttackMelee aiAttackOnCollide = new EntityAIAttackMelee(this, 1.2D, false)
     {

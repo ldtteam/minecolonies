@@ -29,21 +29,21 @@ public final class BarbarianUtils
     /**
      * ResourceLocations for barbarians
      */
-    /* default */ private static final ResourceLocation barbarian = EntityList.getKey(EntityBarbarian.class);
-    /* default */ private static final ResourceLocation archer    = EntityList.getKey(EntityArcherBarbarian.class);
-    /* default */ private static final ResourceLocation chief     = EntityList.getKey(EntityChiefBarbarian.class);
+    private static final ResourceLocation barbarian = EntityList.getKey(EntityBarbarian.class);
+    private static final ResourceLocation archer    = EntityList.getKey(EntityArcherBarbarian.class);
+    private static final ResourceLocation chief     = EntityList.getKey(EntityChiefBarbarian.class);
 
-    /* default */ private static final int    LEVEL_AT_WHICH_TO_NOT_TRIGGER_RAID = 1;
-    /* default */ private static final int    MAX_SIZE                           = Configurations.maxBarbarianHordeSize;
-    /* default */ private static final double ARCHER_BARBARIANS_MULTIPLIER       = 0.5;
-    /* default */ private static final double CHIEF_BARBARIANS_MULTIPLIER        = 0.1;
-    /* default */ private static final int    NUMBER_OF_POSSIBLE_CASES           = 360;
-    /* default */ private static final int    PREFERED_MAX_HORDE_SIZE            = 40;
-    /* default */ private static final int    PREFERED_MAX_BARBARIANS            = 22;
-    /* default */ private static final int    PREFERED_MAX_ARCHERS               = 16;
-    /* default */ private static final int    PREFERED_MAX_CHIEFS                = 2;
-    /* default */ private static final float  WHOLE_CIRCLE                       = 360.0F;
-    /* default */ private static final float  HALF_A_CIRCLE                      = 180F;
+    private static final int    LEVEL_AT_WHICH_TO_NOT_TRIGGER_RAID = 1;
+    private static final int    MAX_SIZE                           = Configurations.maxBarbarianHordeSize;
+    private static final double ARCHER_BARBARIANS_MULTIPLIER       = 0.5;
+    private static final double CHIEF_BARBARIANS_MULTIPLIER        = 0.1;
+    private static final int    NUMBER_OF_POSSIBLE_CASES           = 360;
+    private static final int    PREFERED_MAX_HORDE_SIZE            = 40;
+    private static final int    PREFERED_MAX_BARBARIANS            = 22;
+    private static final int    PREFERED_MAX_ARCHERS               = 16;
+    private static final int    PREFERED_MAX_CHIEFS                = 2;
+    private static final float  WHOLE_CIRCLE                       = 360.0F;
+    private static final float  HALF_A_CIRCLE                      = 180F;
 
     /**
      * Private constructor to hide the implicit public one.

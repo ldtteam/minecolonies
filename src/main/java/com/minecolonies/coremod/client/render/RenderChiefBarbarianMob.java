@@ -17,9 +17,9 @@ import javax.annotation.Nonnull;
  */
 public class RenderChiefBarbarianMob extends RenderLiving<EntityChiefBarbarian>
 {
-    /* default */ private final ResourceLocation mobTexture = new ResourceLocation("minecolonies:textures/entity/chiefbarbarian1.png");
+    private final ResourceLocation mobTexture = new ResourceLocation("minecolonies:textures/entity/chiefbarbarian1.png");
 
-    /* default */ private static final float SHADOW_SIZE = 0.5F;
+    private static final float SHADOW_SIZE = 0.5F;
 
     public static final RenderChiefBarbarianMob.Factory FACTORY = new RenderChiefBarbarianMob.Factory();
 

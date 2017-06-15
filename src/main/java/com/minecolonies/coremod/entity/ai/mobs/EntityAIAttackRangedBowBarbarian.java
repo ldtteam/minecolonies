@@ -19,14 +19,14 @@ public class EntityAIAttackRangedBowBarbarian extends EntityAIBase
     private int     seeTime;
     private boolean strafingClockwise;
     private boolean strafingBackwards;
-    private int strafingTime = -1;
-    /* default */ private        final int    ONE_MINUTE           = 60;
-    /* default */ private        final int    TWENTY_SECONDS       = 20;
-    /* default */ private        final double ONE_QUARTER_BLOCK    = 0.25D;
-    /* default */ private        final float  HALF_BLOCK           = 0.5F;
-    /* default */ private        final double THREE_QUARTERS_BLOCK = 0.75D;
-    /* default */ private        final float  MAX_DEGREES          = 30.0F;
-    /* default */ private static final int    MUTEX_BITS           = 3;
+    private              int    strafingTime         = -1;
+    private final        int    ONE_MINUTE           = 60;
+    private final        int    TWENTY_SECONDS       = 20;
+    private final        double ONE_QUARTER_BLOCK    = 0.25D;
+    private final        float  HALF_BLOCK           = 0.5F;
+    private final        double THREE_QUARTERS_BLOCK = 0.75D;
+    private final        float  MAX_DEGREES          = 30.0F;
+    private static final int    MUTEX_BITS           = 3;
 
     public EntityAIAttackRangedBowBarbarian(final AbstractArcherBarbarian archer, final double speedAmplifier, final int delay, final double maxDistance)
     {

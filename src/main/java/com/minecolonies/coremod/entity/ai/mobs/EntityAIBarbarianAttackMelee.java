@@ -18,16 +18,16 @@ public class EntityAIBarbarianAttackMelee extends EntityAIBase
 
     private final EntityCreature   entity;
     private       EntityLivingBase target;
-    private int lastAttack = 0;
-    /* default */ private static final int    CYCLES_TO_WAIT          = 16;
-    /* default */ private static final double PITCH_MULTIPLIER        = 0.4;
-    /* default */ private static final double PITCH_ADDER             = 0.8;
-    /* default */ private static final double DEFAULT_DAMAGE          = 3.0;
-    /* default */ private static final double HALF_ROTATION           = 180;
-    /* default */ private static final double MIN_DISTANCE_FOR_ATTACK = 2.5;
-    /* default */ private static final double ATTACK_SPEED            = 1.3;
-    /* default */ private static final int    MUTEX_BITS              = 3;
-    /* default */ private static final double IS_ZERO = 0;
+    private              int    lastAttack              = 0;
+    private static final int    CYCLES_TO_WAIT          = 16;
+    private static final double PITCH_MULTIPLIER        = 0.4;
+    private static final double PITCH_ADDER             = 0.8;
+    private static final double DEFAULT_DAMAGE          = 3.0;
+    private static final double HALF_ROTATION           = 180;
+    private static final double MIN_DISTANCE_FOR_ATTACK = 2.5;
+    private static final double ATTACK_SPEED            = 1.3;
+    private static final int    MUTEX_BITS              = 3;
+    private static final double IS_ZERO                 = 0;
 
     public EntityAIBarbarianAttackMelee(final EntityCreature creatureIn)
     {
