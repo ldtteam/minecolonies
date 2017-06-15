@@ -1072,6 +1072,7 @@ public class Colony implements IColony
     /**
      * Return the colony's raid index
      */
+    @Override
     public int getRaidLevel()
     {
         return raidLevel;
