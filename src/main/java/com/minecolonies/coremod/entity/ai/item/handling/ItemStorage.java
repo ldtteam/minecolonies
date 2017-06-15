@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.entity.ai.item.handling;
 
+import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -11,17 +13,7 @@ public class ItemStorage
     /**
      * The item to store.
      */
-    private final Item item;
-
-    /**
-     * The damage value.
-     */
-    private final int damageValue;
-
-    /**
-     * The amount.
-     */
-    private int amount;
+    private final ItemStack item;
 
     /**
      * Set this to ignore the damage value in comparisons.
@@ -32,16 +24,26 @@ public class ItemStorage
      * Creates an instance of the storage.
      *
      * @param item              the item.
+     * @param ignoreDamageValue should the damage value be ignored?
+     */
+    public ItemStorage(@NotNull final ItemStack item, final boolean ignoreDamageValue)
+    {
+        this.item = item;
+        this.ignoreDamageValue = ignoreDamageValue;
+    }
+
+    /**
+     * Creates an instance of the storage.
+     *
+     * @param item              the item.
      * @param damageValue       it's damage value.
      * @param amount            optional amount.
      * @param ignoreDamageValue should the damage value be ignored?
      */
-    public ItemStorage(@NotNull final Item item, final int damageValue, final int amount, final boolean ignoreDamageValue)
+    public ItemStorage(@NotNull final ItemStack stack)
     {
-        this.item = item;
-        this.damageValue = damageValue;
-        this.amount = amount;
-        this.ignoreDamageValue = ignoreDamageValue;
+        this.item = stack;
+        this.ignoreDamageValue = false;
     }
 
     /**
@@ -51,7 +53,7 @@ public class ItemStorage
      */
     public int getAmount()
     {
-        return amount;
+        return ItemStackUtils.getSize(item);
     }
 
     /**
@@ -61,7 +63,7 @@ public class ItemStorage
      */
     public void setAmount(final int amount)
     {
-        this.amount = amount;
+        ItemStackUtils.setSize(item, ItemStackUtils.getSize(item) +  amount);
     }
 
 
@@ -106,7 +108,7 @@ public class ItemStorage
      */
     public int getDamageValue()
     {
-        return damageValue;
+        return item.getItemDamage();
     }
 
     /**
@@ -116,6 +118,15 @@ public class ItemStorage
      */
     @NotNull
     public Item getItem()
+    {
+        return item.getItem();
+    }
+
+    /**
+     * Get the itemStack from this itemStorage.
+     * @return the stack.
+     */
+    public ItemStack getItemStack()
     {
         return item;
     }

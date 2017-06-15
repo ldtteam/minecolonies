@@ -4,17 +4,16 @@
             <layout source="minecolonies:gui/layoutWorkerBuildingDefault.xml"/>
         </view>
 
-        <view id="levelActions" size="100% 100%">
+        <view id="saplingActions" size="100% 100%">
             <label size="100% 11" pos="0 0"
                    label="$(com.minecolonies.coremod.gui.workerHuts.saplingList)" color="black" textalign="BOTTOM_MIDDLE"/>
             <list id="trees" size="78% 85%" pos="30 20">
                 <box size="100% 30" linewidth="2">
-                    <itemIcon id="symbol" size="100 12" pos="5 2" color="black"/>
+                    <itemicon id="symbol" size="100 12" pos="5 2" color="black"/>
                     <label id="name" size="50 12" pos="35 16" textalign="MIDDLE_LEFT" color="black"/>
-                    <button id="switch" size="100 12" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.minerMineNode)"/>
+                    <button id="switch" size="100 12" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.switch)"/>
                 </box>
             </list>
-
         </view>
 
 

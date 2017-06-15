@@ -106,10 +106,10 @@ public class BuildingFarmer extends AbstractBuildingWorker
         final ItemStack stackPotatoe = new ItemStack(Items.POTATO);
         final ItemStack stackReed = new ItemStack(Items.BEETROOT_SEEDS);
 
-        keepX.put(new ItemStorage(stackSeed.getItem(), stackSeed.getItemDamage(), 0, false), SEEDS_TO_KEEP);
-        keepX.put(new ItemStorage(stackCarrot.getItem(), stackCarrot.getItemDamage(), 0, false), SEEDS_TO_KEEP);
-        keepX.put(new ItemStorage(stackPotatoe.getItem(), stackPotatoe.getItemDamage(), 0, false), SEEDS_TO_KEEP);
-        keepX.put(new ItemStorage(stackReed.getItem(), stackReed.getItemDamage(), 0, false), SEEDS_TO_KEEP);
+        keepX.put(new ItemStorage(stackSeed, false), SEEDS_TO_KEEP);
+        keepX.put(new ItemStorage(stackCarrot, false), SEEDS_TO_KEEP);
+        keepX.put(new ItemStorage(stackPotatoe, false), SEEDS_TO_KEEP);
+        keepX.put(new ItemStorage(stackReed, false), SEEDS_TO_KEEP);
     }
 
     /**
@@ -201,7 +201,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
             if (!ItemStackUtils.isEmpty(field.getSeed()))
             {
                 final ItemStack seedStack = field.getSeed();
-                toKeep.put(new ItemStorage(seedStack.getItem(), seedStack.getItemDamage(), 0, false), SEEDS_TO_KEEP);
+                toKeep.put(new ItemStorage(seedStack, false), SEEDS_TO_KEEP);
             }
         }
         return toKeep;

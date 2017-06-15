@@ -41,7 +41,7 @@ public class BuildingBuilderResource extends ItemStorage
      */
     public BuildingBuilderResource(@NotNull final Item item, final int damageValue, final int amount)
     {
-        super(item, damageValue, amount, false);
+        super(new ItemStack(item, amount, damageValue), false);
         this.amountAvailable=0;
         this.amountPlayer=0;
     }
