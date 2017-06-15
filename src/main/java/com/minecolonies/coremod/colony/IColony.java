@@ -75,4 +75,10 @@ public interface IColony
      * @return an integer with a describing value.
      */
     int getLastContactInHours();
+
+    /**
+     * Get the colony's raid index
+     * @return an integer describing the colony's raidlevel
+     */
+    int getRaidLevel();
 }
