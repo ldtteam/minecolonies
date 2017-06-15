@@ -2,10 +2,7 @@ package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.BlockUtils;
-import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockHutTownHall;
@@ -132,11 +129,11 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
         }
         if (message.isHut)
         {
-            handleHut(player.world, player, sn, message.rotation, message.pos, message.mirror);
+            handleHut(CompatibilityUtils.getWorld(player), player, sn, message.rotation, message.pos, message.mirror);
         }
         else
         {
-            handleDecoration(player.world, player, sn, message.workOrderName, message.rotation, message.pos, message.mirror);
+            handleDecoration(CompatibilityUtils.getWorld(player), player, sn, message.workOrderName, message.rotation, message.pos, message.mirror);
         }
     }
 

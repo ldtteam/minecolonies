@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.pathfinding;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockUtils;
+import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.BlockConstructionTape;
 import com.minecolonies.coremod.blocks.BlockConstructionTapeCorner;
@@ -180,7 +181,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         @NotNull final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(MathHelper.floor(entity.posX),
                                                                                     (int) entity.posY,
                                                                                     MathHelper.floor(entity.posZ));
-        IBlockState bs = entity.world.getBlockState(pos);
+        IBlockState bs = CompatibilityUtils.getWorld(entity).getBlockState(pos);
         final Block b = bs.getBlock();
 
         if (entity.isInWater())
@@ -188,7 +189,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             while (bs.getMaterial().isLiquid())
             {
                 pos.setPos(pos.getX(), pos.getY() + 1, pos.getZ());
-                bs = entity.world.getBlockState(pos);
+                bs = CompatibilityUtils.getWorld(entity).getBlockState(pos);
             }
         }
         else if (b instanceof BlockFence || b instanceof BlockWall || b instanceof BlockHutField)

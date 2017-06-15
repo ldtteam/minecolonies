@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.client.render;
 
 import com.minecolonies.api.util.constant.Literals;
+import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
 import net.minecraft.client.renderer.GlStateManager;
@@ -73,7 +74,7 @@ public class RenderFishHook extends Render<EntityFishHook>
         //Check if he is a fisherman -> Through his texture
         if (citizen == null)
         {
-            for (@NotNull final Object citizenX : entity.world.getEntitiesWithinAABB(EntityCitizen.class, entity.getEntityBoundingBox().expand(10, 10, 10)))
+            for (@NotNull final Object citizenX : CompatibilityUtils.getWorld(entity).getEntitiesWithinAABB(EntityCitizen.class, entity.getEntityBoundingBox().expand(10, 10, 10)))
             {
                 if (((EntityCitizen) citizenX).getModelID().textureBase.contains("Fisherman"))
                 {
