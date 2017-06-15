@@ -103,20 +103,20 @@ public final class BarbarianUtils
         spawn(BarbarianUtils.chief, numberOfChiefBarbarians, colony, raidingWorld);
     }
 
-    private static int equilizeBarbarianSpawns(final int total, int numberOf)
+    private static int equilizeBarbarianSpawns(final int total,final int numberOf)
     {
+        int returnValue = numberOf;
         if (total > Configurations.maxBarbarianHordeSize)
         {
+            returnValue = total - MAX_SIZE;
 
-            numberOf = total - MAX_SIZE;
-
-            if (numberOf < 0)
+            if (returnValue < 0)
             {
                 return 0;
             }
-            return numberOf;
+            return returnValue;
         }
-        return numberOf;
+        return returnValue;
     }
 
     /**
