@@ -2,6 +2,7 @@ package com.minecolonies.coremod.client.render;
 
 import com.minecolonies.coremod.client.model.ModelBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.EntityArcherBarbarian;
+import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -25,12 +26,9 @@ public class RenderArcherBarbarianMob extends RenderLiving<EntityArcherBarbarian
 
     public RenderArcherBarbarianMob(final RenderManager renderManagerIn)
     {
-        // We use the vanilla zombie model here and we simply
-        // re-texture it. Of course you can make your own model
         super(renderManagerIn, new ModelBarbarian(), SHADOW_SIZE);
         this.addLayer(new LayerHeldItem(this));
         this.addLayer(new LayerBipedArmor(this));
-        // 0.0F, false
     }
 
     @Override

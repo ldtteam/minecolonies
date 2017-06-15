@@ -5,6 +5,7 @@ import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.entity.ai.mobs.EntityArcherBarbarian;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityTippedArrow;
@@ -41,6 +42,11 @@ public class GuardArrow extends EntityTippedArrow
         this.colony = shooter.getColony();
     }
 
+    public GuardArrow(final World worldIn, final EntityLivingBase shooter)
+    {
+        super(worldIn, shooter);
+    }
+
     @Override
     public void writeEntityToNBT(final NBTTagCompound compound)
     {
@@ -61,7 +67,7 @@ public class GuardArrow extends EntityTippedArrow
     {
         super.arrowHit(targetEntity);
         Log.getLogger().info("Arrow hit " + targetEntity + " with " + targetEntity.getHealth());
-        if (targetEntity.getHealth() <= 0.0F)
+        if (targetEntity.getHealth() <= 0.0F && !(shootingEntity instanceof EntityArcherBarbarian))
         {
             if (targetEntity instanceof EntityPlayer)
             {
