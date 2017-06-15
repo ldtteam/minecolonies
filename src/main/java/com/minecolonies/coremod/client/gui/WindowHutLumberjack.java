@@ -90,6 +90,7 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
     {
         super.onOpened();
         saplingsList = findPaneOfTypeByID(LIST_SAPLINGS, ScrollingList.class);
+        //todo switch button should have "on" and "off"
         saplingsList.setDataProvider(new ScrollingList.DataProvider()
         {
             @Override
