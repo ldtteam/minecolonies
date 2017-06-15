@@ -2,7 +2,6 @@ package com.minecolonies.coremod.client.render;
 
 import com.minecolonies.coremod.client.model.ModelBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.EntityArcherBarbarian;
-import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
