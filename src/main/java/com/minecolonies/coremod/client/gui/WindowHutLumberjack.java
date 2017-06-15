@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.Pane;
@@ -19,6 +20,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BAKER;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON;
 
 /**
  * Window for the fisherman hut.
@@ -41,6 +44,16 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
     private static final String BUTTON_CURRENT_SAPLING = "switch";
 
     /**
+     * String describing on for the gui.
+     */
+    private static final String ON  = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON);
+
+    /**
+     * String describing off for the gui.
+     */
+    private static final String OFF = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF);
+
+    /**
      * Id of the pages view.
      */
     private static final String VIEW_PAGES                = "pages";
@@ -53,7 +66,7 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
     /**
      * List of saplings the lumberjack should, or should not fell (true if should, false if should not).
      */
-    private static final Map<ItemStack, Boolean> treesToFell = new LinkedHashMap<>();
+    private final Map<ItemStack, Boolean> treesToFell = new LinkedHashMap<>();
 
     /**
      * The building of the lumberjack (Client side representation).
@@ -90,7 +103,6 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
     {
         super.onOpened();
         saplingsList = findPaneOfTypeByID(LIST_SAPLINGS, ScrollingList.class);
-        //todo switch button should have "on" and "off"
         saplingsList.setDataProvider(new ScrollingList.DataProvider()
         {
             @Override
@@ -110,11 +122,11 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
 
                 if(treesToFell.get(sapling))
                 {
-                    switchButton.enable();
+                    switchButton.setLabel(ON);
                 }
                 else
                 {
-                    switchButton.disable();
+                    switchButton.setLabel(OFF);
                 }
             }
         });

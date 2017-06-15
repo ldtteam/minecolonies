@@ -10,8 +10,8 @@
             <list id="trees" size="78% 85%" pos="30 20">
                 <box size="100% 30" linewidth="2">
                     <itemicon id="symbol" size="100 12" pos="5 2" color="black"/>
-                    <label id="name" size="50 12" pos="35 16" textalign="LEFT" color="black"/>
-                    <button id="switch" size="100 12" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.switch)"/>
+                    <label id="name" size="50 12" pos="35 16" textalign="MIDDLE_LEFT" color="black"/>
+                    <button id="switch" size="100 12" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOn)"/>
                 </box>
             </list>
         </view>

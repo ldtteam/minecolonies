@@ -329,7 +329,7 @@ public class Tree
                     return false;
                 }
             }
-            else
+            else if(!Compatibility.isSlimeSapling(((ItemBlock) stack.getItem()).getBlock()))
             {
                 if(variantNumber == stack.getItemStack().getMetadata())
                 {
