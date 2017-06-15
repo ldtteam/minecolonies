@@ -35,13 +35,14 @@ public final class BarbarianUtils
 
     private static final int    LEVEL_AT_WHICH_TO_NOT_TRIGGER_RAID = 1;
     private static final int    MAX_SIZE                           = Configurations.maxBarbarianHordeSize;
-    private static final double ARCHER_BARBARIANS_MULTIPLIER       = 0.5;
+    private static final double BARBARIANS_MULTIPLIER = 0.5;
+    private static final double ARCHER_BARBARIANS_MULTIPLIER       = 0.25;
     private static final double CHIEF_BARBARIANS_MULTIPLIER        = 0.1;
     private static final int    NUMBER_OF_POSSIBLE_CASES           = 360;
-    private static final int    PREFERED_MAX_HORDE_SIZE            = 40;
-    private static final int    PREFERED_MAX_BARBARIANS            = 22;
-    private static final int    PREFERED_MAX_ARCHERS               = 16;
-    private static final int    PREFERED_MAX_CHIEFS                = 2;
+    private static final int    PREFERRED_MAX_HORDE_SIZE            = 40;
+    private static final int    PREFERRED_MAX_BARBARIANS            = 22;
+    private static final int    PREFERRED_MAX_ARCHERS               = 16;
+    private static final int    PREFERRED_MAX_CHIEFS                = 2;
     private static final float  WHOLE_CIRCLE                       = 360.0F;
     private static final float  HALF_A_CIRCLE                      = 180F;
 
@@ -68,59 +69,27 @@ public final class BarbarianUtils
             return;
         }
 
-        int numberOfBarbarians = level;
+        int numberOfBarbarians = (int) (BARBARIANS_MULTIPLIER * level) ;
         int numberOfArcherBarbarians = (int) (ARCHER_BARBARIANS_MULTIPLIER * level);
         int numberOfChiefBarbarians = (int) (CHIEF_BARBARIANS_MULTIPLIER * level);
 
         int hordeTotal = numberOfArcherBarbarians + numberOfBarbarians + numberOfChiefBarbarians;
 
-        if (hordeTotal > PREFERED_MAX_HORDE_SIZE && MAX_SIZE == PREFERED_MAX_HORDE_SIZE && hordeTotal > MAX_SIZE)
+        if (hordeTotal > PREFERRED_MAX_HORDE_SIZE && MAX_SIZE == PREFERRED_MAX_HORDE_SIZE && hordeTotal > MAX_SIZE)
         {
-            numberOfBarbarians = PREFERED_MAX_BARBARIANS;
-            numberOfArcherBarbarians = PREFERED_MAX_ARCHERS;
-            numberOfChiefBarbarians = PREFERED_MAX_CHIEFS;
+            //set the preferred horde style if the total spawns is greater that the config's max size
+            numberOfBarbarians = PREFERRED_MAX_BARBARIANS;
+            numberOfArcherBarbarians = PREFERRED_MAX_ARCHERS;
+            numberOfChiefBarbarians = PREFERRED_MAX_CHIEFS;
         }
-
-        if (hordeTotal > Configurations.maxBarbarianHordeSize)
+        else if (hordeTotal > MAX_SIZE)
         {
-
-            numberOfBarbarians = hordeTotal - MAX_SIZE;
-
-            //For error handling and correct hordeTotal
-            if (numberOfBarbarians < 0)
-            {
-                numberOfBarbarians = 0;
-            }
-
-            //Re-asses hordeTotal to see if it is now below or at MAX_SIZE
+            //Equilize the spawns so that there is less spawns than the config's max size
+            numberOfBarbarians = equilizeBarbarianSpawns(hordeTotal, numberOfBarbarians);
             hordeTotal = numberOfArcherBarbarians + numberOfBarbarians + numberOfChiefBarbarians;
-
-            if (hordeTotal > MAX_SIZE)
-            {
-
-                numberOfArcherBarbarians = hordeTotal - MAX_SIZE;
-
-                //For error handling and correct hordeTotal
-                if (numberOfArcherBarbarians < 0)
-                {
-                    numberOfArcherBarbarians = 0;
-                }
-
-                //Re-asses hordeTotal to see if it is now below or at MAX_SIZE
-                hordeTotal = numberOfArcherBarbarians + numberOfBarbarians + numberOfChiefBarbarians;
-
-                if (hordeTotal > MAX_SIZE)
-                {
-
-                    numberOfChiefBarbarians = hordeTotal - MAX_SIZE;
-
-                    //For error handling and correct hordeTotal
-                    if (numberOfChiefBarbarians < 0)
-                    {
-                        numberOfChiefBarbarians = 0;
-                    }
-                }
-            }
+            numberOfArcherBarbarians = equilizeBarbarianSpawns(hordeTotal, numberOfArcherBarbarians);
+            hordeTotal = numberOfArcherBarbarians + numberOfBarbarians + numberOfChiefBarbarians;
+            numberOfChiefBarbarians = equilizeBarbarianSpawns(hordeTotal, numberOfChiefBarbarians);
         }
 
         //Make sure world isn't null
@@ -132,6 +101,22 @@ public final class BarbarianUtils
         spawn(BarbarianUtils.barbarian, numberOfBarbarians, colony, raidingWorld);
         spawn(BarbarianUtils.archer, numberOfArcherBarbarians, colony, raidingWorld);
         spawn(BarbarianUtils.chief, numberOfChiefBarbarians, colony, raidingWorld);
+    }
+
+    private static int equilizeBarbarianSpawns(final int total, int numberOf)
+    {
+        if (total > Configurations.maxBarbarianHordeSize)
+        {
+
+            numberOf = total - MAX_SIZE;
+
+            if (numberOf < 0)
+            {
+                return 0;
+            }
+            return numberOf;
+        }
+        return numberOf;
     }
 
     /**
