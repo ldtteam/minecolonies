@@ -23,7 +23,7 @@ public class ItemStorage
     /**
      * Creates an instance of the storage.
      *
-     * @param item              the item.
+     * @param stack              the item.
      * @param ignoreDamageValue should the damage value be ignored?
      */
     public ItemStorage(@NotNull final ItemStack item, final boolean ignoreDamageValue)
@@ -35,10 +35,7 @@ public class ItemStorage
     /**
      * Creates an instance of the storage.
      *
-     * @param item              the item.
-     * @param damageValue       it's damage value.
-     * @param amount            optional amount.
-     * @param ignoreDamageValue should the damage value be ignored?
+     * @param stack              the item.
      */
     public ItemStorage(@NotNull final ItemStack stack)
     {
