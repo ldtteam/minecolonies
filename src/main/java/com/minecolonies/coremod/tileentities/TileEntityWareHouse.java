@@ -156,7 +156,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      * @param addToList if is in warehouse should add to the list?
      * @return true if has something in warehouse to deliver.
      */
-    public boolean checkInWareHouse(@NotNull final AbstractBuilding buildingEntry, boolean addToList)
+    public boolean checkInWareHouse(@NotNull final AbstractBuilding buildingEntry, final boolean addToList)
     {
         if(buildingEntry.areItemsNeeded())
         {
@@ -268,7 +268,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
 
             for(final BlockPos pos : building.getAdditionalCountainers())
             {
-                @Nullable final TileEntity entity = worldObj.getTileEntity(pos);
+                @Nullable final TileEntity entity = getWorld().getTileEntity(pos);
                 if(entity instanceof TileEntityChest && isInTileEntity((TileEntityChest) entity, itemStackSelectionPredicate))
                 {
                     return true;
@@ -309,7 +309,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
 
             for(final BlockPos pos : building.getAdditionalCountainers())
             {
-                final TileEntity entity = worldObj.getTileEntity(pos);
+                final TileEntity entity = getWorld().getTileEntity(pos);
                 if(entity instanceof TileEntityChest && isInTileEntity((TileEntityChest) entity, itemStackSelectionPredicate))
                 {
                     return pos;
@@ -339,7 +339,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
 
             for(@NotNull final BlockPos pos : building.getAdditionalCountainers())
             {
-                final TileEntity entity = worldObj.getTileEntity(pos);
+                final TileEntity entity = getWorld().getTileEntity(pos);
                 if (entity instanceof TileEntityChest
                         && InventoryUtils.isToolInProvider(entity, tool, minLevel, requestingBuilding.getBuildingLevel()))
                 {
@@ -369,7 +369,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
 
             for(final BlockPos pos : building.getAdditionalCountainers())
             {
-                @Nullable final TileEntity entity = worldObj.getTileEntity(pos);
+                @Nullable final TileEntity entity = getWorld().getTileEntity(pos);
                 if(entity instanceof TileEntityChest
                     && InventoryUtils.isToolInProvider(entity, toolType, requestingBuilding.getNeededToolLevel(), requestingBuilding.getBuildingLevel()))
                 {
@@ -438,7 +438,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
 
         for(@NotNull final BlockPos pos : getBuilding().getAdditionalCountainers())
         {
-            final TileEntity entity = worldObj.getTileEntity(pos);
+            final TileEntity entity = getWorld().getTileEntity(pos);
             if(entity instanceof TileEntityChest
                     && InventoryUtils.findFirstSlotInProviderWith(entity, stack.getItem(), stack.getItemDamage()) != -1
                     && InventoryUtils.getFirstOpenSlotFromProvider(entity) != -1)
@@ -461,7 +461,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     {
         for(@NotNull final BlockPos pos : getBuilding().getAdditionalCountainers())
         {
-            final TileEntity entity = worldObj.getTileEntity(pos);
+            final TileEntity entity = getWorld().getTileEntity(pos);
             if(entity instanceof TileEntityChest
                     && InventoryUtils.findFirstSlotInProviderWith(entity, stack.getItem(), -1) != -1
                     && InventoryUtils.getFirstOpenSlotFromProvider(entity) != -1)
@@ -483,7 +483,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         TileEntityChest emptiestChest = null;
         for(@NotNull final BlockPos pos : getBuilding().getAdditionalCountainers())
         {
-            final TileEntity entity = worldObj.getTileEntity(pos);
+            final TileEntity entity = getWorld().getTileEntity(pos);
             if(entity == null)
             {
                 getBuilding().removeContainerPosition(pos);

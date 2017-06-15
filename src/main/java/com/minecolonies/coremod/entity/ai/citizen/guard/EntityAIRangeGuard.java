@@ -219,7 +219,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
     @Override
     public void attackEntityWithRangedAttack(@NotNull final EntityLivingBase entityToAttack, final float baseDamage)
     {
-        final EntityTippedArrow arrowEntity = new GuardArrow(this.worker.worldObj, worker);
+        final EntityTippedArrow arrowEntity = new GuardArrow(CompatibilityUtils.getWorld(this.worker), worker);
         final double xVector = entityToAttack.posX - worker.posX;
         final double yVector = entityToAttack.getEntityBoundingBox().minY + entityToAttack.height / AIM_HEIGHT - arrowEntity.posY;
         final double zVector = entityToAttack.posZ - worker.posZ;
@@ -250,7 +250,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
 
         worker.swingArm(EnumHand.MAIN_HAND);
         worker.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, (float) BASIC_VOLUME, (float) getRandomPitch());
-        worker.worldObj.spawnEntityInWorld(arrowEntity);
+        CompatibilityUtils.getWorld(worker).spawnEntityInWorld(arrowEntity);
 
         worker.damageItemInHand(1);
     }
@@ -271,10 +271,10 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
         final int powerEntchantment = EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.POWER, worker);
         final int punchEntchantment = EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.PUNCH, worker);
 
-        final DifficultyInstance difficulty = this.worker.worldObj.getDifficultyForLocation(new BlockPos(worker));
+        final DifficultyInstance difficulty = CompatibilityUtils.getWorld(worker).getDifficultyForLocation(new BlockPos(worker));
         arrowEntity.setDamage((baseDamage * BASE_DAMAGE_MULTIPLIER)
                                 + worker.getRandom().nextGaussian() * RANDOM_DAMAGE_MULTPLIER
-                                + this.worker.worldObj.getDifficulty().getDifficultyId() * DIFFICULTY_DAMAGE_INCREASE);
+                                + CompatibilityUtils.getWorld(worker).getDifficulty().getDifficultyId() * DIFFICULTY_DAMAGE_INCREASE);
 
         if (powerEntchantment > 0)
         {
