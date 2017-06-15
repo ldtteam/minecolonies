@@ -395,7 +395,7 @@ public class PathNavigate extends PathNavigateGround
     {
         @NotNull final BlockPos start = AbstractPathJob.prepareStart(entity);
         return (PathJobFindTree.TreePathResult) setPathJob(
-          new PathJobFindTree(entity.worldObj, start, ((EntityCitizen) entity).getWorkBuilding().getLocation(), range, treesToCut), null, speed);
+          new PathJobFindTree(CompatibilityUtils.getWorld(entity), start, ((EntityCitizen) entity).getWorkBuilding().getLocation(), range, treesToCut), null, speed);
     }
 
     /**
