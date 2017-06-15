@@ -103,7 +103,6 @@ public abstract class AbstractArcherBarbarian extends EntityMob implements IRang
     {
         this.tasks.addTask(PRIORITY_ONE, new EntityAISwimming(this));
         this.tasks.addTask(PRIORITY_TWO, new EntityAIRestrictSun(this));
-        this.tasks.addTask(PRIORITY_THREE, new EntityAIAvoidEntity(this, EntityWolf.class, 6.0F, 1.0D, 1.2D));
         this.tasks.addTask(PRIORITY_FIVE, new EntityAIWalkToRandomHuts(this, 2.0D));
         this.tasks.addTask(PRIORITY_SIX, new EntityAIWatchClosest(this, EntityPlayer.class, MAX_WATCH_DISTANCE));
         this.tasks.addTask(PRIORITY_SIX, new EntityAILookIdle(this));

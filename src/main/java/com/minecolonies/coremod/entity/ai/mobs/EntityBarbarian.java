@@ -35,13 +35,14 @@ public class EntityBarbarian extends EntityMob
     /**
      * Defines the default values for the various AI Task's priorities.
      */
-    private static final int PRIORITY_ZERO  = 1;
-    private static final int PRIORITY_TWO   = 2;
-    private static final int PRIORITY_THREE = 3;
-    private static final int PRIORITY_FOUR  = 4;
-    private static final int PRIORITY_FIVE  = 5;
-    private static final int PRIORITY_SIX   = 6;
-    private static final int PRIORITY_EIGHT = 8;
+    private static final int   PRIORITY_ZERO      = 1;
+    private static final int   PRIORITY_TWO       = 2;
+    private static final int   PRIORITY_THREE     = 3;
+    private static final int   PRIORITY_FOUR      = 4;
+    private static final int   PRIORITY_FIVE      = 5;
+    private static final int   PRIORITY_SIX       = 6;
+    private static final int   PRIORITY_EIGHT     = 8;
+    private static final float MAX_WATCH_DISTANCE = 8.0F;
 
     public static final ResourceLocation LOOT = new ResourceLocation(Constants.MOD_ID, "EntityBarbarianDrops");
 
@@ -68,7 +69,7 @@ public class EntityBarbarian extends EntityMob
         this.tasks.addTask(PRIORITY_FIVE, new EntityAIMoveTowardsRestriction(this, 1.0D));
         this.tasks.addTask(PRIORITY_TWO, new EntityAIBarbarianAttackMelee(this));
         this.tasks.addTask(PRIORITY_FOUR, new EntityAIWalkToRandomHuts(this, 2.0D));
-        this.tasks.addTask(PRIORITY_EIGHT, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
+        this.tasks.addTask(PRIORITY_EIGHT, new EntityAIWatchClosest(this, EntityPlayer.class, MAX_WATCH_DISTANCE));
         this.tasks.addTask(PRIORITY_EIGHT, new EntityAILookIdle(this));
         this.tasks.addTask(PRIORITY_SIX, new EntityAIMoveThroughVillage(this, 1.0D, false));
         this.targetTasks.addTask(PRIORITY_TWO, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));

@@ -27,7 +27,7 @@ public class EntityAIBarbarianAttackMelee extends EntityAIBase
     private static final double MIN_DISTANCE_FOR_ATTACK = 2.5;
     private static final double ATTACK_SPEED            = 1.3;
     private static final int    MUTEX_BITS              = 3;
-    private static final double IS_ZERO                 = 0;
+    private static final double IS_ZERO                 = 0.0D;
 
     public EntityAIBarbarianAttackMelee(final EntityCreature creatureIn)
     {
