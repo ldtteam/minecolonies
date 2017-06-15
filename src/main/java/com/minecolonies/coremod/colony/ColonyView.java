@@ -659,4 +659,10 @@ public final class ColonyView implements IColony
     {
         return lastContactInHours;
     }
+
+    @Override
+    public int getRaidLevel()
+    {
+        return 0;
+    }
 }
