@@ -139,7 +139,6 @@ public final class BarbarianUtils
         }
     }
 
-
     /**
      * Sets up and spawns the Barbarian entities of choice
      *

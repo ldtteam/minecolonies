@@ -1130,7 +1130,7 @@ public class Colony implements IColony
                 }
             }
 
-            if (!raidHasHappened && !subscribers.isEmpty() && world != null && !world.isDaytime() && Configurations.doBarbariansSpawn)
+            if (!raidHasHappened && !subscribers.isEmpty() && world != null && !world.isDaytime() && Configurations.doBarbariansSpawn && BarbarianUtils.raidThisNight(world))
             {
                 raidLevel = this.numberOfWorkerLevels();
                 if (citizens.size() < CITIZEN_MINIMUM_FOR_RAID)
@@ -1153,7 +1153,7 @@ public class Colony implements IColony
             building.onWorldTick(event);
         }
 
-        if ( world != null && isDay && !world.isDaytime())
+        if (world != null && isDay && !world.isDaytime())
         {
             isDay = false;
             updateOverallHappiness();
