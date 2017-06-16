@@ -211,7 +211,7 @@ public final class BarbarianUtils
 
         final int randomDegree = theWorld.rand.nextInt( (int) WHOLE_CIRCLE);
 
-        final double rads = randomDegree / HALF_A_CIRCLE * Math.PI;
+        final double rads = (double) randomDegree / HALF_A_CIRCLE * Math.PI;
         final double x = Math.round(center.getX() + radius * Math.sin(rads));
         final double z = Math.round(center.getZ() + radius * Math.cos(rads));
         return BlockPosUtil.getFloor(new BlockPos(x, center.getY(), z), theWorld).up();
