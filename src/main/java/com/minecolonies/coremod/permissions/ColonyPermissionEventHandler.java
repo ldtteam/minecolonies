@@ -17,6 +17,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemStack;
@@ -211,6 +212,7 @@ public class ColonyPermissionEventHandler
                   && !colony.getPermissions().hasPermission(event.getEntityPlayer(), Action.ACCESS_HUTS))
             {
                 cancelEvent(event, event.getEntityPlayer());
+                return;
             }
 
             final Permissions perms = colony.getPermissions();
@@ -223,20 +225,23 @@ public class ColonyPermissionEventHandler
 
             if(Configurations.enableColonyProtection)
             {
-                if (!perms.hasPermission(event.getEntityPlayer(), Action.RIGHTCLICK_BLOCK) && block != null)
+                if (!perms.hasPermission(event.getEntityPlayer(), Action.RIGHTCLICK_BLOCK) && block != null && block != Blocks.AIR)
                 {
                     cancelEvent(event, event.getEntityPlayer());
+                    return;
                 }
 
                 if (block instanceof BlockContainer && !perms.hasPermission(event.getEntityPlayer(),
                   Action.OPEN_CONTAINER))
                 {
                     cancelEvent(event, event.getEntityPlayer());
+                    return;
                 }
 
                 if (event.getWorld().getTileEntity(event.getPos()) != null && !perms.hasPermission(event.getEntityPlayer(), Action.RIGHTCLICK_ENTITY))
                 {
                     cancelEvent(event, event.getEntityPlayer());
+                    return;
                 }
 
                 final ItemStack stack = event.getItemStack();
@@ -249,12 +254,14 @@ public class ColonyPermissionEventHandler
                   Action.THROW_POTION))
                 {
                     cancelEvent(event, event.getEntityPlayer());
+                    return;
                 }
 
                 if (stack.getItem() instanceof ItemScanTool
                       && !perms.hasPermission(event.getEntityPlayer(), Action.USE_SCAN_TOOL))
                 {
                     cancelEvent(event, event.getEntityPlayer());
+                    return;
                 }
             }
         }
