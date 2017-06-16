@@ -128,7 +128,7 @@ public final class BarbarianUtils
     /**
      * Returns whether a raid should happen depending on the Config
      * @param world The world in which the raid is possibly happening (Used to get a random number easily)
-     * @return
+     * @return Boolean value on whether to act this night
      */
     public static boolean raidThisNight(final World world)
     {
@@ -144,7 +144,7 @@ public final class BarbarianUtils
      * @param spawnLocation  the location at which to spawn the entity
      * @param world          the world in which the colony and entity are
      */
-    public static void spawn(final ResourceLocation entityToSpawn, final int numberOfSpawns, final BlockPos spawnLocation, final World world)
+    private static void spawn(final ResourceLocation entityToSpawn, final int numberOfSpawns, final BlockPos spawnLocation, final World world)
     {
 
         if (spawnLocation != null && entityToSpawn != null && world != null)

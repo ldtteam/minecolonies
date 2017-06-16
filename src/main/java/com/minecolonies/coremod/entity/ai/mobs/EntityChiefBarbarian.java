@@ -55,9 +55,6 @@ public class EntityChiefBarbarian extends EntityMob
         this.getAlwaysRenderNameTag();
     }
 
-    /**
-     * Applies the following attributes to the entity
-     */
     @Override
     protected void applyEntityAttributes()
     {
@@ -71,6 +68,7 @@ public class EntityChiefBarbarian extends EntityMob
 
     /**
      * Sets the entity's health based on the raidLevel
+     * @return returns the health in the form of a double
      */
     protected double getHealthBasedOnRaidLevel()
     {
@@ -82,9 +80,6 @@ public class EntityChiefBarbarian extends EntityMob
         return BARBARIAN_BASE_HEALTH;
     }
 
-    /**
-     * Sets the AI tasks for the entity
-     */
     @Override
     protected void initEntityAI()
     {
@@ -99,44 +94,24 @@ public class EntityChiefBarbarian extends EntityMob
         this.targetTasks.addTask(PRIORITY_THREE, new EntityAINearestAttackableTarget(this, EntityCitizen.class, true));
     }
 
-    /**
-     * returns when the entity may despawn
-     *
-     * @return ^ ^
-     */
     @Override
     protected boolean canDespawn()
     {
         return world.isDaytime();
     }
 
-    /**
-     * Returns the sounds event when the Entity gets hurt
-     *
-     * @return ^ ^
-     */
     @Override
     protected SoundEvent getHurtSound()
     {
         return BarbarianSounds.barbarianHurt;
     }
 
-    /**
-     * Returns the sounds event when the Entity dies
-     *
-     * @return ^ ^
-     */
     @Override
     protected SoundEvent getDeathSound()
     {
         return BarbarianSounds.barbarianDeath;
     }
 
-    /**
-     * Returns the sounds event that randomly executes while the entity is living
-     *
-     * @return ^ ^
-     */
     @Nullable
     @Override
     protected SoundEvent getAmbientSound()
@@ -144,11 +119,6 @@ public class EntityChiefBarbarian extends EntityMob
         return BarbarianSounds.barbarianSay;
     }
 
-    /**
-     * Returns the entities loot table
-     *
-     * @return ^ ^
-     */
     @Override
     @Nullable
     protected ResourceLocation getLootTable()

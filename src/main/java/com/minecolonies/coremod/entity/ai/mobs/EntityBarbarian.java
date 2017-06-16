@@ -56,9 +56,6 @@ public class EntityBarbarian extends EntityMob
         super(worldIn);
     }
 
-    /**
-     * Applies the following attributes to the entity
-     */
     @Override
     protected void applyEntityAttributes()
     {
@@ -70,9 +67,6 @@ public class EntityBarbarian extends EntityMob
         this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(this.getHealthBasedOnRaidLevel());
     }
 
-    /**
-     * Sets the AI tasks for the entity
-     */
     @Override
     protected void initEntityAI()
     {
@@ -87,33 +81,18 @@ public class EntityBarbarian extends EntityMob
         this.targetTasks.addTask(PRIORITY_THREE, new EntityAINearestAttackableTarget(this, EntityCitizen.class, true));
     }
 
-    /**
-     * Returns the sounds event when the Entity gets hurt
-     *
-     * @return ^ ^
-     */
     @Override
     protected SoundEvent getHurtSound()
     {
         return BarbarianSounds.barbarianHurt;
     }
 
-    /**
-     * Returns the sounds event when the Entity dies
-     *
-     * @return ^ ^
-     */
     @Override
     protected SoundEvent getDeathSound()
     {
         return BarbarianSounds.barbarianDeath;
     }
 
-    /**
-     * Returns the sounds event that randomly executes while the entity is living
-     *
-     * @return ^ ^
-     */
     @Nullable
     @Override
     protected SoundEvent getAmbientSound()
@@ -123,6 +102,8 @@ public class EntityBarbarian extends EntityMob
 
     /**
      * Sets the entity's health based on the raidLevel
+     *
+     * @return returns the health in the form of a double
      */
     private double getHealthBasedOnRaidLevel()
     {
@@ -134,22 +115,12 @@ public class EntityBarbarian extends EntityMob
         return BARBARIAN_BASE_HEALTH;
     }
 
-    /**
-     * returns when the entity may despawn
-     *
-     * @return ^ ^
-     */
     @Override
     protected boolean canDespawn()
     {
         return world.isDaytime();
     }
 
-    /**
-     * Returns the entities loot table
-     *
-     * @return ^ ^
-     */
     @Override
     @Nullable
     protected ResourceLocation getLootTable()

@@ -43,11 +43,6 @@ public class EntityAIAttackArcher extends EntityAIBase
         this.setMutexBits(MUTEX_BITS);
     }
 
-    /**
-     * Returns whether the AI should Execute or not
-     *
-     * @return ^ ^
-     */
     @Override
     public boolean shouldExecute()
     {
@@ -57,6 +52,7 @@ public class EntityAIAttackArcher extends EntityAIBase
 
     /**
      * Returns whether an in-progress EntityAIBase should continue executing
+     * @return Boolean value on whether or not to continue executing
      */
     public boolean continueExecuting()
     {
@@ -116,7 +112,7 @@ public class EntityAIAttackArcher extends EntityAIBase
     /**
      * Random pitch generator
      *
-     * @return ^ ^
+     * @return A random double to act as a pitch value
      */
     private double getRandomPitch()
     {

@@ -61,11 +61,6 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
         this.setMutexBits(1);
     }
 
-    /**
-     * Returns whether the AI should Execute or not
-     *
-     * @return ^ ^
-     */
     @Override
     public boolean shouldExecute()
     {
@@ -130,7 +125,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
     /**
      * returns the center of the colony
      *
-     * @return ^ ^
+     * @return BlockPos of the center
      */
     @Nullable
     protected BlockPos getPosition()
@@ -141,6 +136,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
 
     /**
      * Returns whether an in-progress EntityAIBase should continue executing
+     * @return Boolean value of whether or not to continue executing
      */
     public boolean continueExecuting()
     {

@@ -1069,9 +1069,6 @@ public class Colony implements IColony
         }
     }
 
-    /**
-     * Return the colony's raid index
-     */
     @Override
     public int getRaidLevel()
     {
@@ -1153,7 +1150,7 @@ public class Colony implements IColony
             building.onWorldTick(event);
         }
 
-        if (world != null && isDay && !world.isDaytime())
+        if (isDay && !world.isDaytime())
         {
             isDay = false;
             updateOverallHappiness();

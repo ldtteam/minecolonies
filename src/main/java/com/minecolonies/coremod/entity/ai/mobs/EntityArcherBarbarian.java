@@ -69,9 +69,6 @@ public class EntityArcherBarbarian extends EntityMob
         super(worldIn);
     }
 
-    /**
-     * Applies the following attributes to the entity
-     */
     @Override
     protected void applyEntityAttributes()
     {
@@ -83,9 +80,6 @@ public class EntityArcherBarbarian extends EntityMob
         this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(this.getHealthBasedOnRaidLevel());
     }
 
-    /**
-     * Sets the AI tasks for the entity
-     */
     @Override
     protected void initEntityAI()
     {
@@ -100,13 +94,6 @@ public class EntityArcherBarbarian extends EntityMob
         this.targetTasks.addTask(PRIORITY_THREE, new EntityAINearestAttackableTarget(this, EntityCitizen.class, true));
     }
 
-    /**
-     * sets the various tasks that occur when the entity first spawns
-     *
-     * @param difficulty The world's difficulty
-     * @param livingdata The entity
-     * @return Living data (stuff i don't mess with)
-     */
     @Nullable
     @Override
     public IEntityLivingData onInitialSpawn(final DifficultyInstance difficulty, @Nullable final IEntityLivingData livingdata)
@@ -115,33 +102,18 @@ public class EntityArcherBarbarian extends EntityMob
         return super.onInitialSpawn(difficulty, livingdata);
     }
 
-    /**
-     * Returns the sounds event when the Entity gets hurt
-     *
-     * @return ^ ^
-     */
     @Override
     protected SoundEvent getHurtSound()
     {
         return BarbarianSounds.barbarianHurt;
     }
 
-    /**
-     * Returns the sounds event when the Entity dies
-     *
-     * @return ^ ^
-     */
     @Override
     protected SoundEvent getDeathSound()
     {
         return BarbarianSounds.barbarianDeath;
     }
 
-    /**
-     * Returns the sounds event that randomly executes while the entity is living
-     *
-     * @return ^ ^
-     */
     @Nullable
     @Override
     protected SoundEvent getAmbientSound()
@@ -151,6 +123,8 @@ public class EntityArcherBarbarian extends EntityMob
 
     /**
      * Sets the entity's health based on the raidLevel
+     *
+     * @return returns the health in the form of a double
      */
     private double getHealthBasedOnRaidLevel()
     {
@@ -171,11 +145,6 @@ public class EntityArcherBarbarian extends EntityMob
         this.dataManager.register(SWINGING_ARMS, Boolean.FALSE);
     }
 
-    /**
-     * returns when the entity may despawn
-     *
-     * @return ^ ^
-     */
     @Override
     protected boolean canDespawn()
     {
@@ -185,7 +154,7 @@ public class EntityArcherBarbarian extends EntityMob
     /**
      * Returns whether the entity is "Swinging arms" or not
      *
-     * @return ^ ^
+     * @return boolean on whether the arms are swinging or not
      */
     @SideOnly(Side.CLIENT)
     public boolean isSwingingArms()
@@ -193,11 +162,6 @@ public class EntityArcherBarbarian extends EntityMob
         return this.dataManager.get(SWINGING_ARMS);
     }
 
-    /**
-     * Returns the entities loot table
-     *
-     * @return ^ ^
-     */
     @Override
     @Nullable
     protected ResourceLocation getLootTable()
