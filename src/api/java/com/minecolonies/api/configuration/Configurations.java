@@ -12,7 +12,7 @@ public class Configurations
     public static       int     citizenRespawnInterval       = 30;
     public static       boolean builderInfiniteResources     = false;
     public static       int     builderBuildBlockDelay       = 15;
-    public static       int     blockMiningDelayModifier     = 5;
+    public static       int     blockMiningDelayModifier     = 500;
     public static       boolean limitToOneWareHousePerColony = true;
     public static       boolean workersAlwaysWorkInRain      = false;
 
