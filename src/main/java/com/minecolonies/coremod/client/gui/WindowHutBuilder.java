@@ -86,7 +86,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
             resources.addAll(updatedView.getResources().values());
             for (final BuildingBuilderResource resource : resources)
             {
-                resource.setPlayerAmount(InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory), resource.getStack(), resource.getDamageValue()));
+                resource.setPlayerAmount(InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory), resource.getItem(), resource.getDamageValue()));
             }
 
             resources.sort(new BuildingBuilderResource.ResourceComparator());
@@ -227,7 +227,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         {
             // The itemStack size should not be greater than itemStack.getMaxStackSize, We send 1 instead
             // and use quantity for the size
-            @NotNull final ItemStack itemStack = new ItemStack(res.getStack(), 1, res.getDamageValue());
+            @NotNull final ItemStack itemStack = new ItemStack(res.getItem(), 1, res.getDamageValue());
             @NotNull final Label quantityLabel = (Label) button.getParent().getChildren().get(RESOURCE_QUANTITY_MISSING_POSITION);
             final int quantity = Integer.parseInt(quantityLabel.getLabelText());
             MineColonies.getNetwork().sendToServer(new TransferItemsRequestMessage(this.building, itemStack, quantity));

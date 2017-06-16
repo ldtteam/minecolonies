@@ -82,7 +82,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
         final int[] saplingId = OreDictionary.getOreIDs(new ItemStack(Blocks.SAPLING));
 
         final List<ItemStack> saplings = new ArrayList<>();
-        for (int i : saplingId)
+        for (final int i : saplingId)
         {
             saplings.addAll(OreDictionary.getOres(OreDictionary.getOreName(i)));
         }
@@ -120,7 +120,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
         return Collections.unmodifiableMap(treesToFell);
     }
 
-    private static Map<ItemStorage, Boolean> calcSaplings(List<ItemStack> saplings)
+    private static Map<ItemStorage, Boolean> calcSaplings(final List<ItemStack> saplings)
     {
         final Map<ItemStorage, Boolean> finalSaplings = new LinkedHashMap<>();
         for (final ItemStack saps : saplings)
@@ -287,7 +287,6 @@ public class BuildingLumberjack extends AbstractBuildingWorker
 
         /**
          * Public constructor of the view, creates an instance of it.
-         *
          * @param c the colony.
          * @param l the position.
          */
@@ -301,7 +300,6 @@ public class BuildingLumberjack extends AbstractBuildingWorker
         {
             super.deserialize(buf);
             treesToFell.clear();
-
             final int size = buf.readInt();
             for (int i = 0; i < size; i++)
             {
@@ -311,11 +309,6 @@ public class BuildingLumberjack extends AbstractBuildingWorker
             }
         }
 
-        /**
-         * Gets the blockOut Window.
-         *
-         * @return the window of the lumberjack building.
-         */
         @NotNull
         @Override
         public Window getWindow()

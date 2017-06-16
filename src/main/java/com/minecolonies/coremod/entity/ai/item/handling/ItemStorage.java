@@ -97,7 +97,7 @@ public class ItemStorage
     @Override
     public int hashCode()
     {
-        return 31 * getStack().hashCode() + getDamageValue();
+        return 31 * getItem().hashCode() + getDamageValue();
     }
 
     @Override
@@ -115,7 +115,7 @@ public class ItemStorage
         final ItemStorage that = (ItemStorage) o;
 
 
-        return getStack().equals(that.getStack()) && (this.ignoreDamageValue || that.getDamageValue() == this.getDamageValue());
+        return getItem().equals(that.getItem()) && (this.ignoreDamageValue || that.getDamageValue() == this.getDamageValue());
     }
 
     /**
@@ -134,7 +134,7 @@ public class ItemStorage
      * @return the stack.
      */
     @NotNull
-    public Item getStack()
+    public Item getItem()
     {
         return stack.getItem();
     }

@@ -22,6 +22,7 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -159,7 +160,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         for (@NotNull final BuildingBuilderResource resource : neededResources.values())
         {
             @NotNull final NBTTagCompound neededRes = new NBTTagCompound();
-            final ItemStack itemStack = new ItemStack(resource.getStack(),resource.getAmount(),resource.getDamageValue());
+            final ItemStack itemStack = new ItemStack(resource.getItem(),resource.getAmount(),resource.getDamageValue());
             itemStack.writeToNBT(neededRes);
 
             neededResTagList.appendTag(neededRes);
@@ -194,11 +195,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         for (@NotNull final Map.Entry<String, BuildingBuilderResource> entry : neededResources.entrySet())
         {
             final BuildingBuilderResource resource = neededResources.get(entry.getKey());
-            //ByteBufUtils.writeItemStack() is Buggy, serialize itemId and damage separately;
-            final int itemId = Item.getIdFromItem(resource.getStack());
-            final int damage = resource.getDamageValue();
-            buf.writeInt(itemId);
-            buf.writeInt(damage);
+            ByteBufUtils.writeItemStack(buf, resource.getItemStack());
             buf.writeInt(resource.getAvailable());
             buf.writeInt(resource.getAmount());
         }
@@ -296,13 +293,13 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
             if (builderInventory!=null)
             {
-                resource.addAvailable(InventoryUtils.getItemCountInItemHandler(new InvWrapper(builderInventory), resource.getStack(), resource.getDamageValue()));
+                resource.addAvailable(InventoryUtils.getItemCountInItemHandler(new InvWrapper(builderInventory), resource.getItem(), resource.getDamageValue()));
             }
 
             final TileEntity chestInventory = this.getTileEntity();
             if (chestInventory!=null)
             {
-                resource.addAvailable(InventoryUtils.getItemCountInProvider(chestInventory, resource.getStack(), resource.getDamageValue()));
+                resource.addAvailable(InventoryUtils.getItemCountInProvider(chestInventory, resource.getItem(), resource.getDamageValue()));
             }
 
             //Count in the additional chests as well
@@ -313,7 +310,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
                     final TileEntity entity = CompatibilityUtils.getWorld(builder).getTileEntity(pos);
                     if(entity instanceof TileEntityChest)
                     {
-                        resource.addAvailable(InventoryUtils.getItemCountInProvider(entity, resource.getStack(), resource.getDamageValue()));
+                        resource.addAvailable(InventoryUtils.getItemCountInProvider(entity, resource.getItem(), resource.getDamageValue()));
                     }
                 }
             }

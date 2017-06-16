@@ -60,7 +60,7 @@ public class BuildingBuilderResource extends ItemStorage
     public String getName()
     {
         //It is the bet way ?
-        return new ItemStack(getStack(), 1, getDamageValue()).getDisplayName();
+        return getItemStack().getDisplayName();
     }
 
     /**
@@ -149,7 +149,7 @@ public class BuildingBuilderResource extends ItemStorage
     @Override
     public String toString()
     {
-        final int itemId = Item.getIdFromItem(getStack());
+        final int itemId = Item.getIdFromItem(getItem());
         return getName() + "(p:" + amountPlayer + " a:" + amountAvailable + " n:" + getAmount() + " id=" + itemId + " damage=" + getDamageValue() + ") => "
                 + getAvailabilityStatus().name();
     }

@@ -45,6 +45,7 @@ public class LumberjackSaplingSelectorMessage extends AbstractMessage<Lumberjack
      */
     public LumberjackSaplingSelectorMessage()
     {
+        super();
         /*
          * Intentionally left empty.
          */
@@ -58,6 +59,8 @@ public class LumberjackSaplingSelectorMessage extends AbstractMessage<Lumberjack
      */
     public LumberjackSaplingSelectorMessage(final BuildingLumberjack.View building, final ItemStack saplingStack, final boolean shouldCut)
     {
+
+        super();
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
         this.stack = saplingStack;
@@ -95,7 +98,7 @@ public class LumberjackSaplingSelectorMessage extends AbstractMessage<Lumberjack
             }
 
             @Nullable final AbstractBuildingWorker building = colony.getBuilding(message.buildingId, AbstractBuildingWorker.class);
-            if (building != null && building instanceof BuildingLumberjack)
+            if (building instanceof BuildingLumberjack)
             {
                 ((BuildingLumberjack) building).setTreeToCut(message.stack, message.shouldCut);
             }

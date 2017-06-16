@@ -437,7 +437,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             return ItemStackUtils.EMPTY;
         }
         final BuildingBuilderResource resource = ((BuildingBuilder) buildingWorker).getNeededResources().get(stack.getUnlocalizedName());
-        return resource == null ? stack : new ItemStack(resource.getStack(), resource.getAmount(), resource.getDamageValue());
+        return resource == null ? stack : new ItemStack(resource.getItem(), resource.getAmount(), resource.getDamageValue());
     }
 
     @Override
