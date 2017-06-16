@@ -35,14 +35,14 @@ public final class BarbarianUtils
 
     private static final int    LEVEL_AT_WHICH_TO_NOT_TRIGGER_RAID = 1;
     private static final int    MAX_SIZE                           = Configurations.maxBarbarianHordeSize;
-    private static final double BARBARIANS_MULTIPLIER = 0.5;
+    private static final double BARBARIANS_MULTIPLIER              = 0.5;
     private static final double ARCHER_BARBARIANS_MULTIPLIER       = 0.25;
     private static final double CHIEF_BARBARIANS_MULTIPLIER        = 0.1;
     private static final int    NUMBER_OF_POSSIBLE_CASES           = 360;
-    private static final int    PREFERRED_MAX_HORDE_SIZE            = 40;
-    private static final int    PREFERRED_MAX_BARBARIANS            = 22;
-    private static final int    PREFERRED_MAX_ARCHERS               = 16;
-    private static final int    PREFERRED_MAX_CHIEFS                = 2;
+    private static final int    PREFERRED_MAX_HORDE_SIZE           = 40;
+    private static final int    PREFERRED_MAX_BARBARIANS           = 22;
+    private static final int    PREFERRED_MAX_ARCHERS              = 16;
+    private static final int    PREFERRED_MAX_CHIEFS               = 2;
     private static final float  WHOLE_CIRCLE                       = 360.0F;
     private static final float  HALF_A_CIRCLE                      = 180F;
 
@@ -53,29 +53,27 @@ public final class BarbarianUtils
     {
     }
 
-    public static void doRaid(final World world, final int level, final Colony colony)
-    {
-        eventRaid(world, level, colony);
-    }
-
     /**
-     * Commences a Raid event in a specific colony, with a specific RaidLevel
+     * Commences a raid for a colony.
+     *
+     * @param raidingWorld The world in which the raid is occurring
+     * @param level        The raidLevel that the colony is at
+     * @param colony       The colony at which the raid is occurring
      */
-
-    private static void eventRaid(final World raidingWorld, final int level, final Colony colony)
+    public static void eventRaid(final World raidingWorld, final int level, final Colony colony)
     {
         if (level == LEVEL_AT_WHICH_TO_NOT_TRIGGER_RAID)
         {
             return;
         }
 
-        int numberOfBarbarians = (int) (BARBARIANS_MULTIPLIER * level) ;
+        int numberOfBarbarians = (int) (BARBARIANS_MULTIPLIER * level);
         int numberOfArcherBarbarians = (int) (ARCHER_BARBARIANS_MULTIPLIER * level);
         int numberOfChiefBarbarians = (int) (CHIEF_BARBARIANS_MULTIPLIER * level);
 
         int hordeTotal = numberOfArcherBarbarians + numberOfBarbarians + numberOfChiefBarbarians;
 
-        if (hordeTotal > PREFERRED_MAX_HORDE_SIZE && MAX_SIZE == PREFERRED_MAX_HORDE_SIZE && hordeTotal > MAX_SIZE)
+        if (hordeTotal > PREFERRED_MAX_HORDE_SIZE && MAX_SIZE == PREFERRED_MAX_HORDE_SIZE)
         {
             //set the preferred horde style if the total spawns is greater that the config's max size
             numberOfBarbarians = PREFERRED_MAX_BARBARIANS;
@@ -98,12 +96,21 @@ public final class BarbarianUtils
             return;
         }
 
-        spawn(BarbarianUtils.barbarian, numberOfBarbarians, colony, raidingWorld);
-        spawn(BarbarianUtils.archer, numberOfArcherBarbarians, colony, raidingWorld);
-        spawn(BarbarianUtils.chief, numberOfChiefBarbarians, colony, raidingWorld);
+        final BlockPos targetSpawnPoint = calculateSpawnLocation(raidingWorld, colony);
+
+        spawn(BarbarianUtils.barbarian, numberOfBarbarians, targetSpawnPoint, raidingWorld);
+        spawn(BarbarianUtils.archer, numberOfArcherBarbarians, targetSpawnPoint, raidingWorld);
+        spawn(BarbarianUtils.chief, numberOfChiefBarbarians, targetSpawnPoint, raidingWorld);
     }
 
-    private static int equilizeBarbarianSpawns(final int total,final int numberOf)
+    /**
+     * Reduces barbarian spawns to less than the maximum allowed (set via the config)
+     *
+     * @param total    The current horde size
+     * @param numberOf The number of barbarians which we are reducing
+     * @return the new number that the barbarians should be set to.
+     */
+    private static int equilizeBarbarianSpawns(final int total, final int numberOf)
     {
         int returnValue = numberOf;
         if (total > Configurations.maxBarbarianHordeSize)
@@ -119,20 +126,36 @@ public final class BarbarianUtils
         return returnValue;
     }
 
-    /**
-     * Spawns EntityToSPawn at the X, Y, Z
-     */
+    public static boolean raidThisNight(World world)
+    {
+        float chance = 1 / Configurations.averageNumberOfNightsBetweenRaids;
+        if (world.rand.nextFloat() < chance)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 
-    public static void spawn(final ResourceLocation entityToSpawn, final int numberOfSpawns, final Colony colony, final World world)
+
+    /**
+     * Sets up and spawns the Barbarian entities of choice
+     *
+     * @param entityToSpawn  The entity which should be spawned
+     * @param numberOfSpawns The number of times the entity should be spawned
+     * @param spawnLocation  the location at which to spawn the entity
+     * @param world          the world in which the colony and entity are
+     */
+    public static void spawn(final ResourceLocation entityToSpawn, final int numberOfSpawns, final BlockPos spawnLocation, final World world)
     {
 
-        final BlockPos targetSpawnPoint = calculateSpawnLocation(world, colony);
-
-        if (targetSpawnPoint != null && entityToSpawn != null && world != null)
+        if (spawnLocation != null && entityToSpawn != null && world != null)
         {
-            final int x = targetSpawnPoint.getX();
-            final int y = targetSpawnPoint.getY();
-            final int z = targetSpawnPoint.getZ();
+            final int x = spawnLocation.getX();
+            final int y = spawnLocation.getY();
+            final int z = spawnLocation.getZ();
 
             IntStream.range(0, numberOfSpawns).forEach(theInteger ->
             {
@@ -140,21 +163,7 @@ public final class BarbarianUtils
 
                 if (entity != null)
                 {
-                    if (entityToSpawn.equals(barbarian))
-                    {
-                        entity.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.STONE_AXE));
-                    }
-                    if (entityToSpawn.equals(archer))
-                    {
-                        entity.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
-                    }
-                    if (entityToSpawn.equals(chief))
-                    {
-                        entity.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_SWORD));
-                        entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(Items.CHAINMAIL_CHESTPLATE));
-                        entity.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(Items.CHAINMAIL_LEGGINGS));
-                        entity.setItemStackToSlot(EntityEquipmentSlot.FEET, new ItemStack(Items.CHAINMAIL_BOOTS));
-                    }
+                    setBarbarianItems(entityToSpawn, entity);
                     entity.setLocationAndAngles(x, y, z, MathHelper.wrapDegrees(world.rand.nextFloat() * WHOLE_CIRCLE), 0.0F);
                     world.spawnEntity(entity);
                 }
@@ -163,10 +172,35 @@ public final class BarbarianUtils
     }
 
     /**
-     * Calculate the colony border.
+     * Sets the various items for each type of barbarian
+     *
+     * @param entityToSpawn The entity which to act upon
+     */
+    private static void setBarbarianItems(ResourceLocation entityToSpawn, Entity entity)
+    {
+        if (entityToSpawn.equals(barbarian))
+        {
+            entity.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.STONE_AXE));
+        }
+        if (entityToSpawn.equals(archer))
+        {
+            entity.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
+        }
+        if (entityToSpawn.equals(chief))
+        {
+            entity.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_SWORD));
+            entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(Items.CHAINMAIL_CHESTPLATE));
+            entity.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(Items.CHAINMAIL_LEGGINGS));
+            entity.setItemStackToSlot(EntityEquipmentSlot.FEET, new ItemStack(Items.CHAINMAIL_BOOTS));
+        }
+    }
+
+    /**
+     * Calculate a random spawnpoint along the colony's border
      *
      * @param theWorld in the world.
      * @param colony   the Colony to spawn the barbarians near.
+     * @return Returns the random blockPos
      */
     private static BlockPos calculateSpawnLocation(final World theWorld, final Colony colony)
     {

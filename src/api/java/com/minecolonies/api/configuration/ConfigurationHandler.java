@@ -20,10 +20,10 @@ public final class ConfigurationHandler
 
     private static Configuration config;
 
-    public static final String CATEGORY_GAMEPLAY    = "gameplay";
-    public static final String CATEGORY_PATHFINDING = "pathfinding";
-    public static final String CATEGORY_NAMES       = "names";
-    private static final String FORMAT_RANGE = "%s (range: %s ~ %s, default: %s)";
+    public static final  String CATEGORY_GAMEPLAY    = "gameplay";
+    public static final  String CATEGORY_PATHFINDING = "pathfinding";
+    public static final  String CATEGORY_NAMES       = "names";
+    private static final String FORMAT_RANGE         = "%s (range: %s ~ %s, default: %s)";
 
     public ConfigurationHandler()
     {
@@ -71,19 +71,19 @@ public final class ConfigurationHandler
             enableColonyProtection = config.get(CATEGORY_GAMEPLAY, "enableColonyProtection", enableColonyProtection,
               "Enable the automatic colony protection?").getBoolean();
             turnOffExplosionsInColonies = config.get(CATEGORY_GAMEPLAY, "turnOffExplosionsInColonies", turnOffExplosionsInColonies,
-                    "Turn off explosions inside the colonies radius?").getBoolean();
+              "Turn off explosions inside the colonies radius?").getBoolean();
             limitToOneWareHousePerColony = config.get(CATEGORY_GAMEPLAY, "limitToOneWareHousePerColony", limitToOneWareHousePerColony,
-                    "Limit the Colony to 1 Warehouse per Colony?").getBoolean();
+              "Limit the Colony to 1 Warehouse per Colony?").getBoolean();
             workersAlwaysWorkInRain = config.get(CATEGORY_GAMEPLAY, "workersAlwaysWorkInRain", workersAlwaysWorkInRain,
-                    "Set wether workers work in rain regardless of hut level").getBoolean();
+              "Set wether workers work in rain regardless of hut level").getBoolean();
             
             /* schematics usage */
             ignoreSchematicsFromJar = config.get(CATEGORY_GAMEPLAY, "ignoreSchematicsFromJar", ignoreSchematicsFromJar,
-                    "Ignore the schematic from the jar file").getBoolean();
+              "Ignore the schematic from the jar file").getBoolean();
             allowPlayerSchematics = config.get(CATEGORY_GAMEPLAY, "allowPlayerSchematics", allowPlayerSchematics,
-                    "Allow player to use their own schematics (in MP)").getBoolean();
+              "Allow player to use their own schematics (in MP)").getBoolean();
             maxCachedSchematics = config.get(CATEGORY_GAMEPLAY, "maxCachedSchematics", maxCachedSchematics,
-                    "How many chached schematics the server can store before deleting them").getInt();
+              "How many chached schematics the server can store before deleting them").getInt();
 
             /* Configs for commands */
             opLevelForServer = config.get(CATEGORY_GAMEPLAY, "opLevelForServer", opLevelForServer,
@@ -127,18 +127,21 @@ public final class ConfigurationHandler
               "Display in-development features which do not work and may break your game").getBoolean();
 
             freeToInteractBlocks = config.get(CATEGORY_GAMEPLAY, "freeToInteractBlocks", freeToInteractBlocks,
-                    "Blocks players should be able to interact with inside any colony.").getStringList();
+              "Blocks players should be able to interact with inside any colony.").getStringList();
 
-            maxBarbarianHordeSize = getClampedInt(config,CATEGORY_GAMEPLAY ,
-                    "maxBarbarianHordeSize", maxBarbarianHordeSize, MIN_BARBARIAN_HORDE_SIZE, MAX_BARBARIAN_HORDE_SIZE,
-                    "Sets the barbarian horde's max amount of barbarians");
+            maxBarbarianHordeSize = getClampedInt(config, CATEGORY_GAMEPLAY,
+              "maxBarbarianHordeSize", maxBarbarianHordeSize, MIN_BARBARIAN_HORDE_SIZE, MAX_BARBARIAN_HORDE_SIZE,
+              "Sets the barbarian horde's max amount of barbarians");
 
             doBarbariansSpawn = config.get(CATEGORY_GAMEPLAY, "doBarbariansSpawn", doBarbariansSpawn,
-                    "Enables or disables barbarian horde's spawning").getBoolean();
+              "Enables or disables barbarian horde's spawning").getBoolean();
 
-            barbarianHordeDifficulty = getClampedInt(config,CATEGORY_GAMEPLAY,
-                    "barbarianHordeDifficulty", barbarianHordeDifficulty, 1, 10,
-                    "Sets the barbarian horde's attack strength");
+            barbarianHordeDifficulty = getClampedInt(config, CATEGORY_GAMEPLAY,
+              "barbarianHordeDifficulty", barbarianHordeDifficulty, 1, 10,
+              "Sets the barbarian horde's attack strength");
+
+            averageNumberOfNightsBetweenRaids = config.get(CATEGORY_GAMEPLAY, "averageNumberOfNightsBetweenRaids", averageNumberOfNightsBetweenRaids,
+              "sets the average number of nights between raids").getInt();
             loadPathFindingConfigurations();
             loadNamesConfigurations();
         }
@@ -157,11 +160,11 @@ public final class ConfigurationHandler
     private static synchronized void loadPathFindingConfigurations()
     {
         pathfindingDebugDraw = config.get(CATEGORY_PATHFINDING, "debugDraw", pathfindingDebugDraw,
-                "Render pathfinding results for debugging purposes (SSP only)").getBoolean();
+          "Render pathfinding results for debugging purposes (SSP only)").getBoolean();
         pathfindingDebugVerbosity = config.get(CATEGORY_PATHFINDING, "debugVerbosity", pathfindingDebugVerbosity,
-                "Debug output verbosity of pathfinding (0=none, 1=results, 2=live work)").getInt();
+          "Debug output verbosity of pathfinding (0=none, 1=results, 2=live work)").getInt();
         pathfindingMaxThreadCount = config.get(CATEGORY_PATHFINDING, "maxThreads", pathfindingMaxThreadCount,
-                "Maximum number of threads to use for pathfinding.").getInt();
+          "Maximum number of threads to use for pathfinding.").getInt();
     }
 
     /**
@@ -170,23 +173,23 @@ public final class ConfigurationHandler
     private static synchronized void loadNamesConfigurations()
     {
         maleFirstNames = config.get(CATEGORY_NAMES, "maleFirstNames", maleFirstNames,
-                "Male First Names").getStringList();
+          "Male First Names").getStringList();
         femaleFirstNames = config.get(CATEGORY_NAMES, "femaleFirstNames", femaleFirstNames,
-                "Female First Names").getStringList();
+          "Female First Names").getStringList();
         lastNames = config.get(CATEGORY_NAMES, "lastNames", lastNames,
-                "Last Names").getStringList();
+          "Last Names").getStringList();
     }
 
     /**
      * This event will be called when the config gets changed through
      * the in-game GUI.
-     * 
-     * @param eventArgs An instance to the event. 
+     *
+     * @param eventArgs An instance to the event.
      */
     @SubscribeEvent
     public void onConfigChanged(final OnConfigChangedEvent eventArgs)
     {
-        if(eventArgs.getModID().equalsIgnoreCase(Constants.MOD_ID)) 
+        if (eventArgs.getModID().equalsIgnoreCase(Constants.MOD_ID))
         {
             // resync configs
             loadConfiguration();

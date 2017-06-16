@@ -2,24 +2,25 @@ package com.minecolonies.api.configuration;
 
 public class Configurations
 {
-    public static final int     CITIZEN_RESPAWN_INTERVAL_MIN = 10;
-    public static final int     CITIZEN_RESPAWN_INTERVAL_MAX = 600;
-    public static       boolean builderPlaceConstructionTape = true;
-    public static       int     workingRangeTownHall         = 100;
-    public static       int     townHallPadding              = 20;
-    public static       boolean supplyChests                 = true;
-    public static       boolean allowInfiniteSupplyChests    = false;
-    public static       int     citizenRespawnInterval       = 240;
-    public static       boolean builderInfiniteResources     = false;
-    public static       boolean limitToOneWareHousePerColony = true;
-    public static       int     builderBuildBlockDelay       = 15;
-    public static       int     blockMiningDelayModifier     = 125;
-    public static       boolean workersAlwaysWorkInRain      = false;
-    public static       int     maxBarbarianHordeSize        = 40;
-    public static       boolean doBarbariansSpawn            = true;
-    public static       int     barbarianHordeDifficulty     = 5;
-    public static final int     MAX_BARBARIAN_HORDE_SIZE     = 60;
-    public static final int     MIN_BARBARIAN_HORDE_SIZE     = 5;
+    public static final int     CITIZEN_RESPAWN_INTERVAL_MIN      = 10;
+    public static final int     CITIZEN_RESPAWN_INTERVAL_MAX      = 600;
+    public static       boolean builderPlaceConstructionTape      = true;
+    public static       int     workingRangeTownHall              = 100;
+    public static       int     townHallPadding                   = 20;
+    public static       boolean supplyChests                      = true;
+    public static       boolean allowInfiniteSupplyChests         = false;
+    public static       int     citizenRespawnInterval            = 240;
+    public static       boolean builderInfiniteResources          = false;
+    public static       boolean limitToOneWareHousePerColony      = true;
+    public static       int     builderBuildBlockDelay            = 15;
+    public static       int     blockMiningDelayModifier          = 125;
+    public static       boolean workersAlwaysWorkInRain           = false;
+    public static       int     maxBarbarianHordeSize             = 40;
+    public static       boolean doBarbariansSpawn                 = true;
+    public static       int     barbarianHordeDifficulty          = 5;
+    public static final int     MAX_BARBARIAN_HORDE_SIZE          = 60;
+    public static final int     MIN_BARBARIAN_HORDE_SIZE          = 5;
+    public static       int     averageNumberOfNightsBetweenRaids = 3;
 
     public static boolean enableColonyProtection      = true;
     public static boolean turnOffExplosionsInColonies = true;

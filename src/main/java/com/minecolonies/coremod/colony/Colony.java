@@ -1137,7 +1137,7 @@ public class Colony implements IColony
                 {
                     raidLevel = 1;
                 }
-                BarbarianUtils.doRaid(world, raidLevel, this);
+                BarbarianUtils.eventRaid(world, raidLevel, this);
                 raidHasHappened = true;
             }
 
