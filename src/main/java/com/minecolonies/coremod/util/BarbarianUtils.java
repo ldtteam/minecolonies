@@ -126,9 +126,9 @@ public final class BarbarianUtils
         return returnValue;
     }
 
-    public static boolean raidThisNight(World world)
+    public static boolean raidThisNight(final World world)
     {
-        float chance =(float) 1 / Configurations.averageNumberOfNightsBetweenRaids;
+        final float chance =(float) 1 / Configurations.averageNumberOfNightsBetweenRaids;
         return world.rand.nextFloat() < chance;
     }
 
