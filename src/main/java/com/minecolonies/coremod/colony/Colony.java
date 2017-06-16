@@ -1084,7 +1084,7 @@ public class Colony implements IColony
      */
     public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
     {
-        if (event.world != getWorld())
+        if (event.world != getWorld() || world == null)
         {
             /**
              * If the event world is not the colony world ignore. This might happen in interactions with other mods.
@@ -1149,7 +1149,7 @@ public class Colony implements IColony
         {
             building.onWorldTick(event);
         }
-
+        
         if (isDay && !world.isDaytime())
         {
             isDay = false;
