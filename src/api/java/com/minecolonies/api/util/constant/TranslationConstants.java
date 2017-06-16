@@ -95,7 +95,7 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_JOB_FARMER                            = "com.minecolonies.coremod.job.Farmer";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_JOB_BAKER                             = "com.minecolonies.coremod.job.Baker";
+    public static final String COM_MINECOLONIES_COREMOD_JOB_BAKER                             = "com.minecolonies.coremod.job.baker";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON            = "com.minecolonies.coremod.gui.workerHuts.retrieveOn";
     @NonNls

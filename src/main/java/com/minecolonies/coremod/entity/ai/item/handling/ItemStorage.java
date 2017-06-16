@@ -6,14 +6,14 @@ import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Used to store an item with various informations to compare items later on.
+ * Used to store an stack with various informations to compare items later on.
  */
 public class ItemStorage
 {
     /**
-     * The item to store.
+     * The stack to store.
      */
-    private final ItemStack item;
+    private final ItemStack stack;
 
     /**
      * Set this to ignore the damage value in comparisons.
@@ -21,26 +21,47 @@ public class ItemStorage
     private final boolean ignoreDamageValue;
 
     /**
+     * Amount of the storage.
+     */
+    private int amount;
+
+    /**
      * Creates an instance of the storage.
      *
-     * @param stack              the item.
+     * @param stack             the stack.
+     * @param amount            the amount.
      * @param ignoreDamageValue should the damage value be ignored?
      */
-    public ItemStorage(@NotNull final ItemStack item, final boolean ignoreDamageValue)
+    public ItemStorage(@NotNull final ItemStack stack, final int amount, final boolean ignoreDamageValue)
     {
-        this.item = item;
+        this.stack = stack;
         this.ignoreDamageValue = ignoreDamageValue;
+        this.amount = amount;
     }
 
     /**
      * Creates an instance of the storage.
      *
-     * @param stack              the item.
+     * @param stack             the stack.
+     * @param ignoreDamageValue should the damage value be ignored?
+     */
+    public ItemStorage(@NotNull final ItemStack stack, final boolean ignoreDamageValue)
+    {
+        this.stack = stack;
+        this.ignoreDamageValue = ignoreDamageValue;
+        this.amount = ItemStackUtils.getSize(stack);
+    }
+
+    /**
+     * Creates an instance of the storage.
+     *
+     * @param stack the stack.
      */
     public ItemStorage(@NotNull final ItemStack stack)
     {
-        this.item = stack;
+        this.stack = stack;
         this.ignoreDamageValue = false;
+        this.amount = ItemStackUtils.getSize(stack);
     }
 
     /**
@@ -50,7 +71,7 @@ public class ItemStorage
      */
     public int getAmount()
     {
-        return ItemStackUtils.getSize(item);
+        return this.amount;
     }
 
     /**
@@ -60,9 +81,8 @@ public class ItemStorage
      */
     public void setAmount(final int amount)
     {
-        ItemStackUtils.setSize(item, ItemStackUtils.getSize(item) +  amount);
+        this.amount = amount;
     }
-
 
     /**
      * Getter for the ignoreDamageValue.
@@ -77,7 +97,7 @@ public class ItemStorage
     @Override
     public int hashCode()
     {
-        return 31 * getItem().hashCode() + getDamageValue();
+        return 31 * getStack().hashCode() + getDamageValue();
     }
 
     @Override
@@ -95,7 +115,7 @@ public class ItemStorage
         final ItemStorage that = (ItemStorage) o;
 
 
-        return getItem().equals(that.getItem()) && (this.ignoreDamageValue || that.getDamageValue() == this.getDamageValue());
+        return getStack().equals(that.getStack()) && (this.ignoreDamageValue || that.getDamageValue() == this.getDamageValue());
     }
 
     /**
@@ -105,26 +125,27 @@ public class ItemStorage
      */
     public int getDamageValue()
     {
-        return item.getItemDamage();
+        return stack.getItemDamage();
     }
 
     /**
-     * Getter for the item.
+     * Getter for the stack.
      *
-     * @return the item.
+     * @return the stack.
      */
     @NotNull
-    public Item getItem()
+    public Item getStack()
     {
-        return item.getItem();
+        return stack.getItem();
     }
 
     /**
      * Get the itemStack from this itemStorage.
+     *
      * @return the stack.
      */
     public ItemStack getItemStack()
     {
-        return item;
+        return stack;
     }
 }

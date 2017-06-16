@@ -63,7 +63,7 @@ public class BuildingBuilderView extends AbstractBuildingWorker.View
             final int amountAvailable = buf.readInt();
             final int amountNeeded = buf.readInt();
             final BuildingBuilderResource resource =
-                new BuildingBuilderResource(itemStack.getItem(), itemStack.getItemDamage(), amountNeeded, amountAvailable);
+                new BuildingBuilderResource(itemStack, amountNeeded, amountAvailable);
             resources.put(itemStack.getDisplayName(), resource);
         }
     }

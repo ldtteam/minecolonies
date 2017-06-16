@@ -324,12 +324,12 @@ public class Tree
 
             if (Compatibility.isSlimeLeaf(world.getBlockState(leafPos).getBlock()))
             {
-                if(Compatibility.isSlimeSapling(((ItemBlock) stack.getItem()).getBlock()) && variantNumber == stack.getItemStack().getMetadata())
+                if(Compatibility.isSlimeSapling(((ItemBlock) stack.getStack()).getBlock()) && variantNumber == stack.getItemStack().getMetadata())
                 {
                     return false;
                 }
             }
-            else if(!Compatibility.isSlimeSapling(((ItemBlock) stack.getItem()).getBlock()))
+            else if(!Compatibility.isSlimeSapling(((ItemBlock) stack.getStack()).getBlock()))
             {
                 if(variantNumber == stack.getItemStack().getMetadata())
                 {

@@ -4,7 +4,6 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.Utils;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
@@ -31,8 +30,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE;
-
 
 /**
  * The builders building.
@@ -149,7 +146,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         {
             final NBTTagCompound neededRes = neededResTagList.getCompoundTagAt(i);
             final ItemStack stack = ItemStack.loadItemStackFromNBT(neededRes);
-            final BuildingBuilderResource resource = new BuildingBuilderResource(stack.getItem(),stack.getItemDamage(), ItemStackUtils.getSize(stack));
+            final BuildingBuilderResource resource = new BuildingBuilderResource(stack, ItemStackUtils.getSize(stack));
             neededResources.put(stack.getUnlocalizedName(), resource);
         }
     }
@@ -162,7 +159,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         for (@NotNull final BuildingBuilderResource resource : neededResources.values())
         {
             @NotNull final NBTTagCompound neededRes = new NBTTagCompound();
-            final ItemStack itemStack = new ItemStack(resource.getItem(),resource.getAmount(),resource.getDamageValue());
+            final ItemStack itemStack = new ItemStack(resource.getStack(),resource.getAmount(),resource.getDamageValue());
             itemStack.writeToNBT(neededRes);
 
             neededResTagList.appendTag(neededRes);
@@ -198,7 +195,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         {
             final BuildingBuilderResource resource = neededResources.get(entry.getKey());
             //ByteBufUtils.writeItemStack() is Buggy, serialize itemId and damage separately;
-            final int itemId = Item.getIdFromItem(resource.getItem());
+            final int itemId = Item.getIdFromItem(resource.getStack());
             final int damage = resource.getDamageValue();
             buf.writeInt(itemId);
             buf.writeInt(damage);
@@ -231,7 +228,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         BuildingBuilderResource resource = this.neededResources.get(res.getUnlocalizedName());
         if (resource == null)
         {
-            resource = new BuildingBuilderResource(res.getItem(), res.getItemDamage(), amount);
+            resource = new BuildingBuilderResource(res, amount);
         }
         else
         {
@@ -299,13 +296,13 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
             if (builderInventory!=null)
             {
-                resource.addAvailable(InventoryUtils.getItemCountInItemHandler(new InvWrapper(builderInventory), resource.getItem(), resource.getDamageValue()));
+                resource.addAvailable(InventoryUtils.getItemCountInItemHandler(new InvWrapper(builderInventory), resource.getStack(), resource.getDamageValue()));
             }
 
             final TileEntity chestInventory = this.getTileEntity();
             if (chestInventory!=null)
             {
-                resource.addAvailable(InventoryUtils.getItemCountInProvider(chestInventory, resource.getItem(), resource.getDamageValue()));
+                resource.addAvailable(InventoryUtils.getItemCountInProvider(chestInventory, resource.getStack(), resource.getDamageValue()));
             }
 
             //Count in the additional chests as well
@@ -316,7 +313,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
                     final TileEntity entity = CompatibilityUtils.getWorld(builder).getTileEntity(pos);
                     if(entity instanceof TileEntityChest)
                     {
-                        resource.addAvailable(InventoryUtils.getItemCountInProvider(entity, resource.getItem(), resource.getDamageValue()));
+                        resource.addAvailable(InventoryUtils.getItemCountInProvider(entity, resource.getStack(), resource.getDamageValue()));
                     }
                 }
             }

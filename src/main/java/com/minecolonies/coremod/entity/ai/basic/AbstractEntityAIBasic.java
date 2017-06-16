@@ -913,7 +913,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         for (final Map.Entry<ItemStorage, Integer> tempEntry : tempKeep)
         {
             final ItemStorage tempStorage = tempEntry.getKey();
-            if (tempStorage != null && tempStorage.getItem() == stack.getItem() && tempStorage.getDamageValue() != stack.getItemDamage())
+            if (tempStorage != null && tempStorage.getStack() == stack.getItem() && tempStorage.getDamageValue() != stack.getItemDamage())
             {
                 shouldKeep.put(new ItemStorage(stack, tempStorage.ignoreDamageValue()), tempEntry.getValue());
                 break;
@@ -955,7 +955,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         final int dump = tempStorage.getAmount() + amountKept - shouldKeep.get(tempStorage);
 
         //Create tempStack with the amount of items that should be dumped.
-        return new ItemStack(tempStorage.getItem(), dump, tempStorage.getDamageValue());
+        return new ItemStack(tempStorage.getStack(), dump, tempStorage.getDamageValue());
     }
 
     /**
