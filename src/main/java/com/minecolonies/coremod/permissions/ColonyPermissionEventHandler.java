@@ -215,7 +215,7 @@ public class ColonyPermissionEventHandler
 
             final Permissions perms = colony.getPermissions();
 
-            if (isFreeToInteractWith(event.getWorld().getBlockState(event.getPos()).getBlock(), event.getPos())
+            if (isFreeToInteractWith(block, event.getPos())
                   && perms.hasPermission(event.getEntityPlayer(), Action.ACCESS_FREE_BLOCKS))
             {
                 return;
@@ -223,12 +223,12 @@ public class ColonyPermissionEventHandler
 
             if(Configurations.enableColonyProtection)
             {
-                if (!perms.hasPermission(event.getEntityPlayer(), Action.RIGHTCLICK_BLOCK) && event.getWorld().getBlockState(event.getPos()).getBlock() != null)
+                if (!perms.hasPermission(event.getEntityPlayer(), Action.RIGHTCLICK_BLOCK) && block != null)
                 {
                     cancelEvent(event, event.getEntityPlayer());
                 }
 
-                if (event.getWorld().getBlockState(event.getPos()).getBlock() instanceof BlockContainer && !perms.hasPermission(event.getEntityPlayer(),
+                if (block instanceof BlockContainer && !perms.hasPermission(event.getEntityPlayer(),
                   Action.OPEN_CONTAINER))
                 {
                     cancelEvent(event, event.getEntityPlayer());
