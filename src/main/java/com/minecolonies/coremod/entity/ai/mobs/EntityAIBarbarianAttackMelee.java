@@ -11,7 +11,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 
 /**
- * Created by Asher on 13/6/17.
+ * Barbarian Attack AI class
  */
 public class EntityAIBarbarianAttackMelee extends EntityAIBase
 {
@@ -29,6 +29,11 @@ public class EntityAIBarbarianAttackMelee extends EntityAIBase
     private static final int    MUTEX_BITS              = 3;
     private static final double IS_ZERO                 = 0.0D;
 
+    /**
+     * Constructor method for AI
+     *
+     * @param creatureIn The creature which is using the AI
+     */
     public EntityAIBarbarianAttackMelee(final EntityCreature creatureIn)
     {
         super();
@@ -36,6 +41,11 @@ public class EntityAIBarbarianAttackMelee extends EntityAIBase
         this.setMutexBits(MUTEX_BITS);
     }
 
+    /**
+     * Returns whether the AI should Execute or not
+     *
+     * @return ^ ^
+     */
     @Override
     public boolean shouldExecute()
     {
@@ -56,12 +66,20 @@ public class EntityAIBarbarianAttackMelee extends EntityAIBase
         return false;
     }
 
+    /**
+     * Is executed when the ai Starts Executing
+     */
     public void startExecuting()
     {
         attack(target);
     }
 
-    public void attack(final EntityLivingBase target)
+    /**
+     * AI for an Entity to attack the target
+     *
+     * @param target The target to attack
+     */
+    private void attack(final EntityLivingBase target)
     {
         double damageToBeDealt = 0;
 
@@ -100,6 +118,11 @@ public class EntityAIBarbarianAttackMelee extends EntityAIBase
         }
     }
 
+    /**
+     * Random pitch generator
+     *
+     * @return ^  ^
+     */
     private double getRandomPitch()
     {
         return 1.0D / (entity.getRNG().nextDouble() * PITCH_MULTIPLIER + PITCH_ADDER);

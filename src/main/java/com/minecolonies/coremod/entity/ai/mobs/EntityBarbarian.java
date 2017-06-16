@@ -17,7 +17,7 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 
 /**
- * Created by Asherslab on 5/6/17.
+ * Class describing the Barbarian Entity
  */
 public class EntityBarbarian extends EntityMob
 {
@@ -46,11 +46,19 @@ public class EntityBarbarian extends EntityMob
 
     public static final ResourceLocation LOOT = new ResourceLocation(Constants.MOD_ID, "EntityBarbarianDrops");
 
+    /**
+     * Constructor method for entity
+     *
+     * @param worldIn The world that the entity is in
+     */
     public EntityBarbarian(final World worldIn)
     {
         super(worldIn);
     }
 
+    /**
+     * Applies the following attributes to the entity
+     */
     @Override
     protected void applyEntityAttributes()
     {
@@ -62,6 +70,9 @@ public class EntityBarbarian extends EntityMob
         this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(this.getHealthBasedOnRaidLevel());
     }
 
+    /**
+     * Sets the AI tasks for the entity
+     */
     @Override
     protected void initEntityAI()
     {
@@ -76,18 +87,33 @@ public class EntityBarbarian extends EntityMob
         this.targetTasks.addTask(PRIORITY_THREE, new EntityAINearestAttackableTarget(this, EntityCitizen.class, true));
     }
 
+    /**
+     * Returns the sounds event when the Entity gets hurt
+     *
+     * @return ^ ^
+     */
     @Override
     protected SoundEvent getHurtSound()
     {
         return BarbarianSounds.barbarianHurt;
     }
 
+    /**
+     * Returns the sounds event when the Entity dies
+     *
+     * @return ^ ^
+     */
     @Override
     protected SoundEvent getDeathSound()
     {
         return BarbarianSounds.barbarianDeath;
     }
 
+    /**
+     * Returns the sounds event that randomly executes while the entity is living
+     *
+     * @return ^ ^
+     */
     @Nullable
     @Override
     protected SoundEvent getAmbientSound()
@@ -95,6 +121,9 @@ public class EntityBarbarian extends EntityMob
         return BarbarianSounds.barbarianSay;
     }
 
+    /**
+     * Sets the entity's health based on the raidLevel
+     */
     private double getHealthBasedOnRaidLevel()
     {
         if (colony != null)
@@ -105,12 +134,22 @@ public class EntityBarbarian extends EntityMob
         return BARBARIAN_BASE_HEALTH;
     }
 
+    /**
+     * returns when the entity may despawn
+     *
+     * @return ^ ^
+     */
     @Override
     protected boolean canDespawn()
     {
         return world.isDaytime();
     }
 
+    /**
+     * Returns the entities loot table
+     *
+     * @return ^ ^
+     */
     @Override
     @Nullable
     protected ResourceLocation getLootTable()

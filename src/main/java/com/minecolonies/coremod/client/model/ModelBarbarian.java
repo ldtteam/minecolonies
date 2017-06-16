@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.client.model;
 
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.entity.ai.mobs.EntityArcherBarbarian;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
@@ -45,7 +46,7 @@ public class ModelBarbarian extends ModelBiped
     /**
      * Sets the model's various rotation angles. For bipeds, par1 and par2 are used for animating the movement of arms
      * and legs, where par1 represents the time(so that arms and legs swing back and forth) and par2 represents how
-     * "far" arms and legs can swing at most.
+     * "far" arms and legs can swing at most
      */
     public void setRotationAngles(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor, Entity entityIn)
     {
@@ -53,7 +54,7 @@ public class ModelBarbarian extends ModelBiped
         ItemStack itemstack = ((EntityLivingBase) entityIn).getHeldItemMainhand();
         EntityArcherBarbarian ArcherBarbarian = (EntityArcherBarbarian) entityIn;
 
-        if (ArcherBarbarian.isSwingingArms() && (itemstack.isEmpty() || itemstack.getItem() != Items.BOW))
+        if (ArcherBarbarian.isSwingingArms() && (ItemStackUtils.isEmpty(new ItemStack(Items.BOW))))
         {
             float f = MathHelper.sin(this.swingProgress * (float) Math.PI);
             float f1 = MathHelper.sin((1.0F - (1.0F - this.swingProgress) * (1.0F - this.swingProgress)) * (float) Math.PI);

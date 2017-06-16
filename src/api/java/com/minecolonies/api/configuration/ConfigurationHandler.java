@@ -130,7 +130,7 @@ public final class ConfigurationHandler
               "Blocks players should be able to interact with inside any colony.").getStringList();
 
             maxBarbarianHordeSize = getClampedInt(config, CATEGORY_GAMEPLAY,
-              "maxBarbarianHordeSize", maxBarbarianHordeSize, MIN_BARBARIAN_HORDE_SIZE, MAX_BARBARIAN_HORDE_SIZE,
+              "maxBarbarianHordeSize", maxBarbarianHordeSize, Constants.MIN_BARBARIAN_HORDE_SIZE, Constants.MAX_BARBARIAN_HORDE_SIZE,
               "Sets the barbarian horde's max amount of barbarians");
 
             doBarbariansSpawn = config.get(CATEGORY_GAMEPLAY, "doBarbariansSpawn", doBarbariansSpawn,

@@ -16,7 +16,7 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 
 /**
- * Created by Asher on 5/6/17.
+ * Class describing the Chief Barbarian Entity
  */
 public class EntityChiefBarbarian extends EntityMob
 {
@@ -44,12 +44,20 @@ public class EntityChiefBarbarian extends EntityMob
     private static final int   PRIORITY_EIGHT     = 8;
     private static final float MAX_WATCH_DISTANCE = 8.0F;
 
+    /**
+     * Constructor method for entity
+     *
+     * @param worldIn The world that the entity is in
+     */
     public EntityChiefBarbarian(final World worldIn)
     {
         super(worldIn);
         this.getAlwaysRenderNameTag();
     }
 
+    /**
+     * Applies the following attributes to the entity
+     */
     @Override
     protected void applyEntityAttributes()
     {
@@ -61,6 +69,9 @@ public class EntityChiefBarbarian extends EntityMob
         this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(this.getHealthBasedOnRaidLevel());
     }
 
+    /**
+     * Sets the entity's health based on the raidLevel
+     */
     protected double getHealthBasedOnRaidLevel()
     {
         if (colony != null)
@@ -71,6 +82,9 @@ public class EntityChiefBarbarian extends EntityMob
         return BARBARIAN_BASE_HEALTH;
     }
 
+    /**
+     * Sets the AI tasks for the entity
+     */
     @Override
     protected void initEntityAI()
     {
@@ -85,24 +99,44 @@ public class EntityChiefBarbarian extends EntityMob
         this.targetTasks.addTask(PRIORITY_THREE, new EntityAINearestAttackableTarget(this, EntityCitizen.class, true));
     }
 
+    /**
+     * returns when the entity may despawn
+     *
+     * @return ^ ^
+     */
     @Override
     protected boolean canDespawn()
     {
         return world.isDaytime();
     }
 
+    /**
+     * Returns the sounds event when the Entity gets hurt
+     *
+     * @return ^ ^
+     */
     @Override
     protected SoundEvent getHurtSound()
     {
         return BarbarianSounds.barbarianHurt;
     }
 
+    /**
+     * Returns the sounds event when the Entity dies
+     *
+     * @return ^ ^
+     */
     @Override
     protected SoundEvent getDeathSound()
     {
         return BarbarianSounds.barbarianDeath;
     }
 
+    /**
+     * Returns the sounds event that randomly executes while the entity is living
+     *
+     * @return ^ ^
+     */
     @Nullable
     @Override
     protected SoundEvent getAmbientSound()
@@ -110,6 +144,11 @@ public class EntityChiefBarbarian extends EntityMob
         return BarbarianSounds.barbarianSay;
     }
 
+    /**
+     * Returns the entities loot table
+     *
+     * @return ^ ^
+     */
     @Override
     @Nullable
     protected ResourceLocation getLootTable()

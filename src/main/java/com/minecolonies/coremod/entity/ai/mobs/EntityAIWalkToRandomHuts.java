@@ -19,7 +19,7 @@ import java.util.Collection;
 import java.util.Random;
 
 /**
- * Created by Asher on 7/6/17.
+ * Barbarian Pathing Class
  */
 public class EntityAIWalkToRandomHuts extends EntityAIBase
 {
@@ -39,9 +39,14 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
      * The navigator for this entity.
      */
     private final PathNavigate newNavigator;
+    private       Field        navigatorField;
 
-    private Field navigatorField;
-
+    /**
+     * Constructor for AI
+     *
+     * @param creatureIn the creature that the AI applies to
+     * @param speedIn    The speed at which the Entity walks
+     */
     public EntityAIWalkToRandomHuts(final EntityCreature creatureIn, final double speedIn)
     {
         super();
@@ -56,6 +61,11 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
         this.setMutexBits(1);
     }
 
+    /**
+     * Returns whether the AI should Execute or not
+     *
+     * @return ^ ^
+     */
     @Override
     public boolean shouldExecute()
     {
@@ -67,6 +77,9 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
         return this.targetBlock != null;
     }
 
+    /**
+     * Updates the navigator field for the AI
+     */
     private synchronized void updateNavigatorField()
     {
         if (navigatorField == null)
@@ -98,7 +111,14 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
         }
     }
 
-    public boolean isWorkerAtSiteWithMove(@NotNull final BlockPos site, final int range)
+    /**
+     * returns whether the entity as at a site with a move, And moves it
+     *
+     * @param site  The site which to move to or check if it is already there
+     * @param range The distance to the site that the entity must be within to return true
+     * @return whether the entity is at the site or not
+     */
+    private boolean isEntityAtSiteWithMove(@NotNull final BlockPos site, final int range)
     {
         if (proxy == null)
         {
@@ -107,6 +127,11 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
         return proxy.walkToBlock(site, range);
     }
 
+    /**
+     * returns the center of the colony
+     *
+     * @return ^ ^
+     */
     @Nullable
     protected BlockPos getPosition()
     {
@@ -122,12 +147,15 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
         return !this.entity.getNavigator().noPath() && this.entity.isEntityAlive();
     }
 
+    /**
+     * Is executed when the ai Starts Executing
+     */
     public void startExecuting()
     {
         updateNavigatorField();
         if (targetBlock != null)
         {
-            if (this.isWorkerAtSiteWithMove(targetBlock, 2))
+            if (this.isEntityAtSiteWithMove(targetBlock, 2))
             {
                 targetBlock = getRandomBuilding();
             }
@@ -138,6 +166,11 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
         }
     }
 
+    /**
+     * gets a random building from the nearby colony
+     *
+     * @return A random building
+     */
     private BlockPos getRandomBuilding()
     {
         if (colony == null)
@@ -147,7 +180,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
 
         final Collection<AbstractBuilding> buildingList = colony.getBuildings().values();
         final Object[] buildingArray = buildingList.toArray();
-        if (buildingArray != null && buildingArray.length != 0)
+        if (buildingArray.length != 0)
         {
             final int random = new Random().nextInt(buildingArray.length);
             final AbstractBuilding building = (AbstractBuilding) buildingArray[random];

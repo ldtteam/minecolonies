@@ -27,7 +27,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nullable;
 
 /**
- * Created by Asherslab on 5/6/17.
+ * Class describing the Archer Barbarian Entity
  */
 public class EntityArcherBarbarian extends EntityMob
 {
@@ -59,11 +59,19 @@ public class EntityArcherBarbarian extends EntityMob
 
     public static final ResourceLocation LOOT = new ResourceLocation(Constants.MOD_ID, "EntityArcherBarbarianDrops");
 
+    /**
+     * Constructor method for entity
+     *
+     * @param worldIn The world that the entity is in
+     */
     public EntityArcherBarbarian(final World worldIn)
     {
         super(worldIn);
     }
 
+    /**
+     * Applies the following attributes to the entity
+     */
     @Override
     protected void applyEntityAttributes()
     {
@@ -75,6 +83,9 @@ public class EntityArcherBarbarian extends EntityMob
         this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(this.getHealthBasedOnRaidLevel());
     }
 
+    /**
+     * Sets the AI tasks for the entity
+     */
     @Override
     protected void initEntityAI()
     {
@@ -89,6 +100,13 @@ public class EntityArcherBarbarian extends EntityMob
         this.targetTasks.addTask(PRIORITY_THREE, new EntityAINearestAttackableTarget(this, EntityCitizen.class, true));
     }
 
+    /**
+     * sets the various tasks that occur when the entity first spawns
+     *
+     * @param difficulty The world's difficulty
+     * @param livingdata The entity
+     * @return Living data (stuff i don't mess with)
+     */
     @Nullable
     @Override
     public IEntityLivingData onInitialSpawn(final DifficultyInstance difficulty, @Nullable final IEntityLivingData livingdata)
@@ -97,18 +115,33 @@ public class EntityArcherBarbarian extends EntityMob
         return super.onInitialSpawn(difficulty, livingdata);
     }
 
+    /**
+     * Returns the sounds event when the Entity gets hurt
+     *
+     * @return ^ ^
+     */
     @Override
     protected SoundEvent getHurtSound()
     {
         return BarbarianSounds.barbarianHurt;
     }
 
+    /**
+     * Returns the sounds event when the Entity dies
+     *
+     * @return ^ ^
+     */
     @Override
     protected SoundEvent getDeathSound()
     {
         return BarbarianSounds.barbarianDeath;
     }
 
+    /**
+     * Returns the sounds event that randomly executes while the entity is living
+     *
+     * @return ^ ^
+     */
     @Nullable
     @Override
     protected SoundEvent getAmbientSound()
@@ -116,6 +149,9 @@ public class EntityArcherBarbarian extends EntityMob
         return BarbarianSounds.barbarianSay;
     }
 
+    /**
+     * Sets the entity's health based on the raidLevel
+     */
     private double getHealthBasedOnRaidLevel()
     {
         if (colony != null)
@@ -126,24 +162,42 @@ public class EntityArcherBarbarian extends EntityMob
         return BARBARIAN_BASE_HEALTH;
     }
 
+    /**
+     * Runs specific Initializer tasks
+     */
     protected void entityInit()
     {
         super.entityInit();
         this.dataManager.register(SWINGING_ARMS, Boolean.FALSE);
     }
 
+    /**
+     * returns when the entity may despawn
+     *
+     * @return ^ ^
+     */
     @Override
     protected boolean canDespawn()
     {
         return world.isDaytime();
     }
 
+    /**
+     * Returns whether the entity is "Swinging arms" or not
+     *
+     * @return ^ ^
+     */
     @SideOnly(Side.CLIENT)
     public boolean isSwingingArms()
     {
         return this.dataManager.get(SWINGING_ARMS);
     }
 
+    /**
+     * Returns the entities loot table
+     *
+     * @return ^ ^
+     */
     @Override
     @Nullable
     protected ResourceLocation getLootTable()

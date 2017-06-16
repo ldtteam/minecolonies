@@ -7,10 +7,10 @@ import com.minecolonies.coremod.creativetab.ModCreativeTabs;
  */
 public class ItemAncientTome extends AbstractItemMinecolonies
 {
-    /* default */ private static final int MAX_STACK_SIZE = 64;
+    private static final int MAX_STACK_SIZE = 64;
 
     /**
-     * Sets the name, creative tab, and registers the item.
+     * Sets the name, creative tab, and registers the Ancient Tome item.
      */
     public ItemAncientTome()
     {

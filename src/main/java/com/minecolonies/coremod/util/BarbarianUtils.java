@@ -38,7 +38,6 @@ public final class BarbarianUtils
     private static final double BARBARIANS_MULTIPLIER              = 0.5;
     private static final double ARCHER_BARBARIANS_MULTIPLIER       = 0.25;
     private static final double CHIEF_BARBARIANS_MULTIPLIER        = 0.1;
-    private static final int    NUMBER_OF_POSSIBLE_CASES           = 360;
     private static final int    PREFERRED_MAX_HORDE_SIZE           = 40;
     private static final int    PREFERRED_MAX_BARBARIANS           = 22;
     private static final int    PREFERRED_MAX_ARCHERS              = 16;
@@ -126,6 +125,11 @@ public final class BarbarianUtils
         return returnValue;
     }
 
+    /**
+     * Returns whether a raid should happen depending on the Config
+     * @param world The world in which the raid is possibly happening (Used to get a random number easily)
+     * @return
+     */
     public static boolean raidThisNight(final World world)
     {
         final float chance =(float) 1 / Configurations.averageNumberOfNightsBetweenRaids;
@@ -166,7 +170,8 @@ public final class BarbarianUtils
     /**
      * Sets the various items for each type of barbarian
      *
-     * @param entityToSpawn The entity which to act upon
+     * @param entityToSpawn The resourceLocation that is checked against
+     * @param entity The entity to apply the following to.
      */
     private static void setBarbarianItems(final ResourceLocation entityToSpawn,final Entity entity)
     {
@@ -204,18 +209,11 @@ public final class BarbarianUtils
         final BlockPos center = colonyView.getCenter();
         final int radius = Configurations.workingRangeTownHall;
 
-        final double randomDegree =(double) theWorld.rand.nextInt(NUMBER_OF_POSSIBLE_CASES);
+        final int randomDegree = theWorld.rand.nextInt( (int) WHOLE_CIRCLE);
 
-        for (double degrees = 0; degrees < (int) WHOLE_CIRCLE; degrees += 1)
-        {
-            if (degrees == randomDegree)
-            {
-                final double rads = degrees / HALF_A_CIRCLE * Math.PI;
-                final double x = Math.round(center.getX() + radius * Math.sin(rads));
-                final double z = Math.round(center.getZ() + radius * Math.cos(rads));
-                return BlockPosUtil.getFloor(new BlockPos(x, center.getY(), z), theWorld).up();
-            }
-        }
-        return null;
+        final double rads = randomDegree / HALF_A_CIRCLE * Math.PI;
+        final double x = Math.round(center.getX() + radius * Math.sin(rads));
+        final double z = Math.round(center.getZ() + radius * Math.cos(rads));
+        return BlockPosUtil.getFloor(new BlockPos(x, center.getY(), z), theWorld).up();
     }
 }

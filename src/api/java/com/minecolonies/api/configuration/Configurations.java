@@ -18,8 +18,6 @@ public class Configurations
     public static       int     maxBarbarianHordeSize             = 40;
     public static       boolean doBarbariansSpawn                 = true;
     public static       int     barbarianHordeDifficulty          = 5;
-    public static final int     MAX_BARBARIAN_HORDE_SIZE          = 60;
-    public static final int     MIN_BARBARIAN_HORDE_SIZE          = 5;
     public static       int     averageNumberOfNightsBetweenRaids = 3;
 
     public static boolean enableColonyProtection      = true;

@@ -11,7 +11,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.MathHelper;
 
 /**
- * Created by Asher on 15/6/17.
+ * Barbarian Ranged Attack AI class
  */
 public class EntityAIAttackArcher extends EntityAIBase
 {
@@ -25,12 +25,17 @@ public class EntityAIAttackArcher extends EntityAIBase
     private static final int    MUTEX_BITS                     = 3;
     private static final double AIM_HEIGHT                     = 3.0D;
     private static final double ARROW_SPEED                    = 1.6D;
-    private static final double HIT_CHANCE_DIVIDER             = 10.0D;
+    private static final double HIT_CHANCE                     = 10.0D;
     private static final double AIM_SLIGHTLY_HIGHER_MULTIPLIER = 0.20000000298023224D;
     private static final double BASE_PITCH                     = 0.8D;
     private static final double PITCH_DIVIDER                  = 1.0D;
     private static final double MAX_ATTACK_DISTANCE            = 20.0D;
 
+    /**
+     * Constructor method for AI
+     *
+     * @param creatureIn The creature which is using the AI
+     */
     public EntityAIAttackArcher(final EntityCreature creatureIn)
     {
         super();
@@ -38,6 +43,11 @@ public class EntityAIAttackArcher extends EntityAIBase
         this.setMutexBits(MUTEX_BITS);
     }
 
+    /**
+     * Returns whether the AI should Execute or not
+     *
+     * @return ^ ^
+     */
     @Override
     public boolean shouldExecute()
     {
@@ -58,12 +68,20 @@ public class EntityAIAttackArcher extends EntityAIBase
         return false;
     }
 
+    /**
+     * Is executed when the ai Starts Executing
+     */
     public void startExecuting()
     {
         attack(target);
     }
 
-    public void attack(final EntityLivingBase target)
+    /**
+     * AI for an Entity to attack the target
+     *
+     * @param target The target to attack
+     */
+    private void attack(final EntityLivingBase target)
     {
         final EntityTippedArrow arrowEntity = new GuardArrow(CompatibilityUtils.getWorld(entity), entity);
         final double xVector = target.posX - entity.posX;
@@ -71,9 +89,8 @@ public class EntityAIAttackArcher extends EntityAIBase
         final double zVector = target.posZ - entity.posZ;
         final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
         //Lower the variable higher the chance that the arrows hits the target.
-        final double chance = HIT_CHANCE_DIVIDER;
 
-        arrowEntity.setThrowableHeading(xVector, yVector + distance * AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, (float) ARROW_SPEED, (float) chance);
+        arrowEntity.setThrowableHeading(xVector, yVector + distance * AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, (float) ARROW_SPEED, (float) HIT_CHANCE);
 
         entity.faceEntity(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
         entity.getLookHelper().setLookPositionWithEntity(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
@@ -96,6 +113,11 @@ public class EntityAIAttackArcher extends EntityAIBase
         }
     }
 
+    /**
+     * Random pitch generator
+     *
+     * @return ^ ^
+     */
     private double getRandomPitch()
     {
         return PITCH_DIVIDER / (entity.getRNG().nextDouble() * PITCH_MULTIPLIER + BASE_PITCH);

@@ -4,6 +4,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.buildings.BuildingGuardTower;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.mobs.EntityArcherBarbarian;
 import net.minecraft.entity.EntityLivingBase;
@@ -67,7 +68,7 @@ public class GuardArrow extends EntityTippedArrow
     {
         super.arrowHit(targetEntity);
         Log.getLogger().info("Arrow hit " + targetEntity + " with " + targetEntity.getHealth());
-        if (targetEntity.getHealth() <= 0.0F && !(shootingEntity instanceof EntityArcherBarbarian))
+        if (targetEntity.getHealth() <= 0.0F && shootingEntity instanceof EntityCitizen)
         {
             if (targetEntity instanceof EntityPlayer)
             {
