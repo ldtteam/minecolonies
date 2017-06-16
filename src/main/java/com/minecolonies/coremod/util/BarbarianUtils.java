@@ -128,15 +128,8 @@ public final class BarbarianUtils
 
     public static boolean raidThisNight(World world)
     {
-        float chance = 1 / Configurations.averageNumberOfNightsBetweenRaids;
-        if (world.rand.nextFloat() < chance)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        float chance =(float) 1 / Configurations.averageNumberOfNightsBetweenRaids;
+        return world.rand.nextFloat() < chance;
     }
 
     /**
@@ -175,7 +168,7 @@ public final class BarbarianUtils
      *
      * @param entityToSpawn The entity which to act upon
      */
-    private static void setBarbarianItems(ResourceLocation entityToSpawn, Entity entity)
+    private static void setBarbarianItems(final ResourceLocation entityToSpawn,final Entity entity)
     {
         if (entityToSpawn.equals(barbarian))
         {
@@ -211,11 +204,11 @@ public final class BarbarianUtils
         final BlockPos center = colonyView.getCenter();
         final int radius = Configurations.workingRangeTownHall;
 
-        final int RandomDegree = theWorld.rand.nextInt(NUMBER_OF_POSSIBLE_CASES);
+        final double randomDegree =(double) theWorld.rand.nextInt(NUMBER_OF_POSSIBLE_CASES);
 
         for (double degrees = 0; degrees < (int) WHOLE_CIRCLE; degrees += 1)
         {
-            if (degrees == RandomDegree)
+            if (degrees == randomDegree)
             {
                 final double rads = degrees / HALF_A_CIRCLE * Math.PI;
                 final double x = Math.round(center.getX() + radius * Math.sin(rads));
