@@ -3,6 +3,7 @@ package com.minecolonies.coremod.permissions;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.EntityUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.Colony;
@@ -16,7 +17,9 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemPotion;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.FakePlayer;
@@ -236,13 +239,19 @@ public class ColonyPermissionEventHandler
                     cancelEvent(event, event.getEntityPlayer());
                 }
 
-                if (event.getItemStack() != null && event.getItemStack().getItem() instanceof ItemPotion && !perms.hasPermission(event.getEntityPlayer(),
+                final ItemStack stack = event.getItemStack();
+                if(ItemStackUtils.isEmpty(stack) || stack.getItem() instanceof ItemFood)
+                {
+                    return;
+                }
+
+                if (stack.getItem() instanceof ItemPotion && !perms.hasPermission(event.getEntityPlayer(),
                   Action.THROW_POTION))
                 {
                     cancelEvent(event, event.getEntityPlayer());
                 }
 
-                if (event.getItemStack() != null && event.getItemStack().getItem() instanceof ItemScanTool
+                if (stack.getItem() instanceof ItemScanTool
                       && !perms.hasPermission(event.getEntityPlayer(), Action.USE_SCAN_TOOL))
                 {
                     cancelEvent(event, event.getEntityPlayer());
@@ -429,7 +438,7 @@ public class ColonyPermissionEventHandler
                 return;
             }
 
-            if (!perms.hasPermission(event.getEntityPlayer(), Action.ATTACK_ENTITY))
+            if (!(event.getTarget() instanceof  EntityMob) && !perms.hasPermission(event.getEntityPlayer(), Action.ATTACK_ENTITY))
             {
                 cancelEvent(event, player);
             }
