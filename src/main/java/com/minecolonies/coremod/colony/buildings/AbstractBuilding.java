@@ -965,17 +965,7 @@ public abstract class AbstractBuilding
     @Override
     public boolean equals(final Object o)
     {
-        if(!(o instanceof AbstractBuilding))
-        {
-            return false;
-        }
-
-        if(((AbstractBuilding) o).getID().equals(this.getID()))
-        {
-            return true;
-        }
-
-        return false;
+        return o instanceof AbstractBuilding && ((AbstractBuilding) o).getID().equals(this.getID());
     }
 
     @Override
