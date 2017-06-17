@@ -962,6 +962,18 @@ public abstract class AbstractBuilding
         this.needsToolLevel = minimalLevel;
     }
 
+    @Override
+    public boolean equals(final Object o)
+    {
+        return o instanceof AbstractBuilding && ((AbstractBuilding) o).getID().equals(this.getID());
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return (int) (31 * this.getID().toLong());
+    }
+
     /**
      * Get which tool the worker needs.
      *
