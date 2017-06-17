@@ -15,7 +15,6 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.network.messages.AssignUnassignMessage;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -46,11 +45,6 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
     private static final String CITIZEN_LABEL = "citizen";
 
     /**
-     * Id of the id label in the GUI.
-     */
-    private static final String ID_LABEL = "id";
-
-    /**
      * Id of the citizen list in the GUI.
      */
     private static final String CITIZEN_LIST = "unemployed";
@@ -59,11 +53,6 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
      * Link to the xml file of the window.
      */
     private static final String BUILDING_NAME_RESOURCE_SUFFIX = ":gui/windowAssignCitizen.xml";
-
-    /**
-     * Position of the id label of each citizen in the list.
-     */
-    private static final int CITIZEN_ID_LABEL_POSITION = 3;
 
     /**
      * Id of the job label in the GUI.
