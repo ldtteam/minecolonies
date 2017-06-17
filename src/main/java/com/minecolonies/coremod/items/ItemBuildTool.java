@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.items;
 
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
@@ -61,5 +62,23 @@ public class ItemBuildTool extends AbstractItemMinecolonies
         }
 
         return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
+    }
+
+    @Override
+    public ItemStack getContainerItem(final ItemStack itemStack)
+    {
+        //we want to return the build tool when use for crafting
+        if (ItemStackUtils.isEmpty(itemStack))
+        {
+            return ItemStackUtils.EMPTY;
+        }
+        return itemStack.copy();
+    }
+
+    @Override
+    public boolean hasContainerItem(final ItemStack itemStack)
+    {
+        //we want to return the build tool when use for crafting
+        return !ItemStackUtils.isEmpty(itemStack);
     }
 }
