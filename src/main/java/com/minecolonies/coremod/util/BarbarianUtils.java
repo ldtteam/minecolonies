@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.util;
 
 import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
@@ -17,8 +17,10 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeChunkManager;
 
 import java.util.List;
 import java.util.Optional;
@@ -89,12 +91,12 @@ public final class BarbarianUtils
         }
         else if (hordeTotal > MAX_SIZE)
         {
-            //Equilize the spawns so that there is less spawns than the config's max size
-            numberOfBarbarians = equilizeBarbarianSpawns(hordeTotal, numberOfBarbarians);
+            //Equalize the spawns so that there is less spawns than the config's max size
+            numberOfBarbarians = equalizeBarbarianSpawns(hordeTotal, numberOfBarbarians);
             hordeTotal = numberOfArcherBarbarians + numberOfBarbarians + numberOfChiefBarbarians;
-            numberOfArcherBarbarians = equilizeBarbarianSpawns(hordeTotal, numberOfArcherBarbarians);
+            numberOfArcherBarbarians = equalizeBarbarianSpawns(hordeTotal, numberOfArcherBarbarians);
             hordeTotal = numberOfArcherBarbarians + numberOfBarbarians + numberOfChiefBarbarians;
-            numberOfChiefBarbarians = equilizeBarbarianSpawns(hordeTotal, numberOfChiefBarbarians);
+            numberOfChiefBarbarians = equalizeBarbarianSpawns(hordeTotal, numberOfChiefBarbarians);
         }
 
         //Make sure world isn't null
@@ -105,9 +107,12 @@ public final class BarbarianUtils
 
         final BlockPos targetSpawnPoint = calculateSpawnLocation(raidingWorld, colony);
 
-        LanguageHandler.sendPlayersMessage(
-          colony.getMessageEntityPlayers(),
-          "" + targetSpawnPoint);
+        if (Configurations.enableInDevelopmentFeatures)
+        {
+            LanguageHandler.sendPlayersMessage(
+              colony.getMessageEntityPlayers(),
+              "Horde Spawn Point: " + targetSpawnPoint);
+        }
 
         spawn(BarbarianUtils.barbarian, numberOfBarbarians, targetSpawnPoint, raidingWorld);
         spawn(BarbarianUtils.archer, numberOfArcherBarbarians, targetSpawnPoint, raidingWorld);
@@ -121,7 +126,7 @@ public final class BarbarianUtils
      * @param numberOf The number of barbarians which we are reducing
      * @return the new number that the barbarians should be set to.
      */
-    private static int equilizeBarbarianSpawns(final int total, final int numberOf)
+    private static int equalizeBarbarianSpawns(final int total, final int numberOf)
     {
         int returnValue = numberOf;
         if (total > Configurations.maxBarbarianHordeSize)
@@ -137,6 +142,13 @@ public final class BarbarianUtils
         return returnValue;
     }
 
+    /**
+     * Returns the closest barbarian to an entity
+     *
+     * @param entity             The entity to test against
+     * @param distanceFromEntity The distance to check for
+     * @return the barbarian (if any) that is nearest
+     */
     public static Entity getClosestBarbarianToEntity(final Entity entity, final double distanceFromEntity)
     {
         final List<Entity> entityList = CompatibilityUtils.getWorld(entity).getEntitiesInAABBexcluding(
@@ -154,6 +166,12 @@ public final class BarbarianUtils
         return entityBarbarian.orElse(null);
     }
 
+    /**
+     * Simple method that returns whether or not an entity is a barbarian
+     *
+     * @param entity The entity to check
+     * @return Boolean value of whether the entity is a barbarian
+     */
     public static Boolean isBarbarian(final Entity entity)
     {
         return (entity instanceof EntityBarbarian || entity instanceof EntityArcherBarbarian || entity instanceof EntityChiefBarbarian);
@@ -184,6 +202,23 @@ public final class BarbarianUtils
 
         if (spawnLocation != null && entityToSpawn != null && world != null)
         {
+            if (!world.isBlockLoaded(spawnLocation))
+            {
+                ForgeChunkManager.Ticket chunkTicket = ForgeChunkManager.requestTicket(MineColonies.instance, world, ForgeChunkManager.Type.NORMAL);
+                if (chunkTicket == null)
+                {
+                    System.out.println("Well forge denied a Chunk Loading ticker, i guess you're not getting your horde tonight...");
+                }
+                else
+                {
+                    chunkTicket.getModData().setInteger("spawnX", spawnLocation.getX());
+                    chunkTicket.getModData().setInteger("spawnY", spawnLocation.getY());
+                    chunkTicket.getModData().setInteger("spawnZ", spawnLocation.getZ());
+                    ForgeChunkManager.forceChunk(chunkTicket, new ChunkPos(spawnLocation.getX(), spawnLocation.getZ()));
+                    System.out.println("Successful chunk load!");
+                }
+            }
+
             final int x = spawnLocation.getX();
             final int y = spawnLocation.getY();
             final int z = spawnLocation.getZ();
@@ -228,7 +263,7 @@ public final class BarbarianUtils
     }
 
     /**
-     * Calculate a random spawnpoint along the colony's border
+     * Calculate a random spawn point along the colony's border
      *
      * @param theWorld in the world.
      * @param colony   the Colony to spawn the barbarians near.
@@ -249,6 +284,6 @@ public final class BarbarianUtils
         final double rads = (double) randomDegree / HALF_A_CIRCLE * Math.PI;
         final double x = Math.round(center.getX() + radius * Math.sin(rads));
         final double z = Math.round(center.getZ() + radius * Math.cos(rads));
-        return BlockPosUtil.getFloor(new BlockPos(x, center.getY(), z), theWorld).up();
+        return theWorld.getTopSolidOrLiquidBlock(new BlockPos(x, center.getY(), z));
     }
 }

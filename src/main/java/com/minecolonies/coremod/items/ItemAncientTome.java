@@ -25,7 +25,6 @@ public class ItemAncientTome extends AbstractItemMinecolonies
     {
         super("ancientTome");
         super.setCreativeTab(ModCreativeTabs.MINECOLONIES);
-        super.hasEffect(new ItemStack(this));
         setMaxStackSize(MAX_STACK_SIZE);
     }
 
