@@ -243,15 +243,7 @@ public class BuildingHome extends AbstractBuildingHut
      */
     public void checkIfFoodNeeded()
     {
-        boolean needFood = false;
-        for(final CitizenData resident: residents)
-        {
-            if(resident.getSaturation() < EntityCitizen.HIGH_SATURATION)
-            {
-                needFood = true;
-            }
-        }
-        setFoodNeeded(needFood);
+        setFoodNeeded(residents.stream().filter(resident -> resident.getSaturation() < EntityCitizen.HIGH_SATURATION).findFirst().isPresent());
     }
 
     /**
