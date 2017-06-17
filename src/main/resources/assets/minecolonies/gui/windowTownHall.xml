@@ -195,6 +195,9 @@
         <view id="pageSettings">
             <label id="assignCitizens" label="$(com.minecolonies.coremod.gui.townHall.jobHiring)" pos="40 12" size="80 11" textalign="MIDDLE_LEFT" color="black"/>
             <button id="toggleJob" size="50 20" pos="60 25" label="$(com.minecolonies.coremod.gui.hiring.off)"/>
+
+            <label id="assignHouses" label="$(com.minecolonies.coremod.gui.townHall.housing)" pos="40 12" size="80 11" textalign="MIDDLE_LEFT" color="black"/>
+            <button id="toggleHousing" size="50 20" pos="60 25" label="$(com.minecolonies.coremod.gui.hiring.off)"/>
         </view>
 
         <view id="pageWorkOrder">

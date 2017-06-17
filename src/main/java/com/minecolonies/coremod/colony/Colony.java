@@ -59,6 +59,7 @@ public class Colony implements IColony
     private static final String TAG_ACHIEVEMENT_LIST           = "achievementlist";
     private static final String TAG_WORK                       = "work";
     private static final String TAG_MANUAL_HIRING              = "manualHiring";
+    private static final String TAG_MANUAL_HOUSING             = "manualHousing";
     private static final String TAG_WAYPOINT                   = "waypoints";
     private static final String TAG_FREE_BLOCKS                = "freeBlocks";
     private static final String TAG_FREE_POSITIONS             = "freePositions";
@@ -176,6 +177,8 @@ public class Colony implements IColony
     private       boolean                         isCitizensDirty  = false;
     private       boolean                         isBuildingsDirty = false;
     private       boolean                         manualHiring     = false;
+    private       boolean                         manualHousing     = false;
+
     private       boolean                         isFieldsDirty    = false;
     private       String                          name             = "ERROR(Wasn't placed by player)";
     private BlockPos         center;
@@ -387,6 +390,7 @@ public class Colony implements IColony
             this.overallHappiness = AVERAGE_HAPPINESS;
         }
         lastContactInHours = compound.getInteger(TAG_ABANDONED);
+        manualHousing = compound.getBoolean(TAG_MANUAL_HOUSING);
     }
 
     /**
@@ -438,7 +442,6 @@ public class Colony implements IColony
 
         compound.setBoolean(TAG_MANUAL_HIRING, manualHiring);
         compound.setInteger(TAG_MAX_CITIZENS, maxCitizens);
-
 
         // Permissions
         permissions.savePermissions(compound);
@@ -546,6 +549,7 @@ public class Colony implements IColony
 
         compound.setDouble(TAG_HAPPINESS, overallHappiness);
         compound.setInteger(TAG_ABANDONED, lastContactInHours);
+        compound.setBoolean(TAG_MANUAL_HOUSING, manualHousing);
     }
 
     /**
@@ -1709,6 +1713,27 @@ public class Colony implements IColony
     public void setManualHiring(final boolean manualHiring)
     {
         this.manualHiring = manualHiring;
+        markDirty();
+    }
+
+    /**
+     * Getter which checks if houses should be manually allocated.
+     *
+     * @return true of false.
+     */
+    public boolean isManualHousing()
+    {
+        return manualHousing;
+    }
+
+    /**
+     * Setter to set the house allocation manual or automatic.
+     *
+     * @param manualHousing true if manual, false if automatic.
+     */
+    public void setManualHousing(final boolean manualHousing)
+    {
+        this.manualHousing = manualHousing;
         markDirty();
     }
 
