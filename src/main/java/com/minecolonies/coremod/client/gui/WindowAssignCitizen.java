@@ -155,7 +155,6 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
                 {
                     rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Label.class).setLabelText(citizen.getName());
                     rowPane.findPaneOfTypeByID(CITIZEN_JOB, Label.class).setLabelText(LanguageHandler.format(citizen.getJob()));
-
                 }
             }
         });

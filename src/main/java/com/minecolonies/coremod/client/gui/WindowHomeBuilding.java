@@ -9,7 +9,6 @@ import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.network.messages.AssignUnassignMessage;
-import com.minecolonies.coremod.network.messages.HireFireMessage;
 import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.NotNull;
 
@@ -66,11 +65,11 @@ public class WindowHomeBuilding extends AbstractWindowBuilding<BuildingHome.View
         this.home = building;
     }
 
-    @Override
-    public void onOpened()
+    /**
+     * Refresh the view.
+     */
+    private void refreshView()
     {
-        super.onOpened();
-
         final Button button = findPaneOfTypeByID(BUTTON_ASSIGN, Button.class);
         final int sparePlaces = building.getBuildingLevel() - building.getResidents().size();
         button.setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HOME_ASSIGN, sparePlaces));
@@ -82,6 +81,13 @@ public class WindowHomeBuilding extends AbstractWindowBuilding<BuildingHome.View
         {
             button.enable();
         }
+        citizen.refreshElementPanes();
+    }
+
+    @Override
+    public void onOpened()
+    {
+        super.onOpened();
 
         citizen = findPaneOfTypeByID(LIST_CITIZEN, ScrollingList.class);
         citizen.setDataProvider(new ScrollingList.DataProvider()
@@ -98,6 +104,8 @@ public class WindowHomeBuilding extends AbstractWindowBuilding<BuildingHome.View
                 rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(home.getColony().getCitizen(home.getResidents().get(index)).getName());
             }
         });
+
+        refreshView();
     }
 
     /**
@@ -136,6 +144,7 @@ public class WindowHomeBuilding extends AbstractWindowBuilding<BuildingHome.View
             final int citizenid = home.getResidents().get(row);
             home.removeResident(row);
             MineColonies.getNetwork().sendToServer(new AssignUnassignMessage(building, false, citizenid));
+            refreshView();
         }
     }
 
