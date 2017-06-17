@@ -154,11 +154,6 @@ public class Field extends Container
     private boolean needsWork = true;
 
     /**
-     * Is the field new or recently reseeded?
-     */
-    private boolean initialized = false;
-
-    /**
      * Has the field been planted?
      */
     private FieldStage fieldStage = FieldStage.EMPTY;
@@ -330,7 +325,6 @@ public class Field extends Container
         inventory = new InventoryField();
         inventory.deserializeNBT((NBTTagCompound) compound.getTag(Constants.MOD_ID + TAG_INVENTORY));
         setOwner(compound.getString(TAG_OWNER));
-        initialized = compound.getBoolean(TAG_INITIALIZED);
     }
 
     /**
@@ -418,7 +412,6 @@ public class Field extends Container
         compound.setInteger(TAG_WIDTH_MINUS, widthMinusZ);
         compound.setTag(Constants.MOD_ID + TAG_INVENTORY, inventory.serializeNBT());
         compound.setString(TAG_OWNER, owner);
-        compound.setBoolean(TAG_INITIALIZED, initialized);
     }
 
     /**
@@ -439,6 +432,17 @@ public class Field extends Container
     public void setTaken(final boolean taken)
     {
         this.taken = taken;
+    }
+
+    public void nextState()
+    {
+        if(getFieldStage().ordinal() + 1 >= FieldStage.values().length)
+        {
+            needsWork = false;
+            setFieldStage(FieldStage.values()[0]);
+            return;
+        }
+        setFieldStage(FieldStage.values()[getFieldStage().ordinal() + 1]);
     }
 
     /**
@@ -479,26 +483,6 @@ public class Field extends Container
     public void setNeedsWork(final boolean needsWork)
     {
         this.needsWork = needsWork;
-    }
-
-    /**
-     * Checks if the field is initialized.
-     *
-     * @return true if so.
-     */
-    public boolean isInitialized()
-    {
-        return this.initialized;
-    }
-
-    /**
-     * Sets that the field has been initialized.
-     *
-     * @param initialized true if so.
-     */
-    public void setInitialized(final boolean initialized)
-    {
-        this.initialized = initialized;
     }
 
     /**

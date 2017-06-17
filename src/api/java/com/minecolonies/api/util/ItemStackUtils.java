@@ -13,6 +13,7 @@ import net.minecraft.nbt.NBTTagList;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
@@ -47,7 +48,7 @@ public final class ItemStackUtils
 
     /**
      * The compound tag for fortune enchantment level.
-    */
+     */
     private static final String NBT_TAG_ENCHANT_LEVEL = "lvl";
 
     /**
@@ -137,7 +138,6 @@ public final class ItemStackUtils
         return isATool;
     }
 
-
     /**
      * Calculate the mining level an item has as a tool of certain type.
      *
@@ -153,10 +153,6 @@ public final class ItemStackUtils
             //empty hand is best on blocks who don't care (0 better 1)
             return stack == null ? 0 : 1;
         }
-        if (stack == null || stack == ItemStack.EMPTY)
-        {
-            return -1;
-        }
         if (!Compatibility.getMiningLevelCompatibility(stack, toolType.toString()))
         {
             return -1;
@@ -164,17 +160,17 @@ public final class ItemStackUtils
         //todo: use 'better' version of this thing
         if (ToolType.HOE.equals(toolType))
         {
-             if (stack.getItem() instanceof ItemHoe)
-             {
-                 final ItemHoe itemHoe = (ItemHoe)stack.getItem();
-                 return getToolLevel(itemHoe.getMaterialName());
-             }
+            if (stack.getItem() instanceof ItemHoe)
+            {
+                final ItemHoe itemHoe = (ItemHoe) stack.getItem();
+                return getToolLevel(itemHoe.getMaterialName());
+            }
         }
         else if (ToolType.SWORD.equals(toolType))
         {
             if (stack.getItem() instanceof ItemSword)
             {
-                final ItemSword itemSword = (ItemSword)stack.getItem();
+                final ItemSword itemSword = (ItemSword) stack.getItem();
                 return getToolLevel(itemSword.getToolMaterialName());
             }
         }
@@ -189,7 +185,6 @@ public final class ItemStackUtils
         }
         return -1;
     }
-
 
     /**
      * Verifies if an item has an appropriated grade.
@@ -268,7 +263,6 @@ public final class ItemStackUtils
         return maxLevel;
     }
 
-
     /**
      * Checks if an item serves as a weapon.
      *
@@ -279,7 +273,6 @@ public final class ItemStackUtils
     {
         return stack.getItem() instanceof ItemSword || stack.getItem() instanceof ItemTool;
     }
-
 
     /**
      * Assigns a string containing the grade of the toolGrade.
@@ -307,7 +300,7 @@ public final class ItemStackUtils
     private static int getToolLevel(final String material)
     {
         if ("WOOD".equals(material)
-            || "GOLD".equals(material))
+                || "GOLD".equals(material))
         {
             return 0;
         }
@@ -367,7 +360,7 @@ public final class ItemStackUtils
      * This is for compatibility between 1.10 and 1.11
      *
      * @param stack to set the size to
-     * @param size of the stack
+     * @param size  of the stack
      */
     @NotNull
     public static void setSize(@NotNull final ItemStack stack, final int size)
@@ -378,14 +371,13 @@ public final class ItemStackUtils
     /**
      * Increase or decrease the stack size.
      *
-     * @param stack to set the size to
+     * @param stack  to set the size to
      * @param amount to increase the stack's size of (negative value to decrease)
      */
     public static void changeSize(@NotNull final ItemStack stack, final int amount)
     {
         stack.setCount(stack.getCount() + amount);
     }
-
 
     /**
      * Method to compare to stacks, ignoring their stacksize.
@@ -398,9 +390,9 @@ public final class ItemStackUtils
     public static Boolean compareItemStacksIgnoreStackSize(final ItemStack itemStack1, final ItemStack itemStack2)
     {
         if (!isEmpty(itemStack1) &&
-            !isEmpty(itemStack2) &&
-            itemStack1.getItem() == itemStack2.getItem() &&
-            itemStack1.getItemDamage() == itemStack2.getItemDamage())
+                !isEmpty(itemStack2) &&
+                itemStack1.getItem() == itemStack2.getItem() &&
+                itemStack1.getItemDamage() == itemStack2.getItemDamage())
         {
             // Then sort on NBT
             if (itemStack1.hasTagCompound() && itemStack2.hasTagCompound())
