@@ -2,6 +2,7 @@ package com.minecolonies.coremod.util;
 
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
@@ -18,6 +19,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 /**
@@ -123,6 +126,28 @@ public final class BarbarianUtils
             return returnValue;
         }
         return returnValue;
+    }
+
+    public static Entity getClosestBarbarianToEntity(final Entity entity, final double distanceFromEntity)
+    {
+        final List<Entity> entityList = CompatibilityUtils.getWorld(entity).getEntitiesInAABBexcluding(
+          entity,
+          entity.getEntityBoundingBox().expand(
+            distanceFromEntity,
+            3.0D,
+            distanceFromEntity),
+          Entity::isEntityAlive);
+
+        Optional<Entity> entityBarbarian = entityList.stream()
+                                             .filter(BarbarianUtils::isBarbarian)
+                                             .findFirst();
+
+        return entityBarbarian.orElse(null);
+    }
+
+    public static Boolean isBarbarian(final Entity entity)
+    {
+        return (entity instanceof EntityBarbarian || entity instanceof EntityArcherBarbarian || entity instanceof EntityChiefBarbarian);
     }
 
     /**

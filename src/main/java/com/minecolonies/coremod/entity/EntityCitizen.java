@@ -1535,6 +1535,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
             return DesiredActivity.WORK;
         }
 
+        if (BarbarianUtils.getClosestBarbarianToEntity(this, DISTANCE_OF_ENTITY_AVOID) != null)
+        {
+            return DesiredActivity.SLEEP;
+        }
+
         if (!CompatibilityUtils.getWorld(this).isDaytime())
         {
             if (isDay && citizenData != null)
