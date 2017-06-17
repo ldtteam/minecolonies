@@ -744,7 +744,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
 
         if (townHall.getColony().isManualHiring())
         {
-            findPaneOfTypeByID("toggleJob", Button.class).setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.hiring.on"));
+            findPaneOfTypeByID("toggleJob", Button.class).setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
         }
     }
 
@@ -1027,14 +1027,14 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private void toggleHiring(@NotNull final Button button)
     {
         final boolean toggle;
-        if (button.getLabel().equals(LanguageHandler.format("com.minecolonies.coremod.gui.hiring.off")))
+        if (button.getLabel().equals(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF)))
         {
-            button.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.hiring.on"));
+            button.setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
             toggle = true;
         }
         else
         {
-            button.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.hiring.off"));
+            button.setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF));
             toggle = false;
         }
         MineColonies.getNetwork().sendToServer(new ToggleJobMessage(this.building.getColony(), toggle));
@@ -1048,14 +1048,14 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private void toggleHousing(@NotNull final Button button)
     {
         final boolean toggle;
-        if (button.getLabel().equals(LanguageHandler.format("com.minecolonies.coremod.gui.hiring.off")))
+        if (button.getLabel().equals(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF)))
         {
-            button.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.hiring.on"));
+            button.setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
             toggle = true;
         }
         else
         {
-            button.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.hiring.off"));
+            button.setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF));
             toggle = false;
         }
         MineColonies.getNetwork().sendToServer(new ToggleHousingMessage(this.building.getColony(), toggle));

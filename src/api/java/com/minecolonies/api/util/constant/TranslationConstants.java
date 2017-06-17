@@ -98,6 +98,10 @@ public final class TranslationConstants
     public static final String COM_MINECOLONIES_COREMOD_JOB_BAKER                             = "com.minecolonies.coremod.job.baker";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_HOME_ASSIGN                       = "com.minecolonies.coremod.gui.home.assign";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF                        = "com.minecolonies.coremod.gui.hiring.off";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_HIRING_ON                         = "com.minecolonies.coremod.gui.hiring.on";
 
     private TranslationConstants()
     {
