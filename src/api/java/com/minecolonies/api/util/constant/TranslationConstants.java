@@ -7,11 +7,6 @@ import org.jetbrains.annotations.NonNls;
  */
 public final class TranslationConstants
 {
-
-    @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF                        = "com.minecolonies.coremod.gui.hiring.off";
-    @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_HIRING_ON                         = "com.minecolonies.coremod.gui.hiring.on";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_UNUSED     = "com.minecolonies.coremod.gui.workerHuts.farmerHut.unused";
     @NonNls
