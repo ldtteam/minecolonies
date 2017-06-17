@@ -2,8 +2,6 @@ package com.minecolonies.api.configuration;
 
 public class Configurations
 {
-    public static final int     CITIZEN_RESPAWN_INTERVAL_MIN      = 10;
-    public static final int     CITIZEN_RESPAWN_INTERVAL_MAX      = 600;
     public static       boolean builderPlaceConstructionTape      = true;
     public static       int     workingRangeTownHall              = 100;
     public static       int     townHallPadding                   = 20;

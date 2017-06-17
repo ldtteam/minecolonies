@@ -16,9 +16,6 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
-/**
- * Class describing the Barbarian Entity
- */
 public class EntityBarbarian extends EntityMob
 {
     private final Colony colony = ColonyManager.getClosestColony(world, this.getPosition());
@@ -113,12 +110,6 @@ public class EntityBarbarian extends EntityMob
             return BARBARIAN_BASE_HEALTH + raidLevel;
         }
         return BARBARIAN_BASE_HEALTH;
-    }
-
-    @Override
-    protected boolean canDespawn()
-    {
-        return world.isDaytime();
     }
 
     @Override

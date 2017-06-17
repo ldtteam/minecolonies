@@ -26,9 +26,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 
-/**
- * Class describing the Archer Barbarian Entity
- */
 public class EntityArcherBarbarian extends EntityMob
 {
     private final Colony colony = ColonyManager.getClosestColony(world, this.getPosition());
@@ -143,12 +140,6 @@ public class EntityArcherBarbarian extends EntityMob
     {
         super.entityInit();
         this.dataManager.register(SWINGING_ARMS, Boolean.FALSE);
-    }
-
-    @Override
-    protected boolean canDespawn()
-    {
-        return world.isDaytime();
     }
 
     /**

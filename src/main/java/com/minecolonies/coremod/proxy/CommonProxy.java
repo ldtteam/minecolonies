@@ -35,12 +35,6 @@ import java.util.Map;
 public class CommonProxy implements IProxy
 {
     /**
-     * Constants used for Registering Entities and Eggs
-     */
-    private static final int TRACKING_RANGE            = 256;
-    private static final int UPDATE_FREQUENCY          = 2;
-    private static final int UPDATE_FREQUENCY_FISHHOOK = 5;
-    /**
      * feel free to change the following if you want different colored spawn eggs
      */
     private static final int PRIMARY_COLOR             = 5;
@@ -125,40 +119,40 @@ public class CommonProxy implements IProxy
           "Citizen",
           getNextEntityId(),
           MineColonies.instance,
-          TRACKING_RANGE,
-          UPDATE_FREQUENCY,
+          Constants.ENTITY_TRACKING_RANGE,
+          Constants.ENTITY_UPDATE_FREQUENCY,
           true);
         EntityRegistry.registerModEntity(locationFishHook,
           EntityFishHook.class,
           "Fishhook",
           getNextEntityId(),
           MineColonies.instance,
-          TRACKING_RANGE,
-          UPDATE_FREQUENCY_FISHHOOK,
+          Constants.ENTITY_TRACKING_RANGE,
+          Constants.ENTITY_UPDATE_FREQUENCY_FISHHOOK,
           true);
         EntityRegistry.registerModEntity(locationBarbarian,
           EntityBarbarian.class,
           "Barbarian",
           getNextEntityId(),
           MineColonies.instance,
-          TRACKING_RANGE,
-          UPDATE_FREQUENCY,
+          Constants.ENTITY_TRACKING_RANGE,
+          Constants.ENTITY_UPDATE_FREQUENCY,
           true);
         EntityRegistry.registerModEntity(locationChiefBarbarian,
           EntityChiefBarbarian.class,
           "ChiefBarbarian",
           getNextEntityId(),
           MineColonies.instance,
-          TRACKING_RANGE,
-          UPDATE_FREQUENCY,
+          Constants.ENTITY_TRACKING_RANGE,
+          Constants.ENTITY_UPDATE_FREQUENCY,
           true);
         EntityRegistry.registerModEntity(locationArcherBarbarian,
           EntityArcherBarbarian.class,
           "ArcherBarbarian",
           getNextEntityId(),
           MineColonies.instance,
-          TRACKING_RANGE,
-          UPDATE_FREQUENCY,
+          Constants.ENTITY_TRACKING_RANGE,
+          Constants.ENTITY_UPDATE_FREQUENCY,
           true);
 
         //Adds spawnEggs for the mobs.

@@ -15,9 +15,6 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
-/**
- * Class describing the Chief Barbarian Entity
- */
 public class EntityChiefBarbarian extends EntityMob
 {
     private final       Colony           colony = ColonyManager.getClosestColony(world, this.getPosition());
@@ -92,12 +89,6 @@ public class EntityChiefBarbarian extends EntityMob
         this.tasks.addTask(PRIORITY_SIX, new EntityAIMoveThroughVillage(this, 1.0D, false));
         this.targetTasks.addTask(PRIORITY_TWO, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
         this.targetTasks.addTask(PRIORITY_THREE, new EntityAINearestAttackableTarget(this, EntityCitizen.class, true));
-    }
-
-    @Override
-    protected boolean canDespawn()
-    {
-        return world.isDaytime();
     }
 
     @Override

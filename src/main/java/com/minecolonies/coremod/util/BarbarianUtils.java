@@ -3,6 +3,7 @@ package com.minecolonies.coremod.util;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
@@ -69,6 +70,10 @@ public final class BarbarianUtils
             return;
         }
 
+        LanguageHandler.sendPlayersMessage(
+          colony.getMessageEntityPlayers(),
+          "event.minecolonies.raidMessage");
+
         int numberOfBarbarians = (int) (BARBARIANS_MULTIPLIER * level);
         int numberOfArcherBarbarians = (int) (ARCHER_BARBARIANS_MULTIPLIER * level);
         int numberOfChiefBarbarians = (int) (CHIEF_BARBARIANS_MULTIPLIER * level);
@@ -99,6 +104,10 @@ public final class BarbarianUtils
         }
 
         final BlockPos targetSpawnPoint = calculateSpawnLocation(raidingWorld, colony);
+
+        LanguageHandler.sendPlayersMessage(
+          colony.getMessageEntityPlayers(),
+          "" + targetSpawnPoint);
 
         spawn(BarbarianUtils.barbarian, numberOfBarbarians, targetSpawnPoint, raidingWorld);
         spawn(BarbarianUtils.archer, numberOfArcherBarbarians, targetSpawnPoint, raidingWorld);
@@ -139,8 +148,8 @@ public final class BarbarianUtils
           Entity::isEntityAlive);
 
         final Optional<Entity> entityBarbarian = entityList.stream()
-                                             .filter(BarbarianUtils::isBarbarian)
-                                             .findFirst();
+                                                   .filter(BarbarianUtils::isBarbarian)
+                                                   .findFirst();
 
         return entityBarbarian.orElse(null);
     }

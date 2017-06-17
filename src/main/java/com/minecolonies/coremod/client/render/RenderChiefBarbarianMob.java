@@ -10,9 +10,6 @@ import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
 
-/**
- * Class for rendering the chief barbarian
- */
 public class RenderChiefBarbarianMob extends RenderLiving<EntityChiefBarbarian>
 {
     private final ResourceLocation mobTexture = new ResourceLocation("minecolonies:textures/entity/chiefbarbarian1.png");

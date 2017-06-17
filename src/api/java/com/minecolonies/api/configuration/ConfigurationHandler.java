@@ -60,7 +60,7 @@ public final class ConfigurationHandler
             allowInfiniteSupplyChests = config.get(CATEGORY_GAMEPLAY,
               "allowInfiniteSupplyChests", allowInfiniteSupplyChests, "Allow infinite placing of Supply Chests?").getBoolean();
             citizenRespawnInterval = getClampedInt(config, CATEGORY_GAMEPLAY,
-              "citizenRespawnInterval", citizenRespawnInterval, CITIZEN_RESPAWN_INTERVAL_MIN, CITIZEN_RESPAWN_INTERVAL_MAX,
+              "citizenRespawnInterval", citizenRespawnInterval, Constants.CITIZEN_RESPAWN_INTERVAL_MIN, Constants.CITIZEN_RESPAWN_INTERVAL_MAX,
               "Citizen respawn interval in seconds");
             builderInfiniteResources = config.get(CATEGORY_GAMEPLAY, "builderInfiniteResources", builderInfiniteResources,
               "Does Builder have infinite resources?").getBoolean();

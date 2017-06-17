@@ -32,6 +32,7 @@ import net.minecraft.stats.Achievement;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -93,9 +94,14 @@ public class Colony implements IColony
     private static final int    CITIZEN_MINIMUM_FOR_RAID  = 5;
 
     /**
-     * Boolean for wether a raid event has executed this night
+     * Boolean for whether a raid event has executed this night
      */
-    private boolean raidHasHappened = true;
+    private boolean nightHasHappened = true;
+
+    /**
+     * Boolean value for whether a raid will execute the next night
+     */
+    public boolean raidWillHappen = true;
 
     /**
      * Amount of ticks that pass/hour.
@@ -1127,7 +1133,8 @@ public class Colony implements IColony
                 }
             }
 
-            if (!raidHasHappened && !subscribers.isEmpty() && world != null && !world.isDaytime() && Configurations.doBarbariansSpawn && BarbarianUtils.raidThisNight(world))
+            if (!nightHasHappened && !subscribers.isEmpty() && world != null && !world.isDaytime() && Configurations.doBarbariansSpawn && raidWillHappen
+                  && world.getDifficulty() != EnumDifficulty.PEACEFUL)
             {
                 raidLevel = this.numberOfWorkerLevels();
                 if (citizens.size() < CITIZEN_MINIMUM_FOR_RAID)
@@ -1135,12 +1142,21 @@ public class Colony implements IColony
                     raidLevel = 1;
                 }
                 BarbarianUtils.eventRaid(world, raidLevel, this);
-                raidHasHappened = true;
+                nightHasHappened = true;
+            }
+
+            if (world != null && !world.isDaytime())
+            {
+                nightHasHappened = true;
             }
 
             if (world != null && world.isDaytime())
             {
-                raidHasHappened = false;
+                if (nightHasHappened)
+                {
+                    raidWillHappen = BarbarianUtils.raidThisNight(world);
+                }
+                nightHasHappened = false;
             }
         }
 
@@ -1149,7 +1165,7 @@ public class Colony implements IColony
         {
             building.onWorldTick(event);
         }
-        
+
         if (isDay && !world.isDaytime())
         {
             isDay = false;
