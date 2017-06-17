@@ -231,6 +231,11 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private static final String FARMERS_LABEL = "farmers";
 
     /**
+     * Id of the total farmers label in the GUI.
+     */
+    private static final String BAKERS_LABEL = "bakers";
+
+    /**
      * Id of the total assignee label in the GUI.
      */
     private static final String ASSIGNEE_LABEL = "assignee";
@@ -821,6 +826,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         int guards = 0;
         int lumberjacks = 0;
         int farmers = 0;
+        int bakers = 0;
 
         for (@NotNull final CitizenDataView citizen : citizens)
         {
@@ -847,6 +853,9 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 case COM_MINECOLONIES_COREMOD_JOB_GUARD:
                     guards++;
                     break;
+                case COM_MINECOLONIES_COREMOD_JOB_BAKER:
+                    bakers++;
+                    break;
                 case "":
                     break;
                 default:
@@ -854,7 +863,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             }
         }
 
-        workers += deliverymen + builders + miners + fishermen + lumberjacks + farmers + guards;
+        workers += deliverymen + builders + miners + fishermen + lumberjacks + farmers + guards + bakers;
 
         final String numberOfCitizens =
           LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.totalCitizens", citizensSize, townHall.getColony().getMaxCitizens());
@@ -866,6 +875,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         final String numberOfGuards = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.Guards", guards);
         final String numberOfLumberjacks = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.lumberjacks", lumberjacks);
         final String numberOfFarmers = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.farmers", farmers);
+        final String numberOfbakers = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.bakers", bakers);
 
         final DecimalFormat df = new DecimalFormat("#.#");
         df.setRoundingMode(RoundingMode.CEILING);
@@ -881,6 +891,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         findPaneOfTypeByID(GUARDS_LABEL, Label.class).setLabelText(numberOfGuards);
         findPaneOfTypeByID(LUMBERJACKS_LABEL, Label.class).setLabelText(numberOfLumberjacks);
         findPaneOfTypeByID(FARMERS_LABEL, Label.class).setLabelText(numberOfFarmers);
+        findPaneOfTypeByID(BAKERS_LABEL, Label.class).setLabelText(numberOfbakers);
     }
 
     /**
