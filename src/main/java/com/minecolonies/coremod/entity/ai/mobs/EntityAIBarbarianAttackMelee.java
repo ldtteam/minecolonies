@@ -94,7 +94,7 @@ public class EntityAIBarbarianAttackMelee extends EntityAIBase
                 damageToBeDealt = DEFAULT_DAMAGE;
             }
 
-            if (entity.getDistanceToEntity(target) <= MIN_DISTANCE_FOR_ATTACK && lastAttack <= 0)
+            if (entity.getDistanceToEntity(target) <= MIN_DISTANCE_FOR_ATTACK && lastAttack <= 0 && entity.canEntityBeSeen(target))
             {
                 target.attackEntityFrom(new DamageSource(entity.getName()), (float) damageToBeDealt);
                 entity.swingArm(EnumHand.MAIN_HAND);
