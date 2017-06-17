@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.Constants.MAX_BUILDING_LEVEL;
+
 /**
  * The class of the citizen hut.
  */
@@ -110,7 +112,7 @@ public class BuildingHome extends AbstractBuildingHut
             return;
         }
 
-        if (residents.size() < getMaxInhabitants())
+        if (residents.size() < getMaxInhabitants() && getColony() != null && !getColony().isManualHousing())
         {
             // 'Capture' as many citizens into this house as possible
             addHomelessCitizens();
@@ -178,7 +180,7 @@ public class BuildingHome extends AbstractBuildingHut
      *
      * @param citizen Citizen to add.
      */
-    private void addResident(@NotNull final CitizenData citizen)
+    public void addResident(@NotNull final CitizenData citizen)
     {
         residents.add(citizen);
         citizen.setHomeBuilding(this);
@@ -189,7 +191,7 @@ public class BuildingHome extends AbstractBuildingHut
     @Override
     public int getMaxBuildingLevel()
     {
-        return 5;
+        return MAX_BUILDING_LEVEL;
     }
 
     @Override
@@ -265,10 +267,32 @@ public class BuildingHome extends AbstractBuildingHut
             super(c, l);
         }
 
+        /**
+         * Getter for the list of residents.
+         * @return an unmodifiable list.
+         */
         @NotNull
         public List<Integer> getResidents()
         {
             return Collections.unmodifiableList(residents);
+        }
+
+        /**
+         * Removes a resident from the building.
+         * @param index the index to remove it from.
+         */
+        public void removeResident(final int index)
+        {
+            residents.remove(index);
+        }
+
+        /**
+         * Add a resident from the building.
+         * @param id the id of the citizen.
+         */
+        public void addResident(final int id)
+        {
+            residents.add(id);
         }
 
         @NotNull
