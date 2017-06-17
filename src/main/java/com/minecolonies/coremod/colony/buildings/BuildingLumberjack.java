@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutLumberjack;
@@ -92,7 +91,6 @@ public class BuildingLumberjack extends AbstractBuildingWorker
             treesToFell.putAll(calcSaplings(saplings));
         }
 
-        Log.getLogger().info("Lalala");
         markDirty();
     }
 
