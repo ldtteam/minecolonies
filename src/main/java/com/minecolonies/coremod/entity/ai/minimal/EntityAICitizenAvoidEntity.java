@@ -60,7 +60,8 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     public boolean shouldExecute()
     {
         closestLivingEntity = getClosestToAvoid();
-        return closestLivingEntity != null && !(theEntity.getColonyJob() instanceof JobGuard) && this.theEntity.canEntityBeSeen(closestLivingEntity) && !BarbarianUtils.isBarbarian(closestLivingEntity);
+        return closestLivingEntity != null && !(theEntity.getColonyJob() instanceof JobGuard) && this.theEntity.canEntityBeSeen(closestLivingEntity) && !BarbarianUtils.isBarbarian(
+          closestLivingEntity);
     }
 
     /**

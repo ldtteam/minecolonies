@@ -138,7 +138,7 @@ public final class BarbarianUtils
             distanceFromEntity),
           Entity::isEntityAlive);
 
-        Optional<Entity> entityBarbarian = entityList.stream()
+        final Optional<Entity> entityBarbarian = entityList.stream()
                                              .filter(BarbarianUtils::isBarbarian)
                                              .findFirst();
 
@@ -152,12 +152,13 @@ public final class BarbarianUtils
 
     /**
      * Returns whether a raid should happen depending on the Config
+     *
      * @param world The world in which the raid is possibly happening (Used to get a random number easily)
      * @return Boolean value on whether to act this night
      */
     public static boolean raidThisNight(final World world)
     {
-        final float chance =(float) 1 / Configurations.averageNumberOfNightsBetweenRaids;
+        final float chance = (float) 1 / Configurations.averageNumberOfNightsBetweenRaids;
         return world.rand.nextFloat() < chance;
     }
 
@@ -196,9 +197,9 @@ public final class BarbarianUtils
      * Sets the various items for each type of barbarian
      *
      * @param entityToSpawn The resourceLocation that is checked against
-     * @param entity The entity to apply the following to.
+     * @param entity        The entity to apply the following to.
      */
-    private static void setBarbarianItems(final ResourceLocation entityToSpawn,final Entity entity)
+    private static void setBarbarianItems(final ResourceLocation entityToSpawn, final Entity entity)
     {
         if (entityToSpawn.equals(barbarian))
         {
@@ -234,7 +235,7 @@ public final class BarbarianUtils
         final BlockPos center = colonyView.getCenter();
         final int radius = Configurations.workingRangeTownHall;
 
-        final int randomDegree = theWorld.rand.nextInt( (int) WHOLE_CIRCLE);
+        final int randomDegree = theWorld.rand.nextInt((int) WHOLE_CIRCLE);
 
         final double rads = (double) randomDegree / HALF_A_CIRCLE * Math.PI;
         final double x = Math.round(center.getX() + radius * Math.sin(rads));
