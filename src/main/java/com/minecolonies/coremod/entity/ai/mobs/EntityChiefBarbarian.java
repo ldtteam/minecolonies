@@ -4,8 +4,11 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.items.ItemChiefSword;
 import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.sounds.BarbarianSounds;
+import com.minecolonies.coremod.util.BarbarianUtils;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
@@ -13,17 +16,21 @@ import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import java.util.stream.Stream;
 
 public class EntityChiefBarbarian extends EntityMob
 {
-    private final       Colony           colony = ColonyManager.getClosestColony(world, this.getPosition());
-    public static final ResourceLocation LOOT   = new ResourceLocation(Constants.MOD_ID, "EntityChiefBarbarianDrops");
+    private final        Colony           colony       = ColonyManager.getClosestColony(world, this.getPosition());
+    public static final  ResourceLocation LOOT         = new ResourceLocation(Constants.MOD_ID, "EntityChiefBarbarianDrops");
+    private static final Potion           SPEED_EFFECT = Potion.getPotionById(1);
 
     /**
      * defines the default values for the Entity's attributes.
@@ -83,10 +90,33 @@ public class EntityChiefBarbarian extends EntityMob
     }
 
     /**
+     * Done so that the Chief does not drop his equipped Chief Sword, because it's supposed to be rare
+     *
+     * @param wasRecentlyHit  Boolean value, of whether it was recently hit
+     * @param lootingModifier The modifier applied by a looting enchantment
+     */
+    @Override
+    protected void dropEquipment(final boolean wasRecentlyHit, final int lootingModifier)
+    {
+    }
+
+    @Override
+    public void onLivingUpdate()
+    {
+        if (this.getHeldItemMainhand().getItem() instanceof ItemChiefSword)
+        {
+            Stream<EntityLivingBase> barbarians = BarbarianUtils.getBarbariansCloseToEntity(this, 7);
+            barbarians.forEach(entity -> entity.addPotionEffect(new PotionEffect(SPEED_EFFECT, 5, 2)));
+        }
+        super.onLivingUpdate();
+    }
+
+    /**
      * Sets the entity's health based on the raidLevel
+     *
      * @return returns the health in the form of a double
      */
-    protected double getHealthBasedOnRaidLevel()
+    private double getHealthBasedOnRaidLevel()
     {
         if (colony != null)
         {

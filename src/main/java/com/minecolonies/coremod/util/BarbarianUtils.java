@@ -13,6 +13,7 @@ import com.minecolonies.coremod.entity.ai.mobs.EntityChiefBarbarian;
 import com.minecolonies.coremod.items.ModItems;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -26,6 +27,7 @@ import net.minecraftforge.common.ForgeChunkManager;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * Utils for The Barbarian Raid Event
@@ -165,6 +167,26 @@ public final class BarbarianUtils
                                                    .findFirst();
 
         return entityBarbarian.orElse(null);
+    }
+
+    /**
+     * Returns the barbarians close to an entity
+     *
+     * @param entity             The entity to test against
+     * @param distanceFromEntity The distance to check for
+     * @return the barbarians (if any) that is nearest
+     */
+    public static Stream<EntityLivingBase> getBarbariansCloseToEntity(final Entity entity, final double distanceFromEntity)
+    {
+        final List<EntityLivingBase> entityList = CompatibilityUtils.getWorld(entity).getEntitiesWithinAABB(
+          EntityLivingBase.class,
+          entity.getEntityBoundingBox().expand(
+            distanceFromEntity,
+            3.0D,
+            distanceFromEntity),
+          Entity::isEntityAlive);
+
+        return entityList.stream().filter(BarbarianUtils::isBarbarian);
     }
 
     /**
