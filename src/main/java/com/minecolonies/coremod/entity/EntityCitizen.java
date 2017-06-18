@@ -250,7 +250,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private int citizenId = 0;
     private int level;
     private int textureId;
-    private float volume = 0.2F;
+    private final float volume = 0.2F;
     /**
      * Walk to proxy.
      */

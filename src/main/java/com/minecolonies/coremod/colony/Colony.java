@@ -1084,7 +1084,7 @@ public class Colony implements IColony
     }
 
     @Override
-    public boolean getWillRaid()
+    public boolean isWillRaid()
     {
         return raidWillHappen;
     }
