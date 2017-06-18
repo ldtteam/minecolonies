@@ -665,4 +665,10 @@ public final class ColonyView implements IColony
     {
         return 0;
     }
+
+    @Override
+    public boolean getWillRaid()
+    {
+        return false;
+    }
 }

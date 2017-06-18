@@ -147,6 +147,7 @@ public class Colony implements IColony
     //private int autoHostile = 0;//Off
     private static final String TAG_FIELDS                        = "fields";
     private static final int    CHECK_WAYPOINT_EVERY              = 100;
+    private static final int    DEFAULT_HAPPINESS                 = 5;
     private static final double MAX_SQ_DIST_SUBSCRIBER_UPDATE     = MathUtils.square(Configurations.workingRangeTownHall + 16D);
     private static final double MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE = MathUtils.square(Configurations.workingRangeTownHall * 2D);
     private final int id;
@@ -213,7 +214,7 @@ public class Colony implements IColony
     private int maxCitizens  = Configurations.maxCitizens;
     private int raidLevel    = 0;
 
-    private double overallHappiness = 5;
+    private double overallHappiness = DEFAULT_HAPPINESS;
 
     /**
      * Amount of ticks passed.
@@ -1080,6 +1081,12 @@ public class Colony implements IColony
     public int getRaidLevel()
     {
         return raidLevel;
+    }
+
+    @Override
+    public boolean getWillRaid()
+    {
+        return raidWillHappen;
     }
 
     /**

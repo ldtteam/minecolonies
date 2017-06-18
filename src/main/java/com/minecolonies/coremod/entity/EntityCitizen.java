@@ -248,8 +248,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private ResourceLocation texture;
     private int              colonyId;
     private int citizenId = 0;
-    private int          level;
-    private int          textureId;
+    private int level;
+    private int textureId;
+    private float volume = 0.2F;
     /**
      * Walk to proxy.
      */
@@ -1536,7 +1537,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
 
         if (BarbarianUtils.getClosestBarbarianToEntity(this, DISTANCE_OF_ENTITY_AVOID) != null &&
-                BarbarianUtils.getClosestBarbarianToEntity(this, DISTANCE_OF_ENTITY_AVOID).isEntityAlive())
+              BarbarianUtils.getClosestBarbarianToEntity(this, DISTANCE_OF_ENTITY_AVOID).isEntityAlive())
         {
             return DesiredActivity.SLEEP;
         }
@@ -1697,7 +1698,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
                   this.getPosition(),
                   SoundEvents.ENTITY_ITEM_PICKUP,
                   SoundCategory.AMBIENT,
-                  0.2F,
+                  volume,
                   (float) ((this.rand.nextGaussian() * 0.7D + 1.0D) * 2.0D));
                 this.onItemPickup(entityItem, ItemStackUtils.getSize(itemStack) - resultingStackSize);
 

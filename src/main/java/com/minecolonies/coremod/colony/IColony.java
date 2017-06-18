@@ -81,4 +81,10 @@ public interface IColony
      * @return an integer describing the colony's raidlevel
      */
     int getRaidLevel();
+
+    /**
+     * get whether the colony will raid the following night or not
+     * @return a boolean value of whether the raid shall occur that night
+     */
+    boolean getWillRaid();
 }
