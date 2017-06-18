@@ -10,6 +10,7 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.entity.ai.mobs.EntityArcherBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.EntityBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.EntityChiefBarbarian;
+import com.minecolonies.coremod.items.ModItems;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.init.Items;
@@ -250,7 +251,7 @@ public final class BarbarianUtils
         }
         if (entityToSpawn.equals(chief))
         {
-            entity.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_SWORD));
+            entity.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(ModItems.chiefSword));
             entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(Items.CHAINMAIL_CHESTPLATE));
             entity.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(Items.CHAINMAIL_LEGGINGS));
             entity.setItemStackToSlot(EntityEquipmentSlot.FEET, new ItemStack(Items.CHAINMAIL_BOOTS));

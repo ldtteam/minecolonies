@@ -15,6 +15,7 @@ public final class ModItems
     public static final Item scepterGuard = new ItemScepterGuard();
     public static final Item supplyCamp   = new ItemSupplyCampDeployer();
     public static final Item ancientTome  = new ItemAncientTome();
+    public static final Item chiefSword   = new ItemChiefSword();
 
     public static final Item itemAchievementProxySettlement = new ItemAchievementProxy("sizeSettlement");
     public static final Item itemAchievementProxyTown       = new ItemAchievementProxy("sizeTown");
