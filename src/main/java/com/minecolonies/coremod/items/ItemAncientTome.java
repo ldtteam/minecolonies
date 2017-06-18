@@ -32,12 +32,12 @@ public class ItemAncientTome extends AbstractItemMinecolonies
     public void onUpdate(final ItemStack stack, final World worldIn, final Entity entityIn, final int itemSlot, final boolean isSelected)
     {
         super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
-        Colony colony = ColonyManager.getClosestColony(worldIn, entityIn.getPosition());
+        final Colony colony = ColonyManager.getClosestColony(worldIn, entityIn.getPosition());
         raidWillHappen = colony != null && colony.raidWillHappen;
     }
 
     @SideOnly(Side.CLIENT)
-    public boolean hasEffect(ItemStack stack)
+    public boolean hasEffect(final ItemStack stack)
     {
         return raidWillHappen;
     }
