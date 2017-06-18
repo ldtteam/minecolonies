@@ -204,7 +204,7 @@ public final class BarbarianUtils
         {
             if (!world.isBlockLoaded(spawnLocation))
             {
-                ForgeChunkManager.Ticket chunkTicket = ForgeChunkManager.requestTicket(MineColonies.instance, world, ForgeChunkManager.Type.NORMAL);
+                final ForgeChunkManager.Ticket chunkTicket = ForgeChunkManager.requestTicket(MineColonies.instance, world, ForgeChunkManager.Type.NORMAL);
                 if (chunkTicket != null)
                 {
                     chunkTicket.getModData().setInteger("spawnX", spawnLocation.getX());
