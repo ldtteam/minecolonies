@@ -233,6 +233,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public static final double FULL_SATURATION = 10;
 
+    private static final float VOLUME = 0.2F;
+    private static final double GAUSSIAN_MULTIPLIER = 0.7D;
     private static Field            navigatorField;
     private final  InventoryCitizen inventory;
     @NotNull
@@ -248,9 +250,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private ResourceLocation texture;
     private int              colonyId;
     private int citizenId = 0;
-    private int level;
-    private int textureId;
-    private final float volume = 0.2F;
+    private int          level;
+    private int          textureId;
     /**
      * Walk to proxy.
      */
@@ -1698,8 +1699,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
                   this.getPosition(),
                   SoundEvents.ENTITY_ITEM_PICKUP,
                   SoundCategory.AMBIENT,
-                  volume,
-                  (float) ((this.rand.nextGaussian() * 0.7D + 1.0D) * 2.0D));
+                  VOLUME,
+                  (float) ((this.rand.nextGaussian() * GAUSSIAN_MULTIPLIER + 1.0D) * 2.0D));
                 this.onItemPickup(entityItem, ItemStackUtils.getSize(itemStack) - resultingStackSize);
 
                 if (ItemStackUtils.isEmpty(resultStack))
