@@ -54,7 +54,7 @@ public class EntityAIBarbarianAttackMelee extends EntityAIBase
      */
     public boolean continueExecuting()
     {
-        if (target.isEntityAlive() && entity.isEntityAlive() && !target.getIsInvulnerable())
+        if (target.isEntityAlive() && entity.isEntityAlive() && !target.getIsInvulnerable() && entity.canEntityBeSeen(target))
         {
             attack(target);
             return true;

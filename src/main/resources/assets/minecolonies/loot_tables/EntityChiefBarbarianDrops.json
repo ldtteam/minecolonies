@@ -183,7 +183,7 @@
           "conditions": [
             {
               "condition": "random_chance_with_looting",
-              "chance": 0.5,
+              "chance": 0.25,
               "looting_multiplier": 0
             }
           ]

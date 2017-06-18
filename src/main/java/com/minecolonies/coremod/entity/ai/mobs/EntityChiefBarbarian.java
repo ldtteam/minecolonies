@@ -42,6 +42,12 @@ public class EntityChiefBarbarian extends EntityMob
     private static final float MAX_WATCH_DISTANCE = 8.0F;
 
     /**
+     * Values used to choose whether or not to play sound
+     */
+    private static final int OUT_OF_ONE_HUNDRED = 100;
+    private static final int ONE                = 1;
+
+    /**
      * Constructor method for entity
      *
      * @param worldIn The world that the entity is in
@@ -108,6 +114,17 @@ public class EntityChiefBarbarian extends EntityMob
     protected SoundEvent getAmbientSound()
     {
         return BarbarianSounds.barbarianSay;
+    }
+
+    @Override
+    public void playLivingSound()
+    {
+        SoundEvent soundevent = this.getAmbientSound();
+
+        if (soundevent != null && world.rand.nextInt(OUT_OF_ONE_HUNDRED) <= ONE)
+        {
+            this.playSound(soundevent, this.getSoundVolume(), this.getSoundPitch());
+        }
     }
 
     @Override
