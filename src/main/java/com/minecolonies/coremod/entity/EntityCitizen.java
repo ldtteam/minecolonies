@@ -1535,7 +1535,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
             return DesiredActivity.WORK;
         }
 
-        if (BarbarianUtils.getClosestBarbarianToEntity(this, DISTANCE_OF_ENTITY_AVOID) != null && BarbarianUtils.getClosestBarbarianToEntity(this, DISTANCE_OF_ENTITY_AVOID).isEntityAlive())
+        if (BarbarianUtils.getClosestBarbarianToEntity(this, DISTANCE_OF_ENTITY_AVOID) != null &&
+                BarbarianUtils.getClosestBarbarianToEntity(this, DISTANCE_OF_ENTITY_AVOID).isEntityAlive())
         {
             return DesiredActivity.SLEEP;
         }

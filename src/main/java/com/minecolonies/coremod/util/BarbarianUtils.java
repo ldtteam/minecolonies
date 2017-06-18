@@ -204,18 +204,13 @@ public final class BarbarianUtils
         {
             if (!world.isBlockLoaded(spawnLocation))
             {
-                ForgeChunkManager.Ticket chunkTicket = ForgeChunkManager.requestTicket(MineColonies.instance, world, ForgeChunkManager.Type.NORMAL);
-                if (chunkTicket == null)
-                {
-                    System.out.println("Well forge denied a Chunk Loading ticker, i guess you're not getting your horde tonight...");
-                }
-                else
+                final ForgeChunkManager.Ticket chunkTicket = ForgeChunkManager.requestTicket(MineColonies.instance, world, ForgeChunkManager.Type.NORMAL);
+                if (chunkTicket != null)
                 {
                     chunkTicket.getModData().setInteger("spawnX", spawnLocation.getX());
                     chunkTicket.getModData().setInteger("spawnY", spawnLocation.getY());
                     chunkTicket.getModData().setInteger("spawnZ", spawnLocation.getZ());
                     ForgeChunkManager.forceChunk(chunkTicket, new ChunkPos(spawnLocation.getX(), spawnLocation.getZ()));
-                    System.out.println("Successful chunk load!");
                 }
             }
 

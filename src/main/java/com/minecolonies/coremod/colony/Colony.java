@@ -92,6 +92,7 @@ public class Colony implements IColony
     private static final int    NUM_ACHIEVEMENT_FOURTH    = 500;
     private static final int    NUM_ACHIEVEMENT_FIFTH     = 1000;
     private static final int    CITIZEN_MINIMUM_FOR_RAID  = 5;
+    private static final int    NUM_ONE                   = 1;
 
     /**
      * Boolean for whether a raid event has executed this night
@@ -1212,7 +1213,7 @@ public class Colony implements IColony
 
         final int averageHousing = housing / Math.max(1, citizens.size());
 
-        if (averageHousing > 1)
+        if (averageHousing > NUM_ONE)
         {
             increaseOverallHappiness(averageHousing * HAPPINESS_FACTOR);
         }
@@ -1229,7 +1230,7 @@ public class Colony implements IColony
 
         final int relation = workers / guards;
 
-        if (relation > 1)
+        if (relation > NUM_ONE)
         {
             decreaseOverallHappiness(relation * HAPPINESS_FACTOR);
         }
