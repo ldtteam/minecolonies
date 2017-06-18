@@ -106,7 +106,7 @@ public class EntityBarbarian extends EntityMob
     @Override
     public void playLivingSound()
     {
-        SoundEvent soundevent = this.getAmbientSound();
+        final SoundEvent soundevent = this.getAmbientSound();
 
         if (soundevent != null && world.rand.nextInt(OUT_OF_ONE_HUNDRED) <= ONE)
         {
