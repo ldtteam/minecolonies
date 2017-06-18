@@ -418,8 +418,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                 LanguageHandler.sendPlayersMessage(getColony().getMessageEntityPlayers(), COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL);
                 return;
             }
-            InventoryUtils.addItemStackToProvider(chest, stack);
-            new InvWrapper(inventoryCitizen).extractItem(i, Integer.MAX_VALUE, false);
+            InventoryUtils.transferItemStackIntoNextFreeSlotInProvider(new InvWrapper(inventoryCitizen), i, chest);
         }
     }
 

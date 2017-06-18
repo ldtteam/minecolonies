@@ -2,7 +2,10 @@ package com.minecolonies.api.compatibility;
 
 import com.minecolonies.api.compatibility.tinkers.ToolBrokenCheck;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.Loader;
 import org.jetbrains.annotations.Nullable;
+
+import static com.minecolonies.api.util.constant.Constants.HARVESTCRAFTMODID;
 
 /**
  * This class is to store the methods that call the methods to check for
@@ -31,5 +34,14 @@ public final class Compatibility
             return false;
         }
         return true;
+    }
+
+    /**
+     * Check if Pams harvestcraft is installed.
+     * @return true if so.
+     */
+    public static boolean isPamsInstalled()
+    {
+        return Loader.isModLoaded(HARVESTCRAFTMODID);
     }
 }
