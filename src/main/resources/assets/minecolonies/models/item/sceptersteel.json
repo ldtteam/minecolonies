@@ -1,5 +1,5 @@
 {
-  "parent": "builtin/generated",
+  "parent": "item/handheld",
   "textures": {
     "layer0": "minecolonies:items/scepterSteel"
   },
