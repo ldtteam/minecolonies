@@ -1098,7 +1098,7 @@ public class Colony implements IColony
      */
     public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
     {
-        if (event.world != getWorld() || world == null)
+        if (event.world != world || world == null)
         {
             /**
              * If the event world is not the colony world ignore. This might happen in interactions with other mods.
@@ -1141,7 +1141,7 @@ public class Colony implements IColony
                 }
             }
 
-            if (!nightHasHappened && !subscribers.isEmpty() && world != null && !world.isDaytime() && Configurations.doBarbariansSpawn && raidWillHappen
+            if (!nightHasHappened && !subscribers.isEmpty() && && !world.isDaytime() && Configurations.doBarbariansSpawn && raidWillHappen
                   && world.getDifficulty() != EnumDifficulty.PEACEFUL)
             {
                 raidLevel = this.numberOfWorkerLevels();
@@ -1153,12 +1153,12 @@ public class Colony implements IColony
                 nightHasHappened = true;
             }
 
-            if (world != null && !world.isDaytime())
+            if (!world.isDaytime())
             {
                 nightHasHappened = true;
             }
 
-            if (world != null && world.isDaytime())
+            if (world.isDaytime())
             {
                 if (nightHasHappened)
                 {
@@ -1179,7 +1179,7 @@ public class Colony implements IColony
             isDay = false;
             updateOverallHappiness();
         }
-        else if (world != null && !isDay && world.isDaytime())
+        else if (!isDay && world.isDaytime())
         {
             isDay = true;
         }
