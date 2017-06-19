@@ -4,21 +4,26 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
-import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
+import com.minecolonies.coremod.client.gui.WindowHutLumberjack;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.oredict.OreDictionary;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
@@ -28,24 +33,38 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 public class BuildingLumberjack extends AbstractBuildingWorker
 {
     /**
+     * NBT tag to store the treesToFell map.
+     */
+    private static final String TAG_SAPLINGS = "saplings";
+
+    /**
+     * NBT tag if the lj should cut a certain type of tree.
+     */
+    private static final String TAG_CUT = "shouldCut";
+
+    /**
      * The maximum upgrade of the building.
      */
-    private static final int    MAX_BUILDING_LEVEL  = 5;
+    private static final int    MAX_BUILDING_LEVEL = 5;
     /**
      * The job description.
      */
-    private static final String LUMBERJACK          = "Lumberjack";
-    /**
-     * The hut description.
-     */
-    private static final String LUMBERJACK_HUT_NAME = "lumberjackHut";
+    private static final String LUMBERJACK         = "Lumberjack";
 
     /**
      * Sets the amount of saplings the lumberjack should keep.
      */
     private static final int SAPLINGS_TO_KEEP = 32;
 
+    /**
+     * List of the items the lumberjack has to keep.
+     */
     private final Map<ItemStorage, Integer> keepX = new HashMap<>();
+
+    /**
+     * List of saplings the lumberjack should, or should not fell (true if should, false if should not).
+     */
+    private final Map<ItemStorage, Boolean> treesToFell = new LinkedHashMap<>();
 
     /**
      * Public constructor of the building, creates an object of the building.
@@ -58,7 +77,107 @@ public class BuildingLumberjack extends AbstractBuildingWorker
         super(c, l);
 
         final ItemStack stack = new ItemStack(Blocks.SAPLING);
-        keepX.put(new ItemStorage(stack.getItem(), stack.getItemDamage(), 0, false), SAPLINGS_TO_KEEP);
+        keepX.put(new ItemStorage(stack, false), SAPLINGS_TO_KEEP);
+        final int[] saplingId = OreDictionary.getOreIDs(new ItemStack(Blocks.SAPLING));
+
+        final List<ItemStack> saplings = new ArrayList<>();
+        for (final int i : saplingId)
+        {
+            saplings.addAll(OreDictionary.getOres(OreDictionary.getOreName(i)));
+        }
+
+        if (treesToFell.isEmpty())
+        {
+            treesToFell.putAll(calcSaplings(saplings));
+        }
+
+        markDirty();
+    }
+
+    /**
+     * Change a tree to be cut or not.
+     *
+     * @param stack the stack of the sapling.
+     * @param cut   should be cut or not.
+     */
+    public void setTreeToCut(final ItemStack stack, final boolean cut)
+    {
+        if (treesToFell.containsKey(new ItemStorage(stack)))
+        {
+            treesToFell.put(new ItemStorage(stack), cut);
+        }
+    }
+
+    /**
+     * Get a list of what kind of trees the lumberjack should or should not cut.
+     *
+     * @return the map with ItemStack (sapling) and boolean (should or should not cut).
+     */
+    public Map<ItemStorage, Boolean> getTreesToCut()
+    {
+        return Collections.unmodifiableMap(treesToFell);
+    }
+
+    private static Map<ItemStorage, Boolean> calcSaplings(final List<ItemStack> saplings)
+    {
+        final Map<ItemStorage, Boolean> finalSaplings = new LinkedHashMap<>();
+        for (final ItemStack saps : saplings)
+        {
+            if (saps.getHasSubtypes())
+            {
+                final List<ItemStack> list = new ArrayList<>();
+                saps.getItem().getSubItems(saps.getItem(), null, list);
+
+                for (final ItemStack stack : list)
+                {
+                    finalSaplings.put(new ItemStorage(stack), true);
+                }
+            }
+        }
+        return finalSaplings;
+    }
+
+    @Override
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+        treesToFell.clear();
+
+        final NBTTagList saplingTagList = compound.getTagList(TAG_SAPLINGS, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < saplingTagList.tagCount(); ++i)
+        {
+            final NBTTagCompound saplingCompound = saplingTagList.getCompoundTagAt(i);
+            final ItemStack stack = ItemStack.loadItemStackFromNBT(saplingCompound);
+            final boolean cut = saplingCompound.getBoolean(TAG_CUT);
+            treesToFell.put(new ItemStorage(stack), cut);
+        }
+    }
+
+    @Override
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    {
+        super.writeToNBT(compound);
+        @NotNull final NBTTagList saplingTagList = new NBTTagList();
+        for (@NotNull final Map.Entry<ItemStorage, Boolean> entry : treesToFell.entrySet())
+        {
+            @NotNull final NBTTagCompound saplingCompound = new NBTTagCompound();
+            entry.getKey().getItemStack().writeToNBT(saplingCompound);
+            saplingCompound.setBoolean(TAG_CUT, entry.getValue());
+            saplingTagList.appendTag(saplingCompound);
+        }
+        compound.setTag(TAG_SAPLINGS, saplingTagList);
+    }
+
+    @Override
+    public void serializeToView(@NotNull final ByteBuf buf)
+    {
+        super.serializeToView(buf);
+        buf.writeInt(treesToFell.size());
+        for (final Map.Entry<ItemStorage, Boolean> entry : treesToFell.entrySet())
+        {
+            ByteBufUtils.writeItemStack(buf, entry.getKey().getItemStack());
+            buf.writeBoolean(entry.getValue());
+        }
     }
 
     /**
@@ -160,8 +279,12 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     public static class View extends AbstractBuildingWorker.View
     {
         /**
+         * List of saplings the lumberjack should, or should not fell (true if should, false if should not).
+         */
+        public final Map<ItemStack, Boolean> treesToFell = new LinkedHashMap<>();
+
+        /**
          * Public constructor of the view, creates an instance of it.
-         *
          * @param c the colony.
          * @param l the position.
          */
@@ -170,15 +293,25 @@ public class BuildingLumberjack extends AbstractBuildingWorker
             super(c, l);
         }
 
-        /**
-         * Gets the blockOut Window.
-         *
-         * @return the window of the lumberjack building.
-         */
+        @Override
+        public void deserialize(@NotNull final ByteBuf buf)
+        {
+            super.deserialize(buf);
+            treesToFell.clear();
+            final int size = buf.readInt();
+            for (int i = 0; i < size; i++)
+            {
+                final ItemStack stack = ByteBufUtils.readItemStack(buf);
+                final boolean cut = buf.readBoolean();
+                treesToFell.put(stack, cut);
+            }
+        }
+
         @NotNull
+        @Override
         public Window getWindow()
         {
-            return new WindowHutWorkerPlaceholder<>(this, LUMBERJACK_HUT_NAME);
+            return new WindowHutLumberjack(this);
         }
 
         @NotNull

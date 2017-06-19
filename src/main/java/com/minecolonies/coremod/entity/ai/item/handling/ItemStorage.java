@@ -1,20 +1,22 @@
 package com.minecolonies.coremod.entity.ai.item.handling;
 
+import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Used to store an item with various informations to compare items later on.
+ * Used to store an stack with various informations to compare items later on.
  */
 public class ItemStorage
 {
     /**
-     * The item to store.
+     * The stack to store.
      */
-    private final Item item;
+    private final ItemStack stack;
 
     /**
-     * The damage value.
+     * Set this to ignore the damage value in comparisons.
      */
     private final int     damageValue;
     /**
@@ -29,17 +31,26 @@ public class ItemStorage
     /**
      * Creates an instance of the storage.
      *
-     * @param item              the item.
-     * @param damageValue       it's damage value.
-     * @param amount            optional amount.
+     * @param stack             the stack.
      * @param ignoreDamageValue should the damage value be ignored?
      */
-    public ItemStorage(@NotNull final Item item, final int damageValue, final int amount, final boolean ignoreDamageValue)
+    public ItemStorage(@NotNull final ItemStack stack, final boolean ignoreDamageValue)
     {
-        this.item = item;
-        this.damageValue = damageValue;
-        this.amount = amount;
+        this.stack = stack;
         this.ignoreDamageValue = ignoreDamageValue;
+        this.amount = ItemStackUtils.getSize(stack);
+    }
+
+    /**
+     * Creates an instance of the storage.
+     *
+     * @param stack the stack.
+     */
+    public ItemStorage(@NotNull final ItemStack stack)
+    {
+        this.stack = stack;
+        this.ignoreDamageValue = false;
+        this.amount = ItemStackUtils.getSize(stack);
     }
 
     /**
@@ -49,7 +60,7 @@ public class ItemStorage
      */
     public int getAmount()
     {
-        return amount;
+        return this.amount;
     }
 
     /**
@@ -115,5 +126,15 @@ public class ItemStorage
     public int getDamageValue()
     {
         return damageValue;
+    }
+
+    /**
+     * Get the itemStack from this itemStorage.
+     *
+     * @return the stack.
+     */
+    public ItemStack getItemStack()
+    {
+        return stack;
     }
 }

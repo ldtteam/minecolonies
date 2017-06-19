@@ -1435,10 +1435,6 @@
     "category": "neutral",
     "sounds": [
       {
-        "name": "minecolonies:mob/farmer/female/IWontWorkDuringRain1",
-        "stream": false
-      },
-      {
         "name": "minecolonies:mob/farmer/female/youhaveanotherthingcomingifyouthinkimworkinginthisrainhere",
         "stream": false
       },

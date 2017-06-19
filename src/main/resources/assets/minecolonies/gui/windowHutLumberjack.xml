@@ -1,0 +1,27 @@
+<window inherit="minecolonies:gui/windowBase.xml">
+    <switch id="pages" size="100% 200px" pos="0 7">
+        <view id="pageActions" size="100% 100%">
+            <layout source="minecolonies:gui/layoutWorkerBuildingDefault.xml"/>
+        </view>
+
+        <view id="saplingActions" size="100% 100%">
+            <label size="100% 11" pos="0 0"
+                   label="$(com.minecolonies.coremod.gui.workerHuts.saplingList)" color="black" textalign="BOTTOM_MIDDLE"/>
+            <list id="trees" size="78% 85%" pos="30 20">
+                <box size="100% 30" linewidth="2">
+                    <itemicon id="symbol" size="100 12" pos="5 2" color="black"/>
+                    <label id="name" size="50 12" pos="35 16" textalign="MIDDLE_LEFT" color="black"/>
+                    <button id="switch" size="100 12" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOn)"/>
+                </box>
+            </list>
+        </view>
+
+
+    </switch>
+    <button id="prevPage" align="TOP_LEFT" size="20 20" pos="10 5" label="&lt;&lt;"/>
+    <button id="nextPage" align="TOP_RIGHT" size="20 20" pos="10 5" label="&gt;&gt;"/>
+
+    <button id="inventory"
+            align="BOTTOM_MIDDLE" size="116 20" pos="0 13"
+            label="$(container.inventory)"/>
+</window>

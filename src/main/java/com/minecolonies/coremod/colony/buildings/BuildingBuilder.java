@@ -11,7 +11,6 @@ import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -20,6 +19,7 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,8 +28,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE;
-
 
 /**
  * The builders building.
@@ -158,7 +156,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         for (@NotNull final BuildingBuilderResource resource : neededResources.values())
         {
             @NotNull final NBTTagCompound neededRes = new NBTTagCompound();
-            final ItemStack itemStack = new ItemStack(resource.getItem(), resource.getAmount(), resource.getDamageValue());
+            final ItemStack itemStack = resource.getItemStack().copy();
             itemStack.writeToNBT(neededRes);
 
             neededResTagList.appendTag(neededRes);
@@ -193,11 +191,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         for (@NotNull final Map.Entry<String, BuildingBuilderResource> entry : neededResources.entrySet())
         {
             final BuildingBuilderResource resource = neededResources.get(entry.getKey());
-            //ByteBufUtils.writeItemStack() is Buggy, serialize itemId and damage separately;
-            final int itemId = Item.getIdFromItem(resource.getItem());
-            final int damage = resource.getDamageValue();
-            buf.writeInt(itemId);
-            buf.writeInt(damage);
+            ByteBufUtils.writeItemStack(buf, resource.getItemStack());
             buf.writeInt(resource.getAvailable());
             buf.writeInt(resource.getAmount());
         }
@@ -276,7 +270,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         BuildingBuilderResource resource = this.neededResources.get(res.getUnlocalizedName());
         if (resource == null)
         {
-            resource = new BuildingBuilderResource(res.getItem(), res.getItemDamage(), amount);
+            resource = new BuildingBuilderResource(res, amount);
         }
         else
         {

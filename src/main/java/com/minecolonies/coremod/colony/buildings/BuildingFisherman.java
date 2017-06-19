@@ -10,6 +10,7 @@ import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobFisherman;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,7 +43,7 @@ public class BuildingFisherman extends AbstractBuildingWorker
     {
         super(c, l);
 
-        keepX.put(new ItemStorage(Items.FISHING_ROD, 0, 0, true), 1);
+        keepX.put(new ItemStorage(new ItemStack(Items.FISHING_ROD), true), 1);
     }
 
     /**
