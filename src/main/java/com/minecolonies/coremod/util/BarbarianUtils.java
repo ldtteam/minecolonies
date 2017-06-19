@@ -50,9 +50,10 @@ public class BarbarianUtils
 
     /**
      * Centralized Barbarian Attributes are set here.
+     *
      * @param barbarian the barbarian to set the Attributes on.
      */
-    public static void setBarbarianAttributes(EntityMob barbarian)
+    public static void setBarbarianAttributes(final EntityMob barbarian)
     {
         barbarian.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE);
         barbarian.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(MOVEMENT_SPEED);
@@ -63,9 +64,10 @@ public class BarbarianUtils
 
     /**
      * Centralized Barbarian AITasks are set here.
+     *
      * @param barbarian the barbarian to set the AITasks on.
      */
-    public static void setBarbarianAITasks(EntityMob barbarian)
+    public static void setBarbarianAITasks(final EntityMob barbarian)
     {
         barbarian.tasks.addTask(PRIORITY_ZERO, new EntityAISwimming(barbarian));
         barbarian.tasks.addTask(PRIORITY_TWO, new EntityAIWander(barbarian, AI_MOVE_SPEED));
@@ -76,22 +78,22 @@ public class BarbarianUtils
         barbarian.tasks.addTask(PRIORITY_SEVEN, new EntityAIWatchClosest(barbarian, EntityPlayer.class, MAX_WATCH_DISTANCE));
         barbarian.tasks.addTask(PRIORITY_EIGHT, new EntityAILookIdle(barbarian));
 
-        if(barbarian instanceof EntityBarbarian || barbarian instanceof EntityChiefBarbarian)
+        if (barbarian instanceof EntityBarbarian || barbarian instanceof EntityChiefBarbarian)
         {
             barbarian.tasks.addTask(PRIORITY_ONE, new EntityAIBarbarianAttackMelee(barbarian));
         }
-        else if(barbarian instanceof EntityArcherBarbarian)
+        else if (barbarian instanceof EntityArcherBarbarian)
         {
             barbarian.tasks.addTask(PRIORITY_ONE, new EntityAIAttackArcher(barbarian));
         }
-
     }
 
     /**
      * Centralized Barbarian Equipment is set here.
+     *
      * @param barbarian the barbarian to give the Equipment to.
      */
-    public static void setBarbarianEquipment(EntityMob barbarian)
+    public static void setBarbarianEquipment(final EntityMob barbarian)
     {
         if (barbarian instanceof EntityBarbarian)
         {
@@ -113,19 +115,20 @@ public class BarbarianUtils
 
     /**
      * Returns a barbarians loot table
+     *
      * @param barbarian The barbarian for which to return the loot table
      */
-    public static ResourceLocation getBarbarianLootTables(EntityMob barbarian)
+    public static ResourceLocation getBarbarianLootTables(final EntityMob barbarian)
     {
-        if(barbarian instanceof  EntityBarbarian)
+        if (barbarian instanceof EntityBarbarian)
         {
             return new ResourceLocation(Constants.MOD_ID, "EntityBarbarianDrops");
         }
-        else if(barbarian instanceof  EntityArcherBarbarian)
+        else if (barbarian instanceof EntityArcherBarbarian)
         {
             return new ResourceLocation(Constants.MOD_ID, "EntityArcherBarbarianDrops");
         }
-        else if(barbarian instanceof EntityChiefBarbarian)
+        else if (barbarian instanceof EntityChiefBarbarian)
         {
             return new ResourceLocation(Constants.MOD_ID, "EntityChiefBarbarianDrops");
         }
