@@ -111,7 +111,7 @@ public class BuildingBaker extends AbstractBuildingWorker
         {
             for(final ItemStack stack: storage.getInput())
             {
-                keepX.put(new ItemStorage(stack.getItem(), stack.getItemDamage(), 0, false), WHEAT_TO_KEEP);
+                keepX.put(new ItemStorage(stack, false), WHEAT_TO_KEEP);
             }
         }
     }

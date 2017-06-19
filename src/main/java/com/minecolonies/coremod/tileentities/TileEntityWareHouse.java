@@ -163,8 +163,8 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             for(final ItemStack stack : buildingEntry.getCopyOfNeededItems())
             {
                 if(ItemStackUtils.isEmpty(stack)
-                     || (deliveryManHasBuildingAsTask(buildingEntry)
-                           && addToList))
+                        || (deliveryManHasBuildingAsTask(buildingEntry)
+                        && addToList))
                 {
                     continue;
                 }
@@ -371,7 +371,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             {
                 @Nullable final TileEntity entity = getWorld().getTileEntity(pos);
                 if(entity instanceof TileEntityChest
-                    && InventoryUtils.isToolInProvider(entity, toolType, requestingBuilding.getNeededToolLevel(), requestingBuilding.getBuildingLevel()))
+                        && InventoryUtils.isToolInProvider(entity, toolType, requestingBuilding.getNeededToolLevel(), requestingBuilding.getBuildingLevel()))
                 {
                     return true;
                 }
