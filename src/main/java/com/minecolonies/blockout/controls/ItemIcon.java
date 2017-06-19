@@ -2,7 +2,10 @@ package com.minecolonies.blockout.controls;
 
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.PaneParams;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -12,6 +15,8 @@ import net.minecraft.util.ResourceLocation;
  */
 public class ItemIcon extends Pane
 {
+    private static final float GUI_ITEM_Z_LEVEL = 200.0F;
+    private static final float GUI_ITEM_Z_TRANSLATE = 32.0F;
     /**
      * ItemStack represented in the itemIcon.
      */
@@ -52,8 +57,33 @@ public class ItemIcon extends Pane
     @Override
     protected void drawSelf(final int mx, final int my)
     {
-        mc.getRenderItem().renderItemAndEffectIntoGUI(itemStack, x, y);
-        mc.getRenderItem().renderItemOverlays(mc.fontRendererObj, itemStack, x, y);
-        GlStateManager.disableLighting();
+        if (itemStack != null)
+        {
+            GlStateManager.pushMatrix();
+            RenderHelper.enableGUIStandardItemLighting();
+            drawItemStack(itemStack, x, y);
+            GlStateManager.popMatrix();
+        }
+    }
+
+    /**
+     * Modified from GuiContainer
+     */
+    private void drawItemStack(ItemStack stack, int x, int y)
+    {
+        final RenderItem itemRender = mc.getRenderItem();
+
+        GlStateManager.translate(0.0F, 0.0F, GUI_ITEM_Z_TRANSLATE);
+        this.zLevel = GUI_ITEM_Z_LEVEL;
+        itemRender.zLevel = GUI_ITEM_Z_LEVEL;
+        FontRenderer font = stack.getItem().getFontRenderer(stack);
+        if (font == null)
+        {
+            font = mc.fontRendererObj;
+        }
+        itemRender.renderItemAndEffectIntoGUI(stack, x, y);
+        itemRender.renderItemOverlayIntoGUI(font, stack, x, y, null);
+        this.zLevel = 0.0F;
+        itemRender.zLevel = 0.0F;
     }
 }

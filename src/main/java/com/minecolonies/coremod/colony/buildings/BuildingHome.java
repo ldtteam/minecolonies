@@ -6,6 +6,7 @@ import com.minecolonies.coremod.client.gui.WindowHomeBuilding;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
@@ -234,6 +235,15 @@ public class BuildingHome extends AbstractBuildingHut
     public boolean hasResident(final CitizenData citizen)
     {
         return residents.contains(citizen);
+    }
+
+    /**
+     * Checks if food in the home is required.
+     * If yes set foodNeeded to true, else to false.
+     */
+    public void checkIfFoodNeeded()
+    {
+        setFoodNeeded(residents.stream().filter(resident -> resident.getSaturation() < EntityCitizen.HIGH_SATURATION).findFirst().isPresent());
     }
 
     /**
