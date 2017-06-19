@@ -8,71 +8,145 @@ public class Configurations
 {
     public static final int     CITIZEN_RESPAWN_INTERVAL_MIN = 10;
     public static final int     CITIZEN_RESPAWN_INTERVAL_MAX = 600;
-    @Config.Comment("Should builder place construction tape")
+
+    @Config.Comment("Should builder place construction tape?")
     public static       boolean builderPlaceConstructionTape = true;
+
+    @Config.Comment("Colony size (radius)")
     public static       int     workingRangeTownHall         = 100;
+
+    @Config.Comment("Padding between colonies")
     public static       int     townHallPadding              = 20;
+
+    @Config.Comment("Should supply chests be craftable on this server?")
     public static       boolean supplyChests                 = true;
+
+    @Config.Comment("Should players be able to place an infinite amount of supplychests?")
     public static       boolean allowInfiniteSupplyChests    = false;
+
+    @Config.Comment("Average citizen respawn interval (in ticks)")
     public static       int     citizenRespawnInterval       = 240;
+
+    @Config.Comment("Should builder and miner build without resources? (this also turns off what they produce)")
     public static       boolean builderInfiniteResources     = false;
+
+    @Config.Comment("Should there be at max 1 warehouse per colony?")
     public static       boolean limitToOneWareHousePerColony = true;
+
+    @Config.Comment("Delay after each block placement (Increasing it, increases the delay)")
     public static       int     builderBuildBlockDelay       = 15;
+
+    @Config.Comment("Delay modifier to mine a block (Decreasing it, decreases the delay)")
     public static       int     blockMiningDelayModifier     = 500;
+
+    @Config.Comment("Should worker work during the rain?")
     public static       boolean workersAlwaysWorkInRain      = false;
 
+    @Config.Comment("Should the colony protection be enabled?")
     public static boolean enableColonyProtection      = true;
+
+    @Config.Comment("Independend from the colony protection, should explosions be turned off?")
     public static boolean turnOffExplosionsInColonies = true;
 
     /* schematics usage */
+    @Config.Comment("Should the default schematics be ignored (from the jar)?")
     public static boolean ignoreSchematicsFromJar = false;
+
+    @Config.Comment("Should player made schematics be allowed")
     public static boolean allowPlayerSchematics   = false;
+
+    @Config.Comment("Max amount of schematics to be cached on the server")
     public static int     maxCachedSchematics     = 100;
 
     /* Command configs */
+
+    @Config.Comment("Time until a next teleport can be executed (in seconds)")
     public static int     teleportBuffer                    = 120;
+
+    @Config.Comment("Which level counts as op level on the server")
     public static int     opLevelForServer                  = 3;
+
+    @Config.Comment("Should the player be allowed to use the '/mc rtp' command?")
     public static boolean canPlayerUseRTPCommand            = true;
+
+    @Config.Comment("Should the player be allowed to use the '/mc colony teleport' command?")
     public static boolean canPlayerUseColonyTPCommand       = false;
+
+    @Config.Comment("Should the player be allowed to use the '/mc home' command?")
     public static boolean canPlayerUseHomeTPCommand         = true;
+
+    @Config.Comment("Should the player be allowed to use the '/mc citizens info' command?")
     public static boolean canPlayerUseCitizenInfoCommand    = true;
+
+    @Config.Comment("Should the player be allowed to use the '/mc citizens list' command?")
     public static boolean canPlayerUseListCitizensCommand   = true;
+
+    @Config.Comment("Should the player be allowed to use the '/mc citizens respawn' command?")
     public static boolean canPlayerRespawnCitizensCommand   = true;
+
+    @Config.Comment("Should the player be allowed to use the '/mc colony info' command?")
     public static boolean canPlayerUseShowColonyInfoCommand = true;
+
+    @Config.Comment("Should the player be allowed to use the '/mc citizens kill' command?")
     public static boolean canPlayerUseKillCitizensCommand   = true;
+
+    @Config.Comment("Should the player be allowed to use the '/mc colony addOfficer' command?")
     public static boolean canPlayerUseAddOfficerCommand     = true;
+
+    @Config.Comment("Should the player be allowed to use the '/mc colony delete' command?")
     public static boolean canPlayerUseDeleteColonyCommand   = true;
+
+    @Config.Comment("Should the player be allowed to use the '/mc colony refresh' command?")
     public static boolean canPlayerUseRefreshColonyCommand  = false;
+
+    @Config.Comment("Should the player be allowed to use the '/mc backup' command?")
     public static boolean canPlayerUseBackupCommand         = false;
 
     /* Colony TP configs */
+    @Config.Comment("Amount of attemps to find a save rtp")
     public static int numberOfAttemptsForSafeTP = 4;
+
+    @Config.Comment("Max distance from world spawn")
     public static int maxDistanceFromWorldSpawn = 8000;
+
+    @Config.Comment("Min distance from world spawn")
     public static int minDistanceFromWorldSpawn = 512;
 
-    //TODO change to false when material handling is implemented
+    @Config.Comment("Should the dman create resources out of hot air (Not implemented)")
     public static boolean deliverymanInfiniteResources = false;
 
-    //TODO remove config value and set maxCitizens based on the colony buildings/levels
+    @Config.Comment("Amount of initial citizens")
     public static int     maxCitizens         = 4;
+
+    @Config.Comment("Should citizen name tags be rendered?")
     public static boolean alwaysRenderNameTag = true;
 
-    //TODO change count to agreed upon value, possibly remove if we think this shouldn't be a problem
+    @Config.Comment("Amount of blocks the builder checks (to decrease lag by builder)")
     public static int maxBlocksCheckedByBuilder = 1000;
+
+    @Config.Comment("Chat frequency of worker requests")
     public static int chatFrequency             = 30;
 
+    @Config.Comment("Should in development features be enabled (might be buggy)")
     public static boolean enableInDevelopmentFeatures = false;
 
+    @Config.Comment("Draw pathfinding paths (might be laggy)")
     public static boolean pathfindingDebugDraw      = false;
+
+    @Config.Comment("Verbosity of pathfinding")
     public static int     pathfindingDebugVerbosity = 0;
+
+    @Config.Comment("Amount of additional threads to be used for pathfinding")
     public static int     pathfindingMaxThreadCount = 2;
 
+    @Config.Comment("Blocks players should be able to interact with in any colony (Ex vending machines)")
     public static String[] freeToInteractBlocks = new String[]
                                                     {
                                                       "block:dirt",
                                                       "0 0 0"
                                                     };
 
+    @Config.Comment("Male first names to be used for colonists")
     public static String[] maleFirstNames = new String[]
                                               {
                                                 "Aaron",
@@ -254,6 +328,7 @@ public class Configurations
                                                 "William"
                                               };
 
+    @Config.Comment("Female first names to be used for colonists")
     public static String[] femaleFirstNames = new String[]
                                                 {
                                                   "Aaliyah",
@@ -444,6 +519,7 @@ public class Configurations
                                                   "Winifred"
                                                 };
 
+    @Config.Comment("Last names to be used for colonists")
     public static String[] lastNames = new String[]
                                          {
                                            "Brown",
