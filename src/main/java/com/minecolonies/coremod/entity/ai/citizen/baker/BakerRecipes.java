@@ -74,7 +74,7 @@ public final class BakerRecipes
         inputBread.add(new ItemStack(Items.WHEAT, REQUIRED_WHEAT));
 
         recipes = new ImmutableList.Builder<RecipeStorage>()
-                .add(new RecipeStorage(inputCookie, GRID_SIZE, new ItemStack(Items.COOKIE, 1)))
+                .add(new RecipeStorage(inputCookie, GRID_SIZE, new ItemStack(Items.COOKIE, 6)))
                 .add(new RecipeStorage(inputCake, GRID_SIZE, new ItemStack(Items.CAKE, 1), new ItemStack(Items.BUCKET, BUCKET_COUNT)))
                 .add(new RecipeStorage(inputBread, GRID_SIZE, new ItemStack(Items.BREAD, 1))).build();
     }
