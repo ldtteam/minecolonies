@@ -989,11 +989,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         boolean allClear = true;
         for (final @Nullable ItemStack tempStack : items)
         {
-            final ItemStack stack = tempStack.copy();
-            if (ItemStackUtils.isEmpty(stack))
+            if (ItemStackUtils.isEmpty(tempStack))
             {
                 continue;
             }
+            final ItemStack stack = tempStack.copy();
+
 
             final int itemDamage = useItemDamage ? stack.getItemDamage() : -1;
             final int countOfItem = worker.getItemCountInInventory(stack.getItem(), itemDamage);
