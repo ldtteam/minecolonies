@@ -128,6 +128,8 @@ public class ClientProxy extends CommonProxy
         itemModelMesher.register(ModItems.supplyChest, 0, new ModelResourceLocation(ModItems.supplyChest.getRegistryName(), INVENTORY));
         itemModelMesher.register(ModItems.supplyCamp, 0, new ModelResourceLocation(ModItems.supplyCamp.getRegistryName(), INVENTORY));
         itemModelMesher.register(ModItems.permTool, 0, new ModelResourceLocation(ModItems.permTool.getRegistryName(), INVENTORY));
+        itemModelMesher.register(ModItems.ancientTome, 0, new ModelResourceLocation(ModItems.ancientTome.getRegistryName(), INVENTORY));
+        itemModelMesher.register(ModItems.chiefSword, 0, new ModelResourceLocation(ModItems.chiefSword.getRegistryName(), INVENTORY));
 
 
         // Achievement proxy Items

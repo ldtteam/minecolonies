@@ -23,6 +23,8 @@ tile.blockHut.messageTooFarFromTownHall=You need to be closer to your town hall!
 tile.blockHut.messageNoTownHall=You need to place a town hall first!
 item.minecolonies.supplyChestDeployer.name=SupplyShip Chest
 item.minecolonies.supplyCampDeployer.name=SupplyCamp Chest
+item.minecolonies.ancientTome.name=Ancient Tome
+item.minecolonies.chiefSword.name=Chief Sword
 
 item.minecolonies.scepterGold.name=Building Tool
 item.minecolonies.scepterSteel.name=Scan Tool

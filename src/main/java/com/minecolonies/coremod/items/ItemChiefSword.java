@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.util.BarbarianUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -41,28 +40,7 @@ public class ItemChiefSword extends ItemSword
         setRegistryName(ITEM_NAME);
         GameRegistry.register(this);
     }
-
-    @Override
-    public void onUpdate(final ItemStack stack, final World worldIn, final Entity entityIn, final int itemSlot, final boolean isSelected)
-    {
-        if (entityIn instanceof EntityPlayer && isSelected)
-        {
-            final Stream<EntityLivingBase> barbarians = BarbarianUtils.getBarbariansCloseToEntity(entityIn, GLOW_EFFECT_DISTANCE);
-            barbarians.forEach(entity -> entity.addPotionEffect(new PotionEffect(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER)));
-        }
-    }
-
-    @Override
-    public boolean hitEntity(final ItemStack stack, final EntityLivingBase target, @NotNull final EntityLivingBase attacker)
-    {
-        if (attacker instanceof EntityPlayer && BarbarianUtils.isBarbarian(target))
-        {
-            target.addPotionEffect(new PotionEffect(LEVITATION_EFFECT, LEVITATION_EFFECT_DURATION, LEVITATION_EFFECT_MULTIPLIER));
-        }
-
-        return super.hitEntity(stack, target, attacker);
-    }
-
+    
     /**
      * returns the items name
      *
