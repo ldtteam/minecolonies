@@ -20,7 +20,7 @@ public class GeneralEntityWalkToProxy extends AbstractWalkToProxy
      * Creates a walkToProxy for a certain worker.
      * @param entity the entity.
      */
-    protected GeneralEntityWalkToProxy(final EntityLiving entity)
+    public GeneralEntityWalkToProxy(final EntityLiving entity)
     {
         super(entity);
     }
