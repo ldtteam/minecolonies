@@ -80,8 +80,8 @@ public class EntityBarbarian extends EntityMob
         this.tasks.addTask(PRIORITY_EIGHT, new EntityAIWatchClosest(this, EntityPlayer.class, MAX_WATCH_DISTANCE));
         this.tasks.addTask(PRIORITY_EIGHT, new EntityAILookIdle(this));
         this.tasks.addTask(PRIORITY_SIX, new EntityAIMoveThroughVillage(this, 1.0D, false));
-        this.targetTasks.addTask(PRIORITY_TWO, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
-        this.targetTasks.addTask(PRIORITY_THREE, new EntityAINearestAttackableTarget(this, EntityCitizen.class, true));
+        this.targetTasks.addTask(PRIORITY_TWO, new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, true));
+        this.targetTasks.addTask(PRIORITY_THREE, new EntityAINearestAttackableTarget<>(this, EntityCitizen.class, true));
     }
 
     @Override
