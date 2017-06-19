@@ -6,6 +6,9 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
+import com.minecolonies.coremod.entity.ai.mobs.EntityArcherBarbarian;
+import com.minecolonies.coremod.entity.ai.mobs.EntityBarbarian;
+import com.minecolonies.coremod.entity.ai.mobs.EntityChiefBarbarian;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.event.FMLEventHandler;
 import com.minecolonies.coremod.inventory.GuiHandler;
@@ -15,6 +18,7 @@ import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.storage.loot.LootTableList;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
@@ -97,6 +101,19 @@ public class CommonProxy implements IProxy
         // See EntityTracker.addEntityToTracker for more default values
         EntityRegistry.registerModEntity(EntityCitizen.class, "Citizen", getNextEntityId(), MineColonies.instance, 256, 2, true);
         EntityRegistry.registerModEntity(EntityFishHook.class, "Fishhook", getNextEntityId(), MineColonies.instance, 250, 5, true);
+        EntityRegistry.registerModEntity(EntityBarbarian.class, "Barbarian", getNextEntityId(), MineColonies.instance, 250,2,true);
+        EntityRegistry.registerModEntity(EntityArcherBarbarian.class, "ArcherBarbarian", getNextEntityId(), MineColonies.instance, 250,2,true);
+        EntityRegistry.registerModEntity(EntityChiefBarbarian.class, "ChiefBarbarian", getNextEntityId(), MineColonies.instance, 250,2,true);
+
+        // Register mob eggs
+        EntityRegistry.registerEgg(EntityBarbarian.class,5,700);
+        EntityRegistry.registerEgg(EntityArcherBarbarian.class, 5, 700);
+        EntityRegistry.registerEgg(EntityChiefBarbarian.class, 5,700);
+
+        // Register mob Loot_Tables
+        LootTableList.register(EntityBarbarian.LOOT);
+        LootTableList.register(EntityArcherBarbarian.LOOT);
+        LootTableList.register(EntityChiefBarbarian.LOOT);
     }
 
     @Override

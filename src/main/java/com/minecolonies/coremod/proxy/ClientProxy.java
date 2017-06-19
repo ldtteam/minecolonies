@@ -2,18 +2,19 @@ package com.minecolonies.coremod.proxy;
 
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.blockout.Render;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.client.gui.WindowBuildTool;
 import com.minecolonies.coremod.client.gui.WindowCitizen;
-import com.minecolonies.coremod.client.render.EmptyTileEntitySpecialRenderer;
-import com.minecolonies.coremod.client.render.RenderBipedCitizen;
-import com.minecolonies.coremod.client.render.RenderFishHook;
-import com.minecolonies.coremod.client.render.TileEntityScarecrowRenderer;
+import com.minecolonies.coremod.client.render.*;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
+import com.minecolonies.coremod.entity.ai.mobs.EntityArcherBarbarian;
+import com.minecolonies.coremod.entity.ai.mobs.EntityBarbarian;
+import com.minecolonies.coremod.entity.ai.mobs.EntityChiefBarbarian;
 import com.minecolonies.coremod.event.ClientEventHandler;
 import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
@@ -64,6 +65,9 @@ public class ClientProxy extends CommonProxy
     {
         RenderingRegistry.registerEntityRenderingHandler(EntityCitizen.class, RenderBipedCitizen::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityFishHook.class, RenderFishHook::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityBarbarian.class, RenderBarbarianMob::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityArcherBarbarian.class, RenderArcherBarbarianMob::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityChiefBarbarian.class, RenderChiefBarbarianMob::new);
     }
 
     @Override
