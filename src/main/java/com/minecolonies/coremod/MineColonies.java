@@ -191,7 +191,7 @@ public class MineColonies
 
     @Optional.Method(modid="gbook")
     @SubscribeEvent
-    public static void registerBook(BookRegistryEvent event) {
+    public static void registerBook(final BookRegistryEvent event) {
         event.register(new ResourceLocation(Constants.MOD_ID + ":book/minecolonies.xml"));
     }
 }
