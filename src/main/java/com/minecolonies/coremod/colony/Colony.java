@@ -1141,7 +1141,7 @@ public class Colony implements IColony
                 }
             }
 
-            if (!nightHasHappened && !subscribers.isEmpty() && && !world.isDaytime() && Configurations.doBarbariansSpawn && raidWillHappen
+            if (!nightHasHappened && !subscribers.isEmpty() && !world.isDaytime() && Configurations.doBarbariansSpawn && raidWillHappen
                   && world.getDifficulty() != EnumDifficulty.PEACEFUL)
             {
                 raidLevel = this.numberOfWorkerLevels();
