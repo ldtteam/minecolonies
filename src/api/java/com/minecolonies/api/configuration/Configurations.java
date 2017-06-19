@@ -1,9 +1,14 @@
 package com.minecolonies.api.configuration;
 
+import com.minecolonies.api.util.constant.Constants;
+import net.minecraftforge.common.config.Config;
+
+@Config(modid = Constants.MOD_ID)
 public class Configurations
 {
     public static final int     CITIZEN_RESPAWN_INTERVAL_MIN = 10;
     public static final int     CITIZEN_RESPAWN_INTERVAL_MAX = 600;
+    @Config.Comment("Should builder place construction tape")
     public static       boolean builderPlaceConstructionTape = true;
     public static       int     workingRangeTownHall         = 100;
     public static       int     townHallPadding              = 20;
