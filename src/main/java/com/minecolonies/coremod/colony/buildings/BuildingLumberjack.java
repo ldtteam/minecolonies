@@ -16,6 +16,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -125,7 +126,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
         {
             if (saps.getHasSubtypes())
             {
-                final List<ItemStack> list = new ArrayList<>();
+                final @NotNull NonNullList<ItemStack> list = NonNullList.create();
                 saps.getItem().getSubItems(saps.getItem(), null, list);
 
                 for (final ItemStack stack : list)
@@ -147,7 +148,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
         for (int i = 0; i < saplingTagList.tagCount(); ++i)
         {
             final NBTTagCompound saplingCompound = saplingTagList.getCompoundTagAt(i);
-            final ItemStack stack = ItemStack.loadItemStackFromNBT(saplingCompound);
+            final ItemStack stack = new ItemStack(saplingCompound);
             final boolean cut = saplingCompound.getBoolean(TAG_CUT);
             treesToFell.put(new ItemStorage(stack), cut);
         }

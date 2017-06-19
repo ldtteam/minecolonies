@@ -20,7 +20,7 @@ public abstract class AbstractMessage<A extends IMessage, B extends IMessage> im
     @Override
     public B onMessage(final A message, final MessageContext ctx)
     {
-        final EntityPlayerMP player = ctx.getServerHandler().playerEntity;
+        final EntityPlayerMP player = ctx.getServerHandler().player;
         player.getServerWorld().addScheduledTask(() -> messageOnServerThread(message, player));
         return null;
     }
