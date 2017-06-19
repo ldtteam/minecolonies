@@ -33,7 +33,7 @@ public class ItemChiefSword extends ItemSword
     /**
      * Constructor method for the Chief Sword Item
      */
-    public ItemChiefSword()
+    ItemChiefSword()
     {
         super(ToolMaterial.GOLD);
         super.setUnlocalizedName(Constants.MOD_ID.toLowerCase() + "." + ITEM_NAME);

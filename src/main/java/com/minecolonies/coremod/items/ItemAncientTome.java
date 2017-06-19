@@ -19,7 +19,7 @@ public class ItemAncientTome extends AbstractItemMinecolonies
     /**
      * Sets the name, creative tab, and registers the Ancient Tome item.
      */
-    public ItemAncientTome()
+    ItemAncientTome()
     {
         super("ancientTome");
         super.setCreativeTab(ModCreativeTabs.MINECOLONIES);

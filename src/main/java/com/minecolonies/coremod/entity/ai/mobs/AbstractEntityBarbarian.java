@@ -10,7 +10,7 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 
 /**
- * Created by Asher on 19/6/17.
+ * Abstract Class for barbarians
  */
 public abstract class AbstractEntityBarbarian extends EntityMob
 {
