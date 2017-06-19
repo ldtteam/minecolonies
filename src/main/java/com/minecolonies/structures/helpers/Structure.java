@@ -223,7 +223,7 @@ public class Structure
         {
             //Look in the folder first
             inputstream = Structure.getStreamFromFolder(MineColonies.proxy.getSchematicsFolder(), structureName);
-            if (inputstream == null && !Configurations.ignoreSchematicsFromJar)
+            if (inputstream == null && !Configurations.Gameplay.ignoreSchematicsFromJar)
             {
                 inputstream = Structure.getStreamFromJar(structureName);
             }

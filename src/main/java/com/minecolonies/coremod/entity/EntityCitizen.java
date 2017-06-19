@@ -289,7 +289,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         super(world);
         setSize((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT);
         this.enablePersistence();
-        this.setAlwaysRenderNameTag(Configurations.alwaysRenderNameTag);
+        this.setAlwaysRenderNameTag(Configurations.Gameplay.alwaysRenderNameTag);
         this.inventory = new InventoryCitizen("Minecolonies Inventory", false, this);
         this.newNavigator = new PathNavigate(this, world);
         updateNavigatorField();
@@ -437,7 +437,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         //Will help track down some hard to find bugs (Pathfinding etc.)
         if (citizenData != null)
         {
-            if (this.getColonyJob() != null && Configurations.enableInDevelopmentFeatures)
+            if (this.getColonyJob() != null && Configurations.Gameplay.enableInDevelopmentFeatures)
             {
                 setCustomNameTag(citizenData.getName() + " (" + getStatus() + ")[" + this.getColonyJob()
                         .getNameTagDescription() + "]");
@@ -1107,7 +1107,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             @NotNull final Iterator<Map.Entry<String, Integer>> it = statusMessages.entrySet().iterator();
             while (it.hasNext())
             {
-                if (ticksExisted - it.next().getValue() > TICKS_20 * Configurations.chatFrequency)
+                if (ticksExisted - it.next().getValue() > TICKS_20 * Configurations.Gameplay.chatFrequency)
                 {
                     it.remove();
                 }
@@ -1572,7 +1572,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     private boolean shouldWorkWhileRaining()
     {
-        return (this.getWorkBuilding() != null && (this.getWorkBuilding().getBuildingLevel() >= BONUS_BUILDING_LEVEL)) || Configurations.workersAlwaysWorkInRain;
+        return (this.getWorkBuilding() != null && (this.getWorkBuilding().getBuildingLevel() >= BONUS_BUILDING_LEVEL)) || Configurations.Gameplay.workersAlwaysWorkInRain;
     }
 
     /**

@@ -284,7 +284,7 @@ public final class StructureWrapper
                 return false;
             }
         }
-        while (isStructureBlockEqualWorldBlock() && count < Configurations.maxBlocksCheckedByBuilder);
+        while (isStructureBlockEqualWorldBlock() && count < Configurations.Gameplay.maxBlocksCheckedByBuilder);
 
         return true;
     }
@@ -461,7 +461,7 @@ public final class StructureWrapper
             }
         }
         //Check for air blocks and if blocks below the hut are different from the structure
-        while ((worldBlockAir() || isStructureBlockEqualWorldBlock()) && count < Configurations.maxBlocksCheckedByBuilder);
+        while ((worldBlockAir() || isStructureBlockEqualWorldBlock()) && count < Configurations.Gameplay.maxBlocksCheckedByBuilder);
 
         return true;
     }
@@ -482,7 +482,7 @@ public final class StructureWrapper
                 return false;
             }
         }
-        while ((isStructureBlockEqualWorldBlock() || isBlockNonSolid()) && count < Configurations.maxBlocksCheckedByBuilder);
+        while ((isStructureBlockEqualWorldBlock() || isBlockNonSolid()) && count < Configurations.Gameplay.maxBlocksCheckedByBuilder);
 
         return true;
     }
@@ -524,7 +524,7 @@ public final class StructureWrapper
                 return false;
             }
         }
-        while ((isStructureBlockEqualWorldBlock() || isBlockSolid()) && count < Configurations.maxBlocksCheckedByBuilder);
+        while ((isStructureBlockEqualWorldBlock() || isBlockSolid()) && count < Configurations.Gameplay.maxBlocksCheckedByBuilder);
 
         return true;
     }

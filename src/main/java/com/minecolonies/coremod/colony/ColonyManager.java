@@ -546,7 +546,7 @@ public final class ColonyManager
     public static int getMinimumDistanceBetweenTownHalls()
     {
         //  [TownHall](Radius)+(Padding)+(Radius)[TownHall]
-        return (2 * Configurations.workingRangeTownHall) + Configurations.townHallPadding;
+        return (2 * Configurations.Gameplay.workingRangeTownHall) + Configurations.Gameplay.townHallPadding;
     }
 
     /**
@@ -1086,7 +1086,7 @@ public final class ColonyManager
             if (c.getDimension() == world.provider.getDimension())
             {
                 final long dist = c.getDistanceSquared(pos);
-                if (dist < (Configurations.workingRangeTownHall + Configurations.townHallPadding + BUFFER))
+                if (dist < (Configurations.Gameplay.workingRangeTownHall + Configurations.Gameplay.townHallPadding + BUFFER))
                 {
                     return true;
                 }

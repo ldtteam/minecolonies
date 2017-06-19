@@ -66,7 +66,7 @@ public final class PlacementHandlers
                 return ActionProcessingResult.IGNORE;
             }
 
-            if (!Configurations.builderInfiniteResources)
+            if (!Configurations.Gameplay.builderInfiniteResources)
             {
                 if (placer.checkOrRequestItems(false, new ItemStack(Items.FLINT_AND_STEEL, 1)))
                 {
@@ -102,7 +102,7 @@ public final class PlacementHandlers
                 return ActionProcessingResult.IGNORE;
             }
 
-            if(!Configurations.builderInfiniteResources && placer.checkOrRequestItems(placer.getTotalAmount(new ItemStack(Blocks.DIRT))))
+            if(!Configurations.Gameplay.builderInfiniteResources && placer.checkOrRequestItems(placer.getTotalAmount(new ItemStack(Blocks.DIRT))))
             {
                 return ActionProcessingResult.DENY;
             }
@@ -128,7 +128,7 @@ public final class PlacementHandlers
                 return ActionProcessingResult.IGNORE;
             }
 
-            if(!Configurations.builderInfiniteResources && placer.checkOrRequestItems(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState))))
+            if(!Configurations.Gameplay.builderInfiniteResources && placer.checkOrRequestItems(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState))))
             {
                 return ActionProcessingResult.DENY;
             }
@@ -156,7 +156,7 @@ public final class PlacementHandlers
             }
 
 
-            if (!Configurations.builderInfiniteResources && blockState.getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT
+            if (!Configurations.Gameplay.builderInfiniteResources && blockState.getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT
                     && placer.checkOrRequestItems(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState))))
             {
                 return ActionProcessingResult.DENY;
@@ -189,7 +189,7 @@ public final class PlacementHandlers
                 return ActionProcessingResult.IGNORE;
             }
 
-            if (!Configurations.builderInfiniteResources && blockState.getValue(BlockDoublePlant.HALF).equals(BlockDoublePlant.EnumBlockHalf.LOWER)
+            if (!Configurations.Gameplay.builderInfiniteResources && blockState.getValue(BlockDoublePlant.HALF).equals(BlockDoublePlant.EnumBlockHalf.LOWER)
                     && placer.checkOrRequestItems(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState))))
             {
                 return ActionProcessingResult.DENY;
@@ -234,7 +234,7 @@ public final class PlacementHandlers
                 return ActionProcessingResult.IGNORE;
             }
 
-            if (!Configurations.builderInfiniteResources)
+            if (!Configurations.Gameplay.builderInfiniteResources)
             {
                 final List<ItemStack> itemList = new ArrayList<>();
                 itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
@@ -292,7 +292,7 @@ public final class PlacementHandlers
                 return ActionProcessingResult.IGNORE;
             }
 
-            if (!Configurations.builderInfiniteResources)
+            if (!Configurations.Gameplay.builderInfiniteResources)
             {
                 if (!(placer.holdEfficientTool(blockState.getBlock()) || placer.checkOrRequestItems(placer.getTotalAmount(new ItemStack(Blocks.DIRT,1)))))
                 {
@@ -343,7 +343,7 @@ public final class PlacementHandlers
 
             final IBlockState newBlockState = BlockUtils.getSubstitutionBlockAtWorld(world, pos);
 
-            if(!Configurations.builderInfiniteResources)
+            if(!Configurations.Gameplay.builderInfiniteResources)
             {
                 if(placer.checkOrRequestItems(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(newBlockState))))
                 {
@@ -368,7 +368,7 @@ public final class PlacementHandlers
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
                 @Nullable final AbstractEntityAIStructure<?> placer)
         {
-            if (!Configurations.builderInfiniteResources)
+            if (!Configurations.Gameplay.builderInfiniteResources)
             {
                 final List<ItemStack> itemList = new ArrayList<>();
                 itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
