@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.mobs;
 
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -28,9 +29,12 @@ import java.util.stream.Stream;
 
 public class EntityChiefBarbarian extends EntityMob
 {
-    private final        Colony           colony       = ColonyManager.getClosestColony(world, this.getPosition());
-    public static final  ResourceLocation LOOT         = new ResourceLocation(Constants.MOD_ID, "EntityChiefBarbarianDrops");
-    private static final Potion           SPEED_EFFECT = Potion.getPotionById(1);
+    private final        Colony           colony                      = ColonyManager.getClosestColony(world, this.getPosition());
+    public static final  ResourceLocation LOOT                        = new ResourceLocation(Constants.MOD_ID, "EntityChiefBarbarianDrops");
+    private static final Potion           SPEED_EFFECT                = Potion.getPotionById(1);
+    private static final int              TIME_TO_COUNTDOWN           = 30;
+    private static final int              COUNTDOWN_SECOND_MULTIPLIER = 4;
+    private              int              currentCount                = 0;
 
     /**
      * defines the default values for the Entity's attributes.
@@ -103,11 +107,17 @@ public class EntityChiefBarbarian extends EntityMob
     @Override
     public void onLivingUpdate()
     {
-        if (this.getHeldItemMainhand().getItem() instanceof ItemChiefSword)
+        if (this.getHeldItemMainhand().getItem() instanceof ItemChiefSword && Configurations.barbarianHordeDifficulty >= 5 && currentCount <= 0)
         {
             Stream<EntityLivingBase> barbarians = BarbarianUtils.getBarbariansCloseToEntity(this, 7);
-            barbarians.forEach(entity -> entity.addPotionEffect(new PotionEffect(SPEED_EFFECT, 5, 2)));
+            barbarians.forEach(entity -> entity.addPotionEffect(new PotionEffect(SPEED_EFFECT, 32, 2)));
+            currentCount = COUNTDOWN_SECOND_MULTIPLIER * TIME_TO_COUNTDOWN;
         }
+        else
+        {
+            --currentCount;
+        }
+
         super.onLivingUpdate();
     }
 
