@@ -99,7 +99,7 @@ public class EntityChiefBarbarian extends EntityMob
     }
 
     /**
-     * Done so that the Chief does not drop his equipped Chief Sword, because it's supposed to be rare
+     * Done so that the Chief does not drop his equipped Chief Sword, because it's supposed to be rare.
      *
      * @param wasRecentlyHit  Boolean value, of whether it was recently hit
      * @param lootingModifier The modifier applied by a looting enchantment
