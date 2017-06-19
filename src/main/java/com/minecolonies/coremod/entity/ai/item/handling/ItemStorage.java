@@ -18,15 +18,26 @@ public class ItemStorage
     /**
      * Set this to ignore the damage value in comparisons.
      */
-    private final int     damageValue;
-    /**
-     * Set this to ignore the damage value in comparisons.
-     */
     private final boolean ignoreDamageValue;
+
     /**
-     * The amount.
+     * Amount of the storage.
      */
-    private       int     amount;
+    private int amount;
+
+    /**
+     * Creates an instance of the storage.
+     *
+     * @param stack             the stack.
+     * @param amount            the amount.
+     * @param ignoreDamageValue should the damage value be ignored?
+     */
+    public ItemStorage(@NotNull final ItemStack stack, final int amount, final boolean ignoreDamageValue)
+    {
+        this.stack = stack;
+        this.ignoreDamageValue = ignoreDamageValue;
+        this.amount = amount;
+    }
 
     /**
      * Creates an instance of the storage.
@@ -108,24 +119,24 @@ public class ItemStorage
     }
 
     /**
-     * Getter for the item.
-     *
-     * @return the item.
-     */
-    @NotNull
-    public Item getItem()
-    {
-        return item;
-    }
-
-    /**
      * Getter for the damage value.
      *
      * @return the damage value.
      */
     public int getDamageValue()
     {
-        return damageValue;
+        return stack.getItemDamage();
+    }
+
+    /**
+     * Getter for the stack.
+     *
+     * @return the stack.
+     */
+    @NotNull
+    public Item getItem()
+    {
+        return stack.getItem();
     }
 
     /**

@@ -16,17 +16,6 @@ import java.util.Comparator;
  */
 public class BuildingBuilderResource extends ItemStorage
 {
-<<<<<<< HEAD
-    private int amountAvailable;
-    private int amountPlayer;
-    /**
-     * Constructor for a resource.
-     *
-     * @param item        the item.
-     * @param damageValue it's damage value.
-     * @param amount      amount for this resource.
-     * @param available   optional amount available for this resource
-=======
     /**
      * Availability status of the resource.
      * according to the builder's chest, inventory and the player's inventory
@@ -60,18 +49,9 @@ public class BuildingBuilderResource extends ItemStorage
      * @param stack the stack.
      * @param amount the amount.
      * @param available the amount available.
->>>>>>> 0602e2d... Feature/lumberjack sapling selector (#1189)
      */
     public BuildingBuilderResource(@NotNull final ItemStack stack, final int amount, final int available)
     {
-<<<<<<< HEAD
-        this(item, damageValue, amount);
-        this.amountAvailable = available;
-    }
-
-    /**
-     * Constructor for a resource.
-=======
         this(stack, amount);
         this.amountAvailable = available;
     }
@@ -97,17 +77,12 @@ public class BuildingBuilderResource extends ItemStorage
 
     /**
      * Setter for the available resource amount.
->>>>>>> 0602e2d... Feature/lumberjack sapling selector (#1189)
      *
-     * @param item        the item.
-     * @param damageValue it's damage value.
-     * @param amount      amount for this resource.
+     * @param amount this is the new amount available
      */
-    public BuildingBuilderResource(@NotNull final Item item, final int damageValue, final int amount)
+    public void setAvailable(final int amount)
     {
-        super(item, damageValue, amount, false);
-        this.amountAvailable = 0;
-        this.amountPlayer = 0;
+        amountAvailable = amount;
     }
 
     /**
@@ -118,8 +93,6 @@ public class BuildingBuilderResource extends ItemStorage
     public void addAvailable(final int amount)
     {
         this.amountAvailable += amount;
-<<<<<<< HEAD
-=======
     }
 
     /**
@@ -140,7 +113,6 @@ public class BuildingBuilderResource extends ItemStorage
     public int getPlayerAmount()
     {
         return amountPlayer;
->>>>>>> 0602e2d... Feature/lumberjack sapling selector (#1189)
     }
 
     /**
@@ -155,20 +127,6 @@ public class BuildingBuilderResource extends ItemStorage
     public int getMissingFromPlayer()
     {
         return amountPlayer + amountAvailable - getAmount();
-    }
-
-    @Override
-    public String toString()
-    {
-        final int itemId = Item.getIdFromItem(getItem());
-        return getName() + "(p:" + amountPlayer + " a:" + amountAvailable + " n:" + getAmount() + " id=" + itemId + " damage=" + getDamageValue() + ") => "
-                 + getAvailabilityStatus().name();
-    }
-
-    public String getName()
-    {
-        //It is the bet way ?
-        return new ItemStack(getItem(), 1, getDamageValue()).getDisplayName();
     }
 
     public RessourceAvailability getAvailabilityStatus()
@@ -189,15 +147,11 @@ public class BuildingBuilderResource extends ItemStorage
     }
 
     @Override
-    public int hashCode()
+    public String toString()
     {
-<<<<<<< HEAD
-        return 31 * (31 * super.hashCode() + amountAvailable) + amountPlayer;
-=======
         final int itemId = Item.getIdFromItem(getItem());
         return getName() + "(p:" + amountPlayer + " a:" + amountAvailable + " n:" + getAmount() + " id=" + itemId + " damage=" + getDamageValue() + ") => "
                 + getAvailabilityStatus().name();
->>>>>>> 0602e2d... Feature/lumberjack sapling selector (#1189)
     }
 
     @Override
@@ -213,68 +167,13 @@ public class BuildingBuilderResource extends ItemStorage
         return false;
     }
 
-    /**
-     * get the amount available for this resource.
-     * <p>
-     * i.e. amount in the chest + amount in the builder's inventory
-     *
-     * @return the amount available
-     */
-    public int getAvailable()
+    @Override
+    public int hashCode()
     {
-<<<<<<< HEAD
-        return amountAvailable;
-    }
-
-    /**
-     * Setter for the available resource amount.
-     *
-     * @param amount this is the new amount available
-     */
-    public void setAvailable(final int amount)
-    {
-        amountAvailable = amount;
-    }
-
-    /**
-     * get how the player have in its inventory.
-     *
-     * @return the amount
-     */
-    public int getPlayerAmount()
-    {
-        return amountPlayer;
-    }
-
-    /**
-     * set how the player have in its inventory.
-     *
-     * @param amount of items
-     */
-    public void setPlayerAmount(final int amount)
-    {
-        amountPlayer = amount;
-    }
-
-    /**
-     * Availability status of the resource.
-     * according to the builder's chest, inventory and the player's inventory
-     */
-    public enum RessourceAvailability
-    {
-        NOT_NEEDED,
-        DONT_HAVE,
-        NEED_MORE,
-        HAVE_ENOUGH
-    }
-
-    /**
-=======
         return 31 * (31 * super.hashCode() + amountAvailable) + amountPlayer;
     }
 
     /**
->>>>>>> 0602e2d... Feature/lumberjack sapling selector (#1189)
      * Comparator class for BuildingBuilderResource.
      * <p>
      * This is use in the gui to order the list of resources needed.
@@ -290,7 +189,7 @@ public class BuildingBuilderResource extends ItemStorage
          * In alphabetical order otherwise
          */
         @Override
-        public int compare(final BuildingBuilderResource resource1, final BuildingBuilderResource resource2)
+        public int compare(BuildingBuilderResource resource1, BuildingBuilderResource resource2)
         {
             if (resource1.getAvailabilityStatus() == resource2.getAvailabilityStatus())
             {

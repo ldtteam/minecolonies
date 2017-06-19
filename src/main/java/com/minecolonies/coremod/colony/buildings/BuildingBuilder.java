@@ -1,7 +1,9 @@
 package com.minecolonies.coremod.colony.buildings;
 
-import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
@@ -11,6 +13,7 @@ import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -105,6 +108,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         }
     }
 
+
     /**
      * Create the job for the builder.
      *
@@ -129,9 +133,9 @@ public class BuildingBuilder extends AbstractBuildingWorker
     public boolean neededForWorker(@Nullable final ItemStack stack)
     {
         return ItemStackUtils.hasToolLevel(stack, ToolType.PICKAXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel())
-            || ItemStackUtils.hasToolLevel(stack, ToolType.SHOVEL, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel())
-            || ItemStackUtils.hasToolLevel(stack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel())
-            || neededResources.containsKey(stack.getUnlocalizedName());
+                || ItemStackUtils.hasToolLevel(stack, ToolType.SHOVEL, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel())
+                || ItemStackUtils.hasToolLevel(stack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel())
+                || neededResources.containsKey(stack.getUnlocalizedName());
     }
 
     @Override
@@ -143,7 +147,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         {
             final NBTTagCompound neededRes = neededResTagList.getCompoundTagAt(i);
             final ItemStack stack = new ItemStack(neededRes);
-            final BuildingBuilderResource resource = new BuildingBuilderResource(stack.getItem(), stack.getItemDamage(), ItemStackUtils.getSize(stack));
+            final BuildingBuilderResource resource = new BuildingBuilderResource(stack, ItemStackUtils.getSize(stack));
             neededResources.put(stack.getUnlocalizedName(), resource);
         }
     }
@@ -156,7 +160,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         for (@NotNull final BuildingBuilderResource resource : neededResources.values())
         {
             @NotNull final NBTTagCompound neededRes = new NBTTagCompound();
-            final ItemStack itemStack = resource.getItemStack().copy();
+            final ItemStack itemStack = new ItemStack(resource.getItem(),resource.getAmount(),resource.getDamageValue());
             itemStack.writeToNBT(neededRes);
 
             neededResTagList.appendTag(neededRes);
@@ -182,7 +186,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
      * @param buf the used ByteBuffer.
      */
     @Override
-    public void serializeToView(@NotNull final ByteBuf buf)
+    public void serializeToView(@NotNull ByteBuf buf)
     {
         super.serializeToView(buf);
 
@@ -198,54 +202,6 @@ public class BuildingBuilder extends AbstractBuildingWorker
     }
 
     /**
-     * Update the available resources.
-     * <p>
-     * which are needed for the build and in the builder's chest or inventory
-     */
-    private void updateAvailableResources()
-    {
-        final EntityCitizen builder = getWorkerEntity();
-
-        InventoryCitizen builderInventory = null;
-        if (builder != null)
-        {
-            builderInventory = builder.getInventoryCitizen();
-        }
-
-
-        for (@NotNull final Map.Entry<String, BuildingBuilderResource> entry : neededResources.entrySet())
-        {
-            final BuildingBuilderResource resource = entry.getValue();
-
-            resource.setAvailable(0);
-
-            if (builderInventory != null)
-            {
-                resource.addAvailable(InventoryUtils.getItemCountInItemHandler(new InvWrapper(builderInventory), resource.getItem(), resource.getDamageValue()));
-            }
-
-            final TileEntity chestInventory = this.getTileEntity();
-            if (chestInventory != null)
-            {
-                resource.addAvailable(InventoryUtils.getItemCountInProvider(chestInventory, resource.getItem(), resource.getDamageValue()));
-            }
-
-            //Count in the additional chests as well
-            if (builder != null)
-            {
-                for (final BlockPos pos : getAdditionalCountainers())
-                {
-                    final TileEntity entity = CompatibilityUtils.getWorld(builder).getTileEntity(pos);
-                    if (entity instanceof TileEntityChest)
-                    {
-                        resource.addAvailable(InventoryUtils.getItemCountInProvider(entity, resource.getItem(), resource.getDamageValue()));
-                    }
-                }
-            }
-        }
-    }
-
-    /**
      * Get the needed resources for the current build.
      *
      * @return a new Hashmap.
@@ -257,13 +213,12 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
     /**
      * Add a new resource to the needed list.
-     *
-     * @param res    the resource.
+     *  @param res    the resource.
      * @param amount the amount.
      */
     public void addNeededResource(@Nullable final ItemStack res, final int amount)
     {
-        if (res.isEmpty() || amount == 0)
+        if (ItemStackUtils.isEmpty(res) || amount == 0)
         {
             return;
         }
@@ -274,7 +229,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         }
         else
         {
-            resource.setAmount(resource.getAmount() + amount);
+            resource.setAmount(resource.getAmount()+amount);
         }
         this.neededResources.put(res.getUnlocalizedName(), resource);
         this.markDirty();
@@ -312,6 +267,66 @@ public class BuildingBuilder extends AbstractBuildingWorker
     {
         neededResources = new HashMap<>();
         this.markDirty();
+    }
+
+    /**
+     * Update the available resources.
+     *
+     * which are needed for the build and in the builder's chest or inventory
+     */
+    private void updateAvailableResources()
+    {
+        final EntityCitizen builder = getWorkerEntity();
+
+        InventoryCitizen builderInventory = null;
+        if (builder!=null)
+        {
+            builderInventory = builder.getInventoryCitizen();
+        }
+
+
+        for (@NotNull final Map.Entry<String, BuildingBuilderResource> entry : neededResources.entrySet())
+        {
+            final BuildingBuilderResource resource = entry.getValue();
+
+            resource.setAvailable(0);
+
+            if (builderInventory!=null)
+            {
+                resource.addAvailable(InventoryUtils.getItemCountInItemHandler(new InvWrapper(builderInventory), resource.getItem(), resource.getDamageValue()));
+            }
+
+            final TileEntity chestInventory = this.getTileEntity();
+            if (chestInventory!=null)
+            {
+                resource.addAvailable(InventoryUtils.getItemCountInProvider(chestInventory, resource.getItem(), resource.getDamageValue()));
+            }
+
+            //Count in the additional chests as well
+            if (builder!=null)
+            {
+                for(final BlockPos pos : getAdditionalCountainers())
+                {
+                    final TileEntity entity = CompatibilityUtils.getWorld(builder).getTileEntity(pos);
+                    if(entity instanceof TileEntityChest)
+                    {
+                        resource.addAvailable(InventoryUtils.getItemCountInProvider(entity, resource.getItem(), resource.getDamageValue()));
+                    }
+                }
+            }
+
+        }
+    }
+
+    /**
+     * Check if the builder requires a certain ItemStack for the current construction.
+     *
+     * @param stack the stack to test.
+     * @return true if so.
+     */
+    public boolean requiresResourceForBuilding(ItemStack stack)
+    {
+        return neededResources.containsKey(stack.getUnlocalizedName());
     }
 
     @Override
