@@ -1,13 +1,9 @@
 package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.ai.mobs.EntityChiefBarbarian;
 import com.minecolonies.coremod.util.BarbarianUtils;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.passive.EntityAmbientCreature;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
@@ -28,6 +24,13 @@ public class ItemChiefSword extends ItemSword
     private static final Potion LEVITATION_EFFECT = Potion.getPotionById(25);
     private static final Potion GLOW_EFFECT       = Potion.getPotionById(24);
 
+    private static final int GLOW_EFFECT_DURATION = 30;
+    private static final int GLOW_EFFECT_MULTIPLIER = 20;
+    private static final int GLOW_EFFECT_DISTANCE = 30;
+
+    private static final int LEVITATION_EFFECT_DURATION = 20;
+    private static final int LEVITATION_EFFECT_MULTIPLIER = 3;
+
     /**
      * Constructor method for the Chief Sword Item
      */
@@ -44,8 +47,8 @@ public class ItemChiefSword extends ItemSword
     {
         if (entityIn instanceof EntityPlayer && isSelected)
         {
-            Stream<EntityLivingBase> barbarians = BarbarianUtils.getBarbariansCloseToEntity(entityIn, 30);
-            barbarians.forEach(entity -> entity.addPotionEffect(new PotionEffect(GLOW_EFFECT, 30, 20)));
+            final Stream<EntityLivingBase> barbarians = BarbarianUtils.getBarbariansCloseToEntity(entityIn, GLOW_EFFECT_DISTANCE);
+            barbarians.forEach(entity -> entity.addPotionEffect(new PotionEffect(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER)));
         }
     }
 
@@ -54,7 +57,7 @@ public class ItemChiefSword extends ItemSword
     {
         if (attacker instanceof EntityPlayer && BarbarianUtils.isBarbarian(target))
         {
-            target.addPotionEffect(new PotionEffect(LEVITATION_EFFECT, 20, 3));
+            target.addPotionEffect(new PotionEffect(LEVITATION_EFFECT, LEVITATION_EFFECT_DURATION, LEVITATION_EFFECT_MULTIPLIER));
         }
 
         return super.hitEntity(stack, target, attacker);

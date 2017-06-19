@@ -29,12 +29,17 @@ import java.util.stream.Stream;
 
 public class EntityChiefBarbarian extends EntityMob
 {
-    private final        Colony           colony                      = ColonyManager.getClosestColony(world, this.getPosition());
-    public static final  ResourceLocation LOOT                        = new ResourceLocation(Constants.MOD_ID, "EntityChiefBarbarianDrops");
-    private static final Potion           SPEED_EFFECT                = Potion.getPotionById(1);
-    private static final int              TIME_TO_COUNTDOWN           = 30;
-    private static final int              COUNTDOWN_SECOND_MULTIPLIER = 4;
-    private              int              currentCount                = 0;
+    private final        Colony           colony                          = ColonyManager.getClosestColony(world, this.getPosition());
+    public static final  ResourceLocation LOOT                            = new ResourceLocation(Constants.MOD_ID, "EntityChiefBarbarianDrops");
+    private static final Potion           SPEED_EFFECT                    = Potion.getPotionById(1);
+    private static final int              TIME_TO_COUNTDOWN               = 30;
+    private static final int              COUNTDOWN_SECOND_MULTIPLIER     = 4;
+    private static final int              SPEED_EFFECT_DISTANCE           = 7;
+    private static final int              SPEED_EFFECT_DURATION           = 32;
+    private static final int              SPEED_EFFECT_MULTIPLIER         = 2;
+    private static final int              BARBARIAN_HORDE_DIFFICULTY_FIVE = 5;
+
+    private int currentCount = 0;
 
     /**
      * defines the default values for the Entity's attributes.
@@ -102,15 +107,16 @@ public class EntityChiefBarbarian extends EntityMob
     @Override
     protected void dropEquipment(final boolean wasRecentlyHit, final int lootingModifier)
     {
+        //Do not drop Equipment because we don't want the Chief Sword dropped any time other that 1 in 1000.
     }
 
     @Override
     public void onLivingUpdate()
     {
-        if (this.getHeldItemMainhand().getItem() instanceof ItemChiefSword && Configurations.barbarianHordeDifficulty >= 5 && currentCount <= 0)
+        if (this.getHeldItemMainhand().getItem() instanceof ItemChiefSword && Configurations.barbarianHordeDifficulty >= BARBARIAN_HORDE_DIFFICULTY_FIVE && currentCount <= 0)
         {
-            Stream<EntityLivingBase> barbarians = BarbarianUtils.getBarbariansCloseToEntity(this, 7);
-            barbarians.forEach(entity -> entity.addPotionEffect(new PotionEffect(SPEED_EFFECT, 32, 2)));
+            final Stream<EntityLivingBase> barbarians = BarbarianUtils.getBarbariansCloseToEntity(this, SPEED_EFFECT_DISTANCE);
+            barbarians.forEach(entity -> entity.addPotionEffect(new PotionEffect(SPEED_EFFECT, SPEED_EFFECT_DURATION, SPEED_EFFECT_MULTIPLIER)));
             currentCount = COUNTDOWN_SECOND_MULTIPLIER * TIME_TO_COUNTDOWN;
         }
         else
