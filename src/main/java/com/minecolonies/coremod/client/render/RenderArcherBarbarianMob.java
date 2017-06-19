@@ -4,6 +4,7 @@ import com.minecolonies.coremod.entity.ai.mobs.EntityArcherBarbarian;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.layers.LayerBipedArmor;
 import net.minecraft.client.renderer.entity.layers.LayerHeldItem;
 import net.minecraft.util.ResourceLocation;
 
@@ -24,6 +25,7 @@ public class RenderArcherBarbarianMob extends RenderLiving<EntityArcherBarbarian
     {
         super(renderManagerIn, new ModelBiped(), SHADOW_SIZE);
         this.addLayer(new LayerHeldItem(this));
+        this.addLayer(new LayerBipedArmor(this));
     }
 
     @Override

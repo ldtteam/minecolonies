@@ -16,7 +16,8 @@ import net.minecraft.world.World;
  */
 public class GuardArrow extends EntityTippedArrow
 {
-    private static final String TAG_COLONY = "colony";
+    private static final String TAG_COLONY  = "colony";
+    private static final float  ZERO_HEALTH = 0.0F;
     private Colony colony;
 
     /**
@@ -41,6 +42,11 @@ public class GuardArrow extends EntityTippedArrow
         this.colony = shooter.getColony();
     }
 
+    public GuardArrow(final World worldIn, final EntityLivingBase shooter)
+    {
+        super(worldIn, shooter);
+    }
+
     @Override
     public void writeEntityToNBT(final NBTTagCompound compound)
     {
@@ -61,7 +67,7 @@ public class GuardArrow extends EntityTippedArrow
     {
         super.arrowHit(targetEntity);
         Log.getLogger().info("Arrow hit " + targetEntity + " with " + targetEntity.getHealth());
-        if (targetEntity.getHealth() <= 0.0F)
+        if (targetEntity.getHealth() <= ZERO_HEALTH && shootingEntity instanceof EntityCitizen)
         {
             if (targetEntity instanceof EntityPlayer)
             {
