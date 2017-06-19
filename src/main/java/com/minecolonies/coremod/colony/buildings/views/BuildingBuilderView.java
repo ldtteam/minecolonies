@@ -6,9 +6,9 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -55,15 +55,10 @@ public class BuildingBuilderView extends AbstractBuildingWorker.View
 
         for (int i = 0; i < size; i++)
         {
-            //Serialising the ItemStack give a bad ItemStack sometimes using itemId + damage instead
-            //final ItemStack itemStack = ByteBufUtils.readItemStack(buf);
-            final int itemId = buf.readInt();
-            final int damage = buf.readInt();
-            final ItemStack itemStack = new ItemStack(Item.getByNameOrId(Integer.toString(itemId)),1,damage);
+            final ItemStack itemStack = ByteBufUtils.readItemStack(buf);
             final int amountAvailable = buf.readInt();
             final int amountNeeded = buf.readInt();
-            final BuildingBuilderResource resource =
-                new BuildingBuilderResource(itemStack.getItem(), itemStack.getItemDamage(), amountNeeded, amountAvailable);
+            final BuildingBuilderResource resource = new BuildingBuilderResource(itemStack, amountNeeded, amountAvailable);
             resources.put(itemStack.getDisplayName(), resource);
         }
     }
