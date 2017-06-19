@@ -52,11 +52,11 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     /**
      * Create a new work order telling the building to build a decoration.
      *
-     * @param structureName  The name of the decoration.
-     * @param workOrderName  The user friendly name of the decoration.
-     * @param rotation       The number of times the decoration was rotated.
-     * @param location       The location where the decoration should be built.
-     * @param mirror         Is the decoration mirrored?
+     * @param structureName The name of the decoration.
+     * @param workOrderName The user friendly name of the decoration.
+     * @param rotation      The number of times the decoration was rotated.
+     * @param location      The location where the decoration should be built.
+     * @param mirror        Is the decoration mirrored?
      */
     public WorkOrderBuildDecoration(final String structureName, final String workOrderName, final int rotation, final BlockPos location, final boolean mirror)
     {
@@ -109,7 +109,6 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
             {
                 Log.getLogger().warn("WorkOrderBuildDecoration.readFromNBT: replace " + sn + " by " + newSN);
                 structureName = newSN.toString();
-
             }
         }
 
@@ -154,7 +153,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
      * Attempt to fulfill the Work Order.
      * Override this with an implementation for the Work Order to find a Citizen to perform the job
      * <p>
-     * finds the first suitable builder for this job.
+     * finds the closest suitable builder for this job.
      *
      * @param colony The colony that owns the Work Order.
      */
@@ -163,6 +162,8 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     {
         boolean sendMessage = true;
         boolean hasBuilder = false;
+        double distanceToBuilder = 0;
+        CitizenData claimedBy = null;
 
         for (@NotNull final CitizenData citizen : colony.getCitizens().values())
         {
@@ -183,10 +184,21 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
 
             if (!job.hasWorkOrder() && canBuild(citizen))
             {
-                job.setWorkOrder(this);
-                this.setClaimedBy(citizen);
-                return;
+                final double distance = citizen.getWorkBuilding().getID().distanceSq(this.buildingLocation);
+                if(claimedBy == null || distance < distanceToBuilder)
+                {
+                    claimedBy = citizen;
+                    distanceToBuilder = distance;
+                }
             }
+        }
+
+        if(claimedBy != null)
+        {
+            final JobBuilder job = claimedBy.getJob(JobBuilder.class);
+            job.setWorkOrder(this);
+            this.setClaimedBy(claimedBy);
+            return;
         }
 
         sendBuilderMessage(colony, hasBuilder, sendMessage);
@@ -194,36 +206,35 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
 
     /**
      * send a message from the builder.
-     *
+     * <p>
      * Suppressing Sonar Rule squid:S1172
      * This rule does "Unused method parameters should be removed"
      * But in this case extending class may need to use the sendMessage parameter
-     * @param colony which the work order belong to
-     * @param hasBuilder true if we have a builder for this work order
+     *
+     * @param colony      which the work order belong to
+     * @param hasBuilder  true if we have a builder for this work order
      * @param sendMessage true if we need to send the message
      */
     @SuppressWarnings(UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED)
     protected void sendBuilderMessage(@NotNull final Colony colony, final boolean hasBuilder, final boolean sendMessage)
     {
-        if (hasSentMessageForThisWorkOrder)
+        if (hasSentMessageForThisWorkOrder || hasBuilder)
         {
             return;
         }
 
-        if (!hasBuilder)
-        {
-            hasSentMessageForThisWorkOrder = true;
-            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
-              "entity.builder.messageNoBuilder");
-        }
+        hasSentMessageForThisWorkOrder = true;
+        LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
+                "entity.builder.messageNoBuilder");
     }
 
     /**
      * Checks if a builder may accept this workOrder.
-     *
+     * <p>
      * Suppressing Sonar Rule squid:S1172
      * This rule does "Unused method parameters should be removed"
      * But in this case extending class may need to use the citizen parameter
+     *
      * @param citizen which could build it or not
      * @return true if he is able to.
      */
@@ -232,7 +243,6 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     {
         return true;
     }
-
 
     @Override
     public boolean isValid(final Colony colony)
@@ -246,7 +256,6 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     {
         return WorkOrderType.BUILD;
     }
-
 
     @Override
     protected String getValue()
@@ -276,10 +285,11 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
 
     /**
      * Gets how many times this structure should be rotated.
-     *
+     * <p>
      * Suppressing Sonar Rule squid:S1172
      * This rule does "Unused method parameters should be removed"
      * But in this case extending class may need to use the world parameter
+     *
      * @param world where the decoration is
      * @return building rotation.
      */
@@ -319,7 +329,6 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         return requested;
     }
 
-
     /**
      * Set whether or not the building materials have been requested already.
      *
@@ -356,5 +365,4 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         super.onRemoved(colony);
         ConstructionTapeHelper.removeConstructionTape(this, colony.getWorld());
     }
-
 }
