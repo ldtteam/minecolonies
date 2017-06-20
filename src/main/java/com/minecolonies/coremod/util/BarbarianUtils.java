@@ -159,50 +159,37 @@ public final class BarbarianUtils
 
         final boolean isDay = world.isDaytime();
 
-        if (isDay && colony.isHasRaided())
-        {
-            colony.setRaidWillHappen(raidThisNight(world));
-            colony.setHasRaided(false);
-        }
-        else if (isDay && !colony.isHasRaided())
+        if (isDay)
         {
             colony.setHasRaided(false);
+            if (colony.isHasRaided())
+            {
+                colony.setRaidWillHappen(raidThisNight(world));
+            }
         }
         else if (!isDay && !colony.isHasRaided() && colony.isWillRaid() && Configurations.doBarbariansSpawn && (world.getDifficulty() != EnumDifficulty.PEACEFUL))
         {
-            numberOfSpawns(colony);
-
-            final BlockPos targetSpawnPoint = calculateSpawnLocation(world, colony);
-
-            if (Configurations.enableInDevelopmentFeatures)
+            if (colony.isWillRaid() && Configurations.doBarbariansSpawn && (world.getDifficulty() != EnumDifficulty.PEACEFUL))
             {
+                numberOfSpawns(colony);
+
+                final BlockPos targetSpawnPoint = calculateSpawnLocation(world, colony);
+
+                if (Configurations.enableInDevelopmentFeatures)
+                {
+                    LanguageHandler.sendPlayersMessage(
+                      colony.getMessageEntityPlayers(),
+                      "Horde Spawn Point: " + targetSpawnPoint);
+                }
+
                 LanguageHandler.sendPlayersMessage(
                   colony.getMessageEntityPlayers(),
-                  "Horde Spawn Point: " + targetSpawnPoint);
+                  "event.minecolonies.raidMessage");
+
+                BarbarianSpawnUtils.spawn(BARBARIAN, numberOfBarbarians, targetSpawnPoint, world);
+                BarbarianSpawnUtils.spawn(ARCHER, numberOfArchers, targetSpawnPoint, world);
+                BarbarianSpawnUtils.spawn(CHIEF, numberOfChiefs, targetSpawnPoint, world);
             }
-
-            LanguageHandler.sendPlayersMessage(
-              colony.getMessageEntityPlayers(),
-              "event.minecolonies.raidMessage");
-
-            BarbarianSpawnUtils.spawn(BARBARIAN, numberOfBarbarians, targetSpawnPoint, world);
-            BarbarianSpawnUtils.spawn(ARCHER, numberOfArchers, targetSpawnPoint, world);
-            BarbarianSpawnUtils.spawn(CHIEF, numberOfChiefs, targetSpawnPoint, world);
-
-            colony.setHasRaided(true);
-        }
-        else if (!isDay && !colony.isHasRaided() && colony.isWillRaid() && Configurations.doBarbariansSpawn && (world.getDifficulty() == EnumDifficulty.PEACEFUL))
-        {
-            if (Configurations.enableInDevelopmentFeatures)
-            {
-                LanguageHandler.sendPlayersMessage(
-                  colony.getMessageEntityPlayers(),
-                  "(This is for asher) Asherslab: You are an idiot, it's still set on peaceful, love Asher");
-            }
-            colony.setHasRaided(true);
-        }
-        else if (!isDay && !colony.isHasRaided())
-        {
             colony.setHasRaided(true);
         }
     }
