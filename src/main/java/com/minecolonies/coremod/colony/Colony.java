@@ -90,7 +90,7 @@ public class Colony implements IColony
     private static final int    NUM_ACHIEVEMENT_THIRD     = 100;
     private static final int    NUM_ACHIEVEMENT_FOURTH    = 500;
     private static final int    NUM_ACHIEVEMENT_FIFTH     = 1000;
-    private static final int CITIZEN_MINIMUM_FOR_RAID = 5;
+    private static final int    CITIZEN_MINIMUM_FOR_RAID  = 5;
     private static final int    NUM_ONE                   = 1;
 
     /**
@@ -1088,7 +1088,7 @@ public class Colony implements IColony
 
         if (event.phase == TickEvent.Phase.START)
         {
-            if(!(this.citizens.size() < CITIZEN_MINIMUM_FOR_RAID))
+            if(this.citizens.size() >= CITIZEN_MINIMUM_FOR_RAID)
             {
                 BarbarianUtils.eventRaid(this);
             }
