@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.entity.ai.mobs;
 
-import com.minecolonies.coremod.util.BarbarianUtils;
+import com.minecolonies.coremod.util.BarbarianSpawnUtils;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.util.ResourceLocation;
@@ -26,28 +26,28 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     @Override
     protected void initEntityAI()
     {
-        BarbarianUtils.setBarbarianAITasks(this);
+        BarbarianSpawnUtils.setBarbarianAITasks(this);
     }
 
     @Override
     protected void applyEntityAttributes()
     {
         super.applyEntityAttributes();
-        BarbarianUtils.setBarbarianAttributes(this);
+        BarbarianSpawnUtils.setBarbarianAttributes(this);
     }
 
     @Nullable
     @Override
     protected ResourceLocation getLootTable()
     {
-        return BarbarianUtils.getBarbarianLootTables(this);
+        return BarbarianSpawnUtils.getBarbarianLootTables(this);
     }
 
     @Nullable
     @Override
     public IEntityLivingData onInitialSpawn(final DifficultyInstance difficulty, @Nullable final IEntityLivingData livingdata)
     {
-        BarbarianUtils.setBarbarianEquipment(this);
+        BarbarianSpawnUtils.setBarbarianEquipment(this);
         return super.onInitialSpawn(difficulty, livingdata);
     }
 

@@ -9,7 +9,7 @@ import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
-import com.minecolonies.coremod.entity.pathfinding.WalkToProxy;
+import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -104,7 +104,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Walk to proxy.
      */
-    private WalkToProxy proxy;
+    private EntityCitizenWalkToProxy proxy;
 
     /**
      * This will count up and progressively disable the entity
@@ -545,7 +545,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         if (proxy == null)
         {
-            proxy = new WalkToProxy(worker);
+            proxy = new EntityCitizenWalkToProxy(worker);
         }
         if (proxy.walkToBlock(stand, range))
         {
@@ -651,7 +651,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Check if we need a tool.
      *
      * Do not use it to find a pickaxe as it need a minimum level
-     * @param tool tool required for block
+     * @param toolType tool required for block
      * @return true if we need a tool
      */
     private boolean checkForNeededTool(@NotNull final IToolType toolType, final int minimalLevel)
@@ -1153,7 +1153,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Checks if said tool of said level is usable.
      * if not, it updates the needsTool flag for said tool.
      *
-     * @param tool     the tool needed
+     * @param toolType the tool needed
      * @param required the level needed (for pickaxe only)
      */
     private void updateToolFlag(@NotNull final IToolType toolType, final int required)
