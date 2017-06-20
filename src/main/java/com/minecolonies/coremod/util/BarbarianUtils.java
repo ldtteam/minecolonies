@@ -62,7 +62,7 @@ public final class BarbarianUtils
      * @param colony The colony to use
      * @return an int describing the raid level
      */
-    static int getColonyRaidLevel(final Colony colony)
+    public static int getColonyRaidLevel(final Colony colony)
     {
         int levels = 0;
 
