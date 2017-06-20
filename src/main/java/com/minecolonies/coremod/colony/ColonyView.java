@@ -661,9 +661,9 @@ public final class ColonyView implements IColony
     }
 
     @Override
-    public int getRaidLevel()
+    public boolean isHasRaided()
     {
-        return 0;
+        return false;
     }
 
     @Override

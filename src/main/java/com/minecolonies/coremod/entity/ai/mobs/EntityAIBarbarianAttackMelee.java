@@ -50,11 +50,12 @@ public class EntityAIBarbarianAttackMelee extends EntityAIBase
 
     /**
      * Returns whether an in-progress EntityAIBase should continue executing
+     *
      * @return Boolean value on whether or not to continue executing
      */
     public boolean continueExecuting()
     {
-        if (target.isEntityAlive() && entity.isEntityAlive() && !target.getIsInvulnerable() && entity.canEntityBeSeen(target))
+        if (target.isEntityAlive() && entity.isEntityAlive() && entity.canEntityBeSeen(target))
         {
             attack(target);
             return true;
@@ -83,7 +84,7 @@ public class EntityAIBarbarianAttackMelee extends EntityAIBase
 
         if (target != null)
         {
-            if (ItemStackUtils.doesItemServeAsWeapon(heldItem) && heldItem.getItem() instanceof ItemSword)
+            if (heldItem != null && ItemStackUtils.doesItemServeAsWeapon(heldItem) && heldItem.getItem() instanceof ItemSword)
             {
                 damageToBeDealt += ((ItemSword) heldItem.getItem()).getDamageVsEntity();
             }

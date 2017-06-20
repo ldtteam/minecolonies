@@ -52,11 +52,12 @@ public class EntityAIAttackArcher extends EntityAIBase
 
     /**
      * Returns whether an in-progress EntityAIBase should continue executing
+     *
      * @return Boolean value on whether or not to continue executing
      */
     public boolean continueExecuting()
     {
-        if (target.isEntityAlive() && entity.isEntityAlive() && !target.getIsInvulnerable())
+        if (target.isEntityAlive() && entity.isEntityAlive())
         {
             attack(target);
             return true;

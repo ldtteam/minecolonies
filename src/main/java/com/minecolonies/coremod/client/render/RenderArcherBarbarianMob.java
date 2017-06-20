@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.client.render;
 
-import com.minecolonies.coremod.client.model.ModelBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.EntityArcherBarbarian;
+import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.layers.LayerBipedArmor;
@@ -23,7 +23,7 @@ public class RenderArcherBarbarianMob extends RenderLiving<EntityArcherBarbarian
      */
     public RenderArcherBarbarianMob(final RenderManager renderManagerIn)
     {
-        super(renderManagerIn, new ModelBarbarian(), SHADOW_SIZE);
+        super(renderManagerIn, new ModelBiped(), SHADOW_SIZE);
         this.addLayer(new LayerHeldItem(this));
         this.addLayer(new LayerBipedArmor(this));
     }

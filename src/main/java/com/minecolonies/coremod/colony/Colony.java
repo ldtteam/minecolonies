@@ -95,14 +95,10 @@ public class Colony implements IColony
     private static final int    NUM_ONE                   = 1;
 
     /**
-     * Boolean for whether a raid event has executed this night
+     * Values used for Raid event
      */
-    private boolean nightHasHappened = true;
-
-    /**
-     * Boolean value for whether a raid will execute the next night
-     */
-    public boolean raidWillHappen = true;
+    private boolean hasRaidHappened = true;
+    private boolean raidWillHappen = true;
 
     /**
      * Amount of ticks that pass/hour.
@@ -1049,38 +1045,11 @@ public class Colony implements IColony
     }
 
     /**
-     * Return the colony's sum of WorkerBuildingLevels (currently with a worker) and TownHallLevels
+     * Set whether a raid will happen tonight
      */
-    private int numberOfWorkerLevels()
+    public void setRaidWillHappen(final boolean willRaid)
     {
-        int levels = 0;
-
-        citizensList.clear();
-        citizensList.addAll(this.getCitizens().values());
-
-        for (@NotNull final CitizenData citizen : citizensList)
-        {
-            if (citizen.getJob() != null && citizen.getWorkBuilding() != null)
-            {
-                final int buildingLevel = citizen.getWorkBuilding().getBuildingLevel();
-                levels += buildingLevel;
-            }
-        }
-
-        if (this.getTownHall() != null)
-        {
-            return (levels + this.getTownHall().getBuildingLevel());
-        }
-        else
-        {
-            return 0;
-        }
-    }
-
-    @Override
-    public int getRaidLevel()
-    {
-        return raidLevel;
+        raidWillHappen = willRaid;
     }
 
     @Override
@@ -1089,6 +1058,19 @@ public class Colony implements IColony
         return raidWillHappen;
     }
 
+    /**
+     * Set whether a raid has happened.
+     */
+    public void setHasRaided(final boolean hasRaided)
+    {
+        hasRaidHappened = hasRaided;
+    }
+
+    @Override
+    public boolean isHasRaided()
+    {
+        return hasRaidHappened;
+    }
     /**
      * Any per-world-tick logic should be performed here.
      * NOTE: If the Colony's world isn't loaded, it won't have a world tick.
@@ -1109,6 +1091,8 @@ public class Colony implements IColony
 
         if (event.phase == TickEvent.Phase.START)
         {
+            BarbarianUtils.eventRaid(this);
+
             //  Detect CitizenData whose EntityCitizen no longer exist in world, and clear the mapping
             //  Consider handing this in an ChunkUnload Event instead?
             citizens.values()
@@ -1139,32 +1123,6 @@ public class Colony implements IColony
                 {
                     spawnCitizen();
                 }
-            }
-
-            if (!nightHasHappened && !subscribers.isEmpty() && !world.isDaytime() && Configurations.doBarbariansSpawn && raidWillHappen
-                  && world.getDifficulty() != EnumDifficulty.PEACEFUL)
-            {
-                raidLevel = this.numberOfWorkerLevels();
-                if (citizens.size() < CITIZEN_MINIMUM_FOR_RAID)
-                {
-                    raidLevel = 1;
-                }
-                BarbarianUtils.eventRaid(world, raidLevel, this);
-                nightHasHappened = true;
-            }
-
-            if (!world.isDaytime())
-            {
-                nightHasHappened = true;
-            }
-
-            if (!world.isDaytime())
-            {
-                if (nightHasHappened)
-                {
-                    raidWillHappen = BarbarianUtils.raidThisNight(world);
-                }
-                nightHasHappened = false;
             }
         }
 

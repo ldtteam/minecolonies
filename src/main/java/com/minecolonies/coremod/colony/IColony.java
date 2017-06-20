@@ -77,14 +77,14 @@ public interface IColony
     int getLastContactInHours();
 
     /**
-     * Get the colony's raid index
-     * @return an integer describing the colony's raidlevel
+     * Get the value of hasRaidHappened.
+     * @return the value of hasRaidHappened.
      */
-    int getRaidLevel();
+    boolean isHasRaided();
 
     /**
-     * get whether the colony will raid the following night or not
-     * @return a boolean value of whether the raid shall occur that night
+     * Get the value of willRaidHappen.
+     * @return the value of willRaidHappen.
      */
     boolean isWillRaid();
 }

@@ -12,7 +12,7 @@ import javax.annotation.Nonnull;
 
 public class RenderChiefBarbarianMob extends RenderLiving<EntityChiefBarbarian>
 {
-    private final ResourceLocation mobTexture = new ResourceLocation("minecolonies:textures/entity/chiefbarbarian1.png");
+    private final ResourceLocation mobTexture = new ResourceLocation("minecolonies:textures/entity/barbarianchief1.png");
 
     private static final float SHADOW_SIZE = 0.5F;
 
