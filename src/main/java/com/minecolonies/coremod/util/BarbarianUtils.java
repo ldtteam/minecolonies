@@ -27,9 +27,9 @@ import java.util.stream.Stream;
  */
 public class BarbarianUtils
 {
-    private static final String barbarian = "minecolonies.Barbarian";
-    private static final String archer    = "minecolonies.ArcherBarbarian";
-    private static final String chief     = "minecolonies.ChiefBarbarian";
+    private static final String BARBARIAN = "minecolonies.Barbarian";
+    private static final String ARCHER    = "minecolonies.ArcherBarbarian";
+    private static final String CHIEF     = "minecolonies.ChiefBarbarian";
 
     private static int numberOfBarbarians = 0;
     private static int numberOfArchers    = 0;
@@ -48,6 +48,13 @@ public class BarbarianUtils
 
     private static final float WHOLE_CIRCLE  = 360.0F;
     private static final float HALF_A_CIRCLE = 180F;
+
+    /**
+     * Private constructor to hide the implicit public one.
+     */
+    private BarbarianUtils()
+    {
+    }
 
     /**
      * Takes a colony and spits out that colony's RaidLevel.
@@ -141,7 +148,7 @@ public class BarbarianUtils
      *
      * @param colony The colony for which the raid is occurring in.
      */
-    public static void EventRaid(final Colony colony)
+    public static void eventRaid(final Colony colony)
     {
         final World world = colony.getWorld();
 
@@ -152,19 +159,18 @@ public class BarbarianUtils
 
         final boolean isDay = world.isDaytime();
 
-        if (isDay && colony.getHasRaided())
+        if (isDay && colony.isHasRaided())
         {
             colony.setRaidWillHappen(raidThisNight(world));
             colony.setHasRaided(false);
         }
-        else if (isDay && !colony.getHasRaided())
+        else if (isDay && !colony.isHasRaided())
         {
             colony.setHasRaided(false);
         }
-        else if (!isDay && !colony.getHasRaided() && colony.getWillRaid() && Configurations.doBarbariansSpawn && (world.getDifficulty() != EnumDifficulty.PEACEFUL))
+        else if (!isDay && !colony.isHasRaided() && colony.isWillRaid() && Configurations.doBarbariansSpawn && (world.getDifficulty() != EnumDifficulty.PEACEFUL))
         {
-            System.out.println("Did the thing");
-            NumberOfSpawns(colony);
+            numberOfSpawns(colony);
 
             final BlockPos targetSpawnPoint = calculateSpawnLocation(world, colony);
 
@@ -179,13 +185,13 @@ public class BarbarianUtils
               colony.getMessageEntityPlayers(),
               "event.minecolonies.raidMessage");
 
-            BarbarianSpawnUtils.spawn(barbarian, numberOfBarbarians, targetSpawnPoint, world);
-            BarbarianSpawnUtils.spawn(archer, numberOfArchers, targetSpawnPoint, world);
-            BarbarianSpawnUtils.spawn(chief, numberOfChiefs, targetSpawnPoint, world);
+            BarbarianSpawnUtils.spawn(BARBARIAN, numberOfBarbarians, targetSpawnPoint, world);
+            BarbarianSpawnUtils.spawn(ARCHER, numberOfArchers, targetSpawnPoint, world);
+            BarbarianSpawnUtils.spawn(CHIEF, numberOfChiefs, targetSpawnPoint, world);
 
             colony.setHasRaided(true);
         }
-        else if (!isDay && !colony.getHasRaided() && colony.getWillRaid() && Configurations.doBarbariansSpawn && (world.getDifficulty() == EnumDifficulty.PEACEFUL))
+        else if (!isDay && !colony.isHasRaided() && colony.isWillRaid() && Configurations.doBarbariansSpawn && (world.getDifficulty() == EnumDifficulty.PEACEFUL))
         {
             if (Configurations.enableInDevelopmentFeatures)
             {
@@ -195,7 +201,7 @@ public class BarbarianUtils
             }
             colony.setHasRaided(true);
         }
-        else if (!isDay && !colony.getHasRaided())
+        else if (!isDay && !colony.isHasRaided())
         {
             colony.setHasRaided(true);
         }
@@ -206,7 +212,7 @@ public class BarbarianUtils
      *
      * @param colony The colony to get the RaidLevel from
      */
-    private static void NumberOfSpawns(final Colony colony)
+    private static void numberOfSpawns(final Colony colony)
     {
         final int raidLevel = getColonyRaidLevel(colony);
 

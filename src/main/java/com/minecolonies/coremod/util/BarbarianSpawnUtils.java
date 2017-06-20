@@ -63,6 +63,13 @@ public class BarbarianSpawnUtils
     private static final float WHOLE_CIRCLE = 360.0F;
 
     /**
+     * Private constructor to hide the implicit public one.
+     */
+    private BarbarianSpawnUtils()
+    {
+    }
+
+    /**
      * Centralized Barbarian Attributes are set here.
      *
      * @param barbarian the barbarian to set the Attributes on.

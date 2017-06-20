@@ -635,13 +635,13 @@ public final class ColonyView implements IColony
     }
 
     @Override
-    public boolean getWillRaid()
+    public boolean isWillRaid()
     {
         return false;
     }
 
     @Override
-    public boolean getHasRaided()
+    public boolean isHasRaided()
     {
         return false;
     }

@@ -103,7 +103,7 @@ public class Colony implements IColony
     /**
      * Values used for Raid event
      */
-    private static boolean hasRaidHappened = true;
+    private boolean hasRaidHappened = true;
     private boolean raidWillHappen = true;
 
     /**
@@ -1169,7 +1169,7 @@ public class Colony implements IColony
     }
 
     @Override
-    public boolean getWillRaid()
+    public boolean isWillRaid()
     {
         return raidWillHappen;
     }
@@ -1183,7 +1183,7 @@ public class Colony implements IColony
     }
 
     @Override
-    public boolean getHasRaided()
+    public boolean isHasRaided()
     {
         return hasRaidHappened;
     }
@@ -1206,7 +1206,7 @@ public class Colony implements IColony
             return;
         }
 
-        BarbarianUtils.EventRaid(this);
+        BarbarianUtils.eventRaid(this);
 
         if (event.phase == TickEvent.Phase.START)
         {

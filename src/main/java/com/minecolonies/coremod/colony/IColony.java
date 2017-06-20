@@ -78,11 +78,11 @@ public interface IColony
      * Get the value of hasRaidHappened.
      * @return the value of hasRaidHappened.
      */
-    boolean getHasRaided();
+    boolean isHasRaided();
 
     /**
      * Get the value of willRaidHappen.
      * @return the value of willRaidHappen.
      */
-    boolean getWillRaid();
+    boolean isWillRaid();
 }

@@ -86,6 +86,9 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     @Override
     protected void dropEquipment(final boolean wasRecentlyHit, final int lootingModifier)
     {
+        /**
+         * We have loot_tables for a reason, this is done to disable equipped items dropping on death.
+         */
     }
 
     @Override
