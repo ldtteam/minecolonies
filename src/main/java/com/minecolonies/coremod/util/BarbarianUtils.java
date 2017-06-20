@@ -3,7 +3,6 @@ package com.minecolonies.coremod.util;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -65,7 +64,7 @@ public final class BarbarianUtils
      * @param colony The colony to use
      * @return an int describing the raid level
      */
-    static int getColonyRaidLevel(final Colony colony)
+    public static int getColonyRaidLevel(final Colony colony)
     {
         int levels = 0;
 

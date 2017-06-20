@@ -32,7 +32,6 @@ import net.minecraft.stats.Achievement;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -91,14 +90,14 @@ public class Colony implements IColony
     private static final int    NUM_ACHIEVEMENT_THIRD     = 100;
     private static final int    NUM_ACHIEVEMENT_FOURTH    = 500;
     private static final int    NUM_ACHIEVEMENT_FIFTH     = 1000;
-    private static final int    CITIZEN_MINIMUM_FOR_RAID  = 5;
+    private static final int CITIZEN_MINIMUM_FOR_RAID = 5;
     private static final int    NUM_ONE                   = 1;
 
     /**
      * Values used for Raid event
      */
     private boolean hasRaidHappened = true;
-    private boolean raidWillHappen = true;
+    private boolean raidWillHappen  = true;
 
     /**
      * Amount of ticks that pass/hour.
@@ -164,8 +163,6 @@ public class Colony implements IColony
     //  Workload and Jobs
     private final WorkManager                     workManager       = new WorkManager(this);
     @NotNull
-    private final List<CitizenData>               citizensList      = new ArrayList<>();
-    @NotNull
     private final Map<BlockPos, AbstractBuilding> buildings         = new HashMap<>();
     //  Citizenry
     @NotNull
@@ -208,7 +205,6 @@ public class Colony implements IColony
     private BuildingTownHall townHall;
     private int topCitizenId = 0;
     private int maxCitizens  = Configurations.maxCitizens;
-    private int raidLevel    = 0;
 
     private double overallHappiness = DEFAULT_HAPPINESS;
 
@@ -1071,6 +1067,7 @@ public class Colony implements IColony
     {
         return hasRaidHappened;
     }
+
     /**
      * Any per-world-tick logic should be performed here.
      * NOTE: If the Colony's world isn't loaded, it won't have a world tick.
@@ -1091,7 +1088,10 @@ public class Colony implements IColony
 
         if (event.phase == TickEvent.Phase.START)
         {
-            BarbarianUtils.eventRaid(this);
+            if(!(this.citizens.size() < CITIZEN_MINIMUM_FOR_RAID))
+            {
+                BarbarianUtils.eventRaid(this);
+            }
 
             //  Detect CitizenData whose EntityCitizen no longer exist in world, and clear the mapping
             //  Consider handing this in an ChunkUnload Event instead?
