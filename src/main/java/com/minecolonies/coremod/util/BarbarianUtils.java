@@ -62,7 +62,7 @@ public final class BarbarianUtils
      * @param colony The colony to use
      * @return an int describing the raid level
      */
-    private static int getColonyRaidLevel(final Colony colony)
+    static int getColonyRaidLevel(final Colony colony)
     {
         int levels = 0;
 
@@ -167,7 +167,7 @@ public final class BarbarianUtils
             }
             colony.setHasRaided(false);
         }
-        else if (!isDay && !colony.isHasRaided())
+        else if (!colony.isHasRaided())
         {
             if (colony.isWillRaid() && Configurations.doBarbariansSpawn && (world.getDifficulty() != EnumDifficulty.PEACEFUL))
             {

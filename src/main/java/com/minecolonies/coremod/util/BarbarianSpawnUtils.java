@@ -2,6 +2,8 @@ package com.minecolonies.coremod.util;
 
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.mobs.*;
 import com.minecolonies.coremod.items.ModItems;
@@ -80,7 +82,23 @@ public final class BarbarianSpawnUtils
         barbarian.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(MOVEMENT_SPEED);
         barbarian.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(ATTACK_DAMAGE);
         barbarian.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(ARMOR);
-        barbarian.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(BARBARIAN_BASE_HEALTH);
+        barbarian.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(getHealthBasedOnRaidLevel(barbarian));
+    }
+
+    /**
+     * Sets the entity's health based on the raidLevel
+     *
+     * @return returns the health in the form of a double
+     */
+    private static double getHealthBasedOnRaidLevel(final EntityMob barbarian)
+    {
+        Colony colony = ColonyManager.getClosestColony(barbarian.getEntityWorld(), new BlockPos(barbarian));
+        if (colony != null)
+        {
+            final int raidLevel = (int) (BarbarianUtils.getColonyRaidLevel(colony) * 1.5);
+            return BARBARIAN_BASE_HEALTH + raidLevel;
+        }
+        return BARBARIAN_BASE_HEALTH;
     }
 
     /**
@@ -167,7 +185,7 @@ public final class BarbarianSpawnUtils
      * @param spawnLocation  the location at which to spawn the entity
      * @param world          the world in which the colony and entity are
      */
-    public static void spawn(final String entityToSpawn, final int numberOfSpawns, final BlockPos spawnLocation, final World world)
+    static void spawn(final String entityToSpawn, final int numberOfSpawns, final BlockPos spawnLocation, final World world)
     {
 
         if (spawnLocation != null && entityToSpawn != null && world != null)
