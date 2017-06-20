@@ -91,6 +91,7 @@ public class Colony implements IColony
     private              int    caughtFish                = 0;
     private static final String TAG_LUMBERJACK_STATISTICS = "lumberjackStatistics";
     private static final String TAG_LUMBERJACK_TREES      = "trees";
+    private static final int    CITIZEN_MINIMUM_FOR_RAID  = 5;
     private              int    felledTrees               = 0;
     private static final String TAG_LUMBERJACK_SAPLINGS   = "saplings";
     private              int    plantedSaplings           = 0;
@@ -1209,7 +1210,10 @@ public class Colony implements IColony
 
         if (event.phase == TickEvent.Phase.START)
         {
-            BarbarianUtils.eventRaid(this);
+            if(!(this.citizens.size() < CITIZEN_MINIMUM_FOR_RAID))
+            {
+                BarbarianUtils.eventRaid(this);
+            }
 
             //  Detect CitizenData whose EntityCitizen no longer exist in world, and clear the mapping
             //  Consider handing this in an ChunkUnload Event instead?
