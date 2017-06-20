@@ -161,13 +161,13 @@ public final class BarbarianUtils
 
         if (isDay)
         {
-            colony.setHasRaided(false);
             if (colony.isHasRaided())
             {
                 colony.setRaidWillHappen(raidThisNight(world));
             }
+            colony.setHasRaided(false);
         }
-        else if (!isDay && !colony.isHasRaided() && colony.isWillRaid() && Configurations.doBarbariansSpawn && (world.getDifficulty() != EnumDifficulty.PEACEFUL))
+        else if (!isDay && !colony.isHasRaided())
         {
             if (colony.isWillRaid() && Configurations.doBarbariansSpawn && (world.getDifficulty() != EnumDifficulty.PEACEFUL))
             {
