@@ -73,4 +73,16 @@ public interface IColony
      * @return an integer with a describing value.
      */
     int getLastContactInHours();
+
+    /**
+     * Get the value of hasRaidHappened.
+     * @return the value of hasRaidHappened.
+     */
+    boolean getHasRaided();
+
+    /**
+     * Get the value of willRaidHappen.
+     * @return the value of willRaidHappen.
+     */
+    boolean getWillRaid();
 }

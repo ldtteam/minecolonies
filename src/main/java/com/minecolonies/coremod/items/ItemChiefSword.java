@@ -20,15 +20,15 @@ import java.util.stream.Stream;
  */
 public class ItemChiefSword extends ItemSword
 {
-    private static final String ITEM_NAME         = "chiefSword";
+    private static final String ITEM_NAME         = "chiefsword";
     private static final Potion LEVITATION_EFFECT = Potion.getPotionById(25);
     private static final Potion GLOW_EFFECT       = Potion.getPotionById(24);
 
-    private static final int GLOW_EFFECT_DURATION = 30;
+    private static final int GLOW_EFFECT_DURATION   = 30;
     private static final int GLOW_EFFECT_MULTIPLIER = 20;
-    private static final int GLOW_EFFECT_DISTANCE = 30;
+    private static final int GLOW_EFFECT_DISTANCE   = 30;
 
-    private static final int LEVITATION_EFFECT_DURATION = 20;
+    private static final int LEVITATION_EFFECT_DURATION   = 20;
     private static final int LEVITATION_EFFECT_MULTIPLIER = 3;
 
     /**

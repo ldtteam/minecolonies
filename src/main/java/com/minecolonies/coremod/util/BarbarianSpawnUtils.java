@@ -1,9 +1,11 @@
 package com.minecolonies.coremod.util;
 
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.mobs.*;
 import com.minecolonies.coremod.items.ModItems;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.EntityMob;
@@ -12,6 +14,13 @@ import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeChunkManager;
+
+import java.util.stream.IntStream;
 
 /**
  * Utils for the Barbarians Spawning
@@ -47,6 +56,11 @@ public class BarbarianSpawnUtils
     private static final double ATTACK_DAMAGE         = 2.0D;
     private static final double ARMOR                 = 2.0D;
     private static final double BARBARIAN_BASE_HEALTH = 20;
+
+    /**
+     * Values used in Spawn() method
+     */
+    private static final float WHOLE_CIRCLE = 360.0F;
 
     /**
      * Centralized Barbarian Attributes are set here.
@@ -135,6 +149,49 @@ public class BarbarianSpawnUtils
         else
         {
             return null;
+        }
+    }
+
+    /**
+     * Sets up and spawns the Barbarian entities of choice
+     *
+     * @param entityToSpawn  The entity which should be spawned
+     * @param numberOfSpawns The number of times the entity should be spawned
+     * @param spawnLocation  the location at which to spawn the entity
+     * @param world          the world in which the colony and entity are
+     */
+    public static void spawn(final String entityToSpawn, final int numberOfSpawns, final BlockPos spawnLocation, final World world)
+    {
+
+        if (spawnLocation != null && entityToSpawn != null && world != null)
+        {
+            if (!world.isBlockLoaded(spawnLocation))
+            {
+                final ForgeChunkManager.Ticket chunkTicket = ForgeChunkManager.requestTicket(MineColonies.instance, world, ForgeChunkManager.Type.NORMAL);
+                if (chunkTicket != null)
+                {
+                    chunkTicket.getModData().setInteger("spawnX", spawnLocation.getX());
+                    chunkTicket.getModData().setInteger("spawnY", spawnLocation.getY());
+                    chunkTicket.getModData().setInteger("spawnZ", spawnLocation.getZ());
+                    ForgeChunkManager.forceChunk(chunkTicket, new ChunkPos(spawnLocation.getX(), spawnLocation.getZ()));
+                }
+            }
+
+            final int x = spawnLocation.getX();
+            final int y = spawnLocation.getY();
+            final int z = spawnLocation.getZ();
+
+            IntStream.range(0, numberOfSpawns).forEach(theInteger ->
+            {
+                final EntityMob entity = (EntityMob) EntityList.createEntityByIDFromName(entityToSpawn, world);
+
+                if (entity != null)
+                {
+                    setBarbarianEquipment(entity);
+                    entity.setLocationAndAngles(x, y, z, MathHelper.wrapDegrees(world.rand.nextFloat() * WHOLE_CIRCLE), 0.0F);
+                    world.spawnEntityInWorld(entity);
+                }
+            });
         }
     }
 }

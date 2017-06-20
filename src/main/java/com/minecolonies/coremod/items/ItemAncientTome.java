@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.items;
 
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
@@ -21,7 +23,7 @@ public class ItemAncientTome extends AbstractItemMinecolonies
      */
     ItemAncientTome()
     {
-        super("ancientTome");
+        super("ancienttome");
         super.setCreativeTab(ModCreativeTabs.MINECOLONIES);
         setMaxStackSize(MAX_STACK_SIZE);
     }
@@ -30,8 +32,8 @@ public class ItemAncientTome extends AbstractItemMinecolonies
     public void onUpdate(final ItemStack stack, final World worldIn, final Entity entityIn, final int itemSlot, final boolean isSelected)
     {
         super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
-        //final Colony colony = ColonyManager.getClosestColony(worldIn, entityIn.getPosition());
-        //raidWillHappen = colony != null && colony.isWillRaid();
+        final Colony colony = ColonyManager.getClosestColony(worldIn, entityIn.getPosition());
+        raidWillHappen = colony != null && colony.getWillRaid();
     }
 
     @SideOnly(Side.CLIENT)

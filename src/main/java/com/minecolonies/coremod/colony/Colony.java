@@ -16,6 +16,7 @@ import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.AchievementUtils;
+import com.minecolonies.coremod.util.BarbarianUtils;
 import com.minecolonies.coremod.util.ColonyUtils;
 import com.minecolonies.coremod.util.ServerUtils;
 import net.minecraft.block.Block;
@@ -98,6 +99,12 @@ public class Colony implements IColony
     private static final int    NUM_ACHIEVEMENT_THIRD     = 100;
     private static final int    NUM_ACHIEVEMENT_FOURTH    = 500;
     private static final int    NUM_ACHIEVEMENT_FIFTH     = 1000;
+
+    /**
+     * Values used for Raid event
+     */
+    private static boolean hasRaidHappened = true;
+    private boolean raidWillHappen = true;
 
     /**
      * Amount of ticks that pass/hour.
@@ -1154,6 +1161,34 @@ public class Colony implements IColony
     }
 
     /**
+     * Set whether a raid will happen tonight
+     */
+    public void setRaidWillHappen(final boolean willRaid)
+    {
+        raidWillHappen = willRaid;
+    }
+
+    @Override
+    public boolean getWillRaid()
+    {
+        return raidWillHappen;
+    }
+
+    /**
+     * Set whether a raid has happened.
+     */
+    public void setHasRaided(final boolean hasRaided)
+    {
+        hasRaidHappened = hasRaided;
+    }
+
+    @Override
+    public boolean getHasRaided()
+    {
+        return hasRaidHappened;
+    }
+
+    /**
      * Any per-world-tick logic should be performed here.
      * NOTE: If the Colony's world isn't loaded, it won't have a world tick.
      * Use onServerTick for logic that should _always_ run.
@@ -1170,6 +1205,8 @@ public class Colony implements IColony
              */
             return;
         }
+
+        BarbarianUtils.EventRaid(this);
 
         if (event.phase == TickEvent.Phase.START)
         {

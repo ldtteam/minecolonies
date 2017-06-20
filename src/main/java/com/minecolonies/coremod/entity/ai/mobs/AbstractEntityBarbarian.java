@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.mobs;
 
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.coremod.items.ItemChiefSword;
+import com.minecolonies.coremod.sounds.BarbarianSounds;
 import com.minecolonies.coremod.util.BarbarianSpawnUtils;
 import com.minecolonies.coremod.util.BarbarianUtils;
 import net.minecraft.entity.EntityLivingBase;
@@ -10,6 +11,7 @@ import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
 
@@ -32,7 +34,14 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     private int currentCount = 0;
 
     /**
+     * Values used to choose whether or not to play sound
+     */
+    private static final int OUT_OF_ONE_HUNDRED = 100;
+    private static final int ONE                = 1;
+
+    /**
      * Constructor method for our abstract class
+     *
      * @param worldIn The world that the Barbarian is in
      */
     AbstractEntityBarbarian(final World worldIn)
@@ -70,7 +79,8 @@ public abstract class AbstractEntityBarbarian extends EntityMob
 
     /**
      * We have loot_tables for a reason, this is done to disable equipped items dropping on death.
-     * @param wasRecentlyHit Was the barbarian recently hit?
+     *
+     * @param wasRecentlyHit  Was the barbarian recently hit?
      * @param lootingModifier Was the barbarian hit with a sword with looting Enchantment?
      */
     @Override
@@ -93,5 +103,35 @@ public abstract class AbstractEntityBarbarian extends EntityMob
         }
 
         super.onLivingUpdate();
+    }
+
+    @Override
+    protected SoundEvent getHurtSound()
+    {
+        return BarbarianSounds.barbarianHurt;
+    }
+
+    @Override
+    protected SoundEvent getDeathSound()
+    {
+        return BarbarianSounds.barbarianDeath;
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getAmbientSound()
+    {
+        return BarbarianSounds.barbarianSay;
+    }
+
+    @Override
+    public void playLivingSound()
+    {
+        final SoundEvent soundevent = this.getAmbientSound();
+
+        if (soundevent != null && worldObj.rand.nextInt(OUT_OF_ONE_HUNDRED) <= ONE)
+        {
+            this.playSound(soundevent, this.getSoundVolume(), this.getSoundPitch());
+        }
     }
 }
