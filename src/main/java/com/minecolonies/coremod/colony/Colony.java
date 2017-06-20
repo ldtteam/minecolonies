@@ -1206,10 +1206,11 @@ public class Colony implements IColony
             return;
         }
 
-        BarbarianUtils.eventRaid(this);
 
         if (event.phase == TickEvent.Phase.START)
         {
+            BarbarianUtils.eventRaid(this);
+
             //  Detect CitizenData whose EntityCitizen no longer exist in world, and clear the mapping
             //  Consider handing this in an ChunkUnload Event instead?
             citizens.values()
