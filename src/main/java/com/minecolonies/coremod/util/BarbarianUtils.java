@@ -13,6 +13,7 @@ import com.minecolonies.coremod.entity.ai.mobs.EntityChiefBarbarian;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,7 +35,7 @@ public class BarbarianUtils
     private static int numberOfArchers    = 0;
     private static int numberOfChiefs     = 0;
 
-    private static final int MAX_SIZE = 40/*Configurations.maxBarbarianHordeSize*/;
+    private static final int MAX_SIZE = Configurations.maxBarbarianHordeSize;
 
     private static final double BARBARIANS_MULTIPLIER        = 0.5;
     private static final double ARCHER_BARBARIANS_MULTIPLIER = 0.25;
@@ -160,8 +161,9 @@ public class BarbarianUtils
         {
             colony.setHasRaided(false);
         }
-        else if (!colony.getHasRaided() && colony.getWillRaid())
+        else if (!isDay && !colony.getHasRaided() && colony.getWillRaid() && Configurations.doBarbariansSpawn && (world.getDifficulty() != EnumDifficulty.PEACEFUL))
         {
+            System.out.println("Did the thing");
             NumberOfSpawns(colony);
 
             final BlockPos targetSpawnPoint = calculateSpawnLocation(world, colony);
@@ -183,8 +185,20 @@ public class BarbarianUtils
 
             colony.setHasRaided(true);
         }
-
-        //System.out.println(colony.getHasRaided() + "   " + colony.getWillRaid());
+        else if (!isDay && !colony.getHasRaided() && colony.getWillRaid() && Configurations.doBarbariansSpawn && (world.getDifficulty() == EnumDifficulty.PEACEFUL))
+        {
+            if (Configurations.enableInDevelopmentFeatures)
+            {
+                LanguageHandler.sendPlayersMessage(
+                  colony.getMessageEntityPlayers(),
+                  "(This is for asher) Asherslab: You are an idiot, it's still set on peaceful, love Asher");
+            }
+            colony.setHasRaided(true);
+        }
+        else if (!isDay && !colony.getHasRaided())
+        {
+            colony.setHasRaided(true);
+        }
     }
 
     /**
@@ -276,7 +290,8 @@ public class BarbarianUtils
      */
     private static boolean raidThisNight(final World world)
     {
-        final float chance = (float) 1 / 1/*Configurations.averageNumberOfNightsBetweenRaids*/;
-        return world.rand.nextFloat() < chance;
+        final float chance = (float) 1 / Configurations.averageNumberOfNightsBetweenRaids;
+        final float randomFloat = world.rand.nextFloat();
+        return randomFloat < chance;
     }
 }

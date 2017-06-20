@@ -28,12 +28,17 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-
 /**
  * CommonProxy of the minecolonies mod (Server and Client).
  */
 public class CommonProxy implements IProxy
 {
+    /**
+     * feel free to change the following if you want different colored spawn eggs
+     */
+    private static final int PRIMARY_COLOR   = 5;
+    private static final int SECONDARY_COLOR = 700;
+
     /**
      * Used to store IExtendedEntityProperties data temporarily between player death and respawn.
      */
@@ -99,16 +104,46 @@ public class CommonProxy implements IProxy
     {
         // Half as much tracking range and same update frequency as a player
         // See EntityTracker.addEntityToTracker for more default values
-        EntityRegistry.registerModEntity(EntityCitizen.class, "Citizen", getNextEntityId(), MineColonies.instance, 256, 2, true);
-        EntityRegistry.registerModEntity(EntityFishHook.class, "Fishhook", getNextEntityId(), MineColonies.instance, 250, 5, true);
-        EntityRegistry.registerModEntity(EntityBarbarian.class, "Barbarian", getNextEntityId(), MineColonies.instance, 250,2,true);
-        EntityRegistry.registerModEntity(EntityArcherBarbarian.class, "ArcherBarbarian", getNextEntityId(), MineColonies.instance, 250,2,true);
-        EntityRegistry.registerModEntity(EntityChiefBarbarian.class, "ChiefBarbarian", getNextEntityId(), MineColonies.instance, 250,2,true);
+        EntityRegistry.registerModEntity(EntityCitizen.class,
+          "Citizen",
+          getNextEntityId(),
+          MineColonies.instance,
+          Constants.ENTITY_TRACKING_RANGE,
+          Constants.ENTITY_UPDATE_FREQUENCY,
+          true);
+        EntityRegistry.registerModEntity(EntityFishHook.class,
+          "Fishhook",
+          getNextEntityId(),
+          MineColonies.instance,
+          Constants.ENTITY_TRACKING_RANGE,
+          Constants.ENTITY_UPDATE_FREQUENCY_FISHHOOK,
+          true);
+        EntityRegistry.registerModEntity(EntityBarbarian.class,
+          "Barbarian",
+          getNextEntityId(),
+          MineColonies.instance,
+          Constants.ENTITY_TRACKING_RANGE,
+          Constants.ENTITY_UPDATE_FREQUENCY,
+          true);
+        EntityRegistry.registerModEntity(EntityArcherBarbarian.class,
+          "ArcherBarbarian",
+          getNextEntityId(),
+          MineColonies.instance,
+          Constants.ENTITY_TRACKING_RANGE,
+          Constants.ENTITY_UPDATE_FREQUENCY,
+          true);
+        EntityRegistry.registerModEntity(EntityChiefBarbarian.class,
+          "ChiefBarbarian",
+          getNextEntityId(),
+          MineColonies.instance,
+          Constants.ENTITY_TRACKING_RANGE,
+          Constants.ENTITY_UPDATE_FREQUENCY,
+          true);
 
         // Register mob eggs
-        EntityRegistry.registerEgg(EntityBarbarian.class,5,700);
-        EntityRegistry.registerEgg(EntityArcherBarbarian.class, 5, 700);
-        EntityRegistry.registerEgg(EntityChiefBarbarian.class, 5,700);
+        EntityRegistry.registerEgg(EntityBarbarian.class, PRIMARY_COLOR, SECONDARY_COLOR);
+        EntityRegistry.registerEgg(EntityArcherBarbarian.class, PRIMARY_COLOR, SECONDARY_COLOR);
+        EntityRegistry.registerEgg(EntityChiefBarbarian.class, PRIMARY_COLOR, SECONDARY_COLOR);
 
         // Register mob Loot_Tables
         LootTableList.register(EntityBarbarian.LOOT);
@@ -175,5 +210,4 @@ public class CommonProxy implements IProxy
     {
         return null;
     }
-
 }
