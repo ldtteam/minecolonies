@@ -1210,7 +1210,7 @@ public class Colony implements IColony
 
         if (event.phase == TickEvent.Phase.START)
         {
-            if(!(this.citizens.size() < CITIZEN_MINIMUM_FOR_RAID))
+            if(this.citizens.size() >= CITIZEN_MINIMUM_FOR_RAID)
             {
                 BarbarianUtils.eventRaid(this);
             }
