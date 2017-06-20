@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 /**
  * Utils for the Barbarians
  */
-public class BarbarianUtils
+public final class BarbarianUtils
 {
     private static final String BARBARIAN = "minecolonies.Barbarian";
     private static final String ARCHER    = "minecolonies.ArcherBarbarian";

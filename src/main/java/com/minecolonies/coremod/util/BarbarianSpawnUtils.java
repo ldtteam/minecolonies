@@ -25,7 +25,7 @@ import java.util.stream.IntStream;
 /**
  * Utils for the Barbarians Spawning
  */
-public class BarbarianSpawnUtils
+public final class BarbarianSpawnUtils
 {
     /**
      * Values used for AI Task's Priorities
