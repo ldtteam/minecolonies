@@ -101,6 +101,8 @@ public final class TranslationConstants
     public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON            = "com.minecolonies.coremod.gui.workerHuts.retrieveOn";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF           = "com.minecolonies.coremod.gui.workerHuts.retrieveOff";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0                 = "com.minecolonies.coremod.gui.workerHuts.level0";
 
     private TranslationConstants()
     {

@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HOME_ASSIGN;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0;
 
 /**
  * Window for the home building.
@@ -70,16 +71,20 @@ public class WindowHomeBuilding extends AbstractWindowBuilding<BuildingHome.View
      */
     private void refreshView()
     {
-        final Button button = findPaneOfTypeByID(BUTTON_ASSIGN, Button.class);
+        final Button buttonAssign = findPaneOfTypeByID(BUTTON_ASSIGN, Button.class);
+        final Button buttonRemove = findPaneOfTypeByID(BUTTON_REMOVE, Button.class);
+
         final int sparePlaces = building.getBuildingLevel() - building.getResidents().size();
-        button.setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HOME_ASSIGN, sparePlaces));
+        buttonAssign.setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HOME_ASSIGN, sparePlaces));
         if (sparePlaces <= 0)
         {
-            button.disable();
+            buttonRemove.disable();
+            buttonAssign.disable();
         }
         else
         {
-            button.enable();
+            buttonRemove.enable();
+            buttonAssign.enable();
         }
         citizen.refreshElementPanes();
     }
@@ -119,7 +124,7 @@ public class WindowHomeBuilding extends AbstractWindowBuilding<BuildingHome.View
         {
             if (building.getBuildingLevel() == 0)
             {
-                LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().thePlayer, "com.minecolonies.coremod.gui.workerHuts.level0");
+                LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().thePlayer, COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0);
                 return;
             }
 

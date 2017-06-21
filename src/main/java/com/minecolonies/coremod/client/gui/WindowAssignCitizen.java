@@ -47,7 +47,12 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
     /**
      * Id of the citizen list in the GUI.
      */
-    private static final String CITIZEN_LIST = "unemployed";
+    private static final String CITIZEN_LIST = "unassigned";
+
+    /**
+     * Assign button of the gui.
+     */
+    private static final String CITIZEN_DONE = "done";
 
     /**
      * Link to the xml file of the window.
@@ -79,7 +84,7 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
     private final ColonyView colony;
 
     /**
-     * Constructor for the window when the player wants to hire a worker for a certain job.
+     * Constructor for the window when the player wants to assign a worker for a certain home building.
      *
      * @param c          the colony view.
      * @param buildingId the building position.
@@ -117,9 +122,10 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
         updateCitizens();
         citizenList.enable();
         citizenList.show();
-        //Creates a dataProvider for the unemployed citizenList.
+        //Creates a dataProvider for the homeless citizenList.
         citizenList.setDataProvider(new ScrollingList.DataProvider()
         {
+
             /**
              * The number of rows of the list.
              * @return the number.
@@ -144,6 +150,16 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
                 {
                     rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Label.class).setLabelText(citizen.getName());
                     rowPane.findPaneOfTypeByID(CITIZEN_JOB, Label.class).setLabelText(LanguageHandler.format(citizen.getJob()));
+
+                    final Button done = rowPane.findPaneOfTypeByID(CITIZEN_DONE, Button.class);
+                    if(colony.isManualHousing())
+                    {
+                        done.enable();
+                    }
+                    else
+                    {
+                        done.disable();
+                    }
                 }
             }
         });

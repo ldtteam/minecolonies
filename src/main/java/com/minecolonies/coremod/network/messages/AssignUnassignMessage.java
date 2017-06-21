@@ -110,16 +110,13 @@ public class AssignUnassignMessage extends AbstractMessage<AssignUnassignMessage
             }
 
             final CitizenData citizen = colony.getCitizen(message.citizenID);
-            if (message.assign)
+            if (message.assign && !((BuildingHome) building).isFull() && citizen.getHomeBuilding() == null)
             {
                 ((BuildingHome) building).addResident(citizen);
             }
-            else
+            else if(((BuildingHome) building).hasResident(citizen))
             {
-                if(((BuildingHome) building).hasResident(citizen))
-                {
-                    building.removeCitizen(citizen);
-                }
+                building.removeCitizen(citizen);
             }
         }
     }

@@ -167,12 +167,21 @@ public class BuildingHome extends AbstractBuildingHut
             {
                 addResident(citizen);
 
-                if (residents.size() >= getMaxInhabitants())
+                if (isFull())
                 {
                     break;
                 }
             }
         }
+    }
+
+    /**
+     * Checks if the building is full.
+     * @return true if so.
+     */
+    public boolean isFull()
+    {
+        return residents.size() >= getMaxInhabitants();
     }
 
     /**
