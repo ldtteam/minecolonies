@@ -583,8 +583,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param maxLevel the max tool lev	el.
      * @return true if found the tool.
      */
-    public boolean isToolInTileEntity(final TileEntityChest entity, final IToolType toolType, final int minLevel, final int maxLevel)
+    public boolean retrieveToolInTileEntity(final TileEntityChest entity, final IToolType toolType, final int minLevel, final int maxLevel)
     {
+        if (ToolType.NONE.equals(toolType))
+        {
+            return false;
+        }
         return InventoryFunctions.matchFirstInProviderWithAction(
                 entity,
                 stack -> ItemStackUtils.hasToolLevel(stack, toolType, minLevel, maxLevel),
@@ -669,7 +673,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             return true;
         }
-        if (isToolInHut(toolType, minimalLevel))
+        if (retrieveToolInHut(toolType, minimalLevel))
         {
             return false;
         }
@@ -736,13 +740,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param minimalLevel the minimal level the tool should have.
      * @return true if a stack of that type was found
      */
-    public boolean isToolInHut(final IToolType toolType, final int minimalLevel)
+    public boolean retrieveToolInHut(final IToolType toolType, final int minimalLevel)
     {
         @Nullable final AbstractBuildingWorker building = getOwnBuilding();
 
         if (building != null)
         {
-            if (isToolInTileEntity(building.getTileEntity(), toolType, minimalLevel, getOwnBuilding().getMaxToolLevel()))
+            if (retrieveToolInTileEntity(building.getTileEntity(), toolType, minimalLevel, getOwnBuilding().getMaxToolLevel()))
             {
                 return true;
             }
@@ -750,7 +754,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             for (final BlockPos pos : building.getAdditionalCountainers())
             {
                 final TileEntity entity = world.getTileEntity(pos);
-                if (entity instanceof TileEntityChest && isToolInTileEntity((TileEntityChest) entity, toolType, minimalLevel, getOwnBuilding().getMaxToolLevel()))
+                if (entity instanceof TileEntityChest && retrieveToolInTileEntity((TileEntityChest) entity, toolType, minimalLevel, getOwnBuilding().getMaxToolLevel()))
                 {
                     return true;
                 }
