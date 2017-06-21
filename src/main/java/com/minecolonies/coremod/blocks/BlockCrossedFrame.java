@@ -9,9 +9,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 /**
- * This block is used as a substitution block for the Builder.
- * Every solid block can be substituted by this block in schematics.
- * This helps make schematics independent from location and ground.
+ * Decorative blocks
  */
 public class BlockCrossedFrame extends Block
 {
@@ -32,8 +30,7 @@ public class BlockCrossedFrame extends Block
     private static final float RESISTANCE = 1F;
 
     /**
-     * Constructor for the Substitution block.
-     * sets the creative tab, as well as the resistance and the hardness.
+     * Constructor for the TimberFrame
      */
     public BlockCrossedFrame()
     {
