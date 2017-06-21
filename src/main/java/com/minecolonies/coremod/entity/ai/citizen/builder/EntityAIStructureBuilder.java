@@ -292,7 +292,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 for (final ItemStack stack : request)
                 {
                     final BuildingBuilder building = (BuildingBuilder) getOwnBuilding();
-                    if (ItemStackUtils.isEmpty(stack))
+                    if (!ItemStackUtils.isEmpty(stack))
                     {
                         building.addNeededResource(stack, 1);
                     }
