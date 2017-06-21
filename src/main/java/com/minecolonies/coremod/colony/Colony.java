@@ -97,7 +97,7 @@ public class Colony implements IColony
      * Values used for Raid event
      */
     private boolean hasRaidHappened = true;
-    private boolean raidWillHappen  = true;
+    private boolean raidWillHappen  = false;
 
     /**
      * Amount of ticks that pass/hour.
