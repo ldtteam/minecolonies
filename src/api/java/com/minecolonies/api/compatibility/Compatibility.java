@@ -112,6 +112,16 @@ public final class Compatibility
     }
 
     /**
+     * Calculate the tool level of the stack.
+     * @param stack the stack.
+     * @return the tool level
+     */
+    public static int getToolLevel(@NotNull final ItemStack stack)
+    {
+        return TinkersWeaponHelper.getToolLvl(stack);
+    }
+
+    /**
      * Check if Pams harvestcraft is installed.
      * @return true if so.
      */
