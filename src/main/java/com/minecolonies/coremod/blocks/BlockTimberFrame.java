@@ -58,7 +58,6 @@ public class BlockTimberFrame extends Block
      *
      * @return true
      */
-    //todo: remove once we no longer need to support this
     @SuppressWarnings("deprecation")
     @Override
     public boolean isOpaqueCube(final IBlockState state)
