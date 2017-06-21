@@ -33,9 +33,12 @@ public final class RecipeHandler
      * The amount of items returned by certain crafting recipes
      */
     private static final int ONE_FORTH_OF_A_STACK = 16;
+    
+    private static final int FOUR_BLOCKS = 4;
     /**
      * Private constructor to hide the implicit public one.
      */
+
     private RecipeHandler()
     {
     }
