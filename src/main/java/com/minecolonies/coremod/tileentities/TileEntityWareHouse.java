@@ -1,12 +1,11 @@
 package com.minecolonies.coremod.tileentities;
 
+import com.minecolonies.api.util.constant.IToolType;
+import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.*;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
-import com.minecolonies.coremod.util.InventoryFunctions;
-import com.minecolonies.coremod.util.InventoryUtils;
-import com.minecolonies.coremod.util.LanguageHandler;
-import com.minecolonies.coremod.util.Utils;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,10 +19,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Predicate;
 
-import static com.minecolonies.coremod.util.constants.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL;
 
 /**
  * Class which handles the tileEntity of our colonyBuildings.
@@ -34,6 +35,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      * Queue which contains the currentTasks to be executed by the deliveryman.
      */
     private final Queue<AbstractBuilding> taskQueue = new ConcurrentLinkedQueue<>();
+    private final Set<AbstractBuilding>   taskSet   = ConcurrentHashMap.newKeySet();
 
     /**
      * Wait this amount of ticks before checking again.
@@ -94,9 +96,8 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             {
                 if (i == index)
                 {
-                    if(buildingEntry.getValue() instanceof AbstractBuildingWorker
-                            && !taskQueue.contains(buildingEntry.getValue())
-                            && (buildingEntry.getValue()).needsAnything())
+                    if(!taskSet.contains(buildingEntry.getValue())
+                            && buildingEntry.getValue().needsAnything())
                     {
                         checkInWareHouse(buildingEntry.getValue(), true);
                     }
@@ -111,19 +112,21 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     {
         if (buildingEntry.isFoodNeeded())
         {
-            if (isInHut(itemStack -> !InventoryUtils.isItemStackEmpty(itemStack) && itemStack.getItem() instanceof ItemFood))
+            if (isInHut(itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemFood))
             {
                 if (addToList)
                 {
                     buildingEntry.setOnGoingDelivery(true);
                     taskQueue.add(buildingEntry);
+                    taskSet.add(buildingEntry);
                 }
                 return true;
             }
 
-            if (taskQueue.contains(buildingEntry))
+            if (taskSet.contains(buildingEntry))
             {
                 taskQueue.remove(buildingEntry);
+                taskSet.remove(buildingEntry);
                 buildingEntry.setOnGoingDelivery(false);
             }
         }
@@ -137,7 +140,14 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     @Nullable
     public AbstractBuilding getTask()
     {
-        return taskQueue.poll();
+        final AbstractBuilding task = taskQueue.poll();
+        if (task == null)
+        {
+            return null;
+        }
+
+        taskSet.remove(task);
+        return task;
     }
 
     /**
@@ -146,15 +156,15 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      * @param addToList if is in warehouse should add to the list?
      * @return true if has something in warehouse to deliver.
      */
-    public boolean checkInWareHouse(@NotNull final AbstractBuilding buildingEntry, boolean addToList)
+    public boolean checkInWareHouse(@NotNull final AbstractBuilding buildingEntry, final boolean addToList)
     {
         if(buildingEntry.areItemsNeeded())
         {
             for(final ItemStack stack : buildingEntry.getCopyOfNeededItems())
             {
-                if(stack == null
-                     || (deliveryManHasBuildingAsTask(buildingEntry)
-                           && addToList))
+                if(ItemStackUtils.isEmpty(stack)
+                        || (deliveryManHasBuildingAsTask(buildingEntry)
+                        && addToList))
                 {
                     continue;
                 }
@@ -165,20 +175,22 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                     {
                         buildingEntry.setOnGoingDelivery(true);
                         taskQueue.add(buildingEntry);
+                        taskSet.add(buildingEntry);
                     }
                     return true;
                 }
             }
 
-            if (taskQueue.contains(buildingEntry))
+            if (taskSet.contains(buildingEntry))
             {
                 taskQueue.remove(buildingEntry);
+                taskSet.remove(buildingEntry);
                 buildingEntry.setOnGoingDelivery(false);
             }
         }
 
-        final String tool = buildingEntry.getRequiredTool();
-        if(!tool.isEmpty())
+        final IToolType tool = buildingEntry.getNeedsTool();
+        if(tool != ToolType.NONE)
         {
             if(isToolInHut(tool, buildingEntry))
             {
@@ -186,17 +198,20 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                 {
                     buildingEntry.setOnGoingDelivery(true);
                     taskQueue.add(buildingEntry);
+                    taskSet.add(buildingEntry);
                 }
                 return true;
             }
 
-            if (taskQueue.contains(buildingEntry))
+            if (taskSet.contains(buildingEntry))
             {
                 taskQueue.remove(buildingEntry);
+                taskSet.remove(buildingEntry);
                 buildingEntry.setOnGoingDelivery(false);
             }
         }
-        return false;
+
+        return buildingEntry instanceof BuildingHome && checkInWareHouse((BuildingHome) buildingEntry, addToList);
     }
 
     /**
@@ -218,7 +233,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                     if(building instanceof BuildingDeliveryman)
                     {
                         return ((BuildingDeliveryman) building).getBuildingToDeliver() != null
-                                && ((BuildingDeliveryman) building).getBuildingToDeliver().getLocation() == buildingEntry.getLocation();
+                                && ((BuildingDeliveryman) building).getBuildingToDeliver().getLocation().equals(buildingEntry.getLocation());
                     }
                 }
             }
@@ -233,7 +248,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      */
     private boolean isInHut(@Nullable final ItemStack is)
     {
-        return is != null && isInHut(stack -> stack != null && is.isItemEqual(stack));
+        return !ItemStackUtils.isEmpty(is) && isInHut(stack -> !ItemStackUtils.isEmpty(stack) && is.isItemEqual(stack));
     }
 
     /**
@@ -253,7 +268,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
 
             for(final BlockPos pos : building.getAdditionalCountainers())
             {
-                @Nullable final TileEntity entity = worldObj.getTileEntity(pos);
+                @Nullable final TileEntity entity = getWorld().getTileEntity(pos);
                 if(entity instanceof TileEntityChest && isInTileEntity((TileEntityChest) entity, itemStackSelectionPredicate))
                 {
                     return true;
@@ -272,7 +287,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     @Nullable
     public BlockPos getPositionOfChestWithItemStack(@NotNull final ItemStack is)
     {
-        return getPositionOfChestWithItemStack(stack -> stack != null && is.isItemEqual(stack));
+        return getPositionOfChestWithItemStack(stack -> !ItemStackUtils.isEmpty(stack) && is.isItemEqual(stack));
     }
 
     /**
@@ -294,7 +309,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
 
             for(final BlockPos pos : building.getAdditionalCountainers())
             {
-                final TileEntity entity = worldObj.getTileEntity(pos);
+                final TileEntity entity = getWorld().getTileEntity(pos);
                 if(entity instanceof TileEntityChest && isInTileEntity((TileEntityChest) entity, itemStackSelectionPredicate))
                 {
                     return pos;
@@ -307,29 +322,26 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     /**
      * Check for a certain item and return the position of the chest containing it.
      * @param tool the tool to search for.
-     * @param minLevel the minLevel of the pickaxe
+     * @param minLevel the minLevel of the tool
      * @param requestingBuilding the building requesting it.
      * @return the position or null.
      */
-    public BlockPos getPositionOfChestWithTool(@NotNull final String tool,final int minLevel, @NotNull final AbstractBuilding requestingBuilding)
+    public BlockPos getPositionOfChestWithTool(@NotNull final IToolType tool, final int minLevel, @NotNull final AbstractBuilding requestingBuilding)
     {
         @Nullable final AbstractBuilding building = getBuilding();
 
         if(building != null)
         {
-            if((minLevel != -1
-                    && InventoryUtils.isPickaxeInProvider(building.getTileEntity(), minLevel, requestingBuilding.getBuildingLevel()))
-                    || InventoryUtils.isToolInProvider(building.getTileEntity(), tool, requestingBuilding.getBuildingLevel()))
+            if(InventoryUtils.isToolInProvider(building.getTileEntity(), tool, minLevel, requestingBuilding.getBuildingLevel()))
             {
                 return building.getLocation();
             }
 
             for(@NotNull final BlockPos pos : building.getAdditionalCountainers())
             {
-                final TileEntity entity = worldObj.getTileEntity(pos);
+                final TileEntity entity = getWorld().getTileEntity(pos);
                 if (entity instanceof TileEntityChest
-                        && ((minLevel != -1 && InventoryUtils.isPickaxeInProvider(entity, minLevel, requestingBuilding.getBuildingLevel()))
-                        || InventoryUtils.isToolInProvider(entity, tool, requestingBuilding.getBuildingLevel())))
+                        && InventoryUtils.isToolInProvider(entity, tool, minLevel, requestingBuilding.getBuildingLevel()))
                 {
                     return pos;
                 }
@@ -344,45 +356,24 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      * @param requestingBuilding the building requesting it.
      * @return true if a stack of that type was found
      */
-    private boolean isToolInHut(final String tool, @NotNull final AbstractBuilding requestingBuilding)
+    private boolean isToolInHut(final IToolType toolType, @NotNull final AbstractBuilding requestingBuilding)
     {
         @Nullable final AbstractBuilding building = getBuilding();
 
-        boolean hasItem;
         if(building != null)
         {
-            if(tool.equals(Utils.PICKAXE))
-            {
-                hasItem = InventoryUtils.isPickaxeInProvider(building.getTileEntity(), requestingBuilding.getNeededPickaxeLevel(), requestingBuilding.getBuildingLevel());
-            }
-            else
-            {
-                hasItem = InventoryUtils.isToolInProvider(building.getTileEntity(), tool, requestingBuilding.getBuildingLevel());
-            }
-
-            if(hasItem)
+            if(InventoryUtils.isToolInProvider(building.getTileEntity(), toolType, requestingBuilding.getNeededToolLevel(), requestingBuilding.getBuildingLevel()))
             {
                 return true;
             }
 
             for(final BlockPos pos : building.getAdditionalCountainers())
             {
-                @Nullable final TileEntity entity = worldObj.getTileEntity(pos);
-                if(entity instanceof TileEntityChest)
+                @Nullable final TileEntity entity = getWorld().getTileEntity(pos);
+                if(entity instanceof TileEntityChest
+                        && InventoryUtils.isToolInProvider(entity, toolType, requestingBuilding.getNeededToolLevel(), requestingBuilding.getBuildingLevel()))
                 {
-                    if(tool.equals(Utils.PICKAXE))
-                    {
-                        hasItem = InventoryUtils.isPickaxeInProvider(entity, requestingBuilding.getNeededPickaxeLevel(), requestingBuilding.getBuildingLevel());
-                    }
-                    else
-                    {
-                        hasItem = InventoryUtils.isToolInProvider(entity, tool, requestingBuilding.getBuildingLevel());
-                    }
-
-                    if(hasItem)
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
         }
@@ -399,27 +390,12 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      * @param itemStackSelectionPredicate the itemStack predicate.
      * @return true if found the stack.
      */
-    private boolean isInTileEntity(final TileEntityChest entity, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    private static boolean isInTileEntity(final TileEntityChest entity, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
         return InventoryFunctions
-                .matchFirstInProviderWithAction(
+                .matchFirstInProvider(
                         entity,
-                        itemStackSelectionPredicate,
-                        InventoryFunctions::doNothing);
-    }
-
-    @Override
-    public void readFromNBT(final NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
-    }
-
-    @NotNull
-    @Override
-    public NBTTagCompound writeToNBT(@NotNull final NBTTagCompound compound)
-    {
-        super.writeToNBT(compound);
-        return compound;
+                        itemStackSelectionPredicate);
     }
 
     /**
@@ -432,8 +408,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         for (int i = 0; i < new InvWrapper(inventoryCitizen).getSlots(); i++)
         {
             final ItemStack stack = inventoryCitizen.getStackInSlot(i);
-
-            if(stack == null || stack.getItem() == null || stack.stackSize == 0)
+            if(ItemStackUtils.isEmpty(stack))
             {
                 continue;
             }
@@ -463,7 +438,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
 
         for(@NotNull final BlockPos pos : getBuilding().getAdditionalCountainers())
         {
-            final TileEntity entity = worldObj.getTileEntity(pos);
+            final TileEntity entity = getWorld().getTileEntity(pos);
             if(entity instanceof TileEntityChest
                     && InventoryUtils.findFirstSlotInProviderWith(entity, stack.getItem(), stack.getItemDamage()) != -1
                     && InventoryUtils.getFirstOpenSlotFromProvider(entity) != -1)
@@ -486,7 +461,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     {
         for(@NotNull final BlockPos pos : getBuilding().getAdditionalCountainers())
         {
-            final TileEntity entity = worldObj.getTileEntity(pos);
+            final TileEntity entity = getWorld().getTileEntity(pos);
             if(entity instanceof TileEntityChest
                     && InventoryUtils.findFirstSlotInProviderWith(entity, stack.getItem(), -1) != -1
                     && InventoryUtils.getFirstOpenSlotFromProvider(entity) != -1)
@@ -508,7 +483,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         TileEntityChest emptiestChest = null;
         for(@NotNull final BlockPos pos : getBuilding().getAdditionalCountainers())
         {
-            final TileEntity entity = worldObj.getTileEntity(pos);
+            final TileEntity entity = getWorld().getTileEntity(pos);
             if(entity == null)
             {
                 getBuilding().removeContainerPosition(pos);

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
+import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.RandomPositionGenerator;
@@ -45,17 +46,18 @@ public class EntityAICitizenWander extends EntityAIBase
         {
             return false;
         }
-        Vec3d Vec3d = RandomPositionGenerator.findRandomTarget(citizen, 10, 7);
-        if (Vec3d == null)
+
+        Vec3d vec3d = RandomPositionGenerator.findRandomTarget(citizen, 10, 7);
+        if (vec3d == null)
         {
             return false;
         }
 
-        Vec3d = new Vec3d(Vec3d.xCoord, getValidHeight(Vec3d), Vec3d.zCoord);
+        vec3d = new Vec3d(vec3d.xCoord, getValidHeight(vec3d), vec3d.zCoord);
 
-        this.xPosition = Vec3d.xCoord;
-        this.yPosition = Vec3d.yCoord;
-        this.zPosition = Vec3d.zCoord;
+        this.xPosition = vec3d.xCoord;
+        this.yPosition = vec3d.yCoord;
+        this.zPosition = vec3d.zCoord;
 
         return true;
     }
@@ -90,14 +92,15 @@ public class EntityAICitizenWander extends EntityAIBase
             returnHeight = 0;
         }
 
-        while (returnHeight >= 1 && citizen.worldObj.isAirBlock(new BlockPos(MathHelper.floor_double(position.xCoord),
+        while (returnHeight >= 1 && CompatibilityUtils.getWorld(citizen).isAirBlock(new BlockPos(MathHelper.floor_double(position.xCoord),
                                                                               (int) returnHeight,
                                                                               MathHelper.floor_double(position.zCoord))))
         {
             returnHeight -= 1.0D;
         }
 
-        while (!citizen.worldObj.isAirBlock(new BlockPos(MathHelper.floor_double(position.xCoord), (int) returnHeight, MathHelper.floor_double(position.zCoord))))
+        while (!CompatibilityUtils.getWorld(citizen).isAirBlock(
+              new BlockPos(MathHelper.floor_double(position.xCoord), (int) returnHeight, MathHelper.floor_double(position.zCoord))))
         {
             returnHeight += 1.0D;
         }

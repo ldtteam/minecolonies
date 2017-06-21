@@ -1,8 +1,9 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.util.Log;
 import com.minecolonies.blockout.controls.Button;
+import com.minecolonies.blockout.controls.ButtonHandler;
 import com.minecolonies.blockout.views.Window;
-import com.minecolonies.coremod.util.Log;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -11,7 +12,7 @@ import java.util.function.Consumer;
 /**
  * Manage windows and their events.
  */
-public abstract class AbstractWindowSkeleton extends Window implements Button.Handler
+public abstract class AbstractWindowSkeleton extends Window implements ButtonHandler
 {
     @NotNull
     private final HashMap<String, Consumer<Button>> buttons;

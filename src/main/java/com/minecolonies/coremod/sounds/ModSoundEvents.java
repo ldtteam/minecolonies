@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.sounds;
 
-import com.minecolonies.coremod.lib.Constants;
+import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -33,6 +33,7 @@ public final class ModSoundEvents
         handlers.add(new FishermanSounds());
         handlers.add(new DeliverymanSounds());
         handlers.add(new CitizenSounds());
+        handlers.add(new FarmerSounds());
     }
 
     /**
@@ -63,6 +64,18 @@ public final class ModSoundEvents
         GameRegistry.register(DeliverymanSounds.Female.offToBed);
         GameRegistry.register(DeliverymanSounds.Female.generalPhrases);
         GameRegistry.register(DeliverymanSounds.Female.noises);
+
+        GameRegistry.register(FarmerSounds.Female.hostile);
+        GameRegistry.register(FarmerSounds.Female.saturationHigh);
+        GameRegistry.register(FarmerSounds.Female.saturationLow);
+        GameRegistry.register(FarmerSounds.Female.saturationVeryLow);
+        GameRegistry.register(FarmerSounds.Female.badWeather);
+        GameRegistry.register(FarmerSounds.Female.offToBed);
+        GameRegistry.register(FarmerSounds.Female.generalPhrases);
+        GameRegistry.register(FarmerSounds.Female.noises);
+        GameRegistry.register(FarmerSounds.Female.greeting);
+        GameRegistry.register(FarmerSounds.Female.farewell);
+        GameRegistry.register(FarmerSounds.Female.interaction);
 
         GameRegistry.register(CitizenSounds.Female.say);
         GameRegistry.register(CitizenSounds.Male.say);

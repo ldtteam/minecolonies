@@ -1,12 +1,16 @@
 package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
-import com.minecolonies.compatibility.Compatibility;
+import com.minecolonies.api.compatibility.Compatibility;
+import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.util.*;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.BuildingLumberjack;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.pathfinding.PathJobFindTree;
-import com.minecolonies.coremod.util.*;
+import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSapling;
 import net.minecraft.block.SoundType;
@@ -19,7 +23,6 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Objects;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
@@ -174,6 +177,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         );
         worker.setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
                 + CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma());
+        worker.setCanPickUpLoot(true);
     }
 
     /**
@@ -197,7 +201,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private AIState prepareForWoodcutting()
     {
-        if (checkForAxe())
+        if (checkForToolOrWeapon(ToolType.AXE))
         {
             return getState();
         }
@@ -241,9 +245,11 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private AIState findTree()
     {
+        final AbstractBuilding building = getOwnBuilding();
+
         if (pathResult == null || pathResult.treeLocation == null)
         {
-            pathResult = worker.getNavigator().moveToTree(SEARCH_RANGE + searchIncrement, 1.0D);
+            pathResult = worker.getNavigator().moveToTree(SEARCH_RANGE + searchIncrement, 1.0D, ((BuildingLumberjack) building).getTreesToCut());
             return getState();
         }
         if (pathResult.getPathReachesDestination())
@@ -287,7 +293,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private AIState chopWood()
     {
-        if (checkForAxe())
+        if (checkForToolOrWeapon(ToolType.AXE))
         {
             return IDLE;
         }
@@ -365,15 +371,14 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         if (isOnSapling())
         {
             @Nullable final BlockPos spawnPoint =
-                    Utils.scanForBlockNearPoint
-                            (world, workFrom, 1, 1, 1, 3,
-                                    Blocks.AIR,
-                                    Blocks.SNOW_LAYER,
-                                    Blocks.TALLGRASS,
-                                    Blocks.RED_FLOWER,
-                                    Blocks.YELLOW_FLOWER);
-            EntityUtils.setSpawnPoint(spawnPoint, worker);
-
+              Utils.scanForBlockNearPoint
+                      (world, workFrom, 1, 1, 1, 3,
+                        Blocks.AIR,
+                        Blocks.SNOW_LAYER,
+                        Blocks.TALLGRASS,
+                        Blocks.RED_FLOWER,
+                        Blocks.YELLOW_FLOWER);
+            WorkerUtil.setSpawnPoint(spawnPoint, worker);
         }
 
         if (job.tree.hasLogs())
@@ -610,7 +615,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private static boolean isStackSapling(@Nullable final ItemStack stack)
     {
-        return stack != null && stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).getBlock() instanceof BlockSapling;
+        return !ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).getBlock() instanceof BlockSapling;
     }
 
     /**
@@ -623,7 +628,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     {
         if (getItemsForPickUp() == null)
         {
-            searchForItems();
+            fillItemsList();
         }
 
         if (getItemsForPickUp() != null && !getItemsForPickUp().isEmpty())
@@ -677,6 +682,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private static boolean isStackLog(@Nullable final ItemStack stack)
     {
-        return stack != null && stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).getBlock().isWood(null, new BlockPos(0, 0, 0));
+        return !ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).getBlock().isWood(null, new BlockPos(0, 0, 0));
     }
 }

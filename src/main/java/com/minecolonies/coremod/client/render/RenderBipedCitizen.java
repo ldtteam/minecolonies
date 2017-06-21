@@ -28,6 +28,7 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         idToMaleModelMap.put(Model.LUMBERJACK, new ModelEntityLumberjackMale());
         idToMaleModelMap.put(Model.FARMER, new ModelEntityFarmerMale());
         idToMaleModelMap.put(Model.FISHERMAN, new ModelEntityFishermanMale());
+        idToMaleModelMap.put(Model.BAKER, new ModelEntityBakerMale());
 
         idToFemaleModelMap.put(Model.NOBLE, new ModelEntityCitizenFemaleNoble());
         idToFemaleModelMap.put(Model.ARISTOCRAT, new ModelEntityCitizenFemaleAristocrat());
@@ -39,6 +40,7 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         idToFemaleModelMap.put(Model.FISHERMAN, new ModelEntityFishermanFemale());
         idToFemaleModelMap.put(Model.ARCHER_GUARD, new ModelBiped());
         idToFemaleModelMap.put(Model.KNIGHT_GUARD, new ModelBiped());
+        idToFemaleModelMap.put(Model.BAKER, new ModelEntityBakerFemale());
     }
     /**
      * Renders model, see {@link RenderBiped}.
@@ -91,7 +93,8 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         FARMER("Farmer", 1),
         FISHERMAN("Fisherman", 1),
         ARCHER_GUARD("Archer", 1),
-        KNIGHT_GUARD("Knight", 1);
+        KNIGHT_GUARD("Knight", 1),
+        BAKER("Baker", 1);
 
         /**
          * String describing the citizen.

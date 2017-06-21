@@ -1,5 +1,11 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.colony.permissions.Player;
+import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.Label;
@@ -10,15 +16,14 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.WorkOrderView;
 import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
-import com.minecolonies.coremod.colony.permissions.Permissions;
-import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.network.messages.*;
-import com.minecolonies.coremod.util.BlockPosUtil;
-import com.minecolonies.coremod.util.LanguageHandler;
 import net.minecraft.block.Block;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.*;
 
 /**
@@ -178,7 +183,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * Id of the current specializations label in the GUI.
      */
-    private static final String HAPPYNESS_LABEL = "happiness";
+    private static final String HAPPINESS_LABEL = "happiness";
 
     /**
      * Id of the total citizens label in the GUI.
@@ -199,6 +204,36 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      * Id of the total deliverymen label in the GUI.
      */
     private static final String DELIVERY_MAN_LABEL = "deliverymen";
+
+    /**
+     * Id of the total miners label in the GUI.
+     */
+    private static final String MINERS_LABEL = "miners";
+
+    /**
+     * Id of the total fishermen label in the GUI.
+     */
+    private static final String FISHERMEN_LABEL = "fishermen";
+
+    /**
+     * Id of the total guards label in the GUI.
+     */
+    private static final String GUARDS_LABEL = "Guards";
+
+    /**
+     * Id of the total lumberjacks label in the GUI.
+     */
+    private static final String LUMBERJACKS_LABEL = "lumberjacks";
+
+    /**
+     * Id of the total farmers label in the GUI.
+     */
+    private static final String FARMERS_LABEL = "farmers";
+
+    /**
+     * Id of the total bakers label in the GUI.
+     */
+    private static final String BAKERS_LABEL = "bakers";
 
     /**
      * Id of the total assignee label in the GUI.
@@ -224,16 +259,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      * Link to the xml file of the window.
      */
     private static final String TOWNHALL_RESOURCE_SUFFIX = ":gui/windowTownHall.xml";
-
-    /**
-     * The builders job description string.
-     */
-    private static final String BUILDER_JOB = "com.minecolonies.coremod.job.Builder";
-
-    /**
-     * The deliverymen job description string.
-     */
-    private static final String DELIVERYMEN_JOB = "com.minecolonies.coremod.job.Deliveryman";
 
     /**
      * The button to go to the previous permission settings page.
@@ -343,26 +368,30 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * List of workOrders.
      */
-    private final        List<WorkOrderView> workOrders      = new ArrayList<>();
+    private final List<WorkOrderView> workOrders = new ArrayList<>();
+
     /**
      * The view of the current building.
      */
     private final BuildingTownHall.View townHall;
+
     /**
      * List of added users.
      */
     @NotNull
-    private final List<Permissions.Player> users       = new ArrayList<>();
+    private final List<Player> users = new ArrayList<>();
+
     /**
      * List of citizens.
      */
     @NotNull
-    private final List<CitizenDataView>    citizens    = new ArrayList<>();
+    private final List<CitizenDataView> citizens = new ArrayList<>();
+
     /**
      * Map of the pages.
      */
     @NotNull
-    private final Map<String, String>      tabsToPages = new HashMap<>();
+    private final Map<String, String> tabsToPages = new HashMap<>();
 
     /**
      * The button f the last tab -> will be filled later on.
@@ -437,6 +466,43 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         registerButton(BUTTON_REMOVE_BLOCK, this::removeBlock);
     }
 
+    /**
+     * Clears and resets all users.
+     */
+    private void updateUsers()
+    {
+        users.clear();
+        users.addAll(townHall.getColony().getPlayers().values());
+        users.sort(Comparator.comparing(Player::getRank, Rank::compareTo));
+    }
+
+    /**
+     * Clears and resets all citizens.
+     */
+    private void updateCitizens()
+    {
+        citizens.clear();
+        citizens.addAll(townHall.getColony().getCitizens().values());
+    }
+
+    /**
+     * Re-sorts the WorkOrders list according to the priorities inside the list.
+     */
+    private void sortWorkOrders()
+    {
+        workOrders.sort(Comparator.comparing(WorkOrderView::getPriority, Comparator.reverseOrder()));
+    }
+
+    /**
+     * Clears and resets all citizens.
+     */
+    private void updateWorkOrders()
+    {
+        workOrders.clear();
+        workOrders.addAll(townHall.getColony().getWorkOrders());
+        sortWorkOrders();
+    }
+
     private void removeBlock(final Button button)
     {
         final int row = freeBlocksList.getListElementIndexByPane(button);
@@ -504,8 +570,8 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             index = Integer.valueOf(((Label) pane).getLabelText());
         }
         final boolean trigger = LanguageHandler.format(ON).equals(button.getLabel());
-        final Permissions.Action action = Permissions.Action.values()[index];
-        final Permissions.Rank rank = Permissions.Rank.valueOf(actionsList.getParent().getID().toUpperCase());
+        final Action action = Action.values()[index];
+        final Rank rank = Rank.valueOf(actionsList.getParent().getID().toUpperCase(Locale.ENGLISH));
 
         MineColonies.getNetwork().sendToServer(new PermissionsMessage.Permission(townHall.getColony(), PermissionsMessage.MessageType.TOGGLE_PERMISSION, rank, action));
         townHall.getColony().getPermissions().togglePermission(rank, action);
@@ -594,35 +660,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     }
 
     /**
-     * Clears and resets all users.
-     */
-    private void updateUsers()
-    {
-        users.clear();
-        users.addAll(townHall.getColony().getPlayers().values());
-        users.sort(Comparator.comparing(Permissions.Player::getRank, Permissions.Rank::compareTo));
-    }
-
-    /**
-     * Clears and resets all citizens.
-     */
-    private void updateCitizens()
-    {
-        citizens.clear();
-        citizens.addAll(townHall.getColony().getCitizens().values());
-    }
-
-    /**
-     * Clears and resets all citizens.
-     */
-    private void updateWorkOrders()
-    {
-        workOrders.clear();
-        workOrders.addAll(townHall.getColony().getWorkOrders());
-        workOrders.sort((first, second) -> second.getPriority() > first.getPriority() ? 1 : (second.getPriority() < first.getPriority() ? -1 : 0));
-    }
-
-    /**
      * On Button click update the priority.
      *
      * @param button the clicked button.
@@ -649,7 +686,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                     MineColonies.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, false, workOrder.getPriority()));
                 }
 
-                workOrders.sort((first, second) -> second.getPriority() > first.getPriority() ? 1 : (second.getPriority() < first.getPriority() ? -1 : 0));
+                sortWorkOrders();
                 window.findPaneOfTypeByID(LIST_WORKORDER, ScrollingList.class).refreshElementPanes();
                 return;
             }
@@ -714,16 +751,40 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         int workers = 0;
         int builders = 0;
         int deliverymen = 0;
+        int miners = 0;
+        int fishermen = 0;
+        int guards = 0;
+        int lumberjacks = 0;
+        int farmers = 0;
+        int bakers = 0;
 
         for (@NotNull final CitizenDataView citizen : citizens)
         {
             switch (citizen.getJob())
             {
-                case BUILDER_JOB:
+                case COM_MINECOLONIES_COREMOD_JOB_BUILDER:
                     builders++;
                     break;
-                case DELIVERYMEN_JOB:
+                case COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN:
                     deliverymen++;
+                    break;
+                case COM_MINECOLONIES_COREMOD_JOB_MINER:
+                    miners++;
+                    break;
+                case COM_MINECOLONIES_COREMOD_JOB_FISHERMAN:
+                    fishermen++;
+                    break;
+                case COM_MINECOLONIES_COREMOD_JOB_LUMBERJACK:
+                    lumberjacks++;
+                    break;
+                case COM_MINECOLONIES_COREMOD_JOB_FARMER:
+                    farmers++;
+                    break;
+                case COM_MINECOLONIES_COREMOD_JOB_GUARD:
+                    guards++;
+                    break;
+                case COM_MINECOLONIES_COREMOD_JOB_BAKER:
+                    bakers++;
                     break;
                 case "":
                     break;
@@ -732,19 +793,35 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             }
         }
 
-        workers += deliverymen + builders;
+        workers += deliverymen + builders + miners + fishermen + lumberjacks + farmers + guards + bakers;
 
         final String numberOfCitizens =
           LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.totalCitizens", citizensSize, townHall.getColony().getMaxCitizens());
         final String numberOfUnemployed = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.unemployed", citizensSize - workers);
         final String numberOfBuilders = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.builders", builders);
         final String numberOfDeliverymen = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.deliverymen", deliverymen);
+        final String numberOfMiners = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.miners", miners);
+        final String numberOfFishermen = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.fishermen", fishermen);
+        final String numberOfGuards = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.Guards", guards);
+        final String numberOfLumberjacks = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.lumberjacks", lumberjacks);
+        final String numberOfFarmers = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.farmers", farmers);
+        final String numberOfBakers = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.bakers", bakers);
 
-        findPaneOfTypeByID(HAPPYNESS_LABEL, Label.class).setLabelText(Double.toString(building.getColony().getOverallHappiness()));
+        final DecimalFormat df = new DecimalFormat("#.#");
+        df.setRoundingMode(RoundingMode.CEILING);
+        final String roundedHappiness = df.format(building.getColony().getOverallHappiness());
+
+        findPaneOfTypeByID(HAPPINESS_LABEL, Label.class).setLabelText(roundedHappiness);
         findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText(numberOfCitizens);
         findPaneOfTypeByID(UNEMP_CITIZENS_LABEL, Label.class).setLabelText(numberOfUnemployed);
         findPaneOfTypeByID(BUILDERS_LABEL, Label.class).setLabelText(numberOfBuilders);
         findPaneOfTypeByID(DELIVERY_MAN_LABEL, Label.class).setLabelText(numberOfDeliverymen);
+        findPaneOfTypeByID(MINERS_LABEL, Label.class).setLabelText(numberOfMiners);
+        findPaneOfTypeByID(FISHERMEN_LABEL, Label.class).setLabelText(numberOfFishermen);
+        findPaneOfTypeByID(GUARDS_LABEL, Label.class).setLabelText(numberOfGuards);
+        findPaneOfTypeByID(LUMBERJACKS_LABEL, Label.class).setLabelText(numberOfLumberjacks);
+        findPaneOfTypeByID(FARMERS_LABEL, Label.class).setLabelText(numberOfFarmers);
+        findPaneOfTypeByID(BAKERS_LABEL, Label.class).setLabelText(numberOfBakers);
     }
 
     /**
@@ -764,9 +841,9 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final Permissions.Player player = users.get(index);
+                final Player player = users.get(index);
                 String rank = player.getRank().name();
-                rank = Character.toUpperCase(rank.charAt(0)) + rank.toLowerCase().substring(1);
+                rank = Character.toUpperCase(rank.charAt(0)) + rank.toLowerCase(Locale.ENGLISH).substring(1);
                 rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(player.getName());
                 rowPane.findPaneOfTypeByID("rank", Label.class).setLabelText(rank);
             }
@@ -784,14 +861,14 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             @Override
             public int getElementCount()
             {
-                return Permissions.Action.values().length - IGNORE_INDEX;
+                return Action.values().length - IGNORE_INDEX;
             }
 
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final int actionIndex = index <= IGNORE_INDEX ? index : (index + IGNORE_INDEX);
-                final Permissions.Action action = Permissions.Action.values()[actionIndex];
+                final Action action = Action.values()[actionIndex];
                 final String name = LanguageHandler.format(KEY_TO_PERMISSIONS + action.toString().toLowerCase());
 
                 if(name.contains(KEY_TO_PERMISSIONS))
@@ -800,7 +877,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 }
 
                 rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(name);
-                final boolean isTriggered = townHall.getColony().getPermissions().hasPermission(Permissions.Rank.valueOf(actionsList.getParent().getID().toUpperCase()), action);
+                final boolean isTriggered = townHall.getColony().getPermissions().hasPermission(Rank.valueOf(actionsList.getParent().getID().toUpperCase()), action);
                 rowPane.findPaneOfTypeByID("trigger", Button.class)
                         .setLabel(isTriggered ? LanguageHandler.format(ON)
                                 : LanguageHandler.format(OFF));
@@ -1020,8 +1097,8 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         final int row = userList.getListElementIndexByPane(button);
         if (row >= 0 && row < users.size())
         {
-            final Permissions.Player user = users.get(row);
-            if (user.getRank() != Permissions.Rank.OWNER)
+            final Player user = users.get(row);
+            if (user.getRank() != Rank.OWNER)
             {
                 MineColonies.getNetwork().sendToServer(new PermissionsMessage.RemovePlayer(townHall.getColony(), user.getID()));
             }
@@ -1038,7 +1115,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         final int row = userList.getListElementIndexByPane(button);
         if (row >= 0 && row < users.size())
         {
-            final Permissions.Player user = users.get(row);
+            final Player user = users.get(row);
 
             if (button.getID().equals(BUTTON_PROMOTE))
             {

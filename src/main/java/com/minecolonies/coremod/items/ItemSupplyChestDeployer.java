@@ -1,15 +1,16 @@
 package com.minecolonies.coremod.items;
 
+import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.BlockUtils;
+import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.Structures;
-import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
-import com.minecolonies.coremod.lib.Constants;
-import com.minecolonies.coremod.util.BlockUtils;
-import com.minecolonies.coremod.util.LanguageHandler;
-import com.minecolonies.coremod.util.Log;
 import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.block.BlockChest;
 import net.minecraft.entity.player.EntityPlayer;
@@ -117,7 +118,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
             final float hitY,
             final float hitZ)
     {
-        if (worldIn == null || playerIn == null || worldIn.isRemote || stack.stackSize == 0 || !isFirstPlacing(playerIn))
+        if (worldIn == null || playerIn == null || worldIn.isRemote || ItemStackUtils.isEmpty(stack) || !isFirstPlacing(playerIn))
         {
             return EnumActionResult.FAIL;
         }
@@ -126,7 +127,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         if (enumfacing != EnumFacing.DOWN)
         {
             spawnShip(worldIn, pos, enumfacing);
-            stack.stackSize--;
+            ItemStackUtils.changeSize(stack, -1 );
 
             playerIn.addStat(ModAchievements.achievementGetSupply);
 

@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.proxy;
 
-import com.minecolonies.coremod.lib.Constants;
+import com.minecolonies.api.util.constant.Constants;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import java.io.File;

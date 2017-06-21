@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.permissions.Permissions;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -91,10 +91,10 @@ public class WorkOrderChangeMessage extends AbstractMessage<WorkOrderChangeMessa
     public void messageOnServerThread(final WorkOrderChangeMessage message, final EntityPlayerMP player)
     {
         final Colony colony = ColonyManager.getColony(message.colonyId);
-        if (colony != null && colony.getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS))
+        if (colony != null && colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
         {
             //Verify player has permission to change this huts settings
-            if (!colony.getPermissions().hasPermission(player, Permissions.Action.MANAGE_HUTS))
+            if (!colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
             {
                 return;
             }

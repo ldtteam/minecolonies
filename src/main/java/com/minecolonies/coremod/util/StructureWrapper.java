@@ -1,7 +1,11 @@
 package com.minecolonies.coremod.util;
 
+import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.BlockUtils;
+import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.ModBlocks;
-import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.structures.helpers.StructureProxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
@@ -611,7 +615,7 @@ public final class StructureWrapper
 
         final ItemStack stack = BlockUtils.getItemStackFromBlockState(blockState);
 
-        if(stack != null)
+        if(!ItemStackUtils.isEmpty(stack))
         {
             return stack.getItem();
         }

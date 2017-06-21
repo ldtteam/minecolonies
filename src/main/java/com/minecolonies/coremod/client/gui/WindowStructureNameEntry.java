@@ -1,18 +1,19 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.controls.Button;
+import com.minecolonies.blockout.controls.ButtonHandler;
 import com.minecolonies.blockout.controls.TextField;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Structures;
-import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.structures.helpers.Settings;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Window for a town hall name entry.
  */
-public class WindowStructureNameEntry extends Window implements Button.Handler
+public class WindowStructureNameEntry extends Window implements ButtonHandler
 {
     private static final String BUTTON_DONE                    = "done";
     private static final String BUTTON_CANCEL                  = "cancel";

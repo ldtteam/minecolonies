@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.builder;
 
+import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockSolidSubstitution;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -7,13 +9,12 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
-import com.minecolonies.coremod.configuration.Configurations;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
-import com.minecolonies.coremod.util.*;
+import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockDoor;
@@ -39,8 +40,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
-import static com.minecolonies.coremod.util.constants.TranslationConstants.*;
 
 /**
  * AI class for the builder.
@@ -266,11 +268,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 if (entity instanceof EntityItemFrame)
                 {
                     final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
-                    if (stack != null)
+                    if (!ItemStackUtils.isEmpty(stack))
                     {
-                        stack.stackSize = 1;
+                        ItemStackUtils.setSize(stack, 1);
                         request.add(stack);
-                        request.add(new ItemStack(Items.ITEM_FRAME, 1, stack.getItemDamage()));
+                        request.add(new ItemStack(Items.ITEM_FRAME, 1));
                     }
                 }
                 else if (entity instanceof EntityArmorStand)
@@ -290,7 +292,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 for (final ItemStack stack : request)
                 {
                     final BuildingBuilder building = (BuildingBuilder) getOwnBuilding();
-                    if (stack != null && stack.getItem() != null)
+                    if (ItemStackUtils.isEmpty(stack))
                     {
                         building.addNeededResource(stack, 1);
                     }
@@ -409,7 +411,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             for (int i = 0; i < ((TileEntityLockable) tileEntity).getSizeInventory(); i++)
             {
                 final ItemStack stack = ((TileEntityLockable) tileEntity).getStackInSlot(i);
-                if (stack != null)
+                if (!ItemStackUtils.isEmpty(stack))
                 {
                     items.add(stack);
                 }
@@ -430,9 +432,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     {
         final AbstractBuildingWorker buildingWorker = getOwnBuilding();
 
-        if(stack == null || stack.getItem() == null)
+        if(ItemStackUtils.isEmpty(stack))
         {
-            return null;
+            return ItemStackUtils.EMPTY;
         }
         final BuildingBuilderResource resource = ((BuildingBuilder) buildingWorker).getNeededResources().get(stack.getUnlocalizedName());
         return resource == null ? stack : new ItemStack(resource.getItem(), resource.getAmount(), resource.getDamageValue());
@@ -546,9 +548,10 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
         for(final BlockPos pos: edges)
         {
-            final BlockPos basePos = BlockPosUtil.getFloor(pos, world);
+            final BlockPos basePos = world.getTopSolidOrLiquidBlock(pos);
             if (EntityUtils.checkForFreeSpace(world, basePos)
-                    && world.getBlockState(basePos.up()).getBlock() != Blocks.SAPLING)
+                    && world.getBlockState(basePos.up()).getBlock() != Blocks.SAPLING
+                    && world.getBlockState(basePos).getMaterial().isSolid())
             {
                 return basePos;
             }

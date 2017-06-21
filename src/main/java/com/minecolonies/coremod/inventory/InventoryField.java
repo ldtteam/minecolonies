@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.inventory;
 
+import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemSeeds;
@@ -133,15 +134,15 @@ public class InventoryField implements IInventory
     @Override
     public ItemStack decrStackSize(final int index, final int count)
     {
-        if (this.stackResult[index] == null)
+        if (ItemStackUtils.isEmpty(this.stackResult[index]))
         {
-            return null;
+            return ItemStackUtils.EMPTY;
         }
 
-        if (this.stackResult[index].stackSize <= count)
+        if (ItemStackUtils.getSize(this.stackResult[index]) <= count)
         {
             final ItemStack itemStack1 = this.stackResult[index];
-            this.stackResult[index] = null;
+            this.stackResult[index] = ItemStackUtils.EMPTY;
             this.markDirty();
             return itemStack1;
         }
@@ -149,9 +150,9 @@ public class InventoryField implements IInventory
         {
             @NotNull final ItemStack itemstack = this.stackResult[index].splitStack(count);
 
-            if (this.stackResult[index].stackSize == 0)
+            if (ItemStackUtils.isEmpty(this.stackResult[index]))
             {
-                this.stackResult[index] = null;
+                this.stackResult[index] = ItemStackUtils.EMPTY;
             }
 
             this.markDirty();
@@ -163,13 +164,13 @@ public class InventoryField implements IInventory
     @Override
     public ItemStack removeStackFromSlot(final int index)
     {
-        if (this.stackResult[index] == null)
+        if (ItemStackUtils.isEmpty(this.stackResult[index]))
         {
-            return null;
+            return ItemStackUtils.EMPTY;
         }
 
         final ItemStack itemstack = this.stackResult[index];
-        this.stackResult[index] = null;
+        this.stackResult[index] = ItemStackUtils.EMPTY;
         return itemstack;
     }
 
@@ -184,9 +185,9 @@ public class InventoryField implements IInventory
     {
         this.stackResult[index] = stack;
 
-        if (stack != null && stack.stackSize > this.getInventoryStackLimit())
+        if (!ItemStackUtils.isEmpty(stack) && ItemStackUtils.getSize(stack) > this.getInventoryStackLimit())
         {
-            stack.stackSize = this.getInventoryStackLimit();
+            ItemStackUtils.setSize(stack, this.getInventoryStackLimit());
         }
 
         this.markDirty();
@@ -239,7 +240,7 @@ public class InventoryField implements IInventory
     @Override
     public boolean isItemValidForSlot(final int index, @Nullable final ItemStack itemStack)
     {
-        return index == 0 && itemStack != null && itemStack.getItem() instanceof ItemSeeds;
+        return index == 0 && ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemSeeds;
     }
 
     /**
@@ -287,7 +288,7 @@ public class InventoryField implements IInventory
     {
         for (int i = 0; i < this.stackResult.length; ++i)
         {
-            this.stackResult[i] = null;
+            this.stackResult[i] = ItemStackUtils.EMPTY;
         }
     }
 
@@ -302,7 +303,7 @@ public class InventoryField implements IInventory
 
         for (int i = 0; i < this.stackResult.length; ++i)
         {
-            if (this.stackResult[i] != null)
+            if (!ItemStackUtils.isEmpty(stackResult[i]))
             {
                 @NotNull final NBTTagCompound nbttagcompound = new NBTTagCompound();
                 nbttagcompound.setByte(TAG_SLOT, (byte) i);

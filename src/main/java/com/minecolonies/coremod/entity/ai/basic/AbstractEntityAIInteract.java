@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
-import com.minecolonies.compatibility.Compatibility;
+import com.minecolonies.api.compatibility.Compatibility;
+import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.configuration.Configurations;
-import com.minecolonies.coremod.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
@@ -35,7 +35,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     /**
      * The amount of xp the entity gains per block mined.
      */
-    private static final double XP_PER_BLOCK         = 0.05D;
+    public static final double XP_PER_BLOCK         = 0.05D;
 
     /**
      * The percentage of time needed if we are one level higher.
@@ -155,7 +155,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         final ItemStack tool = worker.getHeldItemMainhand();
 
         //calculate fortune enchantment
-        final int fortune = Utils.getFortuneOf(tool);
+        final int fortune = ItemStackUtils.getFortuneOf(tool);
 
         //get all item drops
         final List<ItemStack> localItems = BlockPosUtil.getBlockDrops(world, blockToMine, fortune);
@@ -284,6 +284,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     /**
      * Search for all items around the worker.
      * and store them in the items list.
+     * @return the list of items.
      */
     public List<BlockPos> searchForItems()
     {

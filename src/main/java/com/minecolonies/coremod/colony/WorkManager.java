@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony;
 
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
-import com.minecolonies.coremod.util.Log;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -9,10 +8,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -79,13 +75,10 @@ public class WorkManager
     @Nullable
     public <W extends AbstractWorkOrder> W getWorkOrder(final int id, @NotNull final Class<W> type)
     {
-        try
+        final AbstractWorkOrder workOrder = getWorkOrder(id);
+        if (type.isInstance(workOrder))
         {
-            return type.cast(getWorkOrder(id));
-        }
-        catch (final ClassCastException exc)
-        {
-            Log.getLogger().catching(exc);
+            return type.cast(workOrder);
         }
 
         return null;
@@ -114,7 +107,7 @@ public class WorkManager
     {
         for (@NotNull final AbstractWorkOrder o : workOrders.values())
         {
-            if (!o.isClaimed() && type.isAssignableFrom(o.getClass()))
+            if (!o.isClaimed() && type.isInstance(o))
             {
                 return type.cast(o);
             }
@@ -132,7 +125,7 @@ public class WorkManager
      */
     public <W extends AbstractWorkOrder> List<W> getWorkOrdersOfType(@NotNull final Class<W> type)
     {
-        return workOrders.values().stream().filter(o -> type.isAssignableFrom(o.getClass())).map(type::cast).collect(Collectors.toList());
+        return workOrders.values().stream().filter(type::isInstance).map(type::cast).collect(Collectors.toList());
     }
 
     /**
@@ -253,7 +246,7 @@ public class WorkManager
             if ((event.world.getWorldTime() % WORK_ORDER_FULFILL_INCREMENT) == 0)
             {
                 workOrders.values().stream().filter(o -> !o.isClaimed())
-                  .sorted((first, second) -> second.getPriority() > first.getPriority() ? 1 : (second.getPriority() < first.getPriority() ? -1 : 0))
+                  .sorted(Comparator.comparingInt(AbstractWorkOrder::getPriority).reversed())
                   .forEach(o -> o.attemptToFulfill(colony));
             }
         }

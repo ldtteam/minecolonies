@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
@@ -13,11 +14,20 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_HAND;
+import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_MAXIMUM;
+
 /**
  * The abstract class for each worker building.
  */
 public abstract class AbstractBuildingWorker extends AbstractBuildingHut
 {
+    /**
+     * Minimal level to ask for wood tools. (WOOD_HUT_LEVEL + 1 == stone)
+     */
+    public static final int WOOD_HUT_LEVEL = 0;
+
     /**
      * Tag used to store the worker to nbt.
      */
@@ -113,6 +123,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
             {
                 tempCitizen.setLastJob(getJobName());
             }
+            setNeedsTool(ToolType.NONE, TOOL_LEVEL_HAND);
         }
 
         worker = citizen;
@@ -222,6 +233,25 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         {
             setWorker(null);
         }
+    }
+
+
+    /**
+     * Get the max tool level useable by the worker.
+     *
+     * @return the integer.
+     */
+    public int getMaxToolLevel()
+    {
+        if (getBuildingLevel()>=getMaxBuildingLevel())
+        {
+            return TOOL_LEVEL_MAXIMUM;
+        }
+        else if (getBuildingLevel() <= WOOD_HUT_LEVEL)
+        {
+            return TOOL_LEVEL_WOOD_OR_GOLD;
+        }
+        return getBuildingLevel()-WOOD_HUT_LEVEL;
     }
 
     /**

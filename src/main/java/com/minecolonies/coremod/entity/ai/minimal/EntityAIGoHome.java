@@ -1,20 +1,22 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
+import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.util.ChatSpamFilter;
-import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
-import net.minecraft.item.ItemTool;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * EntityCitizen go home AI.
@@ -48,7 +50,7 @@ public class EntityAIGoHome extends EntityAIBase
      *
      * @param citizen the citizen to assign to this task.
      */
-    public EntityAIGoHome(EntityCitizen citizen)
+    public EntityAIGoHome(final EntityCitizen citizen)
     {
         super();
         this.citizen = citizen;
@@ -94,7 +96,7 @@ public class EntityAIGoHome extends EntityAIBase
     @Override
     public boolean continueExecuting()
     {
-        return !citizen.getNavigator().noPath() && citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP;
+        return !citizen.getNavigator().noPath() && (citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP || isCitizenStarving());
     }
 
     @Override
@@ -140,7 +142,7 @@ public class EntityAIGoHome extends EntityAIBase
                 if (slot != -1)
                 {
                     final ItemStack stack = home.getTileEntity().getStackInSlot(slot);
-                    if (!InventoryUtils.isItemStackEmpty(stack))
+                    if (!ItemStackUtils.isEmpty(stack))
                     {
                         final int slotToSet = InventoryUtils.getFirstOpenSlotFromItemHandler(new InvWrapper(citizen.getInventoryCitizen()));
 
@@ -149,17 +151,16 @@ public class EntityAIGoHome extends EntityAIBase
                             InventoryUtils.forceItemStackToItemHandler(
                                     new InvWrapper(citizen.getInventoryCitizen()),
                                     new ItemStack(stack.getItem(), 1),
-                                    stack1 -> !InventoryUtils.isItemStackEmpty(stack) && (stack.getItem() instanceof ItemTool
-                                            || stack.getItem() instanceof ItemSword));
+                                    stack1 -> citizen.getWorkBuilding() == null || !citizen.getWorkBuilding().neededForWorker(stack1));
                         }
                         else
                         {
                             citizen.getInventoryCitizen().setInventorySlotContents(slotToSet, new ItemStack(stack.getItem(), 1));
                         }
                         tookFood = true;
-                        stack.stackSize--;
+                        ItemStackUtils.changeSize(stack, -1);
                     }
-                    ((BuildingHome) home).setFoodNeeded(false);
+                    ((BuildingHome) home).checkIfFoodNeeded();
                 }
             }
             if (!tookFood)
@@ -175,19 +176,19 @@ public class EntityAIGoHome extends EntityAIBase
         {
             if (currentSaturation <= 0)
             {
-                chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.saturation.0");
+                chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_SATURATION_0);
             }
             else if (currentSaturation < EntityCitizen.LOW_SATURATION)
             {
-                chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.saturation.3");
+                chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_SATURATION_3);
             }
             else if (currentSaturation < EntityCitizen.AVERAGE_SATURATION)
             {
-                chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.saturation.5");
+                chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_SATURATION_5);
             }
             else if (currentSaturation < EntityCitizen.HIGH_SATURATION)
             {
-                chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.saturation.7");
+                chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_SATURATION_7);
             }
         }
 
@@ -212,7 +213,7 @@ public class EntityAIGoHome extends EntityAIBase
 
         if (chance <= 1 && citizen.getWorkBuilding() != null && citizen.getColonyJob() != null)
         {
-            SoundUtils.playSoundAtCitizenWithChance(citizen.worldObj, citizen.getPosition(), citizen.getColonyJob().getBedTimeSound(), 1);
+            SoundUtils.playSoundAtCitizenWithChance(CompatibilityUtils.getWorld(citizen), citizen.getPosition(), citizen.getColonyJob().getBedTimeSound(), 1);
             //add further workers as soon as available.
         }
     }

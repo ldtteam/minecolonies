@@ -1,14 +1,15 @@
 package com.minecolonies.coremod.colony;
 
+import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
-import com.minecolonies.coremod.util.BlockPosUtil;
-import com.minecolonies.coremod.util.Log;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -270,7 +271,7 @@ public class CitizenData
         female = rand.nextBoolean();
         name = generateName(rand);
 
-        textureId = entity.worldObj.rand.nextInt(Integer.MAX_VALUE);
+        textureId = CompatibilityUtils.getWorld(entity).rand.nextInt(Integer.MAX_VALUE);
         health = entity.getHealth();
         maxHealth = entity.getMaxHealth();
         experience = 0;
@@ -584,18 +585,16 @@ public class CitizenData
     @Nullable
     public <J extends AbstractJob> J getJob(@NotNull final Class<J> type)
     {
-        try
+        if (type.isInstance(job))
         {
             return type.cast(job);
         }
-        catch (final ClassCastException ignored)
-        {
-            return null;
-        }
+
+        return null;
     }
 
     /**
-     * Writes the citiizen data to an NBT-compound.
+     * Writes the citizen data to an NBT-compound.
      *
      * @param compound NBT-Tag compound.
      */

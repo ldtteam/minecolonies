@@ -1,16 +1,16 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
-import com.minecolonies.coremod.configuration.Configurations;
-import com.minecolonies.coremod.util.Log;
+import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.Log;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.pathfinding.Path;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +26,6 @@ import java.util.concurrent.*;
 public final class Pathfinding
 {
     private static final BlockingQueue<Runnable> jobQueue = new LinkedBlockingDeque<>();
-    private static final ResourceLocation        TEXTURE  = new ResourceLocation("textures/gui/widgets.png");
     private static final ThreadPoolExecutor executor;
     static
     {
@@ -66,15 +65,15 @@ public final class Pathfinding
         final double dy = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * frame;
         final double dz = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * frame;
 
-        GL11.glPushMatrix();
-        GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-        GL11.glTranslated(-dx, -dy, -dz);
+        GlStateManager.pushMatrix();
+        GlStateManager.pushAttrib();
+        GlStateManager.translate(-dx, -dy, -dz);
 
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glDisable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_LIGHTING);
-        GL11.glEnable(GL11.GL_CULL_FACE);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GlStateManager.disableTexture2D();
+        GlStateManager.disableBlend();
+        GlStateManager.disableLighting();
+        GlStateManager.enableCull();
+        GlStateManager.enableDepth();
 
         final Set<Node> debugNodesNotVisited;
         final Set<Node> debugNodesVisited;
@@ -91,20 +90,17 @@ public final class Pathfinding
         {
             for (@NotNull final Node n : debugNodesNotVisited)
             {
-                debugDrawNode(n, (byte) 255, (byte) 0, (byte) 0);
+                debugDrawNode(n, 1.0F, 0F, 0F);
             }
 
             for (@NotNull final Node n : debugNodesVisited)
             {
-                debugDrawNode(n, (byte) 0, (byte) 0, (byte) 255);
+                debugDrawNode(n, 0F, 0F, 1.0F);
             }
 
-            if (debugNodesPath != null)
+            for (@NotNull final Node n : debugNodesPath)
             {
-                for (@NotNull final Node n : debugNodesPath)
-                {
-                    debugDrawNode(n, (byte) 0, (byte) 255, (byte) 0);
-                }
+                debugDrawNode(n, 0F, 1.0F, 0F);
             }
         }
         catch (final ConcurrentModificationException exc)
@@ -112,20 +108,15 @@ public final class Pathfinding
             Log.getLogger().catching(exc);
         }
 
-        GL11.glPopAttrib();
-        GL11.glPopMatrix();
+        GlStateManager.popAttrib();
+        GlStateManager.popMatrix();
     }
 
     @SideOnly(Side.CLIENT)
-    private static void debugDrawNode(@NotNull final Node n, final byte r, final byte g, final byte b)
+    private static void debugDrawNode(@NotNull final Node n, final float r, final float g, final float b)
     {
-        GL11.glPushMatrix();
-        GL11.glTranslated((double) n.pos.getX() + 0.375, (double) n.pos.getY() + 0.375, (double) n.pos.getZ() + 0.375);
-
-        final float f = 1.6F;
-        final float f1 = (float) (0.016666668D * f / 2);
-
-        //  Nameplate
+        GlStateManager.pushMatrix();
+        GlStateManager.translate((double) n.pos.getX() + 0.375, (double) n.pos.getY() + 0.375, (double) n.pos.getZ() + 0.375);
 
         final Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
         final double dx = n.pos.getX() - entity.posX;
@@ -133,111 +124,122 @@ public final class Pathfinding
         final double dz = n.pos.getZ() - entity.posZ;
         if (Math.sqrt(dx * dx + dy * dy + dz * dz) <= 5D)
         {
-            renderDebugText(n, f1);
+            renderDebugText(n);
         }
 
-        GL11.glScaled(0.25, 0.25, 0.25);
+        GlStateManager.scale(0.25D, 0.25D, 0.25D);
 
-        GL11.glBegin(GL11.GL_QUADS);
+        final Tessellator tessellator = Tessellator.getInstance();
+        final VertexBuffer vertexBuffer = tessellator.getBuffer();
+        vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+        GlStateManager.color(r, g, b);
 
-        GL11.glColor3ub(r, g, b);
+        //  X+
+        vertexBuffer.pos(1.0, 0.0, 0.0).endVertex();
+        vertexBuffer.pos(1.0, 1.0, 0.0).endVertex();
+        vertexBuffer.pos(1.0, 1.0, 1.0).endVertex();
+        vertexBuffer.pos(1.0, 0.0, 1.0).endVertex();
 
-        //  X+ Facing
-        GL11.glVertex3d(1.0, 0.0, 0.0);
-        GL11.glVertex3d(1.0, 1.0, 0.0);
-        GL11.glVertex3d(1.0, 1.0, 1.0);
-        GL11.glVertex3d(1.0, 0.0, 1.0);
-
-        //  X- Facing
-        GL11.glVertex3d(0.0, 0.0, 1.0);
-        GL11.glVertex3d(0.0, 1.0, 1.0);
-        GL11.glVertex3d(0.0, 1.0, 0.0);
-        GL11.glVertex3d(0.0, 0.0, 0.0);
+        //  X-
+        vertexBuffer.pos(0.0, 0.0, 1.0).endVertex();
+        vertexBuffer.pos(0.0, 1.0, 1.0).endVertex();
+        vertexBuffer.pos(0.0, 1.0, 0.0).endVertex();
+        vertexBuffer.pos(0.0, 0.0, 0.0).endVertex();
 
         //  Z-
-        GL11.glVertex3d(0.0, 0.0, 0.0);
-        GL11.glVertex3d(0.0, 1.0, 0.0);
-        GL11.glVertex3d(1.0, 1.0, 0.0);
-        GL11.glVertex3d(1.0, 0.0, 0.0);
+        vertexBuffer.pos(0.0, 0.0, 0.0).endVertex();
+        vertexBuffer.pos(0.0, 1.0, 0.0).endVertex();
+        vertexBuffer.pos(1.0, 1.0, 0.0).endVertex();
+        vertexBuffer.pos(1.0, 0.0, 0.0).endVertex();
 
         //  Z+
-        GL11.glVertex3d(1.0, 0.0, 1.0);
-        GL11.glVertex3d(1.0, 1.0, 1.0);
-        GL11.glVertex3d(0.0, 1.0, 1.0);
-        GL11.glVertex3d(0.0, 0.0, 1.0);
+        vertexBuffer.pos(1.0, 0.0, 1.0).endVertex();
+        vertexBuffer.pos(1.0, 1.0, 1.0).endVertex();
+        vertexBuffer.pos(0.0, 1.0, 1.0).endVertex();
+        vertexBuffer.pos(0.0, 0.0, 1.0).endVertex();
 
         //  Y+
-        GL11.glVertex3d(1.0, 1.0, 1.0);
-        GL11.glVertex3d(1.0, 1.0, 0.0);
-        GL11.glVertex3d(0.0, 1.0, 0.0);
-        GL11.glVertex3d(0.0, 1.0, 1.0);
+        vertexBuffer.pos(1.0, 1.0, 1.0).endVertex();
+        vertexBuffer.pos(1.0, 1.0, 0.0).endVertex();
+        vertexBuffer.pos(0.0, 1.0, 0.0).endVertex();
+        vertexBuffer.pos(0.0, 1.0, 1.0).endVertex();
 
         //  Y-
-        GL11.glVertex3d(0.0, 0.0, 1.0);
-        GL11.glVertex3d(0.0, 0.0, 0.0);
-        GL11.glVertex3d(1.0, 0.0, 0.0);
-        GL11.glVertex3d(1.0, 0.0, 1.0);
+        vertexBuffer.pos(0.0, 0.0, 1.0).endVertex();
+        vertexBuffer.pos(0.0, 0.0, 0.0).endVertex();
+        vertexBuffer.pos(1.0, 0.0, 0.0).endVertex();
+        vertexBuffer.pos(1.0, 0.0, 1.0).endVertex();
 
-        GL11.glEnd();
+        tessellator.draw();
 
         if (n.parent != null)
         {
-            GL11.glBegin(GL11.GL_LINES);
-            GL11.glColor3f(0.75F, 0.75F, 0.75F);
-
             final double pdx = n.parent.pos.getX() - n.pos.getX() + 0.125;
             final double pdy = n.parent.pos.getY() - n.pos.getY() + 0.125;
             final double pdz = n.parent.pos.getZ() - n.pos.getZ() + 0.125;
 
-            GL11.glVertex3d(0.5, 0.5, 0.5);
-            GL11.glVertex3d(pdx / 0.25, pdy / 0.25, pdz / 0.25);
-
-            GL11.glEnd();
+            vertexBuffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
+            vertexBuffer.pos(0.5D, 0.5D, 0.5D).color(0.75F, 0.75F, 0.75F, 1.0F).endVertex();
+            vertexBuffer.pos(pdx / 0.25, pdy / 0.25, pdz / 0.25).color(0.75F, 0.75F, 0.75F, 1.0F).endVertex();
+            tessellator.draw();
         }
 
-        GL11.glPopMatrix();
+        GlStateManager.popMatrix();
     }
 
     @SideOnly(Side.CLIENT)
-    private static void renderDebugText(@NotNull final Node n, final float f1)
+    private static void renderDebugText(@NotNull final Node n)
     {
         final String s1 = String.format("F: %.3f [%d]", n.getCost(), n.getCounterAdded());
         final String s2 = String.format("G: %.3f [%d]", n.getScore(), n.getCounterVisited());
         final FontRenderer fontrenderer = Minecraft.getMinecraft().fontRendererObj;
-        GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-        GL11.glPushMatrix();
-        GL11.glTranslatef(0.0F, 0.75F, 0.0F);
-        GL11.glNormal3f(0.0F, 1.0F, 0.0F);
+        GlStateManager.pushAttrib();
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(0.0F, 0.75F, 0.0F);
+        GlStateManager.glNormal3f(0.0F, 1.0F, 0.0F);
 
         final RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
-        GL11.glRotatef(-renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
-        GL11.glRotatef(renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
-        GL11.glScalef(-f1, -f1, f1);
-        GL11.glTranslatef(0.0F, (float) (0.25D / f1), 0.0F);
-        GL11.glDepthMask(false);
+        GlStateManager.rotate(-renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
+        GlStateManager.rotate(renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
+        GlStateManager.scale(-0.014F, -0.014F, 0.014F);
+        GlStateManager.translate(0.0F, 18F, 0.0F);
 
-        final Tessellator tessellator = Tessellator.getInstance();
-        final VertexBuffer VertexBuffer = tessellator.getBuffer();
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GlStateManager.depthMask(false);
+        GlStateManager.disableDepth();
 
-        VertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+        GlStateManager.enableBlend();
+        GlStateManager.tryBlendFuncSeparate(
+                GlStateManager.SourceFactor.SRC_ALPHA,
+                GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
+                GlStateManager.SourceFactor.ONE,
+                GlStateManager.DestFactor.ZERO);
+        GlStateManager.disableTexture2D();
+
         final int i = Math.max(fontrenderer.getStringWidth(s1), fontrenderer.getStringWidth(s2)) / 2;
 
-        //that should set the colors correctly
-        VertexBuffer.pos((double) (-i - 1), -5.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
-        VertexBuffer.pos((double) (-i - 1), 12.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
-        VertexBuffer.pos((double) (i + 1), 12.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
-        VertexBuffer.pos((double) (i + 1), -5.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
+        final Tessellator tessellator = Tessellator.getInstance();
+        final VertexBuffer vertexBuffer = tessellator.getBuffer();
+        vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        vertexBuffer.pos((double) (-i - 1), -5.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
+        vertexBuffer.pos((double) (-i - 1), 12.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
+        vertexBuffer.pos((double) (i + 1), 12.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
+        vertexBuffer.pos((double) (i + 1), -5.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
         tessellator.draw();
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_BLEND);
-        Minecraft.getMinecraft().renderEngine.bindTexture(TEXTURE);
-        GL11.glDepthMask(true);
-        GL11.glTranslatef(0.0F, -5F, 0.0F);
-        fontrenderer.drawString(s1, -fontrenderer.getStringWidth(s1) / 2, 0, 553648127);
-        GL11.glTranslatef(0.0F, 8F, 0.0F);
-        fontrenderer.drawString(s2, -fontrenderer.getStringWidth(s2) / 2, 0, 553648127);
-        GL11.glPopMatrix();
-        GL11.glPopAttrib();
+        GlStateManager.enableTexture2D();
+
+        GlStateManager.translate(0.0F, -5F, 0.0F);
+        fontrenderer.drawString(s1, -fontrenderer.getStringWidth(s1) / 2, 0, 0xFFFFFFFF);
+        GlStateManager.translate(0.0F, 8F, 0.0F);
+        fontrenderer.drawString(s2, -fontrenderer.getStringWidth(s2) / 2, 0, 0xFFFFFFFF);
+
+        GlStateManager.enableDepth();
+        GlStateManager.depthMask(true);
+        GlStateManager.translate(0.0F, -8F, 0.0F);
+        fontrenderer.drawString(s1, -fontrenderer.getStringWidth(s1) / 2, 0, 0xFFFFFFFF);
+        GlStateManager.translate(0.0F, 8F, 0.0F);
+        fontrenderer.drawString(s2, -fontrenderer.getStringWidth(s2) / 2, 0, 0xFFFFFFFF);
+
+        GlStateManager.popMatrix();
+        GlStateManager.popAttrib();
     }
 }

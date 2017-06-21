@@ -25,11 +25,7 @@ public enum AIState
     /**
      * The ai needs one of the tools.
      */
-    NEEDS_SHOVEL,
-    NEEDS_AXE,
-    NEEDS_HOE,
-    NEEDS_PICKAXE,
-    NEEDS_WEAPON,
+    NEEDS_TOOL,
     /**
      * Inventory has to be dumped.
      */
@@ -190,16 +186,6 @@ public enum AIState
     FARMER_HARVEST,
 
     /**
-     * Work field.
-     */
-    FARMER_WORK,
-
-    /**
-     * Initialize field.
-     */
-    FARMER_INITIALIZE,
-
-    /**
      * Looks at the field.
      */
     FARMER_OBSERVE,
@@ -265,5 +251,30 @@ public enum AIState
     /**
      * Dump inventory over chests in warehouse.
      */
-    DUMPING;
+    DUMPING,
+
+ /*
+###Baker###
+    */
+
+    /**
+     * Knead the dough.
+     */
+    BAKER_KNEADING,
+
+    /**
+     * Bake the dough.
+     */
+    BAKER_BAKING,
+
+    /**
+     * Finish up the product.
+     */
+    BAKER_FINISHING,
+
+    /**
+     * Take the product out of the oven.
+     */
+    BAKER_TAKE_OUT_OF_OVEN
+
 }

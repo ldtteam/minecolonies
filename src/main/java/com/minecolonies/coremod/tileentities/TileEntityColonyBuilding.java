@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.tileentities;
 
+import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.permissions.Permissions;
-import com.minecolonies.coremod.util.Log;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -129,11 +129,11 @@ public class TileEntityColonyBuilding extends TileEntityChest
      */
     private void updateColonyReferences()
     {
-        if (colony == null && worldObj != null)
+        if (colony == null && getWorld() != null)
         {
             if (colonyId == 0)
             {
-                colony = ColonyManager.getColony(worldObj, this.getPos());
+                colony = ColonyManager.getColony(getWorld(), this.getPos());
             }
             else
             {
@@ -143,7 +143,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
             if (colony == null)
             {
                 //we tried to update the colony it is still missing... so we...
-                if (worldObj.isRemote)
+                if (getWorld().isRemote)
                 {
                     /*
                      * It's most probably previewed building, please don't spam it here.
@@ -154,7 +154,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
                     //log on the server
                     Log.getLogger()
                       .warn(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] had colony.",
-                        worldObj.getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ()));
+                        getWorld().getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ()));
                 }
             }
         }
@@ -162,7 +162,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
         if (building == null && colony != null)
         {
             building = colony.getBuilding(getPosition());
-            if (building != null && (worldObj == null || !worldObj.isRemote))
+            if (building != null && (getWorld() == null || !getWorld().isRemote))
             {
                 building.setTileEntity(this);
             }
@@ -174,9 +174,9 @@ public class TileEntityColonyBuilding extends TileEntityChest
     {
         super.update();
 
-        if (!worldObj.isRemote && colonyId == 0)
+        if (!getWorld().isRemote && colonyId == 0)
         {
-            final Colony tempColony = ColonyManager.getColony(worldObj, this.getPosition());
+            final Colony tempColony = ColonyManager.getColony(getWorld(), this.getPosition());
             if (tempColony != null)
             {
                 colonyId = tempColony.getID();
@@ -290,7 +290,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
     public boolean hasAccessPermission(final EntityPlayer player)
     {
         //TODO This is called every tick the GUI is open. Is that bad?
-        return building == null || building.getColony().getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS);
+        return building == null || building.getColony().getPermissions().hasPermission(player, Action.ACCESS_HUTS);
     }
 
     /**

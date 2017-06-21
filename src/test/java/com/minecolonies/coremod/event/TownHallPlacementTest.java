@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.event;
 
+import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.permissions.Permissions;
@@ -86,7 +87,7 @@ public class TownHallPlacementTest extends AbstractMockStaticsTest
         when(colony.hasTownHall()).thenReturn(false);
         when(colony.getPermissions()).thenReturn(permissions);
         when(permissions.isColonyMember(player)).thenReturn(true);
-        when(permissions.hasPermission(player, Permissions.Action.PLACE_HUTS)).thenReturn(false);
+        when(permissions.hasPermission(player, Action.PLACE_HUTS)).thenReturn(false);
 
         Assert.assertFalse(EventHandler.onTownHallPlaced(world, player, PLACE_POS));
 
@@ -103,7 +104,7 @@ public class TownHallPlacementTest extends AbstractMockStaticsTest
         when(colony.hasTownHall()).thenReturn(false);
         when(colony.getPermissions()).thenReturn(permissions);
         when(permissions.isColonyMember(player)).thenReturn(true);
-        when(permissions.hasPermission(player, Permissions.Action.PLACE_HUTS)).thenReturn(true);
+        when(permissions.hasPermission(player, Action.PLACE_HUTS)).thenReturn(true);
 
         Assert.assertTrue(EventHandler.onTownHallPlaced(world, player, PLACE_POS));
 

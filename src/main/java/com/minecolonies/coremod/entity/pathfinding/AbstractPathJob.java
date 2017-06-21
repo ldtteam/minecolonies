@@ -1,11 +1,13 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
+import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.BlockUtils;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.BlockConstructionTape;
 import com.minecolonies.coremod.blocks.BlockConstructionTapeCorner;
 import com.minecolonies.coremod.blocks.BlockHutField;
-import com.minecolonies.coremod.configuration.Configurations;
-import com.minecolonies.coremod.util.BlockUtils;
-import com.minecolonies.coremod.util.Log;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -51,17 +53,17 @@ public abstract class AbstractPathJob implements Callable<Path>
     /**
      * Additional cost of jumping and dropping - base 1.
      */
-    private static final double JUMP_DROP_COST = 1.1D;
+    private static final double JUMP_DROP_COST = 2.5D;
 
     /**
      * Cost improvement of paths - base 1.
      */
-    private static final double ON_PATH_COST = 0.75D;
+    private static final double ON_PATH_COST = 0.5D;
 
     /**
      * Additional cost of swimming - base 1.
      */
-    private static final double SWIM_COST       = 5D;
+    private static final double SWIM_COST = 10D;
 
     /**
      * Distance which is considered to be too close to a fence.
@@ -99,7 +101,6 @@ public abstract class AbstractPathJob implements Callable<Path>
     private final Map<Integer, Node> nodesVisited                 = new HashMap<>();
     //  Debug Rendering
     protected     boolean            debugDrawEnabled             = false;
-    protected     int                debugSleepMs                 = 0;
     @Nullable
     protected     Set<Node>          debugNodesVisited            = null;
     @Nullable
@@ -155,7 +156,6 @@ public abstract class AbstractPathJob implements Callable<Path>
         if (Configurations.pathfindingDebugDraw)
         {
             debugDrawEnabled = true;
-            debugSleepMs = 0;
             debugNodesVisited = new HashSet<>();
             debugNodesNotVisited = new HashSet<>();
             debugNodesPath = new HashSet<>();
@@ -181,7 +181,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         @NotNull final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(MathHelper.floor_double(entity.posX),
                                                                                     (int) entity.posY,
                                                                                     MathHelper.floor_double(entity.posZ));
-        IBlockState bs = entity.worldObj.getBlockState(pos);
+        IBlockState bs = CompatibilityUtils.getWorld(entity).getBlockState(pos);
         final Block b = bs.getBlock();
 
         if (entity.isInWater())
@@ -189,7 +189,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             while (bs.getMaterial().isLiquid())
             {
                 pos.setPos(pos.getX(), pos.getY() + 1, pos.getZ());
-                bs = entity.worldObj.getBlockState(pos);
+                bs = CompatibilityUtils.getWorld(entity).getBlockState(pos);
             }
         }
         else if (b instanceof BlockFence || b instanceof BlockWall || b instanceof BlockHutField)
@@ -405,14 +405,9 @@ public abstract class AbstractPathJob implements Callable<Path>
                 bestNodeResultScore = nodeResultScore;
             }
 
-            if (currentNode.getSteps() <= maxRange)
+            if (BlockPosUtil.getDistanceSquared2D(currentNode.pos, start) <= maxRange * maxRange)
             {
                 walkCurrentNode(currentNode);
-            }
-
-            if (doDebugSleep())
-            {
-                return null;
             }
         }
 
@@ -445,31 +440,10 @@ public abstract class AbstractPathJob implements Callable<Path>
         debugNodesVisited.add(currentNode);
     }
 
-    private boolean doDebugSleep()
+    private void addPathNodeToDebug(final Node node)
     {
-        if (debugDrawEnabled && debugSleepMs != 0)
-        {
-            synchronized (debugNodeMonitor)
-            {
-                lastDebugNodesNotVisited = new HashSet<>(debugNodesNotVisited);
-                lastDebugNodesVisited = new HashSet<>(debugNodesVisited);
-                lastDebugNodesPath = null;
-            }
-
-            if (debugSleepMs != 0)
-            {
-                try
-                {
-                    Thread.sleep(debugSleepMs);
-                }
-                catch (final InterruptedException ex)
-                {
-                    Thread.currentThread().interrupt();
-                    return true;
-                }
-            }
-        }
-        return false;
+        debugNodesVisited.remove(node);
+        debugNodesPath.add(node);
     }
 
     private void walkCurrentNode(@NotNull final Node currentNode)
@@ -586,7 +560,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         {
             if (debugDrawEnabled)
             {
-                addNodeToDebug(node);
+                addPathNodeToDebug(node);
             }
 
             --pathLength;
@@ -706,8 +680,12 @@ public abstract class AbstractPathJob implements Callable<Path>
             return false;
         }
 
+        BlockPos yFix = BlockPos.ORIGIN;
+
         if (pos.getY() != newY)
         {
+            yFix = dPos.add(0, newY - pos.getY(), 0);
+
             //  Has this node been visited?
             pos = new BlockPos(pos.getX(), newY, pos.getZ());
             nodeKey = computeNodeKey(pos);
@@ -721,9 +699,9 @@ public abstract class AbstractPathJob implements Callable<Path>
 
 
         final boolean isSwimming = calculateSwimming(world, pos, node);
-        final boolean onRoad = BlockUtils.isPathBlock(world.getBlockState(pos).getBlock());
+        final boolean onRoad = BlockUtils.isPathBlock(world.getBlockState(pos.down()).getBlock());
         //  Cost may have changed due to a jump up or drop
-        final double stepCost = computeCost(dPos, isSwimming, onRoad);
+        final double stepCost = computeCost(dPos.add(yFix), isSwimming, onRoad);
         final double heuristic = computeHeuristic(pos);
         final double cost = parent.getCost() + stepCost;
         final double score = cost + heuristic;

@@ -1,7 +1,10 @@
 package com.minecolonies.coremod.commands;
 
 import com.google.common.collect.ImmutableMap;
-import com.minecolonies.coremod.configuration.Configurations;
+import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.coremod.commands.colonycommands.HomeTeleportCommand;
+import com.minecolonies.coremod.commands.generalcommands.BackupCommand;
+import com.minecolonies.coremod.commands.generalcommands.RandomTeleportCommand;
 import net.minecraft.entity.player.EntityPlayer;
 import org.jetbrains.annotations.NotNull;
 

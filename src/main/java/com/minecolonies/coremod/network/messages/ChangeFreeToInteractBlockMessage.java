@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.permissions.Permissions;
-import com.minecolonies.coremod.util.BlockPosUtil;
-import com.minecolonies.coremod.util.LanguageHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -133,7 +133,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
         if (colony != null)
         {
             //Verify player has permission to change this huts settings
-            if (!colony.getPermissions().hasPermission(player, Permissions.Action.EDIT_PERMISSIONS))
+            if (!colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS))
             {
                 LanguageHandler.sendPlayerMessage(
                         player,

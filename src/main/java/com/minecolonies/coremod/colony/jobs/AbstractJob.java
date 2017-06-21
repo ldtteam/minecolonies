@@ -1,11 +1,12 @@
 package com.minecolonies.coremod.colony.jobs;
 
+import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
-import com.minecolonies.coremod.util.Log;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -42,6 +43,7 @@ public abstract class AbstractJob
     private static final String MAPPING_FARMER      = "Farmer";
     private static final String MAPPING_FISHERMAN   = "Fisherman";
     private static final String MAPPING_TOWER_GUARD = "GuardTower";
+    private static final String MAPPING_BAKER       = "Baker";
 
     /**
      * The priority assigned with every main AI job.
@@ -64,6 +66,7 @@ public abstract class AbstractJob
         addMapping(MAPPING_FARMER, JobFarmer.class);
         addMapping(MAPPING_FISHERMAN, JobFisherman.class);
         addMapping(MAPPING_TOWER_GUARD, JobGuard.class);
+        addMapping(MAPPING_BAKER, JobBaker.class);
     }
 
     private final CitizenData citizen;
@@ -278,12 +281,12 @@ public abstract class AbstractJob
         {
             if (stack.isItemEqualIgnoreDurability(neededItem))
             {
-                neededItem.stackSize += stack.stackSize;
+                ItemStackUtils.changeSize(neededItem, ItemStackUtils.getSize(stack));
                 return;
             }
         }
 
-        itemsNeeded.add(stack);
+        itemsNeeded.add(stack.copy());
     }
 
     /**
@@ -301,9 +304,9 @@ public abstract class AbstractJob
         {
             if (stack.isItemEqualIgnoreDurability(neededItem))
             {
-                final int itemsToRemove = Math.min(neededItem.stackSize, stackCopy.stackSize);
-                neededItem.stackSize -= itemsToRemove;
-                stackCopy.stackSize -= itemsToRemove;
+                final int itemsToRemove = Math.min(ItemStackUtils.getSize(neededItem), ItemStackUtils.getSize(stackCopy));
+                ItemStackUtils.changeSize(neededItem, -itemsToRemove);
+                ItemStackUtils.changeSize(stackCopy, -itemsToRemove);
 
                 //Deativate this if for now in order to keep working even if not all items are given. previously checked if stackSize is 0 and only removed then.
                 itemsNeeded.remove(neededItem);
@@ -312,7 +315,7 @@ public abstract class AbstractJob
             }
         }
 
-        return stackCopy.stackSize == 0 ? null : stackCopy;
+        return ItemStackUtils.isEmpty(stackCopy) ? ItemStackUtils.EMPTY : stackCopy;
     }
 
     /**

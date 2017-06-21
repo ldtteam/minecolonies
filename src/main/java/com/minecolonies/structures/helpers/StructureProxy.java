@@ -1,7 +1,7 @@
 package com.minecolonies.structures.helpers;
 
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
-import com.minecolonies.coremod.util.BlockPosUtil;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;

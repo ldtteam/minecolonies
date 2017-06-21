@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.util;
 
+import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.inventory.api.IWorldNameableModifiable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -126,7 +128,7 @@ public class IItemHandlerToIInventoryWrapper implements IInventory
     @Override
     public boolean isItemValidForSlot(final int index, final ItemStack stack)
     {
-        return wrapped.insertItem(index, stack, true) == InventoryUtils.EMPTY;
+        return wrapped.insertItem(index, stack, true) == ItemStackUtils.EMPTY;
     }
 
     @Override

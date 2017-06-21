@@ -1,11 +1,12 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.util.BlockPosUtil;
-import com.minecolonies.coremod.util.InventoryUtils;
-import com.minecolonies.coremod.util.Log;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
@@ -118,38 +119,34 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
 
         ItemStack remainingItemStack = InventoryUtils.addItemStackToProviderWithResult(building.getTileEntity(), itemStackToTake);
 
-        if (!InventoryUtils.isItemStackEmpty(remainingItemStack))
+        if (!ItemStackUtils.isEmpty(remainingItemStack))
         {
             //If we still have some to drop, let's try the additional chests now
-            if (InventoryUtils.getItemStackSize(remainingItemStack) > 0)
+            final World world = colony.getWorld();
+            for (final BlockPos pos : building.getAdditionalCountainers())
             {
-                final World world = colony.getWorld();
-                for(final BlockPos pos : building.getAdditionalCountainers())
-                {
-                    final TileEntity entity = world.getTileEntity(pos);
-                    remainingItemStack = InventoryUtils.addItemStackToProviderWithResult(entity, remainingItemStack);
+                final TileEntity entity = world.getTileEntity(pos);
+                remainingItemStack = InventoryUtils.addItemStackToProviderWithResult(entity, remainingItemStack);
 
-                    if (InventoryUtils.isItemStackEmpty(remainingItemStack))
-                    {
-                        break;
-                    }
+                if (ItemStackUtils.isEmpty(remainingItemStack))
+                {
+                    break;
                 }
             }
         }
 
-        if (InventoryUtils.isItemStackEmpty(remainingItemStack) || remainingItemStack.stackSize != itemStackToTake.stackSize)
+        if (ItemStackUtils.isEmpty(remainingItemStack) || ItemStackUtils.getSize(remainingItemStack) != ItemStackUtils.getSize(itemStackToTake))
         {
             //Only doing this at the moment as the additional chest do not detect new content
             building.getTileEntity().markDirty();
         }
 
-        int amountToRemoveFromPlayer = amountToTake - (InventoryUtils.isItemStackEmpty(remainingItemStack) ? 0 : InventoryUtils.getItemStackSize(remainingItemStack));
-
+        int amountToRemoveFromPlayer = amountToTake - ItemStackUtils.getSize(remainingItemStack);
         while (amountToRemoveFromPlayer > 0)
         {
             final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory), item, message.itemStack.getItemDamage());
             final ItemStack itemsTaken = player.inventory.decrStackSize(slot, amountToRemoveFromPlayer);
-            amountToRemoveFromPlayer-=itemsTaken.stackSize;
+            amountToRemoveFromPlayer-=ItemStackUtils.getSize(itemsTaken);
         }
 
     }

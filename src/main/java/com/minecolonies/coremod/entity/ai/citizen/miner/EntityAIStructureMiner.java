@@ -1,12 +1,13 @@
 package com.minecolonies.coremod.entity.ai.citizen.miner;
 
+import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.Vec2i;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.buildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
-import com.minecolonies.coremod.util.Log;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLadder;
 import net.minecraft.block.BlockOre;
@@ -18,8 +19,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.awt.geom.Point2D;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
@@ -547,9 +546,9 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         int rotation = 0;
 
         final int workingNodeX = workingNode.getX() > workingNode.getParent().getX() ? 1 : 0;
-        final int workingNodeZ = workingNode.getZ() > workingNode.getParent().getY() ? 1 : 0;
+        final int workingNodeZ = workingNode.getZ() > workingNode.getParent().getZ() ? 1 : 0;
         final int vectorX = workingNode.getX() < workingNode.getParent().getX() ? -1 : workingNodeX;
-        final int vectorZ = workingNode.getZ() < workingNode.getParent().getY() ? -1 : workingNodeZ;
+        final int vectorZ = workingNode.getZ() < workingNode.getParent().getZ() ? -1 : workingNodeZ;
 
         if(vectorX == -1)
         {
@@ -564,7 +563,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             rotation = ROTATE_ONCE;
         }
 
-        @NotNull final BlockPos standingPosition = new BlockPos(workingNode.getParent().getX(), currentLevel.getDepth(), workingNode.getParent().getY());
+        @NotNull final BlockPos standingPosition = new BlockPos(workingNode.getParent().getX(), currentLevel.getDepth(), workingNode.getParent().getZ());
         currentStandingPosition = standingPosition;
         if ((workingNode.getStatus() == Node.NodeStatus.AVAILABLE || workingNode.getStatus() == Node.NodeStatus.IN_PROGRESS) && !walkToBlock(standingPosition))
         {
@@ -793,7 +792,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         {
             return blockToMine;
         }
-        final Point2D parentPos = buildingMiner.getCurrentLevel().getRandomNode().getParent();
+        final Vec2i parentPos = buildingMiner.getCurrentLevel().getRandomNode().getParent();
         if (parentPos != null && buildingMiner.getCurrentLevel().getNode(parentPos) != null
                 && buildingMiner.getCurrentLevel().getNode(parentPos).getStyle() == Node.NodeType.SHAFT)
         {
@@ -803,8 +802,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
                     buildingMiner.getCurrentLevel().getDepth(),
                     ladderPos.getZ() + buildingMiner.getVectorZ() * OTHER_SIDE_OF_SHAFT);
         }
-        final Point2D pos = buildingMiner.getCurrentLevel().getRandomNode().getParent();
-        return new BlockPos(pos.getX(), buildingMiner.getCurrentLevel().getDepth(), pos.getY());
+        final Vec2i pos = buildingMiner.getCurrentLevel().getRandomNode().getParent();
+        return new BlockPos(pos.getX(), buildingMiner.getCurrentLevel().getDepth(), pos.getZ());
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
+import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
@@ -161,7 +163,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
     @Override
     protected AIState searchTarget()
     {
-        if (checkOrRequestItems(false, new ItemStack(Items.BOW)))
+        if (checkForToolOrWeapon(ToolType.BOW))
         {
             return AIState.GUARD_SEARCH_TARGET;
         }
@@ -181,7 +183,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
             targetEntity = this.worker.getLastAttacker();
         }
 
-        if (!targetEntity.isEntityAlive() || checkOrRequestItems(false, new ItemStack(Items.BOW)))
+        if (!targetEntity.isEntityAlive() || checkForToolOrWeapon(ToolType.BOW))
         {
             targetEntity = null;
             worker.setAIMoveSpeed((float) 1.0D);
@@ -217,7 +219,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
     @Override
     public void attackEntityWithRangedAttack(@NotNull final EntityLivingBase entityToAttack, final float baseDamage)
     {
-        final EntityTippedArrow arrowEntity = new GuardArrow(this.worker.worldObj, worker);
+        final EntityTippedArrow arrowEntity = new GuardArrow(CompatibilityUtils.getWorld(this.worker), worker);
         final double xVector = entityToAttack.posX - worker.posX;
         final double yVector = entityToAttack.getEntityBoundingBox().minY + entityToAttack.height / AIM_HEIGHT - arrowEntity.posY;
         final double zVector = entityToAttack.posZ - worker.posZ;
@@ -248,7 +250,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
 
         worker.swingArm(EnumHand.MAIN_HAND);
         worker.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, (float) BASIC_VOLUME, (float) getRandomPitch());
-        worker.worldObj.spawnEntityInWorld(arrowEntity);
+        CompatibilityUtils.getWorld(worker).spawnEntityInWorld(arrowEntity);
 
         worker.damageItemInHand(1);
     }
@@ -269,10 +271,10 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
         final int powerEntchantment = EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.POWER, worker);
         final int punchEntchantment = EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.PUNCH, worker);
 
-        final DifficultyInstance difficulty = this.worker.worldObj.getDifficultyForLocation(new BlockPos(worker));
+        final DifficultyInstance difficulty = CompatibilityUtils.getWorld(worker).getDifficultyForLocation(new BlockPos(worker));
         arrowEntity.setDamage((baseDamage * BASE_DAMAGE_MULTIPLIER)
                                 + worker.getRandom().nextGaussian() * RANDOM_DAMAGE_MULTPLIER
-                                + this.worker.worldObj.getDifficulty().getDifficultyId() * DIFFICULTY_DAMAGE_INCREASE);
+                                + CompatibilityUtils.getWorld(worker).getDifficulty().getDifficultyId() * DIFFICULTY_DAMAGE_INCREASE);
 
         if (powerEntchantment > 0)
         {

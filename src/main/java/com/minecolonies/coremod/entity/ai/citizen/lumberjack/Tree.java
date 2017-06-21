@@ -1,12 +1,13 @@
 package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
-import com.minecolonies.compatibility.Compatibility;
-import com.minecolonies.coremod.util.BlockPosUtil;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockNewLog;
-import net.minecraft.block.BlockOldLog;
+import com.minecolonies.api.compatibility.Compatibility;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.Tuple;
@@ -18,9 +19,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Custom class for Trees. Used by lumberjack
@@ -113,6 +115,11 @@ public class Tree
     private int variantNumber;
 
     /**
+     * If the Tree is a Slime Tree.
+     */
+    private boolean isSlimeTree = false;
+
+    /**
      * Private constructor of the tree.
      * Used by the equals and createFromNBt method.
      */
@@ -120,11 +127,6 @@ public class Tree
     {
         isTree = true;
     }
-
-    /**
-     * If the Tree is a Slime Tree.
-     */
-    private boolean isSlimeTree = false;
 
     /**
      * Creates a new tree Object for the lumberjack.
@@ -139,23 +141,7 @@ public class Tree
         final BlockPos leaf = new BlockPos(log.getX()+1,log.getY()+5,log.getZ());
         if (block.isWood(world, log) || Compatibility.isSlimeBlock(block))
         {
-            if (block instanceof BlockOldLog)
-            {
-                variantNumber = world.getBlockState(log).getValue(BlockOldLog.VARIANT).getMetadata();
-            }
-            else if (block instanceof BlockNewLog)
-            {
-                variantNumber = world.getBlockState(log).getValue(BlockNewLog.VARIANT).getMetadata();
-            }
-            else if (Compatibility.isSlimeBlock(block))
-            {
-                variantNumber = Compatibility.getLeafVariant(world.getBlockState(leaf));
-            }
-            else
-            {
-                variantNumber = 0;
-            }
-
+            variantNumber = calcVariantNumber(block, log, leaf, world);
             woodBlocks = new LinkedList<>();
             leaves = new LinkedList<>();
             location = log;
@@ -167,9 +153,37 @@ public class Tree
             checkTree(world, topLog);
             stumpLocations = new ArrayList<>();
             woodBlocks.clear();
-            final Block BottomBlock = world.getBlockState(location).getBlock();
-            isSlimeTree = Compatibility.isSlimeBlock(BottomBlock);
+            final Block bottomBlock = world.getBlockState(location).getBlock();
+            isSlimeTree = Compatibility.isSlimeBlock(bottomBlock);
         }
+    }
+
+    /**
+     * Calculate the variant number of the tree.
+     * @param block from the block.
+     * @param log the position of it.
+     * @param leaf the leaf position.
+     * @param world the world access.
+     * @return the variant representation.
+     */
+    private static int calcVariantNumber(final Block block, final BlockPos log, final BlockPos leaf, final IBlockAccess world)
+    {
+        if (block instanceof BlockOldLog)
+        {
+            return world.getBlockState(log).getValue(BlockOldLog.VARIANT).getMetadata();
+        }
+
+        if (block instanceof BlockNewLog)
+        {
+            return world.getBlockState(log).getValue(BlockNewLog.VARIANT).getMetadata();
+        }
+
+        if (Compatibility.isSlimeBlock(block))
+        {
+            return Compatibility.getLeafVariant(world.getBlockState(leaf));
+        }
+
+        return 0;
     }
 
     /**
@@ -177,12 +191,14 @@ public class Tree
      *
      * @param world the world.
      * @param pos   The coordinates.
+     * @param treesToCut the trees the lumberjack is supposed to cut.
      * @return true if the log is part of a tree.
      */
-    public static boolean checkTree(@NotNull final IBlockAccess world, final BlockPos pos)
+    public static boolean checkTree(@NotNull final IBlockAccess world, final BlockPos pos, final Map<ItemStorage, Boolean> treesToCut)
     {
         //Is the first block a log?
-        final Block block = world.getBlockState(pos).getBlock();
+        final IBlockState state = world.getBlockState(pos);
+        final Block block = state.getBlock();
         if (!block.isWood(world, pos) && !Compatibility.isSlimeBlock(block))
         {
             return false;
@@ -196,7 +212,7 @@ public class Tree
         //Make sure tree is on solid ground and tree is not build above cobblestone.
         return world.getBlockState(basePos.down()).getMaterial().isSolid()
                  && world.getBlockState(basePos.down()).getBlock() != Blocks.COBBLESTONE
-                 && hasEnoughLeaves(world, baseAndTOp.getSecond());
+                 && hasEnoughLeavesAndIsSupposedToCut(world, baseAndTOp.getSecond(), treesToCut);
     }
 
     /**
@@ -252,8 +268,16 @@ public class Tree
         return new Tuple<>(bottom, top);
     }
 
-    private static boolean hasEnoughLeaves(@NotNull final IBlockAccess world, final BlockPos pos)
+    /**
+     * Check if the tree has enough leaves and the lj is supposed to cut them.
+     * @param world the world it is in.
+     * @param pos the position.
+     * @param treesToCut the trees the lj is supposed to cut.
+     * @return true if so.
+     */
+    private static boolean hasEnoughLeavesAndIsSupposedToCut(@NotNull final IBlockAccess world, final BlockPos pos, final Map<ItemStorage, Boolean> treesToCut)
     {
+        boolean checkedLeaves = false;
         int leafCount = 0;
         for (int dx = -1; dx <= 1; dx++)
         {
@@ -261,8 +285,15 @@ public class Tree
             {
                 for (int dy = -1; dy <= 1; dy++)
                 {
-                    if (world.getBlockState(pos.add(dx, dy, dz)).getMaterial().equals(Material.LEAVES))
+                    final BlockPos leafPos = pos.add(dx, dy, dz);
+                    if (world.getBlockState(leafPos).getMaterial().equals(Material.LEAVES))
                     {
+                        if(!checkedLeaves && !supposedToCut(world, pos, treesToCut, leafPos))
+                        {
+                            return false;
+                        }
+                        checkedLeaves = true;
+
                         leafCount++;
                         if (leafCount >= NUMBER_OF_LEAVES)
                         {
@@ -273,6 +304,38 @@ public class Tree
             }
         }
         return false;
+    }
+
+    /**
+     * Check if the Lj is supposed to cut a tree.
+     * @param world the world it is in.
+     * @param pos the position a leaf is at.
+     * @param treesToCut the trees he is supposed to cut.
+     * @param leafPos
+     * @return false if not.
+     */
+    private static boolean supposedToCut(final IBlockAccess world, final BlockPos pos, final Map<ItemStorage, Boolean> treesToCut, final BlockPos leafPos)
+    {
+        final IBlockState state = world.getBlockState(pos);
+
+        for(final ItemStorage stack: treesToCut.entrySet().stream().filter(entry -> !entry.getValue()).map(Map.Entry::getKey).collect(Collectors.toList()))
+        {
+            final int variantNumber = calcVariantNumber(state.getBlock(), pos, leafPos, world);
+
+            if (Compatibility.isSlimeLeaf(world.getBlockState(leafPos).getBlock()))
+            {
+                if(Compatibility.isSlimeSapling(((ItemBlock) stack.getItem()).getBlock()) && variantNumber == stack.getItemStack().getMetadata())
+                {
+                    return false;
+                }
+            }
+            else if(!Compatibility.isSlimeSapling(((ItemBlock) stack.getItem()).getBlock()) && variantNumber == stack.getItemStack().getMetadata())
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -349,7 +412,7 @@ public class Tree
     public void findLogs(@NotNull final World world)
     {
         addAndSearch(world, location);
-        Collections.sort(woodBlocks, (c1, c2) -> (int) (c1.distanceSq(location) - c2.distanceSq(location)));
+        woodBlocks.sort((c1, c2) -> (int) (c1.distanceSq(location) - c2.distanceSq(location)));
         if (getStumpLocations().isEmpty())
         {
             fillTreeStumps(location.getY());

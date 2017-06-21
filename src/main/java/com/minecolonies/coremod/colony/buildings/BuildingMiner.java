@@ -1,5 +1,8 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutMiner;
@@ -10,8 +13,6 @@ import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
-import com.minecolonies.coremod.util.BlockPosUtil;
-import com.minecolonies.coremod.util.Utils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSlab;
@@ -29,6 +30,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
  * The miners building.
@@ -207,12 +210,12 @@ public class BuildingMiner extends AbstractBuildingWorker
         final ItemStack stackSlab = new ItemStack(Blocks.WOODEN_SLAB);
         final ItemStack stackPlanks = new ItemStack(Blocks.PLANKS);
 
-        keepX.put(new ItemStorage(stackLadder.getItem(), stackLadder.getItemDamage(), 0, false), STACK_MAX_SIZE);
-        keepX.put(new ItemStorage(stackFence.getItem(), stackFence.getItemDamage(), 0, false), STACK_MAX_SIZE);
-        keepX.put(new ItemStorage(stackTorch.getItem(), stackTorch.getItemDamage(), 0, false), STACK_MAX_SIZE);
-        keepX.put(new ItemStorage(stackCobble.getItem(), stackCobble.getItemDamage(), 0, false), STACK_MAX_SIZE);
-        keepX.put(new ItemStorage(stackSlab.getItem(), stackSlab.getItemDamage(), 0, false), STACK_MAX_SIZE);
-        keepX.put(new ItemStorage(stackPlanks.getItem(), stackPlanks.getItemDamage(), 0, false), STACK_MAX_SIZE);
+        keepX.put(new ItemStorage(stackLadder, false), STACK_MAX_SIZE);
+        keepX.put(new ItemStorage(stackFence, false), STACK_MAX_SIZE);
+        keepX.put(new ItemStorage(stackTorch, false), STACK_MAX_SIZE);
+        keepX.put(new ItemStorage(stackCobble, false), STACK_MAX_SIZE);
+        keepX.put(new ItemStorage(stackSlab, false), STACK_MAX_SIZE);
+        keepX.put(new ItemStorage(stackPlanks, false), STACK_MAX_SIZE);
     }
 
     /**
@@ -284,7 +287,9 @@ public class BuildingMiner extends AbstractBuildingWorker
     @Override
     public boolean neededForWorker(@Nullable final ItemStack stack)
     {
-        return Utils.isMiningTool(stack);
+        return ItemStackUtils.hasToolLevel(stack, ToolType.PICKAXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel())
+            || ItemStackUtils.hasToolLevel(stack, ToolType.SHOVEL, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel())
+            || ItemStackUtils.hasToolLevel(stack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel());
     }
 
     /**
@@ -340,8 +345,7 @@ public class BuildingMiner extends AbstractBuildingWorker
         final NBTTagList levelTagList = compound.getTagList(TAG_LEVELS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < levelTagList.tagCount(); i++)
         {
-            final Level level = Level.createFromNBT(levelTagList.getCompoundTagAt(i));
-            this.levels.add(level);
+            this.levels.add(new Level(levelTagList.getCompoundTagAt(i)));
         }
     }
 

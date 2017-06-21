@@ -1,5 +1,9 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
@@ -8,8 +12,6 @@ import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
-import com.minecolonies.coremod.util.InventoryUtils;
-import com.minecolonies.coremod.util.Utils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -20,12 +22,15 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
  * The builders building.
@@ -103,17 +108,6 @@ public class BuildingBuilder extends AbstractBuildingWorker
         }
     }
 
-    /**
-     * Getter of the job description.
-     *
-     * @return the description of the builder job.
-     */
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return BUILDER;
-    }
 
     /**
      * Create the job for the builder.
@@ -128,6 +122,22 @@ public class BuildingBuilder extends AbstractBuildingWorker
         return new JobBuilder(citizen);
     }
 
+    /**
+     * Can be overriden by implementations to specify which tools are useful for the worker.
+     * When dumping he will keep these.
+     *
+     * @param stack the stack to decide on
+     * @return if should be kept or not.
+     */
+    @Override
+    public boolean neededForWorker(@Nullable final ItemStack stack)
+    {
+        return ItemStackUtils.hasToolLevel(stack, ToolType.PICKAXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel())
+            || ItemStackUtils.hasToolLevel(stack, ToolType.SHOVEL, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel())
+            || ItemStackUtils.hasToolLevel(stack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel())
+            || neededResources.containsKey(stack.getUnlocalizedName());
+    }
+
     @Override
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
@@ -137,7 +147,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         {
             final NBTTagCompound neededRes = neededResTagList.getCompoundTagAt(i);
             final ItemStack stack = ItemStack.loadItemStackFromNBT(neededRes);
-            final BuildingBuilderResource resource = new BuildingBuilderResource(stack.getItem(),stack.getItemDamage(), stack.stackSize);
+            final BuildingBuilderResource resource = new BuildingBuilderResource(stack, ItemStackUtils.getSize(stack));
             neededResources.put(stack.getUnlocalizedName(), resource);
         }
     }
@@ -159,6 +169,18 @@ public class BuildingBuilder extends AbstractBuildingWorker
     }
 
     /**
+     * Getter of the job description.
+     *
+     * @return the description of the builder job.
+     */
+    @NotNull
+    @Override
+    public String getJobName()
+    {
+        return BUILDER;
+    }
+
+    /**
      * Method to serialize data to send it to the view.
      *
      * @param buf the used ByteBuffer.
@@ -173,11 +195,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         for (@NotNull final Map.Entry<String, BuildingBuilderResource> entry : neededResources.entrySet())
         {
             final BuildingBuilderResource resource = neededResources.get(entry.getKey());
-            //ByteBufUtils.writeItemStack() is Buggy, serialize itemId and damage separately;
-            final int itemId = Item.getIdFromItem(resource.getItem());
-            final int damage = resource.getDamageValue();
-            buf.writeInt(itemId);
-            buf.writeInt(damage);
+            ByteBufUtils.writeItemStack(buf, resource.getItemStack());
             buf.writeInt(resource.getAvailable());
             buf.writeInt(resource.getAmount());
         }
@@ -200,14 +218,14 @@ public class BuildingBuilder extends AbstractBuildingWorker
      */
     public void addNeededResource(@Nullable final ItemStack res, final int amount)
     {
-        if (res == null || res.getItem() == null || res.stackSize == 0 || amount == 0)
+        if (ItemStackUtils.isEmpty(res) || amount == 0)
         {
             return;
         }
         BuildingBuilderResource resource = this.neededResources.get(res.getUnlocalizedName());
         if (resource == null)
         {
-            resource = new BuildingBuilderResource(res.getItem(), res.getItemDamage(), amount);
+            resource = new BuildingBuilderResource(res, amount);
         }
         else
         {
@@ -215,19 +233,6 @@ public class BuildingBuilder extends AbstractBuildingWorker
         }
         this.neededResources.put(res.getUnlocalizedName(), resource);
         this.markDirty();
-    }
-
-    /**
-     * Can be overriden by implementations to specify which tools are useful for the worker.
-     * When dumping he will keep these.
-     *
-     * @param stack the stack to decide on
-     * @return if should be kept or not.
-     */
-    @Override
-    public boolean neededForWorker(@Nullable final ItemStack stack)
-    {
-        return Utils.isMiningTool(stack) || neededResources.containsKey(stack.getUnlocalizedName());
     }
 
     /**
@@ -302,7 +307,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
             {
                 for(final BlockPos pos : getAdditionalCountainers())
                 {
-                    final TileEntity entity = builder.worldObj.getTileEntity(pos);
+                    final TileEntity entity = CompatibilityUtils.getWorld(builder).getTileEntity(pos);
                     if(entity instanceof TileEntityChest)
                     {
                         resource.addAvailable(InventoryUtils.getItemCountInProvider(entity, resource.getItem(), resource.getDamageValue()));
@@ -329,7 +334,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
     {
         @NotNull final ItemStack resultStack = super.transferStack(stack, world);
 
-        if (InventoryUtils.isItemStackEmpty(resultStack))
+        if (ItemStackUtils.isEmpty(resultStack))
         {
             this.markDirty();
         }
@@ -341,7 +346,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
     public ItemStack forceTransferStack(final ItemStack stack, final World world)
     {
         final ItemStack itemStack = super.forceTransferStack(stack, world);
-        if (InventoryUtils.isItemStackEmpty(itemStack))
+        if (ItemStackUtils.isEmpty(itemStack))
         {
             this.markDirty();
         }

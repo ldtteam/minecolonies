@@ -1,13 +1,13 @@
 package com.minecolonies.coremod;
 
+import com.minecolonies.api.configuration.ConfigurationHandler;
+import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.commands.CommandEntryPoint;
-import com.minecolonies.coremod.configuration.ConfigurationHandler;
-import com.minecolonies.coremod.configuration.Configurations;
-import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.network.messages.*;
 import com.minecolonies.coremod.proxy.IProxy;
-import com.minecolonies.coremod.util.Log;
 import com.minecolonies.coremod.util.RecipeHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
@@ -148,6 +148,7 @@ public class MineColonies
         getNetwork().registerMessage(TransferItemsRequestMessage.class, TransferItemsRequestMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(MarkBuildingDirtyMessage.class, MarkBuildingDirtyMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(ChangeFreeToInteractBlockMessage.class, ChangeFreeToInteractBlockMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(LumberjackSaplingSelectorMessage.class, LumberjackSaplingSelectorMessage.class, ++id, Side.SERVER);
 
 
         // Schematic transfer messages

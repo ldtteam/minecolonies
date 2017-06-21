@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.items;
 
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import net.minecraft.block.IGrowable;
 import net.minecraft.block.state.IBlockState;
@@ -68,7 +69,7 @@ public class ItemCompost extends AbstractItemMinecolonies
                         igrowable.grow(worldIn, worldIn.rand, pos, iblockstate);
                     }
 
-                    --stack.stackSize;
+                    ItemStackUtils.changeSize(stack, -1);
                 }
             }
         }

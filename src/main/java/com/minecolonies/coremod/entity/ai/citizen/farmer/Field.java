@@ -1,12 +1,13 @@
 package com.minecolonies.coremod.entity.ai.citizen.farmer;
 
+import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.inventory.InventoryField;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import com.minecolonies.coremod.util.BlockPosUtil;
-import com.minecolonies.coremod.util.LanguageHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -86,11 +87,6 @@ public class Field extends Container
     private static final String TAG_OWNER = "owner";
 
     /**
-     * Tag to store if initialized or not.
-     */
-    private static final String TAG_INITIALIZED = "initialized";
-
-    /**
      * Amount of rows in the player inventory.
      */
     private static final int PLAYER_INVENTORY_ROWS = 3;
@@ -145,11 +141,6 @@ public class Field extends Container
      * Checks if the field needsWork (Hoeig, Seedings, Farming etc).
      */
     private boolean needsWork = true;
-
-    /**
-     * Is the field new or recently reseeded?
-     */
-    private boolean initialized = false;
 
     /**
      * Has the field been planted?
@@ -256,14 +247,14 @@ public class Field extends Container
             playerIn.inventory.addItemStackToInventory(inventory.getStackInSlot(0));
             inventory.setInventorySlotContents(0, null);
         }
-        else if (inventory.getStackInSlot(0) == null)
+        else if (ItemStackUtils.isEmpty(inventory.getStackInSlot(0)))
         {
             final int playerIndex = slotIndex < MAX_INVENTORY_INDEX ? (slotIndex + INVENTORY_BAR_SIZE) : (slotIndex - MAX_INVENTORY_INDEX);
-            if (playerIn.inventory.getStackInSlot(playerIndex) != null)
+            if (!ItemStackUtils.isEmpty(playerIn.inventory.getStackInSlot(playerIndex)))
             {
                 @NotNull final ItemStack stack = playerIn.inventory.getStackInSlot(playerIndex).splitStack(1);
                 inventory.setInventorySlotContents(0, stack);
-                if (playerIn.inventory.getStackInSlot(playerIndex).stackSize == 0)
+                if (ItemStackUtils.isEmpty(playerIn.inventory.getStackInSlot(playerIndex)))
                 {
                     playerIn.inventory.removeStackFromSlot(playerIndex);
                 }
@@ -276,7 +267,7 @@ public class Field extends Container
     @Override
     public boolean canInteractWith(@NotNull final EntityPlayer playerIn)
     {
-        return getColony().getPermissions().hasPermission(playerIn, Permissions.Action.ACCESS_HUTS);
+        return getColony().getPermissions().hasPermission(playerIn, Action.ACCESS_HUTS);
     }
 
     /**
@@ -323,7 +314,6 @@ public class Field extends Container
         inventory = new InventoryField("");
         inventory.readFromNBT(compound);
         setOwner(compound.getString(TAG_OWNER));
-        initialized = compound.getBoolean(TAG_INITIALIZED);
     }
 
     /**
@@ -411,7 +401,6 @@ public class Field extends Container
         compound.setInteger(TAG_WIDTH_MINUS, widthMinusZ);
         inventory.writeToNBT(compound);
         compound.setString(TAG_OWNER, owner);
-        compound.setBoolean(TAG_INITIALIZED, initialized);
     }
 
     /**
@@ -432,6 +421,17 @@ public class Field extends Container
     public void setTaken(final boolean taken)
     {
         this.taken = taken;
+    }
+
+    public void nextState()
+    {
+        if(getFieldStage().ordinal() + 1 >= FieldStage.values().length)
+        {
+            needsWork = false;
+            setFieldStage(FieldStage.values()[0]);
+            return;
+        }
+        setFieldStage(FieldStage.values()[getFieldStage().ordinal() + 1]);
     }
 
     /**
@@ -472,26 +472,6 @@ public class Field extends Container
     public void setNeedsWork(final boolean needsWork)
     {
         this.needsWork = needsWork;
-    }
-
-    /**
-     * Checks if the field is initialized.
-     *
-     * @return true if so.
-     */
-    public boolean isInitialized()
-    {
-        return this.initialized;
-    }
-
-    /**
-     * Sets that the field has been initialized.
-     *
-     * @param initialized true if so.
-     */
-    public void setInitialized(final boolean initialized)
-    {
-        this.initialized = initialized;
     }
 
     /**

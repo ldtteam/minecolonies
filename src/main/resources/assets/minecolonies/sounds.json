@@ -926,6 +926,7 @@
       }
     ]
   },
+
   "mob.deliveryman.female.hostile": {
     "category": "neutral",
     "sounds": [
@@ -955,6 +956,7 @@
       }
     ]
   },
+
   "mob.deliveryman.female.saturationVeryLow": {
     "category": "neutral",
     "sounds": [
@@ -964,6 +966,7 @@
       }
     ]
   },
+
   "mob.deliveryman.female.saturationLow": {
     "category": "neutral",
     "sounds": [
@@ -981,6 +984,7 @@
       }
     ]
   },
+
   "mob.deliveryman.female.saturationHigh": {
     "category": "neutral",
     "sounds": [
@@ -994,6 +998,7 @@
       }
     ]
   },
+
   "mob.deliveryman.female.badWeather": {
     "category": "neutral",
     "sounds": [
@@ -1011,6 +1016,7 @@
       }
     ]
   },
+
   "mob.deliveryman.female.offToBed": {
     "category": "neutral",
     "sounds": [
@@ -1024,6 +1030,466 @@
       },
       {
         "name": "minecolonies:mob/deliveryman/female/Time2Go2Sleep3",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.farmer.female.interaction": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/farmer/female/absolutelyrightaway",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/no",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/noexclamation",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/nosofter",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/whyyes",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/whyyessir",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/yes",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/yesmylord",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/yessir",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/yessirrightawaysir",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/whatisit",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/whatsitgoingtobetodaythen",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/whatsittodaythen",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.farmer.female.greeting": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/farmer/female/goodtoseeyou",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/hi",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/itismightyfinetoseeyou",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/itsmightygoodtoseeyou",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/lookatthatprettyfaceitsisgoodtoseethat",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/wellhellothere",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/whatcanidoforyou",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/whatcanidoyoufor",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/whyhellothere",
+        "stream": false
+      }
+    ]
+  },
+  "mob.farmer.female.farewell": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/farmer/female/goodbye",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/haveamightyfinedaytoyou",
+        "stream": false
+      }
+    ]
+  },
+  "mob.farmer.female.generalPhrases": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/farmer/female/absolutelyrightaway",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/alrightthenbacktowork",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/bygeorgeicanhelpyouwiththat",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/dontyouworryilltakecareofit",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/excusemesomethingcameoverme",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/farmingismightyeasywhenyouaremilesfromfield",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/fourtwentywheatoddlyspecificamount",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/harddayatworkhuh",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/howsworkdoing",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/ialwaysdreamedofbecomingaprincess",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/icouldreallyuseanewfield",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/ifyousayso",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/ifyouthinkthereisenoughroomthinkagain",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/iliketothinkthechickencamefirst",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/illmakeyouadealonsomewheat",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/ilovelivinghere",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/imlikeafinewineigetbetterwithage",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/itisafineafternoondontyouthink",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/itisafinedayjustlookatitall",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/itisafinemorning",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/itsaboutharvesttime",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/itstherighttimetoplant",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/itwasjustalittlemistake",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/justdoingthegoodlordswork",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/lookatthatsky",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/lookstomelikeagoodharvest",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/lordhavemercywhatagreatdaytowork",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/mmlikeaprettypicture",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/mywhatlovelyweathertoday",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/mywhatlovelyweatherwerehavingtoday",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/noibetternotthankyouthough",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/ohaminotgoodenoughforyou",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/ohihopeitwillrainsoon",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/ohmyyoumustbejoking",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/ohpleaseicanhelpyouwiththat",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/singingdodododadadadado",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/singingworkingthelongday",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/sorrydearihavetowatchmycropsgrow",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/theearthisquitedryaroundhere",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/thereisnotenoughspaceformyfamilytolivehere",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/thesecropsaregrowingwell",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/whatabeautifulskylookatthoseclouds",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/whydontyoulookatthat",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/youaresowise",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/youcityfolkwouldntknowacow",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/youknowyouarentallthatbad",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/yourenotgoingtofiremeoverthatareyou",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/yournotgoingtofiremeoverthatsweetiepie",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.farmer.female.noise": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/farmer/female/groan",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/laughing",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/sniffingwhatisthat",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/uhhhahh",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/yuck",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.farmer.female.hostile": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/farmer/female/healme",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/helphelp",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/ifyoucouldsparesometimeandhealme",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/monstersareblockingmyway",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/ohmystarspleasehelp",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/theresdangernearby",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/youbettercomeoverhereandhealme",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.farmer.female.saturationVeryLow": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/farmer/female/boyimhungry",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/iamstarvingitsbeendayssinceiate",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.farmer.female.saturationLow": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/farmer/female/boyimhungry",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/iamstarvingitsbeendayssinceiate",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.farmer.female.saturationHigh": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/farmer/female/myhusbandsaysieattoomuchbutiputitintherightplaces",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.farmer.female.badWeather": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/farmer/female/youhaveanotherthingcomingifyouthinkimworkinginthisrainhere",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/youknowidontrememberthelasttimeisawthesun",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/thatissomebadweatherwerehavingtoday",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/imdefinitelynotworkingunderthiskindofweather",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/ifitcontinuestorainlikethatsaygoodbyetocrops",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/ihopeitsgoingtostoprainingsoon",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/idontrememberthelasttimeisawthesun",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.farmer.female.offToBed": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/farmer/female/dontsayanotherworditstimetogotosleep",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/imsorryexcusemeiamverytired",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/farmer/female/nightynightyitstimetogotosleep",
         "stream": false
       }
     ]

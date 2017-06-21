@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.blocks;
 
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
-import com.minecolonies.coremod.lib.Constants;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -19,7 +19,7 @@ public class BlockSolidSubstitution extends Block
     /**
      * The hardness this block has.
      */
-    private static final float BLOCK_HARDNESS = 5F;
+    private static final float BLOCK_HARDNESS = 0.0F;
 
     /**
      * This blocks name.
