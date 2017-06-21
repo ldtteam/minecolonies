@@ -6,6 +6,7 @@ import com.minecolonies.coremod.lib.Constants;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
@@ -60,10 +61,15 @@ public final class RecipeHandler
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutCitizen, 1), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', "torch"));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutFisherman, 1), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', Items.FISHING_ROD));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.scanTool, 1), "  I", " S ", "S  ", 'I', Items.IRON_INGOT, 'S', WOODEN_STICK));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.scanTool, 1), "B", 'B', ModItems.buildTool));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.buildTool, 1), "  C", " S ", "S  ", 'C', "cobblestone", 'S', WOODEN_STICK));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.buildTool, 1), "P", 'P', ModItems.permTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.permTool, 1), "S", 'S', ModItems.scanTool));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockSubstitution, ONE_FORTH_OF_A_STACK), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', ModItems.scanTool));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockSolidSubstitution, ONE_FORTH_OF_A_STACK),
                 "XXX", "X#X", "XXX", 'X', "logWood", '#', ModItems.scanTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockTimberFrame, 4), "X", "X", "X", 'X', PLANK_WOOD));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockCrossedFrame, 4), "X X", " X ", "X X", 'X', PLANK_WOOD));
 
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutFarmer, 1), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', Items.WOODEN_HOE));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutFarmer, 2), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', Items.STONE_HOE));

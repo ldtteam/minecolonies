@@ -399,3 +399,5 @@ com.minecolonies.coremod.saturation.3=I'm quite hungry, I feel very unproductive
 com.minecolonies.coremod.saturation.5=I'm hungry, I'm not that productive anymore
 com.minecolonies.coremod.saturation.7=I'm quite saturated, but I'll have to eat soon again
 tile.blockHut.warehouse.limit=The amount of warehouses is limited to 1 per colony.
+tile.minecolonies.blockCrossedFrame.name=Crossed Frame
+tile.minecolonies.blockTimberFrame.name=Timber Frame
