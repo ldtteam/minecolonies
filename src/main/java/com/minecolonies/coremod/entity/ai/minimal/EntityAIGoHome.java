@@ -96,7 +96,7 @@ public class EntityAIGoHome extends EntityAIBase
     @Override
     public boolean continueExecuting()
     {
-        return !citizen.getNavigator().noPath() && citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP;
+        return !citizen.getNavigator().noPath() && (citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP || isCitizenStarving());
     }
 
     @Override
@@ -155,12 +155,19 @@ public class EntityAIGoHome extends EntityAIBase
                         }
                         else
                         {
-                            citizen.getInventoryCitizen().setInventorySlotContents(slotToSet, new ItemStack(stack.getItem(), 1));
+                            final ItemStack copy = stack.copy();
+                            ItemStackUtils.setSize(copy, 1);
+                            citizen.getInventoryCitizen().setInventorySlotContents(slotToSet, copy);
                         }
                         tookFood = true;
                         ItemStackUtils.changeSize(stack, -1);
+
+                        if(ItemStackUtils.getSize(stack) <= 0)
+                        {
+                            new InvWrapper(home.getTileEntity()).setStackInSlot(slot, ItemStackUtils.EMPTY);
+                        }
                     }
-                    ((BuildingHome) home).setFoodNeeded(false);
+                    ((BuildingHome) home).checkIfFoodNeeded();
                 }
             }
             if (!tookFood)

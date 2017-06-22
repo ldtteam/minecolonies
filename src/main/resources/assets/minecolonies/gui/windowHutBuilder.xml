@@ -9,15 +9,17 @@
 
         <view id="resourceActions" size="100% 100%">
             <label size="100% 11" pos="0 0"
-                   label="$(com.minecolonies.coremod.gui.workerHuts.resourceList)" color="black" textalign="BOTTOM_MIDDLE"/>
+                   label="$(com.minecolonies.coremod.gui.workerHuts.resourceList)" color="black"
+                   textalign="BOTTOM_MIDDLE"/>
             <list id="resources" size="78% 85%" pos="30 20">
                 <box size="100% 30" linewidth="2">
-                    <label  id="resourceName" size="100 12" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
-                    <label  id="resourceMissing" size="50 12" pos="2 16" textalign="MIDDLE_LEFT" color="black"/>
-                    <label  id="resourceAvailableNeeded" size="100% 12" pos="0 16" textalign="MIDDLE" color="black"/>
+                    <itemicon id="resourceIcon" size="16 16" pos="1 1"/>
+                    <label id="resourceName" size="100 12" pos="20 3" textalign="MIDDLE_LEFT" color="black"/>
+                    <label id="resourceMissing" size="50 12" pos="2 18" textalign="MIDDLE_LEFT" color="black"/>
+                    <label id="resourceAvailableNeeded" size="100% 12" pos="0 18" textalign="MIDDLE" color="black"/>
                     <button id="resourceAdd" size="16 16" label="↥" pos="0 12"/>
-                    <label  id="resourceId" size="1 1" pos="100 100"/>
-                    <label  id="resourceQuantity" size="1 1" pos="100 100"/>
+                    <label id="resourceId" size="1 1" pos="100 100"/>
+                    <label id="resourceQuantity" size="1 1" pos="100 100"/>
                 </box>
             </list>
 

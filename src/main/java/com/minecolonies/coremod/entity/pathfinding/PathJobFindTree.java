@@ -1,11 +1,14 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
+import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 
 /**
  * Find and return a path to the nearest tree.
@@ -13,20 +16,38 @@ import org.jetbrains.annotations.NotNull;
  */
 public class PathJobFindTree extends AbstractPathJob
 {
+    /**
+     * Tie breaker constant.
+     */
+    private static final double TIE_BREAKER = 0.951D;
+
+    /**
+     * The location of the hut of the lumberjack.
+     */
     private final BlockPos hutLocation;
 
     /**
+     * The list of trees the Lumberjack is supposed to cut.
+     */
+    private final Map<ItemStorage, Boolean> treesToCut;
+
+    /**
      * AbstractPathJob constructor.
-     *
      * @param world the world within which to path.
      * @param start the start position from which to path from.
      * @param home  the position of the workers hut.
      * @param range maximum path range.
+     * @param treesToCut the trees the lj is supposed to cut.
      */
-    public PathJobFindTree(final World world, @NotNull final BlockPos start, final BlockPos home, final int range)
+    public PathJobFindTree(
+            final World world,
+            @NotNull final BlockPos start,
+            final BlockPos home,
+            final int range,
+            final Map<ItemStorage, Boolean> treesToCut)
     {
         super(world, start, start, range, new TreePathResult());
-
+        this.treesToCut = treesToCut;
         hutLocation = home;
     }
 
@@ -56,7 +77,7 @@ public class PathJobFindTree extends AbstractPathJob
         final int dz = pos.getZ() - hutLocation.getZ();
 
         //  Manhattan Distance with a 1/1000th tie-breaker - halved
-        return (Math.abs(dx) + Math.abs(dy) + Math.abs(dz)) * 0.951D;
+        return (Math.abs(dx) + Math.abs(dy) + Math.abs(dz)) * TIE_BREAKER;
     }
 
     @Override
@@ -81,7 +102,7 @@ public class PathJobFindTree extends AbstractPathJob
 
     private boolean isTree(final BlockPos pos)
     {
-        if (Tree.checkTree(world, pos))
+        if (Tree.checkTree(world, pos, treesToCut))
         {
             getResult().treeLocation = pos;
             return true;
