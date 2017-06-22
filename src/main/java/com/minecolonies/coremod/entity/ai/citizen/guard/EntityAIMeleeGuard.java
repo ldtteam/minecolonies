@@ -180,7 +180,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         final ItemStack heldItem = worker.getHeldItem(EnumHand.MAIN_HAND);
         if (heldItem != null)
         {
-            if (ItemStackUtils.doesItemServeAsWeapon(heldItem) && heldItem.getItem() instanceof ItemSword)
+            if (ItemStackUtils.doesItemServeAsWeapon(heldItem))
             {
                 if(heldItem.getItem() instanceof ItemSword)
                 {

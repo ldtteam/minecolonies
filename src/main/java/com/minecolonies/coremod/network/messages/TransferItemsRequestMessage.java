@@ -113,8 +113,18 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
             return;
         }
 
+        final boolean isCreative = player.capabilities.isCreativeMode;
         final Item item = message.itemStack.getItem();
-        final int amountToTake = Math.min(message.quantity, InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.inventory), item, message.itemStack.getItemDamage()));
+        final int amountToTake;
+        if(isCreative)
+        {
+            amountToTake = message.quantity;
+        }
+        else
+        {
+            amountToTake = Math.min(message.quantity, InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.inventory), item, message.itemStack.getItemDamage()));
+        }
+
         final ItemStack itemStackToTake = new ItemStack(item, amountToTake, message.itemStack.getItemDamage());
 
         ItemStack remainingItemStack = InventoryUtils.addItemStackToProviderWithResult(building.getTileEntity(), itemStackToTake);
@@ -141,13 +151,15 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
             building.getTileEntity().markDirty();
         }
 
-        int amountToRemoveFromPlayer = amountToTake - ItemStackUtils.getSize(remainingItemStack);
-        while (amountToRemoveFromPlayer > 0)
+        if(!isCreative)
         {
-            final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory), item, message.itemStack.getItemDamage());
-            final ItemStack itemsTaken = player.inventory.decrStackSize(slot, amountToRemoveFromPlayer);
-            amountToRemoveFromPlayer-=ItemStackUtils.getSize(itemsTaken);
+            int amountToRemoveFromPlayer = amountToTake - ItemStackUtils.getSize(remainingItemStack);
+            while (amountToRemoveFromPlayer > 0)
+            {
+                final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory), item, message.itemStack.getItemDamage());
+                final ItemStack itemsTaken = player.inventory.decrStackSize(slot, amountToRemoveFromPlayer);
+                amountToRemoveFromPlayer -= ItemStackUtils.getSize(itemsTaken);
+            }
         }
-
     }
 }

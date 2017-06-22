@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
@@ -243,12 +244,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private ResourceLocation texture;
     private int              colonyId;
     private int citizenId = 0;
-    private int                      level;
-    private int                      textureId;
+    private int          level;
+    private int          textureId;
     /**
      * Walk to proxy.
      */
-    private EntityCitizenWalkToProxy proxy;
+    private IWalkToProxy proxy;
     /**
      * Skill modifier defines how fast a citizen levels in a certain skill.
      */
