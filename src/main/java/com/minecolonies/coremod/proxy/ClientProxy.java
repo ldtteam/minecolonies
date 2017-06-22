@@ -95,6 +95,7 @@ public class ClientProxy extends CommonProxy
     @Override
     public void registerRenderer()
     {
+        // ModelLoader.setCustomModelResourceLocation todo from preinit
         super.registerRenderer();
 
         final ItemModelMesher itemModelMesher = Minecraft.getMinecraft().getRenderItem().getItemModelMesher();

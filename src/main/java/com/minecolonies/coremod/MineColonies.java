@@ -24,8 +24,7 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 @Mod(modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION,
-  /*dependencies = Constants.FORGE_VERSION,*/ acceptedMinecraftVersions = Constants.MC_VERSION,
-  guiFactory = Constants.CONFIG_GUI_LOCATION)
+  /*dependencies = Constants.FORGE_VERSION,*/ acceptedMinecraftVersions = Constants.MC_VERSION)
 public class MineColonies
 {
     private static final Logger logger = LogManager.getLogger(Constants.MOD_ID);
@@ -84,10 +83,9 @@ public class MineColonies
     {
         proxy.registerSounds();
         proxy.registerEntities();
-
         proxy.registerEntityRendering();
 
-        Configuration configuration = new Configuration(event.getSuggestedConfigurationFile());
+        @NotNull final Configuration configuration = new Configuration(event.getSuggestedConfigurationFile());
         configuration.load();
 
         if (configuration.hasChanged())

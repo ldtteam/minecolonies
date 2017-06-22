@@ -49,7 +49,7 @@ public class BlockConstructionTape extends Block
     /**
      * This blocks name.
      */
-    private static final String BLOCK_NAME = "blockConstructionTape";
+    private static final String BLOCK_NAME = "blockconstructiontape";
 
     /**
      * The resistance this block has.
