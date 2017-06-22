@@ -1,6 +1,5 @@
 package com.minecolonies.coremod;
 
-import com.minecolonies.api.configuration.ConfigurationHandler;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.achievements.ModAchievements;
@@ -81,7 +80,6 @@ public class MineColonies
     @Mod.EventHandler
     public void preInit(@NotNull final FMLPreInitializationEvent event)
     {
-        ConfigurationHandler.init(event.getSuggestedConfigurationFile());
         proxy.registerSounds();
         proxy.registerEntities();
 
@@ -100,7 +98,7 @@ public class MineColonies
 
         proxy.registerTileEntities();
 
-        RecipeHandler.init(Configurations.enableInDevelopmentFeatures, Configurations.supplyChests);
+        RecipeHandler.init(Configurations.Gameplay.enableInDevelopmentFeatures, Configurations.Gameplay.supplyChests);
 
         proxy.registerEvents();
 

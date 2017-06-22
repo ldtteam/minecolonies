@@ -262,7 +262,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
             return (int) world.getBlockState(pos).getBlockHardness(world, pos);
         }
 
-        return (int) ((Configurations.blockMiningDelayModifier
+        return (int) ((Configurations.Gameplay.blockMiningDelayModifier
                          * Math.pow(LEVEL_MODIFIER, worker.getLevel()))
                         * (double) world.getBlockState(pos).getBlockHardness(world, pos)
                         / (double) (worker.getHeldItemMainhand().getItem()

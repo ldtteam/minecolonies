@@ -131,8 +131,8 @@ public class Colony implements IColony
     //private int autoHostile = 0;//Off
     private static final String TAG_FIELDS                        = "fields";
     private static final int    CHECK_WAYPOINT_EVERY              = 100;
-    private static final double MAX_SQ_DIST_SUBSCRIBER_UPDATE     = MathUtils.square(Configurations.workingRangeTownHall + 16D);
-    private static final double MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE = MathUtils.square(Configurations.workingRangeTownHall * 2D);
+    private static final double MAX_SQ_DIST_SUBSCRIBER_UPDATE     = MathUtils.square(Configurations.Gameplay.workingRangeTownHall + 16D);
+    private static final double MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE = MathUtils.square(Configurations.Gameplay.workingRangeTownHall * 2D);
     private final int id;
     //  General Attributes
     private final int dimensionId;
@@ -192,7 +192,7 @@ public class Colony implements IColony
     @Nullable
     private BuildingTownHall townHall;
     private int topCitizenId = 0;
-    private int maxCitizens  = Configurations.maxCitizens;
+    private int maxCitizens  = Configurations.Gameplay.maxCitizens;
 
     private double overallHappiness = 5;
 
@@ -232,7 +232,7 @@ public class Colony implements IColony
         // Register a new event handler
         MinecraftForge.EVENT_BUS.register(new ColonyPermissionEventHandler(this));
 
-        for (final String s : Configurations.freeToInteractBlocks)
+        for (final String s : Configurations.Gameplay.freeToInteractBlocks)
         {
             final Block block = Block.getBlockFromName(s);
             if (block == null)
@@ -1074,7 +1074,7 @@ public class Colony implements IColony
             //  Spawn Citizens
             if (townHall != null && citizens.size() < maxCitizens)
             {
-                int respawnInterval = Configurations.citizenRespawnInterval * 20;
+                int respawnInterval = Configurations.Gameplay.citizenRespawnInterval * 20;
                 respawnInterval -= (60 * townHall.getBuildingLevel());
 
                 if (event.world.getWorldTime() % respawnInterval == 0)
@@ -1198,7 +1198,7 @@ public class Colony implements IColony
 
     private boolean areAllColonyChunksLoaded(@NotNull final TickEvent.WorldTickEvent event)
     {
-        final int distanceFromCenter = Configurations.workingRangeTownHall + 48 /* 3 chunks */ + 15 /* round up a chunk */;
+        final int distanceFromCenter = Configurations.Gameplay.workingRangeTownHall + 48 /* 3 chunks */ + 15 /* round up a chunk */;
         for (int x = -distanceFromCenter; x <= distanceFromCenter; x += 16)
         {
             for (int z = -distanceFromCenter; z <= distanceFromCenter; z += 16)
@@ -1307,7 +1307,7 @@ public class Colony implements IColony
     {
         //  Perform a 2D distance calculation, so pass center.posY as the Y
         return w.equals(getWorld())
-                 && BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ())) <= MathUtils.square(Configurations.workingRangeTownHall);
+                 && BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ())) <= MathUtils.square(Configurations.Gameplay.workingRangeTownHall);
     }
 
     @Override
@@ -1681,7 +1681,7 @@ public class Colony implements IColony
             }
         }
         // Have at least the minimum amount of citizens
-        newMaxCitizens = Math.max(Configurations.maxCitizens, newMaxCitizens);
+        newMaxCitizens = Math.max(Configurations.Gameplay.maxCitizens, newMaxCitizens);
         if (maxCitizens != newMaxCitizens)
         {
             maxCitizens = newMaxCitizens;
