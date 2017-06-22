@@ -594,7 +594,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public void addExperience(final double xp)
     {
-        final BuildingHome home = getHomeBuilding();
+        final BuildingHome home = getWorkBuilding();
 
         final double citizenHutLevel = home == null ? 0 : home.getBuildingLevel();
         final double citizenHutMaxLevel = home == null ? 1 : home.getMaxBuildingLevel();
