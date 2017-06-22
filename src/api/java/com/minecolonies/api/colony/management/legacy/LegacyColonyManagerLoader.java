@@ -123,4 +123,14 @@ public class LegacyColonyManagerLoader<B extends IBuilding, C extends IColony<B>
 
         Log.getLogger().warn("Finished loading colonies from Legacy File.");
     }
+
+    /**
+     * Method to get all the {@link C} loaded by the legacy loader for a given {@link net.minecraft.world.World}.
+     * @param worldId The ID of the world to get the {@link C}
+     * @return A {@link List<C>} with colonies loaded by this Loader. Null if no colonies were loaded for that map.
+     */
+    @Nullable
+    public List<C> getColoniesForWorldId(@NotNull final Integer worldId) {
+        return coloniesByWorld.get(worldId);
+    }
 }

@@ -6,8 +6,10 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.handlers.IColonyEventHandler;
 import com.minecolonies.api.colony.management.IWorldColonyController;
+import com.minecolonies.api.colony.management.legacy.LegacyColonyManagerLoader;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.Log;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -17,10 +19,7 @@ import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * A sideless implementation of a {@link IWorldColonyController}
@@ -45,6 +44,31 @@ public class StandardSidelessWorldColonyController<B extends IBuilding, C extend
         this.savedData = savedData;
 
         this.savedData.setController(this);
+    }
+
+    /**
+     * Method used to construct a {@link StandardSidelessWorldColonyController} for a given {@link World} from legacy data.
+     * @param world The world to construct a {@link StandardSidelessWorldColonyController} for.
+     * @param legacyColonyManagerLoader The {@link LegacyColonyManagerLoader} that was used to load the Data from the legacy cache.
+     * @param <B> The type of {@link IBuilding} to construct a {@link StandardSidelessWorldColonyController} for.
+     * @param <C> The type of {@link IColony<B>} to construct a {@link StandardSidelessWorldColonyController} for.
+     * @return A initialized {@link StandardSidelessWorldColonyController} that is holds the data from the {@link LegacyColonyManagerLoader}
+     */
+    @NotNull
+    public static <B extends IBuilding, C extends IColony<B>> StandardSidelessWorldColonyController attemptLoadFromLegacy(final World world, final LegacyColonyManagerLoader<B, C> legacyColonyManagerLoader)
+    {
+        StandardSidelessWorldColonyController<B, C> legacyLoadedController = new StandardSidelessWorldColonyController<>(world, new StandardWorldColonyControllerWorldSavedData());
+
+        final List<C> colonies = legacyColonyManagerLoader.getColoniesForWorldId(world.provider.getDimension());
+
+        if (colonies != null) {
+            colonies.forEach(c -> legacyLoadedController.colonyMap.put(c.getID(), c));
+            Log.getLogger().debug("Successfully loaded the Colonies for World: " + world.provider.getDimension() + " from the legacy data. Injected it into Controller");
+        } else {
+            Log.getLogger().debug("Attempt to load Colonies for World: " + world.provider.getDimension() + " failed. Constructing new empty Controller.");
+        }
+
+        return legacyLoadedController;
     }
 
     @NotNull
@@ -193,5 +217,17 @@ public class StandardSidelessWorldColonyController<B extends IBuilding, C extend
     public boolean isCoordinateInAnyColony(@NotNull final BlockPos pos)
     {
         return Objects.nonNull(getColony(pos));
+    }
+
+    /**
+     * Method to get the {@link StandardWorldColonyControllerWorldSavedData} that is used to write the data stored in this controller
+     * into MCs World NBT when it is saved.
+     *
+     * @return The {@link StandardWorldColonyControllerWorldSavedData} for this {@link StandardSidelessWorldColonyController<B, C>}.
+     */
+    @NotNull
+    public StandardWorldColonyControllerWorldSavedData getSavedData()
+    {
+        return savedData;
     }
 }
