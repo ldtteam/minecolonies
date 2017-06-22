@@ -3,12 +3,15 @@
   "pattern": [
     "SWS",
     "S S",
-    "S S",
+    "S S"
   ],
   "key": {
-    "X": {
+    "W": {
       "item": "minecraft:wool",
       "data": 10
+    },
+    "S": {
+      "item": "minecraft:stick"
     }
   },
   "result": {
