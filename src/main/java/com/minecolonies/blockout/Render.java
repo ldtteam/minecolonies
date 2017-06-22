@@ -2,7 +2,7 @@ package com.minecolonies.blockout;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.opengl.GL11;
 
@@ -60,7 +60,7 @@ public final class Render
         final float b = (float) ((color & COLOR_MASK) / COLOR_DIVISOR);
 
         final Tessellator tessellator = Tessellator.getInstance();
-        final VertexBuffer vertexBuffer = tessellator.getBuffer();
+        final BufferBuilder vertexBuffer = tessellator.getBuffer();
 
         vertexBuffer.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION);
         GlStateManager.disableTexture2D();

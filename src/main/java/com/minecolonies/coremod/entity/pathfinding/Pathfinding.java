@@ -6,7 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
@@ -130,7 +130,7 @@ public final class Pathfinding
         GlStateManager.scale(0.25D, 0.25D, 0.25D);
 
         final Tessellator tessellator = Tessellator.getInstance();
-        final VertexBuffer vertexBuffer = tessellator.getBuffer();
+        final BufferBuilder vertexBuffer = tessellator.getBuffer();
         vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
         GlStateManager.color(r, g, b);
 
@@ -192,7 +192,7 @@ public final class Pathfinding
     {
         final String s1 = String.format("F: %.3f [%d]", n.getCost(), n.getCounterAdded());
         final String s2 = String.format("G: %.3f [%d]", n.getScore(), n.getCounterVisited());
-        final FontRenderer fontrenderer = Minecraft.getMinecraft().fontRendererObj;
+        final FontRenderer fontrenderer = Minecraft.getMinecraft().fontRenderer;
         GlStateManager.pushAttrib();
         GlStateManager.pushMatrix();
         GlStateManager.translate(0.0F, 0.75F, 0.0F);
@@ -218,7 +218,7 @@ public final class Pathfinding
         final int i = Math.max(fontrenderer.getStringWidth(s1), fontrenderer.getStringWidth(s2)) / 2;
 
         final Tessellator tessellator = Tessellator.getInstance();
-        final VertexBuffer vertexBuffer = tessellator.getBuffer();
+        final BufferBuilder vertexBuffer = tessellator.getBuffer();
         vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
         vertexBuffer.pos((double) (-i - 1), -5.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
         vertexBuffer.pos((double) (-i - 1), 12.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();

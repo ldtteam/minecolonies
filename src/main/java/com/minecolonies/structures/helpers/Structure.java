@@ -17,7 +17,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -465,7 +465,7 @@ public class Structure
         {
             final Entity finalEntity = EntityList.createEntityFromNBT(entityInfoList[i].entityData, world);
             final Vec3d entityVec = entityInfoList[i].pos.add(new Vec3d(pos));
-            finalEntity.setPosition(entityVec.xCoord, entityVec.yCoord, entityVec.zCoord);
+            finalEntity.setPosition(entityVec.x, entityVec.y, entityVec.z);
         }
 
         return entityList;
@@ -585,7 +585,7 @@ public class Structure
                 finalEntity.prevRotationYaw = (float) (finalEntity.getMirroredYaw(settings.getMirror()) - NINETY_DEGREES);
                 final double rotation =
                   (double) finalEntity.getMirroredYaw(settings.getMirror()) + ((double) finalEntity.rotationYaw - finalEntity.getRotatedYaw(settings.getRotation()));
-                finalEntity.setLocationAndAngles(entityVec.xCoord, entityVec.yCoord, entityVec.zCoord, (float) rotation, finalEntity.rotationPitch);
+                finalEntity.setLocationAndAngles(entityVec.x, entityVec.y, entityVec.z, (float) rotation, finalEntity.rotationPitch);
             }
             entityList[i] = finalEntity;
         }
@@ -647,7 +647,7 @@ public class Structure
         {
             final TileEntity te = holder.te;
             te.setPos(holder.pos);
-            final FakeWorld fakeWorld = new FakeWorld(holder.actualState, world.getSaveHandler(), world.getWorldInfo(), world.provider, world.theProfiler, true);
+            final FakeWorld fakeWorld = new FakeWorld(holder.actualState, world.getSaveHandler(), world.getWorldInfo(), world.provider, world.profiler, true);
             te.setWorld(fakeWorld);
             final int pass = 0;
 
@@ -656,7 +656,7 @@ public class Structure
                 final TileEntityRendererDispatcher terd = TileEntityRendererDispatcher.instance;
                 terd.prepare(fakeWorld,
                   Minecraft.getMinecraft().renderEngine,
-                  Minecraft.getMinecraft().fontRendererObj,
+                  Minecraft.getMinecraft().fontRenderer,
                   new FakeEntity(fakeWorld),
                   null,
                   0.0F);
@@ -664,7 +664,7 @@ public class Structure
                 terd.renderEngine = Minecraft.getMinecraft().renderEngine;
                 terd.preDrawBatch();
                 GL11.glColor4f(1F, 1F, 1F, 1F);
-                terd.renderTileEntity(te, partialTicks, -1);
+                terd.render(te, partialTicks, -1);
                 terd.drawBatch(pass);
                 GL11.glPopMatrix();
             }
@@ -682,9 +682,9 @@ public class Structure
     {
         final Mirror mirrorIn = settings.getMirror();
         final Rotation rotationIn = settings.getRotation();
-        double xCoord = vec.xCoord;
-        final double yCoord = vec.yCoord;
-        double zCoord = vec.zCoord;
+        double xCoord = vec.x;
+        final double yCoord = vec.y;
+        double zCoord = vec.z;
         boolean flag = true;
 
         switch (mirrorIn)
@@ -778,7 +778,7 @@ public class Structure
     private void renderQuads(final World world, final IBlockState actualState, final BlockPos pos, final List<BakedQuad> quads, final int alpha)
     {
         final Tessellator tessellator = Tessellator.getInstance();
-        final VertexBuffer buffer = tessellator.getBuffer();
+        final BufferBuilder buffer = tessellator.getBuffer();
 
         for (final BakedQuad quad : quads)
         {
@@ -819,7 +819,7 @@ public class Structure
             final double rotationYaw
               = (double) finalEntity.getMirroredYaw(settings.getMirror()) + ((double) finalEntity.rotationYaw - (double) finalEntity.getRotatedYaw(settings.getRotation()));
 
-            finalEntity.setLocationAndAngles(entityVec.xCoord, entityVec.yCoord, entityVec.zCoord,
+            finalEntity.setLocationAndAngles(entityVec.x, entityVec.y, entityVec.z,
               (float) rotationYaw, finalEntity.rotationPitch);
 
             final NBTTagCompound nbttagcompound = new NBTTagCompound();

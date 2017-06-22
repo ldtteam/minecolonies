@@ -66,7 +66,7 @@ public class GuiField extends GuiContainer
     @Override
     protected void drawGuiContainerForegroundLayer(final int layer1, final int layer2)
     {
-        this.fontRendererObj.drawString(tileEntity.getDesc(), X_OFFSET, Y_OFFSET, TEXT_COLOR);
+        this.fontRenderer.drawString(tileEntity.getDesc(), X_OFFSET, Y_OFFSET, TEXT_COLOR);
     }
 
     /**

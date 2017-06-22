@@ -8,23 +8,9 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
  */
 public class EmptyTileEntitySpecialRenderer extends TileEntitySpecialRenderer<TileEntityColonyBuilding>
 {
-
-    /**
-     * {@inheritDoc}
-     * Method is empty because there are no special ways required to render.
-     *
-     * @param tileEntity   Tile entity to render
-     * @param x            X-coordinate
-     * @param y            Y-coordinate
-     * @param z            Z-coordinate
-     * @param partialTicks probably used for animations
-     * @param destroyStage don't know, doesn't really matter
-     */
     @Override
-    public void renderTileEntityAt(final TileEntityColonyBuilding tileEntity, final double x, final double y, final double z, final float partialTicks, final int destroyStage)
+    public void render(final TileEntityColonyBuilding te, final double x, final double y, final double z, final float partialTicks, final int destroyStage, final float alpha)
     {
-        /*
-         * Intentionally left empty.
-         */
+        super.render(te, x, y, z, partialTicks, destroyStage, alpha);
     }
 }
