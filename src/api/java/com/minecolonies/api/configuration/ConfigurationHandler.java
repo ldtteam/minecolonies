@@ -49,8 +49,7 @@ public final class ConfigurationHandler
     {
         try
         {
-            builderPlaceConstructionTape = config.get(CATEGORY_GAMEPLAY, "placeConstructionTape", builderPlaceConstructionTape,
-              "Should builder place construction tape").getBoolean();
+
             workingRangeTownHall = config.get(CATEGORY_GAMEPLAY, "workingRangeTownHall", workingRangeTownHall,
               "Colony size (radius)").getInt();
             townHallPadding = config.get(CATEGORY_GAMEPLAY, "townHallPadding", townHallPadding,
