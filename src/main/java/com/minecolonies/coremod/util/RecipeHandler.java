@@ -4,6 +4,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.items.ModItems;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLog;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -41,19 +42,14 @@ public final class RecipeHandler
     {
     }
 
-    private static ResourceLocation getLocation()
-    {
-        return new ResourceLocation(Constants.MOD_ID + id++, Constants.MOD_ID + id++);
-    }
-
     private static ResourceLocation getLocation(Block block)
     {
-        return new ResourceLocation(block.getUnlocalizedName(), block.getUnlocalizedName());
+        return block.getRegistryName();
     }
 
-    private static ResourceLocation getLocation(Item block)
+    private static ResourceLocation getLocation(Item item)
     {
-        return new ResourceLocation(block.getUnlocalizedName(), block.getUnlocalizedName());
+        return item.getRegistryName();
     }
 
     /**
@@ -65,13 +61,17 @@ public final class RecipeHandler
      */
     public static void init(final boolean enableInDevelopmentFeatures, final boolean supplyChests)
     {
-        GameRegistry.register(new ShapedOreRecipe(getLocation(ModBlocks.blockConstructionTapeCorner),
+        //todo add vanilla json recipes
+        /*GameRegistry.register(new ShapedOreRecipe(getLocation(ModBlocks.blockConstructionTapeCorner),
                 new ItemStack(ModBlocks.blockConstructionTape, ONE_FORTH_OF_A_STACK), "SWS", "S S", "S S", 'S', Items.STICK, 'W',
                 new ItemStack(Blocks.WOOL, 1, Constants.YELLOW)));
+
         GameRegistry.register(new ShapedOreRecipe(getLocation(ModBlocks.blockConstructionTapeCorner),
                 new ItemStack(ModBlocks.blockConstructionTapeCorner, 1),ModBlocks.blockConstructionTape));
+
         GameRegistry.register(new ShapedOreRecipe(getLocation(ModBlocks.blockConstructionTape),
                 new ItemStack(ModBlocks.blockConstructionTape, 1),ModBlocks.blockConstructionTapeCorner));
+                */
 
         // Register the hust
         addHutRecipe(new ItemStack(ModBlocks.blockHutMiner, 1), Items.WOODEN_PICKAXE);
@@ -101,13 +101,15 @@ public final class RecipeHandler
 
         GameRegistry.register(new ShapedOreRecipe(getLocation(ModBlocks.blockSubstitution),
                 new ItemStack(ModBlocks.blockSubstitution, ONE_FORTH_OF_A_STACK), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', ModItems.scanTool));
+
+
         GameRegistry.register(new ShapedOreRecipe(getLocation(ModBlocks.blockSolidSubstitution),
                 new ItemStack(ModBlocks.blockSolidSubstitution, ONE_FORTH_OF_A_STACK), "XXX", "X#X", "XXX", 'X', "logWood", '#', ModItems.scanTool));
 
 
         GameRegistry.register(new ShapedOreRecipe(getLocation(ModBlocks.blockHutField), new ItemStack(ModBlocks.blockHutField, 1),
                 " Y ", "X#X", " X ", 'X', WOODEN_STICK, '#', Items.LEATHER, 'Y', Blocks.HAY_BLOCK));
-        GameRegistry.register(new ShapedOreRecipe(getLocation(), new ItemStack(Blocks.WEB, 1), "X X", " X ", "X X", 'X', Items.STRING));
+        GameRegistry.register(new ShapedOreRecipe(getLocation(Blocks.WEB), new ItemStack(Blocks.WEB, 1), "X X", " X ", "X X", 'X', Items.STRING));
 
         //enableInDevelopmentFeatures(enableInDevelopmentFeatures);
         addSupplyChestRecipes(supplyChests);

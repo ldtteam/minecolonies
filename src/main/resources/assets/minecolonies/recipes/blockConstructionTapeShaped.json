@@ -1,0 +1,18 @@
+{
+  "type": "crafting_shaped",
+  "pattern": [
+    "SWS",
+    "S S",
+    "S S",
+  ],
+  "key": {
+    "X": {
+      "item": "minecraft:wool",
+      "data": 10
+    }
+  },
+  "result": {
+    "item": "minecolonies:blockConstructionTape",
+    "count": 1
+  }
+}

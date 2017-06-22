@@ -1,0 +1,12 @@
+{
+  "type": "crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecolonies:blockConstructionTape",
+    },
+  ],
+  "result": {
+    "item": "minecolonies:blockConstructionTapeCorner",
+    "count": 1
+  }
+}
