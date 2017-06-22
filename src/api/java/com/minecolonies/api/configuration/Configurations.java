@@ -9,6 +9,10 @@ import static com.minecolonies.api.util.constant.Constants.CITIZEN_RESPAWN_INTER
 @Config(modid = Constants.MOD_ID)
 public class Configurations
 {
+    Gameplay play = new Gameplay();
+    Pathfinding pathfinding = new Pathfinding();
+    Names names = new Names();
+
     public static class Gameplay
     {
         @Config.Comment("Should builder place construction tape?")
