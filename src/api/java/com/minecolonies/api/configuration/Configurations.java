@@ -3,12 +3,12 @@ package com.minecolonies.api.configuration;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraftforge.common.config.Config;
 
+import static com.minecolonies.api.util.constant.Constants.CITIZEN_RESPAWN_INTERVAL_MAX;
+import static com.minecolonies.api.util.constant.Constants.CITIZEN_RESPAWN_INTERVAL_MIN;
+
 @Config(modid = Constants.MOD_ID)
 public class Configurations
 {
-    public static final int     CITIZEN_RESPAWN_INTERVAL_MIN = 10;
-    public static final int     CITIZEN_RESPAWN_INTERVAL_MAX = 600;
-
     public static class Gameplay
     {
         @Config.Comment("Should builder place construction tape?")
