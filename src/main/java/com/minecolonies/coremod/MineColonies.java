@@ -7,6 +7,7 @@ import com.minecolonies.coremod.commands.CommandEntryPoint;
 import com.minecolonies.coremod.network.messages.*;
 import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.util.RecipeHandler;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -84,6 +85,14 @@ public class MineColonies
         proxy.registerEntities();
 
         proxy.registerEntityRendering();
+
+        @NotNull Configuration configuration = new Configuration(event.getSuggestedConfigurationFile());
+        configuration.load();
+
+        if (configuration.hasChanged())
+        {
+            configuration.save();
+        }
     }
 
     /**
