@@ -56,7 +56,7 @@ public final class ConstructionTapeHelper
 
     public static void placeConstructionTape(@NotNull final WorkOrderBuildDecoration workOrder, @NotNull final World world)
     {
-        if (Configurations.Gameplay.builderPlaceConstructionTape)
+        if (Configurations.gameplay.builderPlaceConstructionTape)
         {
             final StructureWrapper wrapper = new StructureWrapper(world, workOrder.getStructureName());
             final BlockPos pos = workOrder.getBuildingLocation();

@@ -46,7 +46,7 @@ public class CommandEntryPoint extends CommandBase
     {
         if(sender instanceof EntityPlayer)
         {
-            return AbstractSingleCommand.isPlayerOpped(sender) || Configurations.Gameplay.opLevelForServer <= 0;
+            return AbstractSingleCommand.isPlayerOpped(sender) || Configurations.gameplay.opLevelForServer <= 0;
         }
         return true;
     }

@@ -23,7 +23,7 @@ public class BlockHutTownHall extends AbstractBlockHut
     {
         super();
         //Sets the working range to whatever the config is set to
-        this.workingRange = Configurations.Gameplay.workingRangeTownHall;
+        this.workingRange = Configurations.gameplay.workingRangeTownHall;
     }
 
     @NotNull
@@ -49,7 +49,7 @@ public class BlockHutTownHall extends AbstractBlockHut
             final Colony colony = ColonyManager.getClosestColony(worldIn, pos);
 
             if ((colony == null
-                   || BlockPosUtil.getDistance2D(colony.getCenter(), pos) >= Configurations.Gameplay.workingRangeTownHall * 2 + Configurations.Gameplay.townHallPadding)
+                   || BlockPosUtil.getDistance2D(colony.getCenter(), pos) >= Configurations.gameplay.workingRangeTownHall * 2 + Configurations.gameplay.townHallPadding)
                   && placer instanceof EntityPlayer)
             {
 

@@ -30,10 +30,10 @@ import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.R
 public class RandomTeleportCommand extends AbstractSingleCommand
 {
     public static final  String DESC             = "rtp";
-    private static final int    ATTEMPTS         = Configurations.Gameplay.numberOfAttemptsForSafeTP;
-    private static final int    UPPER_BOUNDS     = Configurations.Gameplay.maxDistanceFromWorldSpawn * 2;
-    private static final int    LOWER_BOUNDS     = Configurations.Gameplay.maxDistanceFromWorldSpawn;
-    private static final int    SPAWN_NO_TP      = Configurations.Gameplay.minDistanceFromWorldSpawn;
+    private static final int    ATTEMPTS         = Configurations.gameplay.numberOfAttemptsForSafeTP;
+    private static final int    UPPER_BOUNDS     = Configurations.gameplay.maxDistanceFromWorldSpawn * 2;
+    private static final int    LOWER_BOUNDS     = Configurations.gameplay.maxDistanceFromWorldSpawn;
+    private static final int    SPAWN_NO_TP      = Configurations.gameplay.minDistanceFromWorldSpawn;
     private static final int    STARTING_Y       = 250;
     private static final double SAFETY_DROP      = 8;
     private static final int    FALL_DISTANCE    = 5;
@@ -162,7 +162,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand
                 }
                 else
                 {
-                    sender.getCommandSenderEntity().sendMessage(new TextComponentString("Please wait at least " + Configurations.Gameplay.teleportBuffer + " seconds to teleport again"));
+                    sender.getCommandSenderEntity().sendMessage(new TextComponentString("Please wait at least " + Configurations.gameplay.teleportBuffer + " seconds to teleport again"));
                 }
                 return;
             }

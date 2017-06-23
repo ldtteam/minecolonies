@@ -366,7 +366,7 @@ public class Structure
     @NotNull
     private Result advanceBlocks(@NotNull final Supplier<Boolean> moveOneBlock, @NotNull final Function<StructureBlock, Boolean> checkIfApplies)
     {
-        for (int i = 0; i < Configurations.Gameplay.maxBlocksCheckedByBuilder; i++)
+        for (int i = 0; i < Configurations.gameplay.maxBlocksCheckedByBuilder; i++)
         {
             if (!moveOneBlock.get())
             {

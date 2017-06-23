@@ -98,7 +98,7 @@ public class MineColonies
 
         proxy.registerTileEntities();
 
-        RecipeHandler.init(Configurations.Gameplay.enableInDevelopmentFeatures, Configurations.Gameplay.supplyChests);
+        RecipeHandler.init(Configurations.gameplay.enableInDevelopmentFeatures, Configurations.gameplay.supplyChests);
 
         proxy.registerEvents();
 

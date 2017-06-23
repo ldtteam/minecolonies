@@ -63,7 +63,7 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final BlockEvent.PlaceEvent event)
     {
-        if (Configurations.Gameplay.enableColonyProtection && checkBlockEventDenied(event.getWorld(), event.getPos(), event.getPlayer(), event.getPlacedBlock(),
+        if (Configurations.gameplay.enableColonyProtection && checkBlockEventDenied(event.getWorld(), event.getPos(), event.getPlayer(), event.getPlacedBlock(),
           event.getPlacedBlock().getBlock() instanceof AbstractBlockHut ? Action.PLACE_HUTS : Action.PLACE_BLOCKS))
         {
             cancelEvent(event, event.getPlayer());
@@ -136,7 +136,7 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final BlockEvent.BreakEvent event)
     {
-        if (Configurations.Gameplay.enableColonyProtection && checkBlockEventDenied(event.getWorld(), event.getPos(), event.getPlayer(),
+        if (Configurations.gameplay.enableColonyProtection && checkBlockEventDenied(event.getWorld(), event.getPos(), event.getPlayer(),
           event.getWorld().getBlockState(event.getPos()),
           event.getWorld().getBlockState(event.getPos()).getBlock() instanceof AbstractBlockHut ? Action.BREAK_HUTS : Action.BREAK_BLOCKS))
         {
@@ -152,7 +152,7 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final ExplosionEvent.Detonate event)
     {
-        if (!Configurations.Gameplay.enableColonyProtection || !Configurations.Gameplay.turnOffExplosionsInColonies)
+        if (!Configurations.gameplay.enableColonyProtection || !Configurations.gameplay.turnOffExplosionsInColonies)
         {
             return;
         }
@@ -181,8 +181,8 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final ExplosionEvent.Start event)
     {
-        if (Configurations.Gameplay.enableColonyProtection
-              && Configurations.Gameplay.turnOffExplosionsInColonies
+        if (Configurations.gameplay.enableColonyProtection
+              && Configurations.gameplay.turnOffExplosionsInColonies
               && colony.isCoordInColony(event.getWorld(), new BlockPos(event.getExplosion().getPosition())))
         {
             cancelEvent(event, null);
@@ -223,7 +223,7 @@ public class ColonyPermissionEventHandler
                 return;
             }
 
-            if (Configurations.Gameplay.enableColonyProtection)
+            if (Configurations.gameplay.enableColonyProtection)
             {
                 if (!perms.hasPermission(event.getEntityPlayer(), Action.RIGHTCLICK_BLOCK) && block != null && block != Blocks.AIR)
                 {
@@ -312,7 +312,7 @@ public class ColonyPermissionEventHandler
     {
         @NotNull final EntityPlayer player = EntityUtils.getPlayerOfFakePlayer(playerIn, world);
 
-        if (Configurations.Gameplay.enableColonyProtection
+        if (Configurations.gameplay.enableColonyProtection
               && colony.isCoordInColony(player.getEntityWorld(), player.getPosition())
               && !colony.getPermissions().hasPermission(player, action))
         {
@@ -425,7 +425,7 @@ public class ColonyPermissionEventHandler
 
         @NotNull final EntityPlayer player = EntityUtils.getPlayerOfFakePlayer(event.getEntityPlayer(), event.getEntityPlayer().getEntityWorld());
 
-        if (Configurations.Gameplay.enableColonyProtection
+        if (Configurations.gameplay.enableColonyProtection
               && colony.isCoordInColony(player.getEntityWorld(), player.getPosition()))
         {
             final Permissions perms = colony.getPermissions();
