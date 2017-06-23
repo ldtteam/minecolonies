@@ -4,6 +4,7 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.views.Window;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutLumberjack;
 import com.minecolonies.coremod.colony.CitizenData;
@@ -12,6 +13,7 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
+import com.minecolonies.coremod.network.messages.LumberjackSaplingSelectorMessage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -302,6 +304,11 @@ public class BuildingLumberjack extends AbstractBuildingWorker
                     saplings.addAll(OreDictionary.getOres(OreDictionary.getOreName(i)));
                 }
                 treesToFell.putAll(calcSaplings(saplings));
+
+                for(final Map.Entry<ItemStorage, Boolean> entry : treesToFell.entrySet())
+                {
+                    MineColonies.getNetwork().sendToServer(new LumberjackSaplingSelectorMessage(this, entry.getKey().getItemStack(), entry.getValue()));
+                }
             }
         }
 
