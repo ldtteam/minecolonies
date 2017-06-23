@@ -130,8 +130,6 @@ public class BlockConstructionTape extends Block
         setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(), BLOCK_NAME));
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
         Log.getLogger().warn("Register tape");
-        GameRegistry.register(this);
-        GameRegistry.register((new ItemBlock(this)).setRegistryName(this.getRegistryName()));
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);

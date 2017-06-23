@@ -169,9 +169,6 @@ public class BlockConstructionTapeCorner extends Block
         setRegistryName(BLOCK_NAME);
         setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(), BLOCK_NAME));
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
-        Log.getLogger().warn("Register corner");
-        GameRegistry.register(this);
-        GameRegistry.register((new ItemBlock(this)).setRegistryName(this.getRegistryName()));
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);

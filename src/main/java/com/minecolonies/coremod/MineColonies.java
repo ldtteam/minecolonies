@@ -43,6 +43,11 @@ public class MineColonies
 
     private static SimpleNetworkWrapper network;
 
+    static
+    {
+        proxy.registerEvents();
+    }
+
     /**
      * Returns whether the side is client or not
      *
@@ -72,8 +77,6 @@ public class MineColonies
     {
         return logger;
     }
-
-
 
     /**
      * Event handler for forge pre init event.
@@ -109,8 +112,6 @@ public class MineColonies
         proxy.registerTileEntities();
 
         RecipeHandler.init(Configurations.gameplay.enableInDevelopmentFeatures, Configurations.gameplay.supplyChests);
-
-        proxy.registerEvents();
 
         proxy.registerTileEntityRendering();
 
