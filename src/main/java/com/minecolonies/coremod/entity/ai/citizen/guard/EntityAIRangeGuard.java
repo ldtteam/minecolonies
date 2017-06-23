@@ -5,6 +5,7 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
+import com.minecolonies.coremod.util.ExperienceUtils;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IRangedAttackMob;
@@ -139,6 +140,11 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
     private static final int MOVE_CLOSE = 3;
 
     /**
+     * Experience added per mob killed
+     */
+    private static final int EXPERIENCE_PER_MOB = 20;
+
+    /**
      * Sets up some important skeleton stuff for every ai.
      *
      * @param job the job class
@@ -187,6 +193,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
         if (!targetEntity.isEntityAlive() || checkForToolOrWeapon(ToolType.BOW))
         {
             targetEntity = null;
+            worker.addExperience(EXPERIENCE_PER_MOB);
             worker.setAIMoveSpeed((float) 1.0D);
             return AIState.GUARD_GATHERING;
         }

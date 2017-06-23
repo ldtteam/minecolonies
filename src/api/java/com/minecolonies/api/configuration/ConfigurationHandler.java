@@ -142,6 +142,10 @@ public final class ConfigurationHandler
 
             averageNumberOfNightsBetweenRaids = config.get(CATEGORY_GAMEPLAY, "averageNumberOfNightsBetweenRaids", averageNumberOfNightsBetweenRaids,
               "sets the average number of nights between raids").getInt();
+
+            lumberjackReplantsTrees = config.get(CATEGORY_GAMEPLAY, "lumberjackReplantsTrees", lumberjackReplantsTrees,
+              "Wheteher or not the lumberjack replants trees").getBoolean();
+
             loadPathFindingConfigurations();
             loadNamesConfigurations();
         }

@@ -13,6 +13,7 @@ public class Configurations
     public static       int     builderBuildBlockDelay            = 15;
     public static       int     blockMiningDelayModifier          = 125;
     public static       boolean workersAlwaysWorkInRain           = false;
+    public static       boolean lumberjackReplantsTrees      = true;
     public static       int     maxBarbarianHordeSize             = 40;
     public static       boolean doBarbariansSpawn                 = true;
     public static       int     barbarianHordeDifficulty          = 5;
