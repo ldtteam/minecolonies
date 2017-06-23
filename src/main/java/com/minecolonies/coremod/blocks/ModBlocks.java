@@ -6,39 +6,67 @@ import net.minecraft.block.Block;
  * Class to create the modBlocks.
  * References to the blocks can be made here
  */
-public final class ModBlocks
+public class ModBlocks
 {
     /*
      * Creating objects for all blocks in the mod.
      * References can be made to here.
      */
-    public static final Block blockHutTownHall            = new BlockHutTownHall();
-    public static final Block blockHutCitizen             = new BlockHutCitizen();
-    public static final Block blockHutMiner               = new BlockHutMiner();
-    public static final Block blockHutLumberjack          = new BlockHutLumberjack();
-    public static final Block blockHutBaker               = new BlockHutBaker();
-    public static final Block blockHutBuilder             = new BlockHutBuilder();
-    public static final Block blockHutDeliveryman         = new BlockHutDeliveryman();
-    public static final Block blockHutBlacksmith          = new BlockHutBlacksmith();
-    public static final Block blockHutStonemason          = new BlockHutStonemason();
-    public static final Block blockHutFarmer              = new BlockHutFarmer();
-    public static final Block blockHutFisherman           = new BlockHutFisherman();
-    public static final Block blockSubstitution           = new BlockSubstitution();
-    public static final Block blockSolidSubstitution      = new BlockSolidSubstitution();
-    public static final Block blockHutField               = new BlockHutField();
-    public static final Block blockHutGuardTower          = new BlockHutGuardTower();
-    public static final Block blockHutWareHouse           = new BlockHutWareHouse();
-    public static final Block blockConstructionTape       = new BlockConstructionTape();
-    public static final Block blockConstructionTapeCorner = new BlockConstructionTapeCorner();
+    public static Block blockHutTownHall;
+    public static Block blockHutCitizen;
+    public static Block blockHutMiner;
+    public static Block blockHutLumberjack;
+    public static Block blockHutBaker;
+    public static Block blockHutBuilder;
+    public static Block blockHutDeliveryman;
+    public static Block blockHutBlacksmith;
+    public static Block blockHutStonemason;
+    public static Block blockHutFarmer;
+    public static Block blockHutFisherman;
+    public static Block blockSubstitution;
+    public static Block blockSolidSubstitution;
+    public static Block blockHutField;
+    public static Block blockHutGuardTower;
+    public static Block blockHutWareHouse;
+    public static Block blockConstructionTape;
+    public static Block blockConstructionTapeCorner;
 
 
     // Deactivated for now
-    // public static final Block blockBarrel        = new BlockBarrel();
+    // public static  Block blockBarrel        = new BlockBarrel();
 
     /**
-     * private constructor to hide the implicit public one.
+     * Private constructor to hide the implicit public one.
      */
-    private ModBlocks()
+    public ModBlocks()
     {
+        /*
+         * Intentionally left empty.
+         */
+    }
+
+    /**
+     * Initates all the blocks. At the correct time.
+     */
+    public static void init()
+    {
+        blockConstructionTape = new BlockConstructionTape();
+        blockConstructionTapeCorner = new BlockConstructionTapeCorner();
+        blockHutBaker = new BlockHutBaker();
+        blockHutBlacksmith = new BlockHutBlacksmith();
+        blockHutBuilder = new BlockHutBuilder();
+        blockHutCitizen = new BlockHutCitizen();
+        blockHutDeliveryman = new BlockHutDeliveryman();
+        blockHutFarmer = new BlockHutFarmer();
+        blockHutField = new BlockHutField();
+        blockHutFisherman = new BlockHutFisherman();
+        blockHutGuardTower = new BlockHutGuardTower();
+        blockHutLumberjack = new BlockHutLumberjack();
+        blockHutMiner = new BlockHutMiner();
+        blockHutStonemason = new BlockHutStonemason();
+        blockHutTownHall = new BlockHutTownHall();
+        blockHutWareHouse = new BlockHutWareHouse();
+        blockSolidSubstitution = new BlockSolidSubstitution();
+        blockSubstitution = new BlockSubstitution();
     }
 }

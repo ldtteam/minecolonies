@@ -3,9 +3,11 @@ package com.minecolonies.coremod.event;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.blocks.BlockConstructionTape;
+import com.minecolonies.coremod.blocks.BlockConstructionTapeCorner;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.items.ModItems;
+import com.minecolonies.coremod.items.*;
 import com.minecolonies.coremod.network.messages.ColonyStylesMessage;
 import com.minecolonies.coremod.network.messages.ServerUUIDMessage;
 import net.minecraft.block.Block;
@@ -81,6 +83,7 @@ public class FMLEventHandler
 
     /**
      * Called when the config is changed, used to synch between file and game.
+     *
      * @param event the on config changed event.
      */
     @SubscribeEvent
@@ -92,52 +95,24 @@ public class FMLEventHandler
     /**
      * Called when registering blocks,
      * we have to register all our modblocks here.
+     *
      * @param event the registery event for blocks.
      */
     @SubscribeEvent
     public void registerBlocks(@NotNull final RegistryEvent.Register<Block> event)
     {
-        event.getRegistry().registerAll(
-                ModBlocks.blockConstructionTape,
-                ModBlocks.blockConstructionTapeCorner,
-                ModBlocks.blockHutBaker,
-                ModBlocks.blockHutBlacksmith,
-                ModBlocks.blockHutBuilder,
-                ModBlocks.blockHutCitizen,
-                ModBlocks.blockHutDeliveryman,
-                ModBlocks.blockHutFarmer,
-                ModBlocks.blockHutField,
-                ModBlocks.blockHutFisherman,
-                ModBlocks.blockHutGuardTower,
-                ModBlocks.blockHutLumberjack,
-                ModBlocks.blockHutMiner,
-                ModBlocks.blockHutStonemason,
-                ModBlocks.blockHutTownHall,
-                ModBlocks.blockHutWareHouse,
-                ModBlocks.blockSolidSubstitution,
-                ModBlocks.blockSubstitution);
-        Log.getLogger().warn("Registering blocks");
-
+        ModBlocks.init();
     }
 
     /**
      * Called when registering items,
      * we have to register all our mod items here.
+     *
      * @param event the registery event for items.
      */
     @SubscribeEvent
     public void registerItems(@NotNull final RegistryEvent.Register<Item> event)
     {
-        event.getRegistry().registerAll(
-                ModItems.buildTool,
-                ModItems.caliper,
-                ModItems.permTool,
-                ModItems.scanTool,
-                ModItems.scepterGuard,
-                ModItems.supplyCamp,
-                ModItems.supplyChest,
-                new ItemBlock(ModBlocks.blockConstructionTape),
-                new ItemBlock(ModBlocks.blockConstructionTapeCorner));
-        Log.getLogger().warn("Registering items");
+        ModItems.init();
     }
 }

@@ -7,13 +7,13 @@ import net.minecraft.item.Item;
  */
 public final class ModItems
 {
-    public static final Item supplyChest  = new ItemSupplyChestDeployer();
-    public static final Item buildTool    = new ItemBuildTool();
-    public static final Item scanTool     = new ItemScanTool();
-    public static final Item permTool     = new ItemScepterPermission();
-    public static final Item caliper      = new ItemCaliper();
-    public static final Item scepterGuard = new ItemScepterGuard();
-    public static final Item supplyCamp   = new ItemSupplyCampDeployer();
+    public static Item supplyChest;
+    public static Item buildTool;
+    public static Item scanTool;
+    public static Item permTool;
+    public static Item caliper;
+    public static Item scepterGuard;
+    public static Item supplyCamp;
 
     public static final Item itemAchievementProxySettlement = new ItemAchievementProxy("sizeSettlement");
     public static final Item itemAchievementProxyTown       = new ItemAchievementProxy("sizeTown");
@@ -26,10 +26,24 @@ public final class ModItems
     /**
      * Private constructor to hide the implicit public one.
      */
-    private ModItems()
+    public ModItems()
     {
         /*
          * Intentionally left empty.
          */
+    }
+
+    /**
+     * Initates all the blocks. At the correct time.
+     */
+    public static void init()
+    {
+        supplyChest = new ItemSupplyChestDeployer();
+        buildTool = new ItemBuildTool();
+        scanTool = new ItemScanTool();
+        permTool = new ItemScepterPermission();
+        caliper = new ItemCaliper();
+        scepterGuard = new ItemScepterGuard();
+        supplyCamp = new ItemSupplyCampDeployer();
     }
 }
