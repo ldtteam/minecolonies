@@ -744,7 +744,12 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
 
         if (townHall.getColony().isManualHiring())
         {
-            findPaneOfTypeByID("toggleJob", Button.class).setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
+            findPaneOfTypeByID(BUTTON_TOGGLE_JOB, Button.class).setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
+        }
+
+        if (townHall.getColony().isManualHousing())
+        {
+            findPaneOfTypeByID(BUTTON_TOGGLE_HOUSING, Button.class).setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
         }
     }
 
