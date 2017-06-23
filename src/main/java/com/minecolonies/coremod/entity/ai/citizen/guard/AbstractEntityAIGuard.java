@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
@@ -38,44 +39,44 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
     /**
      * Worker gets this distance times building level away from his building to patrol.
      */
-    public static final    int    PATROL_DISTANCE                  = 40;
+    public static final    int    PATROL_DISTANCE        = 40;
     /**
      * Follow the player if farther than this.
      */
-    public static final    int    FOLLOW_RANGE                     = 10;
+    public static final    int    FOLLOW_RANGE           = 10;
     /**
      * Distance the guard starts searching.
      */
-    protected static final int    START_SEARCH_DISTANCE            = 5;
+    protected static final int    START_SEARCH_DISTANCE  = 5;
     /**
      * The start search distance of the guard to track/attack entities may get more depending on the level.
      */
-    private static final   double MAX_ATTACK_DISTANCE              = 20.0D;
+    private static final   double MAX_ATTACK_DISTANCE    = 20.0D;
     /**
      * Basic delay after operations.
      */
-    private static final   int    BASE_DELAY                       = 1;
+    private static final   int    BASE_DELAY             = 1;
     /**
      * Max amount the guard can shoot arrows before restocking.
      */
-    private static final   int    BASE_MAX_ATTACKS                 = 25;
+    private static final   int    BASE_MAX_ATTACKS       = 25;
     /**
      * Y range in which the guard detects other entities.
      */
-    private static final   double HEIGHT_DETECTION_RANGE           = 10D;
+    private static final   double HEIGHT_DETECTION_RANGE = 10D;
     /**
      * Path that close to the patrol target.
      */
-    private static final   int    PATH_CLOSE                       = 2;
+    private static final   int    PATH_CLOSE             = 2;
 
     /**
      * The dump base of actions, will increase depending on level.
      */
-    private static final   int    DUMP_BASE                        = 20;
+    private static final int DUMP_BASE                        = 20;
     /**
      * Increases the max attacks by this amount per level.
      */
-    private static final   int    ADDITIONAL_MAX_ATTACKS_PER_LEVEL = 5;
+    private static final int ADDITIONAL_MAX_ATTACKS_PER_LEVEL = 5;
     /**
      * The current target.
      */
@@ -273,7 +274,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
                 }
             }
 
-            if(!(entityList.get(0)).isEntityAlive())
+            if (!(entityList.get(0)).isEntityAlive())
             {
                 return GUARD_GATHERING;
             }
@@ -286,8 +287,8 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
 
     public boolean huntDownlastAttacker()
     {
-        if(this.worker.getLastAttacker() != null && this.worker.getLastAttackerTime() >= worker.ticksExisted - ATTACK_TIME_BUFFER
-                && this.worker.getLastAttacker().isEntityAlive())
+        if (this.worker.getLastAttacker() != null && this.worker.getLastAttackerTime() >= worker.ticksExisted - ATTACK_TIME_BUFFER
+              && this.worker.getLastAttacker().isEntityAlive())
         {
             return this.worker.getLastAttacker() != null && this.worker.canEntityBeSeen(this.worker.getLastAttacker());
         }
@@ -302,7 +303,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
      */
     protected AIState searchTarget()
     {
-        if(huntDownlastAttacker())
+        if (huntDownlastAttacker())
         {
             targetEntity = this.worker.getLastAttacker();
             return AIState.GUARD_HUNT_DOWN_TARGET;
@@ -311,6 +312,22 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
         entityList = CompatibilityUtils.getWorld(worker).getEntitiesWithinAABB(EntityMob.class, this.getTargetableArea(currentSearchDistance));
         entityList.addAll(CompatibilityUtils.getWorld(worker).getEntitiesWithinAABB(EntitySlime.class, this.getTargetableArea(currentSearchDistance)));
         entityList.addAll(CompatibilityUtils.getWorld(worker).getEntitiesWithinAABB(EntityPlayer.class, this.getTargetableArea(currentSearchDistance)));
+
+        EntityLivingBase possibleTarget = null;
+
+        if (worker.getColony() != null)
+        {
+            final Optional<EntityLivingBase> optionalTarget = worker.getColony().getGuardTargets()
+                                                                .stream()
+                                                                .findFirst();
+
+            possibleTarget = optionalTarget.orElse(null);
+        }
+
+        if (targetEntity == null && possibleTarget != null)
+        {
+            targetEntity = possibleTarget;
+        }
 
         if (targetEntity != null && targetEntity.isEntityAlive() && worker.getEntitySenses().canSee(targetEntity))
         {
