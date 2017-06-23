@@ -152,7 +152,7 @@ public class BuildingGuardTower extends AbstractBuildingWorker
     /**
      * Gets the name of the schematic.
      *
-     * @return Baker schematic name.
+     * @return Guard schematic name.
      */
     @NotNull
     @Override
