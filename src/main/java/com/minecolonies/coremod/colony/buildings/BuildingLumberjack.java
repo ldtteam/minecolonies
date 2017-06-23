@@ -81,24 +81,6 @@ public class BuildingLumberjack extends AbstractBuildingWorker
 
         final ItemStack stack = new ItemStack(Blocks.SAPLING);
         keepX.put(new ItemStorage(stack, false), SAPLINGS_TO_KEEP);
-        final int[] saplingId = OreDictionary.getOreIDs(new ItemStack(Blocks.SAPLING));
-
-        final List<ItemStack> saplings = new ArrayList<>();
-        for (final int i : saplingId)
-        {
-            saplings.addAll(OreDictionary.getOres(OreDictionary.getOreName(i)));
-        }
-
-        if(c.getWorld().isRemote)
-        {
-            if (treesToFell.isEmpty())
-            {
-                Log.getLogger().warn("Try to do saplings");
-                treesToFell.putAll(View.calcSaplings(saplings));
-            }
-
-            markDirty();
-        }
     }
 
     /**
