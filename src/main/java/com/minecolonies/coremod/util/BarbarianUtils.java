@@ -7,6 +7,7 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.EntityArcherBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.EntityBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.EntityChiefBarbarian;
@@ -89,38 +90,16 @@ public final class BarbarianUtils
     }
 
     /**
-     * Simple method that returns whether or not an entity is a barbarian.
-     *
-     * @param entity The entity to check
-     * @return Boolean value of whether the entity is a barbarian
-     */
-    public static Boolean isBarbarian(final Entity entity)
-    {
-        return (entity instanceof EntityBarbarian || entity instanceof EntityArcherBarbarian || entity instanceof EntityChiefBarbarian);
-    }
-
-    /**
      * Returns the closest barbarian to an entity.
      *
      * @param entity             The entity to test against
      * @param distanceFromEntity The distance to check for
      * @return the barbarian (if any) that is nearest
      */
-    public static Entity getClosestBarbarianToEntity(final Entity entity, final double distanceFromEntity)
+    public static AbstractEntityBarbarian getClosestBarbarianToEntity(final Entity entity, final double distanceFromEntity)
     {
-        final List<Entity> entityList = CompatibilityUtils.getWorld(entity).getEntitiesInAABBexcluding(
-          entity,
-          entity.getEntityBoundingBox().expand(
-            distanceFromEntity,
-            3.0D,
-            distanceFromEntity),
-          Entity::isEntityAlive);
-
-        final Optional<Entity> entityBarbarian = entityList.stream()
-                                                   .filter(BarbarianUtils::isBarbarian)
-                                                   .findFirst();
-
-        return entityBarbarian.orElse(null);
+        Optional<AbstractEntityBarbarian> barbarian = getBarbariansCloseToEntity(entity, distanceFromEntity).stream().findFirst();
+        return barbarian.orElse(null);
     }
 
     /**
@@ -130,17 +109,17 @@ public final class BarbarianUtils
      * @param distanceFromEntity The distance to check for
      * @return the barbarians (if any) that is nearest
      */
-    public static Stream<EntityLivingBase> getBarbariansCloseToEntity(final Entity entity, final double distanceFromEntity)
+    public static List<AbstractEntityBarbarian> getBarbariansCloseToEntity(final Entity entity, final double distanceFromEntity)
     {
-        final List<EntityLivingBase> entityList = CompatibilityUtils.getWorld(entity).getEntitiesWithinAABB(
-          EntityLivingBase.class,
+        final List<AbstractEntityBarbarian> entityList = CompatibilityUtils.getWorld(entity).getEntitiesWithinAABB(
+          AbstractEntityBarbarian.class,
           entity.getEntityBoundingBox().expand(
             distanceFromEntity,
             3.0D,
             distanceFromEntity),
           Entity::isEntityAlive);
 
-        return entityList.stream().filter(BarbarianUtils::isBarbarian);
+        return entityList;
     }
 
     /**

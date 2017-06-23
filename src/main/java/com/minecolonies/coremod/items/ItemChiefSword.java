@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityBarbarian;
 import com.minecolonies.coremod.util.BarbarianUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -47,7 +48,7 @@ public class ItemChiefSword extends ItemSword
     {
         if (entityIn instanceof EntityPlayer && isSelected)
         {
-            final Stream<EntityLivingBase> barbarians = BarbarianUtils.getBarbariansCloseToEntity(entityIn, GLOW_EFFECT_DISTANCE);
+            final Stream<AbstractEntityBarbarian> barbarians = BarbarianUtils.getBarbariansCloseToEntity(entityIn, GLOW_EFFECT_DISTANCE).stream();
             barbarians.forEach(entity -> entity.addPotionEffect(new PotionEffect(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER)));
         }
     }
@@ -55,7 +56,7 @@ public class ItemChiefSword extends ItemSword
     @Override
     public boolean hitEntity(final ItemStack stack, final EntityLivingBase target, @NotNull final EntityLivingBase attacker)
     {
-        if (attacker instanceof EntityPlayer && BarbarianUtils.isBarbarian(target))
+        if (attacker instanceof EntityPlayer && target instanceof AbstractEntityBarbarian)
         {
             target.addPotionEffect(new PotionEffect(LEVITATION_EFFECT, LEVITATION_EFFECT_DURATION, LEVITATION_EFFECT_MULTIPLIER));
         }
