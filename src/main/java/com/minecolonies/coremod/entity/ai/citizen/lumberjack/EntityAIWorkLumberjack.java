@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
 import com.minecolonies.api.compatibility.Compatibility;
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -494,7 +495,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         final BlockPos dirtLocation = new BlockPos(location.getX(),location.getY()-1,location.getZ());
         final Block dirt = world.getBlockState(dirtLocation).getBlock();
 
-        if (saplingSlot != -1 && ((job.tree.isSlimeTree() && Compatibility.isSlimeDirtOrGrass(dirt))
+        if (saplingSlot != -1 && Configurations.lumberjackReplantsTrees &&((job.tree.isSlimeTree() && Compatibility.isSlimeDirtOrGrass(dirt))
                                     ||(!job.tree.isSlimeTree() && !Compatibility.isSlimeDirtOrGrass(dirt))))
         {
             final ItemStack stack = getInventory().getStackInSlot(saplingSlot);
@@ -513,7 +514,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             this.getOwnBuilding().getColony().incrementStatistic("saplings");
         }
 
-        if (job.tree.getStumpLocations().isEmpty() || timeWaited >= MAX_WAITING_TIME)
+        if (job.tree.getStumpLocations().isEmpty() || timeWaited >= MAX_WAITING_TIME || !Configurations.lumberjackReplantsTrees)
         {
             timeWaited = 0;
             setDelay(TIMEOUT_DELAY);

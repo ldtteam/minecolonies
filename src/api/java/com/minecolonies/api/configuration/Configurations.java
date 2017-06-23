@@ -15,6 +15,7 @@ public class Configurations
     public static       int     blockMiningDelayModifier     = 500;
     public static       boolean limitToOneWareHousePerColony = true;
     public static       boolean workersAlwaysWorkInRain      = false;
+    public static       boolean lumberjackReplantsTrees      = true;
     public static       int     maxBarbarianHordeSize             = 40;
     public static       boolean doBarbariansSpawn                 = true;
     public static       int     barbarianHordeDifficulty          = 5;

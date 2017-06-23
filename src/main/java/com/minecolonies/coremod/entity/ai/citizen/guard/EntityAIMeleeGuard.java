@@ -84,6 +84,11 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
     private static final int FIRE_CHANCE_MULTIPLIER = 4;
 
     /**
+     * Experience added per mob killed
+     */
+    private static final double EXPERIENCE_PER_MOB = 20.0;
+
+    /**
      * Sets up some important skeleton stuff for every ai.
      *
      * @param job the job class
@@ -132,6 +137,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         if (!targetEntity.isEntityAlive() || checkForToolOrWeapon(ToolType.SWORD))
         {
             targetEntity = null;
+            worker.addExperience(EXPERIENCE_PER_MOB);
             worker.setAIMoveSpeed((float) 1.0D);
             return AIState.GUARD_GATHERING;
         }
