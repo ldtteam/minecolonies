@@ -74,14 +74,8 @@ public class WindowHomeBuilding extends AbstractWindowBuilding<BuildingHome.View
 
         final int sparePlaces = building.getBuildingLevel() - building.getResidents().size();
         buttonAssign.setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HOME_ASSIGN, sparePlaces));
-        if (sparePlaces <= 0)
-        {
-            buttonAssign.disable();
-        }
-        else
-        {
-            buttonAssign.enable();
-        }
+        buttonAssign.setEnabled(sparePlaces > 0 && building.getColony().isManualHousing());
+
         citizen.refreshElementPanes();
     }
 
@@ -89,7 +83,7 @@ public class WindowHomeBuilding extends AbstractWindowBuilding<BuildingHome.View
     public void onOpened()
     {
         super.onOpened();
-
+        final boolean isManualHousing = building.getColony().isManualHousing();
         citizen = findPaneOfTypeByID(LIST_CITIZEN, ScrollingList.class);
         citizen.setDataProvider(new ScrollingList.DataProvider()
         {
@@ -103,17 +97,7 @@ public class WindowHomeBuilding extends AbstractWindowBuilding<BuildingHome.View
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(home.getColony().getCitizen(home.getResidents().get(index)).getName());
-                final Button buttonRemove = findPaneOfTypeByID(BUTTON_REMOVE, Button.class);
-
-                if(building.getColony().isManualHousing())
-                {
-                    buttonRemove.enable();
-                }
-                else
-                {
-                    buttonRemove.disable();
-                }
-
+                rowPane.findPaneOfTypeByID(BUTTON_REMOVE, Button.class).setEnabled(isManualHousing);
             }
         });
 
