@@ -3,7 +3,7 @@ package com.minecolonies.coremod.entity.ai.minimal;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.util.BarbarianUtils;
+import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityBarbarian;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -60,8 +60,8 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     public boolean shouldExecute()
     {
         closestLivingEntity = getClosestToAvoid();
-        return closestLivingEntity != null && !(theEntity.getColonyJob() instanceof JobGuard) && this.theEntity.canEntityBeSeen(closestLivingEntity) && !BarbarianUtils.isBarbarian(
-          closestLivingEntity);
+        return closestLivingEntity != null && !(theEntity.getColonyJob() instanceof JobGuard) && this.theEntity.canEntityBeSeen(closestLivingEntity) &&
+                 !(closestLivingEntity instanceof AbstractEntityBarbarian);
     }
 
     /**

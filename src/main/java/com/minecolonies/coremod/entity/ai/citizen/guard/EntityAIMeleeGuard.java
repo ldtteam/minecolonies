@@ -4,8 +4,10 @@ import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
+import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityBarbarian;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
+import com.minecolonies.coremod.util.BarbarianUtils;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.MoverType;
@@ -132,6 +134,13 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         if(huntDownlastAttacker())
         {
             targetEntity = this.worker.getLastAttacker();
+        }
+
+        AbstractEntityBarbarian closestBarbarian = BarbarianUtils.getClosestBarbarianToEntity(worker, currentSearchDistance);
+
+        if(closestBarbarian != null)
+        {
+            targetEntity = closestBarbarian;
         }
 
         if (!targetEntity.isEntityAlive() || checkForToolOrWeapon(ToolType.SWORD))
