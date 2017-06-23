@@ -21,6 +21,7 @@ import com.minecolonies.coremod.util.ColonyUtils;
 import com.minecolonies.coremod.util.ServerUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -156,9 +157,11 @@ public class Colony implements IColony
     //  General Attributes
     private final int dimensionId;
     //  Buildings
-    private final Map<BlockPos, Field>       fields    = new HashMap<>();
+    private final Map<BlockPos, Field>       fields       = new HashMap<>();
     //Additional Waypoints.
-    private final Map<BlockPos, IBlockState> wayPoints = new HashMap<>();
+    private final Map<BlockPos, IBlockState> wayPoints    = new HashMap<>();
+    //HashMap of what guards are attacking
+    private       List<EntityLivingBase>     guardTargets = new ArrayList<>();
 
     /**
      * The warehouse building position. Initially null.
@@ -1214,7 +1217,7 @@ public class Colony implements IColony
 
         if (event.phase == TickEvent.Phase.START)
         {
-            if(this.citizens.size() >= CITIZEN_MINIMUM_FOR_RAID)
+            if (this.citizens.size() >= CITIZEN_MINIMUM_FOR_RAID)
             {
                 BarbarianUtils.eventRaid(this);
             }
@@ -1987,6 +1990,16 @@ public class Colony implements IColony
     public Map<BlockPos, IBlockState> getWayPoints()
     {
         return new HashMap<>(wayPoints);
+    }
+
+    public List<EntityLivingBase> getGuardTargets()
+    {
+        return new ArrayList<>(guardTargets);
+    }
+
+    public void setGuardTargets(List<EntityLivingBase> targets)
+    {
+        guardTargets = targets;
     }
 
     @Override

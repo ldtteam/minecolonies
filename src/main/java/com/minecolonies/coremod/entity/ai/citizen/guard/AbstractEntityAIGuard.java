@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
@@ -62,7 +63,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
     /**
      * Path that close to the patrol target.
      */
-    private static final   int    PATH_CLOSE                       = 2;
+    private static final   int    PATH_CLOSE             = 2;
 
     /**
      * The dump base of actions, will increase depending on level.
@@ -269,7 +270,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
                 }
             }
 
-            if(!(entityList.get(0)).isEntityAlive())
+            if (!(entityList.get(0)).isEntityAlive())
             {
                 return GUARD_GATHERING;
             }
@@ -282,8 +283,8 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
 
     public boolean huntDownlastAttacker()
     {
-        if(this.worker.getLastAttacker() != null && this.worker.getLastAttackerTime() >= worker.ticksExisted - ATTACK_TIME_BUFFER
-                && this.worker.getLastAttacker().isEntityAlive())
+        if (this.worker.getLastAttacker() != null && this.worker.getLastAttackerTime() >= worker.ticksExisted - ATTACK_TIME_BUFFER
+              && this.worker.getLastAttacker().isEntityAlive())
         {
             return this.worker.getLastAttacker() != null && this.worker.canEntityBeSeen(this.worker.getLastAttacker());
         }
@@ -298,7 +299,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
      */
     protected AIState searchTarget()
     {
-        if(huntDownlastAttacker())
+        if (huntDownlastAttacker())
         {
             targetEntity = this.worker.getLastAttacker();
             return AIState.GUARD_HUNT_DOWN_TARGET;
@@ -307,6 +308,22 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
         entityList = CompatibilityUtils.getWorld(worker).getEntitiesWithinAABB(EntityMob.class, this.getTargetableArea(currentSearchDistance));
         entityList.addAll(CompatibilityUtils.getWorld(worker).getEntitiesWithinAABB(EntitySlime.class, this.getTargetableArea(currentSearchDistance)));
         entityList.addAll(CompatibilityUtils.getWorld(worker).getEntitiesWithinAABB(EntityPlayer.class, this.getTargetableArea(currentSearchDistance)));
+
+        EntityLivingBase possibleTarget = null;
+
+        if (worker.getColony() != null)
+        {
+            final Optional<EntityLivingBase> optionalTarget = worker.getColony().getGuardTargets()
+                                                                .stream()
+                                                                .findFirst();
+
+            possibleTarget = optionalTarget.orElse(null);
+        }
+
+        if (targetEntity == null && possibleTarget != null)
+        {
+            targetEntity = possibleTarget;
+        }
 
         if (targetEntity != null && targetEntity.isEntityAlive() && worker.getEntitySenses().canSee(targetEntity))
         {
