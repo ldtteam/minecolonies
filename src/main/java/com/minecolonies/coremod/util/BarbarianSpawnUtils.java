@@ -55,7 +55,7 @@ public final class BarbarianSpawnUtils
      */
     private static final double FOLLOW_RANGE          = 35.0D;
     private static final double MOVEMENT_SPEED        = 0.2D;
-    private static final double ATTACK_DAMAGE         = 2.0D;
+    public static final  double ATTACK_DAMAGE         = 2.0D;
     private static final double ARMOR                 = 2.0D;
     private static final double BARBARIAN_BASE_HEALTH = 20;
 
@@ -106,7 +106,7 @@ public final class BarbarianSpawnUtils
      *
      * @param barbarian the barbarian to set the AITasks on.
      */
-    public static void setBarbarianAITasks(final EntityMob barbarian)
+    public static void setBarbarianAITasks(final AbstractEntityBarbarian barbarian)
     {
         barbarian.tasks.addTask(PRIORITY_ZERO, new EntityAISwimming(barbarian));
         barbarian.tasks.addTask(PRIORITY_TWO, new EntityAIWalkToRandomHuts(barbarian, AI_MOVE_SPEED));
@@ -132,7 +132,7 @@ public final class BarbarianSpawnUtils
      *
      * @param barbarian the barbarian to give the Equipment to.
      */
-    public static void setBarbarianEquipment(final EntityMob barbarian)
+    public static void setBarbarianEquipment(final AbstractEntityBarbarian barbarian)
     {
         if (barbarian instanceof EntityBarbarian)
         {
@@ -157,7 +157,7 @@ public final class BarbarianSpawnUtils
      *
      * @param barbarian The barbarian for which to return the loot table
      */
-    public static ResourceLocation getBarbarianLootTables(final EntityMob barbarian)
+    public static ResourceLocation getBarbarianLootTables(final AbstractEntityBarbarian barbarian)
     {
         if (barbarian instanceof EntityBarbarian)
         {
@@ -208,7 +208,7 @@ public final class BarbarianSpawnUtils
 
             IntStream.range(0, numberOfSpawns).forEach(theInteger ->
             {
-                final EntityMob entity = (EntityMob) EntityList.createEntityByIDFromName(entityToSpawn, world);
+                final AbstractEntityBarbarian entity = (AbstractEntityBarbarian) EntityList.createEntityByIDFromName(entityToSpawn, world);
 
                 if (entity != null)
                 {
