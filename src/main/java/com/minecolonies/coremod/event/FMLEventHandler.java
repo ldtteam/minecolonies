@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.event;
 
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -115,6 +116,8 @@ public class FMLEventHandler
                 ModBlocks.blockHutWareHouse,
                 ModBlocks.blockSolidSubstitution,
                 ModBlocks.blockSubstitution);
+        Log.getLogger().warn("Registering blocks");
+
     }
 
     /**
@@ -135,7 +138,6 @@ public class FMLEventHandler
                 ModItems.supplyChest,
                 new ItemBlock(ModBlocks.blockConstructionTape),
                 new ItemBlock(ModBlocks.blockConstructionTapeCorner));
+        Log.getLogger().warn("Registering items");
     }
-
-
 }

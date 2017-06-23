@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
@@ -128,6 +129,7 @@ public class BlockConstructionTape extends Block
         setRegistryName(BLOCK_NAME);
         setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(), BLOCK_NAME));
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
+        Log.getLogger().warn("Register tape");
         GameRegistry.register(this);
         GameRegistry.register((new ItemBlock(this)).setRegistryName(this.getRegistryName()));
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
