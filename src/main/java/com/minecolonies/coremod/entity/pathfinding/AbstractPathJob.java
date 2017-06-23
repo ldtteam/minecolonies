@@ -153,7 +153,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         allowJumpPointSearchTypeWalk = false;
 
-        if (Configurations.Pathfinding.pathfindingDebugDraw)
+        if (Configurations.pathfinding.pathfindingDebugDraw)
         {
             debugDrawEnabled = true;
             debugNodesVisited = new HashSet<>();
@@ -428,7 +428,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         currentNode.setClosed();
 
-        if (Configurations.Pathfinding.pathfindingDebugVerbosity == DEBUG_VERBOSITY_FULL)
+        if (Configurations.pathfinding.pathfindingDebugVerbosity == DEBUG_VERBOSITY_FULL)
         {
             Log.getLogger().info(String.format("Examining node [%d,%d,%d] ; g=%f ; f=%f",
               currentNode.pos.getX(), currentNode.pos.getY(), currentNode.pos.getZ(), currentNode.getCost(), currentNode.getScore()));
@@ -610,7 +610,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     private void doDebugPrinting(@NotNull final PathPoint[] points)
     {
-        if (Configurations.Pathfinding.pathfindingDebugVerbosity > DEBUG_VERBOSITY_NONE)
+        if (Configurations.pathfinding.pathfindingDebugVerbosity > DEBUG_VERBOSITY_NONE)
         {
             Log.getLogger().info("Path found:");
 

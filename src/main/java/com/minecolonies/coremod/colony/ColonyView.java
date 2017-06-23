@@ -613,7 +613,7 @@ public final class ColonyView implements IColony
     {
         //  Perform a 2D distance calculation, so pass center.posY as the Y
         return w.provider.getDimension() == dimensionId
-                 && BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ())) <= MathUtils.square(Configurations.Gameplay.workingRangeTownHall);
+                 && BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ())) <= MathUtils.square(Configurations.gameplay.workingRangeTownHall);
     }
 
     @Override

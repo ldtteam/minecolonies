@@ -118,29 +118,29 @@ public abstract class AbstractSingleCommand implements ISubCommand
         switch (theCommand)
         {
             case HOMETP:
-                return Configurations.Gameplay.canPlayerUseHomeTPCommand;
+                return Configurations.gameplay.canPlayerUseHomeTPCommand;
             case COLONYTP:
-                return Configurations.Gameplay.canPlayerUseColonyTPCommand;
+                return Configurations.gameplay.canPlayerUseColonyTPCommand;
             case RTP:
-                return Configurations.Gameplay.canPlayerUseRTPCommand;
+                return Configurations.gameplay.canPlayerUseRTPCommand;
             case KILLCITIZENS:
-                return Configurations.Gameplay.canPlayerUseKillCitizensCommand;
+                return Configurations.gameplay.canPlayerUseKillCitizensCommand;
             case CITIZENINFO:
-                return Configurations.Gameplay.canPlayerUseCitizenInfoCommand;
+                return Configurations.gameplay.canPlayerUseCitizenInfoCommand;
             case LISTCITIZENS:
-                return Configurations.Gameplay.canPlayerUseListCitizensCommand;
+                return Configurations.gameplay.canPlayerUseListCitizensCommand;
             case RESPAWNCITIZENS:
-                return Configurations.Gameplay.canPlayerRespawnCitizensCommand;
+                return Configurations.gameplay.canPlayerRespawnCitizensCommand;
             case SHOWCOLONYINFO:
-                return Configurations.Gameplay.canPlayerUseShowColonyInfoCommand;
+                return Configurations.gameplay.canPlayerUseShowColonyInfoCommand;
             case ADDOFFICER:
-                return Configurations.Gameplay.canPlayerUseAddOfficerCommand;
+                return Configurations.gameplay.canPlayerUseAddOfficerCommand;
             case DELETECOLONY:
-                return Configurations.Gameplay.canPlayerUseDeleteColonyCommand;
+                return Configurations.gameplay.canPlayerUseDeleteColonyCommand;
             case REFRESH_COLONY:
-                return Configurations.Gameplay.canPlayerUseRefreshColonyCommand;
+                return Configurations.gameplay.canPlayerUseRefreshColonyCommand;
             case MC_BACKUP:
-                return Configurations.Gameplay.canPlayerUseBackupCommand;
+                return Configurations.gameplay.canPlayerUseBackupCommand;
             default:
                 return false;
         }

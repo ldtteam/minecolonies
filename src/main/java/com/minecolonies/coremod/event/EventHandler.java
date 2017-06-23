@@ -218,7 +218,7 @@ public class EventHandler
         if(onBlockHutPlaced(world, player, pos))
         {
             final IColony colony = ColonyManager.getIColonyByOwner(world, player);
-            if(colony != null && (!Configurations.Gameplay.limitToOneWareHousePerColony || !colony.hasWarehouse()))
+            if(colony != null && (!Configurations.gameplay.limitToOneWareHousePerColony || !colony.hasWarehouse()))
             {
                 return true;
             }

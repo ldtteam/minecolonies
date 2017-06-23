@@ -49,7 +49,7 @@ public class MinecoloniesCommand extends AbstractSplitCommand
      */
     public static boolean canExecuteCommand(@NotNull final EntityPlayer player)
     {
-        if (Configurations.Gameplay.teleportBuffer == 0)
+        if (Configurations.gameplay.teleportBuffer == 0)
         {
             return true;
         }
@@ -72,7 +72,7 @@ public class MinecoloniesCommand extends AbstractSplitCommand
         final Map<UUID, Instant> mapCopy = new HashMap<>(commandExecutions);
         for (final Map.Entry<UUID, Instant> entry : mapCopy.entrySet())
         {
-            if (Instant.now().isAfter(entry.getValue()) && (Instant.now().getEpochSecond() - entry.getValue().getEpochSecond()) > Configurations.Gameplay.teleportBuffer)
+            if (Instant.now().isAfter(entry.getValue()) && (Instant.now().getEpochSecond() - entry.getValue().getEpochSecond()) > Configurations.gameplay.teleportBuffer)
             {
                 commandExecutions.remove(entry.getKey());
             }

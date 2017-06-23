@@ -375,7 +375,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
         if (building instanceof BuildingGuardTower)
         {
             if (currentPathTarget == null
-                  || BlockPosUtil.getDistance2D(building.getColony().getCenter(), currentPathTarget) > Configurations.Gameplay.workingRangeTownHall + Configurations.Gameplay.townHallPadding
+                  || BlockPosUtil.getDistance2D(building.getColony().getCenter(), currentPathTarget) > Configurations.gameplay.workingRangeTownHall + Configurations.gameplay.townHallPadding
                   || currentPathTarget.getY() < 2)
             {
                 return getNextPatrollingTarget((BuildingGuardTower) building);
@@ -420,7 +420,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
         else if (building.getTask().equals(BuildingGuardTower.Task.FOLLOW))
         {
             BlockPos pos = building.getPlayerToFollow();
-            if (pos == null || BlockPosUtil.getDistance2D(pos, building.getColony().getCenter()) > Configurations.Gameplay.workingRangeTownHall + Configurations.Gameplay.townHallPadding)
+            if (pos == null || BlockPosUtil.getDistance2D(pos, building.getColony().getCenter()) > Configurations.gameplay.workingRangeTownHall + Configurations.gameplay.townHallPadding)
             {
                 if (pos != null)
                 {

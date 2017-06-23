@@ -76,7 +76,7 @@ public final class TeleportToColony
             teleportPlayer(playerToTeleport, colonyId, sender);
             return;
         }
-        sender.getCommandSenderEntity().sendMessage(new TextComponentString("Please wait at least " + Configurations.Gameplay.teleportBuffer + " seconds to teleport again"));
+        sender.getCommandSenderEntity().sendMessage(new TextComponentString("Please wait at least " + Configurations.gameplay.teleportBuffer + " seconds to teleport again"));
     }
 
     /**

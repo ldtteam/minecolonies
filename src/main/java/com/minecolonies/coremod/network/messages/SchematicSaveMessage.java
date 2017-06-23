@@ -81,7 +81,7 @@ public class SchematicSaveMessage implements IMessage, IMessageHandler<Schematic
     @Override
     public IMessage onMessage(@NotNull final SchematicSaveMessage message, final MessageContext ctx)
     {
-        if (!MineColonies.isClient() && !Configurations.Gameplay.allowPlayerSchematics)
+        if (!MineColonies.isClient() && !Configurations.gameplay.allowPlayerSchematics)
         {
             Log.getLogger().info("SchematicSaveMessage: custom schematic is not allowed on this server.");
             if (ctx.side.isServer())

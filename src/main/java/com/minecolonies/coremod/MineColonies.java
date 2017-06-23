@@ -73,6 +73,8 @@ public class MineColonies
         return logger;
     }
 
+
+
     /**
      * Event handler for forge pre init event.
      *
@@ -85,7 +87,7 @@ public class MineColonies
         proxy.registerEntities();
         proxy.registerEntityRendering();
 
-        @NotNull final Configuration configuration = new Configuration(event.getSuggestedConfigurationFile());
+        @NotNull Configuration configuration = new Configuration(event.getSuggestedConfigurationFile());
         configuration.load();
 
         if (configuration.hasChanged())
@@ -106,7 +108,7 @@ public class MineColonies
 
         proxy.registerTileEntities();
 
-        RecipeHandler.init(Configurations.Gameplay.enableInDevelopmentFeatures, Configurations.Gameplay.supplyChests);
+        RecipeHandler.init(Configurations.gameplay.enableInDevelopmentFeatures, Configurations.gameplay.supplyChests);
 
         proxy.registerEvents();
 
