@@ -1,12 +1,9 @@
 package com.minecolonies.coremod.entity.ai.mobs;
 
-import com.minecolonies.api.util.ItemStackUtils;
-import net.minecraft.entity.EntityCreature;
+import com.minecolonies.coremod.util.BarbarianSpawnUtils;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 
@@ -16,25 +13,23 @@ import net.minecraft.util.EnumHand;
 public class EntityAIBarbarianAttackMelee extends EntityAIBase
 {
 
-    private final EntityCreature   entity;
-    private       EntityLivingBase target;
+    private final AbstractEntityBarbarian entity;
+    private       EntityLivingBase        target;
     private              int    lastAttack              = 0;
     private static final int    CYCLES_TO_WAIT          = 16;
     private static final double PITCH_MULTIPLIER        = 0.4;
     private static final double PITCH_ADDER             = 0.8;
-    private static final double DEFAULT_DAMAGE          = 3.0;
     private static final double HALF_ROTATION           = 180;
     private static final double MIN_DISTANCE_FOR_ATTACK = 2.5;
     private static final double ATTACK_SPEED            = 1.3;
     private static final int    MUTEX_BITS              = 3;
-    private static final double IS_ZERO                 = 0.0D;
 
     /**
      * Constructor method for AI
      *
      * @param creatureIn The creature which is using the AI
      */
-    public EntityAIBarbarianAttackMelee(final EntityCreature creatureIn)
+    public EntityAIBarbarianAttackMelee(final AbstractEntityBarbarian creatureIn)
     {
         super();
         this.entity = creatureIn;
@@ -78,21 +73,13 @@ public class EntityAIBarbarianAttackMelee extends EntityAIBase
      */
     private void attack(final EntityLivingBase target)
     {
-        double damageToBeDealt = 0;
-
-        final ItemStack heldItem = entity.getHeldItem(EnumHand.MAIN_HAND);
-
         if (target != null)
         {
-            if (heldItem != null && ItemStackUtils.doesItemServeAsWeapon(heldItem) && heldItem.getItem() instanceof ItemSword)
-            {
-                damageToBeDealt += ((ItemSword) heldItem.getItem()).getDamageVsEntity();
-            }
+            double damageToBeDealt = BarbarianSpawnUtils.ATTACK_DAMAGE;
 
-
-            if (damageToBeDealt <= IS_ZERO)
+            if (entity instanceof EntityChiefBarbarian)
             {
-                damageToBeDealt = DEFAULT_DAMAGE;
+                damageToBeDealt += 1.0;
             }
 
             if (entity.getDistanceToEntity(target) <= MIN_DISTANCE_FOR_ATTACK && lastAttack <= 0 && entity.canEntityBeSeen(target))
