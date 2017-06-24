@@ -161,7 +161,7 @@ public class Colony implements IColony
     //Additional Waypoints.
     private final Map<BlockPos, IBlockState> wayPoints    = new HashMap<>();
     //HashMap of what guards are attacking
-    private       List<EntityLivingBase>     guardTargets = new ArrayList<>();
+    private final List<EntityLivingBase>     guardTargets = new ArrayList<>();
 
     /**
      * The warehouse building position. Initially null.
