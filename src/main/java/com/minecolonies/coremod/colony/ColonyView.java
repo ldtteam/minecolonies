@@ -43,10 +43,17 @@ public final class ColonyView implements IColony
     private       String                      name       = "Unknown";
     private int      dimensionId;
     private BlockPos center;
+
     /**
      * Defines if workers are hired manually or automatically.
      */
     private       boolean          manualHiring = false;
+
+    /**
+     * Defines if workers are housed manually or automatically.
+     */
+    private       boolean          manualHousing = false;
+
     //  Buildings
     @Nullable
     private BuildingTownHall.View townHall;
@@ -146,6 +153,7 @@ public final class ColonyView implements IColony
         }
 
         buf.writeInt(colony.getLastContactInHours());
+        buf.writeBoolean(colony.isManualHousing());
         //  Citizens are sent as a separate packet
     }
 
@@ -231,6 +239,26 @@ public final class ColonyView implements IColony
     public void setManualHiring(final boolean manualHiring)
     {
         this.manualHiring = manualHiring;
+    }
+
+    /**
+     * Getter for the manual housing or not.
+     *
+     * @return the boolean true or false.
+     */
+    public boolean isManualHousing()
+    {
+        return manualHousing;
+    }
+
+    /**
+     * Sets if houses should be assigned manually.
+     *
+     * @param manualHousing true if manually.
+     */
+    public void setManualHousing(final boolean manualHousing)
+    {
+        this.manualHousing = manualHousing;
     }
 
     /**
@@ -409,6 +437,7 @@ public final class ColonyView implements IColony
             wayPoints.add(BlockPosUtil.readFromByteBuf(buf));
         }
         lastContactInHours = buf.readInt();
+        manualHousing = buf.readBoolean();
         return null;
     }
 
