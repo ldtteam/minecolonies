@@ -8,11 +8,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityBarbarian;
-import com.minecolonies.coremod.entity.ai.mobs.EntityArcherBarbarian;
-import com.minecolonies.coremod.entity.ai.mobs.EntityBarbarian;
-import com.minecolonies.coremod.entity.ai.mobs.EntityChiefBarbarian;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
@@ -21,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * Utils for the Barbarians
@@ -98,7 +93,7 @@ public final class BarbarianUtils
      */
     public static AbstractEntityBarbarian getClosestBarbarianToEntity(final Entity entity, final double distanceFromEntity)
     {
-        Optional<AbstractEntityBarbarian> barbarian = getBarbariansCloseToEntity(entity, distanceFromEntity).stream().findFirst();
+        final Optional<AbstractEntityBarbarian> barbarian = getBarbariansCloseToEntity(entity, distanceFromEntity).stream().findFirst();
         return barbarian.orElse(null);
     }
 
@@ -111,15 +106,13 @@ public final class BarbarianUtils
      */
     public static List<AbstractEntityBarbarian> getBarbariansCloseToEntity(final Entity entity, final double distanceFromEntity)
     {
-        final List<AbstractEntityBarbarian> entityList = CompatibilityUtils.getWorld(entity).getEntitiesWithinAABB(
+        return CompatibilityUtils.getWorld(entity).getEntitiesWithinAABB(
           AbstractEntityBarbarian.class,
           entity.getEntityBoundingBox().expand(
             distanceFromEntity,
             3.0D,
             distanceFromEntity),
           Entity::isEntityAlive);
-
-        return entityList;
     }
 
     /**
