@@ -45,6 +45,8 @@ public final class BarbarianUtils
     private static final float WHOLE_CIRCLE  = 360.0F;
     private static final float HALF_A_CIRCLE = 180F;
 
+    private static final double BARBARIAN_Y_COORD_SEARCH = 3.0D;
+
     /**
      * Private constructor to hide the implicit public one.
      */
@@ -110,7 +112,7 @@ public final class BarbarianUtils
           AbstractEntityBarbarian.class,
           entity.getEntityBoundingBox().expand(
             distanceFromEntity,
-            3.0D,
+            BARBARIAN_Y_COORD_SEARCH,
             distanceFromEntity),
           Entity::isEntityAlive);
     }

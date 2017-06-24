@@ -1999,7 +1999,8 @@ public class Colony implements IColony
 
     public void setGuardTargets(final List<EntityLivingBase> targets)
     {
-        guardTargets = targets;
+        guardTargets.clear();
+        guardTargets.addAll(targets);
     }
 
     @Override
