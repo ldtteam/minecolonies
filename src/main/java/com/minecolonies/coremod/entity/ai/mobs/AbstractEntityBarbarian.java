@@ -5,7 +5,6 @@ import com.minecolonies.coremod.items.ItemChiefSword;
 import com.minecolonies.coremod.sounds.BarbarianSounds;
 import com.minecolonies.coremod.util.BarbarianSpawnUtils;
 import com.minecolonies.coremod.util.BarbarianUtils;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.potion.Potion;

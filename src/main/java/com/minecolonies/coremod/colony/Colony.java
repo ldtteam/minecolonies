@@ -1995,7 +1995,7 @@ public class Colony implements IColony
         return new ArrayList<>(guardTargets);
     }
 
-    public void setGuardTargets(List<EntityLivingBase> targets)
+    public void setGuardTargets(final List<EntityLivingBase> targets)
     {
         guardTargets = targets;
     }

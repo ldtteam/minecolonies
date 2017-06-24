@@ -193,7 +193,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
             targetEntity = this.worker.getLastAttacker();
         }
 
-        AbstractEntityBarbarian closestBarbarian = BarbarianUtils.getClosestBarbarianToEntity(worker, currentSearchDistance);
+        final AbstractEntityBarbarian closestBarbarian = BarbarianUtils.getClosestBarbarianToEntity(worker, currentSearchDistance);
 
         if (closestBarbarian != null)
         {
@@ -202,7 +202,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
 
         if (targetEntity != null && worker.getColony() != null)
         {
-            List<EntityLivingBase> targets = worker.getColony().getGuardTargets();
+            final List<EntityLivingBase> targets = worker.getColony().getGuardTargets();
             if (targets.stream().noneMatch(entity -> entity == targetEntity))
             {
                 targets.add(targetEntity);
@@ -210,14 +210,12 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
             worker.getColony().setGuardTargets(targets);
         }
 
-        if (!targetEntity.isEntityAlive() || checkForToolOrWeapon(ToolType.BOW))
+        if (targetEntity != null && (!targetEntity.isEntityAlive() || checkForToolOrWeapon(ToolType.SWORD)))
         {
-            if (targetEntity != null && worker.getColony() != null)
-            {
-                List<EntityLivingBase> targets = worker.getColony().getGuardTargets();
-                targets.remove(targetEntity);
-                worker.getColony().setGuardTargets(targets);
-            }
+
+            List<EntityLivingBase> targets = worker.getColony().getGuardTargets();
+            targets.remove(targetEntity);
+            worker.getColony().setGuardTargets(targets);
             targetEntity = null;
             worker.addExperience(EXPERIENCE_PER_MOB);
             worker.setAIMoveSpeed((float) 1.0D);
