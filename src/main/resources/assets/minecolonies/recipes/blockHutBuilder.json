@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XXX",
+    "XDX",
+    "XXX"
+  ],
+  "key": {
+    "X": {
+      "type": "forge:ore_dict",
+      "ore": "plankWood"
+    },
+    "D": {
+      "item": "minecraft:wooden_door",
+      "data": 0
+    }
+  },
+  "result": {
+    "item": "minecolonies:blockhutbuilder"
+  }
+}

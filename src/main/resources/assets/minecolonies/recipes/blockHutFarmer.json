@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XXX",
+    "XHX",
+    "XXX"
+  ],
+  "key": {
+    "X": {
+      "type": "forge:ore_dict",
+      "ore": "plankWood"
+    },
+    "H": {
+      "item": "minecraft:wooden_hoe"
+    }
+  },
+  "result": {
+    "item": "minecolonies:blockhutfarmer"
+  }
+}

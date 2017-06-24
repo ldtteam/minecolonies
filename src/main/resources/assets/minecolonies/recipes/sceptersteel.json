@@ -1,16 +1,19 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "XXX",
-    "X X",
-    "X X"
+    "  X",
+    " S ",
+    "S  "
   ],
   "key": {
     "X": {
       "item": "minecraft:iron_ingot"
+    },
+    "S": {
+      "item": "minecraft:stick"
     }
   },
   "result": {
-    "item": "minecraft:iron_leggings"
+    "item": "minecolonies:sceptersteel"
   }
 }

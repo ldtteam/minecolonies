@@ -2,8 +2,8 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
-      "item": "minecolonies:blockconstructiontapecorner",
-    },
+      "item": "minecolonies:blockconstructiontapecorner"
+    }
   ],
   "result": {
     "item": "minecolonies:blockconstructiontape",
