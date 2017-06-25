@@ -1,8 +1,9 @@
 package com.minecolonies.coremod.colony.buildings;
 
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.views.Window;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutLumberjack;
 import com.minecolonies.coremod.colony.CitizenData;
@@ -11,6 +12,7 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
+import com.minecolonies.coremod.network.messages.LumberjackSaplingSelectorMessage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -79,20 +81,6 @@ public class BuildingLumberjack extends AbstractBuildingWorker
 
         final ItemStack stack = new ItemStack(Blocks.SAPLING);
         keepX.put(new ItemStorage(stack, false), SAPLINGS_TO_KEEP);
-        final int[] saplingId = OreDictionary.getOreIDs(new ItemStack(Blocks.SAPLING));
-
-        final List<ItemStack> saplings = new ArrayList<>();
-        for (final int i : saplingId)
-        {
-            saplings.addAll(OreDictionary.getOres(OreDictionary.getOreName(i)));
-        }
-
-        if (treesToFell.isEmpty())
-        {
-            treesToFell.putAll(calcSaplings(saplings));
-        }
-
-        markDirty();
     }
 
     /**
@@ -103,10 +91,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
      */
     public void setTreeToCut(final ItemStack stack, final boolean cut)
     {
-        if (treesToFell.containsKey(new ItemStorage(stack)))
-        {
-            treesToFell.put(new ItemStorage(stack), cut);
-        }
+        treesToFell.put(new ItemStorage(stack), cut);
     }
 
     /**
@@ -119,38 +104,22 @@ public class BuildingLumberjack extends AbstractBuildingWorker
         return Collections.unmodifiableMap(treesToFell);
     }
 
-    private static Map<ItemStorage, Boolean> calcSaplings(final List<ItemStack> saplings)
-    {
-        final Map<ItemStorage, Boolean> finalSaplings = new LinkedHashMap<>();
-        for (final ItemStack saps : saplings)
-        {
-            if (saps.getHasSubtypes())
-            {
-                final @NotNull NonNullList<ItemStack> list = NonNullList.create();
-                saps.getItem().getSubItems(saps.getItem(), null, list);
-
-                for (final ItemStack stack : list)
-                {
-                    finalSaplings.put(new ItemStorage(stack), true);
-                }
-            }
-        }
-        return finalSaplings;
-    }
-
     @Override
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
-        super.readFromNBT(compound);
-        treesToFell.clear();
-
-        final NBTTagList saplingTagList = compound.getTagList(TAG_SAPLINGS, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < saplingTagList.tagCount(); ++i)
+        if(treesToFell.isEmpty())
         {
-            final NBTTagCompound saplingCompound = saplingTagList.getCompoundTagAt(i);
-            final ItemStack stack = new ItemStack(saplingCompound);
-            final boolean cut = saplingCompound.getBoolean(TAG_CUT);
-            treesToFell.put(new ItemStorage(stack), cut);
+            super.readFromNBT(compound);
+            treesToFell.clear();
+
+            final NBTTagList saplingTagList = compound.getTagList(TAG_SAPLINGS, Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < saplingTagList.tagCount(); ++i)
+            {
+                final NBTTagCompound saplingCompound = saplingTagList.getCompoundTagAt(i);
+                final ItemStack stack = new ItemStack(saplingCompound);
+                final boolean cut = saplingCompound.getBoolean(TAG_CUT);
+                treesToFell.put(new ItemStorage(stack), cut);
+            }
         }
     }
 
@@ -236,16 +205,15 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     }
 
     /**
-     * Create the job for the lumberjack.
+     * Getter of the job description.
      *
-     * @param citizen the citizen to take the job.
-     * @return the new job.
+     * @return the description of the lumberjacks job.
      */
     @NotNull
     @Override
-    public AbstractJob createJob(final CitizenData citizen)
+    public String getJobName()
     {
-        return new JobLumberjack(citizen);
+        return LUMBERJACK;
     }
 
     /**
@@ -263,15 +231,16 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     }
 
     /**
-     * Getter of the job description.
+     * Create the job for the lumberjack.
      *
-     * @return the description of the lumberjacks job.
+     * @param citizen the citizen to take the job.
+     * @return the new job.
      */
     @NotNull
     @Override
-    public String getJobName()
+    public AbstractJob createJob(final CitizenData citizen)
     {
-        return LUMBERJACK;
+        return new JobLumberjack(citizen);
     }
 
     /**
@@ -282,7 +251,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
         /**
          * List of saplings the lumberjack should, or should not fell (true if should, false if should not).
          */
-        public final Map<ItemStack, Boolean> treesToFell = new LinkedHashMap<>();
+        public final Map<ItemStorage, Boolean> treesToFell = new LinkedHashMap<>();
 
         /**
          * Public constructor of the view, creates an instance of it.
@@ -304,7 +273,24 @@ public class BuildingLumberjack extends AbstractBuildingWorker
             {
                 final ItemStack stack = ByteBufUtils.readItemStack(buf);
                 final boolean cut = buf.readBoolean();
-                treesToFell.put(stack, cut);
+                treesToFell.put(new ItemStorage(stack), cut);
+            }
+
+            if(treesToFell.isEmpty())
+            {
+                final List<ItemStack> saplings = new ArrayList<>();
+                final int[] saplingId = OreDictionary.getOreIDs(new ItemStack(Blocks.SAPLING));
+
+                for (final int i : saplingId)
+                {
+                    saplings.addAll(OreDictionary.getOres(OreDictionary.getOreName(i)));
+                }
+                treesToFell.putAll(calcSaplings(saplings));
+
+                for(final Map.Entry<ItemStorage, Boolean> entry : treesToFell.entrySet())
+                {
+                    MineColonies.getNetwork().sendToServer(new LumberjackSaplingSelectorMessage(this, entry.getKey().getItemStack(), entry.getValue()));
+                }
             }
         }
 
@@ -327,6 +313,30 @@ public class BuildingLumberjack extends AbstractBuildingWorker
         public Skill getSecondarySkill()
         {
             return Skill.CHARISMA;
+        }
+
+        /**
+         * Calculates all saplings ingame and return an itemStorage map of it.
+         * @param saplings the saplings.
+         * @return the itemStorage map.
+         */
+        public static Map<ItemStorage, Boolean> calcSaplings(final List<ItemStack> saplings)
+        {
+            final Map<ItemStorage, Boolean> finalSaplings = new LinkedHashMap<>();
+            for (final ItemStack saps : saplings)
+            {
+                if (saps.getHasSubtypes())
+                {
+                    final NonNullList<ItemStack> list = NonNullList.create();
+                    saps.getItem().getSubItems(saps.getItem(), null, list);
+
+                    for (final ItemStack stack : list)
+                    {
+                        finalSaplings.put(new ItemStorage(stack), true);
+                    }
+                }
+            }
+            return finalSaplings;
         }
     }
 }
