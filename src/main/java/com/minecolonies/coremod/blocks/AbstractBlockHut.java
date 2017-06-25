@@ -52,7 +52,6 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
      * <p>
      * Registers the block, sets the creative tab, as well as the resistance and
      * the hardness.
-     * @param registry
      */
     public AbstractBlockHut()
     {
@@ -89,7 +88,6 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     /**
      * Registery block at gameregistry.
      * @param registry the registry to use.
-     * @return the block itself.
      */
     public void registerItemBlock(final IForgeRegistry<Item> registry)
     {
