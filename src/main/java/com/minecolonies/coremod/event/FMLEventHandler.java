@@ -10,10 +10,13 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.items.*;
 import com.minecolonies.coremod.network.messages.ColonyStylesMessage;
 import com.minecolonies.coremod.network.messages.ServerUUIDMessage;
+import com.minecolonies.coremod.sounds.ModSoundEvents;
 import net.minecraft.block.Block;
+import net.minecraft.client.audio.Sound;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.event.RegistryEvent;
@@ -101,7 +104,7 @@ public class FMLEventHandler
     @SubscribeEvent
     public void registerBlocks(@NotNull final RegistryEvent.Register<Block> event)
     {
-        ModBlocks.init();
+        ModBlocks.init(event.getRegistry());
     }
 
     /**
@@ -113,6 +116,19 @@ public class FMLEventHandler
     @SubscribeEvent
     public void registerItems(@NotNull final RegistryEvent.Register<Item> event)
     {
-        ModItems.init();
+        ModItems.init(event.getRegistry());
+        ModBlocks.registerItemBlock(event.getRegistry());
+    }
+
+    /**
+     * Called when registering sounds,
+     * we have to register all our mod items here.
+     *
+     * @param event the registery event for items.
+     */
+    @SubscribeEvent
+    public void registerSounds(@NotNull final RegistryEvent.Register<SoundEvent> event)
+    {
+        ModSoundEvents.registerSounds(event.getRegistry());
     }
 }

@@ -7,6 +7,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.inventory.InventoryField;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
@@ -15,6 +16,7 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -26,9 +28,9 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -101,8 +103,28 @@ public class BlockHutField extends BlockContainer
         //Hardness of 10 takes a long time to mine to not loose progress.
         setHardness(HARDNESS);
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, NORTH));
-        GameRegistry.register(this);
-        GameRegistry.register((new ItemBlock(this)).setRegistryName(this.getRegistryName()));
+    }
+
+    /**
+     * Registery block at gameregistry.
+     * @param registry the registry to use.
+     * @return the block itself.
+     */
+    public BlockHutField registerBlock(final IForgeRegistry<Block> registry)
+    {
+        registry.register(this);
+        return this;
+    }
+
+    /**
+     * Registery block at gameregistry.
+     * @param registry the registry to use.
+     * @return the block itself.
+     */
+    public Block registerItemBlock(final IForgeRegistry<Item> registry)
+    {
+        registry.register((new ItemBlock(this)).setRegistryName(this.getRegistryName()));
+        return this;
     }
 
     @NotNull

@@ -116,16 +116,16 @@ public final class RecipeHandler
         */
     }
 
-    private static void enableInDevelopmentFeatures(final boolean enable)
+    /*private static void enableInDevelopmentFeatures(final boolean enable)
     {
         if (enable)
         {
             addHutRecipe(new ItemStack(ModBlocks.blockHutBlacksmith, 1), "ingotIron");
             addHutRecipe(new ItemStack(ModBlocks.blockHutStonemason, 1), Blocks.STONEBRICK);
         }
-    }
+    }*/
 
-    private static void addHutRecipe(@NotNull final ItemStack hutItemStack, @NotNull final Item item)
+    /*private static void addHutRecipe(@NotNull final ItemStack hutItemStack, @NotNull final Item item)
     {
         GameRegistry.register(new ShapedOreRecipe(getLocation(hutItemStack.getItem()), hutItemStack, "XBX", "X#X", "XXX", 'B', ModItems.buildTool, 'X', PLANK_WOOD, '#', item));
     }
@@ -138,9 +138,9 @@ public final class RecipeHandler
     private static void addHutRecipe(@NotNull final ItemStack hutItemStack, @NotNull final Block block)
     {
         GameRegistry.register(new ShapedOreRecipe(getLocation(hutItemStack.getItem()), hutItemStack, "XBX", "X#X", "XXX", 'B', ModItems.buildTool, 'X', PLANK_WOOD, '#', block));
-    }
+    }*/
 
-    private static void addSupplyChestRecipes(final boolean enable)
+    /*private static void addSupplyChestRecipes(final boolean enable)
     {
         if (enable)
         {
@@ -156,5 +156,5 @@ public final class RecipeHandler
         {
             GameRegistry.register(new ShapedOreRecipe(getLocation(ModBlocks.blockHutTownHall), new ItemStack(ModBlocks.blockHutTownHall, 1), "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', Items.BOAT));
         }
-    }
+    }*/
 }

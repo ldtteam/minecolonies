@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.items;
 
+import com.minecolonies.coremod.blocks.*;
 import net.minecraft.item.Item;
+import net.minecraftforge.registries.IForgeRegistry;
 
 /**
  * Class handling the registering of the mod items.
@@ -35,15 +37,16 @@ public final class ModItems
 
     /**
      * Initates all the blocks. At the correct time.
+     * @param registry
      */
-    public static void init()
+    public static void init(final IForgeRegistry<Item> registry)
     {
-        supplyChest = new ItemSupplyChestDeployer();
-        buildTool = new ItemBuildTool();
-        scanTool = new ItemScanTool();
-        permTool = new ItemScepterPermission();
-        caliper = new ItemCaliper();
-        scepterGuard = new ItemScepterGuard();
-        supplyCamp = new ItemSupplyCampDeployer();
+        registry.register(supplyChest = new ItemSupplyChestDeployer());
+        registry.register(buildTool = new ItemBuildTool());
+        registry.register(scanTool = new ItemScanTool());
+        registry.register(permTool = new ItemScepterPermission());
+        registry.register(caliper = new ItemCaliper());
+        registry.register(scepterGuard = new ItemScepterGuard());
+        registry.register(supplyCamp = new ItemSupplyCampDeployer());
     }
 }

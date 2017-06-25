@@ -3,7 +3,7 @@ package com.minecolonies.coremod.sounds;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,47 +38,47 @@ public final class ModSoundEvents
 
     /**
      * Register the {@link SoundEvent}s.
+     * @param registry the registry to register at.
      */
-    public static void registerSounds()
+    public static void registerSounds(final IForgeRegistry<SoundEvent> registry)
     {
+        registry.register(FishermanSounds.Female.iGotOne);
+        registry.register(FishermanSounds.Female.badWeather);
+        registry.register(FishermanSounds.Female.needFishingRod);
+        registry.register(FishermanSounds.Female.offToBed);
+        registry.register(FishermanSounds.Female.generalPhrases);
+        registry.register(FishermanSounds.Female.noises);
 
-        GameRegistry.register(FishermanSounds.Female.iGotOne);
-        GameRegistry.register(FishermanSounds.Female.badWeather);
-        GameRegistry.register(FishermanSounds.Female.needFishingRod);
-        GameRegistry.register(FishermanSounds.Female.offToBed);
-        GameRegistry.register(FishermanSounds.Female.generalPhrases);
-        GameRegistry.register(FishermanSounds.Female.noises);
+        registry.register(FishermanSounds.Male.iGotOne);
+        registry.register(FishermanSounds.Male.badWeather);
+        registry.register(FishermanSounds.Male.needFishingRod);
+        registry.register(FishermanSounds.Male.offToBed);
+        registry.register(FishermanSounds.Male.generalPhrases);
+        registry.register(FishermanSounds.Male.noises);
 
-        GameRegistry.register(FishermanSounds.Male.iGotOne);
-        GameRegistry.register(FishermanSounds.Male.badWeather);
-        GameRegistry.register(FishermanSounds.Male.needFishingRod);
-        GameRegistry.register(FishermanSounds.Male.offToBed);
-        GameRegistry.register(FishermanSounds.Male.generalPhrases);
-        GameRegistry.register(FishermanSounds.Male.noises);
+        registry.register(DeliverymanSounds.Female.hostile);
+        registry.register(DeliverymanSounds.Female.saturationHigh);
+        registry.register(DeliverymanSounds.Female.saturationLow);
+        registry.register(DeliverymanSounds.Female.saturationVeryLow);
+        registry.register(DeliverymanSounds.Female.badWeather);
+        registry.register(DeliverymanSounds.Female.offToBed);
+        registry.register(DeliverymanSounds.Female.generalPhrases);
+        registry.register(DeliverymanSounds.Female.noises);
 
-        GameRegistry.register(DeliverymanSounds.Female.hostile);
-        GameRegistry.register(DeliverymanSounds.Female.saturationHigh);
-        GameRegistry.register(DeliverymanSounds.Female.saturationLow);
-        GameRegistry.register(DeliverymanSounds.Female.saturationVeryLow);
-        GameRegistry.register(DeliverymanSounds.Female.badWeather);
-        GameRegistry.register(DeliverymanSounds.Female.offToBed);
-        GameRegistry.register(DeliverymanSounds.Female.generalPhrases);
-        GameRegistry.register(DeliverymanSounds.Female.noises);
+        registry.register(FarmerSounds.Female.hostile);
+        registry.register(FarmerSounds.Female.saturationHigh);
+        registry.register(FarmerSounds.Female.saturationLow);
+        registry.register(FarmerSounds.Female.saturationVeryLow);
+        registry.register(FarmerSounds.Female.badWeather);
+        registry.register(FarmerSounds.Female.offToBed);
+        registry.register(FarmerSounds.Female.generalPhrases);
+        registry.register(FarmerSounds.Female.noises);
+        registry.register(FarmerSounds.Female.greeting);
+        registry.register(FarmerSounds.Female.farewell);
+        registry.register(FarmerSounds.Female.interaction);
 
-        GameRegistry.register(FarmerSounds.Female.hostile);
-        GameRegistry.register(FarmerSounds.Female.saturationHigh);
-        GameRegistry.register(FarmerSounds.Female.saturationLow);
-        GameRegistry.register(FarmerSounds.Female.saturationVeryLow);
-        GameRegistry.register(FarmerSounds.Female.badWeather);
-        GameRegistry.register(FarmerSounds.Female.offToBed);
-        GameRegistry.register(FarmerSounds.Female.generalPhrases);
-        GameRegistry.register(FarmerSounds.Female.noises);
-        GameRegistry.register(FarmerSounds.Female.greeting);
-        GameRegistry.register(FarmerSounds.Female.farewell);
-        GameRegistry.register(FarmerSounds.Female.interaction);
-
-        GameRegistry.register(CitizenSounds.Female.say);
-        GameRegistry.register(CitizenSounds.Male.say);
+        registry.register(CitizenSounds.Female.say);
+        registry.register(CitizenSounds.Male.say);
     }
 
     /**

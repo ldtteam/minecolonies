@@ -94,7 +94,6 @@ public class MineColonies
     @Mod.EventHandler
     public void preInit(@NotNull final FMLPreInitializationEvent event)
     {
-        proxy.registerSounds();
         proxy.registerEntities();
         proxy.registerEntityRendering();
 
