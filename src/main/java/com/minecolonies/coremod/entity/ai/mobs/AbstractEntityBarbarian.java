@@ -6,7 +6,9 @@ import com.minecolonies.coremod.sounds.BarbarianSounds;
 import com.minecolonies.coremod.util.BarbarianSpawnUtils;
 import com.minecolonies.coremod.util.BarbarianUtils;
 import net.minecraft.entity.IEntityLivingData;
+import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
@@ -29,6 +31,8 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     private static final int    SPEED_EFFECT_DURATION           = 160;
     private static final int    SPEED_EFFECT_MULTIPLIER         = 2;
     private static final int    BARBARIAN_HORDE_DIFFICULTY_FIVE = 5;
+
+    private static final int BARBARIAN_EXP_DROP = 1;
 
     private int currentCount = 0;
 
@@ -88,6 +92,18 @@ public abstract class AbstractEntityBarbarian extends EntityMob
         /**
          * We have loot_tables for a reason, this is done to disable equipped items dropping on death.
          */
+    }
+
+    @Override
+    protected void onDeathUpdate()
+    {
+        if (!(this.getAttackingEntity() instanceof EntityPlayer) && (this.recentlyHit > 0 && this.canDropLoot() && this.worldObj.getGameRules().getBoolean("doMobLoot")))
+        {
+            int j = EntityXPOrb.getXPSplit(BARBARIAN_EXP_DROP);
+            this.worldObj.spawnEntityInWorld(new EntityXPOrb(this.worldObj, this.posX, this.posY, this.posZ, j));
+        }
+
+        super.onDeathUpdate();
     }
 
     @Override
