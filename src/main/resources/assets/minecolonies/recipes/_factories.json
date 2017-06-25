@@ -1,0 +1,5 @@
+{
+  "conditions": {
+    "config_property" : "minecolonies.ConfigCondition"
+  }
+}

@@ -5,6 +5,11 @@
     "B B",
     "BBB"
   ],
+  "conditions": [
+    {
+      "type": "supply",
+    }
+  ],
   "key": {
     "B": {
       "item": "minecraft:boat"
