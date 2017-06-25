@@ -18,9 +18,9 @@ public class StandardWorldColonyControllerWorldSavedData extends WorldSavedData
     public static final String WORLD_SAVED_DATA_PREFIX = "Minecolonies_ColonyManager";
     ////// --------------------------- String Constants --------------------------- \\\\\\
 
-    ////// --------------------------- String Constants --------------------------- \\\\\\
+    ////// --------------------------- NBT Constants --------------------------- \\\\\\
     public static final String TAG_CONTROLLER = "Controller";
-    ////// --------------------------- String Constants --------------------------- \\\\\\
+    ////// --------------------------- NBT Constants --------------------------- \\\\\\
 
     /**
      * The {@link IWorldColonyController} for which this {@link StandardWorldColonyControllerWorldSavedData}
@@ -35,8 +35,8 @@ public class StandardWorldColonyControllerWorldSavedData extends WorldSavedData
      * Once a Controller is being set after the loading, by calling the {@link #setController(IWorldColonyController)}
      * method this Tag is read into the first given controller and cleared.
      *
-     * As such it only functions as a temporary storage of the data stored in the NBT to hold it until MC finishes the loading
-     * of this {@link StandardWorldColonyControllerWorldSavedData} until Minecolonies sets the {@link IWorldColonyController}
+     * As such it only functions as a temporary storage of the data stored in the NBT to hold it, while MC finishes the loading
+     * of this {@link StandardWorldColonyControllerWorldSavedData}, until Minecolonies sets the {@link IWorldColonyController}
      * for this {@link StandardWorldColonyControllerWorldSavedData}.
      */
     private NBTTagCompound loadCompound;
@@ -51,6 +51,7 @@ public class StandardWorldColonyControllerWorldSavedData extends WorldSavedData
         super(WORLD_SAVED_DATA_PREFIX);
     }
 
+    //TODO: Fix this.
     @Override
     public void readFromNBT(final NBTTagCompound nbt)
     {

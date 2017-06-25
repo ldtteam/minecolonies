@@ -17,7 +17,6 @@ import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.lib.Constants;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.Colony;

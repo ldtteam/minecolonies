@@ -96,11 +96,11 @@ public class TileEntityColonyBuilding extends TileEntityChest
         {
             if (colonyId == null)
             {
-                colony = IAPI.Holder.getApi().getColonyManager().getColony(world, this.getPos());
+                colony = IAPI.Holder.getApi().getColonyManager().getControllerForWorld(world).getColony(this.getPos());
             }
             else
             {
-                colony = IAPI.Holder.getApi().getColonyManager().getColony(colonyId);
+                colony = IAPI.Holder.getApi().getColonyManager().getControllerForWorld(world).getColony(colonyId);
             }
 
             if (colony == null)
@@ -266,7 +266,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
 
         if (!world.isRemote && colonyId == null)
         {
-            final IColony tempColony = IAPI.Holder.getApi().getColonyManager().getColony(world, this.getPosition());
+            final IColony tempColony = IAPI.Holder.getApi().getColonyManager().getControllerForWorld(world).getColony(this.getPosition());
             if (tempColony != null)
             {
                 colonyId = tempColony.getID();

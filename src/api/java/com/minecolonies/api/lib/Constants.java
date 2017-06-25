@@ -1,5 +1,7 @@
 package com.minecolonies.api.lib;
 
+import com.minecolonies.api.reference.ModAchievements;
+
 /**
  * Some constants needed for the whole mod.
  */
@@ -19,4 +21,20 @@ public class Constants
     public static final int    ROTATE_ONCE           = 1;
     public static final int    ROTATE_TWICE          = 2;
     public static final int    ROTATE_THREE_TIMES    = 3;
+    /**
+     * Population size to achieve {@link ModAchievements#achievementSizeSettlement}.
+     */
+    public static int ACHIEVEMENT_SIZE_SETTLEMENT = 5;
+    /**
+     * Population size to achieve {@link ModAchievements#achievementSizeTown}.
+     */
+    public static int ACHIEVEMENT_SIZE_TOWN = 10;
+    /**
+     * Population size to achieve {@link ModAchievements#achievementSizeCity}.
+     */
+    public static int ACHIEVEMENT_SIZE_CITY = 20;
+    /**
+     * Population size to achieve {@link ModAchievements#achievementSizeMetropolis}.
+     */
+    public static int ACHIEVEMENT_SIZE_METROPOLIS = 50;
 }

@@ -1,13 +1,16 @@
 package com.minecolonies.coremod.network.messages;
 
-import com.minecolonies.api.colony.management.ColonyManager;
+import com.minecolonies.api.IAPI;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,6 +30,10 @@ public class MarkBuildingDirtyMessage extends AbstractMessage<MarkBuildingDirtyM
      * The id of the colony.
      */
     private int      colonyId;
+    /**
+     * The dimension ID of the world
+     */
+    private int      dimensionId;
 
     /**
      * Empty constructor used when registering the message.
@@ -46,6 +53,7 @@ public class MarkBuildingDirtyMessage extends AbstractMessage<MarkBuildingDirtyM
         super();
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getLocation().getInDimensionLocation();
+        this.dimensionId = Minecraft.getMinecraft().player.dimension;
     }
 
     @Override
@@ -53,6 +61,7 @@ public class MarkBuildingDirtyMessage extends AbstractMessage<MarkBuildingDirtyM
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
+        dimensionId = buf.readInt();
     }
 
     @Override
@@ -60,13 +69,14 @@ public class MarkBuildingDirtyMessage extends AbstractMessage<MarkBuildingDirtyM
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
+        buf.writeInt(dimensionId);
     }
 
     @Override
     public void messageOnServerThread(final MarkBuildingDirtyMessage message, final EntityPlayerMP player)
     {
-
-        final Colony colony = ColonyManager.getColony(message.colonyId);
+        final World world = FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension(dimensionId);
+        final Colony colony = IAPI.Holder.getApi().getColonyManager().getControllerForWorld(world).getColony()
         if (colony == null)
         {
             Log.getLogger().warn("TransferItemsRequestMessage colony is null");

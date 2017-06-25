@@ -2,6 +2,8 @@ package com.minecolonies.coremod.colony;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.entity.Citizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.math.BlockPos;
@@ -82,6 +84,19 @@ public class CitizenDataView implements ICitizenData
         return entityId;
     }
 
+    @Nullable
+    @Override
+    public Citizen getCitizen()
+    {
+        return null;
+    }
+
+    @Override
+    public void setCitizenEntity(final Citizen citizen)
+    {
+        //NOOP on the Client Side
+    }
+
     @NotNull
     @Override
     public IColony getColony()
@@ -93,6 +108,12 @@ public class CitizenDataView implements ICitizenData
     public int getId()
     {
         return 0;
+    }
+
+    @Override
+    public void initializeFromEntity(@NotNull final Citizen entity)
+    {
+
     }
 
     /**
@@ -140,6 +161,12 @@ public class CitizenDataView implements ICitizenData
     public String getJob()
     {
         return job;
+    }
+
+    @Override
+    public void setJob(final IJob job)
+    {
+
     }
 
     /**

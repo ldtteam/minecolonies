@@ -3,7 +3,6 @@ package com.minecolonies.coremod.colony.buildings;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.blockout.views.Window;
-import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutGuardTower;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;

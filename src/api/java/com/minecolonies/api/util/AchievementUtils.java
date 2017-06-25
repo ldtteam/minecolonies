@@ -3,7 +3,7 @@ package com.minecolonies.api.util;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
-import com.minecolonies.coremod.achievements.ModAchievements;
+import com.minecolonies.api.reference.ModAchievements;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.stats.Achievement;
 import org.jetbrains.annotations.NotNull;
@@ -38,19 +38,13 @@ public final class AchievementUtils
 
         for (@Nullable final EntityPlayer player : lPlayer)
         {
-            colony.getAchievements().forEach(a -> {
-                if (player == null || ModAchievements.achievementGetSupply == achievement)
-                {
-                    continue;
-                }
-
-                player.addStat(achievement);
-            });
-
-            for (final Achievement achievement : colony.getAchievements())
+            if (player == null)
             {
-
+                continue;
             }
+
+            List<Achievement> colonyAchievements = colony.getAchievements();
+            colonyAchievements.stream().filter(a -> a != ModAchievements.achievementGetSupply).forEach(player::addStat);
         }
     }
 }

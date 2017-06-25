@@ -634,7 +634,7 @@ public class StandardRequestManager implements IRequestManager
         {
             Class requestClass = request.getClass();
 
-            IToken<UUID, NBTTagCompound> token = TokenHandler.generateNewToken(manager);
+            IToken<UUID> token = TokenHandler.generateNewToken(manager);
 
             IFactory<Request, ?> factory = manager.getFactoryController().getFactoryForInput(requestClass);
             IRequest<Request> constructedRequest = (IRequest<Request>) factory.getNewInstance(request, requester, token);
@@ -930,7 +930,7 @@ public class StandardRequestManager implements IRequestManager
     private final static class TokenHandler
     {
 
-        private static IToken<UUID, NBTTagCompound> generateNewToken(StandardRequestManager manager)
+        private static IToken<UUID> generateNewToken(StandardRequestManager manager)
         {
             //Force generic type to be correct.
             StandardToken standardToken = manager.getFactoryController().getNewInstance(UUID.randomUUID());

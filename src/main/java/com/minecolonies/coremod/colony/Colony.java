@@ -19,13 +19,11 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.Citizen;
 import com.minecolonies.api.entity.ai.citizen.farmer.Field;
 import com.minecolonies.api.entity.ai.citizen.farmer.IScarecrow;
+import com.minecolonies.api.lib.Constants;
+import com.minecolonies.api.reference.ModAchievements;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.MathUtils;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.buildings.*;
 import com.minecolonies.coremod.colony.permissions.Permissions;
@@ -34,7 +32,6 @@ import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper
 import com.minecolonies.coremod.network.messages.*;
 import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import com.minecolonies.api.util.AchievementUtils;
 import com.minecolonies.coremod.util.ColonyUtils;
 import com.minecolonies.coremod.util.EntityUtils;
 import com.minecolonies.structures.Structures;
@@ -1277,22 +1274,22 @@ public class Colony implements IColony<AbstractBuilding>
         // the colonies size
         final int size = this.citizens.size();
 
-        if (size >= ModAchievements.ACHIEVEMENT_SIZE_SETTLEMENT)
+        if (size >= Constants.ACHIEVEMENT_SIZE_SETTLEMENT)
         {
             this.triggerAchievement(ModAchievements.achievementSizeSettlement);
         }
 
-        if (size >= ModAchievements.ACHIEVEMENT_SIZE_TOWN)
+        if (size >= Constants.ACHIEVEMENT_SIZE_TOWN)
         {
             this.triggerAchievement(ModAchievements.achievementSizeTown);
         }
 
-        if (size >= ModAchievements.ACHIEVEMENT_SIZE_CITY)
+        if (size >= Constants.ACHIEVEMENT_SIZE_CITY)
         {
             this.triggerAchievement(ModAchievements.achievementSizeCity);
         }
 
-        if (size >= ModAchievements.ACHIEVEMENT_SIZE_METROPOLIS)
+        if (size >= Constants.ACHIEVEMENT_SIZE_METROPOLIS)
         {
             this.triggerAchievement(ModAchievements.achievementSizeMetropolis);
         }
@@ -1444,7 +1441,7 @@ public class Colony implements IColony<AbstractBuilding>
 
         //TODO Target the controller not the manager
         //Makes it a tick more specific on what to save and what not to.
-        IAPI.Holder.getApi().getColonyManager().markDirty();
+        IAPI.Holder.getApi().getColonyManager().getControllerForWorld(getWorld()).markDirty();
 
         return building;
     }
@@ -1499,7 +1496,7 @@ public class Colony implements IColony<AbstractBuilding>
 
         calculateMaxCitizens();
 
-        IAPI.Holder.getApi().getColonyManager().markDirty();
+        IAPI.Holder.getApi().getColonyManager().getControllerForWorld(getWorld()).markDirty();
     }
 
     @Override

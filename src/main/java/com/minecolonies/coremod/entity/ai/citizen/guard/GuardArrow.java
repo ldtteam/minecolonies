@@ -2,7 +2,6 @@ package com.minecolonies.coremod.entity.ai.citizen.guard;
 
 import com.minecolonies.api.colony.management.ColonyManager;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.entity.EntityLivingBase;

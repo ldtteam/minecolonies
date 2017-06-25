@@ -15,7 +15,7 @@ import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
 import com.minecolonies.coremod.event.ClientEventHandler;
-import com.minecolonies.coremod.items.ModItems;
+import com.minecolonies.api.reference.ModItems;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.structures.Structures;
 import com.minecolonies.structures.event.RenderEventHandler;

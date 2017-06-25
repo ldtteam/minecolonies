@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.management.IWorldColonyController;
 import com.minecolonies.api.colony.management.legacy.LegacyColonyManagerLoader;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.AchievementUtils;
 import com.minecolonies.api.util.Log;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -84,10 +85,7 @@ public class StandardSidelessWorldColonyController<B extends IBuilding, C extend
         NBTTagCompound data = new NBTTagCompound();
         NBTTagList colonyDataList = new NBTTagList();
 
-        getColonies().forEach(c ->
-        {
-            colonyDataList.appendTag(c.serializeNBT());
-        });
+        getColonies().stream().map(StandardFactoryController.getInstance()::serialize).forEach(colonyDataList::appendTag);
 
         data.setTag(TAG_COLONIES, colonyDataList);
         data.setInteger(TAG_DIMENSION, world.provider.getDimension());

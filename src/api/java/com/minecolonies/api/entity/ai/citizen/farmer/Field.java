@@ -214,7 +214,7 @@ public class Field extends Container
     public Field(@NotNull final IScarecrow scarecrowTileEntity, final InventoryPlayer playerInventory, @NotNull final World world, @NotNull final BlockPos location)
     {
         super();
-        this.colony = IAPI.Holder.getApi().getColonyManager().getColony(world, location);
+        this.colony = IAPI.Holder.getApi().getColonyManager().getControllerForWorld(world).getColony(location);
         this.location = location;
         this.inventory = scarecrowTileEntity.getInventoryField();
 

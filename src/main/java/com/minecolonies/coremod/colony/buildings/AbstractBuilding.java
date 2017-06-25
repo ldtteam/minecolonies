@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.buildings;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.IAPI;
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.Tool;
@@ -46,7 +47,7 @@ import java.util.*;
 /**
  * Base building class, has all the foundation for what a building stores and does.
  */
-public abstract class AbstractBuilding implements IBuilding
+public abstract class AbstractBuilding implements IBuilding<AbstractBuilding>
 {
     /**
      * Tag used to store the containers to NBT.
@@ -1164,9 +1165,9 @@ public abstract class AbstractBuilding implements IBuilding
      * Views contain the AbstractBuilding's data that is relevant to a Client, in a more client-friendly form.
      * Mutable operations on a View result in a message to the server to perform the operation.
      */
-    public static class View implements IBuilding
+    public static class View implements IBuilding<View>
     {
-        private final ColonyView     colony;
+        private final IColony<View>  colony;
         @NotNull
         private final StaticLocation location;
         @NotNull
@@ -1182,7 +1183,7 @@ public abstract class AbstractBuilding implements IBuilding
          * @param c ColonyView the building is in.
          * @param l The location of the building.
          */
-        protected View(final ColonyView c, @NotNull final BlockPos l, @NotNull final IToken id)
+        protected View(final IColony<View> c, @NotNull final BlockPos l, @NotNull final IToken id)
         {
             colony = c;
             location = new StaticLocation(l, c.getDimension());
@@ -1299,7 +1300,7 @@ public boolean isRepairing()
          *
          * @return ColonyView, client side interpretations of Colony.
          */
-        public ColonyView getColony()
+        public IColony<View> getColony()
         {
             return colony;
         }
@@ -1462,7 +1463,7 @@ public boolean isRepairing()
 
         buildingLevel = level;
         markDirty();
-        IAPI.Holder.getApi().getColonyManager().markDirty();
+        IAPI.Holder.getApi().getColonyManager().getControllerForWorld(getColony().getWorld()).markDirty();
     }
 
 

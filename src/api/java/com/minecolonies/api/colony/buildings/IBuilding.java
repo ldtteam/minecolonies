@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * A building in a colony. Can request objects in the request system and process events that happen in the world.
  */
-public interface IBuilding extends IRequester, IColonyEventHandler
+public interface IBuilding<B extends IBuilding> extends IRequester, IColonyEventHandler
 {
 
     /**
@@ -40,7 +40,7 @@ public interface IBuilding extends IRequester, IColonyEventHandler
      * @return {@link IColony} of the current object.
      */
     @NotNull
-    IColony getColony();
+    IColony<B> getColony();
 
     /**
      * Marks the instance and the building dirty.

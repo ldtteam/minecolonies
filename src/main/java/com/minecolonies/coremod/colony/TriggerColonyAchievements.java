@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony;
 
-import com.minecolonies.coremod.achievements.ModAchievements;
 import org.jetbrains.annotations.NotNull;
 
 /**

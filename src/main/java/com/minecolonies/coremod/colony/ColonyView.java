@@ -1,11 +1,13 @@
 package com.minecolonies.coremod.colony;
 
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IWorkManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.handlers.IColonyEventHandler;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
@@ -14,6 +16,9 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.entity.ai.citizen.farmer.Field;
+import com.minecolonies.api.entity.ai.citizen.farmer.IScarecrow;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.coremod.MineColonies;
@@ -25,11 +30,18 @@ import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.TownHallRenameMessage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.stats.Achievement;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.MinecraftDummyContainer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
@@ -40,10 +52,10 @@ import java.util.*;
 /**
  * Client side representation of the Colony.
  */
-public final class ColonyView implements IColony
+public final class ColonyView implements IColony<AbstractBuilding.View>
 {
     //  General Attributes
-    private final int id;
+    private final IToken id;
     private final Map<Integer, WorkOrderView>          workOrders  = new HashMap<>();
     //  Administration/permissions
     @NotNull
@@ -90,7 +102,7 @@ public final class ColonyView implements IColony
      *
      * @param id The current id for the colony.
      */
-    private ColonyView(final int id)
+    private ColonyView(final IToken id)
     {
         this.id = id;
     }
@@ -102,7 +114,7 @@ public final class ColonyView implements IColony
      * @return the new colony view.
      */
     @NotNull
-    public static ColonyView createFromNetwork(final int id)
+    public static ColonyView createFromNetwork(final IToken id)
     {
         return new ColonyView(id);
     }
@@ -114,7 +126,7 @@ public final class ColonyView implements IColony
      * @param buf               {@link ByteBuf} to write data in.
      * @param isNewSubScription true if this is a new subscription.
      */
-    public static void serializeNetworkData(@NotNull final Colony colony, @NotNull final ByteBuf buf, final boolean isNewSubScription)
+    public static void serializeNetworkData(@NotNull final IColony<AbstractBuilding> colony, @NotNull final ByteBuf buf, final boolean isNewSubScription)
     {
         //  General Attributes
         ByteBufUtils.writeUTF8String(buf, colony.getName());
@@ -429,6 +441,12 @@ public final class ColonyView implements IColony
     }
 
     @Override
+    public void spawnCitizen()
+    {
+        //NOOP on Client side.
+    }
+
+    @Override
     public BlockPos getCenter()
     {
         return center;
@@ -449,6 +467,12 @@ public final class ColonyView implements IColony
     {
         this.name = name;
         MineColonies.getNetwork().sendToServer(new TownHallRenameMessage(this, name));
+    }
+
+    @Override
+    public void markDirty()
+    {
+        //NOOP on the Client Side
     }
 
     @NotNull
@@ -484,9 +508,33 @@ public final class ColonyView implements IColony
      * @return ID of the view.
      */
     @Override
-    public int getID()
+    public IToken getID()
     {
         return id;
+    }
+
+    @Override
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    {
+//NOOP on the Client Side
+    }
+
+    @Override
+    public void addBuilding(@NotNull final AbstractBuilding.View building)
+    {
+//NOOP on the Client Side
+    }
+
+    @Override
+    public void addField(@NotNull final Field field)
+    {
+//NOOP on the Client Side
+    }
+
+    @Override
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    {
+//NOOP on the Client Side
     }
 
     /**
@@ -502,7 +550,73 @@ public final class ColonyView implements IColony
     @Override
     public void incrementStatistic(@NotNull final String statistic)
     {
+//NOOP on the Client Side
+    }
 
+    @Override
+    public int getStatisticAmount(@NotNull final String statistic)
+    {
+        return 0;
+    }
+
+    @Override
+    public void incrementStatisticAmount(@NotNull final String statistic)
+    {
+//NOOP on the Client Side
+    }
+
+    @Override
+    public void markBuildingsDirty()
+    {
+//NOOP on the Client Side
+    }
+
+    @Override
+    public void updateSubscribers()
+    {
+//NOOP on the Client Side
+    }
+
+    @Override
+    public void sendColonyViewPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers)
+    {
+//NOOP on the Client Side
+    }
+
+    @Override
+    public void sendPermissionsPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers)
+    {
+//NOOP on the Client Side
+    }
+
+    @Override
+    public void sendWorkOrderPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers)
+    {
+//NOOP on the Client Side
+    }
+
+    @Override
+    public void sendCitizenPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers)
+    {
+//NOOP on the Client Side
+    }
+
+    @Override
+    public void sendBuildingPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers)
+    {
+//NOOP on the Client Side
+    }
+
+    @Override
+    public void sendSchematicsPackets(final boolean hasNewSubscribers)
+    {
+//NOOP on the Client Side
+    }
+
+    @Override
+    public void sendFieldPackets(final boolean hasNewSubscribers)
+    {
+//NOOP on the Client Side
     }
 
     @NotNull
@@ -517,9 +631,9 @@ public final class ColonyView implements IColony
      *
      * @return the list of free to interact positions.
      */
-    public List<BlockPos> getFreePositions()
+    public Set<BlockPos> getFreePositions()
     {
-        return new ArrayList<>(freePositions);
+        return new HashSet<>(freePositions);
     }
 
     /**
@@ -527,9 +641,9 @@ public final class ColonyView implements IColony
      *
      * @return the list of free to interact blocks.
      */
-    public List<Block> getFreeBlocks()
+    public Set<Block> getFreeBlocks()
     {
-        return new ArrayList<>(freeBlocks);
+        return new HashSet<>(freeBlocks);
     }
 
     /**
@@ -572,6 +686,18 @@ public final class ColonyView implements IColony
         freeBlocks.remove(block);
     }
 
+    @Override
+    public void updateOverallHappiness()
+    {
+//NOOP on the Client Side
+    }
+
+    @Override
+    public void updateWayPoints()
+    {
+//NOOP on the Client Side
+    }
+
     /**
      * returns the World the colony is in.
      *
@@ -581,7 +707,19 @@ public final class ColonyView implements IColony
     @Override
     public World getWorld()
     {
-        return null;
+        return Minecraft.getMinecraft().world;
+    }
+
+    @Override
+    public void markFieldsDirty()
+    {
+//NOOP on the Client Side
+    }
+
+    @Override
+    public void spawnCitizen(final ICitizenData data)
+    {
+//NOOP on the Client Side
     }
 
     /**
@@ -604,6 +742,37 @@ public final class ColonyView implements IColony
         return Collections.unmodifiableMap(citizens);
     }
 
+    @NotNull
+    @Override
+    public List<EntityPlayer> getMessageEntityPlayers()
+    {
+        return null;
+    }
+
+    @Override
+    public void checkAchievements()
+    {
+
+    }
+
+    @Override
+    public void markCitizensDirty()
+    {
+
+    }
+
+    @Override
+    public void triggerAchievement(@NotNull final Achievement achievement)
+    {
+
+    }
+
+    @Override
+    public void spawnCitizenIfNull(@NotNull final ICitizenData data)
+    {
+
+    }
+
     /**
      * Get the town hall View for this ColonyView.
      *
@@ -613,6 +782,26 @@ public final class ColonyView implements IColony
     public BuildingTownHall.View getTownHall()
     {
         return townHall;
+    }
+
+    @NotNull
+    @Override
+    public Map<BlockPos, Field> getFields()
+    {
+        return null;
+    }
+
+    @Override
+    public Field getField(final BlockPos fieldId)
+    {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public Field getFreeField(final String owner)
+    {
+        return null;
     }
 
     /**
@@ -639,6 +828,39 @@ public final class ColonyView implements IColony
         return citizens.get(id);
     }
 
+    @Nullable
+    @Override
+    public <S extends AbstractBuilding.View> S getBuilding(final BlockPos buildingId, @NotNull final Class<S> type)
+    {
+        return null;
+    }
+
+    @Override
+    public void addNewField(
+                             final IScarecrow tileEntity, final InventoryPlayer inventoryPlayer, final BlockPos pos, final World world)
+    {
+
+    }
+
+    @Nullable
+    @Override
+    public AbstractBuilding.View addNewBuilding(@NotNull final TileEntityColonyBuilding tileEntity)
+    {
+        return null;
+    }
+
+    @Override
+    public void calculateMaxCitizens()
+    {
+
+    }
+
+    @Override
+    public void removeBuilding(@NotNull final AbstractBuilding.View building)
+    {
+
+    }
+
     /**
      * Getter for the manual hiring or not.
      *
@@ -660,6 +882,25 @@ public final class ColonyView implements IColony
     }
 
     @Override
+    public void removeCitizen(@NotNull final ICitizenData citizen)
+    {
+
+    }
+
+    @Override
+    public void removeWorkOrder(final int orderId)
+    {
+
+    }
+
+    @Nullable
+    @Override
+    public ICitizenData getJoblessCitizen()
+    {
+        return null;
+    }
+
+    @Override
     public List<BlockPos> getDeliverymanRequired()
     {
         return null;
@@ -678,6 +919,25 @@ public final class ColonyView implements IColony
         return null;
     }
 
+    @Override
+    public void removeField(final BlockPos pos)
+    {
+
+    }
+
+    @Override
+    public void addWayPoint(final BlockPos point, final IBlockState block)
+    {
+
+    }
+
+    @NotNull
+    @Override
+    public List<BlockPos> getWayPoints(@NotNull final BlockPos position, @NotNull final BlockPos target)
+    {
+        return null;
+    }
+
     /**
      * Getter for the overall happiness.
      *
@@ -686,6 +946,18 @@ public final class ColonyView implements IColony
     public double getOverallHappiness()
     {
         return overallHappiness;
+    }
+
+    @Override
+    public void increaseOverallHappiness(final double amount)
+    {
+
+    }
+
+    @Override
+    public void decreaseOverallHappiness(final double amount)
+    {
+
     }
 
     /**
@@ -717,5 +989,18 @@ public final class ColonyView implements IColony
     public IFactoryController getFactoryController()
     {
         return StandardFactoryController.getInstance();
+    }
+
+    @Override
+    public void OnDeletion()
+    {
+
+    }
+
+    @NotNull
+    @Override
+    public ImmutableCollection<IColonyEventHandler> getCombinedHandlers()
+    {
+        return null;
     }
 }
