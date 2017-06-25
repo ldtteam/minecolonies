@@ -35,7 +35,6 @@ import com.minecolonies.coremod.entity.pathfinding.WalkToProxy;
 import com.minecolonies.coremod.network.messages.BlockParticleEffectMessage;
 import com.minecolonies.coremod.util.EntityUtils;
 import com.minecolonies.coremod.util.ExperienceUtils;
-import com.minecolonies.coremod.util.PermissionUtils;
 import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;

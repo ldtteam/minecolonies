@@ -34,8 +34,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static com.minecolonies.coremod.util.constants.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER;
-import static com.minecolonies.coremod.util.constants.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER_NOONE;
+import static com.minecolonies.api.util.constants.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER;
+import static com.minecolonies.api.util.constants.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER_NOONE;
 
 /**
  * Class which handles the farmer building.

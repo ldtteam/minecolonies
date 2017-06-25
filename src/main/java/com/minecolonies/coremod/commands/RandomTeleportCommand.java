@@ -3,7 +3,6 @@ package com.minecolonies.coremod.commands;
 import com.minecolonies.api.colony.management.ColonyManager;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.util.ServerUtils;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;

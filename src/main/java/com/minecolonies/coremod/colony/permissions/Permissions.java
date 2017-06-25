@@ -7,7 +7,7 @@ import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.coremod.network.PacketUtils;
-import com.minecolonies.coremod.util.AchievementUtils;
+import com.minecolonies.api.util.AchievementUtils;
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;

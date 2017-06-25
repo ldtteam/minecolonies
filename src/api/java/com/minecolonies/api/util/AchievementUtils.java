@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.util;
+package com.minecolonies.api.util;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Player;
@@ -38,14 +38,18 @@ public final class AchievementUtils
 
         for (@Nullable final EntityPlayer player : lPlayer)
         {
-            for (final Achievement achievement : colony.getAchievements())
-            {
+            colony.getAchievements().forEach(a -> {
                 if (player == null || ModAchievements.achievementGetSupply == achievement)
                 {
                     continue;
                 }
 
                 player.addStat(achievement);
+            });
+
+            for (final Achievement achievement : colony.getAchievements())
+            {
+
             }
         }
     }

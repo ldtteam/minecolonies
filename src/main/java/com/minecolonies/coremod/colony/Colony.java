@@ -34,10 +34,9 @@ import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper
 import com.minecolonies.coremod.network.messages.*;
 import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import com.minecolonies.coremod.util.AchievementUtils;
+import com.minecolonies.api.util.AchievementUtils;
 import com.minecolonies.coremod.util.ColonyUtils;
 import com.minecolonies.coremod.util.EntityUtils;
-import com.minecolonies.coremod.util.ServerUtils;
 import com.minecolonies.structures.Structures;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;

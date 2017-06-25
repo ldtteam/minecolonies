@@ -13,7 +13,7 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.network.messages.HireFireMessage;
-import com.minecolonies.coremod.util.constants.ColorConstants;
+import com.minecolonies.api.util.constants.ColorConstants;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.coremod.util.constants.TranslationConstants.*;
+import static com.minecolonies.api.util.constants.TranslationConstants.*;
 
 /**
  * Window for the hiring or firing of a worker.

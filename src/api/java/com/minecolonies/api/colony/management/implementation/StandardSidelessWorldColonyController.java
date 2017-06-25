@@ -167,7 +167,7 @@ public class StandardSidelessWorldColonyController<B extends IBuilding, C extend
     @Override
     public void syncAllColoniesAchievements()
     {
-        //TODO
+        colonyMap.values().forEach(AchievementUtils::syncAchievements);
     }
 
     @Override

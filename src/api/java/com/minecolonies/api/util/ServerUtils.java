@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.util;
+package com.minecolonies.api.util;
 
 import com.minecolonies.api.colony.permissions.Player;
 import net.minecraft.entity.player.EntityPlayer;
