@@ -11,7 +11,6 @@ import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.network.messages.AssignUnassignMessage;
 import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.NotNull;
-
 import java.awt.*;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HOME_ASSIGN;
@@ -72,20 +71,11 @@ public class WindowHomeBuilding extends AbstractWindowBuilding<BuildingHome.View
     private void refreshView()
     {
         final Button buttonAssign = findPaneOfTypeByID(BUTTON_ASSIGN, Button.class);
-        final Button buttonRemove = findPaneOfTypeByID(BUTTON_REMOVE, Button.class);
 
         final int sparePlaces = building.getBuildingLevel() - building.getResidents().size();
         buttonAssign.setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HOME_ASSIGN, sparePlaces));
-        if (sparePlaces <= 0)
-        {
-            buttonRemove.disable();
-            buttonAssign.disable();
-        }
-        else
-        {
-            buttonRemove.enable();
-            buttonAssign.enable();
-        }
+        buttonAssign.setEnabled(sparePlaces > 0 && building.getColony().isManualHousing());
+
         citizen.refreshElementPanes();
     }
 
@@ -93,7 +83,7 @@ public class WindowHomeBuilding extends AbstractWindowBuilding<BuildingHome.View
     public void onOpened()
     {
         super.onOpened();
-
+        final boolean isManualHousing = building.getColony().isManualHousing();
         citizen = findPaneOfTypeByID(LIST_CITIZEN, ScrollingList.class);
         citizen.setDataProvider(new ScrollingList.DataProvider()
         {
@@ -107,6 +97,7 @@ public class WindowHomeBuilding extends AbstractWindowBuilding<BuildingHome.View
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(home.getColony().getCitizen(home.getResidents().get(index)).getName());
+                rowPane.findPaneOfTypeByID(BUTTON_REMOVE, Button.class).setEnabled(isManualHousing);
             }
         });
 

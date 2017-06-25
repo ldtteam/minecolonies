@@ -1,71 +1,9 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         inherit="minecolonies:gui/windowBase.xml"
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
-    <switch id="pages" size="100% 200px" pos="0 7">
-        <view id="pageActions" size="100% 100%">
-            <layout source="minecolonies:gui/layoutWorkerBuildingDefault.xml"/>
-        </view>
-        <view id="pageSettings" size="100% 100%" pos="0 1">
-
-            <!-- width = 171 -->
-            <!-- xl = 52, xr = 109 -->
-
-            <!-- Blacksmith -->
-            <view size="100% 40" pos="0 0">
-                <label size="100% 11" pos="0 0"
-                       label="$(com.minecolonies.coremod.gui.warehouse.toBlacksmith)" color="black" textalign="BOTTOM_MIDDLE"/>
-
-                <view size="100% 20" pos="0 16">
-                    <itemicon size="20 20" pos="33 2" item="gold_ingot"/>
-                    <button size="30 20" pos="52 0" id="blacksmithGold"/>
-                    <itemicon size="20 20" pos="90 2" item="diamond"/>
-                    <button size="30 20" pos="109 0" id="blacksmithDiamond"/>
-                </view>
-            </view>
-
-            <!-- Stonemason -->
-            <view size="100% 64" pos="0 41">
-                <label size="100% 11" pos="0 0"
-                       label="$(com.minecolonies.coremod.gui.warehouse.toStonemason)" color="black" textalign="BOTTOM_MIDDLE"/>
-
-                <view size="100% 20" pos="0 16">
-                    <itemicon size="20 20" pos="33 2" item="cobblestone"/>
-                    <button size="30 20" pos="52 0" id="stonemasonCobblestone"/>
-                    <itemicon size="20 20" pos="90 2" item="sand"/>
-                    <button size="30 20" pos="109 0" id="stonemasonSand"/>
-                </view>
-
-                <view size="100% 20" pos="0 40">
-                    <itemicon size="20 20" pos="33 2" item="netherrack"/>
-                    <button size="30 20" pos="52 0" id="stonemasonNetherrack"/>
-                    <itemicon size="20 20" pos="90 2" item="quartz"/>
-                    <button size="30 20" pos="109 0" id="stonemasonQuartz"/>
-                </view>
-            </view>
-
-            <!-- Guards -->
-            <view size="100% 40" pos="0 110">
-                <label size="100% 11" pos="0 0"
-                       label="$(com.minecolonies.coremod.gui.warehouse.toGuards)" color="black" textalign="BOTTOM_MIDDLE"/>
-
-                <view size="100% 20" pos="0 16">
-                    <itemicon size="20 20" pos="33 2" item="iron_chestplate"/>
-                    <button size="30 20" pos="52 0" id="guardArmor"/>
-                    <itemicon size="20 20" pos="90 2" item="iron_sword"/>
-                    <button size="30 20" pos="109 0" id="guardWeapon"/>
-                </view>
-            </view>
-
-            <view size="100% 35" pos="0 155">
-                <label size="100% 11" pos="0 0"
-                       label="$(com.minecolonies.coremod.gui.warehouse.visitCitizenChests)" color="black" textalign="BOTTOM_MIDDLE"/>
-                <button size="30 20" pos="70 12" id="citizenChests"/>
-            </view>
-        </view>
-    </switch>
-
-    <button id="prevPage" align="TOP_LEFT" size="20 20" pos="10 5" label="&lt;&lt;"/>
-    <button id="nextPage" align="TOP_RIGHT" size="20 20" pos="10 5" label="&gt;&gt;"/>
+    <view id="pageActions" size="100% 200px" pos="0 7">
+        <layout source="minecolonies:gui/layoutBuildingDefault.xml"/>
+    </view>
 
     <button id="inventory"
             align="BOTTOM_MIDDLE" size="116 20" pos="0 13"
