@@ -1,5 +1,6 @@
 package com.minecolonies.api.colony.requestsystem.token;
 
+import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
@@ -7,38 +8,28 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 /**
- * Factory for the standard request token.
+ * Factory for the standard request token, {@link StandardToken}
  */
 public class StandardTokenFactory implements ITokenFactory<UUID, StandardToken>
 {
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
-    private static final String NBT_MSB = "Id_MSB";
-    private static final String NBT_LSB = "Id_LSB";
+    public static final String NBT_MSB = "Id_MSB";
+    public static final String NBT_LSB = "Id_LSB";
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
-    /**
-     * Method to get the request type this factory can produce.
-     *
-     * @return The type of request this factory can produce.
-     */
     @NotNull
     @Override
-    public Class<? extends StandardToken> getFactoryOutputType()
+    public TypeToken<StandardToken> getFactoryOutputType()
     {
-        return StandardToken.class;
+        return new TypeToken<StandardToken>() {};
     }
 
-    /**
-     * Used to determine which type of request this can produce.
-     *
-     * @return The class that represents the Type of Request this can produce.
-     */
     @NotNull
     @Override
-    public Class<? extends UUID> getFactoryInputType()
+    public TypeToken<UUID> getFactoryInputType()
     {
-        return UUID.class;
+        return new TypeToken<UUID>() {};
     }
 
     /**
@@ -71,7 +62,10 @@ public class StandardTokenFactory implements ITokenFactory<UUID, StandardToken>
     @Override
     public StandardToken deserialize(@NotNull IFactoryController controller, @NotNull NBTTagCompound nbt)
     {
-        UUID id = new UUID(nbt.getLong(NBT_MSB), nbt.getLong(NBT_LSB));
+        Long msb = nbt.getLong(NBT_MSB);
+        Long lsb = nbt.getLong(NBT_LSB);
+
+        UUID id = new UUID(msb, lsb);
 
         return new StandardToken(id);
     }

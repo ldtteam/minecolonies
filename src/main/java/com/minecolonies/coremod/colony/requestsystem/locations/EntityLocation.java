@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.requestsystem.locations;
 
+import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.location.ILocationFactory;
@@ -25,7 +26,7 @@ public class EntityLocation implements ILocation
     @Nullable
     private WeakReference<Entity> entity;
 
-    public EntityLocation(@NotNull UUID uuid)
+    EntityLocation(@NotNull UUID uuid)
     {
         this.uuid = uuid;
         checkEntity();
@@ -38,7 +39,7 @@ public class EntityLocation implements ILocation
             return;
         }
 
-        entity = new WeakReference<Entity>(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityFromUuid(uuid));
+        entity = new WeakReference<>(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityFromUuid(uuid));
     }
 
     /**
@@ -55,8 +56,10 @@ public class EntityLocation implements ILocation
         {
             return BlockPos.ORIGIN;
         }
-
-        return entity.get().getPosition();
+        else
+        {
+            return entity.get().getPosition();
+        }
     }
 
     /**
@@ -64,7 +67,6 @@ public class EntityLocation implements ILocation
      *
      * @return The dimension of the location.
      */
-    @NotNull
     @Override
     public int getDimension()
     {
@@ -73,8 +75,10 @@ public class EntityLocation implements ILocation
         {
             return 0;
         }
-
-        return entity.get().dimension;
+        else
+        {
+            return entity.get().dimension;
+        }
     }
 
     /**
@@ -87,12 +91,7 @@ public class EntityLocation implements ILocation
     public boolean isReachableFromLocation(@NotNull ILocation location)
     {
         checkEntity();
-        if (entity == null || entity.get() == null)
-        {
-            return false;
-        }
-
-        return location.getDimension() == getDimension();
+        return !(entity == null || entity.get() == null) && location.getDimension() == getDimension();
     }
 
     public static class Factory implements ILocationFactory<Entity, EntityLocation>
@@ -103,28 +102,18 @@ public class EntityLocation implements ILocation
         private static final String NBT_LSB = "Id_LSB";
         ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
-        /**
-         * Method to get the request type this factory can produce.
-         *
-         * @return The type of request this factory can produce.
-         */
         @NotNull
         @Override
-        public Class<? extends EntityLocation> getFactoryOutputType()
+        public TypeToken<EntityLocation> getFactoryOutputType()
         {
-            return EntityLocation.class;
+            return new TypeToken<EntityLocation>() {};
         }
 
-        /**
-         * Used to determine which type of request this can produce.
-         *
-         * @return The class that represents the Type of Request this can produce.
-         */
         @NotNull
         @Override
-        public Class<? extends Entity> getFactoryInputType()
+        public TypeToken<Entity> getFactoryInputType()
         {
-            return Entity.class;
+            return new TypeToken<Entity>() {};
         }
 
         /**

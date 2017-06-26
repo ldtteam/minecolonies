@@ -4,8 +4,8 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
@@ -632,14 +632,11 @@ public class StandardRequestManager implements IRequestManager
         @SuppressWarnings("unchecked")
         private static <Request> IRequest<Request> createRequest(StandardRequestManager manager, IRequester requester, Request request)
         {
-            Class requestClass = request.getClass();
-
             IToken<UUID> token = TokenHandler.generateNewToken(manager);
 
-            IFactory<Request, ?> factory = manager.getFactoryController().getFactoryForInput(requestClass);
-            IRequest<Request> constructedRequest = (IRequest<Request>) factory.getNewInstance(request, requester, token);
+            IRequest<Request> constructedRequest = manager.getFactoryController().getNewInstance(request, new TypeToken<IRequest<Request>>() {}, requester, token);
 
-            Log.getLogger().debug("Creating request for: " + request + " with factory: " + factory + ", token: " + token + " and output: " + constructedRequest);
+            Log.getLogger().debug("Creating request for: " + request + ", token: " + token + " and output: " + constructedRequest);
 
             registerRequest(manager, constructedRequest);
 
@@ -935,7 +932,7 @@ public class StandardRequestManager implements IRequestManager
         private static IToken<UUID> generateNewToken(StandardRequestManager manager)
         {
             //Force generic type to be correct.
-            StandardToken standardToken = manager.getFactoryController().getNewInstance(UUID.randomUUID());
+            StandardToken standardToken = manager.getFactoryController().getNewInstance(UUID.randomUUID(), new TypeToken<StandardToken>() {});
             return standardToken;
         }
     }
@@ -1188,10 +1185,9 @@ public class StandardRequestManager implements IRequestManager
     public <T> IRequest<T> getRequestForToken(@NotNull IToken token) throws IllegalArgumentException
     {
         IRequest<T> internalRequest = RequestHandler.getRequest(this, token);
-        IFactory factory = getFactoryController().getFactoryForInput(internalRequest.getRequest().getClass());
 
-        NBTTagCompound requestData = factory.serialize(getFactoryController(), internalRequest);
-        IRequest<T> defensiveCopiedRequest = (IRequest<T>) factory.deserialize(getFactoryController(), requestData);
+        NBTTagCompound requestData = getFactoryController().serialize(internalRequest);
+        IRequest<T> defensiveCopiedRequest = getFactoryController().deserialize(requestData);
 
         return defensiveCopiedRequest;
     }

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.requestsystem.requests;
 
+import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.RequestState;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequestFactory;
@@ -34,18 +35,6 @@ public final class StandardRequestFactories
     public static final class ItemStackFactory implements IRequestFactory<ItemStack, StandardRequests.ItemStackRequest>
     {
         /**
-         * Method to get the request type this factory can produce.
-         *
-         * @return The type of request this factory can produce.
-         */
-        @NotNull
-        @Override
-        public Class<? extends StandardRequests.ItemStackRequest> getFactoryOutputType()
-        {
-            return StandardRequests.ItemStackRequest.class;
-        }
-
-        /**
          * Method to get a new instance of a request given the input and token.
          *
          * @param input        The input to build a new request for.
@@ -58,16 +47,20 @@ public final class StandardRequestFactories
         public StandardRequests.ItemStackRequest getNewInstance(@NotNull ItemStack input, @NotNull IRequester location, @NotNull IToken token, @NotNull RequestState initialState)
         {
             return new StandardRequests.ItemStackRequest(location, token, initialState, input);
-        }        /**
-         * Used to determine which type of request this can produce.
-         *
-         * @return The class that represents the Type of Request this can produce.
-         */
+        }
+
         @NotNull
         @Override
-        public Class<? extends ItemStack> getFactoryInputType()
+        public TypeToken<StandardRequests.ItemStackRequest> getFactoryOutputType()
         {
-            return ItemStack.class;
+            return new TypeToken<StandardRequests.ItemStackRequest>() {};
+        }
+
+        @NotNull
+        @Override
+        public TypeToken<ItemStack> getFactoryInputType()
+        {
+            return new TypeToken<ItemStack>() {};
         }
 
         /**
@@ -134,7 +127,7 @@ public final class StandardRequestFactories
                 childTokens.add(controller.deserialize(childCompound.getCompoundTagAt(i)));
             }
 
-            StandardRequests.ItemStackRequest request = controller.getNewInstance(requested, token, state);
+            StandardRequests.ItemStackRequest request = controller.getNewInstance(requested, new TypeToken<StandardRequests.ItemStackRequest>() {}, token, state);
 
             if (nbt.hasKey(NBT_PARENT))
             {
@@ -155,28 +148,18 @@ public final class StandardRequestFactories
     public static final class DeliveryFactory implements IRequestFactory<Delivery, StandardRequests.DeliveryRequest>
     {
 
-        /**
-         * Method to get the request type this factory can produce.
-         *
-         * @return The type of request this factory can produce.
-         */
         @NotNull
         @Override
-        public Class<? extends StandardRequests.DeliveryRequest> getFactoryOutputType()
+        public TypeToken<StandardRequests.DeliveryRequest> getFactoryOutputType()
         {
-            return StandardRequests.DeliveryRequest.class;
+            return new TypeToken<StandardRequests.DeliveryRequest>() {};
         }
 
-        /**
-         * Used to determine which type of request this can produce.
-         *
-         * @return The class that represents the Type of Request this can produce.
-         */
         @NotNull
         @Override
-        public Class<? extends Delivery> getFactoryInputType()
+        public TypeToken<Delivery> getFactoryInputType()
         {
-            return Delivery.class;
+            return new TypeToken<Delivery>() {};
         }
 
         /**
@@ -243,7 +226,7 @@ public final class StandardRequestFactories
                 childTokens.add(controller.deserialize(childCompound.getCompoundTagAt(i)));
             }
 
-            StandardRequests.DeliveryRequest request = controller.getNewInstance(requested, token, state);
+            StandardRequests.DeliveryRequest request = controller.getNewInstance(requested, new TypeToken<StandardRequests.DeliveryRequest>() {}, token, state);
 
             if (nbt.hasKey(NBT_PARENT))
             {

@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.requestsystem.RequestState;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.Log;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +25,7 @@ public abstract class AbstractRequest<R> implements IRequest<R>
 {
 
     @NotNull
-    protected final IToken token;
+    private final IToken            token;
     @NotNull
     private final R                 requested;
     @NotNull
@@ -37,8 +38,10 @@ public abstract class AbstractRequest<R> implements IRequest<R>
     private       R                 result;
     @Nullable
     private       IToken            parent;
+    @NotNull
+    private ItemStack deliveryStack = ItemStackUtils.EMPTY;
 
-    public AbstractRequest(@NotNull IRequester requester, @NotNull IToken token, @NotNull R requested)
+    AbstractRequest(@NotNull IRequester requester, @NotNull IToken token, @NotNull R requested)
     {
         this.requester = requester;
         this.token = token;
@@ -47,7 +50,7 @@ public abstract class AbstractRequest<R> implements IRequest<R>
         children = new ArrayList<>();
     }
 
-    public AbstractRequest(@NotNull IRequester requester, @NotNull IToken token, @NotNull RequestState state, @NotNull R requested)
+    AbstractRequest(@NotNull IRequester requester, @NotNull IToken token, @NotNull RequestState state, @NotNull R requested)
     {
         this.requester = requester;
         this.token = token;
@@ -122,7 +125,7 @@ public abstract class AbstractRequest<R> implements IRequest<R>
         this.state = state;
         Log.getLogger().debug("Updated state from: " + getToken() + " to: " + state);
 
-        if (this.hasParent())
+        if (this.hasParent() && this.getParent() != null)
         {
             try
             {
@@ -377,7 +380,7 @@ public abstract class AbstractRequest<R> implements IRequest<R>
     @Override
     public boolean canBeDelivered()
     {
-        return getDelivery() != ItemStack.EMPTY;
+        return !ItemStackUtils.isEmpty(getDelivery());
     }
 
     /**
@@ -394,6 +397,6 @@ public abstract class AbstractRequest<R> implements IRequest<R>
             return (ItemStack) getResult();
         }
 
-        return ItemStack.EMPTY;
+        return deliveryStack;
     }
 }

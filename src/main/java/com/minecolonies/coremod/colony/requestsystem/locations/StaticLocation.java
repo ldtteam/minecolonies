@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.requestsystem.locations;
 
+import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.location.ILocationFactory;
@@ -15,10 +16,10 @@ public class StaticLocation implements ILocation
 
     @NotNull
     private final BlockPos pos;
-    @NotNull
+
     private final int      dimension;
 
-    public StaticLocation(@NotNull BlockPos pos, @NotNull int dimension)
+    StaticLocation(@NotNull BlockPos pos, int dimension)
     {
         this.pos = pos;
         this.dimension = dimension;
@@ -41,7 +42,6 @@ public class StaticLocation implements ILocation
      *
      * @return The dimension of the location.
      */
-    @NotNull
     @Override
     public int getDimension()
     {
@@ -63,37 +63,13 @@ public class StaticLocation implements ILocation
     /**
      * Internal factory class.
      */
-    public static class Factory implements ILocationFactory<StaticLocation, StaticLocation>
+    public static class Factory implements ILocationFactory<BlockPos, StaticLocation>
     {
 
         ////// --------------------------- NBTConstants --------------------------- \\\\\\
         private static final String NBT_POS = "Pos";
         private static final String NBT_DIM = "Dim";
         ////// --------------------------- NBTConstants --------------------------- \\\\\\
-
-        /**
-         * Method to get the request type this factory can produce.
-         *
-         * @return The type of request this factory can produce.
-         */
-        @NotNull
-        @Override
-        public Class<? extends StaticLocation> getFactoryOutputType()
-        {
-            return StaticLocation.class;
-        }
-
-        /**
-         * Used to determine which type of request this can produce.
-         *
-         * @return The class that represents the Type of Request this can produce.
-         */
-        @NotNull
-        @Override
-        public Class<? extends StaticLocation> getFactoryInputType()
-        {
-            return StaticLocation.class;
-        }
 
         /**
          * Method to serialize a given constructable.
@@ -131,14 +107,50 @@ public class StaticLocation implements ILocation
         /**
          * Method to get a new instance of a location given the input.
          *
+         *
+         * Method not used in this factory.
+         *
+         *
+         *
          * @param input The input to build a new location for.
          * @return The new output instance for a given input.
          */
         @NotNull
         @Override
-        public StaticLocation getNewInstance(@NotNull StaticLocation input)
+        public StaticLocation getNewInstance(@NotNull BlockPos input)
         {
-            return new StaticLocation(input.getInDimensionLocation(), input.getDimension());
+            return new StaticLocation(input, 0);
+        }
+
+        @NotNull
+        @Override
+        public TypeToken<StaticLocation> getFactoryOutputType()
+        {
+            return new TypeToken<StaticLocation>() {};
+        }
+
+        @NotNull
+        @Override
+        public TypeToken<BlockPos> getFactoryInputType()
+        {
+            return new TypeToken<BlockPos>() {};
+        }
+
+        @NotNull
+        @Override
+        public StaticLocation getNewInstance(@NotNull final BlockPos blockPos, @NotNull final Object... context) throws IllegalArgumentException
+        {
+            if (context.length != 1)
+            {
+                throw new IllegalArgumentException("Unsupported context - Not the correct amount available. Needed is 1!");
+            }
+
+            if (!(context[0] instanceof Integer))
+            {
+                throw new IllegalArgumentException("Unsupported context - First context object is not a Integer. Provide an Integer as Dimension.");
+            }
+
+            return new StaticLocation(blockPos, (Integer) context[0]);
         }
     }
 }
