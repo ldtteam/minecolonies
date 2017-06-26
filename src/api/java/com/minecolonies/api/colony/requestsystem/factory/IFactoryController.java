@@ -1,5 +1,6 @@
 package com.minecolonies.api.colony.requestsystem.factory;
 
+import com.google.common.reflect.TypeToken;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,7 +25,7 @@ public interface IFactoryController
         //Any exceptions thrown before actual request is made gets wrapped.
         try
         {
-            return getFactoryForInput((Class<? extends Input>) Class.forName(className));
+            return getFactoryForInput(Class.forName(className));
         }
         catch (IllegalArgumentException ex)
         {
@@ -39,13 +40,24 @@ public interface IFactoryController
     /**
      * Method used to get a factory for a given input class.
      *
-     * @param clazz   The class of the input type of the requested factory.
+     * @param clazz Clazz of the input type.
+     * @param <Input> The type of input.
+     * @return A {@link IFactory} that takes the the given Input type and produces an output type.
+     */
+    default <Input> IFactory<Input, ?> getFactoryForInput(@NotNull Class clazz) {
+        return getFactoryForInput(TypeToken.of(clazz));
+    }
+
+    /**
+     * Method used to get a factory for a given input {@link TypeToken}.
+     *
+     * @param clazz   The {@link TypeToken} of the input type of the requested factory.
      * @param <Input> The type of input for the requested factory.
      * @return The factory that can handle the given input class.
      *
      * @throws IllegalArgumentException is thrown when the given input class is unknown to this Factory Controller.
      */
-    <Input> IFactory<Input, ?> getFactoryForInput(@NotNull Class<? extends Input> clazz) throws IllegalArgumentException;
+    <Input> IFactory<Input, ?> getFactoryForInput(@NotNull TypeToken<? extends Input> clazz) throws IllegalArgumentException;
 
     /**
      * Method used to get a factory for a given Output class name.
@@ -62,7 +74,7 @@ public interface IFactoryController
         //Any exceptions thrown before actual request is made gets wrapped.
         try
         {
-            return getFactoryForOutput((Class<? extends Output>) Class.forName(className));
+            return getFactoryForOutput(TypeToken.of((Class<? extends Output>)Class.forName(className)));
         }
         catch (IllegalArgumentException ex)
         {
@@ -74,16 +86,18 @@ public interface IFactoryController
         }
     }
 
+    default <Output> IFactory<?, Output> getFactoryForOutput()
+
     /**
-     * Method used to get a factory for a given output class.
+     * Method used to get a factory for a given output {@link TypeToken}.
      *
-     * @param clazz    The class of the output type of the requested factory.
+     * @param clazz    The {@link TypeToken} of the output type of the requested factory.
      * @param <Output> The type of output for the requested factory.
      * @return The factory that can handle the given output class.
      *
      * @throws IllegalArgumentException is thrown when the given output class is unknown to this Factory Controller.
      */
-    <Output> IFactory<?, Output> getFactoryForOutput(@NotNull Class<? extends Output> clazz) throws IllegalArgumentException;
+    <Output> IFactory<?, Output> getFactoryForOutput(@NotNull TypeToken<? extends Output> clazz) throws IllegalArgumentException;
 
     /**
      * Method used to register a new factory to this controller.
