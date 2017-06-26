@@ -1,6 +1,5 @@
 package com.minecolonies.api.colony.requestsystem.requestable;
 
-import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,7 +23,7 @@ public class Tool
 
     public Tool(@NotNull String toolClass, @NotNull Integer minLevel, @NotNull Integer maxLevel)
     {
-        this(toolClass, minLevel, maxLevel, ItemStackUtils.EMPTY);
+        this(toolClass, minLevel, maxLevel, ItemStack.EMPTY);
     }
 
     public Tool(@NotNull String toolClass, @NotNull Integer minLevel, @NotNull Integer maxLevel, @NotNull ItemStack result)

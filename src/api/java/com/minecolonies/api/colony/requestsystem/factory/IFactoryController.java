@@ -3,8 +3,6 @@ package com.minecolonies.api.colony.requestsystem.factory;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
-
 /**
  * Interface used to describe classes that function as Factory controllers.
  */
@@ -20,8 +18,7 @@ public interface IFactoryController
      *
      * @throws IllegalArgumentException is thrown when the given input name is unknown to this Factory Controller.
      */
-    @SuppressWarnings(UNCHECKED)
-    default <Input> IFactory<Input, ?> getFactoryForInput(@NotNull final String className) throws IllegalArgumentException
+    default <Input> IFactory<Input, ?> getFactoryForInput(@NotNull String className) throws IllegalArgumentException
     {
         //Simple default implementation grabs the class from a given name and casts it to the proper type.
         //Any exceptions thrown before actual request is made gets wrapped.
@@ -29,11 +26,11 @@ public interface IFactoryController
         {
             return getFactoryForInput((Class<? extends Input>) Class.forName(className));
         }
-        catch (final IllegalArgumentException ex)
+        catch (IllegalArgumentException ex)
         {
             throw ex;
         }
-        catch (final Exception ex)
+        catch (Exception ex)
         {
             throw new IllegalArgumentException("The given input name is unknown", ex);
         }
@@ -59,8 +56,7 @@ public interface IFactoryController
      *
      * @throws IllegalArgumentException is thrown when the given Output name is unknown to this Factory Controller.
      */
-    @SuppressWarnings(UNCHECKED)
-    default <Output> IFactory<?, Output> getFactoryForOutput(@NotNull final String className) throws IllegalArgumentException
+    default <Output> IFactory<?, Output> getFactoryForOutput(@NotNull String className) throws IllegalArgumentException
     {
         //Simple default implementation grabs the class from a given name and casts it to the proper type.
         //Any exceptions thrown before actual request is made gets wrapped.
@@ -68,11 +64,11 @@ public interface IFactoryController
         {
             return getFactoryForOutput((Class<? extends Output>) Class.forName(className));
         }
-        catch (final IllegalArgumentException ex)
+        catch (IllegalArgumentException ex)
         {
             throw ex;
         }
-        catch (final Exception ex)
+        catch (Exception ex)
         {
             throw new IllegalArgumentException("The given output name is unknown", ex);
         }

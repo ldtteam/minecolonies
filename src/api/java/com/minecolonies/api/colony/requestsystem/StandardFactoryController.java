@@ -7,16 +7,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
-import java.util.Map;
-
-import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
-import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 
 /**
  * Default implementation of a FactoryController
  * Singleton.
  */
-public final class StandardFactoryController implements IFactoryController
+public class StandardFactoryController implements IFactoryController
 {
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
@@ -27,19 +23,17 @@ public final class StandardFactoryController implements IFactoryController
     /**
      * Instance variable.
      */
-    private static final StandardFactoryController INSTANCE       = new StandardFactoryController();
+    private static final StandardFactoryController INSTANCE = new StandardFactoryController();
     /**
      * Input mappings.
      */
-    @SuppressWarnings(RAWTYPES)
     @NotNull
-    private final        Map<Class, IFactory>      inputMappings  = new HashMap<>();
+    private final HashMap<Class, IFactory> inputMappings = new HashMap<>();
     /**
      * Output mappings.
      */
-    @SuppressWarnings(RAWTYPES)
     @NotNull
-    private final        Map<Class, IFactory>      outputMappings = new HashMap<>();
+    private final HashMap<Class, IFactory> outputMappings = new HashMap<>();
 
     /**
      * Private constructor. Throws IllegalStateException if already created.
@@ -71,8 +65,7 @@ public final class StandardFactoryController implements IFactoryController
      * @throws IllegalArgumentException is thrown when the given input class is unknown to this Factory Controller.
      */
     @Override
-    @SuppressWarnings(UNCHECKED)
-    public <Input> IFactory<Input, ?> getFactoryForInput(@NotNull final Class<? extends Input> clazz) throws IllegalArgumentException
+    public <Input> IFactory<Input, ?> getFactoryForInput(@NotNull Class<? extends Input> clazz) throws IllegalArgumentException
     {
         if (!inputMappings.containsKey(clazz))
         {
@@ -91,8 +84,7 @@ public final class StandardFactoryController implements IFactoryController
      * @throws IllegalArgumentException is thrown when the given output class is unknown to this Factory Controller.
      */
     @Override
-    @SuppressWarnings({UNCHECKED, RAWTYPES})
-    public <Output> IFactory<?, Output> getFactoryForOutput(@NotNull final Class<? extends Output> clazz) throws IllegalArgumentException
+    public <Output> IFactory<?, Output> getFactoryForOutput(@NotNull Class<? extends Output> clazz) throws IllegalArgumentException
     {
         if (!inputMappings.containsKey(clazz))
         {
@@ -111,7 +103,7 @@ public final class StandardFactoryController implements IFactoryController
      * @throws IllegalArgumentException if there is already a factory registered with either the given input and/or the given output.
      */
     @Override
-    public <Input, Output> void registerNewFactory(@NotNull final IFactory<Input, Output> factory) throws IllegalArgumentException
+    public <Input, Output> void registerNewFactory(@NotNull IFactory<Input, Output> factory) throws IllegalArgumentException
     {
         if (inputMappings.containsKey(factory.getFactoryInputType()))
         {
@@ -138,12 +130,12 @@ public final class StandardFactoryController implements IFactoryController
      * @throws IllegalArgumentException is thrown when the output type is unknown to this controller.
      */
     @Override
-    @SuppressWarnings(UNCHECKED)
-    public <Output> NBTTagCompound serialize(@NotNull final Output object) throws IllegalArgumentException
+    @SuppressWarnings("unchecked")
+    public <Output> NBTTagCompound serialize(@NotNull Output object) throws IllegalArgumentException
     {
-        final NBTTagCompound compound = new NBTTagCompound();
+        NBTTagCompound compound = new NBTTagCompound();
 
-        final IFactory<?, Output> factory = getFactoryForOutput((Class<? extends Output>) object.getClass());
+        IFactory<?, Output> factory = getFactoryForOutput((Class<? extends Output>) object.getClass());
 
         compound.setString(NBT_TYPE, object.getClass().getName());
         compound.setTag(NBT_DATA, factory.serialize(this, object));
@@ -160,12 +152,12 @@ public final class StandardFactoryController implements IFactoryController
      * @throws IllegalArgumentException is thrown when the type stored in the data is unknown to this controller.
      */
     @Override
-    @SuppressWarnings(UNCHECKED)
-    public <Output> Output deserialize(@NotNull final NBTTagCompound compound) throws IllegalArgumentException
+    @SuppressWarnings("unchecked")
+    public <Output> Output deserialize(@NotNull NBTTagCompound compound) throws IllegalArgumentException
     {
-        final String className = compound.getString(NBT_TYPE);
+        String className = compound.getString(NBT_TYPE);
 
-        final IFactory<?, Output> factory = getFactoryForOutput(className);
+        IFactory<?, Output> factory = getFactoryForOutput(className);
         return factory.deserialize(this, compound.getCompoundTag(NBT_DATA));
     }
 
@@ -180,10 +172,10 @@ public final class StandardFactoryController implements IFactoryController
      * @throws ClassCastException       thrown when a Factory is known for the given input, but does not produce the given output.
      */
     @Override
-    @SuppressWarnings(UNCHECKED)
-    public <Input, Output> Output getNewInstance(@NotNull final Input input, @NotNull final Object... context) throws IllegalArgumentException, ClassCastException
+    @SuppressWarnings("unchecked")
+    public <Input, Output> Output getNewInstance(@NotNull Input input, @NotNull Object... context) throws IllegalArgumentException, ClassCastException
     {
-        final IFactory<Input, Output> factory = (IFactory<Input, Output>) getFactoryForInput((Class<? extends Input>) input.getClass());
+        IFactory<Input, Output> factory = (IFactory<Input, Output>) getFactoryForInput((Class<? extends Input>) input.getClass());
 
         return factory.getNewInstance(input, context);
     }

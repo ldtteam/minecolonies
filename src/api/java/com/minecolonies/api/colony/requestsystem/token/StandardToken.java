@@ -1,23 +1,15 @@
 package com.minecolonies.api.colony.requestsystem.token;
 
-import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
-
-import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 
 /**
  * Internal implementation of the IToken interface.
  * Uses UUID to store the ID of the request.
  */
-public class StandardToken implements IToken<UUID, NBTTagCompound>
+public class StandardToken implements IToken<UUID>
 {
-
-    ////// --------------------------- NBTConstants --------------------------- \\\\\\
-    private static final String NBT_MSB = "Id_MSB";
-    private static final String NBT_LSB = "Id_LSB";
-    ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
     @NotNull
     private UUID id;
@@ -33,7 +25,7 @@ public class StandardToken implements IToken<UUID, NBTTagCompound>
     /**
      * Creates a new token with the given id.
      */
-    public StandardToken(@NotNull final UUID id)
+    public StandardToken(@NotNull UUID id)
     {
         this.id = id;
     }
@@ -50,31 +42,13 @@ public class StandardToken implements IToken<UUID, NBTTagCompound>
     }
 
     @Override
-    public NBTTagCompound serializeNBT()
-    {
-        final NBTTagCompound compound = new NBTTagCompound();
-
-        compound.setLong(NBT_LSB, id.getLeastSignificantBits());
-        compound.setLong(NBT_MSB, id.getMostSignificantBits());
-
-        return compound;
-    }
-
-    @Override
-    public void deserializeNBT(final NBTTagCompound nbt)
-    {
-        this.id = new UUID(nbt.getLong(NBT_MSB), nbt.getLong(NBT_LSB));
-    }
-
-    @Override
     public int hashCode()
     {
         return id.hashCode();
     }
 
     @Override
-    @SuppressWarnings(RAWTYPES)
-    public boolean equals(final Object o)
+    public boolean equals(Object o)
     {
         if (this == o)
         {
@@ -85,7 +59,7 @@ public class StandardToken implements IToken<UUID, NBTTagCompound>
             return false;
         }
 
-        final IToken that = (IToken) o;
+        IToken that = (IToken) o;
 
         return id.equals(that.getIdentifier());
     }

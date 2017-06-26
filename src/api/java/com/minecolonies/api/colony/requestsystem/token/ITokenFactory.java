@@ -1,7 +1,6 @@
 package com.minecolonies.api.colony.requestsystem.token;
 
 import com.minecolonies.api.colony.requestsystem.factory.IFactory;
-import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -11,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
  * @param <T>  The type of requesttoken.
  * @param <RT> The requesttoken type.
  */
-public interface ITokenFactory<T, RT extends IToken<T, NBTTagCompound>> extends IFactory<T, RT>
+public interface ITokenFactory<T, RT extends IToken<T>> extends IFactory<T, RT>
 {
 
     /**
@@ -25,7 +24,7 @@ public interface ITokenFactory<T, RT extends IToken<T, NBTTagCompound>> extends 
      */
     @NotNull
     @Override
-    default RT getNewInstance(@NotNull final T t, @NotNull final Object... context) throws IllegalArgumentException
+    default RT getNewInstance(@NotNull T t, @NotNull Object... context) throws IllegalArgumentException
     {
         if (context.length != 0)
         {

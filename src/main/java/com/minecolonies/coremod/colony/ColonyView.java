@@ -1,8 +1,10 @@
 package com.minecolonies.coremod.colony;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.colony.requestsystem.IRequestManager;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MathUtils;
@@ -658,5 +660,14 @@ public final class ColonyView implements IColony
     public int getLastContactInHours()
     {
         return lastContactInHours;
+    }
+
+    @Nullable
+    @Override
+    public IRequestManager getRequestManager()
+    {
+        //No request system on the client side.
+        //At least for now.
+        return null;
     }
 }

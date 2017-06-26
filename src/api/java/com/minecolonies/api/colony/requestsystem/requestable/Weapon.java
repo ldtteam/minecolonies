@@ -1,6 +1,5 @@
 package com.minecolonies.api.colony.requestsystem.requestable;
 
-import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,7 +23,7 @@ public class Weapon
 
     public Weapon(@NotNull final WeaponType type, @NotNull final Integer minLevel, @NotNull final Integer maxLevel)
     {
-        this(type, minLevel, maxLevel, ItemStackUtils.EMPTY);
+        this(type, minLevel, maxLevel, ItemStack.EMPTY);
     }
 
     public Weapon(@NotNull final WeaponType type, @NotNull final Integer minLevel, @NotNull final Integer maxLevel, @NotNull final ItemStack result)
