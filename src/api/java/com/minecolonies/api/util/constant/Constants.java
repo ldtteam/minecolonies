@@ -22,6 +22,6 @@ public class Constants
     public static final int ROTATE_TWICE = 2;
     public static final int ROTATE_THREE_TIMES = 3;
     public static final int MAX_BUILDING_LEVEL = 5;
-
-
+    public static final int TICKS_SECOND = 20;
+    public static final int SECONDS_A_MINUTE = 60;
 }
