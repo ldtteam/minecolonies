@@ -99,8 +99,8 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     {
         if (!(this.getAttackingEntity() instanceof EntityPlayer) && (this.recentlyHit > 0 && this.canDropLoot() && this.worldObj.getGameRules().getBoolean("doMobLoot")))
         {
-            int j = EntityXPOrb.getXPSplit(BARBARIAN_EXP_DROP);
-            this.worldObj.spawnEntityInWorld(new EntityXPOrb(this.worldObj, this.posX, this.posY, this.posZ, j));
+            final int experience = EntityXPOrb.getXPSplit(BARBARIAN_EXP_DROP);
+            this.worldObj.spawnEntityInWorld(new EntityXPOrb(this.worldObj, this.posX, this.posY, this.posZ, experience));
         }
 
         super.onDeathUpdate();
