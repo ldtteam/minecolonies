@@ -79,6 +79,12 @@ public interface IColony
     int getLastContactInHours();
 
     /**
+     * Method to get the World this colony is in.
+     * @return
+     */
+    World getWorld();
+
+    /**
      * Get the current {@link IRequestManager} for this Colony.
      * Returns null if the current Colony does not support the request system.
      * @return the {@link IRequestManager} for this colony, null if not supported.
