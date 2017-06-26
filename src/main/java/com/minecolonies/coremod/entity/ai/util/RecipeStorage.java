@@ -2,11 +2,11 @@ package com.minecolonies.coremod.entity.ai.util;
 
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -32,6 +32,11 @@ public class RecipeStorage
     private final List<ItemStack> secondaryOutput;
 
     /**
+     * The intermediate required for the recipe (e.g furnace).
+     */
+    private final Block intermediate;
+
+    /**
      * Grid size required for the recipe.
      */
     private final int gridSize;
@@ -49,6 +54,24 @@ public class RecipeStorage
         this.primaryOutput = primaryOutput;
         this.secondaryOutput = Collections.unmodifiableList(Arrays.asList(secondaryOutput));
         this.gridSize = gridSize;
+        this.intermediate = null;
+    }
+
+    /**
+     * Create an instance of the recipe storage.
+     * @param input the list of input items (required for the recipe).
+     * @param gridSize the required grid size to make it.
+     * @param primaryOutput the primary output of the recipe.
+     * @param intermediate the intermediate to use (e.g furnace).
+     * @param secondaryOutput the secondary output (like buckets or similar).
+     */
+    public RecipeStorage(final List<ItemStack> input, final int gridSize, final ItemStack primaryOutput, final Block intermediate, final ItemStack...secondaryOutput)
+    {
+        this.input = Collections.unmodifiableList(input);
+        this.primaryOutput = primaryOutput;
+        this.secondaryOutput = Collections.unmodifiableList(Arrays.asList(secondaryOutput));
+        this.gridSize = gridSize;
+        this.intermediate = intermediate;
     }
 
     /**
@@ -90,6 +113,15 @@ public class RecipeStorage
     public int getGridSize()
     {
         return gridSize;
+    }
+
+    /**
+     * Get the required intermediate for the recipe.
+     * @return the block.
+     */
+    public Block getIntermediate()
+    {
+        return this.intermediate;
     }
 
     /**

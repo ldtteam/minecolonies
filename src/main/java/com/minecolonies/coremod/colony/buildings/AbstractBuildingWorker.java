@@ -1,18 +1,31 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.colony.requestsystem.token.StandardToken;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.entity.ai.util.RecipeStorage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import javax.swing.plaf.basic.BasicComboBoxUI;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_HAND;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
@@ -32,6 +45,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
      * Tag used to store the worker to nbt.
      */
     private static final String TAG_WORKER = "worker";
+
+    /**
+     * The list of recipes the worker knows, correspond to a subset of the recipes in the colony.
+     */
+    private List<IToken> recipes = new ArrayList<>();
 
     /**
      * The citizenData of the assigned worker.
@@ -100,6 +118,64 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     public boolean neededForWorker(@Nullable final ItemStack stack)
     {
         return false;
+    }
+
+    /**
+     * Method to check if the worker assigned to this building can craft an input stack.
+     * Checks a) if he knows the recipe and
+     *        b) if he has the required items in his inventory or in the hut.
+     * @param stack the stack which shall be crafted.
+     * @return true if possible.
+     */
+    public boolean canCraft(final ItemStack stack)
+    {
+        final Colony colony = getColony();
+
+        if(colony == null)
+        {
+            return false;
+        }
+
+        for(Map.Entry<StandardToken, RecipeStorage> entry : colony.getRecipes().entrySet())
+        {
+            if(entry.getValue().getPrimaryOutput().isItemEqual(stack) && recipes.contains(entry.getKey()))
+            {
+                final List<IItemHandler> handlers = getHandlers();
+                if(entry.getValue().canFullFillRecipe(handlers.toArray(new IItemHandler[handlers.size()])))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Get all handlers accociated with this building.
+     * @return the handlers of the building + citizen.
+     */
+    public List<IItemHandler> getHandlers()
+    {
+        final EntityCitizen workerEntity = this.getWorkerEntity();
+        final Colony colony = getColony();
+        if(this.getWorkerEntity() == null || colony == null || colony.getWorld() == null)
+        {
+            return Collections.emptyList();
+        }
+
+        final List<IItemHandler> handlers = new ArrayList<>();
+        handlers.add(new InvWrapper(workerEntity.getInventoryCitizen()));
+        handlers.add(new InvWrapper(getTileEntity()));
+
+        for (final BlockPos pos : getAdditionalCountainers())
+        {
+            final TileEntity entity = colony.getWorld().getTileEntity(pos);
+            if (entity instanceof TileEntityChest)
+            {
+                handlers.add(new InvWrapper((TileEntityChest) entity));
+            }
+        }
+        return handlers;
     }
 
     /**
