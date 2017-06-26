@@ -152,4 +152,17 @@ public abstract class AbstractEntityBarbarian extends EntityMob
             this.playSound(soundevent, this.getSoundVolume(), this.getSoundPitch());
         }
     }
+
+    @Override
+    protected boolean canDespawn()
+    {
+        return false;
+    }
+
+    @Override
+    protected void entityInit()
+    {
+        this.enablePersistence();
+        super.entityInit();
+    }
 }
