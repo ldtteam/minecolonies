@@ -181,6 +181,12 @@ public interface IRequest<R>
     void childStateUpdated(@NotNull IRequestManager manager, @NotNull IToken child);
 
     /**
+     * Method to set the ItemStack used for delivery.
+     * @param stack The ItemStack used during delivery of the request. ItemStack.Empty means no delivery possible.
+     */
+    void setDelivery(@NotNull final ItemStack stack);
+
+    /**
      * Method used to indicate that the result of this request can be delivered.
      *
      * @return True for requests that can be delivered, false when not.
@@ -190,7 +196,7 @@ public interface IRequest<R>
     /**
      * Method to get the ItemStack used for the getDelivery.
      *
-     * @return The ItemStack that the Deliveryman transports around. ItemStack.Empty means no getDelivery possible.
+     * @return The ItemStack that the Deliveryman transports around. ItemStack.Empty means no delivery possible.
      */
     @NotNull
     ItemStack getDelivery();

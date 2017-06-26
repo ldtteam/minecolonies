@@ -23,6 +23,16 @@ public interface IRequester
     ILocation getLocation();
 
     /**
+     * Method used to get the location that a delivery has to be brought to.
+     * Usually this points for a Building to its Postbox.
+     * @return The location of the targetpoint of a delivery to this location.
+     */
+    @NotNull
+    default ILocation getDeliveryLocation() {
+        return getLocation();
+    }
+
+    /**
      * Method called by the request system to notify this requester that a
      */
     @NotNull

@@ -3,6 +3,7 @@ package com.minecolonies.api.colony.requestsystem.resolver;
 import com.minecolonies.api.colony.requestsystem.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,7 +42,7 @@ public interface IRequestResolver<R> extends IRequester
      * Method used to attempt a resolving operation.
      * <p>
      * <p>
-     * When this attempt was successful a List with requirement requests is returned.
+     * When this attempt was successful a List with tokens of required requests is returned.
      * This list maybe empty.
      * The list should indicate all sub requests that should be fullfilled before the @code{resolve(IRequest request)} method is called.
      * </p>
@@ -53,10 +54,10 @@ public interface IRequestResolver<R> extends IRequester
      *
      * @param request The request to resolve.
      * @param manager The manager that is attempting to resolve using this resolver.
-     * @return The requirements of the request if the attempt was successful (an empty list is allowed to indicate no requirements), null if the attempt failed.
+     * @return The tokens of required requests if the attempt was successful (an empty list is allowed to indicate no requirements), null if the attempt failed.
      */
     @Nullable
-    List<IRequest> attemptResolve(@NotNull IRequestManager manager, @NotNull IRequest<R> request);
+    List<IToken> attemptResolve(@NotNull IRequestManager manager, @NotNull IRequest<R> request);
 
     /**
      * Method used to resolve a given request.
@@ -87,7 +88,7 @@ public interface IRequestResolver<R> extends IRequester
      * @param completedRequest The request that has been completed and the given manager is requesting a followup for.
      * @return The followup request for the completed request. Null if none is needed.
      */
-    @NotNull
+    @Nullable
     IRequest getFollowupRequestForCompletion(@NotNull IRequestManager manager, @NotNull IRequest<R> completedRequest);
 
     /**

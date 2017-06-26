@@ -715,7 +715,7 @@ public class StandardRequestManager implements IRequestManager
                     continue;
                 }
 
-                @Nullable List<IRequest> attemptResult = resolver.attemptResolve(new WrappedBlacklistAssignmentRequestManager(manager, resolverTokenBlackList), request);
+                @Nullable List<IToken> attemptResult = resolver.attemptResolve(new WrappedBlacklistAssignmentRequestManager(manager, resolverTokenBlackList), request);
 
                 //Skip if attempt failed (aka attemptResult == null)
                 if (attemptResult == null)
@@ -727,13 +727,15 @@ public class StandardRequestManager implements IRequestManager
                 Log.getLogger().debug("Finished resolver assignment search for request: " + request + " successfully");
                 ResolverHandler.addRequestToResolver(manager, resolver, request);
 
-                for (IRequest childRequest :
+                for (IToken childRequestToken :
                   attemptResult)
                 {
+                    IRequest childRequest = RequestHandler.getRequest(manager, childRequestToken);
+
                     childRequest.setParent(request.getToken());
                     request.addChild(childRequest.getToken());
 
-                    if (!isAssigned(manager, childRequest.getToken()))
+                    if (!isAssigned(manager, childRequestToken))
                     {
                         assignRequest(manager, childRequest, resolverTokenBlackList);
                     }
@@ -937,7 +939,8 @@ public class StandardRequestManager implements IRequestManager
             return standardToken;
         }
     }
-/**
+
+    /**
      * Wrapper class for a Manager.
      * Subclasses of this have custom behaviour on at least one method.
      */
