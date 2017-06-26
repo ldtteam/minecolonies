@@ -436,8 +436,8 @@ public final class ColonyView implements IColony
         {
             wayPoints.add(BlockPosUtil.readFromByteBuf(buf));
         }
-        lastContactInHours = buf.readInt();
-        manualHousing = buf.readBoolean();
+        this.lastContactInHours = buf.readInt();
+        this.manualHousing = buf.readBoolean();
         return null;
     }
 
