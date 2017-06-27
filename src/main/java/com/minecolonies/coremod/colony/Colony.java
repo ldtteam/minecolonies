@@ -17,10 +17,12 @@ import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.AchievementUtils;
+import com.minecolonies.coremod.util.BarbarianUtils;
 import com.minecolonies.coremod.util.ColonyUtils;
 import com.minecolonies.coremod.util.ServerUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -95,6 +97,7 @@ public class Colony implements IColony
     private              int    caughtFish                = 0;
     private static final String TAG_LUMBERJACK_STATISTICS = "lumberjackStatistics";
     private static final String TAG_LUMBERJACK_TREES      = "trees";
+    private static final int    CITIZEN_MINIMUM_FOR_RAID  = 5;
     private              int    felledTrees               = 0;
     private static final String TAG_LUMBERJACK_SAPLINGS   = "saplings";
     private              int    plantedSaplings           = 0;
@@ -103,6 +106,12 @@ public class Colony implements IColony
     private static final int    NUM_ACHIEVEMENT_THIRD     = 100;
     private static final int    NUM_ACHIEVEMENT_FOURTH    = 500;
     private static final int    NUM_ACHIEVEMENT_FIFTH     = 1000;
+
+    /**
+     * Values used for Raid event
+     */
+    private boolean hasRaidHappened = true;
+    private boolean raidWillHappen = false;
 
     /**
      * Amount of ticks that pass/hour.
@@ -153,9 +162,11 @@ public class Colony implements IColony
     //  General Attributes
     private final int dimensionId;
     //  Buildings
-    private final Map<BlockPos, Field>       fields    = new HashMap<>();
+    private final Map<BlockPos, Field>       fields       = new HashMap<>();
     //Additional Waypoints.
-    private final Map<BlockPos, IBlockState> wayPoints = new HashMap<>();
+    private final Map<BlockPos, IBlockState> wayPoints    = new HashMap<>();
+    //HashMap of what guards are attacking
+    private final List<EntityLivingBase>     guardTargets = new ArrayList<>();
 
     /**
      * The warehouse building position. Initially null.
@@ -1166,6 +1177,34 @@ public class Colony implements IColony
     }
 
     /**
+     * Set whether a raid will happen tonight
+     */
+    public void setRaidWillHappen(final boolean willRaid)
+    {
+        raidWillHappen = willRaid;
+    }
+
+    @Override
+    public boolean isWillRaid()
+    {
+        return raidWillHappen;
+    }
+
+    /**
+     * Set whether a raid has happened.
+     */
+    public void setHasRaided(final boolean hasRaided)
+    {
+        hasRaidHappened = hasRaided;
+    }
+
+    @Override
+    public boolean isHasRaided()
+    {
+        return hasRaidHappened;
+    }
+
+    /**
      * Any per-world-tick logic should be performed here.
      * NOTE: If the Colony's world isn't loaded, it won't have a world tick.
      * Use onServerTick for logic that should _always_ run.
@@ -1183,8 +1222,14 @@ public class Colony implements IColony
             return;
         }
 
+
         if (event.phase == TickEvent.Phase.START)
         {
+            if (this.citizens.size() >= CITIZEN_MINIMUM_FOR_RAID)
+            {
+                BarbarianUtils.eventRaid(this);
+            }
+
             //  Detect CitizenData whose EntityCitizen no longer exist in world, and clear the mapping
             //  Consider handing this in an ChunkUnload Event instead?
             citizens.values()
@@ -1974,6 +2019,17 @@ public class Colony implements IColony
     public Map<BlockPos, IBlockState> getWayPoints()
     {
         return new HashMap<>(wayPoints);
+    }
+
+    public List<EntityLivingBase> getGuardTargets()
+    {
+        return new ArrayList<>(guardTargets);
+    }
+
+    public void setGuardTargets(final List<EntityLivingBase> targets)
+    {
+        guardTargets.clear();
+        guardTargets.addAll(targets);
     }
 
     @Override

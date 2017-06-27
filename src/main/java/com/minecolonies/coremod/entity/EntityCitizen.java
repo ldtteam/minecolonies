@@ -7,7 +7,6 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.*;
@@ -228,6 +227,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public static final double FULL_SATURATION = 10;
 
+    private static final float  VOLUME              = 0.2F;
+    private static final double GAUSSIAN_MULTIPLIER = 0.7D;
     private static Field            navigatorField;
     private final  InventoryCitizen inventory;
     @NotNull
@@ -435,7 +436,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             if (this.getColonyJob() != null && Configurations.enableInDevelopmentFeatures)
             {
                 setCustomNameTag(citizenData.getName() + " (" + getStatus() + ")[" + this.getColonyJob()
-                        .getNameTagDescription() + "]");
+                                                                                       .getNameTagDescription() + "]");
             }
             else
             {
@@ -527,7 +528,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         final double intendedRotationYaw = (Math.atan2(zDifference, xDifference) * 180.0D / Math.PI) - 90.0;
         final double intendedRotationPitch = -(Math.atan2(yDifference, squareDifference) * 180.0D / Math.PI);
         this.setRotation((float) updateRotation(this.rotationYaw, intendedRotationYaw, ROTATION_MOVEMENT),
-                (float) updateRotation(this.rotationPitch, intendedRotationPitch, ROTATION_MOVEMENT));
+          (float) updateRotation(this.rotationPitch, intendedRotationPitch, ROTATION_MOVEMENT));
 
         final double goToX = xDifference > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
         final double goToZ = zDifference > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
@@ -594,12 +595,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public void addExperience(final double xp)
     {
-        final BuildingHome home = getHomeBuilding();
+        final BuildingHome home = this.getHomeBuilding();
 
         final double citizenHutLevel = home == null ? 0 : home.getBuildingLevel();
         final double citizenHutMaxLevel = home == null ? 1 : home.getMaxBuildingLevel();
         if (citizenHutLevel < citizenHutMaxLevel
-                && Math.pow(2.0, citizenHutLevel + 1.0) < this.getExperienceLevel())
+              && Math.pow(2.0, citizenHutLevel + 1.0) < this.getExperienceLevel())
         {
             return;
         }
@@ -670,7 +671,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public int getExperienceLevel()
     {
-        if(citizenData != null)
+        if (citizenData != null)
         {
             return citizenData.getLevel();
         }
@@ -699,8 +700,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
             final int pz = MathHelper.floor_double(posZ);
 
             this.onGround =
-                    CompatibilityUtils.getWorld(this).getBlockState(new BlockPos(px, py, pz)).getBlock().isLadder(
-                            CompatibilityUtils.getWorld(this).getBlockState(new BlockPos(px, py, pz)), CompatibilityUtils.getWorld(this), new BlockPos(px, py, pz), this);
+              CompatibilityUtils.getWorld(this).getBlockState(new BlockPos(px, py, pz)).getBlock().isLadder(
+                CompatibilityUtils.getWorld(this).getBlockState(new BlockPos(px, py, pz)), CompatibilityUtils.getWorld(this), new BlockPos(px, py, pz), this);
         }
 
         super.updateFallState(y, onGroundIn, state, pos);
@@ -759,16 +760,16 @@ public class EntityCitizen extends EntityAgeable implements INpc
             if (getColonyJob() instanceof JobGuard)
             {
                 LanguageHandler.sendPlayersMessage(
-                        colony.getMessageEntityPlayers(),
-                        "tile.blockHutTownHall.messageGuardDead",
-                        citizenData.getName(), (int) posX, (int) posY, (int) posZ);
+                  colony.getMessageEntityPlayers(),
+                  "tile.blockHutTownHall.messageGuardDead",
+                  citizenData.getName(), (int) posX, (int) posY, (int) posZ);
             }
             else
             {
                 LanguageHandler.sendPlayersMessage(
-                        colony.getMessageEntityPlayers(),
-                        "tile.blockHutTownHall.messageColonistDead",
-                        citizenData.getName(), (int) posX, (int) posY, (int) posZ);
+                  colony.getMessageEntityPlayers(),
+                  "tile.blockHutTownHall.messageColonistDead",
+                  citizenData.getName(), (int) posX, (int) posY, (int) posZ);
             }
             colony.removeCitizen(getCitizenData());
         }
@@ -801,12 +802,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
             final double d0 = this.rand.nextGaussian() * 0.02D;
             final double d1 = this.rand.nextGaussian() * 0.02D;
             CompatibilityUtils.getWorld(this).spawnParticle(EnumParticleTypes.EXPLOSION_LARGE,
-                    this.posX + (this.rand.nextDouble() * this.width * 2.0F) - (double) this.width,
-                    this.posY + (this.rand.nextDouble() * this.height),
-                    this.posZ + (this.rand.nextDouble() * this.width * 2.0F) - (double) this.width,
-                    d2,
-                    d0,
-                    d1);
+              this.posX + (this.rand.nextDouble() * this.width * 2.0F) - (double) this.width,
+              this.posY + (this.rand.nextDouble() * this.height),
+              this.posZ + (this.rand.nextDouble() * this.width * 2.0F) - (double) this.width,
+              d2,
+              d0,
+              d1);
         }
     }
 
@@ -1001,7 +1002,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             pickupItems();
             cleanupChatMessages();
             updateColonyServer();
-            if(getColonyJob() != null)
+            if (getColonyJob() != null)
             {
                 checkIfStuck();
             }
@@ -1032,14 +1033,14 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 this.removeActivePotionEffect(Potion.getPotionFromResourceLocation("slowness"));
             }
 
-            if(citizenData.getSaturation() < HIGH_SATURATION)
+            if (citizenData.getSaturation() < HIGH_SATURATION)
             {
                 tryToEat();
             }
             else
             {
                 final BuildingHome home = getHomeBuilding();
-                if(home != null && home.isFoodNeeded())
+                if (home != null && home.isFoodNeeded())
                 {
                     home.setFoodNeeded(false);
                 }
@@ -1091,10 +1092,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
 
         retList.stream()
-                .filter(Objects::nonNull)
-                .filter(item -> !item.isDead)
-                .filter(item -> canPickUpLoot())
-                .forEach(this::tryPickupEntityItem);
+          .filter(Objects::nonNull)
+          .filter(item -> !item.isDead)
+          .filter(item -> canPickUpLoot())
+          .forEach(this::tryPickupEntityItem);
     }
 
     private void cleanupChatMessages()
@@ -1133,14 +1134,14 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 }
                 final BlockPos destination = BlockPosUtil.getFloor(newNavigator.getDestination(), CompatibilityUtils.getWorld(this));
                 @Nullable final BlockPos spawnPoint =
-                        Utils.scanForBlockNearPoint
-                                (CompatibilityUtils.getWorld(this), destination, 1, 1, 1, 3,
-                                        Blocks.AIR,
-                                        Blocks.SNOW_LAYER,
-                                        Blocks.TALLGRASS,
-                                        Blocks.RED_FLOWER,
-                                        Blocks.YELLOW_FLOWER,
-                                        Blocks.CARPET);
+                  Utils.scanForBlockNearPoint
+                          (CompatibilityUtils.getWorld(this), destination, 1, 1, 1, 3,
+                            Blocks.AIR,
+                            Blocks.SNOW_LAYER,
+                            Blocks.TALLGRASS,
+                            Blocks.RED_FLOWER,
+                            Blocks.YELLOW_FLOWER,
+                            Blocks.CARPET);
 
                 WorkerUtil.setSpawnPoint(spawnPoint, this);
                 if (colony != null)
@@ -1246,9 +1247,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
         {
             //  Citizen does not exist in the Colony
             Log.getLogger().warn(String.format("EntityCitizen '%s' attempting to register with Colony #%d as Citizen %d, but not known to colony",
-                    getUniqueID(),
-                    colonyId,
-                    citizenId));
+              getUniqueID(),
+              colonyId,
+              citizenId));
             setDead();
             return;
         }
@@ -1267,10 +1268,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private void handleExistingCitizen(@NotNull final CitizenData data, @NotNull final EntityCitizen existingCitizen)
     {
         Log.getLogger().warn(String.format("EntityCitizen '%s' attempting to register with Colony #%d as Citizen #%d, but already have a citizen ('%s')",
-                getUniqueID(),
-                colonyId,
-                citizenId,
-                existingCitizen.getUniqueID()));
+          getUniqueID(),
+          colonyId,
+          citizenId,
+          existingCitizen.getUniqueID()));
         if (existingCitizen.getUniqueID().equals(this.getUniqueID()))
         {
             data.setCitizenEntity(this);
@@ -1507,14 +1508,14 @@ public class EntityCitizen extends EntityAgeable implements INpc
     public void tryToEat()
     {
         final int slot = InventoryUtils.findFirstSlotInProviderWith(this,
-                itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemFood);
-        if(slot == -1)
+          itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemFood);
+        if (slot == -1)
         {
             return;
         }
 
         final ItemStack stack = inventory.getStackInSlot(slot);
-        if(!ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof ItemFood && citizenData != null)
+        if (!ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof ItemFood && citizenData != null)
         {
             int heal = ((ItemFood) stack.getItem()).getHealAmount(stack);
             citizenData.increaseSaturation(heal);
@@ -1531,6 +1532,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
             return DesiredActivity.WORK;
         }
 
+        if (BarbarianUtils.getClosestBarbarianToEntity(this, DISTANCE_OF_ENTITY_AVOID) != null &&
+              BarbarianUtils.getClosestBarbarianToEntity(this, DISTANCE_OF_ENTITY_AVOID).isEntityAlive())
+        {
+            return DesiredActivity.SLEEP;
+        }
+
         if (!CompatibilityUtils.getWorld(this).isDaytime())
         {
             if (isDay && citizenData != null)
@@ -1538,7 +1545,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 isDay = false;
                 final AbstractBuildingWorker buildingWorker = getWorkBuilding();
                 final double decreaseBy = buildingWorker == null || buildingWorker.getBuildingLevel() == 0 ? 0.1
-                        : (SATURATION_DECREASE_FACTOR * Math.pow(2, buildingWorker.getBuildingLevel() - 1.0));
+                                            : (SATURATION_DECREASE_FACTOR * Math.pow(2, buildingWorker.getBuildingLevel() - 1.0));
                 citizenData.decreaseSaturation(decreaseBy);
                 citizenData.markDirty();
             }
@@ -1683,11 +1690,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
             if (ItemStackUtils.isEmpty(resultStack) || ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, resultStack))
             {
                 CompatibilityUtils.getWorld(this).playSound((EntityPlayer) null,
-                        this.getPosition(),
-                        SoundEvents.ENTITY_ITEM_PICKUP,
-                        SoundCategory.AMBIENT,
-                        0.2F,
-                        (float) ((this.rand.nextGaussian() * 0.7D + 1.0D) * 2.0D));
+                  this.getPosition(),
+                  SoundEvents.ENTITY_ITEM_PICKUP,
+                  SoundCategory.AMBIENT,
+                  VOLUME,
+                  (float) ((this.rand.nextGaussian() * GAUSSIAN_MULTIPLIER + 1.0D) * 2.0D));
                 this.onItemPickup(entityItem, ItemStackUtils.getSize(itemStack) - resultingStackSize);
 
                 if (ItemStackUtils.isEmpty(resultStack))
@@ -1760,16 +1767,16 @@ public class EntityCitizen extends EntityAgeable implements INpc
             if (!CompatibilityUtils.getWorld(this).isRemote)
             {
                 MineColonies.getNetwork().sendToAllAround(
-                        new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorld(this).getBlockState(blockPos), BlockParticleEffectMessage.BREAK_BLOCK),
-                        new NetworkRegistry.TargetPoint(CompatibilityUtils.getWorld(this).provider.getDimension(),
-                            blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_SOUND_RANGE));
+                  new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorld(this).getBlockState(blockPos), BlockParticleEffectMessage.BREAK_BLOCK),
+                  new NetworkRegistry.TargetPoint(CompatibilityUtils.getWorld(this).provider.getDimension(),
+                                                   blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_SOUND_RANGE));
             }
             CompatibilityUtils.getWorld(this).playSound(null,
-                    blockPos,
-                    block.getSoundType(blockState, CompatibilityUtils.getWorld(this), blockPos, this).getBreakSound(),
-                    SoundCategory.BLOCKS,
-                    block.getSoundType(blockState, CompatibilityUtils.getWorld(this), blockPos, this).getVolume(),
-                    block.getSoundType(blockState, CompatibilityUtils.getWorld(this), blockPos, this).getPitch());
+              blockPos,
+              block.getSoundType(blockState, CompatibilityUtils.getWorld(this), blockPos, this).getBreakSound(),
+              SoundCategory.BLOCKS,
+              block.getSoundType(blockState, CompatibilityUtils.getWorld(this), blockPos, this).getVolume(),
+              block.getSoundType(blockState, CompatibilityUtils.getWorld(this), blockPos, this).getPitch());
             CompatibilityUtils.getWorld(this).setBlockToAir(blockPos);
 
             damageItemInHand(1);
@@ -1780,17 +1787,17 @@ public class EntityCitizen extends EntityAgeable implements INpc
             if (!CompatibilityUtils.getWorld(this).isRemote)
             {
                 MineColonies.getNetwork().sendToAllAround(
-                        //todo: correct side
-                        new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorld(this).getBlockState(blockPos), 1),
-                        new NetworkRegistry.TargetPoint(CompatibilityUtils.getWorld(this).provider.getDimension(),
-                            blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE));
+                  //todo: correct side
+                  new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorld(this).getBlockState(blockPos), 1),
+                  new NetworkRegistry.TargetPoint(CompatibilityUtils.getWorld(this).provider.getDimension(),
+                                                   blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE));
             }
             CompatibilityUtils.getWorld(this).playSound((EntityPlayer) null,
-                    blockPos,
-                    block.getSoundType(blockState, CompatibilityUtils.getWorld(this), blockPos, this).getBreakSound(),
-                    SoundCategory.BLOCKS,
-                    block.getSoundType(blockState, CompatibilityUtils.getWorld(this), blockPos, this).getVolume(),
-                    block.getSoundType(blockState, CompatibilityUtils.getWorld(this), blockPos, this).getPitch());
+              blockPos,
+              block.getSoundType(blockState, CompatibilityUtils.getWorld(this), blockPos, this).getBreakSound(),
+              SoundCategory.BLOCKS,
+              block.getSoundType(blockState, CompatibilityUtils.getWorld(this), blockPos, this).getVolume(),
+              block.getSoundType(blockState, CompatibilityUtils.getWorld(this), blockPos, this).getPitch());
         }
     }
 
@@ -1881,11 +1888,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
         {
             players.remove(owner);
             LanguageHandler.sendPlayerMessage(owner,
-                this.getColonyJob() == null ? "" : this.getColonyJob().getName(), citizenDescription, requiredItem);
+              this.getColonyJob() == null ? "" : this.getColonyJob().getName(), citizenDescription, requiredItem);
         }
 
         LanguageHandler.sendPlayersMessage(players,
-                this.getColonyJob() == null ? "" : this.getColonyJob().getName(), colonyDescription, citizenDescription, requiredItem);
+          this.getColonyJob() == null ? "" : this.getColonyJob().getName(), colonyDescription, citizenDescription, requiredItem);
     }
 
     /**
@@ -1964,10 +1971,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public void playMoveAwaySound()
     {
-        if(getColonyJob() != null)
+        if (getColonyJob() != null)
         {
             SoundUtils.playSoundAtCitizenWithChance(CompatibilityUtils.getWorld(this), getPosition(),
-                    getColonyJob().getMoveAwaySound(), 1);
+              getColonyJob().getMoveAwaySound(), 1);
         }
     }
 

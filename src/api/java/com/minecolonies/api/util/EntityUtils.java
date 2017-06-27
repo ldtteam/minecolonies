@@ -46,18 +46,20 @@ public final class EntityUtils
     }
 
     /**
-     * Checks if a player is a fakePlayer and tries to get the owning player if possible.
+     * Checks if a player is a fakePlayer and tries to get the owning player if
+     * possible.
+     *
      * @param player the incoming player.
-     * @param world the world.
+     * @param world  the world.
      * @return the EntityPlayer owner in the best case.
      */
     @NotNull
     public static EntityPlayer getPlayerOfFakePlayer(@NotNull final EntityPlayer player, @NotNull final World world)
     {
-        if(player instanceof FakePlayer)
+        if (player instanceof FakePlayer)
         {
             final EntityPlayer tempPlayer = world.getPlayerEntityByUUID(player.getUniqueID());
-            if(tempPlayer != null)
+            if (tempPlayer != null)
             {
                 return tempPlayer;
             }
@@ -168,26 +170,27 @@ public final class EntityUtils
 
     /**
      * Get a safe spawnpoint near a location.
-     * @param world the world he should spawn in.
+     *
+     * @param world     the world he should spawn in.
      * @param nearPoint the point to search near.
      * @return The spawn position.
      */
     @Nullable
-    public static BlockPos getSpawnPoint(World world, BlockPos nearPoint)
+    public static BlockPos getSpawnPoint(final World world, final BlockPos nearPoint)
     {
         return Utils.scanForBlockNearPoint(
-                world,
-                nearPoint,
-                1,
-                1,
-                1,
-                2,
-                Blocks.AIR,
-                Blocks.SNOW_LAYER,
-                Blocks.TALLGRASS,
-                Blocks.RED_FLOWER,
-                Blocks.YELLOW_FLOWER,
-                Blocks.CARPET);
+          world,
+          nearPoint,
+          1,
+          1,
+          1,
+          2,
+          Blocks.AIR,
+          Blocks.SNOW_LAYER,
+          Blocks.TALLGRASS,
+          Blocks.RED_FLOWER,
+          Blocks.YELLOW_FLOWER,
+          Blocks.CARPET);
     }
 
     /**
