@@ -308,12 +308,44 @@ public class RecipeStorage
         return new RecipeStorage(input, gridSize, primaryOutput, intermediate, secondaryOutput.toArray(new ItemStack[secondaryOutput.size()]));
     }
 
+    /**
+     * Check for free space in the handlers.
+     * @param handlers the handlers to check.
+     * @return true if enough space.
+     */
+    private boolean checkForFreeSpace(final List<IItemHandler> handlers)
+    {
+        if(getSecondaryOutput().size() > getInput().size())
+        {
+            int freeSpace = 0;
+            for (final IItemHandler handler : handlers)
+            {
+                freeSpace+= handler.getSlots() - InventoryUtils.getAmountOfStacksInItemHandler(handler);
+            }
+
+            if(freeSpace < getSecondaryOutput().size() - getInput().size())
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Check for space, remove items, and insert crafted items.
+     * @param handlers the handlers to use.
+     * @return true if succesful.
+     */
     public boolean fullfillRecipe(final List<IItemHandler> handlers)
     {
+        if(!checkForFreeSpace(handlers))
+        {
+            return false;
+        }
+
         for (final ItemStack stack : input)
         {
             int amountNeeded = ItemStackUtils.getSize(stack);
-            boolean hasStack = false;
             for (final IItemHandler handler : handlers)
             {
                 final int slotOfStack = InventoryUtils.
@@ -326,20 +358,40 @@ public class RecipeStorage
 
                     if (count >= amountNeeded)
                     {
-                        hasStack = true;
                         break;
                     }
                     amountNeeded -= count;
                 }
             }
+        }
 
-            if (!hasStack)
+        insertCraftedItems(handlers);
+        return true;
+    }
+
+    /**
+     * Inserted the resulting items into the itemHandlers.
+     * @param handlers the handlers.
+     */
+    private void insertCraftedItems(final List<IItemHandler> handlers)
+    {
+        for (final IItemHandler handler : handlers)
+        {
+            if (InventoryUtils.addItemStackToItemHandler(handler, getPrimaryOutput().copy()))
             {
-                return false;
+                break;
             }
         }
-        return true;
 
-        //todo then craft and add all output.
+        for (final ItemStack stack : getSecondaryOutput())
+        {
+            for (final IItemHandler handler : handlers)
+            {
+                if (InventoryUtils.addItemStackToItemHandler(handler, stack.copy()))
+                {
+                    break;
+                }
+            }
+        }
     }
 }

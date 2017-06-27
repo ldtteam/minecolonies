@@ -388,7 +388,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             delay += DELAY_RECHECK;
             final ItemStack first = getOwnBuilding().getFirstNeededItem();
             //Takes one Stack from the hut if existent
-            if (isInHut(first))
+            if (isInHut(first) || (getOwnBuilding().canCraft(first) && craftItem(first)))
             {
                 return NEEDS_ITEM;
             }
@@ -1005,7 +1005,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             final int itemDamage = useItemDamage ? stack.getItemDamage() : -1;
             final int countOfItem = worker.getItemCountInInventory(stack.getItem(), itemDamage);
 
-            if (countOfItem < 1 && !getOwnBuilding().canCraft(tempStack) || !craftItem(tempStack))
+            if (countOfItem < 1 && (!getOwnBuilding().canCraft(tempStack) || !craftItem(tempStack)))
             {
                 final int itemsLeft = ItemStackUtils.getSize(stack) - countOfItem;
                 @NotNull final ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft, itemDamage);
@@ -1035,13 +1035,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private boolean craftItem(final ItemStack tempStack)
     {
         final RecipeStorage storage = getOwnBuilding().getFirstFullFillableRecipe(tempStack);
-
-        if(storage == null || !getOwnBuilding().fullFillRecipe(storage))
-        {
-            return false;
-        }
-
-        return true;
+        return storage != null && getOwnBuilding().fullFillRecipe(storage);
     }
 
     /**
