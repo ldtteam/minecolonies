@@ -307,4 +307,39 @@ public class RecipeStorage
 
         return new RecipeStorage(input, gridSize, primaryOutput, intermediate, secondaryOutput.toArray(new ItemStack[secondaryOutput.size()]));
     }
+
+    public boolean fullfillRecipe(final List<IItemHandler> handlers)
+    {
+        for (final ItemStack stack : input)
+        {
+            int amountNeeded = ItemStackUtils.getSize(stack);
+            boolean hasStack = false;
+            for (final IItemHandler handler : handlers)
+            {
+                final int slotOfStack = InventoryUtils.
+                        findFirstSlotInItemHandlerNotEmptyWith(handler, itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.isItemEqual(stack));
+
+                while (slotOfStack != -1)
+                {
+                    final int count = ItemStackUtils.getSize(handler.getStackInSlot(slotOfStack));
+                    handler.extractItem(slotOfStack, amountNeeded, false);
+
+                    if (count >= amountNeeded)
+                    {
+                        hasStack = true;
+                        break;
+                    }
+                    amountNeeded -= count;
+                }
+            }
+
+            if (!hasStack)
+            {
+                return false;
+            }
+        }
+        return true;
+
+        //todo then craft and add all output.
+    }
 }

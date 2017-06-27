@@ -143,19 +143,53 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
             return false;
         }
 
+        return getFirstFullFillableRecipe(stack) != null;
+    }
+
+    /**
+     * Get a fullfillable recipe to execute.
+     * @param tempStack the stack which should be crafted.
+     * @return the recipe or null.
+     */
+    public RecipeStorage getFirstFullFillableRecipe(final ItemStack tempStack)
+    {
         for(Map.Entry<IToken, RecipeStorage> entry : ColonyManager.getRecipes().entrySet())
         {
-            if(entry.getValue().getPrimaryOutput().isItemEqual(stack) && recipes.contains(entry.getKey()))
+            if(recipes.contains(entry.getKey()) && entry.getValue().getPrimaryOutput().isItemEqual(tempStack))
             {
                 final List<IItemHandler> handlers = getHandlers();
                 if(entry.getValue().canFullFillRecipe(handlers.toArray(new IItemHandler[handlers.size()])))
                 {
-                    return true;
+                    return entry.getValue();
                 }
             }
         }
-        return false;
+        return null;
     }
+
+    /**
+     * Try to fullfill a recipe.
+     * @param storage with the storage.
+     * @return true if successful.
+     */
+    public boolean fullFillRecipe(final RecipeStorage storage)
+    {
+        final List<IItemHandler> handlers = getHandlers();
+        return storage.fullfillRecipe(handlers);
+    }
+
+
+    /**
+     * Check if a recipe can be added.
+     * This is only important for 3x3 crafting.
+     * Workers shall override this if necessary.
+     * @return true if so.
+     */
+    public boolean canRecipeBeAdded()
+    {
+        return true;
+    }
+
 
     /**
      * Get all handlers accociated with this building.
@@ -342,7 +376,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
      */
     public void addRecipe(final IToken token)
     {
-        if(Math.pow(2, getBuildingLevel()) >= recipes.size())
+        if(canRecipeBeAdded() && Math.pow(2, getBuildingLevel()) >= recipes.size())
         {
             recipes.add(token);
         }
