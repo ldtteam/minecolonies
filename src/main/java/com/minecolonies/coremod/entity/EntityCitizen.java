@@ -538,7 +538,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         final double goToZ = zDifference > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
 
         //Have to move the entity minimally into the direction to render his new rotation.
-        moveRelative(0, 0, (float) goToX, (float) goToZ);
+        move(MoverType.SELF, (float) goToX, 0, (float) goToZ);
     }
 
     /**
