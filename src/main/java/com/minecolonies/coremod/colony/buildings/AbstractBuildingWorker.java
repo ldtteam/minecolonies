@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.requestsystem.token.StandardToken;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -12,16 +13,17 @@ import com.minecolonies.coremod.entity.ai.util.RecipeStorage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.plaf.basic.BasicComboBoxUI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -47,9 +49,14 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     private static final String TAG_WORKER = "worker";
 
     /**
+     * NBTTag to store the recipes list.
+     */
+    private static final String TAG_RECIPES = "recipes";
+
+    /**
      * The list of recipes the worker knows, correspond to a subset of the recipes in the colony.
      */
-    private List<IToken> recipes = new ArrayList<>();
+    private final List<IToken> recipes = new ArrayList<>();
 
     /**
      * The citizenData of the assigned worker.
@@ -136,7 +143,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
             return false;
         }
 
-        for(Map.Entry<StandardToken, RecipeStorage> entry : colony.getRecipes().entrySet())
+        for(Map.Entry<IToken, RecipeStorage> entry : ColonyManager.getRecipes().entrySet())
         {
             if(entry.getValue().getPrimaryOutput().isItemEqual(stack) && recipes.contains(entry.getKey()))
             {
@@ -247,6 +254,15 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
                 worker.setWorkBuilding(this);
             }
         }
+
+        recipes.clear();
+        final NBTTagList recipesTags = compound.getTagList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < recipesTags.tagCount(); ++i)
+        {
+            final NBTTagCompound recipeTag = recipesTags.getCompoundTagAt(i);
+            final StandardToken token = new StandardToken(recipeTag);
+            recipes.add(token);
+        }
     }
 
     @Override
@@ -258,6 +274,15 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         {
             compound.setInteger(TAG_WORKER, worker.getId());
         }
+
+        @NotNull final NBTTagList recipesTagList = new NBTTagList();
+        for (@NotNull final IToken token : recipes)
+        {
+            @NotNull final NBTTagCompound recipeTagCompound = new NBTTagCompound();
+            token.deserializeNBT(recipeTagCompound);
+            recipesTagList.appendTag(recipeTagCompound);
+        }
+        compound.setTag(TAG_RECIPES, recipesTagList);
     }
 
     @Override
@@ -311,6 +336,26 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         }
     }
 
+    /**
+     * Add a recipe to the building.
+     * @param token the id of the recipe.
+     */
+    public void addRecipe(final IToken token)
+    {
+        if(Math.pow(2, getBuildingLevel()) >= recipes.size())
+        {
+            recipes.add(token);
+        }
+    }
+
+    /**
+     * Remove a recipe of the building.
+     * @param token the id of the recipe.
+     */
+    public void removeRecipe(final IToken token)
+    {
+        recipes.remove(token);
+    }
 
     /**
      * Get the max tool level useable by the worker.
@@ -362,6 +407,12 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         super.serializeToView(buf);
 
         buf.writeInt(worker == null ? 0 : worker.getId());
+
+        buf.writeInt(recipes.size());
+        for(final IToken token: recipes)
+        {
+            ColonyManager.getRecipes().get(token).writeToBuffer(buf);
+        }
     }
 
     /**
@@ -369,7 +420,15 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
      */
     public static class View extends AbstractBuildingHut.View
     {
+        /**
+         * WorkerId of the building
+         */
         private int workerId;
+
+        /**
+         * List of recipes.
+         */
+        private final List<RecipeStorage> recipes = new ArrayList<>();
 
         /**
          * Creates the view representation of the building.
@@ -408,6 +467,50 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
             super.deserialize(buf);
 
             workerId = buf.readInt();
+
+            recipes.clear();
+
+            final int recipesSize = buf.readInt();
+            for(int i = 0; i < recipesSize; i++)
+            {
+                recipes.add(RecipeStorage.createFromByteBuffer(buf));
+            }
+        }
+
+        /**
+         * Get the list of recipes.
+         * @return copy of the list.
+         */
+        public List<RecipeStorage> getRecipes()
+        {
+            return new ArrayList<>(recipes);
+        }
+
+        /**
+         * Remove a recipe from the list.
+         * @param i the index to remove.
+         */
+        public void removeRecipe(final int i)
+        {
+            if(i < recipes.size() && i > 0)
+            {
+                recipes.remove(i);
+            }
+        }
+
+        /**
+         * Switch the indices of two recipes.
+         * @param i the first.
+         * @param j the second.
+         */
+        public void switchIndex(final int i, final int j)
+        {
+            if(i < recipes.size() && j < recipes.size() && i > 0 && j > 0)
+            {
+                final RecipeStorage storage = recipes.get(i);
+                recipes.set(i, recipes.get(j));
+                recipes.set(j, storage);
+            }
         }
 
         @NotNull

@@ -2,11 +2,18 @@ package com.minecolonies.coremod.entity.ai.util;
 
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTUtil;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -16,6 +23,21 @@ import java.util.List;
  */
 public class RecipeStorage
 {
+    /**
+     * Compound tag for the grid size.
+     */
+    private static final String TAG_GRID = "grid";
+
+    /**
+     * Compound tag for the secondary output.
+     */
+    private static final String SECONDARY_OUTPUT_TAG = "secondaryoutput";
+
+    /**
+     * Compound tag for the input.
+     */
+    private static final String INPUT_TAG = "input";
+
     /**
      * Input required for the recipe.
      */
@@ -43,12 +65,13 @@ public class RecipeStorage
 
     /**
      * Create an instance of the recipe storage.
-     * @param input the list of input items (required for the recipe).
-     * @param gridSize the required grid size to make it.
-     * @param primaryOutput the primary output of the recipe.
+     *
+     * @param input           the list of input items (required for the recipe).
+     * @param gridSize        the required grid size to make it.
+     * @param primaryOutput   the primary output of the recipe.
      * @param secondaryOutput the secondary output (like buckets or similar).
      */
-    public RecipeStorage(final List<ItemStack> input, final int gridSize, final ItemStack primaryOutput, final ItemStack...secondaryOutput)
+    public RecipeStorage(final List<ItemStack> input, final int gridSize, final ItemStack primaryOutput, final ItemStack... secondaryOutput)
     {
         this.input = Collections.unmodifiableList(input);
         this.primaryOutput = primaryOutput;
@@ -59,13 +82,14 @@ public class RecipeStorage
 
     /**
      * Create an instance of the recipe storage.
-     * @param input the list of input items (required for the recipe).
-     * @param gridSize the required grid size to make it.
-     * @param primaryOutput the primary output of the recipe.
-     * @param intermediate the intermediate to use (e.g furnace).
+     *
+     * @param input           the list of input items (required for the recipe).
+     * @param gridSize        the required grid size to make it.
+     * @param primaryOutput   the primary output of the recipe.
+     * @param intermediate    the intermediate to use (e.g furnace).
      * @param secondaryOutput the secondary output (like buckets or similar).
      */
-    public RecipeStorage(final List<ItemStack> input, final int gridSize, final ItemStack primaryOutput, final Block intermediate, final ItemStack...secondaryOutput)
+    public RecipeStorage(final List<ItemStack> input, final int gridSize, final ItemStack primaryOutput, final Block intermediate, final ItemStack... secondaryOutput)
     {
         this.input = Collections.unmodifiableList(input);
         this.primaryOutput = primaryOutput;
@@ -79,6 +103,7 @@ public class RecipeStorage
      * Suppressing Sonar Rule Squid:S2384
      * The rule thinks we should return a copy of the list and not the list itself.
      * But in this case the rule does not apply because the list is an unmodifiable list already
+     *
      * @return the list.
      */
     @SuppressWarnings("squid:S2384")
@@ -89,6 +114,7 @@ public class RecipeStorage
 
     /**
      * Get the list of output items.
+     *
      * @return the copy of the list.
      */
     @SuppressWarnings("squid:S2384")
@@ -99,6 +125,7 @@ public class RecipeStorage
 
     /**
      * Getter for the primary output.
+     *
      * @return the itemStack to be produced.
      */
     public ItemStack getPrimaryOutput()
@@ -108,6 +135,7 @@ public class RecipeStorage
 
     /**
      * Get the grid size.
+     *
      * @return the integer representing it. (2x2 = 4, 3x3 = 9, etc)
      */
     public int getGridSize()
@@ -117,6 +145,7 @@ public class RecipeStorage
 
     /**
      * Get the required intermediate for the recipe.
+     *
      * @return the block.
      */
     public Block getIntermediate()
@@ -124,38 +153,158 @@ public class RecipeStorage
         return this.intermediate;
     }
 
+    public static RecipeStorage readFromNBT(@NotNull final NBTTagCompound compound)
+    {
+        final List<ItemStack> input = new ArrayList<>();
+        final NBTTagList inputTagList = compound.getTagList(INPUT_TAG, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < inputTagList.tagCount(); ++i)
+        {
+            final NBTTagCompound inputTag = inputTagList.getCompoundTagAt(i);
+            input.add(ItemStack.loadItemStackFromNBT(inputTag));
+        }
+
+        final ItemStack primaryOutput = ItemStack.loadItemStackFromNBT(compound);
+
+        final List<ItemStack> secondaryOutput = new ArrayList<>();
+        final NBTTagList neededResTagList = compound.getTagList(INPUT_TAG, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < neededResTagList.tagCount(); ++i)
+        {
+            final NBTTagCompound neededRes = neededResTagList.getCompoundTagAt(i);
+            secondaryOutput.add(ItemStack.loadItemStackFromNBT(neededRes));
+        }
+
+        final Block intermediate = NBTUtil.readBlockState(compound).getBlock();
+        final int gridSize = compound.getInteger(TAG_GRID);
+
+        return new RecipeStorage(input, gridSize, primaryOutput, intermediate, secondaryOutput.toArray(new ItemStack[secondaryOutput.size()]));
+    }
+
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    {
+        @NotNull final NBTTagList inputTagList = new NBTTagList();
+        for (@NotNull final ItemStack stack : input)
+        {
+            @NotNull final NBTTagCompound neededRes = new NBTTagCompound();
+            stack.writeToNBT(neededRes);
+            inputTagList.appendTag(neededRes);
+        }
+        compound.setTag(INPUT_TAG, inputTagList);
+
+
+        primaryOutput.writeToNBT(compound);
+
+        @NotNull final NBTTagList secondaryOutputTAGList = new NBTTagList();
+        for (@NotNull final ItemStack stack : secondaryOutput)
+        {
+            @NotNull final NBTTagCompound neededRes = new NBTTagCompound();
+            stack.writeToNBT(neededRes);
+            secondaryOutputTAGList.appendTag(neededRes);
+        }
+        compound.setTag(SECONDARY_OUTPUT_TAG, secondaryOutputTAGList);
+
+        if(intermediate != null)
+        {
+            NBTUtil.writeBlockState(compound, intermediate.getDefaultState());
+        }
+
+        compound.setInteger(TAG_GRID, gridSize);
+    }
+
     /**
      * Method to check if with the help of inventories this recipe can be fullfilled.
+     *
      * @param inventories the inventories to check.
      * @return true if possible, else false.
      */
-    public boolean canFullFillRecipe(@NotNull final IItemHandler...inventories)
+    public boolean canFullFillRecipe(@NotNull final IItemHandler... inventories)
     {
-        for(final ItemStack stack: input)
+        for (final ItemStack stack : input)
         {
             int amountNeeded = ItemStackUtils.getSize(stack);
             boolean hasStack = false;
-            for(final IItemHandler handler: inventories)
+            for (final IItemHandler handler : inventories)
             {
                 hasStack = InventoryUtils.hasItemInItemHandler(handler, itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.isItemEqual(stack));
 
-                if(hasStack)
+                if (hasStack)
                 {
                     final int count = InventoryUtils.getItemCountInItemHandler(handler, itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.isItemEqual(stack));
-                    if(count >= amountNeeded)
+                    if (count >= amountNeeded)
                     {
                         break;
                     }
                     hasStack = false;
-                    amountNeeded-= count;
+                    amountNeeded -= count;
                 }
             }
 
-            if(!hasStack)
+            if (!hasStack)
             {
                 return false;
             }
         }
         return true;
+    }
+
+    /**
+     * Serialize to a bytebuffer the recipeStorage.
+     * @param buf the bytebuf.
+     */
+    public void writeToBuffer(final ByteBuf buf)
+    {
+        buf.writeInt(input.size());
+        for (@NotNull final ItemStack stack : input)
+        {
+            ByteBufUtils.writeItemStack(buf, stack);
+        }
+
+        ByteBufUtils.writeItemStack(buf, primaryOutput);
+
+        buf.writeInt(secondaryOutput.size());
+        for (@NotNull final ItemStack stack : secondaryOutput)
+        {
+            ByteBufUtils.writeItemStack(buf, stack);
+        }
+
+        buf.writeBoolean(intermediate != null);
+        if(intermediate != null)
+        {
+            ByteBufUtils.writeUTF8String(buf, intermediate.getRegistryName().toString());
+        }
+
+        buf.writeInt(gridSize);
+    }
+
+    /**
+     * Serialize from a bytebuffer the recipeStorage.
+     * @param buf the byteBuffer.
+     * @return a new RecipeStorage.
+     */
+    public static RecipeStorage createFromByteBuffer(final ByteBuf buf)
+    {
+        final List<ItemStack> input = new ArrayList<>();
+        final int inputSize = buf.readInt();
+        for (int i = 0; i < inputSize; i++)
+        {
+            input.add(ByteBufUtils.readItemStack(buf));
+        }
+
+        final ItemStack primaryOutput = ByteBufUtils.readItemStack(buf);
+
+        final List<ItemStack> secondaryOutput = new ArrayList<>();
+        final int secondaryOutputSize = buf.readInt();
+        for (int i = 0; i < secondaryOutputSize; i++)
+        {
+            secondaryOutput.add(ByteBufUtils.readItemStack(buf));
+        }
+
+        Block intermediate = null;
+        if(buf.readBoolean())
+        {
+            intermediate = Block.getBlockFromName(ByteBufUtils.readUTF8String(buf));
+        }
+        final int gridSize = buf.readInt();
+
+        return new RecipeStorage(input, gridSize, primaryOutput, intermediate, secondaryOutput.toArray(new ItemStack[secondaryOutput.size()]));
     }
 }

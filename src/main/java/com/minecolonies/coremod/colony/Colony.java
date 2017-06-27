@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony;
 
 import com.minecolonies.api.colony.permissions.Rank;
-import com.minecolonies.api.colony.requestsystem.token.StandardToken;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.MineColonies;
@@ -12,7 +11,6 @@ import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.farmer.Field;
-import com.minecolonies.coremod.entity.ai.util.RecipeStorage;
 import com.minecolonies.coremod.network.messages.*;
 import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
@@ -157,11 +155,6 @@ public class Colony implements IColony
     private final Map<BlockPos, Field>       fields    = new HashMap<>();
     //Additional Waypoints.
     private final Map<BlockPos, IBlockState> wayPoints = new HashMap<>();
-
-    /**
-     * Map of all recipes the colony knows about.
-     */
-    private final Map<StandardToken, RecipeStorage> recipes = new HashMap<>();
 
     /**
      * The warehouse building position. Initially null.
@@ -1986,14 +1979,5 @@ public class Colony implements IColony
     public int getLastContactInHours()
     {
         return lastContactInHours;
-    }
-
-    /**
-     * Get a unmodifiable copy of the recipes map.
-     * @return a map of Token, RecipeStorage.
-     */
-    public Map<StandardToken, RecipeStorage> getRecipes()
-    {
-        return Collections.unmodifiableMap(new HashMap<>(recipes));
     }
 }

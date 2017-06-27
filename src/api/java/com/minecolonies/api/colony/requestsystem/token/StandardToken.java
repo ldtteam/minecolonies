@@ -30,10 +30,20 @@ public class StandardToken implements IToken<UUID, NBTTagCompound>
 
     /**
      * Creates a new token with the given id.
+     * @param id the id.
      */
     public StandardToken(@NotNull final UUID id)
     {
         this.id = id;
+    }
+
+    /**
+     * Creates a new token with the given compound.
+     * @param nbt given nbtTagCompound.
+     */
+    public StandardToken(final NBTTagCompound nbt)
+    {
+        this.id = new UUID(nbt.getLong(NBT_MSB), nbt.getLong(NBT_LSB));
     }
 
     /**
