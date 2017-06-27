@@ -26,7 +26,7 @@ public class ConfigCondition implements IConditionFactory
     @Override
     public BooleanSupplier parse(final JsonContext context, final JsonObject json)
     {
-        String value = JsonUtils.getString(json , "type");
+        String value = JsonUtils.getString(json , "key");
 
         if(!Configurations.gameplay.enableInDevelopmentFeatures && SUPPLIES.equalsIgnoreCase(value))
         {
