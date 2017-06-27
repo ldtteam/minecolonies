@@ -8,7 +8,7 @@
   "conditions": [
     {
       "type": "minecolonies:config_condition",
-      "key": "supply",
+      "key": "supply"
     }
   ],
   "key": {
