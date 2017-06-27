@@ -27,4 +27,6 @@ public class Constants
     public static final int    ENTITY_UPDATE_FREQUENCY          = 2;
     public static final int    ENTITY_UPDATE_FREQUENCY_FISHHOOK = 5;
     public static final int    MAX_BUILDING_LEVEL               = 5;
+    public static final int TICKS_SECOND = 20;
+    public static final int SECONDS_A_MINUTE = 60;
 }

@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.buildings.*;
@@ -42,6 +43,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.minecolonies.api.util.constant.Constants.SECONDS_A_MINUTE;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
 /**
  * This class describes a colony and contains all the data and methods for manipulating a Colony.
@@ -1249,10 +1253,10 @@ public class Colony implements IColony
             //  Spawn Citizens
             if (townHall != null && citizens.size() < maxCitizens)
             {
-                int respawnInterval = Configurations.citizenRespawnInterval * 20;
-                respawnInterval -= (60 * townHall.getBuildingLevel());
+                int respawnInterval = Configurations.citizenRespawnInterval * TICKS_SECOND;
+                respawnInterval -= (SECONDS_A_MINUTE * townHall.getBuildingLevel());
 
-                if (event.world.getWorldTime() % respawnInterval == 0)
+                if (event.world.getWorldTime() % Math.max(1, respawnInterval) == 0)
                 {
                     spawnCitizen();
                 }
