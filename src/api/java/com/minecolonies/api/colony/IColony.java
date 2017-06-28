@@ -80,7 +80,7 @@ public interface IColony
 
     /**
      * Method to get the World this colony is in.
-     * @return
+     * @return the World the colony is in.
      */
     World getWorld();
 
