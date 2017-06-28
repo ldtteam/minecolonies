@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
@@ -119,7 +120,8 @@ public class WindowGuiCrafting extends GuiContainer
 
             for(int i = 1; i <= 4; i++)
             {
-                final ItemStack stack = inventorySlots.getInventory().get(i);
+                final ItemStack stack = inventorySlots.getInventory().get(i).copy();
+                ItemStackUtils.setSize(stack, 1);
                 if(ItemStackUtils.isEmpty(stack))
                 {
                     continue;
@@ -133,7 +135,7 @@ public class WindowGuiCrafting extends GuiContainer
                 }
             }
 
-            final ItemStack primaryOutput =  inventorySlots.getSlot(0).getStack();
+            final ItemStack primaryOutput =  inventorySlots.getSlot(0).getStack().copy();
 
             if(!ItemStackUtils.isEmpty(primaryOutput))
             {
