@@ -4,14 +4,14 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.*;
 import com.minecolonies.coremod.items.ModItems;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.*;
-import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
+import net.minecraft.entity.ai.EntityAISwimming;
+import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -50,24 +50,24 @@ public class BarbarianSpawnUtils
     /**
      * Values used for AI Task's Priorities.
      */
-    private static final int    PRIORITY_ZERO         = 0;
-    private static final int    PRIORITY_ONE          = 1;
-    private static final int    PRIORITY_TWO          = 2;
-    private static final int    PRIORITY_THREE        = 3;
-    private static final int    PRIORITY_FOUR         = 4;
-    private static final int    PRIORITY_FIVE         = 5;
+    private static final int    PRIORITY_ZERO               = 0;
+    private static final int    PRIORITY_ONE                = 1;
+    private static final int    PRIORITY_TWO                = 2;
+    private static final int    PRIORITY_THREE              = 3;
+    private static final int    PRIORITY_FOUR               = 4;
+    private static final int    PRIORITY_FIVE               = 5;
     /**
      * Other various values used for AI Tasks.
      */
-    private static final double AI_MOVE_SPEED         = 2.0D;
-    private static final float  MAX_WATCH_DISTANCE    = 8.0F;
+    private static final double AI_MOVE_SPEED               = 2.0D;
+    private static final float  MAX_WATCH_DISTANCE          = 8.0F;
     /**
      * Values used for mob attributes.
      */
-    private static final double FOLLOW_RANGE          = 35.0D;
-    private static final double MOVEMENT_SPEED        = 0.2D;
-    private static final double ARMOR                 = 2.0D;
-    private static final double BARBARIAN_BASE_HEALTH = 20;
+    private static final double FOLLOW_RANGE                = 35.0D;
+    private static final double MOVEMENT_SPEED              = 0.2D;
+    private static final double ARMOR                       = 2.0D;
+    private static final double BARBARIAN_BASE_HEALTH       = 20;
     private static final double BARBARIAN_HEALTH_MULTIPLIER = 0.5;
 
     /**
@@ -82,7 +82,7 @@ public class BarbarianSpawnUtils
         barbarian.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(MOVEMENT_SPEED);
         barbarian.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(ATTACK_DAMAGE);
         barbarian.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(ARMOR);
-        barbarian.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(getHealthBasedOnRaidLevel(barbarian));
+        barbarian.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(getHealthBasedOnRaidLevel(colony));
     }
 
     /**
@@ -90,9 +90,8 @@ public class BarbarianSpawnUtils
      *
      * @return returns the health in the form of a double
      */
-    private static double getHealthBasedOnRaidLevel(final EntityMob barbarian)
+    private static double getHealthBasedOnRaidLevel(final Colony colony)
     {
-        final Colony colony = ColonyManager.getClosestColony(barbarian.getEntityWorld(), new BlockPos(barbarian));
         if (colony != null)
         {
             final int raidLevel = (int) (MobEventsUtils.getColonyRaidLevel(colony) * BARBARIAN_HEALTH_MULTIPLIER);
@@ -105,9 +104,8 @@ public class BarbarianSpawnUtils
      * Set barbarian AI Tasks.
      *
      * @param barbarian The barbarian to set the AI Tasks on.
-     * @param colony    The colony that the barbarian is attacking.
      */
-    public static void setBarbarianAI(AbstractEntityBarbarian barbarian, Colony colony)
+    public static void setBarbarianAI(AbstractEntityBarbarian barbarian)
     {
         barbarian.tasks.addTask(PRIORITY_ZERO, new EntityAISwimming(barbarian));
         barbarian.tasks.addTask(PRIORITY_FOUR, new EntityAIWalkToRandomHuts(barbarian, AI_MOVE_SPEED));

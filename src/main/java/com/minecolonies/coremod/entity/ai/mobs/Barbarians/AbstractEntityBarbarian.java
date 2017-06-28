@@ -66,7 +66,7 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     @Override
     protected void initEntityAI()
     {
-        BarbarianSpawnUtils.setBarbarianAI(this, colony);
+        BarbarianSpawnUtils.setBarbarianAI(this);
     }
 
     @Override
