@@ -659,4 +659,16 @@ public final class ColonyView implements IColony
     {
         return lastContactInHours;
     }
+
+    @Override
+    public boolean isHasRaided()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isWillRaid()
+    {
+        return false;
+    }
 }

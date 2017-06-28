@@ -1,10 +1,12 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
-import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
+import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityBarbarian;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
+import com.minecolonies.coremod.util.BarbarianUtils;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IRangedAttackMob;
@@ -19,6 +21,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.DifficultyInstance;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
@@ -139,6 +143,11 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
     private static final int MOVE_CLOSE = 3;
 
     /**
+     * Experience added per mob killed
+     */
+    private static final int EXPERIENCE_PER_MOB = 20;
+
+    /**
      * Sets up some important skeleton stuff for every ai.
      *
      * @param job the job class
@@ -179,14 +188,36 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
      */
     protected AIState huntDown()
     {
-        if(huntDownlastAttacker())
+        if (huntDownlastAttacker())
         {
             targetEntity = this.worker.getLastAttacker();
         }
 
-        if (!targetEntity.isEntityAlive() || checkForToolOrWeapon(ToolType.BOW))
+        final AbstractEntityBarbarian closestBarbarian = BarbarianUtils.getClosestBarbarianToEntity(worker, currentSearchDistance);
+
+        if (closestBarbarian != null)
         {
+            targetEntity = closestBarbarian;
+        }
+
+        if (targetEntity != null && worker.getColony() != null)
+        {
+            final List<EntityLivingBase> targets = worker.getColony().getGuardTargets();
+            if (targets.stream().noneMatch(entity -> entity == targetEntity))
+            {
+                targets.add(targetEntity);
+            }
+            worker.getColony().setGuardTargets(targets);
+        }
+
+        if (targetEntity != null && (!targetEntity.isEntityAlive() || checkForToolOrWeapon(ToolType.SWORD)))
+        {
+
+            final List<EntityLivingBase> targets = worker.getColony().getGuardTargets();
+            targets.remove(targetEntity);
+            worker.getColony().setGuardTargets(targets);
             targetEntity = null;
+            worker.addExperience(EXPERIENCE_PER_MOB);
             worker.setAIMoveSpeed((float) 1.0D);
             return AIState.GUARD_GATHERING;
         }

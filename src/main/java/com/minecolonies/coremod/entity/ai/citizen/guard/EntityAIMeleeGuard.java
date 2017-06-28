@@ -4,8 +4,10 @@ import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
+import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityBarbarian;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
+import com.minecolonies.coremod.util.BarbarianUtils;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.MoverType;
@@ -15,6 +17,8 @@ import net.minecraft.item.ItemSword;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
@@ -84,6 +88,11 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
     private static final int FIRE_CHANCE_MULTIPLIER = 4;
 
     /**
+     * Experience added per mob killed
+     */
+    private static final double EXPERIENCE_PER_MOB = 20.0;
+
+    /**
      * Sets up some important skeleton stuff for every ai.
      *
      * @param job the job class
@@ -124,14 +133,36 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
      */
     protected AIState huntDown()
     {
-        if(huntDownlastAttacker())
+        if (huntDownlastAttacker())
         {
             targetEntity = this.worker.getLastAttacker();
         }
 
-        if (!targetEntity.isEntityAlive() || checkForToolOrWeapon(ToolType.SWORD))
+        final AbstractEntityBarbarian closestBarbarian = BarbarianUtils.getClosestBarbarianToEntity(worker, currentSearchDistance);
+
+        if (closestBarbarian != null)
         {
+            targetEntity = closestBarbarian;
+        }
+
+        if (targetEntity != null && worker.getColony() != null)
+        {
+            final List<EntityLivingBase> targets = worker.getColony().getGuardTargets();
+            if (targets.stream().noneMatch(entity -> entity == targetEntity))
+            {
+                targets.add(targetEntity);
+            }
+            worker.getColony().setGuardTargets(targets);
+        }
+
+        if (targetEntity != null && (!targetEntity.isEntityAlive() || checkForToolOrWeapon(ToolType.SWORD)))
+        {
+
+            final List<EntityLivingBase> targets = worker.getColony().getGuardTargets();
+            targets.remove(targetEntity);
+            worker.getColony().setGuardTargets(targets);
             targetEntity = null;
+            worker.addExperience(EXPERIENCE_PER_MOB);
             worker.setAIMoveSpeed((float) 1.0D);
             return AIState.GUARD_GATHERING;
         }
@@ -144,7 +175,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
             attacksExecuted += 1;
             currentSearchDistance = START_SEARCH_DISTANCE;
 
-            if(killedEnemy)
+            if (killedEnemy)
             {
                 return AIState.GUARD_GATHERING;
             }

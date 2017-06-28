@@ -79,6 +79,10 @@ public final class ModSoundEvents
 
         GameRegistry.register(CitizenSounds.Female.say);
         GameRegistry.register(CitizenSounds.Male.say);
+
+        GameRegistry.register(BarbarianSounds.barbarianHurt);
+        GameRegistry.register(BarbarianSounds.barbarianDeath);
+        GameRegistry.register(BarbarianSounds.barbarianSay);
     }
 
     /**
