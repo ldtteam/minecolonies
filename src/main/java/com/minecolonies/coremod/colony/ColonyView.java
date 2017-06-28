@@ -15,6 +15,7 @@ import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.TownHallRenameMessage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -667,5 +668,11 @@ public final class ColonyView implements IColony
     public boolean hasWillRaidTonight()
     {
         return false;
+    }
+
+    @Override
+    public List<EntityLivingBase> getGuardTargets()
+    {
+        return null;
     }
 }

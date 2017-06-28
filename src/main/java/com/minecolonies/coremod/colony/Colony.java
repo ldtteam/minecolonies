@@ -22,6 +22,8 @@ import com.minecolonies.coremod.util.ColonyUtils;
 import com.minecolonies.coremod.util.ServerUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -202,6 +204,8 @@ public class Colony implements IColony
     private int maxCitizens  = Configurations.maxCitizens;
 
     private double overallHappiness = AVERAGE_HAPPINESS;
+
+    private List<EntityLivingBase> guardTargets;
 
     /**
      * The Positions which players can freely interact.
@@ -2007,5 +2011,17 @@ public class Colony implements IColony
     public void setWillRaidTonight(final Boolean willRaid)
     {
         willRaidTonight = willRaid;
+    }
+
+    @Override
+    public List<EntityLivingBase> getGuardTargets()
+    {
+        return guardTargets;
+    }
+
+    public void setGuardTargets(final List<EntityLivingBase> targets)
+    {
+        guardTargets.clear();
+        guardTargets.addAll(targets);
     }
 }

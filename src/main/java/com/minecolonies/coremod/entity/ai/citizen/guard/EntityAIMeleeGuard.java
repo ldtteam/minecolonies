@@ -5,6 +5,8 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
+import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbarian;
+import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianUtils;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -15,6 +17,8 @@ import net.minecraft.item.ItemSword;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
@@ -129,8 +133,31 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
             targetEntity = this.worker.getLastAttacker();
         }
 
+        final AbstractEntityBarbarian barbarian = BarbarianUtils.getClosestBarbarianToEntity(worker, 20D);
+
+        if (barbarian != null)
+        {
+            targetEntity = barbarian;
+        }
+
+        if (targetEntity != null && worker.getColony() != null)
+        {
+            List<EntityLivingBase> targets = worker.getColony().getGuardTargets();
+            if (targets.stream().noneMatch(entity -> entity == targetEntity))
+            {
+                targets.add(targetEntity);
+            }
+            worker.getColony().setGuardTargets(targets);
+        }
+
         if (!targetEntity.isEntityAlive() || checkForToolOrWeapon(ToolType.SWORD))
         {
+            if (targetEntity != null && worker.getColony() != null)
+            {
+                List<EntityLivingBase> targets = worker.getColony().getGuardTargets();
+                targets.remove(targetEntity);
+                worker.getColony().setGuardTargets(targets);
+            }
             targetEntity = null;
             worker.setAIMoveSpeed((float) 1.0D);
             return AIState.GUARD_GATHERING;

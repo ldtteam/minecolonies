@@ -1,8 +1,11 @@
 package com.minecolonies.coremod.colony;
 
 import com.minecolonies.api.colony.permissions.IPermissions;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import java.util.List;
 
 /**
  * Interface of the Colony and ColonyView which will have to implement the following methods.
@@ -79,4 +82,10 @@ public interface IColony
      * @return true if so.
      */
     boolean hasWillRaidTonight();
+
+    /**
+     * get the colonies GuardTarget list.
+     * @return a list of targets that the colonies guards have.
+     */
+    List<EntityLivingBase> getGuardTargets();
 }

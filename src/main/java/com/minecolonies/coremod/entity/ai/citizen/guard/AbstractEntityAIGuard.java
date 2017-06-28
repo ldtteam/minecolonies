@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
@@ -311,6 +312,22 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
         if (targetEntity != null && targetEntity.isEntityAlive() && worker.getEntitySenses().canSee(targetEntity))
         {
             return AIState.GUARD_HUNT_DOWN_TARGET;
+        }
+
+        EntityLivingBase possibleTarget = null;
+
+        if (worker.getColony() != null)
+        {
+            final Optional<EntityLivingBase> optionalTarget = worker.getColony().getGuardTargets()
+                                                                .stream()
+                                                                .findFirst();
+
+            possibleTarget = optionalTarget.orElse(null);
+        }
+
+        if (targetEntity == null && possibleTarget != null)
+        {
+            targetEntity = possibleTarget;
         }
 
         setDelay(BASE_DELAY);
