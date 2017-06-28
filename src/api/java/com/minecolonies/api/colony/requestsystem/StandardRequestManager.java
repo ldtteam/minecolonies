@@ -76,7 +76,7 @@ public class StandardRequestManager implements IRequestManager
      * TODO: Assign resolver once implemented.
      */
     @NotNull
-    private final IRequestResolver playerResolver = null;
+    private final IRequestResolver                             playerResolver          = null;
     /**
      * Colony of the manager.
      */
@@ -110,7 +110,8 @@ public class StandardRequestManager implements IRequestManager
     {
         return null;
     }
-/**
+
+    /**
      * Class used to handle the inner workings of the request system with regards to providers.
      */
     private final static class ProviderHandler
@@ -311,16 +312,6 @@ public class StandardRequestManager implements IRequestManager
 
             removeProviderInternal(manager, provider.getToken());
         }
-    }/**
-     * Method used to get the FactoryController of the RequestManager.
-     *
-     * @return The FactoryController of this RequestManager.
-     */
-    @NotNull
-    @Override
-    public IFactoryController getFactoryController()
-    {
-        return StandardFactoryController.getInstance();
     }
 
     /**
@@ -623,7 +614,20 @@ public class StandardRequestManager implements IRequestManager
             return getResolver(manager, manager.requestResolverMap.get(request.getToken()));
         }
     }
-/**
+
+    /**
+     * Method used to get the FactoryController of the RequestManager.
+     *
+     * @return The FactoryController of this RequestManager.
+     */
+    @NotNull
+    @Override
+    public IFactoryController getFactoryController()
+    {
+        return StandardFactoryController.getInstance();
+    }
+
+    /**
      * Class used to handle the inner workings of the request system with regards to requests.
      */
     private final static class RequestHandler
@@ -906,21 +910,6 @@ public class StandardRequestManager implements IRequestManager
 
             return manager.requestBiMap.get(token);
         }
-    }/**
-     * Method to create a request for a given object
-     *
-     * @param requester The requester.
-     * @param object    The Object that is being requested.
-     * @return The token representing the request.
-     *
-     * @throws IllegalArgumentException is thrown when this manager cannot produce a request for the given types.
-     */
-    @NotNull
-    @Override
-    public <T> IToken createRequest(@NotNull IRequester requester, @NotNull T object) throws IllegalArgumentException
-    {
-        IRequest<T> request = RequestHandler.createRequest(this, requester, object);
-        return request.getToken();
     }
 
     /**
@@ -1086,16 +1075,23 @@ public class StandardRequestManager implements IRequestManager
         {
             wrappedManager.deserializeNBT(nbt);
         }
-    }/**
-     * Method used to assign a request to a resolver.
+    }
+
+    /**
+     * Method to create a request for a given object
      *
-     * @param token The token of the request to assign.
-     * @throws IllegalArgumentException when the token is not registered to a request, or is already assigned to a resolver.
+     * @param requester The requester.
+     * @param object    The Object that is being requested.
+     * @return The token representing the request.
+     *
+     * @throws IllegalArgumentException is thrown when this manager cannot produce a request for the given types.
      */
+    @NotNull
     @Override
-    public void assignRequest(@NotNull IToken token) throws IllegalArgumentException
+    public <T> IToken createRequest(@NotNull IRequester requester, @NotNull T object) throws IllegalArgumentException
     {
-        RequestHandler.assignRequest(this, RequestHandler.getRequest(this, token));
+        IRequest<T> request = RequestHandler.createRequest(this, requester, object);
+        return request.getToken();
     }
 
     /**
@@ -1127,7 +1123,8 @@ public class StandardRequestManager implements IRequestManager
             RequestHandler.assignRequest(wrappedManager, RequestHandler.getRequest(wrappedManager, token), blackListedResolvers);
         }
     }
-/**
+
+    /**
      * Class used to handle internal state changes that might cause a loop.
      * Simply returns without notifying its wrapped manager about the state change.
      */
@@ -1152,7 +1149,21 @@ public class StandardRequestManager implements IRequestManager
         {
             return;
         }
-    }/**
+    }
+
+    /**
+     * Method used to assign a request to a resolver.
+     *
+     * @param token The token of the request to assign.
+     * @throws IllegalArgumentException when the token is not registered to a request, or is already assigned to a resolver.
+     */
+    @Override
+    public void assignRequest(@NotNull IToken token) throws IllegalArgumentException
+    {
+        RequestHandler.assignRequest(this, RequestHandler.getRequest(this, token));
+    }
+
+    /**
      * Method used to create and immediately assign a request.
      *
      * @param requester The requester of the requestable.
@@ -1170,7 +1181,7 @@ public class StandardRequestManager implements IRequestManager
         return token;
     }
 
-        /**
+    /**
      * Method to get a request for a given token.
      * <p>
      * Returned value is a defensive copy. However should not be modified!
@@ -1192,7 +1203,7 @@ public class StandardRequestManager implements IRequestManager
         return defensiveCopiedRequest;
     }
 
-        /**
+    /**
      * Method to update the state of a given request.
      *
      * @param token The token that represents a given request to update.
@@ -1223,7 +1234,7 @@ public class StandardRequestManager implements IRequestManager
         }
     }
 
-        /**
+    /**
      * Method used to indicate to this manager that a new Provider has been added to the colony.
      *
      * @param provider The new provider.
@@ -1234,7 +1245,7 @@ public class StandardRequestManager implements IRequestManager
         ProviderHandler.registerProvider(this, provider);
     }
 
-        /**
+    /**
      * Method used to indicate to this manager that Provider has been removed from the colony.
      *
      * @param provider The removed provider.
@@ -1244,8 +1255,6 @@ public class StandardRequestManager implements IRequestManager
     {
         ProviderHandler.removeProvider(this, provider);
     }
-
-
 
     /**
      * Method used to deserialize the data inside the given nbt tag into this request system.
@@ -1257,18 +1266,4 @@ public class StandardRequestManager implements IRequestManager
     {
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

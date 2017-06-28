@@ -141,8 +141,6 @@ public final class StandardRequestFactories
 
             return request;
         }
-
-
     }
 
     public static final class DeliveryFactory implements IRequestFactory<Delivery, StandardRequests.DeliveryRequest>

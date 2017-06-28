@@ -13,7 +13,7 @@ public interface IFactoryController
      * Method used to get a factory for a given input {@link TypeToken}.
      *
      * @param inputTypeToken The typetoken for the input type to process.
-     * @param <Input> The type of input for the requested factory.
+     * @param <Input>        The type of input for the requested factory.
      * @return The factory that can handle the given input class.
      *
      * @throws IllegalArgumentException is thrown when the given input class is unknown to this Factory Controller.
@@ -24,7 +24,7 @@ public interface IFactoryController
      * Method used to get a factory for a given output {@link TypeToken}.
      *
      * @param outputTypeToken The typetoken for the output type to process.
-     * @param <Output> The type of output for the requested factory.
+     * @param <Output>        The type of output for the requested factory.
      * @return The factory that can handle the given output class.
      *
      * @throws IllegalArgumentException is thrown when the given output class is unknown to this Factory Controller.
@@ -79,11 +79,11 @@ public interface IFactoryController
     /**
      * Method used to create a new instance of the given input.
      *
-     * @param input    The input to process.
+     * @param input           The input to process.
      * @param outputTypeToken The typetoken for the output type.
-     * @param context  The context for the creation.
-     * @param <Input>  The type of input.
-     * @param <Output> The type of output.
+     * @param context         The context for the creation.
+     * @param <Input>         The type of input.
+     * @param <Output>        The type of output.
      * @return The output from the factory, created by the given input and output.
      *
      * @throws IllegalArgumentException thrown when the output and input do not match a factory known to this controller.

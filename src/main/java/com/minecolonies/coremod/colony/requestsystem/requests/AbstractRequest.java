@@ -35,9 +35,9 @@ public abstract class AbstractRequest<R> implements IRequest<R>
     @NotNull
     private RequestState state = RequestState.CREATED;
     @Nullable
-    private       R                 result;
+    private R      result;
     @Nullable
-    private       IToken            parent;
+    private IToken parent;
     @NotNull
     private ItemStack deliveryStack = ItemStackUtils.EMPTY;
 

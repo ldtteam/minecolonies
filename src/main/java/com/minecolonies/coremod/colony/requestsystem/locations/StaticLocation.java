@@ -17,7 +17,7 @@ public class StaticLocation implements ILocation
     @NotNull
     private final BlockPos pos;
 
-    private final int      dimension;
+    private final int dimension;
 
     StaticLocation(@NotNull BlockPos pos, int dimension)
     {
@@ -71,6 +71,20 @@ public class StaticLocation implements ILocation
         private static final String NBT_DIM = "Dim";
         ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
+        @NotNull
+        @Override
+        public TypeToken<StaticLocation> getFactoryOutputType()
+        {
+            return new TypeToken<StaticLocation>() {};
+        }
+
+        @NotNull
+        @Override
+        public TypeToken<BlockPos> getFactoryInputType()
+        {
+            return new TypeToken<BlockPos>() {};
+        }
+
         /**
          * Method to serialize a given constructable.
          *
@@ -104,38 +118,6 @@ public class StaticLocation implements ILocation
             return new StaticLocation(pos, dim);
         }
 
-        /**
-         * Method to get a new instance of a location given the input.
-         *
-         *
-         * Method not used in this factory.
-         *
-         *
-         *
-         * @param input The input to build a new location for.
-         * @return The new output instance for a given input.
-         */
-        @NotNull
-        @Override
-        public StaticLocation getNewInstance(@NotNull BlockPos input)
-        {
-            return new StaticLocation(input, 0);
-        }
-
-        @NotNull
-        @Override
-        public TypeToken<StaticLocation> getFactoryOutputType()
-        {
-            return new TypeToken<StaticLocation>() {};
-        }
-
-        @NotNull
-        @Override
-        public TypeToken<BlockPos> getFactoryInputType()
-        {
-            return new TypeToken<BlockPos>() {};
-        }
-
         @NotNull
         @Override
         public StaticLocation getNewInstance(@NotNull final BlockPos blockPos, @NotNull final Object... context) throws IllegalArgumentException
@@ -151,6 +133,22 @@ public class StaticLocation implements ILocation
             }
 
             return new StaticLocation(blockPos, (Integer) context[0]);
+        }
+
+        /**
+         * Method to get a new instance of a location given the input.
+         * <p>
+         * <p>
+         * Method not used in this factory.
+         *
+         * @param input The input to build a new location for.
+         * @return The new output instance for a given input.
+         */
+        @NotNull
+        @Override
+        public StaticLocation getNewInstance(@NotNull BlockPos input)
+        {
+            return new StaticLocation(input, 0);
         }
     }
 }

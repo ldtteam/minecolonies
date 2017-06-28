@@ -61,7 +61,6 @@ public class StandardFactoryController implements IFactoryController
     @NotNull
     private final        Cache<Tuple<TypeToken, TypeToken>, IFactory> secondaryMappingsCache  = CacheBuilder.newBuilder().build();
 
-
     /**
      * Private constructor. Throws IllegalStateException if already created.
      */
@@ -74,19 +73,9 @@ public class StandardFactoryController implements IFactoryController
     }
 
     /**
-     * Method to get the current instance of the StandardFactoryController
-     *
-     * @return The current instance of the standard factory controller.
-     */
-    public static StandardFactoryController getInstance()
-    {
-        return INSTANCE;
-    }
-
-    /**
      * Resets the FactoryController to the default values.
      * Clears all registered Factories.
-     *
+     * <p>
      * Only used for testing.
      */
     public static void reset()
@@ -95,6 +84,16 @@ public class StandardFactoryController implements IFactoryController
         getInstance().primaryOutputMappings.clear();
         getInstance().secondaryInputMappings.clear();
         getInstance().secondaryOutputMappings.clear();
+    }
+
+    /**
+     * Method to get the current instance of the StandardFactoryController
+     *
+     * @return The current instance of the standard factory controller.
+     */
+    public static StandardFactoryController getInstance()
+    {
+        return INSTANCE;
     }
 
     @SuppressWarnings("unchecked")
@@ -114,7 +113,7 @@ public class StandardFactoryController implements IFactoryController
 
         return primaryInputMappings.get(inputTypeToken);
     }
-    
+
     @Override
     public <Output> IFactory<?, Output> getFactoryForOutput(@NotNull final TypeToken<Output> outputTypeToken) throws IllegalArgumentException
     {
