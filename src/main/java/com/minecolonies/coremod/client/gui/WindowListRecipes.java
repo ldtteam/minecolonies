@@ -12,6 +12,7 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.entity.ai.util.RecipeStorage;
 import com.minecolonies.coremod.network.messages.AddRemoveRecipeMessage;
+import com.minecolonies.coremod.network.messages.ChangeRecipePriorityMessage;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -175,12 +176,12 @@ public class WindowListRecipes extends Window implements ButtonHandler
         else if (button.getID().equals(BUTTON_UP))
         {
             building.switchIndex(row, row + 1);
-            //todo make message to switch priorities
+            MineColonies.getNetwork().sendToServer(new ChangeRecipePriorityMessage(building, row, true));
         }
         else if (button.getID().equals(BUTTON_DOWN))
         {
             building.switchIndex(row, row - 1);
-            //todo make message to switch priorities
+            MineColonies.getNetwork().sendToServer(new ChangeRecipePriorityMessage(building, row, false));
         }
         else if (button.getID().equals(BUTTON_CANCEL))
         {

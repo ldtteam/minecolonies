@@ -178,6 +178,20 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         return storage.fullfillRecipe(handlers);
     }
 
+    /**
+     * Switch indices of two recipes because of the priority.
+     * @param i the first index.
+     * @param j the second index.
+     */
+    public void switchIndex(final int i, final int j)
+    {
+        if(i < recipes.size() && j < recipes.size() && i > 0 && j > 0)
+        {
+            final IToken storage = recipes.get(i);
+            recipes.set(i, recipes.get(j));
+            recipes.set(j, storage);
+        }
+    }
 
     /**
      * Check if a recipe can be added.
