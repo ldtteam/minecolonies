@@ -6,6 +6,11 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
+import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbarian;
+import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityArcherBarbarian;
+import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityBarbarian;
+import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityChiefBarbarian;
+import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianSpawnUtils;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.event.FMLEventHandler;
 import com.minecolonies.coremod.inventory.GuiHandler;
@@ -15,11 +20,13 @@ import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.storage.loot.LootTableList;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
+import javax.swing.text.html.parser.Entity;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -97,6 +104,19 @@ public class CommonProxy implements IProxy
         // See EntityTracker.addEntityToTracker for more default values
         EntityRegistry.registerModEntity(EntityCitizen.class, "Citizen", getNextEntityId(), MineColonies.instance, 256, 2, true);
         EntityRegistry.registerModEntity(EntityFishHook.class, "Fishhook", getNextEntityId(), MineColonies.instance, 250, 5, true);
+        EntityRegistry.registerModEntity(EntityBarbarian.class, "Barbarian", getNextEntityId(), MineColonies.instance, 250, 2, true);
+        EntityRegistry.registerModEntity(EntityArcherBarbarian.class, "ArcherBarbarian", getNextEntityId(), MineColonies.instance, 250,2,true);
+        EntityRegistry.registerModEntity(EntityChiefBarbarian.class, "ChiefBarbarian", getNextEntityId(), MineColonies.instance, 250,2,true);
+
+        //Register Barbarian loot tables.
+        LootTableList.register(BarbarianSpawnUtils.BarbarianLootTable);
+        LootTableList.register(BarbarianSpawnUtils.ArcherLootTable);
+        LootTableList.register(BarbarianSpawnUtils.ChiefLootTable);
+
+        //Register Barbarian spawn eggs
+        EntityRegistry.registerEgg(EntityBarbarian.class, 5, 10);
+        EntityRegistry.registerEgg(EntityArcherBarbarian.class, 5, 11);
+        EntityRegistry.registerEgg(EntityChiefBarbarian.class, 5, 12);
     }
 
     @Override
