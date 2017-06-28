@@ -25,18 +25,20 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
 {
 
     protected final EntityCreature entity;
+    private         BlockPos       targetBlock;
     protected final World          world;
     protected final double         speed;
     protected final Colony         colony;
-    /**
-     * The navigator for this entity.
-     */
-    private final PathNavigate newNavigator;
-    private         BlockPos       targetBlock;
+
     /**
      * Walk to proxy.
      */
     private GeneralEntityWalkToProxy proxy;
+
+    /**
+     * The navigator for this entity.
+     */
+    private final PathNavigate newNavigator;
     private       Field        navigatorField;
 
     /**
@@ -57,6 +59,17 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
         this.newNavigator.setCanSwim(true);
         this.newNavigator.setEnterDoors(false);
         this.setMutexBits(1);
+    }
+
+    @Override
+    public boolean shouldExecute()
+    {
+        if (this.targetBlock == null)
+        {
+            this.targetBlock = getRandomBuilding();
+        }
+
+        return this.targetBlock != null;
     }
 
     /**
@@ -93,15 +106,32 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
         }
     }
 
-    @Override
-    public boolean shouldExecute()
+    /**
+     * returns whether the entity as at a site with a move, And moves it
+     *
+     * @param site  The site which to move to or check if it is already there
+     * @param range The distance to the site that the entity must be within to return true
+     * @return whether the entity is at the site or not
+     */
+    private boolean isEntityAtSiteWithMove(@NotNull final BlockPos site, final int range)
     {
-        if (this.targetBlock == null)
+        if (proxy == null)
         {
-            this.targetBlock = getRandomBuilding();
+            proxy = new GeneralEntityWalkToProxy(entity);
         }
+        return proxy.walkToBlock(site, range);
+    }
 
-        return this.targetBlock != null;
+    /**
+     * returns the center of the colony
+     *
+     * @return BlockPos of the center
+     */
+    @Nullable
+    protected BlockPos getPosition()
+    {
+        colony.getBuildings();
+        return colony.getCenter();
     }
 
     /**
@@ -134,22 +164,6 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
     }
 
     /**
-     * returns whether the entity as at a site with a move, And moves it
-     *
-     * @param site  The site which to move to or check if it is already there
-     * @param range The distance to the site that the entity must be within to return true
-     * @return whether the entity is at the site or not
-     */
-    private boolean isEntityAtSiteWithMove(@NotNull final BlockPos site, final int range)
-    {
-        if (proxy == null)
-        {
-            proxy = new GeneralEntityWalkToProxy(entity);
-        }
-        return proxy.walkToBlock(site, range);
-    }
-
-    /**
      * gets a random building from the nearby colony
      *
      * @return A random building
@@ -174,17 +188,5 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
         {
             return null;
         }
-    }
-
-    /**
-     * returns the center of the colony
-     *
-     * @return BlockPos of the center
-     */
-    @Nullable
-    protected BlockPos getPosition()
-    {
-        colony.getBuildings();
-        return colony.getCenter();
     }
 }
