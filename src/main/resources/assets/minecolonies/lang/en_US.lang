@@ -103,6 +103,8 @@ achievement.upgrade.townhall.first.desc=Build a townhall!
 tile.minecolonies.blockHutGuardTower.name=GuardTower
 tile.blockHutTownHall.messageGuardDead=The guard %s has died at %d %d %d!
 item.minecolonies.scepterGuard.name=Guard-scepter
+item.minecolonies.chiefsword.name=Chief Sword
+item.minecolonies.ancienttome.name=Ancient Tome
 
 com.minecolonies.configgui.title=MineColonies Config
 

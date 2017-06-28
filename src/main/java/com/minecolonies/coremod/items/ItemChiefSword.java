@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ItemChiefSword extends ItemSword
 {
-    private static final String ITEM_NAME         = "chiefSword";
+    private static final String ITEM_NAME         = "chiefsword";
     private static final Potion LEVITATION_EFFECT = Potion.getPotionById(25);
     private static final Potion GLOW_EFFECT       = Potion.getPotionById(24);
 
