@@ -31,8 +31,6 @@ public interface IFactoryController
      */
     <Output> IFactory<?, Output> getFactoryForOutput(@NotNull final TypeToken<Output> outputTypeToken) throws IllegalArgumentException;
 
-    default <Output> IFactory<?, Output> getFactoryForOutput()
-
     /**
      * Method used to get a factory for a given input AND output.
      *
