@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.mobs.barbarians;
 
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -29,29 +30,31 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     /**
      * The amount of EXP to drop on entity death.
      */
-    private static final int    BARBARIAN_EXP_DROP          = 1;
+    private static final int BARBARIAN_EXP_DROP = 1;
+
+    private static final int    BARBARIAN_HORDE_DIFFICULTY_FIVE = 5;
     /**
      * Values used to choose whether or not to play sound
      */
-    private static final int    OUT_OF_ONE_HUNDRED          = 100;
-    private static final int    ONE                         = 1;
+    private static final int    OUT_OF_ONE_HUNDRED              = 100;
+    private static final int    ONE                             = 1;
     /**
      * Values used for sword effect.
      */
-    private static final Potion SPEED_EFFECT                = Potion.getPotionById(1);
-    private static final int    TIME_TO_COUNTDOWN           = 240;
-    private static final int    COUNTDOWN_SECOND_MULTIPLIER = 4;
-    private static final int    SPEED_EFFECT_DISTANCE       = 7;
-    private static final int    SPEED_EFFECT_DURATION       = 160;
-    private static final int    SPEED_EFFECT_MULTIPLIER     = 2;
+    private static final Potion SPEED_EFFECT                    = Potion.getPotionById(1);
+    private static final int    TIME_TO_COUNTDOWN               = 240;
+    private static final int    COUNTDOWN_SECOND_MULTIPLIER     = 4;
+    private static final int    SPEED_EFFECT_DISTANCE           = 7;
+    private static final int    SPEED_EFFECT_DURATION           = 160;
+    private static final int    SPEED_EFFECT_MULTIPLIER         = 2;
     /**
      * The Entity's world.
      */
-    private final        World  world                       = CompatibilityUtils.getWorld(this);
+    private final        World  world                           = CompatibilityUtils.getWorld(this);
     /**
      * Sets the barbarians target colony on spawn Thus it never changes.
      */
-    private final        Colony colony                      = ColonyManager.getClosestColony(CompatibilityUtils.getWorld(this), this.getPosition());
+    private final        Colony colony                          = ColonyManager.getClosestColony(CompatibilityUtils.getWorld(this), this.getPosition());
 
     private int currentCount = 0;
 
@@ -129,7 +132,8 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     @Override
     public void onLivingUpdate()
     {
-        if (this.getHeldItemMainhand() != null && SPEED_EFFECT != null && this.getHeldItemMainhand().getItem() instanceof ItemChiefSword /*&& Configurations.barbarianHordeDifficulty >= BARBARIAN_HORDE_DIFFICULTY_FIVE */
+        if (this.getHeldItemMainhand() != null && SPEED_EFFECT != null && this.getHeldItemMainhand().getItem() instanceof ItemChiefSword
+              && Configurations.barbarianHordeDifficulty >= BARBARIAN_HORDE_DIFFICULTY_FIVE
               && currentCount <= 0)
         {
             final Stream<AbstractEntityBarbarian> barbarians = BarbarianUtils.getBarbariansCloseToEntity(this, SPEED_EFFECT_DISTANCE).stream();

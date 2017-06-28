@@ -24,7 +24,7 @@ public class MobEventsUtils
 
     private static final float  WHOLE_CIRCLE                 = 360.0F;
     private static final float  HALF_A_CIRCLE                = 180F;
-    private static final int    MAX_SIZE                     = 40/*Configurations.maxBarbarianHordeSize*/;
+    private static final int    MAX_SIZE                     = Configurations.maxBarbarianHordeSize;
     private static final double BARBARIANS_MULTIPLIER        = 0.5;
     private static final double ARCHER_BARBARIANS_MULTIPLIER = 0.25;
     private static final double CHIEF_BARBARIANS_MULTIPLIER  = 0.1;
@@ -67,6 +67,11 @@ public class MobEventsUtils
     private static void numberOfSpawns(final Colony colony)
     {
         final int raidLevel = getColonyRaidLevel(colony);
+
+        if (colony.getCitizens().size() < 5)
+        {
+            return;
+        }
 
         numberOfBarbarians = (int) (BARBARIANS_MULTIPLIER * raidLevel);
         numberOfArchers = (int) (ARCHER_BARBARIANS_MULTIPLIER * raidLevel);
@@ -206,7 +211,7 @@ public class MobEventsUtils
      */
     private static boolean raidThisNight(final World world)
     {
-        final float chance = (float) 1 / 1/*Configurations.averageNumberOfNightsBetweenRaids*/;
+        final float chance = (float) 1 / Configurations.averageNumberOfNightsBetweenRaids;
         final float randomFloat = world.rand.nextFloat();
         LanguageHandler.sendPlayersMessage(
           world.playerEntities,

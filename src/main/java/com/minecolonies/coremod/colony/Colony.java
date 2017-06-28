@@ -33,6 +33,7 @@ import net.minecraft.stats.Achievement;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -1223,9 +1224,12 @@ public class Colony implements IColony
                 }
             }
 
-            if (MobEventsUtils.isItTimeToRaid(event.world, this))
+            if (event.world.getDifficulty() != EnumDifficulty.PEACEFUL && Configurations.doBarbariansSpawn)
             {
-                MobEventsUtils.barbarianEvent(event.world, this);
+                if (MobEventsUtils.isItTimeToRaid(event.world, this))
+                {
+                    MobEventsUtils.barbarianEvent(event.world, this);
+                }
             }
 
         }
