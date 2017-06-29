@@ -5,8 +5,10 @@ import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.api.colony.requestsystem.requestable.Tool;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Final class holding all the requests for requestables inside minecolonie
@@ -57,7 +59,7 @@ public final class StandardRequests
          *
          * @return The ItemStack that the Deliveryman transports around. ItemStack.Empty means no delivery possible.
          */
-        @NotNull
+        @Nullable
         @Override
         public ItemStack getDelivery()
         {
@@ -66,7 +68,7 @@ public final class StandardRequests
                 return getResult().getStack();
             }
 
-            return ItemStack.EMPTY;
+            return ItemStackUtils.EMPTY;
         }
     }
 
@@ -88,7 +90,7 @@ public final class StandardRequests
          *
          * @return The ItemStack that the Deliveryman transports around. ItemStack.Empty means no getDelivery possible.
          */
-        @NotNull
+        @Nullable
         @Override
         public ItemStack getDelivery()
         {
@@ -97,7 +99,7 @@ public final class StandardRequests
                 return getResult().getResult();
             }
 
-            return ItemStack.EMPTY;
+            return ItemStackUtils.EMPTY;
         }
     }
 }

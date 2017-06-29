@@ -11,7 +11,6 @@ import com.minecolonies.api.util.ReflectionUtils;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -44,11 +43,7 @@ public class StandardFactoryController implements IFactoryController
      */
     @NotNull
     private final        HashMap<TypeToken, IFactory>                 primaryOutputMappings   = new HashMap<>();
-    /**
-     * Secondary (super) Input mappings
-     */
-    @NotNull
-    private final        HashMap<TypeToken, Set<IFactory>>            secondaryInputMappings  = new HashMap<>();
+
     /**
      * Secondary (super) output mappings
      */
@@ -82,7 +77,6 @@ public class StandardFactoryController implements IFactoryController
     {
         getInstance().primaryInputMappings.clear();
         getInstance().primaryOutputMappings.clear();
-        getInstance().secondaryInputMappings.clear();
         getInstance().secondaryOutputMappings.clear();
     }
 
@@ -100,18 +94,19 @@ public class StandardFactoryController implements IFactoryController
     @Override
     public <Input> IFactory<Input, ?> getFactoryForInput(@NotNull final TypeToken<Input> inputTypeToken) throws IllegalArgumentException
     {
-        if (!primaryInputMappings.containsKey(inputTypeToken))
-        {
-            if (!secondaryInputMappings.containsKey(inputTypeToken))
-            {
-                throw new IllegalArgumentException("The given input type is not a Input of a factory");
-            }
+        final Set<TypeToken> secondaryInputSet = ReflectionUtils.getSuperClasses(inputTypeToken);
 
-            //Exists as the type exists in the secondary mapping. No specific output is requested, so we will take the first one.
-            return secondaryInputMappings.get(inputTypeToken).stream().findFirst().get();
+        for (final TypeToken token : secondaryInputSet)
+        {
+            final IFactory factory = primaryInputMappings.get(token);
+
+            if (factory != null)
+            {
+                return factory;
+            }
         }
 
-        return primaryInputMappings.get(inputTypeToken);
+        throw new IllegalArgumentException("The given input type is not a input of a factory.");
     }
 
     @Override
@@ -121,7 +116,7 @@ public class StandardFactoryController implements IFactoryController
         {
             if (!secondaryOutputMappings.containsKey(outputTypeToken))
             {
-                throw new IllegalArgumentException("The given output type is not a Input of a factory");
+                throw new IllegalArgumentException("The given output type is not a output of a factory");
             }
 
             //Exists as the type exists in the secondary mapping. No specific output is requested, so we will take the first one.
@@ -142,58 +137,23 @@ public class StandardFactoryController implements IFactoryController
             return secondaryMappingsCache.get(new Tuple<>(inputTypeToken, outputTypeToken), () ->
             {
                 Log.getLogger().debug("Attempting to find a Factory with Primary: " + inputTypeToken.toString() + " -> " + outputTypeToken.toString());
-                if (primaryInputMappings.containsKey(inputTypeToken))
+
+                final Set<TypeToken> secondaryInputSet = ReflectionUtils.getSuperClasses(inputTypeToken);
+
+                for (final TypeToken token : secondaryInputSet)
                 {
+                    final IFactory factory = primaryInputMappings.get(token);
+                    if (factory == null)
+                    {
+                        continue;
+                    }
+
                     Log.getLogger().debug("Found matching Factory for Primary input type.");
-                    IFactory<Input, ?> inputMatchingFactory = primaryInputMappings.get(inputTypeToken);
-
-                    if (ReflectionUtils.getSuperClasses(inputMatchingFactory.getFactoryOutputType()).contains(outputTypeToken))
+                    final Set<TypeToken> secondaryOutputSet = ReflectionUtils.getSuperClasses(factory.getFactoryOutputType());
+                    if (secondaryOutputSet.contains(outputTypeToken))
                     {
-                        Log.getLogger().debug("Found input factory with matching super Output type. Search complete with: " + inputMatchingFactory);
-                        return inputMatchingFactory;
-                    }
-
-                    Log.getLogger().debug("Found input factory is invalid, attempting with Primary Output type.");
-                }
-                else
-                {
-                    Log.getLogger().debug("No factory found with matching primary input type.");
-                }
-
-                if (primaryOutputMappings.containsKey(outputTypeToken))
-                {
-                    Log.getLogger().debug("Found matching Factory for Primary output type.");
-                    IFactory<Output, ?> outputMatchingFactory = primaryOutputMappings.get(outputTypeToken);
-
-                    if (ReflectionUtils.getSuperClasses(outputMatchingFactory.getFactoryOutputType()).contains(outputTypeToken))
-                    {
-                        Log.getLogger().debug("Found output factory with matching super Input type. Search complete with: " + outputMatchingFactory);
-                        return outputMatchingFactory;
-                    }
-
-                    Log.getLogger().debug("Found output factory is invalid, ");
-                }
-                else
-                {
-                    Log.getLogger().debug("No factory found with matching primary output type.");
-                }
-
-                Log.getLogger().debug("Failed to find factory with either primary Input or Output type.");
-                Log.getLogger().debug("Attempting search for matching secondary input or output type");
-
-                if (secondaryInputMappings.containsKey(inputTypeToken) && secondaryOutputMappings.containsKey(outputTypeToken))
-                {
-                    Log.getLogger().debug("Found factories with matching secondary Input type.");
-                    Set<IFactory> secondaryInputFactories = secondaryInputMappings.get(inputTypeToken);
-
-                    Log.getLogger().debug("Attempting to find mathing secondary Output type:");
-                    @Nullable final IFactory possibleMatchingFactory =
-                      secondaryInputFactories.stream().filter(secondaryOutputMappings.get(outputTypeToken)::contains).findFirst().orElse(null);
-
-                    if (possibleMatchingFactory != null)
-                    {
-                        Log.getLogger().debug("Found matching factory with secondary input and output type.");
-                        return possibleMatchingFactory;
+                        Log.getLogger().debug("Found input factory with matching super Output type. Search complete with: " + factory);
+                        return factory;
                     }
                 }
 
@@ -226,28 +186,11 @@ public class StandardFactoryController implements IFactoryController
         primaryOutputMappings.put(factory.getFactoryOutputType(), factory);
 
         Log.getLogger()
-          .debug("Retrieving super types of input: " + factory.getFactoryInputType().toString() + " and output: " + factory.getFactoryOutputType().toString());
+          .debug("Retrieving super types of output: " + factory.getFactoryOutputType().toString());
 
-        Set<TypeToken> inputSuperTypes = ReflectionUtils.getSuperClasses(factory.getFactoryInputType());
         Set<TypeToken> outputSuperTypes = ReflectionUtils.getSuperClasses(factory.getFactoryOutputType());
 
-        inputSuperTypes.remove(factory.getFactoryInputType());
         outputSuperTypes.remove(factory.getFactoryOutputType());
-
-        if (inputSuperTypes.size() > 0)
-        {
-            Log.getLogger().debug("Input type is not Object or Interface. Introducing secondary Input-Types.");
-
-            inputSuperTypes.forEach(t ->
-            {
-                if (!secondaryInputMappings.containsKey(t))
-                {
-                    secondaryInputMappings.put(t, new HashSet<>());
-                }
-
-                secondaryInputMappings.get(t).add(factory);
-            });
-        }
 
         if (outputSuperTypes.size() > 0)
         {

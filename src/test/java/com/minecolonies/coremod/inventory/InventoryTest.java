@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.inventory;
 
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
@@ -36,7 +37,7 @@ public class InventoryTest
     {
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
-            assertEquals("Inventory space wasn't empty", ItemStack.EMPTY, inventory.getStackInSlot(i));
+            assertEquals("Inventory space wasn't empty", ItemStackUtils.EMPTY, inventory.getStackInSlot(i));
         }
     }
 
@@ -47,7 +48,7 @@ public class InventoryTest
         final ItemStack itemStack = new ItemStack((Item) null);
         inventory.setInventorySlotContents(0, itemStack);
         final ItemStack returnedItemStack = inventory.getStackInSlot(0);
-        assertNotEquals("The Item wasn't set", itemStack, ItemStack.EMPTY);
+        assertNotEquals("The Item wasn't set", itemStack, ItemStackUtils.EMPTY);
         assertSame("Stack wasn't the same", itemStack, returnedItemStack);
     }
 }

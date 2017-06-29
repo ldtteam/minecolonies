@@ -388,7 +388,7 @@ public abstract class AbstractRequest<R> implements IRequest<R>
      *
      * @return The ItemStack that the Deliveryman transports around. ItemStack.Empty means no delivery possible.
      */
-    @NotNull
+    @Nullable
     @Override
     public ItemStack getDelivery()
     {
