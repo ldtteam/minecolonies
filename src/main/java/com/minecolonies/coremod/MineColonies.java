@@ -53,8 +53,6 @@ public class MineColonies
     {
         MinecraftForge.EVENT_BUS.register(new EventHandler());
         MinecraftForge.EVENT_BUS.register(new FMLEventHandler());
-        MinecraftForge.EVENT_BUS.register(new RenderEventHandler());
-        MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
     }
 
     /**
@@ -97,6 +95,7 @@ public class MineColonies
     {
         proxy.registerEntities();
         proxy.registerEntityRendering();
+        proxy.registerEvents();
 
         @NotNull Configuration configuration = new Configuration(event.getSuggestedConfigurationFile());
         configuration.load();

@@ -28,12 +28,12 @@ public class ConfigCondition implements IConditionFactory
     {
         String value = JsonUtils.getString(json , "key");
 
-        if(!Configurations.gameplay.enableInDevelopmentFeatures && SUPPLIES.equalsIgnoreCase(value))
+        if(!Configurations.gameplay.enableInDevelopmentFeatures && IN_DEV.equalsIgnoreCase(value))
         {
             return () -> false;
         }
 
-        if(!Configurations.gameplay.supplyChests && IN_DEV.equalsIgnoreCase(value))
+        if(!Configurations.gameplay.supplyChests && SUPPLIES.equalsIgnoreCase(value))
         {
             return () -> false;
         }

@@ -80,8 +80,7 @@ public class CommonProxy implements IProxy
     @Override
     public void registerEvents()
     {
-        MinecraftForge.EVENT_BUS.register(new EventHandler());
-        MinecraftForge.EVENT_BUS.register(new FMLEventHandler());
+
     }
 
     /*
