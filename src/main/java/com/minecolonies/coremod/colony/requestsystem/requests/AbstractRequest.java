@@ -39,9 +39,9 @@ public abstract class AbstractRequest<R> implements IRequest<R>
     @Nullable
     private IToken parent;
     @NotNull
-    private ItemStack deliveryStack = ItemStackUtils.EMPTY;
+    private final ItemStack deliveryStack = ItemStackUtils.EMPTY;
 
-    AbstractRequest(@NotNull IRequester requester, @NotNull IToken token, @NotNull R requested)
+    AbstractRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final R requested)
     {
         this.requester = requester;
         this.token = token;
@@ -50,7 +50,7 @@ public abstract class AbstractRequest<R> implements IRequest<R>
         children = new ArrayList<>();
     }
 
-    AbstractRequest(@NotNull IRequester requester, @NotNull IToken token, @NotNull RequestState state, @NotNull R requested)
+    AbstractRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final R requested)
     {
         this.requester = requester;
         this.token = token;
@@ -120,7 +120,7 @@ public abstract class AbstractRequest<R> implements IRequest<R>
      * @param state   The new state of this request.
      */
     @Override
-    public void setState(@NotNull IRequestManager manager, @NotNull RequestState state)
+    public void setState(@NotNull final IRequestManager manager, @NotNull final RequestState state)
     {
         this.state = state;
         Log.getLogger().debug("Updated state from: " + getToken() + " to: " + state);
@@ -131,7 +131,7 @@ public abstract class AbstractRequest<R> implements IRequest<R>
             {
                 manager.getRequestForToken(getParent()).childStateUpdated(manager, getToken());
             }
-            catch (IllegalArgumentException ex)
+            catch (final IllegalArgumentException ex)
             {
                 //Something went wrong... Logging. Continuing however. Might cause parent request to get stuck however......
                 Log.getLogger().error(new IllegalStateException("Failed to update parent state.", ex));
@@ -173,7 +173,7 @@ public abstract class AbstractRequest<R> implements IRequest<R>
      * @param result The new result of this request.
      */
     @Override
-    public void setResult(@NotNull R result)
+    public void setResult(@NotNull final R result)
     {
         this.result = result;
     }
@@ -209,7 +209,7 @@ public abstract class AbstractRequest<R> implements IRequest<R>
      * @param parent The new parent, or null to clear the existing one.
      */
     @Override
-    public <T extends IToken> void setParent(@Nullable T parent)
+    public <T extends IToken> void setParent(@Nullable final T parent)
     {
         this.parent = parent;
     }
@@ -231,7 +231,7 @@ public abstract class AbstractRequest<R> implements IRequest<R>
      * @param child The new child request to add.
      */
     @Override
-    public <T extends IToken> void addChild(@NotNull T child)
+    public <T extends IToken> void addChild(@NotNull final T child)
     {
         this.children.add(child);
         Log.getLogger().debug("Added child:" + child + " to: " + getToken());
@@ -243,9 +243,9 @@ public abstract class AbstractRequest<R> implements IRequest<R>
      * @param children An array of children to add.
      */
     @Override
-    public <T extends IToken> void addChildren(@NotNull T... children)
+    public <T extends IToken> void addChildren(@NotNull final T... children)
     {
-        for (IToken token : children)
+        for (final IToken token : children)
         {
             addChild(token);
         }
@@ -257,9 +257,9 @@ public abstract class AbstractRequest<R> implements IRequest<R>
      * @param children A collection of children to add.
      */
     @Override
-    public <T extends IToken> void addChildren(@NotNull Collection<T> children)
+    public <T extends IToken> void addChildren(@NotNull final Collection<T> children)
     {
-        for (IToken token : children)
+        for (final IToken token : children)
         {
             addChild(token);
         }
@@ -271,7 +271,7 @@ public abstract class AbstractRequest<R> implements IRequest<R>
      * @param child The new child request to remove.
      */
     @Override
-    public <T extends IToken> void removeChild(@NotNull T child)
+    public <T extends IToken> void removeChild(@NotNull final T child)
     {
         this.children.remove(child);
         Log.getLogger().debug("Removed child: " + child + " from: " + getToken());
@@ -283,9 +283,9 @@ public abstract class AbstractRequest<R> implements IRequest<R>
      * @param children An array of children to remove.
      */
     @Override
-    public <T extends IToken> void removeChildren(@NotNull T... children)
+    public <T extends IToken> void removeChildren(@NotNull final T... children)
     {
-        for (IToken token : children)
+        for (final IToken token : children)
         {
             if (this.children.contains(token))
             {
@@ -300,9 +300,9 @@ public abstract class AbstractRequest<R> implements IRequest<R>
      * @param children A collection of children to remove.
      */
     @Override
-    public <T extends IToken> void removeChildren(@NotNull Collection<T> children)
+    public <T extends IToken> void removeChildren(@NotNull final Collection<T> children)
     {
-        for (IToken token : children)
+        for (final IToken token : children)
         {
             if (this.children.contains(token))
             {
@@ -330,7 +330,7 @@ public abstract class AbstractRequest<R> implements IRequest<R>
     @Override
     public ImmutableCollection<IToken> getChildren()
     {
-        ImmutableCollection.Builder<IToken> builder = new ImmutableList.Builder<>();
+        final ImmutableCollection.Builder<IToken> builder = new ImmutableList.Builder<>();
 
         builder.addAll(this.children);
 
@@ -344,7 +344,7 @@ public abstract class AbstractRequest<R> implements IRequest<R>
      * @param child   The child that was updated.
      */
     @Override
-    public void childStateUpdated(@NotNull IRequestManager manager, @NotNull IToken child)
+    public void childStateUpdated(@NotNull final IRequestManager manager, @NotNull final IToken child)
     {
         if (!this.children.contains(child))
         {
@@ -354,7 +354,7 @@ public abstract class AbstractRequest<R> implements IRequest<R>
 
         try
         {
-            IRequest<?> childRequest = manager.getRequestForToken(child);
+            final IRequest<?> childRequest = manager.getRequestForToken(child);
             if (childRequest.getState() == RequestState.IN_PROGRESS && getState().ordinal() < RequestState.IN_PROGRESS.ordinal())
             {
                 setState(manager, RequestState.IN_PROGRESS);
@@ -366,7 +366,7 @@ public abstract class AbstractRequest<R> implements IRequest<R>
                 Log.getLogger().debug("Removed child:" + child + " from: " + getToken() + " as it was completed!");
             }
         }
-        catch (IllegalArgumentException ex)
+        catch (final IllegalArgumentException ex)
         {
             Log.getLogger().error(new IllegalStateException("Failed to update request data when child changed.", ex));
         }

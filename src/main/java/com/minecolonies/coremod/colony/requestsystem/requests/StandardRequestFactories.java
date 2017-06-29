@@ -44,7 +44,11 @@ public final class StandardRequestFactories
          * @return The new output instance for a given input.
          */
         @Override
-        public StandardRequests.ItemStackRequest getNewInstance(@NotNull ItemStack input, @NotNull IRequester location, @NotNull IToken token, @NotNull RequestState initialState)
+        public StandardRequests.ItemStackRequest getNewInstance(
+                                                                 @NotNull final ItemStack input,
+                                                                 @NotNull final IRequester location,
+                                                                 @NotNull final IToken token,
+                                                                 @NotNull final RequestState initialState)
         {
             return new StandardRequests.ItemStackRequest(location, token, initialState, input);
         }
@@ -72,16 +76,16 @@ public final class StandardRequestFactories
          */
         @NotNull
         @Override
-        public NBTTagCompound serialize(@NotNull IFactoryController controller, @NotNull StandardRequests.ItemStackRequest request)
+        public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.ItemStackRequest request)
         {
-            NBTTagCompound compound = new NBTTagCompound();
+            final NBTTagCompound compound = new NBTTagCompound();
 
-            NBTTagCompound tokenCompound = controller.serialize(request.getToken());
-            NBTTagInt stateCompound = request.getState().serializeNBT();
-            NBTTagCompound requestedCompound = request.getRequest().serializeNBT();
+            final NBTTagCompound tokenCompound = controller.serialize(request.getToken());
+            final NBTTagInt stateCompound = request.getState().serializeNBT();
+            final NBTTagCompound requestedCompound = request.getRequest().serializeNBT();
 
-            NBTTagList childrenCompound = new NBTTagList();
-            for (IToken token : request.getChildren())
+            final NBTTagList childrenCompound = new NBTTagList();
+            for (final IToken token : request.getChildren())
             {
                 childrenCompound.appendTag(controller.serialize(token));
             }
@@ -114,20 +118,20 @@ public final class StandardRequestFactories
          */
         @NotNull
         @Override
-        public StandardRequests.ItemStackRequest deserialize(@NotNull IFactoryController controller, @NotNull NBTTagCompound nbt)
+        public StandardRequests.ItemStackRequest deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
         {
-            IToken token = controller.deserialize(nbt.getCompoundTag(NBT_TOKEN));
-            RequestState state = RequestState.deserializeNBT((NBTTagInt) nbt.getTag(NBT_STATE));
-            ItemStack requested = new ItemStack(nbt.getCompoundTag(NBT_REQUESTED));
+            final IToken token = controller.deserialize(nbt.getCompoundTag(NBT_TOKEN));
+            final RequestState state = RequestState.deserializeNBT((NBTTagInt) nbt.getTag(NBT_STATE));
+            final ItemStack requested = new ItemStack(nbt.getCompoundTag(NBT_REQUESTED));
 
-            List<IToken> childTokens = new ArrayList<>();
-            NBTTagList childCompound = nbt.getTagList(NBT_CHILDREN, Constants.NBT.TAG_COMPOUND);
+            final List<IToken> childTokens = new ArrayList<>();
+            final NBTTagList childCompound = nbt.getTagList(NBT_CHILDREN, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < childCompound.tagCount(); i++)
             {
                 childTokens.add(controller.deserialize(childCompound.getCompoundTagAt(i)));
             }
 
-            StandardRequests.ItemStackRequest request = controller.getNewInstance(requested, new TypeToken<StandardRequests.ItemStackRequest>() {}, token, state);
+            final StandardRequests.ItemStackRequest request = controller.getNewInstance(requested, new TypeToken<StandardRequests.ItemStackRequest>() {}, token, state);
 
             if (nbt.hasKey(NBT_PARENT))
             {
@@ -169,16 +173,16 @@ public final class StandardRequestFactories
          */
         @NotNull
         @Override
-        public NBTTagCompound serialize(@NotNull IFactoryController controller, @NotNull StandardRequests.DeliveryRequest request)
+        public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.DeliveryRequest request)
         {
-            NBTTagCompound compound = new NBTTagCompound();
+            final NBTTagCompound compound = new NBTTagCompound();
 
-            NBTTagCompound tokenCompound = controller.serialize(request.getToken());
-            NBTTagInt stateCompound = request.getState().serializeNBT();
-            NBTTagCompound requestedCompound = request.getRequest().serialize(controller);
+            final NBTTagCompound tokenCompound = controller.serialize(request.getToken());
+            final NBTTagInt stateCompound = request.getState().serializeNBT();
+            final NBTTagCompound requestedCompound = request.getRequest().serialize(controller);
 
-            NBTTagList childrenCompound = new NBTTagList();
-            for (IToken token : request.getChildren())
+            final NBTTagList childrenCompound = new NBTTagList();
+            for (final IToken token : request.getChildren())
             {
                 childrenCompound.appendTag(controller.serialize(token));
             }
@@ -211,20 +215,20 @@ public final class StandardRequestFactories
          */
         @NotNull
         @Override
-        public StandardRequests.DeliveryRequest deserialize(@NotNull IFactoryController controller, @NotNull NBTTagCompound nbt)
+        public StandardRequests.DeliveryRequest deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
         {
-            IToken token = controller.deserialize(nbt.getCompoundTag(NBT_TOKEN));
-            RequestState state = RequestState.deserializeNBT((NBTTagInt) nbt.getTag(NBT_STATE));
-            Delivery requested = Delivery.deserialize(controller, nbt.getCompoundTag(NBT_REQUESTED));
+            final IToken token = controller.deserialize(nbt.getCompoundTag(NBT_TOKEN));
+            final RequestState state = RequestState.deserializeNBT((NBTTagInt) nbt.getTag(NBT_STATE));
+            final Delivery requested = Delivery.deserialize(controller, nbt.getCompoundTag(NBT_REQUESTED));
 
-            List<IToken> childTokens = new ArrayList<>();
-            NBTTagList childCompound = nbt.getTagList(NBT_CHILDREN, Constants.NBT.TAG_COMPOUND);
+            final List<IToken> childTokens = new ArrayList<>();
+            final NBTTagList childCompound = nbt.getTagList(NBT_CHILDREN, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < childCompound.tagCount(); i++)
             {
                 childTokens.add(controller.deserialize(childCompound.getCompoundTagAt(i)));
             }
 
-            StandardRequests.DeliveryRequest request = controller.getNewInstance(requested, new TypeToken<StandardRequests.DeliveryRequest>() {}, token, state);
+            final StandardRequests.DeliveryRequest request = controller.getNewInstance(requested, new TypeToken<StandardRequests.DeliveryRequest>() {}, token, state);
 
             if (nbt.hasKey(NBT_PARENT))
             {
@@ -249,7 +253,11 @@ public final class StandardRequestFactories
          * @return The new output instance for a given input.
          */
         @Override
-        public StandardRequests.DeliveryRequest getNewInstance(@NotNull Delivery input, @NotNull IRequester location, @NotNull IToken token, @NotNull RequestState initialState)
+        public StandardRequests.DeliveryRequest getNewInstance(
+                                                                @NotNull final Delivery input,
+                                                                @NotNull final IRequester location,
+                                                                @NotNull final IToken token,
+                                                                @NotNull final RequestState initialState)
         {
             return new StandardRequests.DeliveryRequest(location, token, initialState, input);
         }

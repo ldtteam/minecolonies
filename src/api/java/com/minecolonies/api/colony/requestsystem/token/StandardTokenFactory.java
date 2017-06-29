@@ -41,9 +41,9 @@ public class StandardTokenFactory implements ITokenFactory<UUID, StandardToken>
      */
     @NotNull
     @Override
-    public NBTTagCompound serialize(@NotNull IFactoryController controller, @NotNull StandardToken request)
+    public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final StandardToken request)
     {
-        NBTTagCompound compound = new NBTTagCompound();
+        final NBTTagCompound compound = new NBTTagCompound();
 
         compound.setLong(NBT_LSB, request.getIdentifier().getLeastSignificantBits());
         compound.setLong(NBT_MSB, request.getIdentifier().getMostSignificantBits());
@@ -60,12 +60,12 @@ public class StandardTokenFactory implements ITokenFactory<UUID, StandardToken>
      */
     @NotNull
     @Override
-    public StandardToken deserialize(@NotNull IFactoryController controller, @NotNull NBTTagCompound nbt)
+    public StandardToken deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
     {
-        Long msb = nbt.getLong(NBT_MSB);
-        Long lsb = nbt.getLong(NBT_LSB);
+        final Long msb = nbt.getLong(NBT_MSB);
+        final Long lsb = nbt.getLong(NBT_LSB);
 
-        UUID id = new UUID(msb, lsb);
+        final UUID id = new UUID(msb, lsb);
 
         return new StandardToken(id);
     }
@@ -78,7 +78,7 @@ public class StandardTokenFactory implements ITokenFactory<UUID, StandardToken>
      */
     @NotNull
     @Override
-    public StandardToken getNewInstance(@NotNull UUID input)
+    public StandardToken getNewInstance(@NotNull final UUID input)
     {
         return new StandardToken(input);
     }

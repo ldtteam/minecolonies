@@ -24,7 +24,7 @@ public interface ITokenFactory<T, RT extends IToken<T>> extends IFactory<T, RT>
      */
     @NotNull
     @Override
-    default RT getNewInstance(@NotNull T t, @NotNull Object... context) throws IllegalArgumentException
+    default RT getNewInstance(@NotNull final T t, @NotNull final Object... context) throws IllegalArgumentException
     {
         if (context.length != 0)
         {

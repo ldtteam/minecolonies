@@ -21,7 +21,7 @@ import java.util.concurrent.ExecutionException;
  * Default implementation of a FactoryController
  * Singleton.
  */
-public class StandardFactoryController implements IFactoryController
+public final class StandardFactoryController implements IFactoryController
 {
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
@@ -109,6 +109,7 @@ public class StandardFactoryController implements IFactoryController
         throw new IllegalArgumentException("The given input type is not a input of a factory.");
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <Output> IFactory<?, Output> getFactoryForOutput(@NotNull final TypeToken<Output> outputTypeToken) throws IllegalArgumentException
     {
@@ -160,14 +161,14 @@ public class StandardFactoryController implements IFactoryController
                 throw new IllegalArgumentException("No factory found with the given IO types: " + inputTypeToken + " ->" + outputTypeToken);
             });
         }
-        catch (ExecutionException e)
+        catch (final ExecutionException e)
         {
             throw new IllegalArgumentException("No factory found with the given IO types: " + inputTypeToken + " ->" + outputTypeToken);
         }
     }
 
     @Override
-    public <Input, Output> void registerNewFactory(@NotNull IFactory<Input, Output> factory) throws IllegalArgumentException
+    public <Input, Output> void registerNewFactory(@NotNull final IFactory<Input, Output> factory) throws IllegalArgumentException
     {
         if (primaryInputMappings.containsKey(factory.getFactoryInputType()))
         {
@@ -188,7 +189,7 @@ public class StandardFactoryController implements IFactoryController
         Log.getLogger()
           .debug("Retrieving super types of output: " + factory.getFactoryOutputType().toString());
 
-        Set<TypeToken> outputSuperTypes = ReflectionUtils.getSuperClasses(factory.getFactoryOutputType());
+        final Set<TypeToken> outputSuperTypes = ReflectionUtils.getSuperClasses(factory.getFactoryOutputType());
 
         outputSuperTypes.remove(factory.getFactoryOutputType());
 
@@ -209,11 +210,11 @@ public class StandardFactoryController implements IFactoryController
 
     @Override
     @SuppressWarnings("unchecked")
-    public <Output> NBTTagCompound serialize(@NotNull Output object) throws IllegalArgumentException
+    public <Output> NBTTagCompound serialize(@NotNull final Output object) throws IllegalArgumentException
     {
-        NBTTagCompound compound = new NBTTagCompound();
+        final NBTTagCompound compound = new NBTTagCompound();
 
-        IFactory<?, Output> factory = getFactoryForOutput(TypeToken.of((Class<Output>) object.getClass()));
+        final IFactory<?, Output> factory = getFactoryForOutput(TypeToken.of((Class<Output>) object.getClass()));
         compound.setString(NBT_TYPE, object.getClass().getName());
         compound.setTag(NBT_DATA, factory.serialize(this, object));
 
@@ -222,30 +223,30 @@ public class StandardFactoryController implements IFactoryController
 
     @Override
     @SuppressWarnings("unchecked")
-    public <Output> Output deserialize(@NotNull NBTTagCompound compound) throws IllegalArgumentException
+    public <Output> Output deserialize(@NotNull final NBTTagCompound compound) throws IllegalArgumentException
     {
-        String className = compound.getString(NBT_TYPE);
-        Class<Output> outputClass;
+        final String className = compound.getString(NBT_TYPE);
+        final Class<Output> outputClass;
 
         try
         {
             outputClass = (Class<Output>) Class.forName(className);
         }
-        catch (ClassNotFoundException e)
+        catch (final ClassNotFoundException e)
         {
             throw new IllegalArgumentException("The given compound holds an unknown output type for this Controller");
         }
 
-        IFactory<?, Output> factory = getFactoryForOutput(TypeToken.of(outputClass));
+        final IFactory<?, Output> factory = getFactoryForOutput(TypeToken.of(outputClass));
         return factory.deserialize(this, compound.getCompoundTag(NBT_DATA));
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <Input, Output> Output getNewInstance(@NotNull final Input input, @NotNull final TypeToken<Output> outputTypeToken, @NotNull Object... context)
+    public <Input, Output> Output getNewInstance(@NotNull final Input input, @NotNull final TypeToken<Output> outputTypeToken, @NotNull final Object... context)
       throws IllegalArgumentException, ClassCastException
     {
-        IFactory<Input, Output> factory = getFactoryForIO(TypeToken.of((Class<Input>) input.getClass()), outputTypeToken);
+        final IFactory<Input, Output> factory = getFactoryForIO(TypeToken.of((Class<Input>) input.getClass()), outputTypeToken);
 
         return factory.getNewInstance(input, context);
     }

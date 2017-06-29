@@ -12,7 +12,7 @@ public class StandardToken implements IToken<UUID>
 {
 
     @NotNull
-    private UUID id;
+    private final UUID id;
 
     /**
      * Creates a new token with a random id.
@@ -25,7 +25,7 @@ public class StandardToken implements IToken<UUID>
     /**
      * Creates a new token with the given id.
      */
-    public StandardToken(@NotNull UUID id)
+    public StandardToken(@NotNull final UUID id)
     {
         this.id = id;
     }
@@ -48,7 +48,7 @@ public class StandardToken implements IToken<UUID>
     }
 
     @Override
-    public boolean equals(Object o)
+    public boolean equals(final Object o)
     {
         if (this == o)
         {
@@ -59,7 +59,7 @@ public class StandardToken implements IToken<UUID>
             return false;
         }
 
-        IToken that = (IToken) o;
+        final IToken that = (IToken) o;
 
         return id.equals(that.getIdentifier());
     }

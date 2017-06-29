@@ -19,12 +19,12 @@ public final class StandardRequests
     public static class ItemStackRequest extends AbstractRequest<ItemStack>
     {
 
-        public ItemStackRequest(@NotNull IRequester requester, @NotNull IToken token, @NotNull ItemStack requested)
+        public ItemStackRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final ItemStack requested)
         {
             super(requester, token, requested);
         }
 
-        public ItemStackRequest(@NotNull IRequester requester, @NotNull IToken token, @NotNull RequestState state, @NotNull ItemStack requested)
+        public ItemStackRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final ItemStack requested)
         {
             super(requester, token, state, requested);
         }
@@ -44,12 +44,12 @@ public final class StandardRequests
     public static class DeliveryRequest extends AbstractRequest<Delivery>
     {
 
-        public DeliveryRequest(@NotNull IRequester requester, @NotNull IToken token, @NotNull Delivery requested)
+        public DeliveryRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final Delivery requested)
         {
             super(requester, token, requested);
         }
 
-        public DeliveryRequest(@NotNull IRequester requester, @NotNull IToken token, @NotNull RequestState state, @NotNull Delivery requested)
+        public DeliveryRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final Delivery requested)
         {
             super(requester, token, state, requested);
         }
@@ -75,12 +75,12 @@ public final class StandardRequests
     public static class ToolRequest extends AbstractRequest<Tool>
     {
 
-        public ToolRequest(@NotNull IRequester requester, @NotNull IToken token, @NotNull Tool requested)
+        public ToolRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final Tool requested)
         {
             super(requester, token, requested);
         }
 
-        public ToolRequest(@NotNull IRequester requester, @NotNull IToken token, @NotNull RequestState state, @NotNull Tool requested)
+        public ToolRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final Tool requested)
         {
             super(requester, token, state, requested);
         }

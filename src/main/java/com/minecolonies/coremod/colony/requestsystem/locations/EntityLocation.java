@@ -26,7 +26,7 @@ public class EntityLocation implements ILocation
     @Nullable
     private WeakReference<Entity> entity;
 
-    EntityLocation(@NotNull UUID uuid)
+    EntityLocation(@NotNull final UUID uuid)
     {
         this.uuid = uuid;
         checkEntity();
@@ -88,7 +88,7 @@ public class EntityLocation implements ILocation
      * @return True when reachable, false when not.
      */
     @Override
-    public boolean isReachableFromLocation(@NotNull ILocation location)
+    public boolean isReachableFromLocation(@NotNull final ILocation location)
     {
         checkEntity();
         return !(entity == null || entity.get() == null) && location.getDimension() == getDimension();
@@ -125,9 +125,9 @@ public class EntityLocation implements ILocation
          */
         @NotNull
         @Override
-        public NBTTagCompound serialize(@NotNull IFactoryController controller, @NotNull EntityLocation request)
+        public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final EntityLocation request)
         {
-            NBTTagCompound compound = new NBTTagCompound();
+            final NBTTagCompound compound = new NBTTagCompound();
 
             compound.setLong(NBT_LSB, request.uuid.getLeastSignificantBits());
             compound.setLong(NBT_MSB, request.uuid.getMostSignificantBits());
@@ -144,9 +144,9 @@ public class EntityLocation implements ILocation
          */
         @NotNull
         @Override
-        public EntityLocation deserialize(@NotNull IFactoryController controller, @NotNull NBTTagCompound nbt)
+        public EntityLocation deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
         {
-            UUID uuid = new UUID(nbt.getLong(NBT_MSB), nbt.getLong(NBT_LSB));
+            final UUID uuid = new UUID(nbt.getLong(NBT_MSB), nbt.getLong(NBT_LSB));
 
             return new EntityLocation(uuid);
         }
@@ -159,7 +159,7 @@ public class EntityLocation implements ILocation
          */
         @NotNull
         @Override
-        public EntityLocation getNewInstance(@NotNull Entity input)
+        public EntityLocation getNewInstance(@NotNull final Entity input)
         {
             return new EntityLocation(input.getPersistentID());
         }

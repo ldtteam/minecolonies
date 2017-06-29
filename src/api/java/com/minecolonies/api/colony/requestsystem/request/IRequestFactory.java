@@ -27,7 +27,7 @@ public interface IRequestFactory<T, R extends IRequest<T>> extends IFactory<T, R
      */
     @NotNull
     @Override
-    default R getNewInstance(@NotNull T t, @NotNull Object... context) throws IllegalArgumentException
+    default R getNewInstance(@NotNull final T t, @NotNull final Object... context) throws IllegalArgumentException
     {
         if (context.length != 2 && context.length != 3)
         {
@@ -46,15 +46,22 @@ public interface IRequestFactory<T, R extends IRequest<T>> extends IFactory<T, R
 
         if (context.length == 2)
         {
-            return this.getNewInstance(t, context[1], context[0]);
+            IRequester requester = (IRequester) context[1];
+            IToken token = (IToken) context[0];
+
+            return this.getNewInstance(t, requester, token);
         }
 
-        if (context.length == 3 && !(context[2] instanceof RequestState))
+        if (!(context[2] instanceof RequestState))
         {
             throw new IllegalArgumentException("Unsupported context - Third context object is not a request state");
         }
 
-        return this.getNewInstance(t, context[1], context[0], context[2]);
+        IRequester requester = (IRequester) context[1];
+        IToken token = (IToken) context[0];
+        RequestState state = (RequestState) context[2];
+
+        return this.getNewInstance(t, requester, token, state);
     }
 
     /**
@@ -65,7 +72,7 @@ public interface IRequestFactory<T, R extends IRequest<T>> extends IFactory<T, R
      * @param token    The token to build the request from.
      * @return The new output instance for a given input.
      */
-    default R getNewInstance(@NotNull T input, @NotNull IRequester location, @NotNull IToken token)
+    default R getNewInstance(@NotNull final T input, @NotNull final IRequester location, @NotNull final IToken token)
     {
         return this.getNewInstance(input, location, token, RequestState.CREATED);
     }

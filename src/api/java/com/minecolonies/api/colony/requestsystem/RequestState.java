@@ -3,6 +3,7 @@ package com.minecolonies.api.colony.requestsystem;
 import net.minecraft.nbt.NBTTagInt;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Enum used to describe the state of a Request.
@@ -57,17 +58,14 @@ public enum RequestState
     /**
      * Index list used to read and write from NBT
      */
-    static ArrayList<RequestState> indexList = new ArrayList<>();
+    static final ArrayList<RequestState> indexList = new ArrayList<>();
     static
     {
-        /**
+        /*
          * This should never be changed! It is used to read and write from NBT so it has to
          * persist between mod versions.
          */
-        for (RequestState state : RequestState.values())
-        {
-            indexList.add(state);
-        }
+        Collections.addAll(indexList, RequestState.values());
     }
     RequestState()
     {
@@ -79,7 +77,7 @@ public enum RequestState
      * @param nbt The nbt to deserialize from.
      * @return The RequestState that is stored in the given NBT.
      */
-    public static RequestState deserializeNBT(NBTTagInt nbt)
+    public static RequestState deserializeNBT(final NBTTagInt nbt)
     {
         return indexList.get(nbt.getInt());
     }

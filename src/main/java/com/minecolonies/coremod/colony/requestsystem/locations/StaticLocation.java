@@ -19,7 +19,7 @@ public class StaticLocation implements ILocation
 
     private final int dimension;
 
-    StaticLocation(@NotNull BlockPos pos, int dimension)
+    StaticLocation(@NotNull final BlockPos pos, final int dimension)
     {
         this.pos = pos;
         this.dimension = dimension;
@@ -55,7 +55,7 @@ public class StaticLocation implements ILocation
      * @return True when reachable, false when not.
      */
     @Override
-    public boolean isReachableFromLocation(@NotNull ILocation location)
+    public boolean isReachableFromLocation(@NotNull final ILocation location)
     {
         return location.getDimension() == getDimension();
     }
@@ -94,9 +94,9 @@ public class StaticLocation implements ILocation
          */
         @NotNull
         @Override
-        public NBTTagCompound serialize(@NotNull IFactoryController controller, @NotNull StaticLocation request)
+        public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final StaticLocation request)
         {
-            NBTTagCompound compound = new NBTTagCompound();
+            final NBTTagCompound compound = new NBTTagCompound();
             compound.setLong(NBT_POS, request.getInDimensionLocation().toLong());
             compound.setInteger(NBT_DIM, request.getDimension());
             return compound;
@@ -111,10 +111,10 @@ public class StaticLocation implements ILocation
          */
         @NotNull
         @Override
-        public StaticLocation deserialize(@NotNull IFactoryController controller, @NotNull NBTTagCompound nbt)
+        public StaticLocation deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
         {
-            BlockPos pos = BlockPos.fromLong(nbt.getLong(NBT_POS));
-            Integer dim = nbt.getInteger(NBT_DIM);
+            final BlockPos pos = BlockPos.fromLong(nbt.getLong(NBT_POS));
+            final Integer dim = nbt.getInteger(NBT_DIM);
             return new StaticLocation(pos, dim);
         }
 
@@ -146,7 +146,7 @@ public class StaticLocation implements ILocation
          */
         @NotNull
         @Override
-        public StaticLocation getNewInstance(@NotNull BlockPos input)
+        public StaticLocation getNewInstance(@NotNull final BlockPos input)
         {
             return new StaticLocation(input, 0);
         }
