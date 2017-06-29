@@ -4,6 +4,7 @@ import com.minecolonies.api.configuration.ConfigurationHandler;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.achievements.ModAchievements;
+import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
 import com.minecolonies.coremod.commands.CommandEntryPoint;
 import com.minecolonies.coremod.network.messages.*;
 import com.minecolonies.coremod.proxy.IProxy;
@@ -81,6 +82,7 @@ public class MineColonies
     @Mod.EventHandler
     public void preInit(@NotNull final FMLPreInitializationEvent event)
     {
+        StandardFactoryControllerInitializer.onPreInit();
         ConfigurationHandler.init(event.getSuggestedConfigurationFile());
         proxy.registerSounds();
         proxy.registerEntities();

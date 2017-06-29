@@ -22,6 +22,7 @@ public interface ILocation
      *
      * @return The dimension of the location.
      */
+    @NotNull
     int getDimension();
 
     /**

@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.IColony;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.command.CommandException;
