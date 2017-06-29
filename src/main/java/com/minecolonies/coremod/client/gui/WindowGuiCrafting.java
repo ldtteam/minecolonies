@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
