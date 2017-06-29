@@ -616,18 +616,6 @@ public class StandardRequestManager implements IRequestManager
     }
 
     /**
-     * Method used to get the FactoryController of the RequestManager.
-     *
-     * @return The FactoryController of this RequestManager.
-     */
-    @NotNull
-    @Override
-    public IFactoryController getFactoryController()
-    {
-        return StandardFactoryController.getInstance();
-    }
-
-    /**
      * Class used to handle the inner workings of the request system with regards to requests.
      */
     private final static class RequestHandler
@@ -913,6 +901,18 @@ public class StandardRequestManager implements IRequestManager
     }
 
     /**
+     * Method used to get the FactoryController of the RequestManager.
+     *
+     * @return The FactoryController of this RequestManager.
+     */
+    @NotNull
+    @Override
+    public IFactoryController getFactoryController()
+    {
+        return StandardFactoryController.getInstance();
+    }
+
+    /**
      * Class used to handle the inner workings of the request system with regards to tokens.
      */
     private final static class TokenHandler
@@ -1078,23 +1078,6 @@ public class StandardRequestManager implements IRequestManager
     }
 
     /**
-     * Method to create a request for a given object
-     *
-     * @param requester The requester.
-     * @param object    The Object that is being requested.
-     * @return The token representing the request.
-     *
-     * @throws IllegalArgumentException is thrown when this manager cannot produce a request for the given types.
-     */
-    @NotNull
-    @Override
-    public <T> IToken createRequest(@NotNull IRequester requester, @NotNull T object) throws IllegalArgumentException
-    {
-        IRequest<T> request = RequestHandler.createRequest(this, requester, object);
-        return request.getToken();
-    }
-
-    /**
      * Class used to handle internal reassignment changes.
      * Take the given blacklist into account when it assigns the requests.
      */
@@ -1149,6 +1132,23 @@ public class StandardRequestManager implements IRequestManager
         {
             return;
         }
+    }
+
+    /**
+     * Method to create a request for a given object
+     *
+     * @param requester The requester.
+     * @param object    The Object that is being requested.
+     * @return The token representing the request.
+     *
+     * @throws IllegalArgumentException is thrown when this manager cannot produce a request for the given types.
+     */
+    @NotNull
+    @Override
+    public <T> IToken createRequest(@NotNull IRequester requester, @NotNull T object) throws IllegalArgumentException
+    {
+        IRequest<T> request = RequestHandler.createRequest(this, requester, object);
+        return request.getToken();
     }
 
     /**

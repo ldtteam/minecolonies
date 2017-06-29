@@ -32,29 +32,29 @@ public class StandardFactoryController implements IFactoryController
     /**
      * Instance variable.
      */
-    private static final StandardFactoryController                    INSTANCE                = new StandardFactoryController();
+    private static final StandardFactoryController    INSTANCE              = new StandardFactoryController();
     /**
      * Primary (main) Input mappings.
      */
     @NotNull
-    private final        HashMap<TypeToken, IFactory>                 primaryInputMappings    = new HashMap<>();
+    private final        HashMap<TypeToken, IFactory> primaryInputMappings  = new HashMap<>();
     /**
      * Primary (main) Output mappings.
      */
     @NotNull
-    private final        HashMap<TypeToken, IFactory>                 primaryOutputMappings   = new HashMap<>();
+    private final        HashMap<TypeToken, IFactory> primaryOutputMappings = new HashMap<>();
 
     /**
      * Secondary (super) output mappings
      */
     @NotNull
-    private final        HashMap<TypeToken, Set<IFactory>>            secondaryOutputMappings = new HashMap<>();
+    private final HashMap<TypeToken, Set<IFactory>>            secondaryOutputMappings = new HashMap<>();
     /**
      * A cache that holds all Mappers and their search secondary IO types.
      * Filled during runtime to speed up searches to factories when both Input and Output type are secondary types.
      */
     @NotNull
-    private final        Cache<Tuple<TypeToken, TypeToken>, IFactory> secondaryMappingsCache  = CacheBuilder.newBuilder().build();
+    private final Cache<Tuple<TypeToken, TypeToken>, IFactory> secondaryMappingsCache  = CacheBuilder.newBuilder().build();
 
     /**
      * Private constructor. Throws IllegalStateException if already created.
