@@ -3,7 +3,6 @@ package com.minecolonies.coremod.colony;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.buildings.*;
@@ -71,17 +70,17 @@ public class Colony implements IColony
     private static final String TAG_ABANDONED                  = "abandoned";
 
     //statistics tags
-    private static final String TAG_STATISTICS        = "statistics";
-    private static final String TAG_MINER_STATISTICS  = "minerStatistics";
-    private static final String TAG_MINER_ORES        = "ores";
-    private              int    minedOres             = 0;
-    private static final String TAG_MINER_DIAMONDS    = "diamonds";
-    private              int    minedDiamonds         = 0;
-    private static final String TAG_FARMER_STATISTICS = "farmerStatistics";
-    private static final String TAG_FARMER_WHEAT      = "wheat";
-    private              int    harvestedWheat        = 0;
-    private static final String TAG_FARMER_POTATOES   = "potatoes";
-    private              int    harvestedPotatoes     = 0;
+    private static final String TAG_STATISTICS            = "statistics";
+    private static final String TAG_MINER_STATISTICS      = "minerStatistics";
+    private static final String TAG_MINER_ORES            = "ores";
+    private              int    minedOres                 = 0;
+    private static final String TAG_MINER_DIAMONDS        = "diamonds";
+    private              int    minedDiamonds             = 0;
+    private static final String TAG_FARMER_STATISTICS     = "farmerStatistics";
+    private static final String TAG_FARMER_WHEAT          = "wheat";
+    private              int    harvestedWheat            = 0;
+    private static final String TAG_FARMER_POTATOES       = "potatoes";
+    private              int    harvestedPotatoes         = 0;
     private static final String TAG_FARMER_CARROTS        = "carrots";
     private              int    harvestedCarrots          = 0;
     private static final String TAG_GUARD_STATISTICS      = "guardStatistics";
@@ -117,7 +116,7 @@ public class Colony implements IColony
     /**
      * Bonus happiness each factor added.
      */
-    private static final double HAPPINESS_FACTOR         = 0.1;
+    private static final double HAPPINESS_FACTOR = 0.1;
 
     /**
      * Average starting happiness.
@@ -181,10 +180,10 @@ public class Colony implements IColony
     private       boolean                         isCitizensDirty  = false;
     private       boolean                         isBuildingsDirty = false;
     private       boolean                         manualHiring     = false;
-    private       boolean                         manualHousing     = false;
+    private       boolean                         manualHousing    = false;
 
-    private       boolean                         isFieldsDirty    = false;
-    private       String                          name             = "ERROR(Wasn't placed by player)";
+    private boolean isFieldsDirty = false;
+    private String  name          = "ERROR(Wasn't placed by player)";
     private BlockPos         center;
     //  Administration/permissions
     @NotNull
@@ -242,13 +241,13 @@ public class Colony implements IColony
         // Register a new event handler
         MinecraftForge.EVENT_BUS.register(new ColonyPermissionEventHandler(this));
 
-        for(final String s: Configurations.freeToInteractBlocks)
+        for (final String s : Configurations.freeToInteractBlocks)
         {
             final Block block = Block.getBlockFromName(s);
-            if(block == null)
+            if (block == null)
             {
                 final BlockPos pos = BlockPosUtil.getBlockPosOfString(s);
-                if(pos != null)
+                if (pos != null)
                 {
                     freePositions.add(pos);
                 }
@@ -385,7 +384,7 @@ public class Colony implements IColony
             freePositions.add(block);
         }
 
-        if(compound.hasKey(TAG_HAPPINESS))
+        if (compound.hasKey(TAG_HAPPINESS))
         {
             this.overallHappiness = compound.getDouble(TAG_HAPPINESS);
         }
@@ -413,7 +412,7 @@ public class Colony implements IColony
             townHall = (BuildingTownHall) building;
         }
 
-        if(building instanceof BuildingWareHouse && wareHouse == null)
+        if (building instanceof BuildingWareHouse && wareHouse == null)
         {
             wareHouse = (BuildingWareHouse) building;
         }
@@ -543,7 +542,7 @@ public class Colony implements IColony
 
         // Free positions
         @NotNull final NBTTagList freePositionsTagList = new NBTTagList();
-        for (@NotNull final BlockPos pos: freePositions)
+        for (@NotNull final BlockPos pos : freePositions)
         {
             @NotNull final NBTTagCompound wayPointCompound = new NBTTagCompound();
             BlockPosUtil.writeToNBT(wayPointCompound, TAG_FREE_POSITIONS, pos);
@@ -643,6 +642,7 @@ public class Colony implements IColony
 
     /**
      * Check if there is a warehouse in the colony already.
+     *
      * @return true if so.
      */
     @Override
@@ -699,6 +699,7 @@ public class Colony implements IColony
 
     /**
      * increment statistic amount.
+     *
      * @param statistic the statistic.
      */
     private void incrementStatisticAmount(@NotNull String statistic)
@@ -740,9 +741,9 @@ public class Colony implements IColony
         }
     }
 
-
     /**
      * Increment the statistic amount and trigger achievement.
+     *
      * @param statistic the statistic.
      */
     public void incrementStatistic(@NotNull String statistic)
@@ -878,9 +879,9 @@ public class Colony implements IColony
           .filter(permissions::isSubscriber)
           .forEachOrdered(subscribers::add);
 
-        if(subscribers.isEmpty())
+        if (subscribers.isEmpty())
         {
-            if(ticksPassed >= TICKS_HOUR)
+            if (ticksPassed >= TICKS_HOUR)
             {
                 ticksPassed = 0;
                 lastContactInHours++;
@@ -1074,12 +1075,13 @@ public class Colony implements IColony
         if (Structures.isDirty() || hasNewSubscribers)
         {
             subscribers.stream()
-                .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyStylesMessage(), player));
+              .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyStylesMessage(), player));
         }
     }
 
     /**
      * Sends packages to update the fields.
+     *
      * @param hasNewSubscribers the new subscribers.
      */
     private void sendFieldPackets(final boolean hasNewSubscribers)
@@ -1098,6 +1100,7 @@ public class Colony implements IColony
 
     /**
      * Get a copy of the freePositions list.
+     *
      * @return the list of free to interact positions.
      */
     public Set<BlockPos> getFreePositions()
@@ -1107,6 +1110,7 @@ public class Colony implements IColony
 
     /**
      * Get a copy of the freeBlocks list.
+     *
      * @return the list of free to interact blocks.
      */
     public Set<Block> getFreeBlocks()
@@ -1116,6 +1120,7 @@ public class Colony implements IColony
 
     /**
      * Add a new free to interact position.
+     *
      * @param pos position to add.
      */
     public void addFreePosition(@NotNull final BlockPos pos)
@@ -1126,6 +1131,7 @@ public class Colony implements IColony
 
     /**
      * Add a new free to interact block.
+     *
      * @param block block to add.
      */
     public void addFreeBlock(@NotNull final Block block)
@@ -1136,6 +1142,7 @@ public class Colony implements IColony
 
     /**
      * Remove a free to interact position.
+     *
      * @param pos position to remove.
      */
     public void removeFreePosition(@NotNull final BlockPos pos)
@@ -1146,6 +1153,7 @@ public class Colony implements IColony
 
     /**
      * Remove a free to interact block.
+     *
      * @param block state to remove.
      */
     public void removeFreeBlock(@NotNull final Block block)
@@ -1224,12 +1232,12 @@ public class Colony implements IColony
             building.onWorldTick(event);
         }
 
-        if(isDay && !world.isDaytime())
+        if (isDay && !world.isDaytime())
         {
             isDay = false;
             updateOverallHappiness();
         }
-        else if(!isDay && world.isDaytime())
+        else if (!isDay && world.isDaytime())
         {
             isDay = true;
         }
@@ -1244,12 +1252,12 @@ public class Colony implements IColony
         int housing = 0;
         int workers = 1;
         double saturation = 0;
-        for(final CitizenData citizen: citizens.values())
+        for (final CitizenData citizen : citizens.values())
         {
             final AbstractBuildingWorker buildingWorker = citizen.getWorkBuilding();
-            if(buildingWorker != null)
+            if (buildingWorker != null)
             {
-                if(buildingWorker instanceof BuildingGuardTower)
+                if (buildingWorker instanceof BuildingGuardTower)
                 {
                     guards += buildingWorker.getBuildingLevel();
                 }
@@ -1260,7 +1268,7 @@ public class Colony implements IColony
             }
 
             final BuildingHome home = citizen.getHomeBuilding();
-            if(home != null)
+            if (home != null)
             {
                 housing += home.getBuildingLevel();
             }
@@ -1270,24 +1278,24 @@ public class Colony implements IColony
 
         final int averageHousing = housing / Math.max(1, citizens.size());
 
-        if(averageHousing > 1)
+        if (averageHousing > 1)
         {
             increaseOverallHappiness(averageHousing * HAPPINESS_FACTOR);
         }
 
-        final int averageSaturation = (int) (saturation/ Math.max(1, citizens.size()));
-        if(averageSaturation < WELL_SATURATED_LIMIT)
+        final int averageSaturation = (int) (saturation / Math.max(1, citizens.size()));
+        if (averageSaturation < WELL_SATURATED_LIMIT)
         {
             decreaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * -HAPPINESS_FACTOR);
         }
-        else if(averageSaturation > WELL_SATURATED_LIMIT)
+        else if (averageSaturation > WELL_SATURATED_LIMIT)
         {
             increaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * HAPPINESS_FACTOR);
         }
 
-        int relation = workers/guards;
+        int relation = workers / guards;
 
-        if(relation > 1)
+        if (relation > 1)
         {
             decreaseOverallHappiness(relation * HAPPINESS_FACTOR);
         }
@@ -1439,7 +1447,8 @@ public class Colony implements IColony
                     //TODO: add Colony Name prefix?
                     LanguageHandler.sendPlayersMessage(
                       this.getMessageEntityPlayers(),
-                      "tile.blockHutTownHall.messageMaxSize");
+                      "tile.blockHutTownHall.messageMaxSize",
+                      this.name);
                 }
             }
 
@@ -1616,11 +1625,11 @@ public class Colony implements IColony
               getID(),
               tileEntity.getBlockType().getClass(),
               tileEntity.getPosition()));
-            if(tileEntity.isMirrored())
+            if (tileEntity.isMirrored())
             {
                 building.setMirror();
             }
-            if(!tileEntity.getStyle().isEmpty())
+            if (!tileEntity.getStyle().isEmpty())
             {
                 building.setStyle(tileEntity.getStyle());
             }
@@ -1687,7 +1696,7 @@ public class Colony implements IColony
         {
             townHall = null;
         }
-        else if(building instanceof BuildingWareHouse)
+        else if (building instanceof BuildingWareHouse)
         {
             wareHouse = null;
         }
@@ -1928,6 +1937,7 @@ public class Colony implements IColony
 
     /**
      * Getter for overall happiness.
+     *
      * @return the overall happiness.
      */
     public double getOverallHappiness()
@@ -1937,6 +1947,7 @@ public class Colony implements IColony
 
     /**
      * Increase the overall happiness by an amount, cap at max.
+     *
      * @param amount the amount.
      */
     public void increaseOverallHappiness(double amount)
@@ -1947,6 +1958,7 @@ public class Colony implements IColony
 
     /**
      * Decrease the overall happiness by an amount, cap at min.
+     *
      * @param amount the amount.
      */
     public void decreaseOverallHappiness(double amount)
@@ -1969,6 +1981,7 @@ public class Colony implements IColony
 
     /**
      * Get all the waypoints of the colony.
+     *
      * @return copy of hashmap.
      */
     public Map<BlockPos, IBlockState> getWayPoints()
