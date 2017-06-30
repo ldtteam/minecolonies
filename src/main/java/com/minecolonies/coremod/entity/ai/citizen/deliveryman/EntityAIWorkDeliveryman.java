@@ -540,12 +540,12 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 itemsToDeliver.clear();
                 return START_WORKING;
             }
-            else if (itemsToDeliver.isEmpty() && !isToolInTileEntity((TileEntityChest) tileEntity, buildingToDeliver.getNeedsTool(), TOOL_LEVEL_WOOD_OR_GOLD,
+            else if (retrieveToolInTileEntity((TileEntityChest) tileEntity, buildingToDeliver.getNeedsTool(), TOOL_LEVEL_WOOD_OR_GOLD,
                     buildingToDeliver.getBuildingLevel()))
             {
-                ((BuildingDeliveryman) getOwnBuilding()).setBuildingToDeliver(null);
-                itemsToDeliver.clear();
-                return START_WORKING;
+                worker.setHeldItem(SLOT_HAND);
+                setDelay(DUMP_AND_GATHER_DELAY);
+                return DELIVERY;
             }
             else if (!itemsToDeliver.isEmpty())
             {
