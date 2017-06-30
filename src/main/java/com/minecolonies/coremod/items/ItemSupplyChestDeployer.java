@@ -21,6 +21,7 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -81,6 +82,12 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * Our guide Book.
      */
     private static final ResourceLocation GUIDE_BOOK = new ResourceLocation(Constants.MOD_ID + ":book/minecolonies.xml");
+
+    /**
+     * Our guide Book.
+     */
+    @GameRegistry.ItemStackHolder(value = "gbook:guidebook", nbt = "{Book:\"minecolonies:book/minecolonies.xml\"}")
+    public static ItemStack guideBook;
 
     /**
      * Creates a new supplychest deployer. The item is not stackable.
@@ -272,7 +279,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         }
         chest.setInventorySlotContents(0, new ItemStack(ModBlocks.blockHutTownHall));
         chest.setInventorySlotContents(1, new ItemStack(ModItems.buildTool));
-        chest.setInventorySlotContents(2, new ItemGuidebook("guidebook").of(GUIDE_BOOK));
+        chest.setInventorySlotContents(2, guideBook);
     }
 
     /**
