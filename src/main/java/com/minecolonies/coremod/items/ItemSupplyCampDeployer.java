@@ -1,25 +1,23 @@
 package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.util.StructureWrapper;
+import gigaherz.guidebook.guidebook.ItemGuidebook;
 import net.minecraft.block.BlockChest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.Mirror;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -59,6 +57,11 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
      * Amount of directions to try to place the supply camp.
      */
     private static final int CHECK_X_DIRECTIONS = 4;
+
+    /**
+     * Our guide Book.
+     */
+    private static final ResourceLocation GUIDE_BOOK = new ResourceLocation(Constants.MOD_ID + ":book/minecolonies.xml");
 
     /**
      * Creates a new supplychest deployer. The item is not stackable.
@@ -208,6 +211,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
         }
         chest.setInventorySlotContents(0, new ItemStack(ModBlocks.blockHutTownHall));
         chest.setInventorySlotContents(1, new ItemStack(ModItems.buildTool));
+        chest.setInventorySlotContents(2, new ItemGuidebook("guidebook").of(GUIDE_BOOK));
     }
 
     /**

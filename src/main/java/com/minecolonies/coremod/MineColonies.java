@@ -9,10 +9,18 @@ import com.minecolonies.coremod.commands.CommandEntryPoint;
 import com.minecolonies.coremod.network.messages.*;
 import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.util.RecipeHandler;
+import gigaherz.guidebook.client.BookRegistryEvent;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
@@ -23,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 @Mod(modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION,
   /*dependencies = Constants.FORGE_VERSION,*/ acceptedMinecraftVersions = Constants.MC_VERSION,
   guiFactory = Constants.CONFIG_GUI_LOCATION, certificateFingerprint = Constants.FINGERPRINT)
+@Mod.EventBusSubscriber
 public class MineColonies
 {
     /**
@@ -202,6 +211,13 @@ public class MineColonies
         warning += "\n" + "   - " + event.getExpectedFingerprint();
 
         Log.bigWarning(warning);
+    }
+
+
+    @Optional.Method(modid="gbook")
+    @SubscribeEvent
+    public static void registerBook(BookRegistryEvent event) {
+        event.register(new ResourceLocation(Constants.MOD_ID + ":book/minecolonies.xml"));
     }
 }
 

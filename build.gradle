@@ -18,6 +18,11 @@ plugins {
 
 repositories {
     maven {
+        url 'http://dogforce-games.com/maven'
+    }
+}
+repositories {
+    maven {
         name 'DVS1 Maven FS'
         url 'http://dvs1.progwml6.com/files/maven'
     }
@@ -90,12 +95,23 @@ sourceSets {
     }
 }
 
+
+ext.configFile = file "build.properties"
+
+configFile.withReader {
+    def prop = new Properties()
+    prop.load(it)
+    ext.config = new ConfigSlurper().parse prop
+}
+
 dependencies {
-    deobfCompile "slimeknights.mantle:Mantle:1.10.2-1.1.5.205"
-    deobfCompile "slimeknights:TConstruct:1.10.2-2.6.3.500"
+    deobfCompile "slimeknights.mantle:Mantle:${config.minecraft_version}-${config.mantle_version}"
+    deobfCompile "slimeknights:TConstruct:${config.minecraft_version}-${config.tconstruct_version}"
 
     structuresCompile sourceSets.api.output
     //blockOutCompile sourceSets.api.output
+
+    deobfCompile "gigaherz.guidebook:Guidebook-${config.minecraft_version}:${config.guidebook_version}"
 
     testCompile sourceSets.structures.output
     testCompile sourceSets.blockOut.output
@@ -107,14 +123,6 @@ dependencies {
     testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
 
     compile 'com.intellij:annotations:+@jar'
-}
-
-ext.configFile = file "build.properties"
-
-configFile.withReader {
-    def prop = new Properties()
-    prop.load(it)
-    ext.config = new ConfigSlurper().parse prop
 }
 
 group = "com.minecolonies"
