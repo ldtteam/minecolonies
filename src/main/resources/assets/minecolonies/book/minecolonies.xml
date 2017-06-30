@@ -1,4 +1,4 @@
-<book title="Minecolonies Resurrection" cover="minecolonies:book/defaultCover" fontSize="0.6">
+<book title="Minecolonies Resurrection" cover="gbook:covers/default" fontSize="0.6">
 
   <include ref="gbook:xml/standard.xml" />
 
