@@ -89,11 +89,20 @@ sourceSets {
     }
 }
 
+
+ext.configFile = file "build.properties"
+
+configFile.withReader {
+    def prop = new Properties()
+    prop.load(it)
+    ext.config = new ConfigSlurper().parse prop
+}
+
 dependencies {
     structuresCompile sourceSets.api.output
     //blockOutCompile sourceSets.api.output
 
-    deobfCompile "gigaherz.guidebook:Guidebook-1.11.0:1.7.0"
+    deobfCompile "gigaherz.guidebook:Guidebook-1.11.0:${config.guidebook_version}"
 
     testCompile sourceSets.structures.output
     testCompile sourceSets.blockOut.output
@@ -105,14 +114,6 @@ dependencies {
     testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
 
     compile 'com.intellij:annotations:+@jar'
-}
-
-ext.configFile = file "build.properties"
-
-configFile.withReader {
-    def prop = new Properties()
-    prop.load(it)
-    ext.config = new ConfigSlurper().parse prop
 }
 
 group = "com.minecolonies"
