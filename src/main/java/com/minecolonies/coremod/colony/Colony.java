@@ -1444,7 +1444,6 @@ public class Colony implements IColony
 
                 if (getMaxCitizens() == getCitizens().size())
                 {
-                    //TODO: add Colony Name prefix?
                     LanguageHandler.sendPlayersMessage(
                       this.getMessageEntityPlayers(),
                       "tile.blockHutTownHall.messageMaxSize",
