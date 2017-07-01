@@ -178,7 +178,7 @@ public class Tree
             return world.getBlockState(log).getValue(BlockNewLog.VARIANT).getMetadata();
         }
 
-        if (Compatibility.isSlimeBlock(block))
+        if (Compatibility.isSlimeBlock(block) && Compatibility.isSlimeLeaf(world.getBlockState(leaf).getBlock()))
         {
             return Compatibility.getLeafVariant(world.getBlockState(leaf));
         }
