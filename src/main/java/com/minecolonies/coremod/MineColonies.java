@@ -2,8 +2,8 @@ package com.minecolonies.coremod;
 
 import com.minecolonies.api.configuration.ConfigurationHandler;
 import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.commands.CommandEntryPoint;
 import com.minecolonies.coremod.network.messages.*;
@@ -16,10 +16,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
@@ -192,10 +188,12 @@ public class MineColonies
     }
 
     @Mod.EventHandler
-    public void onFingerprintViolation(FMLFingerprintViolationEvent event) {
-        String warning = "Minecolonies does not run from a verified source. Current Fingerprint" + (event.getFingerprints().size() > 1 ? "s" : "") +  ": ";
+    public void onFingerprintViolation(FMLFingerprintViolationEvent event)
+    {
+        String warning = "Minecolonies does not run from a verified source. Current Fingerprint" + (event.getFingerprints().size() > 1 ? "s" : "") + ": ";
 
-        if (event.getFingerprints().size() > 0) {
+        if (event.getFingerprints().size() > 0)
+        {
             for (String print :
               event.getFingerprints())
             {
@@ -213,10 +211,10 @@ public class MineColonies
         Log.bigWarning(warning);
     }
 
-
-    @Optional.Method(modid="gbook")
+    @Optional.Method(modid = "gbook")
     @SubscribeEvent
-    public static void registerBook(BookRegistryEvent event) {
+    public static void registerBook(final BookRegistryEvent event)
+    {
         event.register(new ResourceLocation(Constants.MOD_ID + ":book/minecolonies.xml"));
     }
 }
