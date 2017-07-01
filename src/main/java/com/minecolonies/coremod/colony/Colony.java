@@ -67,13 +67,13 @@ public class Colony implements IColony
     private static final String TAG_ABANDONED                  = "abandoned";
 
     //statistics tags
-    private static final String TAG_STATISTICS        = "statistics";
-    private static final String TAG_MINER_STATISTICS  = "minerStatistics";
-    private static final String TAG_MINER_ORES        = "ores";
-    private static final String TAG_MINER_DIAMONDS    = "diamonds";
-    private static final String TAG_FARMER_STATISTICS = "farmerStatistics";
-    private static final String TAG_FARMER_WHEAT      = "wheat";
-    private static final String TAG_FARMER_POTATOES   = "potatoes";
+    private static final String TAG_STATISTICS            = "statistics";
+    private static final String TAG_MINER_STATISTICS      = "minerStatistics";
+    private static final String TAG_MINER_ORES            = "ores";
+    private static final String TAG_MINER_DIAMONDS        = "diamonds";
+    private static final String TAG_FARMER_STATISTICS     = "farmerStatistics";
+    private static final String TAG_FARMER_WHEAT          = "wheat";
+    private static final String TAG_FARMER_POTATOES       = "potatoes";
     private static final String TAG_FARMER_CARROTS        = "carrots";
     private static final String TAG_GUARD_STATISTICS      = "guardStatistics";
     private static final String TAG_GUARD_MOBS            = "mobs";
@@ -84,7 +84,7 @@ public class Colony implements IColony
     private static final String TAG_LUMBERJACK_STATISTICS = "lumberjackStatistics";
     private static final String TAG_LUMBERJACK_TREES      = "trees";
     private static final String TAG_LUMBERJACK_SAPLINGS   = "saplings";
-    private static final int    NUM_ACHIEVEMENT_FIRST    = 1;
+    private static final int    NUM_ACHIEVEMENT_FIRST     = 1;
     private static final int    NUM_ACHIEVEMENT_SECOND    = 25;
     private static final int    NUM_ACHIEVEMENT_THIRD     = 100;
     private static final int    NUM_ACHIEVEMENT_FOURTH    = 500;
@@ -93,7 +93,7 @@ public class Colony implements IColony
     /**
      * Amount of ticks that pass/hour.
      */
-    private static final int TICKS_HOUR        = 20 * 60 * 60;
+    private static final int TICKS_HOUR = 20 * 60 * 60;
 
     /**
      * Average happiness of a citizen.
@@ -739,9 +739,9 @@ public class Colony implements IColony
 
         // Add owners
         world.getMinecraftServer().getPlayerList().getPlayers()
-                .stream()
-                .filter(permissions::isSubscriber)
-                .forEachOrdered(subscribers::add);
+          .stream()
+          .filter(permissions::isSubscriber)
+          .forEachOrdered(subscribers::add);
 
         if (subscribers.isEmpty())
         {
@@ -766,7 +766,7 @@ public class Colony implements IColony
 
                 final double distance = player.getDistanceSq(center);
                 if (distance < MAX_SQ_DIST_SUBSCRIBER_UPDATE
-                        || (oldSubscribers.contains(player) && distance < MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE))
+                      || (oldSubscribers.contains(player) && distance < MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE))
                 {
                     // Players become subscribers if they come within 16 blocks of the edge of the colony
                     // Players remain subscribers while they remain within double the colony's radius
@@ -1133,15 +1133,15 @@ public class Colony implements IColony
             saturation += citizen.getSaturation();
         }
 
-        final int averageHousing = housing/Math.max(1, citizens.size());
+        final int averageHousing = housing / Math.max(1, citizens.size());
 
         if (averageHousing > 1)
         {
             increaseOverallHappiness(averageHousing * HAPPINESS_FACTOR);
         }
 
-        final int averageSaturation = (int) (saturation/citizens.size());
-        if(averageSaturation < WELL_SATURATED_LIMIT)
+        final int averageSaturation = (int) (saturation / citizens.size());
+        if (averageSaturation < WELL_SATURATED_LIMIT)
         {
             decreaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * -HAPPINESS_FACTOR);
         }
@@ -1150,7 +1150,7 @@ public class Colony implements IColony
             increaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * HAPPINESS_FACTOR);
         }
 
-        final int relation = workers/guards;
+        final int relation = workers / guards;
 
         if (relation > 1)
         {
@@ -1387,7 +1387,6 @@ public class Colony implements IColony
 
                 if (getMaxCitizens() == getCitizens().size())
                 {
-                    //TODO: add Colony Name prefix?
                     LanguageHandler.sendPlayersMessage(
                       this.getMessageEntityPlayers(),
                       "tile.blockHutTownHall.messageMaxSize",

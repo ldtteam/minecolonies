@@ -1,9 +1,10 @@
 package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.blocks.ModBlocks;
@@ -11,13 +12,15 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.util.StructureWrapper;
-import gigaherz.guidebook.guidebook.ItemGuidebook;
 import net.minecraft.block.BlockChest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -76,11 +79,6 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * Offset y of the supplyCamp
      */
     private static final int OFFSET_Y = -2;
-
-    /**
-     * Our guide Book.
-     */
-    private static final ResourceLocation GUIDE_BOOK = new ResourceLocation(Constants.MOD_ID + ":book/minecolonies.xml");
 
     /**
      * Our guide Book.
@@ -234,25 +232,25 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
 
             case SOUTH:
                 StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(OFFSET_SOUTH_WEST, OFFSET_Y, OFFSET_SOUTH_EAST),
-                        Constants.ROTATE_THREE_TIMES, Mirror.NONE);
+                  Constants.ROTATE_THREE_TIMES, Mirror.NONE);
                 break;
             case NORTH:
                 StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(OFFSET_NORTH_EAST, OFFSET_Y, OFFSET_NORTH_WEST),
-                        Constants.ROTATE_ONCE, Mirror.NONE);
+                  Constants.ROTATE_ONCE, Mirror.NONE);
                 break;
             case EAST:
                 StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(OFFSET_SOUTH_EAST, OFFSET_Y, OFFSET_NORTH_EAST),
-                        Constants.ROTATE_TWICE, Mirror.NONE);
+                  Constants.ROTATE_TWICE, Mirror.NONE);
                 break;
             case WEST:
                 StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(OFFSET_NORTH_WEST, OFFSET_Y, OFFSET_SOUTH_WEST),
-                        Constants.ROTATE_0_TIMES, Mirror.NONE);
+                  Constants.ROTATE_0_TIMES, Mirror.NONE);
                 break;
             default:
                 break;
         }
     }
-    
+
     /**
      * Fills the content of the supplychest with the buildTool and townHall.
      *
@@ -283,13 +281,13 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @return true if it can be placed.
      */
     private static boolean checkX(
-            final World world,
-            final BlockPos pos,
-            final int k,
-            final int spaceRightK,
-            final int spaceLeftK,
-            final int widthK,
-            final boolean isCoordPositivelyAdded)
+                                   final World world,
+                                   final BlockPos pos,
+                                   final int k,
+                                   final int spaceRightK,
+                                   final int spaceLeftK,
+                                   final int widthK,
+                                   final boolean isCoordPositivelyAdded)
     {
         for (int i = DISTANCE; i < WIDTH; i++)
         {
@@ -326,13 +324,13 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @return true if it can be placed.
      */
     private static boolean checkZ(
-            final World world,
-            final BlockPos pos,
-            final int k,
-            final int spaceRightK,
-            final int spaceLeftK,
-            final int widthK,
-            final boolean isCoordPositivelyAdded)
+                                   final World world,
+                                   final BlockPos pos,
+                                   final int k,
+                                   final int spaceRightK,
+                                   final int spaceLeftK,
+                                   final int widthK,
+                                   final boolean isCoordPositivelyAdded)
     {
         for (int i = DISTANCE; i < WIDTH; i++)
         {
