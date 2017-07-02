@@ -32,10 +32,20 @@ public class MobEventsUtils
     private static final int    PREFERRED_MAX_BARBARIANS     = 22;
     private static final int    PREFERRED_MAX_ARCHERS        = 16;
     private static final int    PREFERRED_MAX_CHIEFS         = 2;
+    private static final int    MIN_CITIZENS_FOR_RAID        = 5;
+    private static final int    HALF_MINECRAFT_DAY           = 12000;
+    private static final int    TICKS_AFTER_HALF_DAY         = 1000;
     private static       int    numberOfBarbarians           = 0;
     private static       int    numberOfArchers              = 0;
     private static       int    numberOfChiefs               = 0;
-    private static long TimeToRaid;
+    private static long timeToRaid;
+
+    /**
+     * Private constructor to hide the implicit public one.
+     */
+    private MobEventsUtils()
+    {
+    }
 
     public static void barbarianEvent(final World world, final Colony colony)
     {
@@ -66,12 +76,12 @@ public class MobEventsUtils
      */
     private static void numberOfSpawns(final Colony colony)
     {
-        final int raidLevel = getColonyRaidLevel(colony);
-
-        if (colony.getCitizens().size() < 5)
+        if (colony.getCitizens().size() < MIN_CITIZENS_FOR_RAID)
         {
             return;
         }
+
+        final int raidLevel = getColonyRaidLevel(colony);
 
         numberOfBarbarians = (int) (BARBARIANS_MULTIPLIER * raidLevel);
         numberOfArchers = (int) (ARCHER_BARBARIANS_MULTIPLIER * raidLevel);
@@ -179,19 +189,19 @@ public class MobEventsUtils
 
     public static boolean isItTimeToRaid(final World world, final Colony colony)
     {
-        if (world.getWorldTime() % 12000 == 0)
+        if (world.getWorldTime() % HALF_MINECRAFT_DAY == 0)
         {
-            TimeToRaid = world.getWorldTime() + 1000;
+            timeToRaid = world.getWorldTime() + TICKS_AFTER_HALF_DAY;
             return false;
         }
-        if (world.getWorldTime() == TimeToRaid && !world.isDaytime() && colony.hasWillRaidTonight())
+        if (world.getWorldTime() == timeToRaid && !world.isDaytime() && colony.hasWillRaidTonight())
         {
             LanguageHandler.sendPlayersMessage(
               colony.getMessageEntityPlayers(),
               "yello");
             return true;
         }
-        if (world.getWorldTime() == TimeToRaid && world.isDaytime())
+        if (world.getWorldTime() == timeToRaid && world.isDaytime())
         {
             final boolean raid = raidThisNight(world);
             LanguageHandler.sendPlayersMessage(

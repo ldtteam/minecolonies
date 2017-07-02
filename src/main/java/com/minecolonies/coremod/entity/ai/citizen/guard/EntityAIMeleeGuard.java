@@ -142,7 +142,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
 
         if (targetEntity != null && worker.getColony() != null)
         {
-            List<EntityLivingBase> targets = worker.getColony().getGuardTargets();
+            final List<EntityLivingBase> targets = worker.getColony().getGuardTargets();
             if (targets.stream().noneMatch(entity -> entity == targetEntity))
             {
                 targets.add(targetEntity);
@@ -150,14 +150,11 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
             worker.getColony().setGuardTargets(targets);
         }
 
-        if (!targetEntity.isEntityAlive() || checkForToolOrWeapon(ToolType.SWORD))
+        if (targetEntity != null && !targetEntity.isEntityAlive() || checkForToolOrWeapon(ToolType.SWORD))
         {
-            if (targetEntity != null && worker.getColony() != null)
-            {
-                List<EntityLivingBase> targets = worker.getColony().getGuardTargets();
-                targets.remove(targetEntity);
-                worker.getColony().setGuardTargets(targets);
-            }
+            final List<EntityLivingBase> targets = worker.getColony().getGuardTargets();
+            targets.remove(targetEntity);
+            worker.getColony().setGuardTargets(targets);
             targetEntity = null;
             worker.setAIMoveSpeed((float) 1.0D);
             return AIState.GUARD_GATHERING;

@@ -71,12 +71,20 @@ public class BarbarianSpawnUtils
     private static final double BARBARIAN_HEALTH_MULTIPLIER = 0.5;
 
     /**
+     * Private constructor to hide the implicit public one.
+     */
+    private BarbarianSpawnUtils()
+    {
+    }
+
+
+    /**
      * Set barbarian attributes.
      *
      * @param barbarian The barbarian to set the attributes on.
      * @param colony    The colony that the barbarian is attacking.
      */
-    public static void setBarbarianAttributes(AbstractEntityBarbarian barbarian, Colony colony)
+    public static void setBarbarianAttributes(final AbstractEntityBarbarian barbarian,final Colony colony)
     {
         barbarian.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE);
         barbarian.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(MOVEMENT_SPEED);
@@ -105,7 +113,7 @@ public class BarbarianSpawnUtils
      *
      * @param barbarian The barbarian to set the AI Tasks on.
      */
-    public static void setBarbarianAI(AbstractEntityBarbarian barbarian)
+    public static void setBarbarianAI(final AbstractEntityBarbarian barbarian)
     {
         barbarian.tasks.addTask(PRIORITY_ZERO, new EntityAISwimming(barbarian));
         barbarian.tasks.addTask(PRIORITY_FOUR, new EntityAIWalkToRandomHuts(barbarian, AI_MOVE_SPEED));
@@ -129,7 +137,7 @@ public class BarbarianSpawnUtils
      * @param barbarian The barbarian for which to get the Loot Table.
      * @return The loot table.
      */
-    public static ResourceLocation getBarbarianLootTable(AbstractEntityBarbarian barbarian)
+    public static ResourceLocation getBarbarianLootTable(final AbstractEntityBarbarian barbarian)
     {
         if (barbarian instanceof EntityBarbarian)
         {
@@ -190,7 +198,7 @@ public class BarbarianSpawnUtils
         }
     }
 
-    public static void setBarbarianEquipment(AbstractEntityBarbarian barbarian)
+    public static void setBarbarianEquipment(final AbstractEntityBarbarian barbarian)
     {
         if (barbarian instanceof EntityBarbarian)
         {

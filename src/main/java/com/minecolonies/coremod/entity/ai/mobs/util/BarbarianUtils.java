@@ -12,6 +12,16 @@ import java.util.Optional;
  */
 public class BarbarianUtils
 {
+
+    private static final double Y_DISTANCE_TO_CHECK_WITHIN = 3.0D;
+
+    /**
+     * Private constructor to hide the implicit public one.
+     */
+    private BarbarianUtils()
+    {
+    }
+
     /**
      * Returns the closest barbarian to an entity.
      *
@@ -38,7 +48,7 @@ public class BarbarianUtils
           AbstractEntityBarbarian.class,
           entity.getEntityBoundingBox().expand(
             distanceFromEntity,
-            3.0D,
+            Y_DISTANCE_TO_CHECK_WITHIN,
             distanceFromEntity),
           Entity::isEntityAlive);
     }

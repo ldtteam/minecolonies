@@ -15,7 +15,7 @@ import javax.annotation.Nonnull;
 /**
  * Abstract for rendering Barbarians.
  */
-public class AbstractRendererBarbarian extends RenderLiving<AbstractEntityBarbarian>
+public abstract class AbstractRendererBarbarian extends RenderLiving<AbstractEntityBarbarian>
 {
     private static final float SHADOW_SIZE = 0.5F;
     private final ResourceLocation mobTexture;
@@ -25,7 +25,7 @@ public class AbstractRendererBarbarian extends RenderLiving<AbstractEntityBarbar
      *
      * @param renderManagerIn the renderManager
      */
-    public AbstractRendererBarbarian(final RenderManager renderManagerIn, Class barbarian)
+    public AbstractRendererBarbarian(final RenderManager renderManagerIn,final Class barbarian)
     {
         super(renderManagerIn, new ModelBiped(), SHADOW_SIZE);
 
