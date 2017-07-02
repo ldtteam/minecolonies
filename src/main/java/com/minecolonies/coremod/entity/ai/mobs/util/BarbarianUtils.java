@@ -10,7 +10,7 @@ import java.util.Optional;
 /**
  * A few utils used for barbarians.
  */
-public class BarbarianUtils
+public final class BarbarianUtils
 {
 
     private static final double Y_DISTANCE_TO_CHECK_WITHIN = 3.0D;

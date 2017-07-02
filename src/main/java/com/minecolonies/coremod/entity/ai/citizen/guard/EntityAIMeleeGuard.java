@@ -150,7 +150,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
             worker.getColony().setGuardTargets(targets);
         }
 
-        if (targetEntity != null && !targetEntity.isEntityAlive() || checkForToolOrWeapon(ToolType.SWORD))
+        if (targetEntity != null && (!targetEntity.isEntityAlive() || checkForToolOrWeapon(ToolType.SWORD)))
         {
             final List<EntityLivingBase> targets = worker.getColony().getGuardTargets();
             targets.remove(targetEntity);

@@ -28,7 +28,7 @@ import java.util.stream.IntStream;
 /**
  * Utils used for Barbarian Spawning
  */
-public class BarbarianSpawnUtils
+public final class BarbarianSpawnUtils
 {
     /**
      * Loot tables for Barbarians.

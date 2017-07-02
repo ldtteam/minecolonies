@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Utils for Colony mob events
  */
-public class MobEventsUtils
+public final class MobEventsUtils
 {
     private static final String BARBARIAN = "minecolonies.Barbarian";
     private static final String ARCHER    = "minecolonies.ArcherBarbarian";
@@ -33,7 +33,7 @@ public class MobEventsUtils
     private static final int    PREFERRED_MAX_ARCHERS        = 16;
     private static final int    PREFERRED_MAX_CHIEFS         = 2;
     private static final int    MIN_CITIZENS_FOR_RAID        = 5;
-    private static final int    HALF_MINECRAFT_DAY           = 12000;
+    private static final int    HALF_MINECRAFT_DAY           = 12_000;
     private static final int    TICKS_AFTER_HALF_DAY         = 1000;
     private static       int    numberOfBarbarians           = 0;
     private static       int    numberOfArchers              = 0;

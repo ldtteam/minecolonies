@@ -204,7 +204,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
             worker.getColony().setGuardTargets(targets);
         }
 
-        if (targetEntity != null && !targetEntity.isEntityAlive() || checkForToolOrWeapon(ToolType.BOW))
+        if (targetEntity != null && (!targetEntity.isEntityAlive() || checkForToolOrWeapon(ToolType.BOW)))
         {
             final List<EntityLivingBase> targets = worker.getColony().getGuardTargets();
             targets.remove(targetEntity);

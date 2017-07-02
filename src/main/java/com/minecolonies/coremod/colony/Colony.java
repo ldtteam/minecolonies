@@ -2023,8 +2023,7 @@ public class Colony implements IColony
     @Override
     public List<EntityLivingBase> getGuardTargets()
     {
-        final List<EntityLivingBase> targets = guardTargets;
-        return targets;
+        return guardTargets;
     }
 
     public void setGuardTargets(final List<EntityLivingBase> targets)
