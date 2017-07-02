@@ -9,6 +9,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.inventory.InventoryField;
+import com.minecolonies.coremod.tileentities.TileEntityRack;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntityChest;
@@ -16,6 +17,7 @@ import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -80,6 +82,19 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
     }
 
     /**
+     * Creates an open inventory message for a building.
+     *
+     * @param tileEntity {@link TileEntityRack}
+     */
+    public OpenInventoryMessage(@NotNull final TileEntityRack rack)
+    {
+        super();
+        inventoryType = InventoryType.INVENTORY_CHEST;
+        name = "";
+        tePos = rack.getPos();
+    }
+
+    /**
      * Creates an open inventory message for a field.
      *
      * @param field    {@link AbstractBuilding.View}
@@ -104,6 +119,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
             case INVENTORY_CITIZEN:
                 entityID = buf.readInt();
                 break;
+            case INVENTORY_RACK:
             case INVENTORY_CHEST:
                 tePos = BlockPosUtil.readFromByteBuf(buf);
                 break;
@@ -123,6 +139,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
             case INVENTORY_CITIZEN:
                 buf.writeInt(entityID);
                 break;
+            case INVENTORY_RACK:
             case INVENTORY_CHEST:
                 BlockPosUtil.writeToByteBuf(buf, tePos);
                 break;
@@ -169,7 +186,6 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
 
     private static void doHutInventory(final OpenInventoryMessage message, final EntityPlayerMP player)
     {
-
         if (checkPermissions(ColonyManager.getClosestColony(player.getEntityWorld(), message.tePos), player))
         {
             @NotNull final TileEntityChest chest = (TileEntityChest) BlockPosUtil.getTileEntity(CompatibilityUtils.getWorld(player), message.tePos);
@@ -207,6 +223,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
     {
         INVENTORY_CITIZEN,
         INVENTORY_CHEST,
-        INVENTORY_FIELD
+        INVENTORY_FIELD,
+        INVENTORY_RACK
     }
 }

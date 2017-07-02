@@ -1,23 +1,30 @@
 {
+  "forge_marker": 1,
+
   "variants": {
-    "facing=up": {
-      "model": "minecolonies:blockHutTownHall"
+    "facing": {
+      "up": {
+      },
+      "east": {
+        "y": 0
+      },
+      "south": {
+        "y": 90
+      },
+      "west": {
+        "y": 180
+      },
+      "north": {
+        "y": 270
+      }
     },
-    "facing=east": {
-      "model": "minecolonies:blockHutTownHall",
-      "y": 0
-    },
-    "facing=south": {
-      "model": "minecolonies:blockHutTownHall",
-      "y": 90
-    },
-    "facing=west": {
-      "model": "minecolonies:blockHutTownHall",
-      "y": 180
-    },
-    "facing=north": {
-      "model": "minecolonies:blockHutTownHall",
-      "y": 270
+    "variant": {
+      "blockrackempty": {
+        "model": "minecolonies:blockRackEmpty"
+      },
+      "blockrackfull": {
+        "model": "minecolonies:blockRackFull"
+      }
     }
   }
 }

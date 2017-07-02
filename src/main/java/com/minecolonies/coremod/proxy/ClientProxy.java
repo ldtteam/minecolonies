@@ -5,10 +5,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.client.gui.WindowBuildTool;
 import com.minecolonies.coremod.client.gui.WindowCitizen;
-import com.minecolonies.coremod.client.render.EmptyTileEntitySpecialRenderer;
-import com.minecolonies.coremod.client.render.RenderBipedCitizen;
-import com.minecolonies.coremod.client.render.RenderFishHook;
-import com.minecolonies.coremod.client.render.TileEntityScarecrowRenderer;
+import com.minecolonies.coremod.client.render.*;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.Structures;
@@ -18,6 +15,7 @@ import com.minecolonies.coremod.event.ClientEventHandler;
 import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.coremod.tileentities.TileEntityRack;
 import com.minecolonies.structures.event.RenderEventHandler;
 import com.minecolonies.structures.helpers.Settings;
 import net.minecraft.client.Minecraft;
@@ -71,6 +69,7 @@ public class ClientProxy extends CommonProxy
     {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityColonyBuilding.class, new EmptyTileEntitySpecialRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(ScarecrowTileEntity.class, new TileEntityScarecrowRenderer());
+
     }
 
     @Override
@@ -120,6 +119,8 @@ public class ClientProxy extends CommonProxy
                 new ModelResourceLocation(ModBlocks.blockConstructionTape.getRegistryName(), INVENTORY));
         itemModelMesher.register(Item.getItemFromBlock(ModBlocks.blockConstructionTapeCorner), 0,
                 new ModelResourceLocation(ModBlocks.blockConstructionTapeCorner.getRegistryName(), INVENTORY));
+        itemModelMesher.register(Item.getItemFromBlock(ModBlocks.blockRack), 0,
+                new ModelResourceLocation(ModBlocks.blockRack.getRegistryName(), INVENTORY));
 
         itemModelMesher.register(ModItems.buildTool, 0, new ModelResourceLocation(ModItems.buildTool.getRegistryName(), INVENTORY));
         itemModelMesher.register(ModItems.caliper, 0, new ModelResourceLocation(ModItems.caliper.getRegistryName(), INVENTORY));
