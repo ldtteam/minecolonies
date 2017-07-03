@@ -55,6 +55,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
         if(args.length < 2)
         {
             sender.addChatMessage(new TextComponentString(NO_ARGUMENTS));
+            return;
         }
 
         if (!isPlayerOpped(sender))
@@ -90,6 +91,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
         if (colony == null)
         {
             sender.addChatMessage(new TextComponentString(String.format(COLONY_NULL, colonyId)));
+            return;
         }
 
         String playerName = null;
@@ -101,12 +103,14 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
         if(playerName == null || playerName.isEmpty())
         {
             sender.addChatMessage(new TextComponentString(NO_PLAYER));
+            return;
         }
 
         final EntityPlayer player = sender.getEntityWorld().getPlayerEntityByName(playerName);
         if(player == null)
         {
             sender.addChatMessage(new TextComponentString(NO_PLAYER));
+            return;
         }
 
         if(ColonyManager.getIColonyByOwner(sender.getEntityWorld(), player) != null)
