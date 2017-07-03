@@ -39,7 +39,7 @@ public class TileEntityRack extends TileEntity
      */
     private final Map<ItemStorage, Integer> content = new HashMap<>();
 
-    final IItemHandlerModifiable inventory = new ItemStackHandler(27)
+    private final IItemHandlerModifiable inventory = new ItemStackHandler(27)
     {
         @Override
         protected void onContentsChanged(final int slot)
@@ -88,9 +88,22 @@ public class TileEntityRack extends TileEntity
         }
     }
 
+    /**
+     * On neighbor changed this will be called from the block.
+     * @param neighbor the blockPos which has changed.
+     */
     public void neighborChanged(final BlockPos neighbor)
     {
-
+        if(this.neighbor.equals(BlockPos.ORIGIN) && worldObj.getTileEntity(neighbor) instanceof TileEntityRack)
+        {
+            this.neighbor = neighbor;
+            single = false;
+        }
+        else if(this.neighbor.equals(neighbor) && !(worldObj.getTileEntity(neighbor) instanceof TileEntityRack))
+        {
+            this.neighbor = BlockPos.ORIGIN;
+            single = true;
+        }
     }
 
     public IItemHandlerModifiable getInventory()
@@ -131,8 +144,21 @@ public class TileEntityRack extends TileEntity
         return oldState.getBlock() != newSate.getBlock();
     }
 
+    /**
+     * Get the other double chest or null.
+     * @return the tileEntity of the other half or null.
+     */
     public TileEntityRack getOtherChest()
     {
+        if(neighbor.equals(BlockPos.ORIGIN))
+        {
+            return null;
+        }
+        final TileEntity tileEntity = worldObj.getTileEntity(neighbor);
+        if(tileEntity instanceof TileEntityRack)
+        {
+            return (TileEntityRack) tileEntity;
+        }
         return null;
     }
 

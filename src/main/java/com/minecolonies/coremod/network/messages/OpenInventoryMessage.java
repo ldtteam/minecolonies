@@ -82,19 +82,6 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
     }
 
     /**
-     * Creates an open inventory message for a building.
-     *
-     * @param tileEntity {@link TileEntityRack}
-     */
-    public OpenInventoryMessage(@NotNull final TileEntityRack rack)
-    {
-        super();
-        inventoryType = InventoryType.INVENTORY_CHEST;
-        name = "";
-        tePos = rack.getPos();
-    }
-
-    /**
      * Creates an open inventory message for a field.
      *
      * @param field    {@link AbstractBuilding.View}
@@ -119,7 +106,6 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
             case INVENTORY_CITIZEN:
                 entityID = buf.readInt();
                 break;
-            case INVENTORY_RACK:
             case INVENTORY_CHEST:
                 tePos = BlockPosUtil.readFromByteBuf(buf);
                 break;
@@ -139,7 +125,6 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
             case INVENTORY_CITIZEN:
                 buf.writeInt(entityID);
                 break;
-            case INVENTORY_RACK:
             case INVENTORY_CHEST:
                 BlockPosUtil.writeToByteBuf(buf, tePos);
                 break;
@@ -224,6 +209,5 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
         INVENTORY_CITIZEN,
         INVENTORY_CHEST,
         INVENTORY_FIELD,
-        INVENTORY_RACK
     }
 }

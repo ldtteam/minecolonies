@@ -14,27 +14,38 @@ import net.minecraftforge.items.IItemHandler;
 @SideOnly(Side.CLIENT)
 public class GuiRack extends GuiContainer
 {
-    /** The ResourceLocation containing the chest GUI texture. */
+    /**
+     * The resource location of the texture.
+     */
     private static final ResourceLocation CHEST_GUI_TEXTURE = new ResourceLocation("textures/gui/container/generic_54.png");
+    /**
+     * The upper chest inventory.
+     */
     private final IItemHandler upperChestInventory;
-    private final IItemHandler   lowerChestInventory;
-    /** window height is calculated with these values; the more rows, the heigher */
-    private final int          inventoryRows;
 
-    public GuiRack(final InventoryPlayer parInventoryPlayer, final TileEntityRack tileEntity, final World world, final BlockPos location)
+    /**
+     * The lower chest inventory.
+     */
+    private final IItemHandler   lowerChestInventory;
+
+    /**
+     * Used to calculate the window height.
+     */
+    private int inventoryRows;
+
+    public GuiRack(final InventoryPlayer parInventoryPlayer, final TileEntityRack tileEntity, final TileEntityRack neighborRack, final World world, final BlockPos location)
     {
-        super(new ContainerRack(tileEntity, parInventoryPlayer, world, location));
+        super(new ContainerRack(tileEntity, neighborRack, parInventoryPlayer, world, location));
         this.upperChestInventory = tileEntity.getInventory();
-        final TileEntityRack neighborRack = tileEntity.getOtherChest();
+        this.inventoryRows = upperChestInventory.getSlots() / 9;
         if(neighborRack != null)
         {
             this.lowerChestInventory = neighborRack.getInventory();
-            this.inventoryRows = lowerChestInventory.getSlots() / 9;
+            this.inventoryRows += lowerChestInventory.getSlots() / 9;
         }
         else
         {
             this.lowerChestInventory = null;
-            this.inventoryRows = upperChestInventory.getSlots() / 9;
         }
         this.allowUserInput = false;
         this.ySize = 114 + this.inventoryRows * 18;

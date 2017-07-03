@@ -27,7 +27,7 @@ public class GuiHandler implements IGuiHandler
         }
         else if(tileEntity instanceof TileEntityRack)
         {
-            return new ContainerRack((TileEntityRack) tileEntity, player.inventory, world, pos);
+            return new ContainerRack((TileEntityRack) tileEntity, ((TileEntityRack) tileEntity).getOtherChest(), player.inventory, world, pos);
         }
         return null;
     }
@@ -43,7 +43,7 @@ public class GuiHandler implements IGuiHandler
         }
         else if(tileEntity instanceof TileEntityRack)
         {
-            return new GuiRack(player.inventory, (TileEntityRack) tileEntity, world, pos);
+            return new GuiRack(player.inventory, (TileEntityRack) tileEntity, ((TileEntityRack) tileEntity).getOtherChest(), world, pos);
         }
         return null;
     }
