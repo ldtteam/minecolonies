@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
@@ -17,10 +18,12 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -29,6 +32,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -110,35 +114,42 @@ public class BlockRack extends Block
     }
 
     /**
-     * @Deprecated but we still need this because there is nothing better.
-     * @param meta the metadata.
-     * @return the state.
+     * @deprecated but we still need this because there is nothing better.
      */
     @Deprecated
     @Override
     public IBlockState getStateFromMeta(int meta)
     {
-        EnumType type = EnumType.byMetadata(meta / 4);
-        EnumFacing facing = EnumFacing.getHorizontal(meta - (type.getMetadata() * 4));
+        EnumType type = EnumType.byMetadata(meta);
+        EnumFacing facing = EnumFacing.getHorizontal(meta - (type.getMetadata()));
 
         return this.getDefaultState().withProperty(VARIANT, type).withProperty(FACING, facing);
     }
 
     @Override
-    public void onNeighborChange(final IBlockAccess world, final BlockPos pos, final BlockPos neighbor)
+    public void neighborChanged(final IBlockState state, final World worldIn, final BlockPos pos, final Block blockIn)
     {
-        final TileEntity tileEntity = world.getTileEntity(pos);
-        if(tileEntity instanceof TileEntityRack)
+        if(state.getBlock() instanceof BlockRack)
         {
-            ((TileEntityRack) tileEntity).neighborChanged(neighbor);
+            final TileEntity rack = worldIn.getTileEntity(pos);
+            for(EnumFacing offsetFacing: BlockHorizontal.FACING.getAllowedValues())
+            {
+                final BlockPos neighbor = pos.offset(offsetFacing);
+                final Block block = worldIn.getBlockState(neighbor).getBlock();
+                if(rack instanceof TileEntityRack && pos.getY() == neighbor.getY() && !pos.equals(neighbor) && !pos.equals(BlockPos.ORIGIN)
+                        && (block instanceof BlockRack || blockIn instanceof BlockRack))
+                {
+                    ((TileEntityRack) rack).neighborChanged(neighbor);
+                }
+            }
         }
-        super.onNeighborChange(world, pos, neighbor);
+        super.neighborChanged(state, worldIn, pos, blockIn);
     }
 
     @Override
     public int getMetaFromState(@NotNull IBlockState state)
     {
-        return (state.getValue(VARIANT).getMetadata() * 4) + state.getValue(FACING).getHorizontalIndex();
+        return (state.getValue(VARIANT).getMetadata()) + state.getValue(FACING).getHorizontalIndex();
     }
 
     /**
@@ -158,6 +169,20 @@ public class BlockRack extends Block
         drops.add(new ItemStack(this, 1));
 
         return drops;
+    }
+
+    @Override
+    public void breakBlock(final World worldIn, final BlockPos pos, final IBlockState state)
+    {
+        TileEntity tileentity = worldIn.getTileEntity(pos);
+
+        if (tileentity instanceof TileEntityRack)
+        {
+            final IItemHandler handler = ((TileEntityRack) tileentity).getInventory();
+            InventoryUtils.dropItemHandler(handler, worldIn, pos.getX(), pos.getY(), pos.getZ());
+        }
+
+        super.breakBlock(worldIn, pos, state);
     }
 
     @Override
@@ -292,8 +317,11 @@ public class BlockRack extends Block
 
     public static enum EnumType implements IStringSerializable
     {
-        DEFAULT(0, "blockrackempty", "empty"),
-        FULL(1, "blockrackfull", "full");
+        DEFAULT(0, "blockrackemptysingle", "emptysingle"),
+        FULL(1, "blockrackfullsingle", "fullsingle"),
+        DEFAULTDOUBLE(2, "blockrackempty", "empty"),
+        FULLDOUBLE(3, "blockrackfull", "full"),
+        EMPTYAIR(4, "blockrackair", "dontrender");
 
         private static final BlockRack.EnumType[] META_LOOKUP = new BlockRack.EnumType[values().length];
         private final int    meta;

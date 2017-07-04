@@ -4,9 +4,11 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockSolidSubstitution;
+import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
+import com.minecolonies.coremod.colony.buildings.BuildingWareHouse;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
@@ -14,9 +16,11 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
+import com.minecolonies.coremod.tileentities.TileEntityRack;
 import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
+import net.minecraft.block.BlockChest;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -28,6 +32,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.tileentity.TileEntityFlowerPot;
 import net.minecraft.tileentity.TileEntityLockable;
 import net.minecraft.util.math.BlockPos;
@@ -508,10 +513,52 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     }
 
     @Override
+    public void handleBuildingOverChest(@NotNull final BlockPos pos, final TileEntityChest chest)
+    {
+        if(job.getWorkOrder() != null && getOwnBuilding().getColony().getBuilding(job.getWorkOrder().getBuildingLocation()) instanceof BuildingWareHouse)
+        {
+            final List<ItemStack> inventory = new ArrayList<>();
+            final int size = chest.getSingleChestHandler().getSlots();
+            for(int slot = 0; slot < size; slot++)
+            {
+                final ItemStack stack = chest.getSingleChestHandler().getStackInSlot(slot);
+                if(!ItemStackUtils.isEmpty(stack))
+                {
+                    inventory.add(stack.copy());
+                }
+                chest.getSingleChestHandler().insertItem(slot, ItemStackUtils.EMPTY, false);
+            }
+
+            world.setBlockState(pos, ModBlocks.blockRack.getDefaultState(), 0x03);
+
+            final TileEntity entity = world.getTileEntity(pos);
+            if(entity instanceof TileEntityRack)
+            {
+                for(final ItemStack stack: inventory)
+                {
+                    if(!ItemStackUtils.isEmpty(stack))
+                    {
+                        InventoryUtils.addItemStackToItemHandler(((TileEntityRack) entity).getInventory(), stack);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
     public void connectBlockToBuildingIfNecessary(@NotNull Block block, @NotNull final BlockPos pos)
     {
         final BlockPos buildingLocation = job.getWorkOrder().getBuildingLocation();
         final AbstractBuilding building = this.getOwnBuilding().getColony().getBuilding(buildingLocation);
+
+        if(building instanceof BuildingWareHouse && block instanceof BlockChest)
+        {
+            final TileEntity entity = world.getTileEntity(pos);
+            if(entity instanceof TileEntityChest)
+            {
+                handleBuildingOverChest(pos, (TileEntityChest) entity);
+            }
+        }
 
         if (building != null)
         {

@@ -6,13 +6,13 @@
       "up": {
       },
       "east": {
-        "y": 0
+        "y": 180
       },
       "south": {
         "y": 90
       },
       "west": {
-        "y": 180
+        "y": 0
       },
       "north": {
         "y": 270
@@ -20,10 +20,19 @@
     },
     "variant": {
       "blockrackempty": {
-        "model": "minecolonies:blockRackEmpty"
+        "model": "minecolonies:blockRackEmptyDouble"
       },
       "blockrackfull": {
+        "model": "minecolonies:blockRackFullDouble"
+      },
+      "blockrackemptysingle": {
+        "model": "minecolonies:blockRackEmpty"
+      },
+      "blockrackfullsingle": {
         "model": "minecolonies:blockRackFull"
+      },
+      "blockrackair": {
+        "model": "minecraft:block"
       }
     }
   }

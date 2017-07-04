@@ -1,11 +1,18 @@
 package com.minecolonies.coremod.tileentities;
 
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.blocks.BlockRack;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -15,15 +22,32 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
 /**
  * Tile entity for the warehouse shelves.
  */
 public class TileEntityRack extends TileEntity
 {
+    /**
+     * Tag used to store the neighbor pos to NBT.
+     */
+    private static final String TAG_NEIGHBOR = "neighbor";
+
+    /**
+     * Tag used to store the inventory to nbt.
+     */
+    private static final String TAG_INVENTORY = "inventory";
+
+    /**
+     * Tag compound of forge.
+     */
+    private static final int TAG_COMPOUND = 10;
+
     /**
      * Variable which determines if it is a single or doublechest.
      */
@@ -35,10 +59,18 @@ public class TileEntityRack extends TileEntity
     private BlockPos neighbor = BlockPos.ORIGIN;
 
     /**
+     * Is this the main chest of the doubleChest.
+     */
+    private boolean isMain = false;
+
+    /**
      * The content of the chest.
      */
     private final Map<ItemStorage, Integer> content = new HashMap<>();
 
+    /**
+     * The inventory of the tileEntity.
+     */
     private final IItemHandlerModifiable inventory = new ItemStackHandler(27)
     {
         @Override
@@ -50,59 +82,221 @@ public class TileEntityRack extends TileEntity
     };
 
     /**
+     * Check if a certain itemstack is present in the inventory.
+     * This method checks the content list, it is therefore extremely fast.
+     *
+     * @param stack the stack to check.
+     * @return true if so.
+     */
+    public boolean hasItemStack(final ItemStack stack)
+    {
+        return content.containsKey(new ItemStorage(stack));
+    }
+
+    /**
+     * Checks if the chest is empty.
+     * This method checks the content list, it is therefore extremely fast.
+     *
+     * @return true if so.
+     */
+    public boolean isEmpty()
+    {
+        return content.isEmpty();
+    }
+
+    /**
+     * Checks if the chest is empty.
+     * This method checks the content list, it is therefore extremely fast.
+     *
+     * @return true if so.
+     */
+    public boolean freeStacks()
+    {
+        return content.isEmpty();
+    }
+
+    /**
+     * Get the amount of free slots in the inventory.
+     * This method checks the content list, it is therefore extremely fast.
+     *
+     * @return the amount of free slots (an integer).
+     */
+    public int getFreeSlots()
+    {
+        int freeSlots = inventory.getSlots();
+        for (int itemAmount : content.values())
+        {
+            final double slotsNeeded = (double) itemAmount / Constants.STACKSIZE;
+            freeSlots -= (int) Math.ceil(slotsNeeded);
+        }
+        return freeSlots;
+    }
+
+    /**
+     * Check if a similar/same item as the stack is in the inventory.
+     * This method checks the content list, it is therefore extremely fast.
+     *
+     * @param stack             the stack to check.
+     * @param ignoreDamageValue ignore the damage value.
+     * @return true if so.
+     */
+    public boolean hasItemStack(final ItemStack stack, final boolean ignoreDamageValue)
+    {
+        final ItemStorage compareStorage = new ItemStorage(stack, ignoreDamageValue);
+        for (final Map.Entry<ItemStorage, Integer> entry : content.entrySet())
+        {
+            if (compareStorage.equals(entry.getKey()))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if a similar/same item as the stack is in the inventory.
+     * This method checks the content list, it is therefore extremely fast.
+     *
+     * @param itemStackSelectionPredicate the predicate to test the stack against.
+     * @return true if so.
+     */
+    public boolean hasItemStack(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    {
+        for (final Map.Entry<ItemStorage, Integer> entry : content.entrySet())
+        {
+            if (itemStackSelectionPredicate.test(entry.getKey().getItemStack()))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Scans through the whole storage and updates it.
      */
     public void updateItemStorage()
     {
         content.clear();
-        for(int slot = 0; slot < inventory.getSlots(); slot++)
+        for (int slot = 0; slot < inventory.getSlots(); slot++)
         {
             final ItemStack stack = inventory.getStackInSlot(slot);
 
-            if(ItemStackUtils.isEmpty(stack))
+            if (ItemStackUtils.isEmpty(stack))
             {
                 continue;
             }
 
             final ItemStorage storage = new ItemStorage(stack.copy());
             int amount = ItemStackUtils.getSize(stack);
-            if(content.containsKey(storage))
+            if (content.containsKey(storage))
             {
                 amount += content.remove(storage);
             }
             content.put(storage, amount);
         }
 
-        if(content.isEmpty())
+        if (worldObj != null && worldObj.getBlockState(pos).getBlock() instanceof BlockRack && isMain)
         {
-            worldObj.setBlockState(pos, worldObj.getBlockState(pos).withProperty(BlockRack.VARIANT, BlockRack.EnumType.DEFAULT));
+            final IBlockState typeHere;
+            final IBlockState typeNeighbor;
+            if (content.isEmpty() && (getOtherChest() == null || getOtherChest().isEmpty()))
+            {
+                if (getOtherChest() != null && worldObj.getBlockState(neighbor).getBlock() instanceof BlockRack)
+                {
+
+                    typeHere = worldObj.getBlockState(pos).withProperty(BlockRack.VARIANT, BlockRack.EnumType.EMPTYAIR);
+                    typeNeighbor = worldObj.getBlockState(neighbor).withProperty(BlockRack.VARIANT, BlockRack.EnumType.DEFAULTDOUBLE)
+                            .withProperty(BlockRack.FACING, BlockPosUtil.getFacing(pos, neighbor));
+                }
+                else
+                {
+                    typeHere = worldObj.getBlockState(pos).withProperty(BlockRack.VARIANT, BlockRack.EnumType.DEFAULT);
+                    typeNeighbor = null;
+                }
+            }
+            else
+            {
+                if (getOtherChest() != null && worldObj.getBlockState(neighbor).getBlock() instanceof BlockRack)
+                {
+                    typeHere = worldObj.getBlockState(pos).withProperty(BlockRack.VARIANT, BlockRack.EnumType.EMPTYAIR);
+                    typeNeighbor = worldObj.getBlockState(neighbor).withProperty(BlockRack.VARIANT, BlockRack.EnumType.FULLDOUBLE)
+                            .withProperty(BlockRack.FACING, BlockPosUtil.getFacing(pos, neighbor));
+                }
+                else
+                {
+                    typeHere = worldObj.getBlockState(pos).withProperty(BlockRack.VARIANT, BlockRack.EnumType.FULL);
+                    typeNeighbor = null;
+                }
+            }
+
+            worldObj.setBlockState(pos, typeHere);
+            if (typeNeighbor != null)
+            {
+                worldObj.setBlockState(neighbor, typeNeighbor);
+            }
+
+            for (final Map.Entry<ItemStorage, Integer> entry : content.entrySet())
+            {
+                Log.getLogger().warn(entry.getKey().getItemStack().getDisplayName() + ": " + entry.getValue());
+            }
+        }
+        markDirty();
+    }
+
+    /**
+     * Define the neighbor for a block.
+     *
+     * @param neighbor the neighbor to define.
+     */
+    public void setNeighbor(final BlockPos neighbor)
+    {
+        if (!neighbor.equals(BlockPos.ORIGIN))
+        {
+            this.neighbor = neighbor;
+            this.single = false;
         }
         else
         {
-            worldObj.setBlockState(pos, worldObj.getBlockState(pos).withProperty(BlockRack.VARIANT, BlockRack.EnumType.FULL));
-        }
-
-        for(final Map.Entry<ItemStorage, Integer> entry : content.entrySet())
-        {
-            Log.getLogger().warn(entry.getKey().getItemStack().getDisplayName() + ": " + entry.getValue());
+            this.neighbor = BlockPos.ORIGIN;
+            this.single = true;
         }
     }
 
     /**
+     * Check if this is the main chest of the double chest.
+     *
+     * @return true if so.
+     */
+    public boolean isMain()
+    {
+        return this.isMain;
+    }
+
+    /**
      * On neighbor changed this will be called from the block.
+     *
      * @param neighbor the blockPos which has changed.
      */
     public void neighborChanged(final BlockPos neighbor)
     {
-        if(this.neighbor.equals(BlockPos.ORIGIN) && worldObj.getTileEntity(neighbor) instanceof TileEntityRack)
+        if (this.neighbor.equals(BlockPos.ORIGIN) && worldObj.getBlockState(neighbor).getBlock() instanceof BlockRack)
         {
             this.neighbor = neighbor;
             single = false;
+            final TileEntity entity = worldObj.getTileEntity(neighbor);
+            if (entity instanceof TileEntityRack && !((TileEntityRack) entity).isMain())
+            {
+                this.isMain = true;
+            }
+            updateItemStorage();
         }
-        else if(this.neighbor.equals(neighbor) && !(worldObj.getTileEntity(neighbor) instanceof TileEntityRack))
+        else if (this.neighbor.equals(neighbor) && !(worldObj.getBlockState(neighbor).getBlock() instanceof BlockRack))
         {
             this.neighbor = BlockPos.ORIGIN;
             single = true;
+            this.isMain = false;
+            updateItemStorage();
         }
     }
 
@@ -126,16 +320,72 @@ public class TileEntityRack extends TileEntity
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
         {
-            if(single)
+            if (single)
             {
                 return (T) inventory;
             }
             else
             {
-                return (T) new CombinedInvWrapper(inventory, getOtherChest().inventory);
+                if (isMain)
+                {
+                    return (T) new CombinedInvWrapper(inventory, getOtherChest().inventory);
+                }
+                else
+                {
+                    return (T) new CombinedInvWrapper(getOtherChest().inventory, inventory);
+                }
             }
         }
         return super.getCapability(capability, facing);
+    }
+
+    @Override
+    public void readFromNBT(final NBTTagCompound compound)
+    {
+        neighbor = BlockPosUtil.readFromNBT(compound, TAG_NEIGHBOR);
+
+        if (!neighbor.equals(BlockPos.ORIGIN))
+        {
+            single = false;
+        }
+        final NBTTagList inventoryTagList = compound.getTagList(TAG_INVENTORY, TAG_COMPOUND);
+        for (int i = 0; i < inventoryTagList.tagCount(); ++i)
+        {
+            final NBTTagCompound inventoryCompound = inventoryTagList.getCompoundTagAt(i);
+            final ItemStack stack = ItemStackUtils.loadItemStackFromNBT(inventoryCompound);
+            if (ItemStackUtils.getSize(stack) <= 0)
+            {
+                inventory.setStackInSlot(i, ItemStackUtils.EMPTY);
+            }
+            else
+            {
+                inventory.setStackInSlot(i, stack);
+            }
+        }
+        super.readFromNBT(compound);
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(final NBTTagCompound compound)
+    {
+        BlockPosUtil.writeToNBT(compound, TAG_NEIGHBOR, neighbor);
+        @NotNull final NBTTagList inventoryTagList = new NBTTagList();
+        for (int slot = 0; slot < inventory.getSlots(); slot++)
+        {
+            @NotNull final NBTTagCompound inventoryCompound = new NBTTagCompound();
+            final ItemStack stack = inventory.getStackInSlot(slot);
+            if (stack == null)
+            {
+                new ItemStack(Blocks.AIR, 0).writeToNBT(inventoryCompound);
+            }
+            else
+            {
+                stack.writeToNBT(inventoryCompound);
+            }
+            inventoryTagList.appendTag(inventoryCompound);
+        }
+        compound.setTag(TAG_INVENTORY, inventoryTagList);
+        return super.writeToNBT(compound);
     }
 
     @Override
@@ -146,20 +396,78 @@ public class TileEntityRack extends TileEntity
 
     /**
      * Get the other double chest or null.
+     *
      * @return the tileEntity of the other half or null.
      */
     public TileEntityRack getOtherChest()
     {
-        if(neighbor.equals(BlockPos.ORIGIN))
+        if (neighbor.equals(BlockPos.ORIGIN))
         {
             return null;
         }
         final TileEntity tileEntity = worldObj.getTileEntity(neighbor);
-        if(tileEntity instanceof TileEntityRack)
+        if (tileEntity instanceof TileEntityRack)
         {
+            ((TileEntityRack) tileEntity).setNeighbor(this.getPos());
             return (TileEntityRack) tileEntity;
         }
         return null;
     }
 
+    @Override
+    public SPacketUpdateTileEntity getUpdatePacket()
+    {
+        final NBTTagCompound compound = new NBTTagCompound();
+        BlockPosUtil.writeToNBT(compound, TAG_NEIGHBOR, neighbor);
+        @NotNull final NBTTagList inventoryTagList = new NBTTagList();
+        for (int slot = 0; slot < inventory.getSlots(); slot++)
+        {
+            @NotNull final NBTTagCompound inventoryCompound = new NBTTagCompound();
+            final ItemStack stack = inventory.getStackInSlot(slot);
+            if (stack == null)
+            {
+                new ItemStack(Blocks.AIR, 0).writeToNBT(inventoryCompound);
+            }
+            else
+            {
+                stack.writeToNBT(inventoryCompound);
+            }
+            inventoryTagList.appendTag(inventoryCompound);
+        }
+        compound.setTag(TAG_INVENTORY, inventoryTagList);
+        return new SPacketUpdateTileEntity(this.pos, 0, compound);
+    }
+
+    @NotNull
+    @Override
+    public NBTTagCompound getUpdateTag()
+    {
+        return writeToNBT(new NBTTagCompound());
+    }
+
+    @Override
+    public void onDataPacket(final NetworkManager net, final SPacketUpdateTileEntity packet)
+    {
+        final NBTTagCompound compound = packet.getNbtCompound();
+        neighbor = BlockPosUtil.readFromNBT(compound, TAG_NEIGHBOR);
+
+        if (!neighbor.equals(BlockPos.ORIGIN))
+        {
+            single = false;
+        }
+        final NBTTagList inventoryTagList = compound.getTagList(TAG_INVENTORY, TAG_COMPOUND);
+        for (int i = 0; i < inventoryTagList.tagCount(); ++i)
+        {
+            final NBTTagCompound inventoryCompound = inventoryTagList.getCompoundTagAt(i);
+            final ItemStack stack = ItemStackUtils.loadItemStackFromNBT(inventoryCompound);
+            if (ItemStackUtils.getSize(stack) <= 0)
+            {
+                inventory.setStackInSlot(i, ItemStackUtils.EMPTY);
+            }
+            else
+            {
+                inventory.setStackInSlot(i, stack);
+            }
+        }
+    }
 }

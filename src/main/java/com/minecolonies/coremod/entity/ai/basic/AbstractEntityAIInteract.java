@@ -214,7 +214,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      * Checks for the right tools and waits for an appropriate delay.
      *
      * @param blockToMine the block to mine eventually
-     * @param safeStand   a safe stand to mine from (AIR Block!)
+     * @param safeStand   a safe stand to mine from (EMPTYAIR Block!)
      */
     private boolean checkMiningLocation(@NotNull final BlockPos blockToMine, @NotNull final BlockPos safeStand)
     {

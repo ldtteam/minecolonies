@@ -11,6 +11,7 @@ import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.ai.util.Structure;
 import com.minecolonies.coremod.placementhandlers.IPlacementHandler;
 import com.minecolonies.coremod.placementhandlers.PlacementHandlers;
+import com.minecolonies.coremod.tileentities.TileEntityRack;
 import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -23,6 +24,8 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -625,6 +628,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         return true;
     }
 
+    /**
+     * Specific actions to execute when building over a block.
+     * @param pos the position to build at.
+     */
     public void handleBuildingOverBlock(@NotNull final BlockPos pos)
     {
         final List<ItemStack> items = BlockPosUtil.getBlockDrops(world, pos, 0);
@@ -632,6 +639,18 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         {
             InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), item);
         }
+    }
+
+    /**
+     * Specific actions to execute when building over a chest.
+     * @param pos the position to build at.
+     * @param chest the tileEntity at the position.
+     */
+    public void handleBuildingOverChest(@NotNull final BlockPos pos, final TileEntityChest chest)
+    {
+        /**
+         * Specific worker should implement this.
+         */
     }
 
     private boolean decreaseInventory(@NotNull final BlockPos pos, final Block block, @NotNull final IBlockState state)

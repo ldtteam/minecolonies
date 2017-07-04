@@ -2,9 +2,11 @@ package com.minecolonies.api.util;
 
 import com.minecolonies.api.util.constant.IToolType;
 import net.minecraft.block.Block;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.IItemHandler;
@@ -23,6 +25,16 @@ import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABI
  */
 public final class InventoryUtils
 {
+    /**
+     * Several values to spawn items in the world.
+     */
+    private static final double SPAWN_MODIFIER = 0.8D;
+    private static final double SPAWN_ADDITION = 0.1D;
+    private static final int MAX_RANDOM_SPAWN = 21;
+    private static final int MIN_RANDOM_SPAWN = 10;
+    private static final double MOTION_MULTIPLIER = 0.05000000074505806D;
+    private static final double MOTION_Y_MIN = 0.20000000298023224D;
+
     /**
      * Private constructor to hide the implicit one.
      */
@@ -1481,5 +1493,108 @@ public final class InventoryUtils
         }
 
         return true;
+    }
+
+    /**
+     * Check if a certain item is in the provider but without the provider being full.
+     * @param provider the provider to check.
+     * @param item the item.
+     * @param itemDamage its damage.
+     * @return the slot or -1.
+     */
+    public static int findFirstSlotInProviderWithNotFull(final ICapabilityProvider provider, final Item item, final int itemDamage)
+    {
+        for (IItemHandler handler : getItemHandlersFromProvider(provider))
+        {
+            int foundSlot = findFirstSlotInItemHandlerWithNotFull(handler, (ItemStack stack) -> compareItems(stack, item, itemDamage));
+            //TODO: When contract is hardened later: Replace this -1 check with a try-catch block.
+            if (foundSlot > -1)
+            {
+                return foundSlot;
+            }
+        }
+
+        return -1;
+    }
+
+    /**
+     * Check if a certain item is in the handler but without the provider being full.
+     * @param handler the handler to check.
+     * @param itemStackSelectionPredicate the selection predicate..
+     * @return the slot or -1.
+     */
+    public static int findFirstSlotInItemHandlerWithNotFull(final IItemHandler handler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    {
+        boolean foundEmptySlot = false;
+        boolean foundItem = false;
+        int itemSlot = -1;
+        for (int slot = 0; slot < handler.getSlots(); slot++)
+        {
+            final ItemStack stack = handler.getStackInSlot(slot);
+            if(ItemStackUtils.isEmpty(stack))
+            {
+                foundEmptySlot = true;
+            }
+            else if (itemStackSelectionPredicate.test(stack))
+            {
+                foundItem = true;
+                itemSlot = slot;
+            }
+
+            if(foundItem == foundEmptySlot)
+            {
+                return itemSlot;
+            }
+        }
+
+        return -1;
+    }
+
+    /**
+     * Spawn an itemStack in the world.
+     * @param worldIn the world.
+     * @param x the x pos.
+     * @param y the y pos.
+     * @param z the z pos.
+     * @param stack the stack to drop.
+     */
+    public static void spawnItemStack(final World worldIn, final double x, final double y, final double z, final ItemStack stack)
+    {
+        final Random random = new Random();
+        final double f = random.nextDouble() * SPAWN_MODIFIER + SPAWN_ADDITION;
+        final double f1 = random.nextDouble() * SPAWN_MODIFIER + SPAWN_ADDITION;
+        final double f2 = random.nextDouble() * SPAWN_MODIFIER + SPAWN_ADDITION;
+
+        while (stack.stackSize > 0)
+        {
+            final int i = random.nextInt(MAX_RANDOM_SPAWN) + MIN_RANDOM_SPAWN;
+            final EntityItem entityitem = new EntityItem(worldIn, x + f, y + f1, z + f2, stack.splitStack(i));
+
+            entityitem.motionX = random.nextGaussian() * MOTION_MULTIPLIER;
+            entityitem.motionY = random.nextGaussian() * MOTION_MULTIPLIER + MOTION_Y_MIN;
+            entityitem.motionZ = random.nextGaussian() * MOTION_MULTIPLIER;
+            worldIn.spawnEntityInWorld(entityitem);
+        }
+    }
+
+    /**
+     * Drop an actual itemHandler in the world.
+     * @param handler the handler.
+     * @param world the world.
+     * @param x the x pos.
+     * @param y the y pos.
+     * @param z the z pos.
+     */
+    public static void dropItemHandler(final IItemHandler handler, final World world, final int x, final int y, final int z)
+    {
+        for (int i = 0; i < handler.getSlots(); ++i)
+        {
+            ItemStack itemstack = handler.getStackInSlot(i);
+
+            if (itemstack != null)
+            {
+                spawnItemStack(world, x, y, z, itemstack);
+            }
+        }
     }
 }
