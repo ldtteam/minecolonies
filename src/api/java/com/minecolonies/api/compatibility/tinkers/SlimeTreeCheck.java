@@ -13,7 +13,7 @@ import slimeknights.tconstruct.world.block.BlockSlimeGrass;
  */
 public final class SlimeTreeCheck extends SlimeTreeProxy
 {
-
+    private static final String TCONSTRUCT = "tconstruct";
     /**
      * Check if block is slime block.
      *
@@ -76,7 +76,7 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
      * @return if the block is a slime block.
      */
     @Override
-    @Optional.Method(modid = "tconstruct")
+    @Optional.Method(modid = TCONSTRUCT)
     public boolean checkForTinkersSlimeBlock(@NotNull final Block block)
     {
         return block == TinkerCommons.blockSlimeCongealed;
@@ -89,7 +89,7 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
      * @return if the block is a slime leaf.
      */
     @Override
-    @Optional.Method(modid = "tconstruct")
+    @Optional.Method(modid = TCONSTRUCT)
     public boolean checkForTinkersSlimeLeaves(@NotNull final Block block)
     {
         return block == TinkerWorld.slimeLeaves;
@@ -102,7 +102,7 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
      * @return if the block is a slime sapling.
      */
     @Override
-    @Optional.Method(modid = "tconstruct")
+    @Optional.Method(modid = TCONSTRUCT)
     public boolean checkForTinkersSlimeSapling(@NotNull final Block block)
     {
         return block == TinkerWorld.slimeSapling;
@@ -115,7 +115,7 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
      * @return if the block is a slime sapling.
      */
     @Override
-    @Optional.Method(modid = "tconstruct")
+    @Optional.Method(modid = TCONSTRUCT)
     public boolean checkForTinkersSlimeDirtOrGrass(@NotNull final Block block)
     {
         return block == TinkerWorld.slimeDirt || block == TinkerWorld.slimeGrass;
@@ -128,7 +128,7 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
      * @return the variant.
      */
     @Override
-    @Optional.Method(modid = "tconstruct")
+    @Optional.Method(modid = TCONSTRUCT)
     public int getTinkersLeafVariant(@NotNull final IBlockState leaf)
     {
         return leaf.getValue(BlockSlimeGrass.FOLIAGE).getMeta();

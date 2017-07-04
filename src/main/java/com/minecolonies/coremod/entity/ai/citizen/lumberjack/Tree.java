@@ -52,7 +52,7 @@ public class Tree
     /**
      * Tag to store if the Tree is a slime tree to NBT.
      */
-    private static final String TAG_IS_SLIME_TREE = "isSlimeTree";
+    private static final String TAG_IS_SLIME_TREE = "slimeTree";
 
     /**
      * Number of leaves necessary for a tree to be recognized.
@@ -117,7 +117,7 @@ public class Tree
     /**
      * If the Tree is a Slime Tree.
      */
-    private boolean isSlimeTree = false;
+    private boolean slimeTree = false;
 
     /**
      * Private constructor of the tree.
@@ -154,7 +154,7 @@ public class Tree
             stumpLocations = new ArrayList<>();
             woodBlocks.clear();
             final Block bottomBlock = world.getBlockState(location).getBlock();
-            isSlimeTree = Compatibility.isSlimeBlock(bottomBlock);
+            slimeTree = Compatibility.isSlimeBlock(bottomBlock);
         }
     }
 
@@ -366,7 +366,7 @@ public class Tree
 
         tree.topLog = BlockPosUtil.readFromNBT(compound, TAG_TOP_LOG);
 
-        tree.isSlimeTree = compound.getBoolean(TAG_IS_SLIME_TREE);
+        tree.slimeTree = compound.getBoolean(TAG_IS_SLIME_TREE);
 
         return tree;
     }
@@ -583,7 +583,7 @@ public class Tree
      */
     public boolean isSlimeTree()
     {
-        return isSlimeTree;
+        return slimeTree;
     }
 
     /**
@@ -692,6 +692,6 @@ public class Tree
 
         BlockPosUtil.writeToNBT(compound, TAG_TOP_LOG, topLog);
 
-        compound.setBoolean(TAG_IS_SLIME_TREE, isSlimeTree);
+        compound.setBoolean(TAG_IS_SLIME_TREE, slimeTree);
     }
 }

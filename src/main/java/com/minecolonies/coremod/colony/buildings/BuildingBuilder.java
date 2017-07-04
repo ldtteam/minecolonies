@@ -186,7 +186,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
      * @param buf the used ByteBuffer.
      */
     @Override
-    public void serializeToView(@NotNull ByteBuf buf)
+    public void serializeToView(@NotNull final ByteBuf buf)
     {
         super.serializeToView(buf);
 
@@ -324,7 +324,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
      * @param stack the stack to test.
      * @return true if so.
      */
-    public boolean requiresResourceForBuilding(ItemStack stack)
+    public boolean requiresResourceForBuilding(final ItemStack stack)
     {
         return neededResources.containsKey(stack.getUnlocalizedName());
     }

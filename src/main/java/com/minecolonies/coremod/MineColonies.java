@@ -85,7 +85,7 @@ public class MineColonies
 
         proxy.registerEntityRendering();
 
-        @NotNull Configuration configuration = new Configuration(event.getSuggestedConfigurationFile());
+        @NotNull final Configuration configuration = new Configuration(event.getSuggestedConfigurationFile());
         configuration.load();
 
         if (configuration.hasChanged())

@@ -189,7 +189,7 @@ public class BuildingBuilderResource extends ItemStorage
          * In alphabetical order otherwise
          */
         @Override
-        public int compare(BuildingBuilderResource resource1, BuildingBuilderResource resource2)
+        public int compare(final BuildingBuilderResource resource1, final BuildingBuilderResource resource2)
         {
             if (resource1.getAvailabilityStatus() == resource2.getAvailabilityStatus())
             {
