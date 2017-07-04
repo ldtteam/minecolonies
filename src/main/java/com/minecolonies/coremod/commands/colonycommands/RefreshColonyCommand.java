@@ -7,6 +7,7 @@ import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -52,6 +53,8 @@ public class RefreshColonyCommand extends AbstractSingleCommand
         colonyId = getIthArgument(args, 0, -1);
         IColony tempColony = ColonyManager.getColony(colonyId);
 
+        final Entity senderEntity =  sender.getCommandSenderEntity();
+
         if(colonyId == -1 && args.length >= 1)
         {
             final EntityPlayer player = server.getEntityWorld().getPlayerEntityByName(args[0]);
@@ -63,12 +66,13 @@ public class RefreshColonyCommand extends AbstractSingleCommand
 
         if(sender instanceof EntityPlayer)
         {
-            if (sender.getCommandSenderEntity() == null)
+            if (senderEntity == null)
             {
                 return;
             }
 
-            final UUID mayorID = sender.getCommandSenderEntity().getUniqueID();
+
+            final UUID mayorID = senderEntity.getUniqueID();
             if (tempColony == null)
             {
                 tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), mayorID);
@@ -78,7 +82,7 @@ public class RefreshColonyCommand extends AbstractSingleCommand
 
             if (!canPlayerUseCommand(player, Commands.REFRESH_COLONY, colonyId))
             {
-                sender.addChatMessage(new TextComponentString(NOT_PERMITTED));
+                sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NOT_PERMITTED));
                 return;
             }
         }
@@ -107,7 +111,6 @@ public class RefreshColonyCommand extends AbstractSingleCommand
         colony.getPermissions().restoreOwnerIfNull();
     }
 
-    @NotNull
     private static UUID getUUIDFromName(@NotNull final ICommandSender sender, @NotNull final String... args)
     {
         final MinecraftServer tempServer = sender.getEntityWorld().getMinecraftServer();

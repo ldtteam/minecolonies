@@ -6,6 +6,7 @@ import com.minecolonies.coremod.colony.IColony;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -49,6 +50,9 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
+
+        final Entity senderEntity =  sender.getCommandSenderEntity();
+
         if(args.length < 2)
         {
             sender.addChatMessage(new TextComponentString(NO_ARGUMENTS));
@@ -63,22 +67,28 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
         int colonyId = getIthArgument(args, 0, -1);
         if(colonyId == -1)
         {
-            if (sender.getCommandSenderEntity() == null)
+            final String playerName = args[0];
+            final EntityPlayer player = sender.getEntityWorld().getPlayerEntityByName(playerName);
+
+            if (senderEntity == null)
             {
                 server.addChatMessage(new TextComponentString(NO_ARGUMENTS));
                 return;
             }
             else
             {
-                final String playerName = args[0];
-
-                if (playerName == null || playerName.isEmpty())
+                if (playerName == null || playerName.isEmpty() || player == null)
                 {
-                    sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_PLAYER));
+                    senderEntity.addChatMessage(new TextComponentString(NO_PLAYER));
                     return;
                 }
-                final EntityPlayer player = sender.getEntityWorld().getPlayerEntityByName(playerName);
                 final IColony colony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), player.getUniqueID());
+
+                if (colony == null)
+                {
+                    return;
+                }
+
                 colonyId = colony.getID();
             }
         }

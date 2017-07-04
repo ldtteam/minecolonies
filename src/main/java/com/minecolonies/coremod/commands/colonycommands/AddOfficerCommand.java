@@ -7,6 +7,7 @@ import com.minecolonies.coremod.colony.IColony;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -50,19 +51,22 @@ public class AddOfficerCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
+
+        final Entity senderEntity =  sender.getCommandSenderEntity();
+
         if(args.length == 0)
         {
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_ARGUMENTS));
+            sender.addChatMessage(new TextComponentString(NO_ARGUMENTS));
             return;
         }
 
         int colonyId = getIthArgument(args, 0, -1);
-        if(colonyId == -1 && sender instanceof EntityPlayer)
+        if(colonyId == -1 && sender instanceof EntityPlayer && senderEntity != null)
         {
             final IColony colony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), ((EntityPlayer) sender).getUniqueID());
             if(colony == null)
             {
-                sender.getCommandSenderEntity().addChatMessage(new TextComponentString(COLONY_NULL));
+                senderEntity.addChatMessage(new TextComponentString(COLONY_NULL));
                 return;
             }
             colonyId = colony.getID();
@@ -76,12 +80,12 @@ public class AddOfficerCommand extends AbstractSingleCommand
             return;
         }
 
-        if(sender instanceof EntityPlayer)
+        if(sender instanceof EntityPlayer && senderEntity != null)
         {
             EntityPlayer player = (EntityPlayer) sender;
             if (!canPlayerUseCommand(player, ADDOFFICER, colonyId))
             {
-                sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NOT_PERMITTED));
+                senderEntity.addChatMessage(new TextComponentString(NOT_PERMITTED));
                 return;
             }
         }

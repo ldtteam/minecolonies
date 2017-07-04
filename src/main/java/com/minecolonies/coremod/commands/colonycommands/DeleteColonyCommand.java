@@ -9,6 +9,7 @@ import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -60,6 +61,8 @@ public class DeleteColonyCommand extends AbstractSingleCommand
     {
         final int colonyId;
 
+        final Entity senderEntity =  sender.getCommandSenderEntity();
+
         if(args.length == 0)
         {
             IColony colony = null;
@@ -70,7 +73,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand
 
             if(colony == null)
             {
-                sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_ARGUMENTS));
+                sender.addChatMessage(new TextComponentString(NO_ARGUMENTS));
                 return;
             }
             colonyId = colony.getID();
@@ -83,16 +86,16 @@ public class DeleteColonyCommand extends AbstractSingleCommand
         final Colony colony = ColonyManager.getColony(colonyId);
         if(colony == null)
         {
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_COLONY_FOUND_MESSAGE_ID));
+            sender.addChatMessage(new TextComponentString(NO_COLONY_FOUND_MESSAGE_ID));
             return;
         }
 
-        if(sender instanceof EntityPlayer)
+        if(sender instanceof EntityPlayer && senderEntity != null)
         {
             final EntityPlayer player = (EntityPlayer) sender;
             if (!canPlayerUseCommand(player, DELETECOLONY, colonyId))
             {
-                sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NOT_PERMITTED));
+                senderEntity.addChatMessage(new TextComponentString(NOT_PERMITTED));
                 return;
             }
         }
@@ -100,7 +103,6 @@ public class DeleteColonyCommand extends AbstractSingleCommand
         server.addScheduledTask(() -> ColonyManager.deleteColony(colony.getID()));
     }
 
-    @NotNull
     private static UUID getUUIDFromName(@NotNull final ICommandSender sender, @NotNull final String... args)
     {
         final MinecraftServer tempServer = sender.getEntityWorld().getMinecraftServer();
