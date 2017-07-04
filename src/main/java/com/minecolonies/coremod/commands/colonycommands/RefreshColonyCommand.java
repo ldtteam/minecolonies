@@ -4,7 +4,6 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.IColony;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
-import com.mojang.authlib.GameProfile;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
@@ -78,11 +77,11 @@ public class RefreshColonyCommand extends AbstractSingleCommand
                 tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), mayorID);
             }
 
-            final EntityPlayer player = (EntityPlayer) sender;
+            final EntityPlayer player = (EntityPlayer) sender.getCommandSenderEntity();
 
             if (!canPlayerUseCommand(player, Commands.REFRESH_COLONY, colonyId))
             {
-                sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NOT_PERMITTED));
+                senderEntity.addChatMessage(new TextComponentString(NOT_PERMITTED));
                 return;
             }
         }

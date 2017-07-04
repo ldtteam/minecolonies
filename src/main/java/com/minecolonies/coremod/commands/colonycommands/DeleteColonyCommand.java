@@ -6,7 +6,6 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.IColony;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
-import com.mojang.authlib.GameProfile;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
@@ -19,7 +18,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.DELETECOLONY;
 
@@ -61,15 +59,15 @@ public class DeleteColonyCommand extends AbstractSingleCommand
     {
         final int colonyId;
 
-        if(args.length == 0)
+        if (args.length == 0)
         {
             IColony colony = null;
-            if(sender instanceof EntityPlayer)
+            if (sender instanceof EntityPlayer)
             {
                 colony = ColonyManager.getIColonyByOwner(CompatibilityUtils.getWorld(((EntityPlayer) sender)), (EntityPlayer) sender);
             }
 
-            if(colony == null)
+            if (colony == null)
             {
                 sender.addChatMessage(new TextComponentString(NO_ARGUMENTS));
                 return;
@@ -82,15 +80,15 @@ public class DeleteColonyCommand extends AbstractSingleCommand
         }
 
         final Colony colony = ColonyManager.getColony(colonyId);
-        if(colony == null)
+        if (colony == null)
         {
             sender.addChatMessage(new TextComponentString(NO_COLONY_FOUND_MESSAGE_ID));
             return;
         }
 
-        final Entity senderEntity =  sender.getCommandSenderEntity();
+        final Entity senderEntity = sender.getCommandSenderEntity();
 
-        if(sender instanceof EntityPlayer && senderEntity != null)
+        if (senderEntity instanceof EntityPlayer)
         {
             final EntityPlayer player = (EntityPlayer) sender;
             if (!canPlayerUseCommand(player, DELETECOLONY, colonyId))

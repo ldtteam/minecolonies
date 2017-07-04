@@ -26,10 +26,10 @@ import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.A
 public class AddOfficerCommand extends AbstractSingleCommand
 {
 
-    public static final  String       DESC            = "addOfficer";
-    private static final String       SUCCESS_MESSAGE = "Succesfully added Player %s to colony %d";
-    private static final String       COLONY_NULL     = "Couldn't find colony %d.";
-    private static final String       NO_ARGUMENTS    = "Please define a colony or player";
+    public static final  String DESC            = "addOfficer";
+    private static final String SUCCESS_MESSAGE = "Succesfully added Player %s to colony %d";
+    private static final String COLONY_NULL     = "Couldn't find colony %d.";
+    private static final String NO_ARGUMENTS    = "Please define a colony or player";
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -52,19 +52,19 @@ public class AddOfficerCommand extends AbstractSingleCommand
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
 
-        if(args.length == 0)
+        if (args.length == 0)
         {
             sender.addChatMessage(new TextComponentString(NO_ARGUMENTS));
             return;
         }
 
-        final Entity senderEntity =  sender.getCommandSenderEntity();
+        final Entity senderEntity = sender.getCommandSenderEntity();
 
         int colonyId = getIthArgument(args, 0, -1);
-        if(colonyId == -1 && sender instanceof EntityPlayer && senderEntity != null)
+        if (colonyId == -1 && senderEntity instanceof EntityPlayer)
         {
             final IColony colony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), ((EntityPlayer) sender).getUniqueID());
-            if(colony == null)
+            if (colony == null)
             {
                 senderEntity.addChatMessage(new TextComponentString(COLONY_NULL));
                 return;
@@ -80,7 +80,7 @@ public class AddOfficerCommand extends AbstractSingleCommand
             return;
         }
 
-        if(sender instanceof EntityPlayer && senderEntity != null)
+        if (senderEntity instanceof EntityPlayer)
         {
             EntityPlayer player = (EntityPlayer) sender;
             if (!canPlayerUseCommand(player, ADDOFFICER, colonyId))
@@ -96,7 +96,7 @@ public class AddOfficerCommand extends AbstractSingleCommand
             playerName = args[1];
         }
 
-        if(playerName == null || playerName.isEmpty())
+        if (playerName == null || playerName.isEmpty())
         {
             playerName = sender.getName();
         }
