@@ -51,8 +51,6 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
 
-        final Entity senderEntity =  sender.getCommandSenderEntity();
-
         if(args.length < 2)
         {
             sender.addChatMessage(new TextComponentString(NO_ARGUMENTS));
@@ -63,6 +61,8 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
         {
             return;
         }
+
+        final Entity senderEntity =  sender.getCommandSenderEntity();
 
         int colonyId = getIthArgument(args, 0, -1);
         if(colonyId == -1)

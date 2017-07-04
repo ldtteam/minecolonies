@@ -61,8 +61,6 @@ public class DeleteColonyCommand extends AbstractSingleCommand
     {
         final int colonyId;
 
-        final Entity senderEntity =  sender.getCommandSenderEntity();
-
         if(args.length == 0)
         {
             IColony colony = null;
@@ -90,6 +88,8 @@ public class DeleteColonyCommand extends AbstractSingleCommand
             return;
         }
 
+        final Entity senderEntity =  sender.getCommandSenderEntity();
+
         if(sender instanceof EntityPlayer && senderEntity != null)
         {
             final EntityPlayer player = (EntityPlayer) sender;
@@ -101,20 +101,6 @@ public class DeleteColonyCommand extends AbstractSingleCommand
         }
 
         server.addScheduledTask(() -> ColonyManager.deleteColony(colony.getID()));
-    }
-
-    private static UUID getUUIDFromName(@NotNull final ICommandSender sender, @NotNull final String... args)
-    {
-        final MinecraftServer tempServer = sender.getEntityWorld().getMinecraftServer();
-        if (tempServer != null)
-        {
-            final GameProfile profile = tempServer.getPlayerProfileCache().getGameProfileForUsername(args[0]);
-            if (profile != null)
-            {
-                return profile.getId();
-            }
-        }
-        return null;
     }
 
     @NotNull

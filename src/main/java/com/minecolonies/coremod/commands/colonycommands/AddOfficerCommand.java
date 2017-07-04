@@ -52,13 +52,13 @@ public class AddOfficerCommand extends AbstractSingleCommand
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
 
-        final Entity senderEntity =  sender.getCommandSenderEntity();
-
         if(args.length == 0)
         {
             sender.addChatMessage(new TextComponentString(NO_ARGUMENTS));
             return;
         }
+
+        final Entity senderEntity =  sender.getCommandSenderEntity();
 
         int colonyId = getIthArgument(args, 0, -1);
         if(colonyId == -1 && sender instanceof EntityPlayer && senderEntity != null)
