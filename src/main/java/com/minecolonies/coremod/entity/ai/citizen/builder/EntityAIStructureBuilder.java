@@ -530,7 +530,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             }
 
             world.setBlockState(pos, ModBlocks.blockRack.getDefaultState(), 0x03);
-
             final TileEntity entity = world.getTileEntity(pos);
             if(entity instanceof TileEntityRack)
             {
