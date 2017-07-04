@@ -44,6 +44,11 @@ public class TileEntityRack extends TileEntity
     private static final String TAG_INVENTORY = "inventory";
 
     /**
+     * Tag used to store if the entity is the main.
+     */
+    private static final String TAG_MAIN     = "main";
+
+    /**
      * Tag compound of forge.
      */
     private static final int TAG_COMPOUND = 10;
@@ -362,6 +367,7 @@ public class TileEntityRack extends TileEntity
                 inventory.setStackInSlot(i, stack);
             }
         }
+        isMain = compound.getBoolean(TAG_MAIN);
         super.readFromNBT(compound);
     }
 
@@ -385,6 +391,7 @@ public class TileEntityRack extends TileEntity
             inventoryTagList.appendTag(inventoryCompound);
         }
         compound.setTag(TAG_INVENTORY, inventoryTagList);
+        compound.setBoolean(TAG_MAIN, isMain);
         return super.writeToNBT(compound);
     }
 
