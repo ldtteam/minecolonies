@@ -526,7 +526,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 {
                     inventory.add(stack.copy());
                 }
-                chest.getSingleChestHandler().insertItem(slot, ItemStackUtils.EMPTY, false);
+                chest.getSingleChestHandler().extractItem(slot, Integer.MAX_VALUE, false);
             }
 
             world.setBlockState(pos, ModBlocks.blockRack.getDefaultState(), 0x03);

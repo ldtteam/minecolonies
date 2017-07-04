@@ -464,14 +464,16 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
         final int fortune = ItemStackUtils.getFortuneOf(tool);
         final IBlockState state = world.getBlockState(pos);
-        final BlockCrops crops = (BlockCrops) state.getBlock();
-
-        final List<ItemStack> drops = crops.getDrops(world, pos, state, fortune);
-        world.setBlockState(pos, crops.withAge(0));
-
+        final List<ItemStack> drops = state.getBlock().getDrops(world, pos, state, fortune);
         for (final ItemStack item : drops)
         {
             InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), item);
+        }
+
+        if(state.getBlock() instanceof BlockCrops)
+        {
+            final BlockCrops crops = (BlockCrops) state.getBlock();
+            world.setBlockState(pos, crops.withAge(0));
         }
 
         worker.addExperience(XP_PER_BLOCK);
