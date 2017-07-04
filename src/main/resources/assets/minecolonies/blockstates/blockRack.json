@@ -32,7 +32,7 @@
         "model": "minecolonies:blockRackFull"
       },
       "blockrackair": {
-        "model": "minecraft:block"
+        "model": "minecolonies:blockAirRack"
       }
     }
   }

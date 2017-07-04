@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
@@ -111,6 +112,7 @@ public class BlockRack extends Block
         worldIn.setBlockState(pos, tempState, 2);
     }
 
+    //todo fix getActualState
     /**
      * @deprecated but we still need this because there is nothing better.
      */
@@ -120,6 +122,58 @@ public class BlockRack extends Block
     {
         final EnumFacing enumFacing = EnumFacing.getHorizontal(meta);
         return this.getDefaultState().withProperty(FACING, enumFacing);
+    }
+
+    /**
+     * @deprecated but we still need this because there is nothing better.
+     */
+    @Override
+    public IBlockState getActualState(final IBlockState state, final IBlockAccess worldIn, final BlockPos pos)
+    {
+        final TileEntity entity = worldIn.getTileEntity(pos);
+
+        if(!(entity instanceof TileEntityRack))
+        {
+            return super.getActualState(state, worldIn, pos);
+        }
+
+        final TileEntityRack rack = (TileEntityRack) entity;
+        if (rack.isEmpty() && (rack.getOtherChest() == null || rack.getOtherChest().isEmpty()))
+        {
+            if(rack.getOtherChest() != null)
+            {
+                if(rack.isMain())
+                {
+                    return state.withProperty(BlockRack.VARIANT, BlockRack.EnumType.DEFAULTDOUBLE).withProperty(FACING, BlockPosUtil.getFacing(rack.getNeighbor(), pos));
+                }
+                else
+                {
+                    return state.withProperty(BlockRack.VARIANT, EnumType.EMPTYAIR);
+                }
+            }
+            else
+            {
+                return state.withProperty(BlockRack.VARIANT, EnumType.DEFAULT);
+            }
+        }
+        else
+        {
+            if(rack.getOtherChest() != null)
+            {
+                if(rack.isMain())
+                {
+                    return state.withProperty(BlockRack.VARIANT, EnumType.FULLDOUBLE).withProperty(FACING, BlockPosUtil.getFacing(rack.getNeighbor(), pos));
+                }
+                else
+                {
+                    return state.withProperty(BlockRack.VARIANT, BlockRack.EnumType.EMPTYAIR);
+                }
+            }
+            else
+            {
+                return state.withProperty(BlockRack.VARIANT, EnumType.FULL);
+            }
+        }
     }
 
     @Override

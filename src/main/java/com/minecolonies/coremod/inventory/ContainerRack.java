@@ -127,8 +127,6 @@ public class ContainerRack extends net.minecraft.inventory.Container
             }
         }
 
-
-
         //Ddd player inventory slots
         // Note: The slot numbers are within the player inventory and may be the same as the field inventory.
         int i;
