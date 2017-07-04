@@ -118,23 +118,32 @@ public class BlockRack extends Block
     @Override
     public IBlockState getStateFromMeta(int meta)
     {
-        EnumType type = EnumType.byMetadata(meta);
-        EnumFacing facing = EnumFacing.getHorizontal(meta - (type.getMetadata()));
-
-        return this.getDefaultState().withProperty(VARIANT, type).withProperty(FACING, facing);
+        final EnumFacing enumFacing = EnumFacing.getHorizontal(meta);
+        return this.getDefaultState().withProperty(FACING, enumFacing);
     }
 
     @Override
+    public int getMetaFromState(@NotNull final IBlockState state)
+    {
+        return state.getValue(FACING).getHorizontalIndex();
+    }
+
+    /**
+     * On the change of a neighbor block.
+     *
+     * @deprecated (Remove this as soon as minecraft offers anything better).
+     */
+    @Override
     public void neighborChanged(final IBlockState state, final World worldIn, final BlockPos pos, final Block blockIn)
     {
-        if(state.getBlock() instanceof BlockRack)
+        if (state.getBlock() instanceof BlockRack)
         {
             final TileEntity rack = worldIn.getTileEntity(pos);
-            for(EnumFacing offsetFacing: BlockHorizontal.FACING.getAllowedValues())
+            for (EnumFacing offsetFacing : BlockHorizontal.FACING.getAllowedValues())
             {
                 final BlockPos neighbor = pos.offset(offsetFacing);
                 final Block block = worldIn.getBlockState(neighbor).getBlock();
-                if(rack instanceof TileEntityRack && pos.getY() == neighbor.getY() && !pos.equals(neighbor) && !pos.equals(BlockPos.ORIGIN)
+                if (rack instanceof TileEntityRack && pos.getY() == neighbor.getY() && !pos.equals(neighbor) && !pos.equals(BlockPos.ORIGIN)
                         && (block instanceof BlockRack || blockIn instanceof BlockRack))
                 {
                     ((TileEntityRack) rack).neighborChanged(neighbor);
@@ -142,12 +151,6 @@ public class BlockRack extends Block
             }
         }
         super.neighborChanged(state, worldIn, pos, blockIn);
-    }
-
-    @Override
-    public int getMetaFromState(@NotNull IBlockState state)
-    {
-        return (state.getValue(VARIANT).getMetadata()) + state.getValue(FACING).getHorizontalIndex();
     }
 
     /**
@@ -160,7 +163,7 @@ public class BlockRack extends Block
      * @return A ArrayList containing all items this block drops
      */
     @Override
-    public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
+    public List<ItemStack> getDrops(final IBlockAccess world, final BlockPos pos, final IBlockState state, final int fortune)
     {
         List<ItemStack> drops = new ArrayList<>();
 
@@ -313,7 +316,7 @@ public class BlockRack extends Block
         return BlockRenderLayer.SOLID;
     }
 
-    public static enum EnumType implements IStringSerializable
+    public enum EnumType implements IStringSerializable
     {
         DEFAULT(0, "blockrackemptysingle", "emptysingle"),
         FULL(1, "blockrackfullsingle", "fullsingle"),
@@ -326,7 +329,7 @@ public class BlockRack extends Block
         private final String name;
         private final String unlocalizedName;
 
-        EnumType(int meta, String name, String unlocalizedName)
+        EnumType(final int meta, final String name, final String unlocalizedName)
         {
             this.meta = meta;
             this.name = name;
@@ -344,7 +347,7 @@ public class BlockRack extends Block
             return this.name;
         }
 
-        public static BlockRack.EnumType byMetadata(int meta)
+        public static BlockRack.EnumType byMetadata(final int meta)
         {
             int tempMeta = meta;
             if (tempMeta < 0 || tempMeta >= META_LOOKUP.length)
@@ -367,7 +370,7 @@ public class BlockRack extends Block
 
         static
         {
-            for (BlockRack.EnumType blockRack : values())
+            for (final BlockRack.EnumType blockRack : values())
             {
                 META_LOOKUP[blockRack.getMetadata()] = blockRack;
             }

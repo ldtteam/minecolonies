@@ -97,7 +97,14 @@ public class ContainerRack extends net.minecraft.inventory.Container
         this.colony = ColonyManager.getColony(world, location);
         if(neighborRack != null)
         {
-            this.inventory = new CombinedInvWrapper(tileEntityRack.getInventory(), neighborRack.getInventory());
+            if(tileEntityRack.isMain())
+            {
+                this.inventory = new CombinedInvWrapper(tileEntityRack.getInventory(), neighborRack.getInventory());
+            }
+            else
+            {
+                this.inventory = new CombinedInvWrapper(neighborRack.getInventory(), tileEntityRack.getInventory());
+            }
         }
         else
         {

@@ -46,7 +46,7 @@ public class TileEntityRack extends TileEntity
     /**
      * Tag used to store if the entity is the main.
      */
-    private static final String TAG_MAIN     = "main";
+    private static final String TAG_MAIN = "main";
 
     /**
      * Tag compound of forge.
@@ -201,7 +201,23 @@ public class TileEntityRack extends TileEntity
             content.put(storage, amount);
         }
 
-        if (worldObj != null && worldObj.getBlockState(pos).getBlock() instanceof BlockRack && isMain)
+        updateBlockState();
+
+        for (final Map.Entry<ItemStorage, Integer> entry : content.entrySet())
+        {
+            Log.getLogger().warn(entry.getKey().getItemStack().getDisplayName() + ": " + entry.getValue());
+        }
+
+        markDirty();
+    }
+
+    /**
+     * Update the blockState of the rack.
+     * Switch between connected, single, full and empty texture.
+     */
+    private void updateBlockState()
+    {
+        if (worldObj != null && worldObj.getBlockState(pos).getBlock() instanceof BlockRack && (isMain || single))
         {
             final IBlockState typeHere;
             final IBlockState typeNeighbor;
@@ -234,19 +250,12 @@ public class TileEntityRack extends TileEntity
                     typeNeighbor = null;
                 }
             }
-
             worldObj.setBlockState(pos, typeHere);
             if (typeNeighbor != null)
             {
                 worldObj.setBlockState(neighbor, typeNeighbor);
             }
-
-            for (final Map.Entry<ItemStorage, Integer> entry : content.entrySet())
-            {
-                Log.getLogger().warn(entry.getKey().getItemStack().getDisplayName() + ": " + entry.getValue());
-            }
         }
-        markDirty();
     }
 
     /**
@@ -281,22 +290,23 @@ public class TileEntityRack extends TileEntity
     /**
      * On neighbor changed this will be called from the block.
      *
-     * @param neighbor the blockPos which has changed.
+     * @param newNeighbor the blockPos which has changed.
      */
-    public void neighborChanged(final BlockPos neighbor)
+    public void neighborChanged(final BlockPos newNeighbor)
     {
-        if (this.neighbor.equals(BlockPos.ORIGIN) && worldObj.getBlockState(neighbor).getBlock() instanceof BlockRack)
+        final TileEntity entity = worldObj.getTileEntity(newNeighbor);
+        if (this.neighbor.equals(BlockPos.ORIGIN) && worldObj.getBlockState(newNeighbor).getBlock() instanceof BlockRack
+                && !(entity instanceof TileEntityRack && ((TileEntityRack) entity).getOtherChest() != null))
         {
-            this.neighbor = neighbor;
+            this.neighbor = newNeighbor;
             single = false;
-            final TileEntity entity = worldObj.getTileEntity(neighbor);
             if (entity instanceof TileEntityRack && !((TileEntityRack) entity).isMain())
             {
                 this.isMain = true;
             }
             updateItemStorage();
         }
-        else if (this.neighbor.equals(neighbor) && !(worldObj.getBlockState(neighbor).getBlock() instanceof BlockRack))
+        else if (this.neighbor.equals(newNeighbor) && !(worldObj.getBlockState(newNeighbor).getBlock() instanceof BlockRack))
         {
             this.neighbor = BlockPos.ORIGIN;
             single = true;
@@ -368,6 +378,7 @@ public class TileEntityRack extends TileEntity
             }
         }
         isMain = compound.getBoolean(TAG_MAIN);
+        updateItemStorage();
         super.readFromNBT(compound);
     }
 
