@@ -200,13 +200,62 @@ public class TileEntityRack extends TileEntity
             }
             content.put(storage, amount);
         }
-        
+
+        updateBlockState();
+
         for (final Map.Entry<ItemStorage, Integer> entry : content.entrySet())
         {
             Log.getLogger().warn(entry.getKey().getItemStack().getDisplayName() + ": " + entry.getValue());
         }
 
         markDirty();
+    }
+
+    /**
+     * Update the blockState of the rack.
+     * Switch between connected, single, full and empty texture.
+     */
+    private void updateBlockState()
+    {
+        if (worldObj != null && worldObj.getBlockState(pos).getBlock() instanceof BlockRack && (isMain || single))
+        {
+            final IBlockState typeHere;
+            final IBlockState typeNeighbor;
+            if (content.isEmpty() && (getOtherChest() == null || getOtherChest().isEmpty()))
+            {
+                if (getOtherChest() != null && worldObj.getBlockState(neighbor).getBlock() instanceof BlockRack)
+                {
+
+                    typeHere = worldObj.getBlockState(pos).withProperty(BlockRack.VARIANT, BlockRack.EnumType.EMPTYAIR);
+                    typeNeighbor = worldObj.getBlockState(neighbor).withProperty(BlockRack.VARIANT, BlockRack.EnumType.DEFAULTDOUBLE)
+                            .withProperty(BlockRack.FACING, BlockPosUtil.getFacing(pos, neighbor));
+                }
+                else
+                {
+                    typeHere = worldObj.getBlockState(pos).withProperty(BlockRack.VARIANT, BlockRack.EnumType.DEFAULT);
+                    typeNeighbor = null;
+                }
+            }
+            else
+            {
+                if (getOtherChest() != null && worldObj.getBlockState(neighbor).getBlock() instanceof BlockRack)
+                {
+                    typeHere = worldObj.getBlockState(pos).withProperty(BlockRack.VARIANT, BlockRack.EnumType.EMPTYAIR);
+                    typeNeighbor = worldObj.getBlockState(neighbor).withProperty(BlockRack.VARIANT, BlockRack.EnumType.FULLDOUBLE)
+                            .withProperty(BlockRack.FACING, BlockPosUtil.getFacing(pos, neighbor));
+                }
+                else
+                {
+                    typeHere = worldObj.getBlockState(pos).withProperty(BlockRack.VARIANT, BlockRack.EnumType.FULL);
+                    typeNeighbor = null;
+                }
+            }
+            worldObj.setBlockState(pos, typeHere);
+            if (typeNeighbor != null)
+            {
+                worldObj.setBlockState(neighbor, typeNeighbor);
+            }
+        }
     }
 
     /**

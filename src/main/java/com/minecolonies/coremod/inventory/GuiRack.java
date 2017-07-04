@@ -89,8 +89,8 @@ public class GuiRack extends GuiContainer
     {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(CHEST_GUI_TEXTURE);
-        int i = (this.width - this.xSize) / 2;
-        int j = (this.height - this.ySize) / 2;
+        final int i = (this.width - this.xSize) / 2;
+        final int j = (this.height - this.ySize) / 2;
         this.drawTexturedModalRect(i, j, 0, 0, this.xSize, this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET-1);
         this.drawTexturedModalRect(i, j + this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET-1, 0, TEXTURE_OFFSET, this.xSize, TEXTURE_HEIGHT);
     }
