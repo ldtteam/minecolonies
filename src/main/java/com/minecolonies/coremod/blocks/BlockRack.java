@@ -118,7 +118,7 @@ public class BlockRack extends Block
      */
     @Deprecated
     @Override
-    public IBlockState getStateFromMeta(int meta)
+    public IBlockState getStateFromMeta(final int meta)
     {
         final EnumFacing enumFacing = EnumFacing.getHorizontal(meta);
         return this.getDefaultState().withProperty(FACING, enumFacing);
@@ -193,7 +193,7 @@ public class BlockRack extends Block
         if (state.getBlock() instanceof BlockRack)
         {
             final TileEntity rack = worldIn.getTileEntity(pos);
-            for (EnumFacing offsetFacing : BlockHorizontal.FACING.getAllowedValues())
+            for (final EnumFacing offsetFacing : BlockHorizontal.FACING.getAllowedValues())
             {
                 final BlockPos neighbor = pos.offset(offsetFacing);
                 final Block block = worldIn.getBlockState(neighbor).getBlock();
@@ -219,7 +219,7 @@ public class BlockRack extends Block
     @Override
     public List<ItemStack> getDrops(final IBlockAccess world, final BlockPos pos, final IBlockState state, final int fortune)
     {
-        List<ItemStack> drops = new ArrayList<>();
+        final List<ItemStack> drops = new ArrayList<>();
 
         drops.add(new ItemStack(this, 1));
 
@@ -229,7 +229,7 @@ public class BlockRack extends Block
     @Override
     public void breakBlock(final World worldIn, final BlockPos pos, final IBlockState state)
     {
-        TileEntity tileentity = worldIn.getTileEntity(pos);
+        final TileEntity tileentity = worldIn.getTileEntity(pos);
 
         if (tileentity instanceof TileEntityRack)
         {
@@ -273,12 +273,15 @@ public class BlockRack extends Block
 
     /**
      * Called when a user uses the creative pick block button on this block
-     *
-     * @param target The full target the player is looking at
-     * @param player @return A ItemStack to add to the player's inventory, empty itemstack if nothing should be added.
+     * @param state the state.
+     * @param target the target.
+     * @param world the world.
+     * @param pos the position.
+     * @param player the player.
+     * @return
      */
     @Override
-    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player)
+    public ItemStack getPickBlock(final IBlockState state, final RayTraceResult target, final World world, final BlockPos pos, final EntityPlayer player)
     {
         return new ItemStack(this, 1);
     }

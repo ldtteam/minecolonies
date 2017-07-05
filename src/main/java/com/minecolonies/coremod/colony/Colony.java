@@ -739,7 +739,6 @@ public class Colony implements IColony
         }
     }
 
-
     /**
      * Increment the statistic amount and trigger achievement.
      * @param statistic the statistic.
@@ -888,6 +887,7 @@ public class Colony implements IColony
         }
         else
         {
+            lastContactInHours = 0;
             ticksPassed = 0;
         }
 

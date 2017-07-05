@@ -1,8 +1,6 @@
 package com.minecolonies.coremod.inventory;
 
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.tileentities.TileEntityRack;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -57,12 +55,6 @@ public class ContainerRack extends net.minecraft.inventory.Container
     private static final int INVENTORY_BAR_SIZE = 8;
 
     /**
-     * The colony of the field.
-     */
-    @Nullable
-    private final Colony colony;
-
-    /**
      * The inventory.
      */
     private final IItemHandler inventory;
@@ -94,7 +86,6 @@ public class ContainerRack extends net.minecraft.inventory.Container
             final InventoryPlayer playerInventory, @NotNull final World world, @NotNull final BlockPos location)
     {
         super();
-        this.colony = ColonyManager.getColony(world, location);
         if(neighborRack != null)
         {
             if(tileEntityRack.isMain())
@@ -167,7 +158,7 @@ public class ContainerRack extends net.minecraft.inventory.Container
     }
 
     @Override
-    public ItemStack transferStackInSlot(final EntityPlayer playerIn, int index)
+    public ItemStack transferStackInSlot(final EntityPlayer playerIn, final int index)
     {
         final Slot slot = this.inventorySlots.get(index);
 
@@ -176,24 +167,23 @@ public class ContainerRack extends net.minecraft.inventory.Container
             return ItemStackUtils.EMPTY;
         }
 
-        final ItemStack stack = slot.getStack();
-        final ItemStack stackCopy = stack.copy();
+        final ItemStack stackCopy = slot.getStack().copy();
 
         final int maxIndex = this.inventorySize * INVENTORY_COLUMNS;
 
         if (index < maxIndex)
         {
-            if (!this.mergeItemStack(stack, maxIndex, this.inventorySlots.size(), true))
+            if (!this.mergeItemStack(stackCopy, maxIndex, this.inventorySlots.size(), true))
             {
                 return ItemStackUtils.EMPTY;
             }
         }
-        else if (!this.mergeItemStack(stack, 0, maxIndex, false))
+        else if (!this.mergeItemStack(stackCopy, 0, maxIndex, false))
         {
             return ItemStackUtils.EMPTY;
         }
 
-        if (ItemStackUtils.getSize(stack) == 0)
+        if (ItemStackUtils.getSize(stackCopy) == 0)
         {
             slot.putStack(ItemStackUtils.EMPTY);
         }
