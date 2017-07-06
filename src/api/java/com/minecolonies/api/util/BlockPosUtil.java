@@ -441,18 +441,7 @@ public final class BlockPosUtil
      */
     public static EnumFacing getFacing(final BlockPos pos, final BlockPos neighbor)
     {
-        if(pos.getX() > neighbor.getX())
-        {
-            return EnumFacing.WEST;
-        }
-        else if(pos.getZ() > neighbor.getZ())
-        {
-            return EnumFacing.SOUTH;
-        }
-        else if(pos.getZ() < neighbor.getZ())
-        {
-            return EnumFacing.NORTH;
-        }
-        return EnumFacing.EAST;
+        final BlockPos vector = pos.subtract(neighbor);
+        return EnumFacing.getFacingFromVector(vector.getX(), vector.getY(), vector.getZ());
     }
 }

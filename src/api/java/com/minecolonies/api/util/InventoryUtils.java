@@ -1,5 +1,6 @@
 package com.minecolonies.api.util;
 
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.IToolType;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
@@ -1500,13 +1501,14 @@ public final class InventoryUtils
      * @param provider the provider to check.
      * @param item the item.
      * @param itemDamage its damage.
+     * @param amount stack size to be considered.
      * @return the slot or -1.
      */
-    public static int findFirstSlotInProviderWithNotFull(final ICapabilityProvider provider, final Item item, final int itemDamage)
+    public static int findFirstSlotInProviderWithNotFull(final ICapabilityProvider provider, final Item item, final int itemDamage, final int amount)
     {
         for (IItemHandler handler : getItemHandlersFromProvider(provider))
         {
-            int foundSlot = findFirstSlotInItemHandlerWithNotFull(handler, (ItemStack stack) -> compareItems(stack, item, itemDamage));
+            int foundSlot = findFirstSlotInItemHandlerWithNotFull(handler, (ItemStack stack) -> compareItems(stack, item, itemDamage), amount);
             //TODO: When contract is hardened later: Replace this -1 check with a try-catch block.
             if (foundSlot > -1)
             {
@@ -1521,9 +1523,10 @@ public final class InventoryUtils
      * Check if a certain item is in the handler but without the provider being full.
      * @param handler the handler to check.
      * @param itemStackSelectionPredicate the selection predicate..
+     * @param amount stack size to be considered.
      * @return the slot or -1.
      */
-    public static int findFirstSlotInItemHandlerWithNotFull(final IItemHandler handler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    public static int findFirstSlotInItemHandlerWithNotFull(final IItemHandler handler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate, final int amount)
     {
         boolean foundEmptySlot = false;
         boolean foundItem = false;
@@ -1537,6 +1540,10 @@ public final class InventoryUtils
             }
             else if (itemStackSelectionPredicate.test(stack))
             {
+                if(ItemStackUtils.getSize(stack) + amount <= Constants.STACKSIZE)
+                {
+                    foundEmptySlot = true;
+                }
                 foundItem = true;
                 itemSlot = slot;
             }
@@ -1561,14 +1568,14 @@ public final class InventoryUtils
     public static void spawnItemStack(final World worldIn, final double x, final double y, final double z, final ItemStack stack)
     {
         final Random random = new Random();
-        final double f = random.nextDouble() * SPAWN_MODIFIER + SPAWN_ADDITION;
-        final double f1 = random.nextDouble() * SPAWN_MODIFIER + SPAWN_ADDITION;
-        final double f2 = random.nextDouble() * SPAWN_MODIFIER + SPAWN_ADDITION;
+        final double spawnX = random.nextDouble() * SPAWN_MODIFIER + SPAWN_ADDITION;
+        final double spawnY = random.nextDouble() * SPAWN_MODIFIER + SPAWN_ADDITION;
+        final double spawnZ = random.nextDouble() * SPAWN_MODIFIER + SPAWN_ADDITION;
 
         while (stack.stackSize > 0)
         {
-            final int i = random.nextInt(MAX_RANDOM_SPAWN) + MIN_RANDOM_SPAWN;
-            final EntityItem entityitem = new EntityItem(worldIn, x + f, y + f1, z + f2, stack.splitStack(i));
+            final int randomSplitStackSize = random.nextInt(MAX_RANDOM_SPAWN) + MIN_RANDOM_SPAWN;
+            final EntityItem entityitem = new EntityItem(worldIn, x + spawnX, y + spawnY, z + spawnZ, stack.splitStack(randomSplitStackSize));
 
             entityitem.motionX = random.nextGaussian() * MOTION_MULTIPLIER;
             entityitem.motionY = random.nextGaussian() * MOTION_MULTIPLIER + MOTION_Y_MIN;
