@@ -41,11 +41,12 @@ import java.util.List;
 /**
  * Block for the shelves of the warehouse.
  */
-public class BlockRack extends Block
+public class BlockMinecoloniesRack extends Block
 {
-    public static final PropertyEnum<BlockRack.EnumType> VARIANT      = PropertyEnum.<BlockRack.EnumType>create("variant", BlockRack.EnumType.class);
-    public static final int                              DEFAULT_META = BlockRack.EnumType.DEFAULT.getMetadata();
-    public static final int                              FULL_META    = EnumType.FULL.getMetadata();
+    public static final PropertyEnum<BlockMinecoloniesRack.EnumType> VARIANT
+            = PropertyEnum.<BlockMinecoloniesRack.EnumType>create("variant", BlockMinecoloniesRack.EnumType.class);
+    public static final int                                          DEFAULT_META = BlockMinecoloniesRack.EnumType.DEFAULT.getMetadata();
+    public static final int                                          FULL_META    = EnumType.FULL.getMetadata();
 
     /**
      * The position it faces.
@@ -60,7 +61,7 @@ public class BlockRack extends Block
     /**
      * This blocks name.
      */
-    private static final String BLOCK_NAME = "blockRack";
+    private static final String BLOCK_NAME = "blockMinecoloniesRack";
 
     /**
      * The resistance this block has.
@@ -72,7 +73,7 @@ public class BlockRack extends Block
      */
     private static final int LIGHT_OPACITY = 0;
 
-    public BlockRack()
+    public BlockMinecoloniesRack()
     {
         super(Material.WOOD);
         initBlock();
@@ -144,16 +145,16 @@ public class BlockRack extends Block
             {
                 if(rack.isMain())
                 {
-                    return state.withProperty(BlockRack.VARIANT, BlockRack.EnumType.DEFAULTDOUBLE).withProperty(FACING, BlockPosUtil.getFacing(rack.getNeighbor(), pos));
+                    return state.withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.DEFAULTDOUBLE).withProperty(FACING, BlockPosUtil.getFacing(rack.getNeighbor(), pos));
                 }
                 else
                 {
-                    return state.withProperty(BlockRack.VARIANT, EnumType.EMPTYAIR);
+                    return state.withProperty(BlockMinecoloniesRack.VARIANT, EnumType.EMPTYAIR);
                 }
             }
             else
             {
-                return state.withProperty(BlockRack.VARIANT, EnumType.DEFAULT);
+                return state.withProperty(BlockMinecoloniesRack.VARIANT, EnumType.DEFAULT);
             }
         }
         else
@@ -162,16 +163,16 @@ public class BlockRack extends Block
             {
                 if(rack.isMain())
                 {
-                    return state.withProperty(BlockRack.VARIANT, EnumType.FULLDOUBLE).withProperty(FACING, BlockPosUtil.getFacing(rack.getNeighbor(), pos));
+                    return state.withProperty(BlockMinecoloniesRack.VARIANT, EnumType.FULLDOUBLE).withProperty(FACING, BlockPosUtil.getFacing(rack.getNeighbor(), pos));
                 }
                 else
                 {
-                    return state.withProperty(BlockRack.VARIANT, BlockRack.EnumType.EMPTYAIR);
+                    return state.withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.EMPTYAIR);
                 }
             }
             else
             {
-                return state.withProperty(BlockRack.VARIANT, EnumType.FULL);
+                return state.withProperty(BlockMinecoloniesRack.VARIANT, EnumType.FULL);
             }
         }
     }
@@ -190,7 +191,7 @@ public class BlockRack extends Block
     @Override
     public void neighborChanged(final IBlockState state, final World worldIn, final BlockPos pos, final Block blockIn)
     {
-        if (state.getBlock() instanceof BlockRack)
+        if (state.getBlock() instanceof BlockMinecoloniesRack)
         {
             final TileEntity rack = worldIn.getTileEntity(pos);
             for (final EnumFacing offsetFacing : BlockHorizontal.FACING.getAllowedValues())
@@ -198,7 +199,7 @@ public class BlockRack extends Block
                 final BlockPos neighbor = pos.offset(offsetFacing);
                 final Block block = worldIn.getBlockState(neighbor).getBlock();
                 if (rack instanceof TileEntityRack && pos.getY() == neighbor.getY() && !pos.equals(neighbor) && !pos.equals(BlockPos.ORIGIN)
-                        && (block instanceof BlockRack || blockIn instanceof BlockRack))
+                        && (block instanceof BlockMinecoloniesRack || blockIn instanceof BlockMinecoloniesRack))
                 {
                     ((TileEntityRack) rack).neighborChanged(neighbor);
                 }
@@ -381,7 +382,7 @@ public class BlockRack extends Block
         FULLDOUBLE(3, "blockrackfull", "full"),
         EMPTYAIR(4, "blockrackair", "dontrender");
 
-        private static final BlockRack.EnumType[] META_LOOKUP = new BlockRack.EnumType[values().length];
+        private static final BlockMinecoloniesRack.EnumType[] META_LOOKUP = new BlockMinecoloniesRack.EnumType[values().length];
         private final int    meta;
         private final String name;
         private final String unlocalizedName;
@@ -404,7 +405,7 @@ public class BlockRack extends Block
             return this.name;
         }
 
-        public static BlockRack.EnumType byMetadata(final int meta)
+        public static BlockMinecoloniesRack.EnumType byMetadata(final int meta)
         {
             int tempMeta = meta;
             if (tempMeta < 0 || tempMeta >= META_LOOKUP.length)
@@ -427,7 +428,7 @@ public class BlockRack extends Block
 
         static
         {
-            for (final BlockRack.EnumType blockRack : values())
+            for (final BlockMinecoloniesRack.EnumType blockRack : values())
             {
                 META_LOOKUP[blockRack.getMetadata()] = blockRack;
             }

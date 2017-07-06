@@ -4,6 +4,7 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.BlockSolidSubstitution;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
@@ -23,7 +24,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import slimeknights.tconstruct.gadgets.block.BlockRack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -405,7 +405,7 @@ public final class PlacementHandlers
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
                 @Nullable final AbstractEntityAIStructure<?> placer)
         {
-            if (!(blockState.getBlock() instanceof BlockChest && !(blockState.getBlock() instanceof BlockRack)))
+            if (!(blockState.getBlock() instanceof BlockChest && !(blockState.getBlock() instanceof BlockMinecoloniesRack)))
             {
                 return ActionProcessingResult.IGNORE;
             }

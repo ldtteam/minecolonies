@@ -4,7 +4,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Log;
-import com.minecolonies.coremod.blocks.BlockRack;
+import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -217,36 +217,36 @@ public class TileEntityRack extends TileEntity
      */
     private void updateBlockState()
     {
-        if (worldObj != null && worldObj.getBlockState(pos).getBlock() instanceof BlockRack && (isMain || single))
+        if (worldObj != null && worldObj.getBlockState(pos).getBlock() instanceof BlockMinecoloniesRack && (isMain || single))
         {
             final IBlockState typeHere;
             final IBlockState typeNeighbor;
             if (content.isEmpty() && (getOtherChest() == null || getOtherChest().isEmpty()))
             {
-                if (getOtherChest() != null && worldObj.getBlockState(neighbor).getBlock() instanceof BlockRack)
+                if (getOtherChest() != null && worldObj.getBlockState(neighbor).getBlock() instanceof BlockMinecoloniesRack)
                 {
 
-                    typeHere = worldObj.getBlockState(pos).withProperty(BlockRack.VARIANT, BlockRack.EnumType.EMPTYAIR);
-                    typeNeighbor = worldObj.getBlockState(neighbor).withProperty(BlockRack.VARIANT, BlockRack.EnumType.DEFAULTDOUBLE)
-                            .withProperty(BlockRack.FACING, BlockPosUtil.getFacing(pos, neighbor));
+                    typeHere = worldObj.getBlockState(pos).withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.EMPTYAIR);
+                    typeNeighbor = worldObj.getBlockState(neighbor).withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.DEFAULTDOUBLE)
+                            .withProperty(BlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(pos, neighbor));
                 }
                 else
                 {
-                    typeHere = worldObj.getBlockState(pos).withProperty(BlockRack.VARIANT, BlockRack.EnumType.DEFAULT);
+                    typeHere = worldObj.getBlockState(pos).withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.DEFAULT);
                     typeNeighbor = null;
                 }
             }
             else
             {
-                if (getOtherChest() != null && worldObj.getBlockState(neighbor).getBlock() instanceof BlockRack)
+                if (getOtherChest() != null && worldObj.getBlockState(neighbor).getBlock() instanceof BlockMinecoloniesRack)
                 {
-                    typeHere = worldObj.getBlockState(pos).withProperty(BlockRack.VARIANT, BlockRack.EnumType.EMPTYAIR);
-                    typeNeighbor = worldObj.getBlockState(neighbor).withProperty(BlockRack.VARIANT, BlockRack.EnumType.FULLDOUBLE)
-                            .withProperty(BlockRack.FACING, BlockPosUtil.getFacing(pos, neighbor));
+                    typeHere = worldObj.getBlockState(pos).withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.EMPTYAIR);
+                    typeNeighbor = worldObj.getBlockState(neighbor).withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.FULLDOUBLE)
+                            .withProperty(BlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(pos, neighbor));
                 }
                 else
                 {
-                    typeHere = worldObj.getBlockState(pos).withProperty(BlockRack.VARIANT, BlockRack.EnumType.FULL);
+                    typeHere = worldObj.getBlockState(pos).withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.FULL);
                     typeNeighbor = null;
                 }
             }
@@ -295,7 +295,7 @@ public class TileEntityRack extends TileEntity
     public void neighborChanged(final BlockPos newNeighbor)
     {
         final TileEntity entity = worldObj.getTileEntity(newNeighbor);
-        if (this.neighbor.equals(BlockPos.ORIGIN) && worldObj.getBlockState(newNeighbor).getBlock() instanceof BlockRack
+        if (this.neighbor.equals(BlockPos.ORIGIN) && worldObj.getBlockState(newNeighbor).getBlock() instanceof BlockMinecoloniesRack
                 && !(entity instanceof TileEntityRack && ((TileEntityRack) entity).getOtherChest() != null))
         {
             this.neighbor = newNeighbor;
@@ -306,7 +306,7 @@ public class TileEntityRack extends TileEntity
             }
             updateItemStorage();
         }
-        else if (this.neighbor.equals(newNeighbor) && !(worldObj.getBlockState(newNeighbor).getBlock() instanceof BlockRack))
+        else if (this.neighbor.equals(newNeighbor) && !(worldObj.getBlockState(newNeighbor).getBlock() instanceof BlockMinecoloniesRack))
         {
             this.neighbor = BlockPos.ORIGIN;
             single = true;
