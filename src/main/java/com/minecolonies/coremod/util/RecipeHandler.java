@@ -86,7 +86,7 @@ public final class RecipeHandler
         //Field
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutField, 1), 
                 " Y ", "X#X", " X ", 'X', WOODEN_STICK, '#', Items.LEATHER, 'Y', Blocks.HAY_BLOCK));
-        
+
         //enableInDevelopmentFeatures(enableInDevelopmentFeatures);
         addSupplyChestRecipes(supplyChests);
     }

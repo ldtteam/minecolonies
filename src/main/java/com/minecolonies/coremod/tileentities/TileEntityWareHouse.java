@@ -12,6 +12,7 @@ import com.minecolonies.coremod.colony.buildings.BuildingDeliveryman;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.colony.buildings.BuildingWareHouse;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -468,7 +469,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     @Nullable
     private TileEntity searchRightChestForStack(@NotNull final ItemStack stack)
     {
-        if (InventoryUtils.findFirstSlotInProviderWithNotFull(this, stack.getItem(), stack.getItemDamage()) != -1)
+        if (InventoryUtils.findFirstSlotInProviderWithNotFull(this, stack.getItem(), stack.getItemDamage(), ItemStackUtils.getSize(stack)) != -1)
         {
             return this;
         }
@@ -530,7 +531,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     private static boolean isInChest(final ItemStack stack, final TileEntity entity, final boolean ignoreDamageValue)
     {
         return entity instanceof TileEntityChest
-                && InventoryUtils.findFirstSlotInProviderWithNotFull(entity, stack.getItem(), ignoreDamageValue ? -1 : stack.getItemDamage()) != -1;
+                && InventoryUtils.findFirstSlotInProviderWithNotFull(entity, stack.getItem(), ignoreDamageValue ? -1 : stack.getItemDamage(), ItemStackUtils.getSize(stack)) != -1;
     }
 
     /**
