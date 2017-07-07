@@ -4,6 +4,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.IColony;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
+import com.mojang.authlib.GameProfile;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -62,14 +63,22 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
 
         if(colonyId == -1 && args.length >= 1)
         {
-            final EntityPlayer player = server.getEntityWorld().getPlayerEntityByName(args[0]);
+            final GameProfile playerProfile =  server.getPlayerProfileCache().getGameProfileForUsername(args[0]);
+
+            EntityPlayer player = null;
+
+            if (playerProfile != null)
+            {
+                player = (EntityPlayer) server.getEntityFromUuid(playerProfile.getId());
+            }
+
             if(player != null)
             {
                 tempColony = ColonyManager.getIColonyByOwner(server.getEntityWorld(), player);
             }
         }
 
-        if(sender instanceof EntityPlayer)
+        if(sender instanceof EntityPlayer && sender.getCommandSenderEntity() != null)
         {
             final UUID mayorID = sender.getCommandSenderEntity().getUniqueID();
             if (tempColony == null)
