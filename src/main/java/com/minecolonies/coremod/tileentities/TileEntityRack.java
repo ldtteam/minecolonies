@@ -66,7 +66,7 @@ public class TileEntityRack extends TileEntity
     /**
      * Is this the main chest of the doubleChest.
      */
-    private boolean isMain = false;
+    private boolean main = false;
 
     /**
      * The content of the chest.
@@ -217,7 +217,7 @@ public class TileEntityRack extends TileEntity
      */
     private void updateBlockState()
     {
-        if (worldObj != null && worldObj.getBlockState(pos).getBlock() instanceof BlockMinecoloniesRack && (isMain || single))
+        if (worldObj != null && worldObj.getBlockState(pos).getBlock() instanceof BlockMinecoloniesRack && (main || single))
         {
             final IBlockState typeHere;
             final IBlockState typeNeighbor;
@@ -284,7 +284,7 @@ public class TileEntityRack extends TileEntity
      */
     public boolean isMain()
     {
-        return this.isMain;
+        return this.main;
     }
 
     /**
@@ -302,7 +302,7 @@ public class TileEntityRack extends TileEntity
             single = false;
             if (entity instanceof TileEntityRack && !((TileEntityRack) entity).isMain())
             {
-                this.isMain = true;
+                this.main = true;
             }
             updateItemStorage();
         }
@@ -310,7 +310,7 @@ public class TileEntityRack extends TileEntity
         {
             this.neighbor = BlockPos.ORIGIN;
             single = true;
-            this.isMain = false;
+            this.main = false;
             updateItemStorage();
         }
     }
@@ -341,7 +341,7 @@ public class TileEntityRack extends TileEntity
             }
             else
             {
-                if (isMain)
+                if (main)
                 {
                     return (T) new CombinedInvWrapper(inventory, getOtherChest().inventory);
                 }
@@ -377,7 +377,7 @@ public class TileEntityRack extends TileEntity
                 inventory.setStackInSlot(i, stack);
             }
         }
-        isMain = compound.getBoolean(TAG_MAIN);
+        main = compound.getBoolean(TAG_MAIN);
         updateItemStorage();
         super.readFromNBT(compound);
     }
@@ -402,7 +402,7 @@ public class TileEntityRack extends TileEntity
             inventoryTagList.appendTag(inventoryCompound);
         }
         compound.setTag(TAG_INVENTORY, inventoryTagList);
-        compound.setBoolean(TAG_MAIN, isMain);
+        compound.setBoolean(TAG_MAIN, main);
         return super.writeToNBT(compound);
     }
 
@@ -453,7 +453,7 @@ public class TileEntityRack extends TileEntity
             inventoryTagList.appendTag(inventoryCompound);
         }
         compound.setTag(TAG_INVENTORY, inventoryTagList);
-        compound.setBoolean(TAG_MAIN, isMain);
+        compound.setBoolean(TAG_MAIN, main);
         return new SPacketUpdateTileEntity(this.pos, 0, compound);
     }
 
@@ -488,7 +488,7 @@ public class TileEntityRack extends TileEntity
                 inventory.setStackInSlot(i, stack);
             }
         }
-        isMain = compound.getBoolean(TAG_MAIN);
+        main = compound.getBoolean(TAG_MAIN);
     }
 
     /**
