@@ -159,7 +159,8 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
         if (tempColony != null
               && (!tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
                     && !(block instanceof BlockHutTownHall
-                           && BlockPosUtil.getDistance2D(tempColony.getCenter(), buildPos) >= Configurations.workingRangeTownHall * 2 + Configurations.townHallPadding)))
+                           && BlockPosUtil.getDistance2D(tempColony.getCenter(), buildPos) >=
+                Configurations.gameplay.workingRangeTownHall * 2 + Configurations.gameplay.townHallPadding)))
         {
             return;
         }

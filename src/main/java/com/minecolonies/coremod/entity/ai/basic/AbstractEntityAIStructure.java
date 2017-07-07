@@ -459,7 +459,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             worker.faceBlock(currentBlock.blockPosition);
 
             //We need to deal with materials
-            if (Configurations.builderInfiniteResources || currentBlock.worldMetadata.getMaterial().isLiquid())
+            if (Configurations.gameplay.builderInfiniteResources || currentBlock.worldMetadata.getMaterial().isLiquid())
             {
                 worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
                 world.setBlockToAir(currentBlock.blockPosition);
@@ -676,9 +676,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             }
         }
 
-        if (Configurations.builderBuildBlockDelay > 0 && blockToPlace != Blocks.AIR)
+        if (Configurations.gameplay.builderBuildBlockDelay > 0 && blockToPlace != Blocks.AIR)
         {
-            setDelay(Configurations.builderBuildBlockDelay);
+            setDelay(Configurations.gameplay.builderBuildBlockDelay);
         }
 
         return true;
@@ -798,7 +798,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 request.add(entity.getPickedResult(new RayTraceResult(worker)));
             }
 
-            if (!Configurations.builderInfiniteResources)
+            if (!Configurations.gameplay.builderInfiniteResources)
             {
                 for (final ItemStack stack : request)
                 {

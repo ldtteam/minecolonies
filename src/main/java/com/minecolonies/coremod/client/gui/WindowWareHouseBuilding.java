@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class WindowWareHouseBuilding extends AbstractWindowBuilding<BuildingWareHouse.View>
 {
-    private static final String HOME_BUILDING_RESOURCE_SUFFIX = ":gui/windowHutHome.xml";
+    private static final String HOME_BUILDING_RESOURCE_SUFFIX = ":gui/windowHutWarehouse.xml";
 
     /**
      * Creates the Window object.

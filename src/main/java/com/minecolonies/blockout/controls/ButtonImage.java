@@ -585,7 +585,7 @@ public class ButtonImage extends Button
 
             GlStateManager.pushMatrix();
             GlStateManager.translate((float) textScale, (float) textScale, (float) textScale);
-            mc.fontRendererObj.drawString(label, (float) (getX() + offsetX), (float) (getY() + offsetY), color, shadow);
+            mc.fontRenderer.drawString(label, (float) (getX() + offsetX), (float) (getY() + offsetY), color, shadow);
             GlStateManager.popMatrix();
         }
     }
@@ -619,7 +619,7 @@ public class ButtonImage extends Button
      */
     public int getStringWidth()
     {
-        return (int) (mc.fontRendererObj.getStringWidth(label) * textScale);
+        return (int) (mc.fontRenderer.getStringWidth(label) * textScale);
     }
 
     /**
@@ -629,6 +629,6 @@ public class ButtonImage extends Button
      */
     public int getTextHeight()
     {
-        return (int) (mc.fontRendererObj.FONT_HEIGHT * textScale);
+        return (int) (mc.fontRenderer.FONT_HEIGHT * textScale);
     }
 }

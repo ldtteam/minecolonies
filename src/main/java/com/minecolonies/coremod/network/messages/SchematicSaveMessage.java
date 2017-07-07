@@ -81,12 +81,12 @@ public class SchematicSaveMessage implements IMessage, IMessageHandler<Schematic
     @Override
     public IMessage onMessage(@NotNull final SchematicSaveMessage message, final MessageContext ctx)
     {
-        if (!MineColonies.isClient() && !Configurations.allowPlayerSchematics)
+        if (!MineColonies.isClient() && !Configurations.gameplay.allowPlayerSchematics)
         {
             Log.getLogger().info("SchematicSaveMessage: custom schematic is not allowed on this server.");
             if (ctx.side.isServer())
             {
-                ctx.getServerHandler().playerEntity.sendMessage(new TextComponentString("The server does not allow custom schematic!"));
+                ctx.getServerHandler().player.sendMessage(new TextComponentString("The server does not allow custom schematic!"));
             }
             return null;
         }
@@ -106,11 +106,11 @@ public class SchematicSaveMessage implements IMessage, IMessageHandler<Schematic
         {
             if (schematicSent)
             {
-                ctx.getServerHandler().playerEntity.sendMessage(new TextComponentString("Schematic successfully sent!"));
+                ctx.getServerHandler().player.sendMessage(new TextComponentString("Schematic successfully sent!"));
             }
             else
             {
-                ctx.getServerHandler().playerEntity.sendMessage(new TextComponentString("Failed to send the Schematic!"));
+                ctx.getServerHandler().player.sendMessage(new TextComponentString("Failed to send the Schematic!"));
             }
         }
         return null;
