@@ -513,51 +513,10 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     }
 
     @Override
-    public void handleBuildingOverChest(@NotNull final BlockPos pos, final TileEntityChest chest)
-    {
-        if(job.getWorkOrder() != null && getOwnBuilding().getColony().getBuilding(job.getWorkOrder().getBuildingLocation()) instanceof BuildingWareHouse)
-        {
-            final List<ItemStack> inventory = new ArrayList<>();
-            final int size = chest.getSingleChestHandler().getSlots();
-            for(int slot = 0; slot < size; slot++)
-            {
-                final ItemStack stack = chest.getSingleChestHandler().getStackInSlot(slot);
-                if(!ItemStackUtils.isEmpty(stack))
-                {
-                    inventory.add(stack.copy());
-                }
-                chest.getSingleChestHandler().extractItem(slot, Integer.MAX_VALUE, false);
-            }
-
-            world.setBlockState(pos, ModBlocks.blockRack.getDefaultState(), 0x03);
-            final TileEntity entity = world.getTileEntity(pos);
-            if(entity instanceof TileEntityRack)
-            {
-                for(final ItemStack stack: inventory)
-                {
-                    if(!ItemStackUtils.isEmpty(stack))
-                    {
-                        InventoryUtils.addItemStackToItemHandler(((TileEntityRack) entity).getInventory(), stack);
-                    }
-                }
-            }
-        }
-    }
-
-    @Override
     public void connectBlockToBuildingIfNecessary(@NotNull Block block, @NotNull final BlockPos pos)
     {
         final BlockPos buildingLocation = job.getWorkOrder().getBuildingLocation();
         final AbstractBuilding building = this.getOwnBuilding().getColony().getBuilding(buildingLocation);
-
-        if(building instanceof BuildingWareHouse && block instanceof BlockChest)
-        {
-            final TileEntity entity = world.getTileEntity(pos);
-            if(entity instanceof TileEntityChest)
-            {
-                handleBuildingOverChest(pos, (TileEntityChest) entity);
-            }
-        }
 
         if (building != null)
         {

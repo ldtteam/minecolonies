@@ -6,6 +6,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.BlockSolidSubstitution;
+import com.minecolonies.coremod.colony.buildings.BuildingWareHouse;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import net.minecraft.block.*;
@@ -428,7 +429,7 @@ public final class PlacementHandlers
             final TileEntity entity = world.getTileEntity(pos);
             if (entity instanceof TileEntityChest)
             {
-                placer.handleBuildingOverChest(pos, (TileEntityChest) entity);
+                BuildingWareHouse.handleBuildingOverChest(pos, (TileEntityChest) entity, world);
             }
             else if (!world.setBlockState(pos, blockState, 0x03))
             {

@@ -1548,7 +1548,7 @@ public final class InventoryUtils
                 itemSlot = slot;
             }
 
-            if(foundItem == foundEmptySlot)
+            if(foundItem && foundEmptySlot)
             {
                 return itemSlot;
             }

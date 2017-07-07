@@ -23,7 +23,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -637,18 +636,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         {
             InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), item);
         }
-    }
-
-    /**
-     * Specific actions to execute when building over a chest.
-     * @param pos the position to build at.
-     * @param chest the tileEntity at the position.
-     */
-    public void handleBuildingOverChest(@NotNull final BlockPos pos, final TileEntityChest chest)
-    {
-        /**
-         * Specific worker should implement this.
-         */
     }
 
     private boolean decreaseInventory(@NotNull final BlockPos pos, final Block block, @NotNull final IBlockState state)
