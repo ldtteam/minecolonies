@@ -143,7 +143,8 @@ public class Structure
                 return structureBlock == worldBlockState.getBlock();
             }
             else if ((structureBlock instanceof BlockStairs && structureBlockState.equals(worldBlockState))
-                    || BlockUtils.isGrassOrDirt(structureBlock, worldBlock, structureBlockState, worldBlockState))
+                    || BlockUtils.isGrassOrDirt(structureBlock, worldBlock, structureBlockState, worldBlockState)
+                    || isBlockChestOrRack(structureBlock, worldBlock))
             {
                 return true;
             }
@@ -155,6 +156,17 @@ public class Structure
         {
             return structureBlock == ModBlocks.blockSubstitution || (structureBlock == ModBlocks.blockSolidSubstitution
                     && worldMetadata.getMaterial().isSolid() && !(worldBlock instanceof BlockOre) && worldBlock != Blocks.AIR);
+        }
+
+        /**
+         * Chest and rack are to be considered equal in world.
+         * @param structureBlock the block in the structure.
+         * @param worldBlock the block in the world.
+         * @return true if structure is chest and world is rack.
+         */
+        public static boolean isBlockChestOrRack(final Block structureBlock, final Block worldBlock)
+        {
+            return structureBlock == Blocks.CHEST && worldBlock == ModBlocks.blockRack;
         }
     }
 
