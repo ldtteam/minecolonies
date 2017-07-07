@@ -113,7 +113,6 @@ public class BlockMinecoloniesRack extends Block
         worldIn.setBlockState(pos, tempState, 2);
     }
 
-    //todo fix getActualState
     /**
      * @deprecated but we still need this because there is nothing better.
      */
@@ -145,7 +144,8 @@ public class BlockMinecoloniesRack extends Block
             {
                 if(rack.isMain())
                 {
-                    return state.withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.DEFAULTDOUBLE).withProperty(FACING, BlockPosUtil.getFacing(rack.getNeighbor(), pos));
+                    return state.withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.DEFAULTDOUBLE)
+                            .withProperty(FACING, BlockPosUtil.getFacing(rack.getNeighbor(), pos));
                 }
                 else
                 {
@@ -163,7 +163,8 @@ public class BlockMinecoloniesRack extends Block
             {
                 if(rack.isMain())
                 {
-                    return state.withProperty(BlockMinecoloniesRack.VARIANT, EnumType.FULLDOUBLE).withProperty(FACING, BlockPosUtil.getFacing(rack.getNeighbor(), pos));
+                    return state.withProperty(BlockMinecoloniesRack.VARIANT, EnumType.FULLDOUBLE)
+                            .withProperty(FACING, BlockPosUtil.getFacing(rack.getNeighbor(), pos));
                 }
                 else
                 {

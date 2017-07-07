@@ -34,10 +34,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 /**
- * Performs deliveryman work.
- * Created: July 18, 2014
- *
- * @author MrIbby
+ * Delivers item at needs.
  */
 public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliveryman>
 {

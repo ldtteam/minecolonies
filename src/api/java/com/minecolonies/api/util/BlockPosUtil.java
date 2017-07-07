@@ -438,10 +438,11 @@ public final class BlockPosUtil
      * Calculate in which direction a pos is facing.
      * @param pos the pos.
      * @param neighbor the block its facing.
+     * @return the directions its facing.
      */
     public static EnumFacing getFacing(final BlockPos pos, final BlockPos neighbor)
     {
-        final BlockPos vector = pos.subtract(neighbor);
-        return EnumFacing.getFacingFromVector(vector.getX(), vector.getY(), vector.getZ());
+        final BlockPos vector = neighbor.subtract(pos);
+        return EnumFacing.getFacingFromVector(vector.getX(), vector.getY(), -vector.getZ());
     }
 }
