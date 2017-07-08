@@ -673,6 +673,6 @@ public final class ColonyView implements IColony
     @Override
     public List<EntityLivingBase> getGuardTargets()
     {
-        return null;
+        return new ArrayList<>();
     }
 }

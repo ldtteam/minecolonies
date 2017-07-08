@@ -109,7 +109,7 @@ public class Colony implements IColony
     /**
      * Whether there will be a raid in this colony tonight.
      */
-    private static boolean willRaidTonight = false;
+    private boolean willRaidTonight = false;
 
     /**
      * Amount of ticks that pass/hour.
@@ -2023,7 +2023,7 @@ public class Colony implements IColony
     @Override
     public List<EntityLivingBase> getGuardTargets()
     {
-        return guardTargets;
+        return new ArrayList<>(guardTargets);
     }
 
     public void setGuardTargets(final List<EntityLivingBase> targets)
