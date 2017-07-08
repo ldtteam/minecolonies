@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.ai.util;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockUtils;
+import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.block.Block;
@@ -144,7 +145,7 @@ public class Structure
             }
             else if ((structureBlock instanceof BlockStairs && structureBlockState.equals(worldBlockState))
                     || BlockUtils.isGrassOrDirt(structureBlock, worldBlock, structureBlockState, worldBlockState)
-                    || isBlockChestOrRack(structureBlock, worldBlock))
+                    || (worldBlock == ModBlocks.blockRack && BlockMinecoloniesRack.shouldBlockBeReplacedWithRack(structureBlock)))
             {
                 return true;
             }
@@ -156,17 +157,6 @@ public class Structure
         {
             return structureBlock == ModBlocks.blockSubstitution || (structureBlock == ModBlocks.blockSolidSubstitution
                     && worldMetadata.getMaterial().isSolid() && !(worldBlock instanceof BlockOre) && worldBlock != Blocks.AIR);
-        }
-
-        /**
-         * Chest and rack are to be considered equal in world.
-         * @param structureBlock the block in the structure.
-         * @param worldBlock the block in the world.
-         * @return true if structure is chest and world is rack.
-         */
-        public static boolean isBlockChestOrRack(final Block structureBlock, final Block worldBlock)
-        {
-            return structureBlock == Blocks.CHEST && worldBlock == ModBlocks.blockRack;
         }
     }
 

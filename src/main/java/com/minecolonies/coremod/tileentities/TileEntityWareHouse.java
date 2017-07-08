@@ -282,7 +282,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             {
                 @Nullable final TileEntity entity = getWorld().getTileEntity(pos);
                 if ((entity instanceof TileEntityRack && ((TileEntityRack) entity).hasItemStack(itemStackSelectionPredicate))
-                    || (entity instanceof TileEntityChest && isInTileEntity((TileEntityChest) entity, itemStackSelectionPredicate)))
+                        || (entity instanceof TileEntityChest && isInTileEntity((TileEntityChest) entity, itemStackSelectionPredicate)))
                 {
                     return true;
                 }
@@ -361,7 +361,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                         hasItemStack((ItemStack stack) ->
                                 ItemStackUtils.hasToolLevel(stack, tool, minLevel, requestingBuilding.getBuildingLevel())))
                         || (entity instanceof TileEntityChest
-                                && InventoryUtils.isToolInProvider(entity, tool, minLevel, requestingBuilding.getBuildingLevel())))
+                        && InventoryUtils.isToolInProvider(entity, tool, minLevel, requestingBuilding.getBuildingLevel())))
                 {
                     return pos;
                 }
@@ -391,14 +391,11 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             for (final BlockPos pos : building.getAdditionalCountainers())
             {
                 @Nullable final TileEntity entity = getWorld().getTileEntity(pos);
-                if (entity instanceof TileEntityRack)
-                {
-                    return ((TileEntityRack) entity).
-                            hasItemStack((ItemStack stack) ->
-                                    ItemStackUtils.hasToolLevel(stack, toolType, requestingBuilding.getNeededToolLevel(), requestingBuilding.getBuildingLevel()));
-                }
-                else if (entity instanceof TileEntityChest
-                        && InventoryUtils.isToolInProvider(entity, toolType, requestingBuilding.getNeededToolLevel(), requestingBuilding.getBuildingLevel()))
+                if ((entity instanceof TileEntityRack
+                        && ((TileEntityRack) entity).hasItemStack((ItemStack stack) ->
+                                ItemStackUtils.hasToolLevel(stack, toolType, requestingBuilding.getNeededToolLevel(), requestingBuilding.getBuildingLevel())))
+                        || (entity instanceof TileEntityChest
+                                && InventoryUtils.isToolInProvider(entity, toolType, requestingBuilding.getNeededToolLevel(), requestingBuilding.getBuildingLevel())))
                 {
                     return true;
                 }

@@ -19,6 +19,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -176,6 +177,16 @@ public class BlockMinecoloniesRack extends Block
                 return state.withProperty(BlockMinecoloniesRack.VARIANT, EnumType.FULL);
             }
         }
+    }
+
+    /**
+     * Check if a certain block should be replaced with a rack.
+     * @param block the block to check.
+     * @return true if so.
+     */
+    public static boolean shouldBlockBeReplacedWithRack(final Block block)
+    {
+        return block == Blocks.CHEST;
     }
 
     @Override
