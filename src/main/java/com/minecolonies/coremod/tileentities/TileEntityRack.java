@@ -3,7 +3,6 @@ package com.minecolonies.coremod.tileentities;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import net.minecraft.block.state.IBlockState;
@@ -202,12 +201,6 @@ public class TileEntityRack extends TileEntity
         }
 
         updateBlockState();
-
-        for (final Map.Entry<ItemStorage, Integer> entry : content.entrySet())
-        {
-            Log.getLogger().warn(entry.getKey().getItemStack().getDisplayName() + ": " + entry.getValue());
-        }
-
         markDirty();
     }
 
