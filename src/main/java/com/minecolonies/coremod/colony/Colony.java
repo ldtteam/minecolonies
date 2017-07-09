@@ -1774,28 +1774,6 @@ public class Colony implements IColony
     }
 
     /**
-     * Returns the max amount of citizens in the colony.
-     *
-     * @return Max amount of citizens.
-     */
-    public int getMaxCitizens()
-    {
-        return maxCitizens;
-    }
-
-    /**
-     * Returns a map of citizens in the colony.
-     * The map has ID as key, and citizen data as value.
-     *
-     * @return Map of citizens in the colony, with as key the citizen ID, and as value the citizen data.
-     */
-    @NotNull
-    public Map<Integer, CitizenData> getCitizens()
-    {
-        return Collections.unmodifiableMap(citizens);
-    }
-
-    /**
      * Removes a citizen from the colony.
      *
      * @param citizen Citizen data to remove.
