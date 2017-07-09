@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
-import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbarian;
@@ -22,6 +22,7 @@ import net.minecraft.world.DifficultyInstance;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
@@ -30,6 +31,11 @@ import static com.minecolonies.coremod.entity.ai.util.AIState.*;
  */
 public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRangedAttackMob
 {
+    /**
+     * The max distance an entity may be for the guard to help
+     */
+    private static final double MAX_DISTANCE_TO_HELP_GUARD = 60;
+
     /**
      * Basic delay for the next shot.
      */
@@ -182,16 +188,31 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
      */
     protected AIState huntDown()
     {
-        if(huntDownlastAttacker())
+        if (worker.getColony() == null)
+        {
+            return AIState.GUARD_GATHERING;
+        }
+
+        if (huntDownlastAttacker())
         {
             targetEntity = this.worker.getLastAttacker();
         }
 
         final AbstractEntityBarbarian barbarian = BarbarianUtils.getClosestBarbarianToEntity(worker, 20D);
 
-        if (barbarian != null)
+        if (barbarian != null && targetEntity == null)
         {
             targetEntity = barbarian;
+        }
+
+        if (!worker.getColony().getGuardTargets().isEmpty() && targetEntity == null)
+        {
+            final List<EntityLivingBase> targets = worker.getColony().getGuardTargets();
+            final Optional<EntityLivingBase> possibleTarget = targets
+                                                                .stream()
+                                                                .filter(entity -> entity.getDistanceToEntity(worker) <= MAX_DISTANCE_TO_HELP_GUARD)
+                                                                .findFirst();
+            targetEntity = possibleTarget.orElse(null);
         }
 
         if (targetEntity != null && worker.getColony() != null)

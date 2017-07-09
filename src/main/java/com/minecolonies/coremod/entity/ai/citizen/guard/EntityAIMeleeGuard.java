@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
 import com.minecolonies.api.compatibility.Compatibility;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianUtils;
@@ -19,6 +19,7 @@ import net.minecraft.util.EnumHand;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
@@ -27,6 +28,11 @@ import static com.minecolonies.coremod.entity.ai.util.AIState.*;
  */
 public class EntityAIMeleeGuard extends AbstractEntityAIGuard
 {
+    /**
+     * The max distance an entity may be for the guard to help
+     */
+    private static final double MAX_DISTANCE_TO_HELP_GUARD = 60;
+
     /**
      * Basic delay for the next shot.
      */
@@ -117,7 +123,9 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         {
             return AIState.GUARD_SEARCH_TARGET;
         }
-        InventoryFunctions.matchFirstInProviderWithSimpleAction(worker, stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.doesItemServeAsWeapon(stack), worker::setHeldItem);
+        InventoryFunctions.matchFirstInProviderWithSimpleAction(worker,
+          stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.doesItemServeAsWeapon(stack),
+          worker::setHeldItem);
         return super.searchTarget();
     }
 
@@ -128,19 +136,34 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
      */
     protected AIState huntDown()
     {
-        if(huntDownlastAttacker())
+        if (worker.getColony() == null)
+        {
+            return AIState.GUARD_GATHERING;
+        }
+
+        if (huntDownlastAttacker())
         {
             targetEntity = this.worker.getLastAttacker();
         }
 
         final AbstractEntityBarbarian barbarian = BarbarianUtils.getClosestBarbarianToEntity(worker, 20D);
 
-        if (barbarian != null)
+        if (barbarian != null && targetEntity == null)
         {
             targetEntity = barbarian;
         }
 
-        if (targetEntity != null && worker.getColony() != null)
+        if (!worker.getColony().getGuardTargets().isEmpty() && targetEntity == null)
+        {
+            final List<EntityLivingBase> targets = worker.getColony().getGuardTargets();
+            final Optional<EntityLivingBase> possibleTarget = targets
+                                                                .stream()
+                                                                .filter(entity -> entity.getDistanceToEntity(worker) <= MAX_DISTANCE_TO_HELP_GUARD)
+                                                                .findFirst();
+            targetEntity = possibleTarget.orElse(null);
+        }
+
+        if (targetEntity != null)
         {
             final List<EntityLivingBase> targets = worker.getColony().getGuardTargets();
             if (targets.stream().noneMatch(entity -> entity == targetEntity))
@@ -168,7 +191,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
             attacksExecuted += 1;
             currentSearchDistance = START_SEARCH_DISTANCE;
 
-            if(killedEnemy)
+            if (killedEnemy)
             {
                 return AIState.GUARD_GATHERING;
             }
@@ -206,7 +229,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         {
             if (ItemStackUtils.doesItemServeAsWeapon(heldItem))
             {
-                if(heldItem.getItem() instanceof ItemSword)
+                if (heldItem.getItem() instanceof ItemSword)
                 {
                     damgeToBeDealt += ((ItemSword) heldItem.getItem()).getDamageVsEntity();
                 }
