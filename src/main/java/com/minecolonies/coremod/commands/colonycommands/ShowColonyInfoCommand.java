@@ -11,11 +11,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -63,17 +61,17 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
         colonyId = getIthArgument(args, 0, -1);
         IColony tempColony = ColonyManager.getColony(colonyId);
 
-        if(colonyId == -1 && args.length >= 1)
+        if (colonyId == -1 && args.length >= 1)
         {
-            final GameProfile playerProfile =  server.getPlayerProfileCache().getGameProfileForUsername(args[0]);
+            final GameProfile playerProfile = server.getPlayerProfileCache().getGameProfileForUsername(args[0]);
 
-            if(playerProfile != null)
+            if (playerProfile != null)
             {
                 tempColony = ColonyManager.getIColonyByOwner(server.getEntityWorld(), playerProfile.getId());
             }
         }
 
-        if(sender instanceof EntityPlayer && sender.getCommandSenderEntity() != null)
+        if (sender instanceof EntityPlayer && sender.getCommandSenderEntity() != null)
         {
             final UUID mayorID = sender.getCommandSenderEntity().getUniqueID();
             if (tempColony == null)
@@ -81,7 +79,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
                 tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), mayorID);
             }
 
-            if(tempColony != null)
+            if (tempColony != null)
             {
                 colonyId = tempColony.getID();
             }
