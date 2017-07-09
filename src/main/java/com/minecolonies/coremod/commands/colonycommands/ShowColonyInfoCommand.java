@@ -11,9 +11,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -65,16 +67,9 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
         {
             final GameProfile playerProfile =  server.getPlayerProfileCache().getGameProfileForUsername(args[0]);
 
-            EntityPlayer player = null;
-
-            if (playerProfile != null)
+            if(playerProfile != null)
             {
-                player = (EntityPlayer) server.getEntityFromUuid(playerProfile.getId());
-            }
-
-            if(player != null)
-            {
-                tempColony = ColonyManager.getIColonyByOwner(server.getEntityWorld(), player);
+                tempColony = ColonyManager.getIColonyByOwner(server.getEntityWorld(), playerProfile.getId());
             }
         }
 
