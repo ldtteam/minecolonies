@@ -28,4 +28,14 @@ public class TinkersWeaponProxy
     {
         return 0;
     }
+
+    /**
+     * Calculate the tool level of the stack.
+     * @param stack the stack.
+     * @return the tool level
+     */
+    public int getToolLevel(@NotNull final ItemStack stack)
+    {
+        return -1;
+    }
 }

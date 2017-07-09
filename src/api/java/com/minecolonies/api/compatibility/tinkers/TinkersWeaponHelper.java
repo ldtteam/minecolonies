@@ -25,6 +25,18 @@ public final class TinkersWeaponHelper extends TinkersWeaponProxy
     }
 
     /**
+     * Calculate the tool level of the stack.
+     * @param stack the stack.
+     * @return the tool level
+     */
+    @Override
+    @Optional.Method(modid = "tconstruct")
+    public int getToolLevel(@NotNull final ItemStack stack)
+    {
+        return ToolHelper.getHarvestLevelStat(stack);
+    }
+
+    /**
      * Calculate the actual attack damage of the tinkers weapon.
      * @param stack the stack.
      * @return the attack damage.
@@ -54,5 +66,15 @@ public final class TinkersWeaponHelper extends TinkersWeaponProxy
     public static double getDamage(@NotNull final ItemStack stack)
     {
         return new TinkersWeaponHelper().getAttackDamage(stack);
+    }
+
+    /**
+     * Calculate the tool level of the stack.
+     * @param stack the stack.
+     * @return the tool level
+     */
+    public static int getToolLvl(@NotNull final ItemStack stack)
+    {
+        return new TinkersWeaponHelper().getToolLevel(stack);
     }
 }
