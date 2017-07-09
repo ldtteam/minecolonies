@@ -13,8 +13,6 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.MC_BACKUP;
-
 /**
  * Created by asie on 2/16/17.
  */

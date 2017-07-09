@@ -890,7 +890,9 @@ public class Colony implements IColony
         }
         else
         {
+            lastContactInHours = 0;
             ticksPassed = 0;
+            lastContactInHours = 0;
         }
 
         //  Add nearby players

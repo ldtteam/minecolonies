@@ -6,6 +6,7 @@ import com.minecolonies.coremod.colony.IColony;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -15,8 +16,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
-
-import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.CHANGE_COLONY_OWNER;
 
 /**
  * gives ability to change the colony owner.
@@ -51,9 +50,10 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
+
         if(args.length < 2)
         {
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_ARGUMENTS));
+            sender.addChatMessage(new TextComponentString(NO_ARGUMENTS));
             return;
         }
 
@@ -62,19 +62,35 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
             return;
         }
 
+        final Entity senderEntity =  sender.getCommandSenderEntity();
+
         int colonyId = getIthArgument(args, 0, -1);
         if(colonyId == -1)
         {
             final String playerName = args[0];
+            final EntityPlayer player = sender.getEntityWorld().getPlayerEntityByName(playerName);
 
-            if(playerName == null || playerName.isEmpty())
+            if (senderEntity == null)
             {
-                sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_PLAYER));
+                server.addChatMessage(new TextComponentString(NO_ARGUMENTS));
                 return;
             }
-            final EntityPlayer player = sender.getEntityWorld().getPlayerEntityByName(playerName);
-            final IColony colony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), player.getUniqueID());
-            colonyId = colony.getID();
+            else
+            {
+                if (playerName == null || playerName.isEmpty() || player == null)
+                {
+                    senderEntity.addChatMessage(new TextComponentString(NO_PLAYER));
+                    return;
+                }
+                final IColony colony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), player.getUniqueID());
+
+                if (colony == null)
+                {
+                    return;
+                }
+
+                colonyId = colony.getID();
+            }
         }
 
         final Colony colony = ColonyManager.getColony(colonyId);
@@ -93,20 +109,20 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
 
         if(playerName == null || playerName.isEmpty())
         {
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_PLAYER));
+            sender.addChatMessage(new TextComponentString(NO_PLAYER));
             return;
         }
 
         final EntityPlayer player = sender.getEntityWorld().getPlayerEntityByName(playerName);
         if(player == null)
         {
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_PLAYER));
+            sender.addChatMessage(new TextComponentString(NO_PLAYER));
             return;
         }
 
         if(ColonyManager.getIColonyByOwner(sender.getEntityWorld(), player) != null)
         {
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString(String.format(HAS_A_COLONY, playerName)));
+            sender.addChatMessage(new TextComponentString(String.format(HAS_A_COLONY, playerName)));
             return;
         }
 
