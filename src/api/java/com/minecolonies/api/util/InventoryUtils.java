@@ -1527,7 +1527,8 @@ public final class InventoryUtils
 
     /**
      * Check if a certain item is in the handler but without the provider being full.
-     * return the last slot of the item which matches the predicate.
+     * Return as soon as an empty slot and a matching slot has been found.
+     * Returns the last matching slot it found.
      *
      * @param handler                     the handler to check.
      * @param itemStackSelectionPredicate the selection predicate..
