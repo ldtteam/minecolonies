@@ -17,12 +17,9 @@ import com.minecolonies.coremod.network.messages.AssignUnassignMessage;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * Window for the hiring or firing of a worker.

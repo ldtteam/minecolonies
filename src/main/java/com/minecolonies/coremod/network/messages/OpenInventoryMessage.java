@@ -169,7 +169,6 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
 
     private static void doHutInventory(final OpenInventoryMessage message, final EntityPlayerMP player)
     {
-
         if (checkPermissions(ColonyManager.getClosestColony(player.getEntityWorld(), message.tePos), player))
         {
             @NotNull final TileEntityChest chest = (TileEntityChest) BlockPosUtil.getTileEntity(CompatibilityUtils.getWorld(player), message.tePos);
@@ -207,6 +206,6 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
     {
         INVENTORY_CITIZEN,
         INVENTORY_CHEST,
-        INVENTORY_FIELD
+        INVENTORY_FIELD,
     }
 }

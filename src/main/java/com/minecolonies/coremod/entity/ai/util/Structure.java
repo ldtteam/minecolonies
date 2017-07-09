@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.ai.util;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockUtils;
+import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.block.Block;
@@ -143,7 +144,8 @@ public class Structure
                 return structureBlock == worldBlockState.getBlock();
             }
             else if ((structureBlock instanceof BlockStairs && structureBlockState.equals(worldBlockState))
-                    || BlockUtils.isGrassOrDirt(structureBlock, worldBlock, structureBlockState, worldBlockState))
+                    || BlockUtils.isGrassOrDirt(structureBlock, worldBlock, structureBlockState, worldBlockState)
+                    || (worldBlock == ModBlocks.blockRack && BlockMinecoloniesRack.shouldBlockBeReplacedWithRack(structureBlock)))
             {
                 return true;
             }

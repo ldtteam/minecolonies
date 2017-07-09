@@ -5,6 +5,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.structures.helpers.StructureProxy;
 import net.minecraft.block.Block;
@@ -345,14 +346,20 @@ public final class StructureWrapper
             return true;
         }
 
+        final Block worldBlock = worldBlockState.getBlock();
+
         //list of things to only check block for.
         //For the time being any flower pot is equal to each other.
         if (structureBlock instanceof BlockDoor || structureBlock == Blocks.FLOWER_POT)
         {
-            return structureBlock == worldBlockState.getBlock();
+            return structureBlock == worldBlock;
+        }
+        else if(worldBlock == ModBlocks.blockRack)
+        {
+            return BlockMinecoloniesRack.shouldBlockBeReplacedWithRack(structureBlock);
         }
         else if ((structureBlock instanceof BlockStairs && structureBlockState == worldBlockState)
-                || BlockUtils.isGrassOrDirt(structureBlock, worldBlockState.getBlock(), structureBlockState, worldBlockState))
+                || BlockUtils.isGrassOrDirt(structureBlock, worldBlock, structureBlockState, worldBlockState))
         {
             return true;
         }

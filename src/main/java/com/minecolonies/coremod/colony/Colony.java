@@ -3,7 +3,6 @@ package com.minecolonies.coremod.colony;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.buildings.*;
@@ -740,7 +739,6 @@ public class Colony implements IColony
         }
     }
 
-
     /**
      * Increment the statistic amount and trigger achievement.
      * @param statistic the statistic.
@@ -889,6 +887,7 @@ public class Colony implements IColony
         }
         else
         {
+            lastContactInHours = 0;
             ticksPassed = 0;
             lastContactInHours = 0;
         }
