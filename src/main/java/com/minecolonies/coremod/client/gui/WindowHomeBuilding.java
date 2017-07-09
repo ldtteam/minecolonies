@@ -109,7 +109,7 @@ public class WindowHomeBuilding extends AbstractWindowBuilding<BuildingHome.View
      *
      * @param button the clicked button.
      */
-    private void assignClicked(@NotNull final Button button)
+    private void assignClicked()
     {
         if (building.getColony().isManualHousing())
         {
