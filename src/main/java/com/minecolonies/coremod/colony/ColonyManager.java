@@ -801,15 +801,8 @@ public final class ColonyManager
     @NotNull
     private static File getBackupSaveLocation(final Date date)
     {
-<<<<<<< HEAD
         @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
         return new File(saveDir, String.format(FILENAME_MINECOLONIES_BACKUP, new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(date)));
-=======
-        if(colony.getDimension() >= 0)
-        {
-            coloniesByWorld.computeIfAbsent(colony.getDimension(), ArrayList::new).add(colony);
-        }
->>>>>>> 6d75687... Fix/small fixes2 (#1212)
     }
 
     /**
