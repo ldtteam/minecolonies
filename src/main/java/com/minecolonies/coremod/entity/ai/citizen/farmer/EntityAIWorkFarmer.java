@@ -2,9 +2,9 @@ package com.minecolonies.coremod.entity.ai.citizen.farmer;
 
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.util.BlockUtils;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.blocks.BlockHutField;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.BuildingFarmer;
@@ -30,8 +30,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 /**
  * Farmer AI class.
@@ -464,14 +464,16 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
         final int fortune = ItemStackUtils.getFortuneOf(tool);
         final IBlockState state = world.getBlockState(pos);
-        final BlockCrops crops = (BlockCrops) state.getBlock();
-
-        final List<ItemStack> drops = crops.getDrops(world, pos, state, fortune);
-        world.setBlockState(pos, crops.withAge(0));
-
+        final List<ItemStack> drops = state.getBlock().getDrops(world, pos, state, fortune);
         for (final ItemStack item : drops)
         {
             InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), item);
+        }
+
+        if(state.getBlock() instanceof BlockCrops)
+        {
+            final BlockCrops crops = (BlockCrops) state.getBlock();
+            world.setBlockState(pos, crops.withAge(0));
         }
 
         worker.addExperience(XP_PER_BLOCK);

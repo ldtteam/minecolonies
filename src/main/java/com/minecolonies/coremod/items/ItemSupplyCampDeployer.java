@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.ColonyManager;
