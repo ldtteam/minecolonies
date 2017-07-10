@@ -81,7 +81,7 @@ public final class RecipeHandler
                 "XXX", "X#X", "XXX", 'X', "logWood", '#', ModItems.scanTool));
         //Block Rack
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockRack, 1),
-                "XXX", "X#X", "XXX", 'X', "PLANK_WOOD", '#', Blocks.IRON_BARS));
+                "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', Blocks.IRON_BARS));
             
         //Field
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutField, 1), 
