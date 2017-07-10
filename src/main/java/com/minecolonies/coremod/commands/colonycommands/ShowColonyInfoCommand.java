@@ -35,6 +35,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
     private static final String NO_COLONY_FOUND_MESSAGE    = "Colony with mayor %s not found.";
     private static final String NO_COLONY_FOUND_MESSAGE_ID = "Colony with ID %d not found.";
     private static final String LAST_CONTACT_TEXT          = "Last contact with Owner or Officer: %d hours ago!";
+    private static final String IS_DELETABLE               = "If true this colony cannot be deleted: ";
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -125,6 +126,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
         sender.addChatMessage(new TextComponentString(CITIZENS + colony.getCitizens().size() + "/" + colony.getMaxCitizens()));
         sender.addChatMessage(new TextComponentString(COORDINATES_TEXT + String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
         sender.addChatMessage(new TextComponentString(String.format(LAST_CONTACT_TEXT, colony.getLastContactInHours())));
+        sender.addChatMessage(new TextComponentString(IS_DELETABLE + colony.getCanBeAutoDeleted()));
     }
 
     @NotNull

@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.coremod.commands.colonycommands.HomeTeleportCommand;
 import com.minecolonies.coremod.commands.generalcommands.BackupCommand;
+import com.minecolonies.coremod.commands.generalcommands.CheckForAutoDeletesCommand;
 import com.minecolonies.coremod.commands.generalcommands.RandomTeleportCommand;
 import net.minecraft.entity.player.EntityPlayer;
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +32,7 @@ public class MinecoloniesCommand extends AbstractSplitCommand
         .put(RandomTeleportCommand.DESC, new RandomTeleportCommand(DESC))
         .put(BackupCommand.DESC, new BackupCommand(DESC))
         .put(HomeTeleportCommand.DESC, new HomeTeleportCommand(DESC))
+        .put(CheckForAutoDeletesCommand.DESC, new CheckForAutoDeletesCommand(DESC))
         .build();
 
     /**

@@ -73,4 +73,10 @@ public interface IColony
      * @return an integer with a describing value.
      */
     int getLastContactInHours();
+
+    /**
+     * Get whether the colony can be auto deleted.
+     * @return true if so.
+     */
+    boolean getCanBeAutoDeleted();
 }
