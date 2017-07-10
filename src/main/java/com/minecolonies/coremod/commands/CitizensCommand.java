@@ -19,12 +19,12 @@ public class CitizensCommand extends AbstractSplitCommand
     public static final String DESC = "citizens";
 
     private final ImmutableMap<String, ISubCommand> subCommands =
-            new ImmutableMap.Builder<String, ISubCommand>()
-                    .put(ListCitizensCommand.DESC, new ListCitizensCommand(MinecoloniesCommand.DESC, CitizensCommand.DESC, ListCitizensCommand.DESC))
-                    .put(KillCitizenCommand.DESC, new KillCitizenCommand(MinecoloniesCommand.DESC, ColonyCommand.DESC, KillCitizenCommand.DESC))
-                    .put(RespawnCitizenCommand.DESC, new RespawnCitizenCommand(MinecoloniesCommand.DESC, ColonyCommand.DESC, RespawnCitizenCommand.DESC))
-                    .put(CitizenInfoCommand.DESC, new CitizenInfoCommand(MinecoloniesCommand.DESC, ColonyCommand.DESC, CitizenInfoCommand.DESC))
-                    .build();
+      new ImmutableMap.Builder<String, ISubCommand>()
+        .put(ListCitizensCommand.DESC, new ListCitizensCommand(MinecoloniesCommand.DESC, CitizensCommand.DESC, ListCitizensCommand.DESC))
+        .put(KillCitizenCommand.DESC, new KillCitizenCommand(MinecoloniesCommand.DESC, ColonyCommand.DESC, KillCitizenCommand.DESC))
+        .put(RespawnCitizenCommand.DESC, new RespawnCitizenCommand(MinecoloniesCommand.DESC, ColonyCommand.DESC, RespawnCitizenCommand.DESC))
+        .put(CitizenInfoCommand.DESC, new CitizenInfoCommand(MinecoloniesCommand.DESC, ColonyCommand.DESC, CitizenInfoCommand.DESC))
+        .build();
 
     /**
      * Initialize this command with it's parents.
