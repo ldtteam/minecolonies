@@ -71,7 +71,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
             }
         }
 
-        if (sender instanceof EntityPlayer && sender.getCommandSenderEntity() != null)
+        if (sender.getCommandSenderEntity() != null)
         {
             final UUID mayorID = sender.getCommandSenderEntity().getUniqueID();
             if (tempColony == null)
