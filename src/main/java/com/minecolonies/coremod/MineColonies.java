@@ -188,7 +188,7 @@ public class MineColonies
     }
 
     @Mod.EventHandler
-    public void onFingerprintViolation(FMLFingerprintViolationEvent event)
+    public void onFingerprintViolation(final FMLFingerprintViolationEvent event)
     {
         String warning = "Minecolonies does not run from a verified source. Current Fingerprint" + (event.getFingerprints().size() > 1 ? "s" : "") + ": ";
 
