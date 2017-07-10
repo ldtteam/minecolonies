@@ -205,6 +205,7 @@ public final class ColonyManager
         {
             Log.getLogger().warn("Deleting Colony " + id + " errored:", e);
         }
+        ColonyManager.markDirty();
     }
 
     /**
