@@ -29,8 +29,8 @@
     </dropdown>
     <button id="nextSchematic" size="15 15" pos="405 0" label="&gt;"/>
 
-    <button id="rename" size="114 15" pos="293 20" label="Rename" visible="false"/>
-    <button id="delete" size="114 15" pos="293 40" label="Delete" visible="false"/>
+    <button id="rename" size="114 15" pos="83 215" label="Rename" visible="false"/> <!--A other pos i like  pos="93 215" -->
+    <button id="delete" size="114 15" pos="217 215" label="Delete" visible="false"/><!--A other pos i like pos="208 215" -->
 
     <view size="60 112" pos="180 120">
         <buttonimage id="rotateLeft"  source="minecolonies:textures/gui/rotateLeft-20px.png"  size="20" pos="0 0"/>
