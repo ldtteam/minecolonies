@@ -10,7 +10,6 @@ import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.buildings.BuildingBaker;
 import com.minecolonies.coremod.colony.buildings.BuildingLumberjack;
 import com.minecolonies.coremod.network.messages.LumberjackSaplingSelectorMessage;
 import net.minecraft.item.ItemStack;
@@ -74,7 +73,7 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
     /**
      * Constructor for the window of the fisherman.
      *
-     * @param building {@link BuildingBaker.View}.
+     * @param building {@link BuildingLumberjack.View}.
      */
     public WindowHutLumberjack(final BuildingLumberjack.View building)
     {

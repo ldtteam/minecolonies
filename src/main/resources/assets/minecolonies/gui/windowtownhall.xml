@@ -91,7 +91,7 @@
                 <label id="fishermen" label="Unknown" size="100% 11" textalign="MIDDLE_LEFT" color="black"/>
                 <label id="lumberjacks" label="Unkown" size="100% 11" textalign="MIDDLE_LEFT" color="black"/>
                 <label id="farmers" label="Unkown" size="100% 11" textalign="MIDDLE_LEFT" color="black"/>
-                <label id="bakers" label="Unkown" size="100% 11" textalign="MIDDLE_LEFT" color="black"/>
+                <label id="bakers" label="Unknown" size="100% 11" textalign="MIDDLE_LEFT" color="black"/>
                 <label id="Guards" label="Unknown" size="100% 11" textalign="MIDDLE_LEFT" color="black"/>
             </group>
         </view>
@@ -195,6 +195,9 @@
         <view id="pageSettings">
             <label id="assignCitizens" label="$(com.minecolonies.coremod.gui.townHall.jobHiring)" pos="40 12" size="80 11" textalign="MIDDLE_LEFT" color="black"/>
             <button id="toggleJob" size="50 20" pos="60 25" label="$(com.minecolonies.coremod.gui.hiring.off)"/>
+
+            <label id="assignHouses" label="$(com.minecolonies.coremod.gui.townHall.housing)" pos="30 52" size="80 11" textalign="MIDDLE_LEFT" color="black"/>
+            <button id="toggleHousing" size="50 20" pos="60 65" label="$(com.minecolonies.coremod.gui.hiring.off)"/>
         </view>
 
         <view id="pageWorkOrder">
