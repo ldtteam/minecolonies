@@ -18,7 +18,6 @@ import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.AchievementUtils;
 import com.minecolonies.coremod.util.ColonyUtils;
 import com.minecolonies.coremod.util.ServerUtils;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,7 +27,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.stats.Achievement;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatList;
@@ -70,6 +68,7 @@ public class Colony implements IColony
     private static final String TAG_FREE_POSITIONS             = "freePositions";
     private static final String TAG_HAPPINESS                  = "happiness";
     private static final String TAG_ABANDONED                  = "abandoned";
+    private static final String TAG_DELETABLE                  = "deletable";
 
     //statistics tags
     private static final String TAG_STATISTICS            = "statistics";
@@ -401,6 +400,7 @@ public class Colony implements IColony
         }
         lastContactInHours = compound.getInteger(TAG_ABANDONED);
         manualHousing = compound.getBoolean(TAG_MANUAL_HOUSING);
+        canBeAutoDeleted = compound.getBoolean(TAG_DELETABLE);
     }
 
     /**
@@ -560,6 +560,7 @@ public class Colony implements IColony
         compound.setDouble(TAG_HAPPINESS, overallHappiness);
         compound.setInteger(TAG_ABANDONED, lastContactInHours);
         compound.setBoolean(TAG_MANUAL_HOUSING, manualHousing);
+        compound.setBoolean(TAG_DELETABLE, canBeAutoDeleted);
     }
 
     /**
@@ -1202,17 +1203,6 @@ public class Colony implements IColony
 
         if (event.phase == TickEvent.Phase.START)
         {
-
-            if (this.canBeAutoDeleted && !Configurations.requireCheckCommandToAutoDelete && Configurations.autoDeleteColoniesInHours != 0
-                  && this.lastContactInHours >= Configurations.autoDeleteColoniesInHours)
-            {
-                final MinecraftServer server = event.world.getMinecraftServer();
-                if (server != null)
-                {
-                    server.addScheduledTask(() -> ColonyManager.deleteColony(this.getID()));
-                }
-            }
-
             //  Detect CitizenData whose EntityCitizen no longer exist in world, and clear the mapping
             //  Consider handing this in an ChunkUnload Event instead?
             citizens.values()

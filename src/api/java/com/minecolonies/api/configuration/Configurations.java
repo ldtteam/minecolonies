@@ -15,7 +15,7 @@ public class Configurations
     public static       int     blockMiningDelayModifier        = 500;
     public static       boolean limitToOneWareHousePerColony    = true;
     public static       boolean workersAlwaysWorkInRain         = false;
-    public static       int     autoDeleteColoniesInHours       = 0;
+    public static       double  autoDeleteColoniesInHours       = 0.0;
     public static       boolean requireCheckCommandToAutoDelete = true;
 
     public static boolean enableColonyProtection      = true;

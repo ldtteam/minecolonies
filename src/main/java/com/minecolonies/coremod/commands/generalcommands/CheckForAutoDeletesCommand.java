@@ -20,7 +20,7 @@ import java.util.List;
 public class CheckForAutoDeletesCommand extends AbstractSingleCommand
 {
 
-    public static final  String DESC              = "Check if there are any possible colonies to autodelete, and delete them";
+    public static final  String DESC              = "check";
     private static final String NO_COLONIES_FOUND = "There where no colonies found that could be auto-deleted";
     private static final String ABLE_TO_DELETE    = "We were able to delete some colonies!";
 
@@ -47,11 +47,14 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand
 
         boolean colonyWasDeleted = false;
 
-        for (int index = 0; colonies.size() <= index; index++)
+        for (int index = 0; colonies.size() - 1 >= index; index++)
         {
             final Colony colony = colonies.get(index);
-            if (colony.getCanBeAutoDeleted() && Configurations.autoDeleteColoniesInHours != 0 && colony.getLastContactInHours() >= Configurations.autoDeleteColoniesInHours)
+
+            if (colony.getCanBeAutoDeleted() && Configurations.autoDeleteColoniesInHours != 0.0 && colony.getLastContactInHours() + 1 >= Configurations.autoDeleteColoniesInHours)
             {
+                sender.addChatMessage(new TextComponentString("The Inactive Colony: " + colony.getName() + " with the ID of: " + colony.getID() + " was deleted after: "
+                                                                + colony.getLastContactInHours() + "hour/s of no contact"));
                 server.addScheduledTask(() -> ColonyManager.deleteColony(colony.getID()));
                 colonyWasDeleted = true;
             }
@@ -65,7 +68,6 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand
         {
             sender.addChatMessage(new TextComponentString(NO_COLONIES_FOUND));
         }
-
     }
 
     @NotNull

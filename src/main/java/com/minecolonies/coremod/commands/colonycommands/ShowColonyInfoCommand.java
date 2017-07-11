@@ -61,16 +61,16 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
         colonyId = getIthArgument(args, 0, -1);
         IColony tempColony = ColonyManager.getColony(colonyId);
 
-        if(colonyId == -1 && args.length >= 1)
+        if (colonyId == -1 && args.length >= 1)
         {
             final EntityPlayer player = server.getEntityWorld().getPlayerEntityByName(args[0]);
-            if(player != null)
+            if (player != null)
             {
                 tempColony = ColonyManager.getIColonyByOwner(server.getEntityWorld(), player);
             }
         }
 
-        if(sender instanceof EntityPlayer)
+        if (sender.getCommandSenderEntity() instanceof EntityPlayer)
         {
             final UUID mayorID = sender.getCommandSenderEntity().getUniqueID();
             if (tempColony == null)
@@ -78,7 +78,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
                 tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), mayorID);
             }
 
-            if(tempColony != null)
+            if (tempColony != null)
             {
                 colonyId = tempColony.getID();
             }
@@ -126,7 +126,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
         sender.addChatMessage(new TextComponentString(CITIZENS + colony.getCitizens().size() + "/" + colony.getMaxCitizens()));
         sender.addChatMessage(new TextComponentString(COORDINATES_TEXT + String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
         sender.addChatMessage(new TextComponentString(String.format(LAST_CONTACT_TEXT, colony.getLastContactInHours())));
-        sender.addChatMessage(new TextComponentString(IS_DELETABLE + colony.getCanBeAutoDeleted()));
+        sender.addChatMessage(new TextComponentString(IS_DELETABLE + !colony.getCanBeAutoDeleted()));
     }
 
     @NotNull

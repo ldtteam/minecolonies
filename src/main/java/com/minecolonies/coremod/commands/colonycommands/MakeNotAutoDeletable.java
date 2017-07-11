@@ -52,11 +52,11 @@ public class MakeNotAutoDeletable extends AbstractSingleCommand
         sender.addChatMessage(new TextComponentString(Arrays.toString(args)));
 
         int colonyId;
-        colonyId = Integer.parseInt(args[1]);
+        colonyId = Integer.parseInt(args[0]);
         Colony colony = ColonyManager.getColony(colonyId);
 
         boolean canBeDeleted;
-        canBeDeleted = Boolean.parseBoolean(args[2]);
+        canBeDeleted = Boolean.parseBoolean(args[1]);
 
         final Entity senderEntity = sender.getCommandSenderEntity();
 
@@ -67,7 +67,7 @@ public class MakeNotAutoDeletable extends AbstractSingleCommand
         }
 
         sender.addChatMessage(new TextComponentString(MARKED));
-        colony.setCanBeAutoDeleted(canBeDeleted);
+        colony.setCanBeAutoDeleted(!canBeDeleted);
     }
 
     @NotNull
