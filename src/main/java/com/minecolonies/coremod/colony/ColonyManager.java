@@ -205,6 +205,7 @@ public final class ColonyManager
         {
             Log.getLogger().warn("Deleting Colony " + id + " errored:", e);
         }
+        ColonyManager.markDirty();
     }
 
     /**
@@ -546,7 +547,7 @@ public final class ColonyManager
     public static int getMinimumDistanceBetweenTownHalls()
     {
         //  [TownHall](Radius)+(Padding)+(Radius)[TownHall]
-        return (2 * Configurations.workingRangeTownHall) + Configurations.townHallPadding;
+        return (2 * Configurations.gameplay.workingRangeTownHall) + Configurations.gameplay.townHallPadding;
     }
 
     /**
@@ -1086,7 +1087,7 @@ public final class ColonyManager
             if (c.getDimension() == world.provider.getDimension())
             {
                 final long dist = c.getDistanceSquared(pos);
-                if (dist < (Configurations.workingRangeTownHall + Configurations.townHallPadding + BUFFER))
+                if (dist < (Configurations.gameplay.workingRangeTownHall + Configurations.gameplay.townHallPadding + BUFFER))
                 {
                     return true;
                 }

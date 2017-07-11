@@ -121,7 +121,7 @@ public class ButtonVanilla extends Button
             textColor = DISABLED_COLOR;
         }
 
-        drawCenteredString(this.mc.fontRendererObj, label, x + width / 2, y + (height - this.mc.fontRendererObj.FONT_HEIGHT) / 2, textColor);
+        drawCenteredString(this.mc.fontRenderer, label, x + width / 2, y + (height - this.mc.fontRenderer.FONT_HEIGHT) / 2, textColor);
 
         GlStateManager.disableBlend();
     }

@@ -124,7 +124,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
      */
     private static boolean isFirstPlacing(@NotNull final EntityPlayer player)
     {
-        if (Configurations.allowInfiniteSupplyChests || !player.hasAchievement(ModAchievements.achievementGetSupply))
+        if (Configurations.gameplay.allowInfiniteSupplyChests || !player.hasAchievement(ModAchievements.achievementGetSupply))
         {
             return true;
         }

@@ -15,6 +15,12 @@ plugins {
     id "org.sonarqube" version "2.3"
     id "com.matthewprenger.cursegradle" version "1.0.7"
 }
+repositories {
+    maven {
+        name 'DVS1 Maven FS'
+        url 'http://dvs1.progwml6.com/files/maven'
+    }
+}
 
 repositories {
     maven {
@@ -89,9 +95,7 @@ sourceSets {
     }
 }
 
-
 ext.configFile = file "build.properties"
-
 configFile.withReader {
     def prop = new Properties()
     prop.load(it)
@@ -99,6 +103,9 @@ configFile.withReader {
 }
 
 dependencies {
+    deobfCompile "slimeknights.mantle:Mantle:${config.minecraft_version}-${config.mantle_version}"
+    deobfCompile "slimeknights:TConstruct:${config.minecraft_version}-${config.tinker_version}"
+
     structuresCompile sourceSets.api.output
     //blockOutCompile sourceSets.api.output
 

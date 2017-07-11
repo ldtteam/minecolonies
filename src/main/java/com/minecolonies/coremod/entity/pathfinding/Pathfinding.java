@@ -29,7 +29,7 @@ public final class Pathfinding
     private static final ThreadPoolExecutor executor;
     static
     {
-        executor = new ThreadPoolExecutor(1, Configurations.pathfindingMaxThreadCount, 10, TimeUnit.SECONDS, jobQueue);
+        executor = new ThreadPoolExecutor(1, Configurations.pathfinding.pathfindingMaxThreadCount, 10, TimeUnit.SECONDS, jobQueue);
     }
     private Pathfinding()
     {
@@ -192,7 +192,7 @@ public final class Pathfinding
     {
         final String s1 = String.format("F: %.3f [%d]", n.getCost(), n.getCounterAdded());
         final String s2 = String.format("G: %.3f [%d]", n.getScore(), n.getCounterVisited());
-        final FontRenderer fontrenderer = Minecraft.getMinecraft().fontRendererObj;
+        final FontRenderer fontrenderer = Minecraft.getMinecraft().fontRenderer;
         GlStateManager.pushAttrib();
         GlStateManager.pushMatrix();
         GlStateManager.translate(0.0F, 0.75F, 0.0F);

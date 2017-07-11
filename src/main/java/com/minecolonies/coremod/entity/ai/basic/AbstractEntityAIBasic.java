@@ -882,7 +882,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
         else
         {
-            final ItemStorage tempStorage = new ItemStorage(stack.getItem(), stack.getItemDamage(), ItemStackUtils.getSize(stack), false);
+            final ItemStorage tempStorage = new ItemStorage(stack, false);
             final ItemStack tempStack = handleKeepX(alreadyKept, shouldKeep, tempStorage);
             if (ItemStackUtils.isEmpty(tempStack))
             {
@@ -919,11 +919,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             final ItemStorage tempStorage = tempEntry.getKey();
             if (tempStorage != null && tempStorage.getItem() == stack.getItem() && tempStorage.getDamageValue() != stack.getItemDamage())
             {
-                shouldKeep.put(new ItemStorage(stack.getItem(), stack.getItemDamage(), 0, tempStorage.ignoreDamageValue()), tempEntry.getValue());
+                shouldKeep.put(new ItemStorage(stack, tempStorage.ignoreDamageValue()), tempEntry.getValue());
                 break;
             }
         }
-        final ItemStorage tempStorage = new ItemStorage(stack.getItem(), stack.getItemDamage(), 0, false);
+        final ItemStorage tempStorage = new ItemStorage(stack, false);
 
         //Check first if the the item shouldn't be kept if it should be kept check if we already kept enough of them.
         return shouldKeep.get(tempStorage) == null
