@@ -664,7 +664,7 @@ public final class ColonyView implements IColony
     }
 
     @Override
-    public boolean getCanBeAutoDeleted()
+    public boolean isCanBeAutoDeleted()
     {
         return false;
     }

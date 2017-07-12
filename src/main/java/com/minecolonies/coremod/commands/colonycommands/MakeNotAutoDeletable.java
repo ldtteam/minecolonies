@@ -1,11 +1,13 @@
 package com.minecolonies.coremod.commands.colonycommands;
 
+import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
@@ -22,6 +24,8 @@ public class MakeNotAutoDeletable extends AbstractSingleCommand
     private static final String NO_COLONY_FOUND_MESSAGE_ID = "Colony with ID %d not found.";
     private static final String MARKED                     = "Marking succesful!";
     private static final String NOT_ENOUGH_ARGUMENTS       = "You must have 2 Arguments: <ColonyId> <true|false> ";
+
+    private static final int NUMBER_OR_ARGS_REQUIRED = 2;
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -41,9 +45,15 @@ public class MakeNotAutoDeletable extends AbstractSingleCommand
     }
 
     @Override
+    public boolean canRankUseCommand(@NotNull final Colony colony, @NotNull final EntityPlayer player)
+    {
+        return colony.getPermissions().getRank(player).equals(Rank.OWNER);
+    }
+
+    @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        if (args.length < 2)
+        if (args.length < NUMBER_OR_ARGS_REQUIRED)
         {
             sender.addChatMessage(new TextComponentString(NOT_ENOUGH_ARGUMENTS));
             return;
@@ -53,12 +63,10 @@ public class MakeNotAutoDeletable extends AbstractSingleCommand
 
         int colonyId;
         colonyId = Integer.parseInt(args[0]);
-        Colony colony = ColonyManager.getColony(colonyId);
+        final Colony colony = ColonyManager.getColony(colonyId);
 
         boolean canBeDeleted;
         canBeDeleted = Boolean.parseBoolean(args[1]);
-
-        final Entity senderEntity = sender.getCommandSenderEntity();
 
         if (colony == null)
         {

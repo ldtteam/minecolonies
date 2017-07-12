@@ -2005,7 +2005,7 @@ public class Colony implements IColony
     }
 
     @Override
-    public boolean getCanBeAutoDeleted()
+    public boolean isCanBeAutoDeleted()
     {
         return canBeAutoDeleted;
     }
