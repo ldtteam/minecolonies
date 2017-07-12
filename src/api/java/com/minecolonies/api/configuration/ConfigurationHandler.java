@@ -77,9 +77,7 @@ public final class ConfigurationHandler
             workersAlwaysWorkInRain = config.get(CATEGORY_GAMEPLAY, "workersAlwaysWorkInRain", workersAlwaysWorkInRain,
               "Set wether workers work in rain regardless of hut level").getBoolean();
             autoDeleteColoniesInHours = config.get(CATEGORY_GAMEPLAY, "autoDeleteColoniesInHours", autoDeleteColoniesInHours,
-              "Sets the amount of hours until a colony will be deleted after not seeing it's mayor, set to zero to disable").getDouble();
-            requireCheckCommandToAutoDelete = config.get(CATEGORY_GAMEPLAY, "requireCheckCommandToAutoDelete", requireCheckCommandToAutoDelete,
-              "Sets whether the mod will auto delete \"expired\" colonies or if the check command must be run").getBoolean();
+              "Sets the amount of hours until a colony will be deleted after not seeing it's mayor, set to zero to disable").getInt();
             
             /* schematics usage */
             ignoreSchematicsFromJar = config.get(CATEGORY_GAMEPLAY, "ignoreSchematicsFromJar", ignoreSchematicsFromJar,

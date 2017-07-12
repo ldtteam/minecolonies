@@ -51,7 +51,7 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand
         {
             final Colony colony = colonies.get(index);
 
-            if (colony.getCanBeAutoDeleted() && Configurations.autoDeleteColoniesInHours != 0.0 && colony.getLastContactInHours() + 1 >= Configurations.autoDeleteColoniesInHours)
+            if (colony.getCanBeAutoDeleted() && Configurations.autoDeleteColoniesInHours != 0 && colony.getLastContactInHours() >= Configurations.autoDeleteColoniesInHours)
             {
                 sender.addChatMessage(new TextComponentString("The Inactive Colony: " + colony.getName() + " with the ID of: " + colony.getID() + " was deleted after: "
                                                                 + colony.getLastContactInHours() + "hour/s of no contact"));

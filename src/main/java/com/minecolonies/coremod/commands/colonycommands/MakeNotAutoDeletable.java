@@ -18,7 +18,7 @@ import java.util.List;
 
 public class MakeNotAutoDeletable extends AbstractSingleCommand
 {
-    public static final  String DESC                       = "markUndeletable";
+    public static final  String DESC                       = "undeletable";
     private static final String NO_COLONY_FOUND_MESSAGE_ID = "Colony with ID %d not found.";
     private static final String MARKED                     = "Marking succesful!";
     private static final String NOT_ENOUGH_ARGUMENTS       = "You must have 2 Arguments: <ColonyId> <true|false> ";

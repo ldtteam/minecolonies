@@ -2,21 +2,20 @@ package com.minecolonies.api.configuration;
 
 public class Configurations
 {
-    public static final int     CITIZEN_RESPAWN_INTERVAL_MIN    = 10;
-    public static final int     CITIZEN_RESPAWN_INTERVAL_MAX    = 600;
-    public static       boolean builderPlaceConstructionTape    = true;
-    public static       int     workingRangeTownHall            = 100;
-    public static       int     townHallPadding                 = 20;
-    public static       boolean supplyChests                    = true;
-    public static       boolean allowInfiniteSupplyChests       = false;
-    public static       int     citizenRespawnInterval          = 30;
-    public static       boolean builderInfiniteResources        = false;
-    public static       int     builderBuildBlockDelay          = 15;
-    public static       int     blockMiningDelayModifier        = 500;
-    public static       boolean limitToOneWareHousePerColony    = true;
-    public static       boolean workersAlwaysWorkInRain         = false;
-    public static       double  autoDeleteColoniesInHours       = 0.0;
-    public static       boolean requireCheckCommandToAutoDelete = true;
+    public static final int     CITIZEN_RESPAWN_INTERVAL_MIN = 10;
+    public static final int     CITIZEN_RESPAWN_INTERVAL_MAX = 600;
+    public static       boolean builderPlaceConstructionTape = true;
+    public static       int     workingRangeTownHall         = 100;
+    public static       int     townHallPadding              = 20;
+    public static       boolean supplyChests                 = true;
+    public static       boolean allowInfiniteSupplyChests    = false;
+    public static       int     citizenRespawnInterval       = 30;
+    public static       boolean builderInfiniteResources     = false;
+    public static       int     builderBuildBlockDelay       = 15;
+    public static       int     blockMiningDelayModifier     = 500;
+    public static       boolean limitToOneWareHousePerColony = true;
+    public static       boolean workersAlwaysWorkInRain      = false;
+    public static       int     autoDeleteColoniesInHours    = 0;
 
     public static boolean enableColonyProtection      = true;
     public static boolean turnOffExplosionsInColonies = true;
