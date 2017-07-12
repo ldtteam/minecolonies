@@ -999,6 +999,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             }
             final ItemStack stack = tempStack.copy();
 
+
             final int itemDamage = useItemDamage ? stack.getItemDamage() : -1;
             final int countOfItem = worker.getItemCountInInventory(stack.getItem(), itemDamage);
 

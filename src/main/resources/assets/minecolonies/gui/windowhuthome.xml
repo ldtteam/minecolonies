@@ -5,6 +5,16 @@
         <layout source="minecolonies:gui/layoutBuildingDefault.xml"/>
     </view>
 
+    <button id="assign" align="TOP_MIDDLE" size="116 20" pos="0 24"
+            label="$(com.minecolonies.coremod.gui.workerHuts.assign)"/>
+
+    <list id="assignedCitizen" size="78% 90" pos="20 120">
+        <box size="100% 30" linewidth="2">
+            <label id="name" size="100 12" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
+            <button id="remove" size="100 12" pos="5 15" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.unassign)"/>
+        </box>
+    </list>
+
     <button id="inventory"
             align="BOTTOM_MIDDLE" size="116 20" pos="0 13"
             label="$(container.inventory)"/>
