@@ -6,7 +6,6 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
