@@ -10,6 +10,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.ShapedOreRecipe;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -31,9 +32,11 @@ public final class RecipeHandler
      * The amount of items returned by certain crafting recipes
      */
     private static final int ONE_FORTH_OF_A_STACK = 16;
+    private static final int FOUR = 4;
     /**
      * Private constructor to hide the implicit public one.
      */
+
     private RecipeHandler()
     {
     }
@@ -51,7 +54,10 @@ public final class RecipeHandler
         GameRegistry.addShapelessRecipe(new ItemStack(ModBlocks.blockConstructionTapeCorner, 1),ModBlocks.blockConstructionTape);
         GameRegistry.addShapelessRecipe(new ItemStack(ModBlocks.blockConstructionTape, 1),ModBlocks.blockConstructionTapeCorner);
 
-        // Register the hust
+        //Reverse Engineer String
+        GameRegistry.addShapelessRecipe(new ItemStack(Items.STRING, FOUR), Blocks.WOOL);
+
+        // Register the huts
         addHutRecipe(new ItemStack(ModBlocks.blockHutMiner, 1), Items.WOODEN_PICKAXE);
         addHutRecipe(new ItemStack(ModBlocks.blockHutMiner, 2), Items.STONE_PICKAXE);
         addHutRecipe(new ItemStack(ModBlocks.blockHutLumberjack, 1), Items.WOODEN_AXE);
@@ -82,9 +88,7 @@ public final class RecipeHandler
         //Block Rack
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockRack, 1),
                 "XXX", "X#X", "XXX", 'X', "logWood", '#', Blocks.IRON_BARS));
-        //Reverse Engineer String
-        GameRegistry.addShapelessRecipe(new ItemStack(Items.STRING, 4),Blocks.WOOL, 1, Constants.WHITE);
-  
+
         //Field
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutField, 1), 
                 " Y ", "X#X", " X ", 'X', WOODEN_STICK, '#', Items.LEATHER, 'Y', Blocks.HAY_BLOCK));
