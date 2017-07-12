@@ -22,6 +22,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,6 +60,12 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
      * Amount of directions to try to place the supply camp.
      */
     private static final int CHECK_X_DIRECTIONS = 4;
+
+    /**
+     * Our guide Book.
+     */
+    @GameRegistry.ItemStackHolder(value = "gbook:guidebook", nbt = "{Book:\"minecolonies:book/minecolonies.xml\"}")
+    public static ItemStack guideBook;
 
     /**
      * Creates a new supplychest deployer. The item is not stackable.
@@ -208,6 +215,8 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
         }
         chest.setInventorySlotContents(0, new ItemStack(ModBlocks.blockHutTownHall));
         chest.setInventorySlotContents(1, new ItemStack(ModItems.buildTool));
+        chest.setInventorySlotContents(2, guideBook);
+
     }
 
     /**
