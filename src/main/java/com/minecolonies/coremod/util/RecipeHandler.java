@@ -82,7 +82,9 @@ public final class RecipeHandler
         //Block Rack
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockRack, 1),
                 "XXX", "X#X", "XXX", 'X', "logWood", '#', Blocks.IRON_BARS));
-
+        //Reverse Engineer String
+        GameRegistry.addShapelessRecipe(new ItemStack(Items.STRING, 4),Blocks.WOOL, 1, Constants.WHITE);
+  
         //Field
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutField, 1), 
                 " Y ", "X#X", " X ", 'X', WOODEN_STICK, '#', Items.LEATHER, 'Y', Blocks.HAY_BLOCK));
