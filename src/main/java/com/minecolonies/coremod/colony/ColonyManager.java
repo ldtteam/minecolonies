@@ -146,7 +146,10 @@ public final class ColonyManager
 
     private static void addColonyByWorld(final Colony colony)
     {
-        coloniesByWorld.computeIfAbsent(colony.getDimension(), ArrayList::new).add(colony);
+        if(colony.getDimension() >= 0)
+        {
+            coloniesByWorld.computeIfAbsent(colony.getDimension(), ArrayList::new).add(colony);
+        }
     }
 
     /**
@@ -205,6 +208,7 @@ public final class ColonyManager
         {
             Log.getLogger().warn("Deleting Colony " + id + " errored:", e);
         }
+        ColonyManager.markDirty();
     }
 
     /**

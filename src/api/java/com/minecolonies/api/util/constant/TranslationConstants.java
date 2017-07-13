@@ -7,11 +7,6 @@ import org.jetbrains.annotations.NonNls;
  */
 public final class TranslationConstants
 {
-
-    @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF                        = "com.minecolonies.coremod.gui.hiring.off";
-    @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_HIRING_ON                         = "com.minecolonies.coremod.gui.hiring.on";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_UNUSED     = "com.minecolonies.coremod.gui.workerHuts.farmerHut.unused";
     @NonNls
@@ -96,6 +91,20 @@ public final class TranslationConstants
     public static final String COM_MINECOLONIES_COREMOD_JOB_LUMBERJACK                        = "com.minecolonies.coremod.job.Lumberjack";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_JOB_FARMER                            = "com.minecolonies.coremod.job.Farmer";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_HOME_ASSIGN                       = "com.minecolonies.coremod.gui.home.assign";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF                        = "com.minecolonies.coremod.gui.hiring.off";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_HIRING_ON                         = "com.minecolonies.coremod.gui.hiring.on";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON            = "com.minecolonies.coremod.gui.workerHuts.retrieveOn";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF           = "com.minecolonies.coremod.gui.workerHuts.retrieveOff";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0                = "com.minecolonies.coremod.gui.workerHuts.level0";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_LUMBERJACK                        = "com.minecolonies.coremod.job.Lumberjack";
 
     private TranslationConstants()
     {
