@@ -22,6 +22,12 @@ repositories {
     }
 }
 
+repositories {
+    maven {
+        url 'http://dogforce-games.com/maven'
+    }
+}
+
 sonarqube {
     properties{
         property "sonar.host.url", "http://home.kk-sc.de:9000"
@@ -102,6 +108,8 @@ dependencies {
 
     structuresCompile sourceSets.api.output
     //blockOutCompile sourceSets.api.output
+
+    deobfCompile "gigaherz.guidebook:Guidebook-1.11.0:${config.guidebook_version}"
 
     testCompile sourceSets.structures.output
     testCompile sourceSets.blockOut.output
