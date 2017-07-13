@@ -13,7 +13,6 @@ import com.minecolonies.coremod.util.RecipeHandler;
 import com.minecolonies.structures.event.RenderEventHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.crafting.IConditionFactory;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;

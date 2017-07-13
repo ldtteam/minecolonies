@@ -97,8 +97,6 @@ configFile.withReader {
 }
 
 dependencies {
-    deobfCompile "slimeknights.mantle:Mantle:${config.minecraft_version}-${config.mantle_version}"
-    deobfCompile "slimeknights:TConstruct:${config.minecraft_version}-${config.tinker_version}"
 
     structuresCompile sourceSets.api.output
     //blockOutCompile sourceSets.api.output
