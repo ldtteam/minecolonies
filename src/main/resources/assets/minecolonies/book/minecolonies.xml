@@ -1,28 +1,37 @@
-<book title="Minecolonies Resurrection" cover="gbook:covers/default" fontSize="0.6">
+<book title="Minecolonies Resurrection" cover="minecolonies:book/default" fontSize="0.6">
 
   <include ref="gbook:xml/standard.xml" />
 
   <chapter id="Welcome">
 
     <page>
-      <space height="25%" />
-      <title>Welcome to Minecolonies</title>
+      <space height="5%" />
+      <image src="minecolonies:book/header" tw="190" th="30" />
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
       <p></p>
       <p></p>
       <p space="0" align="center">Guidebook</p>
       <p></p>
+      <p></p>
       <p space="6" align="center">__________</p>
       <p></p>
-      <p color="#1aa3ff" align="center">by Wissi</p>
+      <image src="minecolonies:book/WissiFull" x="60" y="4" tw="60" th="132" />
+      <p></p>
+      <p color="#1aa3ff" indent="45">by:</p>
     </page>
 
     <page>
-      <p color="#0004ff" align="center" fontSize="1.0">Minecolonies Resurrection</p>
+      <title>Welcome to Minecolonies</title>
       <p></p>
       <p></p>
       <p color="#0004ff">A complete version of the documentation is available here:</p>
       <p></p>
-      <link align="center" href="https://wiki.minecolonies.com/">Official WIKI</link>
+      <p></p>
+      <link indent="48" href="https://wiki.minecolonies.com/">Official WIKI</link>
+      <p></p>
       <p></p>
       <p>MineColonies is a Colony/Town Simulator that adds many structures and NPC workers and guards that you control and put to work for you! Based around a townhall and village mechanics, there are numerous workers that can be added to your colony, building a busy and vibrant Village/Town/City/Metropolis within Minecraft. There is no coded limit to the number of NPC’s at your disposal, so you can create a small efficient Village dedicated to a particular type of worker, or a sprawling metropolis with many type os workers. It’s entirely up to you!</p>
     </page>
@@ -141,6 +150,7 @@
       <p underline="true">Lets look at each step in detail:</p>
       <p></p>
       <p>Step 1. Craft your Supply Ship or Supply Camp. Now place it by right clicking a block with it. Your Supply Ship or Supply Camp will spawn (which you can use as shelter, warehouse or even as materials to give to your builder). It will also spawn a chest with your Town Hall block and the Building Tool. (You can watch this video from our youtube channel about how to use the Building Tool to position all your buildings).</p>
+      <p></p>
       <link align="center" href="https://www.youtube.com/watch?v=Gz1I7hhMd5Y">The Building Tool</link>
       <p></p>
       <p>Hint: Meanwhile, gather as much materials as possible to be able to give them to your builder when he starts building. He will be asking you for all kinds of materials he will need for each building or upgrade. Mainly oak wood, cobblestone and torches for the starter builds. Further upgrades will require more elaborate materials.</p>
@@ -296,6 +306,8 @@
       <p>Fisherman   Intelligence &amp; Dexterity</p>
       <p>Guard       Intelligence &amp; Strength</p>
       <p>Deliveryman Intelligence &amp; Endurance</p>
+      <p></p>
+      <image src="minecolonies:book/Traits" tw="180" th="33" />
     </page>
 
     <page id="Happ">
@@ -985,6 +997,7 @@
 
     <page>
       <p>Every "X" is a block which needs to be checked if it leads to the correct path.</p>
+      <p></p>
       <p>In this case, our pathfinding requires less than half of the required checks.</p>
       <p></p>
       <p>But, depending on the distances, our pathfinding can be up to 50 times faster than the classic one.</p>
@@ -993,8 +1006,49 @@
       <p></p>
       <p>On default, all hut blocks are considered waypoints in a colony.</p>
       <p></p>
+      <p>As the example shown on the next page. The first image is our pathfinding method compared to the second image which is Minecraft's original pathfinding.</p>
+    </page>
+
+    <page>
+      <image src="minecolonies:book/Comparison" tw="170" th="275" />
+    </page>
+
+    <page>
+      <p>Let's start with an example.</p>
+      <p>In the next image, the "Builder" needs to travel to the "Sawmill".</p>
+      <p>But, unfortunately, the "Sawmill" is very far away and finding a path would be costly.</p>
+      <p>If there were no "Townhall" he would have to path directly to the Sawmill.</p>
+      <p></p>
+      <p>The decision if he should choose a waypoint on the way to a certain goal is simple:</p>
+      <p>- Is there a waypoint closer to me than the actual goal?</p>
+      <p>- Is the waypoint closer to the goal than my current position?</p>
+      <p></p>
+      <p>In the image, going over the waypoint might result in a longer path to walk for the builder but since the townhall is closer to the sawmill than his actual position and closer to his actual position than the townhall he will choose the townhall as a proxy.</p>
+      <p></p>
+      <p></p>
+      <p></p>
+    </page>
+
+    <page>
+      <image src="minecolonies:book/ExamplePath" tw="175" th="126" />
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
       <p>Besides buildings, it is also possible to place additional waypoints for the citizen.</p>
       <p>Every decoration in a folder called "WayPoint" will be recognized by the builder and added to the colony as a waypoint.</p>
+      <p></p>
+      <image src="minecolonies:book/More_Waypoints" tw="175" th="39" />
+      <p></p>
     </page>
 
     <page>
@@ -1014,12 +1068,15 @@
       <p></p>
       <p>A more complex calculation is required when a range of possible waypoints are available when trying to path to a goal.</p>
       <p></p>
+      <image src="minecolonies:book/AlternativePath" tw="175" th="133" />
+    </page>
+
+    <page>
       <p>The calculation to choose the next waypoint is simple:</p>
       <p></p>
       <p>Distance from origin to waypoint * Distance from the origin to waypoint + distance from waypoint to the target.</p>
       <p></p>
       <p>That means that the distance to the first waypoint counts double the total distance, meaning that the less the distance to the next waypoint is the higher the chance that it will be chosen. And another waypoint will only be chosen if it is significantly closer to the target.</p>
-      <p></p>
     </page>
 
     <page id="Path">
@@ -1070,16 +1127,40 @@
       <p></p>
     </page>
 
-    <page>
+    <page id="Path">
       <p>Step Two.- Then all you have to do is right click the lower front corner (left or right makes no difference) at ground level of the structure.</p>
       <p></p>
-      <p>Step Three.- Click on the top opposite corner of the structure. Leaving the entire structure inside this imaginary square. You will get a message to right click again to "save the schematic".</p>
+      <image src="minecolonies:book/point1" tw="175" th="28" />
       <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p>Step Three.- Click on the top opposite corner of the structure. Leaving the entire structure inside this imaginary square. You will get a message to right click again to "save the schematic".</p>
+      <image src="minecolonies:book/point2" tw="175" th="27" />
+      <p></p>
+      <p></p>
+      <p></p>
+      <p>Step Four.- Once you right click again you will get a confirmation message: "Scan successfully saved as...". That's it! Simple, fast.</p>
+      <p></p>
+      <image src="minecolonies:book/point3" tw="175" th="19" />
+    </page>
+
+    <page>
       <p>  Once you right click with the Build Tool You will have to select "My Schematics" (in the left drop down menu) and on the right side drop down menu you will see the scans that you have made.</p>
       <p></p>
       <p>There is also a "Rename" button where you can change the name that was originally assiged to the scan (for example: SCAN_1494289342924-) to whatever you like.</p>
       <p></p>
-      <p>You can also "delete" any of your saved scans.</p>
+      <p>You can also "delete" any of your saved scans.</p><p></p>
+      <p></p>
+      <image src="minecolonies:book/Schematic" tw="180" th="28" />
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <link ref="Welcome:Index" align="center">Back to Index</link>
     </page>
 
   </chapter>
@@ -1128,7 +1209,7 @@
       <p></p>
       <big_recipe>
         <stack item="minecraft:planks"  meta="0" />
-        <stack item="minecraft:planks"  meta="1" />
+        <stack item="minecolonies:scepterGold" />
         <stack item="minecraft:planks"  meta="2" />
         <stack item="minecraft:planks"  meta="3" />
         <stack item="minecraft:fishing_rod" />
@@ -1146,7 +1227,7 @@
       <p></p>
       <big_recipe>
         <stack item="minecraft:planks"  meta="0" />
-        <stack item="minecraft:planks"  meta="1" />
+        <stack item="minecolonies:scepterGold" />
         <stack item="minecraft:planks"  meta="2" />
         <stack item="minecraft:planks"  meta="3" />
         <stack item="minecraft:wooden_door" />
@@ -1165,7 +1246,7 @@
       <p></p>
       <big_recipe>
         <stack item="minecraft:planks"  meta="0" />
-        <stack item="minecraft:planks"  meta="1" />
+        <stack item="minecolonies:scepterGold" />
         <stack item="minecraft:planks"  meta="2" />
         <stack item="minecraft:planks"  meta="3" />
         <stack item="minecraft:wooden_axe" />
@@ -1183,7 +1264,7 @@
       <p></p>
       <big_recipe>
         <stack item="minecraft:planks"  meta="0" />
-        <stack item="minecraft:planks"  meta="1" />
+        <stack item="minecolonies:scepterGold" />
         <stack item="minecraft:planks"  meta="2" />
         <stack item="minecraft:planks"  meta="3" />
         <stack item="minecraft:wooden_pickaxe" />
@@ -1202,7 +1283,7 @@
       <p></p>
       <big_recipe>
         <stack item="minecraft:planks"  meta="0" />
-        <stack item="minecraft:planks"  meta="1" />
+        <stack item="minecolonies:scepterGold" />
         <stack item="minecraft:planks"  meta="2" />
         <stack item="minecraft:planks"  meta="3" />
         <stack item="minecraft:hoe" />
@@ -1239,7 +1320,7 @@
       <p></p>
       <big_recipe>
         <stack item="minecraft:planks"  meta="0" />
-        <stack item="minecraft:planks"  meta="1" />
+        <stack item="minecolonies:scepterGold" />
         <stack item="minecraft:planks"  meta="2" />
         <stack item="minecraft:planks"  meta="3" />
         <stack item="minecraft:torch" />
@@ -1257,7 +1338,7 @@
       <p></p>
       <big_recipe>
         <stack item="minecraft:planks"  meta="0" />
-        <stack item="minecraft:planks"  meta="1" />
+        <stack item="minecolonies:scepterGold" />
         <stack item="minecraft:planks"  meta="2" />
         <stack item="minecraft:planks"  meta="3" />
         <stack item="minecraft:bow" />
@@ -1276,7 +1357,7 @@
       <p></p>
       <big_recipe>
         <stack item="minecraft:planks"  meta="0" />
-        <stack item="minecraft:planks"  meta="1" />
+        <stack item="minecolonies:scepterGold" />
         <stack item="minecraft:planks"  meta="2" />
         <stack item="minecraft:planks"  meta="3" />
         <stack item="minecraft:leather_boots" />
@@ -1294,7 +1375,7 @@
       <p></p>
       <big_recipe>
         <stack item="minecraft:planks"  meta="0" />
-        <stack item="minecraft:planks"  meta="1" />
+        <stack item="minecolonies:scepterGold" />
         <stack item="minecraft:planks"  meta="2" />
         <stack item="minecraft:planks"  meta="3" />
         <stack item="minecraft:chest" />
@@ -1341,6 +1422,34 @@
         <space/>
         <stack item="minecolonies:scepterSteel" />
       </big_recipe>
+      <p></p>
+      <p></p>
+      <p></p>
+    </page>
+
+    <page>
+      <title>Large Fern</title>
+      <p></p>
+      <big_recipe>
+        <stack item="minecraft:tallgrass"  meta="2" />
+        <space/>
+        <space/>
+        <space/>
+        <stack item="minecraft:tallgrass"  meta="2" />
+        <space/>
+        <space/>
+        <space/>
+        <space/>
+        <stack item="minecraft:double_plant"  meta="3" />
+      </big_recipe>
+      <p></p>
+            <p>Shapeless crafting. Any two Fern in any combination.</p>
+      <p></p>
+      <p></p>
+      <title></title>
+      <p></p>
+      <p></p>
+      <p></p>
       <p></p>
       <link ref="Welcome:Index" align="center">Back to Index</link>
     </page>
