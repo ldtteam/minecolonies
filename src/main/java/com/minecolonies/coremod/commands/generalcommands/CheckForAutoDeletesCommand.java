@@ -52,23 +52,26 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand
         {
             final Colony colony = colonies.get(index);
 
-            if (colony.isCanBeAutoDeleted() && Configurations.autoDeleteColoniesInHours != 0 && colony.getLastContactInHours() >= Configurations.autoDeleteColoniesInHours)
+            if (colony.isCanBeAutoDeleted() /*&& Configurations.autoDeleteColoniesInHours != 0*/ && colony.getLastContactInHours()+1 >= Configurations.autoDeleteColoniesInHours)
             {
                 coloniesToDelete.add(colony);
             }
         }
 
-        if (!Boolean.parseBoolean(args[1]))
+        if (args.length != 0)
         {
-            sender.addChatMessage(new TextComponentString("There are: " + coloniesToDelete.size() + " colonies to delete"));
-            sender.addChatMessage(new TextComponentString("Run /mc check true to complete"));
+            if (args[0].equalsIgnoreCase("true"))
+            {
+                for (Colony col : coloniesToDelete)
+                {
+                    server.addScheduledTask(() -> ColonyManager.deleteColony(col.getID()));
+                }
+            }
         }
         else
         {
-            for (Colony col : coloniesToDelete)
-            {
-                server.addScheduledTask(() -> ColonyManager.deleteColony(col.getID()));
-            }
+            sender.addChatMessage(new TextComponentString("There are: " + coloniesToDelete.size() + " colonies to delete"));
+            sender.addChatMessage(new TextComponentString("Run /mc check true to complete"));
         }
     }
 
