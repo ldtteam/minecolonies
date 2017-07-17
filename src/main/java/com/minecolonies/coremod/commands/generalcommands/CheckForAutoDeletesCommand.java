@@ -21,9 +21,7 @@ import java.util.List;
 public class CheckForAutoDeletesCommand extends AbstractSingleCommand
 {
 
-    public static final  String DESC              = "check";
-    private static final String NO_COLONIES_FOUND = "There were no colonies found that could be auto-deleted";
-    private static final String ABLE_TO_DELETE    = "We were able to delete some colonies!";
+    public static final String DESC = "check";
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -52,7 +50,7 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand
         {
             final Colony colony = colonies.get(index);
 
-            if (colony.isCanBeAutoDeleted() /*&& Configurations.autoDeleteColoniesInHours != 0*/ && colony.getLastContactInHours()+1 >= Configurations.autoDeleteColoniesInHours)
+            if (colony.isCanBeAutoDeleted() /*&& Configurations.autoDeleteColoniesInHours != 0*/ && colony.getLastContactInHours() + 1 >= Configurations.autoDeleteColoniesInHours)
             {
                 coloniesToDelete.add(colony);
             }
@@ -62,7 +60,7 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand
         {
             if (args[0].equalsIgnoreCase("true"))
             {
-                for (Colony col : coloniesToDelete)
+                for (final Colony col : coloniesToDelete)
                 {
                     server.addScheduledTask(() -> ColonyManager.deleteColony(col.getID()));
                 }
