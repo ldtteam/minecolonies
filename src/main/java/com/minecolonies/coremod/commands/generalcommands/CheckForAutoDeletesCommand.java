@@ -14,6 +14,7 @@ import net.minecraft.util.text.TextComponentString;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand
 {
 
     public static final  String DESC              = "check";
-    private static final String NO_COLONIES_FOUND = "There where no colonies found that could be auto-deleted";
+    private static final String NO_COLONIES_FOUND = "There were no colonies found that could be auto-deleted";
     private static final String ABLE_TO_DELETE    = "We were able to delete some colonies!";
 
     /**
@@ -45,7 +46,7 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand
     {
         final List<Colony> colonies = ColonyManager.getColonies();
 
-        boolean colonyWasDeleted = false;
+        final List<Colony> coloniesToDelete = new ArrayList<>();
 
         for (int index = 0; colonies.size() - 1 >= index; index++)
         {
@@ -53,20 +54,21 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand
 
             if (colony.isCanBeAutoDeleted() && Configurations.autoDeleteColoniesInHours != 0 && colony.getLastContactInHours() >= Configurations.autoDeleteColoniesInHours)
             {
-                sender.addChatMessage(new TextComponentString("The Inactive Colony: " + colony.getName() + " with the ID of: " + colony.getID() + " was deleted after: "
-                                                                + colony.getLastContactInHours() + "hour/s of no contact"));
-                server.addScheduledTask(() -> ColonyManager.deleteColony(colony.getID()));
-                colonyWasDeleted = true;
+                coloniesToDelete.add(colony);
             }
         }
 
-        if (colonyWasDeleted)
+        if (!Boolean.parseBoolean(args[1]))
         {
-            sender.addChatMessage(new TextComponentString(ABLE_TO_DELETE));
+            sender.addChatMessage(new TextComponentString("There are: " + coloniesToDelete.size() + " colonies to delete"));
+            sender.addChatMessage(new TextComponentString("Run /mc check true to complete"));
         }
         else
         {
-            sender.addChatMessage(new TextComponentString(NO_COLONIES_FOUND));
+            for (Colony col : coloniesToDelete)
+            {
+                server.addScheduledTask(() -> ColonyManager.deleteColony(col.getID()));
+            }
         }
     }
 
