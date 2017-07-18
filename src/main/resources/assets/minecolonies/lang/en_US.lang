@@ -23,6 +23,8 @@ tile.blockHut.messageTooFarFromTownHall=You need to be closer to your town hall!
 tile.blockHut.messageNoTownHall=You need to place a town hall first!
 item.minecolonies.supplyChestDeployer.name=SupplyShip Chest
 item.minecolonies.supplyCampDeployer.name=SupplyCamp Chest
+item.minecolonies.ancientTome.name=Ancient Tome
+item.minecolonies.chiefSword.name=Chief Sword
 
 item.minecolonies.scepterGold.name=Building Tool
 item.minecolonies.scepterSteel.name=Scan Tool
@@ -103,8 +105,6 @@ achievement.upgrade.townhall.first.desc=Build a townhall!
 tile.minecolonies.blockHutGuardTower.name=GuardTower
 tile.blockHutTownHall.messageGuardDead=The guard %s has died at %d %d %d!
 item.minecolonies.scepterGuard.name=Guard-scepter
-item.minecolonies.chiefsword.name=Chief Sword
-item.minecolonies.ancienttome.name=Ancient Tome
 
 com.minecolonies.configgui.title=MineColonies Config
 
