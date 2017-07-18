@@ -900,7 +900,9 @@ public class Colony implements IColony
         }
         else
         {
+            lastContactInHours = 0;
             ticksPassed = 0;
+            lastContactInHours = 0;
         }
 
         //  Add nearby players
@@ -1459,10 +1461,10 @@ public class Colony implements IColony
 
                 if (getMaxCitizens() == getCitizens().size())
                 {
-                    //TODO: add Colony Name prefix?
                     LanguageHandler.sendPlayersMessage(
                       this.getMessageEntityPlayers(),
-                      "tile.blockHutTownHall.messageMaxSize");
+                      "tile.blockHutTownHall.messageMaxSize",
+                      this.name);
                 }
             }
 

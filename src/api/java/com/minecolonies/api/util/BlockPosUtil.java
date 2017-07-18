@@ -11,6 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -431,5 +432,17 @@ public final class BlockPosUtil
             return position;
         }
         return getFloor(position.up(), depth + 1, world);
+    }
+
+    /**
+     * Calculate in which direction a pos is facing.
+     * @param pos the pos.
+     * @param neighbor the block its facing.
+     * @return the directions its facing.
+     */
+    public static EnumFacing getFacing(final BlockPos pos, final BlockPos neighbor)
+    {
+        final BlockPos vector = neighbor.subtract(pos);
+        return EnumFacing.getFacingFromVector(vector.getX(), vector.getY(), -vector.getZ());
     }
 }

@@ -67,9 +67,10 @@ public abstract class AbstractSingleCommand implements ISubCommand
     /**
      * Will check the config file to see if players are allowed to use the command that is sent here.
      * and will verify that they are of correct rank to do so.
-     * @param player the players/senders name.
+     *
+     * @param player     the players/senders name.
      * @param theCommand which command to check if the player can use it.
-     * @param colonyId the id of the colony.
+     * @param colonyId   the id of the colony.
      * @return boolean.
      */
 
@@ -81,18 +82,18 @@ public abstract class AbstractSingleCommand implements ISubCommand
         }
 
         final Colony chkColony = ColonyManager.getColony(colonyId);
-        if(chkColony == null)
+        if (chkColony == null)
         {
             return false;
         }
         return canCommandSenderUseCommand(theCommand)
-                && canRankUseCommand(chkColony, player);
+                 && canRankUseCommand(chkColony, player);
     }
 
     /**
      * Will check to see if play is Opped for the given command name.
      *
-     * @param sender  to check the player using the command.
+     * @param sender to check the player using the command.
      * @return boolean
      */
     @NotNull
@@ -101,7 +102,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
         if (sender instanceof EntityPlayer)
         {
             return FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList()
-                    .canSendCommands(((EntityPlayer) sender).getGameProfile());
+                     .canSendCommands(((EntityPlayer) sender).getGameProfile());
         }
         return true;
     }
