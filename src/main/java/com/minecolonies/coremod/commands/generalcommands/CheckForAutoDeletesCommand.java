@@ -50,7 +50,7 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand
         {
             final Colony colony = colonies.get(index);
 
-            if (colony.isCanBeAutoDeleted() /*&& Configurations.autoDeleteColoniesInHours != 0*/ && colony.getLastContactInHours() + 1 >= Configurations.autoDeleteColoniesInHours)
+            if (colony.isCanBeAutoDeleted() && Configurations.autoDeleteColoniesInHours != 0 && colony.getLastContactInHours() >= Configurations.autoDeleteColoniesInHours)
             {
                 coloniesToDelete.add(colony);
             }
@@ -58,7 +58,7 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand
 
         if (args.length != 0)
         {
-            if (args[0].equalsIgnoreCase("true"))
+            if ("true".equalsIgnoreCase(args[0]))
             {
                 for (final Colony col : coloniesToDelete)
                 {
