@@ -27,7 +27,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.items.CapabilityItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -854,10 +853,9 @@ public abstract class AbstractBuilding
      */
     public void registerBlockPosition(@NotNull Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
-
         final TileEntity tile = world.getTileEntity(pos);
 
-        if (tile != null && tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null))
+        if (tile != null && !InventoryUtils.getItemHandlersFromProvider(tile).isEmpty())
         {
             addContainerPosition(pos);
         }
