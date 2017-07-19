@@ -854,14 +854,11 @@ public abstract class AbstractBuilding
     public void registerBlockPosition(@NotNull Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
 
-        TileEntity tile = world.getTileEntity(pos);
+        final TileEntity tile = world.getTileEntity(pos);
 
-        if (tile != null)
+        if (tile != null && tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null))
         {
-            if (tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null))
-            {
-                addContainerPosition(pos);
-            }
+            addContainerPosition(pos);
         }
     }
 
