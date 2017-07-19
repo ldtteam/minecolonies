@@ -82,10 +82,4 @@ public interface IColony
      * @return true if so.
      */
     boolean hasWillRaidTonight();
-
-    /**
-     * get the colonies GuardTarget list.
-     * @return a list of targets that the colonies guards have.
-     */
-    List<EntityLivingBase> getGuardTargets();
 }

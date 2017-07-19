@@ -314,22 +314,6 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
             return AIState.GUARD_HUNT_DOWN_TARGET;
         }
 
-        EntityLivingBase possibleTarget = null;
-
-        if (worker.getColony() != null)
-        {
-            final Optional<EntityLivingBase> optionalTarget = worker.getColony().getGuardTargets()
-                                                                .stream()
-                                                                .findFirst();
-
-            possibleTarget = optionalTarget.orElse(null);
-        }
-
-        if (targetEntity == null && possibleTarget != null)
-        {
-            targetEntity = possibleTarget;
-        }
-
         setDelay(BASE_DELAY);
         if (entityList.isEmpty())
         {

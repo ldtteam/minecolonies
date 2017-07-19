@@ -2022,15 +2022,4 @@ public class Colony implements IColony
         willRaidTonight = willRaid;
     }
 
-    @Override
-    public List<EntityLivingBase> getGuardTargets()
-    {
-        return new ArrayList<>(guardTargets);
-    }
-
-    public void setGuardTargets(final List<EntityLivingBase> targets)
-    {
-        guardTargets.clear();
-        guardTargets.addAll(targets);
-    }
 }

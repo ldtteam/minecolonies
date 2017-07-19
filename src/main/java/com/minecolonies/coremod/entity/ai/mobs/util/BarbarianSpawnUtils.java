@@ -67,8 +67,8 @@ public final class BarbarianSpawnUtils
     private static final double FOLLOW_RANGE                = 35.0D;
     private static final double MOVEMENT_SPEED              = 0.2D;
     private static final double ARMOR                       = 2.0D;
-    private static final double BARBARIAN_BASE_HEALTH       = 20;
-    private static final double BARBARIAN_HEALTH_MULTIPLIER = 0.5;
+    private static final double BARBARIAN_BASE_HEALTH       = 10;
+    private static final double BARBARIAN_HEALTH_MULTIPLIER = 0.25;
 
     /**
      * Private constructor to hide the implicit public one.
@@ -103,7 +103,7 @@ public final class BarbarianSpawnUtils
         if (colony != null)
         {
             final int raidLevel = (int) (MobEventsUtils.getColonyRaidLevel(colony) * BARBARIAN_HEALTH_MULTIPLIER);
-            return BARBARIAN_BASE_HEALTH + raidLevel;
+            return BARBARIAN_BASE_HEALTH + (raidLevel - 10);
         }
         return BARBARIAN_BASE_HEALTH;
     }

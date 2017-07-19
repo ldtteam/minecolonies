@@ -49,6 +49,11 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
     private static final double BASE_PITCH = 0.8D;
 
     /**
+     * Experience to add when a mob is killed
+     */
+    private static final int EXP_PER_MOD_DEATH = 15;
+
+    /**
      * Random is multiplied by this to get a random arrow sound.
      */
     private static final double PITCH_MULTIPLIER = 0.4D;
@@ -146,39 +151,10 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
             targetEntity = this.worker.getLastAttacker();
         }
 
-        final AbstractEntityBarbarian barbarian = BarbarianUtils.getClosestBarbarianToEntity(worker, 20D);
-
-        if (barbarian != null && targetEntity == null)
-        {
-            targetEntity = barbarian;
-        }
-
-        if (!worker.getColony().getGuardTargets().isEmpty() && targetEntity == null)
-        {
-            final List<EntityLivingBase> targets = worker.getColony().getGuardTargets();
-            final Optional<EntityLivingBase> possibleTarget = targets
-                                                                .stream()
-                                                                .filter(entity -> entity.getDistanceToEntity(worker) <= MAX_DISTANCE_TO_HELP_GUARD)
-                                                                .findFirst();
-            targetEntity = possibleTarget.orElse(null);
-        }
-
-        if (targetEntity != null)
-        {
-            final List<EntityLivingBase> targets = worker.getColony().getGuardTargets();
-            if (targets.stream().noneMatch(entity -> entity == targetEntity))
-            {
-                targets.add(targetEntity);
-            }
-            worker.getColony().setGuardTargets(targets);
-        }
-
         if (targetEntity != null && (!targetEntity.isEntityAlive() || checkForToolOrWeapon(ToolType.SWORD)))
         {
-            final List<EntityLivingBase> targets = worker.getColony().getGuardTargets();
-            targets.remove(targetEntity);
-            worker.getColony().setGuardTargets(targets);
             targetEntity = null;
+            worker.addExperience(EXP_PER_MOD_DEATH);
             worker.setAIMoveSpeed((float) 1.0D);
             return AIState.GUARD_GATHERING;
         }
