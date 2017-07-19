@@ -113,9 +113,8 @@ public class BuildingWareHouse extends AbstractBuilding
     }
 
     @Override
-    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos)
+    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
-        final World world = getColony().getWorld();
         if (block instanceof BlockChest && world != null)
         {
             final TileEntity entity = getColony().getWorld().getTileEntity(pos);
@@ -124,7 +123,7 @@ public class BuildingWareHouse extends AbstractBuilding
                 handleBuildingOverChest(pos, (TileEntityChest) entity, world);
             }
         }
-        super.registerBlockPosition(block,pos);
+        super.registerBlockPosition(block,pos,world);
     }
 
     /**
