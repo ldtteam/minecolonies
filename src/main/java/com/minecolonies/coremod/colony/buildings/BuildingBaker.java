@@ -321,7 +321,7 @@ public class BuildingBaker extends AbstractBuildingWorker
     @Override
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
-        super.registerBlockPosition(pos, world);
+        super.registerBlockPosition(block, pos, world);
         if (block instanceof BlockFurnace && !furnaces.containsKey(pos))
         {
             addToFurnaces(pos);

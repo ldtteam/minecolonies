@@ -123,7 +123,7 @@ public class BuildingWareHouse extends AbstractBuilding
                 handleBuildingOverChest(pos, (TileEntityChest) entity, world);
             }
         }
-        super.registerBlockPosition(pos,world);
+        super.registerBlockPosition(block, pos,world);
     }
 
     /**
