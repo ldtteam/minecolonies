@@ -3,8 +3,6 @@ package com.minecolonies.coremod.entity.ai.citizen.guard;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
-import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbarian;
-import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianUtils;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -20,9 +18,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.DifficultyInstance;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
-import java.util.Optional;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 

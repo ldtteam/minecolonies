@@ -1239,6 +1239,7 @@ public class Colony implements IColony
 
             if (event.world.getDifficulty() != EnumDifficulty.PEACEFUL && Configurations.doBarbariansSpawn && MobEventsUtils.isItTimeToRaid(event.world, this))
             {
+                System.out.println("Stuff");
                 MobEventsUtils.barbarianEvent(event.world, this);
             }
         }
