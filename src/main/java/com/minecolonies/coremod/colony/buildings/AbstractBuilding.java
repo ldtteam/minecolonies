@@ -846,12 +846,12 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * register a block and position.
+     * register a TileEntity and position.
      *
-     * @param block to be registered
+     * @param world the world the TileEntity is being registered in
      * @param pos   of the block
      */
-    public void registerBlockPosition(@NotNull Block block, @NotNull final BlockPos pos, @NotNull final World world)
+    public void registerBlockPosition(@NotNull final BlockPos pos, @NotNull final World world)
     {
 
         final TileEntity tile = world.getTileEntity(pos);
