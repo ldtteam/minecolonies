@@ -25,6 +25,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -124,6 +126,7 @@ public class BuildingWareHouse extends AbstractBuilding
                 handleBuildingOverChest(pos, (TileEntityChest) entity, world);
             }
         }
+        super.registerBlockPosition(block,pos);
     }
 
     /**

@@ -853,7 +853,7 @@ public abstract class AbstractBuilding
      */
     public void registerBlockPosition(@NotNull Block block, @NotNull final BlockPos pos)
     {
-        if (block instanceof BlockContainer)
+        if (block instanceof BlockContainer || block instanceof BlockMinecoloniesRack)
         {
             addContainerPosition(pos);
         }
