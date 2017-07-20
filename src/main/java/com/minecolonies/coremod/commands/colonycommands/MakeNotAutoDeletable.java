@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.commands.colonycommands;
 
-import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
@@ -8,6 +7,7 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import org.jetbrains.annotations.NotNull;
@@ -46,12 +46,22 @@ public class MakeNotAutoDeletable extends AbstractSingleCommand
     @Override
     public boolean canRankUseCommand(@NotNull final Colony colony, @NotNull final EntityPlayer player)
     {
-        return colony.getPermissions().getRank(player).equals(Rank.OWNER);
+        return false;
     }
 
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
+        if (sender instanceof EntityPlayer && !isPlayerOpped(sender))
+        {
+            sender.addChatMessage(new TextComponentString("Must be OP to use command"));
+            return;
+        }
+        else if (sender instanceof TileEntity)
+        {
+            return;
+        }
+
         if (args.length < NUMBER_OR_ARGS_REQUIRED)
         {
             sender.addChatMessage(new TextComponentString(NOT_ENOUGH_ARGUMENTS));

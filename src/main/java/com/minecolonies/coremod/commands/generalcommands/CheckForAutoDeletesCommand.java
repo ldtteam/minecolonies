@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.commands.generalcommands;
 
-import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -9,8 +8,13 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.event.ClickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -36,12 +40,22 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand
     @Override
     public boolean canRankUseCommand(@NotNull final Colony colony, @NotNull final EntityPlayer player)
     {
-        return colony.getPermissions().getRank(player).equals(Rank.OWNER);
+        return false;
     }
 
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
+        if (sender instanceof EntityPlayer && !isPlayerOpped(sender))
+        {
+            sender.addChatMessage(new TextComponentString("Must be OP to use command"));
+            return;
+        }
+        else if (sender instanceof TileEntity)
+        {
+            return;
+        }
+
         final List<Colony> colonies = ColonyManager.getColonies();
 
         final List<Colony> coloniesToDelete = new ArrayList<>();
@@ -60,6 +74,7 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand
         {
             if ("true".equalsIgnoreCase(args[0]))
             {
+                sender.addChatMessage(new TextComponentString("Successful"));
                 for (final Colony col : coloniesToDelete)
                 {
                     server.addScheduledTask(() -> ColonyManager.deleteColony(col.getID()));
@@ -68,8 +83,12 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand
         }
         else
         {
+            final ITextComponent deleteButton = new TextComponentString("[DELETE]").setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
+              new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/mc check true")
+            ));
             sender.addChatMessage(new TextComponentString("There are: " + coloniesToDelete.size() + " colonies to delete"));
-            sender.addChatMessage(new TextComponentString("Run /mc check true to complete"));
+            sender.addChatMessage(new TextComponentString("Click [DELETE] to confirm"));
+            sender.addChatMessage(deleteButton);
         }
     }
 
