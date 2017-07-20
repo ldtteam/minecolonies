@@ -51,7 +51,7 @@ public class RaidAllTonightCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        for (Colony colony : ColonyManager.getColonies())
+        for (final Colony colony : ColonyManager.getColonies())
         {
             colony.setWillRaidTonight(true);
         }

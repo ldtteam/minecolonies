@@ -203,8 +203,6 @@ public class Colony implements IColony
 
     private double overallHappiness = AVERAGE_HAPPINESS;
 
-    private List<EntityLivingBase> guardTargets;
-
     /**
      * The Positions which players can freely interact.
      */
@@ -1239,7 +1237,6 @@ public class Colony implements IColony
 
             if (event.world.getDifficulty() != EnumDifficulty.PEACEFUL && Configurations.doBarbariansSpawn && MobEventsUtils.isItTimeToRaid(event.world, this))
             {
-                System.out.println("Stuff");
                 MobEventsUtils.barbarianEvent(event.world, this);
             }
         }

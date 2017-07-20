@@ -54,9 +54,9 @@ public class DoRaidNowCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        if (args.length == 1)
+        if (args.length != 0)
         {
-            Colony colony = ColonyManager.getColony(Integer.parseInt(args[0]));
+            final Colony colony = ColonyManager.getColony(Integer.parseInt(args[0]));
             if (colony == null)
             {
                 sender.addChatMessage(NO_COLONY_FOUND_MESSAGE_ID);

@@ -1,11 +1,8 @@
 package com.minecolonies.coremod.colony;
 
 import com.minecolonies.api.colony.permissions.IPermissions;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import java.util.List;
 
 /**
  * Interface of the Colony and ColonyView which will have to implement the following methods.

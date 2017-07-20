@@ -27,11 +27,6 @@ import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRangedAttackMob
 {
     /**
-     * The max distance an entity may be for the guard to help
-     */
-    private static final double MAX_DISTANCE_TO_HELP_GUARD = 60;
-
-    /**
      * Basic delay for the next shot.
      */
     private static final int BASE_RELOAD_TIME = 60;
