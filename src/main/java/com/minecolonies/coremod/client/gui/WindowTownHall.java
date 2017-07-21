@@ -3,9 +3,9 @@ package com.minecolonies.coremod.client.gui;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.Label;
@@ -20,11 +20,12 @@ import com.minecolonies.coremod.network.messages.*;
 import net.minecraft.block.Block;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.*;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * Window for the town hall.

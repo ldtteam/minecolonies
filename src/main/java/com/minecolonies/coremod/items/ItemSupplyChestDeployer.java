@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -23,6 +23,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -80,6 +81,12 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     private static final int OFFSET_Y = -2;
 
     /**
+     * Our guide Book.
+     */
+    @GameRegistry.ItemStackHolder(value = "gbook:guidebook", nbt = "{Book:\"minecolonies:book/minecolonies.xml\"}")
+    public static ItemStack guideBook;
+
+    /**
      * Creates a new supplychest deployer. The item is not stackable.
      */
     public ItemSupplyChestDeployer()
@@ -108,15 +115,15 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     @NotNull
     @Override
     public EnumActionResult onItemUse(
-            final ItemStack stack,
-            final EntityPlayer playerIn,
-            final World worldIn,
-            final BlockPos pos,
-            final EnumHand hand,
-            final EnumFacing facing,
-            final float hitX,
-            final float hitY,
-            final float hitZ)
+                                       final ItemStack stack,
+                                       final EntityPlayer playerIn,
+                                       final World worldIn,
+                                       final BlockPos pos,
+                                       final EnumHand hand,
+                                       final EnumFacing facing,
+                                       final float hitX,
+                                       final float hitY,
+                                       final float hitZ)
     {
         if (worldIn == null || playerIn == null || worldIn.isRemote || ItemStackUtils.isEmpty(stack) || !isFirstPlacing(playerIn))
         {
@@ -127,7 +134,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         if (enumfacing != EnumFacing.DOWN)
         {
             spawnShip(worldIn, pos, enumfacing);
-            ItemStackUtils.changeSize(stack, -1 );
+            ItemStackUtils.changeSize(stack, -1);
 
             playerIn.addStat(ModAchievements.achievementGetSupply);
 
@@ -236,19 +243,19 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
 
             case SOUTH:
                 StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(OFFSET_SOUTH_WEST, OFFSET_Y, OFFSET_SOUTH_EAST),
-                        Constants.ROTATE_THREE_TIMES, Mirror.NONE);
+                  Constants.ROTATE_THREE_TIMES, Mirror.NONE);
                 break;
             case NORTH:
                 StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(OFFSET_NORTH_EAST, OFFSET_Y, OFFSET_NORTH_WEST),
-                        Constants.ROTATE_ONCE, Mirror.NONE);
+                  Constants.ROTATE_ONCE, Mirror.NONE);
                 break;
             case EAST:
                 StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(OFFSET_SOUTH_EAST, OFFSET_Y, OFFSET_NORTH_EAST),
-                        Constants.ROTATE_TWICE, Mirror.NONE);
+                  Constants.ROTATE_TWICE, Mirror.NONE);
                 break;
             case WEST:
                 StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(OFFSET_NORTH_WEST, OFFSET_Y, OFFSET_SOUTH_WEST),
-                        Constants.ROTATE_0_TIMES, Mirror.NONE);
+                  Constants.ROTATE_0_TIMES, Mirror.NONE);
                 break;
             default:
                 break;
@@ -269,6 +276,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         }
         chest.setInventorySlotContents(0, new ItemStack(ModBlocks.blockHutTownHall));
         chest.setInventorySlotContents(1, new ItemStack(ModItems.buildTool));
+        chest.setInventorySlotContents(2, guideBook);
     }
 
     /**
@@ -284,13 +292,13 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @return true if it can be placed.
      */
     private static boolean checkX(
-            final World world,
-            final BlockPos pos,
-            final int k,
-            final int spaceRightK,
-            final int spaceLeftK,
-            final int widthK,
-            final boolean isCoordPositivelyAdded)
+                                   final World world,
+                                   final BlockPos pos,
+                                   final int k,
+                                   final int spaceRightK,
+                                   final int spaceLeftK,
+                                   final int widthK,
+                                   final boolean isCoordPositivelyAdded)
     {
         for (int i = DISTANCE; i < WIDTH; i++)
         {
@@ -327,13 +335,13 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @return true if it can be placed.
      */
     private static boolean checkZ(
-            final World world,
-            final BlockPos pos,
-            final int k,
-            final int spaceRightK,
-            final int spaceLeftK,
-            final int widthK,
-            final boolean isCoordPositivelyAdded)
+                                   final World world,
+                                   final BlockPos pos,
+                                   final int k,
+                                   final int spaceRightK,
+                                   final int spaceLeftK,
+                                   final int widthK,
+                                   final boolean isCoordPositivelyAdded)
     {
         for (int i = DISTANCE; i < WIDTH; i++)
         {
@@ -368,7 +376,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     private static boolean checkIfWaterAndNotInColony(final World world, final BlockPos pos1, final BlockPos pos2, final BlockPos pos3)
     {
         return BlockUtils.isWater(world.getBlockState(pos1)) && BlockUtils.isWater(world.getBlockState(pos2)) && BlockUtils.isWater(world.getBlockState(pos3))
-                && notInAnyColony(world, pos1, pos2, pos3);
+                 && notInAnyColony(world, pos1, pos2, pos3);
     }
 
     /**

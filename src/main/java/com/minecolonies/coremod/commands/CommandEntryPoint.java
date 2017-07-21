@@ -23,7 +23,6 @@ public class CommandEntryPoint extends CommandBase
      * private static final int OP_PERMISSION_LEVEL = 3;
      */
 
-
     @NotNull
     private final MinecoloniesCommand root;
 
@@ -38,6 +37,7 @@ public class CommandEntryPoint extends CommandBase
 
     /**
      * Check if the player has the permission to use commands.
+     *
      * @param server the server to check for.
      * @param sender the sender of the command.
      * @return true if so.
@@ -45,7 +45,7 @@ public class CommandEntryPoint extends CommandBase
     @Override
     public boolean checkPermission(final MinecraftServer server, final ICommandSender sender)
     {
-        if(sender instanceof EntityPlayer)
+        if (sender instanceof EntityPlayer)
         {
             return AbstractSingleCommand.isPlayerOpped(sender) || Configurations.opLevelForServer <= 0;
         }
