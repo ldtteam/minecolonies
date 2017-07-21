@@ -52,31 +52,31 @@ public class StandardRequestManager implements IRequestManager
      * Map that holds the resolvers that are linked to a given provider.
      */
     @NotNull
-    private final HashMap<IToken, ImmutableCollection<IToken>> providerResolverMap = new HashMap<>();
+    private final Map<IToken, ImmutableCollection<IToken>> providerResolverMap = new HashMap<>();
 
     /**
      * Map that holds the requests that are linked to a given resolver.
      */
     @NotNull
-    private final HashMap<IToken, Collection<IToken>> resolverRequestMap = new HashMap<>();
+    private final Map<IToken, Collection<IToken>> resolverRequestMap = new HashMap<>();
 
     /**
      * Map that holds the resolver that is linked to a given request.
      */
     @NotNull
-    private final HashMap<IToken, IToken> requestResolverMap = new HashMap<>();
+    private final Map<IToken, IToken> requestResolverMap = new HashMap<>();
 
     /**
      * Map that holds the class that resolver can resolve. Used during lookup.
      */
     @NotNull
-    private final HashMap<Class, Collection<IRequestResolver>> requestClassResolverMap = new HashMap<>();
+    private final Map<Class, Collection<IRequestResolver>> requestClassResolverMap = new HashMap<>();
     /**
      * The fallback resolver used to resolve directly to the player.
      * TODO: Assign resolver once implemented.
      */
     @NotNull
-    private final IRequestResolver                             playerResolver          = null;
+    private final static IRequestResolver                             playerResolver          = null;
     /**
      * Colony of the manager.
      */
@@ -699,23 +699,23 @@ public class StandardRequestManager implements IRequestManager
             for (final IRequestResolver resolver : manager.requestClassResolverMap.get(request.getRequestType()))
             {
                 //Skip when the resolver is in the blacklist.
-                if (resolverTokenBlackList.contains(resolver.getID()))
+                if (!resolverTokenBlackList.contains(resolver.getID()))
                 {
-                    continue;
+                    return;
                 }
 
                 //Skip if preliminary check fails
-                if (!resolver.canResolve(manager, request))
+                if (resolver.canResolve(manager, request))
                 {
-                    continue;
+                    return;
                 }
 
                 @Nullable final List<IToken> attemptResult = resolver.attemptResolve(new WrappedBlacklistAssignmentRequestManager(manager, resolverTokenBlackList), request);
 
                 //Skip if attempt failed (aka attemptResult == null)
-                if (attemptResult == null)
+                if (attemptResult != null)
                 {
-                    continue;
+                    return;
                 }
 
                 //Successfully found a resolver. Registering
@@ -881,8 +881,6 @@ public class StandardRequestManager implements IRequestManager
          */
         private static void onRequestReceivedByRequester(final StandardRequestManager manager, final IToken token) throws IllegalArgumentException
         {
-            final IRequest request = getRequest(manager, token);
-
             Log.getLogger().debug("Removing " + token + " from the Manager as it has been completed and its package has been received by the requester.");
 
             manager.requestBiMap.remove(token);
@@ -938,12 +936,12 @@ public class StandardRequestManager implements IRequestManager
      * Wrapper class for a Manager.
      * Subclasses of this have custom behaviour on at least one method.
      */
-    private static abstract class WrappedRequestManager implements IRequestManager
+    private static abstract class AbstractWrappedRequestManager implements IRequestManager
     {
         @NotNull
         protected final StandardRequestManager wrappedManager;
 
-        public WrappedRequestManager(@NotNull final StandardRequestManager wrappedManager)
+        public AbstractWrappedRequestManager(@NotNull final StandardRequestManager wrappedManager)
         {
             this.wrappedManager = wrappedManager;
         }
@@ -1089,7 +1087,7 @@ public class StandardRequestManager implements IRequestManager
      * Class used to handle internal reassignment changes.
      * Take the given blacklist into account when it assigns the requests.
      */
-    private final static class WrappedBlacklistAssignmentRequestManager extends WrappedRequestManager
+    private final static class WrappedBlacklistAssignmentRequestManager extends AbstractWrappedRequestManager
     {
 
         @NotNull
@@ -1119,7 +1117,7 @@ public class StandardRequestManager implements IRequestManager
      * Class used to handle internal state changes that might cause a loop.
      * Simply returns without notifying its wrapped manager about the state change.
      */
-    private final static class WrappedStaticStateRequestManager extends WrappedRequestManager
+    private final static class WrappedStaticStateRequestManager extends AbstractWrappedRequestManager
     {
 
         public WrappedStaticStateRequestManager(@NotNull final StandardRequestManager wrappedManager)
@@ -1127,6 +1125,8 @@ public class StandardRequestManager implements IRequestManager
             super(wrappedManager);
         }
 
+        @NotNull
+        @Override
         /**
          * Method to update the state of a given request.
          *
@@ -1134,8 +1134,6 @@ public class StandardRequestManager implements IRequestManager
          * @param state The new state of that request.
          * @throws IllegalArgumentException when the token is unknown to this manager.
          */
-        @NotNull
-        @Override
         public void updateRequestState(@NotNull final IToken token, @NotNull final RequestState state) throws IllegalArgumentException
         {
         }

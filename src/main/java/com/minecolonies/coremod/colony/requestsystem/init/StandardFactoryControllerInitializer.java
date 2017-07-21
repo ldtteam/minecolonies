@@ -12,6 +12,13 @@ import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequestFac
 public final class StandardFactoryControllerInitializer
 {
 
+    /**
+     * Private constructor to hide the implicit public one.
+     */
+    private StandardFactoryControllerInitializer()
+    {
+    }
+
     public static void onPreInit()
     {
         StandardFactoryController.getInstance().registerNewFactory(new StandardTokenFactory());

@@ -94,6 +94,10 @@ public class EntityLocation implements ILocation
         return !(entity == null || entity.get() == null) && location.getDimension() == getDimension();
     }
 
+    @SuppressWarnings("squid:S2972")
+    /**
+     * We have this class the way it is for a reason.
+     */
     public static class Factory implements ILocationFactory<Entity, EntityLocation>
     {
 
@@ -104,6 +108,10 @@ public class EntityLocation implements ILocation
 
         @NotNull
         @Override
+        @SuppressWarnings("squid:LeftCurlyBraceStartLineCheck")
+        /**
+         * Moving the curly braces really makes the code hard to read.
+         */
         public TypeToken<EntityLocation> getFactoryOutputType()
         {
             return new TypeToken<EntityLocation>() {};
@@ -111,6 +119,10 @@ public class EntityLocation implements ILocation
 
         @NotNull
         @Override
+        @SuppressWarnings("squid:LeftCurlyBraceStartLineCheck")
+        /**
+         * Moving the curly braces really makes the code hard to read.
+         */
         public TypeToken<Entity> getFactoryInputType()
         {
             return new TypeToken<Entity>() {};

@@ -60,6 +60,10 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<ItemStack>
 
     @Nullable
     @Override
+    @SuppressWarnings("squid:LeftCurlyBraceStartLineCheck")
+    /**
+     * Moving the curly braces really makes the code hard to read.
+     */
     public List<IToken> attemptResolve(
                                         @NotNull final IRequestManager manager, @NotNull final IRequest<ItemStack> request)
     {
@@ -83,7 +87,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<ItemStack>
 
     @Nullable
     @Override
-    public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<ItemStack> request) throws RuntimeException
+    public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<ItemStack> request)
     {
         //Noop delivery has been completed
     }
@@ -99,7 +103,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<ItemStack>
 
     @Nullable
     @Override
-    public IRequest onParentCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<ItemStack> request) throws IllegalArgumentException
+    public IRequest onParentCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<ItemStack> request)
     {
         //TODO Release the stack from the warehouse.
         return null;
@@ -107,19 +111,21 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<ItemStack>
 
     @Nullable
     @Override
-    public void onResolvingOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<ItemStack> request) throws IllegalArgumentException
+    public void onResolvingOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<ItemStack> request)
     {
         //TODO Release the stack from the warehouse.
     }
 
+    @SuppressWarnings("squid:S2972")
+    /**
+     * We have this class the way it is for a reason.
+     */
     private final class WarehouseChestDeliveryRequester implements IRequester
     {
-
         private final WarehouseRequestResolver warehouseRequestResolver;
         private final IToken                   id;
         private final ILocation                location;
-
-        private final IToken itemStackRequestToken;
+        private final IToken                   itemStackRequestToken;
 
         private WarehouseChestDeliveryRequester(
                                                  final WarehouseRequestResolver warehouseRequestResolver,

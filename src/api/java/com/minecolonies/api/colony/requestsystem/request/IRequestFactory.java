@@ -16,6 +16,8 @@ import org.jetbrains.annotations.NotNull;
 public interface IRequestFactory<T, R extends IRequest<T>> extends IFactory<T, R>
 {
 
+    int NUMBER_OF_PROPERTIES = 2;
+
     /**
      * Method to get a new instance of the output given the input and additional context data.
      *
@@ -44,7 +46,7 @@ public interface IRequestFactory<T, R extends IRequest<T>> extends IFactory<T, R
             throw new IllegalArgumentException("Unsupported context - Second context object should be a location");
         }
 
-        if (context.length == 2)
+        if (context.length == NUMBER_OF_PROPERTIES)
         {
             IRequester requester = (IRequester) context[1];
             IToken token = (IToken) context[0];

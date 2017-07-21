@@ -12,6 +12,13 @@ public final class ReflectionUtils
 {
 
     /**
+     * Private constructor to hide the implicit public one.
+     */
+    private ReflectionUtils()
+    {
+    }
+
+    /**
      * Method to get all Super types of a given Class.
      *
      * @param token The type to get the Supertypes for.
@@ -19,10 +26,10 @@ public final class ReflectionUtils
      * @return A set with the super types of the given type.
      */
     @SuppressWarnings("unchecked")
-    public static <T> Set<TypeToken> getSuperClasses(TypeToken<T> token)
+    public static <T> Set<TypeToken> getSuperClasses(final TypeToken<T> token)
     {
-        HashSet<TypeToken> directSet = new HashSet<>(token.getTypes());
-        HashSet<TypeToken> resultingSet = new HashSet<>();
+        final HashSet<TypeToken> directSet = new HashSet<>(token.getTypes());
+        final HashSet<TypeToken> resultingSet = new HashSet<>();
 
         directSet.forEach(t ->
         {

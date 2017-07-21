@@ -16,6 +16,14 @@ import org.jetbrains.annotations.Nullable;
 public final class StandardRequests
 {
 
+    /**
+     * private constructor to hide the implicit public one.
+     */
+    private StandardRequests()
+    {
+    }
+
+
     public static class ItemStackRequest extends AbstractRequest<ItemStack>
     {
 

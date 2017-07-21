@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Abstract skeleton implementation of a request.
@@ -25,13 +26,13 @@ public abstract class AbstractRequest<R> implements IRequest<R>
 {
 
     @NotNull
-    private final IToken            token;
+    private final IToken       token;
     @NotNull
-    private final R                 requested;
+    private final R            requested;
     @NotNull
-    private final ArrayList<IToken> children;
+    private final List<IToken> children;
     @NotNull
-    private final IRequester        requester;
+    private final IRequester   requester;
     @NotNull
     private RequestState state = RequestState.CREATED;
     @Nullable
@@ -39,7 +40,7 @@ public abstract class AbstractRequest<R> implements IRequest<R>
     @Nullable
     private IToken parent;
     @NotNull
-    private final ItemStack deliveryStack = ItemStackUtils.EMPTY;
+    private final static ItemStack deliveryStack = ItemStackUtils.EMPTY;
 
     AbstractRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final R requested)
     {
@@ -245,9 +246,9 @@ public abstract class AbstractRequest<R> implements IRequest<R>
     @Override
     public <T extends IToken> void addChildren(@NotNull final T... children)
     {
-        for (final IToken token : children)
+        for (final IToken theToken : children)
         {
-            addChild(token);
+            addChild(theToken);
         }
     }
 
@@ -259,9 +260,9 @@ public abstract class AbstractRequest<R> implements IRequest<R>
     @Override
     public <T extends IToken> void addChildren(@NotNull final Collection<T> children)
     {
-        for (final IToken token : children)
+        for (final IToken theToken : children)
         {
-            addChild(token);
+            addChild(theToken);
         }
     }
 
@@ -285,11 +286,11 @@ public abstract class AbstractRequest<R> implements IRequest<R>
     @Override
     public <T extends IToken> void removeChildren(@NotNull final T... children)
     {
-        for (final IToken token : children)
+        for (final IToken theToken : children)
         {
-            if (this.children.contains(token))
+            if (this.children.contains(theToken))
             {
-                this.removeChild(token);
+                this.removeChild(theToken);
             }
         }
     }
@@ -302,11 +303,11 @@ public abstract class AbstractRequest<R> implements IRequest<R>
     @Override
     public <T extends IToken> void removeChildren(@NotNull final Collection<T> children)
     {
-        for (final IToken token : children)
+        for (final IToken theToken : children)
         {
-            if (this.children.contains(token))
+            if (this.children.contains(theToken))
             {
-                this.removeChild(token);
+                this.removeChild(theToken);
             }
         }
     }

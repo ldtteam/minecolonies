@@ -87,7 +87,6 @@ public class MineColonies
     public void preInit(@NotNull final FMLPreInitializationEvent event)
     {
         StandardFactoryControllerInitializer.onPreInit();
-        ConfigurationHandler.init(event.getSuggestedConfigurationFile());
         proxy.registerSounds();
         proxy.registerEntities();
 

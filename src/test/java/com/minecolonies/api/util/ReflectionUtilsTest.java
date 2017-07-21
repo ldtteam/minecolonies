@@ -17,12 +17,12 @@ import static org.junit.Assert.assertEquals;
 public class ReflectionUtilsTest
 {
     @Test
-    public void getSuperClasses() throws Exception
+    public void getSuperClasses()
     {
-        Set<TypeToken> types = ReflectionUtils.getSuperClasses(new TypeToken<StandardToken>() {});
+        final Set<TypeToken> types = ReflectionUtils.getSuperClasses(new TypeToken<StandardToken>() {});
         assertEquals(types.size(), 4);
 
-        Set<TypeToken> interfaceTypes = ReflectionUtils.getSuperClasses(new TypeToken<IToken<UUID>>() {});
+        final Set<TypeToken> interfaceTypes = ReflectionUtils.getSuperClasses(new TypeToken<IToken<UUID>>() {});
         assertEquals(interfaceTypes.size(), 2);
     }
 }

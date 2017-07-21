@@ -14,6 +14,8 @@ import org.jetbrains.annotations.NotNull;
 public class StaticLocation implements ILocation
 {
 
+    private static final int NUMBER_OR_CONTEXTS = 1;
+
     @NotNull
     private final BlockPos pos;
 
@@ -63,6 +65,10 @@ public class StaticLocation implements ILocation
     /**
      * Internal factory class.
      */
+    @SuppressWarnings("squid:S2972")
+    /**
+     * We have this class the way it is for a reason.
+     */
     public static class Factory implements ILocationFactory<BlockPos, StaticLocation>
     {
 
@@ -73,6 +79,10 @@ public class StaticLocation implements ILocation
 
         @NotNull
         @Override
+        @SuppressWarnings("squid:LeftCurlyBraceStartLineCheck")
+        /**
+         * Moving the curly braces really makes the code hard to read.
+         */
         public TypeToken<StaticLocation> getFactoryOutputType()
         {
             return new TypeToken<StaticLocation>() {};
@@ -80,6 +90,10 @@ public class StaticLocation implements ILocation
 
         @NotNull
         @Override
+        @SuppressWarnings("squid:LeftCurlyBraceStartLineCheck")
+        /**
+         * Moving the curly braces really makes the code hard to read.
+         */
         public TypeToken<BlockPos> getFactoryInputType()
         {
             return new TypeToken<BlockPos>() {};
@@ -120,9 +134,9 @@ public class StaticLocation implements ILocation
 
         @NotNull
         @Override
-        public StaticLocation getNewInstance(@NotNull final BlockPos blockPos, @NotNull final Object... context) throws IllegalArgumentException
+        public StaticLocation getNewInstance(@NotNull final BlockPos blockPos, @NotNull final Object... context)
         {
-            if (context.length != 1)
+            if (context.length != NUMBER_OR_CONTEXTS)
             {
                 throw new IllegalArgumentException("Unsupported context - Not the correct amount available. Needed is 1!");
             }

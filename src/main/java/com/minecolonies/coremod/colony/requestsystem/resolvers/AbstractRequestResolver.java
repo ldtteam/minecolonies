@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * ----------------------- Not Documented Object ---------------------
  */
-public abstract class AbstractRequestResolver<Requested> implements IRequestResolver<Requested>
+public abstract class AbstractRequestResolver<R> implements IRequestResolver<R>
 {
 
     /**
