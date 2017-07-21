@@ -5,6 +5,7 @@ import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.pathfinding.*;
@@ -17,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -160,7 +162,10 @@ public class PathNavigate extends PathNavigateGround
     }
 
     @Nullable
-    private PathResult setPathJob(@NotNull final AbstractPathJob job, final BlockPos dest, final double speed)
+    private PathResult setPathJob(
+            @NotNull final AbstractPathJob job,
+            final BlockPos dest,
+            final double speed)
     {
         clearPathEntity();
 
@@ -390,13 +395,14 @@ public class PathNavigate extends PathNavigateGround
      *
      * @param range in the range.
      * @param speed walking speed.
+     * @param treesToCut the trees which should be cut.
      * @return the result of the search.
      */
-    public PathJobFindTree.TreePathResult moveToTree(final int range, final double speed)
+    public PathJobFindTree.TreePathResult moveToTree(final int range, final double speed, final Map<ItemStorage, Boolean> treesToCut)
     {
         @NotNull final BlockPos start = AbstractPathJob.prepareStart(entity);
         return (PathJobFindTree.TreePathResult) setPathJob(
-          new PathJobFindTree(CompatibilityUtils.getWorld(entity), start, ((EntityCitizen) entity).getWorkBuilding().getLocation(), range), null, speed);
+          new PathJobFindTree(CompatibilityUtils.getWorld(entity), start, ((EntityCitizen) entity).getWorkBuilding().getLocation(), range, treesToCut), null, speed);
     }
 
     /**

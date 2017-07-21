@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -22,6 +22,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,6 +62,12 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
     private static final int CHECK_X_DIRECTIONS = 4;
 
     /**
+     * Our guide Book.
+     */
+    @GameRegistry.ItemStackHolder(value = "gbook:guidebook", nbt = "{Book:\"minecolonies:book/minecolonies.xml\"}")
+    public static ItemStack guideBook;
+
+    /**
      * Creates a new supplychest deployer. The item is not stackable.
      */
     public ItemSupplyCampDeployer()
@@ -73,16 +80,16 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
 
     @Override
     public EnumActionResult onItemUse(
-            final EntityPlayer player,
-            final World worldIn,
-            final BlockPos pos,
-            final EnumHand hand,
-            final EnumFacing facing,
-            final float hitX,
-            final float hitY,
-            final float hitZ)
+                                       final EntityPlayer player,
+                                       final World worldIn,
+                                       final BlockPos pos,
+                                       final EnumHand hand,
+                                       final EnumFacing facing,
+                                       final float hitX,
+                                       final float hitY,
+                                       final float hitZ)
     {
-        if(worldIn == null || player == null)
+        if (worldIn == null || player == null)
         {
             return EnumActionResult.FAIL;
         }
@@ -117,7 +124,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
      */
     private static boolean isFirstPlacing(@NotNull final EntityPlayer player)
     {
-        if (Configurations.allowInfiniteSupplyChests || !player.hasAchievement(ModAchievements.achievementGetSupply))
+        if (Configurations.gameplay.allowInfiniteSupplyChests || !player.hasAchievement(ModAchievements.achievementGetSupply))
         {
             return true;
         }
@@ -149,7 +156,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
             {
                 case NORTH:
                     if (StructureWrapper.tryToLoadAndPlaceSupplyCampWithRotation(world, SUPPLY_CAMP_STRUCTURE_NAME,
-                            pos.add(OFFSET_NORTH_EAST, 0, OFFSET_NORTH_WEST), Constants.ROTATE_THREE_TIMES, Mirror.NONE))
+                      pos.add(OFFSET_NORTH_EAST, 0, OFFSET_NORTH_WEST), Constants.ROTATE_THREE_TIMES, Mirror.NONE))
                     {
                         return true;
                     }
@@ -157,7 +164,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
                     break;
                 case EAST:
                     if (StructureWrapper.tryToLoadAndPlaceSupplyCampWithRotation(world, SUPPLY_CAMP_STRUCTURE_NAME,
-                            pos.add(OFFSET_SOUTH_EAST, 0, OFFSET_NORTH_EAST), Constants.ROTATE_0_TIMES, Mirror.NONE))
+                      pos.add(OFFSET_SOUTH_EAST, 0, OFFSET_NORTH_EAST), Constants.ROTATE_0_TIMES, Mirror.NONE))
                     {
                         return true;
                     }
@@ -165,7 +172,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
                     break;
                 case WEST:
                     if (StructureWrapper.tryToLoadAndPlaceSupplyCampWithRotation(world, SUPPLY_CAMP_STRUCTURE_NAME,
-                            pos.add(OFFSET_NORTH_WEST, 0, OFFSET_SOUTH_WEST), Constants.ROTATE_TWICE, Mirror.NONE))
+                      pos.add(OFFSET_NORTH_WEST, 0, OFFSET_SOUTH_WEST), Constants.ROTATE_TWICE, Mirror.NONE))
                     {
                         return true;
                     }
@@ -173,7 +180,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
                     break;
                 default:
                     if (StructureWrapper.tryToLoadAndPlaceSupplyCampWithRotation(world, SUPPLY_CAMP_STRUCTURE_NAME,
-                            pos.add(OFFSET_SOUTH_WEST, 0, OFFSET_SOUTH_EAST), Constants.ROTATE_ONCE, Mirror.NONE))
+                      pos.add(OFFSET_SOUTH_WEST, 0, OFFSET_SOUTH_EAST), Constants.ROTATE_ONCE, Mirror.NONE))
                     {
                         return true;
                     }
@@ -197,6 +204,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
         }
         chest.setInventorySlotContents(0, new ItemStack(ModBlocks.blockHutTownHall));
         chest.setInventorySlotContents(1, new ItemStack(ModItems.buildTool));
+        chest.setInventorySlotContents(2, guideBook);
     }
 
     /**

@@ -16,108 +16,51 @@ import java.util.Comparator;
  */
 public class BuildingBuilderResource extends ItemStorage
 {
+    /**
+     * Availability status of the resource.
+     * according to the builder's chest, inventory and the player's inventory
+     */
+    public enum RessourceAvailability
+    {
+        NOT_NEEDED,
+        DONT_HAVE,
+        NEED_MORE,
+        HAVE_ENOUGH
+    }
+
     private int amountAvailable;
     private int amountPlayer;
-    /**
-     * Constructor for a resource.
-     *
-     * @param item        the item.
-     * @param damageValue it's damage value.
-     * @param amount      amount for this resource.
-     * @param available   optional amount available for this resource
-     */
-    public BuildingBuilderResource(@NotNull final Item item, final int damageValue, final int amount, final int available)
-    {
-        this(item, damageValue, amount);
-        this.amountAvailable = available;
-    }
 
     /**
      * Constructor for a resource.
      *
-     * @param item        the item.
-     * @param damageValue it's damage value.
-     * @param amount      amount for this resource.
+     * @param stack  the stack.
+     * @param amount amount for this resource.
      */
-    public BuildingBuilderResource(@NotNull final Item item, final int damageValue, final int amount)
+    public BuildingBuilderResource(@NotNull final ItemStack stack, final int amount)
     {
-        super(item, damageValue, amount, false);
+        super(stack, amount, false);
         this.amountAvailable = 0;
         this.amountPlayer = 0;
     }
 
     /**
-     * Add to the current amount available.
-     *
-     * @param amount to add to the current amount available
+     * Constructor for a resource but with available items.
+     * @param stack the stack.
+     * @param amount the amount.
+     * @param available the amount available.
      */
-    public void addAvailable(final int amount)
+    public BuildingBuilderResource(@NotNull final ItemStack stack, final int amount, final int available)
     {
-        this.amountAvailable += amount;
+        this(stack, amount);
+        this.amountAvailable = available;
     }
 
-    /**
-     * get how much more is needed from the player.
-     * <p>
-     * This is taking the builder's inventory + chest into account and the player inventory
-     * Negative number is when the player does not have enough
-     * Negative number is when the player does not more than enough
-     *
-     * @return the amount needed
-     */
-    public int getMissingFromPlayer()
-    {
-        return amountPlayer + amountAvailable - getAmount();
-    }
-
-    @Override
-    public String toString()
-    {
-        final int itemId = Item.getIdFromItem(getItem());
-        return getName() + "(p:" + amountPlayer + " a:" + amountAvailable + " n:" + getAmount() + " id=" + itemId + " damage=" + getDamageValue() + ") => "
-                 + getAvailabilityStatus().name();
-    }
 
     public String getName()
     {
         //It is the bet way ?
-        return new ItemStack(getItem(), 1, getDamageValue()).getDisplayName();
-    }
-
-    public RessourceAvailability getAvailabilityStatus()
-    {
-        if (getAmount() > amountAvailable)
-        {
-            if (amountPlayer == 0)
-            {
-                return RessourceAvailability.DONT_HAVE;
-            }
-            if (amountPlayer < (getAmount() - amountAvailable))
-            {
-                return RessourceAvailability.NEED_MORE;
-            }
-            return RessourceAvailability.HAVE_ENOUGH;
-        }
-        return RessourceAvailability.NOT_NEEDED;
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return 31 * (31 * super.hashCode() + amountAvailable) + amountPlayer;
-    }
-
-    @Override
-    public boolean equals(final Object o)
-    {
-        if (super.equals(o))
-        {
-            final BuildingBuilderResource that = (BuildingBuilderResource) o;
-
-            return this.getAvailable() == that.getAvailable() && this.getPlayerAmount() == that.getPlayerAmount();
-        }
-
-        return false;
+        return getItemStack().getDisplayName();
     }
 
     /**
@@ -143,13 +86,13 @@ public class BuildingBuilderResource extends ItemStorage
     }
 
     /**
-     * get how the player have in its inventory.
+     * Add to the current amount available.
      *
-     * @return the amount
+     * @param amount to add to the current amount available
      */
-    public int getPlayerAmount()
+    public void addAvailable(final int amount)
     {
-        return amountPlayer;
+        this.amountAvailable += amount;
     }
 
     /**
@@ -163,15 +106,71 @@ public class BuildingBuilderResource extends ItemStorage
     }
 
     /**
-     * Availability status of the resource.
-     * according to the builder's chest, inventory and the player's inventory
+     * get how the player have in its inventory.
+     *
+     * @return the amount
      */
-    public enum RessourceAvailability
+    public int getPlayerAmount()
     {
-        NOT_NEEDED,
-        DONT_HAVE,
-        NEED_MORE,
-        HAVE_ENOUGH
+        return amountPlayer;
+    }
+
+    /**
+     * get how much more is needed from the player.
+     * <p>
+     * This is taking the builder's inventory + chest into account and the player inventory
+     * Negative number is when the player does not have enough
+     * Negative number is when the player does not more than enough
+     *
+     * @return the amount needed
+     */
+    public int getMissingFromPlayer()
+    {
+        return amountPlayer + amountAvailable - getAmount();
+    }
+
+    public RessourceAvailability getAvailabilityStatus()
+    {
+        if (getAmount() > amountAvailable)
+        {
+            if (amountPlayer == 0)
+            {
+                return RessourceAvailability.DONT_HAVE;
+            }
+            if (amountPlayer < (getAmount() - amountAvailable))
+            {
+                return RessourceAvailability.NEED_MORE;
+            }
+            return RessourceAvailability.HAVE_ENOUGH;
+        }
+        return RessourceAvailability.NOT_NEEDED;
+    }
+
+    @Override
+    public String toString()
+    {
+        final int itemId = Item.getIdFromItem(getItem());
+        return getName() + "(p:" + amountPlayer + " a:" + amountAvailable + " n:" + getAmount() + " id=" + itemId + " damage=" + getDamageValue() + ") => "
+                + getAvailabilityStatus().name();
+    }
+
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (super.equals(o))
+        {
+            final BuildingBuilderResource that = (BuildingBuilderResource) o;
+
+            return this.getAvailable() == that.getAvailable() && this.getPlayerAmount() == that.getPlayerAmount();
+        }
+
+        return false;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return 31 * (31 * super.hashCode() + amountAvailable) + amountPlayer;
     }
 
     /**

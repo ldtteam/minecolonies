@@ -86,7 +86,10 @@ public final class RecipeHandler
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutField, 1), 
                 " Y ", "X#X", " X ", 'X', WOODEN_STICK, '#', Items.LEATHER, 'Y', Blocks.HAY_BLOCK));
         GameRegistry.addRecipe(new ItemStack(Blocks.WEB, 1), "X X", " X ", "X X", 'X', Items.STRING);
-
+        
+        //Double Fern
+        GameRegistry.addShapelessRecipe(new ItemStack(Blocks.DOUBLE_PLANT, 1, 3), new ItemStack(Blocks.TALLGRASS, 1, 2), new ItemStack(Blocks.TALLGRASS, 1, 2));
+        
         //enableInDevelopmentFeatures(enableInDevelopmentFeatures);
         addSupplyChestRecipes(supplyChests);
     }

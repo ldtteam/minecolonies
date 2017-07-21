@@ -223,7 +223,7 @@ public class Structure
         {
             //Look in the folder first
             inputstream = Structure.getStreamFromFolder(MineColonies.proxy.getSchematicsFolder(), structureName);
-            if (inputstream == null && !Configurations.ignoreSchematicsFromJar)
+            if (inputstream == null && !Configurations.gameplay.ignoreSchematicsFromJar)
             {
                 inputstream = Structure.getStreamFromJar(structureName);
             }
@@ -647,7 +647,7 @@ public class Structure
         {
             final TileEntity te = holder.te;
             te.setPos(holder.pos);
-            final FakeWorld fakeWorld = new FakeWorld(holder.actualState, world.getSaveHandler(), world.getWorldInfo(), world.provider, world.theProfiler, true);
+            final FakeWorld fakeWorld = new FakeWorld(holder.actualState, world.getSaveHandler(), world.getWorldInfo(), world.provider, world.profiler, true);
             te.setWorld(fakeWorld);
             final int pass = 0;
 
@@ -656,7 +656,7 @@ public class Structure
                 final TileEntityRendererDispatcher terd = TileEntityRendererDispatcher.instance;
                 terd.prepare(fakeWorld,
                   Minecraft.getMinecraft().renderEngine,
-                  Minecraft.getMinecraft().fontRendererObj,
+                  Minecraft.getMinecraft().fontRenderer,
                   new FakeEntity(fakeWorld),
                   null,
                   0.0F);

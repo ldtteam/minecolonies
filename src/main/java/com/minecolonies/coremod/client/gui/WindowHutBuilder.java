@@ -79,12 +79,23 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         {
             final BuildingBuilderView updatedView = (BuildingBuilderView) newView;
             final InventoryPlayer inventory = this.mc.player.inventory;
+            final boolean isCreative = this.mc.player.capabilities.isCreativeMode;
 
             resources.clear();
             resources.addAll(updatedView.getResources().values());
             for (final BuildingBuilderResource resource : resources)
             {
-                resource.setPlayerAmount(InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory), resource.getItem(), resource.getDamageValue()));
+                final int amountToSet;
+                if(isCreative)
+                {
+                    amountToSet = resource.getAmount();
+                }
+                else
+                {
+                    amountToSet = InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory), resource.getItem(), resource.getDamageValue());
+                }
+                resource.setPlayerAmount(amountToSet);
+
             }
 
             resources.sort(new BuildingBuilderResource.ResourceComparator());

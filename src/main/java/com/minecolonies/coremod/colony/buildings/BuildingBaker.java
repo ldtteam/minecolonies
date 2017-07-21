@@ -81,7 +81,7 @@ public class BuildingBaker extends AbstractBuildingWorker
     /**
      * Wait this amount of ticks before checking again.
      */
-    private static final int WAIT_TICKS = 160;
+    private static final int WAIT_TICKS = 320;
 
     /**
      * Always try to keep at least 2 stacks of wheat in the inventory and in the workers chest.
@@ -111,7 +111,7 @@ public class BuildingBaker extends AbstractBuildingWorker
         {
             for(final ItemStack stack: storage.getInput())
             {
-                keepX.put(new ItemStorage(stack.getItem(), stack.getItemDamage(), 0, false), WHEAT_TO_KEEP);
+                keepX.put(new ItemStorage(stack, false), WHEAT_TO_KEEP);
             }
         }
     }

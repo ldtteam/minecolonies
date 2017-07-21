@@ -63,6 +63,7 @@ public class Colony implements IColony
     private static final String TAG_ACHIEVEMENT_LIST           = "achievementlist";
     private static final String TAG_WORK                       = "work";
     private static final String TAG_MANUAL_HIRING              = "manualHiring";
+    private static final String TAG_MANUAL_HOUSING             = "manualHousing";
     private static final String TAG_WAYPOINT                   = "waypoints";
     private static final String TAG_FREE_BLOCKS                = "freeBlocks";
     private static final String TAG_FREE_POSITIONS             = "freePositions";
@@ -70,13 +71,13 @@ public class Colony implements IColony
     private static final String TAG_ABANDONED                  = "abandoned";
 
     //statistics tags
-    private static final String TAG_STATISTICS        = "statistics";
-    private static final String TAG_MINER_STATISTICS  = "minerStatistics";
-    private static final String TAG_MINER_ORES        = "ores";
-    private static final String TAG_MINER_DIAMONDS    = "diamonds";
-    private static final String TAG_FARMER_STATISTICS = "farmerStatistics";
-    private static final String TAG_FARMER_WHEAT      = "wheat";
-    private static final String TAG_FARMER_POTATOES   = "potatoes";
+    private static final String TAG_STATISTICS            = "statistics";
+    private static final String TAG_MINER_STATISTICS      = "minerStatistics";
+    private static final String TAG_MINER_ORES            = "ores";
+    private static final String TAG_MINER_DIAMONDS        = "diamonds";
+    private static final String TAG_FARMER_STATISTICS     = "farmerStatistics";
+    private static final String TAG_FARMER_WHEAT          = "wheat";
+    private static final String TAG_FARMER_POTATOES       = "potatoes";
     private static final String TAG_FARMER_CARROTS        = "carrots";
     private static final String TAG_GUARD_STATISTICS      = "guardStatistics";
     private static final String TAG_GUARD_MOBS            = "mobs";
@@ -87,7 +88,7 @@ public class Colony implements IColony
     private static final String TAG_LUMBERJACK_STATISTICS = "lumberjackStatistics";
     private static final String TAG_LUMBERJACK_TREES      = "trees";
     private static final String TAG_LUMBERJACK_SAPLINGS   = "saplings";
-    private static final int    NUM_ACHIEVEMENT_FIRST    = 1;
+    private static final int    NUM_ACHIEVEMENT_FIRST     = 1;
     private static final int    NUM_ACHIEVEMENT_SECOND    = 25;
     private static final int    NUM_ACHIEVEMENT_THIRD     = 100;
     private static final int    NUM_ACHIEVEMENT_FOURTH    = 500;
@@ -96,7 +97,7 @@ public class Colony implements IColony
     /**
      * Amount of ticks that pass/hour.
      */
-    private static final int TICKS_HOUR        = 20 * 60 * 60;
+    private static final int TICKS_HOUR = 20 * 60 * 60;
 
     /**
      * Average happiness of a citizen.
@@ -111,7 +112,7 @@ public class Colony implements IColony
     /**
      * Bonus happiness each factor added.
      */
-    private static final double HAPPINESS_FACTOR         = 0.1;
+    private static final double HAPPINESS_FACTOR = 0.1;
 
     /**
      * Saturation at which a citizen starts being happy.
@@ -136,8 +137,8 @@ public class Colony implements IColony
     //private int autoHostile = 0;//Off
     private static final String TAG_FIELDS                        = "fields";
     private static final int    CHECK_WAYPOINT_EVERY              = 100;
-    private static final double MAX_SQ_DIST_SUBSCRIBER_UPDATE     = MathUtils.square(Configurations.workingRangeTownHall + 16D);
-    private static final double MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE = MathUtils.square(Configurations.workingRangeTownHall * 2D);
+    private static final double MAX_SQ_DIST_SUBSCRIBER_UPDATE     = MathUtils.square(Configurations.gameplay.workingRangeTownHall + 16D);
+    private static final double MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE = MathUtils.square(Configurations.gameplay.workingRangeTownHall * 2D);
     private final int id;
     //  General Attributes
     private final int dimensionId;
@@ -183,13 +184,15 @@ public class Colony implements IColony
     private       World                           world             = null;
     //  Updates and Subscriptions
     @NotNull
-    private       Set<EntityPlayerMP>             subscribers       = new HashSet<>();
-    private       boolean                         isDirty           = false;
-    private       boolean                         isCitizensDirty   = false;
-    private       boolean                         isBuildingsDirty  = false;
-    private       boolean                         manualHiring      = false;
-    private       boolean                         isFieldsDirty     = false;
-    private       String                          name              = "ERROR(Wasn't placed by player)";
+    private       Set<EntityPlayerMP>             subscribers      = new HashSet<>();
+    private       boolean                         isDirty          = false;
+    private       boolean                         isCitizensDirty  = false;
+    private       boolean                         isBuildingsDirty = false;
+    private       boolean                         manualHiring     = false;
+    private       boolean                         manualHousing     = false;
+
+    private       boolean                         isFieldsDirty    = false;
+    private       String                          name             = "ERROR(Wasn't placed by player)";
     private BlockPos         center;
     //  Administration/permissions
     @NotNull
@@ -197,7 +200,7 @@ public class Colony implements IColony
     @Nullable
     private BuildingTownHall townHall;
     private int topCitizenId = 0;
-    private int maxCitizens  = Configurations.maxCitizens;
+    private int maxCitizens  = Configurations.gameplay.maxCitizens;
 
     private double overallHappiness = 5;
 
@@ -238,7 +241,7 @@ public class Colony implements IColony
         // Register a new event handler
         MinecraftForge.EVENT_BUS.register(new ColonyPermissionEventHandler(this));
 
-        for (final String s : Configurations.freeToInteractBlocks)
+        for (final String s : Configurations.gameplay.freeToInteractBlocks)
         {
             final Block block = Block.getBlockFromName(s);
             if (block == null)
@@ -381,7 +384,7 @@ public class Colony implements IColony
             freePositions.add(block);
         }
 
-        if(compound.hasKey(TAG_HAPPINESS))
+        if (compound.hasKey(TAG_HAPPINESS))
         {
             this.overallHappiness = compound.getDouble(TAG_HAPPINESS);
         }
@@ -390,6 +393,7 @@ public class Colony implements IColony
             this.overallHappiness = AVERAGE_HAPPINESS;
         }
         lastContactInHours = compound.getInteger(TAG_ABANDONED);
+        manualHousing = compound.getBoolean(TAG_MANUAL_HOUSING);
     }
 
     /**
@@ -408,7 +412,7 @@ public class Colony implements IColony
             townHall = (BuildingTownHall) building;
         }
 
-        if(building instanceof BuildingWareHouse && wareHouse == null)
+        if (building instanceof BuildingWareHouse && wareHouse == null)
         {
             wareHouse = (BuildingWareHouse) building;
         }
@@ -441,7 +445,6 @@ public class Colony implements IColony
 
         compound.setBoolean(TAG_MANUAL_HIRING, manualHiring);
         compound.setInteger(TAG_MAX_CITIZENS, maxCitizens);
-
 
         // Permissions
         permissions.savePermissions(compound);
@@ -549,6 +552,7 @@ public class Colony implements IColony
 
         compound.setDouble(TAG_HAPPINESS, overallHappiness);
         compound.setInteger(TAG_ABANDONED, lastContactInHours);
+        compound.setBoolean(TAG_MANUAL_HOUSING, manualHousing);
     }
 
     /**
@@ -701,7 +705,11 @@ public class Colony implements IColony
     {
         if (!w.equals(world))
         {
-            throw new IllegalStateException("Colony's world does not match the event.");
+            /**
+             * If the event world is not the colony world ignore. This might happen in interactions with other mods.
+             * This should not be a problem for minecolonies as long as we take care to do nothing in that moment.
+             */
+            return;
         }
 
         world = null;
@@ -743,13 +751,13 @@ public class Colony implements IColony
 
         // Add owners
         world.getMinecraftServer().getPlayerList().getPlayers()
-                .stream()
-                .filter(permissions::isSubscriber)
-                .forEachOrdered(subscribers::add);
+          .stream()
+          .filter(permissions::isSubscriber)
+          .forEachOrdered(subscribers::add);
 
-        if(subscribers.isEmpty())
+        if (subscribers.isEmpty())
         {
-            if(ticksPassed >= TICKS_HOUR)
+            if (ticksPassed >= TICKS_HOUR)
             {
                 ticksPassed = 0;
                 lastContactInHours++;
@@ -759,6 +767,7 @@ public class Colony implements IColony
         else
         {
             ticksPassed = 0;
+            lastContactInHours = 0;
         }
 
         //  Add nearby players
@@ -770,7 +779,7 @@ public class Colony implements IColony
 
                 final double distance = player.getDistanceSq(center);
                 if (distance < MAX_SQ_DIST_SUBSCRIBER_UPDATE
-                        || (oldSubscribers.contains(player) && distance < MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE))
+                      || (oldSubscribers.contains(player) && distance < MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE))
                 {
                     // Players become subscribers if they come within 16 blocks of the edge of the colony
                     // Players remain subscribers while they remain within double the colony's radius
@@ -936,7 +945,7 @@ public class Colony implements IColony
         if (Structures.isDirty() || hasNewSubscribers)
         {
             subscribers.stream()
-                .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyStylesMessage(), player));
+              .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyStylesMessage(), player));
         }
     }
 
@@ -1077,7 +1086,7 @@ public class Colony implements IColony
             //  Spawn Citizens
             if (townHall != null && citizens.size() < maxCitizens)
             {
-                int respawnInterval = Configurations.citizenRespawnInterval * 20;
+                int respawnInterval = Configurations.gameplay.citizenRespawnInterval * 20;
                 respawnInterval -= (60 * townHall.getBuildingLevel());
 
                 if (event.world.getWorldTime() % respawnInterval == 0)
@@ -1093,12 +1102,12 @@ public class Colony implements IColony
             building.onWorldTick(event);
         }
 
-        if(isDay && !world.isDaytime())
+        if (isDay && !world.isDaytime())
         {
             isDay = false;
             updateOverallHappiness();
         }
-        else if(!isDay && world.isDaytime())
+        else if (!isDay && world.isDaytime())
         {
             isDay = true;
         }
@@ -1113,12 +1122,12 @@ public class Colony implements IColony
         int housing = 0;
         int workers = 1;
         double saturation = 0;
-        for(final CitizenData citizen: citizens.values())
+        for (final CitizenData citizen : citizens.values())
         {
             final AbstractBuildingWorker buildingWorker = citizen.getWorkBuilding();
-            if(buildingWorker != null)
+            if (buildingWorker != null)
             {
-                if(buildingWorker instanceof BuildingGuardTower)
+                if (buildingWorker instanceof BuildingGuardTower)
                 {
                     guards += buildingWorker.getBuildingLevel();
                 }
@@ -1129,7 +1138,7 @@ public class Colony implements IColony
             }
 
             final BuildingHome home = citizen.getHomeBuilding();
-            if(home != null)
+            if (home != null)
             {
                 housing += home.getBuildingLevel();
             }
@@ -1137,26 +1146,26 @@ public class Colony implements IColony
             saturation += citizen.getSaturation();
         }
 
-        final int averageHousing = housing/Math.max(1, citizens.size());
+        final int averageHousing = housing / Math.max(1, citizens.size());
 
-        if(averageHousing > 1)
+        if (averageHousing > 1)
         {
             increaseOverallHappiness(averageHousing * HAPPINESS_FACTOR);
         }
 
-        final int averageSaturation = (int) (saturation/citizens.size());
-        if(averageSaturation < WELL_SATURATED_LIMIT)
+        final int averageSaturation = (int) (saturation / citizens.size());
+        if (averageSaturation < WELL_SATURATED_LIMIT)
         {
             decreaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * -HAPPINESS_FACTOR);
         }
-        else if(averageSaturation > WELL_SATURATED_LIMIT)
+        else if (averageSaturation > WELL_SATURATED_LIMIT)
         {
             increaseOverallHappiness((averageSaturation - WELL_SATURATED_LIMIT) * HAPPINESS_FACTOR);
         }
 
-        final int relation = workers/guards;
+        final int relation = workers / guards;
 
-        if(relation > 1)
+        if (relation > 1)
         {
             decreaseOverallHappiness(relation * HAPPINESS_FACTOR);
         }
@@ -1201,7 +1210,7 @@ public class Colony implements IColony
 
     private boolean areAllColonyChunksLoaded(@NotNull final TickEvent.WorldTickEvent event)
     {
-        final int distanceFromCenter = Configurations.workingRangeTownHall + 48 /* 3 chunks */ + 15 /* round up a chunk */;
+        final int distanceFromCenter = Configurations.gameplay.workingRangeTownHall + 48 /* 3 chunks */ + 15 /* round up a chunk */;
         for (int x = -distanceFromCenter; x <= distanceFromCenter; x += 16)
         {
             for (int z = -distanceFromCenter; z <= distanceFromCenter; z += 16)
@@ -1310,7 +1319,7 @@ public class Colony implements IColony
     {
         //  Perform a 2D distance calculation, so pass center.posY as the Y
         return w.equals(getWorld())
-                 && BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ())) <= MathUtils.square(Configurations.workingRangeTownHall);
+                 && BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ())) <= MathUtils.square(Configurations.gameplay.workingRangeTownHall);
     }
 
     @Override
@@ -1391,10 +1400,10 @@ public class Colony implements IColony
 
                 if (getMaxCitizens() == getCitizens().size())
                 {
-                    //TODO: add Colony Name prefix?
                     LanguageHandler.sendPlayersMessage(
                       this.getMessageEntityPlayers(),
-                      "tile.blockHutTownHall.messageMaxSize");
+                      "tile.blockHutTownHall.messageMaxSize",
+                      this.name);
                 }
             }
             entity.setColony(this, citizenData);
@@ -1683,7 +1692,7 @@ public class Colony implements IColony
             }
         }
         // Have at least the minimum amount of citizens
-        newMaxCitizens = Math.max(Configurations.maxCitizens, newMaxCitizens);
+        newMaxCitizens = Math.max(Configurations.gameplay.maxCitizens, newMaxCitizens);
         if (maxCitizens != newMaxCitizens)
         {
             maxCitizens = newMaxCitizens;
@@ -1715,7 +1724,7 @@ public class Colony implements IColony
         {
             townHall = null;
         }
-        else if(building instanceof BuildingWareHouse)
+        else if (building instanceof BuildingWareHouse)
         {
             wareHouse = null;
         }
@@ -1749,6 +1758,27 @@ public class Colony implements IColony
     public void setManualHiring(final boolean manualHiring)
     {
         this.manualHiring = manualHiring;
+        markDirty();
+    }
+
+    /**
+     * Getter which checks if houses should be manually allocated.
+     *
+     * @return true of false.
+     */
+    public boolean isManualHousing()
+    {
+        return manualHousing;
+    }
+
+    /**
+     * Setter to set the house allocation manual or automatic.
+     *
+     * @param manualHousing true if manual, false if automatic.
+     */
+    public void setManualHousing(final boolean manualHousing)
+    {
+        this.manualHousing = manualHousing;
         markDirty();
     }
 
@@ -1896,6 +1926,7 @@ public class Colony implements IColony
 
     /**
      * Getter for overall happiness.
+     *
      * @return the overall happiness.
      */
     public double getOverallHappiness()
@@ -1905,6 +1936,7 @@ public class Colony implements IColony
 
     /**
      * Increase the overall happiness by an amount, cap at max.
+     *
      * @param amount the amount.
      */
     public void increaseOverallHappiness(final double amount)
@@ -1915,6 +1947,7 @@ public class Colony implements IColony
 
     /**
      * Decrease the overall happiness by an amount, cap at min.
+     *
      * @param amount the amount.
      */
     public void decreaseOverallHappiness(final double amount)
@@ -1937,6 +1970,7 @@ public class Colony implements IColony
 
     /**
      * Get all the waypoints of the colony.
+     *
      * @return copy of hashmap.
      */
     public Map<BlockPos, IBlockState> getWayPoints()

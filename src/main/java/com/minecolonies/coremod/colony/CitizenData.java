@@ -333,13 +333,13 @@ public class CitizenData
         String citizenName;
         if (female)
         {
-            citizenName = String.format("%s %s. %s", getRandomElement(rand, Configurations.femaleFirstNames), getRandomLetter(rand),
-                    getRandomElement(rand, Configurations.lastNames));
+            citizenName = String.format("%s %s. %s", getRandomElement(rand, Configurations.names.femaleFirstNames), getRandomLetter(rand),
+                    getRandomElement(rand, Configurations.names.lastNames));
         }
         else
         {
-            citizenName = String.format("%s %s. %s", getRandomElement(rand, Configurations.maleFirstNames), getRandomLetter(rand),
-                    getRandomElement(rand, Configurations.lastNames));
+            citizenName = String.format("%s %s. %s", getRandomElement(rand, Configurations.names.maleFirstNames), getRandomLetter(rand),
+                    getRandomElement(rand, Configurations.names.lastNames));
         }
         for (int i = 1; i <= this.getColony().getMaxCitizens(); i++)
         {
