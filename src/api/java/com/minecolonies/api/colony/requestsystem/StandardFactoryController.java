@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
@@ -25,8 +26,8 @@ public final class StandardFactoryController implements IFactoryController
 {
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
-    static final String NBT_TYPE = "Type";
-    static final String NBT_DATA = "Data";
+    public static final String NBT_TYPE = "Type";
+    public static final String NBT_DATA = "Data";
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
     /**
@@ -37,18 +38,18 @@ public final class StandardFactoryController implements IFactoryController
      * Primary (main) Input mappings.
      */
     @NotNull
-    private final        HashMap<TypeToken, IFactory> primaryInputMappings  = new HashMap<>();
+    private final        Map<TypeToken, IFactory>     primaryInputMappings  = new HashMap<>();
     /**
      * Primary (main) Output mappings.
      */
     @NotNull
-    private final        HashMap<TypeToken, IFactory> primaryOutputMappings = new HashMap<>();
+    private final        Map<TypeToken, IFactory> primaryOutputMappings = new HashMap<>();
 
     /**
      * Secondary (super) output mappings
      */
     @NotNull
-    private final HashMap<TypeToken, Set<IFactory>>            secondaryOutputMappings = new HashMap<>();
+    private final Map<TypeToken, Set<IFactory>>            secondaryOutputMappings = new HashMap<>();
     /**
      * A cache that holds all Mappers and their search secondary IO types.
      * Filled during runtime to speed up searches to factories when both Input and Output type are secondary types.
@@ -163,7 +164,7 @@ public final class StandardFactoryController implements IFactoryController
         }
         catch (final ExecutionException e)
         {
-            throw new IllegalArgumentException("No factory found with the given IO types: " + inputTypeToken + " ->" + outputTypeToken);
+            throw (IllegalArgumentException) new IllegalArgumentException("No factory found with the given IO types: " + inputTypeToken + " ->" + outputTypeToken).initCause(e);
         }
     }
 
@@ -193,7 +194,7 @@ public final class StandardFactoryController implements IFactoryController
 
         outputSuperTypes.remove(factory.getFactoryOutputType());
 
-        if (outputSuperTypes.size() > 0)
+        if (!outputSuperTypes.isEmpty())
         {
             Log.getLogger().debug("Output type is not Object or Interface. Introducing secondary Output-Types");
             outputSuperTypes.forEach(t ->
@@ -234,7 +235,7 @@ public final class StandardFactoryController implements IFactoryController
         }
         catch (final ClassNotFoundException e)
         {
-            throw new IllegalArgumentException("The given compound holds an unknown output type for this Controller");
+            throw (IllegalArgumentException) new IllegalArgumentException("The given compound holds an unknown output type for this Controller").initCause(e);
         }
 
         final IFactory<?, Output> factory = getFactoryForOutput(TypeToken.of(outputClass));

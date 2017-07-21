@@ -39,6 +39,10 @@ public abstract class AbstractRequest<R> implements IRequest<R>
     private R      result;
     @Nullable
     private IToken parent;
+    @SuppressWarnings("squid:S1170")
+    /**
+     * We don't want this field static.
+     */
     @NotNull
     private final ItemStack deliveryStack = ItemStackUtils.EMPTY;
 

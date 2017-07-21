@@ -27,6 +27,10 @@ import java.util.stream.Collectors;
  * <p>
  * Uses
  */
+@SuppressWarnings("squid:S2972")
+/**
+ * We have this class the way it is for a reason.
+ */
 public class StandardRequestManager implements IRequestManager
 {
 

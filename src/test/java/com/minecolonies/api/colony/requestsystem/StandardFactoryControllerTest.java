@@ -41,21 +41,21 @@ public class StandardFactoryControllerTest
     }
 
     @Test
-    public void getFactoryForInput() throws Exception
+    public void getFactoryForInput()
     {
-        IFactory<UUID, ?> inputBasedFactory = StandardFactoryController.getInstance().getFactoryForInput(new TypeToken<UUID>() {});
+        final IFactory<UUID, ?> inputBasedFactory = StandardFactoryController.getInstance().getFactoryForInput(new TypeToken<UUID>() {});
         assertEquals(inputBasedFactory, factory);
     }
 
     @Test
-    public void getFactoryForOutput() throws Exception
+    public void getFactoryForOutput()
     {
-        IFactory<?, StandardToken> outputBasedFactory = StandardFactoryController.getInstance().getFactoryForOutput(new TypeToken<StandardToken>() {});
+        final IFactory<?, StandardToken> outputBasedFactory = StandardFactoryController.getInstance().getFactoryForOutput(new TypeToken<StandardToken>() {});
         assertEquals(outputBasedFactory, factory);
     }
 
     @Test
-    public void registerNewFactory() throws Exception
+    public void registerNewFactory()
     {
         StandardFactoryController.getInstance().registerNewFactory(new StaticLocation.Factory());
         StandardFactoryController.getInstance().registerNewFactory(new EntityLocation.Factory());
@@ -64,19 +64,19 @@ public class StandardFactoryControllerTest
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void registerNewFactoryDuplicate() throws Exception
+    public void registerNewFactoryDuplicate()
     {
         StandardFactoryController.getInstance().registerNewFactory(factory);
         assertFalse(true);
     }
 
     @Test
-    public void serialize() throws Exception
+    public void serialize()
     {
         StandardToken standardToken = new StandardToken(UUID.randomUUID());
-        IToken token = standardToken;
+        final IToken token = standardToken;
 
-        NBTTagCompound compound = StandardFactoryController.getInstance().serialize(token);
+        final NBTTagCompound compound = StandardFactoryController.getInstance().serialize(token);
 
         assertTrue(compound.hasKey(StandardFactoryController.NBT_TYPE));
         assertTrue(compound.hasKey(StandardFactoryController.NBT_DATA));
@@ -86,24 +86,24 @@ public class StandardFactoryControllerTest
     }
 
     @Test
-    public void deserialize() throws Exception
+    public void deserialize()
     {
         StandardToken standardToken = new StandardToken(UUID.randomUUID());
         IToken token = standardToken;
 
         NBTTagCompound compound = StandardFactoryController.getInstance().serialize(token);
-        IToken deserialize = StandardFactoryController.getInstance().deserialize(compound);
+        final IToken deserialize = StandardFactoryController.getInstance().deserialize(compound);
 
         assertEquals(token, deserialize);
     }
 
     @Test
-    public void getNewInstance() throws Exception
+    public void getNewInstance()
     {
-        UUID id = UUID.randomUUID();
-        IToken token = new StandardToken(id);
+        final UUID id = UUID.randomUUID();
+        final IToken token = new StandardToken(id);
 
-        IToken output = StandardFactoryController.getInstance().getNewInstance(id, new TypeToken<IToken<UUID>>() {});
+        final IToken output = StandardFactoryController.getInstance().getNewInstance(id, new TypeToken<IToken<UUID>>() {});
 
         assertEquals(output, token);
     }

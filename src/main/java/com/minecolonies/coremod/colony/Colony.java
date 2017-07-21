@@ -208,7 +208,7 @@ public class Colony implements IColony
      * Amount of ticks passed.
      */
     private int ticksPassed = 0;
-    private IRequestManager requestManager = new StandardRequestManager(this);
+    private final IRequestManager requestManager = new StandardRequestManager(this);
 
     /**
      * Constructor for a newly created Colony.
