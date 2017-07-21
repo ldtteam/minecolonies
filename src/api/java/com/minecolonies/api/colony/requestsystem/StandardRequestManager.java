@@ -699,23 +699,23 @@ public class StandardRequestManager implements IRequestManager
             for (final IRequestResolver resolver : manager.requestClassResolverMap.get(request.getRequestType()))
             {
                 //Skip when the resolver is in the blacklist.
-                if (!resolverTokenBlackList.contains(resolver.getID()))
+                if (resolverTokenBlackList.contains(resolver.getID()))
                 {
-                    return;
+                    continue;
                 }
 
                 //Skip if preliminary check fails
-                if (resolver.canResolve(manager, request))
+                if (!resolver.canResolve(manager, request))
                 {
-                    return;
+                    continue;
                 }
 
                 @Nullable final List<IToken> attemptResult = resolver.attemptResolve(new WrappedBlacklistAssignmentRequestManager(manager, resolverTokenBlackList), request);
 
                 //Skip if attempt failed (aka attemptResult == null)
-                if (attemptResult != null)
+                if (attemptResult == null)
                 {
-                    return;
+                    continue;
                 }
 
                 //Successfully found a resolver. Registering
@@ -800,12 +800,9 @@ public class StandardRequestManager implements IRequestManager
             }
 
             //Assign the followup request if need be
-            if (followupRequest != null)
+            if (followupRequest != null && !isAssigned(manager, followupRequest.getToken()))
             {
-                if (!isAssigned(manager, followupRequest.getToken()))
-                {
-                    assignRequest(manager, followupRequest);
-                }
+                assignRequest(manager, followupRequest);
             }
         }
 

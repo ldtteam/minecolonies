@@ -40,7 +40,7 @@ public abstract class AbstractRequest<R> implements IRequest<R>
     @Nullable
     private IToken parent;
     @NotNull
-    private final static ItemStack deliveryStack = ItemStackUtils.EMPTY;
+    private final ItemStack deliveryStack = ItemStackUtils.EMPTY;
 
     AbstractRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final R requested)
     {
