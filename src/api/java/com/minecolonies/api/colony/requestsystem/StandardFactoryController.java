@@ -111,7 +111,7 @@ public final class StandardFactoryController implements IFactoryController
         throw new IllegalArgumentException("The given input type is not a input of a factory.");
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(Suppression.UNCHECKED)
     @Override
     public <Output> IFactory<?, Output> getFactoryForOutput(@NotNull final TypeToken<Output> outputTypeToken) throws IllegalArgumentException
     {
@@ -129,7 +129,7 @@ public final class StandardFactoryController implements IFactoryController
         return primaryOutputMappings.get(outputTypeToken);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(Suppression.UNCHECKED)
     @Override
     public <Input, Output> IFactory<Input, Output> getFactoryForIO(@NotNull final TypeToken<Input> inputTypeToken, @NotNull final TypeToken<Output> outputTypeToken)
       throws IllegalArgumentException
@@ -211,7 +211,7 @@ public final class StandardFactoryController implements IFactoryController
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(Suppression.UNCHECKED)
     public <Output> NBTTagCompound serialize(@NotNull final Output object) throws IllegalArgumentException
     {
         final NBTTagCompound compound = new NBTTagCompound();
@@ -224,7 +224,7 @@ public final class StandardFactoryController implements IFactoryController
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(Suppression.UNCHECKED)
     public <Output> Output deserialize(@NotNull final NBTTagCompound compound) throws IllegalArgumentException
     {
         final String className = compound.getString(NBT_TYPE);
@@ -244,7 +244,7 @@ public final class StandardFactoryController implements IFactoryController
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(Suppression.UNCHECKED)
     public <Input, Output> Output getNewInstance(@NotNull final Input input, @NotNull final TypeToken<Output> outputTypeToken, @NotNull final Object... context)
       throws IllegalArgumentException, ClassCastException
     {

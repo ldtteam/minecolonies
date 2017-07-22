@@ -73,9 +73,6 @@ public final class StandardRequestFactories
         @NotNull
         @Override
         @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
-        /**
-         * Moving the curly braces really makes the code hard to read.
-         */
         public TypeToken<ItemStack> getFactoryInputType()
         {
             return new TypeToken<ItemStack>() {};
@@ -146,6 +143,7 @@ public final class StandardRequestFactories
                 childTokens.add(controller.deserialize(childCompound.getCompoundTagAt(i)));
             }
 
+            @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
             final StandardRequests.ItemStackRequest request = controller.getNewInstance(requested, new TypeToken<StandardRequests.ItemStackRequest>() {}, token, state);
 
             if (nbt.hasKey(NBT_PARENT))
@@ -247,6 +245,7 @@ public final class StandardRequestFactories
                 childTokens.add(controller.deserialize(childCompound.getCompoundTagAt(i)));
             }
 
+            @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
             final StandardRequests.DeliveryRequest request = controller.getNewInstance(requested, new TypeToken<StandardRequests.DeliveryRequest>() {}, token, state);
 
             if (nbt.hasKey(NBT_PARENT))
