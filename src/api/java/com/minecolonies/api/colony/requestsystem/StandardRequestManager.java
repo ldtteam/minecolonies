@@ -1137,6 +1137,7 @@ public class StandardRequestManager implements IRequestManager
          */
         public void updateRequestState(@NotNull final IToken token, @NotNull final RequestState state) throws IllegalArgumentException
         {
+            //TODO: implement when link is created with workers
         }
     }
 
