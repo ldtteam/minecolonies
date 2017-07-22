@@ -14,6 +14,7 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvid
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.colony.requestsystem.token.StandardToken;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.Suppression;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,10 +28,8 @@ import java.util.stream.Collectors;
  * <p>
  * Uses
  */
-@SuppressWarnings("squid:S2972")
-/**
- * We have this class the way it is for a reason.
- */
+
+@SuppressWarnings(Suppression.BIG_CLASS)
 public class StandardRequestManager implements IRequestManager
 {
 
@@ -192,7 +191,7 @@ public class StandardRequestManager implements IRequestManager
          * @param token   The token of the provider that is being removed.
          * @throws IllegalArgumentException is thrown when the token is not registered to a provider, or when the data stored in the manager is in conflict.
          */
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings(Suppression.UNCHECKED)
         private static void removeProviderInternal(final StandardRequestManager manager, final IToken token) throws IllegalArgumentException
         {
             final IRequestResolverProvider provider = getProvider(manager, token);
@@ -628,7 +627,7 @@ public class StandardRequestManager implements IRequestManager
     private final static class RequestHandler
     {
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings(Suppression.UNCHECKED)
         private static <Request> IRequest<Request> createRequest(final StandardRequestManager manager, final IRequester requester, final Request request)
         {
             final IToken<UUID> token = TokenHandler.generateNewToken(manager);
@@ -662,7 +661,7 @@ public class StandardRequestManager implements IRequestManager
          * @param request The request to assign
          * @throws IllegalArgumentException when the request is already assigned
          */
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings(Suppression.UNCHECKED)
         private static void assignRequest(final StandardRequestManager manager, final IRequest request) throws IllegalArgumentException
         {
             assignRequest(manager, request, Collections.EMPTY_LIST);
@@ -689,7 +688,7 @@ public class StandardRequestManager implements IRequestManager
          * @param resolverTokenBlackList Each resolver that has its token in this blacklist will be skipped when checking for a possible resolver.
          * @throws IllegalArgumentException is thrown when the request is unknown to this manager.
          */
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings(Suppression.UNCHECKED)
         private static void assignRequest(final StandardRequestManager manager, final IRequest request, final Collection<IToken> resolverTokenBlackList)
           throws IllegalArgumentException
         {
@@ -773,7 +772,7 @@ public class StandardRequestManager implements IRequestManager
          * @param manager The manager that got notified of the successful resolving of the request.
          * @param token   The token of the request that got finished successfully.
          */
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings(Suppression.UNCHECKED)
         private static void onRequestSuccessful(final StandardRequestManager manager, final IToken token)
         {
             final IRequest request = getRequest(manager, token);
@@ -816,7 +815,7 @@ public class StandardRequestManager implements IRequestManager
          * @param manager The manager that got notified of the cancellation or overruling.
          * @param token   The token of the request that got cancelled or overruled
          */
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings(Suppression.UNCHECKED)
         private static void onRequestCancelled(final StandardRequestManager manager, final IToken token)
         {
             final IRequest request = getRequest(manager, token);
@@ -846,7 +845,7 @@ public class StandardRequestManager implements IRequestManager
          * @param request The request about to be resolved.
          * @throws IllegalArgumentException when the request is unknown, not resolved, or cannot be resolved.
          */
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings(Suppression.UNCHECKED)
         private static void resolveRequest(final StandardRequestManager manager, final IRequest request) throws IllegalArgumentException
         {
             getRequest(manager, request.getToken());
@@ -1198,7 +1197,7 @@ public class StandardRequestManager implements IRequestManager
      *
      * @throws IllegalArgumentException when either their is no request with that token, or the token does not produce a request of the given type T.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(Suppression.UNCHECKED)
     @NotNull
     @Override
     public <T> IRequest<T> getRequestForToken(@NotNull final IToken token) throws IllegalArgumentException

@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.ReflectionUtils;
+import com.minecolonies.api.util.constant.Suppression;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
@@ -91,7 +92,7 @@ public final class StandardFactoryController implements IFactoryController
         return INSTANCE;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(Suppression.UNCHECKED)
     @Override
     public <Input> IFactory<Input, ?> getFactoryForInput(@NotNull final TypeToken<Input> inputTypeToken) throws IllegalArgumentException
     {

@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.requestsystem.request.IRequestFactory;
 import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.constant.Suppression;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagInt;
@@ -39,10 +40,7 @@ public final class StandardRequestFactories
     {
     }
 
-    @SuppressWarnings("squid:S2972")
-    /**
-     * We have this class the way it is for a reason.
-     */
+    @SuppressWarnings(Suppression.BIG_CLASS)
     public static final class ItemStackFactory implements IRequestFactory<ItemStack, StandardRequests.ItemStackRequest>
     {
         /**
@@ -66,10 +64,7 @@ public final class StandardRequestFactories
 
         @NotNull
         @Override
-        @SuppressWarnings("squid:LeftCurlyBraceStartLineCheck")
-        /**
-         * Moving the curly braces really makes the code hard to read.
-         */
+        @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
         public TypeToken<StandardRequests.ItemStackRequest> getFactoryOutputType()
         {
             return new TypeToken<StandardRequests.ItemStackRequest>() {};
@@ -77,7 +72,7 @@ public final class StandardRequestFactories
 
         @NotNull
         @Override
-        @SuppressWarnings("squid:LeftCurlyBraceStartLineCheck")
+        @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
         /**
          * Moving the curly braces really makes the code hard to read.
          */
@@ -137,10 +132,7 @@ public final class StandardRequestFactories
          */
         @NotNull
         @Override
-        @SuppressWarnings("squid:LeftCurlyBraceStartLineCheck")
-        /**
-         * Moving the curly braces really makes the code hard to read.
-         */
+        @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
         public StandardRequests.ItemStackRequest deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
         {
             final IToken token = controller.deserialize(nbt.getCompoundTag(NBT_TOKEN));
@@ -170,19 +162,13 @@ public final class StandardRequestFactories
         }
     }
 
-    @SuppressWarnings("squid:S2972")
-    /**
-     * We have this class the way it is for a reason.
-     */
+    @SuppressWarnings(Suppression.BIG_CLASS)
     public static final class DeliveryFactory implements IRequestFactory<Delivery, StandardRequests.DeliveryRequest>
     {
 
         @NotNull
         @Override
-        @SuppressWarnings("squid:LeftCurlyBraceStartLineCheck")
-        /**
-         * Moving the curly braces really makes the code hard to read.
-         */
+        @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
         public TypeToken<StandardRequests.DeliveryRequest> getFactoryOutputType()
         {
             return new TypeToken<StandardRequests.DeliveryRequest>() {};
@@ -190,10 +176,7 @@ public final class StandardRequestFactories
 
         @NotNull
         @Override
-        @SuppressWarnings("squid:LeftCurlyBraceStartLineCheck")
-        /**
-         * Moving the curly braces really makes the code hard to read.
-         */
+        @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
         public TypeToken<Delivery> getFactoryInputType()
         {
             return new TypeToken<Delivery>() {};
@@ -250,10 +233,7 @@ public final class StandardRequestFactories
          */
         @NotNull
         @Override
-        @SuppressWarnings("squid:LeftCurlyBraceStartLineCheck")
-        /**
-         * Moving the curly braces really makes the code hard to read.
-         */
+        @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
         public StandardRequests.DeliveryRequest deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
         {
             final IToken token = controller.deserialize(nbt.getCompoundTag(NBT_TOKEN));
