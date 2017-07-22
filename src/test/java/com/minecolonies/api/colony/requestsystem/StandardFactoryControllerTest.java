@@ -73,7 +73,7 @@ public class StandardFactoryControllerTest
     @Test
     public void serialize()
     {
-        StandardToken standardToken = new StandardToken(UUID.randomUUID());
+        final StandardToken standardToken = new StandardToken(UUID.randomUUID());
         final IToken token = standardToken;
 
         final NBTTagCompound compound = StandardFactoryController.getInstance().serialize(token);
@@ -88,10 +88,10 @@ public class StandardFactoryControllerTest
     @Test
     public void deserialize()
     {
-        StandardToken standardToken = new StandardToken(UUID.randomUUID());
-        IToken token = standardToken;
+        final StandardToken standardToken = new StandardToken(UUID.randomUUID());
+        final IToken token = standardToken;
 
-        NBTTagCompound compound = StandardFactoryController.getInstance().serialize(token);
+        final NBTTagCompound compound = StandardFactoryController.getInstance().serialize(token);
         final IToken deserialize = StandardFactoryController.getInstance().deserialize(compound);
 
         assertEquals(token, deserialize);

@@ -4,6 +4,7 @@ import net.minecraft.nbt.NBTTagInt;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Enum used to describe the state of a Request.
@@ -58,7 +59,7 @@ public enum RequestState
     /**
      * Index list used to read and write from NBT
      */
-    static final ArrayList<RequestState> indexList = new ArrayList<>();
+    static final List<RequestState> indexList = new ArrayList<>();
     static
     {
         /*
@@ -67,6 +68,10 @@ public enum RequestState
          */
         Collections.addAll(indexList, RequestState.values());
     }
+
+    /**
+     * This is an empty constructor, i don't know why, Orion probably does =D.
+     */
     RequestState()
     {
     }
