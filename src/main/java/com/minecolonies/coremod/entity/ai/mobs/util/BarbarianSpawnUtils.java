@@ -12,6 +12,7 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -69,7 +70,6 @@ public final class BarbarianSpawnUtils
     private static final double ARMOR                       = 2.0D;
     private static final double BARBARIAN_BASE_HEALTH       = 10;
     private static final double BARBARIAN_HEALTH_MULTIPLIER = 0.25;
-    private static final int    BARBARIAN_HEALTH_SUBTRACTOR = 10;
 
     /**
      * Private constructor to hide the implicit public one.
@@ -91,7 +91,7 @@ public final class BarbarianSpawnUtils
         barbarian.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(MOVEMENT_SPEED);
         barbarian.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(ATTACK_DAMAGE);
         barbarian.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(ARMOR);
-        barbarian.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(getHealthBasedOnRaidLevel(colony));
+        barbarian.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(getHealthBasedOnRaidLevel(colony));
     }
 
     /**
@@ -104,7 +104,7 @@ public final class BarbarianSpawnUtils
         if (colony != null)
         {
             final int raidLevel = (int) (MobEventsUtils.getColonyRaidLevel(colony) * BARBARIAN_HEALTH_MULTIPLIER);
-            return BARBARIAN_BASE_HEALTH + (raidLevel - BARBARIAN_HEALTH_SUBTRACTOR);
+            return BARBARIAN_BASE_HEALTH + raidLevel;
         }
         return BARBARIAN_BASE_HEALTH;
     }

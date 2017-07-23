@@ -35,6 +35,7 @@ public final class MobEventsUtils
     private static final int    MIN_CITIZENS_FOR_RAID        = 5;
     private static final int    HALF_MINECRAFT_DAY           = 12_000;
     private static final int    TICKS_AFTER_HALF_DAY         = 1000;
+    private static final int    NUMBER_OF_CITIZENS_NEEDED    = 5;
     private static       int    numberOfBarbarians           = 0;
     private static       int    numberOfArchers              = 0;
     private static       int    numberOfChiefs               = 0;
@@ -189,6 +190,10 @@ public final class MobEventsUtils
 
     public static boolean isItTimeToRaid(final World world, final Colony colony)
     {
+        if (colony.getCitizens().size() < NUMBER_OF_CITIZENS_NEEDED)
+        {
+            return false;
+        }
         if (world.getWorldTime() % HALF_MINECRAFT_DAY == 0)
         {
             if (Configurations.enableInDevelopmentFeatures)
