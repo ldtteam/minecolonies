@@ -665,17 +665,20 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param xp amount of xp available to mend with
      * @return xp left after mending
      */
-    private double applyMending(double xp) {
-        ItemStack tool = EnchantmentHelper.getEnchantedItem(Enchantments.MENDING, this);
+    private double applyMending(double xp)
+    {
+        double localXp = xp;
+        final ItemStack tool = EnchantmentHelper.getEnchantedItem(Enchantments.MENDING, this);
 
-        if (tool != null && tool.isItemDamaged()) {
+        if (tool != null && tool.isItemDamaged())
+        {
             //2 xp to heal 1 dmg
-            double dmgHealed = Math.min(xp / 2, tool.getItemDamage());
-            xp -= dmgHealed * 2;
+            double dmgHealed = Math.min(localXp / 2, tool.getItemDamage());
+            localXp -= dmgHealed * 2;
             tool.setItemDamage(tool.getItemDamage() - (int) Math.ceil(dmgHealed));
         }
 
-        return xp;
+        return localXp;
     }
 
     @Nullable
