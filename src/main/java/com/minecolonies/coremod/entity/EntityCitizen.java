@@ -24,6 +24,7 @@ import com.minecolonies.coremod.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.item.EntityItem;
@@ -31,6 +32,7 @@ import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Enchantments;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
@@ -598,7 +600,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         final double citizenHutLevel = home == null ? 0 : home.getBuildingLevel();
         final double citizenHutMaxLevel = home == null ? 1 : home.getMaxBuildingLevel();
         if (citizenHutLevel < citizenHutMaxLevel
-                && Math.pow(2.0, citizenHutLevel + 1.0) < this.getExperienceLevel())
+                && Math.pow(2.0, citizenHutLevel + 1.0) <= this.getExperienceLevel())
         {
             return;
         }
@@ -645,6 +647,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 localXp = maxValue;
             }
 
+            localXp = applyMending(localXp);
             citizenData.addExperience(localXp);
 
             while (ExperienceUtils.getXPNeededForNextLevel(citizenData.getLevel()) < citizenData.getExperience())
@@ -654,6 +657,25 @@ public class EntityCitizen extends EntityAgeable implements INpc
             this.updateLevel();
             citizenData.markDirty();
         }
+    }
+
+    /**
+     * repair random equipped/held item with mending enchant.
+     *
+     * @param xp amount of xp available to mend with
+     * @return xp left after mending
+     */
+    private double applyMending(double xp) {
+        ItemStack tool = EnchantmentHelper.getEnchantedItem(Enchantments.MENDING, this);
+
+        if (tool != null && tool.isItemDamaged()) {
+            //2 xp to heal 1 dmg
+            double dmgHealed = Math.min(xp / 2, tool.getItemDamage());
+            xp -= dmgHealed * 2;
+            tool.setItemDamage(tool.getItemDamage() - (int) Math.ceil(dmgHealed));
+        }
+
+        return xp;
     }
 
     @Nullable
