@@ -841,6 +841,7 @@ public class Colony implements IColony
              * If the event world is not the colony world ignore. This might happen in interactions with other mods.
              * This should not be a problem for minecolonies as long as we take care to do nothing in that moment.
              */
+            Log.getLogger().error("Colony %d has the wrong world, colony probably should be removed if this is being spammed.", id);
             return;
         }
 
