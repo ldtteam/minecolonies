@@ -1,8 +1,10 @@
-package com.minecolonies.coremod.colony;
+package com.minecolonies.api.colony;
 
 import com.minecolonies.api.colony.permissions.IPermissions;
+import com.minecolonies.api.colony.requestsystem.IRequestManager;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Interface of the Colony and ColonyView which will have to implement the
@@ -75,4 +77,18 @@ public interface IColony
      * @return an integer with a describing value.
      */
     int getLastContactInHours();
+
+    /**
+     * Method to get the World this colony is in.
+     * @return the World the colony is in.
+     */
+    World getWorld();
+
+    /**
+     * Get the current {@link IRequestManager} for this Colony.
+     * Returns null if the current Colony does not support the request system.
+     * @return the {@link IRequestManager} for this colony, null if not supported.
+     */
+    @Nullable
+    IRequestManager getRequestManager();
 }

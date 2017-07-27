@@ -24,7 +24,7 @@ public interface ILocationFactory<T, L extends ILocation> extends IFactory<T, L>
      */
     @NotNull
     @Override
-    default L getNewInstance(@NotNull T t, @NotNull Object... context) throws IllegalArgumentException
+    default L getNewInstance(@NotNull final T t, @NotNull final Object... context) throws IllegalArgumentException
     {
         if (context.length != 0)
         {

@@ -96,6 +96,21 @@ public final class Suppression
     @NonNls
     public static final String RESOURCES_SHOULD_BE_CLOSED = "squid:S2095 ";
 
+    /**
+     * We sometimes suppress this because it would be silly to split up the classes.
+     * <p>
+     * Use this sparely!
+     */
+    @NonNls
+    public static final String BIG_CLASS = "squid:S2972";
+
+    /**
+     * Sometimes it would decrease the readability of the code.
+     * <p>
+     * Use this sparely!
+     */
+    @NonNls
+    public static final String LEFT_CURLY_BRACE = "squid:LeftCurlyBraceStartLineCheck";
 
     private Suppression()
     {
