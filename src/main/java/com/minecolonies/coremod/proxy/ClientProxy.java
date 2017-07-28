@@ -9,11 +9,16 @@ import com.minecolonies.coremod.client.render.EmptyTileEntitySpecialRenderer;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.client.render.RenderFishHook;
 import com.minecolonies.coremod.client.render.TileEntityScarecrowRenderer;
+import com.minecolonies.coremod.client.render.mobs.barbarians.RendererBarbarian;
+import com.minecolonies.coremod.client.render.mobs.barbarians.RendererChiefBarbarian;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
+import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityArcherBarbarian;
+import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityBarbarian;
+import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityChiefBarbarian;
 import com.minecolonies.coremod.event.ClientEventHandler;
 import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
@@ -64,6 +69,9 @@ public class ClientProxy extends CommonProxy
     {
         RenderingRegistry.registerEntityRenderingHandler(EntityCitizen.class, RenderBipedCitizen::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityFishHook.class, RenderFishHook::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityBarbarian.class, RendererBarbarian::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityArcherBarbarian.class, RendererBarbarian::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityChiefBarbarian.class, RendererChiefBarbarian::new);
     }
 
     @Override
@@ -131,6 +139,8 @@ public class ClientProxy extends CommonProxy
         itemModelMesher.register(ModItems.supplyChest, 0, new ModelResourceLocation(ModItems.supplyChest.getRegistryName(), INVENTORY));
         itemModelMesher.register(ModItems.supplyCamp, 0, new ModelResourceLocation(ModItems.supplyCamp.getRegistryName(), INVENTORY));
         itemModelMesher.register(ModItems.permTool, 0, new ModelResourceLocation(ModItems.permTool.getRegistryName(), INVENTORY));
+        itemModelMesher.register(ModItems.ancientTome, 0, new ModelResourceLocation(ModItems.ancientTome.getRegistryName(), INVENTORY));
+        itemModelMesher.register(ModItems.chiefSword, 0, new ModelResourceLocation(ModItems.chiefSword.getRegistryName(), INVENTORY));
 
 
         // Achievement proxy Items

@@ -6,6 +6,10 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
+import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityArcherBarbarian;
+import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityBarbarian;
+import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityChiefBarbarian;
+import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianSpawnUtils;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.event.FMLEventHandler;
 import com.minecolonies.coremod.inventory.GuiHandler;
@@ -16,6 +20,7 @@ import com.minecolonies.coremod.tileentities.TileEntityRack;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.storage.loot.LootTableList;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
@@ -25,12 +30,17 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-
 /**
  * CommonProxy of the minecolonies mod (Server and Client).
  */
 public class CommonProxy implements IProxy
 {
+    /**
+     * feel free to change the following if you want different colored spawn eggs
+     */
+    private static final int PRIMARY_COLOR   = 5;
+    private static final int SECONDARY_COLOR = 700;
+
     /**
      * Used to store IExtendedEntityProperties data temporarily between player death and respawn.
      */
@@ -97,8 +107,51 @@ public class CommonProxy implements IProxy
     {
         // Half as much tracking range and same update frequency as a player
         // See EntityTracker.addEntityToTracker for more default values
-        EntityRegistry.registerModEntity(EntityCitizen.class, "Citizen", getNextEntityId(), MineColonies.instance, 256, 2, true);
-        EntityRegistry.registerModEntity(EntityFishHook.class, "Fishhook", getNextEntityId(), MineColonies.instance, 250, 5, true);
+        EntityRegistry.registerModEntity(EntityCitizen.class,
+          "Citizen",
+          getNextEntityId(),
+          MineColonies.instance,
+          Constants.ENTITY_TRACKING_RANGE,
+          Constants.ENTITY_UPDATE_FREQUENCY,
+          true);
+        EntityRegistry.registerModEntity(EntityFishHook.class,
+          "Fishhook",
+          getNextEntityId(),
+          MineColonies.instance,
+          Constants.ENTITY_TRACKING_RANGE,
+          Constants.ENTITY_UPDATE_FREQUENCY_FISHHOOK,
+          true);
+        EntityRegistry.registerModEntity(EntityBarbarian.class,
+          "Barbarian",
+          getNextEntityId(),
+          MineColonies.instance,
+          Constants.ENTITY_TRACKING_RANGE,
+          Constants.ENTITY_UPDATE_FREQUENCY,
+          true);
+        EntityRegistry.registerModEntity(EntityArcherBarbarian.class,
+          "ArcherBarbarian",
+          getNextEntityId(),
+          MineColonies.instance,
+          Constants.ENTITY_TRACKING_RANGE,
+          Constants.ENTITY_UPDATE_FREQUENCY,
+          true);
+        EntityRegistry.registerModEntity(EntityChiefBarbarian.class,
+          "ChiefBarbarian",
+          getNextEntityId(),
+          MineColonies.instance,
+          Constants.ENTITY_TRACKING_RANGE,
+          Constants.ENTITY_UPDATE_FREQUENCY,
+          true);
+
+        //Register Barbarian loot tables.
+        LootTableList.register(BarbarianSpawnUtils.BarbarianLootTable);
+        LootTableList.register(BarbarianSpawnUtils.ArcherLootTable);
+        LootTableList.register(BarbarianSpawnUtils.ChiefLootTable);
+
+        //Register Barbarian spawn eggs
+        EntityRegistry.registerEgg(EntityBarbarian.class, PRIMARY_COLOR, SECONDARY_COLOR);
+        EntityRegistry.registerEgg(EntityArcherBarbarian.class, PRIMARY_COLOR, SECONDARY_COLOR);
+        EntityRegistry.registerEgg(EntityChiefBarbarian.class, PRIMARY_COLOR, SECONDARY_COLOR);
     }
 
     @Override
@@ -160,5 +213,4 @@ public class CommonProxy implements IProxy
     {
         return null;
     }
-
 }

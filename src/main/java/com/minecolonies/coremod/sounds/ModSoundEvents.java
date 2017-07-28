@@ -17,6 +17,13 @@ public final class ModSoundEvents
      * List of sound handlers.
      */
     public static final List<AbstractWorkerSounds> handlers = new ArrayList<>();
+    static
+    {
+        handlers.add(new FishermanSounds());
+        handlers.add(new DeliverymanSounds());
+        handlers.add(new CitizenSounds());
+        handlers.add(new FarmerSounds());
+    }
 
     /**
      * Private constructor to hide the implicit public one.
@@ -26,14 +33,6 @@ public final class ModSoundEvents
         /*
          * Intentionally left empty.
          */
-    }
-
-    static
-    {
-        handlers.add(new FishermanSounds());
-        handlers.add(new DeliverymanSounds());
-        handlers.add(new CitizenSounds());
-        handlers.add(new FarmerSounds());
     }
 
     /**
@@ -79,6 +78,10 @@ public final class ModSoundEvents
 
         GameRegistry.register(CitizenSounds.Female.say);
         GameRegistry.register(CitizenSounds.Male.say);
+
+        GameRegistry.register(BarbarianSounds.barbarianHurt);
+        GameRegistry.register(BarbarianSounds.barbarianDeath);
+        GameRegistry.register(BarbarianSounds.barbarianSay);
     }
 
     /**

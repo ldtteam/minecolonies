@@ -129,6 +129,20 @@ public final class ConfigurationHandler
             freeToInteractBlocks = config.get(CATEGORY_GAMEPLAY, "freeToInteractBlocks", freeToInteractBlocks,
                     "Blocks players should be able to interact with inside any colony.").getStringList();
 
+            maxBarbarianHordeSize = getClampedInt(config, CATEGORY_GAMEPLAY,
+              "maxBarbarianHordeSize", maxBarbarianHordeSize, Constants.MIN_BARBARIAN_HORDE_SIZE, Constants.MAX_BARBARIAN_HORDE_SIZE,
+              "Sets the barbarian horde's max amount of barbarians");
+
+            doBarbariansSpawn = config.get(CATEGORY_GAMEPLAY, "doBarbariansSpawn", doBarbariansSpawn,
+              "Enables or disables barbarian horde's spawning").getBoolean();
+
+            barbarianHordeDifficulty = getClampedInt(config, CATEGORY_GAMEPLAY,
+              "barbarianHordeDifficulty", barbarianHordeDifficulty, 1, 10,
+              "Sets the barbarian horde's attack strength");
+
+            averageNumberOfNightsBetweenRaids = config.get(CATEGORY_GAMEPLAY, "averageNumberOfNightsBetweenRaids", averageNumberOfNightsBetweenRaids,
+              "sets the average number of nights between raids").getInt();
+
             loadPathFindingConfigurations();
             loadNamesConfigurations();
         }
