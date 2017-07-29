@@ -9,6 +9,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingGuardTower;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
+import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianUtils;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
@@ -66,7 +67,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
     /**
      * Path that close to the patrol target.
      */
-    private static final   int    PATH_CLOSE                       = 2;
+    private static final   int    PATH_CLOSE             = 2;
 
     /**
      * The dump base of actions, will increase depending on level.
@@ -273,7 +274,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
                 }
             }
 
-            if(!(entityList.get(0)).isEntityAlive())
+            if (!(entityList.get(0)).isEntityAlive())
             {
                 return GUARD_GATHERING;
             }
@@ -286,8 +287,8 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
 
     public boolean huntDownlastAttacker()
     {
-        if(this.worker.getLastAttacker() != null && this.worker.getLastAttackerTime() >= worker.ticksExisted - ATTACK_TIME_BUFFER
-                && this.worker.getLastAttacker().isEntityAlive())
+        if (this.worker.getLastAttacker() != null && this.worker.getLastAttackerTime() >= worker.ticksExisted - ATTACK_TIME_BUFFER
+              && this.worker.getLastAttacker().isEntityAlive())
         {
             return this.worker.getLastAttacker() != null && this.worker.canEntityBeSeen(this.worker.getLastAttacker());
         }
@@ -302,10 +303,15 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
      */
     protected AIState searchTarget()
     {
-        if(huntDownlastAttacker())
+        if (huntDownlastAttacker())
         {
             targetEntity = this.worker.getLastAttacker();
             return AIState.GUARD_HUNT_DOWN_TARGET;
+        }
+
+        if (targetEntity == null)
+        {
+            targetEntity = BarbarianUtils.getClosestBarbarianToEntity(this.worker, currentSearchDistance);
         }
 
         entityList = CompatibilityUtils.getWorld(worker).getEntitiesWithinAABB(EntityMob.class, this.getTargetableArea(currentSearchDistance));

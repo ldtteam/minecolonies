@@ -14,6 +14,7 @@ import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.farmer.Field;
+import com.minecolonies.coremod.entity.ai.mobs.util.MobEventsUtils;
 import com.minecolonies.coremod.network.messages.*;
 import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
@@ -34,6 +35,7 @@ import net.minecraft.stats.Achievement;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -93,6 +95,11 @@ public class Colony implements IColony
     private static final int    NUM_ACHIEVEMENT_THIRD     = 100;
     private static final int    NUM_ACHIEVEMENT_FOURTH    = 500;
     private static final int    NUM_ACHIEVEMENT_FIFTH     = 1000;
+
+    /**
+     * Whether there will be a raid in this colony tonight.
+     */
+    private boolean willRaidTonight = false;
 
     /**
      * Amount of ticks that pass/hour.
@@ -1094,6 +1101,11 @@ public class Colony implements IColony
                     spawnCitizen();
                 }
             }
+
+            if (event.world.getDifficulty() != EnumDifficulty.PEACEFUL && Configurations.gameplay.doBarbariansSpawn && MobEventsUtils.isItTimeToRaid(event.world, this))
+            {
+                MobEventsUtils.barbarianEvent(event.world, this);
+            }
         }
 
         //  Tick Buildings
@@ -1990,4 +2002,16 @@ public class Colony implements IColony
     {
         return requestManager;
     }
+
+    @Override
+    public boolean hasWillRaidTonight()
+    {
+        return willRaidTonight;
+    }
+
+    public void setWillRaidTonight(final Boolean willRaid)
+    {
+        willRaidTonight = willRaid;
+    }
+
 }
