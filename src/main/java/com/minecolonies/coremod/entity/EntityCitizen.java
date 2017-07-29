@@ -16,6 +16,7 @@ import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.minimal.*;
+import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianUtils;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.entity.pathfinding.PathNavigate;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
@@ -104,6 +105,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * The middle saturation point. smaller than this = bad and bigger than this = good.
      */
     public static final int AVERAGE_SATURATION = 5;
+
+    /**
+     * Distance to avoid Barbarian.
+     */
+    private static final double AVOID_BARBARIAN_RANGE = 20D;
 
     /**
      * The delta yaw value for looking at things.
@@ -1553,6 +1559,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
         if (this.getColonyJob() instanceof JobGuard)
         {
             return DesiredActivity.WORK;
+        }
+
+        if (BarbarianUtils.getClosestBarbarianToEntity(this,AVOID_BARBARIAN_RANGE) != null && !(this.getColonyJob() instanceof JobGuard))
+        {
+            return DesiredActivity.SLEEP;
         }
 
         if (!CompatibilityUtils.getWorld(this).isDaytime())

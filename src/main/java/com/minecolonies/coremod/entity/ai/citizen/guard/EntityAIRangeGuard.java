@@ -57,6 +57,11 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
     private static final double DIFFICULTY_DAMAGE_INCREASE = 0.11D;
 
     /**
+     * Experience to add when a mob is killed
+     */
+    private static final int EXP_PER_MOD_DEATH = 15;
+
+    /**
      * Chance that the arrow lights up the target when the target is on fire.
      */
     private static final int FIRE_EFFECT_CHANCE = 100;
@@ -178,14 +183,20 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
      */
     protected AIState huntDown()
     {
-        if(huntDownlastAttacker())
+        if (worker.getColony() == null)
+        {
+            return AIState.GUARD_GATHERING;
+        }
+
+        if (huntDownlastAttacker())
         {
             targetEntity = this.worker.getLastAttacker();
         }
 
-        if (!targetEntity.isEntityAlive() || checkForToolOrWeapon(ToolType.BOW))
+        if (targetEntity != null && (!targetEntity.isEntityAlive() || checkForToolOrWeapon(ToolType.BOW)))
         {
             targetEntity = null;
+            worker.addExperience(EXP_PER_MOD_DEATH);
             worker.setAIMoveSpeed((float) 1.0D);
             return AIState.GUARD_GATHERING;
         }
