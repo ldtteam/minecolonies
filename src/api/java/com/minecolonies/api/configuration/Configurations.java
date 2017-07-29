@@ -5,7 +5,7 @@ import net.minecraftforge.common.config.Config;
 
 import static com.minecolonies.api.util.constant.Constants.*;
 
-@Config(modid = Constants.MOD_ID)
+@Config(modid = MOD_ID)
     public class Configurations
     {
         @Config.Comment("All configuration related to gameplay")

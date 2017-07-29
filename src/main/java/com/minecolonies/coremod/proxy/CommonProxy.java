@@ -24,7 +24,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import scala.tools.nsc.backend.icode.analysis.CopyPropagation;
 
 import java.io.File;
 import java.util.HashMap;
@@ -113,11 +112,46 @@ public class CommonProxy implements IProxy
 
         // Half as much tracking range and same update frequency as a player
         // See EntityTracker.addEntityToTracker for more default values
-        EntityRegistry.registerModEntity(locationCitizen, EntityCitizen.class, "Citizen", getNextEntityId(), MineColonies.instance, Constants.ENTITY_TRACKING_RANGE, Constants.ENTITY_UPDATE_FREQUENCY, true);
-        EntityRegistry.registerModEntity(locationFishHook, EntityFishHook.class, "Fishhook", getNextEntityId(), MineColonies.instance, Constants.ENTITY_TRACKING_RANGE, Constants.ENTITY_UPDATE_FREQUENCY_FISHHOOK, true);
-        EntityRegistry.registerModEntity(locationBarbarian, EntityBarbarian.class, "Barbarian", getNextEntityId(), MineColonies.instance, Constants.ENTITY_TRACKING_RANGE, Constants.ENTITY_UPDATE_FREQUENCY, true);
-        EntityRegistry.registerModEntity(locationArcherBarbarian, EntityArcherBarbarian.class, "ArcherBarbarian", getNextEntityId(), MineColonies.instance, Constants.ENTITY_TRACKING_RANGE, Constants.ENTITY_UPDATE_FREQUENCY, true);
-        EntityRegistry.registerModEntity(locationChiefBarbarian, EntityChiefBarbarian.class, "ChiefBarbarian", getNextEntityId(), MineColonies.instance, Constants.ENTITY_TRACKING_RANGE, Constants.ENTITY_UPDATE_FREQUENCY, true);
+        EntityRegistry.registerModEntity(locationCitizen,
+          EntityCitizen.class,
+          "Citizen",
+          getNextEntityId(),
+          MineColonies.instance,
+          Constants.ENTITY_TRACKING_RANGE,
+          Constants.ENTITY_UPDATE_FREQUENCY,
+          true);
+        EntityRegistry.registerModEntity(locationFishHook,
+          EntityFishHook.class,
+          "Fishhook",
+          getNextEntityId(),
+          MineColonies.instance,
+          Constants.ENTITY_TRACKING_RANGE,
+          Constants.ENTITY_UPDATE_FREQUENCY_FISHHOOK,
+          true);
+        EntityRegistry.registerModEntity(locationBarbarian,
+          EntityBarbarian.class,
+          "Barbarian",
+          getNextEntityId(),
+          MineColonies.instance,
+          Constants.ENTITY_TRACKING_RANGE,
+          Constants.ENTITY_UPDATE_FREQUENCY,
+          true);
+        EntityRegistry.registerModEntity(locationArcherBarbarian,
+          EntityArcherBarbarian.class,
+          "ArcherBarbarian",
+          getNextEntityId(),
+          MineColonies.instance,
+          Constants.ENTITY_TRACKING_RANGE,
+          Constants.ENTITY_UPDATE_FREQUENCY,
+          true);
+        EntityRegistry.registerModEntity(locationChiefBarbarian,
+          EntityChiefBarbarian.class,
+          "ChiefBarbarian",
+          getNextEntityId(),
+          MineColonies.instance,
+          Constants.ENTITY_TRACKING_RANGE,
+          Constants.ENTITY_UPDATE_FREQUENCY,
+          true);
 
         //Register Barbarian loot tables.
         LootTableList.register(BarbarianSpawnUtils.BarbarianLootTable);

@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.sounds;
 
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.Suppression;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -15,7 +16,10 @@ public final class ModSoundEvents
 {
     /**
      * List of sound handlers.
+     *
+     * (Making this Protected isn't viable in current state)
      */
+    @SuppressWarnings(Suppression.MAKE_PROTECTED)
     public static final List<AbstractWorkerSounds> handlers = new ArrayList<>();
     static
     {
