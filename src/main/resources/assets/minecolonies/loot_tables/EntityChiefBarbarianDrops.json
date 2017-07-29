@@ -1,0 +1,232 @@
+{
+  "pools": [
+    {
+      "name": "minecolonies: ChiefBarbarian",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "weight": 1,
+          "name": "minecraft:diamond_sword",
+          "functions": [
+            {
+              "function": "set_count",
+              "count": {
+                "min": 1,
+                "max": 1
+              }
+            },
+            {
+              "function": "looting_enchant",
+              "count": {
+                "min": 1,
+                "max": 1
+              }
+            },
+            {
+              "function": "set_nbt",
+              "tag": "{}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "random_chance_with_looting",
+              "chance": 0.0125,
+              "looting_multiplier": 0.02
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "minecolonies: ChiefBarbarian",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "weight": 1,
+          "name": "minecraft:golden_sword",
+          "functions": [
+            {
+              "function": "set_count",
+              "count": {
+                "min": 1,
+                "max": 1
+              }
+            },
+            {
+              "function": "looting_enchant",
+              "count": {
+                "min": 1,
+                "max": 1
+              }
+            },
+            {
+              "function": "set_nbt",
+              "tag": "{}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "random_chance_with_looting",
+              "chance": 0.0375,
+              "looting_multiplier": 0.02
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "minecolonies: ChiefBarbarian",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "weight": 1,
+          "name": "minecraft:iron_sword",
+          "functions": [
+            {
+              "function": "set_count",
+              "count": {
+                "min": 1,
+                "max": 1
+              }
+            },
+            {
+              "function": "looting_enchant",
+              "count": {
+                "min": 1,
+                "max": 1
+              }
+            },
+            {
+              "function": "set_nbt",
+              "tag": "{}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "random_chance_with_looting",
+              "chance": 0.05,
+              "looting_multiplier": 0.03
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "minecolonies: ChiefBarbarian",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "weight": 1,
+          "name": "minecraft:stone_sword",
+          "functions": [
+            {
+              "function": "set_count",
+              "count": {
+                "min": 1,
+                "max": 1
+              }
+            },
+            {
+              "function": "looting_enchant",
+              "count": {
+                "min": 1,
+                "max": 1
+              }
+            },
+            {
+              "function": "set_nbt",
+              "tag": "{}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "random_chance_with_looting",
+              "chance": 0.1,
+              "looting_multiplier": 0.05
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "minecolonies: ChiefBarbarian",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "weight": 1,
+          "name": "minecolonies:ancienttome",
+          "functions": [
+            {
+              "function": "set_count",
+              "count": {
+                "min": 1,
+                "max": 1
+              }
+            },
+            {
+              "function": "looting_enchant",
+              "count": {
+                "min": 1,
+                "max": 1
+              }
+            },
+            {
+              "function": "set_nbt",
+              "tag": "{}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "random_chance_with_looting",
+              "chance": 0.25,
+              "looting_multiplier": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "minecolonies: ChiefBarbarian",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "weight": 1,
+          "name": "minecolonies:chiefsword",
+          "functions": [
+            {
+              "function": "set_count",
+              "count": {
+                "min": 1,
+                "max": 1
+              }
+            },
+            {
+              "function": "looting_enchant",
+              "count": {
+                "min": 1,
+                "max": 1
+              }
+            },
+            {
+              "function": "set_nbt",
+              "tag": "{}"
+            }
+          ],
+          "conditions": [
+            {
+              "condition": "random_chance_with_looting",
+              "chance": 0.001,
+              "looting_multiplier": 0
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

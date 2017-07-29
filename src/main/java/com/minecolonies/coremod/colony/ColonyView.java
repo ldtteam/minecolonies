@@ -664,6 +664,12 @@ public final class ColonyView implements IColony
     }
 
     @Override
+    public boolean hasWillRaidTonight()
+    {
+        return false;
+    }
+
+    @Override
     public boolean isCanBeAutoDeleted()
     {
         return false;

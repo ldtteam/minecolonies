@@ -75,6 +75,12 @@ public interface IColony
     int getLastContactInHours();
 
     /**
+     * get whether there will be a raid in the colony tonight.
+     * @return true if so.
+     */
+    boolean hasWillRaidTonight();
+
+    /**
      * Get whether the colony can be auto deleted.
      * @return true if so.
      */

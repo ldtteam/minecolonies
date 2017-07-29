@@ -27,4 +27,15 @@ public final class CompatibilityUtils
         return entity.worldObj;
     }
 
+    /**
+     * spawn an entity in the world
+     *
+     * This method is aiming to hide the differnece between 1.10.2 and 1.11.2
+     * @param world         The world which we are spawning the entity in.
+     * @param entityToSpawn The entity which we are spawning.
+     */
+    public static void spawnEntity(final World world, final Entity entityToSpawn)
+    {
+        world.spawnEntityInWorld(entityToSpawn);
+    }
 }
