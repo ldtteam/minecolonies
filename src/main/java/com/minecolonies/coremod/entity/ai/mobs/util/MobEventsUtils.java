@@ -242,9 +242,6 @@ public final class MobEventsUtils
     {
         final float chance = (float) 1 / Configurations.gameplay.averageNumberOfNightsBetweenRaids;
         final float randomFloat = world.rand.nextFloat();
-        LanguageHandler.sendPlayersMessage(
-          world.playerEntities,
-          randomFloat + "nello" + chance);
         return randomFloat < chance;
     }
 }
