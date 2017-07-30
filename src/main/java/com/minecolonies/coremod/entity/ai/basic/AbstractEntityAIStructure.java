@@ -61,7 +61,16 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     /**
      * Amount of xp the builder gains each building (Will increase by attribute modifiers additionally).
      */
-    private static final double XP_EACH_BUILDING              = 2.5;
+    private static final double XP_EACH_BUILDING = 10.0D;
+    /**
+     * Amount of xp the builder gains for placing a block.
+     */
+    private static final double XP_EACH_BLOCK = 0.1D;
+    /**
+     * Increase this value to make the building speed slower.
+     * Used to balance worker level speed increase.
+     */
+    private static final int PROGRESS_MULTIPLIER = 10;
     /**
      * Speed the builder should run away when he castles himself in.
      */
@@ -465,7 +474,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 world.setBlockToAir(currentBlock.blockPosition);
                 world.setBlockState(currentBlock.blockPosition, Blocks.AIR.getDefaultState());
                 worker.swingArm(worker.getActiveHand());
-                setDelay(UNLIMITED_RESOURCES_TIMEOUT);
+                setDelay(UNLIMITED_RESOURCES_TIMEOUT * PROGRESS_MULTIPLIER / (worker.getLevel() + PROGRESS_MULTIPLIER));
             }
             else
             {
@@ -612,6 +621,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 decrease = (IBlockState) result;
                 decreaseInventory(coords, decrease.getBlock(), decrease);
                 worker.swingArm(worker.getActiveHand());
+                worker.addExperience(XP_EACH_BLOCK);
 
                 return true;
             }
@@ -678,7 +688,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
         if (Configurations.gameplay.builderBuildBlockDelay > 0 && blockToPlace != Blocks.AIR)
         {
-            setDelay(Configurations.gameplay.builderBuildBlockDelay);
+            setDelay(Configurations.gameplay.builderBuildBlockDelay * PROGRESS_MULTIPLIER / (worker.getLevel() + PROGRESS_MULTIPLIER));
         }
 
         return true;
