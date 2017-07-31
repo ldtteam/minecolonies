@@ -667,7 +667,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * repair random equipped/held item with mending enchant.
+     * Repair random equipped/held item with mending enchant.
      *
      * @param xp amount of xp available to mend with
      * @return xp left after mending
