@@ -67,37 +67,37 @@ public abstract class AbstractSingleCommand implements ISubCommand
     /**
      * Will check the config file to see if players are allowed to use the command that is sent here.
      * and will verify that they are of correct rank to do so.
-     * @param player the players/senders name.
+     *
+     * @param player     the players/senders name.
      * @param theCommand which command to check if the player can use it.
-     * @param colonyId the id of the colony.
+     * @param colonyId   the id of the colony.
      * @return boolean.
      */
 
     public boolean canPlayerUseCommand(final EntityPlayer player, final Commands theCommand, final int colonyId)
     {
-        if (isPlayerOpped(player, theCommand.toString()))
+        if (isPlayerOpped(player))
         {
             return true;
         }
 
         final Colony chkColony = ColonyManager.getColony(colonyId);
-        if(chkColony == null)
+        if (chkColony == null)
         {
             return false;
         }
         return canCommandSenderUseCommand(theCommand)
-                && canRankUseCommand(chkColony, player);
+                 && canRankUseCommand(chkColony, player);
     }
 
     /**
      * Will check to see if play is Opped for the given command name.
      *
-     * @param sender  to check the player using the command.
-     * @param cmdName the name of the command to be checked.
+     * @param sender to check the player using the command.
      * @return boolean
      */
     @NotNull
-    public boolean isPlayerOpped(@NotNull final ICommandSender sender, String cmdName)
+    public static boolean isPlayerOpped(@NotNull final ICommandSender sender)
     {
         if (sender instanceof EntityPlayer)
         {

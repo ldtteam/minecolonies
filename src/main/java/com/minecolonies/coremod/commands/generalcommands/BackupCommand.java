@@ -13,15 +13,13 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.MC_BACKUP;
-
 /**
  * Created by asie on 2/16/17.
  */
 public class BackupCommand extends AbstractSingleCommand
 {
-    public static final String DESC = "backup";
-    public static final String NO_PERMISSION_MESSAGE = "You do not have permission to backup colony data!";
+    public static final String DESC                   = "backup";
+    public static final String NO_PERMISSION_MESSAGE  = "You do not have permission to backup colony data!";
     public static final String BACKUP_SUCCESS_MESSAGE = "Successfully backed up colony data!";
     public static final String BACKUP_FAILURE_MESSAGE = "Failed to back up colony data!";
 
@@ -39,9 +37,10 @@ public class BackupCommand extends AbstractSingleCommand
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
 
-        if (isPlayerOpped(sender, String.valueOf(MC_BACKUP)))
+        if (isPlayerOpped(sender))
         {
-            server.addScheduledTask(() -> {
+            server.addScheduledTask(() ->
+            {
                 if (ColonyManager.backupColonyData())
                 {
                     sender.addChatMessage(new TextComponentString(BACKUP_SUCCESS_MESSAGE));
@@ -49,7 +48,6 @@ public class BackupCommand extends AbstractSingleCommand
                 else
                 {
                     sender.addChatMessage(new TextComponentString(BACKUP_FAILURE_MESSAGE));
-
                 }
             });
         }

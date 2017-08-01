@@ -1,8 +1,10 @@
 package com.minecolonies.coremod.commands;
 
+import com.minecolonies.api.configuration.Configurations;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +23,6 @@ public class CommandEntryPoint extends CommandBase
      * private static final int OP_PERMISSION_LEVEL = 3;
      */
 
-
     @NotNull
     private final MinecoloniesCommand root;
 
@@ -32,6 +33,23 @@ public class CommandEntryPoint extends CommandBase
     {
         super();
         root = new MinecoloniesCommand();
+    }
+
+    /**
+     * Check if the player has the permission to use commands.
+     *
+     * @param server the server to check for.
+     * @param sender the sender of the command.
+     * @return true if so.
+     */
+    @Override
+    public boolean checkPermission(final MinecraftServer server, final ICommandSender sender)
+    {
+        if (sender instanceof EntityPlayer)
+        {
+            return AbstractSingleCommand.isPlayerOpped(sender) || Configurations.opLevelForServer <= 0;
+        }
+        return true;
     }
 
     @NotNull

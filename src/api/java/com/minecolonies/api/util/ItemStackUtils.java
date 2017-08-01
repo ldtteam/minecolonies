@@ -3,17 +3,12 @@ package com.minecolonies.api.util;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
-import net.minecraft.item.ItemBow;
-import net.minecraft.item.ItemFishingRod;
-import net.minecraft.item.ItemHoe;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
-import net.minecraft.item.ItemTool;
+import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
@@ -119,7 +114,7 @@ public final class ItemStackUtils
             return false;
         }
 
-        final int level = getMiningLevel(stack, toolType);
+        final int level = Compatibility.isTinkersWeapon(stack) ?  Compatibility.getToolLevel(stack) : getMiningLevel(stack, toolType);
         return isTool(stack, toolType) && verifyToolLevel(stack, level, minimalLevel, maximumLevel);
     }
 
@@ -164,7 +159,7 @@ public final class ItemStackUtils
         }
         else if (ToolType.SWORD.equals(toolType))
         {
-            isATool = itemStack.getItem() instanceof ItemSword;
+            isATool = itemStack.getItem() instanceof ItemSword || Compatibility.isTinkersWeapon(itemStack);
         }
         else if (ToolType.FISHINGROD.equals(toolType))
         {
@@ -314,7 +309,7 @@ public final class ItemStackUtils
      */
     public static boolean doesItemServeAsWeapon(@NotNull final ItemStack stack)
     {
-        return stack.getItem() instanceof ItemSword || stack.getItem() instanceof ItemTool;
+        return stack.getItem() instanceof ItemSword || stack.getItem() instanceof ItemTool || Compatibility.isTinkersWeapon(stack);
     }
 
 

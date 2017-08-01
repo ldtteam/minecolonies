@@ -81,7 +81,7 @@ public class BuildingBaker extends AbstractBuildingWorker
     /**
      * Wait this amount of ticks before checking again.
      */
-    private static final int WAIT_TICKS = 160;
+    private static final int WAIT_TICKS = 320;
 
     /**
      * Always try to keep at least 2 stacks of wheat in the inventory and in the workers chest.
@@ -319,9 +319,9 @@ public class BuildingBaker extends AbstractBuildingWorker
     }
 
     @Override
-    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos)
+    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
-        super.registerBlockPosition(block, pos);
+        super.registerBlockPosition(block, pos, world);
         if (block instanceof BlockFurnace && !furnaces.containsKey(pos))
         {
             addToFurnaces(pos);

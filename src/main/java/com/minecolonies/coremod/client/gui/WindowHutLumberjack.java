@@ -2,7 +2,6 @@ package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.ItemIcon;
@@ -10,8 +9,8 @@ import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.buildings.BuildingBaker;
 import com.minecolonies.coremod.colony.buildings.BuildingLumberjack;
+import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.network.messages.LumberjackSaplingSelectorMessage;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -19,9 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BAKER;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * Window for the fisherman hut.
@@ -56,7 +53,7 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
     /**
      * Id of the pages view.
      */
-    private static final String VIEW_PAGES                = "pages";
+    private static final String VIEW_PAGES                           = "pages";
 
     /**
      * Scrolling list containing the saplings.
@@ -66,7 +63,7 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
     /**
      * List of saplings the lumberjack should, or should not fell (true if should, false if should not).
      */
-    private final Map<ItemStack, Boolean> treesToFell = new LinkedHashMap<>();
+    private final Map<ItemStorage, Boolean> treesToFell = new LinkedHashMap<>();
 
     /**
      * The building of the lumberjack (Client side representation).
@@ -76,7 +73,7 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
     /**
      * Constructor for the window of the fisherman.
      *
-     * @param building {@link BuildingBaker.View}.
+     * @param building {@link BuildingLumberjack.View}.
      */
     public WindowHutLumberjack(final BuildingLumberjack.View building)
     {
@@ -114,13 +111,13 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final ItemStack sapling = treesToFell.keySet().toArray(new ItemStack[treesToFell.size()])[index];
+                final ItemStack sapling = treesToFell.keySet().toArray(new ItemStorage[treesToFell.size()])[index].getItemStack();
                 rowPane.findPaneOfTypeByID("symbol", ItemIcon.class).setItem(sapling);
                 rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(sapling.getDisplayName());
 
                 final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_CURRENT_SAPLING, Button.class);
 
-                if(treesToFell.get(sapling))
+                if(treesToFell.get(new ItemStorage(sapling)))
                 {
                     switchButton.setLabel(ON);
                 }
@@ -139,11 +136,11 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
         {
             final int row = saplingsList.getListElementIndexByPane(button);
 
-            final ItemStack saplingStack = treesToFell.keySet().toArray(new ItemStack[treesToFell.size()])[row];
-            Log.getLogger().warn("Sapling: " + saplingStack.getItem().getUnlocalizedName() + " to: " + !treesToFell.get(saplingStack));
+            final ItemStorage saplingStack = treesToFell.keySet().toArray(new ItemStorage[treesToFell.size()])[row];
+
             final boolean shouldCut = !treesToFell.get(saplingStack);
             treesToFell.put(saplingStack, shouldCut);
-            MineColonies.getNetwork().sendToServer(new LumberjackSaplingSelectorMessage(building, saplingStack, shouldCut));
+            MineColonies.getNetwork().sendToServer(new LumberjackSaplingSelectorMessage(building, saplingStack.getItemStack(), shouldCut));
 
             this.ownBuilding.treesToFell.clear();
             this.ownBuilding.treesToFell.putAll(treesToFell);
@@ -178,7 +175,7 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
     @Override
     public String getBuildingName()
     {
-        return COM_MINECOLONIES_COREMOD_GUI_BAKER;
+        return COM_MINECOLONIES_COREMOD_GUI_LUMBERJACK;
     }
 }
 

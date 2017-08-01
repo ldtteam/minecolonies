@@ -52,17 +52,17 @@ public class HomeTeleportCommand extends AbstractSingleCommand
         }
         else
         {
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString("This is not allowed on this server."));
+            sender.addChatMessage(new TextComponentString("This is not allowed on this server."));
         }
     }
 
     @NotNull
     @Override
     public List<String> getTabCompletionOptions(
-            @NotNull final MinecraftServer server,
-            @NotNull final ICommandSender sender,
-            @NotNull final String[] args,
-            final BlockPos pos)
+                                                 @NotNull final MinecraftServer server,
+                                                 @NotNull final ICommandSender sender,
+                                                 @NotNull final String[] args,
+                                                 final BlockPos pos)
     {
         return Collections.emptyList();
     }

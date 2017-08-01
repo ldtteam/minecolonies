@@ -3,7 +3,7 @@ package com.minecolonies.coremod.blocks;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Hut for the citizen.
+ * Hut for the lumberjack.
  * No different from {@link AbstractBlockHut}
  */
 public class BlockHutLumberjack extends AbstractBlockHut

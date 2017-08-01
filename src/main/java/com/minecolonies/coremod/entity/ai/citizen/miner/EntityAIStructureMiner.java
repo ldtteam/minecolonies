@@ -11,6 +11,7 @@ import com.minecolonies.coremod.entity.ai.util.AITarget;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLadder;
 import net.minecraft.block.BlockOre;
+import net.minecraft.block.BlockRedstoneOre;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -102,7 +103,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     private static boolean isOre(final Block block)
     {
         //TODO make this more sophisticated
-        return block instanceof BlockOre;
+        return block instanceof BlockOre || block instanceof BlockRedstoneOre;
     }
 
     //Miner wants to work but is not at building

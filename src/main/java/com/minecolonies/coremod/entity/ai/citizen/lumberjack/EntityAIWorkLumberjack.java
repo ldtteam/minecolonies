@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
 import com.minecolonies.api.compatibility.Compatibility;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingLumberjack;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;

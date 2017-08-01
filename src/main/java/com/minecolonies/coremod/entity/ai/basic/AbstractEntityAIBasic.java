@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
+import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
@@ -9,7 +10,7 @@ import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
-import com.minecolonies.coremod.entity.pathfinding.WalkToProxy;
+import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -27,8 +28,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 /**
@@ -104,7 +105,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Walk to proxy.
      */
-    private WalkToProxy proxy;
+    private IWalkToProxy proxy;
 
     /**
      * This will count up and progressively disable the entity
@@ -489,11 +490,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Make sure that the worker stands next the chest to not break immersion.
      * Also make sure to have inventory space for the stack.
      *
-     * @param entity the tileEntity chest or building.
+     * @param entity the tileEntity chest or building or rack.
      * @param is     the itemStack.
      * @return true if found the stack.
      */
-    public boolean isInTileEntity(final TileEntityChest entity, final ItemStack is)
+    public boolean isInTileEntity(final TileEntity entity, final ItemStack is)
     {
         return is != null
                 && InventoryFunctions
@@ -545,7 +546,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         if (proxy == null)
         {
-            proxy = new WalkToProxy(worker);
+            proxy = new EntityCitizenWalkToProxy(worker);
         }
         if (proxy.walkToBlock(stand, range))
         {
@@ -582,8 +583,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param maxLevel the max tool lev	el.
      * @return true if found the tool.
      */
-    public boolean isToolInTileEntity(final TileEntityChest entity, final IToolType toolType, final int minLevel, final int maxLevel)
+    public boolean retrieveToolInTileEntity(final TileEntity entity, final IToolType toolType, final int minLevel, final int maxLevel)
     {
+        if (ToolType.NONE.equals(toolType))
+        {
+            return false;
+        }
         return InventoryFunctions.matchFirstInProviderWithAction(
                 entity,
                 stack -> ItemStackUtils.hasToolLevel(stack, toolType, minLevel, maxLevel),
@@ -668,7 +673,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             return true;
         }
-        if (isToolInHut(toolType, minimalLevel))
+        if (retrieveToolInHut(toolType, minimalLevel))
         {
             return false;
         }
@@ -735,13 +740,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param minimalLevel the minimal level the tool should have.
      * @return true if a stack of that type was found
      */
-    public boolean isToolInHut(final IToolType toolType, final int minimalLevel)
+    public boolean retrieveToolInHut(final IToolType toolType, final int minimalLevel)
     {
         @Nullable final AbstractBuildingWorker building = getOwnBuilding();
 
         if (building != null)
         {
-            if (isToolInTileEntity(building.getTileEntity(), toolType, minimalLevel, getOwnBuilding().getMaxToolLevel()))
+            if (retrieveToolInTileEntity(building.getTileEntity(), toolType, minimalLevel, getOwnBuilding().getMaxToolLevel()))
             {
                 return true;
             }
@@ -749,7 +754,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             for (final BlockPos pos : building.getAdditionalCountainers())
             {
                 final TileEntity entity = world.getTileEntity(pos);
-                if (entity instanceof TileEntityChest && isToolInTileEntity((TileEntityChest) entity, toolType, minimalLevel, getOwnBuilding().getMaxToolLevel()))
+                if (entity instanceof TileEntityChest && retrieveToolInTileEntity((TileEntityChest) entity, toolType, minimalLevel, getOwnBuilding().getMaxToolLevel()))
                 {
                     return true;
                 }
@@ -989,11 +994,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         boolean allClear = true;
         for (final @Nullable ItemStack tempStack : items)
         {
-            final ItemStack stack = tempStack.copy();
-            if (ItemStackUtils.isEmpty(stack))
+            if (ItemStackUtils.isEmpty(tempStack))
             {
                 continue;
             }
+            final ItemStack stack = tempStack.copy();
+
 
             final int itemDamage = useItemDamage ? stack.getItemDamage() : -1;
             final int countOfItem = worker.getItemCountInInventory(stack.getItem(), itemDamage);

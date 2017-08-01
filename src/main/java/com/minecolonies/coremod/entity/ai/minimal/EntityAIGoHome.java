@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
 import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -155,10 +155,17 @@ public class EntityAIGoHome extends EntityAIBase
                         }
                         else
                         {
-                            citizen.getInventoryCitizen().setInventorySlotContents(slotToSet, new ItemStack(stack.getItem(), 1));
+                            final ItemStack copy = stack.copy();
+                            ItemStackUtils.setSize(copy, 1);
+                            citizen.getInventoryCitizen().setInventorySlotContents(slotToSet, copy);
                         }
                         tookFood = true;
                         ItemStackUtils.changeSize(stack, -1);
+
+                        if(ItemStackUtils.getSize(stack) <= 0)
+                        {
+                            new InvWrapper(home.getTileEntity()).setStackInSlot(slot, ItemStackUtils.EMPTY);
+                        }
                     }
                     ((BuildingHome) home).checkIfFoodNeeded();
                 }

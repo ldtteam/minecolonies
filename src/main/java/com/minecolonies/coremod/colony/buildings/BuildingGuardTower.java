@@ -13,11 +13,7 @@ import com.minecolonies.coremod.colony.jobs.JobGuard;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemArmor;
-import net.minecraft.item.ItemBow;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
-import net.minecraft.item.ItemTool;
+import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
@@ -154,7 +150,7 @@ public class BuildingGuardTower extends AbstractBuildingWorker
     /**
      * Gets the name of the schematic.
      *
-     * @return Baker schematic name.
+     * @return Guard schematic name.
      */
     @NotNull
     @Override

@@ -7,6 +7,7 @@ import com.minecolonies.coremod.colony.IColony;
 import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
 import com.minecolonies.coremod.commands.MinecoloniesCommand;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -21,7 +22,6 @@ public final class TeleportToColony
     private static final String CANT_FIND_COLONY = "No Colony found for teleport, please define one.";
     private static final String CANT_FIND_PLAYER = "No player found for teleport, please define one.";
     private static final String NO_TOWNHALL      = "Target colony has no town hall, can't teleport.";
-
 
     /**
      * Private constructor to hide the implicit public one.
@@ -48,8 +48,9 @@ public final class TeleportToColony
         final EntityPlayer playerToTeleport;
         final IColony colony;
         final int colonyId;
+        final Entity senderEntity = sender.getCommandSenderEntity();
         //see if sent by a player and grab their name and Get the players Colony ID that sent the command
-        if (sender instanceof EntityPlayer)
+        if (senderEntity instanceof EntityPlayer)
         {
             //if no args then this is a home colony TP and we get the players Colony ID
             if (args.length == 0)
@@ -68,17 +69,16 @@ public final class TeleportToColony
         }
         else
         {
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString(CANT_FIND_PLAYER));
+            sender.addChatMessage(new TextComponentString(CANT_FIND_PLAYER));
             return;
         }
 
-        if(MinecoloniesCommand.canExecuteCommand((EntityPlayer) sender))
+        if (MinecoloniesCommand.canExecuteCommand((EntityPlayer) sender))
         {
             teleportPlayer(playerToTeleport, colonyId, sender);
             return;
         }
         sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Please wait at least " + Configurations.teleportBuffer + " seconds to teleport again"));
-
     }
 
     /**
@@ -92,15 +92,24 @@ public final class TeleportToColony
         final Colony colony = ColonyManager.getColony(colID);
         final BuildingTownHall townHall = colony.getTownHall();
 
-        if(townHall == null)
+        if (townHall == null)
         {
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_TOWNHALL));
+            sender.addChatMessage(new TextComponentString(NO_TOWNHALL));
             return;
         }
 
-        playerToTeleport.getCommandSenderEntity().addChatMessage(new TextComponentString("We got places to go, kid..."));
+        playerToTeleport.addChatMessage(new TextComponentString("We got places to go, kid..."));
 
         final BlockPos position = townHall.getLocation();
+
+        final int dimension = playerToTeleport.getEntityWorld().provider.getDimension();
+        final int colonyDimension = townHall.getColony().getDimension();
+
+        if (dimension != colonyDimension)
+        {
+            playerToTeleport.addChatMessage(new TextComponentString("Hold onto your pants, we're going Inter-Dimensional!"));
+            playerToTeleport.changeDimension(colonyDimension);
+        }
 
         if (colID >= 1)
         {
@@ -108,7 +117,7 @@ public final class TeleportToColony
         }
         else
         {
-            playerToTeleport.getCommandSenderEntity().addChatMessage(new TextComponentString(CANT_FIND_COLONY));
+            playerToTeleport.addChatMessage(new TextComponentString(CANT_FIND_COLONY));
         }
     }
 }

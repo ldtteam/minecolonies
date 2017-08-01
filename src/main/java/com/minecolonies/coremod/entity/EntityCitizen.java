@@ -4,8 +4,9 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.*;
@@ -15,14 +16,16 @@ import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.minimal.*;
+import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianUtils;
+import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.entity.pathfinding.PathNavigate;
-import com.minecolonies.coremod.entity.pathfinding.WalkToProxy;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.network.messages.BlockParticleEffectMessage;
 import com.minecolonies.coremod.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.item.EntityItem;
@@ -30,6 +33,7 @@ import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Enchantments;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
@@ -101,6 +105,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * The middle saturation point. smaller than this = bad and bigger than this = good.
      */
     public static final int AVERAGE_SATURATION = 5;
+
+    /**
+     * Distance to avoid Barbarian.
+     */
+    private static final double AVOID_BARBARIAN_RANGE = 20D;
 
     /**
      * The delta yaw value for looking at things.
@@ -241,12 +250,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private ResourceLocation texture;
     private int              colonyId;
     private int citizenId = 0;
-    private int         level;
-    private int         textureId;
+    private int          level;
+    private int          textureId;
     /**
      * Walk to proxy.
      */
-    private WalkToProxy proxy;
+    private IWalkToProxy proxy;
     /**
      * Skill modifier defines how fast a citizen levels in a certain skill.
      */
@@ -487,7 +496,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         if (proxy == null)
         {
-            proxy = new WalkToProxy(this);
+            proxy = new EntityCitizenWalkToProxy(this);
         }
         return proxy.walkToBlock(site, range, true);
     }
@@ -597,7 +606,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         final double citizenHutLevel = home == null ? 0 : home.getBuildingLevel();
         final double citizenHutMaxLevel = home == null ? 1 : home.getMaxBuildingLevel();
         if (citizenHutLevel < citizenHutMaxLevel
-                && Math.pow(2.0, citizenHutLevel + 1.0) < this.getExperienceLevel())
+                && Math.pow(2.0, citizenHutLevel + 1.0) <= this.getExperienceLevel())
         {
             return;
         }
@@ -644,6 +653,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 localXp = maxValue;
             }
 
+            localXp = applyMending(localXp);
             citizenData.addExperience(localXp);
 
             while (ExperienceUtils.getXPNeededForNextLevel(citizenData.getLevel()) < citizenData.getExperience())
@@ -653,6 +663,28 @@ public class EntityCitizen extends EntityAgeable implements INpc
             this.updateLevel();
             citizenData.markDirty();
         }
+    }
+
+    /**
+     * repair random equipped/held item with mending enchant.
+     *
+     * @param xp amount of xp available to mend with
+     * @return xp left after mending
+     */
+    private double applyMending(final double xp)
+    {
+        double localXp = xp;
+        final ItemStack tool = EnchantmentHelper.getEnchantedItem(Enchantments.MENDING, this);
+
+        if (tool != null && tool.isItemDamaged())
+        {
+            //2 xp to heal 1 dmg
+            final double dmgHealed = Math.min(localXp / 2, tool.getItemDamage());
+            localXp -= dmgHealed * 2;
+            tool.setItemDamage(tool.getItemDamage() - (int) Math.ceil(dmgHealed));
+        }
+
+        return localXp;
     }
 
     @Nullable
@@ -1527,6 +1559,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
         if (this.getColonyJob() instanceof JobGuard)
         {
             return DesiredActivity.WORK;
+        }
+
+        if (BarbarianUtils.getClosestBarbarianToEntity(this,AVOID_BARBARIAN_RANGE) != null && !(this.getColonyJob() instanceof JobGuard))
+        {
+            return DesiredActivity.SLEEP;
         }
 
         if (!CompatibilityUtils.getWorld(this).isDaytime())
