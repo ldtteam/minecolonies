@@ -1,7 +1,7 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "XXX",
+    "XSX",
     "XTX",
     "XXX"
   ],
@@ -12,6 +12,9 @@
     },
     "T": {
       "item": "minecraft:torch"
+    },
+    "S": {
+      "item": "minecolonies:sceptergold"
     }
   },
   "result": {

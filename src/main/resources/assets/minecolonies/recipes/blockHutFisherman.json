@@ -1,7 +1,7 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "XXX",
+    "XTX",
     "XRX",
     "XXX"
   ],
@@ -12,6 +12,9 @@
     },
     "R": {
       "item": "minecraft:fishing_rod"
+    },
+    "T": {
+      "item": "minecolonies:sceptergold"
     }
   },
   "result": {

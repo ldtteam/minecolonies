@@ -1,7 +1,7 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "XXX",
+    "XTX",
     "XBX",
     "XXX"
   ],
@@ -12,6 +12,9 @@
     },
     "B": {
       "item": "minecraft:leather_boots"
+    },
+    "T": {
+      "item": "minecolonies:sceptergold"
     }
   },
   "result": {

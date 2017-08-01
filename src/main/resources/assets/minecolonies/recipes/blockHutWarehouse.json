@@ -1,7 +1,7 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "XXX",
+    "XTX",
     "XGX",
     "XXX"
   ],
@@ -12,6 +12,9 @@
     },
     "G": {
       "item": "minecraft:gold_ingot"
+    },
+    "T": {
+      "item": "minecolonies:sceptergold"
     }
   },
   "result": {

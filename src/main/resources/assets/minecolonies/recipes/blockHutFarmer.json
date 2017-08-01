@@ -1,7 +1,7 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "XXX",
+    "XTX",
     "XHX",
     "XXX"
   ],
@@ -12,6 +12,9 @@
     },
     "H": {
       "item": "minecraft:wooden_hoe"
+    },
+    "T": {
+      "item": "minecolonies:sceptergold"
     }
   },
   "result": {

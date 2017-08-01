@@ -1,7 +1,7 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "XXX",
+    "XTX",
     "XPX",
     "XXX"
   ],
@@ -12,6 +12,9 @@
     },
     "P": {
       "item": "minecraft:wooden_pickaxe"
+    },
+    "T": {
+      "item": "minecolonies:sceptergold"
     }
   },
   "result": {

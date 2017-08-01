@@ -1,7 +1,7 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "XXX",
+    "XTX",
     "XDX",
     "XXX"
   ],
@@ -13,6 +13,9 @@
     "D": {
       "item": "minecraft:wooden_door",
       "data": 0
+    },
+    "T": {
+      "item": "minecolonies:sceptergold"
     }
   },
   "result": {
