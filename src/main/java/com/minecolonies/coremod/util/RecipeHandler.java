@@ -87,8 +87,6 @@ public final class RecipeHandler
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockSolidSubstitution, ONE_FORTH_OF_A_STACK),
                 "XXX", "X#X", "XXX", 'X', "logWood", '#', ModItems.scanTool));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockTimberFrame, FOUR_BLOCKS), " W ", " W ", " WB", 'W', PLANK_WOOD, 'B', ModItems.buildTool));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockCrossedFrame, FOUR_BLOCKS), "W W", " W ", "WBW", 'W', PLANK_WOOD, 'B', ModItems.buildTool));
-
 
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutField, 1), 
                 " Y ", "X#X", " X ", 'X', WOODEN_STICK, '#', Items.LEATHER, 'Y', Blocks.HAY_BLOCK));

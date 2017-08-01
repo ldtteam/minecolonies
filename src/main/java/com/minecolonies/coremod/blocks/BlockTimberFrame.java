@@ -9,7 +9,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 /**
- * Decorative blocks
+ * Decorative block
  */
 public class BlockTimberFrame extends Block
 {

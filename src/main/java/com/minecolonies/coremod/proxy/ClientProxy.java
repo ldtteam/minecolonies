@@ -116,8 +116,6 @@ public class ClientProxy extends CommonProxy
         itemModelMesher.register(Item.getItemFromBlock(ModBlocks.blockHutGuardTower), 0, new ModelResourceLocation(ModBlocks.blockHutGuardTower.getRegistryName(), INVENTORY));
         itemModelMesher.register(Item.getItemFromBlock(ModBlocks.blockSolidSubstitution), 0,
                 new ModelResourceLocation(ModBlocks.blockSolidSubstitution.getRegistryName(), INVENTORY));
-        itemModelMesher.register(Item.getItemFromBlock(ModBlocks.blockCrossedFrame), 0,
-                new ModelResourceLocation(ModBlocks.blockCrossedFrame.getRegistryName(), INVENTORY));
         itemModelMesher.register(Item.getItemFromBlock(ModBlocks.blockTimberFrame), 0,
                 new ModelResourceLocation(ModBlocks.blockTimberFrame.getRegistryName(), INVENTORY));
         itemModelMesher.register(Item.getItemFromBlock(ModBlocks.blockConstructionTape), 0,
