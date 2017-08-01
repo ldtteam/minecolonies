@@ -31,7 +31,7 @@ public final class RecipeHandler
      * The amount of items returned by certain crafting recipes
      */
     private static final int ONE_FORTH_OF_A_STACK = 16;
-    private static final int FOUR = 4;
+    private static final int ONE_SIXTEENTH_OF_A_STACK = 4;
     /**
      * Private constructor to hide the implicit public one.
      */
@@ -54,7 +54,7 @@ public final class RecipeHandler
         GameRegistry.addShapelessRecipe(new ItemStack(ModBlocks.blockConstructionTape, 1),ModBlocks.blockConstructionTapeCorner);
 
         //Reverse Engineer String
-        GameRegistry.addShapelessRecipe(new ItemStack(Items.STRING, FOUR), Blocks.WOOL);
+        GameRegistry.addShapelessRecipe(new ItemStack(Items.STRING, ONE_SIXTEENTH_OF_A_STACK), Blocks.WOOL);
 
         // Register the huts
         addHutRecipe(new ItemStack(ModBlocks.blockHutMiner, 1), Items.WOODEN_PICKAXE);
