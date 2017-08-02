@@ -220,9 +220,6 @@ public final class MobEventsUtils
                 return true;
             }
         }
-
-
-
         return false;
     }
 
