@@ -5,6 +5,10 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
+import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityArcherBarbarian;
+import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityBarbarian;
+import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityChiefBarbarian;
+import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianSpawnUtils;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.event.FMLEventHandler;
 import com.minecolonies.coremod.inventory.GuiHandler;
@@ -15,6 +19,7 @@ import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.storage.loot.LootTableList;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
@@ -24,15 +29,19 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-
 /**
  * CommonProxy of the minecolonies mod (Server and Client).
  */
 public class CommonProxy implements IProxy
 {
     /**
-     * Used to store IExtendedEntityProperties data temporarily between player
-     * death and respawn.
+     * feel free to change the following if you want different colored spawn eggs
+     */
+    private static final int PRIMARY_COLOR   = 5;
+    private static final int SECONDARY_COLOR = 700;
+
+    /**
+     * Used to store IExtendedEntityProperties data temporarily between player death and respawn.
      */
     private static final Map<String, NBTTagCompound> playerPropertiesData = new HashMap<>();
     private              int                         nextEntityId         = 0;
@@ -96,11 +105,62 @@ public class CommonProxy implements IProxy
     {
         final ResourceLocation locationCitizen = new ResourceLocation(Constants.MOD_ID, "Citizen");
         final ResourceLocation locationFishHook = new ResourceLocation(Constants.MOD_ID, "Fishhook");
+        final ResourceLocation locationBarbarian = new ResourceLocation(Constants.MOD_ID, "Barbarian");
+        final ResourceLocation locationArcherBarbarian = new ResourceLocation(Constants.MOD_ID, "ArcherBarbarian");
+        final ResourceLocation locationChiefBarbarian = new ResourceLocation(Constants.MOD_ID, "ChiefBarbarian");
 
         // Half as much tracking range and same update frequency as a player
         // See EntityTracker.addEntityToTracker for more default values
-        EntityRegistry.registerModEntity(locationCitizen, EntityCitizen.class, "Citizen", getNextEntityId(), MineColonies.instance, 256, 2, true);
-        EntityRegistry.registerModEntity(locationFishHook, EntityFishHook.class, "Fishhook", getNextEntityId(), MineColonies.instance, 250, 5, true);
+        EntityRegistry.registerModEntity(locationCitizen,
+          EntityCitizen.class,
+          "Citizen",
+          getNextEntityId(),
+          MineColonies.instance,
+          Constants.ENTITY_TRACKING_RANGE,
+          Constants.ENTITY_UPDATE_FREQUENCY,
+          true);
+        EntityRegistry.registerModEntity(locationFishHook,
+          EntityFishHook.class,
+          "Fishhook",
+          getNextEntityId(),
+          MineColonies.instance,
+          Constants.ENTITY_TRACKING_RANGE,
+          Constants.ENTITY_UPDATE_FREQUENCY_FISHHOOK,
+          true);
+        EntityRegistry.registerModEntity(locationBarbarian,
+          EntityBarbarian.class,
+          "Barbarian",
+          getNextEntityId(),
+          MineColonies.instance,
+          Constants.ENTITY_TRACKING_RANGE,
+          Constants.ENTITY_UPDATE_FREQUENCY,
+          true);
+        EntityRegistry.registerModEntity(locationArcherBarbarian,
+          EntityArcherBarbarian.class,
+          "ArcherBarbarian",
+          getNextEntityId(),
+          MineColonies.instance,
+          Constants.ENTITY_TRACKING_RANGE,
+          Constants.ENTITY_UPDATE_FREQUENCY,
+          true);
+        EntityRegistry.registerModEntity(locationChiefBarbarian,
+          EntityChiefBarbarian.class,
+          "ChiefBarbarian",
+          getNextEntityId(),
+          MineColonies.instance,
+          Constants.ENTITY_TRACKING_RANGE,
+          Constants.ENTITY_UPDATE_FREQUENCY,
+          true);
+
+        //Register Barbarian loot tables.
+        LootTableList.register(BarbarianSpawnUtils.BarbarianLootTable);
+        LootTableList.register(BarbarianSpawnUtils.ArcherLootTable);
+        LootTableList.register(BarbarianSpawnUtils.ChiefLootTable);
+
+        //Register Barbarian spawn eggs
+        EntityRegistry.registerEgg(locationBarbarian, PRIMARY_COLOR, SECONDARY_COLOR);
+        EntityRegistry.registerEgg(locationArcherBarbarian, PRIMARY_COLOR, SECONDARY_COLOR);
+        EntityRegistry.registerEgg(locationChiefBarbarian, PRIMARY_COLOR, SECONDARY_COLOR);
     }
 
     @Override
@@ -156,5 +216,4 @@ public class CommonProxy implements IProxy
     {
         return null;
     }
-
 }

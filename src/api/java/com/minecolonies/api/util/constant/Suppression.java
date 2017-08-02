@@ -97,6 +97,14 @@ public final class Suppression
     public static final String RESOURCES_SHOULD_BE_CLOSED = "squid:S2095 ";
 
 
+    /**
+     * Sometimes it doesn't make sense (Or isn't viable) to make a public value / method protected.
+     * <p>
+     * Use this sparely!
+     */
+    @NonNls
+    public static final String MAKE_PROTECTED = "squid:S2386";
+
     private Suppression()
     {
         //empty default

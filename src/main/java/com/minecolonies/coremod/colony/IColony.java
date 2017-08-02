@@ -75,4 +75,10 @@ public interface IColony
      * @return an integer with a describing value.
      */
     int getLastContactInHours();
+
+    /**
+     * Get whether there will be a raid in this colony tonight, or not.
+     * @return Boolean value true if raid, false if not
+     */
+    boolean hasWillRaidTonight();
 }
