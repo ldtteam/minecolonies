@@ -41,7 +41,6 @@ public final class MobEventsUtils
     private static       int    numberOfBarbarians           = 0;
     private static       int    numberOfArchers              = 0;
     private static       int    numberOfChiefs               = 0;
-    private static long timeToRaid;
 
     /**
      * Private constructor to hide the implicit public one.
@@ -196,39 +195,34 @@ public final class MobEventsUtils
         {
             return false;
         }
-        if (world.getWorldTime() % HALF_MINECRAFT_DAY == 0)
+        if ((world.getWorldTime() - TICKS_AFTER_HALF_DAY) % HALF_MINECRAFT_DAY == 0)
         {
-            if (Configurations.gameplay.enableInDevelopmentFeatures)
+            if (world.isDaytime())
             {
-                LanguageHandler.sendPlayersMessage(
-                  colony.getMessageEntityPlayers(),
-                  "Half-day reached");
+                final boolean raid = raidThisNight(world);
+                if (Configurations.gameplay.enableInDevelopmentFeatures)
+                {
+                    LanguageHandler.sendPlayersMessage(
+                      colony.getMessageEntityPlayers(),
+                      "Will raid tonight: " + raid);
+                }
+                colony.setWillRaidTonight(raid);
+                return false;
             }
-            timeToRaid = world.getWorldTime() + TICKS_AFTER_HALF_DAY;
-            return false;
-        }
-        if (world.getWorldTime() == timeToRaid && !world.isDaytime() && colony.hasWillRaidTonight())
-        {
-            if (Configurations.gameplay.enableInDevelopmentFeatures)
+            else if (colony.hasWillRaidTonight())
             {
-                LanguageHandler.sendPlayersMessage(
-                  colony.getMessageEntityPlayers(),
-                  "Night reached: raiding");
+                if (Configurations.gameplay.enableInDevelopmentFeatures)
+                {
+                    LanguageHandler.sendPlayersMessage(
+                      colony.getMessageEntityPlayers(),
+                      "Night reached: raiding");
+                }
+                return true;
             }
-            return true;
         }
-        if (world.getWorldTime() == timeToRaid && world.isDaytime())
-        {
-            final boolean raid = raidThisNight(world);
-            if (Configurations.gameplay.enableInDevelopmentFeatures)
-            {
-                LanguageHandler.sendPlayersMessage(
-                  colony.getMessageEntityPlayers(),
-                  "Will raid tonight: " + raid);
-            }
-            colony.setWillRaidTonight(raid);
-            return false;
-        }
+
+
+
         return false;
     }
 
