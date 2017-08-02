@@ -91,4 +91,10 @@ public interface IColony
      */
     @Nullable
     IRequestManager getRequestManager();
+
+    /**
+     * Get whether there will be a raid in this colony tonight, or not.
+     * @return Boolean value true if raid, false if not
+     */
+    boolean hasWillRaidTonight();
 }
