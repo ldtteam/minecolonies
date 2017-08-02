@@ -706,4 +706,10 @@ public final class ColonyView implements IColony
         //At least for now.
         return null;
     }
+
+    @Override
+    public boolean hasWillRaidTonight()
+    {
+        return false;
+    }
 }

@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.sounds;
 
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.Suppression;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -15,8 +16,18 @@ public final class ModSoundEvents
 {
     /**
      * List of sound handlers.
+     *
+     * (Making this Protected isn't viable in current state)
      */
+    @SuppressWarnings(Suppression.MAKE_PROTECTED)
     public static final List<AbstractWorkerSounds> handlers = new ArrayList<>();
+    static
+    {
+        handlers.add(new FishermanSounds());
+        handlers.add(new DeliverymanSounds());
+        handlers.add(new CitizenSounds());
+        handlers.add(new FarmerSounds());
+    }
 
     /**
      * Private constructor to hide the implicit public one.
@@ -26,14 +37,6 @@ public final class ModSoundEvents
         /*
          * Intentionally left empty.
          */
-    }
-
-    static
-    {
-        handlers.add(new FishermanSounds());
-        handlers.add(new DeliverymanSounds());
-        handlers.add(new CitizenSounds());
-        handlers.add(new FarmerSounds());
     }
 
     /**
@@ -79,6 +82,10 @@ public final class ModSoundEvents
 
         GameRegistry.register(CitizenSounds.Female.say);
         GameRegistry.register(CitizenSounds.Male.say);
+
+        GameRegistry.register(BarbarianSounds.barbarianHurt);
+        GameRegistry.register(BarbarianSounds.barbarianDeath);
+        GameRegistry.register(BarbarianSounds.barbarianSay);
     }
 
     /**
