@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.mobs.util;
 
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -63,7 +64,7 @@ public final class MobEventsUtils
 
         if (targetSpawnPoint == null)
         {
-            System.out.println("Barbarian Event SpawnPoint is Null for colony: " + colony);
+            Log.getLogger().debug("Barbarian Event SpawnPoint is Null for colony: " + colony);
             return;
         }
 
@@ -125,7 +126,7 @@ public final class MobEventsUtils
     {
         if (colony == null)
         {
-            System.out.println("When trying to find SpawnPoint for Barbarian Event, the Colony was Null!");
+            Log.getLogger().debug("When trying to find SpawnPoint for Barbarian Event, the Colony was Null!");
             return null;
         }
         final BlockPos center = colony.getCenter();
