@@ -61,6 +61,12 @@ public final class MobEventsUtils
               "Horde Spawn Point: " + targetSpawnPoint);
         }
 
+        if (targetSpawnPoint == null)
+        {
+            System.out.println("Barbarian Event SpawnPoint is Null for colony: " + colony);
+            return;
+        }
+
         LanguageHandler.sendPlayersMessage(
           colony.getMessageEntityPlayers(),
           "event.minecolonies.raidMessage");
@@ -117,12 +123,12 @@ public final class MobEventsUtils
      */
     private static BlockPos calculateSpawnLocation(final World world, final Colony colony)
     {
-        final ColonyView colonyView = ColonyManager.getClosestColonyView(world, colony.getCenter());
-        if (colonyView == null)
+        if (colony == null)
         {
+            System.out.println("When trying to find SpawnPoint for Barbarian Event, the Colony was Null!");
             return null;
         }
-        final BlockPos center = colonyView.getCenter();
+        final BlockPos center = colony.getCenter();
         final int radius = Configurations.workingRangeTownHall;
 
         final int randomDegree = world.rand.nextInt((int) WHOLE_CIRCLE);
