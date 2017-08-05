@@ -1998,7 +1998,6 @@ public class Colony implements IColony
 
     public void setWillRaidTonight(final Boolean willRaid)
     {
-        System.out.println("Debug5");
         willRaidTonight = willRaid;
     }
 }

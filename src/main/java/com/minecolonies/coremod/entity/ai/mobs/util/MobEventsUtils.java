@@ -193,15 +193,12 @@ public final class MobEventsUtils
     {
         if (colony.getCitizens().size() < NUMBER_OF_CITIZENS_NEEDED)
         {
-            //System.out.println("Debug1");
             return false;
         }
         if ((world.getWorldTime() - TICKS_AFTER_HALF_DAY) % HALF_MINECRAFT_DAY == 0)
         {
-            System.out.println("Debug2");
             if (world.isDaytime())
             {
-                System.out.println("Debug3");
                 final boolean raid = raidThisNight(world);
                 if (Configurations.gameplay.enableInDevelopmentFeatures)
                 {
@@ -214,7 +211,6 @@ public final class MobEventsUtils
             }
             else if (colony.hasWillRaidTonight())
             {
-                System.out.println("Debug4");
                 if (Configurations.gameplay.enableInDevelopmentFeatures)
                 {
                     LanguageHandler.sendPlayersMessage(
