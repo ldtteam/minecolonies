@@ -86,7 +86,7 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand
             final ITextComponent deleteButton = new TextComponentString("[DELETE]").setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
               new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/mc check true")
             ));
-            sender.addChatMessage(new TextComponentString("There are: " + coloniesToDelete.size() + " colonies to delete"));
+            sender.addChatMessage(new TextComponentString("There are: " + coloniesToDelete.size() + " of a total of " + colonies.size() + " to delete."));
             sender.addChatMessage(new TextComponentString("Click [DELETE] to confirm"));
             sender.addChatMessage(deleteButton);
         }
