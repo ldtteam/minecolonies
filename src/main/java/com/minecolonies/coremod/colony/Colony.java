@@ -124,7 +124,7 @@ public class Colony implements IColony
     /**
      * Whether or not this colony can be auto deleted =D. (set via command)
      */
-    private boolean canBeAutoDeleted = true;
+    private boolean canColonyBeAutoDeleted = true;
 
     /**
      * Bonus happiness each factor added.
@@ -407,7 +407,7 @@ public class Colony implements IColony
         }
         lastContactInHours = compound.getInteger(TAG_ABANDONED);
         manualHousing = compound.getBoolean(TAG_MANUAL_HOUSING);
-        canBeAutoDeleted = compound.getBoolean(TAG_DELETABLE);
+        canColonyBeAutoDeleted = compound.getBoolean(TAG_DELETABLE);
     }
 
     /**
@@ -567,7 +567,7 @@ public class Colony implements IColony
         compound.setDouble(TAG_HAPPINESS, overallHappiness);
         compound.setInteger(TAG_ABANDONED, lastContactInHours);
         compound.setBoolean(TAG_MANUAL_HOUSING, manualHousing);
-        compound.setBoolean(TAG_DELETABLE, canBeAutoDeleted);
+        compound.setBoolean(TAG_DELETABLE, canColonyBeAutoDeleted);
     }
 
     /**
@@ -2032,7 +2032,7 @@ public class Colony implements IColony
     @Override
     public boolean canBeAutoDeleted()
     {
-        return canBeAutoDeleted;
+        return canColonyBeAutoDeleted;
     }
 
     /**
@@ -2041,6 +2041,6 @@ public class Colony implements IColony
      */
     public void setCanBeAutoDeleted(final Boolean canBeDeleted)
     {
-        this.canBeAutoDeleted = canBeDeleted;
+        this.canColonyBeAutoDeleted = canBeDeleted;
     }
 }

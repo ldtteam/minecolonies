@@ -128,7 +128,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
         sender.addChatMessage(new TextComponentString(CITIZENS + colony.getCitizens().size() + "/" + colony.getMaxCitizens()));
         sender.addChatMessage(new TextComponentString(COORDINATES_TEXT + String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
         sender.addChatMessage(new TextComponentString(String.format(LAST_CONTACT_TEXT, colony.getLastContactInHours())));
-        sender.addChatMessage(new TextComponentString(IS_DELETABLE + !colony.isCanBeAutoDeleted()));
+        sender.addChatMessage(new TextComponentString(IS_DELETABLE + !colony.canBeAutoDeleted()));
     }
 
     @NotNull
