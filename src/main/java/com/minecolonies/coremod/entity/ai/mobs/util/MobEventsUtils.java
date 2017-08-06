@@ -135,7 +135,7 @@ public final class MobEventsUtils
             Log.getLogger().error("The FallBack spawn location for the BarbarianRaidEvent is Null.. Report this IMMEDIATELY");
         }
 
-        return world.getTopSolidOrLiquidBlock(new BlockPos(x,y,z));
+        return SpawnPoint;
     }
 
     /**
