@@ -8,6 +8,7 @@ import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import sun.jvm.hotspot.opto.Block;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +51,7 @@ public final class MobEventsUtils
     {
         numberOfSpawns(colony);
 
-        final BlockPos targetSpawnPoint = calculateSpawnLocation(world, colony);
+        BlockPos targetSpawnPoint = calculateSpawnLocation(world, colony);
 
         if (Configurations.enableInDevelopmentFeatures)
         {
@@ -62,7 +63,8 @@ public final class MobEventsUtils
         if (targetSpawnPoint == null)
         {
             Log.getLogger().debug("Barbarian Event SpawnPoint is Null for colony: " + colony);
-            return;
+
+            targetSpawnPoint = calculateFallBackSpawnLocation(world, colony);
         }
 
         LanguageHandler.sendPlayersMessage(
@@ -110,6 +112,30 @@ public final class MobEventsUtils
             hordeTotal = numberOfArchers + numberOfBarbarians + numberOfChiefs;
             numberOfChiefs = equalizeBarbarianSpawns(hordeTotal, numberOfChiefs);
         }
+    }
+
+    private static BlockPos calculateFallBackSpawnLocation(final World world, final Colony colony)
+    {
+        if (colony == null)
+        {
+            Log.getLogger().debug("When trying to find SpawnPoint for Barbarian Event, the Colony was Null!");
+            return null;
+        }
+        final BlockPos center = colony.getCenter();
+        final int radius = Configurations.workingRangeTownHall;
+
+        final int x = center.getX() + radius;
+        final int y = center.getY();
+        final int z = center.getZ();
+
+        final BlockPos SpawnPoint = world.getTopSolidOrLiquidBlock(new BlockPos(x,y,z));
+
+        if (SpawnPoint == null)
+        {
+            Log.getLogger().error("The FallBack spawn location for the BarbarianRaidEvent is Null.. Report this IMMEDIATELY");
+        }
+
+        return world.getTopSolidOrLiquidBlock(new BlockPos(x,y,z));
     }
 
     /**
