@@ -8,7 +8,6 @@ import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-import sun.jvm.hotspot.opto.Block;
 
 import java.util.ArrayList;
 import java.util.List;
