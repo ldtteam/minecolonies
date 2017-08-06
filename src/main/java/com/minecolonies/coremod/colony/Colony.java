@@ -2030,11 +2030,15 @@ public class Colony implements IColony
 
 
     @Override
-    public boolean isCanBeAutoDeleted()
+    public boolean canBeAutoDeleted()
     {
         return canBeAutoDeleted;
     }
 
+    /**
+     * This sets whether or not a colony can be automatically deleted Via command, or an on-tick check.
+     * @param canBeDeleted whether the colony is able to be deleted automatically
+     */
     public void setCanBeAutoDeleted(final Boolean canBeDeleted)
     {
         this.canBeAutoDeleted = canBeDeleted;

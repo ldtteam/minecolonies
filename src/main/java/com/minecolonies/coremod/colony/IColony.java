@@ -84,5 +84,5 @@ public interface IColony
      * Get whether the colony can be auto deleted.
      * @return true if so.
      */
-    boolean isCanBeAutoDeleted();
+    boolean canBeAutoDeleted();
 }
