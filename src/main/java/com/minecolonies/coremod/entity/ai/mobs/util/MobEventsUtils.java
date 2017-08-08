@@ -143,13 +143,7 @@ public final class MobEventsUtils
         final int y;
         final int z;
 
-        if (random == 0)
-        {
-            x = center.getX() + radius;
-            y = center.getY();
-            z = center.getZ();
-        }
-        else if (random == ONE)
+        if (random == ONE)
         {
             x = center.getX() - radius;
             y = center.getY();
@@ -174,14 +168,14 @@ public final class MobEventsUtils
             z = center.getZ();
         }
 
-        final BlockPos SpawnPoint = world.getTopSolidOrLiquidBlock(new BlockPos(x, y, z));
+        final BlockPos spawnPoint = world.getTopSolidOrLiquidBlock(new BlockPos(x, y, z));
 
-        if (SpawnPoint == null)
+        if (spawnPoint == null)
         {
             Log.getLogger().error("The FallBack spawn location for the BarbarianRaidEvent is Null.. Report this IMMEDIATELY");
         }
 
-        return SpawnPoint;
+        return spawnPoint;
     }
 
     /**
