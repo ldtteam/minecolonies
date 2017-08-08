@@ -61,10 +61,19 @@ public final class MobEventsUtils
 
         if (targetSpawnPoint == null)
         {
-            Log.getLogger().debug("Barbarian Event SpawnPoint is Null for colony: " + colony);
+            Log.getLogger().error("Barbarian Event SpawnPoint is Null for colony: " + colony);
 
             targetSpawnPoint = calculateFallBackSpawnLocation(world, colony);
+
+            if (Configurations.enableInDevelopmentFeatures)
+            {
+                LanguageHandler.sendPlayersMessage(
+                  colony.getMessageEntityPlayers(),
+                  "Fallback Horde Spawn Point: " + targetSpawnPoint);
+            }
         }
+
+        Log.getLogger().error("New barbarian event spawnpoint: " + targetSpawnPoint);
 
         LanguageHandler.sendPlayersMessage(
           colony.getMessageEntityPlayers(),
@@ -117,17 +126,50 @@ public final class MobEventsUtils
     {
         if (colony == null)
         {
-            Log.getLogger().debug("When trying to find SpawnPoint for Barbarian Event, the Colony was Null!");
+            Log.getLogger().error("When trying to find SpawnPoint for Barbarian Event, the Colony was Null!");
             return null;
         }
         final BlockPos center = colony.getCenter();
         final int radius = Configurations.workingRangeTownHall;
 
-        final int x = center.getX() + radius;
-        final int y = center.getY();
-        final int z = center.getZ();
+        final int random = world.rand.nextInt(4);
 
-        final BlockPos SpawnPoint = world.getTopSolidOrLiquidBlock(new BlockPos(x,y,z));
+        final int x;
+        final int y;
+        final int z;
+
+        if (random == 0)
+        {
+            x = center.getX() + radius;
+            y = center.getY();
+            z = center.getZ();
+        }
+        else if (random == 1)
+        {
+            x = center.getX() - radius;
+            y = center.getY();
+            z = center.getZ();
+        }
+        else if (random == 2)
+        {
+            x = center.getX();
+            y = center.getY();
+            z = center.getZ() + radius;
+        }
+        else if (random == 3)
+        {
+            x = center.getX();
+            y = center.getY();
+            z = center.getZ() - radius;
+        }
+        else
+        {
+            x = center.getX() + radius;
+            y = center.getY();
+            z = center.getZ();
+        }
+
+        final BlockPos SpawnPoint = world.getTopSolidOrLiquidBlock(new BlockPos(x, y, z));
 
         if (SpawnPoint == null)
         {
@@ -148,26 +190,26 @@ public final class MobEventsUtils
     {
         if (colony == null)
         {
-            Log.getLogger().debug("When trying to find SpawnPoint for Barbarian Event, the Colony was Null!");
+            Log.getLogger().error("When trying to find SpawnPoint for Barbarian Event, the Colony was Null!");
             return null;
         }
         final BlockPos center = colony.getCenter();
-        Log.getLogger().debug("Colony center is: " + center);
+        Log.getLogger().error("Colony center is: " + center);
         final int radius = Configurations.workingRangeTownHall;
-        Log.getLogger().debug("Colony radius is: " + radius);
+        Log.getLogger().error("Colony radius is: " + radius);
         final int randomDegree = world.rand.nextInt((int) WHOLE_CIRCLE);
-        Log.getLogger().debug("RandomDefree for spawn point is:  " + randomDegree);
+        Log.getLogger().error("RandomDegree for spawn point is:  " + randomDegree);
 
         final double rads = (double) randomDegree / HALF_A_CIRCLE * Math.PI;
-        Log.getLogger().debug("Rads:  " + rads);
+        Log.getLogger().error("Rads:  " + rads);
 
         final double x = Math.round(center.getX() + radius * Math.sin(rads));
-        Log.getLogger().debug("X Coord: " + x);
+        Log.getLogger().error("X Coord: " + x);
         final double z = Math.round(center.getZ() + radius * Math.cos(rads));
-        Log.getLogger().debug("Z Coord: " + z);
+        Log.getLogger().error("Z Coord: " + z);
 
         final BlockPos topBlock = world.getTopSolidOrLiquidBlock(new BlockPos(x, center.getY(), z));
-        Log.getLogger().debug("TopSolid or Liquid Block: " + topBlock);
+        Log.getLogger().error("TopSolid or Liquid Block: " + topBlock);
         return topBlock;
     }
 
