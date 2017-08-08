@@ -152,14 +152,23 @@ public final class MobEventsUtils
             return null;
         }
         final BlockPos center = colony.getCenter();
+        Log.getLogger().debug("Colony center is: " + center);
         final int radius = Configurations.workingRangeTownHall;
-
+        Log.getLogger().debug("Colony radius is: " + radius);
         final int randomDegree = world.rand.nextInt((int) WHOLE_CIRCLE);
+        Log.getLogger().debug("RandomDefree for spawn point is:  " + randomDegree);
 
         final double rads = (double) randomDegree / HALF_A_CIRCLE * Math.PI;
+        Log.getLogger().debug("Rads:  " + rads);
+
         final double x = Math.round(center.getX() + radius * Math.sin(rads));
+        Log.getLogger().debug("X Coord: " + x);
         final double z = Math.round(center.getZ() + radius * Math.cos(rads));
-        return world.getTopSolidOrLiquidBlock(new BlockPos(x, center.getY(), z));
+        Log.getLogger().debug("Z Coord: " + z);
+
+        final BlockPos topBlock = world.getTopSolidOrLiquidBlock(new BlockPos(x, center.getY(), z));
+        Log.getLogger().debug("TopSolid or Liquid Block: " + topBlock);
+        return topBlock;
     }
 
     /**
