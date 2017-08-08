@@ -39,6 +39,11 @@ public final class MobEventsUtils
     private static       int    numberOfArchers              = 0;
     private static       int    numberOfChiefs               = 0;
 
+    // Fall back possible values.
+    private static final int ONE   = 1;
+    private static final int TWO   = 2;
+    private static final int THREE = 3;
+
     /**
      * Private constructor to hide the implicit public one.
      */
@@ -144,19 +149,19 @@ public final class MobEventsUtils
             y = center.getY();
             z = center.getZ();
         }
-        else if (random == 1)
+        else if (random == ONE)
         {
             x = center.getX() - radius;
             y = center.getY();
             z = center.getZ();
         }
-        else if (random == 2)
+        else if (random == TWO)
         {
             x = center.getX();
             y = center.getY();
             z = center.getZ() + radius;
         }
-        else if (random == 3)
+        else if (random == THREE)
         {
             x = center.getX();
             y = center.getY();
