@@ -55,7 +55,7 @@ public class DoRaidTonightCommand extends AbstractSingleCommand
     {
         if (sender instanceof EntityPlayer && !isPlayerOpped(sender))
         {
-            sender.addChatMessage(new TextComponentString("Must be OP to use command"));
+            sender.sendMessage(new TextComponentString("Must be OP to use command"));
             return;
         }
 

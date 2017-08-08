@@ -56,10 +56,10 @@ public class DoRaidNowCommand extends AbstractSingleCommand
     {
         if (sender instanceof EntityPlayer && !isPlayerOpped(sender))
         {
-            sender.addChatMessage(new TextComponentString("Must be OP to use command"));
+            sender.sendMessage(new TextComponentString("Must be OP to use command"));
             return;
         }
-        
+
         if (args.length != 0)
         {
             final Colony colony = ColonyManager.getColony(Integer.parseInt(args[0]));
