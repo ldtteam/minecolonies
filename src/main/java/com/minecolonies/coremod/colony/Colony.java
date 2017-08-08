@@ -1,6 +1,9 @@
 package com.minecolonies.coremod.colony;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.colony.requestsystem.IRequestManager;
+import com.minecolonies.api.colony.requestsystem.StandardRequestManager;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.MineColonies;
@@ -216,6 +219,7 @@ public class Colony implements IColony
      * Amount of ticks passed.
      */
     private int ticksPassed = 0;
+    private final IRequestManager requestManager = new StandardRequestManager(this);
 
     /**
      * Constructor for a newly created Colony.
@@ -2020,4 +2024,11 @@ public class Colony implements IColony
         willRaidTonight = willRaid;
     }
 
+
+    @Nullable
+    @Override
+    public IRequestManager getRequestManager()
+    {
+        return requestManager;
+    }
 }

@@ -444,5 +444,17 @@ public final class ItemStackUtils
         }
         return false;
     }
+
+    /**
+     * Update method to allow for easy reading the ItemStack data from NBT.
+     *
+     * @param compound The compound to read from.
+     * @return The ItemStack stored in the NBT Data.
+     */
+    @NotNull
+    public static ItemStack deserializeFromNBT(@NotNull final NBTTagCompound compound)
+    {
+        return new ItemStack(compound);
+    }
 }
 

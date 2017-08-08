@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.inventory;
 
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
@@ -36,16 +38,18 @@ public class InventoryTest
     {
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
-            assertNull("Inventory space wasn't empty", inventory.getStackInSlot(i));
+            assertEquals("Inventory space wasn't empty", ItemStackUtils.EMPTY, inventory.getStackInSlot(i));
         }
     }
 
     @Test
     public void testAddStack()
     {
-        final Item testItem = mock(Item.class);
-        final ItemStack stuff = new ItemStack(testItem, 3);
-        inventory.setInventorySlotContents(0, stuff);
-        assertSame("Unexpected ItemStack in inventory", inventory.getStackInSlot(0), stuff);
+        // Using a null item allows us to get past the call to Blocks or Items.
+        final ItemStack itemStack = new ItemStack((Item) null);
+        inventory.setInventorySlotContents(0, itemStack);
+        final ItemStack returnedItemStack = inventory.getStackInSlot(0);
+        assertNotEquals("The Item wasn't set", itemStack, ItemStackUtils.EMPTY);
+        assertSame("Stack wasn't the same", itemStack, returnedItemStack);
     }
 }
