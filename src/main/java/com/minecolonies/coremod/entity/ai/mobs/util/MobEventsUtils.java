@@ -3,10 +3,12 @@ package com.minecolonies.coremod.entity.ai.mobs.util;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeChunkManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -66,7 +68,7 @@ public final class MobEventsUtils
 
         if (targetSpawnPoint == null)
         {
-            Log.getLogger().error("Barbarian Event SpawnPoint is Null for colony: " + colony);
+            Log.getLogger().info("Barbarian Event SpawnPoint is Null for colony: " + colony);
 
             targetSpawnPoint = calculateFallBackSpawnLocation(world, colony);
 
@@ -78,15 +80,19 @@ public final class MobEventsUtils
             }
         }
 
-        Log.getLogger().error("New barbarian event spawnpoint: " + targetSpawnPoint);
+        Log.getLogger().info("New barbarian event spawnpoint: " + targetSpawnPoint);
 
         LanguageHandler.sendPlayersMessage(
           colony.getMessageEntityPlayers(),
           "event.minecolonies.raidMessage");
 
-        BarbarianSpawnUtils.spawn(BARBARIAN, numberOfBarbarians, targetSpawnPoint, world);
-        BarbarianSpawnUtils.spawn(ARCHER, numberOfArchers, targetSpawnPoint, world);
-        BarbarianSpawnUtils.spawn(CHIEF, numberOfChiefs, targetSpawnPoint, world);
+        final ForgeChunkManager.Ticket chunkTicket = ForgeChunkManager.requestTicket(MineColonies.instance, world, ForgeChunkManager.Type.NORMAL);
+
+        BarbarianSpawnUtils.spawn(BARBARIAN, numberOfBarbarians, targetSpawnPoint, world, chunkTicket);
+        BarbarianSpawnUtils.spawn(ARCHER, numberOfArchers, targetSpawnPoint, world, chunkTicket);
+        BarbarianSpawnUtils.spawn(CHIEF, numberOfChiefs, targetSpawnPoint, world, chunkTicket);
+
+        ForgeChunkManager.releaseTicket(chunkTicket);
     }
 
     /**
@@ -131,7 +137,7 @@ public final class MobEventsUtils
     {
         if (colony == null)
         {
-            Log.getLogger().error("When trying to find SpawnPoint for Barbarian Event, the Colony was Null!");
+            Log.getLogger().info("When trying to find SpawnPoint for Barbarian Event, the Colony was Null!");
             return null;
         }
         final BlockPos center = colony.getCenter();
@@ -172,7 +178,7 @@ public final class MobEventsUtils
 
         if (spawnPoint == null)
         {
-            Log.getLogger().error("The FallBack spawn location for the BarbarianRaidEvent is Null.. Report this IMMEDIATELY");
+            Log.getLogger().info("The FallBack spawn location for the BarbarianRaidEvent is Null.. Report this IMMEDIATELY");
         }
 
         return spawnPoint;
@@ -189,26 +195,26 @@ public final class MobEventsUtils
     {
         if (colony == null)
         {
-            Log.getLogger().error("When trying to find SpawnPoint for Barbarian Event, the Colony was Null!");
+            Log.getLogger().info("When trying to find SpawnPoint for Barbarian Event, the Colony was Null!");
             return null;
         }
         final BlockPos center = colony.getCenter();
-        Log.getLogger().error("Colony center is: " + center);
+        Log.getLogger().info("Colony center is: " + center);
         final int radius = Configurations.workingRangeTownHall;
-        Log.getLogger().error("Colony radius is: " + radius);
+        Log.getLogger().info("Colony radius is: " + radius);
         final int randomDegree = world.rand.nextInt((int) WHOLE_CIRCLE);
-        Log.getLogger().error("RandomDegree for spawn point is:  " + randomDegree);
+        Log.getLogger().info("RandomDegree for spawn point is:  " + randomDegree);
 
         final double rads = (double) randomDegree / HALF_A_CIRCLE * Math.PI;
-        Log.getLogger().error("Rads:  " + rads);
+        Log.getLogger().info("Rads:  " + rads);
 
         final double x = Math.round(center.getX() + radius * Math.sin(rads));
-        Log.getLogger().error("X Coord: " + x);
+        Log.getLogger().info("X Coord: " + x);
         final double z = Math.round(center.getZ() + radius * Math.cos(rads));
-        Log.getLogger().error("Z Coord: " + z);
+        Log.getLogger().info("Z Coord: " + z);
 
         final BlockPos topBlock = world.getTopSolidOrLiquidBlock(new BlockPos(x, center.getY(), z));
-        Log.getLogger().error("TopSolid or Liquid Block: " + topBlock);
+        Log.getLogger().info("TopSolid or Liquid Block: " + topBlock);
         return topBlock;
     }
 

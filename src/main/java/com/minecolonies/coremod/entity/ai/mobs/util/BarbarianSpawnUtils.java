@@ -163,14 +163,12 @@ public final class BarbarianSpawnUtils
      * @param spawnLocation  the location at which to spawn the entity
      * @param world          the world in which the colony and entity are
      */
-    public static void spawn(final String entityToSpawn, final int numberOfSpawns, final BlockPos spawnLocation, final World world)
+    public static void spawn(final String entityToSpawn, final int numberOfSpawns, final BlockPos spawnLocation, final World world, final ForgeChunkManager.Ticket chunkTicket)
     {
-
-        if (spawnLocation != null && entityToSpawn != null && world != null)
+        if (spawnLocation != null && entityToSpawn != null && world != null && !world.isRemote)
         {
             if (!world.isBlockLoaded(spawnLocation))
             {
-                final ForgeChunkManager.Ticket chunkTicket = ForgeChunkManager.requestTicket(MineColonies.instance, world, ForgeChunkManager.Type.NORMAL);
                 if (chunkTicket != null)
                 {
                     chunkTicket.getModData().setInteger("spawnX", spawnLocation.getX());
