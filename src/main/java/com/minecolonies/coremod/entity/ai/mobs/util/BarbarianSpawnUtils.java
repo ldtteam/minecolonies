@@ -167,15 +167,12 @@ public final class BarbarianSpawnUtils
     {
         if (spawnLocation != null && entityToSpawn != null && world != null && !world.isRemote)
         {
-            if (!world.isBlockLoaded(spawnLocation))
+            if (!world.isBlockLoaded(spawnLocation) && chunkTicket != null)
             {
-                if (chunkTicket != null)
-                {
-                    chunkTicket.getModData().setInteger("spawnX", spawnLocation.getX());
-                    chunkTicket.getModData().setInteger("spawnY", spawnLocation.getY());
-                    chunkTicket.getModData().setInteger("spawnZ", spawnLocation.getZ());
-                    ForgeChunkManager.forceChunk(chunkTicket, new ChunkPos(spawnLocation.getX(), spawnLocation.getZ()));
-                }
+                chunkTicket.getModData().setInteger("spawnX", spawnLocation.getX());
+                chunkTicket.getModData().setInteger("spawnY", spawnLocation.getY());
+                chunkTicket.getModData().setInteger("spawnZ", spawnLocation.getZ());
+                ForgeChunkManager.forceChunk(chunkTicket, new ChunkPos(spawnLocation.getX(), spawnLocation.getZ()));
             }
 
             final int x = spawnLocation.getX();
