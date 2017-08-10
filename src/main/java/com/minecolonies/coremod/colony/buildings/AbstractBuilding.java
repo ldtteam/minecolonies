@@ -14,7 +14,6 @@ import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
@@ -81,8 +80,8 @@ public abstract class AbstractBuilding
     /**
      * The tag to store the style of the building.
      */
-    private static final String TAG_STYLE = "style";
-    private static final int NO_WORK_ORDER = 0;
+    private static final String TAG_STYLE     = "style";
+    private static final int    NO_WORK_ORDER = 0;
 
     /**
      * A list which contains the position of all containers which belong to the worker building.
@@ -93,7 +92,7 @@ public abstract class AbstractBuilding
      * Map to resolve names to class.
      */
     @NotNull
-    private static final Map<String, Class<?>>   nameToClassMap               = new TreeMap<>();
+    private static final Map<String, Class<?>> nameToClassMap = new TreeMap<>();
 
     /**
      * Map to resolve classes to name.
@@ -111,7 +110,7 @@ public abstract class AbstractBuilding
      * Map to resolve classNameHash to class.
      */
     @NotNull
-    private static final Map<Integer, Class<?>>  classNameHashToViewClassMap  = new HashMap<>();
+    private static final Map<Integer, Class<?>> classNameHashToViewClassMap = new HashMap<>();
     /*
      * Add all the mappings.
      */
@@ -156,11 +155,11 @@ public abstract class AbstractBuilding
     /**
      * the tool currenly needed by the worker.
      */
-    private IToolType        neededTool          = ToolType.NONE;
+    private IToolType       neededTool           = ToolType.NONE;
     /**
      * The minimum tool level we need to fulfill the tool request.
      */
-    private int              needsToolLevel      = TOOL_LEVEL_HAND;
+    private int             needsToolLevel       = TOOL_LEVEL_HAND;
     /**
      * Checks if there is a ongoing delivery for the currentItem.
      */
@@ -218,10 +217,10 @@ public abstract class AbstractBuilding
      * @param parentBlock   subclass of Block, located in {@link com.minecolonies.coremod.blocks}.
      */
     private static void addMapping(
-            final String name,
-            @NotNull final Class<? extends AbstractBuilding> buildingClass,
-            @NotNull final Class<? extends AbstractBuilding.View> viewClass,
-            @NotNull final Class<? extends AbstractBlockHut> parentBlock)
+                                    final String name,
+                                    @NotNull final Class<? extends AbstractBuilding> buildingClass,
+                                    @NotNull final Class<? extends AbstractBuilding.View> viewClass,
+                                    @NotNull final Class<? extends AbstractBlockHut> parentBlock)
     {
         final int buildingHashCode = buildingClass.getName().hashCode();
 
@@ -329,9 +328,9 @@ public abstract class AbstractBuilding
         if (!Structures.hasMD5(sn))
         {
             final Structures.StructureName newStructureName = Structures.getStructureNameByMD5(md5);
-            if (newStructureName!= null
-                && newStructureName.getPrefix().equals(sn.getPrefix())
-                && newStructureName.getSchematic().equals(sn.getSchematic()))
+            if (newStructureName != null
+                  && newStructureName.getPrefix().equals(sn.getPrefix())
+                  && newStructureName.getSchematic().equals(sn.getSchematic()))
             {
                 //We found the new location for the schematic, update the style accordingly
                 style = newStructureName.getStyle();
@@ -386,7 +385,7 @@ public abstract class AbstractBuilding
             Log.getLogger().error(String.format("Unknown Building type '%s' or missing constructor of proper format.", parent.getClass().getName()), exception);
         }
 
-        if(building != null && parent.getWorld() != null)
+        if (building != null && parent.getWorld() != null)
         {
             ConstructionTapeHelper.placeConstructionTape(building, parent.getWorld());
         }
@@ -481,7 +480,7 @@ public abstract class AbstractBuilding
         {
             compound.setString(TAG_BUILDING_TYPE, s);
             BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
-            final Structures.StructureName  structureName = new Structures.StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + buildingLevel);
+            final Structures.StructureName structureName = new Structures.StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + buildingLevel);
             if (Structures.hasMD5(structureName))
             {
                 compound.setString(TAG_SCHEMATIC_MD5, Structures.getMD5(structureName.toString()));
@@ -494,7 +493,7 @@ public abstract class AbstractBuilding
 
 
         @NotNull final NBTTagList containerTagList = new NBTTagList();
-        for (@NotNull final BlockPos pos: containerList)
+        for (@NotNull final BlockPos pos : containerList)
         {
             containerTagList.appendTag(NBTUtil.createPosTag(pos));
         }
@@ -549,7 +548,7 @@ public abstract class AbstractBuilding
         final World world = colony.getWorld();
         final Block block = world.getBlockState(this.location).getBlock();
 
-        if(tileEntityNew != null)
+        if (tileEntityNew != null)
         {
             InventoryHelper.dropInventoryItems(world, this.location, (IInventory) tileEntityNew);
             world.updateComparatorOutputLevel(this.location, block);
@@ -723,7 +722,7 @@ public abstract class AbstractBuilding
 
     /**
      * Remove the work order for the building.
-     *
+     * <p>
      * Remove either the upgrade or repair work order
      */
     public void removeWorkOrder()
@@ -839,7 +838,7 @@ public abstract class AbstractBuilding
     public final void markDirty()
     {
         dirty = true;
-        if(colony != null)
+        if (colony != null)
         {
             colony.markBuildingsDirty();
         }
@@ -849,11 +848,14 @@ public abstract class AbstractBuilding
      * register a block and position.
      *
      * @param block to be registered
-     * @param pos of the block
+     * @param pos   of the block
+     * @param world the world to place the tileentity in
      */
-    public void registerBlockPosition(@NotNull Block block, @NotNull final BlockPos pos)
+    public void registerBlockPosition(@NotNull Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
-        if (block instanceof BlockContainer)
+        final TileEntity tile = world.getTileEntity(pos);
+
+        if (tile != null && !InventoryUtils.getItemHandlersFromProvider(tile).isEmpty())
         {
             addContainerPosition(pos);
         }
@@ -861,6 +863,7 @@ public abstract class AbstractBuilding
 
     /**
      * Add a new container to the building.
+     *
      * @param pos position to add.
      */
     public void addContainerPosition(@NotNull final BlockPos pos)
@@ -873,6 +876,7 @@ public abstract class AbstractBuilding
 
     /**
      * Remove a container from the building.
+     *
      * @param pos position to remove.
      */
     public void removeContainerPosition(BlockPos pos)
@@ -882,6 +886,7 @@ public abstract class AbstractBuilding
 
     /**
      * Get all additional containers which belong to the building.
+     *
      * @return a copy of the list to avoid currentModification exception.
      */
     public List<BlockPos> getAdditionalCountainers()
@@ -905,6 +910,7 @@ public abstract class AbstractBuilding
 
     /**
      * Check if the building is receiving the required items.
+     *
      * @return true if so.
      */
     public boolean hasOnGoingDelivery()
@@ -914,6 +920,7 @@ public abstract class AbstractBuilding
 
     /**
      * Check if the building is receiving the required items.
+     *
      * @param valueToSet true or false
      */
     public void setOnGoingDelivery(boolean valueToSet)
@@ -923,6 +930,7 @@ public abstract class AbstractBuilding
 
     /**
      * Check if the worker needs anything. Tool or item.
+     *
      * @return true if so.
      */
     public boolean needsAnything()
@@ -932,6 +940,7 @@ public abstract class AbstractBuilding
 
     /**
      * Check if any items are needed at the moment.
+     *
      * @return true if so.
      */
     public boolean areItemsNeeded()
@@ -953,12 +962,12 @@ public abstract class AbstractBuilding
     /**
      * Set which tool the worker needs.
      *
-     * @param neededTool    which tool is needed
+     * @param neededTool   which tool is needed
      * @param minimalLevel which minimal level for the tool
      */
     public void setNeedsTool(final IToolType neededTool, final int minimalLevel)
     {
-        this.neededTool     = neededTool;
+        this.neededTool = neededTool;
         this.needsToolLevel = minimalLevel;
     }
 
@@ -996,11 +1005,12 @@ public abstract class AbstractBuilding
 
     /**
      * Add a neededItem to the currentlyNeededItem list.
+     *
      * @param stack the stack to add.
      */
     public void addNeededItems(@Nullable ItemStack stack)
     {
-        if(!ItemStackUtils.isEmpty(stack))
+        if (!ItemStackUtils.isEmpty(stack))
         {
             itemsCurrentlyNeeded.add(stack);
         }
@@ -1021,12 +1031,13 @@ public abstract class AbstractBuilding
 
     /**
      * Getter for the first of the currentlyNeededItems.
+     *
      * @return copy of the itemStack.
      */
     @Nullable
     public ItemStack getFirstNeededItem()
     {
-        if(itemsCurrentlyNeeded.isEmpty())
+        if (itemsCurrentlyNeeded.isEmpty())
         {
             return null;
         }
@@ -1043,6 +1054,7 @@ public abstract class AbstractBuilding
 
     /**
      * Overwrite the itemsCurrentlyNeededList with a new one.
+     *
      * @param newList the new list to set.
      */
     public void setItemsCurrentlyNeeded(@NotNull List<ItemStack> newList)
@@ -1052,6 +1064,7 @@ public abstract class AbstractBuilding
 
     /**
      * Try to transfer a stack to one of the inventories of the building.
+     *
      * @param stack the stack to transfer.
      * @param world the world to do it in.
      * @return The {@link ItemStack} as that is left over, might be {@link ItemStackUtils#EMPTY} if the stack was completely accepted
@@ -1083,6 +1096,7 @@ public abstract class AbstractBuilding
 
     /**
      * Try to transfer a stack to one of the inventories of the building and force the transfer.
+     *
      * @param stack the stack to transfer.
      * @param world the world to do it in.
      * @return the itemStack which has been replaced or the itemStack which could not be transfered
@@ -1090,12 +1104,12 @@ public abstract class AbstractBuilding
     @Nullable
     public ItemStack forceTransferStack(final ItemStack stack, final World world)
     {
-        if(tileEntity == null)
+        if (tileEntity == null)
         {
-            for(final BlockPos pos: containerList)
+            for (final BlockPos pos : containerList)
             {
                 final TileEntity tempTileEntity = world.getTileEntity(pos);
-                if(tempTileEntity instanceof TileEntityChest && !InventoryUtils.isProviderFull(tempTileEntity))
+                if (tempTileEntity instanceof TileEntityChest && !InventoryUtils.isProviderFull(tempTileEntity))
                 {
                     return forceItemStackToProvider(tempTileEntity, stack);
                 }

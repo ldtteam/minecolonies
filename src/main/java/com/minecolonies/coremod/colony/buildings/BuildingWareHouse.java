@@ -1,20 +1,29 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.blocks.BlockHutDeliveryman;
+import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.client.gui.WindowWareHouseBuilding;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.coremod.tileentities.TileEntityRack;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockChest;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -61,19 +70,20 @@ public class BuildingWareHouse extends AbstractBuilding
 
     /**
      * Register deliveryman with the warehouse.
+     *
      * @param buildingWorker the building of the worker.
      * @return true if able to register or already registered
      */
     public boolean registerWithWareHouse(BuildingDeliveryman buildingWorker)
     {
-        if(registeredDeliverymen.contains(new Vec3d(buildingWorker.getID())))
+        if (registeredDeliverymen.contains(new Vec3d(buildingWorker.getID())))
         {
             return true;
         }
 
-        if(registeredDeliverymen.size() >= getBuildingLevel())
+        if (registeredDeliverymen.size() >= getBuildingLevel())
         {
-            if(!registeredDeliverymen.isEmpty())
+            if (!registeredDeliverymen.isEmpty())
             {
                 Log.getLogger().info(getColony().getName() + " " + Arrays.toString(registeredDeliverymen.toArray()));
                 checkForRegisteredDeliverymen();
@@ -91,10 +101,10 @@ public class BuildingWareHouse extends AbstractBuilding
     private void checkForRegisteredDeliverymen()
     {
         final List<Vec3d> registeredDeliverymenCopy = new ArrayList<>(registeredDeliverymen);
-        for(final Vec3d pos: registeredDeliverymenCopy)
+        for (final Vec3d pos : registeredDeliverymenCopy)
         {
             final Colony colony = getColony();
-            if(colony != null && colony.getWorld() != null
+            if (colony != null && colony.getWorld() != null
                     && (!(colony.getWorld().getBlockState(new BlockPos(pos)) instanceof BlockHutDeliveryman) || colony.isCoordInColony(colony.getWorld(), new BlockPos(pos))))
             {
                 registeredDeliverymen.remove(pos);
@@ -102,8 +112,58 @@ public class BuildingWareHouse extends AbstractBuilding
         }
     }
 
+    @Override
+    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
+    {
+        if (block instanceof BlockChest && world != null)
+        {
+            final TileEntity entity = getColony().getWorld().getTileEntity(pos);
+            if (entity instanceof TileEntityChest)
+            {
+                handleBuildingOverChest(pos, (TileEntityChest) entity, world);
+            }
+        }
+        super.registerBlockPosition(block, pos,world);
+    }
+
+    /**
+     * Handles the chest placement.
+     *
+     * @param pos   at pos.
+     * @param chest the entity.
+     * @param world the world.
+     */
+    public static void handleBuildingOverChest(@NotNull final BlockPos pos, final TileEntityChest chest, final World world)
+    {
+        final List<ItemStack> inventory = new ArrayList<>();
+        final int size = chest.getSingleChestHandler().getSlots();
+        for (int slot = 0; slot < size; slot++)
+        {
+            final ItemStack stack = chest.getSingleChestHandler().getStackInSlot(slot);
+            if (!ItemStackUtils.isEmpty(stack))
+            {
+                inventory.add(stack.copy());
+            }
+            chest.getSingleChestHandler().extractItem(slot, Integer.MAX_VALUE, false);
+        }
+
+        world.setBlockState(pos, ModBlocks.blockRack.getDefaultState(), 0x03);
+        final TileEntity entity = world.getTileEntity(pos);
+        if (entity instanceof TileEntityRack)
+        {
+            for (final ItemStack stack : inventory)
+            {
+                if (!ItemStackUtils.isEmpty(stack))
+                {
+                    InventoryUtils.addItemStackToItemHandler(((TileEntityRack) entity).getInventory(), stack);
+                }
+            }
+        }
+    }
+
     /**
      * Check if deliveryman is allowed to access warehouse.
+     *
      * @param buildingWorker the building of the deliveryman.
      * @return true if able to.
      */
@@ -114,6 +174,7 @@ public class BuildingWareHouse extends AbstractBuilding
 
     /**
      * Get the deliverymen connected with this building.
+     *
      * @return the unmodifiable List of positions of them.
      */
     public List<Vec3d> getRegisteredDeliverymen()
@@ -144,7 +205,7 @@ public class BuildingWareHouse extends AbstractBuilding
         for (int i = 0; i < deliverymanTagList.tagCount(); i++)
         {
             final BlockPos pos = NBTUtil.getPosFromTag(deliverymanTagList.getCompoundTagAt(i));
-            if(getColony() != null && getColony().getBuilding(pos) instanceof AbstractBuildingWorker && !registeredDeliverymen.contains(new Vec3d(pos)))
+            if (getColony() != null && getColony().getBuilding(pos) instanceof AbstractBuildingWorker && !registeredDeliverymen.contains(new Vec3d(pos)))
             {
                 registeredDeliverymen.add(new Vec3d(pos));
             }
@@ -225,6 +286,5 @@ public class BuildingWareHouse extends AbstractBuilding
         {
             super.deserialize(buf);
         }
-
     }
 }

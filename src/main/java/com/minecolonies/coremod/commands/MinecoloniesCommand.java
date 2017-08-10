@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.coremod.commands.colonycommands.HomeTeleportCommand;
 import com.minecolonies.coremod.commands.generalcommands.BackupCommand;
+import com.minecolonies.coremod.commands.generalcommands.RaidAllNowCommand;
+import com.minecolonies.coremod.commands.generalcommands.RaidAllTonightCommand;
 import com.minecolonies.coremod.commands.generalcommands.RandomTeleportCommand;
 import net.minecraft.entity.player.EntityPlayer;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +22,7 @@ import java.util.UUID;
  */
 public class MinecoloniesCommand extends AbstractSplitCommand
 {
-    public static final String DESC = "minecolonies";
+    public static final  String             DESC              = "minecolonies";
     private static final Map<UUID, Instant> commandExecutions = new HashMap<>();
 
     private final ImmutableMap<String, ISubCommand> subCommands =
@@ -31,6 +33,8 @@ public class MinecoloniesCommand extends AbstractSplitCommand
         .put(RandomTeleportCommand.DESC, new RandomTeleportCommand(DESC))
         .put(BackupCommand.DESC, new BackupCommand(DESC))
         .put(HomeTeleportCommand.DESC, new HomeTeleportCommand(DESC))
+        .put(RaidAllTonightCommand.DESC, new RaidAllTonightCommand(DESC))
+        .put(RaidAllNowCommand.DESC, new RaidAllNowCommand(DESC))
         .build();
 
     /**
@@ -49,12 +53,13 @@ public class MinecoloniesCommand extends AbstractSplitCommand
 
     /**
      * Check if the player is able to execute a teleport command again.
+     *
      * @param player the player executing.
      * @return true if should be able to.
      */
     public static boolean canExecuteCommand(@NotNull EntityPlayer player)
     {
-        if(Configurations.teleportBuffer == 0)
+        if (Configurations.teleportBuffer == 0)
         {
             return true;
         }
@@ -62,7 +67,7 @@ public class MinecoloniesCommand extends AbstractSplitCommand
         cleanUpList();
         final boolean canTeleport = !commandExecutions.containsKey(player.getUniqueID());
 
-        if(canTeleport)
+        if (canTeleport)
         {
             commandExecutions.put(player.getUniqueID(), Instant.now());
         }
@@ -75,9 +80,9 @@ public class MinecoloniesCommand extends AbstractSplitCommand
     private static void cleanUpList()
     {
         final Map<UUID, Instant> mapCopy = new HashMap<>(commandExecutions);
-        for(final Map.Entry<UUID, Instant> entry : mapCopy.entrySet())
+        for (final Map.Entry<UUID, Instant> entry : mapCopy.entrySet())
         {
-            if(Instant.now().isAfter(entry.getValue()) && (Instant.now().getEpochSecond() - entry.getValue().getEpochSecond()) > Configurations.teleportBuffer)
+            if (Instant.now().isAfter(entry.getValue()) && (Instant.now().getEpochSecond() - entry.getValue().getEpochSecond()) > Configurations.teleportBuffer)
             {
                 commandExecutions.remove(entry.getKey());
             }

@@ -29,8 +29,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 /**
@@ -491,11 +491,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Make sure that the worker stands next the chest to not break immersion.
      * Also make sure to have inventory space for the stack.
      *
-     * @param entity the tileEntity chest or building.
+     * @param entity the tileEntity chest or building or rack.
      * @param is     the itemStack.
      * @return true if found the stack.
      */
-    public boolean isInTileEntity(final TileEntityChest entity, final ItemStack is)
+    public boolean isInTileEntity(final TileEntity entity, final ItemStack is)
     {
         return is != null
                 && InventoryFunctions
@@ -584,7 +584,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param maxLevel the max tool lev	el.
      * @return true if found the tool.
      */
-    public boolean retrieveToolInTileEntity(final TileEntityChest entity, final IToolType toolType, final int minLevel, final int maxLevel)
+    public boolean retrieveToolInTileEntity(final TileEntity entity, final IToolType toolType, final int minLevel, final int maxLevel)
     {
         if (ToolType.NONE.equals(toolType))
         {

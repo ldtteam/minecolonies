@@ -2,18 +2,22 @@ package com.minecolonies.coremod;
 
 import com.minecolonies.api.configuration.ConfigurationHandler;
 import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.commands.CommandEntryPoint;
 import com.minecolonies.coremod.craftingsystem.CraftingSystemInitializationHandler;
 import com.minecolonies.coremod.network.messages.*;
 import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.util.RecipeHandler;
+import gigaherz.guidebook.client.BookRegistryEvent;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
@@ -24,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 @Mod(modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION,
   /*dependencies = Constants.FORGE_VERSION,*/ acceptedMinecraftVersions = Constants.MC_VERSION,
   guiFactory = Constants.CONFIG_GUI_LOCATION, certificateFingerprint = Constants.FINGERPRINT)
+@Mod.EventBusSubscriber
 public class MineColonies
 {
     /**
@@ -187,10 +192,12 @@ public class MineColonies
     }
 
     @Mod.EventHandler
-    public void onFingerprintViolation(FMLFingerprintViolationEvent event) {
-        String warning = "Minecolonies does not run from a verified source. Current Fingerprint" + (event.getFingerprints().size() > 1 ? "s" : "") +  ": ";
+    public void onFingerprintViolation(final FMLFingerprintViolationEvent event)
+    {
+        String warning = "Minecolonies does not run from a verified source. Current Fingerprint" + (event.getFingerprints().size() > 1 ? "s" : "") + ": ";
 
-        if (event.getFingerprints().size() > 0) {
+        if (event.getFingerprints().size() > 0)
+        {
             for (String print :
               event.getFingerprints())
             {
@@ -206,6 +213,13 @@ public class MineColonies
         warning += "\n" + "   - " + event.getExpectedFingerprint();
 
         Log.bigWarning(warning);
+    }
+
+    @Optional.Method(modid = "gbook")
+    @SubscribeEvent
+    public static void registerBook(final BookRegistryEvent event)
+    {
+        event.register(new ResourceLocation(Constants.MOD_ID + ":book/minecolonies.xml"));
     }
 }
 

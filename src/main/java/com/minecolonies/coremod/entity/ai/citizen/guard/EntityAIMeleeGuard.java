@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
 import com.minecolonies.api.compatibility.Compatibility;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
@@ -37,6 +37,11 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
      * The base pitch, add more to this to change the sound.
      */
     private static final double BASE_PITCH = 0.8D;
+
+    /**
+     * Experience to add when a mob is killed
+     */
+    private static final int EXP_PER_MOD_DEATH = 15;
 
     /**
      * Random is multiplied by this to get a random arrow sound.
@@ -113,7 +118,9 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         {
             return AIState.GUARD_SEARCH_TARGET;
         }
-        InventoryFunctions.matchFirstInProviderWithSimpleAction(worker, stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.doesItemServeAsWeapon(stack), worker::setHeldItem);
+        InventoryFunctions.matchFirstInProviderWithSimpleAction(worker,
+          stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.doesItemServeAsWeapon(stack),
+          worker::setHeldItem);
         return super.searchTarget();
     }
 
@@ -124,14 +131,20 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
      */
     protected AIState huntDown()
     {
-        if(huntDownlastAttacker())
+        if (worker.getColony() == null)
+        {
+            return AIState.GUARD_GATHERING;
+        }
+
+        if (huntDownlastAttacker())
         {
             targetEntity = this.worker.getLastAttacker();
         }
 
-        if (!targetEntity.isEntityAlive() || checkForToolOrWeapon(ToolType.SWORD))
+        if (targetEntity != null && (!targetEntity.isEntityAlive() || checkForToolOrWeapon(ToolType.SWORD)))
         {
             targetEntity = null;
+            worker.addExperience(EXP_PER_MOD_DEATH);
             worker.setAIMoveSpeed((float) 1.0D);
             return AIState.GUARD_GATHERING;
         }
@@ -144,7 +157,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
             attacksExecuted += 1;
             currentSearchDistance = START_SEARCH_DISTANCE;
 
-            if(killedEnemy)
+            if (killedEnemy)
             {
                 return AIState.GUARD_GATHERING;
             }
@@ -182,7 +195,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         {
             if (ItemStackUtils.doesItemServeAsWeapon(heldItem))
             {
-                if(heldItem.getItem() instanceof ItemSword)
+                if (heldItem.getItem() instanceof ItemSword)
                 {
                     damgeToBeDealt += ((ItemSword) heldItem.getItem()).getDamageVsEntity();
                 }

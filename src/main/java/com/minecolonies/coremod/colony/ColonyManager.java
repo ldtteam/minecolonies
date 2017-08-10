@@ -214,6 +214,7 @@ public final class ColonyManager
         {
             Log.getLogger().warn("Deleting Colony " + id + " errored:", e);
         }
+        ColonyManager.markDirty();
     }
 
     /**
@@ -825,7 +826,7 @@ public final class ColonyManager
         }
     }
 
-    private static void addColonyByWorld(Colony colony)
+    private static void addColonyByWorld(final Colony colony)
     {
         if(colony.getDimension() >= 0)
         {
