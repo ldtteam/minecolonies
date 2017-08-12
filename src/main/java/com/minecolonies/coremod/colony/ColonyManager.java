@@ -827,7 +827,7 @@ public final class ColonyManager
         for (int i = 0; i < recipesTags.tagCount(); ++i)
         {
             final NBTTagCompound recipeTag = recipesTags.getCompoundTagAt(i);
-            final StandardToken token = StandardFactoryController.getInstance().deserialize(recipeTag.getCompoundTag(TOKEN_TAG));
+            final IToken token = StandardFactoryController.getInstance().deserialize(recipeTag.getCompoundTag(TOKEN_TAG));
             final RecipeStorage storage = RecipeStorage.readFromNBT(recipeTag);
             recipes.put(token, storage);
         }
