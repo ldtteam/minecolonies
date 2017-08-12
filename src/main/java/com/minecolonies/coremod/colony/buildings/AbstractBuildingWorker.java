@@ -311,7 +311,8 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         for (int i = 0; i < recipesTags.tagCount(); ++i)
         {
             final NBTTagCompound recipeTag = recipesTags.getCompoundTagAt(i);
-            final IToken token = StandardFactoryController.getInstance().deserialize(recipeTag.getCompoundTag(TAG_TOKEN));
+            final IToken token = StandardFactoryController.getInstance().deserialize(recipeTag.getCompoundTag(
+                    TAG_TOKEN));
             recipes.add(token);
         }
     }
