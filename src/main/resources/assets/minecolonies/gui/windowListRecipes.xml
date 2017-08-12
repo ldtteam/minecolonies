@@ -5,8 +5,7 @@
     <label size="100% 11" pos="0 50" textalign="TOP_MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.workerHuts.listRecipes)"/>
     <list id="recipes" size="70% 120" pos="60 70" align="TOP_MIDDLE">
         <view size="70% 30">
-            <button id="up" size="15 15" label="↥" pos="0 0"/>
-            <button id="down" size="15 15" label="↧" pos="0 15"/>
+
 
             <itemicon id="output" size="16 16" pos="60 5"/>
             <box size="100% 30" linewidth="2">
@@ -15,6 +14,8 @@
                 <itemicon id="resource3" size="16 16" pos="34 14"/>
                 <itemicon id="resource4" size="16 16" pos="34 1"/>
             </box>
+            <button id="up" size="15 15" label="↥" pos="0 0"/>
+            <button id="down" size="15 15" label="↧" pos="0 15"/>
             <button id="remove" size="45 15" pos="125 3" label="$(com.minecolonies.coremod.gui.recipe.remove)"/>
         </view>
     </list>

@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.colony.requestsystem.token.StandardToken;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
@@ -25,11 +24,13 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
+
+import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
+
 
 /**
  * The abstract class for each worker building.
@@ -188,7 +189,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
      */
     public void switchIndex(final int i, final int j)
     {
-        if(i < recipes.size() && j < recipes.size() && i > 0 && j > 0)
+        if(i < recipes.size() && j < recipes.size() && i >= 0 && j >= 0)
         {
             final IToken storage = recipes.get(i);
             recipes.set(i, recipes.get(j));
@@ -557,7 +558,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
          */
         public void switchIndex(final int i, final int j)
         {
-            if(i < recipes.size() && j < recipes.size() && i > 0 && j > 0)
+            if(i < recipes.size() && j < recipes.size() && i >= 0 && j >= 0)
             {
                 final RecipeStorage storage = recipes.get(i);
                 recipes.set(i, recipes.get(j));

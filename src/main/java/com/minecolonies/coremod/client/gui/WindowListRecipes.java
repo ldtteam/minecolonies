@@ -166,7 +166,7 @@ public class WindowListRecipes extends Window implements ButtonHandler
     @Override
     public void onButtonClicked(@NotNull final Button button)
     {
-        final int row = recipeList.getListElementIndexByPane(button);
+        final int row = recipeList.getListElementIndexByPane(button) - 1;
         if (button.getID().equals(BUTTON_REMOVE))
         {
             final RecipeStorage data = recipes.get(row);
