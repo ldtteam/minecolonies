@@ -79,4 +79,10 @@ public interface IColony
      * @return true if so.
      */
     boolean hasWillRaidTonight();
+
+    /**
+     * return the colony's world.
+     * @return world.
+     */
+    World getWorld();
 }

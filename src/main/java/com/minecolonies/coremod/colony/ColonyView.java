@@ -678,4 +678,10 @@ public final class ColonyView implements IColony
     {
         return false;
     }
+
+    @Override
+    public World getWorld()
+    {
+        return Minecraft.getMinecraft().theWorld;
+    }
 }
