@@ -102,7 +102,12 @@ public final class ColonyManager
     /**
      * A buffer value to be sure to be outside of the colony.
      */
-    private static final int BUFFER      = 10;
+    private static final int BUFFER    = 10;
+
+    /**
+     * Store the token tag to nbt.
+     */
+    private static final String TOKEN_TAG = "tokenTag";
 
     /**
      * Amount of worlds loaded.
@@ -646,7 +651,7 @@ public final class ColonyManager
         for (@NotNull final Map.Entry<IToken, RecipeStorage> entry : recipes.entrySet())
         {
             @NotNull final NBTTagCompound recipeTagCompound = new NBTTagCompound();
-            StandardFactoryController.getInstance().serialize(entry.getKey());
+            recipeTagCompound.setTag(TOKEN_TAG, StandardFactoryController.getInstance().serialize(entry.getKey()));
             entry.getValue().writeToNBT(recipeTagCompound);
             recipesTagList.appendTag(recipeTagCompound);
         }
@@ -821,7 +826,7 @@ public final class ColonyManager
         for (int i = 0; i < recipesTags.tagCount(); ++i)
         {
             final NBTTagCompound recipeTag = recipesTags.getCompoundTagAt(i);
-            final StandardToken token = new StandardToken(recipeTag);
+            final StandardToken token = StandardFactoryController.getInstance().deserialize(recipeTag.getCompoundTag(TOKEN_TAG));
             final RecipeStorage storage = RecipeStorage.readFromNBT(recipeTag);
             recipes.put(token, storage);
         }

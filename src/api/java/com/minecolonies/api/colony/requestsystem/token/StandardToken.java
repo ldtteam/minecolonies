@@ -1,12 +1,8 @@
 package com.minecolonies.api.colony.requestsystem.token;
 
-import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
-
-import static com.minecolonies.api.colony.requestsystem.token.StandardTokenFactory.NBT_LSB;
-import static com.minecolonies.api.colony.requestsystem.token.StandardTokenFactory.NBT_MSB;
 
 /**
  * Internal implementation of the IToken interface.
@@ -38,15 +34,6 @@ public class StandardToken implements IToken<UUID, NBTTagCompound>
     public StandardToken(@NotNull final UUID id)
     {
         this.id = id;
-    }
-
-    /**
-     * Creates a new token with the given compound.
-     * @param nbt given nbtTagCompound.
-     */
-    public StandardToken(final NBTTagCompound nbt)
-    {
-        this.id = new UUID(nbt.getLong(NBT_MSB), nbt.getLong(NBT_LSB));
     }
 
     /**
