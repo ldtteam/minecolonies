@@ -1064,7 +1064,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             }
             final int itemDamage = useItemDamage ? stack.getItemDamage() : -1;
             final int countOfItem = worker.getItemCountInInventory(stack.getItem(), itemDamage);
-            if (countOfItem < ItemStackUtils.getSize(tempStack))
+            if (countOfItem < ItemStackUtils.getSize(tempStack) && (!getOwnBuilding().canCraft(tempStack) || !craftItem(tempStack)))
             {
                 final int itemsLeft = ItemStackUtils.getSize(stack) - countOfItem;
                 @NotNull final ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft, -1);

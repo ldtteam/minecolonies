@@ -119,18 +119,19 @@ public class WindowGuiCrafting extends GuiContainer
 
             for(int i = 1; i <= 4; i++)
             {
-                final ItemStack stack = inventorySlots.getInventory().get(i).copy();
-                ItemStackUtils.setSize(stack, 1);
+                final ItemStack stack = inventorySlots.getInventory().get(i);
                 if(ItemStackUtils.isEmpty(stack))
                 {
                     continue;
                 }
+                final ItemStack copy = stack.copy();
+                ItemStackUtils.setSize(copy, 1);
 
-                input.add(stack);
+                input.add(copy);
 
-                if(stack.getItem().hasContainerItem(stack))
+                if(copy.getItem().hasContainerItem(copy))
                 {
-                    secondaryOutput.add(stack.getItem().getContainerItem(stack));
+                    secondaryOutput.add(copy.getItem().getContainerItem(copy));
                 }
             }
 
