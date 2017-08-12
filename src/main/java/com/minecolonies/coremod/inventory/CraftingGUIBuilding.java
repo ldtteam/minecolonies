@@ -179,7 +179,7 @@ public class CraftingGUIBuilding extends Container
 
             if (index == 0)
             {
-                if (!this.mergeItemStack(itemstack1, 10, 46, true))
+                if (!this.mergeItemStack(itemstack1, 5, 41, true))
                 {
                     return null;
                 }
