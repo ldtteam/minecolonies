@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.colony.requestsystem.token.StandardToken;
 import com.minecolonies.api.util.constant.ToolType;
@@ -324,7 +325,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         for (@NotNull final IToken token : recipes)
         {
             @NotNull final NBTTagCompound recipeTagCompound = new NBTTagCompound();
-            token.deserializeNBT(recipeTagCompound);
+            StandardFactoryController.getInstance().serialize(token);
             recipesTagList.appendTag(recipeTagCompound);
         }
         compound.setTag(TAG_RECIPES, recipesTagList);

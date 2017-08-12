@@ -1,8 +1,12 @@
 package com.minecolonies.api.colony.requestsystem.token;
 
+import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
+
+import static com.minecolonies.api.colony.requestsystem.token.StandardTokenFactory.NBT_LSB;
+import static com.minecolonies.api.colony.requestsystem.token.StandardTokenFactory.NBT_MSB;
 
 /**
  * Internal implementation of the IToken interface.

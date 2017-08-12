@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.colony.requestsystem.token.StandardToken;
 import com.minecolonies.api.configuration.Configurations;
@@ -646,7 +647,7 @@ public final class ColonyManager
         for (@NotNull final Map.Entry<IToken, RecipeStorage> entry : recipes.entrySet())
         {
             @NotNull final NBTTagCompound recipeTagCompound = new NBTTagCompound();
-            entry.getKey().deserializeNBT(recipeTagCompound);
+            StandardFactoryController.getInstance().serialize(entry.getKey());
             entry.getValue().writeToNBT(recipeTagCompound);
             recipesTagList.appendTag(recipeTagCompound);
         }
