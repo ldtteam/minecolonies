@@ -52,6 +52,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     private static final String TAG_RECIPES = "recipes";
 
     /**
+     * Tag to serialize ITokens.
+     */
+    private static final String TAG_TOKEN = "tokenTag";
+
+    /**
      * The list of recipes the worker knows, correspond to a subset of the recipes in the colony.
      */
     private final List<IToken> recipes = new ArrayList<>();
@@ -306,7 +311,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         for (int i = 0; i < recipesTags.tagCount(); ++i)
         {
             final NBTTagCompound recipeTag = recipesTags.getCompoundTagAt(i);
-            final StandardToken token = StandardFactoryController.getInstance().deserialize(recipeTag);
+            final IToken token = StandardFactoryController.getInstance().deserialize(recipeTag.getCompoundTag(TAG_TOKEN));
             recipes.add(token);
         }
     }
@@ -325,7 +330,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         for (@NotNull final IToken token : recipes)
         {
             @NotNull final NBTTagCompound recipeTagCompound = new NBTTagCompound();
-            StandardFactoryController.getInstance().serialize(token);
+            recipeTagCompound.setTag(TAG_TOKEN , StandardFactoryController.getInstance().serialize(token));
             recipesTagList.appendTag(recipeTagCompound);
         }
         compound.setTag(TAG_RECIPES, recipesTagList);
