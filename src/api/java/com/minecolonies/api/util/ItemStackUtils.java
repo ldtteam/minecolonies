@@ -43,7 +43,7 @@ public final class ItemStackUtils
 
     /**
      * The compound tag for fortune enchantment level.
-    */
+     */
     private static final String NBT_TAG_ENCHANT_LEVEL = "lvl";
 
     /**
@@ -339,7 +339,7 @@ public final class ItemStackUtils
     private static int getToolLevel(final String material)
     {
         if (MATERIAL_WOOD.equals(material)
-            || MATERIAL_GOLD.equals(material))
+              || MATERIAL_GOLD.equals(material))
         {
             return TOOL_LEVEL_WOOD_OR_GOLD;
         }
@@ -427,9 +427,9 @@ public final class ItemStackUtils
     public static Boolean compareItemStacksIgnoreStackSize(final ItemStack itemStack1, final ItemStack itemStack2)
     {
         if (!isEmpty(itemStack1) &&
-            !isEmpty(itemStack2) &&
-            itemStack1.getItem() == itemStack2.getItem() &&
-            itemStack1.getItemDamage() == itemStack2.getItemDamage())
+              !isEmpty(itemStack2) &&
+              itemStack1.getItem() == itemStack2.getItem() &&
+              itemStack1.getItemDamage() == itemStack2.getItemDamage())
         {
             // Then sort on NBT
             if (itemStack1.hasTagCompound() && itemStack2.hasTagCompound())
@@ -443,18 +443,6 @@ public final class ItemStackUtils
             }
         }
         return false;
-    }
-
-    /**
-     * Update method to allow for easy reading the ItemStack data from NBT.
-     *
-     * @param compound The compound to read from.
-     * @return The ItemStack stored in the NBT Data.
-     */
-    @NotNull
-    public static ItemStack deserializeFromNBT(@NotNull final NBTTagCompound compound)
-    {
-        return new ItemStack(compound);
     }
 }
 

@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.colony;
+package com.minecolonies.api.colony;
 
 import com.minecolonies.api.colony.permissions.IPermissions;
 import net.minecraft.util.math.BlockPos;

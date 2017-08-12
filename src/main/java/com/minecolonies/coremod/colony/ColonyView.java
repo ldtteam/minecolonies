@@ -4,7 +4,6 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
-import com.minecolonies.api.colony.requestsystem.IRequestManager;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MathUtils;
@@ -34,33 +33,33 @@ public final class ColonyView implements IColony
 {
     //  General Attributes
     private final int id;
-    private final Map<Integer, WorkOrderView> workOrders = new HashMap<>();
+    private final Map<Integer, WorkOrderView>          workOrders  = new HashMap<>();
     //  Administration/permissions
     @NotNull
-    private final Permissions.View permissions  = new Permissions.View();
+    private final Permissions.View                     permissions = new Permissions.View();
     @NotNull
     private final Map<BlockPos, AbstractBuilding.View> buildings   = new HashMap<>();
     //  Citizenry
     @NotNull
     private final Map<Integer, CitizenDataView>        citizens    = new HashMap<>();
-    private       String                      name       = "Unknown";
+    private       String                               name        = "Unknown";
     private int      dimensionId;
     private BlockPos center;
 
     /**
      * Defines if workers are hired manually or automatically.
      */
-    private       boolean          manualHiring = false;
+    private boolean manualHiring = false;
 
     /**
      * Defines if workers are housed manually or automatically.
      */
-    private       boolean          manualHousing = false;
+    private boolean manualHousing = false;
 
     //  Buildings
     @Nullable
     private BuildingTownHall.View townHall;
-    private       int                                  maxCitizens = 0;
+    private int maxCitizens = 0;
 
     /**
      * Check if the colony has a warehouse.
@@ -136,13 +135,13 @@ public final class ColonyView implements IColony
         final Set<BlockPos> waypoints = colony.getWayPoints().keySet();
 
         buf.writeInt(freeBlocks.size());
-        for(final Block block : freeBlocks)
+        for (final Block block : freeBlocks)
         {
             ByteBufUtils.writeUTF8String(buf, block.getRegistryName().toString());
         }
 
         buf.writeInt(freePos.size());
-        for(final BlockPos block : freePos)
+        for (final BlockPos block : freePos)
         {
             BlockPosUtil.writeToByteBuf(buf, block);
         }
@@ -150,7 +149,7 @@ public final class ColonyView implements IColony
         buf.writeBoolean(colony.hasWarehouse());
 
         buf.writeInt(waypoints.size());
-        for(final BlockPos block: waypoints)
+        for (final BlockPos block : waypoints)
         {
             BlockPosUtil.writeToByteBuf(buf, block);
         }
@@ -162,6 +161,7 @@ public final class ColonyView implements IColony
 
     /**
      * Get a copy of the freePositions list.
+     *
      * @return the list of free to interact positions.
      */
     public List<BlockPos> getFreePositions()
@@ -171,6 +171,7 @@ public final class ColonyView implements IColony
 
     /**
      * Get a copy of the freeBlocks list.
+     *
      * @return the list of free to interact blocks.
      */
     public List<Block> getFreeBlocks()
@@ -180,6 +181,7 @@ public final class ColonyView implements IColony
 
     /**
      * Add a new free to interact position.
+     *
      * @param pos position to add.
      */
     public void addFreePosition(@NotNull final BlockPos pos)
@@ -189,6 +191,7 @@ public final class ColonyView implements IColony
 
     /**
      * Add a new free to interact block.
+     *
      * @param block block to add.
      */
     public void addFreeBlock(@NotNull final Block block)
@@ -198,6 +201,7 @@ public final class ColonyView implements IColony
 
     /**
      * Remove a free to interact position.
+     *
      * @param pos position to remove.
      */
     public void removeFreePosition(@NotNull final BlockPos pos)
@@ -207,6 +211,7 @@ public final class ColonyView implements IColony
 
     /**
      * Remove a free to interact block.
+     *
      * @param block state to remove.
      */
     public void removeFreeBlock(@NotNull final Block block)
@@ -421,13 +426,13 @@ public final class ColonyView implements IColony
         wayPoints = new HashSet<>();
 
         final int blockListSize = buf.readInt();
-        for(int i = 0; i < blockListSize; i++)
+        for (int i = 0; i < blockListSize; i++)
         {
             freeBlocks.add(Block.getBlockFromName(ByteBufUtils.readUTF8String(buf)));
         }
 
         final int posListSize = buf.readInt();
-        for(int i = 0; i < posListSize; i++)
+        for (int i = 0; i < posListSize; i++)
         {
             freePositions.add(BlockPosUtil.readFromByteBuf(buf));
         }
@@ -435,7 +440,7 @@ public final class ColonyView implements IColony
         this.hasWarehouse = buf.readBoolean();
 
         final int wayPointListSize = buf.readInt();
-        for(int i = 0; i < wayPointListSize; i++)
+        for (int i = 0; i < wayPointListSize; i++)
         {
             wayPoints.add(BlockPosUtil.readFromByteBuf(buf));
         }
@@ -577,6 +582,7 @@ public final class ColonyView implements IColony
 
     /**
      * Getter for the overall happiness.
+     *
      * @return the happiness, a double.
      */
     public double getOverallHappiness()
@@ -636,6 +642,7 @@ public final class ColonyView implements IColony
 
     /**
      * Get a list of all waypoints in the colony view.
+     *
      * @return a copy of the list.
      */
     public Set<BlockPos> getWayPoints()
@@ -670,20 +677,5 @@ public final class ColonyView implements IColony
     public boolean hasWillRaidTonight()
     {
         return false;
-    }
-
-    @Override
-    public World getWorld()
-    {
-        return Minecraft.getMinecraft().player.getEntityWorld();
-    }
-
-    @Nullable
-    @Override
-    public IRequestManager getRequestManager()
-    {
-        //No request system on the client side.
-        //At least for now.
-        return null;
     }
 }
