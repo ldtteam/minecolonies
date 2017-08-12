@@ -134,7 +134,7 @@ public final class StandardRequestFactories
         {
             final IToken token = controller.deserialize(nbt.getCompoundTag(NBT_TOKEN));
             final RequestState state = RequestState.deserializeNBT((NBTTagInt) nbt.getTag(NBT_STATE));
-            final ItemStack requested = new ItemStack(nbt.getCompoundTag(NBT_REQUESTED));
+            final ItemStack requested = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag(NBT_REQUESTED));
 
             final List<IToken> childTokens = new ArrayList<>();
             final NBTTagList childCompound = nbt.getTagList(NBT_CHILDREN, Constants.NBT.TAG_COMPOUND);
@@ -153,7 +153,7 @@ public final class StandardRequestFactories
 
             if (nbt.hasKey(NBT_RESULT))
             {
-                request.setResult(new ItemStack(nbt.getCompoundTag(NBT_RESULT)));
+                request.setResult(ItemStack.loadItemStackFromNBT(nbt.getCompoundTag(NBT_RESULT)));
             }
 
             return request;

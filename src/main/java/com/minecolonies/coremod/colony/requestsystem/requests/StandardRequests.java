@@ -45,7 +45,7 @@ public final class StandardRequests
         @Override
         public boolean hasResult()
         {
-            return getResult() != null && !getResult().isEmpty();
+            return getResult() != null && !ItemStackUtils.isEmpty(getResult());
         }
     }
 
@@ -71,7 +71,7 @@ public final class StandardRequests
         @Override
         public ItemStack getDelivery()
         {
-            if (getResult() != null && !getResult().getStack().isEmpty())
+            if (getResult() != null && !ItemStackUtils.isEmpty(getResult().getStack()))
             {
                 return getResult().getStack();
             }
@@ -102,7 +102,7 @@ public final class StandardRequests
         @Override
         public ItemStack getDelivery()
         {
-            if (getResult() != null && !getResult().getResult().isEmpty())
+            if (getResult() != null && !ItemStackUtils.isEmpty(getResult().getResult()))
             {
                 return getResult().getResult();
             }
