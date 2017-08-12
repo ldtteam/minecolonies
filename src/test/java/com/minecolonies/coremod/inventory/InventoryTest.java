@@ -2,6 +2,7 @@ package com.minecolonies.coremod.inventory;
 
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import net.minecraft.inventory.IInventory;
@@ -13,8 +14,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
