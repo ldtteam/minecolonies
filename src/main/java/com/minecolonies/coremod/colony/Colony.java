@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
@@ -630,6 +631,7 @@ public class Colony implements IColony
      * @return World the colony is in.
      */
     @Nullable
+    @Override
     public World getWorld()
     {
         return world;
@@ -2019,5 +2021,4 @@ public class Colony implements IColony
     {
         willRaidTonight = willRaid;
     }
-
 }
