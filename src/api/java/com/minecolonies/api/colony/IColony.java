@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.colony;
+package com.minecolonies.api.colony;
 
 import com.minecolonies.api.colony.permissions.IPermissions;
 import net.minecraft.util.math.BlockPos;
@@ -79,4 +79,10 @@ public interface IColony
      * @return true if so.
      */
     boolean hasWillRaidTonight();
+
+    /**
+     * return the colony's world.
+     * @return world.
+     */
+    World getWorld();
 }

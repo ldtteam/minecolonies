@@ -10,6 +10,7 @@ import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
+import com.minecolonies.coremod.entity.ai.util.RecipeStorage;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import net.minecraft.block.Block;
@@ -387,7 +388,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             delay += DELAY_RECHECK;
             final ItemStack first = getOwnBuilding().getFirstNeededItem();
             //Takes one Stack from the hut if existent
-            if (isInHut(first))
+            if (isInHut(first) || (getOwnBuilding().canCraft(first) && craftItem(first)))
             {
                 return NEEDS_ITEM;
             }
@@ -1004,7 +1005,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             final int itemDamage = useItemDamage ? stack.getItemDamage() : -1;
             final int countOfItem = worker.getItemCountInInventory(stack.getItem(), itemDamage);
 
-            if (countOfItem < 1)
+            if (countOfItem < 1 && (!getOwnBuilding().canCraft(tempStack) || !craftItem(tempStack)))
             {
                 final int itemsLeft = ItemStackUtils.getSize(stack) - countOfItem;
                 @NotNull final ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft, itemDamage);
@@ -1020,9 +1021,21 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             return false;
         }
+
         itemsNeeded.clear();
         Collections.addAll(itemsNeeded, items);
         return true;
+    }
+
+    /**
+     * Try to craft a certain stack.
+     * @param tempStack the stack to craft.
+     * @return true if succesful.
+     */
+    private boolean craftItem(final ItemStack tempStack)
+    {
+        final RecipeStorage storage = getOwnBuilding().getFirstFullFillableRecipe(tempStack);
+        return storage != null && getOwnBuilding().fullFillRecipe(storage);
     }
 
     /**
@@ -1051,7 +1064,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             }
             final int itemDamage = useItemDamage ? stack.getItemDamage() : -1;
             final int countOfItem = worker.getItemCountInInventory(stack.getItem(), itemDamage);
-            if (countOfItem < ItemStackUtils.getSize(tempStack))
+            if (countOfItem < ItemStackUtils.getSize(tempStack) && (!getOwnBuilding().canCraft(tempStack) || !craftItem(tempStack)))
             {
                 final int itemsLeft = ItemStackUtils.getSize(stack) - countOfItem;
                 @NotNull final ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft, -1);

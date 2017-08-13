@@ -256,7 +256,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      * @param is the type of item requested (amount is ignored)
      * @return true if a stack of that type was found
      */
-    private boolean isInHut(@Nullable final ItemStack is)
+    public boolean isInHut(@Nullable final ItemStack is)
     {
         return !ItemStackUtils.isEmpty(is) && isInHut(stack -> !ItemStackUtils.isEmpty(stack) && is.isItemEqual(stack));
     }
@@ -414,7 +414,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      * @param itemStackSelectionPredicate the itemStack predicate.
      * @return true if found the stack.
      */
-    private static boolean isInTileEntity(final TileEntityChest entity, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    public static boolean isInTileEntity(final TileEntityChest entity, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
         return InventoryFunctions
                 .matchFirstInProvider(
