@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.inventory;
 
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -207,7 +208,7 @@ public class CraftingGUIBuilding extends Container
 
             if (itemstack1.getCount() == 0)
             {
-                slot.putStack((ItemStack) null);
+                slot.putStack((ItemStack) ItemStackUtils.EMPTY);
             }
             else
             {
