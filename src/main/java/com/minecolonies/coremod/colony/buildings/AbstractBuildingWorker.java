@@ -1,10 +1,7 @@
 package com.minecolonies.coremod.colony.buildings;
 
-<<<<<<< HEAD
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-=======
->>>>>>> racks
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
@@ -27,17 +24,13 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-<<<<<<< HEAD
-import java.util.Map;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
 
-=======
-import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
->>>>>>> racks
 
 /**
  * The abstract class for each worker building.
