@@ -1,5 +1,6 @@
 package com.minecolonies.api.colony.requestsystem.token;
 
+import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
@@ -7,32 +8,28 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 /**
- * Factory for the standard request token.
+ * Factory for the standard request token, {@link StandardToken}
  */
 public class StandardTokenFactory implements ITokenFactory<UUID, StandardToken>
 {
-    /**
-     * Method to get the request type this factory can produce.
-     *
-     * @return The type of request this factory can produce.
-     */
+
+    ////// --------------------------- NBTConstants --------------------------- \\\\\\
+    public static final String NBT_MSB = "Id_MSB";
+    public static final String NBT_LSB = "Id_LSB";
+    ////// --------------------------- NBTConstants --------------------------- \\\\\\
+
     @NotNull
     @Override
-    public Class<? extends StandardToken> getFactoryOutputType()
+    public TypeToken<StandardToken> getFactoryOutputType()
     {
-        return StandardToken.class;
+        return new TypeToken<StandardToken>() {};
     }
 
-    /**
-     * Used to determine which type of request this can produce.
-     *
-     * @return The class that represents the Type of Request this can produce.
-     */
     @NotNull
     @Override
-    public Class<? extends UUID> getFactoryInputType()
+    public TypeToken<UUID> getFactoryInputType()
     {
-        return UUID.class;
+        return new TypeToken<UUID>() {};
     }
 
     /**
@@ -46,7 +43,12 @@ public class StandardTokenFactory implements ITokenFactory<UUID, StandardToken>
     @Override
     public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final StandardToken request)
     {
-        return request.serializeNBT();
+        final NBTTagCompound compound = new NBTTagCompound();
+
+        compound.setLong(NBT_LSB, request.getIdentifier().getLeastSignificantBits());
+        compound.setLong(NBT_MSB, request.getIdentifier().getMostSignificantBits());
+
+        return compound;
     }
 
     /**
@@ -60,9 +62,12 @@ public class StandardTokenFactory implements ITokenFactory<UUID, StandardToken>
     @Override
     public StandardToken deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
     {
-        final StandardToken token = new StandardToken();
-        token.deserializeNBT(nbt);
-        return token;
+        final Long msb = nbt.getLong(NBT_MSB);
+        final Long lsb = nbt.getLong(NBT_LSB);
+
+        final UUID id = new UUID(msb, lsb);
+
+        return new StandardToken(id);
     }
 
     /**
