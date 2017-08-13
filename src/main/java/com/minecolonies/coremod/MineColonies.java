@@ -5,7 +5,6 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
 import com.minecolonies.coremod.commands.CommandEntryPoint;
-import com.minecolonies.coremod.craftingsystem.CraftingSystemInitializationHandler;
 import com.minecolonies.coremod.network.messages.*;
 import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.util.RecipeHandler;
@@ -100,8 +99,6 @@ public class MineColonies
         {
             configuration.save();
         }
-
-        CraftingSystemInitializationHandler.onPreInit();
     }
 
     /**

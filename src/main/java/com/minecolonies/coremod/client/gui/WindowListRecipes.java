@@ -169,8 +169,8 @@ public class WindowListRecipes extends Window implements ButtonHandler
         final int row = recipeList.getListElementIndexByPane(button) - 1;
         if (button.getID().equals(BUTTON_REMOVE))
         {
-            final RecipeStorage data = recipes.get(row);
-            building.removeRecipe(row);
+            final RecipeStorage data = recipes.get(row+1);
+            building.removeRecipe(row+1);
             MineColonies.getNetwork().sendToServer(new AddRemoveRecipeMessage(data, building, true));
         }
         else if (button.getID().equals(BUTTON_UP))

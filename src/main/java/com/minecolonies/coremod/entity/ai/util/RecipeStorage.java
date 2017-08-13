@@ -41,16 +41,19 @@ public class RecipeStorage
     /**
      * Input required for the recipe.
      */
+    @NotNull
     private final List<ItemStack> input;
 
     /**
      * Primary output generated for the recipe.
      */
+    @NotNull
     private final ItemStack primaryOutput;
 
     /**
      * Secondary output generated for the recipe.
      */
+    @NotNull
     private final List<ItemStack> secondaryOutput;
 
     /**
@@ -273,6 +276,58 @@ public class RecipeStorage
         }
 
         buf.writeInt(gridSize);
+    }
+
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (!(o instanceof RecipeStorage))
+        {
+            return false;
+        }
+
+        final RecipeStorage that = (RecipeStorage) o;
+
+        if (gridSize != that.gridSize
+                || input.size() != that.input.size()
+                || secondaryOutput.size() != that.secondaryOutput.size()
+                || !primaryOutput.equals(that.primaryOutput))
+        {
+            return false;
+        }
+
+        for(final ItemStack stack: input)
+        {
+            if(!that.input.contains(stack))
+            {
+                return false;
+            }
+        }
+
+        for(final ItemStack stack: secondaryOutput)
+        {
+            if(!that.secondaryOutput.contains(stack))
+            {
+                return false;
+            }
+        }
+
+        return intermediate == null ? (that.intermediate == null) : intermediate.equals(that.intermediate);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = input.hashCode();
+        result = 31 * result + primaryOutput.hashCode();
+        result = 31 * result + secondaryOutput.hashCode();
+        result = 31 * result + (intermediate != null ? intermediate.hashCode() : 0);
+        result = 31 * result + gridSize;
+        return result;
     }
 
     /**
