@@ -1,6 +1,7 @@
 package com.minecolonies.coremod;
 
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
