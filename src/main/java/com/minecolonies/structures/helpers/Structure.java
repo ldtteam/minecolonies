@@ -465,7 +465,7 @@ public class Structure
         {
             final Entity finalEntity = EntityList.createEntityFromNBT(entityInfoList[i].entityData, world);
             final Vec3d entityVec = entityInfoList[i].pos.add(new Vec3d(pos));
-            finalEntity.setPosition(entityVec.xCoord, entityVec.yCoord, entityVec.zCoord);
+            finalEntity.setPosition(entityVec.x, entityVec.y, entityVec.z);
         }
 
         return entityList;
@@ -585,7 +585,7 @@ public class Structure
                 finalEntity.prevRotationYaw = (float) (finalEntity.getMirroredYaw(settings.getMirror()) - NINETY_DEGREES);
                 final double rotation =
                   (double) finalEntity.getMirroredYaw(settings.getMirror()) + ((double) finalEntity.rotationYaw - finalEntity.getRotatedYaw(settings.getRotation()));
-                finalEntity.setLocationAndAngles(entityVec.xCoord, entityVec.yCoord, entityVec.zCoord, (float) rotation, finalEntity.rotationPitch);
+                finalEntity.setLocationAndAngles(entityVec.x, entityVec.y, entityVec.z, (float) rotation, finalEntity.rotationPitch);
             }
             entityList[i] = finalEntity;
         }
@@ -682,9 +682,9 @@ public class Structure
     {
         final Mirror mirrorIn = settings.getMirror();
         final Rotation rotationIn = settings.getRotation();
-        double xCoord = vec.xCoord;
-        final double yCoord = vec.yCoord;
-        double zCoord = vec.zCoord;
+        double xCoord = vec.x;
+        final double yCoord = vec.y;
+        double zCoord = vec.z;
         boolean flag = true;
 
         switch (mirrorIn)
@@ -819,7 +819,7 @@ public class Structure
             final double rotationYaw
               = (double) finalEntity.getMirroredYaw(settings.getMirror()) + ((double) finalEntity.rotationYaw - (double) finalEntity.getRotatedYaw(settings.getRotation()));
 
-            finalEntity.setLocationAndAngles(entityVec.xCoord, entityVec.yCoord, entityVec.zCoord,
+            finalEntity.setLocationAndAngles(entityVec.x, entityVec.y, entityVec.z,
               (float) rotationYaw, finalEntity.rotationPitch);
 
             final NBTTagCompound nbttagcompound = new NBTTagCompound();

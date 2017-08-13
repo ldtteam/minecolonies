@@ -98,7 +98,7 @@ public class PathNavigate extends PathNavigateGround
     protected boolean isDirectPathBetweenPoints(final Vec3d start, final Vec3d end, final int sizeX, final int sizeY, final int sizeZ)
     {
         // TODO improve road walking. This is better in some situations, but still not great.
-        return !BlockUtils.isPathBlock(world.getBlockState(new BlockPos(start.xCoord, start.yCoord - 1, start.zCoord)).getBlock())
+        return !BlockUtils.isPathBlock(world.getBlockState(new BlockPos(start.x, start.y - 1, start.z)).getBlock())
                 && super.isDirectPathBetweenPoints(start, end, sizeX, sizeY, sizeZ);
     }
 
@@ -191,13 +191,13 @@ public class PathNavigate extends PathNavigateGround
             for (int i = 0; i < pathLength; ++i)
             {
                 final PathPoint point = path.getPathPointFromIndex(i);
-                newPoints[i] = new PathPointExtended(new BlockPos(point.xCoord, point.yCoord, point.zCoord));
+                newPoints[i] = new PathPointExtended(new BlockPos(point.x, point.y, point.z));
             }
 
             tempPath = new Path(newPoints);
 
             final PathPointExtended finalPoint = newPoints[pathLength - 1];
-            destination = new BlockPos(finalPoint.xCoord, finalPoint.yCoord, finalPoint.zCoord);
+            destination = new BlockPos(finalPoint.x, finalPoint.y, finalPoint.z);
         }
 
         return super.setPath(tempPath == null ? path : tempPath, speed);
@@ -229,7 +229,7 @@ public class PathNavigate extends PathNavigateGround
                 final PathPoint p = getPath().getFinalPathPoint();
                 if (p != null && destination == null)
                 {
-                    destination = new BlockPos(p.xCoord, p.yCoord, p.zCoord);
+                    destination = new BlockPos(p.x, p.y, p.z);
 
                     //  AbstractPathJob with no destination, did reach it's destination
                     pathResult.setPathReachesDestination(true);
@@ -255,7 +255,7 @@ public class PathNavigate extends PathNavigateGround
             {
                 final Vec3d vec3 = this.getPath().getPosition(this.entity);
 
-                if (vec3.squareDistanceTo(entity.posX, vec3.yCoord, entity.posZ) < 0.1)
+                if (vec3.squareDistanceTo(entity.posX, vec3.y, entity.posZ) < 0.1)
                 {
                     //This way he is less nervous and gets up the ladder
                     double newSpeed = 0.05;
@@ -280,7 +280,7 @@ public class PathNavigate extends PathNavigateGround
                             break;
                     }
 
-                    this.entity.getMoveHelper().setMoveTo(vec3.xCoord, vec3.yCoord, vec3.zCoord, newSpeed);
+                    this.entity.getMoveHelper().setMoveTo(vec3.x, vec3.y, vec3.z, newSpeed);
                 }
             }
             else if (entity.isInWater())
@@ -289,7 +289,7 @@ public class PathNavigate extends PathNavigateGround
                 final int curIndex = this.getPath().getCurrentPathIndex();
                 if (curIndex > 0
                       && (curIndex + 1) < this.getPath().getCurrentPathLength()
-                      && this.getPath().getPathPointFromIndex(curIndex - 1).yCoord != pEx.yCoord)
+                      && this.getPath().getPathPointFromIndex(curIndex - 1).y != pEx.y)
                 {
                     //  Work around the initial 'spin back' when dropping into water
                     oldIndex = curIndex + 1;
@@ -299,8 +299,8 @@ public class PathNavigate extends PathNavigateGround
 
                 Vec3d vec3d = this.getPath().getPosition(this.entity);
 
-                if (vec3d.squareDistanceTo(new Vec3d(entity.posX, vec3d.yCoord, entity.posZ)) < 0.1
-                      && Math.abs(entity.posY - vec3d.yCoord) < 0.5)
+                if (vec3d.squareDistanceTo(new Vec3d(entity.posX, vec3d.y, entity.posZ)) < 0.1
+                      && Math.abs(entity.posY - vec3d.y) < 0.5)
                 {
                     this.getPath().setCurrentPathIndex(this.getPath().getCurrentPathIndex() + 1);
                     if (this.noPath())
@@ -311,7 +311,7 @@ public class PathNavigate extends PathNavigateGround
                     vec3d = this.getPath().getPosition(this.entity);
                 }
 
-                this.entity.getMoveHelper().setMoveTo(vec3d.xCoord, vec3d.yCoord, vec3d.zCoord, walkSpeed);
+                this.entity.getMoveHelper().setMoveTo(vec3d.x, vec3d.y, vec3d.z, walkSpeed);
             }
             else
             {
@@ -349,7 +349,7 @@ public class PathNavigate extends PathNavigateGround
                   && !pExNext.isOnLadder())
             {
                 final Vec3d vec3 = getEntityPosition();
-                if ((vec3.yCoord - (double) pEx.yCoord) < 0.001)
+                if ((vec3.y - (double) pEx.y) < 0.001)
                 {
                     this.currentPath.setCurrentPathIndex(curNodeNext);
                 }

@@ -719,7 +719,7 @@ public class InventoryCitizen implements IInventory
                 final CrashReportCategory crashreportcategory = crashreport.makeCategory("Item being added");
                 crashreportcategory.addCrashSection("Item ID", Item.getIdFromItem(itemStackIn.getItem()));
                 crashreportcategory.addCrashSection("Item data", itemStackIn.getMetadata());
-                crashreportcategory.setDetail("Item name", itemStackIn::getDisplayName);
+                crashreportcategory.addDetail("Item name", itemStackIn::getDisplayName);
                 throw new ReportedException(crashreport);
             }
         }

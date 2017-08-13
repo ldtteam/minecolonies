@@ -747,12 +747,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @Override
     public boolean attackEntityFrom(@NotNull final DamageSource damageSource, final float damage)
     {
-        final Entity sourceEntity = damageSource.getEntity();
+        final Entity sourceEntity = damageSource.getTrueSource();
         if (sourceEntity instanceof EntityCitizen && ((EntityCitizen) sourceEntity).colonyId == this.colonyId)
         {
             return false;
         }
-        setLastAttacker(damageSource.getEntity());
+        setLastAttackedEntity(damageSource.getTrueSource());
 
         final boolean result = super.attackEntityFrom(damageSource, damage);
 
@@ -775,11 +775,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
     public void onDeath(final DamageSource par1DamageSource)
     {
         double penalty = CITIZEN_DEATH_PENALTY;
-        if (par1DamageSource.getEntity() instanceof EntityPlayer)
+        if (par1DamageSource.getTrueSource() instanceof EntityPlayer)
         {
             for (final Player player : PermissionUtils.getPlayersWithAtLeastRank(colony, Rank.OFFICER))
             {
-                if (player.getID().equals(par1DamageSource.getEntity().getUniqueID()))
+                if (player.getID().equals(par1DamageSource.getTrueSource().getUniqueID()))
                 {
                     penalty = CITIZEN_KILL_PENALTY;
                     break;
@@ -1718,7 +1718,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 return;
             }
 
-            final ItemStack itemStack = entityItem.getEntityItem();
+            final ItemStack itemStack = entityItem.getItem();
 
             final ItemStack resultStack = InventoryUtils.addItemStackToItemHandlerWithResult(new InvWrapper(getInventoryCitizen()), itemStack.copy());
             final int resultingStackSize = ItemStackUtils.isEmpty(resultStack) ? 0 : ItemStackUtils.getSize(resultStack);

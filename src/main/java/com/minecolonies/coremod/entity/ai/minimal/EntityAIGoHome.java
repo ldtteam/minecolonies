@@ -94,7 +94,7 @@ public class EntityAIGoHome extends EntityAIBase
      * @return true if he should continue.
      */
     @Override
-    public boolean continueExecuting()
+    public boolean shouldContinueExecuting()
     {
         return !citizen.getNavigator().noPath() && (citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP || isCitizenStarving());
     }

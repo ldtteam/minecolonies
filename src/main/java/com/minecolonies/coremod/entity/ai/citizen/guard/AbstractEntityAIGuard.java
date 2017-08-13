@@ -287,12 +287,12 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
 
     public boolean huntDownlastAttacker()
     {
-        if (this.worker.getLastAttacker() != null && this.worker.getLastAttackerTime() >= worker.ticksExisted - ATTACK_TIME_BUFFER
-              && this.worker.getLastAttacker().isEntityAlive())
+        if (this.worker.getLastAttackedEntity() != null && this.worker.getLastAttackedEntityTime() >= worker.ticksExisted - ATTACK_TIME_BUFFER
+              && this.worker.getLastAttackedEntity().isEntityAlive())
         {
-            return this.worker.getLastAttacker() != null && this.worker.canEntityBeSeen(this.worker.getLastAttacker());
+            return this.worker.getLastAttackedEntity() != null && this.worker.canEntityBeSeen(this.worker.getLastAttackedEntity());
         }
-        worker.setLastAttacker(null);
+        worker.setLastAttackedEntity(null);
         return false;
     }
 
@@ -305,7 +305,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
     {
         if (huntDownlastAttacker())
         {
-            targetEntity = this.worker.getLastAttacker();
+            targetEntity = this.worker.getLastAttackedEntity();
             return AIState.GUARD_HUNT_DOWN_TARGET;
         }
 
