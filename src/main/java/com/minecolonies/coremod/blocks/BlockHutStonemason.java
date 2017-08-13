@@ -41,8 +41,7 @@ public class BlockHutStonemason extends AbstractBlockHut
             final IBlockState state,
             final EntityPlayer playerIn,
             final EnumHand hand,
-            @Nullable final ItemStack heldItem,
-            final EnumFacing side,
+            final EnumFacing facing,
             final float hitX,
             final float hitY,
             final float hitZ)
@@ -62,6 +61,4 @@ public class BlockHutStonemason extends AbstractBlockHut
         }
         return true;
     }
-
-
 }

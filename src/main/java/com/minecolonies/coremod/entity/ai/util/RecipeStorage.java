@@ -160,17 +160,17 @@ public class RecipeStorage
         for (int i = 0; i < inputTagList.tagCount(); ++i)
         {
             final NBTTagCompound inputTag = inputTagList.getCompoundTagAt(i);
-            input.add(ItemStack.loadItemStackFromNBT(inputTag));
+            input.add(new ItemStack(inputTag));
         }
 
-        final ItemStack primaryOutput = ItemStack.loadItemStackFromNBT(compound);
+        final ItemStack primaryOutput = new ItemStack(compound);
 
         final List<ItemStack> secondaryOutput = new ArrayList<>();
         final NBTTagList neededResTagList = compound.getTagList(INPUT_TAG, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < neededResTagList.tagCount(); ++i)
         {
             final NBTTagCompound neededRes = neededResTagList.getCompoundTagAt(i);
-            secondaryOutput.add(ItemStack.loadItemStackFromNBT(neededRes));
+            secondaryOutput.add(new ItemStack(neededRes));
         }
 
         final Block intermediate = NBTUtil.readBlockState(compound).getBlock();

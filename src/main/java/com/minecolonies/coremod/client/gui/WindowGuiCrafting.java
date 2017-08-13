@@ -140,7 +140,7 @@ public class WindowGuiCrafting extends GuiContainer
             if(!ItemStackUtils.isEmpty(primaryOutput))
             {
                 MineColonies.getNetwork().sendToServer(new AddRemoveRecipeMessage(input, 2, primaryOutput, secondaryOutput, building, false));
-                LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().thePlayer, "com.minecolonies.coremod.gui.recipe.done");
+                LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "com.minecolonies.coremod.gui.recipe.done");
             }
         }
     }
@@ -151,7 +151,7 @@ public class WindowGuiCrafting extends GuiContainer
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY)
     {
-        this.fontRendererObj.drawString(I18n.format("container.crafting", new Object[0]), X_OFFSET, Y_OFFSET, GUI_COLOR);
+        this.fontRenderer.drawString(I18n.format("container.crafting", new Object[0]), X_OFFSET, Y_OFFSET, GUI_COLOR);
     }
 
     /**

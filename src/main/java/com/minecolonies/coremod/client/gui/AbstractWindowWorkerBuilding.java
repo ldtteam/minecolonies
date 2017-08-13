@@ -86,7 +86,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
     private void craftingClicked()
     {
         final BlockPos pos = building.getLocation();
-        Minecraft.getMinecraft().thePlayer.openGui(MineColonies.instance, 0, Minecraft.getMinecraft().theWorld, pos.getX(), pos.getY(), pos.getZ());
+        Minecraft.getMinecraft().player.openGui(MineColonies.instance, 0, Minecraft.getMinecraft().world, pos.getX(), pos.getY(), pos.getZ());
         MineColonies.getNetwork().sendToServer(new OpenCraftingGUIMessage(building, 2));
     }
 

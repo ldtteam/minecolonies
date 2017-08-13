@@ -76,7 +76,7 @@ public class OpenCraftingGUIMessage extends AbstractMessage<OpenCraftingGUIMessa
         if (colony != null && checkPermissions(colony, player))
         {
             final BlockPos pos = message.buildingId;
-            player.openGui(MineColonies.instance, 0, player.worldObj, pos.getX(), pos.getY(), pos.getZ());
+            player.openGui(MineColonies.instance, 0, player.world, pos.getX(), pos.getY(), pos.getZ());
         }
     }
 
