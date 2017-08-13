@@ -24,6 +24,7 @@ public class StandardToken implements IToken<UUID>
 
     /**
      * Creates a new token with the given id.
+     * @param id the id.
      */
     public StandardToken(@NotNull final UUID id)
     {

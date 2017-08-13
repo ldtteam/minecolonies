@@ -6,9 +6,12 @@ import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.commands.MinecoloniesCommand;
 import com.minecolonies.coremod.network.messages.HireFireMessage;
+import com.minecolonies.coremod.network.messages.OpenCraftingGUIMessage;
 import com.minecolonies.coremod.network.messages.RecallCitizenMessage;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -43,7 +46,20 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
      */
     private static final String LABEL_WORKERLEVEL = "workerLevel";
 
+    /**
+     * Name string of the builder hut.
+     */
     private static final String BUILDER_HUT_NAME = "com.minecolonies.coremod.gui.workerHuts.buildersHut";
+
+    /**
+     * Button to access the crafting grid.
+     */
+    private static final String BUTTON_CRAFTING  = "crafting";
+
+    /**
+     * Button to access the recipe list.
+     */
+    private static final String BUTTON_RECIPES_LIST = "recipelist";
 
     /**
      * Constructor for the window of the worker building.
@@ -57,6 +73,21 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
 
         super.registerButton(BUTTON_HIRE, this::hireClicked);
         super.registerButton(BUTTON_RECALL, this::recallClicked);
+        super.registerButton(BUTTON_CRAFTING, this::craftingClicked);
+        super.registerButton(BUTTON_RECIPES_LIST, this::recipeListClicked);
+    }
+
+    private void recipeListClicked()
+    {
+        @NotNull final WindowListRecipes window = new WindowListRecipes(building.getColony(), building.getLocation());
+        window.open();
+    }
+
+    private void craftingClicked()
+    {
+        final BlockPos pos = building.getLocation();
+        Minecraft.getMinecraft().thePlayer.openGui(MineColonies.instance, 0, Minecraft.getMinecraft().theWorld, pos.getX(), pos.getY(), pos.getZ());
+        MineColonies.getNetwork().sendToServer(new OpenCraftingGUIMessage(building, 2));
     }
 
     /**
@@ -129,7 +160,5 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
         findPaneOfTypeByID(LABEL_WORKERNAME, Label.class).setLabelText(workerName);
         findPaneOfTypeByID(LABEL_WORKERLEVEL, Label.class)
           .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.workerLevel", workerLevel));
-
-        findPaneOfTypeByID(LABEL_BUILDINGTYPE, Label.class).setLabelText("xxxxxxxx");
     }
 }

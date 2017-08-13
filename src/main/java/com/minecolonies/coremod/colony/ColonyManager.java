@@ -3,6 +3,9 @@ package com.minecolonies.coremod.colony;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.colony.requestsystem.token.StandardToken;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
@@ -11,6 +14,7 @@ import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.entity.ai.util.RecipeStorage;
 import com.minecolonies.coremod.util.AchievementUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -58,10 +62,16 @@ public final class ColonyManager
      * The tag of the colonies.
      */
     private static final String                     TAG_COLONIES          = "colonies";
+
     /**
      * The tag of the pseudo unique identifier
      */
     private static final String                     TAG_UUID              = "uuid";
+
+    /**
+     * The Tag to store the recipes to NBT.
+     */
+    private static final String TAG_RECIPES = "recipes";
 
     /**
      * The damage source used to kill citizens.
@@ -71,12 +81,14 @@ public final class ColonyManager
      * The list of all colonies.
      */
     @NotNull
-    private static final ColonyList<Colony>         colonies              = new ColonyList<>();
+    private static final ColonyList<Colony>         colonies        = new ColonyList<>();
+
     /**
      * The list of all colonies by world.
      */
     @NotNull
-    private static final Map<Integer, List<Colony>> coloniesByWorld       = new HashMap<>();
+    private static final Map<Integer, List<Colony>> coloniesByWorld = new HashMap<>();
+
     /**
      * The list of colony views.
      */
@@ -84,9 +96,19 @@ public final class ColonyManager
     private static final ColonyList<ColonyView>     colonyViews           = new ColonyList<>();
 
     /**
+     * Map of all recipes which have been discovered globally already.
+     */
+    private static final Map<IToken, RecipeStorage> recipes = new HashMap<>();
+
+    /**
      * A buffer value to be sure to be outside of the colony.
      */
-    private static final int BUFFER = 10;
+    private static final int BUFFER    = 10;
+
+    /**
+     * Store the token tag to nbt.
+     */
+    private static final String TOKEN_TAG = "tokenTag";
 
     /**
      * The last colony id.
@@ -95,7 +117,8 @@ public final class ColonyManager
     /**
      * Amount of worlds loaded.
      */
-    private static int     numWorldsLoaded;
+    private static int numWorldsLoaded;
+
     /**
      * Whether the colonyManager should persist data.
      */
@@ -106,6 +129,7 @@ public final class ColonyManager
      * Client only
      */
     private static boolean schematicDownloaded = false;
+
     /**
      * Pseudo unique id for the server
      */
@@ -606,6 +630,16 @@ public final class ColonyManager
         {
             compound.setUniqueId(TAG_UUID, serverUUID);
         }
+
+        @NotNull final NBTTagList recipesTagList = new NBTTagList();
+        for (@NotNull final Map.Entry<IToken, RecipeStorage> entry : recipes.entrySet())
+        {
+            @NotNull final NBTTagCompound recipeTagCompound = new NBTTagCompound();
+            recipeTagCompound.setTag(TOKEN_TAG, StandardFactoryController.getInstance().serialize(entry.getKey()));
+            entry.getValue().writeToNBT(recipeTagCompound);
+            recipesTagList.appendTag(recipeTagCompound);
+        }
+        compound.setTag(TAG_RECIPES, recipesTagList);
     }
 
     /**
@@ -792,6 +826,15 @@ public final class ColonyManager
         }
 
         Log.getLogger().info(String.format("Loaded %d colonies", colonies.size()));
+
+        final NBTTagList recipesTags = compound.getTagList(TAG_RECIPES, NBT.TAG_COMPOUND);
+        for (int i = 0; i < recipesTags.tagCount(); ++i)
+        {
+            final NBTTagCompound recipeTag = recipesTags.getCompoundTagAt(i);
+            final IToken token = StandardFactoryController.getInstance().deserialize(recipeTag.getCompoundTag(TOKEN_TAG));
+            final RecipeStorage storage = RecipeStorage.readFromNBT(recipeTag);
+            recipes.put(token, storage);
+        }
     }
 
     /**
@@ -1098,5 +1141,57 @@ public final class ColonyManager
             }
         }
         return false;
+    }
+
+    /**
+     * Get a unmodifiable copy of the recipes map.
+     * @return a map of Token, RecipeStorage.
+     */
+    public static Map<IToken, RecipeStorage> getRecipes()
+    {
+        return Collections.unmodifiableMap(new HashMap<>(recipes));
+    }
+
+    /**
+     * Add a recipe to the map.
+     * @param storage the recipe to add
+     */
+    public static IToken addRecipe(final RecipeStorage storage)
+    {
+        final IToken token = new StandardToken();
+        recipes.put(token, storage);
+        return token;
+    }
+
+    /**
+     * Check if recipe is in map already, if not.
+     * Add a recipe to the map.
+     * @param storage the recipe to add
+     */
+    public static IToken checkOrAddRecipe(final RecipeStorage storage)
+    {
+        final IToken token = getRecipeId(storage);
+        if(token == null)
+        {
+            return addRecipe(storage);
+        }
+        return token;
+    }
+
+    /**
+     * Get the recipe id of a given recipeStorage.
+     * @param storage the storage.
+     * @return the id or null if inexistent.
+     */
+    public static IToken getRecipeId(final RecipeStorage storage)
+    {
+        for(final Map.Entry<IToken, RecipeStorage> tempStorage: recipes.entrySet())
+        {
+            if(tempStorage.getValue().equals(storage))
+            {
+                return tempStorage.getKey();
+            }
+        }
+        return null;
     }
 }
