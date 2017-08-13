@@ -1515,9 +1515,9 @@ public class InventoryUtils
      */
     public static int findSlotInProviderNotFullWithItem(final ICapabilityProvider provider, final Item item, final int itemDamage, final int amount)
     {
-        for (IItemHandler handler : getItemHandlersFromProvider(provider))
+        for (final IItemHandler handler : getItemHandlersFromProvider(provider))
         {
-            int foundSlot = findSlotInItemHandlerNotFullWithItem(handler, (ItemStack stack) -> compareItems(stack, item, itemDamage), amount);
+            final int foundSlot = findSlotInItemHandlerNotFullWithItem(handler, (ItemStack stack) -> compareItems(stack, item, itemDamage), amount);
             //TODO: When contract is hardened later: Replace this -1 check with a try-catch block.
             if (foundSlot > -1)
             {
