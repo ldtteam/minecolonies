@@ -1613,7 +1613,7 @@ public class InventoryUtils
     {
         for (int i = 0; i < handler.getSlots(); ++i)
         {
-            ItemStack itemstack = handler.getStackInSlot(i);
+            final ItemStack itemstack = handler.getStackInSlot(i);
 
             if (itemstack != null)
             {
