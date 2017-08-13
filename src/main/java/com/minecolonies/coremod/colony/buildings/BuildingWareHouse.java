@@ -15,6 +15,7 @@ import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
+import net.minecraft.block.BlockContainer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -116,13 +117,14 @@ public class BuildingWareHouse extends AbstractBuilding
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos)
     {
         final World world = getColony().getWorld();
-        if (block instanceof BlockChest && world != null)
+        if (block instanceof BlockContainer && world != null)
         {
             final TileEntity entity = getColony().getWorld().getTileEntity(pos);
             if (entity instanceof TileEntityChest)
             {
                 handleBuildingOverChest(pos, (TileEntityChest) entity, world);
             }
+            addContainerPosition(pos);
         }
     }
 

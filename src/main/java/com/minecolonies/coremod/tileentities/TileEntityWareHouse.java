@@ -443,16 +443,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                 LanguageHandler.sendPlayersMessage(getColony().getMessageEntityPlayers(), COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL);
                 return;
             }
-
-            if (chest instanceof TileEntityRack)
-            {
-                InventoryUtils.addItemStackToItemHandler(((TileEntityRack) chest).getInventory(), stack);
-            }
-            else
-            {
-                InventoryUtils.addItemStackToProvider(chest, stack);
-            }
-            new InvWrapper(inventoryCitizen).extractItem(i, Integer.MAX_VALUE, false);
+            InventoryUtils.transferItemStackIntoNextFreeSlotInProvider(new InvWrapper(inventoryCitizen), i, chest);
         }
     }
 
