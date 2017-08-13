@@ -295,22 +295,22 @@ public class RecipeStorage
         if (gridSize != that.gridSize
                 || input.size() != that.input.size()
                 || secondaryOutput.size() != that.secondaryOutput.size()
-                || !primaryOutput.equals(that.primaryOutput))
+                || !primaryOutput.isItemEqualIgnoreDurability(that.primaryOutput))
         {
             return false;
         }
 
-        for(final ItemStack stack: input)
+        for(int i = 0; i < input.size(); i++)
         {
-            if(!that.input.contains(stack))
+            if(!that.input.get(i).isItemEqual(input.get(i)))
             {
                 return false;
             }
         }
 
-        for(final ItemStack stack: secondaryOutput)
+        for(int i = 0; i < secondaryOutput.size(); i++)
         {
-            if(!that.secondaryOutput.contains(stack))
+            if(!that.secondaryOutput.get(i).isItemEqual(secondaryOutput.get(i)))
             {
                 return false;
             }

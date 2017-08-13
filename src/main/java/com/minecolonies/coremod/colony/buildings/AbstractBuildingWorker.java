@@ -123,14 +123,15 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
      */
     public RecipeStorage getFirstFullFillableRecipe(final ItemStack tempStack)
     {
-        for(Map.Entry<IToken, RecipeStorage> entry : ColonyManager.getRecipes().entrySet())
+        for(final IToken token : recipes)
         {
-            if(recipes.contains(entry.getKey()) && entry.getValue().getPrimaryOutput().isItemEqual(tempStack))
+            final RecipeStorage storage = ColonyManager.getRecipes().get(token);
+            if(storage != null && storage.getPrimaryOutput().isItemEqual(tempStack))
             {
                 final List<IItemHandler> handlers = getHandlers();
-                if(entry.getValue().canFullFillRecipe(handlers.toArray(new IItemHandler[handlers.size()])))
+                if(storage.canFullFillRecipe(handlers.toArray(new IItemHandler[handlers.size()])))
                 {
-                    return entry.getValue();
+                    return storage;
                 }
             }
         }
