@@ -98,7 +98,7 @@ public class BlockMinecoloniesRack extends Block
     }
 
     @Override
-    public void getSubBlocks(final Item itemIn, final CreativeTabs tab, final List<ItemStack> list)
+    public void getSubBlocks(final Item itemIn, final CreativeTabs tab, final NonNullList<ItemStack> list)
     {
         list.add(new ItemStack(this, 1, EnumType.DEFAULT.getMetadata()));
     }
@@ -195,13 +195,8 @@ public class BlockMinecoloniesRack extends Block
         return state.getValue(FACING).getHorizontalIndex();
     }
 
-    /**
-     * On the change of a neighbor block.
-     *
-     * @deprecated (Remove this as soon as minecraft offers anything better).
-     */
     @Override
-    public void neighborChanged(final IBlockState state, final World worldIn, final BlockPos pos, final Block blockIn)
+    public void neighborChanged(final IBlockState state, final World worldIn, final BlockPos pos, final Block blockIn, final BlockPos fromPos)
     {
         if (state.getBlock() instanceof BlockMinecoloniesRack)
         {
@@ -217,8 +212,7 @@ public class BlockMinecoloniesRack extends Block
                 }
             }
         }
-        super.neighborChanged(state, worldIn, pos, blockIn);
-    }
+        super.neighborChanged(state, worldIn, pos, blockIn, fromPos);    }
 
     /**
      * This returns a complete list of items dropped from this block.
@@ -260,8 +254,7 @@ public class BlockMinecoloniesRack extends Block
             final IBlockState state,
             final EntityPlayer playerIn,
             final EnumHand hand,
-            @Nullable final ItemStack heldItem,
-            final EnumFacing side,
+            final EnumFacing facing,
             final float hitX,
             final float hitY,
             final float hitZ)

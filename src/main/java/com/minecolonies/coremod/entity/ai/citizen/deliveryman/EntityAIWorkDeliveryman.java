@@ -505,14 +505,14 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             if (((TileEntityChest) tileEntity).numPlayersUsing == 0)
             {
                 this.world.addBlockEvent(tileEntity.getPos(), tileEntity.getBlockType(), 1, 1);
-                this.world.notifyNeighborsOfStateChange(tileEntity.getPos(), tileEntity.getBlockType());
-                this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockType());
+                this.world.notifyNeighborsOfStateChange(tileEntity.getPos(), tileEntity.getBlockType(), true);
+                this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockType(), true);
                 setDelay(DUMP_AND_GATHER_DELAY);
                 return GATHER_IN_WAREHOUSE;
             }
             this.world.addBlockEvent(tileEntity.getPos(), tileEntity.getBlockType(), 1, 0);
-            this.world.notifyNeighborsOfStateChange(tileEntity.getPos(), tileEntity.getBlockType());
-            this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockType());
+            this.world.notifyNeighborsOfStateChange(tileEntity.getPos(), tileEntity.getBlockType(), true);
+            this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockType(), true);
         }
 
         if (buildingToDeliver instanceof BuildingHome)

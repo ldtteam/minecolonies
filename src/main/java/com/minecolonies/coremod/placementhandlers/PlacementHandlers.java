@@ -411,7 +411,7 @@ public final class PlacementHandlers
                 return ActionProcessingResult.IGNORE;
             }
 
-            if (!Configurations.builderInfiniteResources)
+            if (!Configurations.gameplay.builderInfiniteResources)
             {
                 final List<ItemStack> itemList = new ArrayList<>();
                 itemList.add(BlockUtils.getItemStackFromBlockState(blockState));

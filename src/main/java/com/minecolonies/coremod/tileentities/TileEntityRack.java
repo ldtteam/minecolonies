@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.tileentities;
 
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
@@ -210,43 +211,43 @@ public class TileEntityRack extends TileEntity
      */
     private void updateBlockState()
     {
-        if (worldObj != null && worldObj.getBlockState(pos).getBlock() instanceof BlockMinecoloniesRack && (main || single))
+        if (world != null && world.getBlockState(pos).getBlock() instanceof BlockMinecoloniesRack && (main || single))
         {
             final IBlockState typeHere;
             final IBlockState typeNeighbor;
             if (content.isEmpty() && (getOtherChest() == null || getOtherChest().isEmpty()))
             {
-                if (getOtherChest() != null && worldObj.getBlockState(neighbor).getBlock() instanceof BlockMinecoloniesRack)
+                if (getOtherChest() != null && world.getBlockState(neighbor).getBlock() instanceof BlockMinecoloniesRack)
                 {
 
-                    typeHere = worldObj.getBlockState(pos).withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.EMPTYAIR);
-                    typeNeighbor = worldObj.getBlockState(neighbor).withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.DEFAULTDOUBLE)
+                    typeHere = world.getBlockState(pos).withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.EMPTYAIR);
+                    typeNeighbor = world.getBlockState(neighbor).withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.DEFAULTDOUBLE)
                             .withProperty(BlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(pos, neighbor));
                 }
                 else
                 {
-                    typeHere = worldObj.getBlockState(pos).withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.DEFAULT);
+                    typeHere = world.getBlockState(pos).withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.DEFAULT);
                     typeNeighbor = null;
                 }
             }
             else
             {
-                if (getOtherChest() != null && worldObj.getBlockState(neighbor).getBlock() instanceof BlockMinecoloniesRack)
+                if (getOtherChest() != null && world.getBlockState(neighbor).getBlock() instanceof BlockMinecoloniesRack)
                 {
-                    typeHere = worldObj.getBlockState(pos).withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.EMPTYAIR);
-                    typeNeighbor = worldObj.getBlockState(neighbor).withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.FULLDOUBLE)
+                    typeHere = world.getBlockState(pos).withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.EMPTYAIR);
+                    typeNeighbor = world.getBlockState(neighbor).withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.FULLDOUBLE)
                             .withProperty(BlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(pos, neighbor));
                 }
                 else
                 {
-                    typeHere = worldObj.getBlockState(pos).withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.FULL);
+                    typeHere = world.getBlockState(pos).withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.FULL);
                     typeNeighbor = null;
                 }
             }
-            worldObj.setBlockState(pos, typeHere);
+            world.setBlockState(pos, typeHere);
             if (typeNeighbor != null)
             {
-                worldObj.setBlockState(neighbor, typeNeighbor);
+                world.setBlockState(neighbor, typeNeighbor);
             }
         }
     }
@@ -287,8 +288,8 @@ public class TileEntityRack extends TileEntity
      */
     public void neighborChanged(final BlockPos newNeighbor)
     {
-        final TileEntity entity = worldObj.getTileEntity(newNeighbor);
-        if (this.neighbor.equals(BlockPos.ORIGIN) && worldObj.getBlockState(newNeighbor).getBlock() instanceof BlockMinecoloniesRack
+        final TileEntity entity = world.getTileEntity(newNeighbor);
+        if (this.neighbor.equals(BlockPos.ORIGIN) && world.getBlockState(newNeighbor).getBlock() instanceof BlockMinecoloniesRack
                 && !(entity instanceof TileEntityRack && ((TileEntityRack) entity).getOtherChest() != null))
         {
             this.neighbor = newNeighbor;
@@ -299,7 +300,7 @@ public class TileEntityRack extends TileEntity
             }
             updateItemStorage();
         }
-        else if (this.neighbor.equals(newNeighbor) && !(worldObj.getBlockState(newNeighbor).getBlock() instanceof BlockMinecoloniesRack))
+        else if (this.neighbor.equals(newNeighbor) && !(world.getBlockState(newNeighbor).getBlock() instanceof BlockMinecoloniesRack))
         {
             this.neighbor = BlockPos.ORIGIN;
             single = true;
@@ -360,7 +361,7 @@ public class TileEntityRack extends TileEntity
         for (int i = 0; i < inventoryTagList.tagCount(); ++i)
         {
             final NBTTagCompound inventoryCompound = inventoryTagList.getCompoundTagAt(i);
-            final ItemStack stack = ItemStackUtils.loadItemStackFromNBT(inventoryCompound);
+            final ItemStack stack = new ItemStack(inventoryCompound);
             if (ItemStackUtils.getSize(stack) <= 0)
             {
                 inventory.setStackInSlot(i, ItemStackUtils.EMPTY);
@@ -416,7 +417,7 @@ public class TileEntityRack extends TileEntity
         {
             return null;
         }
-        final TileEntity tileEntity = worldObj.getTileEntity(neighbor);
+        final TileEntity tileEntity = world.getTileEntity(neighbor);
         if (tileEntity instanceof TileEntityRack)
         {
             ((TileEntityRack) tileEntity).setNeighbor(this.getPos());
@@ -435,7 +436,7 @@ public class TileEntityRack extends TileEntity
         {
             @NotNull final NBTTagCompound inventoryCompound = new NBTTagCompound();
             final ItemStack stack = inventory.getStackInSlot(slot);
-            if (stack == null)
+            if (stack == ItemStack.EMPTY)
             {
                 new ItemStack(Blocks.AIR, 0).writeToNBT(inventoryCompound);
             }
@@ -471,7 +472,7 @@ public class TileEntityRack extends TileEntity
         for (int i = 0; i < inventoryTagList.tagCount(); ++i)
         {
             final NBTTagCompound inventoryCompound = inventoryTagList.getCompoundTagAt(i);
-            final ItemStack stack = ItemStackUtils.loadItemStackFromNBT(inventoryCompound);
+            final ItemStack stack = new ItemStack(inventoryCompound);
             if (ItemStackUtils.getSize(stack) <= 0)
             {
                 inventory.setStackInSlot(i, ItemStackUtils.EMPTY);
