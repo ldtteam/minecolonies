@@ -631,6 +631,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         return true;
     }
 
+    /**
+     * Specific actions to execute when building over a block.
+     * @param pos the position to build at.
+     */
     public void handleBuildingOverBlock(@NotNull final BlockPos pos)
     {
         final List<ItemStack> items = BlockPosUtil.getBlockDrops(world, pos, 0);
