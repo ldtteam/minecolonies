@@ -172,18 +172,13 @@ public class Image extends Pane
     @Override
     protected void drawSelf(final int mx, final int my)
     {
-        // Some other texture must need to be ticked, I tried ticking the current one.
-        // This fixes the problem, even if you put it after the draw call. So I guess I'll keep it.
-
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
         this.mc.getTextureManager().bindTexture(resourceLocation);
-
         //Draw
-        drawModalRectWithCustomSizedTexture(x, y,
+        drawTexturedModalRect(x, y,
           imageOffsetX, imageOffsetY,
           imageWidth != 0 ? imageWidth : getWidth(),
-          imageHeight != 0 ? imageHeight : getHeight(),
-          mapWidth, mapHeight);
+          imageHeight != 0 ? imageHeight : getHeight());
     }
 }
