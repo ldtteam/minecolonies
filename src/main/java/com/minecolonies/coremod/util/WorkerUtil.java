@@ -127,7 +127,7 @@ public final class WorkerUtil
     /**
      * Get the correct havestlevel for a certain block.
      * We need this because minecraft has a lot of blocks which have strange or no required harvestlevel.
-     * @param int the target block.
+     * @param target the target block.
      * @return the required harvestLevel.
      */
     public static int getCorrectHavestLevelForBlock(final Block target)
