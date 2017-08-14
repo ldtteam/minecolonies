@@ -504,7 +504,8 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      */
     private static boolean isInRack(final ItemStack stack, final TileEntity entity, final boolean ignoreDamageValue)
     {
-        return entity instanceof TileEntityRack && !((TileEntityRack) entity).isEmpty() && ((TileEntityRack) entity).hasItemStack(stack, ignoreDamageValue);
+        return entity instanceof TileEntityRack && !((TileEntityRack) entity).isEmpty() && ((TileEntityRack) entity).hasItemStack(stack, ignoreDamageValue)
+                && InventoryUtils.findSlotInProviderNotFullWithItem(entity, stack.getItem(), ignoreDamageValue ? -1 : stack.getItemDamage(), ItemStackUtils.getSize(stack)) != -1;
     }
 
     /**
