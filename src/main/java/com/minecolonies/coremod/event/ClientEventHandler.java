@@ -45,7 +45,7 @@ public class ClientEventHandler
             }
             else
             {
-                RenderUtils.renderColonyBorder(position, Minecraft.getMinecraft().world, event.getPartialTicks(), Minecraft.getMinecraft().player, colonyBorder);
+                RenderUtils.renderColonyBorder(position, Minecraft.getMinecraft().theWorld, event.getPartialTicks(), Minecraft.getMinecraft().thePlayer, colonyBorder);
             }
             return;
         }
