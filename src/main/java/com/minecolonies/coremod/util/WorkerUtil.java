@@ -1,8 +1,13 @@
 package com.minecolonies.coremod.util;
 
 import com.minecolonies.api.util.EntityUtils;
+import com.minecolonies.api.util.constant.IToolType;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.pathfinding.PathResult;
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.init.Blocks;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -97,6 +102,46 @@ public final class WorkerUtil
         citizen.getNavigator().clearPathEntity();
         return true;
     }
+
+    /**
+     * Get a Tooltype for a certain block.
+     * We need this because minecraft has a lot of blocks which have strange or no required tool.
+     * @param target the target block.
+     * @return the toolType to use.
+     */
+    public static IToolType getBestToolForBlock(final Block target)
+    {
+        final IToolType toolType = ToolType.getToolType(target.getHarvestTool(target.getDefaultState()));
+
+        if(toolType == ToolType.NONE && target.getDefaultState().getMaterial() == Material.WOOD)
+        {
+            return ToolType.AXE;
+        }
+        else if(target == Blocks.HARDENED_CLAY || target == Blocks.STAINED_HARDENED_CLAY)
+        {
+            return ToolType.PICKAXE;
+        }
+        return toolType;
+    }
+
+    /**
+     * Get the correct havestlevel for a certain block.
+     * We need this because minecraft has a lot of blocks which have strange or no required harvestlevel.
+     * @param target the target block.
+     * @return the required harvestLevel.
+     */
+    public static int getCorrectHavestLevelForBlock(final Block target)
+    {
+        final int required = target.getHarvestLevel(target.getDefaultState());
+
+        if((required == -1 && target.getDefaultState().getMaterial() == Material.WOOD)
+                || target == Blocks.HARDENED_CLAY || target == Blocks.STAINED_HARDENED_CLAY)
+        {
+            return 0;
+        }
+        return required;
+    }
+
 
     /**
      * Returns whether or not a citizen is heading to a specific location.
