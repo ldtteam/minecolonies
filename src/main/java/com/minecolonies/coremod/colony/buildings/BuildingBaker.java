@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutBaker;
 import com.minecolonies.coremod.colony.CitizenData;
@@ -248,6 +249,7 @@ public class BuildingBaker extends AbstractBuildingWorker
     @Override
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
+        Log.getLogger().error("Starting to write the Baker to NBT RIGHTX");
         super.writeToNBT(compound);
         @NotNull final NBTTagList tasksTagList = new NBTTagList();
         for (@NotNull final Map.Entry<ProductState, List<BakingProduct>> entry : tasks.entrySet())
@@ -283,11 +285,14 @@ public class BuildingBaker extends AbstractBuildingWorker
             furnacesTagList.appendTag(furnaceCompound);
         }
         compound.setTag(TAG_FURNACES, furnacesTagList);
+        Log.getLogger().error("Finished to write the Baker to NBT RIGHTX");
     }
 
     @Override
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
+        Log.getLogger().error("Starting to read the Baker from NBT RIGHTX");
+
         tasks.clear();
         super.readFromNBT(compound);
         final NBTTagList taskTagList = compound.getTagList(TAG_TASKS, Constants.NBT.TAG_COMPOUND);
@@ -316,6 +321,7 @@ public class BuildingBaker extends AbstractBuildingWorker
             final BakingProduct bakingProduct = BakingProduct.createFromNBT(furnaceCompound);
             furnaces.put(pos, bakingProduct);
         }
+        Log.getLogger().error("Finished to read the Baker from NBT RIGHTX");
     }
 
     @Override
