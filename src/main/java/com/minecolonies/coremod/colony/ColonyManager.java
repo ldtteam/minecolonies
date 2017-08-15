@@ -842,6 +842,7 @@ public final class ColonyManager
                 saveColonies();
             }
 
+
             for (@NotNull final Colony c : getColonies(world))
             {
                 c.onWorldUnload(world);
