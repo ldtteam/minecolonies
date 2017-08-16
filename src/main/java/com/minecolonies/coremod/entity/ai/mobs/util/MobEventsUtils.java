@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.mobs.util;
 
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
@@ -69,30 +70,16 @@ public final class MobEventsUtils
         if (targetSpawnPoint == null)
         {
             Log.getLogger().info("Barbarian Event SpawnPoint is Null for colony: " + colony);
-
             targetSpawnPoint = calculateFallBackSpawnLocation(world, colony);
-
-            if (Configurations.enableInDevelopmentFeatures)
-            {
-                LanguageHandler.sendPlayersMessage(
-                  colony.getMessageEntityPlayers(),
-                  "Fallback Horde Spawn Point: " + targetSpawnPoint);
-            }
         }
-
-        Log.getLogger().info("New barbarian event spawnpoint: " + targetSpawnPoint);
 
         LanguageHandler.sendPlayersMessage(
           colony.getMessageEntityPlayers(),
           "event.minecolonies.raidMessage");
 
-        final ForgeChunkManager.Ticket chunkTicket = ForgeChunkManager.requestTicket(MineColonies.instance, world, ForgeChunkManager.Type.NORMAL);
-
-        BarbarianSpawnUtils.spawn(BARBARIAN, numberOfBarbarians, targetSpawnPoint, world, chunkTicket);
-        BarbarianSpawnUtils.spawn(ARCHER, numberOfArchers, targetSpawnPoint, world, chunkTicket);
-        BarbarianSpawnUtils.spawn(CHIEF, numberOfChiefs, targetSpawnPoint, world, chunkTicket);
-
-        ForgeChunkManager.releaseTicket(chunkTicket);
+        BarbarianSpawnUtils.spawn(BARBARIAN, numberOfBarbarians, targetSpawnPoint, world);
+        BarbarianSpawnUtils.spawn(ARCHER, numberOfArchers, targetSpawnPoint, world);
+        BarbarianSpawnUtils.spawn(CHIEF, numberOfChiefs, targetSpawnPoint, world);
     }
 
     /**
@@ -174,7 +161,7 @@ public final class MobEventsUtils
             z = center.getZ();
         }
 
-        final BlockPos spawnPoint = world.getTopSolidOrLiquidBlock(new BlockPos(x, y, z));
+        final BlockPos spawnPoint = BlockPosUtil.findLand(new BlockPos(x, y, z), world);
 
         if (spawnPoint == null)
         {
@@ -196,25 +183,20 @@ public final class MobEventsUtils
         if (colony == null)
         {
             Log.getLogger().info("When trying to find SpawnPoint for Barbarian Event, the Colony was Null!");
+            Log.getLogger().info("LIKE, PLEASE REPORT THIS, THIS MAKES NO FREAKING SENSE!");
             return null;
         }
+
         final BlockPos center = colony.getCenter();
-        Log.getLogger().info("Colony center is: " + center);
         final int radius = Configurations.workingRangeTownHall;
-        Log.getLogger().info("Colony radius is: " + radius);
         final int randomDegree = world.rand.nextInt((int) WHOLE_CIRCLE);
-        Log.getLogger().info("RandomDegree for spawn point is:  " + randomDegree);
 
         final double rads = (double) randomDegree / HALF_A_CIRCLE * Math.PI;
-        Log.getLogger().info("Rads:  " + rads);
 
         final double x = Math.round(center.getX() + radius * Math.sin(rads));
-        Log.getLogger().info("X Coord: " + x);
         final double z = Math.round(center.getZ() + radius * Math.cos(rads));
-        Log.getLogger().info("Z Coord: " + z);
 
-        final BlockPos topBlock = world.getTopSolidOrLiquidBlock(new BlockPos(x, center.getY(), z));
-        Log.getLogger().info("TopSolid or Liquid Block: " + topBlock);
+        final BlockPos topBlock = BlockPosUtil.findLand(new BlockPos(x, center.getY(), z), world);
         return topBlock;
     }
 
@@ -246,7 +228,7 @@ public final class MobEventsUtils
         }
         else
         {
-            return 0;
+            return levels;
         }
     }
 

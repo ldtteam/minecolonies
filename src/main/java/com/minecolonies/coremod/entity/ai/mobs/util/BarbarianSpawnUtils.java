@@ -23,12 +23,13 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeChunkManager;
 
+import java.util.List;
 import java.util.stream.IntStream;
 
 /**
  * Utils used for Barbarian Spawning
  */
-public final class BarbarianSpawnUtils
+public final class BarbarianSpawnUtils implements ForgeChunkManager.LoadingCallback
 {
     /**
      * Loot tables for Barbarians.
@@ -163,17 +164,10 @@ public final class BarbarianSpawnUtils
      * @param spawnLocation  the location at which to spawn the entity
      * @param world          the world in which the colony and entity are
      */
-    public static void spawn(final String entityToSpawn, final int numberOfSpawns, final BlockPos spawnLocation, final World world, final ForgeChunkManager.Ticket chunkTicket)
+    public static void spawn(final String entityToSpawn, final int numberOfSpawns, final BlockPos spawnLocation, final World world)
     {
         if (spawnLocation != null && entityToSpawn != null && world != null && !world.isRemote)
         {
-            if (!world.isBlockLoaded(spawnLocation) && chunkTicket != null)
-            {
-                chunkTicket.getModData().setInteger("spawnX", spawnLocation.getX());
-                chunkTicket.getModData().setInteger("spawnY", spawnLocation.getY());
-                chunkTicket.getModData().setInteger("spawnZ", spawnLocation.getZ());
-                ForgeChunkManager.forceChunk(chunkTicket, new ChunkPos(spawnLocation.getX(), spawnLocation.getZ()));
-            }
 
             final int x = spawnLocation.getX();
             final int y = spawnLocation.getY();
@@ -211,5 +205,11 @@ public final class BarbarianSpawnUtils
             barbarian.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(Items.CHAINMAIL_LEGGINGS));
             barbarian.setItemStackToSlot(EntityEquipmentSlot.FEET, new ItemStack(Items.CHAINMAIL_BOOTS));
         }
+    }
+
+    @Override
+    public void ticketsLoaded(final List<ForgeChunkManager.Ticket> tickets, final World world)
+    {
+
     }
 }
