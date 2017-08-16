@@ -69,7 +69,7 @@ public class Weapon
     }
 
     /**
-     * The resulting stack if set during creation, else ItemStackUtils.EMPTY.
+     * The resulting stack if set during creation, else ItemStack.Empty.
      *
      * @return The resulting stack.
      */

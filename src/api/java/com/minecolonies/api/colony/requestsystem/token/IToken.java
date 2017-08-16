@@ -1,8 +1,5 @@
 package com.minecolonies.api.colony.requestsystem.token;
 
-import net.minecraft.nbt.NBTBase;
-import net.minecraftforge.common.util.INBTSerializable;
-
 /**
  * Interface used to represent a request outside of the request management system.
  * <p>
@@ -11,7 +8,7 @@ import net.minecraftforge.common.util.INBTSerializable;
  * <p>
  * Also extends INBTSerializable to make writing the data to disk a lot easier.
  */
-public interface IToken<T, D extends NBTBase> extends INBTSerializable<D>
+public interface IToken<T>
 {
 
     /**

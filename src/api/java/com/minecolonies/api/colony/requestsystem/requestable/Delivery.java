@@ -27,7 +27,7 @@ public class Delivery
     @NotNull
     private final ItemStack stack;
 
-    public Delivery(@NotNull ILocation start, @NotNull ILocation target, @NotNull ItemStack stack)
+    public Delivery(@NotNull final ILocation start, @NotNull final ILocation target, @NotNull final ItemStack stack)
     {
         this.start = start;
         this.target = target;
@@ -35,11 +35,11 @@ public class Delivery
     }
 
     @NotNull
-    public static Delivery deserialize(@NotNull IFactoryController controller, @NotNull NBTTagCompound compound)
+    public static Delivery deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound compound)
     {
-        ILocation start = controller.deserialize(compound.getCompoundTag(NBT_START));
-        ILocation target = controller.deserialize(compound.getCompoundTag(NBT_TARGET));
-        ItemStack stack = ItemStackUtils.loadItemStackFromNBT(compound.getCompoundTag(NBT_STACK));
+        final ILocation start = controller.deserialize(compound.getCompoundTag(NBT_START));
+        final ILocation target = controller.deserialize(compound.getCompoundTag(NBT_TARGET));
+        final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompoundTag(NBT_STACK));
 
         return new Delivery(start, target, stack);
     }
@@ -51,9 +51,9 @@ public class Delivery
     }
 
     @NotNull
-    public NBTTagCompound serialize(@NotNull IFactoryController controller)
+    public NBTTagCompound serialize(@NotNull final IFactoryController controller)
     {
-        NBTTagCompound compound = new NBTTagCompound();
+        final NBTTagCompound compound = new NBTTagCompound();
 
         compound.setTag(NBT_START, controller.serialize(getStack()));
         compound.setTag(NBT_TARGET, controller.serialize(getTarget()));

@@ -31,6 +31,7 @@ public final class ModBlocks
     public static final Block blockConstructionTape  = new BlockConstructionTape();
     public static final Block blockConstructionTapeCorner  = new BlockConstructionTapeCorner();
     public static final Block blockRack                    = new BlockMinecoloniesRack();
+    public static final Block blockTimberFrame  = new BlockTimberFrame();
 
 
     // Deactivated for now
