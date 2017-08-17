@@ -29,7 +29,7 @@ import java.util.stream.IntStream;
 /**
  * Utils used for Barbarian Spawning
  */
-public final class BarbarianSpawnUtils implements ForgeChunkManager.LoadingCallback
+public final class BarbarianSpawnUtils
 {
     /**
      * Loot tables for Barbarians.
@@ -205,11 +205,5 @@ public final class BarbarianSpawnUtils implements ForgeChunkManager.LoadingCallb
             barbarian.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(Items.CHAINMAIL_LEGGINGS));
             barbarian.setItemStackToSlot(EntityEquipmentSlot.FEET, new ItemStack(Items.CHAINMAIL_BOOTS));
         }
-    }
-
-    @Override
-    public void ticketsLoaded(final List<ForgeChunkManager.Ticket> tickets, final World world)
-    {
-
     }
 }

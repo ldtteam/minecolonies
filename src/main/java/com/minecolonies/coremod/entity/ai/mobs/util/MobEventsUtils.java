@@ -196,8 +196,7 @@ public final class MobEventsUtils
         final double x = Math.round(center.getX() + radius * Math.sin(rads));
         final double z = Math.round(center.getZ() + radius * Math.cos(rads));
 
-        final BlockPos topBlock = BlockPosUtil.findLand(new BlockPos(x, center.getY(), z), world);
-        return topBlock;
+        return BlockPosUtil.findLand(new BlockPos(x, center.getY(), z), world);
     }
 
     /**
