@@ -695,7 +695,7 @@ public final class ColonyView implements IColony
     @Override
     public World getWorld()
     {
-        return Minecraft.getMinecraft().player.getEntityWorld();
+        return null;
     }
 
     @Nullable
