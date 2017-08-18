@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.mobs.util;
 
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.CitizenData;
@@ -131,7 +132,8 @@ public final class MobEventsUtils
         final double rads = (double) randomDegree / HALF_A_CIRCLE * Math.PI;
         final double x = Math.round(center.getX() + radius * Math.sin(rads));
         final double z = Math.round(center.getZ() + radius * Math.cos(rads));
-        return world.getTopSolidOrLiquidBlock(new BlockPos(x, center.getY(), z));
+        
+        return BlockPosUtil.findLand(new BlockPos(x, center.getY(), z), world);
     }
 
     /**
