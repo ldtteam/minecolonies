@@ -4,7 +4,9 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.BlockSolidSubstitution;
+import com.minecolonies.coremod.colony.buildings.BuildingWareHouse;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import net.minecraft.block.*;
@@ -15,6 +17,8 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemDoor;
 import net.minecraft.item.ItemFlintAndSteel;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -52,6 +56,7 @@ public final class PlacementHandlers
         handlers.add(new BlockGrassPathPlacementHandler());
         handlers.add(new StairBlockPlacementHandler());
         handlers.add(new BlockSolidSubstitutionPlacementHandler());
+        handlers.add(new ChestPlacementHandler());
         handlers.add(new GeneralBlockPlacementHandler());
     }
 
@@ -294,7 +299,7 @@ public final class PlacementHandlers
 
             if (!Configurations.gameplay.builderInfiniteResources)
             {
-                if (!(placer.holdEfficientTool(blockState.getBlock()) || placer.checkOrRequestItems(placer.getTotalAmount(new ItemStack(Blocks.DIRT,1)))))
+                if (!(placer.holdEfficientTool(blockState.getBlock()) || placer.checkOrRequestItems(placer.getTotalAmount(new ItemStack(Blocks.DIRT, 1)))))
                 {
                     return ActionProcessingResult.DENY;
                 }
@@ -333,7 +338,8 @@ public final class PlacementHandlers
     public static class BlockSolidSubstitutionPlacementHandler implements IPlacementHandler
     {
         @Override
-        public Object handle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
+        public Object handle(
+                @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
                 @Nullable final AbstractEntityAIStructure<?> placer)
         {
             if (!(blockState.getBlock() instanceof BlockSolidSubstitution))
@@ -345,7 +351,7 @@ public final class PlacementHandlers
 
             if(!Configurations.gameplay.builderInfiniteResources)
             {
-                if(placer.checkOrRequestItems(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(newBlockState))))
+                if (placer.checkOrRequestItems(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(newBlockState))))
                 {
                     return ActionProcessingResult.DENY;
                 }
@@ -385,6 +391,47 @@ public final class PlacementHandlers
 
             placer.handleBuildingOverBlock(pos);
             if (!world.setBlockState(pos, blockState, 0x03))
+            {
+                return ActionProcessingResult.DENY;
+            }
+
+            return blockState;
+        }
+    }
+
+    public static class ChestPlacementHandler implements IPlacementHandler
+    {
+        @Override
+        public Object handle(
+                @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
+                @Nullable final AbstractEntityAIStructure<?> placer)
+        {
+            if (!(blockState.getBlock() instanceof BlockChest && !(blockState.getBlock() instanceof BlockMinecoloniesRack)))
+            {
+                return ActionProcessingResult.IGNORE;
+            }
+
+            if (!Configurations.gameplay.builderInfiniteResources)
+            {
+                final List<ItemStack> itemList = new ArrayList<>();
+                itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
+                itemList.addAll(placer.getItemsFromTileEntity());
+
+                for (final ItemStack stack : itemList)
+                {
+                    if (!ItemStackUtils.isEmpty(stack) && placer.checkOrRequestItems(placer.getTotalAmount(stack)))
+                    {
+                        return ActionProcessingResult.DENY;
+                    }
+                }
+            }
+
+            final TileEntity entity = world.getTileEntity(pos);
+            if (entity instanceof TileEntityChest)
+            {
+                BuildingWareHouse.handleBuildingOverChest(pos, (TileEntityChest) entity, world);
+            }
+            else if (!world.setBlockState(pos, blockState, 0x03))
             {
                 return ActionProcessingResult.DENY;
             }

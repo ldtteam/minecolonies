@@ -10,7 +10,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.ShapedOreRecipe;
-
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -81,12 +80,13 @@ public final class RecipeHandler
                 "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', ModItems.scanTool));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockSolidSubstitution, ONE_FORTH_OF_A_STACK),
                 "XXX", "X#X", "XXX", 'X', "logWood", '#', ModItems.scanTool));
-
-
+        //Block Rack
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockRack, 1),
+                "XXX", "X#X", "XXX", 'X', "PLANK_WOOD", '#', Blocks.IRON_BARS));
+            
+        //Field
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutField, 1), 
                 " Y ", "X#X", " X ", 'X', WOODEN_STICK, '#', Items.LEATHER, 'Y', Blocks.HAY_BLOCK));
-        GameRegistry.addRecipe(new ItemStack(Blocks.WEB, 1), "X X", " X ", "X X", 'X', Items.STRING);
-        
         //Double Fern
         GameRegistry.addShapelessRecipe(new ItemStack(Blocks.DOUBLE_PLANT, 1, 3), new ItemStack(Blocks.TALLGRASS, 1, 2), new ItemStack(Blocks.TALLGRASS, 1, 2));
         

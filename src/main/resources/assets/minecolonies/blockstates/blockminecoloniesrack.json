@@ -1,0 +1,39 @@
+{
+  "forge_marker": 1,
+
+  "variants": {
+    "facing": {
+      "up": {
+      },
+      "east": {
+        "y": 180
+      },
+      "south": {
+        "y": 90
+      },
+      "west": {
+        "y": 0
+      },
+      "north": {
+        "y": 270
+      }
+    },
+    "variant": {
+      "blockrackempty": {
+        "model": "minecolonies:blockrackemptydouble"
+      },
+      "blockrackfull": {
+        "model": "minecolonies:blockrackfulldouble"
+      },
+      "blockrackemptysingle": {
+        "model": "minecolonies:blockrackempty"
+      },
+      "blockrackfullsingle": {
+        "model": "minecolonies:blockrackfull"
+      },
+      "blockrackair": {
+        "model": "minecolonies:blockairrack"
+      }
+    }
+  }
+}
