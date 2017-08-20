@@ -25,15 +25,15 @@ import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.K
 public class KillCitizenCommand extends AbstractCitizensCommands
 {
 
-    public static final  String       DESC                            = "kill";
-    private static final String       CITIZEN_DESCRIPTION             = "§2ID: §f %d §2 Name: §f %s";
-    private static final String       REMOVED_MESSAGE                 = "Has been removed";
-    private static final String       COORDINATES_XYZ                 = "§4x=§f%s §4y=§f%s §4z=§f%s";
+    public static final  String DESC                = "kill";
+    private static final String CITIZEN_DESCRIPTION = "§2ID: §f %d §2 Name: §f %s";
+    private static final String REMOVED_MESSAGE     = "Has been removed";
+    private static final String COORDINATES_XYZ     = "§4x=§f%s §4y=§f%s §4z=§f%s";
 
     /**
      * The damage source used to kill citizens.
      */
-    private static final DamageSource CONSOLE_DAMAGE_SOURCE           = new DamageSource("Console");
+    private static final DamageSource CONSOLE_DAMAGE_SOURCE = new DamageSource("Console");
 
     /**
      * Initialize this SubCommand with it's parents.
