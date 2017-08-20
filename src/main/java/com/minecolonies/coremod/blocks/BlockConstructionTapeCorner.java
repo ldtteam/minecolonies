@@ -144,6 +144,7 @@ public class BlockConstructionTapeCorner extends Block
      * Height of the collision box.
      */
     private static final double HEIGHT_COLLISION = 1.0;
+
     /**
      * How much light goes through the block.
      */
