@@ -1719,7 +1719,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             }
 
 
-            final ItemStack itemStack = entityItem.getEntityItem();
+            final ItemStack itemStack = entityItem.getItem();
             final ItemStack compareStack = itemStack.copy();
 
             final ItemStack resultStack = InventoryUtils.addItemStackToItemHandlerWithResult(new InvWrapper(getInventoryCitizen()), itemStack);
