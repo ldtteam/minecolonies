@@ -427,9 +427,12 @@ com.minecolonies.coremod.gui.workerHuts.saplingList=Tasklist
 com.minecolonies.coremod.gui.townHall.housing=Housing assignment mode:
 com.minecolonies.coremod.gui.home.assign=Assign %d citizens
 com.minecolonies.coremod.gui.workerHuts.unassign=Remove citizen
+
 tile.minecolonies.blockMinecoloniesRack.name=Rack
 
 com.minecolonies.coremod.gui.workerHuts.crafting=Teach recipe
 com.minecolonies.coremod.gui.recipe.done=Succesfully saved recipe!
 com.minecolonies.coremod.gui.workerHuts.listRecipes=List of recipes
 com.minecolonies.coremod.gui.recipe.remove=Remove
+tile.minecolonies.blockTimberFrame.name=Plain Timber Frame
+tile.minecolonies.blockMinecoloniesRack.name=Rack
