@@ -15,7 +15,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.io.IOException;
@@ -65,6 +64,11 @@ public class WindowGuiCrafting extends GuiContainer
     private static final int Y_OFFSET = 8;
 
     /**
+     * Size of the crafting grid.
+     */
+    private static final int CRAFTING_GRID_SIZE = 4;
+
+    /**
      * The button to click done after finishing the recipe.
      */
     private GuiButton doneButton;
@@ -77,26 +81,14 @@ public class WindowGuiCrafting extends GuiContainer
     /**
      * Create a crafting gui window.
      *
-     * @param playerInv the player.
-     * @param worldIn   the world.
-     * @param building  the building it belongs to.
-     */
-    public WindowGuiCrafting(final InventoryPlayer playerInv, final World worldIn, final AbstractBuilding.View building)
-    {
-        this(playerInv, worldIn, BlockPos.ORIGIN, building);
-    }
-
-    /**
-     * Create a crafting gui window.
-     *
      * @param playerInv     the player.
      * @param worldIn       the world.
      * @param blockPosition the position.
      * @param building      the building.
      */
-    public WindowGuiCrafting(final InventoryPlayer playerInv, final World worldIn, final BlockPos blockPosition, final AbstractBuilding.View building)
+    public WindowGuiCrafting(final InventoryPlayer playerInv, final World worldIn, final AbstractBuilding.View building)
     {
-        super(new CraftingGUIBuilding(playerInv, worldIn, blockPosition));
+        super(new CraftingGUIBuilding(playerInv, worldIn));
         this.building = building;
     }
 
@@ -117,7 +109,7 @@ public class WindowGuiCrafting extends GuiContainer
             final List<ItemStack> input = new ArrayList<>();
             final List<ItemStack> secondaryOutput = new ArrayList<>();
 
-            for(int i = 1; i <= 4; i++)
+            for(int i = 1; i <= CRAFTING_GRID_SIZE; i++)
             {
                 final ItemStack stack = inventorySlots.getInventory().get(i);
                 if(ItemStackUtils.isEmpty(stack))

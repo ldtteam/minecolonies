@@ -1,13 +1,11 @@
 package com.minecolonies.coremod.inventory;
 
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -65,6 +63,26 @@ public class CraftingGUIBuilding extends Container
     private static final int Y_OFFSET_CRAFTING = 17;
 
     /**
+     * Amount of slots in the crafting window.
+     */
+    private static final int CRAFTING_SLOTS = 5;
+
+    /**
+     * Amount of slots per line in the GUI.
+     */
+    private static final int SLOTS_PER_LINE = 9;
+
+    /**
+     * Start slot of the player hotbar.
+     */
+    private static final int HOTBAR_START = 32;
+
+    /**
+     * Total amount of slots in the GUI.
+     */
+    private static final int TOTAL_SLOTS = 41;
+
+    /**
      * The crafting matrix inventory (2x2).
      */
     private final InventoryCrafting craftMatrix = new InventoryCrafting(this, 2, 2);
@@ -79,7 +97,7 @@ public class CraftingGUIBuilding extends Container
      */
     private final World worldObj;
 
-    public CraftingGUIBuilding(final InventoryPlayer playerInventory, final World worldIn, final BlockPos posIn)
+    public CraftingGUIBuilding(final InventoryPlayer playerInventory, final World worldIn)
     {
         super();
         this.worldObj = worldIn;
@@ -146,7 +164,7 @@ public class CraftingGUIBuilding extends Container
 
         if (!this.worldObj.isRemote)
         {
-            for (int i = 0; i < 9; ++i)
+            for (int i = 0; i < SLOTS_PER_LINE; ++i)
             {
                 final ItemStack itemstack = this.craftMatrix.removeStackFromSlot(i);
 
@@ -179,28 +197,28 @@ public class CraftingGUIBuilding extends Container
 
             if (index == 0)
             {
-                if (!this.mergeItemStack(itemstack1, 5, 41, true))
+                if (!this.mergeItemStack(itemstack1, CRAFTING_SLOTS, TOTAL_SLOTS, true))
                 {
                     return null;
                 }
 
                 slot.onSlotChange(itemstack1, itemstack);
             }
-            else if (index >= 5 && index < 32)
+            else if (index >= CRAFTING_SLOTS && index < HOTBAR_START)
             {
-                if (!this.mergeItemStack(itemstack1, 32, 41, false))
+                if (!this.mergeItemStack(itemstack1, HOTBAR_START, TOTAL_SLOTS, false))
                 {
                     return null;
                 }
             }
-            else if (index >= 32 && index < 41)
+            else if (index >= HOTBAR_START && index < TOTAL_SLOTS)
             {
-                if (!this.mergeItemStack(itemstack1, 5, 32, false))
+                if (!this.mergeItemStack(itemstack1, CRAFTING_SLOTS, HOTBAR_START, false))
                 {
                     return null;
                 }
             }
-            else if (!this.mergeItemStack(itemstack1, 5, 41, false))
+            else if (!this.mergeItemStack(itemstack1, CRAFTING_SLOTS, TOTAL_SLOTS, false))
             {
                 return null;
             }

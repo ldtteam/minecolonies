@@ -36,7 +36,7 @@ public class GuiHandler implements IGuiHandler
             @Nullable final AbstractBuilding.View building = ColonyManager.getBuildingView(pos);
             if (building != null)
             {
-                return new CraftingGUIBuilding(player.inventory, world, new BlockPos(x, y, z));
+                return new CraftingGUIBuilding(player.inventory, world);
             }
             return null;
         }
@@ -60,7 +60,7 @@ public class GuiHandler implements IGuiHandler
             @Nullable final AbstractBuilding.View building = ColonyManager.getBuildingView(pos);
             if (building != null)
             {
-                return new WindowGuiCrafting(player.inventory, world, new BlockPos(x, y, z), building);
+                return new WindowGuiCrafting(player.inventory, world, building);
             }
         }
     }
