@@ -1707,10 +1707,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
             }
 
             final ItemStack itemStack = entityItem.getItem();
+            final ItemStack compareStack = itemStack.copy();
 
-            final ItemStack resultStack = InventoryUtils.addItemStackToItemHandlerWithResult(new InvWrapper(getInventoryCitizen()), itemStack.copy());
+            final ItemStack resultStack = InventoryUtils.addItemStackToItemHandlerWithResult(new InvWrapper(getInventoryCitizen()), itemStack);
             final int resultingStackSize = ItemStackUtils.isEmpty(resultStack) ? 0 : ItemStackUtils.getSize(resultStack);
-            if (ItemStackUtils.isEmpty(resultStack) || ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, resultStack))
+
+            if (ItemStackUtils.isEmpty(resultStack) || ItemStackUtils.getSize(resultStack) != ItemStackUtils.getSize(compareStack))
             {
                 CompatibilityUtils.getWorld(this).playSound((EntityPlayer) null,
                         this.getPosition(),
