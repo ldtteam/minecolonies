@@ -57,7 +57,7 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand
                 return;
             }
         }
-        sender.getCommandSenderEntity().sendMessage(new TextComponentString("You are not allowed to do this"));
+        sender.sendMessage(new TextComponentString("You are not allowed to do this"));
     }
 
     @Override
@@ -69,10 +69,10 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand
     @NotNull
     @Override
     public List<String> getTabCompletionOptions(
-            @NotNull final MinecraftServer server,
-            @NotNull final ICommandSender sender,
-            @NotNull final String[] args,
-            final BlockPos pos)
+                                                 @NotNull final MinecraftServer server,
+                                                 @NotNull final ICommandSender sender,
+                                                 @NotNull final String[] args,
+                                                 final BlockPos pos)
     {
         return Collections.emptyList();
     }

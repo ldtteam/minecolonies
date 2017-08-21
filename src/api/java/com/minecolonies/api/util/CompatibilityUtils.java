@@ -1,7 +1,6 @@
 package com.minecolonies.api.util;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 /**

@@ -52,7 +52,7 @@ public class HomeTeleportCommand extends AbstractSingleCommand
         }
         else
         {
-            sender.getCommandSenderEntity().sendMessage(new TextComponentString("This is not allowed on this server."));
+            sender.sendMessage(new TextComponentString("This is not allowed on this server."));
         }
     }
 

@@ -20,11 +20,12 @@ import com.minecolonies.coremod.network.messages.*;
 import net.minecraft.block.Block;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.*;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * Window for the town hall.

@@ -106,23 +106,23 @@ public class ListColoniesCommand extends AbstractSingleCommand
         for (final Colony colony : coloniesPage)
         {
             sender.sendMessage(new TextComponentString(String.format(
-                    ID_AND_NAME_TEXT, colony.getID(), colony.getName())).setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                    String.format(COMMAND_COLONY_INFO, colony.getID())))));
+              ID_AND_NAME_TEXT, colony.getID(), colony.getName())).setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
+                                                                                                                      String.format(COMMAND_COLONY_INFO, colony.getID())))));
             final BlockPos center = colony.getCenter();
 
             final ITextComponent teleport = new TextComponentString(COORDINATES_TEXT + String.format(COORDINATES_XYZ, center.getX(), center.getY(), center.getZ()))
-                    .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
-                            new ClickEvent(ClickEvent.Action.RUN_COMMAND, TELEPORT_COMMAND + colony.getID())
-                    ));
+                                              .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
+                                                new ClickEvent(ClickEvent.Action.RUN_COMMAND, TELEPORT_COMMAND + colony.getID())
+                                              ));
 
             sender.sendMessage(teleport);
         }
 
         final ITextComponent prevButton = new TextComponentString(PREV_PAGE).setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
-                new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED + prevPage)
+          new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED + prevPage)
         ));
         final ITextComponent nextButton = new TextComponentString(NEXT_PAGE).setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
-                new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED + nextPage)
+          new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED + nextPage)
         ));
 
         final ITextComponent beginLine = new TextComponentString(PAGE_LINE);
@@ -133,10 +133,10 @@ public class ListColoniesCommand extends AbstractSingleCommand
     @NotNull
     @Override
     public List<String> getTabCompletionOptions(
-            @NotNull final MinecraftServer server,
-            @NotNull final ICommandSender sender,
-            @NotNull final String[] args,
-            @Nullable final BlockPos pos)
+                                                 @NotNull final MinecraftServer server,
+                                                 @NotNull final ICommandSender sender,
+                                                 @NotNull final String[] args,
+                                                 @Nullable final BlockPos pos)
     {
         return new ArrayList<>();
     }

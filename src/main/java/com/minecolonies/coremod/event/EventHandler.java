@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.event;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.LanguageHandler;
@@ -9,7 +10,6 @@ import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockHutTownHall;
 import com.minecolonies.coremod.blocks.BlockHutWareHouse;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSilverfish;
