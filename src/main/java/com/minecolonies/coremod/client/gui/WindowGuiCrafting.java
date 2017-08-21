@@ -83,7 +83,6 @@ public class WindowGuiCrafting extends GuiContainer
      *
      * @param playerInv     the player.
      * @param worldIn       the world.
-     * @param blockPosition the position.
      * @param building      the building.
      */
     public WindowGuiCrafting(final InventoryPlayer playerInv, final World worldIn, final AbstractBuilding.View building)
