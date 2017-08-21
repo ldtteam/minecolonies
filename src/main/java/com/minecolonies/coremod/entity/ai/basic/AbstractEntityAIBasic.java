@@ -13,6 +13,7 @@ import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.ai.util.RecipeStorage;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
+import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -1163,8 +1164,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private void requestTool(@NotNull final Block target)
     {
-        final IToolType toolType = ToolType.getToolType(target.getHarvestTool(target.getDefaultState()));
-        final int required = target.getHarvestLevel(target.getDefaultState());
+        final IToolType toolType = WorkerUtil.getBestToolForBlock(target);
+        final int required = WorkerUtil.getCorrectHavestLevelForBlock(target);
         updateToolFlag(toolType, required);
     }
 
@@ -1196,8 +1197,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private int getMostEfficientTool(@NotNull final Block target)
     {
-        final IToolType toolType = ToolType.getToolType(target.getHarvestTool(target.getDefaultState()));
-        final int required = target.getHarvestLevel(target.getDefaultState());
+        final IToolType toolType = WorkerUtil.getBestToolForBlock(target);
+        final int required = WorkerUtil.getCorrectHavestLevelForBlock(target);
         int bestSlot = -1;
         int bestLevel = Integer.MAX_VALUE;
         @NotNull final InventoryCitizen inventory = worker.getInventoryCitizen();
