@@ -14,6 +14,11 @@ import org.jetbrains.annotations.NotNull;
  */
 public class EntityAICitizenWander extends EntityAIBase
 {
+    /**
+     * Age in which a citizen is too old to wander around.
+     */
+    private static final int OLD_AGE = 100;
+
     private final EntityCitizen citizen;
     private final double        speed;
     private       double        xPosition;
@@ -42,7 +47,7 @@ public class EntityAICitizenWander extends EntityAIBase
     @Override
     public boolean shouldExecute()
     {
-        if (isToOld() || checkForRandom() || citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP)
+        if (isTooOld() || checkForRandom() || citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP)
         {
             return false;
         }
@@ -68,9 +73,9 @@ public class EntityAICitizenWander extends EntityAIBase
      *
      * @return True when age => 100, otherwise false.
      */
-    private boolean isToOld()
+    private boolean isTooOld()
     {
-        return citizen.getGrowingAge() >= 100;
+        return citizen.getGrowingAge() >= OLD_AGE;
     }
 
     private boolean checkForRandom()
