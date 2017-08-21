@@ -63,5 +63,6 @@ public class GuiHandler implements IGuiHandler
                 return new WindowGuiCrafting(player.inventory, world, building);
             }
         }
+        return null;
     }
 }

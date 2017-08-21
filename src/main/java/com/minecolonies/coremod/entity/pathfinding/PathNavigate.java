@@ -27,7 +27,27 @@ import java.util.concurrent.Future;
  */
 public class PathNavigate extends PathNavigateGround
 {
-    private static final double ON_PATH_SPEED_MULTIPLIER    = 1.3D;
+    private static final double ON_PATH_SPEED_MULTIPLIER = 1.3D;
+
+    /**
+     * Used when something should be extremely close.
+     */
+    private static final double VERY_CLOSE = 0.001;
+
+    /**
+     * Used when something should be quite close.
+     */
+    private static final double QUITE_CLOSE = 0.1;
+
+    /**
+     * Speed on the ladders for citizen.
+     */
+    private static final double LADDER_SPEED = 0.05;
+
+    /**
+     * Distance of half a block.
+     */
+    private static final double HALF_BLOCK_DISTANCE = 0.5;
 
     //  Parent class private members
     private final EntityLiving entity;
@@ -255,10 +275,10 @@ public class PathNavigate extends PathNavigateGround
             {
                 final Vec3d vec3 = this.getPath().getPosition(this.entity);
 
-                if (vec3.squareDistanceTo(entity.posX, vec3.y, entity.posZ) < 0.1)
+                if (vec3.squareDistanceTo(entity.posX, vec3.y, entity.posZ) < QUITE_CLOSE)
                 {
                     //This way he is less nervous and gets up the ladder
-                    double newSpeed = 0.05;
+                    double newSpeed = LADDER_SPEED;
                     switch (pEx.getLadderFacing())
                     {
                         //  Any of these values is climbing, so adjust our direction of travel towards the ladder
@@ -299,8 +319,8 @@ public class PathNavigate extends PathNavigateGround
 
                 Vec3d vec3d = this.getPath().getPosition(this.entity);
 
-                if (vec3d.squareDistanceTo(new Vec3d(entity.posX, vec3d.y, entity.posZ)) < 0.1
-                      && Math.abs(entity.posY - vec3d.y) < 0.5)
+                if (vec3d.squareDistanceTo(new Vec3d(entity.posX, vec3d.y, entity.posZ)) < QUITE_CLOSE
+                      && Math.abs(entity.posY - vec3d.y) < HALF_BLOCK_DISTANCE)
                 {
                     this.getPath().setCurrentPathIndex(this.getPath().getCurrentPathIndex() + 1);
                     if (this.noPath())
@@ -349,7 +369,7 @@ public class PathNavigate extends PathNavigateGround
                   && !pExNext.isOnLadder())
             {
                 final Vec3d vec3 = getEntityPosition();
-                if ((vec3.y - (double) pEx.y) < 0.001)
+                if ((vec3.y - (double) pEx.y) < VERY_CLOSE)
                 {
                     this.currentPath.setCurrentPathIndex(curNodeNext);
                 }
