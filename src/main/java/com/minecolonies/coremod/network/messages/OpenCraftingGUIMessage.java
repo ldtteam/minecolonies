@@ -45,7 +45,7 @@ public class OpenCraftingGUIMessage extends AbstractMessage<OpenCraftingGUIMessa
      *
      * @param building {@link AbstractBuilding.View}
      */
-    public OpenCraftingGUIMessage(@NotNull final AbstractBuilding.View building, int gridSize)
+    public OpenCraftingGUIMessage(@NotNull final AbstractBuilding.View building, final int gridSize)
     {
         super();
         this.buildingId = building.getLocation();

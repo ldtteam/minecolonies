@@ -81,7 +81,7 @@ public class WindowGuiCrafting extends GuiContainer
      * @param worldIn   the world.
      * @param building  the building it belongs to.
      */
-    public WindowGuiCrafting(InventoryPlayer playerInv, World worldIn, final AbstractBuilding.View building)
+    public WindowGuiCrafting(final InventoryPlayer playerInv, final World worldIn, final AbstractBuilding.View building)
     {
         this(playerInv, worldIn, BlockPos.ORIGIN, building);
     }
@@ -94,7 +94,7 @@ public class WindowGuiCrafting extends GuiContainer
      * @param blockPosition the position.
      * @param building      the building.
      */
-    public WindowGuiCrafting(InventoryPlayer playerInv, World worldIn, BlockPos blockPosition, final AbstractBuilding.View building)
+    public WindowGuiCrafting(final InventoryPlayer playerInv, final World worldIn, final BlockPos blockPosition, final AbstractBuilding.View building)
     {
         super(new CraftingGUIBuilding(playerInv, worldIn, blockPosition));
         this.building = building;
@@ -149,7 +149,7 @@ public class WindowGuiCrafting extends GuiContainer
      * Draw the foreground layer for the GuiContainer (everything in front of the items)
      */
     @Override
-    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY)
+    protected void drawGuiContainerForegroundLayer(final int mouseX, final int mouseY)
     {
         this.fontRenderer.drawString(I18n.format("container.crafting", new Object[0]), X_OFFSET, Y_OFFSET, GUI_COLOR);
     }
@@ -157,7 +157,7 @@ public class WindowGuiCrafting extends GuiContainer
     /**
      * Draws the background layer of this container (behind the items).
      */
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
+    protected void drawGuiContainerBackgroundLayer(final float partialTicks, final int mouseX, final int mouseY)
     {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(CRAFTING_TABLE_GUI_TEXTURES);

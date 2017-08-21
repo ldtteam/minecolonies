@@ -80,11 +80,6 @@ public class WindowListRecipes extends Window implements ButtonHandler
     private final ScrollingList recipeList;
 
     /**
-     * The colony.
-     */
-    private final ColonyView colony;
-
-    /**
      * Constructor for the window when the player wants to assign a worker for a certain home building.
      *
      * @param c          the colony view.
@@ -93,8 +88,7 @@ public class WindowListRecipes extends Window implements ButtonHandler
     public WindowListRecipes(final ColonyView c, final BlockPos buildingId)
     {
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
-        this.colony = c;
-        this.building = (AbstractBuildingWorker.View) colony.getBuilding(buildingId);
+        this.building = (AbstractBuildingWorker.View) c.getBuilding(buildingId);
         recipeList = findPaneOfTypeByID(RECIPE_LIST, ScrollingList.class);
         updateRecipes();
     }

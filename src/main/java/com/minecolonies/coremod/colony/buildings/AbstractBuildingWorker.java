@@ -182,13 +182,13 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
      */
     public List<IItemHandler> getHandlers()
     {
-        final EntityCitizen workerEntity = this.getWorkerEntity();
         final Colony colony = getColony();
         if(this.getWorkerEntity() == null || colony == null || colony.getWorld() == null)
         {
             return Collections.emptyList();
         }
 
+        final EntityCitizen workerEntity = this.getWorkerEntity();
         final List<IItemHandler> handlers = new ArrayList<>();
         handlers.add(new InvWrapper(workerEntity.getInventoryCitizen()));
         handlers.add(new InvWrapper(getTileEntity()));

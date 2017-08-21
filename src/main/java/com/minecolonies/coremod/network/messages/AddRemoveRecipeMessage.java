@@ -126,7 +126,6 @@ public class AddRemoveRecipeMessage extends AbstractMessage<AddRemoveRecipeMessa
     @Override
     public void messageOnServerThread(final AddRemoveRecipeMessage message, final EntityPlayerMP player)
     {
-        final IToken token = ColonyManager.checkOrAddRecipe(message.storage);
 
         final Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony == null || !colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
@@ -137,6 +136,8 @@ public class AddRemoveRecipeMessage extends AbstractMessage<AddRemoveRecipeMessa
         final AbstractBuilding buildingWorker = colony.getBuilding(message.building);
         if(buildingWorker instanceof AbstractBuildingWorker)
         {
+            final IToken token = ColonyManager.checkOrAddRecipe(message.storage);
+
             if(message.remove)
             {
                 ((AbstractBuildingWorker) buildingWorker).removeRecipe(token);

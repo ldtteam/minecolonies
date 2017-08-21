@@ -130,10 +130,9 @@ public class CraftingGUIBuilding extends Container
      * Callback for when the crafting matrix is changed.
      */
     @Override
-    public void onCraftMatrixChanged(IInventory inventoryIn)
+    public void onCraftMatrixChanged(final IInventory inventoryIn)
     {
         super.onCraftMatrixChanged(inventoryIn);
-        //todo can use this to get the recipe on button click
         this.craftResult.setInventorySlotContents(0, CraftingManager.getInstance().findMatchingRecipe(this.craftMatrix, this.worldObj));
     }
 
@@ -141,7 +140,7 @@ public class CraftingGUIBuilding extends Container
      * Called when the container is closed.
      */
     @Override
-    public void onContainerClosed(EntityPlayer playerIn)
+    public void onContainerClosed(final EntityPlayer playerIn)
     {
         super.onContainerClosed(playerIn);
 
@@ -149,7 +148,7 @@ public class CraftingGUIBuilding extends Container
         {
             for (int i = 0; i < 9; ++i)
             {
-                ItemStack itemstack = this.craftMatrix.removeStackFromSlot(i);
+                final ItemStack itemstack = this.craftMatrix.removeStackFromSlot(i);
 
                 if (itemstack != null)
                 {
@@ -160,7 +159,7 @@ public class CraftingGUIBuilding extends Container
     }
 
     @Override
-    public boolean canInteractWith(EntityPlayer playerIn)
+    public boolean canInteractWith(final EntityPlayer playerIn)
     {
         return true;
     }
@@ -168,14 +167,14 @@ public class CraftingGUIBuilding extends Container
 
     @Nullable
     @Override
-    public ItemStack transferStackInSlot(EntityPlayer playerIn, int index)
+    public ItemStack transferStackInSlot(final EntityPlayer playerIn, final int index)
     {
         ItemStack itemstack = null;
-        Slot slot = this.inventorySlots.get(index);
+        final Slot slot = this.inventorySlots.get(index);
 
         if (slot != null && slot.getHasStack())
         {
-            ItemStack itemstack1 = slot.getStack();
+            final ItemStack itemstack1 = slot.getStack();
             itemstack = itemstack1.copy();
 
             if (index == 0)
@@ -227,7 +226,7 @@ public class CraftingGUIBuilding extends Container
     }
 
     @Override
-    public boolean canMergeSlot(ItemStack stack, Slot slotIn)
+    public boolean canMergeSlot(final ItemStack stack, final Slot slotIn)
     {
         return slotIn.inventory != this.craftResult && super.canMergeSlot(stack, slotIn);
     }
