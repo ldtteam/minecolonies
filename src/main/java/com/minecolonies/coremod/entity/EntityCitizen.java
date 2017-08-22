@@ -443,7 +443,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public ITextComponent[] getLatestStatus()
     {
-        return latestStatus;
+        return latestStatus.clone();
     }
 
     //todo we have add to latest status and setLatest status
@@ -456,7 +456,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         for(int i = 0; i < latestStatus.length; i++)
         {
-            if(i > status.length)
+            if(i >= status.length)
             {
                 latestStatus[i] = null;
             }
@@ -1111,6 +1111,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
             {
                 checkIfStuck();
             }
+            else
+            {
+                setLatestStatus(new TextComponentString("Waiting for a job"));
+            }
 
             if (CompatibilityUtils.getWorld(this).isDaytime() && !CompatibilityUtils.getWorld(this).isRaining() && citizenData != null)
             {
@@ -1648,6 +1652,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 citizenData.decreaseSaturation(decreaseBy);
                 citizenData.markDirty();
             }
+
+            //todo
+            setLatestStatus(new TextComponentString("Just slacking"));
             return DesiredActivity.SLEEP;
         }
 
@@ -1655,6 +1662,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         if (CompatibilityUtils.getWorld(this).isRaining() && !shouldWorkWhileRaining())
         {
+            setLatestStatus(new TextComponentString("Waiting for the"), new TextComponentString("rain to stop"));
             return DesiredActivity.IDLE;
         }
         else

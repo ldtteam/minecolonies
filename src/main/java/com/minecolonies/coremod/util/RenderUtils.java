@@ -9,14 +9,13 @@ import com.minecolonies.structures.helpers.Settings;
 import com.minecolonies.structures.helpers.Structure;
 import com.minecolonies.structures.lib.ModelHolder;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockSign;
 import net.minecraft.block.BlockWallSign;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.entity.item.EntityEnderCrystal;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntitySign;
@@ -97,33 +96,32 @@ public final class RenderUtils
      * @param clientWorld  the world.
      * @param partialTicks the partial ticks
      */
-    public static void renderSigns(final WorldClient clientWorld, final float partialTicks, final CitizenDataView citizenDataView, final EntityPlayerSP playerSP)
+    public static void renderSigns(final WorldClient clientWorld, final float partialTicks, final CitizenDataView citizenDataView, final EntityPlayer player)
     {
         final Block block = Blocks.WALL_SIGN;
-        final BlockPos pos = playerSP.getPosition().up().offset(playerSP.getHorizontalFacing(),2);
+        final BlockPos pos = player.getPosition().up().offset(player.getHorizontalFacing());
 
         //todo still have to adjust the position a bit
         //todo then have to insert the last status
-        //todo then only show on collide
-        //todo then have to adjust it only stays 3 seconds
-        //todo make that from the citizen like make a var in the citizen which is "isColliding"
-        //todo so as long as it isColliding its true so we render for that citizen
-        //todo still we have to check every citizen here so we do several things:
-        //a) Only check if the player is inside a colony //this here is client side anyway
-        //b) When he is inside check if he has rights to interact
-        //c) since we don't really have collide we do distance < 0.2 will make it appear or while distance < 0.2 or for 3 seconds.
 
-        final IBlockState iblockstate = block.getDefaultState().withProperty(BlockWallSign.FACING, playerSP.getHorizontalFacing().getOpposite());
+        final IBlockState iblockstate = block.getDefaultState().withProperty(BlockWallSign.FACING, player.getHorizontalFacing().getOpposite());
         final IBlockState iBlockExtendedState = block.getExtendedState(iblockstate, clientWorld, pos);
         final IBakedModel ibakedmodel = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(iblockstate);
         final TileEntitySign sign = new TileEntitySign();
         sign.setPos(pos);
-        sign.signText[0] = new TextComponentString(citizenDataView.getName());
+
+        for(int i = 0; i < sign.signText.length; i++)
+        {
+            if(i < citizenDataView.getLatestStatus().length)
+            {
+                sign.signText[i] = citizenDataView.getLatestStatus()[i];
+            }
+        }
 
         final ModelHolder models = new ModelHolder(pos, iblockstate, iBlockExtendedState, sign, ibakedmodel);
         Structure.getQuads(models, models.quads);
 
-        new Structure(Minecraft.getMinecraft().world).renderGhost(clientWorld, models, playerSP, partialTicks);
+        new Structure(Minecraft.getMinecraft().world).renderGhost(clientWorld, models, player, partialTicks);
     }
 
     /**
@@ -139,7 +137,7 @@ public final class RenderUtils
             final BlockPos position,
             final WorldClient clientWorld,
             final float partialTicks,
-            final EntityPlayerSP thePlayer,
+            final EntityPlayer thePlayer,
             final List<BlockPos> colonyBorder)
     {
         if (colonyBorder.isEmpty())
@@ -168,7 +166,7 @@ public final class RenderUtils
      * @param thePlayer    with the player.
      * @param colonyBorder the border.
      */
-    private static void calculateColonyBorder(final WorldClient theWorld, final EntityPlayerSP thePlayer, final List<BlockPos> colonyBorder)
+    private static void calculateColonyBorder(final WorldClient theWorld, final EntityPlayer thePlayer, final List<BlockPos> colonyBorder)
     {
         final ColonyView colonyView = ColonyManager.getClosestColonyView(theWorld, thePlayer.getPosition());
         if (colonyView == null)

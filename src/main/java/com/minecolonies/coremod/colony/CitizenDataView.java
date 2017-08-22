@@ -3,9 +3,13 @@ package com.minecolonies.coremod.colony;
 import com.minecolonies.api.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Arrays;
 
 /**
  * The CitizenDataView is the client-side representation of a CitizenData. Views
@@ -51,9 +55,9 @@ public class CitizenDataView
     private BlockPos workBuilding;
 
     /**
-     * Position of the entity itself.
+     * The 4 lines of the latest status.
      */
-    private BlockPos entityPos;
+    private ITextComponent[] latestStatus = new ITextComponent[4];
 
     /**
      * Set View id.
@@ -84,7 +88,7 @@ public class CitizenDataView
     {
         return entityId;
     }
-
+    
     /**
      * Entity name getter.
      *
@@ -265,6 +269,21 @@ public class CitizenDataView
 
         job = ByteBufUtils.readUTF8String(buf);
 
-        entityPos = BlockPosUtil.readFromByteBuf(buf);
+        final int length = buf.readInt();
+        for(int i = 0; i < length; i++)
+        {
+            final String textComp = ByteBufUtils.readUTF8String(buf);
+            final TextComponentTranslation textComponent = new TextComponentTranslation(textComp);
+            latestStatus[i] = textComponent;
+        }
+    }
+
+    /**
+     * Get the array of the latest status.
+     * @return the array of ITextComponents.
+     */
+    public ITextComponent[] getLatestStatus()
+    {
+        return latestStatus.clone();
     }
 }

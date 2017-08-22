@@ -13,6 +13,7 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -684,11 +685,16 @@ public class CitizenData
         final EntityCitizen citizen = getCitizenEntity();
         if(citizen != null)
         {
-            BlockPosUtil.writeToByteBuf(buf, citizen.getPosition());
+            final ITextComponent[] latestStatus = citizen.getLatestStatus();
+            buf.writeInt(latestStatus.length);
+            for(int i = 0; i < latestStatus.length; i++)
+            {
+                ByteBufUtils.writeUTF8String(buf, latestStatus[i] == null ? "" : latestStatus[i].getUnformattedText());
+            }
         }
         else
         {
-            BlockPosUtil.writeToByteBuf(buf, BlockPos.ORIGIN);
+            buf.writeInt(0);
         }
     }
 
