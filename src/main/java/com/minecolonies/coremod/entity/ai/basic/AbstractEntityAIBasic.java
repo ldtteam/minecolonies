@@ -368,8 +368,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private AIState waitForNeededItems()
     {
         delay = DELAY_RECHECK;
-        worker.addLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waiting"));
-        worker.addLatestStatus(new TextComponentString(getOwnBuilding().getFirstNeededItem().getDisplayName()));
+        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waiting"),
+                new TextComponentString(getOwnBuilding().getFirstNeededItem().getDisplayName()));
         return lookForNeededItems();
     }
 
@@ -622,12 +622,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     @NotNull
     private AIState waitForToolOrWeapon()
     {
-
         final IToolType toolType = worker.getWorkBuilding().getNeedsTool();
         if (toolType != ToolType.NONE && checkForToolOrWeapon(toolType, worker.getWorkBuilding().getNeededToolLevel()))
         {
-            worker.addLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waiting"));
-            worker.addLatestStatus(new TextComponentString(toolType.getName()));
+            worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waiting"),
+                    new TextComponentString(toolType.getName()));
             delay += DELAY_RECHECK;
             return NEEDS_TOOL;
         }
