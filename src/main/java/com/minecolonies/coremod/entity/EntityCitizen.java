@@ -51,6 +51,7 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
@@ -273,6 +274,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private CitizenData citizenData;
 
     /**
+     * The 4 lines of the latest status.
+     */
+    private ITextComponent[] latestStatus = new ITextComponent[4];
+
+    /**
      * The entities current Position.
      */
     private BlockPos currentPosition = null;
@@ -431,11 +437,64 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
     }
 
+    /**
+     * Get the latest status of the citizen.
+     * @return a ITextComponent with the length 4 describing it.
+     */
+    public ITextComponent[] getLatestStatus()
+    {
+        return latestStatus;
+    }
+
+    //todo we have add to latest status and setLatest status
+    //both receive a string.
+    /**
+     * Set the latest status of the citizen and clear the existing status
+     * @param status the new status to set.
+     */
+    public void setLatestStatus(final ITextComponent...status)
+    {
+        for(int i = 0; i < latestStatus.length; i++)
+        {
+            if(i > status.length)
+            {
+                latestStatus[i] = null;
+            }
+            else
+            {
+                latestStatus[i] = status[i];
+            }
+        }
+    }
+
+    /**
+     * Append to the existing latestStatus list.
+     * This will override the oldest one if full and move the others one down in the array.
+     * @param status the latest status to append
+     */
+    public void addLatestStatus(final ITextComponent status)
+    {
+        for(int i = latestStatus.length - 1; i > 0; i--)
+        {
+            latestStatus[i] = latestStatus[i-1];
+        }
+
+        latestStatus[0] = status;
+    }
+
+    /**
+     * Get the level of the citizen.
+     * @return the level of the citizen.
+     */
     public int getLevel()
     {
         return level;
     }
 
+    /**
+     * Set the metadata for rendering.
+     * @param metadata the metadata required.
+     */
     public void setRenderMetadata(final String metadata)
     {
         renderMetadata = metadata;
@@ -1040,13 +1099,19 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
         else
         {
-            pickupItems();
-            cleanupChatMessages();
-            updateColonyServer();
-            if(getColonyJob() != null)
+            if (getOffsetTicks() % TICKS_20 == 0)
+            {
+                this.setAlwaysRenderNameTag(Configurations.gameplay.alwaysRenderNameTag);
+                pickupItems();
+                cleanupChatMessages();
+                updateColonyServer();
+            }
+
+            if (getColonyJob() != null)
             {
                 checkIfStuck();
             }
+
             if (CompatibilityUtils.getWorld(this).isDaytime() && !CompatibilityUtils.getWorld(this).isRaining() && citizenData != null)
             {
                 SoundUtils.playRandomSound(CompatibilityUtils.getWorld(this), this, citizenData.getSaturation());

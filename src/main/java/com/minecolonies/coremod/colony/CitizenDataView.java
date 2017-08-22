@@ -51,6 +51,11 @@ public class CitizenDataView
     private BlockPos workBuilding;
 
     /**
+     * Position of the entity itself.
+     */
+    private BlockPos entityPos;
+
+    /**
      * Set View id.
      *
      * @param id the id to set.
@@ -259,5 +264,7 @@ public class CitizenDataView
         saturation = buf.readDouble();
 
         job = ByteBufUtils.readUTF8String(buf);
+
+        entityPos = BlockPosUtil.readFromByteBuf(buf);
     }
 }

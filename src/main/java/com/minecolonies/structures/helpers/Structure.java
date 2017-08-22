@@ -150,6 +150,20 @@ public class Structure
     }
 
     /**
+     * Constuctor of Structure, tries to create a new structure.
+     * creates a plain Structure to append rendering later.
+     * @param world         with world.
+     */
+    public Structure(@Nullable final World world)
+    {
+        if (world == null || world.isRemote)
+        {
+            this.settings = settings;
+            this.mc = Minecraft.getMinecraft();
+        }
+    }
+
+    /**
      * Get the file representation of the cached schematics' folder.
      *
      * @return the folder for the cached schematics
@@ -654,12 +668,6 @@ public class Structure
             if (te.shouldRenderInPass(pass))
             {
                 final TileEntityRendererDispatcher terd = TileEntityRendererDispatcher.instance;
-                terd.prepare(fakeWorld,
-                  Minecraft.getMinecraft().renderEngine,
-                  Minecraft.getMinecraft().fontRenderer,
-                  new FakeEntity(fakeWorld),
-                  null,
-                  0.0F);
                 GL11.glPushMatrix();
                 terd.renderEngine = Minecraft.getMinecraft().renderEngine;
                 terd.preDrawBatch();
