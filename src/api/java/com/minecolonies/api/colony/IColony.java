@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.colony;
+package com.minecolonies.api.colony;
 
 import com.minecolonies.api.colony.permissions.IPermissions;
 import net.minecraft.util.math.BlockPos;
@@ -81,8 +81,8 @@ public interface IColony
     boolean hasWillRaidTonight();
 
     /**
-     * Get whether the colony can be auto deleted.
-     * @return true if so.
+     * return the colony's world.
+     * @return world.
      */
-    boolean canBeAutoDeleted();
+    World getWorld();
 }
