@@ -19,8 +19,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntitySign;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
 
 import java.util.List;
 import java.util.Set;
@@ -91,20 +91,26 @@ public final class RenderUtils
 
     /**
      * Render all waypoints.
-     *
-     * @param position     the position of the build tool click.
+     *  @param position     the position of the build tool click.
      * @param clientWorld  the world.
      * @param partialTicks the partial ticks
+     * @param citizen the citizen position
      */
-    public static void renderSigns(final WorldClient clientWorld, final float partialTicks, final CitizenDataView citizenDataView, final EntityPlayer player)
+    public static void renderSigns(
+            final WorldClient clientWorld,
+            final float partialTicks,
+            final CitizenDataView citizenDataView,
+            final EntityPlayer player,
+            final BlockPos citizen)
     {
         final Block block = Blocks.WALL_SIGN;
-        final BlockPos pos = player.getPosition().up().offset(player.getHorizontalFacing());
-
-        //todo still have to adjust the position a bit
+        final BlockPos vector = citizen.subtract(player.getPosition());
+        final EnumFacing facing = EnumFacing.getFacingFromVector(vector.getX(), 0, vector.getZ()).getOpposite();
+        final BlockPos pos = citizen.up().offset(facing);
         //todo then have to insert the last status
+        //todo have to insert the correct last status
 
-        final IBlockState iblockstate = block.getDefaultState().withProperty(BlockWallSign.FACING, player.getHorizontalFacing().getOpposite());
+        final IBlockState iblockstate = block.getDefaultState().withProperty(BlockWallSign.FACING, facing);
         final IBlockState iBlockExtendedState = block.getExtendedState(iblockstate, clientWorld, pos);
         final IBakedModel ibakedmodel = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(iblockstate);
         final TileEntitySign sign = new TileEntitySign();

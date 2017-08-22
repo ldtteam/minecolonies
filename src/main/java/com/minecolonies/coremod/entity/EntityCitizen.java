@@ -1113,7 +1113,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             }
             else
             {
-                setLatestStatus(new TextComponentString("Waiting for a job"));
+                setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waitingForWork"));
             }
 
             if (CompatibilityUtils.getWorld(this).isDaytime() && !CompatibilityUtils.getWorld(this).isRaining() && citizenData != null)
@@ -1653,8 +1653,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 citizenData.markDirty();
             }
 
-            //todo
-            setLatestStatus(new TextComponentString("Just slacking"));
+            setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.sleeping"));
             return DesiredActivity.SLEEP;
         }
 
@@ -1662,7 +1661,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         if (CompatibilityUtils.getWorld(this).isRaining() && !shouldWorkWhileRaining())
         {
-            setLatestStatus(new TextComponentString("Waiting for the"), new TextComponentString("rain to stop"));
+            setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waiting"), new TextComponentTranslation("com.minecolonies.coremod.status.rainStop"));
             return DesiredActivity.IDLE;
         }
         else
@@ -2074,6 +2073,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         if (this.getWorkBuilding() != null)
         {
+            setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.working"));
             this.getWorkBuilding().onWakeUp();
         }
     }

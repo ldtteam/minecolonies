@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.event;
 
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -79,13 +80,24 @@ public class ClientEventHandler
         {
             if(citizen != null)
             {
-                RenderUtils.renderSigns(world, event.getPartialTicks(), citizen, player);
-                ticksPassed += event.getPartialTicks();
-                if(ticksPassed > Constants.TICKS_SECOND * SECONDS_TO_SHOW)
+                final Entity entityCitizen = world.getEntityByID(citizen.getEntityId());
+                if(entityCitizen instanceof EntityCitizen)
                 {
-                    ticksPassed = 0;
-                    citizen = null;
+                    RenderUtils.renderSigns(world, event.getPartialTicks(), citizen, player,
+                            entityCitizen.getPosition());
+                    ticksPassed += event.getPartialTicks();
+                    if(ticksPassed > Constants.TICKS_SECOND * SECONDS_TO_SHOW)
+                    {
+                        ticksPassed = 0;
+                        citizen = null;
+                    }
                 }
+                else
+                {
+                    citizen = null;
+                    ticksPassed = 0;
+                }
+
                 return;
             }
 
@@ -95,9 +107,9 @@ public class ClientEventHandler
                 for(final CitizenDataView citizenDataView : colony.getCitizens().values())
                 {
                     final Entity entityCitizen = world.getEntityByID(citizenDataView.getEntityId());
-                    if(entityCitizen instanceof EntityCitizen && entityCitizen.getPosition().distanceSq(player.getPosition().up()) < 0.1)
+                    if(entityCitizen instanceof EntityCitizen && entityCitizen.getPosition().distanceSq(player.getPosition()) <= 2)
                     {
-                        RenderUtils.renderSigns(world, event.getPartialTicks(), citizenDataView, player);
+                        RenderUtils.renderSigns(world, event.getPartialTicks(), citizenDataView, player, entityCitizen.getPosition());
                         citizen = citizenDataView;
                         return;
                     }
