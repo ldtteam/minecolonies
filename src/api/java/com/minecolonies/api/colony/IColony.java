@@ -85,4 +85,10 @@ public interface IColony
      * @return world.
      */
     World getWorld();
+
+    /**
+     * return whether or not a colony is able to be automatically deleted.
+     * @return true if so.
+     */
+    boolean canBeAutoDeleted();
 }
