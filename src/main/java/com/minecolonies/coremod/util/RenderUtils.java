@@ -90,10 +90,11 @@ public final class RenderUtils
     }
 
     /**
-     * Render all waypoints.
-     *  @param position     the position of the build tool click.
-     * @param clientWorld  the world.
-     * @param partialTicks the partial ticks
+     * Render informal signs at the citizen.
+     * @param clientWorld the client world.
+     * @param partialTicks the partial ticks.
+     * @param citizenDataView the citizen data.
+     * @param player the player.
      * @param citizen the citizen position
      */
     public static void renderSigns(
@@ -107,8 +108,6 @@ public final class RenderUtils
         final BlockPos vector = citizen.subtract(player.getPosition());
         final EnumFacing facing = EnumFacing.getFacingFromVector(vector.getX(), 0, vector.getZ()).getOpposite();
         final BlockPos pos = citizen.up().offset(facing);
-        //todo then have to insert the last status
-        //todo have to insert the correct last status
 
         final IBlockState iblockstate = block.getDefaultState().withProperty(BlockWallSign.FACING, facing);
         final IBlockState iBlockExtendedState = block.getExtendedState(iblockstate, clientWorld, pos);
