@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.event;
 
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyManager;

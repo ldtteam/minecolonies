@@ -9,8 +9,6 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-
 /**
  * The CitizenDataView is the client-side representation of a CitizenData. Views
  * contain the CitizenData's data that is relevant to a Client, in a more
@@ -19,6 +17,11 @@ import java.util.Arrays;
  */
 public class CitizenDataView
 {
+    /**
+     * The max amount of lines the latest log allows.
+     */
+    private static final int MAX_LINES_OF_LATEST_LOG = 4;
+
     /**
      * Attributes.
      */
@@ -57,7 +60,7 @@ public class CitizenDataView
     /**
      * The 4 lines of the latest status.
      */
-    private ITextComponent[] latestStatus = new ITextComponent[4];
+    private ITextComponent[] latestStatus = new ITextComponent[MAX_LINES_OF_LATEST_LOG];
 
     /**
      * Set View id.

@@ -12,7 +12,6 @@ import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;

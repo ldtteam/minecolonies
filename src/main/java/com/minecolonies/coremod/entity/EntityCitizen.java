@@ -188,6 +188,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private static final int    MAX_STUCK_TIME             = 20 * 60 * 2;
 
     /**
+     * The max amount of lines the latest log allows.
+     */
+    private static final int MAX_LINES_OF_LATEST_LOG = 4;
+
+    /**
      * Distance from mobs the entity should hold.
      */
     private static final double DISTANCE_OF_ENTITY_AVOID = 8.0D;
@@ -276,7 +281,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * The 4 lines of the latest status.
      */
-    private ITextComponent[] latestStatus = new ITextComponent[4];
+    private final ITextComponent[] latestStatus = new ITextComponent[MAX_LINES_OF_LATEST_LOG];
 
     /**
      * The entities current Position.
@@ -446,8 +451,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
         return latestStatus.clone();
     }
 
-    //todo we have add to latest status and setLatest status
-    //both receive a string.
     /**
      * Set the latest status of the citizen and clear the existing status
      * @param status the new status to set.
