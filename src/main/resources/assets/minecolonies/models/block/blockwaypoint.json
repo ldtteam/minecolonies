@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "particle": "minecolonies:blocks/blockwaypoint",
+    "down": "minecolonies:blocks/blockwaypoint",
+    "up": "minecolonies:blocks/blockwaypoint",
+    "north": "minecolonies:blocks/blockwaypoint",
+    "east": "minecolonies:blocks/blockwaypoint",
+    "south": "minecolonies:blocks/blockwaypoint",
+    "west": "minecolonies:blocks/blockwaypoint"
+  }
+}
