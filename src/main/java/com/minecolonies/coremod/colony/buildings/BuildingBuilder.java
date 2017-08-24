@@ -13,6 +13,9 @@ import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockChest;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -199,6 +202,17 @@ public class BuildingBuilder extends AbstractBuildingWorker
             buf.writeInt(resource.getAmount());
         }
     }
+
+    @Override
+    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
+    {
+        //Only the chests because he shouldn't fill up the furnaces.
+        if (block instanceof BlockChest)
+        {
+            addContainerPosition(pos);
+        }
+    }
+
 
     /**
      * Get the needed resources for the current build.

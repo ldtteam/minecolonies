@@ -45,11 +45,7 @@ public class ClientEventHandler
             }
             else
             {
-                Structures.StructureName name = new Structures.StructureName(Settings.instance.getStructureName());
-                if (name.isHut())
-                {
-                    RenderUtils.renderColonyBorder(position, Minecraft.getMinecraft().theWorld, event.getPartialTicks(), Minecraft.getMinecraft().thePlayer, colonyBorder);
-                }
+                RenderUtils.renderColonyBorder(position, Minecraft.getMinecraft().theWorld, event.getPartialTicks(), Minecraft.getMinecraft().thePlayer, colonyBorder);
             }
             return;
         }
