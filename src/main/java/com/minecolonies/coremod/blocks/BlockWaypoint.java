@@ -6,6 +6,9 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.util.Locale;
@@ -73,6 +76,23 @@ public class BlockWaypoint extends Block
     @Deprecated
     public boolean isOpaqueCube(final IBlockState state)
     {
-        return true;
+        return false;
+    }
+
+    /**
+     * @deprecated (Remove this as soon as minecraft offers anything better).
+     */
+    @SuppressWarnings(DEPRECATION)
+    @Override
+    @Deprecated
+    public boolean isFullBlock(final IBlockState state)
+    {
+        return false;
+    }
+
+    @Override
+    public boolean doesSideBlockRendering(final IBlockState state, final IBlockAccess world, final BlockPos pos, final EnumFacing face)
+    {
+        return false;
     }
 }
