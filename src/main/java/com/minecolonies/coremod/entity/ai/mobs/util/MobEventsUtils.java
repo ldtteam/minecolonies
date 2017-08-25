@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.entity.ai.mobs.util;
 
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.ColonyView;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -40,6 +40,11 @@ public final class MobEventsUtils
     private static       int    numberOfArchers              = 0;
     private static       int    numberOfChiefs               = 0;
 
+    // Fall back possible values.
+    private static final int ONE   = 1;
+    private static final int TWO   = 2;
+    private static final int THREE = 3;
+
     /**
      * Private constructor to hide the implicit public one.
      */
@@ -51,13 +56,19 @@ public final class MobEventsUtils
     {
         numberOfSpawns(colony);
 
-        final BlockPos targetSpawnPoint = calculateSpawnLocation(world, colony);
+        BlockPos targetSpawnPoint = calculateSpawnLocation(world, colony);
 
         if (Configurations.enableInDevelopmentFeatures)
         {
             LanguageHandler.sendPlayersMessage(
               colony.getMessageEntityPlayers(),
               "Horde Spawn Point: " + targetSpawnPoint);
+        }
+
+        if (targetSpawnPoint == null)
+        {
+            Log.getLogger().info("Barbarian Event SpawnPoint is Null for colony: " + colony);
+            targetSpawnPoint = calculateFallBackSpawnLocation(world, colony);
         }
 
         LanguageHandler.sendPlayersMessage(
@@ -107,6 +118,57 @@ public final class MobEventsUtils
         }
     }
 
+    private static BlockPos calculateFallBackSpawnLocation(final World world, final Colony colony)
+    {
+        if (colony == null)
+        {
+            Log.getLogger().info("When trying to find SpawnPoint for Barbarian Event, the Colony was Null!");
+            return null;
+        }
+        final BlockPos center = colony.getCenter();
+        final int radius = Configurations.workingRangeTownHall;
+
+        final int random = world.rand.nextInt(4);
+
+        final int x;
+        final int y;
+        final int z;
+
+        if (random == ONE)
+        {
+            x = center.getX() - radius;
+            y = center.getY();
+            z = center.getZ();
+        }
+        else if (random == TWO)
+        {
+            x = center.getX();
+            y = center.getY();
+            z = center.getZ() + radius;
+        }
+        else if (random == THREE)
+        {
+            x = center.getX();
+            y = center.getY();
+            z = center.getZ() - radius;
+        }
+        else
+        {
+            x = center.getX() + radius;
+            y = center.getY();
+            z = center.getZ();
+        }
+
+        final BlockPos spawnPoint = BlockPosUtil.findLand(new BlockPos(x, y, z), world);
+
+        if (spawnPoint == null)
+        {
+            Log.getLogger().info("The FallBack spawn location for the BarbarianRaidEvent is Null.. Report this IMMEDIATELY");
+        }
+
+        return spawnPoint;
+    }
+
     /**
      * Calculate a random spawn point along the colony's border
      *
@@ -116,20 +178,23 @@ public final class MobEventsUtils
      */
     private static BlockPos calculateSpawnLocation(final World world, final Colony colony)
     {
-        final ColonyView colonyView = ColonyManager.getClosestColonyView(world, colony.getCenter());
-        if (colonyView == null)
+        if (colony == null)
         {
+            Log.getLogger().info("When trying to find SpawnPoint for Barbarian Event, the Colony was Null!");
+            Log.getLogger().info("LIKE, PLEASE REPORT THIS, THIS MAKES NO FREAKING SENSE!");
             return null;
         }
-        final BlockPos center = colonyView.getCenter();
-        final int radius = Configurations.workingRangeTownHall;
 
+        final BlockPos center = colony.getCenter();
+        final int radius = Configurations.workingRangeTownHall;
         final int randomDegree = world.rand.nextInt((int) WHOLE_CIRCLE);
 
         final double rads = (double) randomDegree / HALF_A_CIRCLE * Math.PI;
+
         final double x = Math.round(center.getX() + radius * Math.sin(rads));
         final double z = Math.round(center.getZ() + radius * Math.cos(rads));
-        return world.getTopSolidOrLiquidBlock(new BlockPos(x, center.getY(), z));
+
+        return BlockPosUtil.findLand(new BlockPos(x, center.getY(), z), world);
     }
 
     /**
@@ -160,7 +225,7 @@ public final class MobEventsUtils
         }
         else
         {
-            return 0;
+            return levels;
         }
     }
 
