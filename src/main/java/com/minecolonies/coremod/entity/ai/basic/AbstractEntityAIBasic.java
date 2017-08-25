@@ -367,10 +367,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     @NotNull
     private AIState waitForNeededItems()
     {
-        if(worker.getColonyJob() == null)
-        {
-            return AIState.IDLE;
-        }
         delay = DELAY_RECHECK;
         worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waiting"),
                 new TextComponentString(getOwnBuilding().getFirstNeededItem().getDisplayName()));
@@ -626,10 +622,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     @NotNull
     private AIState waitForToolOrWeapon()
     {
-        if(worker.getColonyJob() == null)
-        {
-            return AIState.IDLE;
-        }
         final IToolType toolType = worker.getWorkBuilding().getNeedsTool();
         if (toolType != ToolType.NONE && checkForToolOrWeapon(toolType, worker.getWorkBuilding().getNeededToolLevel()))
         {
