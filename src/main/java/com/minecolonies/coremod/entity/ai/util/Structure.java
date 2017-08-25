@@ -135,9 +135,8 @@ public class Structure
             final Block structureBlock = structureBlockState.getBlock();
 
             //All worldBlocks are equal the substitution block
-            if (structureBlock == ModBlocks.blockSubstitution
-                  || (structureBlock == ModBlocks.blockSolidSubstitution && worldMetadata.getMaterial().isSolid()
-                        && !(worldBlock instanceof BlockOre) && worldBlock != Blocks.AIR))
+            if (structureBlockEqualsWorldBlock(structureBlock, worldBlock, worldMetadata)
+                    || (worldBlock == Blocks.AIR && structureBlock == ModBlocks.blockWayPoint))
             {
                 return true;
             }
@@ -153,10 +152,6 @@ public class Structure
             else if ((structureBlock instanceof BlockStairs && structureBlockState.equals(worldBlockState))
                     || BlockUtils.isGrassOrDirt(structureBlock, worldBlock, structureBlockState, worldBlockState)
                     || (worldBlock == ModBlocks.blockRack && BlockMinecoloniesRack.shouldBlockBeReplacedWithRack(structureBlock)))
-            {
-                return true;
-            }
-            else if ((structureBlock == Blocks.DIRT || structureBlock == Blocks.GRASS) && (worldBlock == Blocks.DIRT || worldBlock == Blocks.GRASS))
             {
                 return true;
             }
@@ -226,6 +221,20 @@ public class Structure
     }
 
     /**
+     * Create a new building task.
+     *
+     * @param targetWorld   the world.
+     * @param structure     the structure.
+     * @param stageProgress the stage to start off with.
+     */
+    public Structure(final World targetWorld, final StructureWrapper structure, final Stage stageProgress)
+    {
+        this.structure = structure;
+        this.stage = stageProgress;
+        this.targetWorld = targetWorld;
+    }
+
+    /**
      * Load the structure for this building.
      *
      * @param targetWorld       the world we want to place it
@@ -272,20 +281,6 @@ public class Structure
             tempSchematic.setLocalPosition(blockProgress);
         }
         return tempSchematic;
-    }
-
-    /**
-     * Create a new building task.
-     *
-     * @param targetWorld   the world.
-     * @param structure     the structure.
-     * @param stageProgress the stage to start off with.
-     */
-    public Structure(final World targetWorld, final StructureWrapper structure, final Stage stageProgress)
-    {
-        this.structure = structure;
-        this.stage = stageProgress;
-        this.targetWorld = targetWorld;
     }
 
     /**
