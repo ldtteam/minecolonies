@@ -907,4 +907,13 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     {
         return rotation;
     }
+
+    /**
+     * Adds a waypoint to the AI's colony.
+     * @param pos the position of the point
+     */
+    public void addWayPoint(final BlockPos pos)
+    {
+        worker.getColony().addWayPoint(pos, world.getBlockState(pos));
+    }
 }
