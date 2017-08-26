@@ -1,3 +1,6 @@
 {
-  "parent": "minecolonies:block/blockHutMiner"
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "minecolonies:items/blockhutminer"
+  }
 }

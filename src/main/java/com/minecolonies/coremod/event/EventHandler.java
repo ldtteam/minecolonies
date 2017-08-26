@@ -401,16 +401,4 @@ public class EventHandler
     {
         ColonyManager.onWorldUnload(event.getWorld());
     }
-
-    /**
-     * Gets called when world saves.
-     * Calls {@link ColonyManager#onWorldSave(World)}
-     *
-     * @param event {@link net.minecraftforge.event.world.WorldEvent.Save}
-     */
-    @SubscribeEvent
-    public void onWorldSave(@NotNull final WorldEvent.Save event)
-    {
-        ColonyManager.onWorldSave(event.getWorld());
-    }
 }
