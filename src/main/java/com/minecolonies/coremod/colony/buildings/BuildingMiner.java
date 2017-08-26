@@ -208,6 +208,7 @@ public class BuildingMiner extends AbstractBuildingWorker
         final ItemStack stackCobble = new ItemStack(Blocks.COBBLESTONE);
         final ItemStack stackSlab = new ItemStack(Blocks.WOODEN_SLAB);
         final ItemStack stackPlanks = new ItemStack(Blocks.PLANKS);
+        final ItemStack stackDirt = new ItemStack(Blocks.DIRT);
 
         keepX.put(new ItemStorage(stackLadder, false), STACK_MAX_SIZE);
         keepX.put(new ItemStorage(stackFence, false), STACK_MAX_SIZE);
@@ -215,6 +216,7 @@ public class BuildingMiner extends AbstractBuildingWorker
         keepX.put(new ItemStorage(stackCobble, false), STACK_MAX_SIZE);
         keepX.put(new ItemStorage(stackSlab, false), STACK_MAX_SIZE);
         keepX.put(new ItemStorage(stackPlanks, false), STACK_MAX_SIZE);
+        keepX.put(new ItemStorage(stackDirt, false), STACK_MAX_SIZE);
     }
 
     /**
