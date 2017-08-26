@@ -6,6 +6,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.BlockSolidSubstitution;
+import com.minecolonies.coremod.blocks.BlockWaypoint;
 import com.minecolonies.coremod.colony.buildings.BuildingWareHouse;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
@@ -57,7 +58,9 @@ public final class PlacementHandlers
         handlers.add(new StairBlockPlacementHandler());
         handlers.add(new BlockSolidSubstitutionPlacementHandler());
         handlers.add(new ChestPlacementHandler());
+        handlers.add(new WayPointBlockPlacementHandler());
         handlers.add(new GeneralBlockPlacementHandler());
+
     }
 
     //If he woudln't count the bracket spaces we'd be under 25 easily.
@@ -395,6 +398,23 @@ public final class PlacementHandlers
                 return ActionProcessingResult.DENY;
             }
 
+            return blockState;
+        }
+    }
+
+    public static class WayPointBlockPlacementHandler implements IPlacementHandler
+    {
+        @Override
+        public Object handle(
+                @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
+                @Nullable final AbstractEntityAIStructure<?> placer)
+        {
+            if (!(blockState.getBlock() instanceof BlockWaypoint))
+            {
+                return ActionProcessingResult.IGNORE;
+            }
+
+            placer.addWayPoint(pos);
             return blockState;
         }
     }

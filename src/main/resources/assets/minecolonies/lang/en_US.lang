@@ -430,3 +430,5 @@ com.minecolonies.coremod.gui.townHall.housing=Housing assignment mode:
 com.minecolonies.coremod.gui.home.assign=Assign %d citizens
 com.minecolonies.coremod.gui.workerHuts.unassign=Remove citizen
 tile.minecolonies.blockMinecoloniesRack.name=Rack
+tile.minecolonies.blockWayPoint.name=Waypoint placeholder
+

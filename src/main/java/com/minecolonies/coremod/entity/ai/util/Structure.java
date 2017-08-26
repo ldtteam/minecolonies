@@ -132,7 +132,8 @@ public class Structure
             final Block structureBlock = structureBlockState.getBlock();
 
             //All worldBlocks are equal the substitution block
-            if (structureBlockEqualsWorldBlock(structureBlock, worldBlock, worldMetadata))
+            if (structureBlockEqualsWorldBlock(structureBlock, worldBlock, worldMetadata)
+                    || (worldBlock == Blocks.AIR && structureBlock == ModBlocks.blockWayPoint))
             {
                 return true;
             }
@@ -149,6 +150,7 @@ public class Structure
             {
                 return true;
             }
+
             return structureBlockState.equals(worldBlockState);
         }
 

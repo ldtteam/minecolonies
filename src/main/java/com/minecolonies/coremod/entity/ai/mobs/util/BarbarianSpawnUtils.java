@@ -2,7 +2,6 @@ package com.minecolonies.coremod.entity.ai.mobs.util;
 
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.*;
@@ -18,10 +17,8 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeChunkManager;
 
 import java.util.stream.IntStream;
 
@@ -77,14 +74,13 @@ public final class BarbarianSpawnUtils
     {
     }
 
-
     /**
      * Set barbarian attributes.
      *
      * @param barbarian The barbarian to set the attributes on.
      * @param colony    The colony that the barbarian is attacking.
      */
-    public static void setBarbarianAttributes(final AbstractEntityBarbarian barbarian,final Colony colony)
+    public static void setBarbarianAttributes(final AbstractEntityBarbarian barbarian, final Colony colony)
     {
         barbarian.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE);
         barbarian.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(MOVEMENT_SPEED);
@@ -165,20 +161,8 @@ public final class BarbarianSpawnUtils
      */
     public static void spawn(final String entityToSpawn, final int numberOfSpawns, final BlockPos spawnLocation, final World world)
     {
-
-        if (spawnLocation != null && entityToSpawn != null && world != null)
+        if (spawnLocation != null && entityToSpawn != null && world != null && !world.isRemote)
         {
-            if (!world.isBlockLoaded(spawnLocation))
-            {
-                final ForgeChunkManager.Ticket chunkTicket = ForgeChunkManager.requestTicket(MineColonies.instance, world, ForgeChunkManager.Type.NORMAL);
-                if (chunkTicket != null)
-                {
-                    chunkTicket.getModData().setInteger("spawnX", spawnLocation.getX());
-                    chunkTicket.getModData().setInteger("spawnY", spawnLocation.getY());
-                    chunkTicket.getModData().setInteger("spawnZ", spawnLocation.getZ());
-                    ForgeChunkManager.forceChunk(chunkTicket, new ChunkPos(spawnLocation.getX(), spawnLocation.getZ()));
-                }
-            }
 
             final int x = spawnLocation.getX();
             final int y = spawnLocation.getY();
