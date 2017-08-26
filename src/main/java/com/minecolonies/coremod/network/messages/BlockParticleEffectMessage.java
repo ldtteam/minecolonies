@@ -5,6 +5,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.client.FMLClientHandler;
@@ -20,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Colton
  */
-public class BlockParticleEffectMessage implements IMessage, IMessageHandler<BlockParticleEffectMessage, IMessage>
+public class BlockParticleEffectMessage extends AbstractMessage<BlockParticleEffectMessage, IMessage>
 {
     public static final int BREAK_BLOCK = -1;
 
@@ -70,9 +71,8 @@ public class BlockParticleEffectMessage implements IMessage, IMessageHandler<Blo
         buf.writeInt(side);
     }
 
-    @Nullable
     @Override
-    public IMessage onMessage(@NotNull final BlockParticleEffectMessage message, final MessageContext ctx)
+    public void messageOnServerThread(final BlockParticleEffectMessage message, final EntityPlayerMP player)
     {
         if (message.side == BREAK_BLOCK)
         {
@@ -84,6 +84,5 @@ public class BlockParticleEffectMessage implements IMessage, IMessageHandler<Blo
             // TODO: test if this works
             FMLClientHandler.instance().getClient().effectRenderer.addBlockHitEffects(message.pos, EnumFacing.getFront(message.side));
         }
-        return null;
     }
 }
