@@ -263,10 +263,24 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     {
         for (final Map.Entry<ItemStorage, Integer> entry : building.getRequiredItemsAndAmount().entrySet())
         {
-            if (entry.getKey().getItem() == stack.getItem()
-                  && entry.getKey().getDamageValue() == stack.getItemDamage()
-                  && !localAlreadyKept.contains(entry.getKey()))
+            if (entry.getKey().getItemStack().isItemEqual(stack))
             {
+                if(localAlreadyKept.contains(entry.getKey()))
+                {
+                    final int index = localAlreadyKept.indexOf(entry.getKey());
+                    final ItemStorage temp = localAlreadyKept.get(index);
+
+                    if(temp.getAmount() >= entry.getValue())
+                    {
+                        return false;
+                    }
+
+                    localAlreadyKept.remove(index);
+                    temp.setAmount(temp.getAmount() + ItemStackUtils.getSize(stack));
+                    localAlreadyKept.add(temp);
+                    return true;
+                }
+
                 localAlreadyKept.add(entry.getKey());
                 return true;
             }

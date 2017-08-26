@@ -45,7 +45,7 @@
                      textcolor="DimGray" texthovercolor="DimGray" textdisabledcolor="DarkGray"/>
     </group>
 
-    <image source="minecolonies:textures/gui/guiHutBackground.png" size="100% 100%" y="-5"/>
+    <image source="minecolonies:textures/gui/guiHutBackground.png" size="100% 100%" y="-2"/>
 
     <switch id="pages" size="100% 212px" pos="0 0" default="pageActions">
         <view id="pageActions">
