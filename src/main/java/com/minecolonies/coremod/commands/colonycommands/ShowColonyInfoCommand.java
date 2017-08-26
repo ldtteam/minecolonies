@@ -1,9 +1,10 @@
 package com.minecolonies.coremod.commands.colonycommands;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.IColony;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
+import com.mojang.authlib.GameProfile;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -60,16 +61,17 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
         colonyId = getIthArgument(args, 0, -1);
         IColony tempColony = ColonyManager.getColony(colonyId);
 
-        if(colonyId == -1 && args.length >= 1)
+        if (colonyId == -1 && args.length >= 1)
         {
-            final EntityPlayer player = server.getEntityWorld().getPlayerEntityByName(args[0]);
-            if(player != null)
+            final GameProfile playerProfile = server.getPlayerProfileCache().getGameProfileForUsername(args[0]);
+
+            if (playerProfile != null)
             {
-                tempColony = ColonyManager.getIColonyByOwner(server.getEntityWorld(), player);
+                tempColony = ColonyManager.getIColonyByOwner(server.getEntityWorld(), playerProfile.getId());
             }
         }
 
-        if(sender instanceof EntityPlayer)
+        if (sender.getCommandSenderEntity() != null)
         {
             final UUID mayorID = sender.getCommandSenderEntity().getUniqueID();
             if (tempColony == null)
@@ -77,7 +79,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
                 tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), mayorID);
             }
 
-            if(tempColony != null)
+            if (tempColony != null)
             {
                 colonyId = tempColony.getID();
             }

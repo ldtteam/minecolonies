@@ -1,8 +1,10 @@
 package com.minecolonies.coremod.colony;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.colony.requestsystem.IRequestManager;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MathUtils;
@@ -15,6 +17,7 @@ import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.TownHallRenameMessage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -687,6 +690,21 @@ public final class ColonyView implements IColony
     public int getLastContactInHours()
     {
         return lastContactInHours;
+    }
+
+    @Override
+    public World getWorld()
+    {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public IRequestManager getRequestManager()
+    {
+        //No request system on the client side.
+        //At least for now.
+        return null;
     }
 
     @Override

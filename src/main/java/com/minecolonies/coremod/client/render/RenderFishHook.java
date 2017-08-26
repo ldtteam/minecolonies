@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.client.render;
 
-import com.minecolonies.api.util.constant.Literals;
 import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.constant.Literals;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
 import net.minecraft.client.renderer.GlStateManager;

@@ -22,12 +22,12 @@ public class Tool
     @NotNull
     private final ItemStack result;
 
-    public Tool(@NotNull String toolClass, @NotNull Integer minLevel, @NotNull Integer maxLevel)
+    public Tool(@NotNull final String toolClass, @NotNull final Integer minLevel, @NotNull final Integer maxLevel)
     {
         this(toolClass, minLevel, maxLevel, ItemStackUtils.EMPTY);
     }
 
-    public Tool(@NotNull String toolClass, @NotNull Integer minLevel, @NotNull Integer maxLevel, @NotNull ItemStack result)
+    public Tool(@NotNull final String toolClass, @NotNull final Integer minLevel, @NotNull final Integer maxLevel, @NotNull final ItemStack result)
     {
         this.toolClass = toolClass;
         this.minLevel = minLevel;

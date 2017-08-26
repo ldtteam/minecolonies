@@ -9,7 +9,7 @@ public class Constants
     public static final String MOD_NAME                         = "MineColonies";
     public static final String VERSION                          = "@VERSION@";
     public static final String FORGE_VERSION                    = "required-after:Forge@[12.18.1.2076,)";
-    public static final String MC_VERSION                       = "[1.12]";
+    public static final String MC_VERSION                       = "[1.11]";
     public static final String CLIENT_PROXY_LOCATION            = "com.minecolonies.coremod.proxy.ClientProxy";
     public static final String SERVER_PROXY_LOCATION            = "com.minecolonies.coremod.proxy.ServerProxy";
     public static final String CONFIG_GUI_LOCATION              = "com.minecolonies.coremod.client.gui.GuiFactory";
@@ -23,6 +23,9 @@ public class Constants
     public static final int    CITIZEN_RESPAWN_INTERVAL_MIN     = 10;
     public static final int    CITIZEN_RESPAWN_INTERVAL_MAX     = 600;
     public static final int    MAX_BUILDING_LEVEL               = 5;
+    public static final int    TICKS_SECOND                     = 20;
+    public static final int    SECONDS_A_MINUTE                 = 60;
+    public static final int    STACKSIZE                        = 64;
     public static final int    MAX_BARBARIAN_HORDE_SIZE         = 60;
     public static final int    MIN_BARBARIAN_HORDE_SIZE         = 5;
     public static final int    MAX_BARBARIAN_DIFFICULTY         = 10;

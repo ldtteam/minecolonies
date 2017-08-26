@@ -207,6 +207,6 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
     {
         INVENTORY_CITIZEN,
         INVENTORY_CHEST,
-        INVENTORY_FIELD
+        INVENTORY_FIELD,
     }
 }

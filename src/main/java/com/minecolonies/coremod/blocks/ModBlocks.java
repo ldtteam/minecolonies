@@ -32,6 +32,9 @@ public class ModBlocks
     public static BlockHutWareHouse     blockHutWareHouse;
     public static BlockConstructionTape  blockConstructionTape;
     public static BlockConstructionTapeCorner blockConstructionTapeCorner;
+    public static final Block blockRack                   = new BlockMinecoloniesRack();
+    public static final Block blockTimberFrame            = new BlockTimberFrame();
+    public static final Block blockWayPoint               = new BlockWaypoint();
 
 
     // Deactivated for now
