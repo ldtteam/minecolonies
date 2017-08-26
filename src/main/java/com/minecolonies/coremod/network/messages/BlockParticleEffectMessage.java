@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Colton
  */
-public class BlockParticleEffectMessage extends AbstractMessage<BlockParticleEffectMessage, IMessage>
+public class BlockParticleEffectMessage implements IMessage, IMessageHandler<BlockParticleEffectMessage, IMessage>
 {
     public static final int BREAK_BLOCK = -1;
 
@@ -72,7 +72,7 @@ public class BlockParticleEffectMessage extends AbstractMessage<BlockParticleEff
     }
 
     @Override
-    public void messageOnServerThread(final BlockParticleEffectMessage message, final EntityPlayerMP player)
+    public IMessage onMessage(final BlockParticleEffectMessage message, final MessageContext ctx)
     {
         if (message.side == BREAK_BLOCK)
         {
@@ -82,5 +82,6 @@ public class BlockParticleEffectMessage extends AbstractMessage<BlockParticleEff
         {
             FMLClientHandler.instance().getClient().effectRenderer.addBlockHitEffects(message.pos, EnumFacing.getFront(message.side));
         }
+        return null;
     }
 }
