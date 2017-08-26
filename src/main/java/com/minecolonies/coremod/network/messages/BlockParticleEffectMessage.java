@@ -71,8 +71,9 @@ public class BlockParticleEffectMessage implements IMessage, IMessageHandler<Blo
         buf.writeInt(side);
     }
 
+    @Nullable
     @Override
-    public IMessage onMessage(final BlockParticleEffectMessage message, final MessageContext ctx)
+    public IMessage onMessage(@NotNull final BlockParticleEffectMessage message, final MessageContext ctx)
     {
         if (message.side == BREAK_BLOCK)
         {
