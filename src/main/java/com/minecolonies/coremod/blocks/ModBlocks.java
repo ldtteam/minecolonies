@@ -43,7 +43,7 @@ public class ModBlocks
     /**
      * Private constructor to hide the implicit public one.
      */
-    public ModBlocks()
+    private ModBlocks()
     {
         /*
          * Intentionally left empty.
