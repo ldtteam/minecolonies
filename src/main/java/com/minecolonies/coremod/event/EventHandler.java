@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.event;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.LanguageHandler;
@@ -9,7 +10,6 @@ import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockHutTownHall;
 import com.minecolonies.coremod.blocks.BlockHutWareHouse;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSilverfish;
@@ -401,17 +401,5 @@ public class EventHandler
     public void onWorldUnload(@NotNull final WorldEvent.Unload event)
     {
         ColonyManager.onWorldUnload(event.getWorld());
-    }
-
-    /**
-     * Gets called when world saves.
-     * Calls {@link ColonyManager#onWorldSave(World)}
-     *
-     * @param event {@link net.minecraftforge.event.world.WorldEvent.Save}
-     */
-    @SubscribeEvent
-    public void onWorldSave(@NotNull final WorldEvent.Save event)
-    {
-        ColonyManager.onWorldSave(event.getWorld());
     }
 }

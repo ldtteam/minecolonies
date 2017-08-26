@@ -36,15 +36,16 @@ public class CommandEntryPoint extends CommandBase
     }
 
     /**
-     * Check the permissions of the player.
-     * @param server the server to check them at.
-     * @param sender the sender of the mssage
-     * @return true if he has the permission.
+     * Check if the player has the permission to use commands.
+     *
+     * @param server the server to check for.
+     * @param sender the sender of the command.
+     * @return true if so.
      */
     @Override
     public boolean checkPermission(final MinecraftServer server, final ICommandSender sender)
     {
-        if(sender instanceof EntityPlayer)
+        if (sender instanceof EntityPlayer)
         {
             return AbstractSingleCommand.isPlayerOpped(sender) || Configurations.gameplay.opLevelForServer <= 0;
         }

@@ -3,7 +3,9 @@ package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockNewLog;
+import net.minecraft.block.BlockOldLog;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -178,7 +180,7 @@ public class Tree
             return world.getBlockState(log).getValue(BlockNewLog.VARIANT).getMetadata();
         }
 
-        if (Compatibility.isSlimeBlock(block))
+        if (Compatibility.isSlimeBlock(block) && Compatibility.isSlimeLeaf(world.getBlockState(leaf).getBlock()))
         {
             return Compatibility.getLeafVariant(world.getBlockState(leaf));
         }
