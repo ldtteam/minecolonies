@@ -1,5 +1,5 @@
 {
-  "parent": "minecolonies:block/blockwaypoint",
+  "parent": "minecolonies:block/blockWayPoint",
   "display": {
     "thirdperson": {
       "rotation": [
