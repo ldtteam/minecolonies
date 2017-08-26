@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.items;
 
-import com.minecolonies.coremod.blocks.*;
 import net.minecraft.item.Item;
 import net.minecraftforge.registries.IForgeRegistry;
 
 /**
  * Class handling the registering of the mod items.
  */
+@SuppressWarnings("squid:S1444")
 public final class ModItems
 {
     public static Item supplyChest;
@@ -16,6 +16,8 @@ public final class ModItems
     public static Item caliper;
     public static Item scepterGuard;
     public static Item supplyCamp;
+    public static Item ancientTome;
+    public static Item chiefSword;
 
     public static final Item itemAchievementProxySettlement = new ItemAchievementProxy("sizeSettlement");
     public static final Item itemAchievementProxyTown       = new ItemAchievementProxy("sizeTown");
@@ -41,12 +43,24 @@ public final class ModItems
      */
     public static void init(final IForgeRegistry<Item> registry)
     {
-        registry.register(supplyChest = new ItemSupplyChestDeployer());
-        registry.register(buildTool = new ItemBuildTool());
-        registry.register(scanTool = new ItemScanTool());
-        registry.register(permTool = new ItemScepterPermission());
-        registry.register(caliper = new ItemCaliper());
-        registry.register(scepterGuard = new ItemScepterGuard());
-        registry.register(supplyCamp = new ItemSupplyCampDeployer());
+        supplyChest = new ItemSupplyChestDeployer();
+        buildTool = new ItemBuildTool();
+        scanTool = new ItemScanTool();
+        permTool = new ItemScepterPermission();
+        caliper = new ItemCaliper();
+        scepterGuard = new ItemScepterGuard();
+        supplyCamp = new ItemSupplyCampDeployer();
+        ancientTome = new ItemAncientTome();
+        chiefSword = new ItemChiefSword();
+
+        registry.register(supplyChest);
+        registry.register(buildTool);
+        registry.register(scanTool);
+        registry.register(permTool);
+        registry.register(caliper);
+        registry.register(scepterGuard);
+        registry.register(supplyCamp);
+        registry.register(ancientTome);
+        registry.register(chiefSword);
     }
 }

@@ -39,6 +39,11 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
     private static final double BASE_PITCH = 0.8D;
 
     /**
+     * Experience to add when a mob is killed
+     */
+    private static final int EXP_PER_MOD_DEATH = 15;
+
+    /**
      * Random is multiplied by this to get a random arrow sound.
      */
     private static final double PITCH_MULTIPLIER = 0.4D;
@@ -124,14 +129,20 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
      */
     protected AIState huntDown()
     {
-        if(huntDownlastAttacker())
+        if (worker.getColony() == null)
+        {
+            return AIState.GUARD_GATHERING;
+        }
+
+        if (huntDownlastAttacker())
         {
             targetEntity = this.worker.getLastAttackedEntity();
         }
 
-        if (!targetEntity.isEntityAlive() || checkForToolOrWeapon(ToolType.SWORD))
+        if (targetEntity != null && (!targetEntity.isEntityAlive() || checkForToolOrWeapon(ToolType.SWORD)))
         {
             targetEntity = null;
+            worker.addExperience(EXP_PER_MOD_DEATH);
             worker.setAIMoveSpeed((float) 1.0D);
             return AIState.GUARD_GATHERING;
         }
@@ -144,7 +155,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
             attacksExecuted += 1;
             currentSearchDistance = START_SEARCH_DISTANCE;
 
-            if(killedEnemy)
+            if (killedEnemy)
             {
                 return AIState.GUARD_GATHERING;
             }

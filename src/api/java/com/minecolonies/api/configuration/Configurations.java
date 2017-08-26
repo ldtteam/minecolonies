@@ -3,10 +3,9 @@ package com.minecolonies.api.configuration;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraftforge.common.config.Config;
 
-import static com.minecolonies.api.util.constant.Constants.CITIZEN_RESPAWN_INTERVAL_MAX;
-import static com.minecolonies.api.util.constant.Constants.CITIZEN_RESPAWN_INTERVAL_MIN;
+import static com.minecolonies.api.util.constant.Constants.*;
 
-    @Config(modid = Constants.MOD_ID)
+@Config(modid = MOD_ID)
     public class Configurations
     {
         @Config.Comment("All configuration related to gameplay")
@@ -59,6 +58,20 @@ import static com.minecolonies.api.util.constant.Constants.CITIZEN_RESPAWN_INTER
 
             @Config.Comment("Independend from the colony protection, should explosions be turned off?")
             public  boolean turnOffExplosionsInColonies = true;
+
+            @Config.Comment("Whether or not to spawn barbarians")
+            public boolean doBarbariansSpawn = true;
+
+            @Config.RangeInt(min = (MIN_BARBARIAN_DIFFICULTY), max = MAX_BARBARIAN_DIFFICULTY)
+            @Config.Comment("The difficulty setting for barbarians")
+            public int barbarianHordeDifficulty = 5;
+
+            @Config.RangeInt(min = (MIN_BARBARIAN_HORDE_SIZE), max = MAX_BARBARIAN_HORDE_SIZE)
+            @Config.Comment("The max size of a barbarian horde")
+            public int maxBarbarianHordeSize = 40;
+
+            @Config.Comment("The average amount of nights between raids")
+            public int averageNumberOfNightsBetweenRaids = 3;
 
             /* schematics usage */
             @Config.Comment("Should the default schematics be ignored (from the jar)?")
