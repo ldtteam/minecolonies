@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.items;
 
-import com.minecolonies.coremod.blocks.*;
 import net.minecraft.item.Item;
 import net.minecraftforge.registries.IForgeRegistry;
 
 /**
  * Class handling the registering of the mod items.
  */
+@SuppressWarnings("squid:S1444")
 public final class ModItems
 {
     public static Item supplyChest;
