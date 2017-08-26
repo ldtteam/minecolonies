@@ -429,4 +429,4 @@ com.minecolonies.coremod.gui.home.assign=Assign %d citizens
 com.minecolonies.coremod.gui.workerHuts.unassign=Remove citizen
 tile.minecolonies.blockTimberFrame.name=Plain Timber Frame
 tile.minecolonies.blockMinecoloniesRack.name=Rack
-tile.minecolonies.blockwaypoint.name=Waypoint placeholder
+tile.minecolonies.blockWayPoint.name=Waypoint placeholder
