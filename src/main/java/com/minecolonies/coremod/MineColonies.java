@@ -13,7 +13,6 @@ import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.util.RecipeHandler;
 import com.minecolonies.structures.event.RenderEventHandler;
 import net.minecraftforge.common.MinecraftForge;
-import gigaherz.guidebook.client.BookRegistryEvent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -99,7 +98,6 @@ public class MineColonies
     public void preInit(@NotNull final FMLPreInitializationEvent event)
     {
         StandardFactoryControllerInitializer.onPreInit();
-        proxy.registerSounds();
         proxy.registerEntities();
         proxy.registerEntityRendering();
         proxy.registerEvents();
@@ -208,13 +206,5 @@ public class MineColonies
     {
         // register server commands
         event.registerServerCommand(new CommandEntryPoint());
-    }
-
-    @Optional.Method(modid="gbook")
-    @SubscribeEvent
-    public static void registerBook(final BookRegistryEvent event) {
-        System.out.println("Hello " + Constants.MOD_ID + ":book/minecolonies.xml");
-        System.out.println(new ResourceLocation(Constants.MOD_ID + ":book/minecolonies.xml"));
-        event.register(new ResourceLocation(Constants.MOD_ID + ":book/minecolonies.xml"));
     }
 }

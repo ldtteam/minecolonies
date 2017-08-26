@@ -14,27 +14,27 @@ public class ModBlocks
      * Creating objects for all blocks in the mod.
      * References can be made to here.
      */
-    public static BlockHutTownHall    blockHutTownHall;
-    public static BlockHutCitizen     blockHutCitizen;
-    public static BlockHutMiner     blockHutMiner;
-    public static BlockHutLumberjack  blockHutLumberjack;
-    public static BlockHutBaker       blockHutBaker;
-    public static BlockHutBuilder     blockHutBuilder;
-    public static BlockHutDeliveryman blockHutDeliveryman;
-    public static BlockHutBlacksmith       blockHutBlacksmith;
-    public static BlockHutStonemason  blockHutStonemason;
-    public static BlockHutFarmer      blockHutFarmer;
-    public static BlockHutFisherman   blockHutFisherman;
-    public static BlockSubstitution      blockSubstitution;
-    public static BlockSolidSubstitution blockSolidSubstitution;
-    public static BlockHutField          blockHutField;
-    public static BlockHutGuardTower     blockHutGuardTower;
-    public static BlockHutWareHouse     blockHutWareHouse;
-    public static BlockConstructionTape  blockConstructionTape;
+    public static BlockHutTownHall            blockHutTownHall;
+    public static BlockHutCitizen             blockHutCitizen;
+    public static BlockHutMiner               blockHutMiner;
+    public static BlockHutLumberjack          blockHutLumberjack;
+    public static BlockHutBaker               blockHutBaker;
+    public static BlockHutBuilder             blockHutBuilder;
+    public static BlockHutDeliveryman         blockHutDeliveryman;
+    public static BlockHutBlacksmith          blockHutBlacksmith;
+    public static BlockHutStonemason          blockHutStonemason;
+    public static BlockHutFarmer              blockHutFarmer;
+    public static BlockHutFisherman           blockHutFisherman;
+    public static BlockSubstitution           blockSubstitution;
+    public static BlockSolidSubstitution      blockSolidSubstitution;
+    public static BlockHutField               blockHutField;
+    public static BlockHutGuardTower          blockHutGuardTower;
+    public static BlockHutWareHouse           blockHutWareHouse;
+    public static BlockConstructionTape       blockConstructionTape;
     public static BlockConstructionTapeCorner blockConstructionTapeCorner;
-    public static final Block blockRack                   = new BlockMinecoloniesRack();
-    public static final Block blockTimberFrame            = new BlockTimberFrame();
-    public static final Block blockWayPoint               = new BlockWaypoint();
+    public static BlockMinecoloniesRack       blockRack;
+    public static BlockTimberFrame            blockTimberFrame;
+    public static BlockWaypoint               blockWayPoint;
 
 
     // Deactivated for now
@@ -52,7 +52,6 @@ public class ModBlocks
 
     /**
      * Initates all the blocks. At the correct time.
-     * @param registry
      */
     public static void init(final IForgeRegistry<Block> registry)
     {
@@ -74,6 +73,9 @@ public class ModBlocks
         blockHutWareHouse = (BlockHutWareHouse) new BlockHutWareHouse().registerBlock(registry);
         blockSolidSubstitution = new BlockSolidSubstitution().registerBlock(registry);
         blockSubstitution = new BlockSubstitution().registerBlock(registry);
+        blockRack = new BlockMinecoloniesRack().registerBlock(registry);
+        blockTimberFrame = new BlockTimberFrame().registerBlock(registry);
+        blockWayPoint = new BlockWaypoint().registerBlock(registry);
     }
 
     public static void registerItemBlock(final IForgeRegistry<Item> registry)
@@ -96,5 +98,8 @@ public class ModBlocks
         blockHutWareHouse.registerItemBlock(registry);
         blockSolidSubstitution.registerItemBlock(registry);
         blockSubstitution.registerItemBlock(registry);
+        blockRack.registerItemBlock(registry);
+        blockTimberFrame.registerItemBlock(registry);
+        blockWayPoint.registerItemBlock(registry);
     }
 }
