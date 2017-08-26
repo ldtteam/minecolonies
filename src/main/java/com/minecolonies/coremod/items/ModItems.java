@@ -30,7 +30,7 @@ public final class ModItems
     /**
      * Private constructor to hide the implicit public one.
      */
-    public ModItems()
+    private ModItems()
     {
         /*
          * Intentionally left empty.
