@@ -19,7 +19,7 @@ import java.util.List;
 
 public class MakeNotAutoDeletable extends AbstractSingleCommand
 {
-    public static final  String DESC                       = "undeletable";
+    public static final  String DESC                       = "deletable";
     private static final String NO_COLONY_FOUND_MESSAGE_ID = "Colony with ID %d not found.";
     private static final String MARKED                     = "Marking succesful!";
     private static final String NOT_ENOUGH_ARGUMENTS       = "You must have 2 Arguments: <ColonyId> <true|false> ";
@@ -84,7 +84,7 @@ public class MakeNotAutoDeletable extends AbstractSingleCommand
         }
 
         sender.addChatMessage(new TextComponentString(MARKED));
-        colony.setCanBeAutoDeleted(!canBeDeleted);
+        colony.setCanBeAutoDeleted(canBeDeleted);
     }
 
     @NotNull
