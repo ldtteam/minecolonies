@@ -478,7 +478,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 world.setBlockToAir(currentBlock.blockPosition);
                 world.setBlockState(currentBlock.blockPosition, Blocks.AIR.getDefaultState());
                 worker.swingArm(worker.getActiveHand());
-                setDelay(UNLIMITED_RESOURCES_TIMEOUT * PROGRESS_MULTIPLIER / worker.getLevel());
+                setDelay(UNLIMITED_RESOURCES_TIMEOUT * PROGRESS_MULTIPLIER / Math.max(1, worker.getLevel()));
             }
             else
             {
