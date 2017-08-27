@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.*;
 import com.minecolonies.blockout.views.ScrollingList;
@@ -465,7 +466,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         registerButton(BUTTON_DELETE, this::deleteWorkOrder);
 
         findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class).setVisible(false);
-        findPaneOfTypeByID(BUTTON_MANAGE_OFFICER, Button.class).setVisible(false);
+        findPaneOfTypeByID(BUTTON_MANAGE_OFFICER, Button.class).setEnabled(false);
 
         registerButton(BUTTON_TRIGGER, this::trigger);
         registerButton(BUTTON_ADD_BLOCK, this::addBlock);
@@ -674,10 +675,11 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             {
                 final int actionIndex = index <= IGNORE_INDEX ? index : (index + IGNORE_INDEX);
                 final Action action = Action.values()[actionIndex];
-                final String name = LanguageHandler.format(KEY_TO_PERMISSIONS + action.toString().toLowerCase());
+                final String name = LanguageHandler.format(KEY_TO_PERMISSIONS + action.toString().toLowerCase(Locale.US));
 
                 if (name.contains(KEY_TO_PERMISSIONS))
                 {
+                    Log.getLogger().warn("Didn't work for:" + name);
                     return;
                 }
 
