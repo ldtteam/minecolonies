@@ -261,6 +261,11 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private static final int HIDDEN_ID_POSITION = 5;
 
     /**
+     * The distance to move the ribbon.
+     */
+    private static final int RIBBON_OFFSET = 20;
+
+    /**
      * Link to the xml file of the window.
      */
     private static final String TOWNHALL_RESOURCE_SUFFIX = ":gui/windowtownhall.xml";
@@ -814,6 +819,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         lastTabButton.setEnabled(false);
         findPaneOfTypeByID(lastTabButton.getID() + "0", Image.class).setVisible(false);
         findPaneOfTypeByID(lastTabButton.getID() + "1", ButtonImage.class).setVisible(true);
+        lastTabButton.setPosition(lastTabButton.getX() + RIBBON_OFFSET, lastTabButton.getY());
 
         fillUserList();
         fillCitizensList();
@@ -1075,6 +1081,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         final String newId = button.getID();
         final String page = tabsToPages.get(newId);
 
+        lastTabButton.setPosition(lastTabButton.getX() - RIBBON_OFFSET, lastTabButton.getY());
         findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(page);
         findPaneOfTypeByID(oldId + "0", Image.class).setVisible(true);
         findPaneOfTypeByID(oldId + "1", ButtonImage.class).setVisible(false);
@@ -1085,6 +1092,8 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         lastTabButton.setEnabled(true);
         button.setEnabled(false);
         lastTabButton = button;
+        lastTabButton.setPosition(lastTabButton.getX() + RIBBON_OFFSET, lastTabButton.getY());
+
     }
 
     @Override
