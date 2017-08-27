@@ -13,30 +13,30 @@
         <image id="workOrder0" size="32 14" source="minecolonies:textures/gui/bookmark_short_ribbon_06.png"/>
     </group>
 
-    <group size="100 185" pos="0 30" spacing="7">
+    <group size="100 185" pos="-2 30" spacing="7">
         <buttonimage id="info1" size="161 17" source="minecolonies:textures/gui/bookmark_ribbon_01.png" visible="false"
                      label="$(com.minecolonies.coremod.gui.workerHuts.information)"
-                     textalign="MIDDLE_RIGHT" textoffset="-65 1"
+                     textalign="MIDDLE_RIGHT" textoffset="-77 1"
                      textcolor="White" textdisabledcolor="DarkGray"/>
         <buttonimage id="actions1" size="161 17" source="minecolonies:textures/gui/bookmark_ribbon_02.png" visible="false"
                      label="$(com.minecolonies.coremod.gui.townHall.actions)"
-                     textalign="MIDDLE_RIGHT" textoffset="-80 1"
+                     textalign="MIDDLE_RIGHT" textoffset="-97 1"
                      textcolor="White" textdisabledcolor="DarkGray"/>
         <buttonimage id="permissions1" size="161 17" source="minecolonies:textures/gui/bookmark_ribbon_03.png" visible="false"
                      label="$(com.minecolonies.coremod.gui.townHall.permissions)"
-                     textalign="MIDDLE_RIGHT" textoffset="-65 1"
+                     textalign="MIDDLE_RIGHT" textoffset="-77 1"
                      textcolor="White" textdisabledcolor="DarkGray"/>
         <buttonimage id="citizens1" size="161 17" source="minecolonies:textures/gui/bookmark_ribbon_04.png" visible="false"
                      label="$(com.minecolonies.coremod.gui.townHall.citizens)"
-                     textalign="MIDDLE_RIGHT" textoffset="-80 1"
+                     textalign="MIDDLE_RIGHT" textoffset="-96 1"
                      textcolor="White" textdisabledcolor="DarkGray"/>
         <buttonimage id="settings1" size="161 17" source="minecolonies:textures/gui/bookmark_ribbon_05.png" visible="false"
                      label="$(com.minecolonies.coremod.gui.workerHuts.settings)"
-                     textalign="MIDDLE_RIGHT" textoffset="-80 1"
+                     textalign="MIDDLE_RIGHT" textoffset="-95 1"
                      textcolor="White" textdisabledcolor="DarkGray"/>
         <buttonimage id="workOrder1" size="161 17" source="minecolonies:textures/gui/bookmark_ribbon_06.png" visible="false"
                      label="$(com.minecolonies.coremod.gui.workerHuts.workOrder)"
-                     textalign="MIDDLE_RIGHT" textoffset="-65 1"
+                     textalign="MIDDLE_RIGHT" textoffset="-72 1"
                      textcolor="White" textdisabledcolor="DarkGray"/>
     </group>
 

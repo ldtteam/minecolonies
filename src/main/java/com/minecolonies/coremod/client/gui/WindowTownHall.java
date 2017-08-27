@@ -263,7 +263,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * The distance to move the ribbon.
      */
-    private static final int RIBBON_OFFSET = 20;
+    private static final int RIBBON_OFFSET = 19;
 
     /**
      * Link to the xml file of the window.
