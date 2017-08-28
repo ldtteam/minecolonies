@@ -168,18 +168,6 @@ public final class BarbarianSpawnUtils
 
         if (spawnLocation != null && entityToSpawn != null && world != null)
         {
-            if (!world.isBlockLoaded(spawnLocation))
-            {
-                final ForgeChunkManager.Ticket chunkTicket = ForgeChunkManager.requestTicket(MineColonies.instance, world, ForgeChunkManager.Type.NORMAL);
-                if (chunkTicket != null)
-                {
-                    chunkTicket.getModData().setInteger("spawnX", spawnLocation.getX());
-                    chunkTicket.getModData().setInteger("spawnY", spawnLocation.getY());
-                    chunkTicket.getModData().setInteger("spawnZ", spawnLocation.getZ());
-                    ForgeChunkManager.forceChunk(chunkTicket, new ChunkPos(spawnLocation.getX(), spawnLocation.getZ()));
-                }
-            }
-
             final int x = spawnLocation.getX();
             final int y = spawnLocation.getY();
             final int z = spawnLocation.getZ();

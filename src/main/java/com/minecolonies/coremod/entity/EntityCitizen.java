@@ -1897,12 +1897,13 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
         else
         {
-            //todo: might remove this
             if (!CompatibilityUtils.getWorld(this).isRemote)
             {
+                final BlockPos vector = blockPos.subtract(this.getPosition());
+                final EnumFacing facing = EnumFacing.getFacingFromVector(vector.getX(), vector.getY(), vector.getZ()).getOpposite();
+
                 MineColonies.getNetwork().sendToAllAround(
-                        //todo: correct side
-                        new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorld(this).getBlockState(blockPos), 1),
+                        new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorld(this).getBlockState(blockPos), facing.ordinal()),
                         new NetworkRegistry.TargetPoint(CompatibilityUtils.getWorld(this).provider.getDimension(), blockPos.getX(),
                                                         blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE));
             }
