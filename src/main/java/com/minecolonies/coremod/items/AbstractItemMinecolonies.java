@@ -26,7 +26,6 @@ public abstract class AbstractItemMinecolonies extends Item
 
         super.setUnlocalizedName(Constants.MOD_ID.toLowerCase() + "." + this.name);
         setRegistryName(this.name);
-        GameRegistry.register(this);
     }
 
     /**

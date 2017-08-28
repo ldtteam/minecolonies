@@ -45,7 +45,7 @@ public class EntityAISleep extends EntityAIBase
      * @return true while he should sleep.
      */
     @Override
-    public boolean continueExecuting()
+    public boolean shouldContinueExecuting()
     {
         if (citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP)
         {

@@ -53,11 +53,11 @@ public class EntityAICitizenWander extends EntityAIBase
             return false;
         }
 
-        vec3d = new Vec3d(vec3d.xCoord, getValidHeight(vec3d), vec3d.zCoord);
+        vec3d = new Vec3d(vec3d.x, getValidHeight(vec3d), vec3d.z);
 
-        this.xPosition = vec3d.xCoord;
-        this.yPosition = vec3d.yCoord;
-        this.zPosition = vec3d.zCoord;
+        this.xPosition = vec3d.x;
+        this.yPosition = vec3d.y;
+        this.zPosition = vec3d.z;
 
         return true;
     }
@@ -70,7 +70,7 @@ public class EntityAICitizenWander extends EntityAIBase
      */
     private boolean isToOld()
     {
-        return citizen.getAge() >= 100;
+        return citizen.getGrowingAge() >= 100;
     }
 
     private boolean checkForRandom()
@@ -86,20 +86,20 @@ public class EntityAICitizenWander extends EntityAIBase
      */
     private double getValidHeight(@NotNull final Vec3d position)
     {
-        double returnHeight = position.yCoord;
-        if (position.yCoord < 0)
+        double returnHeight = position.y;
+        if (position.y < 0)
         {
             returnHeight = 0;
         }
 
-        while (returnHeight >= 1 && CompatibilityUtils.getWorld(citizen).isAirBlock(new BlockPos(MathHelper.floor(position.xCoord),
+        while (returnHeight >= 1 && CompatibilityUtils.getWorld(citizen).isAirBlock(new BlockPos(MathHelper.floor(position.x),
                                                                            (int) returnHeight,
-                                                                           MathHelper.floor(position.zCoord))))
+                                                                           MathHelper.floor(position.z))))
         {
             returnHeight -= 1.0D;
         }
 
-        while (!CompatibilityUtils.getWorld(citizen).isAirBlock(new BlockPos(MathHelper.floor(position.xCoord), (int) returnHeight, MathHelper.floor(position.zCoord))))
+        while (!CompatibilityUtils.getWorld(citizen).isAirBlock(new BlockPos(MathHelper.floor(position.x), (int) returnHeight, MathHelper.floor(position.z))))
         {
             returnHeight += 1.0D;
         }
@@ -111,7 +111,7 @@ public class EntityAICitizenWander extends EntityAIBase
      * Returns whether an in-progress EntityAIBase should continue executing.
      */
     @Override
-    public boolean continueExecuting()
+    public boolean shouldContinueExecuting()
     {
         return !citizen.getNavigator().noPath();
     }

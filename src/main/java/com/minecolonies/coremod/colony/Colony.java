@@ -7,7 +7,7 @@ import com.minecolonies.api.colony.requestsystem.StandardRequestManager;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.achievements.ModAchievements;
+import com.minecolonies.coremod.achievements.MineColoniesAchievement;
 import com.minecolonies.coremod.colony.buildings.*;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
@@ -22,6 +22,7 @@ import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.AchievementUtils;
 import com.minecolonies.coremod.util.ColonyUtils;
 import com.minecolonies.coremod.util.ServerUtils;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,9 +32,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.stats.Achievement;
-import net.minecraft.stats.StatBase;
-import net.minecraft.stats.StatList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
@@ -160,7 +158,7 @@ public class Colony implements IColony
     private BuildingWareHouse wareHouse = null;
 
     @NotNull
-    private final List<Achievement> colonyAchievements;
+    private final List<Advancement> colonyAchievements;
     //  Workload and Jobs
     private final WorkManager                     workManager       = new WorkManager(this);
     @NotNull
@@ -335,11 +333,13 @@ public class Colony implements IColony
         {
             final NBTTagCompound achievementCompound = achievementTagList.getCompoundTagAt(i);
             final String achievementKey = achievementCompound.getString(TAG_ACHIEVEMENT);
-            final StatBase statBase = StatList.getOneShotStat(achievementKey);
-            if (statBase instanceof Achievement)
+
+            //todo serialization
+            /*final StatBase statBase = StatList.getOneShotStat(achievementKey);
+             if (statBase instanceof Advancement)
             {
-                colonyAchievements.add((Achievement) statBase);
-            }
+                colonyAchievements.add((Advancement) statBase);
+            }*/
         }
 
         //  Workload
@@ -488,11 +488,12 @@ public class Colony implements IColony
 
         //  Achievements
         @NotNull final NBTTagList achievementsTagList = new NBTTagList();
-        for (@NotNull final Achievement achievement : this.colonyAchievements)
+        for (@NotNull final Advancement achievement : this.colonyAchievements)
         {
             @NotNull final NBTTagCompound achievementCompound = new NBTTagCompound();
-            achievementCompound.setString(TAG_ACHIEVEMENT, achievement.statId);
-            achievementsTagList.appendTag(achievementCompound);
+            //todo deserialization
+            /*achievementCompound.setString(TAG_ACHIEVEMENT, achievement.);
+            achievementsTagList.appendTag(achievementCompound);*/
         }
         compound.setTag(TAG_ACHIEVEMENT_LIST, achievementsTagList);
 
@@ -1478,7 +1479,8 @@ public class Colony implements IColony
         // the colonies size
         final int size = this.citizens.size();
 
-        if (size >= ModAchievements.ACHIEVEMENT_SIZE_SETTLEMENT)
+        //todo check those later again
+        /*if (size >= ModAchievements.ACHIEVEMENT_SIZE_SETTLEMENT)
         {
             this.triggerAchievement(ModAchievements.achievementSizeSettlement);
         }
@@ -1496,7 +1498,7 @@ public class Colony implements IColony
         if (size >= ModAchievements.ACHIEVEMENT_SIZE_METROPOLIS)
         {
             this.triggerAchievement(ModAchievements.achievementSizeMetropolis);
-        }
+        }*/
     }
 
     /**
@@ -1514,14 +1516,14 @@ public class Colony implements IColony
      *
      * @param achievement The achievement to trigger
      */
-    public void triggerAchievement(@NotNull final Achievement achievement)
+    public void triggerAchievement(@NotNull final MineColoniesAchievement achievement)
     {
         if (this.colonyAchievements.contains(achievement))
         {
             return;
         }
 
-        this.colonyAchievements.add(achievement);
+        //this.colonyAchievements.add(achievement);
 
         AchievementUtils.syncAchievements(this);
     }
@@ -1874,7 +1876,7 @@ public class Colony implements IColony
     }
 
     @NotNull
-    public List<Achievement> getAchievements()
+    public List<Advancement> getAchievements()
     {
         return Collections.unmodifiableList(this.colonyAchievements);
     }

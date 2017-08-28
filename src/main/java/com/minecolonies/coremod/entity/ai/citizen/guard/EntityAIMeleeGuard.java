@@ -136,7 +136,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
 
         if (huntDownlastAttacker())
         {
-            targetEntity = this.worker.getLastAttacker();
+            targetEntity = this.worker.getLastAttackedEntity();
         }
 
         if (targetEntity != null && (!targetEntity.isEntityAlive() || checkForToolOrWeapon(ToolType.SWORD)))

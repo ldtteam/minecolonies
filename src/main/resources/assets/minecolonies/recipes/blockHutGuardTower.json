@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XTX",
+    "XBX",
+    "XXX"
+  ],
+  "key": {
+    "X": {
+      "type": "forge:ore_dict",
+      "ore": "plankWood"
+    },
+    "B": {
+      "item": "minecraft:bow"
+    },
+    "T": {
+      "item": "minecolonies:sceptergold"
+    }
+  },
+  "result": {
+    "item": "minecolonies:BlockHutGuardTower"
+  }
+}

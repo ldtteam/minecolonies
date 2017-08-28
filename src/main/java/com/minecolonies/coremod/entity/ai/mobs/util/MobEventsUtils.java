@@ -132,7 +132,6 @@ public final class MobEventsUtils
         final double rads = (double) randomDegree / HALF_A_CIRCLE * Math.PI;
         final double x = Math.round(center.getX() + radius * Math.sin(rads));
         final double z = Math.round(center.getZ() + radius * Math.cos(rads));
-        
         return BlockPosUtil.findLand(new BlockPos(x, center.getY(), z), world);
     }
 

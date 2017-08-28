@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.blocks;
 
+import net.minecraft.block.Block;
 import org.jetbrains.annotations.NotNull;
 
 /**

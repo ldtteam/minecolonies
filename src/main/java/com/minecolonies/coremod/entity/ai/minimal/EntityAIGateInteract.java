@@ -114,7 +114,7 @@ public class EntityAIGateInteract extends EntityAIBase
             final PathPoint pathpoint = path.getPathPointFromIndex(i);
             for (int level = 0; level < HEIGHT_TO_CHECK; level++)
             {
-                this.gatePosition = new BlockPos(pathpoint.xCoord, pathpoint.yCoord + level, pathpoint.zCoord);
+                this.gatePosition = new BlockPos(pathpoint.x, pathpoint.y + level, pathpoint.z);
                 if (this.theEntity.getDistanceSq((double) this.gatePosition.getX(), this.theEntity.posY, (double) this.gatePosition.getZ()) <= MIN_DISTANCE)
                 {
                     this.gateBlock = this.getBlockFence(this.gatePosition);
@@ -155,7 +155,7 @@ public class EntityAIGateInteract extends EntityAIBase
      * @return true or false.
      */
     @Override
-    public boolean continueExecuting()
+    public boolean shouldContinueExecuting()
     {
         return !this.hasStoppedFenceInteraction;
     }
