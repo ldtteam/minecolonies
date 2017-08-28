@@ -19,6 +19,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -136,6 +137,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         {
             return START_WORKING;
         }
+
+        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.gathering"));
 
         if (!worker.isWorkerAtSiteWithMove(gatherTarget, MIN_DISTANCE_TO_WAREHOUSE))
         {
@@ -260,10 +263,24 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     {
         for (final Map.Entry<ItemStorage, Integer> entry : building.getRequiredItemsAndAmount().entrySet())
         {
-            if (entry.getKey().getItem() == stack.getItem()
-                  && entry.getKey().getDamageValue() == stack.getItemDamage()
-                  && !localAlreadyKept.contains(entry.getKey()))
+            if (entry.getKey().getItemStack().isItemEqual(stack))
             {
+                if(localAlreadyKept.contains(entry.getKey()))
+                {
+                    final int index = localAlreadyKept.indexOf(entry.getKey());
+                    final ItemStorage temp = localAlreadyKept.get(index);
+
+                    if(temp.getAmount() >= entry.getValue())
+                    {
+                        return false;
+                    }
+
+                    localAlreadyKept.remove(index);
+                    temp.setAmount(temp.getAmount() + ItemStackUtils.getSize(stack));
+                    localAlreadyKept.add(temp);
+                    return true;
+                }
+
                 localAlreadyKept.add(entry.getKey());
                 return true;
             }
@@ -278,6 +295,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     public AIState dump()
     {
+        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.dumping"));
+
         if (!worker.isWorkerAtSiteWithMove(wareHouse.getLocation(), MIN_DISTANCE_TO_WAREHOUSE))
         {
             return DUMPING;
@@ -303,6 +322,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         {
             return START_WORKING;
         }
+
+        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.delivering"));
 
         if (!worker.isWorkerAtSiteWithMove(buildingToDeliver.getLocation(), MIN_DISTANCE_TO_WAREHOUSE))
         {

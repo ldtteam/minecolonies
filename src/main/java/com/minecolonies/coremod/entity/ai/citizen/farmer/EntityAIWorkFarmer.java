@@ -22,6 +22,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -387,18 +388,22 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             switch (getState())
             {
                 case FARMER_HOE:
+                    worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.hoeing"));
+
                     if(!hoeIfAble(position))
                     {
                         return getState();
                     }
                     break;
                 case FARMER_PLANT:
+                    worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.planting"));
                     if(!tryToPlant(field, position))
                     {
                         return PREPARING;
                     }
                     break;
                 case FARMER_HARVEST:
+                    worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.harvesting"));
                     if(!harvestIfAble(position))
                     {
                         return getState();

@@ -19,6 +19,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -233,6 +234,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     {
         if (job.tree == null)
         {
+            worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.searchingtree"));
+
             return findTree();
         }
         return LUMBERJACK_CHOP_TREE;
@@ -349,6 +352,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private AIState chopTree()
     {
+        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.chopping"));
+
         final BlockPos location = job.tree.getLocation();
         if (!walkToTree(job.tree.getStumpLocations().get(0)))
         {
@@ -440,6 +445,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             return;
         }
         //now we seem to be stuck!
+        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.stuckinleaves"));
+
         tryGettingUnstuckFromLeaves();
     }
 
@@ -489,6 +496,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         {
             return false;
         }
+
+        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.planting"));
 
         final int saplingSlot = findSaplingSlot();
         final BlockPos dirtLocation = new BlockPos(location.getX(),location.getY()-1,location.getZ());
@@ -626,6 +635,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private AIState gathering()
     {
+        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.gathering"));
+
         if (getItemsForPickUp() == null)
         {
             fillItemsList();
