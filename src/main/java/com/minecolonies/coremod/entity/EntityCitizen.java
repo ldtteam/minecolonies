@@ -546,7 +546,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         final double goToZ = zDifference > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
 
         //Have to move the entity minimally into the direction to render his new rotation.
-        move(MoverType.SELF, (float) goToX, 0, (float) goToZ);
+        moveEntityWithHeading((float) goToX, (float) goToZ);
     }
 
     /**
@@ -747,12 +747,13 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @Override
     public boolean attackEntityFrom(@NotNull final DamageSource damageSource, final float damage)
     {
-        final Entity sourceEntity = damageSource.getTrueSource();
+        final Entity sourceEntity = damageSource.getEntity();
         if (sourceEntity instanceof EntityCitizen && ((EntityCitizen) sourceEntity).colonyId == this.colonyId)
         {
             return false;
         }
-        setLastAttackedEntity(damageSource.getTrueSource());
+        setLastAttacker(damageSource.getEntity());
+
         final boolean result = super.attackEntityFrom(damageSource, damage);
 
         if (damageSource.isMagicDamage() || damageSource.isFireDamage())
@@ -774,11 +775,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
     public void onDeath(final DamageSource par1DamageSource)
     {
         double penalty = CITIZEN_DEATH_PENALTY;
-        if (par1DamageSource.getTrueSource() instanceof EntityPlayer)
+        if (par1DamageSource.getEntity() instanceof EntityPlayer)
         {
             for (final Player player : PermissionUtils.getPlayersWithAtLeastRank(colony, Rank.OFFICER))
             {
-                if (player.getID().equals(par1DamageSource.getTrueSource().getUniqueID()))
+                if (player.getID().equals(par1DamageSource.getEntity().getUniqueID()))
                 {
                     penalty = CITIZEN_KILL_PENALTY;
                     break;
@@ -1717,7 +1718,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 return;
             }
 
-            final ItemStack itemStack = entityItem.getItem();
+            final ItemStack itemStack = entityItem.getEntityItem();
             final ItemStack compareStack = itemStack.copy();
 
             final ItemStack resultStack = InventoryUtils.addItemStackToItemHandlerWithResult(new InvWrapper(getInventoryCitizen()), itemStack);

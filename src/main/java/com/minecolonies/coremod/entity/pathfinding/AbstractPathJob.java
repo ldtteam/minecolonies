@@ -616,7 +616,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
             for (@NotNull final PathPoint p : points)
             {
-                Log.getLogger().info(String.format("Step: [%d,%d,%d]", p.x, p.y, p.z));
+                Log.getLogger().info(String.format("Step: [%d,%d,%d]", p.xCoord, p.yCoord, p.zCoord));
             }
 
             Log.getLogger().info(String.format("Total Nodes Visited %d / %d", totalNodesVisited, totalNodesAdded));

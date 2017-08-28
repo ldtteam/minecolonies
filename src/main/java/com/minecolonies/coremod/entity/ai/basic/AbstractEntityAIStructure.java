@@ -456,7 +456,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
 
         //Don't break bedrock etc.
-        //Don't break bedrock etc.
         if (!BlockUtils.shouldNeverBeMessedWith(currentBlock.worldBlock))
         {
             //Fill workFrom with the position from where the builder should build.

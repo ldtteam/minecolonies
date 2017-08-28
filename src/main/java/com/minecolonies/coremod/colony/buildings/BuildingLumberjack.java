@@ -14,7 +14,6 @@ import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.network.messages.LumberjackSaplingSelectorMessage;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -329,7 +328,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
                 if (saps.getHasSubtypes())
                 {
                     final NonNullList<ItemStack> list = NonNullList.create();
-                    saps.getItem().getSubItems(CreativeTabs.DECORATIONS, list);
+                    saps.getItem().getSubItems(saps.getItem(), null, list);
 
                     for (final ItemStack stack : list)
                     {

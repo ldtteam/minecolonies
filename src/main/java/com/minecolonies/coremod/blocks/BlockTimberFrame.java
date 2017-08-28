@@ -5,9 +5,8 @@ import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
-import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 
@@ -50,6 +49,8 @@ public class BlockTimberFrame extends Block
         setRegistryName(BLOCK_NAME);
         setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(), BLOCK_NAME));
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
+        GameRegistry.register(this);
+        GameRegistry.register((new ItemBlock(this)).setRegistryName(this.getRegistryName()));
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);
     }
@@ -64,27 +65,5 @@ public class BlockTimberFrame extends Block
     public boolean isOpaqueCube(final IBlockState state)
     {
         return true;
-    }
-
-    /**
-     * Registery block at gameregistry.
-     * @param registry the registry to use.
-     * @return the block itself.
-     */
-    public BlockTimberFrame registerBlock(final IForgeRegistry<Block> registry)
-    {
-        registry.register(this);
-        return this;
-    }
-
-    /**
-     * Registery block at gameregistry.
-     * @param registry the registry to use.
-     * @return the block itself.
-     */
-    public Block registerItemBlock(final IForgeRegistry<Item> registry)
-    {
-        registry.register((new ItemBlock(this)).setRegistryName(this.getRegistryName()));
-        return this;
     }
 }

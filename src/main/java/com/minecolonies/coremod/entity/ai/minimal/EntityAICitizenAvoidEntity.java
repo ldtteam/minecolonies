@@ -99,7 +99,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
      * Returns whether an in-progress EntityAIBase should continue executing.
      */
     @Override
-    public boolean shouldContinueExecuting()
+    public boolean continueExecuting()
     {
         if (closestLivingEntity instanceof AbstractEntityBarbarian)
         {
