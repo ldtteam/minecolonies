@@ -76,12 +76,10 @@ public class BlockParticleEffectMessage implements IMessage, IMessageHandler<Blo
     {
         if (message.side == BREAK_BLOCK)
         {
-            //TODO check default state, mw, trans 1.7
             Minecraft.getMinecraft().effectRenderer.addBlockDestroyEffects(message.pos, message.block.getDefaultState());
         }
         else
         {
-            // TODO: test if this works
             FMLClientHandler.instance().getClient().effectRenderer.addBlockHitEffects(message.pos, EnumFacing.getFront(message.side));
         }
         return null;

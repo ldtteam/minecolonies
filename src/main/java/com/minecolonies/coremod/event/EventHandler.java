@@ -217,7 +217,7 @@ public class EventHandler
     {
         if(onBlockHutPlaced(world, player, pos))
         {
-            final IColony colony = ColonyManager.getIColonyByOwner(world, player);
+            final IColony colony = ColonyManager.getClosestIColony(world, pos);
             if(colony != null && (!Configurations.gameplay.limitToOneWareHousePerColony || !colony.hasWarehouse()))
             {
                 return true;
@@ -401,17 +401,5 @@ public class EventHandler
     public void onWorldUnload(@NotNull final WorldEvent.Unload event)
     {
         ColonyManager.onWorldUnload(event.getWorld());
-    }
-
-    /**
-     * Gets called when world saves.
-     * Calls {@link ColonyManager#onWorldSave(World)}
-     *
-     * @param event {@link net.minecraftforge.event.world.WorldEvent.Save}
-     */
-    @SubscribeEvent
-    public void onWorldSave(@NotNull final WorldEvent.Save event)
-    {
-        ColonyManager.onWorldSave(event.getWorld());
     }
 }

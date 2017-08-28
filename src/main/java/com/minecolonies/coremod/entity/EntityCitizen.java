@@ -51,6 +51,7 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
@@ -187,6 +188,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private static final int    MAX_STUCK_TIME             = 20 * 60 * 2;
 
     /**
+     * The max amount of lines the latest log allows.
+     */
+    private static final int MAX_LINES_OF_LATEST_LOG = 4;
+
+    /**
      * Distance from mobs the entity should hold.
      */
     private static final double DISTANCE_OF_ENTITY_AVOID = 8.0D;
@@ -271,6 +277,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private Colony      colony;
     @Nullable
     private CitizenData citizenData;
+
+    /**
+     * The 4 lines of the latest status.
+     */
+    private final ITextComponent[] latestStatus = new ITextComponent[MAX_LINES_OF_LATEST_LOG];
 
     /**
      * The entities current Position.
@@ -431,11 +442,64 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
     }
 
+    /**
+     * Get the latest status of the citizen.
+     * @return a ITextComponent with the length 4 describing it.
+     */
+    public ITextComponent[] getLatestStatus()
+    {
+        return latestStatus.clone();
+    }
+
+    /**
+     * Set the latest status of the citizen and clear the existing status
+     * @param status the new status to set.
+     */
+    public void setLatestStatus(final ITextComponent...status)
+    {
+        for(int i = 0; i < latestStatus.length; i++)
+        {
+            if(i >= status.length)
+            {
+                latestStatus[i] = null;
+            }
+            else
+            {
+                latestStatus[i] = status[i];
+            }
+        }
+        citizenData.markDirty();
+    }
+
+    /**
+     * Append to the existing latestStatus list.
+     * This will override the oldest one if full and move the others one down in the array.
+     * @param status the latest status to append
+     */
+    public void addLatestStatus(final ITextComponent status)
+    {
+        for(int i = latestStatus.length - 1; i > 0; i--)
+        {
+            latestStatus[i] = latestStatus[i-1];
+        }
+
+        latestStatus[0] = status;
+        citizenData.markDirty();
+    }
+
+    /**
+     * Get the level of the citizen.
+     * @return the level of the citizen.
+     */
     public int getLevel()
     {
         return level;
     }
 
+    /**
+     * Set the metadata for rendering.
+     * @param metadata the metadata required.
+     */
     public void setRenderMetadata(final String metadata)
     {
         renderMetadata = metadata;
@@ -1040,13 +1104,23 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
         else
         {
-            pickupItems();
-            cleanupChatMessages();
-            updateColonyServer();
-            if(getColonyJob() != null)
+            if (getOffsetTicks() % TICKS_20 == 0)
+            {
+                this.setAlwaysRenderNameTag(Configurations.gameplay.alwaysRenderNameTag);
+                pickupItems();
+                cleanupChatMessages();
+                updateColonyServer();
+            }
+
+            if (getColonyJob() != null)
             {
                 checkIfStuck();
             }
+            else
+            {
+                setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waitingForWork"));
+            }
+
             if (CompatibilityUtils.getWorld(this).isDaytime() && !CompatibilityUtils.getWorld(this).isRaining() && citizenData != null)
             {
                 SoundUtils.playRandomSound(CompatibilityUtils.getWorld(this), this, citizenData.getSaturation());
@@ -1583,6 +1657,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 citizenData.decreaseSaturation(decreaseBy);
                 citizenData.markDirty();
             }
+
+            setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.sleeping"));
             return DesiredActivity.SLEEP;
         }
 
@@ -1590,6 +1666,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         if (CompatibilityUtils.getWorld(this).isRaining() && !shouldWorkWhileRaining())
         {
+            setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waiting"), new TextComponentTranslation("com.minecolonies.coremod.status.rainStop"));
             return DesiredActivity.IDLE;
         }
         else
@@ -1821,12 +1898,13 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
         else
         {
-            //todo: might remove this
             if (!CompatibilityUtils.getWorld(this).isRemote)
             {
+                final BlockPos vector = blockPos.subtract(this.getPosition());
+                final EnumFacing facing = EnumFacing.getFacingFromVector(vector.getX(), vector.getY(), vector.getZ()).getOpposite();
+
                 MineColonies.getNetwork().sendToAllAround(
-                        //todo: correct side
-                        new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorld(this).getBlockState(blockPos), 1),
+                        new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorld(this).getBlockState(blockPos), facing.ordinal()),
                         new NetworkRegistry.TargetPoint(CompatibilityUtils.getWorld(this).provider.getDimension(), blockPos.getX(),
                                                         blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE));
             }
@@ -2002,6 +2080,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         if (this.getWorkBuilding() != null)
         {
+            setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.working"));
             this.getWorkBuilding().onWakeUp();
         }
     }
