@@ -12,6 +12,7 @@ import net.minecraft.item.ItemSword;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
@@ -41,6 +42,7 @@ public class ItemChiefSword extends ItemSword
         super.setUnlocalizedName(Constants.MOD_ID.toLowerCase() + "." + ITEM_NAME);
         setRegistryName(ITEM_NAME);
         super.setCreativeTab(ModCreativeTabs.MINECOLONIES);
+        GameRegistry.register(this);
     }
 
     @Override

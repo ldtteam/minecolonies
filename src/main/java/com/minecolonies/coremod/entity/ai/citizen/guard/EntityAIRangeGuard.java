@@ -191,7 +191,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
 
         if (huntDownlastAttacker())
         {
-            targetEntity = this.worker.getLastAttackedEntity();
+            targetEntity = this.worker.getLastAttacker();
         }
 
         if (targetEntity != null && (!targetEntity.isEntityAlive() || checkForToolOrWeapon(ToolType.BOW)))
@@ -265,12 +265,6 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
         worker.world.spawnEntity(arrowEntity);
 
         worker.damageItemInHand(1);
-    }
-
-    @Override
-    public void setSwingingArms(final boolean swingingArms)
-    {
-        //todo
     }
 
     private int getReloadTime()

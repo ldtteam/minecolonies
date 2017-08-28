@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.achievements;
 
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.stats.Achievement;
 
 /**
  * This class is the superclass of all our achievements.
@@ -13,33 +13,35 @@ import net.minecraft.item.ItemStack;
  *
  * @since 0.2
  */
-public class MineColoniesAchievement
+public class MineColoniesAchievement extends Achievement
 {
-    //todo this will make new advancements at some point
+
     /**
      * Create a new Achievement.
-     *  @param id       the unique id this achievement should have
+     *
+     * @param id       the unique id this achievement should have
      * @param offsetX  X position placement on the board
      * @param offsetY  Y position placement on the board
      * @param itemIcon The icon to show
      * @param parent   the parent achievement
      */
-    public MineColoniesAchievement(final String id, final int offsetX, final int offsetY, final Block itemIcon, final MineColoniesAchievement parent)
+    public MineColoniesAchievement(final String id, final int offsetX, final int offsetY, final Item itemIcon, final Achievement parent)
     {
-        //super(Constants.MOD_ID + "." + id, id, offsetX, offsetY, itemIcon, parent);
+        super(Constants.MOD_ID + "." + id, id, offsetX, offsetY, itemIcon, parent);
     }
 
     /**
      * Create a new Achievement.
-     *  @param id        the unique id this achievement should have
+     *
+     * @param id        the unique id this achievement should have
      * @param offsetX   X position placement on the board
      * @param offsetY   Y position placement on the board
      * @param blockIcon The icon to show
      * @param parent    the parent achievement
      */
-    public MineColoniesAchievement(final String id, final int offsetX, final int offsetY, final Item blockIcon, final MineColoniesAchievement parent)
+    public MineColoniesAchievement(final String id, final int offsetX, final int offsetY, final Block blockIcon, final Achievement parent)
     {
-        //super(Constants.MOD_ID + "." + id, id, offsetX, offsetY, blockIcon, parent);
+        super(Constants.MOD_ID + "." + id, id, offsetX, offsetY, blockIcon, parent);
     }
 
     /**
@@ -51,8 +53,8 @@ public class MineColoniesAchievement
      * @param itemStackIcon The icon to show
      * @param parent        the parent achievement
      */
-    public MineColoniesAchievement(final String id, final int offsetX, final int offsetY, final ItemStack itemStackIcon, final Advancement parent)
+    public MineColoniesAchievement(final String id, final int offsetX, final int offsetY, final ItemStack itemStackIcon, final Achievement parent)
     {
-        //super(Constants.MOD_ID + "." + id, id, offsetX, offsetY, itemStackIcon, parent);
+        super(Constants.MOD_ID + "." + id, id, offsetX, offsetY, itemStackIcon, parent);
     }
 }

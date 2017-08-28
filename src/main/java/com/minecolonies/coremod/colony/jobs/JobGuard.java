@@ -107,7 +107,7 @@ public class JobGuard extends AbstractJob
     public void triggerDeathAchievement(final DamageSource source, final EntityCitizen citizen)
     {
         super.triggerDeathAchievement(source, citizen);
-        if (source.getTrueSource() instanceof EntityEnderman)
+        if (source.getEntity() instanceof EntityEnderman)
         {
             citizen.getColony().triggerAchievement(ModAchievements.achievementGuardDeathEnderman);
         }

@@ -97,9 +97,9 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
      * Returns whether an in-progress EntityAIBase should continue executing.
      */
     @Override
-    public final boolean shouldContinueExecuting()
+    public final boolean continueExecuting()
     {
-        return super.shouldContinueExecuting();
+        return super.continueExecuting();
     }
 
     /**

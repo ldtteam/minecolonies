@@ -14,7 +14,6 @@ import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.DifficultyInstance;
@@ -151,7 +150,7 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     }
 
     @Override
-    protected SoundEvent getHurtSound(final DamageSource damageSourceIn)
+    protected SoundEvent getHurtSound()
     {
         return BarbarianSounds.barbarianHurt;
     }
