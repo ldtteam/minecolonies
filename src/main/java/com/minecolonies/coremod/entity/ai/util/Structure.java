@@ -11,15 +11,18 @@ import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockOre;
 import net.minecraft.block.BlockStairs;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.util.Mirror;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.template.Template;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.text.html.parser.Entity;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -101,6 +104,11 @@ public class Structure
         public final Template.EntityInfo entity;
 
         /**
+         * The entityInfo block.
+         */
+        public final boolean hasWorldEntity;
+
+        /**
          * Create one immutable Block containing all information needed.
          *
          * @param block         the minecraft block this block has.
@@ -110,10 +118,11 @@ public class Structure
          * @param item          the item needed to place this block
          * @param worldBlock    the block to be replaced with the structure block
          * @param worldMetadata the metadata of the world block
+         * @param hasWorldEntity if there is an entity at the position in the world.
          */
         public StructureBlock(
                                final Block block, final BlockPos blockPosition, final IBlockState metadata, final Template.EntityInfo entity,
-                               final Item item, final Block worldBlock, final IBlockState worldMetadata)
+                               final Item item, final Block worldBlock, final IBlockState worldMetadata, final boolean hasWorldEntity)
         {
             this.block = block;
             this.blockPosition = blockPosition;
@@ -122,6 +131,7 @@ public class Structure
             this.item = item;
             this.worldBlock = worldBlock;
             this.worldMetadata = worldMetadata;
+            this.hasWorldEntity = hasWorldEntity;
         }
 
         /**
@@ -139,6 +149,11 @@ public class Structure
                     || (worldBlock == Blocks.AIR && structureBlock == ModBlocks.blockWayPoint))
             {
                 return true;
+            }
+
+            if(entity == null && hasWorldEntity)
+            {
+                return false;
             }
 
             final IBlockState worldBlockState = worldMetadata;
@@ -392,8 +407,9 @@ public class Structure
                                    this.structure.getEntityinfo(),
                                    this.structure.getItem(),
                                    BlockPosUtil.getBlock(targetWorld, this.structure.getBlockPosition()),
-                                   BlockPosUtil.getBlockState(targetWorld, this.structure.getBlockPosition())
-        );
+                                   BlockPosUtil.getBlockState(targetWorld, this.structure.getBlockPosition()),
+                                           !targetWorld.getEntitiesWithinAABB(net.minecraft.entity.Entity.class,
+                                                   new AxisAlignedBB(this.structure.getBlockPosition()), entity -> !(entity instanceof EntityLiving)).isEmpty());
     }
 
     /**
