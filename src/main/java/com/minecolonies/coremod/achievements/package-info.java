@@ -3,7 +3,8 @@
  * <p>
  * Contains a subclass of:
  * <p>
-//todo fill in as soon as existent
+ * - {@link net.minecraft.stats.Achievement}
+ * - {@link net.minecraftforge.common.AchievementPage}
  * <p>
  * and a collection of achievements in {@link com.minecolonies.coremod.achievements.ModAchievements}
  *

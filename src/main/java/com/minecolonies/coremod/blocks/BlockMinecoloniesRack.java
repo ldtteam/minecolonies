@@ -29,10 +29,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -88,6 +88,8 @@ public class BlockMinecoloniesRack extends Block
         setRegistryName(BLOCK_NAME);
         setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(), BLOCK_NAME));
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
+        GameRegistry.register(this);
+        GameRegistry.register((new ItemBlock(this)).setRegistryName(this.getRegistryName()));
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(VARIANT, EnumType.DEFAULT));
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);
@@ -95,9 +97,9 @@ public class BlockMinecoloniesRack extends Block
     }
 
     @Override
-    public void getSubBlocks(final CreativeTabs itemIn, final NonNullList<ItemStack> items)
+    public void getSubBlocks(final Item itemIn, final CreativeTabs tab, final NonNullList<ItemStack> list)
     {
-        items.add(new ItemStack(this, 1, EnumType.DEFAULT.getMetadata()));
+        list.add(new ItemStack(this, 1, EnumType.DEFAULT.getMetadata()));
     }
 
     @Override
@@ -374,28 +376,6 @@ public class BlockMinecoloniesRack extends Block
     public BlockRenderLayer getBlockLayer()
     {
         return BlockRenderLayer.SOLID;
-    }
-
-    /**
-     * Registery block at gameregistry.
-     * @param registry the registry to use.
-     * @return the block itself.
-     */
-    public BlockMinecoloniesRack registerBlock(final IForgeRegistry<Block> registry)
-    {
-        registry.register(this);
-        return this;
-    }
-
-    /**
-     * Registery block at gameregistry.
-     * @param registry the registry to use.
-     * @return the block itself.
-     */
-    public Block registerItemBlock(final IForgeRegistry<Item> registry)
-    {
-        registry.register((new ItemBlock(this)).setRegistryName(this.getRegistryName()));
-        return this;
     }
 
     public enum EnumType implements IStringSerializable

@@ -6,7 +6,7 @@ import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -55,7 +55,7 @@ public class RenderFishHook extends Render<EntityFishHook>
         GlStateManager.scale(0.5F, 0.5F, 0.5F);
         this.bindEntityTexture(entity);
         final Tessellator tessellator = Tessellator.getInstance();
-        final BufferBuilder vertexBuffer = tessellator.getBuffer();
+        final VertexBuffer vertexBuffer = tessellator.getBuffer();
 
         GlStateManager.rotate((float) (180.0D - this.renderManager.playerViewY), 0.0F, 1.0F, 0.0F);
         GlStateManager.rotate(-this.renderManager.playerViewX, 1.0F, 0.0F, 0.0F);

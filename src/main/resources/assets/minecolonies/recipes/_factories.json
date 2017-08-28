@@ -1,5 +1,0 @@
-{
-  "conditions": {
-    "config_condition" : "com.minecolonies.coremod.util.ConfigCondition"
-  }
-}

@@ -17,9 +17,9 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,7 +49,7 @@ public class BlockConstructionTape extends Block
     /**
      * This blocks name.
      */
-    private static final String BLOCK_NAME = "blockconstructiontape";
+    private static final String BLOCK_NAME = "blockConstructionTape";
 
     /**
      * The resistance this block has.
@@ -128,32 +128,12 @@ public class BlockConstructionTape extends Block
         setRegistryName(BLOCK_NAME);
         setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(), BLOCK_NAME));
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
+        GameRegistry.register(this);
+        GameRegistry.register((new ItemBlock(this)).setRegistryName(this.getRegistryName()));
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);
         setLightOpacity(LIGHT_OPACITY);
-    }
-
-    /**
-     * Registery block at gameregistry.
-     * @param registry the registry to use.
-     * @return the block itself.
-     */
-    public BlockConstructionTape registerBlock(final IForgeRegistry<Block> registry)
-    {
-        registry.register(this);
-        return this;
-    }
-
-    /**
-     * Registery block at gameregistry.
-     * @param registry the registry to use.
-     * @return the block itself.
-     */
-    public Block registerItemBlock(final IForgeRegistry<Item> registry)
-    {
-        registry.register((new ItemBlock(this)).setRegistryName(this.getRegistryName()));
-        return this;
     }
 
     /**

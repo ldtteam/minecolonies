@@ -39,6 +39,11 @@ public interface IProxy
     void registerEntityRendering();
 
     /**
+     * Method to register sounds.
+     */
+    void registerSounds();
+
+    /**
      * Method to register tile entity rendering in.
      */
     void registerTileEntityRendering();
