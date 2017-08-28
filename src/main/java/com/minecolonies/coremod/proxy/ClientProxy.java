@@ -79,6 +79,7 @@ public class ClientProxy extends CommonProxy
     {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityColonyBuilding.class, new EmptyTileEntitySpecialRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(ScarecrowTileEntity.class, new TileEntityScarecrowRenderer());
+
     }
 
     @Override
@@ -125,10 +126,16 @@ public class ClientProxy extends CommonProxy
         itemModelMesher.register(Item.getItemFromBlock(ModBlocks.blockHutGuardTower), 0, new ModelResourceLocation(ModBlocks.blockHutGuardTower.getRegistryName(), INVENTORY));
         itemModelMesher.register(Item.getItemFromBlock(ModBlocks.blockSolidSubstitution), 0,
           new ModelResourceLocation(ModBlocks.blockSolidSubstitution.getRegistryName(), INVENTORY));
+        itemModelMesher.register(Item.getItemFromBlock(ModBlocks.blockTimberFrame), 0,
+                new ModelResourceLocation(ModBlocks.blockTimberFrame.getRegistryName(), INVENTORY));
         itemModelMesher.register(Item.getItemFromBlock(ModBlocks.blockConstructionTape), 0,
           new ModelResourceLocation(ModBlocks.blockConstructionTape.getRegistryName(), INVENTORY));
         itemModelMesher.register(Item.getItemFromBlock(ModBlocks.blockConstructionTapeCorner), 0,
-          new ModelResourceLocation(ModBlocks.blockConstructionTapeCorner.getRegistryName(), INVENTORY));
+                new ModelResourceLocation(ModBlocks.blockConstructionTapeCorner.getRegistryName(), INVENTORY));
+        itemModelMesher.register(Item.getItemFromBlock(ModBlocks.blockRack), 0,
+                new ModelResourceLocation(ModBlocks.blockRack.getRegistryName(), INVENTORY));
+        itemModelMesher.register(Item.getItemFromBlock(ModBlocks.blockWayPoint), 0,
+                new ModelResourceLocation(ModBlocks.blockWayPoint.getRegistryName(), INVENTORY));
 
         itemModelMesher.register(ModItems.buildTool, 0, new ModelResourceLocation(ModItems.buildTool.getRegistryName(), INVENTORY));
         itemModelMesher.register(ModItems.caliper, 0, new ModelResourceLocation(ModItems.caliper.getRegistryName(), INVENTORY));

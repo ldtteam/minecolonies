@@ -87,13 +87,13 @@ public abstract class AbstractSingleCommand implements ISubCommand
             return false;
         }
         return canCommandSenderUseCommand(theCommand)
-                && canRankUseCommand(chkColony, player);
+                 && canRankUseCommand(chkColony, player);
     }
 
     /**
      * Will check to see if play is Opped for the given command name.
      *
-     * @param sender  to check the player using the command.
+     * @param sender to check the player using the command.
      * @return boolean
      */
     @NotNull
@@ -102,7 +102,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
         if (sender instanceof EntityPlayer)
         {
             return FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList()
-                    .canSendCommands(((EntityPlayer) sender).getGameProfile());
+                     .canSendCommands(((EntityPlayer) sender).getGameProfile());
         }
         return true;
     }

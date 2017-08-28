@@ -1,22 +1,6 @@
 {
-  "parent": "minecolonies:block/blockHutMiner",
-  "display": {
-    "thirdperson": {
-      "rotation": [
-        10,
-        -45,
-        50
-      ],
-      "translation": [
-        0,
-        1.5,
-        -2.75
-      ],
-      "scale": [
-        0.375,
-        0.375,
-        0.375
-      ]
-    }
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "minecolonies:items/blockhutminer"
   }
 }

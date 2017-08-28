@@ -3,14 +3,9 @@ package com.minecolonies.api.util;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
-import net.minecraft.item.ItemBow;
-import net.minecraft.item.ItemFishingRod;
-import net.minecraft.item.ItemHoe;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
-import net.minecraft.item.ItemTool;
+import net.minecraft.item.*;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -406,6 +401,18 @@ public final class ItemStackUtils
             }
         }
         return false;
+    }
+
+    /**
+     * Update method to allow for easy reading the ItemStack data from NBT.
+     *
+     * @param compound The compound to read from.
+     * @return The ItemStack stored in the NBT Data.
+     */
+    @NotNull
+    public static ItemStack deserializeFromNBT(@NotNull final NBTTagCompound compound)
+    {
+        return new ItemStack(compound);
     }
 }
 

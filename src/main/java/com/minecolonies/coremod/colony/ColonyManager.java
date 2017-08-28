@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.configuration.Configurations;
@@ -826,21 +827,6 @@ public final class ColonyManager
         return serverUUID;
     }
 
-
-    /**
-     * Saves data when world is saved.
-     *
-     * @param world World.
-     */
-    public static void onWorldSave(@NotNull final World world)
-    {
-        //We save when the first dimension is saved.
-        if (!world.isRemote && world.provider.getDimension() == 0)
-        {
-            saveColonies();
-        }
-    }
-
     /**
      * When a world unloads, all colonies in that world are informed.
      * Additionally, when the last world is unloaded, delete all colonies.
@@ -851,6 +837,12 @@ public final class ColonyManager
     {
         if (!world.isRemote)
         {
+            if(world.provider.getDimension() == 0)
+            {
+                saveColonies();
+            }
+
+
             for (@NotNull final Colony c : getColonies(world))
             {
                 c.onWorldUnload(world);
