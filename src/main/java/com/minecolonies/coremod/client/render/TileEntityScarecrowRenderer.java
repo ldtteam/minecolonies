@@ -78,12 +78,12 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<Scare
     }
 
     @Override
-    public void renderTileEntityAt(@NotNull final ScarecrowTileEntity te, final double posX, final double posY, final double posZ, final float partialTicks, final int destroyStage)
+    public void render(final ScarecrowTileEntity te, final double x, final double y, final double z, final float partialTicks, final int destroyStage, final float alpha)
     {
         //Store the transformation
         GlStateManager.pushMatrix();
         //Set viewport to tile entity position to render it
-        GlStateManager.translate(posX + BLOCK_MIDDLE, posY + YOFFSET, posZ + BLOCK_MIDDLE);
+        GlStateManager.translate(x + BLOCK_MIDDLE, y + YOFFSET, z + BLOCK_MIDDLE);
 
         this.bindTexture(getResourceLocation(te));
 

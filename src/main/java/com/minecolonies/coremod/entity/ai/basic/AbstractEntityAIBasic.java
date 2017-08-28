@@ -21,6 +21,8 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentBase;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -366,6 +368,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private AIState waitForNeededItems()
     {
         delay = DELAY_RECHECK;
+        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waiting"),
+                new TextComponentString(getOwnBuilding().getFirstNeededItem().getDisplayName()));
         return lookForNeededItems();
     }
 
@@ -621,6 +625,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         final IToolType toolType = worker.getWorkBuilding().getNeedsTool();
         if (toolType != ToolType.NONE && checkForToolOrWeapon(toolType, worker.getWorkBuilding().getNeededToolLevel()))
         {
+            worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waiting"),
+                    new TextComponentString(toolType.getName()));
             delay += DELAY_RECHECK;
             return NEEDS_TOOL;
         }

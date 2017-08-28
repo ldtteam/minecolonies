@@ -4,8 +4,8 @@ import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.Colony;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.stats.Achievement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,14 +38,15 @@ public final class AchievementUtils
 
         for (@Nullable final EntityPlayer player : lPlayer)
         {
-            for (final Achievement achievement : colony.getAchievements())
+            for (final Advancement achievement : colony.getAchievements())
             {
-                if (player == null || ModAchievements.achievementGetSupply == achievement)
+                //todo
+                /*if (player == null || ModAchievements.ad == achievement)
                 {
                     continue;
                 }
 
-                player.addStat(achievement);
+                player.addStat(achievement);*/
             }
         }
     }

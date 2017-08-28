@@ -94,9 +94,9 @@ public class CitizenInfoCommand extends AbstractCitizensCommands
           entityCitizen.getHealth(),
           entityCitizen.getMaxHealth())));
         sender.sendMessage(new TextComponentString(String.format(CITIZEN_LEVEL_AND_AGE,
-          entityCitizen.getLevel(),
-          entityCitizen.getAge(),
-          entityCitizen.getExperienceLevel())));
+                entityCitizen.getLevel(),
+                entityCitizen.getGrowingAge(),
+                entityCitizen.getExperienceLevel())));
         sender.sendMessage(new TextComponentString(String.format(CITIZEN_SKILLS,
           entityCitizen.getCharisma(),
           entityCitizen.getDexterity(),

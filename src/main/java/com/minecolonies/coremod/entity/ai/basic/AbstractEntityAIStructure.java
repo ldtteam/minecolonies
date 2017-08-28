@@ -27,6 +27,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.template.Template;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -187,6 +188,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     @Override
     public void fillItemsList()
     {
+        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.gathering"));
+
         if(currentStructure == null)
         {
             return;
@@ -216,6 +219,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     {
         if (!BlockUtils.shouldNeverBeMessedWith(structureBlock.worldBlock))
         {
+            worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.decorating"));
+
             //Fill workFrom with the position from where the builder should build.
             //also ensure we are at that position.
             if (!walkToConstructionSite())
@@ -254,6 +259,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     {
         if (!BlockUtils.shouldNeverBeMessedWith(structureBlock.worldBlock))
         {
+            worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.building"));
+
             //Fill workFrom with the position from where the builder should build.
             //also ensure we are at that position.
             if (!walkToConstructionSite())
@@ -455,6 +462,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             return true;
         }
 
+        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.clearing"));
+        //Don't break bedrock etc.
         //Don't break bedrock etc.
         if (!BlockUtils.shouldNeverBeMessedWith(currentBlock.worldBlock))
         {
@@ -503,6 +512,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      */
     protected boolean isThereAStructureToBuild()
     {
+        if(currentStructure == null)
+        {
+            worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waitingForBuild"));
+        }
         return currentStructure != null;
     }
 
@@ -786,6 +799,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         {
             return true;
         }
+
+        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.spawning"));
 
         final Entity entity = getEntityFromEntityInfoOrNull(entityInfo);
         if (entity != null && !isEntityAtPosition(entity, world))

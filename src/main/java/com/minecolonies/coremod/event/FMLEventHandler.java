@@ -1,13 +1,25 @@
 package com.minecolonies.coremod.event;
 
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.blocks.BlockConstructionTape;
+import com.minecolonies.coremod.blocks.BlockConstructionTapeCorner;
+import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.items.*;
 import com.minecolonies.coremod.network.messages.ColonyStylesMessage;
 import com.minecolonies.coremod.network.messages.ServerUUIDMessage;
+import com.minecolonies.coremod.sounds.ModSoundEvents;
+import net.minecraft.block.Block;
+import net.minecraft.client.audio.Sound;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
@@ -74,11 +86,49 @@ public class FMLEventHandler
 
     /**
      * Called when the config is changed, used to synch between file and game.
+     *
      * @param event the on config changed event.
      */
     @SubscribeEvent
     public void onConfigChanged(@NotNull final ConfigChangedEvent.OnConfigChangedEvent event)
     {
         ConfigManager.sync(Constants.MOD_ID, Config.Type.INSTANCE);
+    }
+
+    /**
+     * Called when registering blocks,
+     * we have to register all our modblocks here.
+     *
+     * @param event the registery event for blocks.
+     */
+    @SubscribeEvent
+    public void registerBlocks(@NotNull final RegistryEvent.Register<Block> event)
+    {
+        ModBlocks.init(event.getRegistry());
+    }
+
+    /**
+     * Called when registering items,
+     * we have to register all our mod items here.
+     *
+     * @param event the registery event for items.
+     */
+    @SubscribeEvent
+    public void registerItems(@NotNull final RegistryEvent.Register<Item> event)
+    {
+        ModItems.init(event.getRegistry());
+        ModBlocks.registerItemBlock(event.getRegistry());
+    }
+
+    /**
+     * Called when registering sounds,
+     * we have to register all our mod items here.
+     *
+     * @param event the registery event for items.
+     */
+    @SubscribeEvent
+    public void registerSounds(@NotNull final RegistryEvent.Register<SoundEvent> event)
+    {
+        ModSoundEvents.registerSounds(event.getRegistry());
     }
 }

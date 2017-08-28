@@ -121,7 +121,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
             spawnShip(worldIn, pos, enumfacing);
             ItemStackUtils.changeSize(stack, -1);
 
-            playerIn.addStat(ModAchievements.achievementGetSupply);
+            //playerIn.addStat(ModAchievements.achievementGetSupply);
 
             return EnumActionResult.SUCCESS;
         }
@@ -138,12 +138,15 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      */
     private static boolean isFirstPlacing(@NotNull final EntityPlayer player)
     {
-        if (Configurations.gameplay.allowInfiniteSupplyChests || !player.hasAchievement(ModAchievements.achievementGetSupply))
+        /*
+        if (Configurations.allowInfiniteSupplyChests || !player.hasAchievement(ModAchievements.achievementGetSupply))
         {
             return true;
-        }
-        LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.error.supplyChestAlreadyPlaced");
-        return false;
+        }*/
+        //todo prio 1!
+        return true;
+        /*LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.error.supplyChestAlreadyPlaced");
+        return false;*/
     }
 
     /**

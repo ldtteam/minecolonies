@@ -7,6 +7,7 @@ import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbaria
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -99,7 +100,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
      * Returns whether an in-progress EntityAIBase should continue executing.
      */
     @Override
-    public boolean continueExecuting()
+    public boolean shouldContinueExecuting()
     {
         if (closestLivingEntity instanceof AbstractEntityBarbarian)
         {
@@ -149,10 +150,11 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
         theEntity.playMoveAwaySound();
 
         @Nullable final Entity newClosest = getClosestToAvoid();
-        if (newClosest != null && newClosest != closestLivingEntity)
+        if (newClosest != null && newClosest.getEntityId() != closestLivingEntity.getEntityId())
         {
             closestLivingEntity = newClosest;
             performMoveAway();
+            theEntity.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.avoiding"));
             return;
         }
 

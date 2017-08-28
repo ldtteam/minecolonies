@@ -42,7 +42,7 @@ public class ItemBuildTool extends AbstractItemMinecolonies
                                        final float hitY,
                                        final float hitZ)
     {
-        playerIn.addStat(ModAchievements.achievementWandOfbuilding);
+        //playerIn.addStat(ModAchievements.achievementWandOfbuilding);
         if (worldIn.isRemote)
         {
             MineColonies.proxy.openBuildToolWindow(pos.offset(facing));

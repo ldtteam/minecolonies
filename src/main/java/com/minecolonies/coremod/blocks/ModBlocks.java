@@ -1,47 +1,105 @@
 package com.minecolonies.coremod.blocks;
 
 import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+import net.minecraftforge.registries.IForgeRegistry;
 
 /**
  * Class to create the modBlocks.
  * References to the blocks can be made here
  */
-public final class ModBlocks
+public class ModBlocks
 {
     /*
      * Creating objects for all blocks in the mod.
      * References can be made to here.
      */
-    public static final Block blockHutTownHall            = new BlockHutTownHall();
-    public static final Block blockHutCitizen             = new BlockHutCitizen();
-    public static final Block blockHutMiner               = new BlockHutMiner();
-    public static final Block blockHutLumberjack          = new BlockHutLumberjack();
-    public static final Block blockHutBaker               = new BlockHutBaker();
-    public static final Block blockHutBuilder             = new BlockHutBuilder();
-    public static final Block blockHutDeliveryman         = new BlockHutDeliveryman();
-    public static final Block blockHutBlacksmith          = new BlockHutBlacksmith();
-    public static final Block blockHutStonemason          = new BlockHutStonemason();
-    public static final Block blockHutFarmer              = new BlockHutFarmer();
-    public static final Block blockHutFisherman           = new BlockHutFisherman();
-    public static final Block blockSubstitution           = new BlockSubstitution();
-    public static final Block blockSolidSubstitution      = new BlockSolidSubstitution();
-    public static final Block blockHutField               = new BlockHutField();
-    public static final Block blockHutGuardTower          = new BlockHutGuardTower();
-    public static final Block blockHutWareHouse           = new BlockHutWareHouse();
-    public static final Block blockConstructionTape       = new BlockConstructionTape();
-    public static final Block blockConstructionTapeCorner = new BlockConstructionTapeCorner();
-    public static final Block blockTimberFrame            = new BlockTimberFrame();
-    public static final Block blockRack                   = new BlockMinecoloniesRack();
-    public static final Block blockWayPoint               = new BlockWaypoint();
+    public static BlockHutTownHall            blockHutTownHall;
+    public static BlockHutCitizen             blockHutCitizen;
+    public static BlockHutMiner               blockHutMiner;
+    public static BlockHutLumberjack          blockHutLumberjack;
+    public static BlockHutBaker               blockHutBaker;
+    public static BlockHutBuilder             blockHutBuilder;
+    public static BlockHutDeliveryman         blockHutDeliveryman;
+    public static BlockHutBlacksmith          blockHutBlacksmith;
+    public static BlockHutStonemason          blockHutStonemason;
+    public static BlockHutFarmer              blockHutFarmer;
+    public static BlockHutFisherman           blockHutFisherman;
+    public static BlockSubstitution           blockSubstitution;
+    public static BlockSolidSubstitution      blockSolidSubstitution;
+    public static BlockHutField               blockHutField;
+    public static BlockHutGuardTower          blockHutGuardTower;
+    public static BlockHutWareHouse           blockHutWareHouse;
+    public static BlockConstructionTape       blockConstructionTape;
+    public static BlockConstructionTapeCorner blockConstructionTapeCorner;
+    public static BlockMinecoloniesRack       blockRack;
+    public static BlockTimberFrame            blockTimberFrame;
+    public static BlockWaypoint               blockWayPoint;
 
 
     // Deactivated for now
-    // public static final Block blockBarrel        = new BlockBarrel();
+    // public static  Block blockBarrel        = new BlockBarrel();
 
     /**
-     * private constructor to hide the implicit public one.
+     * Private constructor to hide the implicit public one.
      */
     private ModBlocks()
     {
+        /*
+         * Intentionally left empty.
+         */
+    }
+
+    /**
+     * Initates all the blocks. At the correct time.
+     */
+    public static void init(final IForgeRegistry<Block> registry)
+    {
+        blockConstructionTape = new BlockConstructionTape().registerBlock(registry);
+        blockConstructionTapeCorner = new BlockConstructionTapeCorner().registerBlock(registry);
+        blockHutBaker = (BlockHutBaker) new BlockHutBaker().registerBlock(registry);
+        blockHutBlacksmith = (BlockHutBlacksmith) new BlockHutBlacksmith().registerBlock(registry);
+        blockHutBuilder = (BlockHutBuilder) new BlockHutBuilder().registerBlock(registry);
+        blockHutCitizen = (BlockHutCitizen) new BlockHutCitizen().registerBlock(registry);
+        blockHutDeliveryman = (BlockHutDeliveryman) new BlockHutDeliveryman().registerBlock(registry);
+        blockHutFarmer = (BlockHutFarmer) new BlockHutFarmer().registerBlock(registry);
+        blockHutField = new BlockHutField().registerBlock(registry);
+        blockHutFisherman = (BlockHutFisherman) new BlockHutFisherman().registerBlock(registry);
+        blockHutGuardTower = (BlockHutGuardTower) new BlockHutGuardTower().registerBlock(registry);
+        blockHutLumberjack = (BlockHutLumberjack) new BlockHutLumberjack().registerBlock(registry);
+        blockHutMiner = (BlockHutMiner) new BlockHutMiner().registerBlock(registry);
+        blockHutStonemason = (BlockHutStonemason) new BlockHutStonemason().registerBlock(registry);
+        blockHutTownHall = (BlockHutTownHall) new BlockHutTownHall().registerBlock(registry);
+        blockHutWareHouse = (BlockHutWareHouse) new BlockHutWareHouse().registerBlock(registry);
+        blockSolidSubstitution = new BlockSolidSubstitution().registerBlock(registry);
+        blockSubstitution = new BlockSubstitution().registerBlock(registry);
+        blockRack = new BlockMinecoloniesRack().registerBlock(registry);
+        blockTimberFrame = new BlockTimberFrame().registerBlock(registry);
+        blockWayPoint = new BlockWaypoint().registerBlock(registry);
+    }
+
+    public static void registerItemBlock(final IForgeRegistry<Item> registry)
+    {
+        blockConstructionTape.registerItemBlock(registry);
+        blockConstructionTapeCorner.registerItemBlock(registry);
+        blockHutBaker.registerItemBlock(registry);
+        blockHutBlacksmith.registerItemBlock(registry);
+        blockHutBuilder.registerItemBlock(registry);
+        blockHutCitizen.registerItemBlock(registry);
+        blockHutDeliveryman.registerItemBlock(registry);
+        blockHutFarmer.registerItemBlock(registry);
+        blockHutField.registerItemBlock(registry);
+        blockHutFisherman.registerItemBlock(registry);
+        blockHutGuardTower.registerItemBlock(registry);
+        blockHutLumberjack.registerItemBlock(registry);
+        blockHutMiner.registerItemBlock(registry);
+        blockHutStonemason.registerItemBlock(registry);
+        blockHutTownHall.registerItemBlock(registry);
+        blockHutWareHouse.registerItemBlock(registry);
+        blockSolidSubstitution.registerItemBlock(registry);
+        blockSubstitution.registerItemBlock(registry);
+        blockRack.registerItemBlock(registry);
+        blockTimberFrame.registerItemBlock(registry);
+        blockWayPoint.registerItemBlock(registry);
     }
 }

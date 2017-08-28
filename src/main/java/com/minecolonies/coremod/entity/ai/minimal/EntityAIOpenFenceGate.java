@@ -46,9 +46,9 @@ public class EntityAIOpenFenceGate extends EntityAIGateInteract
      * @return true or false.
      */
     @Override
-    public boolean continueExecuting()
+    public boolean shouldContinueExecuting()
     {
-        return this.closeDoor && this.closeDoorTemporisation > 0 && super.continueExecuting();
+        return this.closeDoor && this.closeDoorTemporisation > 0 && super.shouldContinueExecuting();
     }
 
     /**

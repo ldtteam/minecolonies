@@ -7,24 +7,18 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
 }
 
 plugins {
     id "org.sonarqube" version "2.3"
-    id "com.matthewprenger.cursegradle" version "1.0.7"
+    id "com.matthewprenger.cursegradle" version "1.0.9"
 }
 repositories {
     maven {
         name 'DVS1 Maven FS'
         url 'http://dvs1.progwml6.com/files/maven'
-    }
-}
-
-repositories {
-    maven {
-        url 'http://dogforce-games.com/maven'
     }
 }
 
@@ -103,13 +97,9 @@ configFile.withReader {
 }
 
 dependencies {
-    deobfCompile "slimeknights.mantle:Mantle:${config.minecraft_version}-${config.mantle_version}"
-    deobfCompile "slimeknights:TConstruct:${config.minecraft_version}-${config.tinker_version}"
 
     structuresCompile sourceSets.api.output
     //blockOutCompile sourceSets.api.output
-
-    deobfCompile "gigaherz.guidebook:Guidebook-1.11.0:${config.guidebook_version}"
 
     testCompile sourceSets.structures.output
     testCompile sourceSets.blockOut.output

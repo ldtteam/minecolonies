@@ -154,6 +154,6 @@ public final class WorkerUtil
     public static boolean isPathingTo(@NotNull final EntityCitizen citizen, final int x, final int z)
     {
         final PathPoint pathpoint = citizen.getNavigator().getPath().getFinalPathPoint();
-        return pathpoint != null && pathpoint.xCoord == x && pathpoint.zCoord == z;
+        return pathpoint != null && pathpoint.x == x && pathpoint.z == z;
     }
 }
