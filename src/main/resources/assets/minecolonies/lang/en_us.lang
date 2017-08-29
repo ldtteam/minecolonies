@@ -462,3 +462,4 @@ tile.minecolonies.blockwaypoint.name=Waypoint placeholder
 
 tile.minecolonies.blockWayPoint.name=Waypoint placeholder
 
+com.minecolonies.coremod.permission.teleport_to_colony=Teleport to Colony
