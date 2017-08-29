@@ -12,6 +12,8 @@ import net.minecraft.block.BlockOre;
 import net.minecraft.block.BlockStairs;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.util.Mirror;
@@ -409,7 +411,8 @@ public class Structure
                                    BlockPosUtil.getBlock(targetWorld, this.structure.getBlockPosition()),
                                    BlockPosUtil.getBlockState(targetWorld, this.structure.getBlockPosition()),
                                            !targetWorld.getEntitiesWithinAABB(net.minecraft.entity.Entity.class,
-                                                   new AxisAlignedBB(this.structure.getBlockPosition()), entity -> !(entity instanceof EntityLiving)).isEmpty());
+                                                   new AxisAlignedBB(this.structure.getBlockPosition()),
+                                                   entity -> !(entity instanceof EntityLiving || entity instanceof EntityPlayer || entity instanceof EntityItem)).isEmpty());
     }
 
     /**
