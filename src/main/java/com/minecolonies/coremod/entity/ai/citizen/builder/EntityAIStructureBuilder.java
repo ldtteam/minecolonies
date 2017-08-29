@@ -552,7 +552,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             final BlockPos basePos = world.getTopSolidOrLiquidBlock(pos);
             if (EntityUtils.checkForFreeSpace(world, basePos.down())
                     && world.getBlockState(basePos.up()).getBlock() != Blocks.SAPLING
-                    && world.getBlockState(basePos).getMaterial().isSolid())
+                    && world.getBlockState(basePos.down()).getMaterial().isSolid())
             {
                 return basePos;
             }
