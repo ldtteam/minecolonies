@@ -454,7 +454,7 @@ public class Structure
             nbttagcompound.setInteger("DataVersion", 500);
         }
 
-        Template template = new Template();
+        final Template template = new Template();
         template.read(fixer.process(FixTypes.STRUCTURE, nbttagcompound));
         return template;
     }
