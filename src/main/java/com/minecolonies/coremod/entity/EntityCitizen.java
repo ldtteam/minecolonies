@@ -1094,7 +1094,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         {
             if (getOffsetTicks() % TICKS_20 == 0)
             {
-                this.setAlwaysRenderNameTag(Configurations.gameplay.alwaysRenderNameTag);
+                this.setAlwaysRenderNameTag(Configurations.alwaysRenderNameTag);
                 pickupItems();
                 cleanupChatMessages();
                 updateColonyServer();
