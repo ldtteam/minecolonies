@@ -34,8 +34,8 @@ import static com.minecolonies.api.util.constant.Constants.*;
             public  boolean allowInfiniteSupplyChests = false;
 
             @Config.RangeInt(min = (CITIZEN_RESPAWN_INTERVAL_MIN), max = CITIZEN_RESPAWN_INTERVAL_MAX)
-            @Config.Comment("Average citizen respawn interval (in ticks)")
-            public  int citizenRespawnInterval = 240;
+            @Config.Comment("Average citizen respawn interval (in seconds)")
+            public  int citizenRespawnInterval = 60;
 
             @Config.Comment("Should builder and miner build without resources? (this also turns off what they produce)")
             public  boolean builderInfiniteResources = false;
