@@ -19,6 +19,7 @@ public class Configurations
     public static       boolean doBarbariansSpawn                 = true;
     public static       int     barbarianHordeDifficulty          = 5;
     public static       int     averageNumberOfNightsBetweenRaids = 3;
+    public static       int     autoDeleteColoniesInHours    = 0;
 
     public static boolean enableColonyProtection      = true;
     public static boolean turnOffExplosionsInColonies = true;

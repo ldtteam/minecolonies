@@ -71,6 +71,7 @@ public class Colony implements IColony
     private static final String TAG_FREE_POSITIONS             = "freePositions";
     private static final String TAG_HAPPINESS                  = "happiness";
     private static final String TAG_ABANDONED                  = "abandoned";
+    private static final String TAG_DELETABLE                  = "deletable";
 
     //statistics tags
     private static final String TAG_STATISTICS            = "statistics";
@@ -120,6 +121,11 @@ public class Colony implements IColony
      * The hours the colony is without contact with its players.
      */
     private int lastContactInHours = 0;
+
+    /**
+     * Whether or not this colony can be auto deleted =D. (set via command)
+     */
+    private boolean canColonyBeAutoDeleted = true;
 
     /**
      * Bonus happiness each factor added.
@@ -402,6 +408,7 @@ public class Colony implements IColony
         }
         lastContactInHours = compound.getInteger(TAG_ABANDONED);
         manualHousing = compound.getBoolean(TAG_MANUAL_HOUSING);
+        canColonyBeAutoDeleted = compound.getBoolean(TAG_DELETABLE);
     }
 
     /**
@@ -561,6 +568,7 @@ public class Colony implements IColony
         compound.setDouble(TAG_HAPPINESS, overallHappiness);
         compound.setInteger(TAG_ABANDONED, lastContactInHours);
         compound.setBoolean(TAG_MANUAL_HOUSING, manualHousing);
+        compound.setBoolean(TAG_DELETABLE, canColonyBeAutoDeleted);
     }
 
     /**
@@ -2020,5 +2028,21 @@ public class Colony implements IColony
     public void setWillRaidTonight(final Boolean willRaid)
     {
         willRaidTonight = willRaid;
+    }
+
+
+    @Override
+    public boolean canBeAutoDeleted()
+    {
+        return canColonyBeAutoDeleted;
+    }
+
+    /**
+     * This sets whether or not a colony can be automatically deleted Via command, or an on-tick check.
+     * @param canBeDeleted whether the colony is able to be deleted automatically
+     */
+    public void setCanBeAutoDeleted(final Boolean canBeDeleted)
+    {
+        this.canColonyBeAutoDeleted = canBeDeleted;
     }
 }
