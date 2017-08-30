@@ -6,10 +6,9 @@ import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.Pane;
-import com.minecolonies.blockout.controls.Button;
-import com.minecolonies.blockout.controls.Label;
-import com.minecolonies.blockout.controls.TextField;
+import com.minecolonies.blockout.controls.*;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.MineColonies;
@@ -237,7 +236,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private static final String FARMERS_LABEL = "farmers";
 
     /**
-     * Id of the total bakers label in the GUI.
+     * Id of the total farmers label in the GUI.
      */
     private static final String BAKERS_LABEL = "bakers";
 
@@ -262,9 +261,14 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private static final int HIDDEN_ID_POSITION = 5;
 
     /**
+     * The distance to move the ribbon.
+     */
+    private static final int RIBBON_OFFSET = 19;
+
+    /**
      * Link to the xml file of the window.
      */
-    private static final String TOWNHALL_RESOURCE_SUFFIX = ":gui/windowTownHall.xml";
+    private static final String TOWNHALL_RESOURCE_SUFFIX = ":gui/windowtownhall.xml";
 
     /**
      * The button to go to the previous permission settings page.
@@ -354,7 +358,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * Ignored index starts at this line, ignore this amount after this index.
      */
-    private static final int IGNORE_INDEX     = 3;
+    private static final int IGNORE_INDEX = 3;
 
     /**
      * Button clicked to add a block to the colony to be freely interacted with.
@@ -466,7 +470,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         registerButton(BUTTON_DOWN, this::updatePriority);
         registerButton(BUTTON_DELETE, this::deleteWorkOrder);
 
-        findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class).setEnabled(false);
+        findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class).setVisible(false);
         findPaneOfTypeByID(BUTTON_MANAGE_OFFICER, Button.class).setEnabled(false);
 
         registerButton(BUTTON_TRIGGER, this::trigger);
@@ -519,13 +523,13 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             @NotNull final List<Block> freeBlocks = townHall.getColony().getFreeBlocks();
             @NotNull final List<BlockPos> freePositions = townHall.getColony().getFreePositions();
 
-            if(row < freeBlocks.size())
+            if (row < freeBlocks.size())
             {
                 MineColonies.getNetwork().sendToServer(
                         new ChangeFreeToInteractBlockMessage(townHall.getColony(), freeBlocks.get(row), ChangeFreeToInteractBlockMessage.MessageType.REMOVE_BLOCK));
                 townHall.getColony().removeFreeBlock(freeBlocks.get(row));
             }
-            else if(row < freeBlocks.size() + freePositions.size())
+            else if (row < freeBlocks.size() + freePositions.size())
             {
                 final BlockPos freePos = freePositions.get(row - freeBlocks.size());
                 MineColonies.getNetwork().sendToServer(
@@ -534,6 +538,39 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             }
             fillFreeBlockList();
         }
+    }
+
+    /**
+     * Fills the free blocks list in the GUI.
+     */
+    private void fillFreeBlockList()
+    {
+        @NotNull final List<Block> freeBlocks = townHall.getColony().getFreeBlocks();
+        @NotNull final List<BlockPos> freePositions = townHall.getColony().getFreePositions();
+
+        freeBlocksList = findPaneOfTypeByID(LIST_FREE_BLOCKS, ScrollingList.class);
+        freeBlocksList.setDataProvider(new ScrollingList.DataProvider()
+        {
+            @Override
+            public int getElementCount()
+            {
+                return freeBlocks.size() + freePositions.size();
+            }
+
+            @Override
+            public void updateElement(final int index, @NotNull final Pane rowPane)
+            {
+                if (index < freeBlocks.size())
+                {
+                    rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(freeBlocks.get(index).getRegistryName().toString());
+                }
+                else
+                {
+                    final BlockPos pos = freePositions.get(index - freeBlocks.size());
+                    rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(pos.getX() + " " + pos.getY() + " " + pos.getZ());
+                }
+            }
+        });
     }
 
     /**
@@ -547,7 +584,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
 
         final Block block = Block.getBlockFromName(inputText);
 
-        if(block != null)
+        if (block != null)
         {
             townHall.getColony().addFreeBlock(block);
             MineColonies.getNetwork().sendToServer(new ChangeFreeToInteractBlockMessage(townHall.getColony(), block, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK));
@@ -555,7 +592,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
 
         final BlockPos pos = BlockPosUtil.getBlockPosOfString(inputText);
 
-        if(pos != null)
+        if (pos != null)
         {
             MineColonies.getNetwork().sendToServer(new ChangeFreeToInteractBlockMessage(townHall.getColony(), pos, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK));
             townHall.getColony().addFreePosition(pos);
@@ -567,13 +604,14 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
 
     /**
      * Called when the permission button has been triggered.
+     *
      * @param button the triggered button.
      */
     private void trigger(@NotNull final Button button)
     {
         @NotNull final Pane pane = button.getParent().getChildren().get(2);
         int index = 0;
-        if(pane instanceof Label)
+        if (pane instanceof Label)
         {
             index = Integer.valueOf(((Label) pane).getLabelText());
         }
@@ -584,7 +622,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         MineColonies.getNetwork().sendToServer(new PermissionsMessage.Permission(townHall.getColony(), PermissionsMessage.MessageType.TOGGLE_PERMISSION, rank, action));
         townHall.getColony().getPermissions().togglePermission(rank, action);
 
-        if(trigger)
+        if (trigger)
         {
             button.setLabel(LanguageHandler.format(OFF));
         }
@@ -599,28 +637,65 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      */
     private void switchPage(@NotNull final Button button)
     {
-        if(button.getID().equals(BUTTON_PREV_PAGE_PERM))
+        if (button.getID().equals(BUTTON_PREV_PAGE_PERM))
         {
             findPaneOfTypeByID(VIEW_PERM_PAGES, SwitchView.class).previousView();
 
-            findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class).setEnabled(false);
-            findPaneOfTypeByID(BUTTON_NEXT_PAGE_PERM, Button.class).setEnabled(true);
+            findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class).setVisible(false);
+            findPaneOfTypeByID(BUTTON_NEXT_PAGE_PERM, Button.class).setVisible(true);
         }
         else
         {
             findPaneOfTypeByID(VIEW_PERM_PAGES, SwitchView.class).nextView();
 
-            findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class).setEnabled(true);
-            findPaneOfTypeByID(BUTTON_NEXT_PAGE_PERM, Button.class).setEnabled(false);
+            findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class).setVisible(true);
+            findPaneOfTypeByID(BUTTON_NEXT_PAGE_PERM, Button.class).setVisible(false);
         }
 
-        if(findPaneOfTypeByID(VIEW_PERM_PAGES, SwitchView.class).getCurrentView().getID().equals(PERMISSION_VIEW))
+        if (findPaneOfTypeByID(VIEW_PERM_PAGES, SwitchView.class).getCurrentView().getID().equals(PERMISSION_VIEW))
         {
-            findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class).setEnabled(true);
-            findPaneOfTypeByID(BUTTON_NEXT_PAGE_PERM, Button.class).setEnabled(true);
+            findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class).setVisible(true);
+            findPaneOfTypeByID(BUTTON_NEXT_PAGE_PERM, Button.class).setVisible(true);
 
             fillPermissionList(VIEW_OFFICER);
         }
+    }
+
+    /**
+     * Fills the permission list in the GUI.
+     */
+    private void fillPermissionList(@NotNull final String category)
+    {
+        actionsList = findPaneOfTypeByID(LIST_ACTIONS + category, ScrollingList.class);
+        actionsList.setDataProvider(new ScrollingList.DataProvider()
+        {
+            @Override
+            public int getElementCount()
+            {
+                return Action.values().length - IGNORE_INDEX;
+            }
+
+            @Override
+            public void updateElement(final int index, @NotNull final Pane rowPane)
+            {
+                final int actionIndex = index <= IGNORE_INDEX ? index : (index + IGNORE_INDEX);
+                final Action action = Action.values()[actionIndex];
+                final String name = LanguageHandler.format(KEY_TO_PERMISSIONS + action.toString().toLowerCase(Locale.US));
+
+                if (name.contains(KEY_TO_PERMISSIONS))
+                {
+                    Log.getLogger().warn("Didn't work for:" + name);
+                    return;
+                }
+
+                rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(name);
+                final boolean isTriggered = townHall.getColony().getPermissions().hasPermission(Rank.valueOf(actionsList.getParent().getID().toUpperCase(Locale.ENGLISH)), action);
+                rowPane.findPaneOfTypeByID("trigger", Button.class)
+                        .setLabel(isTriggered ? LanguageHandler.format(ON)
+                                : LanguageHandler.format(OFF));
+                rowPane.findPaneOfTypeByID("index", Label.class).setLabelText(Integer.toString(actionIndex));
+            }
+        });
     }
 
     private void editOfficer()
@@ -731,12 +806,20 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     {
         super.onOpened();
 
+        if (lastTabButton != null)
+        {
+            return;
+        }
+
         createAndSetStatistics();
 
         findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(PAGE_ACTIONS);
 
         lastTabButton = findPaneOfTypeByID(BUTTON_ACTIONS, Button.class);
         lastTabButton.setEnabled(false);
+        findPaneOfTypeByID(lastTabButton.getID() + "0", Image.class).setVisible(false);
+        findPaneOfTypeByID(lastTabButton.getID() + "1", ButtonImage.class).setVisible(true);
+        lastTabButton.setPosition(lastTabButton.getX() + RIBBON_OFFSET, lastTabButton.getY());
 
         fillUserList();
         fillCitizensList();
@@ -809,7 +892,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         workers += deliverymen + builders + miners + fishermen + lumberjacks + farmers + guards + bakers;
 
         final String numberOfCitizens =
-          LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.totalCitizens", citizensSize, townHall.getColony().getMaxCitizens());
+                LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.totalCitizens", citizensSize, townHall.getColony().getMaxCitizens());
         final String numberOfUnemployed = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.unemployed", citizensSize - workers);
         final String numberOfBuilders = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.builders", builders);
         final String numberOfDeliverymen = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.deliverymen", deliverymen);
@@ -818,7 +901,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         final String numberOfGuards = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.Guards", guards);
         final String numberOfLumberjacks = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.lumberjacks", lumberjacks);
         final String numberOfFarmers = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.farmers", farmers);
-        final String numberOfBakers = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.bakers", bakers);
+        final String numberOfbakers = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.bakers", bakers);
 
         final DecimalFormat df = new DecimalFormat("#.#");
         df.setRoundingMode(RoundingMode.CEILING);
@@ -834,7 +917,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         findPaneOfTypeByID(GUARDS_LABEL, Label.class).setLabelText(numberOfGuards);
         findPaneOfTypeByID(LUMBERJACKS_LABEL, Label.class).setLabelText(numberOfLumberjacks);
         findPaneOfTypeByID(FARMERS_LABEL, Label.class).setLabelText(numberOfFarmers);
-        findPaneOfTypeByID(BAKERS_LABEL, Label.class).setLabelText(numberOfBakers);
+        findPaneOfTypeByID(BAKERS_LABEL, Label.class).setLabelText(numberOfbakers);
     }
 
     /**
@@ -859,75 +942,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 rank = Character.toUpperCase(rank.charAt(0)) + rank.toLowerCase(Locale.ENGLISH).substring(1);
                 rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(player.getName());
                 rowPane.findPaneOfTypeByID("rank", Label.class).setLabelText(rank);
-            }
-        });
-    }
-
-    /**
-     * Fills the permission list in the GUI.
-     */
-    private void fillPermissionList(@NotNull final String category)
-    {
-        actionsList = findPaneOfTypeByID(LIST_ACTIONS + category, ScrollingList.class);
-        actionsList.setDataProvider(new ScrollingList.DataProvider()
-        {
-            @Override
-            public int getElementCount()
-            {
-                return Action.values().length - IGNORE_INDEX;
-            }
-
-            @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
-                final int actionIndex = index <= IGNORE_INDEX ? index : (index + IGNORE_INDEX);
-                final Action action = Action.values()[actionIndex];
-                final String name = LanguageHandler.format(KEY_TO_PERMISSIONS + action.toString().toLowerCase());
-
-                if(name.contains(KEY_TO_PERMISSIONS))
-                {
-                    return;
-                }
-
-                rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(name);
-                final boolean isTriggered = townHall.getColony().getPermissions().hasPermission(Rank.valueOf(actionsList.getParent().getID().toUpperCase()), action);
-                rowPane.findPaneOfTypeByID("trigger", Button.class)
-                        .setLabel(isTriggered ? LanguageHandler.format(ON)
-                                : LanguageHandler.format(OFF));
-                rowPane.findPaneOfTypeByID("index", Label.class).setLabelText(Integer.toString(actionIndex));
-            }
-        });
-    }
-
-    /**
-     * Fills the free blocks list in the GUI.
-     */
-    private void fillFreeBlockList()
-    {
-        @NotNull final List<Block> freeBlocks = townHall.getColony().getFreeBlocks();
-        @NotNull final List<BlockPos> freePositions = townHall.getColony().getFreePositions();
-
-        freeBlocksList = findPaneOfTypeByID(LIST_FREE_BLOCKS, ScrollingList.class);
-        freeBlocksList.setDataProvider(new ScrollingList.DataProvider()
-        {
-            @Override
-            public int getElementCount()
-            {
-                return freeBlocks.size() + freePositions.size();
-            }
-
-            @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
-                if(index < freeBlocks.size())
-                {
-                    rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(freeBlocks.get(index).getRegistryName().toString());
-                }
-                else
-                {
-                    final BlockPos pos = freePositions.get(index - freeBlocks.size());
-                    rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(pos.getX() + " " + pos.getY() + " " + pos.getZ());
-                }
             }
         });
     }
@@ -1015,17 +1029,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     }
 
     /**
-     * Returns the name of a building.
-     *
-     * @return Name of a building.
-     */
-    @Override
-    public String getBuildingName()
-    {
-        return townHall.getColony().getName();
-    }
-
-    /**
      * Toggles the allocation of a certain job. Manual or automatic.
      *
      * @param button the pressed button.
@@ -1074,12 +1077,22 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      */
     private void onTabClicked(@NotNull final Button button)
     {
-        final String page = tabsToPages.get(button.getID());
+        final String oldId = lastTabButton.getID();
+        final String newId = button.getID();
+        final String page = tabsToPages.get(newId);
+
+        lastTabButton.setPosition(lastTabButton.getX() - RIBBON_OFFSET, lastTabButton.getY());
         findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(page);
+        findPaneOfTypeByID(oldId + "0", Image.class).setVisible(true);
+        findPaneOfTypeByID(oldId + "1", ButtonImage.class).setVisible(false);
+        findPaneOfTypeByID(newId + "0", Image.class).setVisible(false);
+        findPaneOfTypeByID(newId + "1", ButtonImage.class).setVisible(true);
+
 
         lastTabButton.setEnabled(true);
         button.setEnabled(false);
         lastTabButton = button;
+        lastTabButton.setPosition(lastTabButton.getX() + RIBBON_OFFSET, lastTabButton.getY());
     }
 
     @Override
@@ -1100,6 +1113,17 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         }
         updateWorkOrders();
         window.findPaneOfTypeByID(LIST_WORKORDER, ScrollingList.class).refreshElementPanes();
+    }
+
+    /**
+     * Returns the name of a building.
+     *
+     * @return Name of a building.
+     */
+    @Override
+    public String getBuildingName()
+    {
+        return townHall.getColony().getName();
     }
 
     /**
@@ -1154,12 +1178,12 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             if (button.getID().equals(BUTTON_PROMOTE))
             {
                 MineColonies.getNetwork()
-                  .sendToServer(new PermissionsMessage.ChangePlayerRank(townHall.getColony(), user.getID(), PermissionsMessage.ChangePlayerRank.Type.PROMOTE));
+                        .sendToServer(new PermissionsMessage.ChangePlayerRank(townHall.getColony(), user.getID(), PermissionsMessage.ChangePlayerRank.Type.PROMOTE));
             }
             else
             {
                 MineColonies.getNetwork()
-                  .sendToServer(new PermissionsMessage.ChangePlayerRank(townHall.getColony(), user.getID(), PermissionsMessage.ChangePlayerRank.Type.DEMOTE));
+                        .sendToServer(new PermissionsMessage.ChangePlayerRank(townHall.getColony(), user.getID(), PermissionsMessage.ChangePlayerRank.Type.DEMOTE));
             }
         }
     }
