@@ -1193,7 +1193,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         for (final Object o :
                 CompatibilityUtils.getWorld(this).
                         getEntitiesWithinAABB(EntityItem.class,
-                                new AxisAlignedBB(getPosition()).expand(2.0F, 1.0F, 2.0F).expand(-2.0F, -1.0F, -2.0F)))
+                                new AxisAlignedBB(getPosition()).expand(2.0F, 1.0F, 2.0F)))
         {
             if (o instanceof EntityItem)
             {
