@@ -3,6 +3,8 @@ package com.minecolonies.coremod.colony;
 import com.minecolonies.api.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,6 +16,11 @@ import org.jetbrains.annotations.Nullable;
  */
 public class CitizenDataView
 {
+    /**
+     * The max amount of lines the latest log allows.
+     */
+    private static final int MAX_LINES_OF_LATEST_LOG = 4;
+
     /**
      * Attributes.
      */
@@ -50,6 +57,11 @@ public class CitizenDataView
     private BlockPos workBuilding;
 
     /**
+     * The 4 lines of the latest status.
+     */
+    private ITextComponent[] latestStatus = new ITextComponent[MAX_LINES_OF_LATEST_LOG];
+
+    /**
      * Set View id.
      *
      * @param id the id to set.
@@ -78,7 +90,7 @@ public class CitizenDataView
     {
         return entityId;
     }
-
+    
     /**
      * Entity name getter.
      *
@@ -258,5 +270,22 @@ public class CitizenDataView
         saturation = buf.readDouble();
 
         job = ByteBufUtils.readUTF8String(buf);
+
+        final int length = buf.readInt();
+        for(int i = 0; i < length; i++)
+        {
+            final String textComp = ByteBufUtils.readUTF8String(buf);
+            final TextComponentTranslation textComponent = new TextComponentTranslation(textComp);
+            latestStatus[i] = textComponent;
+        }
+    }
+
+    /**
+     * Get the array of the latest status.
+     * @return the array of ITextComponents.
+     */
+    public ITextComponent[] getLatestStatus()
+    {
+        return latestStatus.clone();
     }
 }

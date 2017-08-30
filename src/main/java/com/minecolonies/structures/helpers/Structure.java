@@ -8,7 +8,6 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.Structures;
-import com.minecolonies.structures.fake.FakeEntity;
 import com.minecolonies.structures.fake.FakeWorld;
 import com.minecolonies.structures.lib.ModelHolder;
 import net.minecraft.block.Block;
@@ -144,6 +143,20 @@ public class Structure
         finally
         {
             IOUtils.closeQuietly(inputStream);
+        }
+    }
+
+    /**
+     * Constuctor of Structure, tries to create a new structure.
+     * creates a plain Structure to append rendering later.
+     * @param world         with world.
+     */
+    public Structure(@Nullable final World world)
+    {
+        if (world == null || world.isRemote)
+        {
+            this.settings = settings;
+            this.mc = Minecraft.getMinecraft();
         }
     }
 
@@ -707,12 +720,6 @@ public class Structure
             if (te.shouldRenderInPass(pass))
             {
                 final TileEntityRendererDispatcher terd = TileEntityRendererDispatcher.instance;
-                terd.func_190056_a(fakeWorld,
-                        Minecraft.getMinecraft().renderEngine,
-                        Minecraft.getMinecraft().fontRendererObj,
-                        new FakeEntity(fakeWorld),
-                        null,
-                        0.0F);
                 GL11.glPushMatrix();
                 terd.renderEngine = Minecraft.getMinecraft().renderEngine;
                 terd.preDrawBatch();

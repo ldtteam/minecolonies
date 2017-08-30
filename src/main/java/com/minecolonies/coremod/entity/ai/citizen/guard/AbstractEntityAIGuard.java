@@ -23,6 +23,7 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -264,6 +265,8 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
                 }
                 else
                 {
+                    worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.hunting"));
+
                     worker.getNavigator().clearPathEntity();
                     targetEntity = (EntityLivingBase) entity;
                     return AIState.GUARD_HUNT_DOWN_TARGET;
@@ -402,6 +405,8 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
     {
         if (building.shallPatrolManually() && building.getTask().equals(BuildingGuardTower.Task.PATROL))
         {
+            worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.patrolling"));
+
             final BlockPos pos = building.getNextPatrolTarget(currentPathTarget);
             if (pos != null)
             {
@@ -411,6 +416,8 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
         }
         else if (building.getTask().equals(BuildingGuardTower.Task.GUARD))
         {
+            worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.guarding"));
+
             BlockPos pos = building.getGuardPos();
             if (pos == null)
             {
@@ -421,6 +428,8 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
         }
         else if (building.getTask().equals(BuildingGuardTower.Task.FOLLOW))
         {
+            worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.following"));
+
             BlockPos pos = building.getPlayerToFollow();
             if (pos == null || BlockPosUtil.getDistance2D(pos, building.getColony().getCenter()) > Configurations.workingRangeTownHall + Configurations.townHallPadding)
             {
@@ -509,6 +518,8 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
      */
     private AIState gathering()
     {
+        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.gathering"));
+
         if (getItemsForPickUp() == null)
         {
             searchForItems();

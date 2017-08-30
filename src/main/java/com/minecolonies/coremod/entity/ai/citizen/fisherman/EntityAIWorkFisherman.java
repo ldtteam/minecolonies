@@ -20,6 +20,7 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemFishingRod;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -297,6 +298,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         {
             return FISHERMAN_SEARCHING_WATER;
         }
+        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.goingtopond"));
+
         if (walkToWater())
         {
             return getState();
@@ -347,6 +350,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private AIState findWater()
     {
+        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.searchingwater"));
+
         //Reset executedRotations when fisherman searches a new Pond
         executedRotations = 0;
         //If he can't find any pond, tell that to the player
@@ -427,6 +432,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     @Nullable
     private AIState doFishing()
     {
+        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.fishing"));
+
         @Nullable final AIState notReadyState = isReadyToFish();
         if (notReadyState != null)
         {
