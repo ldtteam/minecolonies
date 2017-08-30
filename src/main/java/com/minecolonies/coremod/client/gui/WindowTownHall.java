@@ -268,7 +268,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * Link to the xml file of the window.
      */
-    private static final String TOWNHALL_RESOURCE_SUFFIX = ":gui/windowtownhall.xml";
+    private static final String TOWNHALL_RESOURCE_SUFFIX = ":gui/windowTownHall.xml";
 
     /**
      * The button to go to the previous permission settings page.
