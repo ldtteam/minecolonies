@@ -72,6 +72,9 @@ import static com.minecolonies.api.util.constant.Constants.*;
             @Config.Comment("The average amount of nights between raids")
             public int averageNumberOfNightsBetweenRaids = 3;
 
+            @Config.Comment("The time in hours to auto-delete a colony after")
+            public int autoDeleteColoniesInHours = 0;
+
             /* schematics usage */
             @Config.Comment("Should the default schematics be ignored (from the jar)?")
             public  boolean ignoreSchematicsFromJar = false;

@@ -97,4 +97,10 @@ public interface IColony
      * @return Boolean value true if raid, false if not
      */
     boolean hasWillRaidTonight();
+
+    /**
+     * return whether or not a colony is able to be automatically deleted.
+     * @return true if so.
+     */
+    boolean canBeAutoDeleted();
 }
