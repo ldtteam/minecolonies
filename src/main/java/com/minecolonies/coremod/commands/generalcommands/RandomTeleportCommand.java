@@ -136,7 +136,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand
             final int x = getRandCoordinate();
             final int z = getRandCoordinate();
 
-            if (sender.getEntityWorld().getWorldBorder().getSize() > (sender.getEntityWorld().getSpawnPoint().getDistance(x,STARTING_Y,z)))
+            if (sender.getEntityWorld().getWorldBorder().getSize() > (sender.getEntityWorld().getSpawnPoint().getDistance(x, STARTING_Y, z)))
             {
                 continue;
             }
