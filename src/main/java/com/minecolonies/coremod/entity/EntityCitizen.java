@@ -1115,7 +1115,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         @NotNull final List<EntityItem> retList = new ArrayList<>();
         //I know streams look better but they are flawed in type erasure
-        for (final Object o : CompatibilityUtils.getWorld(this).getEntitiesWithinAABB(EntityItem.class, getEntityBoundingBox().expand(2.0F, 0.0F, 2.0F)))
+        for (final Object o :
+                CompatibilityUtils.getWorld(this).
+                        getEntitiesWithinAABB(EntityItem.class,
+                                new AxisAlignedBB(getPosition()).expand(2.0F, 1.0F, 2.0F).expand(-2.0F, -1.0F, -2.0F)))
         {
             if (o instanceof EntityItem)
             {
