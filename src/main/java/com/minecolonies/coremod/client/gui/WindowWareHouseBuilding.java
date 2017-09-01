@@ -54,7 +54,7 @@ public class WindowWareHouseBuilding extends AbstractWindowBuilding<BuildingWare
     /**
      * Constructor for window warehouse hut.
      *
-     * @param building {@link BuildingWarehouseView}.
+     * @param building {@link BuildingWarehouse.View}.
      */
     public WindowWareHouseBuilding(final BuildingWareHouse.View building)
     {
