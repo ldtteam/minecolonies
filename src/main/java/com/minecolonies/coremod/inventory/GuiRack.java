@@ -1,16 +1,22 @@
 package com.minecolonies.coremod.inventory;
 
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.tileentities.TileEntityRack;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.gui.inventory.GuiContainerCreative;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
+import org.lwjgl.input.Mouse;
+
+import java.io.IOException;
 
 @SideOnly(Side.CLIENT)
 public class GuiRack extends GuiContainer
@@ -18,7 +24,7 @@ public class GuiRack extends GuiContainer
     /**
      * The resource location of the texture.
      */
-    private static final ResourceLocation CHEST_GUI_TEXTURE = new ResourceLocation("textures/gui/container/generic_54.png");
+    private static final ResourceLocation CHEST_GUI_TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/gui/generic_108.png");
 
     /**
      * Amount of slots each row.
@@ -43,8 +49,7 @@ public class GuiRack extends GuiContainer
     /**
      * Offset inside the texture to use.
      */
-    private static final int TEXTURE_OFFSET = 126;
-
+    private static final int TEXTURE_OFFSET = 126*2-17;
 
     /**
      * The upper chest inventory.
@@ -91,7 +96,9 @@ public class GuiRack extends GuiContainer
         this.mc.getTextureManager().bindTexture(CHEST_GUI_TEXTURE);
         final int i = (this.width - this.xSize) / 2;
         final int j = (this.height - this.ySize) / 2;
-        this.drawTexturedModalRect(i, j, 0, 0, this.xSize, this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET-1);
-        this.drawTexturedModalRect(i, j + this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET-1, 0, TEXTURE_OFFSET, this.xSize, TEXTURE_HEIGHT);
+
+        this.drawModalRectWithCustomSizedTexture(i, j, 0, 0, this.xSize, this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, 350, 350);
+        this.drawModalRectWithCustomSizedTexture(i, j + this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, 0, TEXTURE_OFFSET, this.xSize, TEXTURE_HEIGHT, 350, 350);
+
     }
 }
