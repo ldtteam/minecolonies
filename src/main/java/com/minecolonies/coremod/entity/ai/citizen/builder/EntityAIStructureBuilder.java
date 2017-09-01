@@ -528,6 +528,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         {
             building.registerBlockPosition(block, pos, world);
         }
+
+        if(block == ModBlocks.blockWayPoint)
+        {
+            worker.getColony().addWayPoint(pos, world.getBlockState(pos));
+        }
     }
 
     @Override
