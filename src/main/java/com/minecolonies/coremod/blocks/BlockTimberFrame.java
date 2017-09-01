@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.blocks;
 
-import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;

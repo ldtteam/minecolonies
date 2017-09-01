@@ -19,6 +19,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -32,6 +33,7 @@ import java.util.Map;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+
 
 /**
  * Delivers item at needs.
@@ -136,6 +138,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return START_WORKING;
         }
 
+        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.gathering"));
+
         if (!worker.isWorkerAtSiteWithMove(gatherTarget, MIN_DISTANCE_TO_WAREHOUSE))
         {
             return GATHERING;
@@ -160,87 +164,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return GATHERING;
         }
         return START_WORKING;
-    }
-
-    /**
-     * Check if the worker can hold that much items.
-     * It depends on his building level.
-     * Level 1: 1 stack Level 2: 2 stacks, 4 stacks, 8, unlimited.
-     * That's 2^buildingLevel-1.
-     */
-    private boolean cannotHoldMoreItems()
-    {
-        if (getOwnBuilding().getBuildingLevel() >= getOwnBuilding().getMaxBuildingLevel())
-        {
-            return false;
-        }
-        return InventoryUtils.getAmountOfStacksInItemHandler(new InvWrapper(worker.getInventoryCitizen())) >= Math.pow(2, getOwnBuilding().getBuildingLevel() - 1.0D);
-    }
-
-    /**
-     * Gather not needed Items from building.
-     *
-     * @param building building to gather it from.
-     * @return true when finished.
-     */
-    private boolean gatherFromBuilding(@NotNull final AbstractBuilding building)
-    {
-        if (currentSlot >= building.getTileEntity().getSizeInventory())
-        {
-            return true;
-        }
-
-        final ItemStack stack = building.getTileEntity().getStackInSlot(currentSlot);
-        if (ItemStackUtils.isEmpty(stack) || workerRequiresItem(building, stack, alreadyKept)
-                || (building instanceof BuildingHome && stack.getItem() instanceof ItemFood))
-        {
-            return false;
-        }
-
-        InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandlers(building.getTileEntity().getSingleChestHandler(), currentSlot, new InvWrapper(worker.getInventoryCitizen()));
-        building.markDirty();
-        setDelay(DUMP_AND_GATHER_DELAY);
-        worker.setHeldItem(SLOT_HAND);
-        return false;
-    }
-
-    /**
-     * Check if the worker requires a certain amount of that item and if the deliveryman already kept it.
-     * Always leave one stack behind if the worker requires a certain amount of it. Just to be sure.
-     *
-     * @param building         the building of the worker.
-     * @param stack            the stack to check it with.
-     * @param localAlreadyKept already kept items.
-     * @return true if deliveryman should leave it behind.
-     */
-    private static boolean buildingRequiresCertainAmountOfItem(AbstractBuilding building, ItemStack stack, List<ItemStorage> localAlreadyKept)
-    {
-        for (final Map.Entry<ItemStorage, Integer> entry : building.getRequiredItemsAndAmount().entrySet())
-        {
-            if (entry.getKey().getItem() == stack.getItem()
-                    && entry.getKey().getDamageValue() == stack.getItemDamage()
-                    && !localAlreadyKept.contains(entry.getKey()))
-            {
-                localAlreadyKept.add(entry.getKey());
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Check if worker of a certain building requires the item now.
-     * Or the builder for the current task.
-     *
-     * @param building         the building to check for.
-     * @param stack            the stack to stack with.
-     * @param localAlreadyKept already kept resources.
-     * @return true if required.
-     */
-    public static boolean workerRequiresItem(AbstractBuilding building, ItemStack stack, List<ItemStorage> localAlreadyKept)
-    {
-        return (building instanceof AbstractBuildingWorker && ((AbstractBuildingWorker) building).neededForWorker(stack))
-                || buildingRequiresCertainAmountOfItem(building, stack, localAlreadyKept);
     }
 
     /**
@@ -271,12 +194,109 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     }
 
     /**
+     * Gather not needed Items from building.
+     *
+     * @param building building to gather it from.
+     * @return true when finished.
+     */
+    private boolean gatherFromBuilding(@NotNull final AbstractBuilding building)
+    {
+        if (currentSlot >= building.getTileEntity().getSizeInventory())
+        {
+            return true;
+        }
+
+        final ItemStack stack = building.getTileEntity().getStackInSlot(currentSlot);
+        if (workerRequiresItem(building, stack, alreadyKept)
+                || (building instanceof BuildingHome && stack.getItem() instanceof ItemFood))
+        {
+            return false;
+        }
+
+        InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandlers(building.getTileEntity().getSingleChestHandler(), currentSlot, new InvWrapper(worker.getInventoryCitizen()));
+        building.markDirty();
+        setDelay(DUMP_AND_GATHER_DELAY);
+        worker.setHeldItem(SLOT_HAND);
+        return false;
+    }
+
+    /**
+     * Check if the worker can hold that much items.
+     * It depends on his building level.
+     * Level 1: 1 stack Level 2: 2 stacks, 4 stacks, 8, unlimited.
+     * That's 2^buildingLevel-1.
+     */
+    private boolean cannotHoldMoreItems()
+    {
+        if (getOwnBuilding().getBuildingLevel() >= getOwnBuilding().getMaxBuildingLevel())
+        {
+            return false;
+        }
+        return InventoryUtils.getAmountOfStacksInItemHandler(new InvWrapper(worker.getInventoryCitizen())) >= Math.pow(2, getOwnBuilding().getBuildingLevel() - 1.0D);
+    }
+
+    /**
+     * Check if worker of a certain building requires the item now.
+     * Or the builder for the current task.
+     *
+     * @param building         the building to check for.
+     * @param stack            the stack to stack with.
+     * @param localAlreadyKept already kept resources.
+     * @return true if required.
+     */
+    public static boolean workerRequiresItem(final AbstractBuilding building, final ItemStack stack, final List<ItemStorage> localAlreadyKept)
+    {
+        return (building instanceof AbstractBuildingWorker && ((AbstractBuildingWorker) building).neededForWorker(stack))
+                || buildingRequiresCertainAmountOfItem(building, stack, localAlreadyKept);
+    }
+
+    /**
+     * Check if the worker requires a certain amount of that item and if the deliveryman already kept it.
+     * Always leave one stack behind if the worker requires a certain amount of it. Just to be sure.
+     *
+     * @param building         the building of the worker.
+     * @param stack            the stack to check it with.
+     * @param localAlreadyKept already kept items.
+     * @return true if deliveryman should leave it behind.
+     */
+    private static boolean buildingRequiresCertainAmountOfItem(final AbstractBuilding building, final ItemStack stack, final List<ItemStorage> localAlreadyKept)
+    {
+        for (final Map.Entry<ItemStorage, Integer> entry : building.getRequiredItemsAndAmount().entrySet())
+        {
+            if (entry.getKey().getItemStack().isItemEqual(stack))
+            {
+                if(localAlreadyKept.contains(entry.getKey()))
+                {
+                    final int index = localAlreadyKept.indexOf(entry.getKey());
+                    final ItemStorage temp = localAlreadyKept.get(index);
+
+                    if(temp.getAmount() >= entry.getValue())
+                    {
+                        return false;
+                    }
+
+                    localAlreadyKept.remove(index);
+                    temp.setAmount(temp.getAmount() + ItemStackUtils.getSize(stack));
+                    localAlreadyKept.add(temp);
+                    return true;
+                }
+
+                localAlreadyKept.add(entry.getKey());
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Dump the inventory into the warehouse.
      *
      * @return the next state to go to.
      */
     public AIState dump()
     {
+        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.dumping"));
+
         if (!worker.isWorkerAtSiteWithMove(wareHouse.getLocation(), MIN_DISTANCE_TO_WAREHOUSE))
         {
             return DUMPING;
@@ -302,6 +322,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         {
             return START_WORKING;
         }
+
+        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.delivering"));
 
         if (!worker.isWorkerAtSiteWithMove(buildingToDeliver.getLocation(), MIN_DISTANCE_TO_WAREHOUSE))
         {
@@ -437,7 +459,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      * @param buildingToDeliver the building to deliver to.
      * @return true if is ready to deliver.
      */
-    private boolean hasFood(AbstractBuilding buildingToDeliver)
+    private boolean hasFood(final AbstractBuilding buildingToDeliver)
     {
         return InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()),
                 stack -> !ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof ItemFood) > buildingToDeliver.getBuildingLevel();
