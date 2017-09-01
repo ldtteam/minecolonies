@@ -167,6 +167,7 @@ public class WindowWareHouseBuilding extends AbstractWindowBuilding<BuildingWare
     {
         MineColonies.getNetwork().sendToServer(new UpgradeWarehouseMessage(this.building));
         allowMoreStorageUpgrades = false;
+        this.updateResourcePane();
     }
 
     /**

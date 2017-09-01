@@ -121,7 +121,7 @@ public class GuiRack extends GuiContainer
         final int i = (this.width - this.xSize) / 2;
         int j = (this.height - this.ySize) / 2;
 
-        if (inventoryRows < SLOTS_EACH_ROW - 1)
+        if (inventoryRows < SLOTS_EACH_ROW)
         {
             drawModalRectWithCustomSizedTexture(i, j, 0, 0, this.xSize, this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, TEXTURE_SIZE, TEXTURE_SIZE);
             drawModalRectWithCustomSizedTexture(i, j + this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, 0,

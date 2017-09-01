@@ -48,6 +48,11 @@ public class BuildingWareHouse extends AbstractBuilding
     private static final String TAG_DELIVERYMAN = "Deliveryman";
 
     /**
+     * The storage tag for the storage capacity.
+     */
+    private static final String TAG_STORAGE     = "tagStorage" ;
+
+    /**
      * The list of deliverymen registered to this building.
      */
     private static final List<Vec3d> registeredDeliverymen = new ArrayList<>();
@@ -213,6 +218,7 @@ public class BuildingWareHouse extends AbstractBuilding
                 registeredDeliverymen.add(new Vec3d(pos));
             }
         }
+        storageUpgrade = compound.getInteger(TAG_STORAGE);
     }
 
     @NotNull
@@ -232,6 +238,7 @@ public class BuildingWareHouse extends AbstractBuilding
             levelTagList.appendTag(NBTUtil.createPosTag(new BlockPos(deliverymanBuilding)));
         }
         compound.setTag(TAG_DELIVERYMAN, levelTagList);
+        compound.setInteger(TAG_STORAGE, storageUpgrade);
     }
 
     /**
@@ -267,15 +274,18 @@ public class BuildingWareHouse extends AbstractBuilding
      */
     public void upgradeContainers(final World world)
     {
-        for (final BlockPos pos : getAdditionalCountainers())
+        if(storageUpgrade < MAX_STORAGE_UPGRADE)
         {
-            final TileEntity entity = world.getTileEntity(pos);
-            if (entity instanceof TileEntityRack)
+            for (final BlockPos pos : getAdditionalCountainers())
             {
-                ((TileEntityRack) entity).upgradeItemStorage();
+                final TileEntity entity = world.getTileEntity(pos);
+                if (entity instanceof TileEntityRack)
+                {
+                    ((TileEntityRack) entity).upgradeItemStorage();
+                }
             }
+            storageUpgrade++;
         }
-        storageUpgrade++;
         markDirty();
     }
 
