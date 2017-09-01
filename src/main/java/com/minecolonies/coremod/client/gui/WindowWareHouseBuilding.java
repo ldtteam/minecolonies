@@ -46,15 +46,9 @@ public class WindowWareHouseBuilding extends AbstractWindowBuilding<BuildingWare
     private boolean allowMoreStorageUpgrades = false;
 
     /**
-     * List of resources needed.
-     */
-    @NotNull
-    private final List<BuildingBuilderResource> resources = new ArrayList<>();
-
-    /**
      * Constructor for window warehouse hut.
      *
-     * @param building {@link BuildingWarehouse.View}.
+     * @param building {@link BuildingWareHouse.View}.
      */
     public WindowWareHouseBuilding(final BuildingWareHouse.View building)
     {

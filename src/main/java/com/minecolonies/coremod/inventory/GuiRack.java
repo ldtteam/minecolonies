@@ -119,7 +119,7 @@ public class GuiRack extends GuiContainer
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(getCorrectTextureForSlots(inventoryRows));
         final int i = (this.width - this.xSize) / 2;
-        int j = (this.height - this.ySize) / 2;
+        final int j = (this.height - this.ySize) / 2;
 
         if (inventoryRows < SLOTS_EACH_ROW)
         {
