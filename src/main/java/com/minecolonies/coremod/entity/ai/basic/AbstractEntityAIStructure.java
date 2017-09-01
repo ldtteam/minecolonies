@@ -109,7 +109,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     /**
      * String which shows if something is a waypoint.
      */
-    public static final String WAYPOINT_STRING = "waypoint";
+    public static final String WAYPOINT_STRING = "infrastructure";
 
     /**
      * Creates this ai base class and set's up important things.
