@@ -326,6 +326,12 @@ public class EventHandler
             return false;
         }
 
+        if(Configurations.gameplay.protectVillages && world.getVillageCollection().getNearestVillage(pos, Configurations.gameplay.workingRangeTownHall) != null)
+        {
+            Log.getLogger().warn("Village close by!");
+            return false;
+        }
+
         return true;
     }
 

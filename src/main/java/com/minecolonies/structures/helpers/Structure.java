@@ -30,6 +30,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
+import net.minecraft.util.datafix.DataFixer;
+import net.minecraft.util.datafix.DataFixesManager;
+import net.minecraft.util.datafix.FixTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -85,6 +88,11 @@ public class Structure
     private static final int BUFFER_SIZE = 1024;
 
     /**
+     * Required Datafixer
+     */
+    private final DataFixer fixer;
+
+    /**
      * Template of the structure.
      */
     private Template          template;
@@ -107,6 +115,7 @@ public class Structure
             this.settings = settings;
             this.mc = Minecraft.getMinecraft();
         }
+        this.fixer = DataFixesManager.createFixer();
 
         InputStream inputStream = null;
         try
@@ -136,7 +145,7 @@ public class Structure
             try
             {
                 this.md5 = Structure.calculateMD5(Structure.getStream(correctStructureName));
-                this.template = readTemplateFromStream(inputStream);
+                this.template = readTemplateFromStream(inputStream, fixer);
             }
             catch (final IOException e)
             {
@@ -147,6 +156,21 @@ public class Structure
         {
             IOUtils.closeQuietly(inputStream);
         }
+    }
+
+    /**
+     * Constuctor of Structure, tries to create a new structure.
+     * creates a plain Structure to append rendering later.
+     * @param world         with world.
+     */
+    public Structure(@Nullable final World world)
+    {
+        if (world == null || world.isRemote)
+        {
+            this.settings = settings;
+            this.mc = Minecraft.getMinecraft();
+        }
+        this.fixer = DataFixesManager.createFixer();
     }
 
     /**
@@ -422,11 +446,17 @@ public class Structure
     /**
      * Reads a template from an inputstream.
      */
-    private static Template readTemplateFromStream(final InputStream stream) throws IOException
+    private static Template readTemplateFromStream(final InputStream stream, final DataFixer fixer) throws IOException
     {
         final NBTTagCompound nbttagcompound = CompressedStreamTools.readCompressed(stream);
+
+        if (!nbttagcompound.hasKey("DataVersion", 99))
+        {
+            nbttagcompound.setInteger("DataVersion", 500);
+        }
+
         final Template template = new Template();
-        template.read(nbttagcompound);
+        template.read(fixer.process(FixTypes.STRUCTURE, nbttagcompound));
         return template;
     }
 
@@ -577,9 +607,14 @@ public class Structure
 
         for (int i = 0; i < entityInfoList.length; i++)
         {
-            final Entity finalEntity = EntityList.createEntityFromNBT(entityInfoList[i].entityData, world);
+            final NBTTagCompound compound = entityInfoList[i].entityData;
+            final Entity finalEntity = EntityList.createEntityFromNBT(compound, world);
             final Vec3d entityVec = Structure.transformedVec3d(settings, entityInfoList[i].pos).add(new Vec3d(pos));
 
+            if(!compound.hasKey("UpdateBlocked"))
+            {
+                compound.setByte("UpdatedBlocked", (byte)0);
+            }
             if (finalEntity != null)
             {
                 finalEntity.prevRotationYaw = (float) (finalEntity.getMirroredYaw(settings.getMirror()) - NINETY_DEGREES);
