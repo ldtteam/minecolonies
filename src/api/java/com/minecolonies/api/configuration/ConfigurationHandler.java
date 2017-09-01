@@ -78,7 +78,9 @@ public final class ConfigurationHandler
               "Set wether workers work in rain regardless of hut level").getBoolean();
             autoDeleteColoniesInHours = config.get(CATEGORY_GAMEPLAY, "autoDeleteColoniesInHours", autoDeleteColoniesInHours,
               "Sets the amount of hours until a colony will be deleted after not seeing it's mayor, set to zero to disable").getInt();
-            
+            protectVillages = config.get(CATEGORY_GAMEPLAY, "protectVillages", protectVillages,
+                    "Should players be allowed to build their colonies over existing villages?").getBoolean();
+
             /* schematics usage */
             ignoreSchematicsFromJar = config.get(CATEGORY_GAMEPLAY, "ignoreSchematicsFromJar", ignoreSchematicsFromJar,
               "Ignore the schematic from the jar file").getBoolean();
