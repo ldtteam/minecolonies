@@ -47,6 +47,11 @@ public class GuiRack extends GuiContainer
     private static final int GOOD_SIZE = 8;
 
     /**
+     * Multiply the current size by this amount.
+     */
+    private static final int SIZE_MULTIPLIER = 3;
+
+    /**
      * General y offset.
      */
     private static final int Y_OFFSET = 114;
@@ -83,7 +88,7 @@ public class GuiRack extends GuiContainer
 
     public GuiRack(final InventoryPlayer parInventoryPlayer, final TileEntityRack tileEntity, final TileEntityRack neighborRack, final World world, final BlockPos location)
     {
-        super(new ContainerRack(tileEntity, neighborRack, parInventoryPlayer, world, location));
+        super(new ContainerRack(tileEntity, neighborRack, parInventoryPlayer, location));
 
         if (neighborRack != null)
         {
@@ -130,10 +135,10 @@ public class GuiRack extends GuiContainer
         else
         {
             final int textureOffset = TEXTURE_OFFSET - EXTRA_OFFSET;
-            drawModalRectWithCustomSizedTexture(i, j, 0, 0, (this.xSize * 3) / 2, this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, TEXTURE_SIZE, TEXTURE_SIZE);
+            drawModalRectWithCustomSizedTexture(i, j, 0, 0, (this.xSize * SIZE_MULTIPLIER) / 2, this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, TEXTURE_SIZE, TEXTURE_SIZE);
             drawModalRectWithCustomSizedTexture(i,
                     j + Math.min(SLOTS_EACH_ROW, this.inventoryRows) * SLOT_OFFSET + SLOT_OFFSET - 1, 0,
-                    textureOffset, (this.xSize * 3) / 2, TEXTURE_HEIGHT + EXTRA_HEIGHT, TEXTURE_SIZE, TEXTURE_SIZE);
+                    textureOffset, (this.xSize * SIZE_MULTIPLIER) / 2, TEXTURE_HEIGHT + EXTRA_HEIGHT, TEXTURE_SIZE, TEXTURE_SIZE);
         }
     }
 
