@@ -108,7 +108,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     /**
      * String which shows if something is a waypoint.
      */
-    public static final String WAYPOINT_STRING = "waypoint";
+    public static final String WAYPOINT_STRING = "infrastructure";
 
     /**
      * Creates this ai base class and set's up important things.
@@ -567,6 +567,16 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         return Collections.emptyList();
     }
 
+    /*
+    * Get specific data of an entity.
+    * Workers should implement this correctly if they require this behavior.
+    * @return the entityInfo or null.
+    */
+    public Template.EntityInfo getEntityInfo()
+    {
+        return null;
+    }
+
     /**
      * Check how much of a certain stuck is actually required.
      *
@@ -905,4 +915,5 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     {
         worker.getColony().addWayPoint(pos, world.getBlockState(pos));
     }
+
 }
