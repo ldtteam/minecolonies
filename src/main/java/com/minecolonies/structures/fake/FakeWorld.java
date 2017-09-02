@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Holds a fake world.
@@ -24,8 +25,8 @@ public class FakeWorld extends World
     /**
      * Map of all states.
      */
-    private final HashMap<BlockPos, IBlockState> stateHashMap = new HashMap<>();
-    private final HashMap<BlockPos, TileEntity> entityHashMap = new HashMap<>();
+    private final Map<BlockPos, IBlockState> stateHashMap  = new HashMap<>();
+    private final Map<BlockPos, TileEntity>  entityHashMap = new HashMap<>();
 
     private final IBlockState blockState;
     private final TileEntity entity;
