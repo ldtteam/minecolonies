@@ -1,6 +1,7 @@
 package com.minecolonies.structures.fake;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -119,7 +120,11 @@ public class FakeWorld extends World
     {
         if(simulateWorld)
         {
-            return stateHashMap.get(pos);
+            if(stateHashMap.containsKey(pos))
+            {
+                return stateHashMap.get(pos);
+            }
+            return Blocks.AIR.getDefaultState();
         }
         return this.blockState;
     }
@@ -131,5 +136,6 @@ public class FakeWorld extends World
         {
             return entityHashMap.get(pos);
         }
+        return entity;
     }
 }
