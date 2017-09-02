@@ -201,18 +201,19 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private boolean gatherFromBuilding(@NotNull final AbstractBuilding building)
     {
-        if (currentSlot >= building.getTileEntity().getSizeInventory())
+        final ItemStack stack = building.getTileEntity().getStackInSlot(currentSlot);
+
+        if (currentSlot >= building.getTileEntity().getSizeInventory() || ItemStackUtils.isEmpty(stack))
         {
             return true;
         }
 
-        final ItemStack stack = building.getTileEntity().getStackInSlot(currentSlot);
         if (workerRequiresItem(building, stack, alreadyKept)
                 || (building instanceof BuildingHome && stack.getItem() instanceof ItemFood))
         {
             return false;
         }
-
+        
         InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandlers(building.getTileEntity().getSingleChestHandler(), currentSlot, new InvWrapper(worker.getInventoryCitizen()));
         building.markDirty();
         setDelay(DUMP_AND_GATHER_DELAY);

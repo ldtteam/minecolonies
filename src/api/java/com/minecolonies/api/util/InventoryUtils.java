@@ -1348,6 +1348,12 @@ public final class InventoryUtils
     public static boolean transferItemStackIntoNextFreeSlotInItemHandlers(@NotNull final IItemHandler sourceHandler, @NotNull int sourceIndex, @NotNull IItemHandler targetHandler)
     {
         ItemStack sourceStack = sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, true);
+
+        if(ItemStackUtils.isEmpty(sourceStack))
+        {
+            return true;
+        }
+
         final ItemStack originalStack = sourceStack.copy();
 
         for (int i = 0; i < targetHandler.getSlots(); i++)
