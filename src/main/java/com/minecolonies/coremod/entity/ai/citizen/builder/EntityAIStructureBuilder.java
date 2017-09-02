@@ -397,6 +397,16 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         return Collections.emptyList();
     }
 
+    @Override
+    public Template.EntityInfo getEntityInfo()
+    {
+        if (job.getStructure() != null && job.getStructure().getEntityinfo() != null)
+        {
+            return job.getStructure().getEntityinfo();
+        }
+        return null;
+    }
+
     /**
      * Get itemStack of tileEntityData. Retrieve the data from the tileEntity.
      *
@@ -517,6 +527,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         if (building != null)
         {
             building.registerBlockPosition(block, pos, world);
+        }
+
+        if(block == ModBlocks.blockWayPoint)
+        {
+            worker.getColony().addWayPoint(pos, world.getBlockState(pos));
         }
     }
 
