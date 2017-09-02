@@ -95,7 +95,7 @@ public class Structure
     /**
      * List of models.
      */
-    private final ArrayList<ModelHolder> modelList = new ArrayList<>();
+    private final List<ModelHolder> modelList = new ArrayList<>();
 
     /**
      * Template of the structure.

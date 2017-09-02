@@ -24,8 +24,8 @@ public class FakeWorld extends World
     /**
      * Map of all states.
      */
-    private HashMap<BlockPos, IBlockState> stateHashMap = new HashMap<>();
-    private HashMap<BlockPos, TileEntity> entityHashMap = new HashMap<>();
+    private final HashMap<BlockPos, IBlockState> stateHashMap = new HashMap<>();
+    private final HashMap<BlockPos, TileEntity> entityHashMap = new HashMap<>();
 
     private final IBlockState blockState;
     private final TileEntity entity;
