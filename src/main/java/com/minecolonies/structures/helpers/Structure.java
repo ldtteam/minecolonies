@@ -28,6 +28,7 @@ import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityFlowerPot;
 import net.minecraft.util.*;
 import net.minecraft.util.datafix.DataFixer;
 import net.minecraft.util.datafix.DataFixesManager;
@@ -529,10 +530,27 @@ public class Structure
         final Template.BlockInfo[] blockList = this.getBlockInfoWithSettings(this.settings);
         final Entity[] entityList = this.getEntityInfoWithSettings(clientWorld, startingPos, this.settings);
 
+        final FakeWorld fakeWorld = new FakeWorld(null, clientWorld.getSaveHandler(), clientWorld.getWorldInfo(), clientWorld.provider, clientWorld.profiler, true, null, true);
+
         for (final Template.BlockInfo aBlockList : blockList)
         {
-            Block block = aBlockList.blockState.getBlock();
+            final IBlockState iblockstate = aBlockList.blockState;
+            fakeWorld.setBlockState(aBlockList.pos, iblockstate);
+            final Block block = iblockstate.getBlock();
+            TileEntity tileentity = null;
+            if (block.hasTileEntity(aBlockList.blockState) && aBlockList.tileentityData != null)
+            {
+                tileentity = block.createTileEntity(clientWorld, iblockstate);
+                tileentity.readFromNBT(aBlockList.tileentityData);
+            }
+            fakeWorld.setTileEntity(aBlockList.pos, tileentity);
+        }
+
+        for (final Template.BlockInfo aBlockList : blockList)
+        {
             IBlockState iblockstate = aBlockList.blockState;
+            Block block = iblockstate.getBlock();
+            iblockstate = aBlockList.blockState.getBlock().getActualState(aBlockList.blockState, fakeWorld, aBlockList.pos);
 
             if (block == ModBlocks.blockSubstitution)
             {
@@ -548,13 +566,8 @@ public class Structure
             final BlockPos blockpos = aBlockList.pos.add(startingPos);
             final IBlockState iBlockExtendedState = block.getExtendedState(iblockstate, clientWorld, blockpos);
             final IBakedModel ibakedmodel = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(iblockstate);
-            TileEntity tileentity = null;
-            if (block.hasTileEntity(iblockstate) && aBlockList.tileentityData != null)
-            {
-                tileentity = block.createTileEntity(clientWorld, iblockstate);
-                tileentity.readFromNBT(aBlockList.tileentityData);
-            }
-            final ModelHolder models = new ModelHolder(blockpos, iblockstate, iBlockExtendedState, tileentity, ibakedmodel);
+
+            final ModelHolder models = new ModelHolder(blockpos, iblockstate, iBlockExtendedState, fakeWorld.getTileEntity(aBlockList.pos), ibakedmodel);
             getQuads(models, models.quads);
             this.renderGhost(clientWorld, models, player, partialTicks);
         }
@@ -677,11 +690,11 @@ public class Structure
             ForgeHooksClient.setRenderLayer(originalLayer);
         }
 
-        if (holder.te != null && !holder.isRendered())
+        if (holder.te != null)
         {
             final TileEntity te = holder.te;
             te.setPos(holder.pos);
-            final FakeWorld fakeWorld = new FakeWorld(holder.actualState, world.getSaveHandler(), world.getWorldInfo(), world.provider, world.profiler, true);
+            final FakeWorld fakeWorld = new FakeWorld(holder.actualState, world.getSaveHandler(), world.getWorldInfo(), world.provider, world.profiler, true, te, true);
             te.setWorld(fakeWorld);
             final int pass = 0;
 
