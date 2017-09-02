@@ -7,7 +7,6 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
@@ -78,13 +77,13 @@ public class ContainerRack extends net.minecraft.inventory.Container
      * Creates an instance of our field container, this may be serve to open the GUI.
      *
      * @param tileEntityRack  the tileEntity of the field containing the inventory.
+     * @param neighborRack the neighboring rack.
      * @param playerInventory the player inventory.
-     * @param world           the world.
      * @param location        the position of the field.
      */
     public ContainerRack(
             @NotNull final TileEntityRack tileEntityRack, @Nullable final TileEntityRack neighborRack,
-            final InventoryPlayer playerInventory, @NotNull final World world, @NotNull final BlockPos location)
+            final InventoryPlayer playerInventory, @NotNull final BlockPos location)
     {
         super();
         if (neighborRack != null)
@@ -138,7 +137,8 @@ public class ContainerRack extends net.minecraft.inventory.Container
                         playerInventory,
                         j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
                         PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
-                        PLAYER_INVENTORY_INITIAL_Y_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize, 8) + i * PLAYER_INVENTORY_OFFSET_EACH
+                        PLAYER_INVENTORY_INITIAL_Y_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize, INVENTORY_BAR_SIZE)
+                                + i * PLAYER_INVENTORY_OFFSET_EACH
                 ));
             }
         }
@@ -148,7 +148,8 @@ public class ContainerRack extends net.minecraft.inventory.Container
             addSlotToContainer(new Slot(
                     playerInventory, i,
                     PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
-                    PLAYER_INVENTORY_HOTBAR_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize, 8)
+                    PLAYER_INVENTORY_HOTBAR_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize,
+                            INVENTORY_BAR_SIZE)
             ));
         }
     }
