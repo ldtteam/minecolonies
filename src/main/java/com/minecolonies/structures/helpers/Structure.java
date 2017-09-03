@@ -547,6 +547,7 @@ public class Structure
 
         if (modelList.isEmpty())
         {
+            lastStartingPos = startingPos;
             final Template.BlockInfo[] blockList = this.getBlockInfoWithSettings(this.settings);
 
             final FakeWorld fakeWorld = new FakeWorld(null, clientWorld.getSaveHandler(), clientWorld.getWorldInfo(), clientWorld.provider, clientWorld.profiler, true, null, true);
