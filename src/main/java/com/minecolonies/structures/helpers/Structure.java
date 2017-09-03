@@ -98,6 +98,11 @@ public class Structure
     private final List<ModelHolder> modelList = new ArrayList<>();
 
     /**
+     * The last starting position.
+     */
+    private BlockPos lastStartingPos = BlockPos.ORIGIN;
+
+    /**
      * Template of the structure.
      */
     private Template          template;
@@ -534,6 +539,11 @@ public class Structure
     public void renderStructure(@NotNull final BlockPos startingPos, @NotNull final World clientWorld, @NotNull final EntityPlayer player, final float partialTicks)
     {
         final Entity[] entityList = this.getEntityInfoWithSettings(clientWorld, startingPos, this.settings);
+
+        if(!lastStartingPos.equals(startingPos))
+        {
+            modelList.clear();
+        }
 
         if (modelList.isEmpty())
         {
