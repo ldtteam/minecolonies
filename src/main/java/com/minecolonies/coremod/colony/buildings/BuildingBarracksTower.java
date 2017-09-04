@@ -9,13 +9,13 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Building class of the BarracksTower.
  */
-public class BuildingGuardTower extends AbstractBuildingGuards
+public class BuildingBarracksTower extends AbstractBuildingGuards
 {
 
     /**
      * Name description of the guard hat.
      */
-    private static final String GUARD_TOWER = "GuardTower";
+    private static final String GUARD_TOWER = "BarracksTower";
 
     /**
      * Constructor for the BarracksTower building.
@@ -23,10 +23,11 @@ public class BuildingGuardTower extends AbstractBuildingGuards
      * @param c Colony the building is in.
      * @param l Location of the building.
      */
-    public BuildingGuardTower(final Colony c, final BlockPos l)
+    public BuildingBarracksTower(final Colony c, final BlockPos l)
     {
         super(c, l);
     }
+
 
     /**
      * Gets the name of the schematic.
@@ -57,4 +58,5 @@ public class BuildingGuardTower extends AbstractBuildingGuards
         }
     }
 }
+
 
