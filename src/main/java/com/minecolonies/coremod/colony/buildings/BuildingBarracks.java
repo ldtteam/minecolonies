@@ -10,6 +10,13 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BuildingBarracks extends AbstractBuilding
 {
+    //todo GUI not working
+    //todo scan all in
+    //todo try to build
+    //todo if not build set tower position manually.
+    //todo rotate tower as neccessary
+    //todo let tower get up to 5 worker (guards)
+    //todo coordiante all guards using the GUI.
     /**
      * General Barracks description key.
      */
