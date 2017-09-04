@@ -430,3 +430,5 @@ com.minecolonies.coremod.gui.workerHuts.unassign=Remove citizen
 tile.minecolonies.blockTimberFrame.name=Plain Timber Frame
 tile.minecolonies.blockMinecoloniesRack.name=Rack
 tile.minecolonies.blockWayPoint.name=Waypoint placeholder
+
+com.minecolonies.coremod.permission.teleport_to_colony=Teleport to Colony
