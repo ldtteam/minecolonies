@@ -1,7 +1,10 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.blockout.views.Window;
+import com.minecolonies.coremod.client.gui.WindowBarracksBuilding;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BuildingBarracks extends AbstractBuilding
 {
-    //todo GUI not working
     //todo scan all in
     //todo try to build
     //todo if not build set tower position manually.
@@ -59,5 +61,36 @@ public class BuildingBarracks extends AbstractBuilding
     public int getMaxBuildingLevel()
     {
         return BARRACKS_HUT_MAX_LEVEL;
+    }
+
+    /**
+     * BuildingDeliveryman View.
+     */
+    public static class View extends AbstractBuildingHut.View
+    {
+
+        /**
+         * Instantiate the deliveryman view.
+         *
+         * @param c the colonyview to put it in
+         * @param l the positon
+         */
+        public View(final ColonyView c, final BlockPos l)
+        {
+            super(c, l);
+        }
+
+        @NotNull
+        @Override
+        public Window getWindow()
+        {
+            return new WindowBarracksBuilding(this);
+        }
+
+        @Override
+        public void deserialize(@NotNull final ByteBuf buf)
+        {
+            super.deserialize(buf);
+        }
     }
 }

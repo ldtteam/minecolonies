@@ -463,5 +463,6 @@ com.minecolonies.coremod.status.stuckinleaves=Stuck in leaves!
 tile.minecolonies.blockwaypoint.name=Waypoint placeholder
 tile.minecolonies.blockHutBarracksTower.name=BarracksTower
 tile.minecolonies.blockHutBarracks.name=Barracks
+com.minecolonies.coremod.gui.workerHuts.buildBarracks=Barracks
 
 com.minecolonies.coremod.permission.teleport_to_colony=Teleport to Colony

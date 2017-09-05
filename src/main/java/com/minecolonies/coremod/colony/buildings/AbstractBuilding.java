@@ -129,7 +129,7 @@ public abstract class AbstractBuilding
         addMapping("Fisherman", BuildingFisherman.class, BuildingFisherman.View.class, BlockHutFisherman.class);
         addMapping("GuardTower", BuildingGuardTower.class, BuildingGuardTower.View.class, BlockHutGuardTower.class);
         addMapping("WareHouse", BuildingWareHouse.class, BuildingWareHouse.View.class, BlockHutWareHouse.class);
-        addMapping("Barracks", BuildingBarracks.class, AbstractBuilding.View.class, BlockHutBarracks.class);
+        addMapping("Barracks", BuildingBarracks.class, BuildingBarracks.View.class, BlockHutBarracks.class);
         addMapping("BarracksTower", BuildingBarracksTower.class, AbstractBuildingGuards.View.class, BlockHutBarracksTower.class);
 
     }
