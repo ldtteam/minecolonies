@@ -45,6 +45,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
      */
     private static final String TAG_TASK            = "TASK";
     private static final String TAG_JOB             = "job";
+
     /**
      * Max level of the guard hut.
      */
@@ -59,11 +60,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
      * The health multiplier each level after level 4.
      */
     private static final int HEALTH_MULTIPLIER = 2;
-
-    /**
-     * Base max health of the guard.
-     */
-    private static final double BASE_MAX_HEALTH = 20D;
 
     /**
      * Vision bonus per level.
@@ -166,7 +162,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         {
             if (newLevel > MAX_VISION_BONUS_MULTIPLIER)
             {
-                citizen.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH + getBonusHealth());
+                citizen.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(SharedMonsterAttributes.MAX_HEALTH.getDefaultValue() + getBonusHealth());
             }
         }
 
@@ -354,7 +350,8 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     {
         if (citizen != null && citizen.getCitizenEntity() != null)
         {
-            citizen.getCitizenEntity().getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH);
+            citizen.getCitizenEntity().getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(SharedMonsterAttributes.MAX_HEALTH.getDefaultValue());
+            citizen.getCitizenEntity().getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(SharedMonsterAttributes.ARMOR.getDefaultValue());
         }
         super.removeCitizen(citizen);
     }
@@ -364,10 +361,23 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     {
         if (citizen != null && citizen.getCitizenEntity() != null)
         {
-            citizen.getCitizenEntity().getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH + getBonusHealth());
+            citizen.getCitizenEntity().getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(SharedMonsterAttributes.MAX_HEALTH.getDefaultValue() + getBonusHealth());
+            citizen.getCitizenEntity().getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(SharedMonsterAttributes.ARMOR.getDefaultValue() + getDefenceBonus());
         }
         super.setWorker(citizen);
     }
+
+    /**
+     * Get an Offence bonus related to the Buildingtype.
+     * @return an Integer.
+     */
+    public abstract int getOffenceBonus();
+
+    /**
+     * Get an Defence bonus related to the Buildingtype.
+     * @return an Integer.
+     */
+    public abstract int getDefenceBonus();
 
     @Override
     public void readFromNBT(@NotNull final NBTTagCompound compound)

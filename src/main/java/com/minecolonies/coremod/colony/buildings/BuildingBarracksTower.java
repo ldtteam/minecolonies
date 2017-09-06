@@ -11,11 +11,15 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BuildingBarracksTower extends AbstractBuildingGuards
 {
-
     /**
      * Name description of the guard hat.
      */
     private static final String GUARD_TOWER = "BarracksTower";
+
+    /**
+     * Offence bonus related to this building.
+     */
+    private static final int OFFENCE_BONUS = 5;
 
     /**
      * Position of the barracks.
@@ -31,6 +35,18 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     public BuildingBarracksTower(final Colony c, final BlockPos l)
     {
         super(c, l);
+    }
+
+    @Override
+    public int getOffenceBonus()
+    {
+        return OFFENCE_BONUS;
+    }
+
+    @Override
+    public int getDefenceBonus()
+    {
+        return 0;
     }
 
     /**

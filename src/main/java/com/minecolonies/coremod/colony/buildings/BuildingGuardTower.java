@@ -18,6 +18,11 @@ public class BuildingGuardTower extends AbstractBuildingGuards
     private static final String GUARD_TOWER = "GuardTower";
 
     /**
+     * Defence bonus related to this building.
+     */
+    private static final int DEFENCE_BONUS  = 5;
+
+    /**
      * Constructor for the BarracksTower building.
      *
      * @param c Colony the building is in.
@@ -26,6 +31,18 @@ public class BuildingGuardTower extends AbstractBuildingGuards
     public BuildingGuardTower(final Colony c, final BlockPos l)
     {
         super(c, l);
+    }
+
+    @Override
+    public int getOffenceBonus()
+    {
+        return 0;
+    }
+
+    @Override
+    public int getDefenceBonus()
+    {
+        return DEFENCE_BONUS;
     }
 
     /**
