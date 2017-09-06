@@ -2,6 +2,8 @@ package com.minecolonies.coremod.colony.buildings;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
@@ -47,6 +49,20 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     public int getDefenceBonus()
     {
         return 0;
+    }
+
+    @Override
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    {
+        barracks = NBTUtil.getPosFromTag(compound);
+        super.readFromNBT(compound);
+    }
+
+    @Override
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    {
+        NBTUtil.createPosTag(barracks);
+        super.writeToNBT(compound);
     }
 
     /**
