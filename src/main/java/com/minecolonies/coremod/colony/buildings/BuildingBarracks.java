@@ -75,7 +75,6 @@ public class BuildingBarracks extends AbstractBuilding
 
     final Tuple<BlockPos, EnumFacing> getPositionAndFacingForLevel(final int level)
     {
-        //todo rotated north maybe off!
         BlockPos position = getLocation();
         int tempLevel = level;
 
@@ -104,7 +103,7 @@ public class BuildingBarracks extends AbstractBuilding
             tempLevel -= 4;
         }
 
-        EnumFacing facing = EnumFacing.EAST;
+        EnumFacing facing = EnumFacing.NORTH;
         switch (tempLevel)
         {
             case 1:
@@ -120,7 +119,7 @@ public class BuildingBarracks extends AbstractBuilding
                 break;
             case 4:
                 position = position.offset(EnumFacing.NORTH, TOWER_OFFSET).offset(EnumFacing.WEST, TOWER_OFFSET);
-                facing = EnumFacing.NORTH;
+                facing = EnumFacing.EAST;
                 break;
             default:
                 //do nothing
