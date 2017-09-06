@@ -1,24 +1,35 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.blockout.views.Window;
+import com.minecolonies.coremod.blocks.BlockHutBarracksTower;
+import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.client.gui.WindowBarracksBuilding;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * Building for the Barracks.
  */
 public class BuildingBarracks extends AbstractBuilding
 {
-    //todo scan all in
-    //todo try to build
-    //todo if not build set tower position manually.
-    //todo rotate tower as neccessary
-    //todo let tower get up to 5 worker (guards)
+    //todo rescan them with default placement of build tool
+
+
+    //todo associate the building with the tower and vice versa.
+    //todo restrict tower level by barrack level
+
     //todo coordiante all guards using the GUI.
+
     /**
      * General Barracks description key.
      */
@@ -30,6 +41,11 @@ public class BuildingBarracks extends AbstractBuilding
     private static final int BARRACKS_HUT_MAX_LEVEL = 5;
 
     /**
+     * Tower position offset.
+     */
+    private static final int TOWER_OFFSET = 8;
+
+    /**
      * Constructor for the Barracks building.
      *
      * @param c Colony the building is in.
@@ -38,6 +54,96 @@ public class BuildingBarracks extends AbstractBuilding
     public BuildingBarracks(final Colony c, final BlockPos l)
     {
         super(c, l);
+    }
+
+    @Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        final World world = getColony().getWorld();
+        if (world != null)
+        {
+            final Tuple<BlockPos, EnumFacing> tuple = getPositionAndFacingForLevel(newLevel);
+            world.setBlockState(tuple.getFirst(), ModBlocks.blockHutBarracksTower.getDefaultState().withProperty(BlockHutBarracksTower.FACING, tuple.getSecond()));
+            getColony().addNewBuilding((TileEntityColonyBuilding) world.getTileEntity(tuple.getFirst()));
+
+            final AbstractBuilding building = getColony().getBuilding(tuple.getFirst());
+            if(building instanceof BuildingBarracksTower)
+            {
+                ((BuildingBarracksTower) building).addBarracks(getLocation());
+            }
+        }
+        super.onUpgradeComplete(newLevel);
+    }
+
+    final Tuple<BlockPos, EnumFacing> getPositionAndFacingForLevel(final int level)
+    {
+        BlockPos position = getLocation();
+        int tempLevel = level;
+
+        if (isMirrored())
+        {
+            tempLevel += 1;
+        }
+
+        switch (getRotation())
+        {
+            case 1:
+                tempLevel += 3;
+                break;
+            case 2:
+                tempLevel += 1;
+                break;
+            case 3:
+                tempLevel += 2;
+                break;
+            default:
+                //do nothing
+        }
+
+        if (tempLevel > 4)
+        {
+            tempLevel -= 4;
+        }
+
+        EnumFacing facing = EnumFacing.EAST;
+        switch (tempLevel)
+        {
+            case 1:
+                position = position.offset(EnumFacing.SOUTH, TOWER_OFFSET).offset(EnumFacing.WEST, TOWER_OFFSET);
+                break;
+            case 2:
+                position = position.offset(EnumFacing.NORTH, TOWER_OFFSET).offset(EnumFacing.EAST, TOWER_OFFSET);
+                facing = EnumFacing.SOUTH;
+                break;
+            case 3:
+                position = position.offset(EnumFacing.SOUTH, TOWER_OFFSET).offset(EnumFacing.EAST, TOWER_OFFSET);
+                facing = EnumFacing.WEST;
+                break;
+            case 4:
+                position = position.offset(EnumFacing.NORTH, TOWER_OFFSET).offset(EnumFacing.WEST, TOWER_OFFSET);
+                facing = EnumFacing.NORTH;
+                break;
+            default:
+                //do nothing
+        }
+
+        return new Tuple<>(position, facing);
+    }
+
+    @Override
+    public void onDestroyed()
+    {
+        final World world = getColony().getWorld();
+        if (world != null)
+        {
+            for (int i = 1; i <= this.getBuildingLevel(); i++)
+            {
+                final Tuple<BlockPos, EnumFacing> tuple = getPositionAndFacingForLevel(i);
+                world.setBlockState(tuple.getFirst(), ModBlocks.blockHutBarracksTower.getDefaultState().withProperty(BlockHutBarracksTower.FACING, tuple.getSecond()));
+                getColony().addNewBuilding((TileEntityColonyBuilding) world.getTileEntity(tuple.getFirst()));
+            }
+        }
+        super.onDestroyed();
     }
 
     /**
@@ -68,7 +174,6 @@ public class BuildingBarracks extends AbstractBuilding
      */
     public static class View extends AbstractBuildingHut.View
     {
-
         /**
          * Instantiate the deliveryman view.
          *

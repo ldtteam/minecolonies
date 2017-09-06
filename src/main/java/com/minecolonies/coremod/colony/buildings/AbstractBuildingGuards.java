@@ -10,6 +10,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
@@ -161,9 +162,12 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     @Override
     public void onUpgradeComplete(final int newLevel)
     {
-        if (this.getWorkerEntity() != null && newLevel > MAX_VISION_BONUS_MULTIPLIER)
+        for(final EntityCitizen citizen: getWorkerEntities())
         {
-            this.getWorkerEntity().getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH + getBonusHealth());
+            if (newLevel > MAX_VISION_BONUS_MULTIPLIER)
+            {
+                citizen.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH + getBonusHealth());
+            }
         }
 
         super.onUpgradeComplete(newLevel);
@@ -346,13 +350,19 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     }
 
     @Override
+    public void removeCitizen(final CitizenData citizen)
+    {
+        if (citizen != null && citizen.getCitizenEntity() != null)
+        {
+            citizen.getCitizenEntity().getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH);
+        }
+        super.removeCitizen(citizen);
+    }
+
+    @Override
     public void setWorker(final CitizenData citizen)
     {
-        if (citizen == null && this.getWorkerEntity() != null)
-        {
-            this.getWorkerEntity().getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH);
-        }
-        else if (citizen != null && citizen.getCitizenEntity() != null)
+        if (citizen != null && citizen.getCitizenEntity() != null)
         {
             citizen.getCitizenEntity().getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH + getBonusHealth());
         }

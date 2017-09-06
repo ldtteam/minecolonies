@@ -10,6 +10,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.*;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
@@ -665,7 +666,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public void addExperience(final double xp)
     {
-        final BuildingHome home = getHomeBuilding();
+        final AbstractBuilding home = getHomeBuilding();
 
         final double citizenHutLevel = home == null ? 0 : home.getBuildingLevel();
         final double citizenHutMaxLevel = home == null ? 1 : home.getMaxBuildingLevel();
@@ -752,7 +753,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     @Nullable
-    private BuildingHome getHomeBuilding()
+    private AbstractBuilding getHomeBuilding()
     {
         return (citizenData == null) ? null : citizenData.getHomeBuilding();
     }
@@ -1142,10 +1143,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
             }
             else
             {
-                final BuildingHome home = getHomeBuilding();
-                if(home != null && home.isFoodNeeded())
+                final AbstractBuilding home = getHomeBuilding();
+                if(home != null && home instanceof BuildingHome && ((BuildingHome)home).isFoodNeeded())
                 {
-                    home.setFoodNeeded(false);
+                    ((BuildingHome)home).setFoodNeeded(false);
                 }
             }
         }
@@ -1587,7 +1588,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @Override
     public BlockPos getHomePosition()
     {
-        @Nullable final BuildingHome homeBuilding = getHomeBuilding();
+        @Nullable final AbstractBuilding homeBuilding = getHomeBuilding();
         if (homeBuilding != null)
         {
             return homeBuilding.getLocation();

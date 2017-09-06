@@ -1292,7 +1292,7 @@ public class Colony implements IColony
                 }
             }
 
-            final BuildingHome home = citizen.getHomeBuilding();
+            final AbstractBuilding home = citizen.getHomeBuilding();
             if (home != null)
             {
                 housing += home.getBuildingLevel();
@@ -1682,9 +1682,16 @@ public class Colony implements IColony
 
         for (final AbstractBuilding b : buildings.values())
         {
-            if (b instanceof BuildingHome && b.getBuildingLevel() > 0)
+            if(b.getBuildingLevel() > 0)
             {
-                newMaxCitizens += ((BuildingHome) b).getMaxInhabitants();
+                if (b instanceof BuildingHome)
+                {
+                    newMaxCitizens += ((BuildingHome) b).getMaxInhabitants();
+                }
+                else if (b instanceof BuildingBarracksTower)
+                {
+                    newMaxCitizens += b.getBuildingLevel();
+                }
             }
         }
         // Have at least the minimum amount of citizens

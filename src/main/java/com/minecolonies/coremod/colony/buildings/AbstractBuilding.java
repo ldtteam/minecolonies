@@ -14,6 +14,7 @@ import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
@@ -23,6 +24,7 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants;
@@ -637,12 +639,17 @@ public abstract class AbstractBuilding
 
     /**
      * Requests an upgrade for the current building.
+     * @param player
      */
-    public void requestUpgrade()
+    public void requestUpgrade(final EntityPlayer player)
     {
         if (buildingLevel < getMaxBuildingLevel())
         {
             requestWorkOrder(buildingLevel + 1);
+        }
+        else
+        {
+            player.addChatComponentMessage(new TextComponentTranslation("com.minecolonies.coremod.worker.noUpgrade"));
         }
     }
 
@@ -686,7 +693,7 @@ public abstract class AbstractBuilding
      *
      * @param level Desired level.
      */
-    private void requestWorkOrder(final int level)
+    protected void requestWorkOrder(final int level)
     {
         for (@NotNull final WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
         {

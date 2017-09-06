@@ -67,7 +67,12 @@ public class WindowHireWorker extends Window implements ButtonHandler
     /**
      * Position of the id label of each citizen in the list.
      */
-    private static final int CITIZEN_ID_LABEL_POSITION = 3;
+    private static final int CITIZEN_ID_LABEL_POSITION = 4;
+
+    /**
+     * Id of the fire button
+     */
+    private static final String BUTTON_FIRE = "fire";
 
     /**
      * Contains all the citizens.
@@ -76,7 +81,7 @@ public class WindowHireWorker extends Window implements ButtonHandler
     /**
      * The view of the current building.
      */
-    private final AbstractBuilding.View building;
+    private final AbstractBuildingWorker.View building;
 
     /**
      * The colony.
@@ -93,7 +98,7 @@ public class WindowHireWorker extends Window implements ButtonHandler
     {
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
         this.colony = c;
-        building = colony.getBuilding(buildingId);
+        building = (AbstractBuildingWorker.View) colony.getBuilding(buildingId);
         updateCitizens();
     }
 
@@ -107,8 +112,9 @@ public class WindowHireWorker extends Window implements ButtonHandler
 
         //Removes all citizens which already have a job.
         citizens = colony.getCitizens().values().stream()
-                     .filter(citizen -> citizen.getWorkBuilding() == null)
-                     .collect(Collectors.toList());
+                .filter(citizen -> (citizen.getWorkBuilding() == null && !building.hasEnoughWorkers())
+                        || building.getLocation().equals(citizen.getWorkBuilding()))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -150,16 +156,27 @@ public class WindowHireWorker extends Window implements ButtonHandler
                     final AbstractBuildingWorker.Skill primary = ((AbstractBuildingWorker.View) building).getPrimarySkill();
                     final AbstractBuildingWorker.Skill secondary = ((AbstractBuildingWorker.View) building).getSecondarySkill();
 
+                    if(citizen.getWorkBuilding() == null)
+                    {
+                        rowPane.findPaneOfTypeByID(BUTTON_DONE, Button.class).show();
+                        rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).hide();
+                    }
+                    else
+                    {
+                        rowPane.findPaneOfTypeByID(BUTTON_DONE, Button.class).hide();
+                        rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).show();
+                    }
+
                     @NotNull final String strength = createAttributeText(createColor(primary, secondary, AbstractBuildingWorker.Skill.STRENGTH),
-                      LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_STRENGTH, citizen.getStrength()));
+                            LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_STRENGTH, citizen.getStrength()));
                     @NotNull final String charisma = createAttributeText(createColor(primary, secondary, AbstractBuildingWorker.Skill.CHARISMA),
-                      LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_CHARISMA, citizen.getCharisma()));
+                            LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_CHARISMA, citizen.getCharisma()));
                     @NotNull final String dexterity = createAttributeText(createColor(primary, secondary, AbstractBuildingWorker.Skill.DEXTERITY),
-                      LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_DEXTERITY, citizen.getDexterity()));
+                            LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_DEXTERITY, citizen.getDexterity()));
                     @NotNull final String endurance = createAttributeText(createColor(primary, secondary, AbstractBuildingWorker.Skill.ENDURANCE),
-                      LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_ENDURANCE, citizen.getEndurance()));
+                            LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_ENDURANCE, citizen.getEndurance()));
                     @NotNull final String intelligence = createAttributeText(createColor(primary, secondary, AbstractBuildingWorker.Skill.INTELLIGENCE),
-                      LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_INTELLIGENCE, citizen.getIntelligence()));
+                            LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_CITIZEN_SKILLS_INTELLIGENCE, citizen.getIntelligence()));
 
                     //Creates the list of attributes for each citizen
                     @NotNull final String attributes = strength + charisma + dexterity + endurance + intelligence;
@@ -213,9 +230,17 @@ public class WindowHireWorker extends Window implements ButtonHandler
 
             if (building instanceof AbstractBuildingWorker.View)
             {
-                ((AbstractBuildingWorker.View) building).setWorkerId(id);
+                ((AbstractBuildingWorker.View) building).addWorkerId(id);
             }
             MineColonies.getNetwork().sendToServer(new HireFireMessage(this.building, true, id));
+        }
+        else if (button.getID().equals(BUTTON_FIRE))
+        {
+            @NotNull final Label idLabel = (Label) button.getParent().getChildren().get(CITIZEN_ID_LABEL_POSITION);
+            final int id = Integer.parseInt(idLabel.getLabelText());
+
+            MineColonies.getNetwork().sendToServer(new HireFireMessage(building, false, id));
+            ((AbstractBuildingWorker.View) building).removeWorkerId(id);
         }
         else if (!button.getID().equals(BUTTON_CANCEL))
         {
