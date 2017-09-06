@@ -52,7 +52,6 @@ public class BuildingBarracks extends AbstractBuilding
         final World world = getColony().getWorld();
         if (world != null && newLevel < 5)
         {
-            //todo hiring manually more guards?
             for (int i = 1; i <= newLevel; i++)
             {
                 final Tuple<BlockPos, EnumFacing> tuple = getPositionAndFacingForLevel(i);
