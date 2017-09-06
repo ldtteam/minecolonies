@@ -11,25 +11,15 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 
 /**
  * Building for the Barracks.
  */
 public class BuildingBarracks extends AbstractBuilding
 {
-    //todo rescan them with default placement of build tool
-
-
-    //todo associate the building with the tower and vice versa.
-    //todo restrict tower level by barrack level
-
-    //todo coordiante all guards using the GUI.
-
     /**
      * General Barracks description key.
      */
@@ -62,14 +52,22 @@ public class BuildingBarracks extends AbstractBuilding
         final World world = getColony().getWorld();
         if (world != null)
         {
-            final Tuple<BlockPos, EnumFacing> tuple = getPositionAndFacingForLevel(newLevel);
-            world.setBlockState(tuple.getFirst(), ModBlocks.blockHutBarracksTower.getDefaultState().withProperty(BlockHutBarracksTower.FACING, tuple.getSecond()));
-            getColony().addNewBuilding((TileEntityColonyBuilding) world.getTileEntity(tuple.getFirst()));
 
-            final AbstractBuilding building = getColony().getBuilding(tuple.getFirst());
-            if(building instanceof BuildingBarracksTower)
+            for (int i = 1; i <= newLevel; i++)
             {
-                ((BuildingBarracksTower) building).addBarracks(getLocation());
+                final Tuple<BlockPos, EnumFacing> tuple = getPositionAndFacingForLevel(newLevel);
+
+                if(!(world.getBlockState(tuple.getFirst()).getBlock() instanceof BlockHutBarracksTower))
+                {
+                    world.setBlockState(tuple.getFirst(), ModBlocks.blockHutBarracksTower.getDefaultState().withProperty(BlockHutBarracksTower.FACING, tuple.getSecond()));
+                    getColony().addNewBuilding((TileEntityColonyBuilding) world.getTileEntity(tuple.getFirst()));
+
+                    final AbstractBuilding building = getColony().getBuilding(tuple.getFirst());
+                    if (building instanceof BuildingBarracksTower)
+                    {
+                        ((BuildingBarracksTower) building).addBarracks(getLocation());
+                    }
+                }
             }
         }
         super.onUpgradeComplete(newLevel);
