@@ -227,11 +227,7 @@ public class WindowHireWorker extends Window implements ButtonHandler
         {
             @NotNull final Label idLabel = (Label) button.getParent().getChildren().get(CITIZEN_ID_LABEL_POSITION);
             final int id = Integer.parseInt(idLabel.getLabelText());
-
-            if (building instanceof AbstractBuildingWorker.View)
-            {
-                ((AbstractBuildingWorker.View) building).addWorkerId(id);
-            }
+            building.addWorkerId(id);
             MineColonies.getNetwork().sendToServer(new HireFireMessage(this.building, true, id));
         }
         else if (button.getID().equals(BUTTON_FIRE))
@@ -240,7 +236,7 @@ public class WindowHireWorker extends Window implements ButtonHandler
             final int id = Integer.parseInt(idLabel.getLabelText());
 
             MineColonies.getNetwork().sendToServer(new HireFireMessage(building, false, id));
-            ((AbstractBuildingWorker.View) building).removeWorkerId(id);
+            building.removeWorkerId(id);
         }
         else if (!button.getID().equals(BUTTON_CANCEL))
         {

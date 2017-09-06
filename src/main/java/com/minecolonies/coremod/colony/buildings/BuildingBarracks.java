@@ -50,12 +50,12 @@ public class BuildingBarracks extends AbstractBuilding
     public void onUpgradeComplete(final int newLevel)
     {
         final World world = getColony().getWorld();
-        if (world != null)
+        if (world != null && newLevel < 5)
         {
-
+            //todo hiring manually more guards?
             for (int i = 1; i <= newLevel; i++)
             {
-                final Tuple<BlockPos, EnumFacing> tuple = getPositionAndFacingForLevel(newLevel);
+                final Tuple<BlockPos, EnumFacing> tuple = getPositionAndFacingForLevel(i);
 
                 if(!(world.getBlockState(tuple.getFirst()).getBlock() instanceof BlockHutBarracksTower))
                 {
@@ -75,6 +75,7 @@ public class BuildingBarracks extends AbstractBuilding
 
     final Tuple<BlockPos, EnumFacing> getPositionAndFacingForLevel(final int level)
     {
+        //todo rotated north maybe off!
         BlockPos position = getLocation();
         int tempLevel = level;
 

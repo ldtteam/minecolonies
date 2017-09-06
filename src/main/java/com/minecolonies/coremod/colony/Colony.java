@@ -1282,7 +1282,7 @@ public class Colony implements IColony
             final AbstractBuildingWorker buildingWorker = citizen.getWorkBuilding();
             if (buildingWorker != null)
             {
-                if (buildingWorker instanceof BuildingGuardTower)
+                if (buildingWorker instanceof AbstractBuildingGuards)
                 {
                     guards += buildingWorker.getBuildingLevel();
                 }
