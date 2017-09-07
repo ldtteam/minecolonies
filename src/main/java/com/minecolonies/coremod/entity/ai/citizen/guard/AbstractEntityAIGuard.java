@@ -15,21 +15,22 @@ import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Random;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
@@ -84,6 +85,11 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
     private static final int ADDITIONAL_MAX_ATTACKS_PER_LEVEL = 5;
 
     /**
+     * After this amount of ticks the citizen should switch the patrolling target because his current one is unreachable.
+     */
+    private static final int SWITCH_TARGET_AFTER_TICKS = 10;
+
+    /**
      * Low health at which the guards should retrieve.
      */
     private static final double LOW_HEALTH = 2.0;
@@ -117,6 +123,21 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
      * Containing all close entities.
      */
     private List<Entity> entityList;
+
+    /**
+     * Last position the worker has been seen.
+     */
+    private BlockPos lastPos = null;
+
+    /**
+     * Amount of ticks the guard is at the same position.
+     */
+    private int ticksAtSamePos = 0;
+
+    /**
+     * Last direction the guard headed to.
+     */
+    private Tuple<EnumFacing, EnumFacing> lastDirection = null;
 
     /**
      * Sets up some important skeleton stuff for every ai.
@@ -396,6 +417,16 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
         worker.setAIMoveSpeed(1);
         final AbstractBuilding building = getOwnBuilding();
 
+        if(worker.getPosition().equals(lastPos))
+        {
+            ticksAtSamePos++;
+        }
+        else
+        {
+            ticksAtSamePos = 0;
+            lastPos = worker.getPosition();
+        }
+
         if (building instanceof AbstractBuildingGuards)
         {
             if (currentPathTarget == null
@@ -405,7 +436,9 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
                 return getNextPatrollingTarget((AbstractBuildingGuards) building);
             }
 
-            if (worker.isWorkerAtSiteWithMove(currentPathTarget, PATH_CLOSE) || ((AbstractBuildingGuards) building).getTask().equals(AbstractBuildingGuards.Task.FOLLOW))
+            if (worker.isWorkerAtSiteWithMove(currentPathTarget, PATH_CLOSE)
+                    || ((AbstractBuildingGuards) building).getTask().equals(AbstractBuildingGuards.Task.FOLLOW)
+                    || ticksAtSamePos >= SWITCH_TARGET_AFTER_TICKS)
             {
                 return getNextPatrollingTarget((AbstractBuildingGuards) building);
             }
@@ -485,21 +518,45 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
             return worker.getPosition();
         }
 
-        Vec3d vec3d = null;
-        while(vec3d == null || world.getBlockState(new BlockPos(vec3d)).getMaterial().isLiquid())
+        final Random random = new Random();
+
+        BlockPos pos = null;
+        while(pos == null
+                || world.getBlockState(pos).getMaterial().isLiquid()
+                || !world.getBlockState(pos.down()).getMaterial().isSolid()
+                || (!world.isAirBlock(pos) && !world.isAirBlock(pos.up())))
         {
-            vec3d = RandomPositionGenerator.findRandomTarget(worker, 5, 3);
-            if(vec3d != null)
-            {
-                vec3d = new Vec3d(vec3d.xCoord, BlockPosUtil.getValidHeight(vec3d, CompatibilityUtils.getWorld(worker)), vec3d.zCoord);
-            }
+            final Tuple<EnumFacing, EnumFacing> direction = getRandomDirectionTuple(random);
+            pos =
+                    new BlockPos(worker.getPosition())
+                            .offset(direction.getFirst(), random.nextInt(10))
+                            .offset(direction.getSecond(), random.nextInt(10))
+                            .up(random.nextInt(4))
+                            .down(random.nextInt(4));
         }
 
-        if (BlockPosUtil.getDistance2D(new BlockPos(vec3d), this.getOwnBuilding().getLocation()) > ((AbstractBuildingGuards) getOwnBuilding()).getPatrolDistance())
+
+
+        if (BlockPosUtil.getDistance2D(pos, this.getOwnBuilding().getLocation()) > ((AbstractBuildingGuards) getOwnBuilding()).getPatrolDistance())
         {
             return this.getOwnBuilding().getLocation();
         }
-        return new BlockPos(vec3d);
+        return pos;
+    }
+
+    /**
+     * Searches a random direction.
+     * @param random a random object.
+     * @return a tuple of two directions.
+     */
+    private Tuple<EnumFacing, EnumFacing> getRandomDirectionTuple(final Random random)
+    {
+        if(lastDirection != null && random.nextInt(10) < 5)
+        {
+            return lastDirection;
+        }
+
+        return new Tuple<>(EnumFacing.random(random), EnumFacing.random(random));
     }
 
     /**
