@@ -7,7 +7,6 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.BuildingGuardTower;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianUtils;
@@ -16,6 +15,7 @@ import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,11 +24,11 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.List;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
@@ -41,60 +41,78 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
     /**
      * Follow the player if farther than this.
      */
-    public static final    int    FOLLOW_RANGE           = 10;
+    public static final int FOLLOW_RANGE = 10;
+
     /**
      * Distance the guard starts searching.
      */
-    protected static final int    START_SEARCH_DISTANCE  = 5;
+    protected static final int START_SEARCH_DISTANCE = 5;
+
     /**
      * The start search distance of the guard to track/attack entities may get more depending on the level.
      */
-    private static final   double MAX_ATTACK_DISTANCE    = 20.0D;
+    private static final double MAX_ATTACK_DISTANCE = 20.0D;
+
     /**
      * Basic delay after operations.
      */
-    private static final   int    BASE_DELAY             = 1;
+    private static final int BASE_DELAY = 1;
+
     /**
      * Max amount the guard can shoot arrows before restocking.
      */
-    private static final   int    BASE_MAX_ATTACKS       = 25;
+    private static final int BASE_MAX_ATTACKS = 25;
+
     /**
      * Y range in which the guard detects other entities.
      */
-    private static final   double HEIGHT_DETECTION_RANGE = 10D;
+    private static final double HEIGHT_DETECTION_RANGE = 10D;
+
     /**
      * Path that close to the patrol target.
      */
-    private static final   int    PATH_CLOSE             = 2;
+    private static final int PATH_CLOSE = 2;
 
     /**
      * The dump base of actions, will increase depending on level.
      */
-    private static final int DUMP_BASE                        = 20;
+    private static final int DUMP_BASE = 20;
+
     /**
      * Increases the max attacks by this amount per level.
      */
     private static final int ADDITIONAL_MAX_ATTACKS_PER_LEVEL = 5;
+
+    /**
+     * Low health at which the guards should retrieve.
+     */
+    private static final double LOW_HEALTH = 2.0;
+
     /**
      * The current target.
      */
     protected EntityLivingBase targetEntity;
+
     /**
      * Amount of arrows already shot or sword hits dealt.
      */
-    protected int attacksExecuted       = 0;
+    protected int attacksExecuted = 0;
+
     /**
      * The distance the guard is searching entities in currently.
      */
     protected int currentSearchDistance = START_SEARCH_DISTANCE;
+
     /**
      * Checks if the guard should dump its inventory.
      */
-    private   int dumpAfterActions      = DUMP_BASE;
+    private int dumpAfterActions = DUMP_BASE;
+
     /**
      * Current goTo task.
      */
-    private BlockPos     currentPathTarget;
+    private BlockPos currentPathTarget;
+
     /**
      * Containing all close entities.
      */
@@ -109,10 +127,10 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
     {
         super(job);
         super.registerTargets(
-          new AITarget(this::checkIfExecute, this::getState),
-          new AITarget(IDLE, () -> START_WORKING),
-          new AITarget(START_WORKING, () -> GUARD_RESTOCK),
-          new AITarget(GUARD_GATHERING, this::gathering)
+                new AITarget(this::checkIfExecute, this::getState),
+                new AITarget(IDLE, () -> START_WORKING),
+                new AITarget(START_WORKING, () -> GUARD_RESTOCK),
+                new AITarget(GUARD_GATHERING, this::gathering)
         );
     }
 
@@ -134,7 +152,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
             return false;
         }
 
-        if (worker.getHealth() > 2)
+        if (worker.getHealth() > LOW_HEALTH)
         {
             return false;
         }
@@ -172,7 +190,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
                 if (stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).armorType) == null)
                 {
                     final int emptySlot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(worker.getInventoryCitizen()),
-                      ItemStackUtils::isEmpty);
+                            ItemStackUtils::isEmpty);
 
                     if (emptySlot != -1)
                     {
@@ -288,7 +306,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
     public boolean huntDownlastAttacker()
     {
         if (this.worker.getLastAttacker() != null && this.worker.getLastAttackerTime() >= worker.ticksExisted - ATTACK_TIME_BUFFER
-              && this.worker.getLastAttacker().isEntityAlive())
+                && this.worker.getLastAttacker().isEntityAlive())
         {
             return this.worker.getLastAttacker() != null && this.worker.canEntityBeSeen(this.worker.getLastAttacker());
         }
@@ -381,8 +399,8 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
         if (building instanceof AbstractBuildingGuards)
         {
             if (currentPathTarget == null
-                  || BlockPosUtil.getDistance2D(building.getColony().getCenter(), currentPathTarget) > Configurations.workingRangeTownHall + Configurations.townHallPadding
-                  || currentPathTarget.getY() < 2)
+                    || BlockPosUtil.getDistance2D(building.getColony().getCenter(), currentPathTarget) > Configurations.workingRangeTownHall + Configurations.townHallPadding
+                    || currentPathTarget.getY() < 2)
             {
                 return getNextPatrollingTarget((AbstractBuildingGuards) building);
             }
@@ -449,6 +467,8 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
             currentPathTarget = pos;
             return AIState.GUARD_SEARCH_TARGET;
         }
+        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.patrolling"));
+
         currentPathTarget = getRandomBuilding();
         return AIState.GUARD_SEARCH_TARGET;
     }
@@ -465,19 +485,21 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
             return worker.getPosition();
         }
 
-        final Collection<AbstractBuilding> buildingList = worker.getColony().getBuildings().values();
-        final Object[] buildingArray = buildingList.toArray();
+        Vec3d vec3d = null;
+        while(vec3d == null || world.getBlockState(new BlockPos(vec3d)).getMaterial().isLiquid())
+        {
+            vec3d = RandomPositionGenerator.findRandomTarget(worker, 5, 3);
+            if(vec3d != null)
+            {
+                vec3d = new Vec3d(vec3d.xCoord, BlockPosUtil.getValidHeight(vec3d, CompatibilityUtils.getWorld(worker)), vec3d.zCoord);
+            }
+        }
 
-        final int random = worker.getRandom().nextInt(buildingArray.length);
-        final AbstractBuilding building = (AbstractBuilding) buildingArray[random];
-
-        if (building instanceof AbstractBuildingGuards
-              || BlockPosUtil.getDistance2D(building.getLocation(), this.getOwnBuilding().getLocation()) > ((AbstractBuildingGuards) getOwnBuilding()).getPatrolDistance())
+        if (BlockPosUtil.getDistance2D(new BlockPos(vec3d), this.getOwnBuilding().getLocation()) > ((AbstractBuildingGuards) getOwnBuilding()).getPatrolDistance())
         {
             return this.getOwnBuilding().getLocation();
         }
-
-        return building.getLocation();
+        return new BlockPos(vec3d);
     }
 
     /**
@@ -495,7 +517,8 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
             getNextPatrollingTarget((AbstractBuildingGuards) building);
         }
 
-        return building instanceof AbstractBuildingGuards && BlockPosUtil.getDistance2D(target, currentPathTarget) > ((AbstractBuildingGuards) building).getPatrolDistance() + range;
+        return building instanceof AbstractBuildingGuards
+                && BlockPosUtil.getDistance2D(target, currentPathTarget) > ((AbstractBuildingGuards) building).getPatrolDistance() + range;
     }
 
     /**

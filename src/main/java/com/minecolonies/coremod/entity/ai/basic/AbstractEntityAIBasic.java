@@ -687,7 +687,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         if (!getOwnBuilding().hasOnGoingDelivery())
         {
             chatRequestTool(toolType, minimalLevel, maxToolLevel);
-
         }
         return true;
     }
