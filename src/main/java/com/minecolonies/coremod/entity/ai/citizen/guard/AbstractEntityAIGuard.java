@@ -77,7 +77,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
     /**
      * The dump base of actions, will increase depending on level.
      */
-    private static final int DUMP_BASE = 20;
+    private static final int DUMP_BASE = 5;
 
     /**
      * Increases the max attacks by this amount per level.
@@ -587,7 +587,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
     {
         final Colony colony = this.getOwnBuilding().getColony();
         colony.incrementStatistic("mobs");
-        incrementActionsDone();
+        this.incrementActionsDone();
         worker.getNavigator().clearPathEntity();
     }
 
