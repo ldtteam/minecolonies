@@ -391,7 +391,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
             }
         }
 
-        if (getWorker() == null)
+        if (getWorker().isEmpty())
         {
             ByteBufUtils.writeUTF8String(buf, "");
         }
