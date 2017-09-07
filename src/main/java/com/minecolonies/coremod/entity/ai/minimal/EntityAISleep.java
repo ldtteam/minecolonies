@@ -25,7 +25,7 @@ public class EntityAISleep extends EntityAIBase
     /**
      * Bed the citizen is using atm.
      */
-    private BlockPos usedBed = BlockPos.ORIGIN;
+    private BlockPos usedBed = null;
 
     /**
      * Initiate the sleep task.
@@ -70,7 +70,7 @@ public class EntityAISleep extends EntityAIBase
                 return true;
             }
 
-            if(usedBed.equals(BlockPos.ORIGIN))
+            if(usedBed == null)
             {
                 final AbstractBuilding hut = colony.getBuilding(citizen.getHomePosition());
                 if (hut instanceof BuildingHome)
@@ -100,14 +100,14 @@ public class EntityAISleep extends EntityAIBase
         }
 
         citizen.onWakeUp();
-        if(!usedBed.equals(BlockPos.ORIGIN))
+        if(usedBed != null)
         {
             final IBlockState state = citizen.worldObj.getBlockState(usedBed);
             if(state.getBlock() instanceof BlockBed)
             {
                 citizen.worldObj.notifyBlockUpdate(usedBed, state, state.withProperty(BlockBed.OCCUPIED, false), 0);
             }
-            usedBed = BlockPos.ORIGIN;
+            usedBed = null;
         }
 
         return false;
