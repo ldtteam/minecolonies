@@ -54,15 +54,15 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     @Override
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
-        barracks = NBTUtil.getPosFromTag(compound);
         super.readFromNBT(compound);
+        barracks = NBTUtil.getPosFromTag(compound);
     }
 
     @Override
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
-        NBTUtil.createPosTag(barracks);
         super.writeToNBT(compound);
+        compound.merge(NBTUtil.createPosTag(barracks));
     }
 
     /**
@@ -90,6 +90,13 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
         {
             player.addChatComponentMessage(new TextComponentTranslation("com.minecolonies.coremod.worker.needBarracks"));
         }
+    }
+
+    @Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        super.onUpgradeComplete(newLevel);
+        getColony().calculateMaxCitizens();
     }
 
     @Override
