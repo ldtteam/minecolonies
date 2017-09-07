@@ -17,7 +17,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards.*;
+import static com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards.Task;
 
 /**
  * Guard Scepter Item class. Used to give tasks to guards.
@@ -99,7 +99,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
 
         final BlockPos guardTower = BlockPosUtil.readFromNBT(compound, "pos");
         final AbstractBuilding hut = colony.getBuilding(guardTower);
-        if (hut == null || !(hut instanceof AbstractBuildingGuards))
+        if (!(hut instanceof AbstractBuildingGuards))
         {
             return EnumActionResult.FAIL;
         }

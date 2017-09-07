@@ -95,6 +95,26 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
     private static final double LOW_HEALTH = 2.0;
 
     /**
+     * The length range one patrolling operation can have on x or z.
+     */
+    private static final int LENGTH_RANGE = 10;
+
+    /**
+     * The length range one patrolling operation can have on x or z.
+     */
+    private static final int IN_TEN = 10;
+
+    /**
+     * The length range one patrolling operation can have on y.
+     */
+    private static final int UP_DOWN_RANGE = 4;
+
+    /**
+     * Chance of trying to follow the same direction again.
+     */
+    private static final int LAST_DIRECTION_CHANCE = 5;
+
+    /**
      * The current target.
      */
     protected EntityLivingBase targetEntity;
@@ -417,7 +437,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
         worker.setAIMoveSpeed(1);
         final AbstractBuilding building = getOwnBuilding();
 
-        if(worker.getPosition().equals(lastPos))
+        if (worker.getPosition().equals(lastPos))
         {
             ticksAtSamePos++;
         }
@@ -521,7 +541,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
         final Random random = new Random();
 
         BlockPos pos = null;
-        while(pos == null
+        while (pos == null
                 || world.getBlockState(pos).getMaterial().isLiquid()
                 || !world.getBlockState(pos.down()).getMaterial().isSolid()
                 || (!world.isAirBlock(pos) && !world.isAirBlock(pos.up())))
@@ -529,12 +549,12 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
             final Tuple<EnumFacing, EnumFacing> direction = getRandomDirectionTuple(random);
             pos =
                     new BlockPos(worker.getPosition())
-                            .offset(direction.getFirst(), random.nextInt(10))
-                            .offset(direction.getSecond(), random.nextInt(10))
-                            .up(random.nextInt(4))
-                            .down(random.nextInt(4));
+                            .offset(direction.getFirst(), random.nextInt(LENGTH_RANGE))
+                            .offset(direction.getSecond(), random.nextInt(LENGTH_RANGE))
+                            .up(random.nextInt(UP_DOWN_RANGE))
+                            .down(random.nextInt(UP_DOWN_RANGE));
+            lastDirection = direction;
         }
-
 
 
         if (BlockPosUtil.getDistance2D(pos, this.getOwnBuilding().getLocation()) > ((AbstractBuildingGuards) getOwnBuilding()).getPatrolDistance())
@@ -546,12 +566,13 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
 
     /**
      * Searches a random direction.
+     *
      * @param random a random object.
      * @return a tuple of two directions.
      */
     private Tuple<EnumFacing, EnumFacing> getRandomDirectionTuple(final Random random)
     {
-        if(lastDirection != null && random.nextInt(10) < 5)
+        if (lastDirection != null && random.nextInt(IN_TEN) < LAST_DIRECTION_CHANCE)
         {
             return lastDirection;
         }

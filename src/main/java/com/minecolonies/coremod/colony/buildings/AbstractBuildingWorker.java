@@ -18,7 +18,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
+import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_MAXIMUM;
+import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
  * The abstract class for each worker building.
@@ -203,7 +204,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
             @NotNull final NBTTagList workersTagList = new NBTTagList();
             for (@NotNull final CitizenData data : workers)
             {
-                NBTTagCompound idCompound = new NBTTagCompound();
+                final NBTTagCompound idCompound = new NBTTagCompound();
                 idCompound.setInteger(TAG_ID, data.getId());
                 workersTagList.appendTag(idCompound);
             }
@@ -405,7 +406,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         {
             for(int i = 0; i < workerIDs.size(); i++)
             {
-                int workerId = workerIDs.get(i);
+                final int workerId = workerIDs.get(i);
                 if(workerId == id)
                 {
                     workerIDs.remove(i);

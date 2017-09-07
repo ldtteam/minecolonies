@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.blocks.BlockHutBarracksTower;
 import com.minecolonies.coremod.blocks.ModBlocks;
@@ -7,7 +8,6 @@ import com.minecolonies.coremod.client.gui.WindowBarracksBuilding;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -50,7 +50,7 @@ public class BuildingBarracks extends AbstractBuilding
     public void onUpgradeComplete(final int newLevel)
     {
         final World world = getColony().getWorld();
-        if (world != null && newLevel < 5)
+        if (world != null && newLevel < BARRACKS_HUT_MAX_LEVEL)
         {
             for (int i = 1; i <= newLevel; i++)
             {
@@ -72,51 +72,58 @@ public class BuildingBarracks extends AbstractBuilding
         super.onUpgradeComplete(newLevel);
     }
 
-    final Tuple<BlockPos, EnumFacing> getPositionAndFacingForLevel(final int level)
+    /**
+     * Calculate position and facing of the tower to add.
+     *
+     * @param level the level of the barracks.
+     * @return a tuple with position and facing.
+     */
+    private final Tuple<BlockPos, EnumFacing> getPositionAndFacingForLevel(final int level)
     {
+
         BlockPos position = getLocation();
         int tempLevel = level;
 
         if (isMirrored())
         {
-            tempLevel += 1;
+            tempLevel += Constants.ROTATE_ONCE;
         }
 
         switch (getRotation())
         {
-            case 1:
-                tempLevel += 3;
+            case Constants.ROTATE_ONCE:
+                tempLevel += Constants.ROTATE_THREE_TIMES;
                 break;
-            case 2:
-                tempLevel += 1;
+            case Constants.ROTATE_TWICE:
+                tempLevel += Constants.ROTATE_ONCE;
                 break;
-            case 3:
-                tempLevel += 2;
+            case Constants.ROTATE_THREE_TIMES:
+                tempLevel += Constants.ROTATE_TWICE;
                 break;
             default:
                 //do nothing
         }
 
-        if (tempLevel > 4)
+        if (tempLevel > Constants.MAX_ROTATIONS)
         {
-            tempLevel -= 4;
+            tempLevel -= Constants.MAX_ROTATIONS;
         }
 
         EnumFacing facing = EnumFacing.NORTH;
         switch (tempLevel)
         {
-            case 1:
+            case Constants.ROTATE_ONCE:
                 position = position.offset(EnumFacing.SOUTH, TOWER_OFFSET).offset(EnumFacing.WEST, TOWER_OFFSET);
                 break;
-            case 2:
+            case Constants.ROTATE_TWICE:
                 position = position.offset(EnumFacing.NORTH, TOWER_OFFSET).offset(EnumFacing.EAST, TOWER_OFFSET);
                 facing = EnumFacing.SOUTH;
                 break;
-            case 3:
+            case Constants.ROTATE_THREE_TIMES:
                 position = position.offset(EnumFacing.SOUTH, TOWER_OFFSET).offset(EnumFacing.EAST, TOWER_OFFSET);
                 facing = EnumFacing.WEST;
                 break;
-            case 4:
+            case Constants.MAX_ROTATIONS:
                 position = position.offset(EnumFacing.NORTH, TOWER_OFFSET).offset(EnumFacing.WEST, TOWER_OFFSET);
                 facing = EnumFacing.EAST;
                 break;
@@ -187,12 +194,6 @@ public class BuildingBarracks extends AbstractBuilding
         public Window getWindow()
         {
             return new WindowBarracksBuilding(this);
-        }
-
-        @Override
-        public void deserialize(@NotNull final ByteBuf buf)
-        {
-            super.deserialize(buf);
         }
     }
 }
