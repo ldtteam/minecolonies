@@ -60,7 +60,6 @@ public class GuardArrow extends EntityTippedArrow
     protected void arrowHit(final EntityLivingBase targetEntity)
     {
         super.arrowHit(targetEntity);
-        Log.getLogger().info("Arrow hit " + targetEntity + " with " + targetEntity.getHealth());
         if (targetEntity.getHealth() <= 0.0F)
         {
             if (targetEntity instanceof EntityPlayer)
