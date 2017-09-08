@@ -463,3 +463,4 @@ com.minecolonies.coremod.status.stuckinleaves=Stuck in leaves!
 tile.minecolonies.blockwaypoint.name=Waypoint placeholder
 
 com.minecolonies.coremod.permission.teleport_to_colony=Teleport to Colony
+com.minecolonies.coremod.gui.warehouse.upgrade=Upgrade Storage
