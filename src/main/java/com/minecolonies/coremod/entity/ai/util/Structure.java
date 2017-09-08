@@ -148,7 +148,7 @@ public class Structure
 
             //All worldBlocks are equal the substitution block
             if (structureBlockEqualsWorldBlock(structureBlock, worldBlock, worldMetadata)
-                    || (worldBlock == Blocks.AIR && structureBlock == ModBlocks.blockWayPoint))
+                    || structureBlock == ModBlocks.blockWayPoint)
             {
                 return true;
             }

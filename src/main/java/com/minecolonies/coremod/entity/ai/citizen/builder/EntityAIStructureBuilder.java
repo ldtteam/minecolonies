@@ -4,6 +4,7 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockSolidSubstitution;
+import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
@@ -523,6 +524,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         if (building != null)
         {
             building.registerBlockPosition(block, pos);
+        }
+
+        if(block == ModBlocks.blockWayPoint)
+        {
+            worker.getColony().addWayPoint(pos, world.getBlockState(pos));
         }
     }
 
