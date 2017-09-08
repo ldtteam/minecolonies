@@ -176,7 +176,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Range required for the citizen to be home.
      */
-    private static final double RANGE_TO_BE_HOME           = 16;
+    private static final double RANGE_TO_BE_HOME           = 100;
     /**
      * If the entitiy is stuck for 2 minutes do something.
      */
@@ -1773,6 +1773,14 @@ public class EntityCitizen extends EntityAgeable implements INpc
     public boolean hasItemInInventory(final Item item, int itemDamage)
     {
         return InventoryUtils.hasItemInItemHandler(new InvWrapper(getInventoryCitizen()), item, itemDamage);
+    }
+
+    @Override
+    public void onItemPickup(final Entity entityIn, final int quantity)
+    {
+        /**
+         * Do nothing here because the automatic pickUp doesn't work that well. That's why we use our own.
+         */
     }
 
     /**

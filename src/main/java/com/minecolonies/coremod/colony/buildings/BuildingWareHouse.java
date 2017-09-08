@@ -48,14 +48,34 @@ public class BuildingWareHouse extends AbstractBuilding
     private static final String TAG_DELIVERYMAN = "Deliveryman";
 
     /**
+     * The storage tag for the storage capacity.
+     */
+    private static final String TAG_STORAGE     = "tagStorage" ;
+
+    /**
      * The list of deliverymen registered to this building.
      */
     private static final List<Vec3d> registeredDeliverymen = new ArrayList<>();
 
     /**
+     * Max level of the building.
+     */
+    private static final int MAX_LEVEL = 5;
+
+    /**
+     * Max storage upgrades.
+     */
+    private static final int MAX_STORAGE_UPGRADE = 3;
+
+    /**
      * The tileEntity of the building.
      */
     private TileEntityWareHouse tileEntity;
+
+    /**
+     * Storage upgrade level.
+     */
+    private int storageUpgrade = 0;
 
     /**
      * Instantiates a new warehouse building.
@@ -192,7 +212,7 @@ public class BuildingWareHouse extends AbstractBuilding
     @Override
     public int getMaxBuildingLevel()
     {
-        return 5;
+        return MAX_LEVEL;
     }
 
     @Override
@@ -210,6 +230,7 @@ public class BuildingWareHouse extends AbstractBuilding
                 registeredDeliverymen.add(new Vec3d(pos));
             }
         }
+        storageUpgrade = compound.getInteger(TAG_STORAGE);
     }
 
     @Override
@@ -222,6 +243,7 @@ public class BuildingWareHouse extends AbstractBuilding
             levelTagList.appendTag(NBTUtil.createPosTag(new BlockPos(deliverymanBuilding)));
         }
         compound.setTag(TAG_DELIVERYMAN, levelTagList);
+        compound.setInteger(TAG_STORAGE, storageUpgrade);
     }
 
     /**
@@ -250,10 +272,33 @@ public class BuildingWareHouse extends AbstractBuilding
         return tileEntity;
     }
 
+    /**
+     * Upgrade all containers by 9 slots.
+     *
+     * @param world the world object.
+     */
+    public void upgradeContainers(final World world)
+    {
+        if(storageUpgrade < MAX_STORAGE_UPGRADE)
+        {
+            for (final BlockPos pos : getAdditionalCountainers())
+            {
+                final TileEntity entity = world.getTileEntity(pos);
+                if (entity instanceof TileEntityRack)
+                {
+                    ((TileEntityRack) entity).upgradeItemStorage();
+                }
+            }
+            storageUpgrade++;
+        }
+        markDirty();
+    }
+
     @Override
     public void serializeToView(@NotNull final ByteBuf buf)
     {
         super.serializeToView(buf);
+        buf.writeBoolean(storageUpgrade < MAX_STORAGE_UPGRADE);
     }
 
     /**
@@ -261,6 +306,10 @@ public class BuildingWareHouse extends AbstractBuilding
      */
     public static class View extends AbstractBuildingHut.View
     {
+        /**
+         * Should the building allow further storage upgrades.
+         */
+        private boolean allowUpgrade = true;
 
         /**
          * Instantiate the deliveryman view.
@@ -273,7 +322,6 @@ public class BuildingWareHouse extends AbstractBuilding
             super(c, l);
         }
 
-        //todo add specialized view for the warehouse later.
         @NotNull
         @Override
         public Window getWindow()
@@ -285,6 +333,17 @@ public class BuildingWareHouse extends AbstractBuilding
         public void deserialize(@NotNull final ByteBuf buf)
         {
             super.deserialize(buf);
+            allowUpgrade = buf.readBoolean();
+        }
+
+        /**
+         * Check if the warehouse building storage can be upgraded further.
+         *
+         * @return true if so.
+         */
+        public boolean canUpgradeStorage()
+        {
+            return allowUpgrade;
         }
     }
 }
