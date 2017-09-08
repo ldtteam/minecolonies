@@ -627,7 +627,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         final IBlockState decrease;
         for(IPlacementHandler handlers :PlacementHandlers.handlers)
         {
-            final Object result = handlers.handle(world, coords, blockState, this);
+            final Object result = handlers.handle(world, coords, blockState, this, Configurations.builderInfiniteResources);
             if(result instanceof IPlacementHandler.ActionProcessingResult)
             {
                 if(result == ACCEPT)

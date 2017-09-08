@@ -45,4 +45,6 @@
         <buttonimage id="confirm"     source="minecolonies:textures/gui/confirm.png"          size="32" pos="0 60"/>
         <buttonimage id="cancel"      source="minecolonies:textures/gui/cancel.png"           size="32" pos="28 60"/>
     </view>
+
+    <button      id="paste"       label="paste"  visible="false"                          size="35 16" pos="350 220"/>
 </window>
