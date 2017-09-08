@@ -7,6 +7,7 @@ import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.network.messages.AssignUnassignMessage;
 import net.minecraft.client.Minecraft;
@@ -95,8 +96,12 @@ public class WindowHomeBuilding extends AbstractWindowBuilding<BuildingHome.View
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(home.getColony().getCitizen(home.getResidents().get(index)).getName());
-                rowPane.findPaneOfTypeByID(BUTTON_REMOVE, Button.class).setEnabled(isManualHousing);
+                final CitizenDataView citizenDataView = home.getColony().getCitizen((home.getResidents().get(index)));
+                if(citizenDataView!= null)
+                {
+                    rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(citizenDataView.getName());
+                    rowPane.findPaneOfTypeByID(BUTTON_REMOVE, Button.class).setEnabled(isManualHousing);
+                }
             }
         });
 
