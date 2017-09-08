@@ -726,13 +726,13 @@ public class Structure
             final FakeWorld fakeWorld;
             if(simulateWorld)
             {
-                fakeWorld = new FakeWorld(holder.actualState, world.getSaveHandler(), world.getWorldInfo(), world.provider, world.profiler, true, te, true);
+                fakeWorld = new FakeWorld(holder.actualState, world.getSaveHandler(), world.getWorldInfo(), world.provider, world.theProfiler, true, te, true);
             }
             else
             {
-                fakeWorld = new FakeWorld(holder.actualState, world.getSaveHandler(), world.getWorldInfo(), world.provider, world.profiler, true);
+                fakeWorld = new FakeWorld(holder.actualState, world.getSaveHandler(), world.getWorldInfo(), world.provider, world.theProfiler, true);
             }
-            te.setWorld(fakeWorld);
+            te.setWorldObj(fakeWorld);
             final int pass = 0;
 
             if (te.shouldRenderInPass(pass))
