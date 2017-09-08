@@ -170,7 +170,7 @@ public class EntityAIGoHome extends EntityAIBase
                     ((BuildingHome) home).checkIfFoodNeeded();
                 }
             }
-            if (!tookFood)
+            if (!tookFood && home != null)
             {
                 requestFoodIfRequired(currentSaturation, home);
             }

@@ -193,7 +193,7 @@
             <label size="80 12" pos="203 35" textalign="MIDDLE_RIGHT" color="black" label="§n§4NAME"/>
             <!-- label size="25 12" pos="110 7" textalign="MIDDLE_LEFT" color="black" label="§n§4JOB"/ -->
 
-            <list id="citizenList" size="140 100%" pos="223 55">
+            <list id="citizenList" size="140 165" pos="210 50">
                 <view size="100% 15">
                     <label id="name" size="60 12" pos="5 4" textalign="MIDDLE_LEFT" color="black"/>
                     <!-- label id="job" size="25 12" pos="95 4" textalign="MIDDLE_LEFT" color="black"/ -->
