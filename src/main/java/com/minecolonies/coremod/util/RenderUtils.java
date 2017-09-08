@@ -126,7 +126,7 @@ public final class RenderUtils
         final ModelHolder models = new ModelHolder(pos, iblockstate, iBlockExtendedState, sign, ibakedmodel);
         Structure.getQuads(models, models.quads);
 
-        new Structure(Minecraft.getMinecraft().theWorld).renderGhost(clientWorld, models, player, partialTicks);
+        new Structure(Minecraft.getMinecraft().theWorld).renderGhost(clientWorld, models, player, partialTicks, false);
     }
 
     /**
@@ -160,7 +160,7 @@ public final class RenderUtils
 
             final ModelHolder models = new ModelHolder(pos, iblockstate, iBlockExtendedState, tileentity, ibakedmodel);
             Structure.getQuads(models, models.quads);
-            Settings.instance.getActiveStructure().renderGhost(clientWorld, models, thePlayer, partialTicks);
+            Settings.instance.getActiveStructure().renderGhost(clientWorld, models, thePlayer, partialTicks, false);
         }
     }
 
