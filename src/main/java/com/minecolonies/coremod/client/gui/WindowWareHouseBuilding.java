@@ -25,7 +25,7 @@ public class WindowWareHouseBuilding extends AbstractWindowBuilding<BuildingWare
     /**
      * The builders gui file.
      */
-    private static final String HUT_BUILDER_RESOURCE_SUFFIX = ":gui/windowhutwarehouse.xml";
+    private static final String HUT_BUILDER_RESOURCE_SUFFIX = ":gui/windowHutWarehouse.xml";
     private static final String RESOURCE_NAME               = "resourceName";
     private static final String RESOURCE_AVAILABLE_NEEDED   = "resourceAvailableNeeded";
     private static final String RESOURCE_MISSING            = "resourceMissing";
