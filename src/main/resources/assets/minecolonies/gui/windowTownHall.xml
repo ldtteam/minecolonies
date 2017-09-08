@@ -4,7 +4,7 @@
 
     <image source="minecolonies:textures/gui/townhall_book.png" size="100% 100%"/>
 
-    <group size="100 185" pos="-20 63" spacing="10">
+    <group size="100 185" pos="-19 63" spacing="10">
         <image id="info0" size="32 14" source="minecolonies:textures/gui/bookmark_short_ribbon_01.png"/>
         <image id="actions0" size="32 14" source="minecolonies:textures/gui/bookmark_short_ribbon_02.png"/>
         <image id="permissions0" size="32 14" source="minecolonies:textures/gui/bookmark_short_ribbon_03.png"/>
@@ -59,7 +59,7 @@
     <switch id="pages" size="100% 100%" pos="0 0" default="pageActions">
         <view id="pageActions">
 
-            <group align="TOP_MIDDLE" size="80% 100%" pos="0 25">
+            <group align="TOP_MIDDLE" size="80% 100%" pos="0 22">
                 <label size="100% 11"
                        label="$(com.minecolonies.coremod.gui.townHall.currTownHallName)" textalign="MIDDLE_LEFT" color="green"/>
                 <label size="100% 11"
@@ -127,7 +127,7 @@
                 <view id="managePermissions">
                     <switch id="userGroups" size="100% 250px" pos="120 7">
                         <view id="officer">
-                            <list id="actionsofficer" size="120 170" pos="55 20">
+                            <list id="actionsofficer" size="120 170" pos="90 20">
                                 <box size="100% 20" linewidth="2">
                                     <label id="name" size="60 12" textscale="0.7" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
                                     <button id="trigger" size="20 16" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOff)"/>
@@ -136,7 +136,7 @@
                             </list>
                         </view>
                         <view id="friend">
-                            <list id="actionsfriend" size="120 170" pos="55 20">
+                            <list id="actionsfriend" size="120 170" pos="90 20">
                                 <box size="100% 20" linewidth="2">
                                     <label id="name" size="60 12" textscale="0.7" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
                                     <button id="trigger" size="20 16" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOff)"/>
@@ -145,7 +145,7 @@
                             </list>
                         </view>
                         <view id="neutral">
-                            <list id="actionsneutral" size="120 170" pos="55 20">
+                            <list id="actionsneutral" size="120 170" pos="90 20">
                                 <box size="100% 20" linewidth="2">
                                     <label id="name" size="60 12" textscale="0.7" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
                                     <button id="trigger" size="20 16" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOff)"/>
@@ -154,7 +154,7 @@
                             </list>
                         </view>
                         <view id="hostile">
-                            <list id="actionshostile" size="120 170" pos="55 20">
+                            <list id="actionshostile" size="120 170" pos="90 20">
                                 <box size="100% 20" linewidth="2">
                                     <label id="name" size="60 12" textscale="0.7" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
                                     <button id="trigger" size="20 16" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOff)"/>
@@ -170,23 +170,23 @@
                 </view>
 
                 <view id="freeBlockList">
-                    <label size="100 11" pos="163 20" color="black" label="$(com.minecolonies.coremod.gui.townHall.freeBlocks)"/>
-                    <list id="blocks" size="140 180" pos="163 30">
+                    <label size="100 11" pos="203 20" color="black" label="$(com.minecolonies.coremod.gui.townHall.freeBlocks)"/>
+                    <list id="blocks" size="140 180" pos="203 30">
                         <box size="100% 30" linewidth="2">
                             <label id="name" size="100 12" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
                             <button id="removeBlock" size="12 12" pos="5 2" align="TOP_RIGHT" label="X"/>
                         </box>
                     </list>
 
-                    <label size="100 11" pos="25 25" textalign="TOP_LEFT" color="black" label="$(com.minecolonies.coremod.gui.townHall.addBlock)"/>
-                    <input id="addBlockName" size="100 20" pos="25 35" maxlength="32"/>
-                    <button id="addBlock" size="20 20" pos="130 35" label="+"/>
+                    <label size="100 11" pos="30 65" textalign="TOP_LEFT" color="black" label="$(com.minecolonies.coremod.gui.townHall.addBlock)"/>
+                    <input id="addBlockName" size="100 20" pos="30 75" maxlength="32"/>
+                    <button id="addBlock" size="20 20" pos="135 75" label="+"/>
                 </view>
             </switch>
             <buttonimage id="prevPagePerm" source="minecolonies:textures/gui/corner_left.png"
                          size="22 18" pos="0 225"/>
             <buttonimage id="nextPagePerm" source="minecolonies:textures/gui/corner_right.png"
-                         size="22 18" pos="295 225"/>
+                         size="22 18" pos="355 225"/>
 
         </view>
         <view id="pageCitizens">

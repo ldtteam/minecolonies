@@ -8,6 +8,7 @@ import com.minecolonies.coremod.client.gui.WindowBarracksBuilding;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -143,8 +144,7 @@ public class BuildingBarracks extends AbstractBuilding
             for (int i = 1; i <= this.getBuildingLevel(); i++)
             {
                 final Tuple<BlockPos, EnumFacing> tuple = getPositionAndFacingForLevel(i);
-                world.setBlockState(tuple.getFirst(), ModBlocks.blockHutBarracksTower.getDefaultState().withProperty(BlockHutBarracksTower.FACING, tuple.getSecond()));
-                getColony().addNewBuilding((TileEntityColonyBuilding) world.getTileEntity(tuple.getFirst()));
+                world.setBlockState(tuple.getFirst(), Blocks.AIR.getDefaultState());
             }
         }
         super.onDestroyed();
