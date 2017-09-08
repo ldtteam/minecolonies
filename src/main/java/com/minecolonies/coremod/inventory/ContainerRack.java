@@ -7,7 +7,6 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
@@ -77,18 +76,19 @@ public class ContainerRack extends net.minecraft.inventory.Container
     /**
      * Creates an instance of our field container, this may be serve to open the GUI.
      *
-     * @param tileEntityRack the tileEntity of the field containing the inventory.
-     * @param playerInventory     the player inventory.
-     * @param world               the world.
-     * @param location            the position of the field.
+     * @param tileEntityRack  the tileEntity of the field containing the inventory.
+     * @param neighborRack the neighboring rack.
+     * @param playerInventory the player inventory.
+     * @param location        the position of the field.
      */
-    public ContainerRack(@NotNull final TileEntityRack tileEntityRack, @Nullable final TileEntityRack neighborRack,
-            final InventoryPlayer playerInventory, @NotNull final World world, @NotNull final BlockPos location)
+    public ContainerRack(
+            @NotNull final TileEntityRack tileEntityRack, @Nullable final TileEntityRack neighborRack,
+            final InventoryPlayer playerInventory, @NotNull final BlockPos location)
     {
         super();
-        if(neighborRack != null)
+        if (neighborRack != null)
         {
-            if(tileEntityRack.isMain())
+            if (tileEntityRack.isMain())
             {
                 this.inventory = new CombinedInvWrapper(tileEntityRack.getInventory(), neighborRack.getInventory());
             }
@@ -105,20 +105,28 @@ public class ContainerRack extends net.minecraft.inventory.Container
         this.rack = tileEntityRack;
         this.neighborRack = neighborRack;
         this.inventorySize = this.inventory.getSlots() / INVENTORY_COLUMNS;
+        final int size = this.inventory.getSlots();
 
+        final int columns = inventorySize <= INVENTORY_BAR_SIZE ? INVENTORY_COLUMNS : ((size / INVENTORY_BAR_SIZE) + 1);
+        final int extraOffset = inventorySize <= INVENTORY_BAR_SIZE ? 0 : 2;
+        int index = 0;
 
-        for (int j = 0; j < this.inventorySize; ++j)
+        for (int j = 0; j < Math.min(this.inventorySize, INVENTORY_BAR_SIZE); ++j)
         {
-            for (int k = 0; k < INVENTORY_COLUMNS; ++k)
+            for (int k = 0; k < columns; ++k)
             {
-                this.addSlotToContainer(
-                        new SlotItemHandler(inventory, k + j * INVENTORY_COLUMNS,
-                                INVENTORY_BAR_SIZE + k * PLAYER_INVENTORY_OFFSET_EACH,
-                                PLAYER_INVENTORY_OFFSET_EACH + j * PLAYER_INVENTORY_OFFSET_EACH));
+                if (index < size)
+                {
+                    this.addSlotToContainer(
+                            new SlotItemHandler(inventory, index,
+                                    INVENTORY_BAR_SIZE + k * PLAYER_INVENTORY_OFFSET_EACH,
+                                    PLAYER_INVENTORY_OFFSET_EACH + j * PLAYER_INVENTORY_OFFSET_EACH));
+                    index++;
+                }
             }
         }
 
-        //Ddd player inventory slots
+        // Player inventory slots
         // Note: The slot numbers are within the player inventory and may be the same as the field inventory.
         int i;
         for (i = 0; i < INVENTORY_ROWS; i++)
@@ -129,7 +137,8 @@ public class ContainerRack extends net.minecraft.inventory.Container
                         playerInventory,
                         j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
                         PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
-                        PLAYER_INVENTORY_INITIAL_Y_OFFSET + PLAYER_INVENTORY_OFFSET_EACH * this.inventorySize + i * PLAYER_INVENTORY_OFFSET_EACH
+                        PLAYER_INVENTORY_INITIAL_Y_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize, INVENTORY_BAR_SIZE)
+                                + i * PLAYER_INVENTORY_OFFSET_EACH
                 ));
             }
         }
@@ -139,10 +148,10 @@ public class ContainerRack extends net.minecraft.inventory.Container
             addSlotToContainer(new Slot(
                     playerInventory, i,
                     PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
-                    PLAYER_INVENTORY_HOTBAR_OFFSET + PLAYER_INVENTORY_OFFSET_EACH * this.inventorySize
+                    PLAYER_INVENTORY_HOTBAR_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize,
+                            INVENTORY_BAR_SIZE)
             ));
         }
-
     }
 
     @Override
@@ -193,7 +202,7 @@ public class ContainerRack extends net.minecraft.inventory.Container
         }
 
         rack.updateItemStorage();
-        if(neighborRack != null)
+        if (neighborRack != null)
         {
             neighborRack.updateItemStorage();
         }

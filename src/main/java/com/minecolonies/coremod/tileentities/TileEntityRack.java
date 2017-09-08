@@ -43,6 +43,11 @@ public class TileEntityRack extends TileEntity
     private static final String TAG_INVENTORY = "inventory";
 
     /**
+     * Tag used to store the size.
+     */
+    private static final String TAG_SIZE = "tagSIze";
+
+    /**
      * Tag used to store if the entity is the main.
      */
     private static final String TAG_MAIN = "main";
@@ -51,6 +56,16 @@ public class TileEntityRack extends TileEntity
      * Tag compound of forge.
      */
     private static final int TAG_COMPOUND = 10;
+
+    /**
+     * Default size of the inventory.
+     */
+    private static final int DEFAULT_SIZE = 27;
+
+    /**
+     * Slots per line.
+     */
+    private static final int SLOT_PER_LINE = 9;
 
     /**
      * Variable which determines if it is a single or doublechest.
@@ -68,6 +83,13 @@ public class TileEntityRack extends TileEntity
     private boolean main = false;
 
     /**
+     * Size multiplier of the inventory.
+     * 0 = default value.
+     * 1 = 1*9 additional slots, and so on.
+     */
+    private int size = 0;
+
+    /**
      * The content of the chest.
      */
     private final Map<ItemStorage, Integer> content = new HashMap<>();
@@ -75,7 +97,7 @@ public class TileEntityRack extends TileEntity
     /**
      * The inventory of the tileEntity.
      */
-    private final IItemHandlerModifiable inventory = new ItemStackHandler(27)
+    private IItemHandlerModifiable inventory = new ItemStackHandler(DEFAULT_SIZE)
     {
         @Override
         protected void onContentsChanged(final int slot)
@@ -252,6 +274,32 @@ public class TileEntityRack extends TileEntity
     }
 
     /**
+     * Upgrade the rack by 1. This adds 9 more slots and copies the inventory to the new one.
+     */
+    public void upgradeItemStorage()
+    {
+        ++size;
+        final IItemHandlerModifiable tempInventory = new ItemStackHandler(DEFAULT_SIZE + size * SLOT_PER_LINE)
+        {
+            @Override
+            protected void onContentsChanged(final int slot)
+            {
+                updateItemStorage();
+                super.onContentsChanged(slot);
+            }
+        };
+
+        for (int slot = 0; slot < inventory.getSlots(); slot++)
+        {
+            tempInventory.setStackInSlot(slot, inventory.getStackInSlot(slot));
+        }
+
+        inventory = tempInventory;
+        final IBlockState state = world.getBlockState(pos);
+        world.notifyBlockUpdate(pos, state, state, 0x03);
+    }
+
+    /**
      * Define the neighbor for a block.
      *
      * @param neighbor the neighbor to define.
@@ -350,6 +398,23 @@ public class TileEntityRack extends TileEntity
     @Override
     public void readFromNBT(final NBTTagCompound compound)
     {
+        if (compound.hasKey(TAG_SIZE))
+        {
+            size = compound.getInteger(TAG_SIZE);
+            if (size > 0)
+            {
+                inventory = new ItemStackHandler(DEFAULT_SIZE + size * SLOT_PER_LINE)
+                {
+                    @Override
+                    protected void onContentsChanged(final int slot)
+                    {
+                        updateItemStorage();
+                        super.onContentsChanged(slot);
+                    }
+                };
+            }
+        }
+
         neighbor = BlockPosUtil.readFromNBT(compound, TAG_NEIGHBOR);
 
         if (!neighbor.equals(BlockPos.ORIGIN))
@@ -378,13 +443,14 @@ public class TileEntityRack extends TileEntity
     @Override
     public NBTTagCompound writeToNBT(final NBTTagCompound compound)
     {
+        compound.setInteger(TAG_SIZE, size);
         BlockPosUtil.writeToNBT(compound, TAG_NEIGHBOR, neighbor);
         @NotNull final NBTTagList inventoryTagList = new NBTTagList();
         for (int slot = 0; slot < inventory.getSlots(); slot++)
         {
             @NotNull final NBTTagCompound inventoryCompound = new NBTTagCompound();
             final ItemStack stack = inventory.getStackInSlot(slot);
-            if (stack == null)
+            if (stack == ItemStackUtils.EMPTY)
             {
                 new ItemStack(Blocks.AIR, 0).writeToNBT(inventoryCompound);
             }
@@ -429,7 +495,9 @@ public class TileEntityRack extends TileEntity
     public SPacketUpdateTileEntity getUpdatePacket()
     {
         final NBTTagCompound compound = new NBTTagCompound();
+        compound.setInteger(TAG_SIZE, size);
         BlockPosUtil.writeToNBT(compound, TAG_NEIGHBOR, neighbor);
+
         @NotNull final NBTTagList inventoryTagList = new NBTTagList();
         for (int slot = 0; slot < inventory.getSlots(); slot++)
         {
@@ -461,8 +529,24 @@ public class TileEntityRack extends TileEntity
     public void onDataPacket(final NetworkManager net, final SPacketUpdateTileEntity packet)
     {
         final NBTTagCompound compound = packet.getNbtCompound();
+        size = compound.getInteger(TAG_SIZE);
+        if (compound.hasKey(TAG_SIZE))
+        {
+            size = compound.getInteger(TAG_SIZE);
+            if (size > 0)
+            {
+                inventory = new ItemStackHandler(DEFAULT_SIZE + size * SLOT_PER_LINE)
+                {
+                    @Override
+                    protected void onContentsChanged(final int slot)
+                    {
+                        updateItemStorage();
+                        super.onContentsChanged(slot);
+                    }
+                };
+            }
+        }
         neighbor = BlockPosUtil.readFromNBT(compound, TAG_NEIGHBOR);
-
         if (!neighbor.equals(BlockPos.ORIGIN))
         {
             single = false;
@@ -486,6 +570,7 @@ public class TileEntityRack extends TileEntity
 
     /**
      * Get the neighbor of the entity.
+     *
      * @return the position, a blockPos.
      */
     public BlockPos getNeighbor()
