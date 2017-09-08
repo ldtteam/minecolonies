@@ -295,8 +295,8 @@ public class TileEntityRack extends TileEntity
         }
 
         inventory = tempInventory;
-        final IBlockState state = world.getBlockState(pos);
-        world.notifyBlockUpdate(pos, state, state, 0x03);
+        final IBlockState state = worldObj.getBlockState(pos);
+        worldObj.notifyBlockUpdate(pos, state, state, 0x03);
     }
 
     /**

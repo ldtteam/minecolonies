@@ -212,7 +212,7 @@ public class BuildingWareHouse extends AbstractBuilding
     @Override
     public int getMaxBuildingLevel()
     {
-        return 5;
+        return MAX_LEVEL;
     }
 
     @Override
@@ -292,12 +292,6 @@ public class BuildingWareHouse extends AbstractBuilding
             storageUpgrade++;
         }
         markDirty();
-    }
-
-    @Override
-    public int getMaxBuildingLevel()
-    {
-        return MAX_LEVEL;
     }
 
     @Override

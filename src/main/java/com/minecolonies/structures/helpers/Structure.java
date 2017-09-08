@@ -29,6 +29,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
+import net.minecraft.util.datafix.DataFixer;
+import net.minecraft.util.datafix.DataFixesManager;
+import net.minecraft.util.datafix.FixTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -51,6 +54,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+
+import static com.minecolonies.api.util.constant.Suppression.RESOURCES_SHOULD_BE_CLOSED;
 
 /**
  * Structure class, used to store, create, get structures.
@@ -75,7 +80,7 @@ public class Structure
     /**
      * Used for scale.
      */
-    private static final double SCALE                    = 1.001;
+    private static final double SCALE = 1.001;
 
     /**
      * Size of the buffer.
@@ -120,6 +125,7 @@ public class Structure
             this.settings = settings;
             this.mc = Minecraft.getMinecraft();
         }
+        this.fixer = DataFixesManager.createFixer();
 
         InputStream inputStream = null;
         try
@@ -149,7 +155,7 @@ public class Structure
             try
             {
                 this.md5 = Structure.calculateMD5(Structure.getStream(correctStructureName));
-                this.template = readTemplateFromStream(inputStream);
+                this.template = readTemplateFromStream(inputStream, fixer);
             }
             catch (final IOException e)
             {
@@ -175,6 +181,7 @@ public class Structure
             this.settings = settings;
             this.mc = Minecraft.getMinecraft();
         }
+        this.fixer = DataFixesManager.createFixer();
     }
 
     /**
@@ -229,7 +236,7 @@ public class Structure
      * @param structureName name of the structure to load
      * @return the input stream or null
      */
-    @SuppressWarnings("squid:S2095")
+    @SuppressWarnings(RESOURCES_SHOULD_BE_CLOSED)
     @Nullable
     public static InputStream getStream(final String structureName)
     {
@@ -341,10 +348,10 @@ public class Structure
         }
         try
         {
-            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
             int nRead;
-            byte[] data = new byte[BUFFER_SIZE];
+            final byte[] data = new byte[BUFFER_SIZE];
 
             while ((nRead = stream.read(data, 0, data.length)) != -1)
             {
@@ -388,7 +395,7 @@ public class Structure
             final MessageDigest md = MessageDigest.getInstance("MD5");
             return DatatypeConverter.printHexBinary(md.digest(bytes));
         }
-        catch (@NotNull NoSuchAlgorithmException e)
+        catch (@NotNull final NoSuchAlgorithmException e)
         {
             Log.getLogger().trace(e);
         }
@@ -428,7 +435,7 @@ public class Structure
 
     public static byte[] uncompress(final byte[] data)
     {
-        byte[] buffer = new byte[BUFFER_SIZE];
+        final byte[] buffer = new byte[BUFFER_SIZE];
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         try (ByteArrayInputStream byteStream = new ByteArrayInputStream(data);
              GZIPInputStream zipStream = new GZIPInputStream(byteStream))
@@ -450,11 +457,17 @@ public class Structure
     /**
      * Reads a template from an inputstream.
      */
-    private static Template readTemplateFromStream(final InputStream stream) throws IOException
+    private static Template readTemplateFromStream(final InputStream stream, final DataFixer fixer) throws IOException
     {
         final NBTTagCompound nbttagcompound = CompressedStreamTools.readCompressed(stream);
+
+        if (!nbttagcompound.hasKey("DataVersion", 99))
+        {
+            nbttagcompound.setInteger("DataVersion", 500);
+        }
+
         final Template template = new Template();
-        template.read(nbttagcompound);
+        template.read(fixer.process(FixTypes.CHUNK, nbttagcompound));
         return template;
     }
 
@@ -537,7 +550,8 @@ public class Structure
             lastStartingPos = startingPos;
             final Template.BlockInfo[] blockList = this.getBlockInfoWithSettings(this.settings);
 
-            final FakeWorld fakeWorld = new FakeWorld(null, clientWorld.getSaveHandler(), clientWorld.getWorldInfo(), clientWorld.provider, clientWorld.profiler, true, null, true);
+            final FakeWorld fakeWorld
+                    = new FakeWorld(null, clientWorld.getSaveHandler(), clientWorld.getWorldInfo(), clientWorld.provider, clientWorld.theProfiler, true, null, true);
 
             for (final Template.BlockInfo aBlockList : blockList)
             {
@@ -588,7 +602,7 @@ public class Structure
 
         for (final Entity anEntityList : entityList)
         {
-            if(anEntityList != null)
+            if (anEntityList != null)
             {
                 Minecraft.getMinecraft().getRenderManager().renderEntityStatic(anEntityList, 0.0F, true);
             }
@@ -619,61 +633,6 @@ public class Structure
     /**
      * Get entity info with specific setting.
      *
-     * @param entityInfo the entity to transform.
-     * @param world      world the entity is in.
-     * @param pos        the position it is at.
-     * @param settings   the settings.
-     * @return the entity info aray.
-     */
-    public Template.EntityInfo transformEntityInfoWithSettings(final Template.EntityInfo entityInfo, final World world, final BlockPos pos, final PlacementSettings settings)
-    {
-        final Entity finalEntity = EntityList.createEntityFromNBT(entityInfo.entityData, world);
-
-        //err might be here? only use pos? or don't add?
-        final Vec3d entityVec = Structure.transformedVec3d(settings, entityInfo.pos).add(new Vec3d(pos));
-
-        if (finalEntity != null)
-        {
-            finalEntity.prevRotationYaw = (float) (finalEntity.getMirroredYaw(settings.getMirror()) - NINETY_DEGREES);
-            final double rotationYaw
-                    = (double)finalEntity.getMirroredYaw(settings.getMirror()) + ((double)finalEntity.rotationYaw - (double)finalEntity.getRotatedYaw(settings.getRotation()));
-
-            finalEntity.setLocationAndAngles(entityVec.xCoord, entityVec.yCoord, entityVec.zCoord,
-                    (float) rotationYaw, finalEntity.rotationPitch);
-
-            final NBTTagCompound nbttagcompound = new NBTTagCompound();
-            finalEntity.writeToNBTOptional(nbttagcompound);
-            return new Template.EntityInfo(entityInfo.pos, entityInfo.blockPos, nbttagcompound);
-        }
-
-        return null;
-    }
-
-
-    /**
-     * Transforms the entity's current yaw with the given Rotation and returns it. This does not have a side-effect.
-     * @param transformRotation the incoming rotation.
-     * @param previousYaw the previous rotation yaw.
-     * @return the new rotation yaw.
-     */
-    public double getRotatedYaw(Rotation transformRotation, double previousYaw)
-    {
-        switch (transformRotation)
-        {
-            case CLOCKWISE_180:
-                return previousYaw + NINETY_DEGREES;
-            case COUNTERCLOCKWISE_90:
-                return previousYaw + TWO_HUNDRED_SEVENTY_DEGREES;
-            case CLOCKWISE_90:
-                return previousYaw + ONE_HUNDED_EIGHTY_DEGREES;
-            default:
-                return previousYaw;
-        }
-    }
-
-    /**
-     * Get entity info with specific setting.
-     *
      * @param world    world the entity is in.
      * @param pos      the position it is at.
      * @param settings the settings.
@@ -688,7 +647,8 @@ public class Structure
 
         for (int i = 0; i < entityInfoList.length; i++)
         {
-            final Entity finalEntity = EntityList.createEntityFromNBT(entityInfoList[i].entityData, world);
+            final NBTTagCompound compound = entityInfoList[i].entityData;
+            final Entity finalEntity = EntityList.createEntityFromNBT(compound, world);
             final Vec3d entityVec = Structure.transformedVec3d(settings, entityInfoList[i].pos).add(new Vec3d(pos));
 
             if (!compound.hasKey("UpdateBlocked"))
@@ -762,8 +722,8 @@ public class Structure
         {
             final TileEntity te = holder.te;
             te.setPos(holder.pos);
-            final FakeWorld fakeWorld = new FakeWorld(holder.actualState, world.getSaveHandler(), world.getWorldInfo(), world.provider, world.profiler, true, te, true);
-            te.setWorld(fakeWorld);
+            final FakeWorld fakeWorld = new FakeWorld(holder.actualState, world.getSaveHandler(), world.getWorldInfo(), world.provider, world.theProfiler, true, te, true);
+            te.setWorldObj(fakeWorld);
             final int pass = 0;
 
             if (te.shouldRenderInPass(pass))
@@ -928,8 +888,8 @@ public class Structure
             final double rotationYaw
                     = (double) finalEntity.getMirroredYaw(settings.getMirror()) + ((double) finalEntity.rotationYaw - (double) finalEntity.getRotatedYaw(settings.getRotation()));
 
-            finalEntity.setLocationAndAngles(entityVec.x, entityVec.y, entityVec.z,
-              (float) rotationYaw, finalEntity.rotationPitch);
+            finalEntity.setLocationAndAngles(entityVec.xCoord, entityVec.yCoord, entityVec.zCoord,
+                    (float) rotationYaw, finalEntity.rotationPitch);
 
             final NBTTagCompound nbttagcompound = new NBTTagCompound();
             finalEntity.writeToNBTOptional(nbttagcompound);
