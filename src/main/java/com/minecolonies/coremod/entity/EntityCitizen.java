@@ -1775,6 +1775,14 @@ public class EntityCitizen extends EntityAgeable implements INpc
         return InventoryUtils.hasItemInItemHandler(new InvWrapper(getInventoryCitizen()), item, itemDamage);
     }
 
+    @Override
+    public void onItemPickup(final Entity entityIn, final int quantity)
+    {
+        /**
+         * Do nothing here because the automatic pickUp doesn't work that well. That's why we use our own.
+         */
+    }
+
     /**
      * Citizen will try to pick up a certain item.
      *
