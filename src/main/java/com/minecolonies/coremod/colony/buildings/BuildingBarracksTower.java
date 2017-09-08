@@ -62,7 +62,10 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        compound.merge(NBTUtil.createPosTag(barracks));
+        if(barracks != null)
+        {
+            compound.merge(NBTUtil.createPosTag(barracks));
+        }
     }
 
     /**
