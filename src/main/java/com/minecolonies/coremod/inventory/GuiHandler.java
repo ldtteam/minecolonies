@@ -29,7 +29,7 @@ public class GuiHandler implements IGuiHandler
         }
         else if(tileEntity instanceof TileEntityRack)
         {
-            return new ContainerRack((TileEntityRack) tileEntity, ((TileEntityRack) tileEntity).getOtherChest(), player.inventory, world, pos);
+            return new ContainerRack((TileEntityRack) tileEntity, ((TileEntityRack) tileEntity).getOtherChest(), player.inventory, pos);
         }
         else
         {

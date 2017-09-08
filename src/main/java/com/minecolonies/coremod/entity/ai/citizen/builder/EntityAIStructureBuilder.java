@@ -4,6 +4,7 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockSolidSubstitution;
+import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
@@ -393,6 +394,16 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         return Collections.emptyList();
     }
 
+    @Override
+    public Template.EntityInfo getEntityInfo()
+    {
+        if (job.getStructure() != null && job.getStructure().getEntityinfo() != null)
+        {
+            return job.getStructure().getEntityinfo();
+        }
+        return null;
+    }
+
     /**
      * Get itemStack of tileEntityData. Retrieve the data from the tileEntity.
      *
@@ -469,11 +480,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         else
         {
             final WorkOrderBuild woh = (wo instanceof WorkOrderBuild)?(WorkOrderBuild) wo : null;
-            if (woh == null && structureName.contains(WAYPOINT_STRING))
-            {
-                worker.getColony().addWayPoint(wo.getBuildingLocation(), world.getBlockState(wo.getBuildingLocation()));
-            }
-            else if (woh != null)
+            if (woh != null)
             {
                 final AbstractBuilding building = job.getColony().getBuilding(wo.getBuildingLocation());
                 if (building == null)
@@ -518,6 +525,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         {
             building.registerBlockPosition(block, pos);
         }
+
+        if(block == ModBlocks.blockWayPoint)
+        {
+            worker.getColony().addWayPoint(pos, world.getBlockState(pos));
+        }
     }
 
     @Override
@@ -552,7 +564,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             final BlockPos basePos = world.getTopSolidOrLiquidBlock(pos);
             if (EntityUtils.checkForFreeSpace(world, basePos.down())
                     && world.getBlockState(basePos.up()).getBlock() != Blocks.SAPLING
-                    && world.getBlockState(basePos).getMaterial().isSolid())
+                    && world.getBlockState(basePos.down()).getMaterial().isSolid())
             {
                 return basePos;
             }

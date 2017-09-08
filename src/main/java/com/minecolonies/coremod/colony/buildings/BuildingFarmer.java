@@ -499,7 +499,10 @@ public class BuildingFarmer extends AbstractBuildingWorker
     {
         final Field field = getColony().getField(position);
         field.setTaken(true);
-        field.setOwner(getWorker().getName());
+        if(getWorker() != null)
+        {
+            field.setOwner(getWorker().getName());
+        }
         farmerFields.add(field);
     }
 

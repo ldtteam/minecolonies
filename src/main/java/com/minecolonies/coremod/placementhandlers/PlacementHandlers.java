@@ -7,12 +7,14 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.BlockSolidSubstitution;
 import com.minecolonies.coremod.blocks.BlockWaypoint;
-import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.buildings.BuildingWareHouse;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -21,7 +23,9 @@ import net.minecraft.item.ItemFlintAndSteel;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -279,6 +283,20 @@ public final class PlacementHandlers
             if (blockState.getBlock() instanceof BlockAir)
             {
                 placer.getWorker().setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
+
+                //Meaning there is not supposed to be an entity at this location
+                if(placer.getEntityInfo() == null)
+                {
+                    final List<Entity> entityList = world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos),
+                            entity -> !(entity instanceof EntityLiving || entity instanceof EntityItem));
+                    if(!entityList.isEmpty())
+                    {
+                        for(final Entity entity: entityList)
+                        {
+                            entity.attackEntityFrom(DamageSource.ANVIL, Float.MAX_VALUE);
+                        }
+                    }
+                }
 
                 placer.handleBuildingOverBlock(pos);
                 world.setBlockToAir(pos);
