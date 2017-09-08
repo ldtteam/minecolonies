@@ -176,7 +176,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Range required for the citizen to be home.
      */
-    private static final double RANGE_TO_BE_HOME           = 16;
+    private static final double RANGE_TO_BE_HOME           = 100;
     /**
      * If the entitiy is stuck for 2 minutes do something.
      */
