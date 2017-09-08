@@ -77,13 +77,13 @@ public class EntityAISleep extends EntityAIBase
                 {
                     for (final BlockPos pos : ((BuildingHome) hut).getBedList())
                     {
-                        final World world = citizen.worldObj;
+                        final World world = citizen.world;
                         IBlockState state = world.getBlockState(pos);
                         state = state.getBlock().getActualState(state, world, pos);
                         if (state.getBlock() instanceof BlockBed && !state.getValue(BlockBed.OCCUPIED))
                         {
                             usedBed = pos;
-                            citizen.worldObj.notifyBlockUpdate(pos, state, state.withProperty(BlockBed.OCCUPIED, true), 0);
+                            citizen.world.notifyBlockUpdate(pos, state, state.withProperty(BlockBed.OCCUPIED, true), 0);
                             return true;
                         }
                     }
@@ -102,10 +102,10 @@ public class EntityAISleep extends EntityAIBase
         citizen.onWakeUp();
         if(usedBed != null)
         {
-            final IBlockState state = citizen.worldObj.getBlockState(usedBed);
+            final IBlockState state = citizen.world.getBlockState(usedBed);
             if(state.getBlock() instanceof BlockBed)
             {
-                citizen.worldObj.notifyBlockUpdate(usedBed, state, state.withProperty(BlockBed.OCCUPIED, false), 0);
+                citizen.world.notifyBlockUpdate(usedBed, state, state.withProperty(BlockBed.OCCUPIED, false), 0);
             }
             usedBed = null;
         }

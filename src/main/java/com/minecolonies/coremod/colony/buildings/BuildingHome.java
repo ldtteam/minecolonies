@@ -139,7 +139,7 @@ public class BuildingHome extends AbstractBuildingHut
     }
 
     @Override
-    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
+    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos)
     {
         if (block == Blocks.BED)
         {
