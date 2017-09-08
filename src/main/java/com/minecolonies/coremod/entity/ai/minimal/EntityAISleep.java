@@ -1,7 +1,14 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import net.minecraft.block.BlockBed;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 import static com.minecolonies.coremod.entity.EntityCitizen.Status.SLEEPING;
 
@@ -10,7 +17,15 @@ import static com.minecolonies.coremod.entity.EntityCitizen.Status.SLEEPING;
  */
 public class EntityAISleep extends EntityAIBase
 {
+    /**
+     * The citizen.
+     */
     private final EntityCitizen citizen;
+
+    /**
+     * Bed the citizen is using atm.
+     */
+    private BlockPos usedBed = null;
 
     /**
      * Initiate the sleep task.
@@ -49,11 +64,51 @@ public class EntityAISleep extends EntityAIBase
     {
         if (citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP)
         {
-            //TODO might search a bed?
+            final Colony colony = citizen.getColony();
+            if(colony == null)
+            {
+                return true;
+            }
+
+            if(usedBed == null)
+            {
+                final AbstractBuilding hut = colony.getBuilding(citizen.getHomePosition());
+                if (hut instanceof BuildingHome)
+                {
+                    for (final BlockPos pos : ((BuildingHome) hut).getBedList())
+                    {
+                        final World world = citizen.world;
+                        IBlockState state = world.getBlockState(pos);
+                        state = state.getBlock().getActualState(state, world, pos);
+                        if (state.getBlock() instanceof BlockBed && !state.getValue(BlockBed.OCCUPIED))
+                        {
+                            usedBed = pos;
+                            citizen.world.notifyBlockUpdate(pos, state, state.withProperty(BlockBed.OCCUPIED, true), 0);
+                            return true;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (citizen.isWorkerAtSiteWithMove(usedBed, 1))
+                {
+                    return true;
+                }
+            }
             return true;
         }
 
         citizen.onWakeUp();
+        if(usedBed != null)
+        {
+            final IBlockState state = citizen.world.getBlockState(usedBed);
+            if(state.getBlock() instanceof BlockBed)
+            {
+                citizen.world.notifyBlockUpdate(usedBed, state, state.withProperty(BlockBed.OCCUPIED, false), 0);
+            }
+            usedBed = null;
+        }
 
         return false;
     }
