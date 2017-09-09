@@ -1,13 +1,11 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.RandomPositionGenerator;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Entity action to wander randomly around.
@@ -53,7 +51,7 @@ public class EntityAICitizenWander extends EntityAIBase
             return false;
         }
 
-        vec3d = new Vec3d(vec3d.xCoord, getValidHeight(vec3d), vec3d.zCoord);
+        vec3d = new Vec3d(vec3d.xCoord, BlockPosUtil.getValidHeight(vec3d, CompatibilityUtils.getWorld(citizen)), vec3d.zCoord);
 
         this.xPosition = vec3d.xCoord;
         this.yPosition = vec3d.yCoord;
@@ -76,34 +74,6 @@ public class EntityAICitizenWander extends EntityAIBase
     private boolean checkForRandom()
     {
         return citizen.getRNG().nextInt(120) != 0;
-    }
-
-    /**
-     * Returns the right height for the given position (ground block).
-     *
-     * @param position Current position of the entity.
-     * @return Ground level at (position.x, position.z).
-     */
-    private double getValidHeight(@NotNull final Vec3d position)
-    {
-        double returnHeight = position.yCoord;
-        if (position.yCoord < 0)
-        {
-            returnHeight = 0;
-        }
-
-        while (returnHeight >= 1 && CompatibilityUtils.getWorld(citizen).isAirBlock(new BlockPos(MathHelper.floor(position.xCoord),
-                                                                           (int) returnHeight,
-                                                                           MathHelper.floor(position.zCoord))))
-        {
-            returnHeight -= 1.0D;
-        }
-
-        while (!CompatibilityUtils.getWorld(citizen).isAirBlock(new BlockPos(MathHelper.floor(position.xCoord), (int) returnHeight, MathHelper.floor(position.zCoord))))
-        {
-            returnHeight += 1.0D;
-        }
-        return returnHeight;
     }
 
     /**

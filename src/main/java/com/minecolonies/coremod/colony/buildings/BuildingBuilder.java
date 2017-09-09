@@ -287,7 +287,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
      */
     private void updateAvailableResources()
     {
-        final EntityCitizen builder = getWorkerEntity();
+        final EntityCitizen builder = getMainWorkerEntity();
 
         InventoryCitizen builderInventory = null;
         if (builder!=null)

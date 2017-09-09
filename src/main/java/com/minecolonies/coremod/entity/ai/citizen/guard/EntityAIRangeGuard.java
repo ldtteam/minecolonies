@@ -194,20 +194,28 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
             targetEntity = this.worker.getLastAttacker();
         }
 
-        if (targetEntity != null && (!targetEntity.isEntityAlive() || checkForToolOrWeapon(ToolType.BOW)))
+        if(targetEntity == null)
+        {
+            return AIState.GUARD_SEARCH_TARGET;
+        }
+
+        if (!targetEntity.isEntityAlive() || checkForToolOrWeapon(ToolType.BOW))
         {
             targetEntity = null;
             worker.addExperience(EXP_PER_MOD_DEATH);
             worker.setAIMoveSpeed((float) 1.0D);
+            this.onKilledEntity(targetEntity);
             return AIState.GUARD_GATHERING;
         }
 
         if (worker.getEntitySenses().canSee(targetEntity) && worker.getDistanceToEntity(targetEntity) <= MAX_ATTACK_DISTANCE)
         {
             worker.resetActiveHand();
-            attackEntityWithRangedAttack(targetEntity, DAMAGE_PER_ATTACK);
+            attackEntityWithRangedAttack(targetEntity, (float) DAMAGE_PER_ATTACK);
+
             setDelay(getReloadTime());
             attacksExecuted += 1;
+            currentSearchDistance = START_SEARCH_DISTANCE;
 
             if (attacksExecuted >= getMaxAttacksUntilRestock())
             {

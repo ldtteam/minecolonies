@@ -1,0 +1,23 @@
+{
+  "variants": {
+    "facing=up": {
+      "model": "minecolonies:blockhutbarrackstower"
+    },
+    "facing=east": {
+      "model": "minecolonies:blockhutbarrackstower",
+      "y": 0
+    },
+    "facing=south": {
+      "model": "minecolonies:blockhutbarrackstower",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "minecolonies:blockhutbarrackstower",
+      "y": 180
+    },
+    "facing=north": {
+      "model": "minecolonies:blockhutbarrackstower",
+      "y": 270
+    }
+  }
+}
