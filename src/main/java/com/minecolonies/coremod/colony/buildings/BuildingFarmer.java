@@ -378,7 +378,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
         {
             if (field.isTaken())
             {
-                if (getWorker() == null || field.getOwner().equals(getMainWorker().getName()))
+                if (getWorker().isEmpty() || field.getOwner().equals(getMainWorker().getName()))
                 {
                     @NotNull final FieldView fieldView = new FieldView(field);
                     fieldView.serializeViewNetworkData(buf);
