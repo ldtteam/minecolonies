@@ -238,15 +238,15 @@ public final class BlockPosUtil
             returnHeight = 0;
         }
 
-        while (returnHeight >= 1 && world.isAirBlock(new BlockPos(MathHelper.floor_double(position.xCoord),
+        while (returnHeight >= 1 && world.isAirBlock(new BlockPos(MathHelper.floor(position.xCoord),
                 (int) returnHeight,
-                MathHelper.floor_double(position.zCoord))))
+                MathHelper.floor(position.zCoord))))
         {
             returnHeight -= 1.0D;
         }
 
         while (!world.isAirBlock(
-                new BlockPos(MathHelper.floor_double(position.xCoord), (int) returnHeight, MathHelper.floor_double(position.zCoord))))
+                new BlockPos(MathHelper.floor(position.xCoord), (int) returnHeight, MathHelper.floor(position.zCoord))))
         {
             returnHeight += 1.0D;
         }
