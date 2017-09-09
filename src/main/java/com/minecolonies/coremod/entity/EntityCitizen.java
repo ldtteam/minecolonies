@@ -1811,7 +1811,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
                         SoundCategory.AMBIENT,
                         0.2F,
                         (float) ((this.rand.nextGaussian() * 0.7D + 1.0D) * 2.0D));
-                this.onItemPickup(entityItem, ItemStackUtils.getSize(itemStack) - resultingStackSize);
+                super.onItemPickup(entityItem, ItemStackUtils.getSize(itemStack) - resultingStackSize);
 
                 if (ItemStackUtils.isEmpty(resultStack))
                 {
