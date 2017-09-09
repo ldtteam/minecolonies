@@ -51,9 +51,9 @@ public class BuildingBarracks extends AbstractBuilding
     public void onUpgradeComplete(final int newLevel)
     {
         final World world = getColony().getWorld();
-        if (world != null && newLevel < BARRACKS_HUT_MAX_LEVEL)
+        if (world != null)
         {
-            for (int i = 1; i <= newLevel; i++)
+            for (int i = 1; i <= newLevel && i < BARRACKS_HUT_MAX_LEVEL; i++)
             {
                 final Tuple<BlockPos, EnumFacing> tuple = getPositionAndFacingForLevel(i);
 
