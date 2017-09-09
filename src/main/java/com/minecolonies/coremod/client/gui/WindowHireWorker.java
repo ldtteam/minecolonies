@@ -77,6 +77,7 @@ public class WindowHireWorker extends Window implements ButtonHandler
      * Contains all the citizens.
      */
     private List<CitizenDataView> citizens = new ArrayList<>();
+
     /**
      * The view of the current building.
      */
@@ -86,10 +87,7 @@ public class WindowHireWorker extends Window implements ButtonHandler
      * The colony.
      */
     private final ColonyView            colony;
-    /**
-     * Contains all the citizens.
-     */
-    private List<CitizenDataView> citizens = new ArrayList<>();
+
 
     /**
      * Constructor for the window when the player wants to hire a worker for a certain job.

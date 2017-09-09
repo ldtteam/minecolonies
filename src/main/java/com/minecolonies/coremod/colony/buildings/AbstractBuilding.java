@@ -643,7 +643,7 @@ public abstract class AbstractBuilding
         }
         else
         {
-            player.addChatComponentMessage(new TextComponentTranslation("com.minecolonies.coremod.worker.noUpgrade"));
+            player.sendMessage(new TextComponentTranslation("com.minecolonies.coremod.worker.noUpgrade"));
         }
     }
 
