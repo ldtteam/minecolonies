@@ -12,7 +12,6 @@ import com.minecolonies.coremod.placementhandlers.IPlacementHandler;
 import com.minecolonies.coremod.placementhandlers.PlacementHandlers;
 import com.minecolonies.structures.helpers.StructureProxy;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockStairs;
 import net.minecraft.block.state.IBlockState;
@@ -21,8 +20,6 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFlowerPot;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
@@ -289,7 +286,7 @@ public final class StructureWrapper
                     {
                         try
                         {
-                            Entity entity = EntityList.createEntityFromNBT(info.entityData, world);
+                            final Entity entity = EntityList.createEntityFromNBT(info.entityData, world);
                             entity.setUniqueId(UUID.randomUUID());
                             world.spawnEntityInWorld(entity);
                         }

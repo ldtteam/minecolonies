@@ -27,9 +27,6 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Send build tool data to the server. Verify the data on the server side and then place the building.
- * Created: August 13, 2015
- *
- * @author Colton
  */
 public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage, IMessage>
 {
@@ -150,7 +147,6 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
             final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
     {
         final String hut = sn.getSection();
-        final Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
         final Colony tempColony = ColonyManager.getClosestColony(world, buildPos);
         if (tempColony != null
                 && !tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
@@ -159,6 +155,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
             return;
         }
 
+        final Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
         if (block != null && EventHandler.onBlockHutPlaced(world, player, block, buildPos))
         {
             world.destroyBlock(buildPos, true);
@@ -209,7 +206,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
 
             try
             {
-                int level = Integer.parseInt(name);
+                final int level = Integer.parseInt(name);
                 building.setBuildingLevel(level);
             }
             catch(final NumberFormatException e)
