@@ -4,7 +4,7 @@
     <switch id="pages" size="100% 200px" pos="0 7">
 
         <view id="pageActions" size="100% 200px" pos="0 7">
-            <layout source="minecolonies:gui/layoutbuildingdefault.xml"/>
+            <layout source="minecolonies:gui/layoutBuildingDefault.xml"/>
         </view>
 
         <view id="resourceActions" size="100% 100%">
