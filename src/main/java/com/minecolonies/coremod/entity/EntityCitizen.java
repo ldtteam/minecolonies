@@ -1776,11 +1776,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     @Override
-    public void onItemPickup(final Entity entityIn, final int quantity)
+    protected void updateEquipmentIfNeeded(final EntityItem itemEntity)
     {
-        /**
-         * Do nothing here because the automatic pickUp doesn't work that well. That's why we use our own.
-         */
+        //Just do nothing!
     }
 
     /**
@@ -1811,7 +1809,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
                         SoundCategory.AMBIENT,
                         0.2F,
                         (float) ((this.rand.nextGaussian() * 0.7D + 1.0D) * 2.0D));
-                super.onItemPickup(entityItem, ItemStackUtils.getSize(itemStack) - resultingStackSize);
+                this.onItemPickup(entityItem, ItemStackUtils.getSize(itemStack) - resultingStackSize);
 
                 if (ItemStackUtils.isEmpty(resultStack))
                 {
