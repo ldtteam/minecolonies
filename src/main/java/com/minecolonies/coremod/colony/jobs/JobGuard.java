@@ -4,7 +4,7 @@ import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.BuildingGuardTower;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.guard.EntityAIMeleeGuard;
@@ -47,15 +47,15 @@ public class JobGuard extends AbstractJob
     public RenderBipedCitizen.Model getModel()
     {
         final AbstractBuilding building = getCitizen().getWorkBuilding();
-        if (building instanceof BuildingGuardTower)
+        if (building instanceof AbstractBuildingGuards)
         {
-            BuildingGuardTower.GuardJob job = ((BuildingGuardTower) building).getJob();
+            AbstractBuildingGuards.GuardJob job = ((AbstractBuildingGuards) building).getJob();
             if (job == null)
             {
-                job = generateRandomAI((BuildingGuardTower) building);
+                job = generateRandomAI((AbstractBuildingGuards) building);
             }
 
-            if (job == BuildingGuardTower.GuardJob.KNIGHT)
+            if (job == AbstractBuildingGuards.GuardJob.KNIGHT)
             {
                 return RenderBipedCitizen.Model.KNIGHT_GUARD;
             }
@@ -71,16 +71,16 @@ public class JobGuard extends AbstractJob
      * @return the new job.
      */
     @NotNull
-    private static BuildingGuardTower.GuardJob generateRandomAI(@NotNull final BuildingGuardTower building)
+    private static AbstractBuildingGuards.GuardJob generateRandomAI(@NotNull final AbstractBuildingGuards building)
     {
         final int chance = new Random().nextInt(GUARD_CHANCE);
         if (chance == 1)
         {
-            building.setJob(BuildingGuardTower.GuardJob.KNIGHT);
-            return BuildingGuardTower.GuardJob.KNIGHT;
+            building.setJob(AbstractBuildingGuards.GuardJob.KNIGHT);
+            return AbstractBuildingGuards.GuardJob.KNIGHT;
         }
-        building.setJob(BuildingGuardTower.GuardJob.RANGER);
-        return BuildingGuardTower.GuardJob.RANGER;
+        building.setJob(AbstractBuildingGuards.GuardJob.RANGER);
+        return AbstractBuildingGuards.GuardJob.RANGER;
     }
 
     /**
@@ -91,10 +91,10 @@ public class JobGuard extends AbstractJob
     public AbstractAISkeleton<? extends AbstractJob> generateAI()
     {
         final AbstractBuilding building = getCitizen().getWorkBuilding();
-        if (building instanceof BuildingGuardTower)
+        if (building instanceof AbstractBuildingGuards)
         {
-            final BuildingGuardTower.GuardJob job = ((BuildingGuardTower) building).getJob();
-            if (job == BuildingGuardTower.GuardJob.KNIGHT)
+            final AbstractBuildingGuards.GuardJob job = ((AbstractBuildingGuards) building).getJob();
+            if (job == AbstractBuildingGuards.GuardJob.KNIGHT)
             {
                 return new EntityAIMeleeGuard(this);
             }

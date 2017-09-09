@@ -24,7 +24,6 @@ import net.minecraft.world.gen.structure.template.Template;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.text.html.parser.Entity;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;

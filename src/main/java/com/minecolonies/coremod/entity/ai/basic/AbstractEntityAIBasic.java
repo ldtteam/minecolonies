@@ -165,7 +165,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 /*
                  * Check if inventory has to be dumped.
                  */
-                new AITarget(this::inventoryNeedsDump, INVENTORY_FULL)
+                new AITarget(this::inventoryNeedsDump, INVENTORY_FULL),
+                /**
+                 * Reset to idle if no specific tool is needed.
+                 */
+                new AITarget(() -> getState() == NEEDS_TOOL && this.getOwnBuilding().needsTool(ToolType.NONE), IDLE)
         );
     }
 
@@ -687,7 +691,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         if (!getOwnBuilding().hasOnGoingDelivery())
         {
             chatRequestTool(toolType, minimalLevel, maxToolLevel);
-
         }
         return true;
     }

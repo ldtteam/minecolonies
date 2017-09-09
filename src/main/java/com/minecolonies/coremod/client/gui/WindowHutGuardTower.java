@@ -8,7 +8,7 @@ import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.buildings.BuildingGuardTower;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.network.messages.GuardScepterMessage;
 import com.minecolonies.coremod.network.messages.GuardTaskMessage;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -24,7 +24,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECO
 /**
  * Window for the guardTower hut.
  */
-public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGuardTower.View>
+public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBuildingGuards.View>
 {
     /**
      * Id of the list of the patrol points in the GUI.
@@ -103,11 +103,11 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
     /**
      * The task of the guard, following the Task enum.
      */
-    private BuildingGuardTower.Task     task                = BuildingGuardTower.Task.GUARD;
+    private AbstractBuildingGuards.Task     task                = AbstractBuildingGuards.Task.GUARD;
     /**
      * The job of the guard, following the GuardJob enum.
      */
-    private BuildingGuardTower.GuardJob job                 = null;
+    private AbstractBuildingGuards.GuardJob job                 = null;
     /**
      * The list of MANUAL patrol targets.
      */
@@ -120,9 +120,9 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
     /**
      * Constructor for the window of the guardTower hut.
      *
-     * @param building {@link BuildingGuardTower.View}.
+     * @param building {@link AbstractBuildingGuards.View}.
      */
-    public WindowHutGuardTower(final BuildingGuardTower.View building)
+    public WindowHutGuardTower(final AbstractBuildingGuards.View building)
     {
         super(building, Constants.MOD_ID + HUT_GUARD_TOWER_RESOURCE_SUFFIX);
 
@@ -169,7 +169,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
 
         if (job != null)
         {
-            if (job.equals(BuildingGuardTower.GuardJob.KNIGHT))
+            if (job.equals(AbstractBuildingGuards.GuardJob.KNIGHT))
             {
                 buttonJob.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.knight"));
             }
@@ -185,7 +185,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
         this.findPaneOfTypeByID(BUTTON_PATROL_MODE, Button.class).setLabel(patrolManually ? MANUAL : AUTO);
         this.findPaneOfTypeByID(BUTTON_RETRIEVAL_MODE, Button.class).setLabel(retrieveOnLowHealth ? ON : OFF);
 
-        if (task.equals(BuildingGuardTower.Task.PATROL))
+        if (task.equals(AbstractBuildingGuards.Task.PATROL))
         {
             if (patrolManually)
             {
@@ -198,12 +198,12 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
             }
             buttonTaskPatrol.setEnabled(false);
         }
-        else if (task.equals(BuildingGuardTower.Task.FOLLOW))
+        else if (task.equals(AbstractBuildingGuards.Task.FOLLOW))
         {
             buttonTaskFollow.setEnabled(false);
             buttonSetTarget.hide();
         }
-        else if (task.equals(BuildingGuardTower.Task.GUARD))
+        else if (task.equals(AbstractBuildingGuards.Task.GUARD))
         {
             buttonSetTarget.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.targetGuard"));
             buttonTaskGuard.setEnabled(false);
@@ -219,7 +219,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
     {
         if (button.getID().contains("patrol"))
         {
-            building.task = BuildingGuardTower.Task.PATROL;
+            building.task = AbstractBuildingGuards.Task.PATROL;
 
             buttonTaskPatrol.setEnabled(false);
             buttonTaskFollow.setEnabled(true);
@@ -229,7 +229,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
         }
         else if (button.getID().contains("follow"))
         {
-            building.task = BuildingGuardTower.Task.FOLLOW;
+            building.task = AbstractBuildingGuards.Task.FOLLOW;
 
             buttonTaskFollow.setEnabled(false);
             buttonTaskPatrol.setEnabled(true);
@@ -239,7 +239,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
         }
         else
         {
-            building.task = BuildingGuardTower.Task.GUARD;
+            building.task = AbstractBuildingGuards.Task.GUARD;
 
             buttonTaskGuard.setEnabled(false);
             buttonTaskPatrol.setEnabled(true);
@@ -274,14 +274,14 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
             LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.gui.workerHuts.noSpace");
         }
 
-        if (patrolManually && task.equals(BuildingGuardTower.Task.PATROL))
+        if (patrolManually && task.equals(AbstractBuildingGuards.Task.PATROL))
         {
-            givePlayerScepter(BuildingGuardTower.Task.PATROL);
+            givePlayerScepter(AbstractBuildingGuards.Task.PATROL);
             LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.job.guard.tool.taskPatrol");
         }
-        else if (task.equals(BuildingGuardTower.Task.GUARD))
+        else if (task.equals(AbstractBuildingGuards.Task.GUARD))
         {
-            givePlayerScepter(BuildingGuardTower.Task.GUARD);
+            givePlayerScepter(AbstractBuildingGuards.Task.GUARD);
             LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.job.guard.tool.taskGuard");
         }
         window.close();
@@ -292,7 +292,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
      *
      * @param localTask the task to execute with the scepter.
      */
-    private void givePlayerScepter(final BuildingGuardTower.Task localTask)
+    private void givePlayerScepter(final AbstractBuildingGuards.Task localTask)
     {
         MineColonies.getNetwork().sendToServer(new GuardScepterMessage(localTask.ordinal(), building.getID()));
     }
@@ -326,17 +326,17 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
     {
         if (building.job == null)
         {
-            building.job = BuildingGuardTower.GuardJob.RANGER;
+            building.job = AbstractBuildingGuards.GuardJob.RANGER;
         }
         else
         {
-            if (building.job.equals(BuildingGuardTower.GuardJob.KNIGHT))
+            if (building.job.equals(AbstractBuildingGuards.GuardJob.KNIGHT))
             {
-                building.job = BuildingGuardTower.GuardJob.RANGER;
+                building.job = AbstractBuildingGuards.GuardJob.RANGER;
             }
             else
             {
-                building.job = BuildingGuardTower.GuardJob.KNIGHT;
+                building.job = AbstractBuildingGuards.GuardJob.KNIGHT;
             }
         }
         pullInfoFromHut();
@@ -359,7 +359,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
         super.onOpened();
 
         patrolList = findPaneOfTypeByID(LIST_LEVELS, ScrollingList.class);
-        if (task.equals(BuildingGuardTower.Task.PATROL))
+        if (task.equals(AbstractBuildingGuards.Task.PATROL))
         {
             patrolList.setDataProvider(new ScrollingList.DataProvider()
             {
@@ -377,7 +377,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
                 }
             });
         }
-        else if (task.equals(BuildingGuardTower.Task.GUARD))
+        else if (task.equals(AbstractBuildingGuards.Task.GUARD))
         {
             patrolList.setDataProvider(new ScrollingList.DataProvider()
             {
@@ -405,7 +405,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
         pullInfoFromHut();
         handleButtons();
 
-        if (!task.equals(BuildingGuardTower.Task.PATROL))
+        if (!task.equals(AbstractBuildingGuards.Task.PATROL))
         {
             patrolList.hide();
         }
