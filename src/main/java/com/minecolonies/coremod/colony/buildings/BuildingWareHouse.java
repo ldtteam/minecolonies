@@ -303,7 +303,7 @@ public class BuildingWareHouse extends AbstractBuilding
     }
 
     /**
-     * BuildingDeliveryman View.
+     * BuildWarehouse View.
      */
     public static class View extends AbstractBuildingHut.View
     {

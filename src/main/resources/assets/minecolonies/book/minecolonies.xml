@@ -1,4 +1,4 @@
-<book title="Minecolonies Resurrection" cover="minecolonies:book/default" fontSize="0.6">
+<book title="Minecolonies Resurrection" cover="gbook:default" fontSize="0.6">
 
   <include ref="gbook:xml/standard.xml" />
 
@@ -6,7 +6,7 @@
 
     <page>
       <space height="5%" />
-      <image src="minecolonies:book/header" tw="190" th="30" />
+      <image src="gbook:header" tw="190" th="30" />
       <p></p>
       <p></p>
       <p></p>
@@ -18,7 +18,7 @@
       <p></p>
       <p space="6" align="center">__________</p>
       <p></p>
-      <image src="minecolonies:book/WissiFull" x="60" y="4" tw="60" th="132" />
+      <image src="gbook:WissiFull" x="60" y="4" tw="60" th="132" />
       <p></p>
       <p color="#1aa3ff" indent="45">by:</p>
     </page>
@@ -56,6 +56,7 @@
       <link indent="24" ref="Workers:Fisherman">&#9755; Fisherman</link>
       <link indent="24" ref="Workers:Guard">&#9755; Guard</link>
       <link indent="24" ref="Workers:D-man">&#9755; Deliveryman</link>
+      <link indent="24" ref="Workers:Baker">&#9755; Baker</link>
     </page>
 
     <page>
@@ -307,7 +308,7 @@
       <p>Guard       Intelligence &amp; Strength</p>
       <p>Deliveryman Intelligence &amp; Endurance</p>
       <p></p>
-      <image src="minecolonies:book/Traits" tw="180" th="33" />
+      <image src="gbook:Traits" tw="180" th="33" />
     </page>
 
     <page id="Happ">
@@ -807,6 +808,78 @@
       <p></p>
       <link ref="Welcome:Index" align="center">Back to Index</link>
     </page>
+    
+    <page id="Baker">
+      <p color="#0004ff" align="center" underline="true">Baker Information</p>
+      <p></p>
+      <p>  The Baker is another part of the your Town's "bloodline". He will craft bread and cake to provide for all your Town Workers' needs. He will be crafting bread in the furnace, provided that the deliveryman (or yourself) give him/her all the wheat to do it. the baker will also craft a cake if you provide him/her with the appropriate items required (at the moment deliveryman will not deliver the items required for crafting cakes, has to be provided by player).</p>
+      <p></p>
+      <p>  Before you choose a place to build his hut, take into account the location from warehouse and/or farmer(s). After you have selected a place for the hut you have to craft the “Builder’s Hut” block in the crafting table and use your Buiding Tool to place the building.</p>
+    </page>
+    
+    <page>
+      <p>Once you "commit" to the placement of the Baker's Hut, the block will be placed and the baker will be automatically assigned (or you can manually assign one with the best " Traits" for Baker if you changed this in the setting tab in the Town Hall's GUI.</p>
+      <p></p>
+      <p align="center" bold="true">Best Traits are: Intelligence and Dexterity.</p>
+      <p></p>
+      <p align="center" underline="true">You now officially have a Baker! CONGRATULATIONS!</p>
+      <p></p>
+      <p>  Now you will have a Baker so he can start crafting bread and cakes right away. You will have to issue the builder the "Build" assignment so he can build the "baker's Hut". He will be asking for the materials he/she needs. Make sure to check the "chat" section of Minecraft regularly to see what materials the builder is requesting for any build/upgrade,also you can check the page 2 of the builder's GUI to see a list of the materials that are required.</p>
+    </page>
+    
+    <page>
+      <p>Once the builder is done, you can think about upgrading the baker’s hut so that the worker can craft more bread at a faster pace.</p>
+      <p></p>
+      <p>Hint: If you see builder has not finished a work order and you don’t see the builder asking for any materials, go to the builder’s hut and &quot;recall&quot; the builder and wait a bit to see what he/she needs. You can also look in pg. 2 of the hut's GUI and see there any materials that are required and he might be missing, they will be in red.</p>
+      <p></p>
+      <p>Now you can access the Baker's Hut block (right click on it) and you will see a GUI with different options:</p>
+      <p></p>
+      <p>The Worker assigned and his/her Level. (the Worker levels up in time by doing his/her work. The higher the level the faster and more efficient he/she will be).</p>
+    </page>
+
+    <page>
+      <p>And the buttons:</p>
+      <p></p>
+      <p indent="8">- Fire/Hire Worker.- If you think you know a better Citizen for the job.</p>
+      <p></p>
+      <p indent="8">- Recall Worker.- If Deliveryman gets stuck or you just need to bring him to his Hut.</p>
+      <p></p>
+      <p indent="8">- Build/Upgrade Building.- To create the build/upgrade work order for this building.</p>
+      <p></p>
+      <p indent="8">- Repair Building.- So the builder can recreate the original building (at the current level) and fix any broken, missing, unwanted addons to the original building.</p>
+      <p></p>
+      <p indent="8">- Inventory.- To access the buildings' storage where the &quot;worker&quot; takes and deposits materials, tools and anything he/she finds along the way. (they pickup anything in their path  considered a &quot;drop&quot;; saplings, seeds, rotten flesh, bones, arrows, etc.).</p>
+    </page>
+
+    <page>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <link ref="Welcome:Index" align="center">Back to Index</link>
+    </page>
+    
+    
   </chapter>
 
   <chapter id="Build">
@@ -831,6 +904,17 @@
       <link indent="16" ref="Tut:TH">* Town Hall</link>
       <link indent="16" ref="Build:CH">* Citizen Hut</link>
       <link indent="16" ref="Build:WH">* Warehouse</link>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
       <p></p>
       <p></p>
       <p></p>
@@ -868,7 +952,7 @@
       <p>  The Suppy Camp is one of two ways to obtain the Town Hall block. It is a great Supply of materials for you to start as well as a very illuminated place to live while you get your Town started. You have many chests, bed, bookshelves, torches, wool, etc etc. What else could the Camp contain... hhmmmm maybe some treasure as well?</p>
       <p></p>
       <p>Hint: if you’re not being able to place the Supply Camp, try it block by block: one to the right, left, closer of further from the area you cleared. It can not contain any holes or have any flowers, grass, fens, etc. Must be completely flat and clear.</p>
-    </page>
+    </page>4
 
     <page>
       <title>Placement of the Supply Camp.</title>
@@ -1010,7 +1094,7 @@
     </page>
 
     <page>
-      <image src="minecolonies:book/Comparison" tw="170" th="275" />
+      <image src="gbook:Comparison" tw="170" th="275" />
     </page>
 
     <page>
@@ -1030,7 +1114,7 @@
     </page>
 
     <page>
-      <image src="minecolonies:book/ExamplePath" tw="175" th="126" />
+      <image src="gbook:ExamplePath" tw="175" th="126" />
       <p></p>
       <p></p>
       <p></p>
@@ -1047,7 +1131,7 @@
       <p>Besides buildings, it is also possible to place additional waypoints for the citizen.</p>
       <p>Every decoration in a folder called "WayPoint" will be recognized by the builder and added to the colony as a waypoint.</p>
       <p></p>
-      <image src="minecolonies:book/More_Waypoints" tw="175" th="39" />
+      <image src="gbook:More_Waypoints" tw="175" th="39" />
       <p></p>
     </page>
 
@@ -1068,7 +1152,7 @@
       <p></p>
       <p>A more complex calculation is required when a range of possible waypoints are available when trying to path to a goal.</p>
       <p></p>
-      <image src="minecolonies:book/AlternativePath" tw="175" th="133" />
+      <image src="gbook:Alternative Path" tw="175" th="133" />
     </page>
 
     <page>
@@ -1130,19 +1214,19 @@
     <page id="Path">
       <p>Step Two.- Then all you have to do is right click the lower front corner (left or right makes no difference) at ground level of the structure.</p>
       <p></p>
-      <image src="minecolonies:book/point1" tw="175" th="28" />
+      <image src="gbook:point1" tw="175" th="28" />
       <p></p>
       <p></p>
       <p></p>
       <p></p>
       <p>Step Three.- Click on the top opposite corner of the structure. Leaving the entire structure inside this imaginary square. You will get a message to right click again to "save the schematic".</p>
-      <image src="minecolonies:book/point2" tw="175" th="27" />
+      <image src="gbook:point2" tw="175" th="27" />
       <p></p>
       <p></p>
       <p></p>
       <p>Step Four.- Once you right click again you will get a confirmation message: "Scan successfully saved as...". That's it! Simple, fast.</p>
       <p></p>
-      <image src="minecolonies:book/point3" tw="175" th="19" />
+      <image src="gbook:point3" tw="175" th="19" />
     </page>
 
     <page>
@@ -1152,7 +1236,7 @@
       <p></p>
       <p>You can also "delete" any of your saved scans.</p><p></p>
       <p></p>
-      <image src="minecolonies:book/Schematic" tw="180" th="28" />
+      <image src="gbook:Schematic" tw="180" th="28" />
       <p></p>
       <p></p>
       <p></p>

@@ -348,7 +348,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                     if (buildingToDeliver instanceof AbstractBuildingWorker)
                     {
                         chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NAMEDCHESTFULL,
-                                ((AbstractBuildingWorker) buildingToDeliver).getWorker().getName());
+                                ((AbstractBuildingWorker) buildingToDeliver).getMainWorker().getName());
                     }
                     else
                     {
