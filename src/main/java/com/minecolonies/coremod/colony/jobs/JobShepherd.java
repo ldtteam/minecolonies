@@ -8,6 +8,7 @@ import net.minecraft.entity.passive.EntitySheep;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -69,7 +70,7 @@ public class JobShepherd  extends AbstractJob
      */
     public List<EntitySheep> getSheep()
     {
-        return sheep;
+        return new ArrayList<>(sheep);
     }
 
     /**
@@ -79,6 +80,6 @@ public class JobShepherd  extends AbstractJob
      */
     public void setSheep(final List<EntitySheep> sheep)
     {
-        this.sheep = sheep;
+        this.sheep = new ArrayList<>(sheep);
     }
 }

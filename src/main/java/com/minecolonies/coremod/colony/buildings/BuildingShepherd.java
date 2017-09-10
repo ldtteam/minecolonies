@@ -60,7 +60,6 @@ public class BuildingShepherd extends AbstractBuildingWorker
         return SHEPHERD;
     }
 
-    //TODO Implement Later
     @NotNull
     @Override
     public AbstractJob createJob(final CitizenData citizen)
@@ -84,6 +83,7 @@ public class BuildingShepherd extends AbstractBuildingWorker
         }
 
         @NotNull
+        @Override
         public Window getWindow()
         {
             return new WindowHutWorkerPlaceholder<AbstractBuildingWorker.View>(this, SHEPHERD_HUT_NAME);

@@ -222,7 +222,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAISkill<JobShepherd>
 
             worker.getHeldItemMainhand().damageItem(1, worker);
 
-            for (ItemStack item : items)
+            for (final ItemStack item : items)
             {
                 worker.getInventoryCitizen().addItemStackToInventory(item);
             }
@@ -253,12 +253,8 @@ public class EntityAIWorkShepherd extends AbstractEntityAISkill<JobShepherd>
 
             final int rand = world.rand.nextInt(100);
 
-            System.out.println("chance: " + chanceToDye);
-            System.out.println("rand: " + rand);
-
             if (rand <= chanceToDye)
             {
-                System.out.println("true");
                 final int dyeInt = world.rand.nextInt(15);
                 sheep.setFleeceColor(EnumDyeColor.byMetadata(dyeInt));
             }
