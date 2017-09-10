@@ -14,17 +14,18 @@ import java.util.List;
 /**
  * Created by Asher on 3/9/17.
  */
-public class JobShepherd  extends AbstractJob
+public class JobShepherd extends AbstractJob
 {
 
     /**
      * The water the fisherman is currently fishing at
      * Contains the location of the water so that the fisherman can path to the fishing spot.
      */
-    private List<EntitySheep> sheep;
+    private List<EntitySheep> sheep = new ArrayList<>();
 
     /**
      * Instantiates the placeholder job.
+     *
      * @param entity the entity.
      */
     public JobShepherd(final CitizenData entity)
@@ -61,6 +62,15 @@ public class JobShepherd  extends AbstractJob
     public RenderBipedCitizen.Model getModel()
     {
         return RenderBipedCitizen.Model.FARMER;
+    }
+
+    /**
+     * Remove dead sheep from List
+     */
+    public void removeDeadSheep()
+    {
+        sheep.stream().filter(sheepie -> !sheepie.isEntityAlive()).forEach(sheepie ->
+                                                                             sheep.remove(sheepie));
     }
 
     /**

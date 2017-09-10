@@ -434,6 +434,7 @@ tile.minecolonies.blockMinecoloniesRack.name=Rack
 com.minecolonies.coremod.gui.workerHuts.saplingList=Tasklist
 
 com.minecolonies.coremod.status.waitingForWork=Waiting for a job
+com.minecolonies.coremod.status.goingToHut=Going to Hut!
 com.minecolonies.coremod.status.sleeping=Let me sleep
 com.minecolonies.coremod.status.waiting=Waiting for:
 com.minecolonies.coremod.status.rainStop=the rain to stop
@@ -464,6 +465,7 @@ com.minecolonies.coremod.status.stuckinleaves=Stuck in leaves!
 com.minecolonies.coremod.status.shepherd.goingtohut=Going to Hut!
 com.minecolonies.coremod.status.shepherd.goingtosheep=Travelling to da Sheep!
 com.minecolonies.coremod.status.shepherd.searchforsheep=Searching for da lamb!
+com.minecolonies.coremod.status.shepherd.breedingsheep=Breeding the sheep!
 tile.minecolonies.blockwaypoint.name=Waypoint placeholder
 tile.minecolonies.blockHutBarracksTower.name=Barracks Tower
 tile.minecolonies.blockHutBarracks.name=Barracks

@@ -428,6 +428,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     protected final boolean walkToBuilding()
     {
+        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.goingToHut"));
         @Nullable final AbstractBuildingWorker ownBuilding = getOwnBuilding();
         //Return true if the building is null to stall the worker
         return ownBuilding == null

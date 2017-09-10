@@ -294,5 +294,10 @@ public enum AIState
     /**
      * Shear all the sheep!
      */
-    SHEPHERD_SHEAR_SHEEP
+    SHEPHERD_SHEAR_SHEEP,
+
+    /**
+     * Breed some sheep!
+     */
+    SHEPHERD_BREED_SHEEP
 }
