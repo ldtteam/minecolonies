@@ -232,21 +232,21 @@ public final class BlockPosUtil
      */
     public static double getValidHeight(@NotNull final Vec3d position, @NotNull final World world)
     {
-        double returnHeight = position.yCoord;
-        if (position.yCoord < 0)
+        double returnHeight = position.y;
+        if (position.y < 0)
         {
             returnHeight = 0;
         }
 
-        while (returnHeight >= 1 && world.isAirBlock(new BlockPos(MathHelper.floor(position.xCoord),
+        while (returnHeight >= 1 && world.isAirBlock(new BlockPos(MathHelper.floor(position.x),
                 (int) returnHeight,
-                MathHelper.floor(position.zCoord))))
+                MathHelper.floor(position.z))))
         {
             returnHeight -= 1.0D;
         }
 
         while (!world.isAirBlock(
-                new BlockPos(MathHelper.floor(position.xCoord), (int) returnHeight, MathHelper.floor(position.zCoord))))
+                new BlockPos(MathHelper.floor(position.x), (int) returnHeight, MathHelper.floor(position.z))))
         {
             returnHeight += 1.0D;
         }

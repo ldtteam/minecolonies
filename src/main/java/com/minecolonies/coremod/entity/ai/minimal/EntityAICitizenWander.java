@@ -51,7 +51,7 @@ public class EntityAICitizenWander extends EntityAIBase
             return false;
         }
 
-        vec3d = new Vec3d(vec3d.xCoord, BlockPosUtil.getValidHeight(vec3d, CompatibilityUtils.getWorld(citizen)), vec3d.zCoord);
+        vec3d = new Vec3d(vec3d.x, BlockPosUtil.getValidHeight(vec3d, CompatibilityUtils.getWorld(citizen)), vec3d.z);
 
         this.xPosition = vec3d.x;
         this.yPosition = vec3d.y;
