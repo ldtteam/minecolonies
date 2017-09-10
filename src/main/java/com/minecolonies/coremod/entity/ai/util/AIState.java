@@ -275,6 +275,24 @@ public enum AIState
     /**
      * Take the product out of the oven.
      */
-    BAKER_TAKE_OUT_OF_OVEN
+    BAKER_TAKE_OUT_OF_OVEN,
 
+    /*
+ ###Shepherd###
+     */
+
+    /**
+     * Search for new sheep to shear.
+     */
+    SHEPHERD_SEARCH_FOR_SHEEP,
+
+    /**
+     * Walk to sheep.
+     */
+    SHEPHERD_WALK_TO_SHEEP,
+
+    /**
+     * Shear all the sheep!
+     */
+    SHEPHERD_SHEAR_SHEEP
 }

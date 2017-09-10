@@ -120,6 +120,7 @@ public abstract class AbstractBuilding
     {
         addMapping("Baker", BuildingBaker.class, BuildingBaker.View.class, BlockHutBaker.class);
         addMapping("Blacksmith", BuildingBlacksmith.class, BuildingBlacksmith.View.class, BlockHutBlacksmith.class);
+        addMapping("Shepherd", BuildingShepherd.class, BuildingShepherd.View.class, BlockHutShepherd.class);
         addMapping("Builder", BuildingBuilder.class, BuildingBuilderView.class, BlockHutBuilder.class);
         addMapping("Home", BuildingHome.class, BuildingHome.View.class, BlockHutCitizen.class);
         addMapping("Farmer", BuildingFarmer.class, BuildingFarmer.View.class, BlockHutFarmer.class);
