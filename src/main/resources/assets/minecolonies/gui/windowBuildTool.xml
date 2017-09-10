@@ -46,6 +46,6 @@
         <buttonimage id="cancel"        source="minecolonies:textures/gui/buildtool/red/cancel.png"         size="32" pos="64 96"/>
     </view>
 
-    <buttonimage id="pastecomplete" source="minecolonies:textures/gui/buildtool/blue/copy.png" label="Paste 1:1" visible="false" size="32 32" pos="320 210"/>
-    <buttonimage id="pastenice" source="minecolonies:textures/gui/buildtool/blue/paste.png" label="Paste" visible="false" size="32 32" pos="360 210"/>
+    <buttonimage id="pastecomplete" source="minecolonies:textures/gui/buildtool/blue/copy.png" visible="false" size="32 32" pos="320 210" textcolor="Black" texthovercolor="White"/>
+    <buttonimage id="pastenice" source="minecolonies:textures/gui/buildtool/blue/paste.png" visible="false" size="32 32" pos="360 210"/>
 </window>

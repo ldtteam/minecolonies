@@ -156,7 +156,6 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
             final Structures.StructureName sn,
             final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
     {
-        final String hut = sn.getSection();
         final Colony tempColony = ColonyManager.getClosestColony(world, buildPos);
         if (tempColony != null
                 && !tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
@@ -165,6 +164,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
             return;
         }
 
+        final String hut = sn.getSection();
         final Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
         if (block != null && EventHandler.onBlockHutPlaced(world, player, block, buildPos))
         {
