@@ -7,6 +7,7 @@ import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
 import com.minecolonies.structures.helpers.Settings;
 import com.minecolonies.structures.helpers.Structure;
 import com.minecolonies.structures.lib.ModelHolder;
@@ -114,7 +115,7 @@ public final class RenderUtils
         final IBlockState iblockstate = block.getDefaultState().withProperty(BlockInfoPoster.FACING, facing);
         final IBlockState iBlockExtendedState = block.getExtendedState(iblockstate, clientWorld, pos);
         final IBakedModel ibakedmodel = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(iblockstate);
-        final TileEntitySign sign = new TileEntitySign();
+        final TileEntitySign sign = new TileEntityInfoPoster();
         sign.setPos(pos);
 
         for(int i = 0; i < sign.signText.length; i++)

@@ -1,7 +1,12 @@
 package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
 import net.minecraft.block.BlockWallSign;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.util.Locale;
@@ -34,6 +39,19 @@ public class BlockInfoPoster extends BlockWallSign
     {
         setRegistryName(BLOCK_NAME);
         setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(Locale.ENGLISH), BLOCK_NAME));
+        GameRegistry.register((new ItemBlock(this)).setRegistryName(this.getRegistryName()));
         GameRegistry.register(this);
+    }
+
+    @Override
+    public TileEntity createNewTileEntity(final World worldIn, final int meta)
+    {
+        return new TileEntityInfoPoster();
+    }
+
+    @Override
+    public boolean hasTileEntity(final IBlockState state)
+    {
+        return true;
     }
 }
