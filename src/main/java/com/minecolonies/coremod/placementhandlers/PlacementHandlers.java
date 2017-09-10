@@ -6,6 +6,8 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.BlockSolidSubstitution;
 import com.minecolonies.coremod.blocks.BlockWaypoint;
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.BuildingWareHouse;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
@@ -64,22 +66,22 @@ public final class PlacementHandlers
         handlers.add(new ChestPlacementHandler());
         handlers.add(new WayPointBlockPlacementHandler());
         handlers.add(new GeneralBlockPlacementHandler());
-
     }
 
     //If he woudln't count the bracket spaces we'd be under 25 easily.
     public static class FireplacementHandler implements IPlacementHandler
     {
         @Override
-        public Object handle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final AbstractEntityAIStructure<?> placer,
-                final boolean infiniteResources)
+        public Object handle(
+                @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final AbstractEntityAIStructure<?> placer,
+                final boolean infiniteResources, final boolean complete)
         {
             if (!(blockState.getBlock() instanceof BlockFire))
             {
                 return ActionProcessingResult.IGNORE;
             }
 
-            if(placer != null)
+            if (placer != null)
             {
                 if (!infiniteResources)
                 {
@@ -111,14 +113,14 @@ public final class PlacementHandlers
         @Override
         public Object handle(
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources)
+                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
             if (blockState.getBlock() != Blocks.GRASS)
             {
                 return ActionProcessingResult.IGNORE;
             }
 
-            if(placer != null)
+            if (placer != null)
             {
                 if (!infiniteResources && placer.checkOrRequestItems(placer.getTotalAmount(new ItemStack(Blocks.DIRT))))
                 {
@@ -140,21 +142,21 @@ public final class PlacementHandlers
         @Override
         public Object handle(
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources)
+                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
             if (!(blockState.getBlock() instanceof BlockDoor))
             {
                 return ActionProcessingResult.IGNORE;
             }
 
-            if(placer != null && !infiniteResources && placer.checkOrRequestItems(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState))))
+            if (placer != null && !infiniteResources && placer.checkOrRequestItems(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState))))
             {
                 return ActionProcessingResult.DENY;
             }
 
             if (blockState.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.LOWER))
             {
-                if(placer != null)
+                if (placer != null)
                 {
                     placer.handleBuildingOverBlock(pos);
                 }
@@ -170,7 +172,7 @@ public final class PlacementHandlers
         @Override
         public Object handle(
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources)
+                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
             if (!(blockState.getBlock() instanceof BlockBed))
             {
@@ -188,7 +190,7 @@ public final class PlacementHandlers
             //Set other part of the bed, to the opposite PartType
             if (blockState.getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT)
             {
-                if(placer != null)
+                if (placer != null)
                 {
                     placer.handleBuildingOverBlock(pos);
                 }
@@ -206,7 +208,7 @@ public final class PlacementHandlers
         @Override
         public Object handle(
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources)
+                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
             if (!(blockState.getBlock() instanceof BlockDoublePlant))
             {
@@ -221,7 +223,7 @@ public final class PlacementHandlers
 
             if (blockState.getValue(BlockDoublePlant.HALF).equals(BlockDoublePlant.EnumBlockHalf.LOWER))
             {
-                if(placer != null)
+                if (placer != null)
                 {
                     placer.handleBuildingOverBlock(pos);
                 }
@@ -238,7 +240,7 @@ public final class PlacementHandlers
         @Override
         public Object handle(
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources)
+                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
             if (blockState instanceof BlockEndPortal
                     || blockState instanceof BlockMobSpawner
@@ -254,15 +256,16 @@ public final class PlacementHandlers
     public static class FlowerPotPlacementHandler implements IPlacementHandler
     {
         @Override
-        public Object handle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final AbstractEntityAIStructure<?> placer,
-                final boolean infiniteResources)
+        public Object handle(
+                @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final AbstractEntityAIStructure<?> placer,
+                final boolean infiniteResources, final boolean complete)
         {
             if (!(blockState.getBlock() instanceof BlockFlowerPot))
             {
                 return ActionProcessingResult.IGNORE;
             }
 
-            if(placer != null)
+            if (placer != null)
             {
                 if (!infiniteResources)
                 {
@@ -286,7 +289,7 @@ public final class PlacementHandlers
                 return false;
             }
 
-            if(placer != null)
+            if (placer != null)
             {
                 placer.handleFlowerPots(pos);
             }
@@ -299,11 +302,11 @@ public final class PlacementHandlers
         @Override
         public Object handle(
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources)
+                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
             if (blockState.getBlock() instanceof BlockAir)
             {
-                if(placer != null)
+                if (placer != null)
                 {
                     placer.getWorker().setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
 
@@ -336,7 +339,7 @@ public final class PlacementHandlers
         @Override
         public Object handle(
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources)
+                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
             if (!(blockState.getBlock() instanceof BlockGrassPath))
             {
@@ -366,7 +369,7 @@ public final class PlacementHandlers
         @Override
         public Object handle(
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources)
+                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
             //Workaround as long as we didn't rescan all of our buildings since BlockStairs now have different metadata values.
             if (blockState.getBlock() instanceof BlockStairs
@@ -386,7 +389,7 @@ public final class PlacementHandlers
         @Override
         public Object handle(
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources)
+                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
             if (!(blockState.getBlock() instanceof BlockSolidSubstitution))
             {
@@ -404,9 +407,19 @@ public final class PlacementHandlers
                 placer.handleBuildingOverBlock(pos);
             }
 
-            if (!world.setBlockState(pos, newBlockState, 0x03))
+            if(complete)
             {
-                return ActionProcessingResult.DENY;
+                if (!world.setBlockState(pos, blockState, 0x03))
+                {
+                    return ActionProcessingResult.DENY;
+                }
+            }
+            else
+            {
+                if (!world.setBlockState(pos, newBlockState, 0x03))
+                {
+                    return ActionProcessingResult.DENY;
+                }
             }
 
             return newBlockState;
@@ -418,7 +431,7 @@ public final class PlacementHandlers
         @Override
         public Object handle(
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources)
+                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
             if (placer != null && !infiniteResources)
             {
@@ -450,17 +463,32 @@ public final class PlacementHandlers
         @Override
         public Object handle(
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources)
+                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
             if (!(blockState.getBlock() instanceof BlockWaypoint))
             {
                 return ActionProcessingResult.IGNORE;
             }
 
-            if (placer != null)
+            if (placer == null)
             {
+                final Colony colony = ColonyManager.getClosestColony(world, pos);
+                if(colony != null && !complete)
+                {
+                    colony.addWayPoint(pos, Blocks.AIR.getDefaultState());
+                }
+                else
+                {
+                    return ActionProcessingResult.IGNORE;
+                }
+            }
+            else
+            {
+                placer.handleBuildingOverBlock(pos);
                 placer.addWayPoint(pos);
             }
+            world.setBlockToAir(pos);
+
             return blockState;
         }
     }
@@ -470,7 +498,7 @@ public final class PlacementHandlers
         @Override
         public Object handle(
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources)
+                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
             if (!(blockState.getBlock() instanceof BlockChest && !(blockState.getBlock() instanceof BlockMinecoloniesRack)))
             {

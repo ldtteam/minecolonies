@@ -30,7 +30,8 @@ import org.jetbrains.annotations.Nullable;
  */
 public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage, IMessage>
 {
-    private String   structureName;
+    private boolean complete;
+    private String structureName;
     private String   workOrderName;
     private int      rotation;
     private BlockPos pos;
@@ -55,8 +56,12 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
      * @param rotation      int representation of the rotation
      * @param isHut         true if hut, false if decoration
      * @param mirror        the mirror of the building or decoration.
+     * @param complete      paste it complete (with structure blocks) or without.
      */
-    public BuildToolPasteMessage(final String structureName, final String workOrderName, final BlockPos pos, final int rotation, final boolean isHut, final Mirror mirror)
+    public BuildToolPasteMessage(final String structureName,
+            final String workOrderName, final BlockPos pos,
+            final int rotation, final boolean isHut,
+            final Mirror mirror, final boolean complete)
     {
         super();
         this.structureName = structureName;
@@ -65,6 +70,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
         this.rotation = rotation;
         this.isHut = isHut;
         this.mirror = mirror == Mirror.FRONT_BACK;
+        this.complete = complete;
     }
 
     /**
@@ -85,6 +91,8 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
         isHut = buf.readBoolean();
 
         mirror = buf.readBoolean();
+
+        complete = buf.readBoolean();
     }
 
     /**
@@ -107,6 +115,8 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
         buf.writeBoolean(isHut);
 
         buf.writeBoolean(mirror);
+
+        buf.writeBoolean(complete);
     }
 
     @Override
@@ -126,7 +136,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
                 handleHut(CompatibilityUtils.getWorld(player), player, sn, message.rotation, message.pos, message.mirror);
             }
             StructureWrapper.loadAndPlaceStructureWithRotation(player.worldObj, message.structureName,
-                    message.pos, message.rotation, message.mirror ? Mirror.FRONT_BACK : Mirror.NONE);
+                    message.pos, message.rotation, message.mirror ? Mirror.FRONT_BACK : Mirror.NONE, message.complete);
         }
     }
 

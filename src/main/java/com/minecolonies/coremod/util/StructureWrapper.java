@@ -34,6 +34,7 @@ import java.util.UUID;
 
 import static com.minecolonies.coremod.placementhandlers.IPlacementHandler.ActionProcessingResult.ACCEPT;
 import static com.minecolonies.coremod.placementhandlers.IPlacementHandler.ActionProcessingResult.DENY;
+import static com.minecolonies.coremod.placementhandlers.IPlacementHandler.ActionProcessingResult.IGNORE;
 
 /**
  * Interface for using the structure codebase.
@@ -101,16 +102,18 @@ public final class StructureWrapper
      * @param pos       coordinates
      * @param rotations number of times rotated
      * @param mirror    the mirror used.
+     * @param complete  paste it complete (with structure blocks) or without
      */
     public static void loadAndPlaceStructureWithRotation(
             final World worldObj, @NotNull final String name,
-            @NotNull final BlockPos pos, final int rotations, @NotNull final Mirror mirror)
+            @NotNull final BlockPos pos, final int rotations, @NotNull final Mirror mirror,
+            final boolean complete)
     {
         try
         {
             @NotNull final StructureWrapper structureWrapper = new StructureWrapper(worldObj, name);
             structureWrapper.rotate(rotations, worldObj, pos, mirror);
-            structureWrapper.placeStructure(pos.subtract(structureWrapper.getOffset()));
+            structureWrapper.placeStructure(pos.subtract(structureWrapper.getOffset()), complete);
         }
         catch (final IllegalStateException e)
         {
@@ -139,7 +142,7 @@ public final class StructureWrapper
             structureWrapper.rotate(rotations, worldObj, pos, mirror);
             if (structureWrapper.checkForFreeSpace(pos))
             {
-                structureWrapper.placeStructure(pos);
+                structureWrapper.placeStructure(pos, false);
                 return true;
             }
             return false;
@@ -207,9 +210,10 @@ public final class StructureWrapper
     /**
      * Place a structure into the world.
      *
-     * @param pos coordinates
+     * @param pos       coordinates
+     * @param complete  paste it complete (with structure blocks) or without
      */
-    private void placeStructure(@NotNull final BlockPos pos)
+    private void placeStructure(@NotNull final BlockPos pos, final boolean complete)
     {
         setLocalPosition(pos);
 
@@ -228,17 +232,14 @@ public final class StructureWrapper
 
                     final BlockPos worldPos = pos.add(localPos);
 
-                    if (localBlock == ModBlocks.blockSubstitution || localBlock instanceof AbstractBlockHut)
+                    if ((localBlock == ModBlocks.blockSubstitution && !complete) || localBlock instanceof AbstractBlockHut)
                     {
                         continue;
                     }
 
                     if(localState.getMaterial().isSolid())
                     {
-                        for (final IPlacementHandler handlers : PlacementHandlers.handlers)
-                        {
-                            handlers.handle(world, worldPos, localState, null, true);
-                        }
+                        handleBlockPlacement(worldPos, localState, complete);
                     }
                     else
                     {
@@ -260,10 +261,7 @@ public final class StructureWrapper
             final IBlockState localState = this.structure.getBlockState(coords);
             final BlockPos newWorldPos = pos.add(coords);
 
-            for (final IPlacementHandler handlers : PlacementHandlers.handlers)
-            {
-                handlers.handle(world, newWorldPos, localState, null, true);
-            }
+            handleBlockPlacement(newWorldPos, localState, complete);
 
             if (this.structure.getBlockInfo(coords).tileentityData != null && world.getTileEntity(newWorldPos) instanceof TileEntityFlowerPot)
             {
@@ -296,6 +294,18 @@ public final class StructureWrapper
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private void handleBlockPlacement(final BlockPos pos, final IBlockState localState, final boolean complete)
+    {
+        for (final IPlacementHandler handlers : PlacementHandlers.handlers)
+        {
+            final Object result = handlers.handle(world, pos, localState, null, true, complete);
+            if(!(result instanceof IPlacementHandler.ActionProcessingResult) || result != IGNORE)
+            {
+                return;
             }
         }
     }

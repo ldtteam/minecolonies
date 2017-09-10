@@ -178,7 +178,12 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     /**
      * Id of the paste button.
      */
-    private static final String BUTTON_PASTE = "paste";
+    private static final String BUTTON_PASTE = "pastecomplete";
+
+    /**
+     * Id of the paste nice button.
+     */
+    private static final String BUTTON_PASTE_NICE = "pastenice";
 
     /**
      * List of section.
@@ -280,7 +285,8 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         registerButton(BUTTON_DOWN, WindowBuildTool::moveDownClicked);
         registerButton(BUTTON_ROTATE_RIGHT, this::rotateRightClicked);
         registerButton(BUTTON_ROTATE_LEFT, this::rotateLeftClicked);
-        registerButton(BUTTON_PASTE, this::paste);
+        registerButton(BUTTON_PASTE, this::pasteComplete);
+        registerButton(BUTTON_PASTE_NICE, this::pasteNice);
 
         registerButton(BUTTON_RENAME, this::renameClicked);
         registerButton(BUTTON_DELETE, this::deleteClicked);
@@ -288,10 +294,23 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         deleteButton = findPaneOfTypeByID(BUTTON_DELETE, Button.class);
     }
 
+    private void pasteNice()
+    {
+        paste(false);
+    }
+
     /**
      * Paste a schematic in the world.
      */
-    private void paste()
+    private void pasteComplete()
+    {
+        paste(true);
+    }
+
+    /**
+     * Paste a schematic in the world.
+     */
+    private void paste(final boolean complete)
     {
         final Structures.StructureName structureName = new Structures.StructureName(schematics.get(schematicsDropDownList.getSelectedIndex()));
         if (structureName.getPrefix().equals(Structures.SCHEMATICS_SCAN) && FMLCommonHandler.instance().getMinecraftServerInstance() == null)
@@ -307,7 +326,8 @@ public class WindowBuildTool extends AbstractWindowSkeleton
                     Settings.instance.getPosition(),
                     Settings.instance.getRotation(),
                     structureName.isHut(),
-                    Settings.instance.getMirror()));
+                    Settings.instance.getMirror(),
+                    complete));
         }
 
         Settings.instance.reset();
@@ -432,6 +452,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         if( Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode)
         {
             findPaneOfTypeByID(BUTTON_PASTE, Button.class).setVisible(true);
+            findPaneOfTypeByID(BUTTON_PASTE_NICE, Button.class).setVisible(true);
         }
 
         setStructureName(Settings.instance.getStructureName());
