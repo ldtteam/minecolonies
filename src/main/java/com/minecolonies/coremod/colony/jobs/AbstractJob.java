@@ -69,10 +69,26 @@ public abstract class AbstractJob
         addMapping(MAPPING_BAKER, JobBaker.class);
     }
 
+    /**
+     * Citizen connected with the job.
+     */
     private final CitizenData citizen;
+
+    /**
+     * Required items by the job.
+     */
     @NotNull
     private final List<ItemStack> itemsNeeded = new ArrayList<>();
+
+    /**
+     * NameTag of the job.
+     */
     private       String          nameTag     = "";
+
+    /**
+     * Check if the worker has searched for food today.
+     */
+    private boolean searchedForFoodToday;
 
     /**
      * Initialize citizen data.
@@ -344,6 +360,23 @@ public abstract class AbstractJob
      */
     @SuppressWarnings("squid:S1452")
     public abstract AbstractAISkeleton<? extends AbstractJob> generateAI();
+
+    /**
+     * Check if the citizen already checked for food in his chest today.
+     * @return true if so.
+     */
+    public boolean hasCheckedForFoodToday()
+    {
+        return searchedForFoodToday;
+    }
+
+    /**
+     * Sets that the citizen on this day already searched for food in his chest.
+     */
+    public void setCheckedForFood()
+    {
+        searchedForFoodToday = true;
+    }
 
     /**
      * This method can be used to display the current status.
