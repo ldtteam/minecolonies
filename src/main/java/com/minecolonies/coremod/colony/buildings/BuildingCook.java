@@ -7,8 +7,12 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobCook;
+import net.minecraft.block.Block;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class of the cook building.
@@ -29,6 +33,11 @@ public class BuildingCook extends AbstractBuildingWorker
      * Checks if the cook has gathered food at the warehouse today already.
      */
     private boolean hasGatheredToday = false;
+
+    /**
+     * List of registered furnaces.
+     */
+    private final List<BlockPos> furnaces = new ArrayList<>();
 
     /**
      * Instantiates a new cook building.
@@ -89,6 +98,12 @@ public class BuildingCook extends AbstractBuildingWorker
     public void onWakeUp()
     {
         hasGatheredToday = false;
+    }
+
+    @Override
+    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos)
+    {
+        super.registerBlockPosition(block, pos);
     }
 
     /**
