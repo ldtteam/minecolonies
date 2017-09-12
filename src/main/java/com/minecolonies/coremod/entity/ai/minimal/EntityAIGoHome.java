@@ -66,18 +66,9 @@ public class EntityAIGoHome extends EntityAIBase
     @Override
     public boolean shouldExecute()
     {
-        return (citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP && (!citizen.isAtHome() || isCitizenHungry()))
-                || isCitizenStarving();
+        return citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP && !citizen.isAtHome();
     }
 
-    /**
-     * Check if a citizen is hungry (Saturation smaller than 7)
-     * @return true if so.
-     */
-    private boolean isCitizenHungry()
-    {
-        return citizen.getCitizenData() != null && citizen.getCitizenData().getSaturation() <= EntityCitizen.HIGH_SATURATION;
-    }
 
     /**
      * Check if a citizen is hungry saturation 0.
@@ -167,7 +158,6 @@ public class EntityAIGoHome extends EntityAIBase
                             new InvWrapper(home.getTileEntity()).setStackInSlot(slot, ItemStackUtils.EMPTY);
                         }
                     }
-                    ((BuildingHome) home).checkIfFoodNeeded();
                 }
             }
             if (!tookFood && home != null)
@@ -197,11 +187,6 @@ public class EntityAIGoHome extends EntityAIBase
             {
                 chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_SATURATION_7);
             }
-        }
-
-        if(home instanceof BuildingHome)
-        {
-            ((BuildingHome)home).setFoodNeeded(true);
         }
     }
 

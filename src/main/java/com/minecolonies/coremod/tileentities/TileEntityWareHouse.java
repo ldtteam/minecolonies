@@ -306,37 +306,6 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     /**
      * Check for a certain item and return the position of the chest containing it.
      *
-     * @param itemStackSelectionPredicate the stack to search for.
-     * @return the position or null.
-     */
-    @Nullable
-    public BlockPos getPositionOfChestWithItemStack(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
-    {
-        @Nullable final AbstractBuilding building = getBuilding();
-
-        if (building != null)
-        {
-            if (isInTileEntity(building.getTileEntity(), itemStackSelectionPredicate))
-            {
-                return building.getLocation();
-            }
-
-            for (final BlockPos pos : building.getAdditionalCountainers())
-            {
-                final TileEntity entity = getWorld().getTileEntity(pos);
-                if ((entity instanceof TileEntityRack && ((TileEntityRack) entity).hasItemStack(itemStackSelectionPredicate))
-                        || (entity instanceof TileEntityChest && isInTileEntity((TileEntityChest) entity, itemStackSelectionPredicate)))
-                {
-                    return pos;
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Check for a certain item and return the position of the chest containing it.
-     *
      * @param tool               the tool to search for.
      * @param minLevel           the minLevel of the tool
      * @param requestingBuilding the building requesting it.
@@ -402,24 +371,6 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         }
 
         return false;
-    }
-
-    /**
-     * Finds the first @see ItemStack the type of {@code is}.
-     * It will be taken from the chest and placed in the workers inventory.
-     * Make sure that the worker stands next the chest to not break immersion.
-     * Also make sure to have inventory space for the stack.
-     *
-     * @param entity                      the tileEntity chest or building.
-     * @param itemStackSelectionPredicate the itemStack predicate.
-     * @return true if found the stack.
-     */
-    public static boolean isInTileEntity(final TileEntityChest entity, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
-    {
-        return InventoryFunctions
-                .matchFirstInProvider(
-                        entity,
-                        itemStackSelectionPredicate);
     }
 
     /**

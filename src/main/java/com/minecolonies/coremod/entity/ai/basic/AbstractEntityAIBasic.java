@@ -4,7 +4,9 @@ import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.BuildingCook;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -16,6 +18,7 @@ import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
@@ -120,6 +123,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Check to see if the worker wants to stand still waiting for the request to be fullfilled.
      */
     private boolean waitForRequest = true;
+
+    /**
+     * The restaurant this AI usually goes to.
+     */
+    private BlockPos restaurant = null;
 
     /**
      * Sets up some important skeleton stuff for every ai.
@@ -230,19 +238,42 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             return getState();
         }
-        //todo keep X = 1 stack of food!
-        //todo this counts for dman leaving and dumping!
 
-        //todo go to hut chest
-        //todo search for food
+        job.setCheckedForFood();
+        if(isInHut(itemStack -> itemStack.getItem() instanceof ItemFood) || worker.getCitizenData().getSaturation() > 0)
+        {
+            return getState();
+        }
 
-        //todo if saturation == 0 -> go to restaurant
-        //todo if saturation > 0, complain about hunger and go to back to work
-        //todo will need a variable which we set true here and then resets on the next night.
+        if(restaurant == null)
+        {
+            double distance = Double.MAX_VALUE;
+            BlockPos goodCook = null;
+            for(final AbstractBuilding building : worker.getColony().getBuildings().values())
+            {
+                if(building instanceof BuildingCook)
+                {
+                    final double localDistance = building.getLocation().distanceSq(getOwnBuilding().getLocation());
+                    if(localDistance < distance)
+                    {
+                        distance = localDistance;
+                        goodCook = building.getLocation();
+                    }
+                }
+            }
 
-        //todo go to restaurant
+            if(goodCook == null)
+            {
+                chatSpamFilter.requestTextComponentWithoutSpam(new TextComponentTranslation("com.minecolonies.coremod.ai.noRestaurant"));
+                return getState();
+            }
+            restaurant = goodCook;
+        }
+
+        walkToBlock(restaurant);
         //todo search for food there
-        return AIState.IDLE;
+
+        return getState();
     }
 
     /**
@@ -459,6 +490,44 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         //Return true if the building is null to stall the worker
         return ownBuilding == null
                 || walkToBlock(ownBuilding.getLocation());
+    }
+
+    /**
+     * Check all chests in the worker hut for a required item.
+     *
+     * @param is the type of item requested (amount is ignored)
+     * @return true if a stack of that type was found
+     */
+    public boolean isInHut(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    {
+        @Nullable final AbstractBuildingWorker building = getOwnBuilding();
+
+        boolean hasItem;
+        if (building != null)
+        {
+            hasItem = isInTileEntity(building.getTileEntity(), itemStackSelectionPredicate);
+
+            if (hasItem)
+            {
+                return true;
+            }
+
+            for (final BlockPos pos : building.getAdditionalCountainers())
+            {
+                final TileEntity entity = world.getTileEntity(pos);
+                if (entity instanceof TileEntityChest)
+                {
+                    hasItem = isInTileEntity((TileEntityChest) entity, itemStackSelectionPredicate);
+
+                    if (hasItem)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -887,6 +956,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         //Items already kept in the inventory
         final Map<ItemStorage, Integer> alreadyKept = new HashMap<>();
         final Map<ItemStorage, Integer> shouldKeep = getOwnBuilding().getRequiredItemsAndAmount();
+        shouldKeep.put(new ItemStorage(new ItemStack(new ItemFood(1,false)), true, true), worker.getLevel());
 
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
 
@@ -912,7 +982,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         @Nullable final ItemStack returnStack;
         int amountToKeep = 0;
-        if (keptEnough(alreadyKept, shouldKeep, stack))
+        if (!keptEnough(alreadyKept, shouldKeep, stack))
         {
             returnStack = InventoryUtils.addItemStackToProviderWithResult(buildingWorker.getTileEntity(), stack.copy());
         }
@@ -948,7 +1018,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param stack       stack to analyse.
      * @return true if the the item shouldn't be kept.
      */
-    private static boolean keptEnough(@NotNull final Map<ItemStorage, Integer> alreadyKept, @NotNull final Map<ItemStorage, Integer> shouldKeep, @NotNull final ItemStack stack)
+    private static boolean keptEnough(
+            @NotNull final Map<ItemStorage, Integer> alreadyKept,
+            @NotNull final Map<ItemStorage, Integer> shouldKeep,
+            @NotNull final ItemStack stack)
     {
         final ArrayList<Map.Entry<ItemStorage, Integer>> tempKeep = new ArrayList<>(shouldKeep.entrySet());
         for (final Map.Entry<ItemStorage, Integer> tempEntry : tempKeep)
@@ -979,7 +1052,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     @Nullable
     private static ItemStack handleKeepX(
             @NotNull final Map<ItemStorage, Integer> alreadyKept,
-            @NotNull final Map<ItemStorage, Integer> shouldKeep, @NotNull final ItemStorage tempStorage)
+            @NotNull final Map<ItemStorage, Integer> shouldKeep,
+            @NotNull final ItemStorage tempStorage)
     {
         int amountKept = 0;
         if (alreadyKept.get(tempStorage) != null)

@@ -199,6 +199,23 @@ public class TileEntityRack extends TileEntity
     }
 
     /**
+     * Get the amount of items matching a predicate in the inventory.
+     * @param predicate the predicate.
+     * @return the total count.
+     */
+    public int getItemCount(final Predicate<ItemStack> predicate)
+    {
+        for (final Map.Entry<ItemStorage, Integer> entry : content.entrySet())
+        {
+            if (predicate.test(entry.getKey().getItemStack()))
+            {
+                return entry.getValue();
+            }
+        }
+        return 0;
+    }
+
+    /**
      * Scans through the whole storage and updates it.
      */
     public void updateItemStorage()

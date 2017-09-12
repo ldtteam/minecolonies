@@ -26,6 +26,11 @@ public class BuildingCook extends AbstractBuildingWorker
     private static final int MAX_BUILDING_LEVEL = 5;
 
     /**
+     * Checks if the cook has gathered food at the warehouse today already.
+     */
+    private boolean hasGatheredToday = false;
+
+    /**
      * Instantiates a new cook building.
      *
      * @param c the colony.
@@ -61,6 +66,29 @@ public class BuildingCook extends AbstractBuildingWorker
     public String getJobName()
     {
         return COOK;
+    }
+
+    /**
+     * Check if the Cook has gathered today already.
+     * @return true if so.
+     */
+    public boolean hasGatheredToday()
+    {
+        return hasGatheredToday;
+    }
+
+    /**
+     * Set that the Cook gathered today already.
+     */
+    public void setGatheredToday()
+    {
+        hasGatheredToday = true;
+    }
+
+    @Override
+    public void onWakeUp()
+    {
+        hasGatheredToday = false;
     }
 
     /**

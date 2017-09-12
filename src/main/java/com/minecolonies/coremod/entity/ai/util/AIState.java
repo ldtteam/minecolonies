@@ -257,7 +257,7 @@ public enum AIState
      */
     DUMPING,
 
- /*
+     /*
 ###Baker###
     */
 
@@ -279,6 +279,29 @@ public enum AIState
     /**
      * Take the product out of the oven.
      */
-    BAKER_TAKE_OUT_OF_OVEN
+    BAKER_TAKE_OUT_OF_OVEN,
 
+    /*
+###Cook###
+     */
+
+    /**
+     * Get some food from the warehouse.
+     */
+    COOK_GET_FOOD,
+
+    /**
+     * Cook cooks food until its cooked.
+     */
+    COOK_COOK_FOOD,
+
+    /**
+     * Gathering food from his building.
+     */
+    COOK_GATHERING,
+    
+    /**
+     * Serve food to the citizen inside the building.
+     */
+    COOK_SERVE
 }
