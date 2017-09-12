@@ -252,18 +252,6 @@ public class TileEntityColonyBuilding extends TileEntityChest
     }
 
     /**
-     * Sets the colony of the tile entity.
-     *
-     * @param c Colony to set in references.
-     */
-    public void setColony(final Colony c)
-    {
-        colony = c;
-        colonyId = c.getID();
-        markDirty();
-    }
-
-    /**
      * Returns the building associated with the tile entity.
      *
      * @return {@link AbstractBuilding} associated with the tile entity.

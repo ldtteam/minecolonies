@@ -13,6 +13,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -163,9 +164,9 @@ public class BuildingCook extends AbstractBuildingWorker
     }
 
     @Override
-    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos)
+    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
-        super.registerBlockPosition(block, pos);
+        super.registerBlockPosition(block, pos, world);
         if (block instanceof BlockFurnace && !furnaces.contains(pos))
         {
             furnaces.add(pos);
