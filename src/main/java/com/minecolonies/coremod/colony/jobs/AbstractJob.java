@@ -439,4 +439,12 @@ public abstract class AbstractJob
     public void triggerDeathAchievement(final DamageSource source, final EntityCitizen citizen)
     {
     }
+
+    /**
+     * Executed every time the colony woke up.
+     */
+    public void onWakeUp()
+    {
+        searchedForFoodToday = false;
+    }
 }
