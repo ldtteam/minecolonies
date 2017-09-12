@@ -1,0 +1,23 @@
+{
+  "variants": {
+    "facing=up": {
+      "model": "minecolonies:blockhutcook"
+    },
+    "facing=east": {
+      "model": "minecolonies:blockhutcook",
+      "y": 0
+    },
+    "facing=south": {
+      "model": "minecolonies:blockhutcook",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "minecolonies:blockhutcook",
+      "y": 180
+    },
+    "facing=north": {
+      "model": "minecolonies:blockhutcook",
+      "y": 270
+    }
+  }
+}

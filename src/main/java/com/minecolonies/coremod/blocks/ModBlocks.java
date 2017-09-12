@@ -35,7 +35,7 @@ public final class ModBlocks
     public static final Block blockWayPoint               = new BlockWaypoint();
     public static final Block blockHutBarracks            = new BlockHutBarracks();
     public static final Block blockHutBarracksTower       = new BlockHutBarracksTower();
-
+    public static final Block blockHutCook                = new BlockHutCook();
 
     // Deactivated for now
     // public static final Block blockBarrel        = new BlockBarrel();
