@@ -2,9 +2,12 @@ package com.minecolonies.coremod.util;
 
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.coremod.blocks.BlockInfoPoster;
+import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
 import com.minecolonies.structures.helpers.Settings;
 import com.minecolonies.structures.helpers.Structure;
 import com.minecolonies.structures.lib.ModelHolder;
@@ -104,15 +107,15 @@ public final class RenderUtils
             final EntityPlayer player,
             final BlockPos citizen)
     {
-        final Block block = Blocks.WALL_SIGN;
+        final Block block = ModBlocks.blockInfoPoster;
         final BlockPos vector = citizen.subtract(player.getPosition());
         final EnumFacing facing = EnumFacing.getFacingFromVector(vector.getX(), 0, vector.getZ()).getOpposite();
-        final BlockPos pos = citizen.up().offset(facing);
+        final BlockPos pos = citizen.up(2).offset(facing);
 
-        final IBlockState iblockstate = block.getDefaultState().withProperty(BlockWallSign.FACING, facing);
+        final IBlockState iblockstate = block.getDefaultState().withProperty(BlockInfoPoster.FACING, facing);
         final IBlockState iBlockExtendedState = block.getExtendedState(iblockstate, clientWorld, pos);
         final IBakedModel ibakedmodel = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(iblockstate);
-        final TileEntitySign sign = new TileEntitySign();
+        final TileEntitySign sign = new TileEntityInfoPoster();
         sign.setPos(pos);
 
         for(int i = 0; i < sign.signText.length; i++)
