@@ -170,6 +170,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                  * Reset to idle if no specific tool is needed.
                  */
                 new AITarget(() -> getState() == NEEDS_TOOL && this.getOwnBuilding().needsTool(ToolType.NONE), IDLE)
+          new AITarget(() -> worker.getCitizenData().getSaturation() <= 0, this::searchForFood)
         );
     }
 
@@ -216,6 +217,23 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             Log.getLogger().error("Caused by ai exception:");
             e.printStackTrace();
         }
+    }
+
+    private AIState searchForFood()
+    {
+        //todo keep X = 1 stack of food!
+        //todo this counts for dman leaving and dumping!
+
+        //todo go to hut chest
+        //todo search for food
+
+        //todo if saturation == 0 -> go to restaurant
+        //todo if saturation > 0, complain about hunger and go to back to work
+        //todo will need a variable which we set true here and then resets on the next night.
+
+        //todo go to restaurant
+        //todo search for food there
+        return AIState.IDLE;
     }
 
     /**

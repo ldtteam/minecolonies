@@ -74,6 +74,10 @@ public enum AIState
      * Pick up left over items after building.
      */
     PICK_UP_RESIDUALS,
+    /**
+     * Go search food.
+     */
+    HUNGRY,
     /*
 ###FISHERMAN###
      */
