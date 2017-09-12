@@ -1345,6 +1345,43 @@ public final class InventoryUtils
     }
 
     /**
+     * Transfer X of sourceHandler to targetHandler matching a predicate.
+     * @param sourceHandler the source handler.
+     * @param itemStackSelectionPredicate the predicate.
+     * @param amount the amount.
+     * @param targetHandler the target handler.
+     * @param slot the next slot.
+     * @return the result.
+     */
+    public static boolean transferXOfFirstSlotInProviderWithIntoInItemHandler(
+            @NotNull final IItemHandler sourceHandler,
+            @NotNull final Predicate<ItemStack> itemStackSelectionPredicate,
+            @NotNull final int amount, @NotNull final IItemHandler targetHandler,
+                     final int slot)
+    {
+        final int desiredItemSlot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(sourceHandler,
+                itemStackSelectionPredicate::test);
+
+        if (desiredItemSlot == -1)
+        {
+            return false;
+        }
+        final ItemStack returnStack = sourceHandler.extractItem(desiredItemSlot, amount, false);
+        if (ItemStackUtils.isEmpty(returnStack))
+        {
+            return false;
+        }
+        final ItemStack result = targetHandler.insertItem(slot, returnStack, false);
+        final int returnAmount = ItemStackUtils.getSize(result);
+        if(!ItemStackUtils.isEmpty(returnStack))
+        {
+            sourceHandler.insertItem(desiredItemSlot, result, false);
+        }
+
+        return returnAmount < amount;
+    }
+
+    /**
      * Method to swap the ItemStacks from the given source {@link IItemHandler}
      * to the given target {@link IItemHandler}.
      *
