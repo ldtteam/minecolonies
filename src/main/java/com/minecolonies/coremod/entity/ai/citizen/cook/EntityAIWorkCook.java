@@ -71,10 +71,14 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
     private static final int STANDARD_DELAY = 5;
 
     /**
+     * Predicate describing food.
+     */
+    private static final Predicate<ItemStack> isFood = itemStack ->  !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemFood;
+
+    /**
      * Predicate describing a cookable itemStack.
      */
-    private static final Predicate<ItemStack> isCookable =
-            itemStack -> itemStack.getItem() instanceof ItemFood && ItemStackUtils.isEmpty(FurnaceRecipes.instance().getSmeltingResult(itemStack));
+    private static final Predicate<ItemStack> isCookable = isFood.and(itemStack -> ItemStackUtils.isEmpty(FurnaceRecipes.instance().getSmeltingResult(itemStack)));
 
     /**
      * The citizen the worker is currently trying to serve.
@@ -176,14 +180,14 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
 
     private AIState gatherFoodFromBuilding()
     {
-        final BlockPos pos = getOwnBuilding().getTileEntity().getPositionOfChestWithItemStack(itemStack -> itemStack.getItem() instanceof ItemFood);
+        final BlockPos pos = getOwnBuilding().getTileEntity().getPositionOfChestWithItemStack(isFood);
 
         if (walkToBlock(pos))
         {
             return getState();
         }
 
-        boolean transfered = tryTransferFromPosToCook(pos, itemStack ->  itemStack.getItem() instanceof ItemFood);
+        boolean transfered = tryTransferFromPosToCook(pos, isFood);
         if(transfered)
         {
             return COOK_SERVE;
@@ -207,7 +211,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
 
         InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
                 new InvWrapper(worker.getInventoryCitizen()),
-                itemStack -> itemStack.getItem() instanceof ItemFood,
+                isFood,
                 AMOUNT_OF_FOOD_TO_SERVE,
                 new InvWrapper(citizenToServe.get(0).getInventoryCitizen()));
 
@@ -363,7 +367,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
 
         if(walkTo == null)
         {
-            final BlockPos pos = wareHouse.getTileEntity().getPositionOfChestWithItemStack(itemStack -> itemStack.getItem() instanceof ItemFood);
+            final BlockPos pos = wareHouse.getTileEntity().getPositionOfChestWithItemStack(isFood);
             if (pos == null)
             {
                 chatSpamFilter.requestTextComponentWithoutSpam(new TextComponentTranslation("com.minecolonies.coremod.ai.noFood"));
@@ -382,7 +386,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
         boolean transfered = true;
         while(transfered && transfersDone < getOwnBuilding().getBuildingLevel())
         {
-            transfered = tryTransferFromPosToCook(walkTo, itemStack -> itemStack.getItem() instanceof ItemFood);
+            transfered = tryTransferFromPosToCook(walkTo, isFood);
         }
 
         walkTo = null;
@@ -412,8 +416,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
             ((BuildingCook)getOwnBuilding()).setIsSomethingInOven(false);
         }
 
-        final int amountOfFood = getOwnBuilding().getCountOfPredicateInHut(
-                itemStack -> itemStack.getItem() instanceof ItemFood, getOwnBuilding().getBuildingLevel() * LEAST_KEEP_FOOD_MULTIPLIER, world);
+        final int amountOfFood = getOwnBuilding().getCountOfPredicateInHut(isFood, getOwnBuilding().getBuildingLevel() * LEAST_KEEP_FOOD_MULTIPLIER, world);
 
         if (amountOfFood <= 0)
         {
