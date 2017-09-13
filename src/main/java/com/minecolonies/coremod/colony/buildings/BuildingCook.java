@@ -141,6 +141,7 @@ public class BuildingCook extends AbstractBuildingWorker
     @Override
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
+        super.writeToNBT(compound);
         @NotNull final NBTTagList furnacesTagList = new NBTTagList();
         for (@NotNull final BlockPos entry : furnaces)
         {
@@ -155,6 +156,7 @@ public class BuildingCook extends AbstractBuildingWorker
     @Override
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
+        super.readFromNBT(compound);
         final NBTTagList furnaceTagList = compound.getTagList(TAG_FURNACES, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < furnaceTagList.tagCount(); ++i)
         {

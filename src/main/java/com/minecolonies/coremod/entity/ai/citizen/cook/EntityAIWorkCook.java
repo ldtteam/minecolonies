@@ -4,6 +4,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Log;
+import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingCook;
 import com.minecolonies.coremod.colony.buildings.BuildingWareHouse;
@@ -14,6 +15,7 @@ import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 
 import com.minecolonies.coremod.tileentities.TileEntityRack;
+import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemFood;
@@ -22,6 +24,7 @@ import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.util.Mirror;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -94,6 +97,11 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
      * The current position the worker should walk to.
      */
     private BlockPos walkTo = null;
+
+    /**
+     * The building range the cook should search for clients.
+     */
+    private AxisAlignedBB range = null;
 
     /**
      * Constructor for the Fisherman.
@@ -407,11 +415,6 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
 
     private AIState startWorking()
     {
-        if(getOwnBuilding() == null)
-        {
-            return getState();
-        }
-        
         if(((BuildingCook) getOwnBuilding()).isSomethingInOven())
         {
             for(final BlockPos pos: ((BuildingCook) getOwnBuilding()).getFurnaces())
@@ -433,9 +436,12 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
             return COOK_GET_FOOD;
         }
 
-        //todo calculate building size.
+        if(range == null)
+        {
+            range = getTargetableArea();
+        }
         final List<EntityCitizen> citizenList = world.getEntitiesWithinAABB(EntityCitizen.class,
-                new AxisAlignedBB(getOwnBuilding().getLocation().add(10,10,10)),cit -> !(cit.getColonyJob() instanceof JobCook));
+                range, cit -> !(cit.getColonyJob() instanceof JobCook));
         if (citizenList.size() > LEAST_KEEP_FOOD_MULTIPLIER)
         {
             citizenToServe.addAll(citizenList);
@@ -454,5 +460,33 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
 
         setDelay(STANDARD_DELAY);
         return COOK_GET_FOOD;
+    }
+
+    /**
+     * Creates a simple area around the Shepherd Hut used for AABB calculations for finding sheep
+     *
+     * @return The AABB
+     */
+    private AxisAlignedBB getTargetableArea()
+    {
+        final Structures.StructureName sn =
+                new Structures.StructureName(Structures.SCHEMATICS_PREFIX, getOwnBuilding().getStyle(), getOwnBuilding().getSchematicName() + getOwnBuilding().getBuildingLevel());
+
+        final String structureName = sn.toString();
+
+        final StructureWrapper wrapper = new StructureWrapper(world, structureName);
+        wrapper.rotate(getOwnBuilding().getRotation(), world, getOwnBuilding().getLocation(), getOwnBuilding().isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE);
+
+        final BlockPos pos = getOwnBuilding().getLocation();
+        wrapper.setPosition(pos);
+
+        final int x1 = wrapper.getPosition().getX() - wrapper.getOffset().getX() - 1;
+        final int z1 = wrapper.getPosition().getZ() - wrapper.getOffset().getZ() - 1;
+        final int x3 = wrapper.getPosition().getX() + (wrapper.getWidth() - wrapper.getOffset().getX());
+        final int z3 = wrapper.getPosition().getZ() + (wrapper.getLength() - wrapper.getOffset().getZ());
+        final int y1 = getOwnBuilding().getLocation().getY() - 10;
+        final int y3 = getOwnBuilding().getLocation().getY() + 10;
+
+        return new AxisAlignedBB(x1, y1, z1, x3, y3, z3);
     }
 }
