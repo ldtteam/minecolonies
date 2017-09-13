@@ -81,13 +81,15 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
         {
             if (ModBlocks.blockInfoPoster.canRenderInLayer(actualState, layer))
             {
+                //GlStateManager.enableCull();
+
                 final EntityPlayer player = Minecraft.getMinecraft().thePlayer;
                 final double dx = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTicks;
                 final double dy = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTicks;
                 final double dz = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTicks;
 
                 GlStateManager.pushMatrix();
-                GlStateManager.translate(pos.getX() - dx, pos.getY() - dy, pos.getZ() - dz);
+                GlStateManager.translate(pos.getX() - dx -0.5, pos.getY() - dy, pos.getZ() - dz - 0.5);
 
                 RenderHelper.disableStandardItemLighting();
 
@@ -121,7 +123,6 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
                 GlStateManager.popMatrix();
             }
         }
-
 
         GlStateManager.enableRescaleNormal();
         GlStateManager.pushMatrix();
