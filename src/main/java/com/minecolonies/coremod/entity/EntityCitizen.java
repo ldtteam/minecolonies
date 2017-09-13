@@ -463,7 +463,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 latestStatus[i] = status[i];
             }
         }
-        citizenData.markDirty();
+        if(citizenData != null)
+        {
+            citizenData.markDirty();
+        }
     }
 
     /**

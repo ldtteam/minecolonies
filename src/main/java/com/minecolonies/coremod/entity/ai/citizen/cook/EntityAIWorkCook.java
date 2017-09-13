@@ -374,7 +374,6 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
 
         if(walkToBlock(wareHouse.getLocation()))
         {
-            setDelay(2);
             return getState();
         }
 
@@ -400,6 +399,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
         while(transfered && transfersDone < getOwnBuilding().getBuildingLevel())
         {
             transfered = tryTransferFromPosToCook(walkTo, isFood);
+            transfersDone++;
         }
 
         walkTo = null;
@@ -441,7 +441,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
             range = getTargetableArea();
         }
         final List<EntityCitizen> citizenList = world.getEntitiesWithinAABB(EntityCitizen.class,
-                range, cit -> !(cit.getColonyJob() instanceof JobCook));
+                range, cit -> !(cit.getColonyJob() instanceof JobCook) && cit.getCitizenData().getSaturation() <= 0);
         if (citizenList.size() > LEAST_KEEP_FOOD_MULTIPLIER)
         {
             citizenToServe.addAll(citizenList);
