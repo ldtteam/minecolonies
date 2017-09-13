@@ -29,7 +29,7 @@ public class BuildingCook extends AbstractBuildingWorker
     /**
      * The cook string.
      */
-    private static final String COOK = "cook";
+    private static final String COOK = "Cook";
 
     /**
      * Max building level of the cook.

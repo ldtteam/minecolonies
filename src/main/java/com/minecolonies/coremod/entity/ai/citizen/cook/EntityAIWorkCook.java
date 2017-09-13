@@ -182,6 +182,11 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
     {
         final BlockPos pos = getOwnBuilding().getTileEntity().getPositionOfChestWithItemStack(isFood);
 
+        if(pos == null)
+        {
+            return START_WORKING;
+        }
+
         if (walkToBlock(pos))
         {
             return getState();
@@ -402,7 +407,12 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
 
     private AIState startWorking()
     {
-        if(((BuildingCook)getOwnBuilding()).isSomethingInOven())
+        if(getOwnBuilding() == null)
+        {
+            return getState();
+        }
+        
+        if(((BuildingCook) getOwnBuilding()).isSomethingInOven())
         {
             for(final BlockPos pos: ((BuildingCook) getOwnBuilding()).getFurnaces())
             {
@@ -423,7 +433,9 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
             return COOK_GET_FOOD;
         }
 
-        final List<EntityCitizen> citizenList = world.getEntitiesWithinAABB(EntityCitizen.class, new AxisAlignedBB(getOwnBuilding().getLocation()));
+        //todo calculate building size.
+        final List<EntityCitizen> citizenList = world.getEntitiesWithinAABB(EntityCitizen.class,
+                new AxisAlignedBB(getOwnBuilding().getLocation().add(10,10,10)),cit -> !(cit.getColonyJob() instanceof JobCook));
         if (citizenList.size() > LEAST_KEEP_FOOD_MULTIPLIER)
         {
             citizenToServe.addAll(citizenList);

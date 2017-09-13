@@ -240,7 +240,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
 
         job.setCheckedForFood();
-        if(isInHut(itemStack -> itemStack.getItem() instanceof ItemFood) || worker.getCitizenData().getSaturation() > 0)
+        if(isInHut(itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemFood) || worker.getCitizenData().getSaturation() > 0)
         {
             return getState();
         }
