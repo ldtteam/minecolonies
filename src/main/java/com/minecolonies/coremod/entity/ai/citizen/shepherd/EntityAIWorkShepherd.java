@@ -247,12 +247,12 @@ public class EntityAIWorkShepherd extends AbstractEntityAISkill<JobShepherd>
             return SHEPHERD_SEARCH_FOR_SHEEP;
         }
 
-        final EntitySheep sheep = sheepies.stream().filter(sheepie -> !sheepie.getSheared()).findFirst().orElse(null);
-
         if (!equipShears())
         {
             return PREPARING;
         }
+
+        final EntitySheep sheep = sheepies.stream().filter(sheepie -> !sheepie.getSheared()).findFirst().orElse(null);
 
         if (worker.getHeldItemMainhand() != null && sheep != null)
         {
