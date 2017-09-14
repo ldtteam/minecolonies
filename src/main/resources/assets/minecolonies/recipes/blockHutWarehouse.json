@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "pattern": [
     "XTX",
-    "XGX",
+    "XCX",
     "XXX"
   ],
   "key": {
@@ -10,8 +10,8 @@
       "type": "forge:ore_dict",
       "ore": "plankWood"
     },
-    "G": {
-      "item": "minecraft:gold_ingot"
+    "C": {
+      "item": "minecolonies:blockminecoloniesrack"
     },
     "T": {
       "item": "minecolonies:sceptergold"
