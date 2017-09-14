@@ -11,7 +11,7 @@
       "ore": "plankWood"
     },
     "C": {
-      "item": "minecolonies:blockminecoloniesrack"
+      "item": "minecraft:chest"
     },
     "T": {
       "item": "minecolonies:sceptergold"
