@@ -55,6 +55,16 @@ public class EntityAIWorkShepherd extends AbstractEntityAISkill<JobShepherd>
     protected static final int MAX_SHEEP_MULTIPLIER = 2;
 
     /**
+     * Amount of sheep needed to bread.
+     */
+    protected static final int NUM_OF_SHEEP_TO_BREED = 2;
+
+    /**
+     * Butchering attack damage.
+     */
+    protected static final int BUTCHERING_ATTACK_DAMAGE = 5;
+
+    /**
      * Sets up some important skeleton stuff for every ai.
      *
      * @param job the job class.
@@ -127,9 +137,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAISkill<JobShepherd>
 
         final EntitySheep shearingSheep = job.getSheep().stream().filter(sheepie -> !sheepie.getSheared()).findFirst().orElse(null);
 
-        int numOfBreedableSheep = job.getSheep().stream().filter(sheepie -> sheepie.getGrowingAge() == 0).toArray().length;
-
-        //setDelay(80);
+        final int numOfBreedableSheep = job.getSheep().stream().filter(sheepie -> sheepie.getGrowingAge() == 0).toArray().length;
 
         if (sheepSize() > 0)
         {
@@ -139,7 +147,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAISkill<JobShepherd>
         {
             return SHEPHERD_SHEAR_SHEEP;
         }
-        else if (numOfBreedableSheep >= 2)
+        else if (numOfBreedableSheep >= NUM_OF_SHEEP_TO_BREED)
         {
             return SHEPHERD_BREED_SHEEP;
         }
@@ -265,8 +273,6 @@ public class EntityAIWorkShepherd extends AbstractEntityAISkill<JobShepherd>
             }
         }
 
-        //setDelay(40);
-
         return SHEPHERD_DECIDE;
     }
 
@@ -324,8 +330,6 @@ public class EntityAIWorkShepherd extends AbstractEntityAISkill<JobShepherd>
 
         breedTwoSheep(sheepOne, sheepTwo);
 
-        //setDelay(40);
-
         return SHEPHERD_DECIDE;
     }
 
@@ -338,12 +342,12 @@ public class EntityAIWorkShepherd extends AbstractEntityAISkill<JobShepherd>
             return SHEPHERD_DECIDE;
         }
 
-        final EntitySheep sheep = job.getSheep().stream().findFirst().orElse(null);
-
         if (!equipAxe())
         {
             return PREPARING;
         }
+
+        final EntitySheep sheep = job.getSheep().stream().findFirst().orElse(null);
 
         butcherSheep(sheep);
 
@@ -353,7 +357,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAISkill<JobShepherd>
     /**
      * Butcher a sheep.
      */
-    private void butcherSheep(EntitySheep sheep)
+    private void butcherSheep(final EntitySheep sheep)
     {
 
         worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.shepherd.butcheringSheep"));
@@ -364,7 +368,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAISkill<JobShepherd>
 
             final BlockPos oldSheepLocation = sheep.getPosition();
 
-            sheep.attackEntityFrom(new DamageSource(worker.getName()), (float) 5);
+            sheep.attackEntityFrom(new DamageSource(worker.getName()), (float) BUTCHERING_ATTACK_DAMAGE);
 
             worker.getHeldItemMainhand().damageItem(1, sheep);
 
@@ -378,7 +382,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAISkill<JobShepherd>
      * @param sheepOne the first sheep to breed.
      * @param sheepTwo the second sheep to breed.
      */
-    private void breedTwoSheep(EntitySheep sheepOne, EntitySheep sheepTwo)
+    private void breedTwoSheep(final EntitySheep sheepOne, final EntitySheep sheepTwo)
     {
         final EntityPlayer playerUsedForbreeding = worker.getColony().getMessageEntityPlayers().stream().findFirst().orElse(null);
 
@@ -463,7 +467,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAISkill<JobShepherd>
      * @param item The item to check for.
      * @return slot number.
      */
-    private int getItemSlot(Item item)
+    private int getItemSlot(final Item item)
     {
         return InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(getInventory()), item, 0);
     }
