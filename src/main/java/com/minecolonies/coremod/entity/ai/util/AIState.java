@@ -289,7 +289,7 @@ public enum AIState
     /**
      * Walk to sheep.
      */
-    SHEPHERD_WALK_TO_SHEEP,
+    SHEPHERD_DECIDE,
 
     /**
      * Shear all the sheep!
@@ -299,5 +299,10 @@ public enum AIState
     /**
      * Breed some sheep!
      */
-    SHEPHERD_BREED_SHEEP
+    SHEPHERD_BREED_SHEEP,
+
+    /**
+     * Butcher some sheep!
+     */
+    SHEPHERD_BUTCHER_SHEEP
 }

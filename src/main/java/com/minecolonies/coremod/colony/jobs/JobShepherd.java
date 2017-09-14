@@ -69,8 +69,12 @@ public class JobShepherd extends AbstractJob
      */
     public void removeDeadSheep()
     {
-        sheep.stream().filter(sheepie -> !sheepie.isEntityAlive()).forEach(sheepie ->
-                                                                             sheep.remove(sheepie));
+        final List<EntitySheep> sheepToRemove = new ArrayList<>();
+
+        sheep.stream().filter(sheepie ->
+                                sheepie == null || !sheepie.isEntityAlive()).forEach(sheepToRemove::add);
+
+        sheep.removeAll(sheepToRemove);
     }
 
     /**

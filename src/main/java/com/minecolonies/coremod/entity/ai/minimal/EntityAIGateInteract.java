@@ -115,7 +115,8 @@ public class EntityAIGateInteract extends EntityAIBase
             for (int level = 0; level < HEIGHT_TO_CHECK; level++)
             {
                 this.gatePosition = new BlockPos(pathpoint.xCoord, pathpoint.yCoord + level, pathpoint.zCoord);
-                if (this.theEntity.getDistanceSq((double) this.gatePosition.getX(), this.theEntity.posY, (double) this.gatePosition.getZ()) <= MIN_DISTANCE)
+                if (this.theEntity.getDistanceSq((double) this.gatePosition.getX(), this.theEntity.posY, (double) this.gatePosition.getZ()) <= MIN_DISTANCE &&
+                      this.theEntity.getPosition().offset(this.theEntity.getHorizontalFacing()).equals(this.gatePosition))
                 {
                     this.gateBlock = this.getBlockFence(this.gatePosition);
                     if (this.gateBlock != null)
@@ -146,7 +147,7 @@ public class EntityAIGateInteract extends EntityAIBase
             block = CompatibilityUtils.getWorld(this.theEntity).getBlockState(this.theEntity.getPosition()).getBlock();
             gatePosition = this.theEntity.getPosition();
         }
-        return block instanceof BlockFenceGate && blockState.getMaterial() == Material.WOOD ? (BlockFenceGate) block : null;
+        return block instanceof BlockFenceGate ? (BlockFenceGate) block : null;
     }
 
     /**
