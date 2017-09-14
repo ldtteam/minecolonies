@@ -16,6 +16,7 @@ import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.WorkerUtil;
+import com.sun.xml.internal.ws.util.StreamUtils;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemFood;
@@ -271,8 +272,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
 
         walkToBlock(restaurant);
-        //todo search for food there
-
         return getState();
     }
 
@@ -955,7 +954,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         //Items already kept in the inventory
         final Map<ItemStorage, Integer> alreadyKept = new HashMap<>();
-        final Map<ItemStorage, Integer> shouldKeep = getOwnBuilding().getRequiredItemsAndAmount();
+        final Map<ItemStorage, Integer> shouldKeep = new HashMap<>();
+        shouldKeep.putAll(getOwnBuilding().getRequiredItemsAndAmount());
         shouldKeep.put(new ItemStorage(new ItemStack(new ItemFood(1,false)), true, true), worker.getLevel());
 
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
@@ -1061,16 +1061,28 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             amountKept = alreadyKept.remove(tempStorage);
         }
 
-        if (shouldKeep.get(tempStorage) >= (tempStorage.getAmount() + amountKept))
+        if (getAmountOfSimilarFromHashMap(tempStorage, shouldKeep) >= (tempStorage.getAmount() + amountKept))
         {
             alreadyKept.put(tempStorage, tempStorage.getAmount() + amountKept);
             return ItemStackUtils.EMPTY;
         }
         alreadyKept.put(tempStorage, shouldKeep.get(tempStorage));
-        final int dump = tempStorage.getAmount() + amountKept - shouldKeep.get(tempStorage);
+        final int dump = tempStorage.getAmount() + amountKept - getAmountOfSimilarFromHashMap(tempStorage, shouldKeep);
 
         //Create tempStack with the amount of items that should be dumped.
         return new ItemStack(tempStorage.getItem(), dump, tempStorage.getDamageValue());
+    }
+
+    private static int getAmountOfSimilarFromHashMap(@NotNull final ItemStorage storage, @NotNull final Map<ItemStorage, Integer> map)
+    {
+        for(final Map.Entry<ItemStorage, Integer> entry: map.entrySet())
+        {
+            if(entry.getKey().equals(storage))
+            {
+                return entry.getValue();
+            }
+        }
+        return 0;
     }
 
     /**

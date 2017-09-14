@@ -105,6 +105,13 @@ public class TileEntityRack extends TileEntity
             updateItemStorage();
             super.onContentsChanged(slot);
         }
+
+        @Override
+        public ItemStack extractItem(final int slot, final int amount, final boolean simulate)
+        {
+            updateItemStorage();
+            return super.extractItem(slot, amount, simulate);
+        }
     };
 
     /**
