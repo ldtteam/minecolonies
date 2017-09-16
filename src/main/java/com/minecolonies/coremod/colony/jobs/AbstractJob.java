@@ -45,6 +45,7 @@ public abstract class AbstractJob
     private static final String MAPPING_TOWER_GUARD = "GuardTower";
     private static final String MAPPING_BAKER       = "Baker";
     private static final String MAPPING_SHEPHERD    = "Shepherd";
+    private static final String MAPPING_COWBOY      = "Cowboy";
 
     /**
      * The priority assigned with every main AI job.
@@ -69,6 +70,7 @@ public abstract class AbstractJob
         addMapping(MAPPING_TOWER_GUARD, JobGuard.class);
         addMapping(MAPPING_BAKER, JobBaker.class);
         addMapping(MAPPING_SHEPHERD, JobShepherd.class);
+        addMapping(MAPPING_COWBOY, JobCowboy.class);
     }
 
     private final CitizenData citizen;

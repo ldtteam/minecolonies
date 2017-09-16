@@ -3,23 +3,21 @@ package com.minecolonies.coremod.colony.jobs;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
-import com.minecolonies.coremod.entity.ai.citizen.herders.EntityAIWorkShepherd;
+import com.minecolonies.coremod.entity.ai.citizen.herders.EntityAIWorkCowboy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-
 /**
- * Created by Asher on 3/9/17.
+ * Created by Asher on 16/9/17.
  */
-public class JobShepherd extends AbstractJob
+public class JobCowboy extends AbstractJob
 {
-
     /**
      * Instantiates the placeholder job.
      *
      * @param entity the entity.
      */
-    public JobShepherd(final CitizenData entity)
+    public JobCowboy(final CitizenData entity)
     {
         super(entity);
     }
@@ -28,7 +26,7 @@ public class JobShepherd extends AbstractJob
     @Override
     public String getName()
     {
-        return "com.minecolonies.coremod.job.Shepherd";
+        return "com.minecolonies.coremod.job.Cowboy";
     }
 
     /**
@@ -38,9 +36,9 @@ public class JobShepherd extends AbstractJob
      */
     @Nullable
     @Override
-    public AbstractAISkeleton<JobShepherd> generateAI()
+    public AbstractAISkeleton<JobCowboy> generateAI()
     {
-        return new EntityAIWorkShepherd(this);
+        return new EntityAIWorkCowboy(this);
     }
 
     /**
@@ -54,5 +52,4 @@ public class JobShepherd extends AbstractJob
     {
         return RenderBipedCitizen.Model.FARMER;
     }
-
 }

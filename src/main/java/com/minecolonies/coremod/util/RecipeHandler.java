@@ -75,6 +75,7 @@ public final class RecipeHandler
         addHutRecipe(new ItemStack(ModBlocks.blockHutBaker, 1), Items.WHEAT);
         addHutRecipe(new ItemStack(ModBlocks.blockHutBarracks, 1), Blocks.IRON_BLOCK);
         addHutRecipe(new ItemStack(ModBlocks.blockHutShepherd, 1), Blocks.WOOL);
+        addHutRecipe(new ItemStack(ModBlocks.blockHutCowboy, 1), Items.LEATHER);
 
         //Register Scepters
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.scanTool, 1), "  I", " S ", "S  ", 'I', Items.IRON_INGOT, 'S', WOODEN_STICK));

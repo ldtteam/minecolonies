@@ -21,6 +21,7 @@ public final class ModBlocks
     public static final Block blockHutDeliveryman         = new BlockHutDeliveryman();
     public static final Block blockHutBlacksmith          = new BlockHutBlacksmith();
     public static final Block blockHutShepherd            = new BlockHutShepherd();
+    public static final Block blockHutCowboy              = new BlockHutCowboy();
     public static final Block blockHutStonemason          = new BlockHutStonemason();
     public static final Block blockHutFarmer              = new BlockHutFarmer();
     public static final Block blockHutFisherman           = new BlockHutFisherman();

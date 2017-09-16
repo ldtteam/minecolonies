@@ -278,31 +278,40 @@ public enum AIState
     BAKER_TAKE_OUT_OF_OVEN,
 
     /*
+ ###Herder###
+     */
+
+    /**
+     * Searching for new animals.
+     */
+    HERDER_SEARCH,
+
+    /**
+     * Walk to animal.
+     */
+    HERDER_WALK,
+
+    /**
+     * Breed animals.
+     */
+    HERDER_BREED,
+
+    /**
+     * Butcher animals.
+     */
+    HERDER_BUTCHER,
+
+    /**
+     * Herder deciding what to do.
+     */
+    HERDER_DECIDE,
+
+    /*
  ###Shepherd###
      */
 
     /**
-     * Search for new sheep to shear.
-     */
-    SHEPHERD_SEARCH_FOR_SHEEP,
-
-    /**
-     * Walk to sheep.
-     */
-    SHEPHERD_DECIDE,
-
-    /**
      * Shear all the sheep!
      */
-    SHEPHERD_SHEAR_SHEEP,
-
-    /**
-     * Breed some sheep!
-     */
-    SHEPHERD_BREED_SHEEP,
-
-    /**
-     * Butcher some sheep!
-     */
-    SHEPHERD_BUTCHER_SHEEP
+    SHEPHERD_SHEAR
 }
