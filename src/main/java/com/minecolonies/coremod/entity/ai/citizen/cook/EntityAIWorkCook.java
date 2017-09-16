@@ -137,7 +137,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
         if (getOwnBuilding().getCountOfPredicateInHut(TileEntityFurnace::isItemFuel, 1, world) < 1)
         {
             checkOrRequestItemsAsynch(false, new ItemStack(Blocks.LOG), new ItemStack(Blocks.LOG2), new ItemStack(Items.COAL));
-            setDelay(STANDARD_DELAY);
+            setDelay(400);
         }
         else
         {
@@ -183,7 +183,8 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
         final TileEntity entity = world.getTileEntity(walkTo);
         if (!(entity instanceof TileEntityFurnace)
                 || ((TileEntityFurnace) entity).isBurning()
-                || ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(2)))
+                || (ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(2))
+                && ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(0))))
         {
             walkTo = null;
             return START_WORKING;
@@ -255,6 +256,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
                 AMOUNT_OF_FOOD_TO_SERVE,
                 new InvWrapper(citizenToServe.get(0).getInventoryCitizen()));
 
+        citizenToServe.remove(0);
         setDelay(SERVE_DELAY);
         return getState();
     }
@@ -267,7 +269,8 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
             return START_WORKING;
         }
 
-        if (!InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), isCookable))
+        if (!InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), isCookable)
+                && (walkTo == null || world.getBlockState(walkTo).getBlock() != Blocks.FURNACE))
         {
             if (walkTo == null)
             {
@@ -339,6 +342,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
             }
 
             ((BuildingCook) getOwnBuilding()).setIsSomethingInOven(true);
+            return START_WORKING;
         }
         setDelay(STANDARD_DELAY);
         return COOK_COOK_FOOD;
@@ -475,7 +479,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
         }
         final List<EntityCitizen> citizenList = world.getEntitiesWithinAABB(EntityCitizen.class,
                 range, cit -> !(cit.getColonyJob() instanceof JobCook) && cit.getCitizenData().getSaturation() <= 0);
-        if (citizenList.size() > LEAST_KEEP_FOOD_MULTIPLIER)
+        if (!citizenList.isEmpty())
         {
             citizenToServe.addAll(citizenList);
             return COOK_GATHERING;
@@ -495,11 +499,17 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
         for (final BlockPos pos : ((BuildingCook) getOwnBuilding()).getFurnaces())
         {
             final TileEntity entity = world.getTileEntity(pos);
-            if (entity instanceof TileEntityFurnace && !((TileEntityFurnace) entity).isBurning()
-                    && (!ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(2)) || !ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(0))))
+            if (entity instanceof TileEntityFurnace && !((TileEntityFurnace) entity).isBurning())
             {
+                if(!ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(2)))
+                {
+                    return COOK_RETRIEVE_FOOD;
+                }
+                else if(!ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(0)))
+                {
+                    return COOK_COOK_FOOD;
+                }
                 walkTo = pos;
-                return COOK_RETRIEVE_FOOD;
             }
         }
         setDelay(STANDARD_DELAY);

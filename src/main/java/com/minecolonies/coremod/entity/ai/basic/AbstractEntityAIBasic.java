@@ -234,15 +234,18 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
     private AIState searchForFood()
     {
-        if(walkToBuilding())
+        if(!job.hasCheckedForFoodToday())
         {
-            return getState();
-        }
+            if (walkToBuilding())
+            {
+                return IDLE;
+            }
 
-        job.setCheckedForFood();
-        if(isInHut(itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemFood) || worker.getCitizenData().getSaturation() > 0)
-        {
-            return getState();
+            job.setCheckedForFood();
+            if (isInHut(itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemFood) || worker.getCitizenData().getSaturation() > 0)
+            {
+                return IDLE;
+            }
         }
 
         if(restaurant == null)
@@ -271,7 +274,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
 
         walkToBlock(restaurant);
-        return getState();
+        return IDLE;
     }
 
     /**
