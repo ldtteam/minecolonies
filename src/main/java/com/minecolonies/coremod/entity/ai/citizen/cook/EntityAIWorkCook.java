@@ -127,7 +127,6 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
         worker.setCanPickUpLoot(true);
     }
 
-    //todo call on update on our racks!
     private AIState getBurnableMaterial()
     {
         if(walkTo == null && walkToBuilding())
@@ -184,7 +183,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
         final TileEntity entity = world.getTileEntity(walkTo);
         if (!(entity instanceof TileEntityFurnace)
                 || ((TileEntityFurnace) entity).isBurning()
-                || !ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(1)))
+                || ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(2)))
         {
             walkTo = null;
             return START_WORKING;
@@ -332,11 +331,11 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
                     new InvWrapper(worker.getInventoryCitizen()), isCookable, Constants.STACKSIZE,
                     new InvWrapper((TileEntityFurnace) entity), 0);
 
-            if (ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(2)))
+            if (ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(1)))
             {
                 InventoryUtils.transferXOfFirstSlotInProviderWithIntoInItemHandler(
                         new InvWrapper(worker.getInventoryCitizen()), TileEntityFurnace::isItemFuel, Constants.STACKSIZE,
-                        new InvWrapper((TileEntityFurnace) entity), 2);
+                        new InvWrapper((TileEntityFurnace) entity), 1);
             }
 
             ((BuildingCook) getOwnBuilding()).setIsSomethingInOven(true);
@@ -408,6 +407,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
                 return getState();
             }
 
+            ((BuildingCook) getOwnBuilding()).setGatheredToday();
             final BlockPos pos = wareHouse.getTileEntity().getPositionOfChestWithItemStack(isFood);
             if (pos == null)
             {
@@ -433,7 +433,6 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
             transfersDone++;
         }
 
-        ((BuildingCook) getOwnBuilding()).setGatheredToday();
         walkTo = null;
         incrementActionsDone();
         return START_WORKING;
@@ -453,7 +452,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
             {
                 final TileEntity entity = world.getTileEntity(pos);
                 if (entity instanceof TileEntityFurnace && !((TileEntityFurnace) entity).isBurning()
-                        && (!ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(1)) || !ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(0))))
+                        && (!ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(2)) || !ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(0))))
                 {
                     walkTo = pos;
                     return COOK_RETRIEVE_FOOD;
@@ -465,7 +464,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
         final int amountOfFood = getOwnBuilding().getCountOfPredicateInHut(isFood, getOwnBuilding().getBuildingLevel() * LEAST_KEEP_FOOD_MULTIPLIER, world)
                 + InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), isFood);
 
-        if (amountOfFood <= 0)
+        if (amountOfFood <= 0 && !((BuildingCook) getOwnBuilding()).hasGatheredToday())
         {
             return COOK_GET_FOOD;
         }
@@ -493,8 +492,18 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
             return COOK_COOK_FOOD;
         }
 
+        for (final BlockPos pos : ((BuildingCook) getOwnBuilding()).getFurnaces())
+        {
+            final TileEntity entity = world.getTileEntity(pos);
+            if (entity instanceof TileEntityFurnace && !((TileEntityFurnace) entity).isBurning()
+                    && (!ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(2)) || !ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(0))))
+            {
+                walkTo = pos;
+                return COOK_RETRIEVE_FOOD;
+            }
+        }
         setDelay(STANDARD_DELAY);
-        return COOK_GET_FOOD;
+        return START_WORKING;
     }
 
     /**

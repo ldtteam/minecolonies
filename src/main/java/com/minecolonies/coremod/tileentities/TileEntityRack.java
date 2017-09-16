@@ -109,8 +109,9 @@ public class TileEntityRack extends TileEntity
         @Override
         public ItemStack extractItem(final int slot, final int amount, final boolean simulate)
         {
+            final ItemStack result = super.extractItem(slot, amount, simulate);
             updateItemStorage();
-            return super.extractItem(slot, amount, simulate);
+            return result;
         }
     };
 

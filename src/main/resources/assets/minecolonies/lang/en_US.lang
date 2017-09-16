@@ -475,5 +475,5 @@ com.minecolonies.coremod.gui.workerHuts.cook=Cook
 tile.minecolonies.blockHutCook.name=Restaurant
 com.minecolonies.coremod.ai.noRestaurant=Please build a restaurant or get me something to eat!
 com.minecolonies.coremod.ai.noWarehouse=Build a warehouse or bring me food to serve to my clients!
-com.minecolonies.coremod.ai.noFood=Our colony is out of food!
+com.minecolonies.coremod.ai.noFood=I can't find any food in the warehouse.
 com.minecolonies.coremod.gui.workerHuts.Cook=Restaurant
