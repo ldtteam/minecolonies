@@ -493,7 +493,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Check all chests in the worker hut for a required item.
      *
-     * @param is the type of item requested (amount is ignored)
+     * @param itemStackSelectionPredicate is the type of item requested (amount is ignored)
      * @return true if a stack of that type was found
      */
     public boolean isInHut(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
