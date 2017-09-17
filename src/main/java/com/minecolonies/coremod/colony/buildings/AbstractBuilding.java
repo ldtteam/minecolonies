@@ -110,7 +110,10 @@ public abstract class AbstractBuilding
 
     /**
      * Map to resolve classNameHash to class.
+     *
+     * The suppression is to suppress "Remove reference to ***" for all of the following.
      */
+    @SuppressWarnings("squid:S2390")
     @NotNull
     private static final Map<Integer, Class<?>> classNameHashToViewClassMap = new HashMap<>();
     /*

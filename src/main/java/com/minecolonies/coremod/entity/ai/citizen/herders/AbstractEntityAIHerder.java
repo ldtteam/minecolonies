@@ -50,7 +50,19 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     /**
      * Amount of animals to keep per Hut Level.
      */
-    private static int maxAnimalMultiplier;
+    private int maxAnimalMultiplier;
+
+    /**
+     * Delays used to setDelay()
+     */
+    private static final int DELAY_TWENTY = 20;
+    private static final int DELAY_FOURTY = 40;
+    private static final int DELAY_ONE_HUNDRED = 100;
+
+    /**
+     * Number of actions needed to dump inventory.
+     */
+    private static final int ACTIONS_FOR_DUMP = 10;
 
     /**
      * Creates the abstract part of the AI.
@@ -61,7 +73,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     public AbstractEntityAIHerder(@NotNull final J job, final int maxAnimalsMultiplier)
     {
         super(job);
-        maxAnimalMultiplier = maxAnimalsMultiplier;
+        this.maxAnimalMultiplier = maxAnimalsMultiplier;
         super.registerTargets(
           new AITarget(IDLE, START_WORKING),
           new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
@@ -76,7 +88,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     @Override
     protected int getActionsDoneUntilDumping()
     {
-        return 10;
+        return ACTIONS_FOR_DUMP;
     }
 
     /**
@@ -86,13 +98,13 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      */
     public AIState decideWhatToDo()
     {
-        setDelay(40);
+        setDelay(DELAY_FOURTY);
 
         final List<T> animals = new ArrayList<>(getAnimals());
 
         if (animals.isEmpty())
         {
-            setDelay(100);
+            setDelay(DELAY_ONE_HUNDRED);
             return HERDER_DECIDE;
         }
 
@@ -148,7 +160,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      */
     private AIState butcherAnimals()
     {
-        setDelay(20);
+        setDelay(DELAY_TWENTY);
 
         if (!maxAnimals())
         {
@@ -169,7 +181,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
 
         butcherAnimal(animal);
 
-        if (!animal.isEntityAlive())
+        if (animal != null && !animal.isEntityAlive())
         {
             incrementActionsDone();
         }
@@ -184,7 +196,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      */
     private AIState breedAnimals()
     {
-        setDelay(40);
+        setDelay(DELAY_FOURTY);
 
         final List<T> animals = new ArrayList<>(getAnimals());
 

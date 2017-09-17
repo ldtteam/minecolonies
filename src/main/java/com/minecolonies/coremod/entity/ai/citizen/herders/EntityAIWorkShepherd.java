@@ -31,6 +31,12 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
     private static final int MAX_ANIMALS_PER_LEVEL = 2;
 
     /**
+     * Delays used to setDelay()
+     */
+    private static final int DELAY_FOURTY = 40;
+    private static final int DELAY_ONE_HUNDRED = 100;
+
+    /**
      * Creates the abstract part of the AI.
      * Always use this constructor!
      *
@@ -52,13 +58,13 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
     @Override
     public AIState decideWhatToDo()
     {
-        setDelay(40);
+        setDelay(DELAY_FOURTY);
 
         final List<EntitySheep> animals = new ArrayList<>(getAnimals());
 
         if (animals.isEmpty())
         {
-            setDelay(100);
+            setDelay(DELAY_ONE_HUNDRED);
             return HERDER_DECIDE;
         }
 
