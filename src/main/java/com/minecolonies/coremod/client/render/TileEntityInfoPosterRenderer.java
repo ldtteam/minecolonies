@@ -4,6 +4,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
+import net.minecraft.block.BlockWallSign;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -41,6 +42,16 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
     private static final ResourceLocation SIGN_TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/blocks/info/info_poster.png");
 
     /**
+     * Offset to the block middle.
+     */
+    private static final double BLOCK_MIDDLE = 0.5;
+
+    /**
+     * Y-Offset in order to have the scarecrow over ground.
+     */
+    private static final double YOFFSET = 1.0;
+
+    /**
      * The ModelSign instance for use in this renderer
      */
     private IBakedModel model = null;
@@ -48,7 +59,7 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
     @Override
     public void renderTileEntityAt(final TileEntityInfoPoster te, final double x, final double y, final double z, final float partialTicks, final int destroyStage)
     {
-        if(model == null)
+        if (model == null)
         {
             model = loadModel();
         }
@@ -57,76 +68,48 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
         final IBlockState state = world.getBlockState(te.getPos());
         final BlockPos pos = te.getPos();
         final IBlockState actualState = state.getBlock().getActualState(state, world, pos);
+        float facing = actualState.getValue(BlockWallSign.FACING).getHorizontalAngle();
 
-        int k = te.getBlockMetadata();
-        float f2 = 0.0F;
 
-        if (k == 2)
+        int plusX = 0;
+        int plusZ = 0;
+
+        if (facing == 90 || facing == 180)
         {
-            f2 = 180.0F;
+            plusZ += 1;
+            plusX += 1;
         }
 
-        if (k == 4)
-        {
-            f2 = 90.0F;
-        }
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(x + plusX, y + YOFFSET, z + plusZ);
+        GlStateManager.rotate(facing, 0.0F, 1.0F, 0.0F);
+        GlStateManager.disableCull();
 
-        if (k == 5)
-        {
-            f2 = -90.0F;
-        }
-        GlStateManager.rotate(-f2, 0.0F, 1.0F, 0.0F);
+        RenderHelper.disableStandardItemLighting();
 
-        for (final BlockRenderLayer layer : BlockRenderLayer.values())
-        {
-            if (ModBlocks.blockInfoPoster.canRenderInLayer(actualState, layer))
-            {
-                final EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-                final double dx = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTicks;
-                final double dy = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTicks;
-                final double dz = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTicks;
+        GlStateManager.color(1F, 1F, 1F, 1F);
 
-                GlStateManager.pushMatrix();
-                GlStateManager.translate(pos.getX() - dx, pos.getY() - dy, pos.getZ() - dz);
+        final int alpha = ((int) (1.0D * 0xFF)) << 24;
 
-                RenderHelper.disableStandardItemLighting();
+        GlStateManager.enableBlend();
+        GlStateManager.enableTexture2D();
 
-                if (layer == BlockRenderLayer.CUTOUT)
-                {
-                    Minecraft.getMinecraft().getTextureManager().getTexture(SIGN_TEXTURE).setBlurMipmap(false, false);
-                }
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.colorMask(false, false, false, false);
+        GlStateManager.colorMask(true, true, true, true);
+        GlStateManager.depthFunc(GL11.GL_LEQUAL);
 
-                GlStateManager.color(1F, 1F, 1F, 1F);
+        this.renderModel(world, model, pos, alpha);
 
-                final int alpha = ((int) (1.0D * 0xFF)) << 24;
 
-                GlStateManager.enableBlend();
-                GlStateManager.enableTexture2D();
-
-                GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-                GlStateManager.colorMask(false, false, false, false);
-                this.renderModel(world, model, pos, alpha);
-
-                GlStateManager.colorMask(true, true, true, true);
-                GlStateManager.depthFunc(GL11.GL_LEQUAL);
-                this.renderModel(world, model, pos, alpha);
-
-                GlStateManager.disableBlend();
-
-                if (layer == BlockRenderLayer.CUTOUT)
-                {
-                    Minecraft.getMinecraft().getTextureManager().getTexture(SIGN_TEXTURE).restoreLastBlurMipmap();
-                }
-
-                GlStateManager.popMatrix();
-            }
-        }
+        GlStateManager.disableBlend();
+        GlStateManager.popMatrix();
 
 
         GlStateManager.enableRescaleNormal();
         GlStateManager.pushMatrix();
         final FontRenderer fontrenderer = this.getFontRenderer();
-        GlStateManager.translate(0.0F, 0.33333334F, 0.046666667F);
+        //GlStateManager.translate(0.0F, 0.33333334F, 0.046666667F);
         GlStateManager.scale(0.010416667F, -0.010416667F, 0.010416667F);
         GlStateManager.glNormal3f(0.0F, 0.0F, -0.010416667F);
         GlStateManager.depthMask(false);
@@ -148,7 +131,7 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
                     }
                     else
                     {
-                        fontrenderer.drawString(s + "halla", -fontrenderer.getStringWidth(s) / 2, j * 10 - te.signText.length * 5, 0);
+                        fontrenderer.drawString("blah" + s, -fontrenderer.getStringWidth(s) / 2, j * 10 - te.signText.length * 5, 0);
                     }
                 }
             }
