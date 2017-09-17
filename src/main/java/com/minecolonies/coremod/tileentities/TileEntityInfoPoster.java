@@ -320,6 +320,7 @@ public class TileEntityInfoPoster extends TileEntity
 
                 if (clickevent.getAction() == ClickEvent.Action.RUN_COMMAND)
                 {
+                    //todo doesn't seem to reach here!
                     playerIn.getServer().getCommandManager().executeCommand(icommandsender, clickevent.getValue());
                 }
             }
