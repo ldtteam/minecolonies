@@ -50,7 +50,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     /**
      * Amount of animals to keep per Hut Level.
      */
-    private int maxAnimalMultiplier;
+    private final int maxAnimalMultiplier;
 
     /**
      * Delays used to setDelay()
