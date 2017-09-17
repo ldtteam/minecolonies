@@ -1,13 +1,13 @@
 package com.minecolonies.coremod.entity.ai.citizen.herders;
 
-import com.minecolonies.coremod.colony.jobs.JobCowboy;
-import net.minecraft.entity.passive.EntityCow;
+import com.minecolonies.coremod.colony.jobs.JobSwineHerder;
+import net.minecraft.entity.passive.EntityPig;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by Asher on 16/9/17.
  */
-public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, EntityCow>
+public class EntityAIWorkSwineHerder extends AbstractEntityAIHerder<JobSwineHerder, EntityPig>
 {
     /**
      * Max amount of animals per Hut Level.
@@ -20,14 +20,14 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
      *
      * @param job the job to fulfill
      */
-    public EntityAIWorkCowboy(@NotNull final JobCowboy job)
+    public EntityAIWorkSwineHerder(@NotNull final JobSwineHerder job)
     {
         super(job, MAX_ANIMALS_PER_LEVEL);
     }
 
     @Override
-    public Class<EntityCow> getAnimalClass()
+    public Class<EntityPig> getAnimalClass()
     {
-        return EntityCow.class;
+        return EntityPig.class;
     }
 }

@@ -476,6 +476,12 @@ tile.minecolonies.blockHutCowboy.name=Cowboy
 com.minecolonies.coremod.job.Shepherd=Shepherd
 com.minecolonies.coremod.gui.workerHuts.shepherdHut=Shepherd's Hut
 tile.minecolonies.blockHutShepherd.name=Shepherd
+com.minecolonies.coremod.job.SwineHerder=Swine Herder
+com.minecolonies.coremod.gui.workerHuts.swineHerderHut=Swine Herder's Hut
+tile.minecolonies.blockHutSwineHerder.name=Swine Herder
+com.minecolonies.coremod.job.ChickenHerder=Chicken Herder
+com.minecolonies.coremod.gui.workerHuts.chickenHerderHut=Chicken Herder's Hut
+tile.minecolonies.blockHutChickenHerder.name=Chicken Herder
 
 tile.minecolonies.blockwaypoint.name=Waypoint placeholder
 tile.minecolonies.blockHutBarracksTower.name=Barracks Tower

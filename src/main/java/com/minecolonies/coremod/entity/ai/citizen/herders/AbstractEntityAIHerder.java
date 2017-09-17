@@ -8,11 +8,14 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.util.StructureWrapper;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.passive.EntityAnimal;
+import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -55,9 +58,9 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     /**
      * Delays used to setDelay()
      */
-    private static final int DELAY_TWENTY = 20;
-    private static final int DELAY_FOURTY = 40;
-    private static final int DELAY_ONE_HUNDRED = 100;
+    public static final int DELAY_TWENTY      = 20;
+    public static final int DELAY_FOURTY      = 40;
+    public static final int DELAY_ONE_HUNDRED = 100;
 
     /**
      * Number of actions needed to dump inventory.
@@ -80,7 +83,8 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
           new AITarget(PREPARING, this::prepareForHerding),
           new AITarget(HERDER_DECIDE, this::decideWhatToDo),
           new AITarget(HERDER_BREED, this::breedAnimals),
-          new AITarget(HERDER_BUTCHER, this::butcherAnimals)
+          new AITarget(HERDER_BUTCHER, this::butcherAnimals),
+          new AITarget(HERDER_PICKUP, this::pickupItems)
         );
         worker.setCanPickUpLoot(true);
     }
@@ -100,7 +104,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     {
         setDelay(DELAY_FOURTY);
 
-        final List<T> animals = new ArrayList<>(getAnimals());
+        final List<T> animals = new ArrayList<>(searchForAnimals());
 
         if (animals.isEmpty())
         {
@@ -112,7 +116,11 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
 
         final int numOfBreedableAnimals = animals.stream().filter(animal -> animal.getGrowingAge() == 0).toArray().length;
 
-        if (maxAnimals())
+        if (!searchForItemsInArea().isEmpty())
+        {
+            return HERDER_PICKUP;
+        }
+        else if (maxAnimals())
         {
             return HERDER_BUTCHER;
         }
@@ -145,7 +153,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      */
     private AIState prepareForHerding()
     {
-        if (checkForToolOrWeapon(ToolType.AXE) && checkOrRequestItems(new ItemStack(Items.WHEAT, 2))
+        if (checkForToolOrWeapon(ToolType.AXE) && checkOrRequestItems(new ItemStack(getBreedingItem(), 2))
               && (this instanceof EntityAIWorkShepherd && checkForToolOrWeapon(ToolType.SHEARS)))
         {
             return getState();
@@ -156,7 +164,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     /**
      * Butcher some animals (Preferably Adults) that the herder looks after.
      *
-     * @return The next AIState
+     * @return The next AIState.
      */
     private AIState butcherAnimals()
     {
@@ -172,11 +180,11 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
             return PREPARING;
         }
 
-        EntityAnimal animal = getAnimals().stream().filter(animalToButcher -> !animalToButcher.isChild()).findFirst().orElse(null);
+        EntityAnimal animal = searchForAnimals().stream().filter(animalToButcher -> !animalToButcher.isChild()).findFirst().orElse(null);
 
         if (animal == null)
         {
-            animal = getAnimals().stream().findFirst().orElse(null);
+            animal = searchForAnimals().stream().findFirst().orElse(null);
         }
 
         butcherAnimal(animal);
@@ -192,13 +200,13 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     /**
      * Breed some animals together.
      *
-     * @return The next AIState
+     * @return The next AIState.
      */
     private AIState breedAnimals()
     {
         setDelay(DELAY_FOURTY);
 
-        final List<T> animals = new ArrayList<>(getAnimals());
+        final List<T> animals = new ArrayList<>(searchForAnimals());
 
         final EntityAnimal animalOne = animals.stream().filter(animal -> animal.getGrowingAge() == 0).findAny().orElse(null);
 
@@ -220,7 +228,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
             return HERDER_DECIDE;
         }
 
-        if (!equipItem(new ItemStack(Items.WHEAT, 2)))
+        if (!equipItem(new ItemStack(getBreedingItem(), 2)))
         {
             return PREPARING;
         }
@@ -233,18 +241,39 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     }
 
     /**
+     * Allows the worker to pickup any stray items around Hut.
+     * Specifically useful when he possibly leaves Butchered
+     * drops OR with chickens (that drop feathers and etc)!
+     *
+     * @return The next AIState.
+     */
+    private AIState pickupItems()
+    {
+        final List<EntityItem> items = new ArrayList<>(searchForItemsInArea());
+
+        for (final EntityItem item : items)
+        {
+            walkToBlock(item.getPosition());
+        }
+
+        incrementActionsDone();
+
+        return HERDER_DECIDE;
+    }
+
+    /**
      * Find animals in area.
      *
-     * @return the next AIState the herder should switch to, after executing this method.
+     * @return the list of animals in the area.
      */
-    public List<T> searchForAnimals(final Class<? extends T> clazz)
+    public List<T> searchForAnimals()
     {
         worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.herder.searching"));
 
         if (this.getTargetableArea() != null)
         {
             return new ArrayList<>((world.getEntitiesWithinAABB(
-              clazz,
+              getAnimalClass(),
               this.getTargetableArea()
             )));
         }
@@ -252,9 +281,26 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     }
 
     /**
-     * Get the anmimals from the none Abstract.
+     * Find items in hut area.
+     *
+     * @return the list of items in the area.
      */
-    public abstract List<T> getAnimals();
+    public List<EntityItem> searchForItemsInArea()
+    {
+        if (this.getTargetableArea() != null)
+        {
+            return new ArrayList<>((world.getEntitiesWithinAABB(
+              EntityItem.class,
+              this.getTargetableArea()
+            )));
+        }
+        return new ArrayList<>();
+    }
+
+    /**
+     * Get the Animal's class from the none Abstract.
+     */
+    public abstract Class<T> getAnimalClass();
 
     /**
      * Creates a simple area around the Herder's Hut used for AABB calculations for finding animals.
@@ -282,8 +328,8 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
         final int z1 = wrapper.getPosition().getZ() - wrapper.getOffset().getZ() - 1;
         final int x3 = wrapper.getPosition().getX() + (wrapper.getWidth() - wrapper.getOffset().getX());
         final int z3 = wrapper.getPosition().getZ() + (wrapper.getLength() - wrapper.getOffset().getZ());
-        final int y1 = getOwnBuilding().getLocation().getY() - 10;
-        final int y3 = getOwnBuilding().getLocation().getY() + 10;
+        final int y1 = getOwnBuilding().getLocation().getY() - 1;
+        final int y3 = getOwnBuilding().getLocation().getY() + 2;
 
         return new AxisAlignedBB(x1, y1, z1, x3, y3, z3);
     }
@@ -291,9 +337,9 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     /**
      * Lets the herder walk to the animal.
      *
-     * @return true if the herder has arrived at the animal.
+     * @return true if the herder is walking to the animal.
      */
-    public boolean walkToAnimal(final EntityAnimal animal)
+    public boolean walkingToAnimal(final EntityAnimal animal)
     {
 
         if (animal != null)
@@ -322,10 +368,11 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
 
         for (final EntityAnimal animal : animalsToBreed)
         {
-            if (!animal.isInLove() && !walkToAnimal(animal))
+            if (!animal.isInLove() && !walkingToAnimal(animal))
             {
                 animal.setInLove(null);
-                new InvWrapper(getInventory()).extractItem(getItemSlot(Items.WHEAT), 1, false);
+                worker.swingArm(EnumHand.MAIN_HAND);
+                new InvWrapper(getInventory()).extractItem(getItemSlot(getBreedingItem()), 1, false);
             }
         }
     }
@@ -340,7 +387,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     {
         if (getOwnBuilding() != null)
         {
-            final int numOfAnimals = getAnimals().size();
+            final int numOfAnimals = searchForAnimals().size();
             final int maxAnimals = getOwnBuilding().getBuildingLevel() * maxAnimalMultiplier;
 
             return numOfAnimals > maxAnimals;
@@ -416,17 +463,29 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
 
         worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.herder.butchering"));
 
-        if (worker.getHeldItemMainhand() != null && animal != null)
+        if (!walkingToAnimal(animal) && worker.getHeldItemMainhand() != null && animal != null)
         {
             new DamageSource(worker.getName());
 
-            final BlockPos oldAnimalLocation = animal.getPosition();
-
+            worker.swingArm(EnumHand.MAIN_HAND);
             animal.attackEntityFrom(new DamageSource(worker.getName()), (float) BUTCHERING_ATTACK_DAMAGE);
 
             worker.getHeldItemMainhand().damageItem(1, animal);
+        }
+    }
 
-            walkToBlock(oldAnimalLocation);
+    /**
+     * Get breeding item for animal.
+     */
+    private Item getBreedingItem()
+    {
+        if (getAnimalClass().equals(EntityChicken.class))
+        {
+            return Items.WHEAT_SEEDS;
+        }
+        else
+        {
+            return Items.WHEAT;
         }
     }
 }

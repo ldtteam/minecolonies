@@ -306,6 +306,11 @@ public enum AIState
      */
     HERDER_DECIDE,
 
+    /**
+     * Pickup items around hut.
+     */
+    HERDER_PICKUP,
+
     /*
  ###Shepherd###
      */

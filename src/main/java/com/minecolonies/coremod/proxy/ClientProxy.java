@@ -25,6 +25,7 @@ import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.structures.event.RenderEventHandler;
 import com.minecolonies.structures.helpers.Settings;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -101,6 +102,13 @@ public class ClientProxy extends CommonProxy
         window.open();
     }
 
+    public void registerBlockHut(final Block block)
+    {
+        final ItemModelMesher itemModelMesher = Minecraft.getMinecraft().getRenderItem().getItemModelMesher();
+
+        itemModelMesher.register(Item.getItemFromBlock(block), 0 , new ModelResourceLocation(block.getRegistryName(), INVENTORY));
+    }
+
     @Override
     public void registerRenderer()
     {
@@ -108,26 +116,27 @@ public class ClientProxy extends CommonProxy
 
         final ItemModelMesher itemModelMesher = Minecraft.getMinecraft().getRenderItem().getItemModelMesher();
 
-        itemModelMesher.register(Item.getItemFromBlock(ModBlocks.blockHutBaker), 0, new ModelResourceLocation(ModBlocks.blockHutBaker.getRegistryName(), INVENTORY));
-        itemModelMesher.register(Item.getItemFromBlock(ModBlocks.blockHutBlacksmith), 0, new ModelResourceLocation(ModBlocks.blockHutBlacksmith.getRegistryName(), INVENTORY));
-        itemModelMesher.register(Item.getItemFromBlock(ModBlocks.blockHutShepherd), 0, new ModelResourceLocation(ModBlocks.blockHutShepherd.getRegistryName(), INVENTORY));
-        itemModelMesher.register(Item.getItemFromBlock(ModBlocks.blockHutCowboy), 0, new ModelResourceLocation(ModBlocks.blockHutCowboy.getRegistryName(), INVENTORY));
-        itemModelMesher.register(Item.getItemFromBlock(ModBlocks.blockHutBuilder), 0, new ModelResourceLocation(ModBlocks.blockHutBuilder.getRegistryName(), INVENTORY));
-        itemModelMesher.register(Item.getItemFromBlock(ModBlocks.blockHutCitizen), 0, new ModelResourceLocation(ModBlocks.blockHutCitizen.getRegistryName(), INVENTORY));
-        itemModelMesher.register(Item.getItemFromBlock(ModBlocks.blockHutFarmer), 0, new ModelResourceLocation(ModBlocks.blockHutFarmer.getRegistryName(), INVENTORY));
-        itemModelMesher.register(Item.getItemFromBlock(ModBlocks.blockHutFisherman), 0, new ModelResourceLocation(ModBlocks.blockHutFisherman.getRegistryName(), INVENTORY));
-        itemModelMesher.register(Item.getItemFromBlock(ModBlocks.blockHutLumberjack), 0, new ModelResourceLocation(ModBlocks.blockHutLumberjack.getRegistryName(), INVENTORY));
-        itemModelMesher.register(Item.getItemFromBlock(ModBlocks.blockHutMiner), 0, new ModelResourceLocation(ModBlocks.blockHutMiner.getRegistryName(), INVENTORY));
-        itemModelMesher.register(Item.getItemFromBlock(ModBlocks.blockHutStonemason), 0, new ModelResourceLocation(ModBlocks.blockHutStonemason.getRegistryName(), INVENTORY));
-        itemModelMesher.register(Item.getItemFromBlock(ModBlocks.blockHutTownHall), 0, new ModelResourceLocation(ModBlocks.blockHutTownHall.getRegistryName(), INVENTORY));
-        itemModelMesher.register(Item.getItemFromBlock(ModBlocks.blockHutWareHouse), 0, new ModelResourceLocation(ModBlocks.blockHutWareHouse.getRegistryName(), INVENTORY));
-        itemModelMesher.register(Item.getItemFromBlock(ModBlocks.blockHutDeliveryman), 0, new ModelResourceLocation(ModBlocks.blockHutDeliveryman.getRegistryName(), INVENTORY));
-        itemModelMesher.register(Item.getItemFromBlock(ModBlocks.blockSubstitution), 0, new ModelResourceLocation(ModBlocks.blockSubstitution.getRegistryName(), INVENTORY));
-        itemModelMesher.register(Item.getItemFromBlock(ModBlocks.blockHutField), 0, new ModelResourceLocation(ModBlocks.blockHutField.getRegistryName(), INVENTORY));
-        itemModelMesher.register(Item.getItemFromBlock(ModBlocks.blockHutGuardTower), 0, new ModelResourceLocation(ModBlocks.blockHutGuardTower.getRegistryName(), INVENTORY));
-        itemModelMesher.register(Item.getItemFromBlock(ModBlocks.blockHutBarracks), 0, new ModelResourceLocation(ModBlocks.blockHutBarracks.getRegistryName(), INVENTORY));
-        itemModelMesher.register(Item.getItemFromBlock(ModBlocks.blockHutBarracksTower), 0, new ModelResourceLocation(ModBlocks.blockHutBarracksTower.getRegistryName(), INVENTORY));
-
+        registerBlockHut(ModBlocks.blockHutBaker);
+        registerBlockHut(ModBlocks.blockHutBlacksmith);
+        registerBlockHut(ModBlocks.blockHutShepherd);
+        registerBlockHut(ModBlocks.blockHutCowboy);
+        registerBlockHut(ModBlocks.blockHutSwineHerder);
+        registerBlockHut(ModBlocks.blockHutChickenHerder);
+        registerBlockHut(ModBlocks.blockHutBuilder);
+        registerBlockHut(ModBlocks.blockHutCitizen);
+        registerBlockHut(ModBlocks.blockHutFarmer);
+        registerBlockHut(ModBlocks.blockHutFisherman);
+        registerBlockHut(ModBlocks.blockHutLumberjack);
+        registerBlockHut(ModBlocks.blockHutMiner);
+        registerBlockHut(ModBlocks.blockHutStonemason);
+        registerBlockHut(ModBlocks.blockHutTownHall);
+        registerBlockHut(ModBlocks.blockHutWareHouse);
+        registerBlockHut(ModBlocks.blockHutDeliveryman);
+        registerBlockHut(ModBlocks.blockSubstitution);
+        registerBlockHut(ModBlocks.blockHutField);
+        registerBlockHut(ModBlocks.blockHutGuardTower);
+        registerBlockHut(ModBlocks.blockHutBarracks);
+        registerBlockHut(ModBlocks.blockHutBarracksTower);
 
         itemModelMesher.register(Item.getItemFromBlock(ModBlocks.blockSolidSubstitution), 0,
                 new ModelResourceLocation(ModBlocks.blockSolidSubstitution.getRegistryName(), INVENTORY));

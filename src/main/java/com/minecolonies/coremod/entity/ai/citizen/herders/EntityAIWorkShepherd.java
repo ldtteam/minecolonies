@@ -7,6 +7,7 @@ import com.minecolonies.coremod.entity.ai.util.AITarget;
 import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,12 +30,6 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
      * Max amount of animals per Hut Level.
      */
     private static final int MAX_ANIMALS_PER_LEVEL = 2;
-
-    /**
-     * Delays used to setDelay()
-     */
-    private static final int DELAY_FOURTY = 40;
-    private static final int DELAY_ONE_HUNDRED = 100;
 
     /**
      * Creates the abstract part of the AI.
@@ -60,7 +55,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
     {
         setDelay(DELAY_FOURTY);
 
-        final List<EntitySheep> animals = new ArrayList<>(getAnimals());
+        final List<EntitySheep> animals = new ArrayList<>(searchForAnimals());
 
         if (animals.isEmpty())
         {
@@ -70,7 +65,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
 
         worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.herder.deciding"));
 
-        final EntitySheep shearingSheep = animals.stream().filter(sheepie -> !sheepie.getSheared()).findFirst().orElse(null);
+        final EntitySheep shearingSheep = animals.stream().filter(sheepie -> !sheepie.getSheared() && !sheepie.isChild()).findFirst().orElse(null);
 
         final int numOfBreedableSheep = animals.stream().filter(sheepie -> sheepie.getGrowingAge() == 0).toArray().length;
 
@@ -78,7 +73,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
         {
             return HERDER_BUTCHER;
         }
-        else if (shearingSheep != null && !walkToAnimal(shearingSheep))
+        else if (shearingSheep != null && !walkingToAnimal(shearingSheep))
         {
             return SHEPHERD_SHEAR;
         }
@@ -90,9 +85,9 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
     }
 
     @Override
-    public List<EntitySheep> getAnimals()
+    public Class<EntitySheep> getAnimalClass()
     {
-        return searchForAnimals(EntitySheep.class);
+        return EntitySheep.class;
     }
 
     /**
@@ -104,7 +99,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
     {
         worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.shepherd.shearing"));
 
-        final List<EntitySheep> sheeps = getAnimals();
+        final List<EntitySheep> sheeps = searchForAnimals();
 
         if (sheeps.isEmpty())
         {
@@ -120,6 +115,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
 
         if (worker.getHeldItemMainhand() != null && sheep != null)
         {
+            worker.swingArm(EnumHand.MAIN_HAND);
             final List<ItemStack> items = sheep.onSheared(worker.getHeldItemMainhand(),
               worker.worldObj,
               worker.getPosition(),
