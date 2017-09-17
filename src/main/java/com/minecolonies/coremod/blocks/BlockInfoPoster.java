@@ -9,16 +9,12 @@ import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -59,7 +55,7 @@ public class BlockInfoPoster extends BlockContainer
      */
     private void initBlock()
     {
-        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
+        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, NORTH));
         setRegistryName(BLOCK_NAME);
         setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(Locale.ENGLISH), BLOCK_NAME));
         GameRegistry.register((new ItemBlock(this)).setRegistryName(this.getRegistryName()));
@@ -67,19 +63,19 @@ public class BlockInfoPoster extends BlockContainer
     }
 
     @Override
-    public boolean isFullCube(IBlockState state)
+    public boolean isFullCube(final IBlockState state)
     {
         return false;
     }
 
     @Override
-    public boolean isPassable(IBlockAccess worldIn, BlockPos pos)
+    public boolean isPassable(final IBlockAccess worldIn, final BlockPos pos)
     {
         return true;
     }
 
     @Override
-    public boolean isOpaqueCube(IBlockState state)
+    public boolean isOpaqueCube(final IBlockState state)
     {
         return false;
     }
@@ -97,48 +93,32 @@ public class BlockInfoPoster extends BlockContainer
     }
 
     @Override
-    public IBlockState getStateFromMeta(int meta)
+    public IBlockState getStateFromMeta(final int meta)
     {
         EnumFacing enumfacing = EnumFacing.getFront(meta);
 
         if (enumfacing.getAxis() == EnumFacing.Axis.Y)
         {
-            enumfacing = EnumFacing.NORTH;
+            enumfacing = NORTH;
         }
 
         return this.getDefaultState().withProperty(FACING, enumfacing);
     }
 
     @Override
-    public boolean onBlockActivated(
-            World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
-            EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
-    {
-        if (worldIn.isRemote)
-        {
-            return true;
-        }
-        else
-        {
-            TileEntity tileentity = worldIn.getTileEntity(pos);
-            return tileentity instanceof TileEntityInfoPoster ? ((TileEntityInfoPoster)tileentity).executeCommand(playerIn) : false;
-        }
-    }
-
-    @Override
-    public int getMetaFromState(IBlockState state)
+    public int getMetaFromState(final IBlockState state)
     {
         return ((EnumFacing)state.getValue(FACING)).getIndex();
     }
 
     @Override
-    public IBlockState withRotation(IBlockState state, Rotation rot)
+    public IBlockState withRotation(final IBlockState state, final Rotation rot)
     {
         return state.withProperty(FACING, rot.rotate((EnumFacing)state.getValue(FACING)));
     }
 
     @Override
-    public IBlockState withMirror(IBlockState state, Mirror mirrorIn)
+    public IBlockState withMirror(final IBlockState state, final Mirror mirrorIn)
     {
         return state.withRotation(mirrorIn.toRotation((EnumFacing)state.getValue(FACING)));
     }
