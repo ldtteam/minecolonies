@@ -61,19 +61,19 @@ public class BlockInfoPoster extends BlockContainer
     }
 
     @Override
-    public boolean isFullCube(IBlockState state)
+    public boolean isFullCube(final IBlockState state)
     {
         return false;
     }
 
     @Override
-    public boolean isPassable(IBlockAccess worldIn, BlockPos pos)
+    public boolean isPassable(final IBlockAccess worldIn, final BlockPos pos)
     {
         return true;
     }
 
     @Override
-    public boolean isOpaqueCube(IBlockState state)
+    public boolean isOpaqueCube(final IBlockState state)
     {
         return false;
     }
@@ -91,7 +91,7 @@ public class BlockInfoPoster extends BlockContainer
     }
 
     @Override
-    public IBlockState getStateFromMeta(int meta)
+    public IBlockState getStateFromMeta(final int meta)
     {
         EnumFacing enumfacing = EnumFacing.getFront(meta);
 
@@ -104,19 +104,19 @@ public class BlockInfoPoster extends BlockContainer
     }
 
     @Override
-    public int getMetaFromState(IBlockState state)
+    public int getMetaFromState(final IBlockState state)
     {
         return ((EnumFacing)state.getValue(FACING)).getIndex();
     }
 
     @Override
-    public IBlockState withRotation(IBlockState state, Rotation rot)
+    public IBlockState withRotation(final IBlockState state, final Rotation rot)
     {
         return state.withProperty(FACING, rot.rotate((EnumFacing)state.getValue(FACING)));
     }
 
     @Override
-    public IBlockState withMirror(IBlockState state, Mirror mirrorIn)
+    public IBlockState withMirror(final IBlockState state, final Mirror mirrorIn)
     {
         return state.withRotation(mirrorIn.toRotation((EnumFacing)state.getValue(FACING)));
     }
