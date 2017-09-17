@@ -2,7 +2,6 @@ package com.minecolonies.coremod.client.render;
 
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Log;
-import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
 import net.minecraft.block.BlockWallSign;
 import net.minecraft.block.state.IBlockState;
@@ -18,8 +17,6 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -39,17 +36,55 @@ import java.util.List;
 @SideOnly(Side.CLIENT)
 public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<TileEntityInfoPoster>
 {
-    private static final ResourceLocation SIGN_TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/blocks/info/info_poster.png");
-
     /**
      * Offset to the block middle.
      */
-    private static final double BLOCK_MIDDLE = 0.5;
+    private static final double BLOCK_MIDDLE = 0.6;
+
+    /**
+     * Used to move the text slightly in the front.
+     */
+    private static final double SLIGHTLY_IN_FRONT = 0.01;
+
+    /**
+     * Scaling factor.
+     */
+    private static final double SCALING_FACTOR = 0.010416667F;
 
     /**
      * Y-Offset in order to have the scarecrow over ground.
      */
-    private static final double YOFFSET = 1.0;
+    private static final double YOFFSET    = 0.2;
+
+    /**
+     * 90° offset.
+     */
+    private static final int NINETY_DEGREE = 90;
+
+    /**
+     * 180° offset.
+     */
+    private static final int HALF_ROTATION = 180;
+
+    /**
+     * 270° offset.
+     */
+    private static final int THREE_QUARTERS  = 270;
+
+    /**
+     * Max text length.
+     */
+    private static final int MAX_TEXT_LENGTH = 90;
+
+    /**
+     * Text offset at x.
+     */
+    private static final int TEXT_OFFSET_X   = 10;
+
+    /**
+     * Text offset at y.
+     */
+    private static final int TEXT_OFFSET_Y   = 5;
 
     /**
      * The ModelSign instance for use in this renderer
@@ -68,21 +103,36 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
         final IBlockState state = world.getBlockState(te.getPos());
         final BlockPos pos = te.getPos();
         final IBlockState actualState = state.getBlock().getActualState(state, world, pos);
-        float facing = actualState.getValue(BlockWallSign.FACING).getHorizontalAngle();
+        int facing = (int) actualState.getValue(BlockWallSign.FACING).getHorizontalAngle();
 
 
-        int plusX = 0;
-        int plusZ = 0;
+        double plusX = 0;
+        double plusZ = 0;
 
-        if (facing == 90 || facing == 180)
+
+        switch(facing)
         {
-            plusZ += 1;
-            plusX += 1;
+            case NINETY_DEGREE:
+                plusX +=1;
+                plusZ+=1;
+                break;
+            case HALF_ROTATION:
+                plusZ+=1;
+                facing= 0;
+                break;
+            case 0:
+                facing = HALF_ROTATION;
+                plusX += 1;
+                break;
+            default:
+                //do nothing
+
         }
 
         GlStateManager.pushMatrix();
         GlStateManager.translate(x + plusX, y + YOFFSET, z + plusZ);
         GlStateManager.rotate(facing, 0.0F, 1.0F, 0.0F);
+
         GlStateManager.disableCull();
 
         RenderHelper.disableStandardItemLighting();
@@ -98,10 +148,7 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
         GlStateManager.colorMask(false, false, false, false);
         GlStateManager.colorMask(true, true, true, true);
         GlStateManager.depthFunc(GL11.GL_LEQUAL);
-
-        this.renderModel(world, model, pos, alpha);
-
-
+        renderModel(world, model, pos, alpha);
         GlStateManager.disableBlend();
         GlStateManager.popMatrix();
 
@@ -109,9 +156,34 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
         GlStateManager.enableRescaleNormal();
         GlStateManager.pushMatrix();
         final FontRenderer fontrenderer = this.getFontRenderer();
-        //GlStateManager.translate(0.0F, 0.33333334F, 0.046666667F);
-        GlStateManager.scale(0.010416667F, -0.010416667F, 0.010416667F);
-        GlStateManager.glNormal3f(0.0F, 0.0F, -0.010416667F);
+
+        facing = (int) actualState.getValue(BlockWallSign.FACING).getHorizontalAngle();
+        switch(facing)
+        {
+            case NINETY_DEGREE:
+                facing = THREE_QUARTERS;
+                plusZ -= BLOCK_MIDDLE;
+                plusX -= SLIGHTLY_IN_FRONT;
+                break;
+            case HALF_ROTATION:
+                plusX += BLOCK_MIDDLE;
+                plusZ -= SLIGHTLY_IN_FRONT;
+                break;
+            case THREE_QUARTERS:
+                facing = NINETY_DEGREE;
+                plusZ += BLOCK_MIDDLE;
+                plusX += SLIGHTLY_IN_FRONT;
+                break;
+            default:
+                plusX -= BLOCK_MIDDLE;
+                plusZ += SLIGHTLY_IN_FRONT;
+                break;
+        }
+
+        GlStateManager.translate(x + plusX, y + YOFFSET * 2, z + plusZ);
+
+        GlStateManager.rotate(facing, 0.0F, 1.0F, 0.0F);
+        GlStateManager.scale(SCALING_FACTOR, -SCALING_FACTOR, SCALING_FACTOR);
         GlStateManager.depthMask(false);
 
         if (destroyStage < 0)
@@ -121,18 +193,10 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
                 if (te.signText[j] != null)
                 {
                     ITextComponent itextcomponent = te.signText[j];
-                    List<ITextComponent> list = GuiUtilRenderComponents.splitText(itextcomponent, 90, fontrenderer, false, true);
-                    String s = list != null && !list.isEmpty() ? list.get(0).getFormattedText() : "";
+                    List<ITextComponent> list = GuiUtilRenderComponents.splitText(itextcomponent, MAX_TEXT_LENGTH, fontrenderer, false, true);
+                    String text = list != null && !list.isEmpty() ? list.get(0).getFormattedText() : "";
+                    fontrenderer.drawString(text, -fontrenderer.getStringWidth(text) / 2, j * TEXT_OFFSET_X - te.signText.length * TEXT_OFFSET_Y, 0);
 
-                    if (j == te.lineBeingEdited)
-                    {
-                        s = "> " + s + " <";
-                        fontrenderer.drawString(s, -fontrenderer.getStringWidth(s) / 2, j * 10 - te.signText.length * 5, 0);
-                    }
-                    else
-                    {
-                        fontrenderer.drawString("blah" + s, -fontrenderer.getStringWidth(s) / 2, j * 10 - te.signText.length * 5, 0);
-                    }
                 }
             }
         }
@@ -157,7 +221,7 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
         return null;
     }
 
-    private void renderModel(final World world, final IBakedModel model, final BlockPos pos, final int alpha)
+    private static void renderModel(final World world, final IBakedModel model, final BlockPos pos, final int alpha)
     {
         final IBlockState state = world.getBlockState(pos);
         final IBlockState actualState = state.getBlock().getActualState(state, world, pos);
@@ -165,13 +229,13 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
 
         for (final EnumFacing facing : EnumFacing.values())
         {
-            this.renderQuads(world, actualState, pos, model.getQuads(actualState, facing, 0), alpha);
+            renderQuads(world, actualState, pos, model.getQuads(actualState, facing, 0), alpha);
         }
 
-        this.renderQuads(world, actualState, pos, model.getQuads(iBlockExtendedState, null, 0), alpha);
+        renderQuads(world, actualState, pos, model.getQuads(iBlockExtendedState, null, 0), alpha);
     }
 
-    private void renderQuads(final World world, final IBlockState actualState, final BlockPos pos, final List<BakedQuad> quads, final int alpha)
+    private static void renderQuads(final World world, final IBlockState actualState, final BlockPos pos, final List<BakedQuad> quads, final int alpha)
     {
         final Tessellator tessellator = Tessellator.getInstance();
         final VertexBuffer buffer = tessellator.getBuffer();
@@ -180,7 +244,7 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
         {
             buffer.begin(GL11.GL_QUADS, quad.getFormat());
 
-            final int color = quad.hasTintIndex() ? this.getTint(world, actualState, pos, alpha, quad.getTintIndex()) : (alpha | 0xffffff);
+            final int color = quad.hasTintIndex() ? getTint(world, actualState, pos, alpha, quad.getTintIndex()) : (alpha | 0xffffff);
 
             LightUtil.renderQuadColor(buffer, quad, color);
 
@@ -188,7 +252,7 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
         }
     }
 
-    private int getTint(final World world, final IBlockState actualState, final BlockPos pos, final int alpha, final int tintIndex)
+    private static int getTint(final World world, final IBlockState actualState, final BlockPos pos, final int alpha, final int tintIndex)
     {
         return alpha | Minecraft.getMinecraft().getBlockColors().colorMultiplier(actualState, world, pos, tintIndex);
     }
