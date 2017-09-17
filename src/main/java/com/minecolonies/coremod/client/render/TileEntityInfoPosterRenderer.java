@@ -39,7 +39,7 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
     /**
      * Offset to the block middle.
      */
-    private static final double BLOCK_MIDDLE = 0.6;
+    private static final double BLOCK_MIDDLE = 0.5;
 
     /**
      * Used to move the text slightly in the front.
