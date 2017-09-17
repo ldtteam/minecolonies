@@ -53,7 +53,7 @@ public class BlockInfoPoster extends BlockContainer
      */
     private void initBlock()
     {
-        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
+        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, NORTH));
         setRegistryName(BLOCK_NAME);
         setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(Locale.ENGLISH), BLOCK_NAME));
         GameRegistry.register((new ItemBlock(this)).setRegistryName(this.getRegistryName()));
@@ -97,7 +97,7 @@ public class BlockInfoPoster extends BlockContainer
 
         if (enumfacing.getAxis() == EnumFacing.Axis.Y)
         {
-            enumfacing = EnumFacing.NORTH;
+            enumfacing = NORTH;
         }
 
         return this.getDefaultState().withProperty(FACING, enumfacing);

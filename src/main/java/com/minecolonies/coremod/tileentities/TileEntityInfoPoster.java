@@ -1,8 +1,6 @@
 package com.minecolonies.coremod.tileentities;
 
 import net.minecraft.command.CommandResultStats;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -17,16 +15,7 @@ public class TileEntityInfoPoster extends TileEntity
     public final ITextComponent[] signText =
             new ITextComponent[] {new TextComponentString(""), new TextComponentString(""), new TextComponentString(""), new TextComponentString("")};
 
-    private EntityPlayer player;
     private final CommandResultStats stats = new CommandResultStats();
-
-    /**
-     * Creates an instance of the TileEntityInfoPoster.
-     */
-    public TileEntityInfoPoster()
-    {
-        super();
-    }
 
     @Override
     public NBTTagCompound writeToNBT(final NBTTagCompound compound)
