@@ -104,11 +104,9 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
         final BlockPos pos = te.getPos();
         final IBlockState actualState = state.getBlock().getActualState(state, world, pos);
         int facing = (int) actualState.getValue(BlockWallSign.FACING).getHorizontalAngle();
-
-
+        
         double plusX = 0;
         double plusZ = 0;
-
 
         switch(facing)
         {
@@ -181,7 +179,6 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
         }
 
         GlStateManager.translate(x + plusX, y + YOFFSET * 2, z + plusZ);
-
         GlStateManager.rotate(facing, 0.0F, 1.0F, 0.0F);
         GlStateManager.scale(SCALING_FACTOR, -SCALING_FACTOR, SCALING_FACTOR);
         GlStateManager.depthMask(false);
@@ -192,11 +189,9 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
             {
                 if (te.signText[j] != null)
                 {
-                    ITextComponent itextcomponent = te.signText[j];
-                    List<ITextComponent> list = GuiUtilRenderComponents.splitText(itextcomponent, MAX_TEXT_LENGTH, fontrenderer, false, true);
-                    String text = list != null && !list.isEmpty() ? list.get(0).getFormattedText() : "";
+                    final List<ITextComponent> list = GuiUtilRenderComponents.splitText(te.signText[j], MAX_TEXT_LENGTH, fontrenderer, false, true);
+                    final String text = list != null && !list.isEmpty() ? list.get(0).getFormattedText() : "";
                     fontrenderer.drawString(text, -fontrenderer.getStringWidth(text) / 2, j * TEXT_OFFSET_X - te.signText.length * TEXT_OFFSET_Y, 0);
-
                 }
             }
         }
