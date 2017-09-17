@@ -99,6 +99,11 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
             model = loadModel();
         }
 
+        if(model == null)
+        {
+            return;
+        }
+
         final World world = te.getWorld();
         final IBlockState state = world.getBlockState(te.getPos());
         final BlockPos pos = te.getPos();

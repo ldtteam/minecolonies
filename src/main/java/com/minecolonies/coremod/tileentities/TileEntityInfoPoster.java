@@ -29,7 +29,7 @@ public class TileEntityInfoPoster extends TileEntity
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound compound)
+    public NBTTagCompound writeToNBT(final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
 
@@ -44,13 +44,13 @@ public class TileEntityInfoPoster extends TileEntity
     }
 
     @Override
-    protected void setWorldCreate(World worldIn)
+    protected void setWorldCreate(final World worldIn)
     {
         this.setWorldObj(worldIn);
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound compound)
+    public void readFromNBT(final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
 
