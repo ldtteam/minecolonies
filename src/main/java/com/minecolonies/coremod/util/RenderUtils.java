@@ -115,7 +115,7 @@ public final class RenderUtils
         final IBlockState iblockstate = block.getDefaultState().withProperty(BlockInfoPoster.FACING, facing);
         final IBlockState iBlockExtendedState = block.getExtendedState(iblockstate, clientWorld, pos);
         final IBakedModel ibakedmodel = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(iblockstate);
-        final TileEntitySign sign = new TileEntityInfoPoster();
+        final TileEntityInfoPoster sign = new TileEntityInfoPoster();
         sign.setPos(pos);
 
         for(int i = 0; i < sign.signText.length; i++)

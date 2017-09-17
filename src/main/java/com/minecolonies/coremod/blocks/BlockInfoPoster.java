@@ -2,20 +2,42 @@ package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
-import net.minecraft.block.BlockWallSign;
+import net.minecraft.block.*;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntitySign;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.Mirror;
+import net.minecraft.util.Rotation;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
 import java.util.Locale;
+
+import static net.minecraft.util.EnumFacing.NORTH;
+import static net.minecraft.util.EnumFacing.fromAngle;
 
 /**
  * Class for the minecolonies info Poster.
  */
-public class BlockInfoPoster extends BlockWallSign
+public class BlockInfoPoster extends BlockContainer
 {
+    public static final PropertyDirection FACING = BlockHorizontal.FACING;
+
     /**
      * This blocks name.
      */
@@ -27,7 +49,7 @@ public class BlockInfoPoster extends BlockWallSign
      */
     public BlockInfoPoster()
     {
-        super();
+        super(Material.WOOD);
         initBlock();
     }
 
@@ -37,10 +59,29 @@ public class BlockInfoPoster extends BlockWallSign
      */
     private void initBlock()
     {
+        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
         setRegistryName(BLOCK_NAME);
         setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(Locale.ENGLISH), BLOCK_NAME));
         GameRegistry.register((new ItemBlock(this)).setRegistryName(this.getRegistryName()));
         GameRegistry.register(this);
+    }
+
+    @Override
+    public boolean isFullCube(IBlockState state)
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isPassable(IBlockAccess worldIn, BlockPos pos)
+    {
+        return true;
+    }
+
+    @Override
+    public boolean isOpaqueCube(IBlockState state)
+    {
+        return false;
     }
 
     @Override
@@ -53,5 +94,73 @@ public class BlockInfoPoster extends BlockWallSign
     public boolean hasTileEntity(final IBlockState state)
     {
         return true;
+    }
+
+    @Override
+    public IBlockState getStateFromMeta(int meta)
+    {
+        EnumFacing enumfacing = EnumFacing.getFront(meta);
+
+        if (enumfacing.getAxis() == EnumFacing.Axis.Y)
+        {
+            enumfacing = EnumFacing.NORTH;
+        }
+
+        return this.getDefaultState().withProperty(FACING, enumfacing);
+    }
+
+    @Override
+    public boolean onBlockActivated(
+            World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
+            EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
+    {
+        if (worldIn.isRemote)
+        {
+            return true;
+        }
+        else
+        {
+            TileEntity tileentity = worldIn.getTileEntity(pos);
+            return tileentity instanceof TileEntityInfoPoster ? ((TileEntityInfoPoster)tileentity).executeCommand(playerIn) : false;
+        }
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state)
+    {
+        return ((EnumFacing)state.getValue(FACING)).getIndex();
+    }
+
+    @Override
+    public IBlockState withRotation(IBlockState state, Rotation rot)
+    {
+        return state.withProperty(FACING, rot.rotate((EnumFacing)state.getValue(FACING)));
+    }
+
+    @Override
+    public IBlockState withMirror(IBlockState state, Mirror mirrorIn)
+    {
+        return state.withRotation(mirrorIn.toRotation((EnumFacing)state.getValue(FACING)));
+    }
+
+    @Override
+    protected BlockStateContainer createBlockState()
+    {
+        return new BlockStateContainer(this, new IProperty[] {FACING});
+    }
+
+    @Override
+    public IBlockState onBlockPlaced(
+            final World worldIn,
+            final BlockPos pos,
+            final EnumFacing facing,
+            final float hitX,
+            final float hitY,
+            final float hitZ,
+            final int meta,
+            @org.jetbrains.annotations.Nullable final EntityLivingBase placer)
+    {
+        @NotNull final EnumFacing enumFacing = (placer == null) ? NORTH : fromAngle(placer.rotationYaw);
+        return this.getDefaultState().withProperty(FACING, enumFacing);
     }
 }
