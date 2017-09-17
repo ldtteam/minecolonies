@@ -50,7 +50,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     /**
      * Amount of animals to keep per Hut Level.
      */
-    private static int maxAnimalMultiplier = 2;
+    private static int maxAnimalMultiplier;
 
     /**
      * Creates the abstract part of the AI.
@@ -58,7 +58,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      *
      * @param job the job to fulfill
      */
-    public AbstractEntityAIHerder(@NotNull final J job, int maxAnimalsMultiplier)
+    public AbstractEntityAIHerder(@NotNull final J job, final int maxAnimalsMultiplier)
     {
         super(job);
         maxAnimalMultiplier = maxAnimalsMultiplier;
@@ -225,7 +225,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      *
      * @return the next AIState the herder should switch to, after executing this method.
      */
-    public List<T> searchForAnimals(Class<? extends T> clazz)
+    public List<T> searchForAnimals(final Class<? extends T> clazz)
     {
         worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.herder.searching"));
 
@@ -339,7 +339,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     /**
      * Sets the tool as held item.
      */
-    public boolean equipTool(ToolType toolType)
+    public boolean equipTool(final ToolType toolType)
     {
         if (getToolSlot(toolType) != -1)
         {
@@ -354,7 +354,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      *
      * @return slot number.
      */
-    private int getToolSlot(ToolType toolType)
+    private int getToolSlot(final ToolType toolType)
     {
         if (getOwnBuilding() != null)
         {
@@ -375,7 +375,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      *
      * @return whether the item was equipped.
      */
-    private boolean equipItem(ItemStack itemStack)
+    private boolean equipItem(final ItemStack itemStack)
     {
         if (!checkOrRequestItems(itemStack))
         {
