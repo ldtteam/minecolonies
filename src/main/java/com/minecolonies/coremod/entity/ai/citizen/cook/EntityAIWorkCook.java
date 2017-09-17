@@ -216,8 +216,12 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
 
     private AIState gatherFoodFromBuilding()
     {
-        final BlockPos pos = getOwnBuilding().getTileEntity().getPositionOfChestWithItemStack(isFood);
+        if(InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), isFood))
+        {
+            return COOK_SERVE;
+        }
 
+        final BlockPos pos = getOwnBuilding().getTileEntity().getPositionOfChestWithItemStack(isFood);
         if (pos == null)
         {
             return START_WORKING;
@@ -459,6 +463,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
                         && (!ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(2)) || !ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(0))))
                 {
                     walkTo = pos;
+                    worker.setLatestStatus(new TextComponentTranslation(" com.minecolonies.coremod.status.retrieving"));
                     return COOK_RETRIEVE_FOOD;
                 }
             }
@@ -470,6 +475,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
 
         if (amountOfFood <= 0 && !((BuildingCook) getOwnBuilding()).hasGatheredToday())
         {
+            worker.setLatestStatus(new TextComponentTranslation(" com.minecolonies.coremod.status.gathering"));
             return COOK_GET_FOOD;
         }
 
@@ -477,22 +483,27 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
         {
             range = getTargetableArea();
         }
+
+        citizenToServe.clear();
         final List<EntityCitizen> citizenList = world.getEntitiesWithinAABB(EntityCitizen.class,
                 range, cit -> !(cit.getColonyJob() instanceof JobCook) && cit.getCitizenData().getSaturation() <= 0);
         if (!citizenList.isEmpty())
         {
             citizenToServe.addAll(citizenList);
+            worker.setLatestStatus(new TextComponentTranslation(" com.minecolonies.coremod.status.serving"));
             return COOK_GATHERING;
         }
 
         if (amountOfFood < getOwnBuilding().getBuildingLevel() * LEAST_KEEP_FOOD_MULTIPLIER && !((BuildingCook) getOwnBuilding()).hasGatheredToday())
         {
+            worker.setLatestStatus(new TextComponentTranslation(" com.minecolonies.coremod.status.gathering"));
             return COOK_GET_FOOD;
         }
 
         if (getOwnBuilding().getCountOfPredicateInHut(isCookable, 1, world) >= 1
                 || InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), isCookable) >= 1)
         {
+            worker.setLatestStatus(new TextComponentTranslation(" com.minecolonies.coremod.status.cooking"));
             return COOK_COOK_FOOD;
         }
 
@@ -501,17 +512,21 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
             final TileEntity entity = world.getTileEntity(pos);
             if (entity instanceof TileEntityFurnace && !((TileEntityFurnace) entity).isBurning())
             {
+                walkTo = pos;
                 if(!ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(2)))
                 {
+                    worker.setLatestStatus(new TextComponentTranslation(" com.minecolonies.coremod.status.retrieving"));
                     return COOK_RETRIEVE_FOOD;
                 }
                 else if(!ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(0)))
                 {
+                    worker.setLatestStatus(new TextComponentTranslation(" com.minecolonies.coremod.status.cooking"));
                     return COOK_COOK_FOOD;
                 }
-                walkTo = pos;
             }
         }
+
+        worker.setLatestStatus(new TextComponentTranslation(" com.minecolonies.coremod.status.idling"));
         setDelay(STANDARD_DELAY);
         return START_WORKING;
     }
