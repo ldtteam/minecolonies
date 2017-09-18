@@ -37,6 +37,7 @@ public class ModBlocks
     public static BlockWaypoint               blockWayPoint;
     public static BlockHutBarracks            blockHutBarracks;
     public static BlockHutBarracksTower       blockHutBarracksTower;
+    public static BlockInfoPoster             blockInfoPoster;
 
 
     // Deactivated for now
@@ -80,6 +81,7 @@ public class ModBlocks
         blockWayPoint = new BlockWaypoint().registerBlock(registry);
         blockHutBarracks = (BlockHutBarracks) new BlockHutBarracks().registerBlock(registry);
         blockHutBarracksTower = (BlockHutBarracksTower) new BlockHutBarracksTower().registerBlock(registry);
+        blockInfoPoster = new BlockInfoPoster().registerBlock(registry);
     }
 
     public static void registerItemBlock(final IForgeRegistry<Item> registry)
@@ -107,5 +109,7 @@ public class ModBlocks
         blockWayPoint.registerItemBlock(registry);
         blockHutBarracksTower.registerItemBlock(registry);
         blockHutBarracks.registerItemBlock(registry);
+        blockInfoPoster.registerItemBlock(registry);
+
     }
 }
