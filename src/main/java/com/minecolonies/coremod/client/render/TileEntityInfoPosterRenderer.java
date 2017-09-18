@@ -9,10 +9,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiUtilRenderComponents;
 import net.minecraft.client.model.ModelSign;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
@@ -92,7 +92,7 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
     private IBakedModel model = null;
 
     @Override
-    public void renderTileEntityAt(final TileEntityInfoPoster te, final double x, final double y, final double z, final float partialTicks, final int destroyStage)
+    public void render(final TileEntityInfoPoster te, final double x, final double y, final double z, final float partialTicks, final int destroyStage, final float alpha)
     {
         if (model == null)
         {
@@ -142,7 +142,7 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
 
         GlStateManager.color(1F, 1F, 1F, 1F);
 
-        final int alpha = ((int) (1.0D * 0xFF)) << 24;
+        final int alpha2 = ((int) (1.0D * 0xFF)) << 24;
 
         GlStateManager.enableBlend();
         GlStateManager.enableTexture2D();
@@ -151,13 +151,14 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
         GlStateManager.colorMask(false, false, false, false);
         GlStateManager.colorMask(true, true, true, true);
         GlStateManager.depthFunc(GL11.GL_LEQUAL);
-        renderModel(world, model, pos, alpha);
+        renderModel(world, model, pos, alpha2);
         GlStateManager.disableBlend();
         GlStateManager.popMatrix();
 
         GlStateManager.enableRescaleNormal();
         renderText(actualState, plusZ, plusX, te, x, y, z);
     }
+
 
     private void renderText(final IBlockState actualState, final double addZ, final double addX, final TileEntityInfoPoster te,
             final double x, final double y, final double z)
@@ -244,7 +245,7 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
     private static void renderQuads(final World world, final IBlockState actualState, final BlockPos pos, final List<BakedQuad> quads, final int alpha)
     {
         final Tessellator tessellator = Tessellator.getInstance();
-        final VertexBuffer buffer = tessellator.getBuffer();
+        final BufferBuilder buffer = tessellator.getBuffer();
 
         for (final BakedQuad quad : quads)
         {
