@@ -7,7 +7,6 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobChickenHerder;
-import com.minecolonies.coremod.colony.jobs.JobCowboy;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
