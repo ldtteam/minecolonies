@@ -25,7 +25,15 @@ public interface IPlacementHandler
      * @param pos the position.
      * @param blockState the blockState.
      * @param placer the placer of the block.
+     * @param infinteResources resources must be considered or not.
+     * @param complete place it complete (with or without substitution blocks etc).
      * @return ACCEPT, DENY or IGNORE.
      */
-    Object handle(@NotNull World world, @NotNull BlockPos pos, @NotNull IBlockState blockState, @Nullable AbstractEntityAIStructure<?> placer);
+    Object handle(
+            @NotNull World world,
+            @NotNull BlockPos pos,
+            @NotNull IBlockState blockState,
+            @Nullable AbstractEntityAIStructure<?> placer,
+            boolean infinteResources,
+            final boolean complete);
 }

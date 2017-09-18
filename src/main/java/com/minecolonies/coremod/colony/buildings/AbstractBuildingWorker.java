@@ -173,18 +173,31 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         workers.clear();
         if (compound.hasKey(TAG_WORKER))
         {
-            final NBTTagList workersTagList = compound.getTagList(TAG_WORKER, Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < workersTagList.tagCount(); ++i)
+            try
             {
-                final CitizenData data = getColony().getCitizen(workersTagList.getCompoundTagAt(i).getInteger(TAG_ID));
-                if (data != null)
+                final NBTTagList workersTagList = compound.getTagList(TAG_WORKER, Constants.NBT.TAG_COMPOUND);
+                for (int i = 0; i < workersTagList.tagCount(); ++i)
                 {
-                    data.setWorkBuilding(this);
-                    workers.add(data);
+                    final CitizenData data = getColony().getCitizen(workersTagList.getCompoundTagAt(i).getInteger(TAG_ID));
+                    if (data != null)
+                    {
+                        data.setWorkBuilding(this);
+                        workers.add(data);
+                    }
+                }
+            }
+            catch(final Exception e)
+            {
+                final CitizenData worker = getColony().getCitizen(compound.getInteger(TAG_WORKER));
+                workers.add(worker);
+                if (worker != null)
+                {
+                    worker.setWorkBuilding(this);
                 }
             }
         }
     }
+
 
     @Override
     public void writeToNBT(@NotNull final NBTTagCompound compound)
