@@ -32,17 +32,20 @@
     <button id="rename" size="114 15" pos="293 20" label="Rename" visible="false"/>
     <button id="delete" size="114 15" pos="293 40" label="Delete" visible="false"/>
 
-    <view size="60 112" pos="180 120">
-        <buttonimage id="rotateLeft"  source="minecolonies:textures/gui/rotateLeft-20px.png"  size="20" pos="0 0"/>
-        <buttonimage id="forward"     source="minecolonies:textures/gui/up-20px.png"          size="20" pos="20 0"/>
-        <buttonimage id="rotateRight" source="minecolonies:textures/gui/rotateRight-20px.png" size="20" pos="40 0"/>
-        <buttonimage id="left"        source="minecolonies:textures/gui/left-20px.png"        size="20" pos="0 20"/>
-        <buttonimage id="mirror"      source="minecolonies:textures/gui/mirror-20px.png"      size="20" pos="20 20"/>
-        <buttonimage id="right"       source="minecolonies:textures/gui/right-20px.png"       size="20" pos="40 20"/>
-        <buttonimage id="down"        source="minecolonies:textures/gui/minus-20px.png"       size="20" pos="0 40"/>
-        <buttonimage id="backward"    source="minecolonies:textures/gui/down-20px.png"        size="20" pos="20 40"/>
-        <buttonimage id="up"          source="minecolonies:textures/gui/plus-20px.png"        size="20" pos="40 40"/>
-        <buttonimage id="confirm"     source="minecolonies:textures/gui/confirm.png"          size="32" pos="0 60"/>
-        <buttonimage id="cancel"      source="minecolonies:textures/gui/cancel.png"           size="32" pos="28 60"/>
+    <view size="120 112" pos="160 80">
+        <buttonimage id="rotateLeft"    source="minecolonies:textures/gui/buildtool/rotateleft.png"    size="32" pos="0 0"/>
+        <buttonimage id="forward"       source="minecolonies:textures/gui/buildtool/up.png"            size="32" pos="32 0"/>
+        <buttonimage id="rotateRight"   source="minecolonies:textures/gui/buildtool/rotateright.png"   size="32" pos="64 0"/>
+        <buttonimage id="left"          source="minecolonies:textures/gui/buildtool/left.png"          size="32" pos="0 32"/>
+        <buttonimage id="mirror"        source="minecolonies:textures/gui/buildtool/mirror.png"        size="32" pos="32 32"/>
+        <buttonimage id="right"         source="minecolonies:textures/gui/buildtool/right.png"         size="32" pos="64 32"/>
+        <buttonimage id="down"          source="minecolonies:textures/gui/buildtool/minus.png"         size="32" pos="0 64"/>
+        <buttonimage id="backward"      source="minecolonies:textures/gui/buildtool/down.png"          size="32" pos="32 64"/>
+        <buttonimage id="up"            source="minecolonies:textures/gui/buildtool/plus.png"          size="32" pos="64 64"/>
+        <buttonimage id="confirm"       source="minecolonies:textures/gui/buildtool/confirm.png"      size="32" pos="0 96"/>
+        <buttonimage id="cancel"        source="minecolonies:textures/gui/buildtool/cancel.png"         size="32" pos="64 96"/>
     </view>
+
+    <buttonimage id="pastecomplete" source="minecolonies:textures/gui/buildtool/copy.png" visible="false" size="32 32" pos="320 210" textcolor="Black" texthovercolor="White"/>
+    <buttonimage id="pastenice" source="minecolonies:textures/gui/buildtool/paste.png" visible="false" size="32 32" pos="360 210"/>
 </window>

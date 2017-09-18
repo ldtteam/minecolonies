@@ -1,12 +1,13 @@
 package com.minecolonies.coremod.placementhandlers;
 
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.BlockSolidSubstitution;
 import com.minecolonies.coremod.blocks.BlockWaypoint;
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.BuildingWareHouse;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
@@ -65,39 +66,43 @@ public final class PlacementHandlers
         handlers.add(new ChestPlacementHandler());
         handlers.add(new WayPointBlockPlacementHandler());
         handlers.add(new GeneralBlockPlacementHandler());
-
     }
 
     //If he woudln't count the bracket spaces we'd be under 25 easily.
     public static class FireplacementHandler implements IPlacementHandler
     {
         @Override
-        public Object handle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final AbstractEntityAIStructure<?> placer)
+        public Object handle(
+                @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final AbstractEntityAIStructure<?> placer,
+                final boolean infiniteResources, final boolean complete)
         {
             if (!(blockState.getBlock() instanceof BlockFire))
             {
                 return ActionProcessingResult.IGNORE;
             }
 
-            if (!Configurations.builderInfiniteResources)
+            if (placer != null)
             {
-                if (placer.checkOrRequestItems(false, new ItemStack(Items.FLINT_AND_STEEL, 1)))
+                if (!infiniteResources)
                 {
-                    return ActionProcessingResult.DENY;
-                }
+                    if (placer.checkOrRequestItems(false, new ItemStack(Items.FLINT_AND_STEEL, 1)))
+                    {
+                        return ActionProcessingResult.DENY;
+                    }
 
-                final EntityCitizen citizen = placer.getWorker();
-                final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(new InvWrapper(citizen.getInventoryCitizen()), s ->
-                        s.getItem() == Items.FLINT_AND_STEEL);
-                final ItemStack item = slot == -1 ? ItemStackUtils.EMPTY : citizen.getInventoryCitizen().getStackInSlot(slot);
-                if (ItemStackUtils.isEmpty(item) || !(item.getItem() instanceof ItemFlintAndSteel))
-                {
-                    return ActionProcessingResult.DENY;
+                    final EntityCitizen citizen = placer.getWorker();
+                    final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(new InvWrapper(citizen.getInventoryCitizen()), s ->
+                            s.getItem() == Items.FLINT_AND_STEEL);
+                    final ItemStack item = slot == -1 ? ItemStackUtils.EMPTY : citizen.getInventoryCitizen().getStackInSlot(slot);
+                    if (ItemStackUtils.isEmpty(item) || !(item.getItem() instanceof ItemFlintAndSteel))
+                    {
+                        return ActionProcessingResult.DENY;
+                    }
+                    citizen.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item);
+                    item.damageItem(1, citizen);
                 }
-                citizen.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item);
-                item.damageItem(1, citizen);
+                placer.handleBuildingOverBlock(pos);
             }
-            placer.handleBuildingOverBlock(pos);
             world.setBlockState(pos, blockState, 0x03);
             return ActionProcessingResult.ACCEPT;
         }
@@ -108,18 +113,21 @@ public final class PlacementHandlers
         @Override
         public Object handle(
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer)
+                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
             if (blockState.getBlock() != Blocks.GRASS)
             {
                 return ActionProcessingResult.IGNORE;
             }
 
-            if (!Configurations.builderInfiniteResources && placer.checkOrRequestItems(placer.getTotalAmount(new ItemStack(Blocks.DIRT))))
+            if (placer != null)
             {
-                return ActionProcessingResult.DENY;
+                if (!infiniteResources && placer.checkOrRequestItems(placer.getTotalAmount(new ItemStack(Blocks.DIRT))))
+                {
+                    return ActionProcessingResult.DENY;
+                }
+                placer.handleBuildingOverBlock(pos);
             }
-            placer.handleBuildingOverBlock(pos);
             if (!world.setBlockState(pos, Blocks.DIRT.getDefaultState(), 0x03))
             {
                 return ActionProcessingResult.DENY;
@@ -134,21 +142,24 @@ public final class PlacementHandlers
         @Override
         public Object handle(
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer)
+                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
             if (!(blockState.getBlock() instanceof BlockDoor))
             {
                 return ActionProcessingResult.IGNORE;
             }
 
-            if (!Configurations.builderInfiniteResources && placer.checkOrRequestItems(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState))))
+            if (placer != null && !infiniteResources && placer.checkOrRequestItems(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState))))
             {
                 return ActionProcessingResult.DENY;
             }
 
             if (blockState.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.LOWER))
             {
-                placer.handleBuildingOverBlock(pos);
+                if (placer != null)
+                {
+                    placer.handleBuildingOverBlock(pos);
+                }
                 ItemDoor.placeDoor(world, pos, blockState.getValue(BlockDoor.FACING), blockState.getBlock(), false);
             }
 
@@ -161,15 +172,14 @@ public final class PlacementHandlers
         @Override
         public Object handle(
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer)
+                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
             if (!(blockState.getBlock() instanceof BlockBed))
             {
                 return ActionProcessingResult.IGNORE;
             }
 
-
-            if (!Configurations.builderInfiniteResources && blockState.getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT
+            if (placer != null && !infiniteResources && blockState.getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT
                     && placer.checkOrRequestItems(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState))))
             {
                 return ActionProcessingResult.DENY;
@@ -180,7 +190,10 @@ public final class PlacementHandlers
             //Set other part of the bed, to the opposite PartType
             if (blockState.getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT)
             {
-                placer.handleBuildingOverBlock(pos);
+                if (placer != null)
+                {
+                    placer.handleBuildingOverBlock(pos);
+                }
                 //pos.offset(facing) will get the other part of the bed
                 world.setBlockState(pos.offset(facing), blockState.withProperty(BlockBed.PART, BlockBed.EnumPartType.HEAD), 0x03);
                 world.setBlockState(pos, blockState.withProperty(BlockBed.PART, BlockBed.EnumPartType.FOOT), 0x03);
@@ -195,14 +208,14 @@ public final class PlacementHandlers
         @Override
         public Object handle(
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer)
+                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
             if (!(blockState.getBlock() instanceof BlockDoublePlant))
             {
                 return ActionProcessingResult.IGNORE;
             }
 
-            if (!Configurations.builderInfiniteResources && blockState.getValue(BlockDoublePlant.HALF).equals(BlockDoublePlant.EnumBlockHalf.LOWER)
+            if (placer != null && !infiniteResources && blockState.getValue(BlockDoublePlant.HALF).equals(BlockDoublePlant.EnumBlockHalf.LOWER)
                     && placer.checkOrRequestItems(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState))))
             {
                 return ActionProcessingResult.DENY;
@@ -210,7 +223,10 @@ public final class PlacementHandlers
 
             if (blockState.getValue(BlockDoublePlant.HALF).equals(BlockDoublePlant.EnumBlockHalf.LOWER))
             {
-                placer.handleBuildingOverBlock(pos);
+                if (placer != null)
+                {
+                    placer.handleBuildingOverBlock(pos);
+                }
                 world.setBlockState(pos, blockState.withProperty(BlockDoublePlant.HALF, BlockDoublePlant.EnumBlockHalf.LOWER), 0x03);
                 world.setBlockState(pos.up(), blockState.withProperty(BlockDoublePlant.HALF, BlockDoublePlant.EnumBlockHalf.UPPER), 0x03);
                 return blockState;
@@ -224,7 +240,7 @@ public final class PlacementHandlers
         @Override
         public Object handle(
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer)
+                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
             if (blockState instanceof BlockEndPortal
                     || blockState instanceof BlockMobSpawner
@@ -240,35 +256,43 @@ public final class PlacementHandlers
     public static class FlowerPotPlacementHandler implements IPlacementHandler
     {
         @Override
-        public Object handle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final AbstractEntityAIStructure<?> placer)
+        public Object handle(
+                @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final AbstractEntityAIStructure<?> placer,
+                final boolean infiniteResources, final boolean complete)
         {
             if (!(blockState.getBlock() instanceof BlockFlowerPot))
             {
                 return ActionProcessingResult.IGNORE;
             }
 
-            if (!Configurations.builderInfiniteResources)
+            if (placer != null)
             {
-                final List<ItemStack> itemList = new ArrayList<>();
-                itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
-                itemList.addAll(placer.getItemsFromTileEntity());
-
-                for (final ItemStack stack : itemList)
+                if (!infiniteResources)
                 {
-                    if (!ItemStackUtils.isEmpty(stack) && placer.checkOrRequestItems(placer.getTotalAmount(stack)))
+                    final List<ItemStack> itemList = new ArrayList<>();
+                    itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
+                    itemList.addAll(placer.getItemsFromTileEntity());
+
+                    for (final ItemStack stack : itemList)
                     {
-                        return ActionProcessingResult.DENY;
+                        if (!ItemStackUtils.isEmpty(stack) && placer.checkOrRequestItems(placer.getTotalAmount(stack)))
+                        {
+                            return ActionProcessingResult.DENY;
+                        }
                     }
                 }
-            }
 
-            placer.handleBuildingOverBlock(pos);
+                placer.handleBuildingOverBlock(pos);
+            }
             if (!world.setBlockState(pos, blockState, 0x03))
             {
                 return false;
             }
 
-            placer.handleFlowerPots(pos);
+            if (placer != null)
+            {
+                placer.handleFlowerPots(pos);
+            }
             return blockState;
         }
     }
@@ -278,27 +302,30 @@ public final class PlacementHandlers
         @Override
         public Object handle(
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer)
+                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
             if (blockState.getBlock() instanceof BlockAir)
             {
-                placer.getWorker().setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
-
-                //Meaning there is not supposed to be an entity at this location
-                if(placer.getEntityInfo() == null)
+                if (placer != null)
                 {
-                    final List<Entity> entityList = world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos),
-                            entity -> !(entity instanceof EntityLiving || entity instanceof EntityItem));
-                    if(!entityList.isEmpty())
+                    placer.getWorker().setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
+
+                    //Meaning there is not supposed to be an entity at this location
+                    if (placer.getEntityInfo() == null)
                     {
-                        for(final Entity entity: entityList)
+                        final List<Entity> entityList = world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos),
+                                entity -> !(entity instanceof EntityLiving || entity instanceof EntityItem));
+                        if (!entityList.isEmpty())
                         {
-                            entity.attackEntityFrom(DamageSource.anvil, Float.MAX_VALUE);
+                            for (final Entity entity : entityList)
+                            {
+                                entity.attackEntityFrom(DamageSource.anvil, Float.MAX_VALUE);
+                            }
                         }
                     }
-                }
 
-                placer.handleBuildingOverBlock(pos);
+                    placer.handleBuildingOverBlock(pos);
+                }
                 world.setBlockToAir(pos);
                 return ActionProcessingResult.ACCEPT;
             }
@@ -312,14 +339,14 @@ public final class PlacementHandlers
         @Override
         public Object handle(
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer)
+                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
             if (!(blockState.getBlock() instanceof BlockGrassPath))
             {
                 return ActionProcessingResult.IGNORE;
             }
 
-            if (!Configurations.builderInfiniteResources)
+            if (placer != null && !infiniteResources)
             {
                 if (!(placer.holdEfficientTool(blockState.getBlock()) || placer.checkOrRequestItems(placer.getTotalAmount(new ItemStack(Blocks.DIRT, 1)))))
                 {
@@ -342,7 +369,7 @@ public final class PlacementHandlers
         @Override
         public Object handle(
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer)
+                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
             //Workaround as long as we didn't rescan all of our buildings since BlockStairs now have different metadata values.
             if (blockState.getBlock() instanceof BlockStairs
@@ -362,7 +389,7 @@ public final class PlacementHandlers
         @Override
         public Object handle(
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer)
+                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
             if (!(blockState.getBlock() instanceof BlockSolidSubstitution))
             {
@@ -371,7 +398,7 @@ public final class PlacementHandlers
 
             final IBlockState newBlockState = BlockUtils.getSubstitutionBlockAtWorld(world, pos);
 
-            if (!Configurations.builderInfiniteResources)
+            if (placer != null && !infiniteResources)
             {
                 if (placer.checkOrRequestItems(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(newBlockState))))
                 {
@@ -380,9 +407,19 @@ public final class PlacementHandlers
                 placer.handleBuildingOverBlock(pos);
             }
 
-            if (!world.setBlockState(pos, newBlockState, 0x03))
+            if(complete)
             {
-                return ActionProcessingResult.DENY;
+                if (!world.setBlockState(pos, blockState, 0x03))
+                {
+                    return ActionProcessingResult.DENY;
+                }
+            }
+            else
+            {
+                if (!world.setBlockState(pos, newBlockState, 0x03))
+                {
+                    return ActionProcessingResult.DENY;
+                }
             }
 
             return newBlockState;
@@ -394,9 +431,9 @@ public final class PlacementHandlers
         @Override
         public Object handle(
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer)
+                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
-            if (!Configurations.builderInfiniteResources)
+            if (placer != null && !infiniteResources)
             {
                 final List<ItemStack> itemList = new ArrayList<>();
                 itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
@@ -409,9 +446,9 @@ public final class PlacementHandlers
                         return ActionProcessingResult.DENY;
                     }
                 }
+                placer.handleBuildingOverBlock(pos);
             }
 
-            placer.handleBuildingOverBlock(pos);
             if (!world.setBlockState(pos, blockState, 0x03))
             {
                 return ActionProcessingResult.DENY;
@@ -426,14 +463,32 @@ public final class PlacementHandlers
         @Override
         public Object handle(
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer)
+                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
             if (!(blockState.getBlock() instanceof BlockWaypoint))
             {
                 return ActionProcessingResult.IGNORE;
             }
 
-            placer.addWayPoint(pos);
+            if (placer == null)
+            {
+                final Colony colony = ColonyManager.getClosestColony(world, pos);
+                if(colony != null && !complete)
+                {
+                    colony.addWayPoint(pos, Blocks.AIR.getDefaultState());
+                }
+                else
+                {
+                    return ActionProcessingResult.IGNORE;
+                }
+            }
+            else
+            {
+                placer.handleBuildingOverBlock(pos);
+                placer.addWayPoint(pos);
+            }
+            world.setBlockToAir(pos);
+
             return blockState;
         }
     }
@@ -443,14 +498,14 @@ public final class PlacementHandlers
         @Override
         public Object handle(
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
-                @Nullable final AbstractEntityAIStructure<?> placer)
+                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
             if (!(blockState.getBlock() instanceof BlockChest && !(blockState.getBlock() instanceof BlockMinecoloniesRack)))
             {
                 return ActionProcessingResult.IGNORE;
             }
 
-            if (!Configurations.builderInfiniteResources)
+            if (placer != null && !infiniteResources)
             {
                 final List<ItemStack> itemList = new ArrayList<>();
                 itemList.add(BlockUtils.getItemStackFromBlockState(blockState));

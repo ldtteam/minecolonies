@@ -432,7 +432,7 @@ tile.minecolonies.blockTimberFrame.name=Plain Timber Frame
 tile.minecolonies.blockMinecoloniesRack.name=Rack
 com.minecolonies.coremod.gui.workerHuts.saplingList=Tasklist
 
-com.minecolonies.coremod.status.waitingForWork=Waiting for a job
+com.minecolonies.coremod.status.waitingForWork=Searching a job
 com.minecolonies.coremod.status.sleeping=Let me sleep
 com.minecolonies.coremod.status.waiting=Waiting for:
 com.minecolonies.coremod.status.rainStop=the rain to stop

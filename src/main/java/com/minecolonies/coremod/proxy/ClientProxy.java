@@ -5,10 +5,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.client.gui.WindowBuildTool;
 import com.minecolonies.coremod.client.gui.WindowCitizen;
-import com.minecolonies.coremod.client.render.EmptyTileEntitySpecialRenderer;
-import com.minecolonies.coremod.client.render.RenderBipedCitizen;
-import com.minecolonies.coremod.client.render.RenderFishHook;
-import com.minecolonies.coremod.client.render.TileEntityScarecrowRenderer;
+import com.minecolonies.coremod.client.render.*;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererBarbarian;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererChiefBarbarian;
 import com.minecolonies.coremod.colony.CitizenDataView;
@@ -23,6 +20,7 @@ import com.minecolonies.coremod.event.ClientEventHandler;
 import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
 import com.minecolonies.structures.event.RenderEventHandler;
 import com.minecolonies.structures.helpers.Settings;
 import net.minecraft.client.Minecraft;
@@ -79,7 +77,7 @@ public class ClientProxy extends CommonProxy
     {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityColonyBuilding.class, new EmptyTileEntitySpecialRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(ScarecrowTileEntity.class, new TileEntityScarecrowRenderer());
-
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityInfoPoster.class, new TileEntityInfoPosterRenderer());
     }
 
     @Override
