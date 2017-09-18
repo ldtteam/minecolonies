@@ -2,20 +2,24 @@ package com.minecolonies.coremod.util;
 
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.structures.helpers.Settings;
 import com.minecolonies.structures.helpers.Structure;
 import com.minecolonies.structures.lib.ModelHolder;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockWallSign;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.entity.item.EntityEnderCrystal;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntitySign;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.List;
@@ -39,7 +43,7 @@ public final class RenderUtils
     /**
      * Degrees of a whole circle.
      */
-    private static final int WHOLE_CIRCLE  = 360;
+    private static final int WHOLE_CIRCLE = 360;
 
     /**
      * Half a circle radius.
@@ -58,15 +62,16 @@ public final class RenderUtils
 
     /**
      * Render all waypoints.
-     * @param position the position of the build tool click.
-     * @param clientWorld the world.
+     *
+     * @param position     the position of the build tool click.
+     * @param clientWorld  the world.
      * @param partialTicks the partial ticks
      */
     public static void renderWayPoints(final BlockPos position, final WorldClient clientWorld, final float partialTicks)
     {
         final ColonyView colonyView = ColonyManager.getClosestColonyView(clientWorld, position);
 
-        if(colonyView == null)
+        if (colonyView == null)
         {
             return;
         }
@@ -85,21 +90,62 @@ public final class RenderUtils
     }
 
     /**
-     * Render the colony border.
-     * @param position the position of the structure.
-     * @param clientWorld the world.
+     * Render informal signs at the citizen.
+     * @param clientWorld the client world.
      * @param partialTicks the partial ticks.
-     * @param thePlayer the player clicking.
+     * @param citizenDataView the citizen data.
+     * @param player the player.
+     * @param citizen the citizen position
+     */
+    public static void renderSigns(
+            final WorldClient clientWorld,
+            final float partialTicks,
+            final CitizenDataView citizenDataView,
+            final EntityPlayer player,
+            final BlockPos citizen)
+    {
+        final Block block = Blocks.WALL_SIGN;
+        final BlockPos vector = citizen.subtract(player.getPosition());
+        final EnumFacing facing = EnumFacing.getFacingFromVector(vector.getX(), 0, vector.getZ()).getOpposite();
+        final BlockPos pos = citizen.up().offset(facing);
+
+        final IBlockState iblockstate = block.getDefaultState().withProperty(BlockWallSign.FACING, facing);
+        final IBlockState iBlockExtendedState = block.getExtendedState(iblockstate, clientWorld, pos);
+        final IBakedModel ibakedmodel = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(iblockstate);
+        final TileEntitySign sign = new TileEntitySign();
+        sign.setPos(pos);
+
+        for(int i = 0; i < sign.signText.length; i++)
+        {
+            if(i < citizenDataView.getLatestStatus().length)
+            {
+                sign.signText[i] = citizenDataView.getLatestStatus()[i];
+            }
+        }
+
+        final ModelHolder models = new ModelHolder(pos, iblockstate, iBlockExtendedState, sign, ibakedmodel);
+        Structure.getQuads(models, models.quads);
+
+        new Structure(Minecraft.getMinecraft().world).renderGhost(clientWorld, models, player, partialTicks, false);
+    }
+
+    /**
+     * Render the colony border.
+     *
+     * @param position     the position of the structure.
+     * @param clientWorld  the world.
+     * @param partialTicks the partial ticks.
+     * @param thePlayer    the player clicking.
      * @param colonyBorder the border of the colony.
      */
     public static void renderColonyBorder(
             final BlockPos position,
             final WorldClient clientWorld,
             final float partialTicks,
-            final EntityPlayerSP thePlayer,
+            final EntityPlayer thePlayer,
             final List<BlockPos> colonyBorder)
     {
-        if(colonyBorder.isEmpty())
+        if (colonyBorder.isEmpty())
         {
             calculateColonyBorder(clientWorld, thePlayer, colonyBorder);
         }
@@ -114,31 +160,32 @@ public final class RenderUtils
 
             final ModelHolder models = new ModelHolder(pos, iblockstate, iBlockExtendedState, tileentity, ibakedmodel);
             Structure.getQuads(models, models.quads);
-            Settings.instance.getActiveStructure().renderGhost(clientWorld, models, thePlayer, partialTicks);
+            Settings.instance.getActiveStructure().renderGhost(clientWorld, models, thePlayer, partialTicks, false);
         }
     }
 
     /**
      * Calculate the colony border.
-     * @param theWorld in the world.
-     * @param thePlayer with the player.
+     *
+     * @param theWorld     in the world.
+     * @param thePlayer    with the player.
      * @param colonyBorder the border.
      */
-    private static void calculateColonyBorder(final WorldClient theWorld, final EntityPlayerSP thePlayer, final List<BlockPos> colonyBorder)
+    private static void calculateColonyBorder(final WorldClient theWorld, final EntityPlayer thePlayer, final List<BlockPos> colonyBorder)
     {
         final ColonyView colonyView = ColonyManager.getClosestColonyView(theWorld, thePlayer.getPosition());
-        if(colonyView == null)
+        if (colonyView == null)
         {
             return;
         }
         final BlockPos center = colonyView.getCenter();
         final int radius = Configurations.gameplay.workingRangeTownHall;
 
-        for ( double degrees = 0; degrees < WHOLE_CIRCLE; degrees += 1 )
+        for (double degrees = 0; degrees < WHOLE_CIRCLE; degrees += 1)
         {
             final double rads = degrees / HALF_A_CIRCLE * Math.PI;
-            final double x = Math.round( center.getX( ) + radius * Math.sin( rads ) );
-            final double z = Math.round( center.getZ( ) + radius * Math.cos( rads ) );
+            final double x = Math.round(center.getX() + radius * Math.sin(rads));
+            final double z = Math.round(center.getZ() + radius * Math.cos(rads));
             colonyBorder.add(BlockPosUtil.getFloor(new BlockPos(x, center.getY(), z), theWorld).up());
         }
     }

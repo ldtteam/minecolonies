@@ -8,7 +8,6 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.Structures;
-import com.minecolonies.structures.fake.FakeEntity;
 import com.minecolonies.structures.fake.FakeWorld;
 import com.minecolonies.structures.lib.ModelHolder;
 import net.minecraft.block.Block;
@@ -597,7 +596,7 @@ public class Structure
         for(final ModelHolder models: modelList)
         {
             getQuads(models, models.quads);
-            this.renderGhost(clientWorld, models, player, partialTicks);
+            this.renderGhost(clientWorld, models, player, partialTicks, true);
         }
 
         for (final Entity anEntityList : entityList)
@@ -693,7 +692,7 @@ public class Structure
         }
     }
 
-    public void renderGhost(final World world, final ModelHolder holder, final EntityPlayer player, final float partialTicks)
+    public void renderGhost(final World world, final ModelHolder holder, final EntityPlayer player, final float partialTicks, final boolean simulateWorld)
     {
         final boolean existingModel = !this.mc.world.isAirBlock(holder.pos);
 
@@ -718,23 +717,26 @@ public class Structure
             ForgeHooksClient.setRenderLayer(originalLayer);
         }
 
-        if (holder.te != null)
+        if (holder.te != null && !holder.isRendered())
         {
             final TileEntity te = holder.te;
             te.setPos(holder.pos);
-            final FakeWorld fakeWorld = new FakeWorld(holder.actualState, world.getSaveHandler(), world.getWorldInfo(), world.provider, world.profiler, true, te, true);
+
+            final FakeWorld fakeWorld;
+            if(simulateWorld)
+            {
+                fakeWorld = new FakeWorld(holder.actualState, world.getSaveHandler(), world.getWorldInfo(), world.provider, world.profiler, true, te, true);
+            }
+            else
+            {
+                fakeWorld = new FakeWorld(holder.actualState, world.getSaveHandler(), world.getWorldInfo(), world.provider, world.profiler, true);
+            }
             te.setWorld(fakeWorld);
             final int pass = 0;
 
             if (te.shouldRenderInPass(pass))
             {
                 final TileEntityRendererDispatcher terd = TileEntityRendererDispatcher.instance;
-                terd.prepare(fakeWorld,
-                  Minecraft.getMinecraft().renderEngine,
-                  Minecraft.getMinecraft().fontRenderer,
-                  new FakeEntity(fakeWorld),
-                  null,
-                  0.0F);
                 GL11.glPushMatrix();
                 terd.renderEngine = Minecraft.getMinecraft().renderEngine;
                 terd.preDrawBatch();

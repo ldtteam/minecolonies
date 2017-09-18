@@ -263,7 +263,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * The distance to move the ribbon.
      */
-    private static final int RIBBON_OFFSET = 19;
+    private static final int RIBBON_OFFSET = 5;
 
     /**
      * Link to the xml file of the window.
@@ -819,7 +819,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         lastTabButton.setEnabled(false);
         findPaneOfTypeByID(lastTabButton.getID() + "0", Image.class).setVisible(false);
         findPaneOfTypeByID(lastTabButton.getID() + "1", ButtonImage.class).setVisible(true);
-        lastTabButton.setPosition(lastTabButton.getX() + RIBBON_OFFSET, lastTabButton.getY());
+        lastTabButton.setPosition(lastTabButton.getX() + RIBBON_OFFSET, findPaneOfTypeByID(lastTabButton.getID() + "1", ButtonImage.class).getY());
 
         fillUserList();
         fillCitizensList();
@@ -1080,20 +1080,18 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         final String oldId = lastTabButton.getID();
         final String newId = button.getID();
         final String page = tabsToPages.get(newId);
-
-        lastTabButton.setPosition(lastTabButton.getX() - RIBBON_OFFSET, lastTabButton.getY());
+        final Image image = findPaneOfTypeByID(oldId + "0", Image.class);
+        lastTabButton.setPosition(lastTabButton.getX() - RIBBON_OFFSET, image.getY() + image.getParent().getY() - 2);
         findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(page);
         findPaneOfTypeByID(oldId + "0", Image.class).setVisible(true);
         findPaneOfTypeByID(oldId + "1", ButtonImage.class).setVisible(false);
         findPaneOfTypeByID(newId + "0", Image.class).setVisible(false);
         findPaneOfTypeByID(newId + "1", ButtonImage.class).setVisible(true);
 
-
         lastTabButton.setEnabled(true);
         button.setEnabled(false);
         lastTabButton = button;
-        lastTabButton.setPosition(lastTabButton.getX() + RIBBON_OFFSET, lastTabButton.getY());
-
+        lastTabButton.setPosition(lastTabButton.getX() + RIBBON_OFFSET, findPaneOfTypeByID(lastTabButton.getID() + "1", ButtonImage.class).getY());
     }
 
     @Override
