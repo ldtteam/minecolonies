@@ -212,14 +212,16 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     public List<IItemHandler> getHandlers()
     {
         final Colony colony = getColony();
-        if(this.getWorkerEntity() == null || colony == null || colony.getWorld() == null)
+        if(this.getWorkerEntities().isEmpty() || colony == null || colony.getWorld() == null)
         {
             return Collections.emptyList();
         }
 
-        final EntityCitizen workerEntity = this.getWorkerEntity();
         final List<IItemHandler> handlers = new ArrayList<>();
-        handlers.add(new InvWrapper(workerEntity.getInventoryCitizen()));
+        for(final EntityCitizen workerEntity: this.getWorkerEntities())
+        {
+            handlers.add(new InvWrapper(workerEntity.getInventoryCitizen()));
+        }
         handlers.add(new InvWrapper(getTileEntity()));
 
         for (final BlockPos pos : getAdditionalCountainers())
@@ -509,19 +511,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         {
             ColonyManager.getRecipes().get(token).writeToBuffer(buf);
         }
-    }
-
-    /**
-     * Available skills of the citizens.
-     */
-    public enum Skill
-    {
-        STRENGTH,
-        ENDURANCE,
-        CHARISMA,
-        INTELLIGENCE,
-        DEXTERITY,
-        PLACEHOLDER
     }
 
     /**
