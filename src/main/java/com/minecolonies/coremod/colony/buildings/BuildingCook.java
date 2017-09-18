@@ -54,7 +54,7 @@ public class BuildingCook extends AbstractBuildingWorker
     /**
      * Checks if the cook has gathered food at the warehouse today already.
      */
-    private boolean hasGatheredToday = false;
+    private boolean gatheredToday = false;
 
     /**
      * List of registered furnaces.
@@ -111,7 +111,7 @@ public class BuildingCook extends AbstractBuildingWorker
      */
     public boolean hasGatheredToday()
     {
-        return hasGatheredToday;
+        return gatheredToday;
     }
 
     /**
@@ -119,13 +119,13 @@ public class BuildingCook extends AbstractBuildingWorker
      */
     public void setGatheredToday()
     {
-        hasGatheredToday = true;
+        gatheredToday = true;
     }
 
     @Override
     public void onWakeUp()
     {
-        hasGatheredToday = false;
+        gatheredToday = false;
     }
 
     /**
@@ -191,7 +191,7 @@ public class BuildingCook extends AbstractBuildingWorker
      *
      * @param set true or false
      */
-    public void setIsSomethingInOven(boolean set)
+    public void setIsSomethingInOven(final boolean set)
     {
         isSomethingInOven = set;
     }

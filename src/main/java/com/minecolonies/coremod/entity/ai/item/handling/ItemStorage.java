@@ -131,7 +131,7 @@ public class ItemStorage
             return true;
         }
 
-        if (o == null || !(o instanceof ItemStorage))
+        if (!(o instanceof ItemStorage))
         {
             return false;
         }
