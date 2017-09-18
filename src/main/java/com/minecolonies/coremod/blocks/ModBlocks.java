@@ -38,7 +38,6 @@ public final class ModBlocks
     public static final Block blockInfoPoster             = new BlockInfoPoster();
     public static final Block blockHutCook             = new BlockHutCook();
 
-
     // Deactivated for now
     // public static final Block blockBarrel        = new BlockBarrel();
 
