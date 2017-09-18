@@ -14,6 +14,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -220,6 +221,36 @@ public final class BlockPosUtil
         }
 
         return foundland;
+    }
+
+    /**
+     * Returns the right height for the given position (ground block).
+     *
+     * @param position Current position of the entity.
+     * @param world the world object.
+     * @return Ground level at (position.x, position.z).
+     */
+    public static double getValidHeight(@NotNull final Vec3d position, @NotNull final World world)
+    {
+        double returnHeight = position.yCoord;
+        if (position.yCoord < 0)
+        {
+            returnHeight = 0;
+        }
+
+        while (returnHeight >= 1 && world.isAirBlock(new BlockPos(MathHelper.floor(position.xCoord),
+                (int) returnHeight,
+                MathHelper.floor(position.zCoord))))
+        {
+            returnHeight -= 1.0D;
+        }
+
+        while (!world.isAirBlock(
+                new BlockPos(MathHelper.floor(position.xCoord), (int) returnHeight, MathHelper.floor(position.zCoord))))
+        {
+            returnHeight += 1.0D;
+        }
+        return returnHeight;
     }
 
     /**

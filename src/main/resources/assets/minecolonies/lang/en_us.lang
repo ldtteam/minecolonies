@@ -459,8 +459,12 @@ com.minecolonies.coremod.status.searchingtree=Searching Tree
 com.minecolonies.coremod.status.chopping=Chopping
 com.minecolonies.coremod.status.stuckinleaves=Stuck in leaves!
 tile.minecolonies.blockwaypoint.name=Waypoint placeholder
-
-tile.minecolonies.blockWayPoint.name=Waypoint placeholder
+tile.minecolonies.blockHutBarracksTower.name=BarracksTower
+tile.minecolonies.blockHutBarracks.name=Barracks
+com.minecolonies.coremod.gui.workerHuts.buildBarracks=Barracks
 
 com.minecolonies.coremod.permission.teleport_to_colony=Teleport to Colony
+com.minecolonies.coremod.gui.hiring.buttonFire=Fire
+com.minecolonies.coremod.worker.noUpgrade=No Upgrade available.
+com.minecolonies.coremod.worker.needBarracks=Please upgrade the Barracks first.
 com.minecolonies.coremod.gui.warehouse.upgrade=Upgrade Storage

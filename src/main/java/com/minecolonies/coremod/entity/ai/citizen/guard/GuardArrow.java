@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
-import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -60,7 +59,6 @@ public class GuardArrow extends EntityTippedArrow
     protected void arrowHit(final EntityLivingBase targetEntity)
     {
         super.arrowHit(targetEntity);
-        Log.getLogger().info("Arrow hit " + targetEntity + " with " + targetEntity.getHealth());
         if (targetEntity.getHealth() <= 0.0F)
         {
             if (targetEntity instanceof EntityPlayer)

@@ -5,8 +5,8 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.BuildingGuardTower;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianUtils;
@@ -21,14 +21,16 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Random;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
@@ -44,64 +46,122 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
     /**
      * Follow the player if farther than this.
      */
-    public static final    int    FOLLOW_RANGE                     = 10;
+    public static final int FOLLOW_RANGE = 10;
+
     /**
      * Distance the guard starts searching.
      */
-    protected static final int    START_SEARCH_DISTANCE            = 5;
+    protected static final int START_SEARCH_DISTANCE = 5;
+
     /**
      * The start search distance of the guard to track/attack entities may get more depending on the level.
      */
-    private static final   double MAX_ATTACK_DISTANCE              = 20.0D;
+    private static final double MAX_ATTACK_DISTANCE = 20.0D;
+
     /**
      * Basic delay after operations.
      */
-    private static final   int    BASE_DELAY                       = 1;
+    private static final int BASE_DELAY = 1;
+
     /**
      * Max amount the guard can shoot arrows before restocking.
      */
-    private static final   int    BASE_MAX_ATTACKS                 = 25;
+    private static final int BASE_MAX_ATTACKS = 25;
+
     /**
      * Y range in which the guard detects other entities.
      */
-    private static final   double HEIGHT_DETECTION_RANGE           = 10D;
+    private static final double HEIGHT_DETECTION_RANGE = 10D;
+
     /**
      * Path that close to the patrol target.
      */
-    private static final   int    PATH_CLOSE             = 2;
+    private static final int PATH_CLOSE = 2;
 
     /**
      * The dump base of actions, will increase depending on level.
      */
-    private static final   int    DUMP_BASE                        = 20;
+    private static final int DUMP_BASE = 5;
+
     /**
      * Increases the max attacks by this amount per level.
      */
-    private static final   int    ADDITIONAL_MAX_ATTACKS_PER_LEVEL = 5;
+    private static final int ADDITIONAL_MAX_ATTACKS_PER_LEVEL = 5;
+
+    /**
+     * After this amount of ticks the citizen should switch the patrolling target because his current one is unreachable.
+     */
+    private static final int SWITCH_TARGET_AFTER_TICKS = 10;
+
+    /**
+     * Low health at which the guards should retrieve.
+     */
+    private static final double LOW_HEALTH = 2.0;
+
+    /**
+     * The length range one patrolling operation can have on x or z.
+     */
+    private static final int LENGTH_RANGE = 10;
+
+    /**
+     * The length range one patrolling operation can have on x or z.
+     */
+    private static final int IN_TEN = 10;
+
+    /**
+     * The length range one patrolling operation can have on y.
+     */
+    private static final int UP_DOWN_RANGE = 4;
+
+    /**
+     * Chance of trying to follow the same direction again.
+     */
+    private static final int LAST_DIRECTION_CHANCE = 5;
+
     /**
      * The current target.
      */
     protected EntityLivingBase targetEntity;
+
     /**
      * Amount of arrows already shot or sword hits dealt.
      */
-    protected int attacksExecuted       = 0;
+    protected int attacksExecuted = 0;
+
     /**
      * The distance the guard is searching entities in currently.
      */
     protected int currentSearchDistance = START_SEARCH_DISTANCE;
+
     /**
      * Checks if the guard should dump its inventory.
      */
-    private   int dumpAfterActions      = DUMP_BASE;
+    private int dumpAfterActions = DUMP_BASE;
+
     /**
      * Current goTo task.
      */
-    private BlockPos     currentPathTarget;
+    private BlockPos currentPathTarget;
+
     /**
      * Containing all close entities.
      */
     private List<Entity> entityList;
+
+    /**
+     * Last position the worker has been seen.
+     */
+    private BlockPos lastPos = null;
+
+    /**
+     * Amount of ticks the guard is at the same position.
+     */
+    private int ticksAtSamePos = 0;
+
+    /**
+     * Last direction the guard headed to.
+     */
+    private Tuple<EnumFacing, EnumFacing> lastDirection = null;
 
     /**
      * Sets up some important skeleton stuff for every ai.
@@ -112,10 +172,10 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
     {
         super(job);
         super.registerTargets(
-          new AITarget(this::checkIfExecute, this::getState),
-          new AITarget(IDLE, () -> START_WORKING),
-          new AITarget(START_WORKING, () -> GUARD_RESTOCK),
-          new AITarget(GUARD_GATHERING, this::gathering)
+                new AITarget(this::checkIfExecute, this::getState),
+                new AITarget(IDLE, () -> START_WORKING),
+                new AITarget(START_WORKING, () -> GUARD_RESTOCK),
+                new AITarget(GUARD_GATHERING, this::gathering)
         );
     }
 
@@ -127,17 +187,17 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
     private boolean checkIfExecute()
     {
         final AbstractBuilding building = getOwnBuilding();
-        if (!(building instanceof BuildingGuardTower))
+        if (!(building instanceof AbstractBuildingGuards))
         {
             return true;
         }
 
-        if (!((BuildingGuardTower) building).shallRetrieveOnLowHealth())
+        if (!((AbstractBuildingGuards) building).shallRetrieveOnLowHealth())
         {
             return false;
         }
 
-        if (worker.getHealth() > 2)
+        if (worker.getHealth() > LOW_HEALTH)
         {
             return false;
         }
@@ -175,7 +235,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
                 if (stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).armorType) == null)
                 {
                     final int emptySlot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(worker.getInventoryCitizen()),
-                      ItemStackUtils::isEmpty);
+                            ItemStackUtils::isEmpty);
 
                     if (emptySlot != -1)
                     {
@@ -251,7 +311,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
         final BlockPos buildingLocation = getOwnBuilding().getLocation();
 
         //Only attack entities in max patrol distance.
-        if (BlockPosUtil.getDistance2D(entity.getPosition(), buildingLocation) < ((BuildingGuardTower) getOwnBuilding()).getPatrolDistance())
+        if (BlockPosUtil.getDistance2D(entity.getPosition(), buildingLocation) < ((AbstractBuildingGuards) getOwnBuilding()).getPatrolDistance())
         {
             if (worker.getEntitySenses().canSee(entity) && (entityList.get(0)).isEntityAlive())
             {
@@ -291,7 +351,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
     public boolean huntDownlastAttacker()
     {
         if (this.worker.getLastAttacker() != null && this.worker.getLastAttackerTime() >= worker.ticksExisted - ATTACK_TIME_BUFFER
-              && this.worker.getLastAttacker().isEntityAlive())
+                && this.worker.getLastAttacker().isEntityAlive())
         {
             return this.worker.getLastAttacker() != null && this.worker.canEntityBeSeen(this.worker.getLastAttacker());
         }
@@ -356,7 +416,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
      */
     private double getMaxVision()
     {
-        final BuildingGuardTower guardTower = (BuildingGuardTower) worker.getWorkBuilding();
+        final AbstractBuildingGuards guardTower = (AbstractBuildingGuards) worker.getWorkBuilding();
         return (guardTower == null) ? 0 : (MAX_ATTACK_DISTANCE + guardTower.getBonusVision());
     }
 
@@ -367,7 +427,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
      */
     protected int getMaxAttacksUntilRestock()
     {
-        final BuildingGuardTower guardTower = (BuildingGuardTower) worker.getWorkBuilding();
+        final AbstractBuildingGuards guardTower = (AbstractBuildingGuards) worker.getWorkBuilding();
         return (guardTower == null) ? 0 : (BASE_MAX_ATTACKS + guardTower.getBuildingLevel() * ADDITIONAL_MAX_ATTACKS_PER_LEVEL);
     }
 
@@ -381,19 +441,31 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
         worker.setAIMoveSpeed(1);
         final AbstractBuilding building = getOwnBuilding();
 
-        if (building instanceof BuildingGuardTower)
+        if (worker.getPosition().equals(lastPos))
+        {
+            ticksAtSamePos++;
+        }
+        else
+        {
+            ticksAtSamePos = 0;
+            lastPos = worker.getPosition();
+        }
+
+        if (building instanceof AbstractBuildingGuards)
         {
             if (currentPathTarget == null
                   || BlockPosUtil.getDistance2D(building.getColony().getCenter(), currentPathTarget)
                     > Configurations.gameplay.workingRangeTownHall + Configurations.gameplay.townHallPadding
                   || currentPathTarget.getY() < 2)
             {
-                return getNextPatrollingTarget((BuildingGuardTower) building);
+                return getNextPatrollingTarget((AbstractBuildingGuards) building);
             }
 
-            if (worker.isWorkerAtSiteWithMove(currentPathTarget, PATH_CLOSE) || ((BuildingGuardTower) building).getTask().equals(BuildingGuardTower.Task.FOLLOW))
+            if (worker.isWorkerAtSiteWithMove(currentPathTarget, PATH_CLOSE)
+                    || ((AbstractBuildingGuards) building).getTask().equals(AbstractBuildingGuards.Task.FOLLOW)
+                    || ticksAtSamePos >= SWITCH_TARGET_AFTER_TICKS)
             {
-                return getNextPatrollingTarget((BuildingGuardTower) building);
+                return getNextPatrollingTarget((AbstractBuildingGuards) building);
             }
         }
 
@@ -406,9 +478,9 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
      * @param building his building.
      * @return the next state to go to.
      */
-    private AIState getNextPatrollingTarget(final BuildingGuardTower building)
+    private AIState getNextPatrollingTarget(final AbstractBuildingGuards building)
     {
-        if (building.shallPatrolManually() && building.getTask().equals(BuildingGuardTower.Task.PATROL))
+        if (building.shallPatrolManually() && building.getTask().equals(AbstractBuildingGuards.Task.PATROL))
         {
             worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.patrolling"));
 
@@ -419,7 +491,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
                 return AIState.GUARD_SEARCH_TARGET;
             }
         }
-        else if (building.getTask().equals(BuildingGuardTower.Task.GUARD))
+        else if (building.getTask().equals(AbstractBuildingGuards.Task.GUARD))
         {
             worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.guarding"));
 
@@ -431,7 +503,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
             currentPathTarget = pos;
             return AIState.GUARD_SEARCH_TARGET;
         }
-        else if (building.getTask().equals(BuildingGuardTower.Task.FOLLOW))
+        else if (building.getTask().equals(AbstractBuildingGuards.Task.FOLLOW))
         {
             worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.following"));
 
@@ -449,11 +521,13 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
                     LanguageHandler.sendPlayerMessage(building.getPlayer(), "com.minecolonies.coremod.job.guard.switch");
                 }
                 pos = building.getLocation();
-                building.setTask(BuildingGuardTower.Task.GUARD);
+                building.setTask(AbstractBuildingGuards.Task.GUARD);
             }
             currentPathTarget = pos;
             return AIState.GUARD_SEARCH_TARGET;
         }
+        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.patrolling"));
+
         currentPathTarget = getRandomBuilding();
         return AIState.GUARD_SEARCH_TARGET;
     }
@@ -470,19 +544,46 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
             return worker.getPosition();
         }
 
-        final Collection<AbstractBuilding> buildingList = worker.getColony().getBuildings().values();
-        final Object[] buildingArray = buildingList.toArray();
+        final Random random = new Random();
 
-        final int random = worker.getRandom().nextInt(buildingArray.length);
-        final AbstractBuilding building = (AbstractBuilding) buildingArray[random];
+        BlockPos pos = null;
+        while (pos == null
+                || world.getBlockState(pos).getMaterial().isLiquid()
+                || !world.getBlockState(pos.down()).getMaterial().isSolid()
+                || (!world.isAirBlock(pos) && !world.isAirBlock(pos.up())))
+        {
+            final Tuple<EnumFacing, EnumFacing> direction = getRandomDirectionTuple(random);
+            pos =
+                    new BlockPos(worker.getPosition())
+                            .offset(direction.getFirst(), random.nextInt(LENGTH_RANGE))
+                            .offset(direction.getSecond(), random.nextInt(LENGTH_RANGE))
+                            .up(random.nextInt(UP_DOWN_RANGE))
+                            .down(random.nextInt(UP_DOWN_RANGE));
+            lastDirection = direction;
+        }
 
-        if (building instanceof BuildingGuardTower
-              || BlockPosUtil.getDistance2D(building.getLocation(), this.getOwnBuilding().getLocation()) > ((BuildingGuardTower) getOwnBuilding()).getPatrolDistance())
+
+        if (BlockPosUtil.getDistance2D(pos, this.getOwnBuilding().getLocation()) > ((AbstractBuildingGuards) getOwnBuilding()).getPatrolDistance())
         {
             return this.getOwnBuilding().getLocation();
         }
+        return pos;
+    }
 
-        return building.getLocation();
+    /**
+     * Searches a random direction.
+     *
+     * @param random a random object.
+     * @return a tuple of two directions.
+     */
+    private Tuple<EnumFacing, EnumFacing> getRandomDirectionTuple(final Random random)
+    {
+        if (lastDirection != null && random.nextInt(IN_TEN) < LAST_DIRECTION_CHANCE)
+        {
+            return lastDirection;
+        }
+
+        return new Tuple<>(EnumFacing.random(random), EnumFacing.random(random));
     }
 
     /**
@@ -497,10 +598,11 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
         final AbstractBuilding building = getOwnBuilding();
         if (currentPathTarget == null)
         {
-            getNextPatrollingTarget((BuildingGuardTower) building);
+            getNextPatrollingTarget((AbstractBuildingGuards) building);
         }
 
-        return building instanceof BuildingGuardTower && BlockPosUtil.getDistance2D(target, currentPathTarget) > ((BuildingGuardTower) building).getPatrolDistance() + range;
+        return building instanceof AbstractBuildingGuards
+                && BlockPosUtil.getDistance2D(target, currentPathTarget) > ((AbstractBuildingGuards) building).getPatrolDistance() + range;
     }
 
     /**
@@ -512,7 +614,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
     {
         final Colony colony = this.getOwnBuilding().getColony();
         colony.incrementStatistic("mobs");
-        incrementActionsDone();
+        this.incrementActionsDone();
         worker.getNavigator().clearPathEntity();
     }
 

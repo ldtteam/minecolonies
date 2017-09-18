@@ -77,26 +77,29 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
             @Nullable final AbstractBuildingWorker building = colony.getBuilding(message.buildingId, AbstractBuildingWorker.class);
             if (building != null)
             {
-                EntityCitizen citizen = building.getWorkerEntity();
-                if (citizen == null)
+                for(int i = 0; i < building.getWorkerEntities().size(); i++)
                 {
-                    final CitizenData citizenData = building.getWorker();
-                    if (citizenData != null)
+                    EntityCitizen citizen = building.getWorkerEntities().get(i);
+                    if (citizen == null)
                     {
-                        Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", colony.getID(), citizenData.getId()));
-                        colony.spawnCitizen(citizenData);
-                        citizen = citizenData.getCitizenEntity();
+                        final CitizenData citizenData = building.getWorker().get(i);
+                        if (citizenData != null)
+                        {
+                            Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", colony.getID(), citizenData.getId()));
+                            colony.spawnCitizen(citizenData);
+                            citizen = citizenData.getCitizenEntity();
+                        }
+                        else
+                        {
+                            Log.getLogger().warn("Citizen is AWOL and citizenData is null!");
+                            return;
+                        }
                     }
-                    else
+                    final BlockPos loc = building.getLocation();
+                    if (!TeleportHelper.teleportCitizen(citizen, colony.getWorld(), loc))
                     {
-                        Log.getLogger().warn("Citizen is AWOL and citizenData is null!");
-                        return;
+                        LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.workerHuts.recallFail");
                     }
-                }
-                final BlockPos loc = building.getLocation();
-                if (!TeleportHelper.teleportCitizen(citizen, colony.getWorld(), loc))
-                {
-                    LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.workerHuts.recallFail");
                 }
             }
         }

@@ -360,7 +360,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
         {
             if (field.isTaken())
             {
-                if (getWorker() == null || field.getOwner().equals(getWorker().getName()))
+                if (getWorker().isEmpty() || field.getOwner().equals(getMainWorker().getName()))
                 {
                     size++;
                 }
@@ -377,7 +377,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
         {
             if (field.isTaken())
             {
-                if (getWorker() == null || field.getOwner().equals(getWorker().getName()))
+                if (getWorker().isEmpty() || field.getOwner().equals(getMainWorker().getName()))
                 {
                     @NotNull final FieldView fieldView = new FieldView(field);
                     fieldView.serializeViewNetworkData(buf);
@@ -390,13 +390,13 @@ public class BuildingFarmer extends AbstractBuildingWorker
             }
         }
 
-        if (getWorker() == null)
+        if (getWorker().isEmpty())
         {
             ByteBufUtils.writeUTF8String(buf, "");
         }
         else
         {
-            ByteBufUtils.writeUTF8String(buf, getWorker().getName());
+            ByteBufUtils.writeUTF8String(buf, getMainWorker().getName());
         }
     }
 
@@ -424,7 +424,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
                 }
                 else
                 {
-                    scarecrow.setName(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER, getWorker().getName()));
+                    scarecrow.setName(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER, getMainWorker().getName()));
                     getColony().getWorld()
                             .notifyBlockUpdate(scarecrow.getPos(),
                                     getColony().getWorld().getBlockState(scarecrow.getPos()),
@@ -499,9 +499,10 @@ public class BuildingFarmer extends AbstractBuildingWorker
     {
         final Field field = getColony().getField(position);
         field.setTaken(true);
-        if(getWorker() != null)
+
+        if(getMainWorker() != null)
         {
-            field.setOwner(getWorker().getName());
+            field.setOwner(getMainWorker().getName());
         }
         farmerFields.add(field);
     }
