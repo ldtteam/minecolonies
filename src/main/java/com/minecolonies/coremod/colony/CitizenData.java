@@ -6,6 +6,7 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.BuildingBarracksTower;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -88,7 +89,7 @@ public class CitizenData
      * The home building of the citizen.
      */
     @Nullable
-    private BuildingHome homeBuilding;
+    private AbstractBuilding homeBuilding;
 
     /**
      * The work building of the citizen.
@@ -467,7 +468,7 @@ public class CitizenData
      * @return home building.
      */
     @Nullable
-    public BuildingHome getHomeBuilding()
+    public AbstractBuilding getHomeBuilding()
     {
         return homeBuilding;
     }
@@ -477,13 +478,14 @@ public class CitizenData
      *
      * @param building home building.
      */
-    public void setHomeBuilding(@Nullable final BuildingHome building)
+    public void setHomeBuilding(@Nullable final AbstractBuilding building)
     {
-        if (homeBuilding != null && building != null && homeBuilding != building)
+        if (homeBuilding != null && building != null && !homeBuilding.equals(building))
         {
-            throw new IllegalStateException("CitizenData.setHomeBuilding() - already assigned a home building when setting a new home building");
+            homeBuilding.removeCitizen(this);
         }
-        else if (homeBuilding != building)
+
+        if (building instanceof BuildingHome || building instanceof BuildingBarracksTower)
         {
             homeBuilding = building;
             markDirty();

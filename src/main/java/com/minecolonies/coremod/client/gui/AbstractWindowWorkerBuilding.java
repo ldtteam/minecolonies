@@ -106,20 +106,8 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
                 return;
             }
 
-            if (building.getWorkerId() == 0)
-            {
-                @NotNull final WindowHireWorker window = new WindowHireWorker(building.getColony(), building.getLocation());
-                window.open();
-            }
-            else
-            {
-                MineColonies.getNetwork().sendToServer(new HireFireMessage(building, false, 0));
-                button.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.hire"));
-                findPaneOfTypeByID(LABEL_WORKERNAME, Label.class).setLabelText("");
-                findPaneOfTypeByID(LABEL_WORKERLEVEL, Label.class)
-                  .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.workerLevel", ""));
-                building.setWorkerId(0);
-            }
+            @NotNull final WindowHireWorker window = new WindowHireWorker(building.getColony(), building.getLocation());
+            window.open();
         }
     }
 
@@ -141,20 +129,17 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
         String workerName = "";
         String workerLevel = "";
 
-        if (building.getWorkerId() != 0)
+        if (!building.getWorkerId().isEmpty())
         {
-            final CitizenDataView worker = building.getColony().getCitizen(building.getWorkerId());
+            final CitizenDataView worker = building.getColony().getCitizen(building.getWorkerId().get(0));
             if (worker != null)
             {
                 workerName = worker.getName();
                 workerLevel = String.format("%d", worker.getLevel());
             }
-            findPaneOfTypeByID(BUTTON_HIRE, Button.class).setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.fire"));
         }
-        else
-        {
-            findPaneOfTypeByID(BUTTON_HIRE, Button.class).setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.hire"));
-        }
+
+        findPaneOfTypeByID(BUTTON_HIRE, Button.class).setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.hire"));
 
         findPaneOfTypeByID(LABEL_WORKERNAME, Label.class).setLabelText(workerName);
         findPaneOfTypeByID(LABEL_WORKERLEVEL, Label.class)

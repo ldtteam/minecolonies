@@ -108,7 +108,7 @@ public class BuildRequestMessage extends AbstractMessage<BuildRequestMessage, IM
             switch (message.mode)
             {
                 case BUILD:
-                    building.requestUpgrade();
+                    building.requestUpgrade(player);
                     break;
                 case REPAIR:
                     building.requestRepair();

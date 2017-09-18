@@ -6,7 +6,7 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.BuildingGuardTower;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,6 +16,8 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards.Task;
 
 /**
  * Guard Scepter Item class. Used to give tasks to guards.
@@ -96,19 +98,20 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
 
         final BlockPos guardTower = BlockPosUtil.readFromNBT(compound, "pos");
         final AbstractBuilding hut = colony.getBuilding(guardTower);
-        if (hut == null || !(hut instanceof BuildingGuardTower))
+        if (!(hut instanceof AbstractBuildingGuards))
         {
             return EnumActionResult.FAIL;
         }
+        final AbstractBuildingGuards tower = (AbstractBuildingGuards) hut;
 
-        if(BlockPosUtil.getDistance2D(pos, guardTower) > ((BuildingGuardTower) hut).getPatrolDistance())
+        if(BlockPosUtil.getDistance2D(pos, guardTower) > tower.getPatrolDistance())
         {
             LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.job.guard.toolClickGuardTooFar");
             return EnumActionResult.FAIL;
         }
 
-        final BuildingGuardTower.Task task = BuildingGuardTower.Task.values()[compound.getInteger("task")];
-        final CitizenData citizen = ((BuildingGuardTower) hut).getWorker();
+        final Task task = Task.values()[compound.getInteger("task")];
+        final CitizenData citizen = tower.getMainWorker();
 
         String name = "";
         if (citizen != null)
@@ -116,19 +119,19 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
             name = " " + citizen.getName();
         }
 
-        if (task.equals(BuildingGuardTower.Task.GUARD))
+        if (task.equals(Task.GUARD))
         {
             LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.job.guard.toolClickGuard", pos, name);
-            ((BuildingGuardTower) hut).setGuardTarget(pos);
+            tower.setGuardTarget(pos);
             playerIn.inventory.removeStackFromSlot(playerIn.inventory.currentItem);
         }
         else
         {
             if (!compound.hasKey(TAG_LAST_POS))
             {
-                ((BuildingGuardTower) hut).resetPatrolTargets();
+                tower.resetPatrolTargets();
             }
-            ((BuildingGuardTower) hut).addPatrolTargets(pos);
+            tower.addPatrolTargets(pos);
             LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.job.guard.toolClickPatrol", pos, name);
         }
         BlockPosUtil.writeToNBT(compound, TAG_LAST_POS, pos);

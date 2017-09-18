@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.ai.citizen.guard;
 import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
@@ -147,7 +148,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
             return AIState.GUARD_GATHERING;
         }
 
-        if (worker.canEntityBeSeen(targetEntity) && worker.getDistanceToEntity(targetEntity) <= MIN_ATTACK_DISTANCE)
+        if (worker.getEntitySenses().canSee(targetEntity) && worker.getDistanceToEntity(targetEntity) <= MIN_ATTACK_DISTANCE)
         {
             worker.resetActiveHand();
             final boolean killedEnemy = attackEntity(targetEntity, (float) DAMAGE_PER_ATTACK);
@@ -187,6 +188,8 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         {
             damgeToBeDealt *= 2;
         }
+
+        damgeToBeDealt+= ((AbstractBuildingGuards)getOwnBuilding()).getOffenceBonus();
 
         final ItemStack heldItem = worker.getHeldItem(EnumHand.MAIN_HAND);
         if (heldItem != null)
