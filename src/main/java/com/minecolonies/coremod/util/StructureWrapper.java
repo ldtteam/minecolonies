@@ -5,16 +5,22 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.ModBlocks;
+import com.minecolonies.coremod.placementhandlers.IPlacementHandler;
+import com.minecolonies.coremod.placementhandlers.PlacementHandlers;
 import com.minecolonies.structures.helpers.StructureProxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockStairs;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntityFlowerPot;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -24,6 +30,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+
+import static com.minecolonies.coremod.placementhandlers.IPlacementHandler.ActionProcessingResult.ACCEPT;
+import static com.minecolonies.coremod.placementhandlers.IPlacementHandler.ActionProcessingResult.DENY;
+import static com.minecolonies.coremod.placementhandlers.IPlacementHandler.ActionProcessingResult.IGNORE;
 
 /**
  * Interface for using the structure codebase.
@@ -91,16 +102,18 @@ public final class StructureWrapper
      * @param pos       coordinates
      * @param rotations number of times rotated
      * @param mirror    the mirror used.
+     * @param complete  paste it complete (with structure blocks) or without
      */
     public static void loadAndPlaceStructureWithRotation(
-                                                          final World worldObj, @NotNull final String name,
-                                                          @NotNull final BlockPos pos, final int rotations, @NotNull final Mirror mirror)
+            final World worldObj, @NotNull final String name,
+            @NotNull final BlockPos pos, final int rotations, @NotNull final Mirror mirror,
+            final boolean complete)
     {
         try
         {
             @NotNull final StructureWrapper structureWrapper = new StructureWrapper(worldObj, name);
             structureWrapper.rotate(rotations, worldObj, pos, mirror);
-            structureWrapper.placeStructure(pos);
+            structureWrapper.placeStructure(pos.subtract(structureWrapper.getOffset()), complete);
         }
         catch (final IllegalStateException e)
         {
@@ -119,16 +132,17 @@ public final class StructureWrapper
      * @param mirror    the mirror used.
      * @return true if succesful.
      */
-    public static boolean tryToLoadAndPlaceSupplyCampWithRotation(final World worldObj, @NotNull final String name,
+    public static boolean tryToLoadAndPlaceSupplyCampWithRotation(
+            final World worldObj, @NotNull final String name,
             @NotNull final BlockPos pos, final int rotations, @NotNull final Mirror mirror)
     {
         try
         {
             @NotNull final StructureWrapper structureWrapper = new StructureWrapper(worldObj, name);
             structureWrapper.rotate(rotations, worldObj, pos, mirror);
-            if(structureWrapper.checkForFreeSpace(pos))
+            if (structureWrapper.checkForFreeSpace(pos))
             {
-                structureWrapper.placeStructure(pos);
+                structureWrapper.placeStructure(pos, false);
                 return true;
             }
             return false;
@@ -172,18 +186,18 @@ public final class StructureWrapper
 
                     final BlockPos worldPos = pos.add(localPos);
 
-                    if(worldPos.getY() <= pos.getY() && !world.getBlockState(worldPos.down()).getMaterial().isSolid())
+                    if (worldPos.getY() <= pos.getY() && !world.getBlockState(worldPos.down()).getMaterial().isSolid())
                     {
                         return false;
                     }
 
                     final IBlockState worldState = world.getBlockState(worldPos);
-                    if(worldState.getBlock() == Blocks.BEDROCK)
+                    if (worldState.getBlock() == Blocks.BEDROCK)
                     {
                         return false;
                     }
 
-                    if(worldPos.getY() > pos.getY() && worldState.getBlock() != Blocks.AIR)
+                    if (worldPos.getY() > pos.getY() && worldState.getBlock() != Blocks.AIR)
                     {
                         return false;
                     }
@@ -196,9 +210,10 @@ public final class StructureWrapper
     /**
      * Place a structure into the world.
      *
-     * @param pos coordinates
+     * @param pos       coordinates
+     * @param complete  paste it complete (with structure blocks) or without
      */
-    private void placeStructure(@NotNull final BlockPos pos)
+    private void placeStructure(@NotNull final BlockPos pos, final boolean complete)
     {
         setLocalPosition(pos);
 
@@ -216,32 +231,26 @@ public final class StructureWrapper
                     final Block localBlock = localState.getBlock();
 
                     final BlockPos worldPos = pos.add(localPos);
-                    final IBlockState worldState = world.getBlockState(worldPos);
 
-                    if (localBlock == ModBlocks.blockSubstitution)
+                    if ((localBlock == ModBlocks.blockSubstitution && !complete) || localBlock instanceof AbstractBlockHut)
                     {
                         continue;
                     }
 
-                    if(localBlock == ModBlocks.blockSolidSubstitution)
+                    if(localState.getMaterial().isSolid())
                     {
-                        if( !worldState.getMaterial().isSolid())
-                        {
-                            final IBlockState subBlock = BlockUtils.getSubstitutionBlockAtWorld(world, worldPos);
-                            placeBlock(subBlock, subBlock.getBlock(), worldPos);
-                        }
-                    }
-                    else if (localBlock == Blocks.AIR && !worldState.getMaterial().isSolid())
-                    {
-                        world.setBlockToAir(worldPos);
-                    }
-                    else if (localState.getMaterial().isSolid())
-                    {
-                        placeBlock(localState, localBlock, worldPos);
+                        handleBlockPlacement(worldPos, localState, complete);
                     }
                     else
                     {
                         delayedBlocks.add(localPos);
+                    }
+
+                    if (this.structure.getBlockInfo(localPos).tileentityData != null && world.getTileEntity(worldPos) instanceof TileEntityFlowerPot)
+                    {
+                        final TileEntityFlowerPot tileentityflowerpot = (TileEntityFlowerPot) world.getTileEntity(worldPos);
+                        tileentityflowerpot.readFromNBT(this.structure.getBlockInfo(localPos).tileentityData);
+                        world.setTileEntity(worldPos, tileentityflowerpot);
                     }
                 }
             }
@@ -250,23 +259,54 @@ public final class StructureWrapper
         for (@NotNull final BlockPos coords : delayedBlocks)
         {
             final IBlockState localState = this.structure.getBlockState(coords);
-            final Block localBlock = localState.getBlock();
             final BlockPos newWorldPos = pos.add(coords);
 
-            placeBlock(localState, localBlock, newWorldPos);
+            handleBlockPlacement(newWorldPos, localState, complete);
+
+            if (this.structure.getBlockInfo(coords).tileentityData != null && world.getTileEntity(newWorldPos) instanceof TileEntityFlowerPot)
+            {
+                final TileEntityFlowerPot tileentityflowerpot = (TileEntityFlowerPot) world.getTileEntity(newWorldPos);
+                tileentityflowerpot.readFromNBT(this.structure.getBlockInfo(coords).tileentityData);
+                world.setTileEntity(newWorldPos, tileentityflowerpot);
+            }
+        }
+
+        for (int j = 0; j < structure.getHeight(); j++)
+        {
+            for (int k = 0; k < structure.getLength(); k++)
+            {
+                for (int i = 0; i < structure.getWidth(); i++)
+                {
+                    @NotNull final BlockPos localPos = new BlockPos(i, j, k);
+                    final Template.EntityInfo info = this.structure.getEntityinfo(localPos);
+
+                    if (info != null)
+                    {
+                        try
+                        {
+                            final Entity entity = EntityList.createEntityFromNBT(info.entityData, world);
+                            entity.setUniqueId(UUID.randomUUID());
+                            world.spawnEntityInWorld(entity);
+                        }
+                        catch (final RuntimeException e)
+                        {
+                            Log.getLogger().info("Couldn't restore entitiy", e);
+                        }
+                    }
+                }
+            }
         }
     }
 
-    private void placeBlock(final IBlockState localState, @NotNull final Block localBlock, @NotNull final BlockPos worldPos)
+    private void handleBlockPlacement(final BlockPos pos, final IBlockState localState, final boolean complete)
     {
-        world.setBlockState(worldPos, localState, 0x03);
-        if (world.getBlockState(worldPos).getBlock() == localBlock)
+        for (final IPlacementHandler handlers : PlacementHandlers.handlers)
         {
-            if (world.getBlockState(worldPos) != localState)
+            final Object result = handlers.handle(world, pos, localState, null, true, complete);
+            if(!(result instanceof IPlacementHandler.ActionProcessingResult) || result != IGNORE)
             {
-                world.setBlockState(worldPos, localState, 0x03);
+                return;
             }
-            localBlock.onBlockAdded(world, worldPos, localState);
         }
     }
 
@@ -341,7 +381,7 @@ public final class StructureWrapper
 
         final IBlockState worldBlockState = world.getBlockState(worldPos);
 
-        if(structureBlock == ModBlocks.blockSolidSubstitution && worldBlockState.getMaterial().isSolid())
+        if (structureBlock == ModBlocks.blockSolidSubstitution && worldBlockState.getMaterial().isSolid())
         {
             return true;
         }
@@ -354,7 +394,7 @@ public final class StructureWrapper
         {
             return structureBlock == worldBlock;
         }
-        else if(worldBlock == ModBlocks.blockRack)
+        else if (worldBlock == ModBlocks.blockRack)
         {
             return BlockMinecoloniesRack.shouldBlockBeReplacedWithRack(structureBlock);
         }
@@ -365,7 +405,7 @@ public final class StructureWrapper
         }
 
         final Template.EntityInfo entityInfo = structure.getEntityinfo(this.getLocalPosition());
-        if(entityInfo != null)
+        if (entityInfo != null)
         {
             return false;
             //todo get entity at position.
@@ -373,7 +413,7 @@ public final class StructureWrapper
 
         //had this problem in a super flat world, causes builder to sit doing nothing because placement failed
         return worldPos.getY() <= 0
-                 || structureBlockState == worldBlockState;
+                || structureBlockState == worldBlockState;
     }
 
     /**
@@ -622,7 +662,7 @@ public final class StructureWrapper
 
         final ItemStack stack = BlockUtils.getItemStackFromBlockState(blockState);
 
-        if(!ItemStackUtils.isEmpty(stack))
+        if (!ItemStackUtils.isEmpty(stack))
         {
             return stack.getItem();
         }
@@ -687,6 +727,7 @@ public final class StructureWrapper
 
     /**
      * Calculate the current entity in the structure.
+     *
      * @return the entityInfo.
      */
     @Nullable
