@@ -1797,9 +1797,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @Override
     protected void updateEquipmentIfNeeded(final EntityItem itemEntity)
     {
-        /**
-         * Do nothing here because the automatic pickUp doesn't work that well. That's why we use our own.
-         */
+        //Just do nothing!
     }
 
     /**

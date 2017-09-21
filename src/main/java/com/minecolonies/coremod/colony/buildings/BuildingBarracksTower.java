@@ -1,4 +1,5 @@
 package com.minecolonies.coremod.colony.buildings;
+
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,6 +23,11 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
      * Offence bonus related to this building.
      */
     private static final int OFFENCE_BONUS = 5;
+
+    /**
+     * Tag to store the barracks pos to NBT.
+     */
+    private static final String TAG_POS = "pos";
 
     /**
      * Position of the barracks.
@@ -55,16 +61,16 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
-        barracks = NBTUtil.getPosFromTag(compound);
+        barracks = NBTUtil.getPosFromTag(compound.getCompoundTag(TAG_POS));
     }
 
     @Override
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        if(barracks != null)
+        if (barracks != null)
         {
-            compound.merge(NBTUtil.createPosTag(barracks));
+            compound.setTag(TAG_POS, NBTUtil.createPosTag(barracks));
         }
     }
 
@@ -110,6 +116,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
 
     /**
      * Adds the position of the main barracks.
+     *
      * @param pos the BlockPos.
      */
     public void addBarracks(final BlockPos pos)
@@ -135,6 +142,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
 
         /**
          * Check if it has enough workers.
+         *
          * @return true if so.
          */
         @Override
