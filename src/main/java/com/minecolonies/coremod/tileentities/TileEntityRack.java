@@ -478,7 +478,7 @@ public class TileEntityRack extends TileEntity
      */
     public TileEntityRack getOtherChest()
     {
-        if (neighbor.equals(BlockPos.ORIGIN))
+        if (neighbor.equals(BlockPos.ORIGIN) || worldObj == null)
         {
             return null;
         }
