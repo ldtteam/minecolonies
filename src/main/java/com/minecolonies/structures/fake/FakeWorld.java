@@ -112,7 +112,11 @@ public class FakeWorld extends World
     @Override
     public void setTileEntity(final BlockPos pos, @Nullable final TileEntity tileEntityIn)
     {
-        entityHashMap.put(pos, tileEntityIn);
+        if(tileEntityIn != null)
+        {
+            entityHashMap.put(pos, tileEntityIn);
+            tileEntityIn.setWorld(this);
+        }
     }
 
     @NotNull
