@@ -563,7 +563,6 @@ public class Structure
                 {
                     tileentity = block.createTileEntity(clientWorld, iblockstate);
                     tileentity.readFromNBT(aBlockList.tileentityData);
-                    tileentity.setWorldObj(fakeWorld);
                 }
                 fakeWorld.setTileEntity(aBlockList.pos, tileentity);
             }
