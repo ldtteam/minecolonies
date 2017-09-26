@@ -50,9 +50,13 @@ public class ColonyUtils
     }
 
     /**
-     * Calculates the corners for a structure.
-     * @param wrapper the wrapper for the calculation.
-     * @return the result.
+     * Calculated the corner of a building.
+     * @param pos the central position.
+     * @param world the world.
+     * @param structureName the name of the structure (resource location).
+     * @param rotation the rotation.
+     * @param isMirrored if its mirrored.
+     * @return a tuple with the required corners.
      */
     public static Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> calculateCorners(
             final BlockPos pos, final World world, final String structureName, final int rotation, final boolean isMirrored)
