@@ -430,7 +430,7 @@ com.minecolonies.coremod.gui.workerHuts.unassign=Remove citizen
 tile.minecolonies.blockTimberFrame.name=Plain Timber Frame
 tile.minecolonies.blockMinecoloniesRack.name=Rack
 
-com.minecolonies.coremod.status.waitingForWork=Searching a job
+com.minecolonies.coremod.status.waitingForWork=Searching job
 com.minecolonies.coremod.status.sleeping=Let me sleep
 com.minecolonies.coremod.status.waiting=Waiting for:
 com.minecolonies.coremod.status.rainStop=the rain to stop
@@ -458,7 +458,7 @@ com.minecolonies.coremod.status.hunting=Hunting
 com.minecolonies.coremod.status.searchingtree=Searching Tree
 com.minecolonies.coremod.status.chopping=Chopping
 com.minecolonies.coremod.status.stuckinleaves=Stuck in leaves!
-tile.minecolonies.blockwaypoint.name=Waypoint placeholder
+tile.minecolonies.blockWayPoint.name=Waypoint placeholder
 tile.minecolonies.blockHutBarracksTower.name=BarracksTower
 tile.minecolonies.blockHutBarracks.name=Barracks
 com.minecolonies.coremod.gui.workerHuts.buildBarracks=Barracks

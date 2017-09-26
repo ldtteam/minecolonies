@@ -231,12 +231,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Big multiplier in extreme saturation situations.
      */
-    private static final double BIG_SATURATION_FACTOR = 0.25;
+    private static final double BIG_SATURATION_FACTOR = 0.05;
 
     /**
      * Small multiplier in average saturation situation.s
      */
-    private static final double LOW_SATURATION_FACTOR = 0.1;
+    private static final double LOW_SATURATION_FACTOR = 0.01;
 
     /**
      * Decrease by this * buildingLevel each new night.
@@ -689,7 +689,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             final double maxValue = Integer.MAX_VALUE - citizenData.getExperience();
             double localXp = xp * skillModifier / EXP_DIVIDER;
             final double workBuildingLevel = getWorkBuilding() == null ? 0 : getWorkBuilding().getBuildingLevel();
-            final double bonusXp = workBuildingLevel * (1 + citizenHutLevel) / Math.log(this.getExperienceLevel() + 2.0D);
+            final double bonusXp = (workBuildingLevel * (1 + citizenHutLevel) / Math.log(this.getExperienceLevel() + 2.0D)) / 2;
             localXp = localXp * bonusXp;
             final double saturation = citizenData.getSaturation();
 
