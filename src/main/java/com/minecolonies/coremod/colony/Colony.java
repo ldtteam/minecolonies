@@ -2075,7 +2075,7 @@ public class Colony implements IColony
         AbstractBuilding theBuilding = null;
         for(final BlockPos pos: positions)
         {
-            double currentDistance = center.distanceSq(pos);
+            final double currentDistance = center.distanceSq(pos);
             if(currentDistance > distance && world.isAreaLoaded(pos, DEFAULT_SPAWN_RADIUS))
             {
                 distance = currentDistance;

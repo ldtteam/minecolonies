@@ -94,7 +94,7 @@ public final class ConstructionTapeHelper
      * @param workOrder the workOrder.
      * @param world the world.
      */
-    public static void placeConstructionTape(@NotNull WorkOrderBuildDecoration workOrder, @NotNull World world)
+    public static void placeConstructionTape(@NotNull final WorkOrderBuildDecoration workOrder, @NotNull final World world)
     {
         final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
                 = ColonyUtils.calculateCorners(workOrder.getBuildingLocation(), world, workOrder.getStructureName(), workOrder.getRotation(world), workOrder.isMirrored());
@@ -106,7 +106,7 @@ public final class ConstructionTapeHelper
      * @param workOrder the workOrder.
      * @param world the world.
      */
-    public static void removeConstructionTape(@NotNull WorkOrderBuildDecoration workOrder, @NotNull World world)
+    public static void removeConstructionTape(@NotNull final WorkOrderBuildDecoration workOrder, @NotNull final World world)
     {
         final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
                 = ColonyUtils.calculateCorners(workOrder.getBuildingLocation(), world, workOrder.getStructureName(), workOrder.getRotation(world), workOrder.isMirrored());
@@ -121,7 +121,7 @@ public final class ConstructionTapeHelper
      * @param corners the corner positions.
      * @param world the world.
      */
-    public static void placeConstructionTape(final BlockPos pos, final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners, @NotNull World world)
+    public static void placeConstructionTape(final BlockPos pos, final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners, @NotNull final World world)
     {
         if (Configurations.builderPlaceConstructionTape)
         {
