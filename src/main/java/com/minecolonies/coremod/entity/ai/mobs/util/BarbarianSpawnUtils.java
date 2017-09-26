@@ -163,7 +163,6 @@ public final class BarbarianSpawnUtils
     {
         if (spawnLocation != null && entityToSpawn != null && world != null && !world.isRemote)
         {
-
             final int x = spawnLocation.getX();
             final int y = spawnLocation.getY();
             final int z = spawnLocation.getZ();
