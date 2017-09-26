@@ -2086,7 +2086,7 @@ public class Colony implements IColony
 
         if(thePos.equals(center))
         {
-            return null;
+            return center;
         }
 
         int minDistance = 0;
