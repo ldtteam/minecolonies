@@ -12,6 +12,7 @@ import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.coremod.util.ColonyUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,6 +24,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
@@ -83,6 +85,10 @@ public abstract class AbstractBuilding
      * The tag to store the style of the building.
      */
     private static final String TAG_STYLE     = "style";
+
+    /**
+     * Tag if the building has no workOrder.
+     */
     private static final int    NO_WORK_ORDER = 0;
 
     /**
@@ -198,6 +204,14 @@ public abstract class AbstractBuilding
      * Made to check if the building has to update the server/client.
      */
     private boolean dirty = false;
+
+    private int cornerX1;
+
+    private int cornerX2;
+
+    private int cornerZ1;
+
+    private int cornerZ2;
 
     /**
      * Constructor for a AbstractBuilding.
@@ -392,9 +406,37 @@ public abstract class AbstractBuilding
 
         if (building != null && parent.getWorld() != null)
         {
-            ConstructionTapeHelper.placeConstructionTape(building, parent.getWorld());
+            final WorkOrderBuild workOrder = new WorkOrderBuild(building, 1);
+            final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
+            = ColonyUtils.calculateCorners(building.getLocation(), parent.getWorld(), workOrder.getStructureName(), building.rotation, building.isMirrored);
+            building.setCorners(corners.getFirst().getFirst(), corners.getFirst().getSecond(), corners.getSecond().getFirst(), corners.getSecond().getSecond());
+            ConstructionTapeHelper.placeConstructionTape(building.getLocation(), corners, parent.getWorld());
         }
         return building;
+    }
+
+    /**
+     * Sets the corners of the building based on the schematic.
+     * @param x1 the first x corner.
+     * @param x2 the second x corner.
+     * @param z1 the first z corner.
+     * @param z2 the second z corner.
+     */
+    private void setCorners(final int x1, final int x2, final int z1, final int z2)
+    {
+        this.cornerX1 = x1;
+        this.cornerX2 = x2;
+        this.cornerZ1 = z1;
+        this.cornerZ2 = z2;
+    }
+
+    /**
+     * Get all the corners of the building based on the schematic.
+     * @return the corners.
+     */
+    public Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> getCorners()
+    {
+        return new Tuple<>(new Tuple<>(cornerX1, cornerX2), new Tuple<>(cornerZ1, cornerZ2));
     }
 
     /**
@@ -557,9 +599,9 @@ public abstract class AbstractBuilding
         {
             InventoryHelper.dropInventoryItems(world, this.location, (IInventory) tileEntityNew);
             world.updateComparatorOutputLevel(this.location, block);
-            ConstructionTapeHelper.removeConstructionTape(this, world);
         }
-        ConstructionTapeHelper.removeConstructionTape(this, world);
+
+        ConstructionTapeHelper.removeConstructionTape(getCorners(), world);
     }
 
     /**
@@ -795,7 +837,10 @@ public abstract class AbstractBuilding
      */
     public void onUpgradeComplete(final int newLevel)
     {
-        // Does nothing here
+        final WorkOrderBuild workOrder = new WorkOrderBuild(this, 1);
+        final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
+                = ColonyUtils.calculateCorners(this.getLocation(), colony.getWorld(), workOrder.getUpgradeName(), this.rotation, this.isMirrored);
+        this.setCorners(corners.getFirst().getFirst(), corners.getFirst().getSecond(), corners.getSecond().getFirst(), corners.getSecond().getSecond());
     }
 
     /**

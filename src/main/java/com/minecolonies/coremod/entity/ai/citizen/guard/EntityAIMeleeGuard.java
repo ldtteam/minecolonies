@@ -42,7 +42,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
     /**
      * Experience to add when a mob is killed
      */
-    private static final int EXP_PER_MOD_DEATH = 15;
+    private static final int EXP_PER_MOD_DEATH = 5;
 
     /**
      * Random is multiplied by this to get a random arrow sound.
