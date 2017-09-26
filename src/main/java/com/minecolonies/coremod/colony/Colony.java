@@ -2084,11 +2084,6 @@ public class Colony implements IColony
             }
         }
 
-        if(thePos.equals(center))
-        {
-            return center;
-        }
-
         int minDistance = 0;
         if(theBuilding != null)
         {
