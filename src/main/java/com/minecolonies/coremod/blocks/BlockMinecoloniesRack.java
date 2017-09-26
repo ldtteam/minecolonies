@@ -183,7 +183,7 @@ public class BlockMinecoloniesRack extends Block
      */
     public static boolean shouldBlockBeReplacedWithRack(final Block block)
     {
-        return block == Blocks.CHEST;
+        return block == Blocks.CHEST || block == ModBlocks.blockRack;
     }
 
     @Override
