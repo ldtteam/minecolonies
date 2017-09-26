@@ -42,7 +42,12 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_H
 
 /**
  * Base building class, has all the foundation for what a building stores and does.
+ *
+ * We suppress the warning which warns you about referencing child classes in the parent because that's how we register the instances of the childClasses
+ * to their views and blocks.
+ *
  */
+@SuppressWarnings("squid:S2390")
 public abstract class AbstractBuilding
 {
     /**
@@ -127,6 +132,7 @@ public abstract class AbstractBuilding
      */
     @NotNull
     private static final Map<Integer, Class<?>> classNameHashToViewClassMap = new HashMap<>();
+
     /*
      * Add all the mappings.
      */
@@ -853,9 +859,11 @@ public abstract class AbstractBuilding
 
     /**
      * Called upon completion of an upgrade process.
+     * We suppress this warning since this parameter will be used in child classes which override this method.
      *
      * @param newLevel The new level.
      */
+    @SuppressWarnings("squid:S1172")
     public void onUpgradeComplete(final int newLevel)
     {
         final WorkOrderBuild workOrder = new WorkOrderBuild(this, 1);
@@ -921,12 +929,14 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * register a block and position.
+     * Register a block and position.
+     * We suppress this warning since this parameter will be used in child classes which override this method.
      *
      * @param block to be registered
      * @param pos   of the block
      * @param world the world to place the tileentity in
      */
+    @SuppressWarnings("squid:S1172")
     public void registerBlockPosition(@NotNull Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
         final TileEntity tile = world.getTileEntity(pos);

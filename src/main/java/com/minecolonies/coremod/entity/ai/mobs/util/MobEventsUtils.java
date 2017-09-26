@@ -48,6 +48,11 @@ public final class MobEventsUtils
     private static final int THREE = 3;
 
     /**
+     * Spawn modifier to decrease the spawnrate.
+     */
+    private static final int SPAWN_MODIFIER = 3;
+
+    /**
      * Private constructor to hide the implicit public one.
      */
     private MobEventsUtils()
@@ -96,9 +101,9 @@ public final class MobEventsUtils
 
         final int raidLevel = getColonyRaidLevel(colony);
 
-        numberOfBarbarians = (int) (BARBARIANS_MULTIPLIER * raidLevel/3);
-        numberOfArchers = (int) (ARCHER_BARBARIANS_MULTIPLIER * raidLevel/3);
-        numberOfChiefs = (int) (CHIEF_BARBARIANS_MULTIPLIER * raidLevel/3);
+        numberOfBarbarians = (int) (BARBARIANS_MULTIPLIER * raidLevel / SPAWN_MODIFIER);
+        numberOfArchers = (int) (ARCHER_BARBARIANS_MULTIPLIER * raidLevel / SPAWN_MODIFIER);
+        numberOfChiefs = (int) (CHIEF_BARBARIANS_MULTIPLIER * raidLevel / SPAWN_MODIFIER);
 
         int hordeTotal = numberOfBarbarians + numberOfArchers + numberOfChiefs;
 
