@@ -6,15 +6,16 @@ import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.ColonyView;
-import net.minecraft.util.ResourceLocation;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.BuildingBarracks;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Utils for Colony mob events
@@ -25,9 +26,7 @@ public final class MobEventsUtils
     private static final ResourceLocation ARCHER    = new ResourceLocation(Constants.MOD_ID, "ArcherBarbarian");
     private static final ResourceLocation CHIEF     = new ResourceLocation(Constants.MOD_ID, "ChiefBarbarian");
 
-    private static final float  WHOLE_CIRCLE                 = 360.0F;
-    private static final float  HALF_A_CIRCLE                = 180F;
-    private static final int    MAX_SIZE                     = Configurations.gameplay.maxBarbarianHordeSize;
+    private static final int    MAX_SIZE                     = Configurations.maxBarbarianHordeSize;
     private static final double BARBARIANS_MULTIPLIER        = 0.5;
     private static final double ARCHER_BARBARIANS_MULTIPLIER = 0.25;
     private static final double CHIEF_BARBARIANS_MULTIPLIER  = 0.1;
@@ -42,6 +41,11 @@ public final class MobEventsUtils
     private static       int    numberOfBarbarians           = 0;
     private static       int    numberOfArchers              = 0;
     private static       int    numberOfChiefs               = 0;
+
+    /**
+     * Spawn modifier to decrease the spawnrate.
+     */
+    private static final int SPAWN_MODIFIER = 3;
 
     /**
      * Private constructor to hide the implicit public one.
@@ -86,9 +90,9 @@ public final class MobEventsUtils
 
         final int raidLevel = getColonyRaidLevel(colony);
 
-        numberOfBarbarians = (int) (BARBARIANS_MULTIPLIER * raidLevel);
-        numberOfArchers = (int) (ARCHER_BARBARIANS_MULTIPLIER * raidLevel);
-        numberOfChiefs = (int) (CHIEF_BARBARIANS_MULTIPLIER * raidLevel);
+        numberOfBarbarians = (int) (BARBARIANS_MULTIPLIER * raidLevel / SPAWN_MODIFIER);
+        numberOfArchers = (int) (ARCHER_BARBARIANS_MULTIPLIER * raidLevel / SPAWN_MODIFIER);
+        numberOfChiefs = (int) (CHIEF_BARBARIANS_MULTIPLIER * raidLevel / SPAWN_MODIFIER);
 
         int hordeTotal = numberOfBarbarians + numberOfArchers + numberOfChiefs;
 
@@ -117,23 +121,14 @@ public final class MobEventsUtils
      * @param colony the Colony to spawn the barbarians near.
      * @return Returns the random blockPos
      */
-    private static BlockPos calculateSpawnLocation(final World world, final Colony colony)
+    private static BlockPos calculateSpawnLocation(final World world, @NotNull final Colony colony)
     {
-        final ColonyView colonyView = ColonyManager.getClosestColonyView(world, colony.getCenter());
-        if (colonyView == null)
-        {
-            return null;
-        }
-        final BlockPos center = colonyView.getCenter();
-        final int radius = Configurations.gameplay.workingRangeTownHall;
+        final Random random = new Random();
+        final BlockPos pos = colony.getRandomOutsiderInDirection(
+                random.nextInt(2) < 1 ? EnumFacing.EAST : EnumFacing.WEST,
+                random.nextInt(2) < 1 ? EnumFacing.NORTH : EnumFacing.SOUTH);
 
-        final int randomDegree = world.rand.nextInt((int) WHOLE_CIRCLE);
-
-        final double rads = (double) randomDegree / HALF_A_CIRCLE * Math.PI;
-        final double x = Math.round(center.getX() + radius * Math.sin(rads));
-        final double z = Math.round(center.getZ() + radius * Math.cos(rads));
-        
-        return BlockPosUtil.findLand(new BlockPos(x, center.getY(), z), world);
+        return BlockPosUtil.findLand(pos, world);
     }
 
     /**
@@ -158,9 +153,17 @@ public final class MobEventsUtils
             }
         }
 
+        for(final AbstractBuilding building: colony.getBuildings().values())
+        {
+            if(building instanceof BuildingBarracks)
+            {
+                levels+= building.getBuildingLevel() * 2;
+            }
+        }
+
         if (colony.getTownHall() != null)
         {
-            return (levels + colony.getTownHall().getBuildingLevel());
+            return levels + colony.getTownHall().getBuildingLevel() * 2;
         }
         else
         {
@@ -233,8 +236,6 @@ public final class MobEventsUtils
      */
     private static boolean raidThisNight(final World world)
     {
-        final float chance = (float) 1 / Configurations.gameplay.averageNumberOfNightsBetweenRaids;
-        final float randomFloat = world.rand.nextFloat();
-        return randomFloat < chance;
+        return world.rand.nextDouble() < 1.0 / Configurations.averageNumberOfNightsBetweenRaids;
     }
 }
