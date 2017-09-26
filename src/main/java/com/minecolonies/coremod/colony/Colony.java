@@ -114,6 +114,11 @@ public class Colony implements IColony
     private static final int DEFAULT_SPAWN_RADIUS = 10;
 
     /**
+     * Max spawn radius of the barbarians.
+     */
+    private static final int MAX_SPAWN_RADIUS = 75;
+
+    /**
      * Whether there will be a raid in this colony tonight.
      */
     private boolean willRaidTonight = false;
@@ -2089,7 +2094,7 @@ public class Colony implements IColony
         {
             final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = theBuilding.getCorners();
             minDistance
-                    = Math.max(Math.max(corners.getFirst().getFirst(), corners.getFirst().getSecond()), Math.max(corners.getSecond().getFirst(), corners.getSecond().getSecond()));
+                    = Math.max(corners.getFirst().getFirst() - corners.getFirst().getSecond(), corners.getSecond().getFirst() - corners.getSecond().getSecond());
         }
 
         int radius = DEFAULT_SPAWN_RADIUS;
@@ -2098,8 +2103,8 @@ public class Colony implements IColony
             radius+=DEFAULT_SPAWN_RADIUS;
         }
 
-        thePos = thePos.offset(directionX, Math.max(minDistance, radius/2));
-        thePos = thePos.offset(directionZ, Math.max(minDistance,radius/2));
+        thePos = thePos.offset(directionX, Math.max(minDistance, Math.min(radius, MAX_SPAWN_RADIUS)));
+        thePos = thePos.offset(directionZ, Math.max(minDistance,Math.min(radius, MAX_SPAWN_RADIUS)));
 
         final int randomDegree = world.rand.nextInt((int) WHOLE_CIRCLE);
 
@@ -2108,6 +2113,8 @@ public class Colony implements IColony
         final double x = Math.round(thePos.getX() + 3 * Math.sin(rads));
         final double z = Math.round(thePos.getZ() + 3 * Math.cos(rads));
 
+
+        Log.getLogger().info("Spawning at: " + x + " " + z);
         return new BlockPos(x, thePos.getY(), z);
     }
 
