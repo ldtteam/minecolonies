@@ -44,7 +44,7 @@ public final class ConstructionTapeHelper
      * @return The new Y position.
      */
 
-    public static int checkIfPlaceable(@NotNull int x, @NotNull int y, @NotNull int z, @NotNull World world)
+    public static int checkIfPlaceable(@NotNull int x, @NotNull int y, @NotNull int z, @NotNull final World world)
     {
         int newY = y;
         boolean working = true;
@@ -76,7 +76,7 @@ public final class ConstructionTapeHelper
      * @param block            the block.
      * @param tapeOrTapeCorner Is the checked block supposed to be ConstructionTape or ConstructionTapeCorner.
      */
-    public static void removeTapeIfNecessary(@NotNull World world, @NotNull BlockPos block, @NotNull Block tapeOrTapeCorner)
+    public static void removeTapeIfNecessary(@NotNull final World world, @NotNull BlockPos block, @NotNull Block tapeOrTapeCorner)
     {
         for (int y = MINHEIGHT; y <= MAXHEIGHT; y++)
         {

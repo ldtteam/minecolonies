@@ -940,7 +940,7 @@ public abstract class AbstractBuilding
      * @param pos of the block
      */
     @SuppressWarnings("squid:S1172")
-    public void registerBlockPosition(@NotNull Block block, @NotNull final BlockPos pos, @NotNull final World world)
+    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
         if (block instanceof BlockContainer)
         {
