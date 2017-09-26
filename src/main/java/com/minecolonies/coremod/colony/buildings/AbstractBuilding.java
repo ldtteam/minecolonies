@@ -429,7 +429,11 @@ public abstract class AbstractBuilding
         {
             final WorkOrderBuild workOrder = new WorkOrderBuild(building, 1);
             final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
-                    = ColonyUtils.calculateCorners(building.getLocation(), parent.getWorld(), workOrder.getStructureName(), building.rotation, building.isMirrored);
+                    = ColonyUtils.calculateCorners(building.getLocation(),
+                    parent.getWorld(),
+                    workOrder.getStructureName(),
+                    workOrder.getRotation(parent.getWorld()),
+                    workOrder.isMirrored());
             building.setCorners(corners.getFirst().getFirst(), corners.getFirst().getSecond(), corners.getSecond().getFirst(), corners.getSecond().getSecond());
             ConstructionTapeHelper.placeConstructionTape(building.getLocation(), corners, parent.getWorld());
         }
@@ -868,7 +872,11 @@ public abstract class AbstractBuilding
     {
         final WorkOrderBuild workOrder = new WorkOrderBuild(this, 1);
         final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
-                = ColonyUtils.calculateCorners(this.getLocation(), colony.getWorld(), workOrder.getStructureName(), this.rotation, this.isMirrored);
+                = ColonyUtils.calculateCorners(this.getLocation(),
+                colony.getWorld(),
+                workOrder.getStructureName(),
+                workOrder.getRotation(colony.getWorld()),
+                workOrder.isMirrored());
         this.setCorners(corners.getFirst().getFirst(), corners.getFirst().getSecond(), corners.getSecond().getFirst(), corners.getSecond().getSecond());
     }
 
