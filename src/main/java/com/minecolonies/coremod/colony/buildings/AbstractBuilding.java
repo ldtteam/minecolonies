@@ -84,12 +84,20 @@ public abstract class AbstractBuilding
     /**
      * The tag to store the style of the building.
      */
-    private static final String TAG_STYLE     = "style";
+    private static final String TAG_STYLE = "style";
 
     /**
      * Tag if the building has no workOrder.
      */
-    private static final int    NO_WORK_ORDER = 0;
+    private static final int NO_WORK_ORDER = 0;
+
+    /**
+     * Tags used to store the building corners to nbt and retrieve them.
+     */
+    private static final String TAG_CORNER1 = "corner1";
+    private static final String TAG_CORNER2 = "corner2";
+    private static final String TAG_CORNER3 = "corner3";
+    private static final String TAG_CORNER4 = "corner4";
 
     /**
      * A list which contains the position of all containers which belong to the worker building.
@@ -139,7 +147,6 @@ public abstract class AbstractBuilding
         addMapping("WareHouse", BuildingWareHouse.class, BuildingWareHouse.View.class, BlockHutWareHouse.class);
         addMapping("Barracks", BuildingBarracks.class, BuildingBarracks.View.class, BlockHutBarracks.class);
         addMapping("BarracksTower", BuildingBarracksTower.class, BuildingBarracksTower.View.class, BlockHutBarracksTower.class);
-
     }
 
     /**
@@ -236,10 +243,10 @@ public abstract class AbstractBuilding
      * @param parentBlock   subclass of Block, located in {@link com.minecolonies.coremod.blocks}.
      */
     private static void addMapping(
-                                    final String name,
-                                    @NotNull final Class<? extends AbstractBuilding> buildingClass,
-                                    @NotNull final Class<? extends AbstractBuilding.View> viewClass,
-                                    @NotNull final Class<? extends AbstractBlockHut> parentBlock)
+            final String name,
+            @NotNull final Class<? extends AbstractBuilding> buildingClass,
+            @NotNull final Class<? extends AbstractBuilding.View> viewClass,
+            @NotNull final Class<? extends AbstractBlockHut> parentBlock)
     {
         final int buildingHashCode = buildingClass.getName().hashCode();
 
@@ -320,7 +327,7 @@ public abstract class AbstractBuilding
         catch (final RuntimeException ex)
         {
             Log.getLogger().error(String.format("A Building %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-              compound.getString(TAG_BUILDING_TYPE), oclass.getName()), ex);
+                    compound.getString(TAG_BUILDING_TYPE), oclass.getName()), ex);
             building = null;
         }
 
@@ -348,8 +355,8 @@ public abstract class AbstractBuilding
         {
             final Structures.StructureName newStructureName = Structures.getStructureNameByMD5(md5);
             if (newStructureName != null
-                  && newStructureName.getPrefix().equals(sn.getPrefix())
-                  && newStructureName.getSchematic().equals(sn.getSchematic()))
+                    && newStructureName.getPrefix().equals(sn.getPrefix())
+                    && newStructureName.getSchematic().equals(sn.getSchematic()))
             {
                 //We found the new location for the schematic, update the style accordingly
                 style = newStructureName.getStyle();
@@ -370,6 +377,14 @@ public abstract class AbstractBuilding
             containerList.add(NBTUtil.getPosFromTag(containerCompound));
         }
         isMirrored = compound.getBoolean(TAG_MIRROR);
+
+        if (compound.hasKey(TAG_CORNER1))
+        {
+            this.cornerX1 = compound.getInteger(TAG_CORNER1);
+            this.cornerX2 = compound.getInteger(TAG_CORNER2);
+            this.cornerZ1 = compound.getInteger(TAG_CORNER3);
+            this.cornerZ2 = compound.getInteger(TAG_CORNER4);
+        }
     }
 
     /**
@@ -408,7 +423,7 @@ public abstract class AbstractBuilding
         {
             final WorkOrderBuild workOrder = new WorkOrderBuild(building, 1);
             final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
-            = ColonyUtils.calculateCorners(building.getLocation(), parent.getWorld(), workOrder.getStructureName(), building.rotation, building.isMirrored);
+                    = ColonyUtils.calculateCorners(building.getLocation(), parent.getWorld(), workOrder.getStructureName(), building.rotation, building.isMirrored);
             building.setCorners(corners.getFirst().getFirst(), corners.getFirst().getSecond(), corners.getSecond().getFirst(), corners.getSecond().getSecond());
             ConstructionTapeHelper.placeConstructionTape(building.getLocation(), corners, parent.getWorld());
         }
@@ -417,6 +432,7 @@ public abstract class AbstractBuilding
 
     /**
      * Sets the corners of the building based on the schematic.
+     *
      * @param x1 the first x corner.
      * @param x2 the second x corner.
      * @param z1 the first z corner.
@@ -432,6 +448,7 @@ public abstract class AbstractBuilding
 
     /**
      * Get all the corners of the building based on the schematic.
+     *
      * @return the corners.
      */
     public Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> getCorners()
@@ -482,8 +499,8 @@ public abstract class AbstractBuilding
         catch (final IndexOutOfBoundsException ex)
         {
             Log.getLogger().error(
-              String.format("A AbstractBuilding View (%s) has thrown an exception during deserializing, its state cannot be restored. Report this to the mod author",
-                oclass.getName()), ex);
+                    String.format("A AbstractBuilding View (%s) has thrown an exception during deserializing, its state cannot be restored. Report this to the mod author",
+                            oclass.getName()), ex);
             return null;
         }
 
@@ -546,6 +563,11 @@ public abstract class AbstractBuilding
         }
         compound.setTag(TAG_CONTAINERS, containerTagList);
         compound.setBoolean(TAG_MIRROR, isMirrored);
+
+        compound.setInteger(TAG_CORNER1, this.cornerX1);
+        compound.setInteger(TAG_CORNER2, this.cornerX2);
+        compound.setInteger(TAG_CORNER3, this.cornerZ1);
+        compound.setInteger(TAG_CORNER4, this.cornerZ2);
     }
 
     /**
@@ -681,7 +703,6 @@ public abstract class AbstractBuilding
 
     /**
      * Requests an upgrade for the current building.
-     * @param player
      */
     public void requestUpgrade(final EntityPlayer player)
     {
@@ -839,7 +860,7 @@ public abstract class AbstractBuilding
     {
         final WorkOrderBuild workOrder = new WorkOrderBuild(this, 1);
         final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
-                = ColonyUtils.calculateCorners(this.getLocation(), colony.getWorld(), workOrder.getUpgradeName(), this.rotation, this.isMirrored);
+                = ColonyUtils.calculateCorners(this.getLocation(), colony.getWorld(), workOrder.getStructureName(), this.rotation, this.isMirrored);
         this.setCorners(corners.getFirst().getFirst(), corners.getFirst().getSecond(), corners.getSecond().getFirst(), corners.getSecond().getSecond());
     }
 
