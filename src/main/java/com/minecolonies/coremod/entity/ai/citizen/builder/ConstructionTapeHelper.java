@@ -89,9 +89,6 @@ public final class ConstructionTapeHelper
         }
     }
 
-    //todo rethink this for decorations!
-    //todo wrapper which only calculates the borders!
-
     /**
      * Calculates the borders for the workOrderBuildDecoration and sends it to the placement.
      * @param workOrder the workOrder.
@@ -120,8 +117,9 @@ public final class ConstructionTapeHelper
     /**
      * Place construction tape.
      *
-     * @param building the building.
-     * @param world    the world.
+     * @param pos the building pos
+     * @param corners the corner positions.
+     * @param world the world.
      */
     public static void placeConstructionTape(final BlockPos pos, final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners, @NotNull World world)
     {
@@ -131,8 +129,8 @@ public final class ConstructionTapeHelper
             final IBlockState constructionTapeCorner = ModBlocks.blockConstructionTapeCorner.getDefaultState();
 
             final int x1 = corners.getFirst().getFirst();
-            final int z1 = corners.getFirst().getSecond();
-            final int x3 = corners.getSecond().getFirst();
+            final int x3 = corners.getFirst().getSecond();
+            final int z1 = corners.getSecond().getFirst();
             final int z3 = corners.getSecond().getSecond();
             final int y = pos.getY();
             int newY;
@@ -203,14 +201,14 @@ public final class ConstructionTapeHelper
     /**
      * Remove construction tape.
      *
-     * @param building the building.
+     * @param corners the corner positions.
      * @param world    the world.
      */
     public static void removeConstructionTape(final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners, @NotNull final World world)
     {
         final int x1 = corners.getFirst().getFirst();
-        final int z1 = corners.getFirst().getSecond();
-        final int x3 = corners.getSecond().getFirst();
+        final int x3 = corners.getFirst().getSecond();
+        final int z1 = corners.getSecond().getFirst();
         final int z3 = corners.getSecond().getSecond();
         if (x1 < x3)
         {
