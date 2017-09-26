@@ -106,11 +106,6 @@ public abstract class AbstractBuilding
     private static final String TAG_CORNER4 = "corner4";
 
     /**
-     * A list which contains the position of all containers which belong to the worker building.
-     */
-    private final List<BlockPos> containerList = new ArrayList<>();
-
-    /**
      * Map to resolve names to class.
      */
     @NotNull
@@ -760,16 +755,7 @@ public abstract class AbstractBuilding
         // Location doubles as ID.
         return location;
     }
-
-    /**
-     * Marks the instance and the building dirty.
-     */
-    public final void markDirty()
-    {
-        dirty = true;
-        colony.markBuildingsDirty();
-    }
-
+    
     /**
      * Checks if this building have a work order.
      *

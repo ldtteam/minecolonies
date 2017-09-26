@@ -2036,22 +2036,6 @@ public class Colony implements IColony
         willRaidTonight = willRaid;
     }
 
-
-    @Override
-    public boolean canBeAutoDeleted()
-    {
-        return canColonyBeAutoDeleted;
-    }
-
-    /**
-     * This sets whether or not a colony can be automatically deleted Via command, or an on-tick check.
-     * @param canBeDeleted whether the colony is able to be deleted automatically
-     */
-    public void setCanBeAutoDeleted(final Boolean canBeDeleted)
-    {
-        this.canColonyBeAutoDeleted = canBeDeleted;
-    }
-
     /**
      * Gets a random spot inside the colony, in the named direction, where the chunk is loaded.
      * @param directionX the first direction parameter.

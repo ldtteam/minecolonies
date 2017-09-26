@@ -9,6 +9,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingBarracks;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +27,7 @@ public final class MobEventsUtils
     private static final ResourceLocation ARCHER    = new ResourceLocation(Constants.MOD_ID, "ArcherBarbarian");
     private static final ResourceLocation CHIEF     = new ResourceLocation(Constants.MOD_ID, "ChiefBarbarian");
 
-    private static final int    MAX_SIZE                     = Configurations.maxBarbarianHordeSize;
+    private static final int    MAX_SIZE                     = Configurations.gameplay.maxBarbarianHordeSize;
     private static final double BARBARIANS_MULTIPLIER        = 0.5;
     private static final double ARCHER_BARBARIANS_MULTIPLIER = 0.25;
     private static final double CHIEF_BARBARIANS_MULTIPLIER  = 0.1;
@@ -236,6 +237,6 @@ public final class MobEventsUtils
      */
     private static boolean raidThisNight(final World world)
     {
-        return world.rand.nextDouble() < 1.0 / Configurations.averageNumberOfNightsBetweenRaids;
+        return world.rand.nextDouble() < 1.0 / Configurations.gameplay.averageNumberOfNightsBetweenRaids;
     }
 }
