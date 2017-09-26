@@ -260,22 +260,4 @@ public final class ConstructionTapeHelper
         removeTapeIfNecessary(world, corner3, ModBlocks.blockConstructionTapeCorner);
         removeTapeIfNecessary(world, corner4, ModBlocks.blockConstructionTapeCorner);
     }
-
-    /**
-     * @param world            the world.
-     * @param block            the block.
-     * @param tapeOrTapeCorner Is the checked block supposed to be ConstructionTape or ConstructionTapeCorner.
-     */
-    public static void removeTapeIfNecessary(@NotNull final World world, @NotNull final BlockPos block, @NotNull final Block tapeOrTapeCorner)
-    {
-        for (int y = MINHEIGHT; y <= MAXHEIGHT; y++)
-        {
-            final BlockPos newBlock = new BlockPos(block.getX(), y, block.getZ());
-            if (world.getBlockState(newBlock).getBlock() == tapeOrTapeCorner)
-            {
-                world.setBlockState(newBlock, Blocks.AIR.getDefaultState());
-                break;
-            }
-        }
-    }
 }

@@ -755,7 +755,7 @@ public abstract class AbstractBuilding
         // Location doubles as ID.
         return location;
     }
-    
+
     /**
      * Checks if this building have a work order.
      *
