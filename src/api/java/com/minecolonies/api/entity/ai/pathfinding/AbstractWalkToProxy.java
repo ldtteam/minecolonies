@@ -146,7 +146,7 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
                 return takeTheDirectPath(target, range, onMove);
             }
 
-            entity.getNavigator().clearPathEntity();
+            entity.getNavigator().clearPath();
             currentProxy = proxyList.get(0);
             proxyList.remove(0);
         }

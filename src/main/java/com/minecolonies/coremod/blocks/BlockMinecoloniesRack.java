@@ -192,7 +192,17 @@ public class BlockMinecoloniesRack extends Block
         return state.getValue(FACING).getHorizontalIndex();
     }
 
+    /**
+     * Does some action if a neighbor changes.
+     * @deprecated but we definitely need it.
+     * @param state the state.
+     * @param worldIn the world.
+     * @param pos the pos.
+     * @param blockIn the block.
+     * @param fromPos the changed ps.
+     */
     @Override
+    @Deprecated
     public void neighborChanged(final IBlockState state, final World worldIn, final BlockPos pos, final Block blockIn, final BlockPos fromPos)
     {
         if (state.getBlock() instanceof BlockMinecoloniesRack)
@@ -213,7 +223,7 @@ public class BlockMinecoloniesRack extends Block
 
     /**
      * This returns a complete list of items dropped from this block.
-     *
+     * @deprecated but we still need it.
      * @param world   The current world
      * @param pos     Block position in world
      * @param state   Current state
@@ -221,6 +231,7 @@ public class BlockMinecoloniesRack extends Block
      * @return A ArrayList containing all items this block drops
      */
     @Override
+    @Deprecated
     public List<ItemStack> getDrops(final IBlockAccess world, final BlockPos pos, final IBlockState state, final int fortune)
     {
         final List<ItemStack> drops = new ArrayList<>();

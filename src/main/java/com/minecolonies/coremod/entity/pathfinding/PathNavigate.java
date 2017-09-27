@@ -167,7 +167,7 @@ public class PathNavigate extends PathNavigateGround
             final BlockPos dest,
             final double speed)
     {
-        clearPathEntity();
+        clearPath();
 
         this.destination = dest;
         this.originalDestination = dest;
@@ -372,7 +372,7 @@ public class PathNavigate extends PathNavigateGround
     }
 
     @Override
-    public void clearPathEntity()
+    public void clearPath()
     {
         if (future != null)
         {
@@ -387,7 +387,7 @@ public class PathNavigate extends PathNavigateGround
         }
 
         destination = null;
-        super.clearPathEntity();
+        super.clearPath();
     }
 
     /**

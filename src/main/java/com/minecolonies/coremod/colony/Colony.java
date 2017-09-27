@@ -2045,7 +2045,7 @@ public class Colony implements IColony
     {
         willRaidTonight = willRaid;
     }
-    
+
     @Override
     public boolean canBeAutoDeleted()
     {
