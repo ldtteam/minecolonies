@@ -85,7 +85,7 @@ public class EntityAIGateInteract extends EntityAIBase
     @Override
     public boolean shouldExecute()
     {
-        return this.theEntity.isCollidedHorizontally && checkPath();
+        return this.theEntity.collidedHorizontally && checkPath();
     }
 
     /**

@@ -320,7 +320,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
                     if (worker.getColony() != null && worker.getColony().getPermissions().hasPermission((EntityPlayer) entity, Action.GUARDS_ATTACK))
                     {
                         targetEntity = (EntityLivingBase) entity;
-                        worker.getNavigator().clearPathEntity();
+                        worker.getNavigator().clearPath();
                         return AIState.GUARD_HUNT_DOWN_TARGET;
                     }
                     entityList.remove(0);
@@ -331,7 +331,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
                 {
                     worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.hunting"));
 
-                    worker.getNavigator().clearPathEntity();
+                    worker.getNavigator().clearPath();
                     targetEntity = (EntityLivingBase) entity;
                     return AIState.GUARD_HUNT_DOWN_TARGET;
                 }
@@ -615,7 +615,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
         final Colony colony = this.getOwnBuilding().getColony();
         colony.incrementStatistic("mobs");
         this.incrementActionsDone();
-        worker.getNavigator().clearPathEntity();
+        worker.getNavigator().clearPath();
     }
 
     /**

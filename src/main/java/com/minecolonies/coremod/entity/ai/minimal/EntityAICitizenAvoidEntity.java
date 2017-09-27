@@ -158,7 +158,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
             return;
         }
 
-        if (theEntity.getDistanceSqToEntity(closestLivingEntity) < TOO_CLOSE_TO_MOB)
+        if (theEntity.getDistance(closestLivingEntity) < TOO_CLOSE_TO_MOB)
         {
             theEntity.getNavigator().setSpeed(nearSpeed);
         }

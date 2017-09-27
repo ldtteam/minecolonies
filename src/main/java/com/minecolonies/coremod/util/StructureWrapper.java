@@ -7,6 +7,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
+import com.minecolonies.coremod.blocks.BlockWaypoint;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.placementhandlers.IPlacementHandler;
 import com.minecolonies.coremod.placementhandlers.PlacementHandlers;
@@ -399,7 +400,8 @@ public final class StructureWrapper
             return BlockMinecoloniesRack.shouldBlockBeReplacedWithRack(structureBlock);
         }
         else if ((structureBlock instanceof BlockStairs && structureBlockState == worldBlockState)
-                || BlockUtils.isGrassOrDirt(structureBlock, worldBlock, structureBlockState, worldBlockState))
+                || BlockUtils.isGrassOrDirt(structureBlock, worldBlock, structureBlockState, worldBlockState)
+                || structureBlock instanceof BlockWaypoint)
         {
             return true;
         }

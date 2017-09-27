@@ -161,7 +161,6 @@ public final class BarbarianSpawnUtils
      */
     public static void spawn(final ResourceLocation entityToSpawn, final int numberOfSpawns, final BlockPos spawnLocation, final World world)
     {
-
         if (spawnLocation != null && entityToSpawn != null && world != null)
         {
 
