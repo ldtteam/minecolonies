@@ -1118,7 +1118,7 @@ public class Colony implements IColony
             //  Spawn Citizens
             if (townHall != null && citizens.size() < maxCitizens)
             {
-                int respawnInterval = Configurations.gameplay.citizenRespawnInterval * 20;
+                int respawnInterval = Configurations.gameplay.citizenRespawnInterval * TICKS_SECOND;
                 respawnInterval -= (60 * townHall.getBuildingLevel());
 
                 if (event.world.getTotalWorldTime() % respawnInterval == 0)
