@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.requestsystem.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.StandardRequestManager;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.MineColoniesAchievement;
 import com.minecolonies.coremod.colony.buildings.*;
@@ -1119,7 +1118,7 @@ public class Colony implements IColony
             if (townHall != null && citizens.size() < maxCitizens)
             {
                 int respawnInterval = Configurations.gameplay.citizenRespawnInterval * TICKS_SECOND;
-                respawnInterval -= (60 * townHall.getBuildingLevel());
+                respawnInterval -= (SECONDS_A_MINUTE * townHall.getBuildingLevel());
 
                 if (event.world.getTotalWorldTime() % respawnInterval == 0)
                 {
