@@ -66,6 +66,11 @@ public final class MobEventsUtils
 
         final BlockPos targetSpawnPoint = calculateSpawnLocation(world, colony);
 
+        if(targetSpawnPoint.equals(colony.getCenter()))
+        {
+            return;
+        }
+
         if (Configurations.gameplay.enableInDevelopmentFeatures)
         {
             LanguageHandler.sendPlayersMessage(
@@ -133,6 +138,11 @@ public final class MobEventsUtils
         final BlockPos pos = colony.getRandomOutsiderInDirection(
                 random.nextInt(2) < 1 ? EnumFacing.EAST : EnumFacing.WEST,
                 random.nextInt(2) < 1 ? EnumFacing.NORTH : EnumFacing.SOUTH);
+
+        if(pos.equals(colony.getCenter()))
+        {
+            return colony.getCenter();
+        }
 
         return BlockPosUtil.findLand(pos, world);
     }
