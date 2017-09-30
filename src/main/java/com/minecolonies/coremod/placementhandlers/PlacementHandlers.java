@@ -291,7 +291,7 @@ public final class PlacementHandlers
 
             if (placer != null)
             {
-                placer.handleFlowerPots(pos);
+                placer.handleTileEntityPlacement(pos);
             }
             return blockState;
         }
@@ -452,6 +452,11 @@ public final class PlacementHandlers
             if (!world.setBlockState(pos, blockState, 0x03))
             {
                 return ActionProcessingResult.DENY;
+            }
+
+            if(placer != null)
+            {
+                placer.handleTileEntityPlacement(pos);
             }
 
             return blockState;

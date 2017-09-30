@@ -21,6 +21,8 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFlowerPot;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
@@ -247,11 +249,12 @@ public final class StructureWrapper
                         delayedBlocks.add(localPos);
                     }
 
-                    if (this.structure.getBlockInfo(localPos).tileentityData != null && world.getTileEntity(worldPos) instanceof TileEntityFlowerPot)
+                    if (this.structure.getBlockInfo(localPos).tileentityData != null)
                     {
-                        final TileEntityFlowerPot tileentityflowerpot = (TileEntityFlowerPot) world.getTileEntity(worldPos);
-                        tileentityflowerpot.readFromNBT(this.structure.getBlockInfo(localPos).tileentityData);
-                        world.setTileEntity(worldPos, tileentityflowerpot);
+                        final NBTTagCompound tileEntityData = this.structure.getBlockInfo(localPos).tileentityData;
+                        final TileEntity entity = TileEntity.create(world, tileEntityData);
+                        world.setTileEntity(worldPos, entity);
+                        world.markBlockRangeForRenderUpdate(worldPos, worldPos);
                     }
                 }
             }

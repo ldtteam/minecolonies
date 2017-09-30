@@ -504,11 +504,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     }
 
     @Override
-    public void handleFlowerPots(@NotNull final BlockPos pos)
+    public void handleTileEntityPlacement(@NotNull final BlockPos pos)
     {
         if (job.getStructure().getBlockInfo().tileentityData != null)
         {
-            final TileEntityFlowerPot tileentityflowerpot = (TileEntityFlowerPot) world.getTileEntity(pos);
+            final TileEntity tileentityflowerpot = world.getTileEntity(pos);
             tileentityflowerpot.readFromNBT(job.getStructure().getBlockInfo().tileentityData);
             world.setTileEntity(pos, tileentityflowerpot);
         }
