@@ -1234,7 +1234,7 @@ public class Colony implements IColony
             //  Cleanup disappeared citizens
             //  It would be really nice if we didn't have to do this... but Citizens can disappear without dying!
             //  Every CITIZEN_CLEANUP_TICK_INCREMENT, cleanup any 'lost' citizens
-            if ((event.world.getWorldTime() % CITIZEN_CLEANUP_TICK_INCREMENT) == 0 && areAllColonyChunksLoaded(event) && townHall != null)
+            if ((event.world.getTotalWorldTime() % CITIZEN_CLEANUP_TICK_INCREMENT) == 0 && areAllColonyChunksLoaded(event) && townHall != null)
             {
                 //  All chunks within a good range of the colony should be loaded, so all citizens should be loaded
                 //  If we don't have any references to them, destroy the citizen
@@ -1250,7 +1250,7 @@ public class Colony implements IColony
                 int respawnInterval = Configurations.citizenRespawnInterval * TICKS_SECOND;
                 respawnInterval -= (SECONDS_A_MINUTE * townHall.getBuildingLevel());
 
-                if (event.world.getWorldTime() % Math.max(1, respawnInterval) == 0)
+                if (event.world.getTotalWorldTime() % respawnInterval == 0)
                 {
                     spawnCitizen();
                 }
