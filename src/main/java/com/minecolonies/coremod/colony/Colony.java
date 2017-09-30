@@ -1104,7 +1104,7 @@ public class Colony implements IColony
             //  Cleanup disappeared citizens
             //  It would be really nice if we didn't have to do this... but Citizens can disappear without dying!
             //  Every CITIZEN_CLEANUP_TICK_INCREMENT, cleanup any 'lost' citizens
-            if ((event.world.getTotalWorldTime() % CITIZEN_CLEANUP_TICK_INCREMENT) == 0 && areAllColonyChunksLoaded(event) && townHall != null)
+            if (shallUpdate(event.world) && areAllColonyChunksLoaded(event) && townHall != null)
             {
                 //  All chunks within a good range of the colony should be loaded, so all citizens should be loaded
                 //  If we don't have any references to them, destroy the citizen
@@ -1150,6 +1150,18 @@ public class Colony implements IColony
 
         updateWayPoints();
         workManager.onWorldTick(event);
+    }
+
+    /**
+     * Calculate randomly if the colony should update the citizens.
+     * By mean they update it at CITIZEN_CLEANUP_TICK_INCREMENT.
+     *
+     * @param world the world.
+     * @return a boolean by random.
+     */
+    private static boolean shallUpdate(final World world)
+    {
+        return world.getWorldTime() % new Random().nextInt(CITIZEN_CLEANUP_TICK_INCREMENT*2) == 0;
     }
 
     private void updateOverallHappiness()
