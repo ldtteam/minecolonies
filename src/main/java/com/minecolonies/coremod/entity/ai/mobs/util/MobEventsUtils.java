@@ -57,6 +57,11 @@ public final class MobEventsUtils
 
     public static void barbarianEvent(final World world, final Colony colony)
     {
+        if(world == null)
+        {
+            return;
+        }
+
         numberOfSpawns(colony);
 
         final BlockPos targetSpawnPoint = calculateSpawnLocation(world, colony);

@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.requestsystem.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.StandardRequestManager;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.MineColoniesAchievement;
 import com.minecolonies.coremod.colony.buildings.*;
@@ -55,7 +56,7 @@ import static com.minecolonies.api.util.constant.Constants.*;
 public class Colony implements IColony
 {
     //  Settings
-    private static final int    CITIZEN_CLEANUP_TICK_INCREMENT = 5 * 20;
+    private static final int    CITIZEN_CLEANUP_TICK_INCREMENT = 5 * TICKS_SECOND;
     private static final String TAG_ID                         = "id";
     private static final String TAG_NAME                       = "name";
     private static final String TAG_DIMENSION                  = "dimension";
@@ -117,7 +118,7 @@ public class Colony implements IColony
     /**
      * Amount of ticks that pass/hour.
      */
-    private static final int TICKS_HOUR = 20 * 60 * 60;
+    private static final int TICKS_HOUR = TICKS_SECOND * SECONDS_A_MINUTE * SECONDS_A_MINUTE;
 
     /**
      * Average happiness of a citizen.
@@ -1126,7 +1127,18 @@ public class Colony implements IColony
                 }
             }
 
-            if (event.world.getDifficulty() != EnumDifficulty.PEACEFUL && Configurations.gameplay.doBarbariansSpawn && MobEventsUtils.isItTimeToRaid(event.world, this))
+            subscribers = new HashSet<>();
+
+            // Add owners
+            world.getMinecraftServer().getPlayerList().getPlayerList()
+                    .stream()
+                    .filter(permissions::isSubscriber)
+                    .forEachOrdered(subscribers::add);
+
+            if (event.world.getDifficulty() != EnumDifficulty.PEACEFUL
+                    && Configurations.doBarbariansSpawn
+                    && !subscribers.isEmpty()
+                    && MobEventsUtils.isItTimeToRaid(event.world, this))
             {
                 MobEventsUtils.barbarianEvent(event.world, this);
             }
