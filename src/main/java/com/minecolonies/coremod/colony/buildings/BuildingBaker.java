@@ -340,6 +340,10 @@ public class BuildingBaker extends AbstractBuildingWorker
                 i++;
                 tag = TAG_FURNACE_POS + i;
 
+                if(furnaces.isEmpty())
+                {
+                    Log.getLogger().warn("AAAAAAAAAAAH EMPPPTTYY WHHHYYY???");
+                }
                 Log.getLogger().warn(getColony().getName() +  " Added furnace: " + pos.toString());
             }
 
@@ -413,6 +417,7 @@ public class BuildingBaker extends AbstractBuildingWorker
             final IBlockState furnace = worldObj.getBlockState(entry.getKey());
             if(!(furnace.getBlock() instanceof BlockFurnace))
             {
+                Log.getLogger().warn("Remove this from the furnaces, this isn't a furnace!!!!!!");
                 this.removeFromFurnaces(entry.getKey());
                 continue;
             }
