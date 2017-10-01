@@ -1260,13 +1260,13 @@ public class Colony implements IColony
             subscribers = new HashSet<>();
 
             // Add owners
-            world.getMinecraftServer().getPlayerList().getPlayerList()
+            world.getMinecraftServer().getPlayerList().getPlayers()
                     .stream()
                     .filter(permissions::isSubscriber)
                     .forEachOrdered(subscribers::add);
 
             if (event.world.getDifficulty() != EnumDifficulty.PEACEFUL
-                    && Configurations.doBarbariansSpawn
+                    && Configurations.gameplay.doBarbariansSpawn
                     && !subscribers.isEmpty()
                     && MobEventsUtils.isItTimeToRaid(event.world, this))
             {
@@ -2119,6 +2119,11 @@ public class Colony implements IColony
             final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = theBuilding.getCorners();
             minDistance
                     = Math.max(corners.getFirst().getFirst() - corners.getFirst().getSecond(), corners.getSecond().getFirst() - corners.getSecond().getSecond());
+        }
+
+        if(thePos.equals(center))
+        {
+            return center;
         }
 
         int radius = DEFAULT_SPAWN_RADIUS;
