@@ -164,6 +164,7 @@ public class BuildingHome extends AbstractBuildingHut
         {
             citizen.setHomeBuilding(null);
             residents.remove(citizen);
+            markDirty();
         }
     }
 

@@ -483,9 +483,10 @@ public class CitizenData
         if (homeBuilding != null && building != null && !homeBuilding.equals(building))
         {
             homeBuilding.removeCitizen(this);
+            markDirty();
         }
 
-        if (building instanceof BuildingHome || building instanceof BuildingBarracksTower)
+        if (building == null || building instanceof BuildingHome || building instanceof BuildingBarracksTower)
         {
             homeBuilding = building;
             markDirty();
