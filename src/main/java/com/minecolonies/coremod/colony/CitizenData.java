@@ -274,16 +274,11 @@ public class CitizenData
         {
             return false;
         }
-        if (name != null ? !name.equals(data.name) : data.name != null)
+        if (name != null ? !name.equals(data.name) : (data.name != null))
         {
             return false;
         }
-        if (colony != null ? !colony.equals(data.colony) : data.colony != null)
-        {
-            return false;
-        }
-
-        return true;
+        return colony != null ? (data.colony != null && colony.getID() == data.colony.getID()) : (data.colony == null);
     }
 
     @Override
