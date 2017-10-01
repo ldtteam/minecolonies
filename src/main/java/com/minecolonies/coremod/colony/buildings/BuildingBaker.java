@@ -21,6 +21,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -415,9 +416,13 @@ public class BuildingBaker extends AbstractBuildingWorker
         for(final Map.Entry<BlockPos, BakingProduct> entry: copyOfList)
         {
             final IBlockState furnace = worldObj.getBlockState(entry.getKey());
-            if(!(furnace.getBlock() instanceof BlockFurnace))
+            if(!(furnace.getBlock() instanceof BlockFurnace) && !(worldObj.getTileEntity(entry.getKey()) instanceof TileEntityFurnace))
             {
                 Log.getLogger().warn("Remove this from the furnaces, this isn't a furnace!!!!!!" + furnace.getBlock().getLocalizedName());
+                if(!worldObj.isBlockLoaded(entry.getKey()))
+                {
+                    Log.getLogger().warn("The are isn't loaded yet dumbass: " + furnace.getBlock().getLocalizedName());
+                }
                 this.removeFromFurnaces(entry.getKey());
                 continue;
             }
