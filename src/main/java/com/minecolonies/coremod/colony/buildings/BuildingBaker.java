@@ -328,10 +328,19 @@ public class BuildingBaker extends AbstractBuildingWorker
                 final BlockPos pos = BlockPosUtil.readFromNBT(compound, tag);
                 Log.getLogger().warn(getColony().getName() +  " Retrieving furnace: " + pos.toString());
 
-                final BakingProduct bakingProduct = BakingProduct.createFromNBT(compound, i);
-                furnaces.put(pos, bakingProduct);
+                try
+                {
+                    final BakingProduct bakingProduct = BakingProduct.createFromNBT(compound, i);
+                    furnaces.put(pos, bakingProduct);
+                }
+                catch(RuntimeException e)
+                {
+                    Log.getLogger().warn("Things went down: " + e);
+                }
                 i++;
                 tag = TAG_FURNACE_POS + i;
+
+                Log.getLogger().warn(getColony().getName() +  " Added furnace: " + pos.toString());
             }
 
         }
