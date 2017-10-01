@@ -458,18 +458,30 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public void setLatestStatus(final ITextComponent...status)
     {
+        boolean hasChanged = false;
         for(int i = 0; i < latestStatus.length; i++)
         {
+            ITextComponent newStatus;
             if(i >= status.length)
             {
-                latestStatus[i] = null;
+                newStatus = null;
             }
             else
             {
-                latestStatus[i] = status[i];
+                newStatus = status[i];
+            }
+
+            if(!Objects.equals(latestStatus[i], newStatus))
+            {
+                latestStatus[i] = newStatus;
+                hasChanged = true;
             }
         }
-        citizenData.markDirty();
+
+        if(hasChanged)
+        {
+            citizenData.markDirty();
+        }
     }
 
     /**
