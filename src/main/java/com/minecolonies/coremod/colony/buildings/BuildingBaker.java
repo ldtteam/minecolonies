@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutBaker;
 import com.minecolonies.coremod.colony.CitizenData;
@@ -269,20 +270,19 @@ public class BuildingBaker extends AbstractBuildingWorker
         }
         compound.setTag(TAG_TASKS, tasksTagList);
 
-        @NotNull final NBTTagList furnacesTagList = new NBTTagList();
+        int i = 0;
         for (@NotNull final Map.Entry<BlockPos, BakingProduct> entry : furnaces.entrySet())
         {
-            @NotNull final NBTTagCompound furnaceCompound = new NBTTagCompound();
-            BlockPosUtil.writeToNBT(furnaceCompound, TAG_FURNACE_POS, entry.getKey());
+            Log.getLogger().warn(getColony().getName() + " Storing furnace: " + entry.getKey().toString());
 
+            final String furnaceCompound = TAG_FURNACE_POS + i;
+            BlockPosUtil.writeToNBT(compound, furnaceCompound, entry.getKey());
             if(entry.getValue() != null)
             {
-                entry.getValue().writeToNBT(furnaceCompound);
+                entry.getValue().writeToNBT(compound, i);
             }
-
-            furnacesTagList.appendTag(furnaceCompound);
+            i++;
         }
-        compound.setTag(TAG_FURNACES, furnacesTagList);
     }
 
     @Override
@@ -315,6 +315,25 @@ public class BuildingBaker extends AbstractBuildingWorker
             final BlockPos pos = BlockPosUtil.readFromNBT(furnaceCompound, TAG_FURNACE_POS);
             final BakingProduct bakingProduct = BakingProduct.createFromNBT(furnaceCompound);
             furnaces.put(pos, bakingProduct);
+        }
+
+        if(furnaces.isEmpty())
+        {
+            Log.getLogger().warn(getColony().getName() + " Retrieving furnaces: ");
+
+            int i = 0;
+            String tag = TAG_FURNACE_POS + i;
+            while(compound.hasKey(tag))
+            {
+                final BlockPos pos = BlockPosUtil.readFromNBT(compound, tag);
+                Log.getLogger().warn(getColony().getName() +  " Retrieving furnace: " + pos.toString());
+
+                final BakingProduct bakingProduct = BakingProduct.createFromNBT(compound, i);
+                furnaces.put(pos, bakingProduct);
+                i++;
+                tag = TAG_FURNACE_POS + i;
+            }
+
         }
     }
 
