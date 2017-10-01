@@ -179,7 +179,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
-        workers.clear();
         if (compound.hasKey(TAG_WORKER))
         {
             try
