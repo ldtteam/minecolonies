@@ -111,7 +111,7 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     @Override
     protected void entityInit()
     {
-        worldTimeAtSpawn = world.getTotalWorldTime();
+        worldTimeAtSpawn = worldObj.getTotalWorldTime();
         this.enablePersistence();
         super.entityInit();
     }
@@ -121,7 +121,7 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     {
         final SoundEvent soundevent = this.getAmbientSound();
 
-        if (soundevent != null && world.rand.nextInt(OUT_OF_ONE_HUNDRED) <= ONE)
+        if (soundevent != null && worldObj.rand.nextInt(OUT_OF_ONE_HUNDRED) <= ONE)
         {
             this.playSound(soundevent, this.getSoundVolume(), this.getSoundPitch());
         }
@@ -144,7 +144,7 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     @Override
     protected boolean canDespawn()
     {
-        if(worldTimeAtSpawn != 0 && worldTimeAtSpawn - world.getTotalWorldTime() >= TICKS_TO_DESPAWN)
+        if(worldTimeAtSpawn != 0 && worldTimeAtSpawn - worldObj.getTotalWorldTime() >= TICKS_TO_DESPAWN)
         {
             return true;
         }
@@ -177,7 +177,7 @@ public abstract class AbstractEntityBarbarian extends EntityMob
         if(random.nextInt(EVERY_X_TICKS) % currentTick == 0)
         {
             if (this.getHeldItemMainhand() != null && SPEED_EFFECT != null && this.getHeldItemMainhand().getItem() instanceof ItemChiefSword
-                    && Configurations.gameplay.barbarianHordeDifficulty >= BARBARIAN_HORDE_DIFFICULTY_FIVE
+                    && Configurations.barbarianHordeDifficulty >= BARBARIAN_HORDE_DIFFICULTY_FIVE
                     && currentCount <= 0)
             {
                 final Stream<AbstractEntityBarbarian> barbarians = BarbarianUtils.getBarbariansCloseToEntity(this, SPEED_EFFECT_DISTANCE).stream();
@@ -209,7 +209,7 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     }
 
     @Override
-    protected SoundEvent getHurtSound(final DamageSource damageSourceIn)
+    protected SoundEvent getHurtSound()
     {
         return BarbarianSounds.barbarianHurt;
     }
@@ -230,10 +230,10 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     @Override
     protected void onDeathUpdate()
     {
-        if (!(this.getAttackingEntity() instanceof EntityPlayer) && (this.recentlyHit > 0 && this.canDropLoot() && world.getGameRules().getBoolean("doMobLoot")))
+        if (!(this.getAttackingEntity() instanceof EntityPlayer) && (this.recentlyHit > 0 && this.canDropLoot() && worldObj.getGameRules().getBoolean("doMobLoot")))
         {
             final int experience = EntityXPOrb.getXPSplit(BARBARIAN_EXP_DROP);
-            CompatibilityUtils.spawnEntity(world, new EntityXPOrb(world, this.posX, this.posY, this.posZ, experience));
+            CompatibilityUtils.spawnEntity(worldObj, new EntityXPOrb(worldObj, this.posX, this.posY, this.posZ, experience));
         }
         super.onDeathUpdate();
     }

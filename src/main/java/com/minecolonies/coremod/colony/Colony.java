@@ -1260,13 +1260,13 @@ public class Colony implements IColony
             subscribers = new HashSet<>();
 
             // Add owners
-            world.getMinecraftServer().getPlayerList().getPlayers()
+            world.getMinecraftServer().getPlayerList().getPlayerList()
                     .stream()
                     .filter(permissions::isSubscriber)
                     .forEachOrdered(subscribers::add);
 
             if (event.world.getDifficulty() != EnumDifficulty.PEACEFUL
-                    && Configurations.gameplay.doBarbariansSpawn
+                    && Configurations.doBarbariansSpawn
                     && !subscribers.isEmpty()
                     && MobEventsUtils.isItTimeToRaid(event.world, this))
             {
