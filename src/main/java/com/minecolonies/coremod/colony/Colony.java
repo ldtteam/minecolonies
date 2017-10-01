@@ -1172,7 +1172,7 @@ public class Colony implements IColony
      */
     private static boolean shallUpdate(final World world)
     {
-        return world.getWorldTime() % new Random().nextInt(CITIZEN_CLEANUP_TICK_INCREMENT*2) == 0;
+        return world.getWorldTime() % (new Random().nextInt(CITIZEN_CLEANUP_TICK_INCREMENT*2) + 1) == 0;
     }
 
     private void updateOverallHappiness()
