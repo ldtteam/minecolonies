@@ -1132,7 +1132,7 @@ public class Colony implements IColony
             world.getMinecraftServer().getPlayerList().getPlayers()
                     .stream()
                     .filter(permissions::isSubscriber)
-                    .forEachOrdered(subscribers::add);
+                    .forEach(subscribers::add);
 
             if (event.world.getDifficulty() != EnumDifficulty.PEACEFUL
                     && Configurations.gameplay.doBarbariansSpawn
@@ -1172,7 +1172,7 @@ public class Colony implements IColony
      */
     private static boolean shallUpdate(final World world)
     {
-        return world.getWorldTime() % (new Random().nextInt(CITIZEN_CLEANUP_TICK_INCREMENT*2) + 1) == 0;
+        return world.getWorldTime() % (world.rand.nextInt(CITIZEN_CLEANUP_TICK_INCREMENT*2) + 1) == 0;
     }
 
     private void updateOverallHappiness()
