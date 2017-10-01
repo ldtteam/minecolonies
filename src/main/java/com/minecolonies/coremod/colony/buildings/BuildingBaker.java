@@ -21,6 +21,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -270,19 +271,19 @@ public class BuildingBaker extends AbstractBuildingWorker
         }
         compound.setTag(TAG_TASKS, tasksTagList);
 
-        int i = 0;
+        @NotNull final NBTTagList furnacesTagList = new NBTTagList();
         for (@NotNull final Map.Entry<BlockPos, BakingProduct> entry : furnaces.entrySet())
         {
-            Log.getLogger().warn(getColony().getName() + " Storing furnace: " + entry.getKey().toString());
+            @NotNull final NBTTagCompound furnaceCompound = new NBTTagCompound();
+            BlockPosUtil.writeToNBT(furnaceCompound, TAG_FURNACE_POS, entry.getKey());
 
-            final String furnaceCompound = TAG_FURNACE_POS + i;
-            BlockPosUtil.writeToNBT(compound, furnaceCompound, entry.getKey());
             if(entry.getValue() != null)
             {
-                entry.getValue().writeToNBT(compound, i);
+                entry.getValue().writeToNBT(furnaceCompound);
             }
-            i++;
+            furnacesTagList.appendTag(furnaceCompound);
         }
+        compound.setTag(TAG_FURNACES, furnacesTagList);
     }
 
     @Override
@@ -315,38 +316,6 @@ public class BuildingBaker extends AbstractBuildingWorker
             final BlockPos pos = BlockPosUtil.readFromNBT(furnaceCompound, TAG_FURNACE_POS);
             final BakingProduct bakingProduct = BakingProduct.createFromNBT(furnaceCompound);
             furnaces.put(pos, bakingProduct);
-        }
-
-        if(furnaces.isEmpty())
-        {
-            Log.getLogger().warn(getColony().getName() + " Retrieving furnaces: ");
-
-            int i = 0;
-            String tag = TAG_FURNACE_POS + i;
-            while(compound.hasKey(tag))
-            {
-                final BlockPos pos = BlockPosUtil.readFromNBT(compound, tag);
-                Log.getLogger().warn(getColony().getName() +  " Retrieving furnace: " + pos.toString());
-
-                try
-                {
-                    final BakingProduct bakingProduct = BakingProduct.createFromNBT(compound, i);
-                    furnaces.put(pos, bakingProduct);
-                }
-                catch(RuntimeException e)
-                {
-                    Log.getLogger().warn("Things went down: " + e);
-                }
-                i++;
-                tag = TAG_FURNACE_POS + i;
-
-                if(furnaces.isEmpty())
-                {
-                    Log.getLogger().warn("AAAAAAAAAAAH EMPPPTTYY WHHHYYY???");
-                }
-                Log.getLogger().warn(getColony().getName() +  " Added furnace: " + pos.toString());
-            }
-
         }
     }
 
@@ -417,7 +386,11 @@ public class BuildingBaker extends AbstractBuildingWorker
             final IBlockState furnace = worldObj.getBlockState(entry.getKey());
             if(!(furnace.getBlock() instanceof BlockFurnace))
             {
-                Log.getLogger().warn("Remove this from the furnaces, this isn't a furnace!!!!!!");
+                if(worldObj.getTileEntity(entry.getKey()) instanceof TileEntityFurnace)
+                {
+                    return;
+                }
+                Log.getLogger().warn(getColony().getName() + " Removed furnace at: " + entry.getKey() + " because it went missing!");
                 this.removeFromFurnaces(entry.getKey());
                 continue;
             }

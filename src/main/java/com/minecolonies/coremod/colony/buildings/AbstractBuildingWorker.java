@@ -204,19 +204,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
                 }
             }
         }
-
-        int i = 0;
-        while(compound.hasKey(TAG_ID + i))
-        {
-            final CitizenData data = getColony().getCitizen(compound.getInteger(TAG_ID + i));
-            if (data != null)
-            {
-                data.setWorkBuilding(this);
-                workers.add(data);
-                Log.getLogger().warn(getColony().getName() + " Added worker: " + data.getName());
-            }
-            i++;
-        }
     }
 
 
@@ -227,13 +214,14 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
 
         if (!workers.isEmpty())
         {
-            int i = 0;
+            @NotNull final NBTTagList workersTagList = new NBTTagList();
             for (@NotNull final CitizenData data : workers)
             {
-                compound.setInteger(TAG_ID + i, data.getId());
-                Log.getLogger().warn(getColony().getName() + " Stored worker: " + data.getName());
-                i++;
+                final NBTTagCompound idCompound = new NBTTagCompound();
+                idCompound.setInteger(TAG_ID, data.getId());
+                workersTagList.appendTag(idCompound);
             }
+            compound.setTag(TAG_WORKER, workersTagList);
         }
     }
 

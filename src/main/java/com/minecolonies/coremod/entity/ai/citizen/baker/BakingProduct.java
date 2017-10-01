@@ -144,25 +144,6 @@ public class BakingProduct
     }
 
     /**
-     * Create the product from NBT.
-     * @param productCompound the compound to use.
-     * @param i the iteration.
-     * @return the restored BakingProduct.
-     */
-    public static BakingProduct createFromNBT(final NBTTagCompound productCompound, final int i)
-    {
-        if(productCompound.hasKey(TAG_STATE + i))
-        {
-            final ProductState state = ProductState.values()[productCompound.getInteger(TAG_STATE + i)];
-            final int recipeId = productCompound.getInteger(TAG_RECIPE_ID + i);
-            final BakingProduct bakingProduct = new BakingProduct(ItemStack.loadItemStackFromNBT(productCompound), recipeId);
-            bakingProduct.setState(state);
-            return bakingProduct;
-        }
-        return null;
-    }
-
-    /**
      * Write the BakingProduct to NBT.
      * @param productCompound the compound to write it to.
      */
@@ -170,18 +151,6 @@ public class BakingProduct
     {
         productCompound.setInteger(TAG_STATE, state.ordinal());
         productCompound.setInteger(TAG_RECIPE_ID, recipeId);
-        endProduct.writeToNBT(productCompound);
-    }
-
-    /**
-     * Write the BakingProduct to NBT.
-     * @param productCompound the compound to write it to.
-     * @param i the iteration.
-     */
-    public void writeToNBT(final NBTTagCompound productCompound, final int i)
-    {
-        productCompound.setInteger(TAG_STATE + i, state.ordinal());
-        productCompound.setInteger(TAG_RECIPE_ID + i, recipeId);
         endProduct.writeToNBT(productCompound);
     }
 
