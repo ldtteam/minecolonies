@@ -417,7 +417,7 @@ public class BuildingBaker extends AbstractBuildingWorker
             final IBlockState furnace = worldObj.getBlockState(entry.getKey());
             if(!(furnace.getBlock() instanceof BlockFurnace))
             {
-                Log.getLogger().warn("Remove this from the furnaces, this isn't a furnace!!!!!!");
+                Log.getLogger().warn("Remove this from the furnaces, this isn't a furnace!!!!!!" + furnace.getBlock().getLocalizedName());
                 this.removeFromFurnaces(entry.getKey());
                 continue;
             }
