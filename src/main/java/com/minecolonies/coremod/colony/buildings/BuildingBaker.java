@@ -384,7 +384,7 @@ public class BuildingBaker extends AbstractBuildingWorker
         for(final Map.Entry<BlockPos, BakingProduct> entry: copyOfList)
         {
             final IBlockState furnace = worldObj.getBlockState(entry.getKey());
-            if(!(furnace.getBlock() instanceof BlockFurnace))
+            if(!(furnace.getBlock() instanceof BlockFurnace) && !(worldObj.getTileEntity(entry.getKey()) instanceof TileEntityFurnace))
             {
                 if(worldObj.getTileEntity(entry.getKey()) instanceof TileEntityFurnace)
                 {
