@@ -92,7 +92,7 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     /**
      * The current tick since creation.
      */
-    private int currentTick = 0;
+    private int currentTick = 1;
 
     /**
      * Constructor method for Abstract Barbarians.
@@ -174,7 +174,7 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     @Override
     public void onLivingUpdate()
     {
-        if(random.nextInt(EVERY_X_TICKS) % currentTick == 0)
+        if((random.nextInt(EVERY_X_TICKS) + 1) % currentTick == 0)
         {
             if (this.getHeldItemMainhand() != null && SPEED_EFFECT != null && this.getHeldItemMainhand().getItem() instanceof ItemChiefSword
                     && Configurations.barbarianHordeDifficulty >= BARBARIAN_HORDE_DIFFICULTY_FIVE
