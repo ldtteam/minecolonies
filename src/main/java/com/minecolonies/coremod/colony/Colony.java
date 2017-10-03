@@ -1294,7 +1294,7 @@ public class Colony implements IColony
      * @param world the world.
      * @return a boolean by random.
      */
-    private static boolean shallUpdate(final World world, int averageTicks)
+    private static boolean shallUpdate(final World world, final int averageTicks)
     {
         return world.getWorldTime() % (world.rand.nextInt(averageTicks * 2) + 1) == 0;
     }
