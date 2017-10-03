@@ -189,7 +189,7 @@ public abstract class AbstractEntityBarbarian extends EntityMob
 
             if(shouldDespawn())
             {
-                this.kill();
+                this.setDead();
             }
 
             if (this.getHeldItemMainhand() != null && SPEED_EFFECT != null && this.getHeldItemMainhand().getItem() instanceof ItemChiefSword
