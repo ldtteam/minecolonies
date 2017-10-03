@@ -141,14 +141,19 @@ public abstract class AbstractEntityBarbarian extends EntityMob
         return BarbarianSpawnUtils.getBarbarianLootTable(this);
     }
 
+    /**
+     * Should the barbs despawn.
+     * @return true if so.
+     */
+    private boolean shouldDespawn()
+    {
+        return worldTimeAtSpawn != 0 && (worldObj.getTotalWorldTime() - worldTimeAtSpawn) >= 1000;
+    }
+
     @Override
     protected boolean canDespawn()
     {
-        if(worldTimeAtSpawn != 0 && worldTimeAtSpawn - worldObj.getTotalWorldTime() >= TICKS_TO_DESPAWN)
-        {
-            return true;
-        }
-        return colony == null;
+        return shouldDespawn() || colony == null;
     }
 
     /**
@@ -174,8 +179,18 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     @Override
     public void onLivingUpdate()
     {
-        if((random.nextInt(EVERY_X_TICKS) + 1) % currentTick == 0)
+        if(currentTick % (random.nextInt(EVERY_X_TICKS) + 1) == 0)
         {
+            if(worldTimeAtSpawn == 0)
+            {
+                worldTimeAtSpawn = worldObj.getTotalWorldTime();
+            }
+
+            if(shouldDespawn())
+            {
+                this.kill();
+            }
+
             if (this.getHeldItemMainhand() != null && SPEED_EFFECT != null && this.getHeldItemMainhand().getItem() instanceof ItemChiefSword
                     && Configurations.barbarianHordeDifficulty >= BARBARIAN_HORDE_DIFFICULTY_FIVE
                     && currentCount <= 0)
