@@ -277,31 +277,34 @@ public final class MobEventsUtils
         {
             return false;
         }
-        if ((world.getWorldTime() - TICKS_AFTER_HALF_DAY) % HALF_MINECRAFT_DAY == 0)
+
+        if (world.isDaytime())
         {
-            if (world.isDaytime())
+            if(!colony.hasWillRaidTonight())
             {
                 final boolean raid = raidThisNight(world);
                 if (Configurations.enableInDevelopmentFeatures)
                 {
                     LanguageHandler.sendPlayersMessage(
-                      colony.getMessageEntityPlayers(),
-                      "Will raid tonight: " + raid);
+                            colony.getMessageEntityPlayers(),
+                            "Will raid tonight: " + raid);
                 }
                 colony.setWillRaidTonight(raid);
-                return false;
             }
-            else if (colony.hasWillRaidTonight())
-            {
-                if (Configurations.enableInDevelopmentFeatures)
-                {
-                    LanguageHandler.sendPlayersMessage(
-                      colony.getMessageEntityPlayers(),
-                      "Night reached: raiding");
-                }
-                return true;
-            }
+            return false;
         }
+        else if (colony.hasWillRaidTonight())
+        {
+            colony.setWillRaidTonight(false);
+            if (Configurations.enableInDevelopmentFeatures)
+            {
+                LanguageHandler.sendPlayersMessage(
+                        colony.getMessageEntityPlayers(),
+                        "Night reached: raiding");
+            }
+            return true;
+        }
+
         return false;
     }
 
