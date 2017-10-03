@@ -147,7 +147,7 @@ public abstract class AbstractEntityBarbarian extends EntityMob
      */
     private boolean shouldDespawn()
     {
-        return worldTimeAtSpawn != 0 && (worldObj.getTotalWorldTime() - worldTimeAtSpawn) >= 1000;
+        return worldTimeAtSpawn != 0 && (worldObj.getTotalWorldTime() - worldTimeAtSpawn) >= TICKS_TO_DESPAWN;
     }
 
     @Override
