@@ -1095,7 +1095,7 @@ public class Colony implements IColony
             //  Cleanup disappeared citizens
             //  It would be really nice if we didn't have to do this... but Citizens can disappear without dying!
             //  Every CITIZEN_CLEANUP_TICK_INCREMENT, cleanup any 'lost' citizens
-            if (shallUpdate(event.world) && areAllColonyChunksLoaded(event) && townHall != null)
+            if (shallUpdate(event.world, CITIZEN_CLEANUP_TICK_INCREMENT) && areAllColonyChunksLoaded(event) && townHall != null)
             {
                 //  All chunks within a good range of the colony should be loaded, so all citizens should be loaded
                 //  If we don't have any references to them, destroy the citizen
@@ -1111,23 +1111,16 @@ public class Colony implements IColony
                 int respawnInterval = Configurations.gameplay.citizenRespawnInterval * TICKS_SECOND;
                 respawnInterval -= (SECONDS_A_MINUTE * townHall.getBuildingLevel());
 
-                if (event.world.getTotalWorldTime() % respawnInterval == 0)
+                if ((event.world.getTotalWorldTime() + 1) % (respawnInterval + 1) == 0)
                 {
                     spawnCitizen();
                 }
             }
 
-            subscribers = new HashSet<>();
-
-            // Add owners
-            world.getMinecraftServer().getPlayerList().getPlayers()
-                    .stream()
-                    .filter(permissions::isSubscriber)
-                    .forEach(subscribers::add);
-
-            if (event.world.getDifficulty() != EnumDifficulty.PEACEFUL
+            if (shallUpdate(world, TICKS_SECOND) && event.world.getDifficulty() != EnumDifficulty.PEACEFUL
                     && Configurations.gameplay.doBarbariansSpawn
-                    && !subscribers.isEmpty()
+                    && !world.getMinecraftServer().getPlayerList().getPlayers()
+                    .stream().filter(permissions::isSubscriber).collect(Collectors.toList()).isEmpty()
                     && MobEventsUtils.isItTimeToRaid(event.world, this))
             {
                 MobEventsUtils.barbarianEvent(event.world, this);
@@ -1161,9 +1154,9 @@ public class Colony implements IColony
      * @param world the world.
      * @return a boolean by random.
      */
-    private static boolean shallUpdate(final World world)
+    private static boolean shallUpdate(final World world, final int averageTicks)
     {
-        return world.getWorldTime() % (world.rand.nextInt(CITIZEN_CLEANUP_TICK_INCREMENT*2) + 1) == 0;
+        return world.getWorldTime() % (world.rand.nextInt(averageTicks * 2) + 1) == 0;
     }
 
     private void updateOverallHappiness()
