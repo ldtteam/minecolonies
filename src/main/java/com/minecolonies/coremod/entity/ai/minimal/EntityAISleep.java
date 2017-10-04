@@ -71,7 +71,7 @@ public class EntityAISleep extends EntityAIBase
             }
 
             final Colony colony = citizen.getColony();
-            if(colony == null)
+            if(colony == null || colony.getBuilding(citizen.getHomePosition()) != null)
             {
                 return true;
             }

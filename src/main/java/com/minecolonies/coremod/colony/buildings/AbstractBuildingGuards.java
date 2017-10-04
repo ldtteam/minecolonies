@@ -17,6 +17,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -398,7 +399,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
             patrolTargets.add(pos);
         }
 
-        guardPos = BlockPosUtil.readFromNBT(compound, TAG_GUARD);
+        guardPos = NBTUtil.getPosFromTag(compound.getCompoundTag(TAG_GUARD));
     }
 
     @Override
@@ -422,7 +423,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         }
         compound.setTag(TAG_PATROL_TARGETS, wayPointTagList);
 
-        BlockPosUtil.writeToNBT(compound, TAG_GUARD, guardPos);
+        compound.setTag(TAG_GUARD, NBTUtil.createPosTag(guardPos));
     }
 
     @Override
