@@ -36,8 +36,6 @@ public final class MobEventsUtils
     private static final int    PREFERRED_MAX_ARCHERS        = 16;
     private static final int    PREFERRED_MAX_CHIEFS         = 2;
     private static final int    MIN_CITIZENS_FOR_RAID        = 5;
-    private static final int    HALF_MINECRAFT_DAY           = 12_000;
-    private static final int    TICKS_AFTER_HALF_DAY         = 1000;
     private static final int    NUMBER_OF_CITIZENS_NEEDED    = 5;
     private static       int    numberOfBarbarians           = 0;
     private static       int    numberOfArchers              = 0;
@@ -216,31 +214,34 @@ public final class MobEventsUtils
         {
             return false;
         }
-        if ((world.getWorldTime() - TICKS_AFTER_HALF_DAY) % HALF_MINECRAFT_DAY == 0)
+
+        if (world.isDaytime())
         {
-            if (world.isDaytime())
+            if(!colony.hasWillRaidTonight())
             {
                 final boolean raid = raidThisNight(world);
                 if (Configurations.gameplay.enableInDevelopmentFeatures)
                 {
                     LanguageHandler.sendPlayersMessage(
-                      colony.getMessageEntityPlayers(),
-                      "Will raid tonight: " + raid);
+                            colony.getMessageEntityPlayers(),
+                            "Will raid tonight: " + raid);
                 }
                 colony.setWillRaidTonight(raid);
-                return false;
             }
-            else if (colony.hasWillRaidTonight())
-            {
-                if (Configurations.gameplay.enableInDevelopmentFeatures)
-                {
-                    LanguageHandler.sendPlayersMessage(
-                      colony.getMessageEntityPlayers(),
-                      "Night reached: raiding");
-                }
-                return true;
-            }
+            return false;
         }
+        else if (colony.hasWillRaidTonight())
+        {
+            colony.setWillRaidTonight(false);
+            if (Configurations.gameplay.enableInDevelopmentFeatures)
+            {
+                LanguageHandler.sendPlayersMessage(
+                        colony.getMessageEntityPlayers(),
+                        "Night reached: raiding");
+            }
+            return true;
+        }
+
         return false;
     }
 
