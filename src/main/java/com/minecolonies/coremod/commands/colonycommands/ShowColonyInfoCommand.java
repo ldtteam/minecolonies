@@ -89,7 +89,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
 
             if (!canPlayerUseCommand(player, SHOWCOLONYINFO, colonyId))
             {
-                sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NOT_PERMITTED));
+                sender.getCommandSenderEntity().sendMessage(new TextComponentString(NOT_PERMITTED));
                 return;
             }
         }
@@ -98,11 +98,11 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
         {
             if (colonyId == -1 && args.length != 0)
             {
-                sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE, args[0])));
+                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE, args[0])));
             }
             else
             {
-                sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE_ID, colonyId)));
+                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE_ID, colonyId)));
             }
             return;
         }
@@ -112,23 +112,23 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
         {
             if (colonyId == -1 && args.length != 0)
             {
-                sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE, args[0])));
+                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE, args[0])));
             }
             else
             {
-                sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE_ID, colonyId)));
+                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE_ID, colonyId)));
             }
             return;
         }
 
         final BlockPos position = colony.getCenter();
-        sender.addChatMessage(new TextComponentString(ID_TEXT + colony.getID() + NAME_TEXT + colony.getName()));
+        sender.sendMessage(new TextComponentString(ID_TEXT + colony.getID() + NAME_TEXT + colony.getName()));
         final String mayor = colony.getPermissions().getOwnerName();
-        sender.addChatMessage(new TextComponentString(MAYOR_TEXT + mayor));
-        sender.addChatMessage(new TextComponentString(CITIZENS + colony.getCitizens().size() + "/" + colony.getMaxCitizens()));
-        sender.addChatMessage(new TextComponentString(COORDINATES_TEXT + String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
-        sender.addChatMessage(new TextComponentString(String.format(LAST_CONTACT_TEXT, colony.getLastContactInHours())));
-        sender.addChatMessage(new TextComponentString(IS_DELETABLE + !colony.canBeAutoDeleted()));
+        sender.sendMessage(new TextComponentString(MAYOR_TEXT + mayor));
+        sender.sendMessage(new TextComponentString(CITIZENS + colony.getCitizens().size() + "/" + colony.getMaxCitizens()));
+        sender.sendMessage(new TextComponentString(COORDINATES_TEXT + String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
+        sender.sendMessage(new TextComponentString(String.format(LAST_CONTACT_TEXT, colony.getLastContactInHours())));
+        sender.sendMessage(new TextComponentString(IS_DELETABLE + !colony.canBeAutoDeleted()));
     }
 
     @NotNull

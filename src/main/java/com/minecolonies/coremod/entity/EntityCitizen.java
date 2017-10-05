@@ -617,7 +617,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         final double goToZ = zDifference > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
 
         //Have to move the entity minimally into the direction to render his new rotation.
-        moveEntity(goToX, 0, goToZ);
+        move(goToX, 0, goToZ);
     }
 
     /**
@@ -801,9 +801,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         if (!onGround)
         {
-            final int px = MathHelper.floor_double(posX);
+            final int px = MathHelper.floor(posX);
             final int py = (int) posY;
-            final int pz = MathHelper.floor_double(posZ);
+            final int pz = MathHelper.floor(posZ);
 
             this.onGround =
                     CompatibilityUtils.getWorld(this).getBlockState(new BlockPos(px, py, pz)).getBlock().isLadder(
@@ -897,7 +897,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             {
                 final int j = EntityXPOrb.getXPSplit(experience);
                 experience -= j;
-                CompatibilityUtils.getWorld(this).spawnEntityInWorld(new EntityXPOrb(CompatibilityUtils.getWorld(this), this.posX, this.posY, this.posZ, j));
+                CompatibilityUtils.getWorld(this).spawnEntity(new EntityXPOrb(CompatibilityUtils.getWorld(this), this.posX, this.posY, this.posZ, j));
             }
         }
 

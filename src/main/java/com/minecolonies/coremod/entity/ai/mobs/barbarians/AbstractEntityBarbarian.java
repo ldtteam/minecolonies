@@ -111,7 +111,7 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     @Override
     protected void entityInit()
     {
-        worldTimeAtSpawn = worldObj.getTotalWorldTime();
+        worldTimeAtSpawn = world.getTotalWorldTime();
         this.enablePersistence();
         super.entityInit();
     }
@@ -121,7 +121,7 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     {
         final SoundEvent soundevent = this.getAmbientSound();
 
-        if (soundevent != null && worldObj.rand.nextInt(OUT_OF_ONE_HUNDRED) <= ONE)
+        if (soundevent != null && world.rand.nextInt(OUT_OF_ONE_HUNDRED) <= ONE)
         {
             this.playSound(soundevent, this.getSoundVolume(), this.getSoundPitch());
         }
@@ -147,7 +147,7 @@ public abstract class AbstractEntityBarbarian extends EntityMob
      */
     private boolean shouldDespawn()
     {
-        return worldTimeAtSpawn != 0 && (worldObj.getTotalWorldTime() - worldTimeAtSpawn) >= TICKS_TO_DESPAWN;
+        return worldTimeAtSpawn != 0 && (world.getTotalWorldTime() - worldTimeAtSpawn) >= TICKS_TO_DESPAWN;
     }
 
     @Override
@@ -183,7 +183,7 @@ public abstract class AbstractEntityBarbarian extends EntityMob
         {
             if(worldTimeAtSpawn == 0)
             {
-                worldTimeAtSpawn = worldObj.getTotalWorldTime();
+                worldTimeAtSpawn = world.getTotalWorldTime();
             }
 
             if(shouldDespawn())
@@ -245,10 +245,10 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     @Override
     protected void onDeathUpdate()
     {
-        if (!(this.getAttackingEntity() instanceof EntityPlayer) && (this.recentlyHit > 0 && this.canDropLoot() && worldObj.getGameRules().getBoolean("doMobLoot")))
+        if (!(this.getAttackingEntity() instanceof EntityPlayer) && (this.recentlyHit > 0 && this.canDropLoot() && world.getGameRules().getBoolean("doMobLoot")))
         {
             final int experience = EntityXPOrb.getXPSplit(BARBARIAN_EXP_DROP);
-            CompatibilityUtils.spawnEntity(worldObj, new EntityXPOrb(worldObj, this.posX, this.posY, this.posZ, experience));
+            CompatibilityUtils.spawnEntity(world, new EntityXPOrb(world, this.posX, this.posY, this.posZ, experience));
         }
         super.onDeathUpdate();
     }

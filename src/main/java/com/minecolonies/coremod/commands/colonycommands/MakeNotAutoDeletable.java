@@ -54,7 +54,7 @@ public class MakeNotAutoDeletable extends AbstractSingleCommand
     {
         if (sender instanceof EntityPlayer && !isPlayerOpped(sender))
         {
-            sender.addChatMessage(new TextComponentString("Must be OP to use command"));
+            sender.sendMessage(new TextComponentString("Must be OP to use command"));
             return;
         }
         else if (sender instanceof TileEntity)
@@ -64,11 +64,11 @@ public class MakeNotAutoDeletable extends AbstractSingleCommand
 
         if (args.length < NUMBER_OR_ARGS_REQUIRED)
         {
-            sender.addChatMessage(new TextComponentString(NOT_ENOUGH_ARGUMENTS));
+            sender.sendMessage(new TextComponentString(NOT_ENOUGH_ARGUMENTS));
             return;
         }
 
-        sender.addChatMessage(new TextComponentString(Arrays.toString(args)));
+        sender.sendMessage(new TextComponentString(Arrays.toString(args)));
 
         int colonyId;
         colonyId = Integer.parseInt(args[0]);
@@ -79,11 +79,11 @@ public class MakeNotAutoDeletable extends AbstractSingleCommand
 
         if (colony == null)
         {
-            sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE_ID, colonyId)));
+            sender.sendMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE_ID, colonyId)));
             return;
         }
 
-        sender.addChatMessage(new TextComponentString(MARKED));
+        sender.sendMessage(new TextComponentString(MARKED));
         colony.setCanBeAutoDeleted(canBeDeleted);
     }
 

@@ -235,15 +235,15 @@ public final class BlockPosUtil
             returnHeight = 0;
         }
 
-        while (returnHeight >= 1 && world.isAirBlock(new BlockPos(MathHelper.floor_double(position.xCoord),
+        while (returnHeight >= 1 && world.isAirBlock(new BlockPos(MathHelper.floor(position.xCoord),
                 (int) returnHeight,
-                MathHelper.floor_double(position.zCoord))))
+                MathHelper.floor(position.zCoord))))
         {
             returnHeight -= 1.0D;
         }
 
         while (!world.isAirBlock(
-                new BlockPos(MathHelper.floor_double(position.xCoord), (int) returnHeight, MathHelper.floor_double(position.zCoord))))
+                new BlockPos(MathHelper.floor(position.xCoord), (int) returnHeight, MathHelper.floor(position.zCoord))))
         {
             returnHeight += 1.0D;
         }
@@ -416,7 +416,7 @@ public final class BlockPosUtil
     @NotNull
     public static BlockPos fromEntity(@NotNull final Entity entity)
     {
-        return new BlockPos(MathHelper.floor_double(entity.posX), MathHelper.floor_double(entity.posY), MathHelper.floor_double(entity.posZ));
+        return new BlockPos(MathHelper.floor(entity.posX), MathHelper.floor(entity.posY), MathHelper.floor(entity.posZ));
     }
 
     /**

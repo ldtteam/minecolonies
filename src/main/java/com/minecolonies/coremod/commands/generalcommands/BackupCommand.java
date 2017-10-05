@@ -43,17 +43,17 @@ public class BackupCommand extends AbstractSingleCommand
             {
                 if (ColonyManager.backupColonyData())
                 {
-                    sender.addChatMessage(new TextComponentString(BACKUP_SUCCESS_MESSAGE));
+                    sender.sendMessage(new TextComponentString(BACKUP_SUCCESS_MESSAGE));
                 }
                 else
                 {
-                    sender.addChatMessage(new TextComponentString(BACKUP_FAILURE_MESSAGE));
+                    sender.sendMessage(new TextComponentString(BACKUP_FAILURE_MESSAGE));
                 }
             });
         }
         else
         {
-            sender.addChatMessage(new TextComponentString(NO_PERMISSION_MESSAGE));
+            sender.sendMessage(new TextComponentString(NO_PERMISSION_MESSAGE));
         }
     }
 

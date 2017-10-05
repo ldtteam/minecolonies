@@ -139,7 +139,7 @@ public class TextField extends Pane
 
     public void setCursorPosition(final int pos)
     {
-        cursorPosition = MathHelper.clamp_int(pos, 0, text.length());
+        cursorPosition = MathHelper.clamp(pos, 0, text.length());
         setSelectionEnd(cursorPosition);
     }
 
@@ -160,7 +160,7 @@ public class TextField extends Pane
 
     public void setSelectionEnd(final int pos)
     {
-        selectionEnd = MathHelper.clamp_int(pos, 0, text.length());
+        selectionEnd = MathHelper.clamp(pos, 0, text.length());
 
         final int internalWidth = getInternalWidth();
         if (internalWidth > 0)
@@ -187,7 +187,7 @@ public class TextField extends Pane
                 scrollOffset -= scrollOffset - selectionEnd;
             }
 
-            scrollOffset = MathHelper.clamp_int(scrollOffset, 0, text.length());
+            scrollOffset = MathHelper.clamp(scrollOffset, 0, text.length());
         }
     }
 

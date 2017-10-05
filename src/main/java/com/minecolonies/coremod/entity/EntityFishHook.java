@@ -187,7 +187,7 @@ public final class EntityFishHook extends Entity
 
     private void setPosition(final double x, final double y, final double z, final double yaw, final double pitch)
     {
-        final double squareRootXYZ = MathHelper.sqrt_double(x * x + y * y + z * z);
+        final double squareRootXYZ = MathHelper.sqrt(x * x + y * y + z * z);
         double newX = x / squareRootXYZ;
         double newY = y / squareRootXYZ;
         double newZ = z / squareRootXYZ;
@@ -405,7 +405,7 @@ public final class EntityFishHook extends Entity
      */
     private void updateMotionAndRotation()
     {
-        this.moveEntity(this.motionX, this.motionY, this.motionZ);
+        this.move(this.motionX, this.motionY, this.motionZ);
         final double motion = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
         this.rotationYaw = (float) (Math.atan2(this.motionY, this.motionZ) * HALF_CIRCLE / Math.PI);
         this.rotationPitch = (float) (Math.atan2(this.motionY, motion) * HALF_CIRCLE / Math.PI);
@@ -450,7 +450,7 @@ public final class EntityFishHook extends Entity
 
             if (this.rand.nextDouble() < NO_CLEAR_SKY_CHANCE
                   && !CompatibilityUtils.getWorld(this).canBlockSeeSky(
-                          new BlockPos(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY) + 1, MathHelper.floor_double(this.posZ))))
+                          new BlockPos(MathHelper.floor(this.posX), MathHelper.floor(this.posY) + 1, MathHelper.floor(this.posZ))))
             {
                 --fishingProgressStep;
             }
@@ -477,7 +477,7 @@ public final class EntityFishHook extends Entity
             }
             else
             {
-                this.countdownFishNear = MathHelper.getRandomIntegerInRange(this.rand, 100, 900);
+                this.countdownFishNear = MathHelper.getInt(this.rand, 100, 900);
                 this.countdownFishNear -= fishingSpeedEnchantment * 20 * 5;
             }
         }
@@ -524,8 +524,8 @@ public final class EntityFishHook extends Entity
 
         if (this.countdownFishNear <= 0)
         {
-            this.relativeRotation = MathHelper.randomFloatClamp(this.rand, 0.0F, 360.0F);
-            this.countdownFishBites = MathHelper.getRandomIntegerInRange(this.rand, 20, 80);
+            this.relativeRotation = MathHelper.nextFloat(this.rand, 0.0F, 360.0F);
+            this.countdownFishBites = MathHelper.getInt(this.rand, 20, 80);
         }
     }
 
@@ -551,8 +551,8 @@ public final class EntityFishHook extends Entity
      */
     private void renderLittleSplash(@NotNull final WorldServer worldServer)
     {
-        final double sinYPosition = (double) MathHelper.randomFloatClamp(this.rand, 0.0F, 360.0F) * 0.017453292D;
-        final double cosYPosition = MathHelper.randomFloatClamp(this.rand, 25.0F, 60.0F);
+        final double sinYPosition = (double) MathHelper.nextFloat(this.rand, 0.0F, 360.0F) * 0.017453292D;
+        final double cosYPosition = MathHelper.nextFloat(this.rand, 25.0F, 60.0F);
         final double bubbleX = this.posX + (Math.sin(sinYPosition) * cosYPosition * 0.1);
         final double increasedYPosition = Math.floor(this.getEntityBoundingBox().minY) + 1.0;
         final double bubbleZ = this.posZ + (Math.cos(sinYPosition) * cosYPosition * 0.1);
@@ -598,7 +598,7 @@ public final class EntityFishHook extends Entity
           0.0,
           (double) this.width,
           0.20000000298023224);
-        this.countdownNoFish = MathHelper.getRandomIntegerInRange(this.rand, 10, 30);
+        this.countdownNoFish = MathHelper.getInt(this.rand, 10, 30);
         isFishCaugth = true;
     }
 
@@ -681,8 +681,8 @@ public final class EntityFishHook extends Entity
         entityitem.motionX = distanceX * 0.1;
         entityitem.motionY = distanceY * 0.1 + Math.sqrt(Math.sqrt(distanceX * distanceX + distanceY * distanceY + distanceZ * distanceZ)) * 0.08;
         entityitem.motionZ = distanceZ * 0.1;
-        CompatibilityUtils.getWorld(this).spawnEntityInWorld(entityitem);
-        CompatibilityUtils.getWorld(citizen).spawnEntityInWorld(new EntityXPOrb(CompatibilityUtils.getWorld(citizen),
+        CompatibilityUtils.getWorld(this).spawnEntity(entityitem);
+        CompatibilityUtils.getWorld(citizen).spawnEntity(new EntityXPOrb(CompatibilityUtils.getWorld(citizen),
                                                              citizenPosX,
                                                              citizenPosY + 0.D,
                                                              citizenPosZ + 0.5,
@@ -704,7 +704,7 @@ public final class EntityFishHook extends Entity
         final int random = CompatibilityUtils.getWorld(this).rand.nextInt(INCREASE_RARENESS_MODIFIER);
         final int buildingLevel = citizen.getWorkBuilding().getBuildingLevel();
         //Cut to minimum value of 0.
-        final int lootBonus = MathHelper.clamp_int(fishingLootEnchantment- fishingSpeedEnchantment,0,Integer.MAX_VALUE);
+        final int lootBonus = MathHelper.clamp(fishingLootEnchantment- fishingSpeedEnchantment,0,Integer.MAX_VALUE);
 
         if (random >= buildingLevel * (lootBonus + 1) || buildingLevel == 1)
         {
