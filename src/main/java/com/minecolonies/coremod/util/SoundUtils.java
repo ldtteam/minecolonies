@@ -124,4 +124,32 @@ public final class SoundUtils
                     (float) PITCH);
         }
     }
+
+    /**
+     * Play an interaction sound with chance at the citizen.
+     * @param world the world.
+     * @param position the position.
+     * @param chance the chance.
+     * @param citizen the citizen.
+     */
+    public static void playInteractionSoundAtCitizenWithChance(@NotNull final World world, @NotNull final BlockPos position, final int chance, @NotNull final EntityCitizen citizen)
+    {
+        if (chance > rand.nextInt(ONE_HUNDRED))
+        {
+            String prefix = "";
+
+            if (citizen.getWorkBuilding() != null)
+            {
+                prefix = citizen.getWorkBuilding().getJobName();
+            }
+
+            for (final AbstractWorkerSounds sounds : ModSoundEvents.handlers)
+            {
+                if (sounds.getWorkerString().equals(prefix))
+                {
+                    sounds.playInteractionSound(world, citizen.getPosition(), citizen.isFemale());
+                }
+            }
+        }
+    }
 }

@@ -1481,5 +1481,258 @@
         "stream": false
       }
     ]
+  },
+
+  "mob.guard.knight.male.interaction": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/guard/knight/male/icanhelpyouwiththat",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/guard/knight/male/itsyourgold",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/guard/knight/male/thinktheremightbetrouble",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/guard/knight/male/whatisit",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/guard/knight/male/whatisittoday",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/guard/knight/male/whatyougotaproblem",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/guard/knight/male/yesmlord",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/guard/knight/male/ifyousayso",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.guard.knight.male.greeting": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/guard/knight/male/hellothere",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/guard/knight/male/whatcanido",
+        "stream": false
+      }
+    ]
+  },
+  "mob.guard.knight.male.farewell": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/guard/knight/male/backtowork",
+        "stream": false
+      }
+    ]
+  },
+  "mob.guard.knight.male.generalPhrases": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/guard/knight/male/backtowork",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/guard/knight/male/beautifulclouds",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/guard/knight/male/giantspidersarenomatch",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/guard/knight/male/gottakeepaneyeout",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/guard/knight/male/hadsometroubleyesterday",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/guard/knight/male/howstheworkgoing",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/guard/knight/male/iwillhuntthatcreeper",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/guard/knight/male/knowwhatmightbecreeping",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/guard/knight/male/lovelyweather",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/guard/knight/male/notgoingtofireme",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/guard/knight/male/notgoodenough",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/guard/knight/male/rightaway",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/guard/knight/male/takecareofit",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/guard/knight/male/nobetternot",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/guard/knight/male/mightbetheendofus",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/guard/knight/male/toarms",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.guard.knight.male.levelup": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/guard/knight/male/getbetter",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.guard.knight.male.badhousing": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/guard/knight/male/notenoughroomfamily",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.guard.knight.male.noise": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/guard/knight/male/awyeah",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/guard/knight/male/feelmyblade",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/guard/knight/male/ichallengethee",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/guard/knight/male/ieatfriedzombie",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/guard/knight/male/nointruderwillpass",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/guard/knight/male/theblackknightalways",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.guard.knight.male.retrieve": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/guard/knight/male/dontthinkyoullgetaway",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/guard/knight/male/healme",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/guard/knight/male/retreatlowonhealth",
+        "stream": false
+      }
+    ]
+  },
+
+
+  "mob.guard.knight.male.saturationVeryLow": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/guard/knight/male/imstarving",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.guard.knight.male.saturationLow": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/guard/knight/male/imhungry",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.guard.knight.male.saturationHigh": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/guard/knight/male/mywifesaysieattoomuch",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.guard.knight.male.badWeather": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/guard/knight/male/shouldvecalledinsick",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/guard/knight/male/terriblerain",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.guard.knight.male.offToBed": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/guard/knight/male/timetogotosleep",
+        "stream": false
+      }
+    ]
   }
 }
