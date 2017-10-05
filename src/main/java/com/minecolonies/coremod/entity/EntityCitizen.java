@@ -51,6 +51,7 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -880,6 +881,17 @@ public class EntityCitizen extends EntityAgeable implements INpc
             colony.removeCitizen(getCitizenData());
         }
         super.onDeath(par1DamageSource);
+    }
+
+    @Override
+    public EnumActionResult applyPlayerInteraction(
+            final EntityPlayer player,
+            final Vec3d vec,
+            @Nullable final ItemStack itemInHand,
+            final EnumHand hand)
+    {
+        SoundUtils.playInteractionSoundAtCitizenWithChance(CompatibilityUtils.getWorld(this), this.getPosition(), 100, this);
+        return super.applyPlayerInteraction(player, vec, itemInHand, hand);
     }
 
     /**

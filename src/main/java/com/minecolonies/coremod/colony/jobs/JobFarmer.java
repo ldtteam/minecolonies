@@ -4,7 +4,11 @@ import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.farmer.EntityAIWorkFarmer;
+import com.minecolonies.coremod.sounds.DeliverymanSounds;
+import com.minecolonies.coremod.sounds.FarmerSounds;
+import net.minecraft.util.SoundEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Job class of the farmer, handles his fields.
@@ -43,5 +47,36 @@ public class JobFarmer extends AbstractJob
     public AbstractAISkeleton<JobFarmer> generateAI()
     {
         return new EntityAIWorkFarmer(this);
+    }
+
+    @Nullable
+    @Override
+    public SoundEvent getBadWeatherSound()
+    {
+        if (getCitizen() != null)
+        {
+            return getCitizen().isFemale() ? FarmerSounds.Female.badWeather : null;
+        }
+        return null;
+    }
+
+    @Override
+    public SoundEvent getBedTimeSound()
+    {
+        if (getCitizen() != null)
+        {
+            return getCitizen().isFemale() ? FarmerSounds.Female.offToBed : null;
+        }
+        return null;
+    }
+
+    @Override
+    public SoundEvent getMoveAwaySound()
+    {
+        if (getCitizen() != null)
+        {
+            return getCitizen().isFemale() ? FarmerSounds.Female.hostile : null;
+        }
+        return null;
     }
 }

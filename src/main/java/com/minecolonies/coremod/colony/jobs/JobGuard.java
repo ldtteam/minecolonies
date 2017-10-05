@@ -9,9 +9,12 @@ import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.guard.EntityAIMeleeGuard;
 import com.minecolonies.coremod.entity.ai.citizen.guard.EntityAIRangeGuard;
+import com.minecolonies.coremod.sounds.DeliverymanSounds;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.SoundEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
@@ -111,5 +114,26 @@ public class JobGuard extends AbstractJob
         {
             citizen.getColony().triggerAchievement(ModAchievements.achievementGuardDeathEnderman);
         }
+    }
+
+    @Nullable
+    @Override
+    public SoundEvent getBadWeatherSound()
+    {
+        if (getCitizen() != null)
+        {
+            return !getCitizen().isFemale() ? DeliverymanSounds.Female.badWeather : null;
+        }
+        return null;
+    }
+
+    @Override
+    public SoundEvent getBedTimeSound()
+    {
+        if (getCitizen() != null)
+        {
+            return !getCitizen().isFemale() ? DeliverymanSounds.Female.offToBed : null;
+        }
+        return null;
     }
 }
