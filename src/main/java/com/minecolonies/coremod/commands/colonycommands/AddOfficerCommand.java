@@ -54,7 +54,7 @@ public class AddOfficerCommand extends AbstractSingleCommand
 
         if (args.length == 0)
         {
-            sender.addChatMessage(new TextComponentString(NO_ARGUMENTS));
+            sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
             return;
         }
 
@@ -66,7 +66,7 @@ public class AddOfficerCommand extends AbstractSingleCommand
             final IColony colony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), ((EntityPlayer) sender).getUniqueID());
             if (colony == null)
             {
-                senderEntity.addChatMessage(new TextComponentString(COLONY_NULL));
+                senderEntity.sendMessage(new TextComponentString(COLONY_NULL));
                 return;
             }
             colonyId = colony.getID();
@@ -76,7 +76,7 @@ public class AddOfficerCommand extends AbstractSingleCommand
 
         if (colony == null)
         {
-            sender.addChatMessage(new TextComponentString(String.format(COLONY_NULL, colonyId)));
+            sender.sendMessage(new TextComponentString(String.format(COLONY_NULL, colonyId)));
             return;
         }
 
@@ -85,7 +85,7 @@ public class AddOfficerCommand extends AbstractSingleCommand
             EntityPlayer player = (EntityPlayer) sender;
             if (!canPlayerUseCommand(player, ADDOFFICER, colonyId))
             {
-                senderEntity.addChatMessage(new TextComponentString(NOT_PERMITTED));
+                senderEntity.sendMessage(new TextComponentString(NOT_PERMITTED));
                 return;
             }
         }
@@ -102,7 +102,7 @@ public class AddOfficerCommand extends AbstractSingleCommand
         }
 
         colony.getPermissions().addPlayer(playerName, Rank.OFFICER, colony.getWorld());
-        sender.addChatMessage(new TextComponentString(String.format(SUCCESS_MESSAGE, playerName, colonyId)));
+        sender.sendMessage(new TextComponentString(String.format(SUCCESS_MESSAGE, playerName, colonyId)));
     }
 
     @NotNull

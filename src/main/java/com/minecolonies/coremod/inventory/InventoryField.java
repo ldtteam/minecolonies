@@ -206,7 +206,7 @@ public class InventoryField implements IInventory
     }
 
     @Override
-    public boolean isUseableByPlayer(final EntityPlayer entityPlayer)
+    public boolean isUsableByPlayer(final EntityPlayer entityPlayer)
     {
         return true;
     }

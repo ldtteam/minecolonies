@@ -53,7 +53,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
 
         if (args.length < 2)
         {
-            sender.addChatMessage(new TextComponentString(NO_ARGUMENTS));
+            sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
             return;
         }
 
@@ -72,14 +72,14 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
 
             if (senderEntity == null)
             {
-                server.addChatMessage(new TextComponentString(NO_ARGUMENTS));
+                server.sendMessage(new TextComponentString(NO_ARGUMENTS));
                 return;
             }
             else
             {
                 if (playerName == null || playerName.isEmpty() || player == null)
                 {
-                    senderEntity.addChatMessage(new TextComponentString(NO_PLAYER));
+                    senderEntity.sendMessage(new TextComponentString(NO_PLAYER));
                     return;
                 }
                 final IColony colony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), player.getUniqueID());
@@ -97,7 +97,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
 
         if (colony == null)
         {
-            sender.addChatMessage(new TextComponentString(String.format(COLONY_NULL, colonyId)));
+            sender.sendMessage(new TextComponentString(String.format(COLONY_NULL, colonyId)));
             return;
         }
 
@@ -109,26 +109,26 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
 
         if (playerName == null || playerName.isEmpty())
         {
-            sender.addChatMessage(new TextComponentString(NO_PLAYER));
+            sender.sendMessage(new TextComponentString(NO_PLAYER));
             return;
         }
 
         final EntityPlayer player = sender.getEntityWorld().getPlayerEntityByName(playerName);
         if (player == null)
         {
-            sender.addChatMessage(new TextComponentString(NO_PLAYER));
+            sender.sendMessage(new TextComponentString(NO_PLAYER));
             return;
         }
 
         if (ColonyManager.getIColonyByOwner(sender.getEntityWorld(), player) != null)
         {
-            sender.addChatMessage(new TextComponentString(String.format(HAS_A_COLONY, playerName)));
+            sender.sendMessage(new TextComponentString(String.format(HAS_A_COLONY, playerName)));
             return;
         }
 
         colony.getPermissions().setOwner(player);
 
-        sender.addChatMessage(new TextComponentString(String.format(SUCCESS_MESSAGE, playerName, colonyId)));
+        sender.sendMessage(new TextComponentString(String.format(SUCCESS_MESSAGE, playerName, colonyId)));
     }
 
     @NotNull

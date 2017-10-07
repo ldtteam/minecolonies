@@ -140,7 +140,7 @@ public final class ServerUtils
         {
             return null;
         }
-        final List<EntityPlayerMP> allPlayers = world.getMinecraftServer().getPlayerList().getPlayerList();
+        final List<EntityPlayerMP> allPlayers = world.getMinecraftServer().getPlayerList().getPlayers();
         for (@NotNull final EntityPlayerMP player : allPlayers)
         {
             if (player.getUniqueID().equals(uuid))

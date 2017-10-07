@@ -140,8 +140,8 @@ public class Level
         int ladderZ;
         if (hasDoubles)
         {
-            ladderX = MathHelper.floor_double(compound.getDouble(TAG_LADDERX));
-            ladderZ = MathHelper.floor_double(compound.getDouble(TAG_LADDERZ));
+            ladderX = MathHelper.floor(compound.getDouble(TAG_LADDERX));
+            ladderZ = MathHelper.floor(compound.getDouble(TAG_LADDERZ));
         }
         else
         {

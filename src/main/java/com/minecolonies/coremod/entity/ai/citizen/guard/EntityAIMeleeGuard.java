@@ -235,7 +235,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         final double goToX = xDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
         final double goToZ = zDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
 
-        worker.moveEntity(goToX, 0, goToZ);
+        worker.move(goToX, 0, goToZ);
 
         worker.swingArm(EnumHand.MAIN_HAND);
         worker.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) getRandomPitch());

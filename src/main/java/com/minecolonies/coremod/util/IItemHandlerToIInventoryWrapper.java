@@ -104,7 +104,7 @@ public class IItemHandlerToIInventoryWrapper implements IInventory
      * Don't rename this method to canInteractWith due to conflicts with Container.
      */
     @Override
-    public boolean isUseableByPlayer(final EntityPlayer player)
+    public boolean isUsableByPlayer(final EntityPlayer player)
     {
         return true;
     }

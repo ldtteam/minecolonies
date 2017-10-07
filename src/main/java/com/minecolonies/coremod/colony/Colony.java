@@ -904,7 +904,7 @@ public class Colony implements IColony
         subscribers = new HashSet<>();
 
         // Add owners
-        world.getMinecraftServer().getPlayerList().getPlayerList()
+        world.getMinecraftServer().getPlayerList().getPlayers()
           .stream()
           .filter(permissions::isSubscriber)
           .forEachOrdered(subscribers::add);
@@ -1259,7 +1259,7 @@ public class Colony implements IColony
 
             if (shallUpdate(world, TICKS_SECOND) && event.world.getDifficulty() != EnumDifficulty.PEACEFUL
                     && Configurations.doBarbariansSpawn
-                    && !world.getMinecraftServer().getPlayerList().getPlayerList()
+                    && !world.getMinecraftServer().getPlayerList().getPlayers()
                     .stream().filter(permissions::isSubscriber).collect(Collectors.toList()).isEmpty()
                     && MobEventsUtils.isItTimeToRaid(event.world, this))
             {
@@ -1507,7 +1507,7 @@ public class Colony implements IColony
             entity.setColony(this, citizenData);
 
             entity.setPosition(spawnPoint.getX() + 0.5D, spawnPoint.getY() + 0.1D, spawnPoint.getZ() + 0.5D);
-            world.spawnEntityInWorld(entity);
+            world.spawnEntity(entity);
 
             checkAchievements();
 

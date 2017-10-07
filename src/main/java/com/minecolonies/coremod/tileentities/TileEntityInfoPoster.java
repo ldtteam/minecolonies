@@ -35,7 +35,7 @@ public class TileEntityInfoPoster extends TileEntity
     @Override
     protected void setWorldCreate(final World worldIn)
     {
-        this.setWorldObj(worldIn);
+        this.setWorld(worldIn);
     }
 
     @Override

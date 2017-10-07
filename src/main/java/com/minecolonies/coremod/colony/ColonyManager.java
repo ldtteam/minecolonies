@@ -678,7 +678,7 @@ public final class ColonyManager
      */
     public static void onClientTick(@NotNull final TickEvent.ClientTickEvent event)
     {
-        if (event.phase == TickEvent.Phase.END && Minecraft.getMinecraft().theWorld == null && !colonyViews.isEmpty())
+        if (event.phase == TickEvent.Phase.END && Minecraft.getMinecraft().world == null && !colonyViews.isEmpty())
         {
             //  Player has left the game, clear the Colony View cache
             colonyViews.clear();

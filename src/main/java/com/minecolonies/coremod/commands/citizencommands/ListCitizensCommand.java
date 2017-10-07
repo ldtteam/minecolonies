@@ -78,7 +78,7 @@ public class ListCitizensCommand extends AbstractSingleCommand
             final EntityPlayer player = (EntityPlayer) sender;
             if (!canPlayerUseCommand(player, LISTCITIZENS, colonyId))
             {
-                player.addChatMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
+                player.sendMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
                 return;
             }
         }
@@ -113,11 +113,11 @@ public class ListCitizensCommand extends AbstractSingleCommand
         }
 
         final ITextComponent headerLine = new TextComponentString(String.format(PAGE_TOP, page, pageCount));
-        sender.addChatMessage(headerLine);
+        sender.sendMessage(headerLine);
 
         for (final CitizenData citizen : citizensPage)
         {
-            sender.addChatMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION,
+            sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION,
               citizen.getId(),
               citizen.getName())).setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
                                                                                      String.format(COMMAND_CITIZEN_INFO, citizen.getColony().getID(), citizen.getId())))));
@@ -125,7 +125,7 @@ public class ListCitizensCommand extends AbstractSingleCommand
             if (citizen.getCitizenEntity() != null)
             {
                 final BlockPos position = citizen.getCitizenEntity().getPosition();
-                sender.addChatMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
+                sender.sendMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
             }
         }
         drawPageSwitcher(sender, page, citizenCount, halfPage, colonyId);
@@ -176,7 +176,7 @@ public class ListCitizensCommand extends AbstractSingleCommand
 
         final ITextComponent beginLine = new TextComponentString(PAGE_LINE);
         final ITextComponent endLine = new TextComponentString(PAGE_LINE);
-        sender.addChatMessage(beginLine.appendSibling(prevButton).appendSibling(new TextComponentString(PAGE_LINE_DIVIDER)).appendSibling(nextButton).appendSibling(endLine));
+        sender.sendMessage(beginLine.appendSibling(prevButton).appendSibling(new TextComponentString(PAGE_LINE_DIVIDER)).appendSibling(nextButton).appendSibling(endLine));
     }
 
     @NotNull
