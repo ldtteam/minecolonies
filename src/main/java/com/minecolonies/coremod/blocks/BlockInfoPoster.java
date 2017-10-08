@@ -21,7 +21,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
 import java.util.Locale;
 
 import static net.minecraft.util.EnumFacing.NORTH;
