@@ -10,7 +10,6 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.guard.EntityAIMeleeGuard;
 import com.minecolonies.coremod.entity.ai.citizen.guard.EntityAIRangeGuard;
 import com.minecolonies.coremod.sounds.ArcherSounds;
-import com.minecolonies.coremod.sounds.DeliverymanSounds;
 import com.minecolonies.coremod.sounds.KnightSounds;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.util.DamageSource;
