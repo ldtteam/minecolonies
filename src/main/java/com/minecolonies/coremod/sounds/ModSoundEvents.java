@@ -28,6 +28,7 @@ public final class ModSoundEvents
         handlers.add(new CitizenSounds());
         handlers.add(new FarmerSounds());
         handlers.add(new KnightSounds());
+        handlers.add(new ArcherSounds());
     }
 
     /**
@@ -93,6 +94,19 @@ public final class ModSoundEvents
         GameRegistry.register(KnightSounds.Male.greeting);
         GameRegistry.register(KnightSounds.Male.farewell);
         GameRegistry.register(KnightSounds.Male.interaction);
+
+        GameRegistry.register(ArcherSounds.Female.badHousing);
+        GameRegistry.register(ArcherSounds.Female.levelUp);
+        GameRegistry.register(ArcherSounds.Female.saturationHigh);
+        GameRegistry.register(ArcherSounds.Female.saturationLow);
+        GameRegistry.register(ArcherSounds.Female.saturationVeryLow);
+        GameRegistry.register(ArcherSounds.Female.badWeather);
+        GameRegistry.register(ArcherSounds.Female.offToBed);
+        GameRegistry.register(ArcherSounds.Female.generalPhrases);
+        GameRegistry.register(ArcherSounds.Female.noises);
+        GameRegistry.register(ArcherSounds.Female.greeting);
+        GameRegistry.register(ArcherSounds.Female.farewell);
+        GameRegistry.register(ArcherSounds.Female.interaction);
 
         GameRegistry.register(CitizenSounds.Female.say);
         GameRegistry.register(CitizenSounds.Male.say);

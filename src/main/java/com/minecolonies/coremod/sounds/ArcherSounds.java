@@ -9,9 +9,9 @@ import net.minecraft.world.World;
 import java.util.Random;
 
 /**
- * Class containing the Knight sounds.
+ * Class containing the Archer sounds.
  */
-public final class KnightSounds extends AbstractWorkerSounds
+public final class ArcherSounds extends AbstractWorkerSounds
 {
     /**
      * Number of different sounds in this class.
@@ -24,10 +24,24 @@ public final class KnightSounds extends AbstractWorkerSounds
     private static final Random rand = new Random();
 
     /**
-     * Containing the female Knight sounds.
+     * Containing the female Archer sounds.
      */
     public static final class Female
     {
+        public static final SoundEvent generalPhrases    = ModSoundEvents.getSoundID("mob.guard.archer.female.generalPhrases");
+        public static final SoundEvent noises            = ModSoundEvents.getSoundID("mob.guard.archer.female.noise");
+        public static final SoundEvent retrieve          = ModSoundEvents.getSoundID("mob.guard.archer.female.retrieve");
+        public static final SoundEvent offToBed          = ModSoundEvents.getSoundID("mob.guard.archer.female.offToBed");
+        public static final SoundEvent badWeather        = ModSoundEvents.getSoundID("mob.guard.archer.female.badWeather");
+        public static final SoundEvent saturationVeryLow = ModSoundEvents.getSoundID("mob.guard.archer.female.saturationVeryLow");
+        public static final SoundEvent saturationLow     = ModSoundEvents.getSoundID("mob.guard.archer.female.saturationLow");
+        public static final SoundEvent saturationHigh    = ModSoundEvents.getSoundID("mob.guard.archer.female.saturationHigh");
+        public static final SoundEvent levelUp           = ModSoundEvents.getSoundID("mob.guard.archer.female.levelup");
+        public static final SoundEvent badHousing        = ModSoundEvents.getSoundID("mob.guard.archer.female.badhousing");
+        public static final SoundEvent greeting          = ModSoundEvents.getSoundID("mob.guard.archer.female.greeting");
+        public static final SoundEvent farewell          = ModSoundEvents.getSoundID("mob.guard.archer.female.farewell");
+        public static final SoundEvent interaction       = ModSoundEvents.getSoundID("mob.guard.archer.female.interaction");
+
         /**
          * Private constructor to hide the implicit public one.
          */
@@ -40,24 +54,10 @@ public final class KnightSounds extends AbstractWorkerSounds
     }
 
     /**
-     * Containing the male Knight sounds.
+     * Containing the male Archer sounds.
      */
     public static final class Male
     {
-        public static final SoundEvent generalPhrases    = ModSoundEvents.getSoundID("mob.guard.knight.male.generalPhrases");
-        public static final SoundEvent noises            = ModSoundEvents.getSoundID("mob.guard.knight.male.noise");
-        public static final SoundEvent retrieve          = ModSoundEvents.getSoundID("mob.guard.knight.male.retrieve");
-        public static final SoundEvent offToBed          = ModSoundEvents.getSoundID("mob.guard.knight.male.offToBed");
-        public static final SoundEvent badWeather        = ModSoundEvents.getSoundID("mob.guard.knight.male.badWeather");
-        public static final SoundEvent saturationVeryLow = ModSoundEvents.getSoundID("mob.guard.knight.male.saturationVeryLow");
-        public static final SoundEvent saturationLow     = ModSoundEvents.getSoundID("mob.guard.knight.male.saturationLow");
-        public static final SoundEvent saturationHigh    = ModSoundEvents.getSoundID("mob.guard.knight.male.saturationHigh");
-        public static final SoundEvent levelUp           = ModSoundEvents.getSoundID("mob.guard.knight.male.levelup");
-        public static final SoundEvent badHousing        = ModSoundEvents.getSoundID("mob.guard.knight.male.badhousing");
-        public static final SoundEvent greeting          = ModSoundEvents.getSoundID("mob.guard.knight.male.greeting");
-        public static final SoundEvent farewell          = ModSoundEvents.getSoundID("mob.guard.knight.male.farewell");
-        public static final SoundEvent interaction       = ModSoundEvents.getSoundID("mob.guard.knight.male.interaction");
-
         /**
          * Private constructor to hide the implicit public one.
          */
@@ -70,7 +70,7 @@ public final class KnightSounds extends AbstractWorkerSounds
     }
 
     /**
-     * Plays Knight sounds.
+     * Plays Archer sounds.
      * Suppressing Sonar Rule squid:S109
      * This rule wants to prevent magic numbers
      * But in this case the rule does not apply because its not a magic number its a % chance.
@@ -86,7 +86,7 @@ public final class KnightSounds extends AbstractWorkerSounds
     public void playSound(final World worldIn, final BlockPos position, final boolean isFemale, final double saturation)
     {
         //While there are no male sounds
-        if (isFemale)
+        if (!isFemale)
         {
             return;
         }
@@ -94,22 +94,22 @@ public final class KnightSounds extends AbstractWorkerSounds
         switch (rand.nextInt(NUMBER_OF_SOUNDS + 1))
         {
             case 1:
-                final SoundEvent noises = Male.noises;
+                final SoundEvent noises = Female.noises;
                 SoundUtils.playSoundAtCitizenWithChance(worldIn, position, noises, getBasicSoundChance());
                 break;
             case 2:
                 playSaturationSound(worldIn, position, isFemale, saturation);
                 break;
             case 3:
-                final SoundEvent greeting = Male.greeting;
+                final SoundEvent greeting = Female.greeting;
                 SoundUtils.playSoundAtCitizenWithChance(worldIn, position, greeting, getBasicSoundChance() * 2);
                 break;
             case 4:
-                final SoundEvent farewell = Male.farewell;
+                final SoundEvent farewell = Female.farewell;
                 SoundUtils.playSoundAtCitizenWithChance(worldIn, position, farewell, getBasicSoundChance());
                 break;
             default:
-                final SoundEvent generalPhrases = Male.generalPhrases;
+                final SoundEvent generalPhrases = Female.generalPhrases;
                 SoundUtils.playSoundAtCitizenWithChance(worldIn, position, generalPhrases, getPhraseChance());
                 break;
         }
@@ -118,7 +118,7 @@ public final class KnightSounds extends AbstractWorkerSounds
     @Override
     public String getWorkerString()
     {
-        return "knight";
+        return "archer";
     }
 
     /**
@@ -131,12 +131,12 @@ public final class KnightSounds extends AbstractWorkerSounds
     public void playInteractionSound(final World worldIn, final BlockPos position, final boolean isFemale)
     {
         //While there are no male sounds
-        if (isFemale)
+        if (!isFemale)
         {
             return;
         }
 
-        SoundUtils.playSoundAtCitizenWithChance(worldIn, position, Male.interaction, getBasicSoundChance());
+        SoundUtils.playSoundAtCitizenWithChance(worldIn, position, Female.interaction, getBasicSoundChance());
     }
 
     /**
@@ -150,7 +150,7 @@ public final class KnightSounds extends AbstractWorkerSounds
     public void playSaturationSound(final World worldIn, final BlockPos position, final boolean isFemale, final double saturation)
     {
         //While there are no male sounds
-        if (isFemale)
+        if (!isFemale)
         {
             return;
         }
@@ -158,15 +158,15 @@ public final class KnightSounds extends AbstractWorkerSounds
         final SoundEvent saturationFeedback;
         if (saturation < EntityCitizen.LOW_SATURATION)
         {
-            saturationFeedback = Male.saturationVeryLow;
+            saturationFeedback = Female.saturationVeryLow;
         }
         else if (saturation < EntityCitizen.AVERAGE_SATURATION)
         {
-            saturationFeedback = Male.saturationLow;
+            saturationFeedback = Female.saturationLow;
         }
         else
         {
-            saturationFeedback = Male.saturationHigh;
+            saturationFeedback = Female.saturationHigh;
         }
         SoundUtils.playSoundAtCitizenWithChance(worldIn, position, saturationFeedback, getBasicSoundChance());
     }
