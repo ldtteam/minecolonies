@@ -59,8 +59,8 @@ public class ClientEventHandler
         Pathfinding.debugDraw(event.getPartialTicks());
 
         final Structure structure = Settings.instance.getActiveStructure();
-        final WorldClient world = Minecraft.getMinecraft().theWorld;
-        final EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+        final WorldClient world = Minecraft.getMinecraft().world;
+        final EntityPlayer player = Minecraft.getMinecraft().player;
 
         if (structure != null)
         {

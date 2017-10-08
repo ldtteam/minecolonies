@@ -108,6 +108,14 @@ public final class DeliverymanSounds extends AbstractWorkerSounds
         return "Deliveryman";
     }
 
+    @Override
+    public void playInteractionSound(final World world, final BlockPos position, final boolean female)
+    {
+        /**
+         * Do nothing, we have nothing for this worker.
+         */
+    }
+
     /**
      * Play the saturation sound depending on the saturation.
      *

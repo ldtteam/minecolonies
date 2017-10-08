@@ -115,7 +115,7 @@ public class FakeWorld extends World
         if(tileEntityIn != null)
         {
             entityHashMap.put(pos, tileEntityIn);
-            tileEntityIn.setWorldObj(this);
+            tileEntityIn.setWorld(this);
         }
     }
 

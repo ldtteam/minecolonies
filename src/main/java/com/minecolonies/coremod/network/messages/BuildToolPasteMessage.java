@@ -125,7 +125,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
         final Structures.StructureName sn = new Structures.StructureName(message.structureName);
         if (!Structures.hasMD5(sn))
         {
-            player.addChatComponentMessage(new TextComponentString("Can not build " + message.workOrderName + ": schematic missing!"));
+            player.sendMessage(new TextComponentString("Can not build " + message.workOrderName + ": schematic missing!"));
             return;
         }
 
@@ -135,7 +135,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
             {
                 handleHut(CompatibilityUtils.getWorld(player), player, sn, message.rotation, message.pos, message.mirror);
             }
-            StructureWrapper.loadAndPlaceStructureWithRotation(player.worldObj, message.structureName,
+            StructureWrapper.loadAndPlaceStructureWithRotation(player.world, message.structureName,
                     message.pos, message.rotation, message.mirror ? Mirror.FRONT_BACK : Mirror.NONE, message.complete);
         }
     }

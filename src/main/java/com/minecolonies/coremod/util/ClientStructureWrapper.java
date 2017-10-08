@@ -49,12 +49,12 @@ public final class ClientStructureWrapper
         }
         catch (final IOException e)
         {
-            LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().thePlayer, "item.scepterSteel.scanFailure");
+            LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "item.scepterSteel.scanFailure");
             Log.getLogger().warn("Exception while trying to scan.", e);
             return;
         }
 
-        LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().thePlayer, "item.scepterSteel.scanSuccess", file);
+        LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "item.scepterSteel.scanSuccess", file);
         Settings.instance.setStructureName(structureName.toString());
     }
 
@@ -65,7 +65,7 @@ public final class ClientStructureWrapper
      */
     public static void sendMessageSchematicTooBig(int maxSize)
     {
-        LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().thePlayer, "com.minecolonies.coremod.network.messages.schematicsavemessage.toobig", maxSize);
+        LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "com.minecolonies.coremod.network.messages.schematicsavemessage.toobig", maxSize);
     }
 
     /**

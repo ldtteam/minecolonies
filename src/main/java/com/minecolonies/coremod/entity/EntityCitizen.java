@@ -51,6 +51,7 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -617,7 +618,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         final double goToZ = zDifference > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
 
         //Have to move the entity minimally into the direction to render his new rotation.
-        moveEntity(goToX, 0, goToZ);
+        move(goToX, 0, goToZ);
     }
 
     /**
@@ -801,9 +802,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         if (!onGround)
         {
-            final int px = MathHelper.floor_double(posX);
+            final int px = MathHelper.floor(posX);
             final int py = (int) posY;
-            final int pz = MathHelper.floor_double(posZ);
+            final int pz = MathHelper.floor(posZ);
 
             this.onGround =
                     CompatibilityUtils.getWorld(this).getBlockState(new BlockPos(px, py, pz)).getBlock().isLadder(
@@ -882,6 +883,17 @@ public class EntityCitizen extends EntityAgeable implements INpc
         super.onDeath(par1DamageSource);
     }
 
+    @Override
+    public EnumActionResult applyPlayerInteraction(
+            final EntityPlayer player,
+            final Vec3d vec,
+            @Nullable final ItemStack itemInHand,
+            final EnumHand hand)
+    {
+        SoundUtils.playInteractionSoundAtCitizenWithChance(CompatibilityUtils.getWorld(this), this.getPosition(), 100, this);
+        return super.applyPlayerInteraction(player, vec, itemInHand, hand);
+    }
+
     /**
      * Drop some experience share depending on the experience and experienceLevel.
      */
@@ -897,7 +909,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             {
                 final int j = EntityXPOrb.getXPSplit(experience);
                 experience -= j;
-                CompatibilityUtils.getWorld(this).spawnEntityInWorld(new EntityXPOrb(CompatibilityUtils.getWorld(this), this.posX, this.posY, this.posZ, j));
+                CompatibilityUtils.getWorld(this).spawnEntity(new EntityXPOrb(CompatibilityUtils.getWorld(this), this.posX, this.posY, this.posZ, j));
             }
         }
 

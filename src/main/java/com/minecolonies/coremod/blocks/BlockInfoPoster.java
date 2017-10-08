@@ -130,17 +130,9 @@ public class BlockInfoPoster extends BlockContainer
     }
 
     @Override
-    public IBlockState onBlockPlaced(
-            final World worldIn,
-            final BlockPos pos,
-            final EnumFacing facing,
-            final float hitX,
-            final float hitY,
-            final float hitZ,
-            final int meta,
-            @org.jetbrains.annotations.Nullable final EntityLivingBase placer)
+    public void onBlockPlacedBy(final World worldIn, final BlockPos pos, final IBlockState state, final EntityLivingBase placer, final ItemStack stack)
     {
         @NotNull final EnumFacing enumFacing = (placer == null) ? NORTH : fromAngle(placer.rotationYaw);
-        return this.getDefaultState().withProperty(FACING, enumFacing);
+        this.getDefaultState().withProperty(FACING, enumFacing);
     }
 }

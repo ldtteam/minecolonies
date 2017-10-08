@@ -56,7 +56,7 @@ public class DoRaidNowCommand extends AbstractSingleCommand
     {
         if (sender instanceof EntityPlayer && !isPlayerOpped(sender))
         {
-            sender.addChatMessage(new TextComponentString("Must be OP to use command"));
+            sender.sendMessage(new TextComponentString("Must be OP to use command"));
             return;
         }
 
@@ -65,17 +65,17 @@ public class DoRaidNowCommand extends AbstractSingleCommand
             final Colony colony = ColonyManager.getColony(Integer.parseInt(args[0]));
             if (colony == null)
             {
-                sender.addChatMessage(NO_COLONY_FOUND_MESSAGE_ID);
+                sender.sendMessage(NO_COLONY_FOUND_MESSAGE_ID);
                 return;
             }
 
             MobEventsUtils.barbarianEvent(colony.getWorld(),colony);
 
-            sender.addChatMessage(SUCCESSFUL);
+            sender.sendMessage(SUCCESSFUL);
         }
         else
         {
-            sender.addChatMessage(NO_ARGUMENTS);
+            sender.sendMessage(NO_ARGUMENTS);
         }
     }
 

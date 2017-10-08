@@ -86,7 +86,7 @@ public class SchematicSaveMessage implements IMessage, IMessageHandler<Schematic
             Log.getLogger().info("SchematicSaveMessage: custom schematic is not allowed on this server.");
             if (ctx.side.isServer())
             {
-                ctx.getServerHandler().playerEntity.addChatComponentMessage(new TextComponentString("The server does not allow custom schematic!"));
+                ctx.getServerHandler().playerEntity.sendMessage(new TextComponentString("The server does not allow custom schematic!"));
             }
             return null;
         }
@@ -106,11 +106,11 @@ public class SchematicSaveMessage implements IMessage, IMessageHandler<Schematic
         {
             if (schematicSent)
             {
-                ctx.getServerHandler().playerEntity.addChatComponentMessage(new TextComponentString("Schematic successfully sent!"));
+                ctx.getServerHandler().playerEntity.sendMessage(new TextComponentString("Schematic successfully sent!"));
             }
             else
             {
-                ctx.getServerHandler().playerEntity.addChatComponentMessage(new TextComponentString("Failed to send the Schematic!"));
+                ctx.getServerHandler().playerEntity.sendMessage(new TextComponentString("Failed to send the Schematic!"));
             }
         }
         return null;

@@ -1644,7 +1644,7 @@ public final class InventoryUtils
             entityitem.motionX = random.nextGaussian() * MOTION_MULTIPLIER;
             entityitem.motionY = random.nextGaussian() * MOTION_MULTIPLIER + MOTION_Y_MIN;
             entityitem.motionZ = random.nextGaussian() * MOTION_MULTIPLIER;
-            worldIn.spawnEntityInWorld(entityitem);
+            worldIn.spawnEntity(entityitem);
         }
     }
 

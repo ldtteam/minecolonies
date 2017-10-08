@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
+import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 import static net.minecraft.util.EnumFacing.*;
 
 /**
@@ -147,7 +148,7 @@ public class BlockConstructionTapeCorner extends Block
     /**
      * How much light goes through the block.
      */
-    private static final int LIGHT_OPACITY = 0;
+    private static final int    LIGHT_OPACITY    = 0;
 
     /**
      * Constructor for the Substitution block.
@@ -158,7 +159,6 @@ public class BlockConstructionTapeCorner extends Block
         super(Material.VINE);
         initBlock();
     }
-
 
     /**
      * initialize the block
@@ -175,31 +175,6 @@ public class BlockConstructionTapeCorner extends Block
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);
         setLightOpacity(LIGHT_OPACITY);
-        blockMaterial.setReplaceable();
-    }
-
-    @Nullable
-    @Override
-    public Item getItemDropped(final IBlockState state, final Random rand, final int fortune)
-    {
-        return null;
-    }
-    
-    /**
-     * @deprecated (Remove this as soon as minecraft offers anything better).
-     */
-
-    @Override
-    @Deprecated
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos)
-    {
-        return null;
-    }
-    
-    @Override
-    public int getMetaFromState(@NotNull final IBlockState state)
-    {
-        return state.getValue(FACING).getIndex();
     }
 
     /**
@@ -222,40 +197,10 @@ public class BlockConstructionTapeCorner extends Block
         return this.getDefaultState().withProperty(FACING, enumfacing);
     }
 
-    /**
-     * @deprecated (Remove this as soon as minecraft offers anything better).
-     */
-    @SideOnly(Side.CLIENT)
     @Override
-    @Deprecated
-    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
+    public int getMetaFromState(@NotNull final IBlockState state)
     {
-        return true;
-    }
-
-    /**
-     * @deprecated (Remove this as soon as minecraft offers anything better).
-     */
-    @Override
-    @Deprecated
-    public boolean isOpaqueCube(final IBlockState state)
-    {
-        return false;
-    }
-
-    @NotNull
-    @Override
-    protected BlockStateContainer createBlockState()
-    {
-        return new BlockStateContainer(this, FACING);
-    }
-
-    @NotNull
-    @Override
-    @SideOnly(Side.CLIENT)
-    public BlockRenderLayer getBlockLayer()
-    {
-        return BlockRenderLayer.SOLID;
+        return state.getValue(FACING).getIndex();
     }
 
     /**
@@ -284,46 +229,93 @@ public class BlockConstructionTapeCorner extends Block
         if (state.getValue(FACING).equals(NORTH))
         {
             return new AxisAlignedBB((float) N_START_COLLISION_X,
-                                      (float) BOTTOM_COLLISION,
-                                      (float) N_START_COLLISION_Z,
-                                      (float) N_END_COLLISION_X,
-                                      (float) HEIGHT_COLLISION,
-                                      (float) N_END_COLLISION_Z);
+                    (float) BOTTOM_COLLISION,
+                    (float) N_START_COLLISION_Z,
+                    (float) N_END_COLLISION_X,
+                    (float) HEIGHT_COLLISION,
+                    (float) N_END_COLLISION_Z);
         }
         if (state.getValue(FACING).equals(WEST))
         {
             return new AxisAlignedBB((float) W_START_COLLISION_X,
-                                      (float) BOTTOM_COLLISION,
-                                      (float) W_START_COLLISION_Z,
-                                      (float) W_END_COLLISION_X,
-                                      (float) HEIGHT_COLLISION,
-                                      (float) W_END_COLLISION_Z);
+                    (float) BOTTOM_COLLISION,
+                    (float) W_START_COLLISION_Z,
+                    (float) W_END_COLLISION_X,
+                    (float) HEIGHT_COLLISION,
+                    (float) W_END_COLLISION_Z);
         }
         if (state.getValue(FACING).equals(SOUTH))
         {
             return new AxisAlignedBB((float) S_START_COLLISION_X,
-                                      (float) BOTTOM_COLLISION,
-                                      (float) S_START_COLLISION_Z,
-                                      (float) S_END_COLLISION_X,
-                                      (float) HEIGHT_COLLISION,
-                                      (float) S_END_COLLISION_Z);
+                    (float) BOTTOM_COLLISION,
+                    (float) S_START_COLLISION_Z,
+                    (float) S_END_COLLISION_X,
+                    (float) HEIGHT_COLLISION,
+                    (float) S_END_COLLISION_Z);
         }
         else
         {
             return new AxisAlignedBB((float) E_START_COLLISION_X,
-                                      (float) BOTTOM_COLLISION,
-                                      (float) E_START_COLLISION_Z,
-                                      (float) E_END_COLLISION_X,
-                                      (float) HEIGHT_COLLISION,
-                                      (float) E_END_COLLISION_Z);
+                    (float) BOTTOM_COLLISION,
+                    (float) E_START_COLLISION_Z,
+                    (float) E_END_COLLISION_X,
+                    (float) HEIGHT_COLLISION,
+                    (float) E_END_COLLISION_Z);
         }
     }
 
-    // =======================================================================
-    // ======================= Rendering & IBlockState =======================
-    // =======================================================================
+    /**
+     * @deprecated (Remove this as soon as minecraft offers anything better).
+     */
+    @SideOnly(Side.CLIENT)
     @Override
-    public IBlockState onBlockPlaced(
+    @Deprecated
+    public boolean shouldSideBeRendered(final IBlockState blockState, final IBlockAccess blockAccess, final BlockPos pos, final EnumFacing side)
+    {
+        return true;
+    }
+
+    /**
+     * @deprecated (Remove this as soon as minecraft offers anything better).
+     */
+    @Deprecated
+    @Nullable
+    @Override
+    public AxisAlignedBB getCollisionBoundingBox(
+            final IBlockState blockState, final World worldIn, final BlockPos pos)
+    {
+        return null;
+    }
+
+    /**
+     * @deprecated (Remove this as soon as minecraft offers anything better).
+     */
+    @Override
+    @Deprecated
+    public boolean isOpaqueCube(final IBlockState state)
+    {
+        return false;
+    }
+
+    @Nullable
+    @Override
+    public Item getItemDropped(final IBlockState state, final Random rand, final int fortune)
+    {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    @SideOnly(Side.CLIENT)
+    public BlockRenderLayer getBlockLayer()
+    {
+        return BlockRenderLayer.SOLID;
+    }
+
+    @SuppressWarnings(DEPRECATION)
+    @NotNull
+    @Override
+    public IBlockState getStateForPlacement(
             final World worldIn,
             final BlockPos pos,
             final EnumFacing facing,
@@ -331,9 +323,16 @@ public class BlockConstructionTapeCorner extends Block
             final float hitY,
             final float hitZ,
             final int meta,
-            @Nullable final EntityLivingBase placer)
+            final EntityLivingBase placer)
     {
-        @NotNull final EnumFacing enumFacing = (placer == null) ? NORTH : EnumFacing.fromAngle(placer.rotationYaw);
+        @NotNull final EnumFacing enumFacing = (placer == null) ? EnumFacing.NORTH : EnumFacing.fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);
+    }
+
+    @NotNull
+    @Override
+    protected BlockStateContainer createBlockState()
+    {
+        return new BlockStateContainer(this, FACING);
     }
 }

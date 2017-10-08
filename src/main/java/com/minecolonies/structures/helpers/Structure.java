@@ -694,7 +694,7 @@ public class Structure
 
     public void renderGhost(final World world, final ModelHolder holder, final EntityPlayer player, final float partialTicks, final boolean simulateWorld)
     {
-        final boolean existingModel = !this.mc.theWorld.isAirBlock(holder.pos);
+        final boolean existingModel = !this.mc.world.isAirBlock(holder.pos);
 
         final IBlockState actualState = holder.actualState;
         final Block block = actualState.getBlock();
@@ -731,7 +731,7 @@ public class Structure
             {
                 fakeWorld = new FakeWorld(holder.actualState, world.getSaveHandler(), world.getWorldInfo(), world.provider, world.theProfiler, true);
             }
-            te.setWorldObj(fakeWorld);
+            te.setWorld(fakeWorld);
             final int pass = 0;
 
             if (te.shouldRenderInPass(pass))
