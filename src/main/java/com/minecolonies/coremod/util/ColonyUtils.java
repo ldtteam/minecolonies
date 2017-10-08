@@ -59,9 +59,8 @@ public class ColonyUtils
      * @return a tuple with the required corners.
      */
     public static Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> calculateCorners(
-            final BlockPos pos, final World world, final String structureName, final int rotation, final boolean isMirrored)
+            final BlockPos pos, final World world, final StructureWrapper wrapper, final int rotation, final boolean isMirrored)
     {
-        final StructureWrapper wrapper = new StructureWrapper(world, structureName);
         wrapper.rotate(rotation, world, pos, isMirrored ? Mirror.FRONT_BACK : Mirror.NONE);
         wrapper.setPosition(pos);
 
