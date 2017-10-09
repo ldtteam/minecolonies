@@ -151,8 +151,6 @@ public class StaticLocation implements ILocation
 
         /**
          * Method to get a new instance of a location given the input.
-         * <p>
-         * <p>
          * Method not used in this factory.
          *
          * @param input The input to build a new location for.

@@ -21,11 +21,12 @@ public abstract class AbstractRendererBarbarian extends RenderLiving<AbstractEnt
     private final ResourceLocation mobTexture;
 
     /**
-     * Constructor method for renderer
+     * Constructor method for renderer.
      *
+     * @param barbarian the barbarian class to render.
      * @param renderManagerIn the renderManager
      */
-    public AbstractRendererBarbarian(final RenderManager renderManagerIn,final Class barbarian)
+    public AbstractRendererBarbarian(final RenderManager renderManagerIn, final Class barbarian)
     {
         super(renderManagerIn, new ModelBiped(), SHADOW_SIZE);
 
