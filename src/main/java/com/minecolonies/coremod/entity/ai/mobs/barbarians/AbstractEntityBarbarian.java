@@ -96,10 +96,12 @@ public abstract class AbstractEntityBarbarian extends EntityMob
 
     /**
      * Constructor method for Abstract Barbarians.
+     *
+     * @param world the world.
      */
-    public AbstractEntityBarbarian(final World worldIn)
+    public AbstractEntityBarbarian(final World world)
     {
-        super(worldIn);
+        super(world);
     }
 
     @Override
