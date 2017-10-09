@@ -27,6 +27,8 @@ public final class ModSoundEvents
         handlers.add(new DeliverymanSounds());
         handlers.add(new CitizenSounds());
         handlers.add(new FarmerSounds());
+        handlers.add(new KnightSounds());
+        handlers.add(new ArcherSounds());
     }
 
     /**
@@ -79,6 +81,35 @@ public final class ModSoundEvents
         registry.register(FarmerSounds.Female.greeting);
         registry.register(FarmerSounds.Female.farewell);
         registry.register(FarmerSounds.Female.interaction);
+
+        registry.register(CitizenSounds.Female.say);
+        registry.register(CitizenSounds.Male.say);
+
+        registry.register(KnightSounds.Male.badHousing);
+        registry.register(KnightSounds.Male.levelUp);
+        registry.register(KnightSounds.Male.saturationHigh);
+        registry.register(KnightSounds.Male.saturationLow);
+        registry.register(KnightSounds.Male.saturationVeryLow);
+        registry.register(KnightSounds.Male.badWeather);
+        registry.register(KnightSounds.Male.offToBed);
+        registry.register(KnightSounds.Male.generalPhrases);
+        registry.register(KnightSounds.Male.noises);
+        registry.register(KnightSounds.Male.greeting);
+        registry.register(KnightSounds.Male.farewell);
+        registry.register(KnightSounds.Male.interaction);
+
+        registry.register(ArcherSounds.Female.badHousing);
+        registry.register(ArcherSounds.Female.levelUp);
+        registry.register(ArcherSounds.Female.saturationHigh);
+        registry.register(ArcherSounds.Female.saturationLow);
+        registry.register(ArcherSounds.Female.saturationVeryLow);
+        registry.register(ArcherSounds.Female.badWeather);
+        registry.register(ArcherSounds.Female.offToBed);
+        registry.register(ArcherSounds.Female.generalPhrases);
+        registry.register(ArcherSounds.Female.noises);
+        registry.register(ArcherSounds.Female.greeting);
+        registry.register(ArcherSounds.Female.farewell);
+        registry.register(ArcherSounds.Female.interaction);
 
         registry.register(CitizenSounds.Female.say);
         registry.register(CitizenSounds.Male.say);

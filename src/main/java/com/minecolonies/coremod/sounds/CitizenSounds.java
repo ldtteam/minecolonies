@@ -78,6 +78,14 @@ public final class CitizenSounds extends AbstractWorkerSounds
     }
 
     @Override
+    public void playInteractionSound(final World world, final BlockPos position, final boolean female)
+    {
+        /**
+         * Do nothing we don't have this implemented for this here yet.
+         */
+    }
+
+    @Override
     public String getWorkerString()
     {
         return "";

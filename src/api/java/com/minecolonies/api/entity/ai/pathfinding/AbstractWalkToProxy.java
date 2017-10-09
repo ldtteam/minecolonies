@@ -198,6 +198,7 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
      * Returns a proxy point to the goal.
      *
      * @param target         the target.
+     * @param position       the position.
      * @param distanceToPath the total distance.
      * @return a proxy or, if not applicable null.
      */

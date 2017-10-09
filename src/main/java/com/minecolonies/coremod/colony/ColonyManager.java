@@ -171,9 +171,7 @@ public final class ColonyManager
         try
         {
             final Colony colony = getColony(id);
-            Log.getLogger().info("Deleting colony " + id);
-            colonies.remove(id);
-            coloniesByWorld.get(colony.getDimension()).remove(colony);
+
             final Set<World> colonyWorlds = new HashSet<>();
             Log.getLogger().info("Removing citizens for " + id);
             for (final CitizenData citizenData : new ArrayList<>(colony.getCitizens().values()))
@@ -190,9 +188,9 @@ public final class ColonyManager
             Log.getLogger().info("Removing buildings for " + id);
             for (final AbstractBuilding building : new ArrayList<>(colony.getBuildings().values()))
             {
-
                 final BlockPos location = building.getLocation();
                 Log.getLogger().info("Delete Building at " + location);
+                building.deconstruct();
                 building.destroy();
                 for (final World world : colonyWorlds)
                 {
@@ -203,6 +201,11 @@ public final class ColonyManager
                     }
                 }
             }
+
+            Log.getLogger().info("Deleting colony: " + colony.getID());
+            colonies.remove(id);
+            coloniesByWorld.get(colony.getDimension()).remove(colony);
+
             Log.getLogger().info("Done with " + id);
         }
         catch (final RuntimeException e)
