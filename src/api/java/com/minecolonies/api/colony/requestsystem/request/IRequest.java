@@ -22,6 +22,7 @@ public interface IRequest<R>
     /**
      * The unique token representing the request outside of the management system.
      *
+     * @param <T> generic token.
      * @return the token representing the request outside of the management system.
      */
     <T extends IToken> T getToken();
@@ -47,6 +48,7 @@ public interface IRequest<R>
      * Setter for the current state of this request.
      * It is not recommended to call this method from outside of the request management system.
      *
+     * @param manager the request manager.
      * @param state The new state of this request.
      */
     void setState(@NotNull IRequestManager manager, @NotNull RequestState state);
@@ -97,6 +99,7 @@ public interface IRequest<R>
      * Returns the parent of this request.
      * If this is set it means that this request is part of request chain.
      *
+     * @param <T> generic token.
      * @return The parent of this request, or null if it has no parent.
      */
     @Nullable
@@ -105,6 +108,7 @@ public interface IRequest<R>
     /**
      * Method used to set the parent of a request.
      *
+     * @param <T> generic token.
      * @param parent The new parent, or null to clear the existing one.
      */
     <T extends IToken> void setParent(@Nullable T parent);
@@ -119,6 +123,7 @@ public interface IRequest<R>
     /**
      * Method used to add a single Child.
      *
+     * @param <T> generic token.
      * @param child The new child request to add.
      */
     <T extends IToken> void addChild(@NotNull T child);
@@ -126,6 +131,7 @@ public interface IRequest<R>
     /**
      * Method to add multiple children in a single call.
      *
+     * @param <T> generic token.
      * @param children An array of children to add.
      */
     <T extends IToken> void addChildren(@NotNull T... children);
@@ -133,6 +139,7 @@ public interface IRequest<R>
     /**
      * Method to add multiple children in a single call.
      *
+     * @param <T> generic token.
      * @param children A collection of children to add.
      */
     <T extends IToken> void addChildren(@NotNull Collection<T> children);
@@ -140,6 +147,7 @@ public interface IRequest<R>
     /**
      * Method used to remove a single Child.
      *
+     * @param <T> generic token.
      * @param child The new child request to remove.
      */
     <T extends IToken> void removeChild(@NotNull T child);
@@ -147,6 +155,7 @@ public interface IRequest<R>
     /**
      * Method to remove multiple children in a single call.
      *
+     * @param <T> generic token.
      * @param children An array of children to remove.
      */
     <T extends IToken> void removeChildren(@NotNull T... children);
@@ -154,6 +163,7 @@ public interface IRequest<R>
     /**
      * Method to remove multiple children in a single call.
      *
+     * @param <T> generic token.
      * @param children A collection of children to remove.
      */
     <T extends IToken> void removeChildren(@NotNull Collection<T> children);
