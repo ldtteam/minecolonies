@@ -13,6 +13,7 @@ import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDelive
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.ColonyUtils;
+import com.minecolonies.coremod.util.StructureWrapper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -103,6 +104,7 @@ public abstract class AbstractBuilding
     private static final String TAG_CORNER2 = "corner2";
     private static final String TAG_CORNER3 = "corner3";
     private static final String TAG_CORNER4 = "corner4";
+    private static final String TAG_HEIGHT  = "height";
 
     /**
      * A list which contains the position of all containers which belong to the worker building.
@@ -219,6 +221,9 @@ public abstract class AbstractBuilding
      */
     private boolean dirty = false;
 
+    /**
+     * Corners of the building.
+     */
     private int cornerX1;
 
     private int cornerX2;
@@ -226,6 +231,11 @@ public abstract class AbstractBuilding
     private int cornerZ1;
 
     private int cornerZ2;
+
+    /**
+     * Height of the building.
+     */
+    private int height;
 
     /**
      * Constructor for a AbstractBuilding.
@@ -392,6 +402,11 @@ public abstract class AbstractBuilding
             this.cornerZ1 = compound.getInteger(TAG_CORNER3);
             this.cornerZ2 = compound.getInteger(TAG_CORNER4);
         }
+
+        if(compound.hasKey(TAG_HEIGHT))
+        {
+            this.height = compound.getInteger(TAG_HEIGHT);
+        }
     }
 
     /**
@@ -429,13 +444,15 @@ public abstract class AbstractBuilding
         if (building != null && parent.getWorld() != null)
         {
             final WorkOrderBuild workOrder = new WorkOrderBuild(building, 1);
+            final StructureWrapper wrapper = new StructureWrapper(parent.getWorld(), workOrder.getStructureName());
             final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
                     = ColonyUtils.calculateCorners(building.getLocation(),
                     parent.getWorld(),
-                    workOrder.getStructureName(),
+                    wrapper,
                     workOrder.getRotation(parent.getWorld()),
                     workOrder.isMirrored());
             building.setCorners(corners.getFirst().getFirst(), corners.getFirst().getSecond(), corners.getSecond().getFirst(), corners.getSecond().getSecond());
+            building.setHeight(wrapper.getHeight());
             ConstructionTapeHelper.placeConstructionTape(building.getLocation(), corners, parent.getWorld());
         }
         return building;
@@ -579,6 +596,9 @@ public abstract class AbstractBuilding
         compound.setInteger(TAG_CORNER2, this.cornerX2);
         compound.setInteger(TAG_CORNER3, this.cornerZ1);
         compound.setInteger(TAG_CORNER4, this.cornerZ2);
+
+        compound.setInteger(TAG_HEIGHT, this.height);
+
     }
 
     /**
@@ -617,6 +637,23 @@ public abstract class AbstractBuilding
     {
         onDestroyed();
         colony.removeBuilding(this);
+    }
+
+    /**
+     * Deconstruct the building on destroyed.
+     */
+    public void deconstruct()
+    {
+        for(int x = cornerX1; x < cornerX2; x++)
+        {
+            for(int z = cornerZ1; z < cornerZ2; z++)
+            {
+                for(int y = getLocation().getY() - 1; y < getLocation().getY() + this.height; y++)
+                {
+                    getColony().getWorld().destroyBlock(new BlockPos(x,y,z), false);
+                }
+            }
+        }
     }
 
     /**
@@ -714,6 +751,8 @@ public abstract class AbstractBuilding
 
     /**
      * Requests an upgrade for the current building.
+     *
+     * @param player the requesting player.
      */
     public void requestUpgrade(final EntityPlayer player)
     {
@@ -863,6 +902,15 @@ public abstract class AbstractBuilding
     }
 
     /**
+     * Set the height of the building.
+     * @param height the height to set.
+     */
+    public void setHeight(final int height)
+    {
+        this.height = height;
+    }
+
+    /**
      * Called upon completion of an upgrade process.
      * We suppress this warning since this parameter will be used in child classes which override this method.
      *
@@ -871,13 +919,15 @@ public abstract class AbstractBuilding
     @SuppressWarnings("squid:S1172")
     public void onUpgradeComplete(final int newLevel)
     {
-        final WorkOrderBuild workOrder = new WorkOrderBuild(this, 1);
+        final WorkOrderBuild workOrder = new WorkOrderBuild(this, newLevel);
+        final StructureWrapper wrapper = new StructureWrapper(colony.getWorld(), workOrder.getStructureName());
         final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
                 = ColonyUtils.calculateCorners(this.getLocation(),
                 colony.getWorld(),
-                workOrder.getStructureName(),
+                wrapper,
                 workOrder.getRotation(colony.getWorld()),
                 workOrder.isMirrored());
+        this.height = wrapper.getHeight();
         this.setCorners(corners.getFirst().getFirst(), corners.getFirst().getSecond(), corners.getSecond().getFirst(), corners.getSecond().getSecond());
     }
 
