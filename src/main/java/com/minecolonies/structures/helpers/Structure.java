@@ -588,7 +588,6 @@ public class Structure
                 final IBakedModel ibakedmodel = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(iblockstate);
 
                 final ModelHolder models = new ModelHolder(blockpos, iblockstate, iBlockExtendedState, fakeWorld.getTileEntity(aBlockList.pos), ibakedmodel);
-
                 modelList.add(models);
             }
         }

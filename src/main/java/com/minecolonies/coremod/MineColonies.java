@@ -173,7 +173,8 @@ public class MineColonies
         getNetwork().registerMessage(AddRemoveRecipeMessage.class, AddRemoveRecipeMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(ChangeRecipePriorityMessage.class, ChangeRecipePriorityMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(UpgradeWarehouseMessage.class, UpgradeWarehouseMessage.class, ++id, Side.SERVER);
-        
+        getNetwork().registerMessage(BuildToolPasteMessage.class, BuildToolPasteMessage.class, ++id, Side.SERVER);
+
         // Schematic transfer messages
         getNetwork().registerMessage(SchematicRequestMessage.class, SchematicRequestMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(SchematicSaveMessage.class, SchematicSaveMessage.class, ++id, Side.CLIENT);

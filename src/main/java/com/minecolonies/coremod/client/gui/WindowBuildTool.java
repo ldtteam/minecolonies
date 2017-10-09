@@ -9,12 +9,14 @@ import com.minecolonies.blockout.views.DropDownList;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.Structures;
+import com.minecolonies.coremod.network.messages.BuildToolPasteMessage;
 import com.minecolonies.coremod.network.messages.BuildToolPlaceMessage;
 import com.minecolonies.coremod.network.messages.SchematicRequestMessage;
 import com.minecolonies.coremod.network.messages.SchematicSaveMessage;
 import com.minecolonies.structures.helpers.Settings;
 import com.minecolonies.structures.helpers.Structure;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Rotation;
@@ -171,13 +173,23 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     /**
      * Rotation to rotateWithMirror left.
      */
-    private static final int ROTATE_LEFT = 3;
+    private static final int ROTATE_LEFT  = 3;
+
+    /**
+     * Id of the paste button.
+     */
+    private static final String BUTTON_PASTE = "pastecomplete";
+
+    /**
+     * Id of the paste nice button.
+     */
+    private static final String BUTTON_PASTE_NICE = "pastenice";
 
     /**
      * List of section.
      */
     @NotNull
-    private List<String> sections = new ArrayList<>();
+    private final List<String> sections = new ArrayList<>();
 
     /**
      * List of style for the section.
@@ -273,10 +285,53 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         registerButton(BUTTON_DOWN, WindowBuildTool::moveDownClicked);
         registerButton(BUTTON_ROTATE_RIGHT, this::rotateRightClicked);
         registerButton(BUTTON_ROTATE_LEFT, this::rotateLeftClicked);
+        registerButton(BUTTON_PASTE, this::pasteComplete);
+        registerButton(BUTTON_PASTE_NICE, this::pasteNice);
+
         registerButton(BUTTON_RENAME, this::renameClicked);
         registerButton(BUTTON_DELETE, this::deleteClicked);
         renameButton = findPaneOfTypeByID(BUTTON_RENAME, Button.class);
         deleteButton = findPaneOfTypeByID(BUTTON_DELETE, Button.class);
+    }
+
+    private void pasteNice()
+    {
+        paste(false);
+    }
+
+    /**
+     * Paste a schematic in the world.
+     */
+    private void pasteComplete()
+    {
+        paste(true);
+    }
+
+    /**
+     * Paste a schematic in the world.
+     */
+    private void paste(final boolean complete)
+    {
+        final Structures.StructureName structureName = new Structures.StructureName(schematics.get(schematicsDropDownList.getSelectedIndex()));
+        if (structureName.getPrefix().equals(Structures.SCHEMATICS_SCAN) && FMLCommonHandler.instance().getMinecraftServerInstance() == null)
+        {
+            //We need to check that the server have it too using the md5
+            requestScannedSchematic(structureName);
+        }
+        else
+        {
+            MineColonies.getNetwork().sendToServer(new BuildToolPasteMessage(
+                    structureName.toString(),
+                    structureName.toString(),
+                    Settings.instance.getPosition(),
+                    Settings.instance.getRotation(),
+                    structureName.isHut(),
+                    Settings.instance.getMirror(),
+                    complete));
+        }
+
+        Settings.instance.reset();
+        close();
     }
 
     /**
@@ -400,6 +455,12 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             {
                 sections.add(section);
             }
+        }
+
+        if( Minecraft.getMinecraft().player.capabilities.isCreativeMode)
+        {
+            findPaneOfTypeByID(BUTTON_PASTE, Button.class).setVisible(true);
+            findPaneOfTypeByID(BUTTON_PASTE_NICE, Button.class).setVisible(true);
         }
 
         setStructureName(Settings.instance.getStructureName());

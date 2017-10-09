@@ -938,7 +938,7 @@ public class Permissions implements IPermissions
         public boolean hasPermission(final Rank rank, @NotNull final Action action)
         {
             return (rank == Rank.OWNER && action != Action.GUARDS_ATTACK)
-                     || Utils.testFlag(permissions.get(rank), action.getFlag());
+                     || (permissions != null && action != null && Utils.testFlag(permissions.get(rank), action.getFlag()));
         }
 
         /**

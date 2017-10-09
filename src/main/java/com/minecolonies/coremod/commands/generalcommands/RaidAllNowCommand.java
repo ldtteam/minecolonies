@@ -60,7 +60,7 @@ public class RaidAllNowCommand extends AbstractSingleCommand
 
         for (final Colony colony : ColonyManager.getColonies())
         {
-            MobEventsUtils.barbarianEvent(colony.getWorld(),colony);
+            MobEventsUtils.barbarianEvent(colony.getWorld(), colony);
         }
 
         sender.sendMessage(SUCCESSFUL);

@@ -101,9 +101,9 @@ public class ClientEventHandler
             }
 
             final ColonyView colony = ColonyManager.getClosestColonyView(world, player.getPosition());
-            if(colony != null && colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
+            if(colony != null && player != null && colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
             {
-                for(final CitizenDataView citizenDataView : colony.getCitizens().values())
+                for(final CitizenDataView citizenDataView : new ArrayList<CitizenDataView>(colony.getCitizens().values()))
                 {
                     final Entity entityCitizen = world.getEntityByID(citizenDataView.getEntityId());
                     if(entityCitizen instanceof EntityCitizen && entityCitizen.getPosition().distanceSq(player.getPosition()) <= 2)
