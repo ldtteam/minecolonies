@@ -911,6 +911,15 @@ public abstract class AbstractBuilding
     }
 
     /**
+     * Get the height of the building.
+     * @return the height..
+     */
+    public int getHeight()
+    {
+        return this.height;
+    }
+
+    /**
      * Called upon completion of an upgrade process.
      * We suppress this warning since this parameter will be used in child classes which override this method.
      *

@@ -25,6 +25,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.Mirror;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -87,6 +88,11 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
      * Wait this amount of ticks after requesting a burnable material.
      */
     private static final int WAIT_AFTER_REQUEST = 400;
+
+    /**
+     * Base height considered for the restaurant.
+     */
+    private static final int BASE_HEIGHT        = 10;
 
     /**
      * The citizen the worker is currently trying to serve.
@@ -534,23 +540,43 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
      */
     private AxisAlignedBB getTargetableArea()
     {
-        final Structures.StructureName sn =
-                new Structures.StructureName(Structures.SCHEMATICS_PREFIX, getOwnBuilding().getStyle(), getOwnBuilding().getSchematicName() + getOwnBuilding().getBuildingLevel());
+        final int x1;
+        final int z1;
+        final int x3;
+        final int z3;
+        final int y1 = getOwnBuilding().getLocation().getY() - 1;
+        final int y3;
 
-        final String structureName = sn.toString();
+        if(getOwnBuilding().getHeight() == 0)
+        {
+            final Structures.StructureName sn =
+                    new Structures.StructureName(Structures.SCHEMATICS_PREFIX,
+                            getOwnBuilding().getStyle(),
+                            getOwnBuilding().getSchematicName() + getOwnBuilding().getBuildingLevel());
 
-        final StructureWrapper wrapper = new StructureWrapper(world, structureName);
-        wrapper.rotate(getOwnBuilding().getRotation(), world, getOwnBuilding().getLocation(), getOwnBuilding().isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE);
+            final String structureName = sn.toString();
 
-        final BlockPos pos = getOwnBuilding().getLocation();
-        wrapper.setPosition(pos);
+            final StructureWrapper wrapper = new StructureWrapper(world, structureName);
+            wrapper.rotate(getOwnBuilding().getRotation(), world, getOwnBuilding().getLocation(), getOwnBuilding().isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE);
 
-        final int x1 = wrapper.getPosition().getX() - wrapper.getOffset().getX() - 1;
-        final int z1 = wrapper.getPosition().getZ() - wrapper.getOffset().getZ() - 1;
-        final int x3 = wrapper.getPosition().getX() + (wrapper.getWidth() - wrapper.getOffset().getX());
-        final int z3 = wrapper.getPosition().getZ() + (wrapper.getLength() - wrapper.getOffset().getZ());
-        final int y1 = getOwnBuilding().getLocation().getY() - 10;
-        final int y3 = getOwnBuilding().getLocation().getY() + 10;
+            final BlockPos pos = getOwnBuilding().getLocation();
+            wrapper.setPosition(pos);
+
+            x1 = wrapper.getPosition().getX() - wrapper.getOffset().getX() - 1;
+            z1 = wrapper.getPosition().getZ() - wrapper.getOffset().getZ() - 1;
+            x3 = wrapper.getPosition().getX() + (wrapper.getWidth() - wrapper.getOffset().getX());
+            z3 = wrapper.getPosition().getZ() + (wrapper.getLength() - wrapper.getOffset().getZ());
+            y3 = getOwnBuilding().getLocation().getY() + BASE_HEIGHT;
+        }
+        else
+        {
+            final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = getOwnBuilding().getCorners();
+            x1 = corners.getFirst().getFirst();
+            x3 = corners.getFirst().getSecond();
+            z1 = corners.getSecond().getFirst();
+            z3 = corners.getSecond().getSecond();
+            y3 = getOwnBuilding().getHeight();
+        }
 
         return new AxisAlignedBB(x1, y1, z1, x3, y3, z3);
     }
