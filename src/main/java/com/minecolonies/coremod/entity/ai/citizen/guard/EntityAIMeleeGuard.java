@@ -42,7 +42,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
     /**
      * Experience to add when a mob is killed
      */
-    private static final int EXP_PER_MOD_DEATH = 15;
+    private static final int EXP_PER_MOD_DEATH = 5;
 
     /**
      * Random is multiplied by this to get a random arrow sound.
@@ -148,7 +148,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
             return AIState.GUARD_GATHERING;
         }
 
-        if (worker.getEntitySenses().canSee(targetEntity) && worker.getDistanceToEntity(targetEntity) <= MIN_ATTACK_DISTANCE)
+        if (worker.getEntitySenses().canSee(targetEntity) && worker.getDistance(targetEntity) <= MIN_ATTACK_DISTANCE)
         {
             worker.resetActiveHand();
             final boolean killedEnemy = attackEntity(targetEntity, (float) DAMAGE_PER_ATTACK);
@@ -196,7 +196,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         {
             if (ItemStackUtils.doesItemServeAsWeapon(heldItem))
             {
-                damgeToBeDealt += ((ItemSword) heldItem.getItem()).getDamageVsEntity();
+                damgeToBeDealt += ((ItemSword) heldItem.getItem()).getAttackDamage();
             }
             damgeToBeDealt += EnchantmentHelper.getModifierForCreature(heldItem, targetEntity.getCreatureAttribute());
         }

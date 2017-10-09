@@ -60,7 +60,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
     /**
      * Experience to add when a mob is killed
      */
-    private static final int EXP_PER_MOD_DEATH = 15;
+    private static final int EXP_PER_MOD_DEATH = 5;
 
     /**
      * Chance that the arrow lights up the target when the target is on fire.
@@ -208,7 +208,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
             return AIState.GUARD_GATHERING;
         }
 
-        if (worker.getEntitySenses().canSee(targetEntity) && worker.getDistanceToEntity(targetEntity) <= MAX_ATTACK_DISTANCE)
+        if (worker.getEntitySenses().canSee(targetEntity) && worker.getDistance(targetEntity) <= MAX_ATTACK_DISTANCE)
         {
             worker.resetActiveHand();
             attackEntityWithRangedAttack(targetEntity, (float) DAMAGE_PER_ATTACK);
@@ -248,7 +248,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
         //Lower the variable higher the chance that the arrows hits the target.
         final double chance = HIT_CHANCE_DIVIDER / (worker.getExperienceLevel() + 1);
 
-        arrowEntity.setThrowableHeading(xVector, yVector + distance * AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, (float) ARROW_SPEED, (float) chance);
+        arrowEntity.shoot(xVector, yVector + distance * AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, (float) ARROW_SPEED, (float) chance);
 
         if (worker.getHealth() <= 2)
         {

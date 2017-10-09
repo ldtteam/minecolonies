@@ -351,7 +351,7 @@ public final class EntityFishHook extends Entity
         updateMotionAndRotation();
         double movementLimiter = AIR_MOVEMENT_LIMITER;
 
-        if (this.onGround || this.isCollidedHorizontally)
+        if (this.onGround || this.collidedHorizontally)
         {
             movementLimiter = GROUND_MOVEMENT_LIMITER;
         }

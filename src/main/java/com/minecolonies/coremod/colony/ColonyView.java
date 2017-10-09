@@ -44,7 +44,7 @@ public final class ColonyView implements IColony
     private final Map<Integer, CitizenDataView>        citizens    = new HashMap<>();
     private       String                               name        = "Unknown";
     private int      dimensionId;
-    private BlockPos center;
+    private BlockPos center = BlockPos.ORIGIN;
 
     /**
      * Defines if workers are hired manually or automatically.

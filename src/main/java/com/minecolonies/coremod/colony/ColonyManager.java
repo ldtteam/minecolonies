@@ -426,7 +426,7 @@ public final class ColonyManager
 
         for (@NotNull final ColonyView c : colonyViews)
         {
-            if (c.getDimension() == w.provider.getDimension())
+            if (c.getDimension() == w.provider.getDimension() && c.getCenter() != null)
             {
                 final long dist = c.getDistanceSquared(pos);
                 if (dist < closestDist)

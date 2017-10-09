@@ -873,7 +873,7 @@ public class InventoryCitizen implements IInventory
 
         if (!(this.mainInventory.get(this.currentItem)).isEmpty())
         {
-            f *= (this.mainInventory.get(this.currentItem)).getStrVsBlock(state);
+            f *= (this.mainInventory.get(this.currentItem)).getDestroySpeed(state);
         }
 
         return f;

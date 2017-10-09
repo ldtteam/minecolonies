@@ -267,7 +267,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
                          * Math.pow(LEVEL_MODIFIER, worker.getLevel()))
                         * (double) world.getBlockState(pos).getBlockHardness(world, pos)
                         / (double) (worker.getHeldItemMainhand().getItem()
-                                      .getStrVsBlock(worker.getHeldItemMainhand(),
+                                      .getDestroySpeed(worker.getHeldItemMainhand(),
                                         block.getDefaultState())));
     }
 
@@ -325,7 +325,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         if (stillTicks > STUCK_WAIT_TICKS)
         {
             //Skip this item
-            worker.getNavigator().clearPathEntity();
+            worker.getNavigator().clearPath();
             if(items != null && !items.isEmpty())
             {
                 items.remove(0);
