@@ -58,6 +58,7 @@ public interface IFactoryController
     /**
      * Method used to quickly serialize a object if it is known to this controller.
      *
+     * @param <Output> generic output.
      * @param object The object to serialize.
      * @return An NBTTag containing a serialized version of the given object.
      *

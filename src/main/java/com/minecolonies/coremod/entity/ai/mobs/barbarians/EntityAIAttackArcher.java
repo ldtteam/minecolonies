@@ -83,7 +83,7 @@ public class EntityAIAttackArcher extends EntityAIBase
         final double xVector = target.posX - entity.posX;
         final double yVector = target.getEntityBoundingBox().minY + target.height / AIM_HEIGHT - arrowEntity.posY;
         final double zVector = target.posZ - entity.posZ;
-        final double distance = (double) MathHelper.sqrt_double(xVector * xVector + zVector * zVector);
+        final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
         //Lower the variable higher the chance that the arrows hits the target.
 
         arrowEntity.setThrowableHeading(xVector, yVector + distance * AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, (float) ARROW_SPEED, (float) HIT_CHANCE);

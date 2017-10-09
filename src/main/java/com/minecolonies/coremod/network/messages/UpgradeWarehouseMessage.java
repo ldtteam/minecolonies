@@ -89,7 +89,7 @@ public class UpgradeWarehouseMessage extends AbstractMessage<UpgradeWarehouseMes
             return;
         }
 
-        ((BuildingWareHouse) building).upgradeContainers(player.worldObj);
+        ((BuildingWareHouse) building).upgradeContainers(player.world);
 
         final boolean isCreative = player.capabilities.isCreativeMode;
         if(!isCreative)

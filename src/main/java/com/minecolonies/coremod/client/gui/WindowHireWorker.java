@@ -18,6 +18,7 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -112,7 +113,7 @@ public class WindowHireWorker extends Window implements ButtonHandler
         //Removes all citizens which already have a job.
         citizens = colony.getCitizens().values().stream()
                 .filter(citizen -> (citizen.getWorkBuilding() == null && !building.hasEnoughWorkers())
-                        || building.getLocation().equals(citizen.getWorkBuilding()))
+                        || building.getLocation().equals(citizen.getWorkBuilding())).sorted(Comparator.comparing(CitizenDataView::getName))
                 .collect(Collectors.toList());
     }
 

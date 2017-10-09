@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.blocks;
 
-import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
@@ -33,6 +32,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 import static net.minecraft.util.EnumFacing.NORTH;
 import static net.minecraft.util.EnumFacing.fromAngle;
 
@@ -105,6 +105,7 @@ public class BlockHutField extends BlockContainer
         GameRegistry.register((new ItemBlock(this)).setRegistryName(this.getRegistryName()));
     }
 
+    @NotNull
     @Override
     public EnumBlockRenderType getRenderType(final IBlockState state)
     {
@@ -118,7 +119,7 @@ public class BlockHutField extends BlockContainer
     }
 
     //todo: remove once we no longer need to support this
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings(DEPRECATION)
     @Override
     public boolean isFullCube(final IBlockState state)
     {
@@ -132,20 +133,21 @@ public class BlockHutField extends BlockContainer
     }
 
     //todo: remove once we no longer need to support this
-    @SuppressWarnings("deprecation")
+    @NotNull
+    @SuppressWarnings(DEPRECATION)
     @Override
     public AxisAlignedBB getBoundingBox(final IBlockState state, final IBlockAccess source, final BlockPos pos)
     {
         return new AxisAlignedBB((float) START_COLLISION,
-                                  (float) BOTTOM_COLLISION,
-                                  (float) START_COLLISION,
-                                  (float) END_COLLISION,
-                                  (float) HEIGHT_COLLISION,
-                                  (float) END_COLLISION);
+                (float) BOTTOM_COLLISION,
+                (float) START_COLLISION,
+                (float) END_COLLISION,
+                (float) HEIGHT_COLLISION,
+                (float) END_COLLISION);
     }
 
     //todo: remove once we no longer need to support this
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings(DEPRECATION)
     @Override
     public boolean isOpaqueCube(final IBlockState state)
     {
@@ -162,16 +164,16 @@ public class BlockHutField extends BlockContainer
 
     @Override
     public boolean onBlockActivated(
-                                     final World worldIn,
-                                     final BlockPos pos,
-                                     final IBlockState state,
-                                     final EntityPlayer playerIn,
-                                     final EnumHand hand,
-                                     @Nullable final ItemStack heldItem,
-                                     final EnumFacing side,
-                                     final float hitX,
-                                     final float hitY,
-                                     final float hitZ)
+            final World worldIn,
+            final BlockPos pos,
+            final IBlockState state,
+            final EntityPlayer playerIn,
+            final EnumHand hand,
+            @Nullable final ItemStack stack,
+            final EnumFacing facing,
+            final float hitX,
+            final float hitY,
+            final float hitZ)
     {
         //If the world is server, open the inventory of the field.
         if (!worldIn.isRemote)
@@ -189,16 +191,19 @@ public class BlockHutField extends BlockContainer
     // =======================================================================
     // ======================= Rendering & IBlockState =======================
     // =======================================================================
+
+    @SuppressWarnings(DEPRECATION)
+    @NotNull
     @Override
-    public IBlockState onBlockPlaced(
-                                      final World worldIn,
-                                      final BlockPos pos,
-                                      final EnumFacing facing,
-                                      final float hitX,
-                                      final float hitY,
-                                      final float hitZ,
-                                      final int meta,
-                                      @Nullable final EntityLivingBase placer)
+    public IBlockState getStateForPlacement(
+            final World worldIn,
+            final BlockPos pos,
+            final EnumFacing facing,
+            final float hitX,
+            final float hitY,
+            final float hitZ,
+            final int meta,
+            final EntityLivingBase placer)
     {
         @NotNull final EnumFacing enumFacing = (placer == null) ? NORTH : fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);
@@ -219,10 +224,14 @@ public class BlockHutField extends BlockContainer
 
             if (colony != null)
             {
-                @NotNull final InventoryField inventoryField = new InventoryField(LanguageHandler.format("com.minecolonies.coremod.gui.inventory.scarecrow"));
-
-                ((ScarecrowTileEntity) worldIn.getTileEntity(pos)).setInventoryField(inventoryField);
-                colony.addNewField((ScarecrowTileEntity) worldIn.getTileEntity(pos), ((EntityPlayer) placer).inventory, pos, worldIn);
+                @NotNull final InventoryField inventoryField = new InventoryField("");
+                final ScarecrowTileEntity scareCrow = (ScarecrowTileEntity) worldIn.getTileEntity(pos);
+                final EntityPlayer player = (EntityPlayer) placer;
+                if (scareCrow != null)
+                {
+                    scareCrow.setInventoryField(inventoryField);
+                    colony.addNewField(scareCrow, player.inventory, pos, worldIn);
+                }
             }
         }
     }

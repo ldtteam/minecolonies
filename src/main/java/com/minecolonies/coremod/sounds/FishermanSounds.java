@@ -95,6 +95,14 @@ public final class FishermanSounds extends AbstractWorkerSounds
     }
 
     @Override
+    public void playInteractionSound(final World world, final BlockPos position, final boolean female)
+    {
+        /**
+         * Do nothing, we have nothing for this worker.
+         */
+    }
+
+    @Override
     public String getWorkerString()
     {
         return "Fisherman";

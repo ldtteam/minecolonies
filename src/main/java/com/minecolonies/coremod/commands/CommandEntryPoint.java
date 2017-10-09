@@ -54,14 +54,14 @@ public class CommandEntryPoint extends CommandBase
 
     @NotNull
     @Override
-    public String getCommandName()
+    public String getName()
     {
         return "minecolonies";
     }
 
     @NotNull
     @Override
-    public String getCommandUsage(@NotNull final ICommandSender sender)
+    public String getUsage(final ICommandSender sender)
     {
         return root.getCommandUsage(sender);
     }
@@ -82,18 +82,18 @@ public class CommandEntryPoint extends CommandBase
      */
     @NotNull
     @Override
-    public List<String> getCommandAliases()
+    public List<String> getAliases()
     {
         return Arrays.asList("mc", "col", "mcol", "mcolonies", "minecol", "minecolonies");
     }
 
     @NotNull
     @Override
-    public List<String> getTabCompletionOptions(
-                                                 @NotNull final MinecraftServer server,
-                                                 @NotNull final ICommandSender sender,
-                                                 @NotNull final String[] args,
-                                                 @Nullable final BlockPos pos)
+    public List<String> getTabCompletions(
+            @NotNull final MinecraftServer server,
+            @NotNull final ICommandSender sender,
+            @NotNull final String[] args,
+            @Nullable final BlockPos pos)
     {
         return root.getTabCompletionOptions(server, sender, args, pos);
     }

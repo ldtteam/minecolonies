@@ -50,4 +50,12 @@ public abstract class AbstractWorkerSounds
     {
         return BASIC_SOUND_CHANCE;
     }
+
+    /**
+     * Play an interaction sound for a certain worker.
+     * @param world the world.
+     * @param position the positon.
+     * @param female if female.
+     */
+    public abstract void playInteractionSound(final World world, final BlockPos position, final boolean female);
 }

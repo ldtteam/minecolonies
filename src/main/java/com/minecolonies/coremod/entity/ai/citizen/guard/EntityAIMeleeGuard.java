@@ -42,7 +42,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
     /**
      * Experience to add when a mob is killed
      */
-    private static final int EXP_PER_MOD_DEATH = 15;
+    private static final int EXP_PER_MOD_DEATH = 5;
 
     /**
      * Random is multiplied by this to get a random arrow sound.
@@ -235,7 +235,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         final double goToX = xDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
         final double goToZ = zDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
 
-        worker.moveEntity(goToX, 0, goToZ);
+        worker.move(goToX, 0, goToZ);
 
         worker.swingArm(EnumHand.MAIN_HAND);
         worker.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) getRandomPitch());

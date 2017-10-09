@@ -54,16 +54,16 @@ public class RaidAllNowCommand extends AbstractSingleCommand
     {
         if (sender instanceof EntityPlayer && !isPlayerOpped(sender))
         {
-            sender.addChatMessage(new TextComponentString("Must be OP to use command"));
+            sender.sendMessage(new TextComponentString("Must be OP to use command"));
             return;
         }
 
         for (final Colony colony : ColonyManager.getColonies())
         {
-            MobEventsUtils.barbarianEvent(colony.getWorld(),colony);
+            MobEventsUtils.barbarianEvent(colony.getWorld(), colony);
         }
 
-        sender.addChatMessage(SUCCESSFUL);
+        sender.sendMessage(SUCCESSFUL);
     }
 
     @NotNull

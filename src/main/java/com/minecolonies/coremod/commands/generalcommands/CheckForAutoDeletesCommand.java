@@ -48,7 +48,7 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand
     {
         if (sender instanceof EntityPlayer && !isPlayerOpped(sender))
         {
-            sender.addChatMessage(new TextComponentString("Must be OP to use command"));
+            sender.sendMessage(new TextComponentString("Must be OP to use command"));
             return;
         }
         else if (sender instanceof TileEntity)
@@ -74,7 +74,7 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand
         {
             if ("true".equalsIgnoreCase(args[0]))
             {
-                sender.addChatMessage(new TextComponentString("Successful"));
+                sender.sendMessage(new TextComponentString("Successful"));
                 for (final Colony col : coloniesToDelete)
                 {
                     server.addScheduledTask(() -> ColonyManager.deleteColony(col.getID()));
@@ -86,9 +86,9 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand
             final ITextComponent deleteButton = new TextComponentString("[DELETE]").setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
               new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/mc check true")
             ));
-            sender.addChatMessage(new TextComponentString("There are: " + coloniesToDelete.size() + " of a total of " + colonies.size() + " to delete."));
-            sender.addChatMessage(new TextComponentString("Click [DELETE] to confirm"));
-            sender.addChatMessage(deleteButton);
+            sender.sendMessage(new TextComponentString("There are: " + coloniesToDelete.size() + " of a total of " + colonies.size() + " to delete."));
+            sender.sendMessage(new TextComponentString("Click [DELETE] to confirm"));
+            sender.sendMessage(deleteButton);
         }
     }
 

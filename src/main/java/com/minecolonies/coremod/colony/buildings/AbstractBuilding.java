@@ -12,6 +12,8 @@ import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.coremod.util.ColonyUtils;
+import com.minecolonies.coremod.util.StructureWrapper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,6 +25,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
@@ -40,7 +43,12 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_H
 
 /**
  * Base building class, has all the foundation for what a building stores and does.
+ *
+ * We suppress the warning which warns you about referencing child classes in the parent because that's how we register the instances of the childClasses
+ * to their views and blocks.
+ *
  */
+@SuppressWarnings("squid:S2390")
 public abstract class AbstractBuilding
 {
     /**
@@ -82,8 +90,21 @@ public abstract class AbstractBuilding
     /**
      * The tag to store the style of the building.
      */
-    private static final String TAG_STYLE     = "style";
-    private static final int    NO_WORK_ORDER = 0;
+    private static final String TAG_STYLE = "style";
+
+    /**
+     * Tag if the building has no workOrder.
+     */
+    private static final int NO_WORK_ORDER = 0;
+
+    /**
+     * Tags used to store the building corners to nbt and retrieve them.
+     */
+    private static final String TAG_CORNER1 = "corner1";
+    private static final String TAG_CORNER2 = "corner2";
+    private static final String TAG_CORNER3 = "corner3";
+    private static final String TAG_CORNER4 = "corner4";
+    private static final String TAG_HEIGHT  = "height";
 
     /**
      * A list which contains the position of all containers which belong to the worker building.
@@ -113,6 +134,7 @@ public abstract class AbstractBuilding
      */
     @NotNull
     private static final Map<Integer, Class<?>> classNameHashToViewClassMap = new HashMap<>();
+
     /*
      * Add all the mappings.
      */
@@ -133,7 +155,6 @@ public abstract class AbstractBuilding
         addMapping("WareHouse", BuildingWareHouse.class, BuildingWareHouse.View.class, BlockHutWareHouse.class);
         addMapping("Barracks", BuildingBarracks.class, BuildingBarracks.View.class, BlockHutBarracks.class);
         addMapping("BarracksTower", BuildingBarracksTower.class, BuildingBarracksTower.View.class, BlockHutBarracksTower.class);
-
     }
 
     /**
@@ -200,6 +221,22 @@ public abstract class AbstractBuilding
     private boolean dirty = false;
 
     /**
+     * Corners of the building.
+     */
+    private int cornerX1;
+
+    private int cornerX2;
+
+    private int cornerZ1;
+
+    private int cornerZ2;
+
+    /**
+     * Height of the building.
+     */
+    private int height;
+
+    /**
      * Constructor for a AbstractBuilding.
      *
      * @param colony Colony the building belongs to.
@@ -222,10 +259,10 @@ public abstract class AbstractBuilding
      * @param parentBlock   subclass of Block, located in {@link com.minecolonies.coremod.blocks}.
      */
     private static void addMapping(
-                                    final String name,
-                                    @NotNull final Class<? extends AbstractBuilding> buildingClass,
-                                    @NotNull final Class<? extends AbstractBuilding.View> viewClass,
-                                    @NotNull final Class<? extends AbstractBlockHut> parentBlock)
+            final String name,
+            @NotNull final Class<? extends AbstractBuilding> buildingClass,
+            @NotNull final Class<? extends AbstractBuilding.View> viewClass,
+            @NotNull final Class<? extends AbstractBlockHut> parentBlock)
     {
         final int buildingHashCode = buildingClass.getName().hashCode();
 
@@ -306,7 +343,7 @@ public abstract class AbstractBuilding
         catch (final RuntimeException ex)
         {
             Log.getLogger().error(String.format("A Building %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-              compound.getString(TAG_BUILDING_TYPE), oclass.getName()), ex);
+                    compound.getString(TAG_BUILDING_TYPE), oclass.getName()), ex);
             building = null;
         }
 
@@ -334,8 +371,8 @@ public abstract class AbstractBuilding
         {
             final Structures.StructureName newStructureName = Structures.getStructureNameByMD5(md5);
             if (newStructureName != null
-                  && newStructureName.getPrefix().equals(sn.getPrefix())
-                  && newStructureName.getSchematic().equals(sn.getSchematic()))
+                    && newStructureName.getPrefix().equals(sn.getPrefix())
+                    && newStructureName.getSchematic().equals(sn.getSchematic()))
             {
                 //We found the new location for the schematic, update the style accordingly
                 style = newStructureName.getStyle();
@@ -356,6 +393,19 @@ public abstract class AbstractBuilding
             containerList.add(NBTUtil.getPosFromTag(containerCompound));
         }
         isMirrored = compound.getBoolean(TAG_MIRROR);
+
+        if (compound.hasKey(TAG_CORNER1))
+        {
+            this.cornerX1 = compound.getInteger(TAG_CORNER1);
+            this.cornerX2 = compound.getInteger(TAG_CORNER2);
+            this.cornerZ1 = compound.getInteger(TAG_CORNER3);
+            this.cornerZ2 = compound.getInteger(TAG_CORNER4);
+        }
+
+        if(compound.hasKey(TAG_HEIGHT))
+        {
+            this.height = compound.getInteger(TAG_HEIGHT);
+        }
     }
 
     /**
@@ -392,9 +442,45 @@ public abstract class AbstractBuilding
 
         if (building != null && parent.getWorld() != null)
         {
-            ConstructionTapeHelper.placeConstructionTape(building, parent.getWorld());
+            final WorkOrderBuild workOrder = new WorkOrderBuild(building, 1);
+            final StructureWrapper wrapper = new StructureWrapper(parent.getWorld(), workOrder.getStructureName());
+            final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
+                    = ColonyUtils.calculateCorners(building.getLocation(),
+                    parent.getWorld(),
+                    wrapper,
+                    workOrder.getRotation(parent.getWorld()),
+                    workOrder.isMirrored());
+            building.setCorners(corners.getFirst().getFirst(), corners.getFirst().getSecond(), corners.getSecond().getFirst(), corners.getSecond().getSecond());
+            building.setHeight(wrapper.getHeight());
+            ConstructionTapeHelper.placeConstructionTape(building.getLocation(), corners, parent.getWorld());
         }
         return building;
+    }
+
+    /**
+     * Sets the corners of the building based on the schematic.
+     *
+     * @param x1 the first x corner.
+     * @param x2 the second x corner.
+     * @param z1 the first z corner.
+     * @param z2 the second z corner.
+     */
+    private void setCorners(final int x1, final int x2, final int z1, final int z2)
+    {
+        this.cornerX1 = x1;
+        this.cornerX2 = x2;
+        this.cornerZ1 = z1;
+        this.cornerZ2 = z2;
+    }
+
+    /**
+     * Get all the corners of the building based on the schematic.
+     *
+     * @return the corners.
+     */
+    public Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> getCorners()
+    {
+        return new Tuple<>(new Tuple<>(cornerX1, cornerX2), new Tuple<>(cornerZ1, cornerZ2));
     }
 
     /**
@@ -440,8 +526,8 @@ public abstract class AbstractBuilding
         catch (final IndexOutOfBoundsException ex)
         {
             Log.getLogger().error(
-              String.format("A AbstractBuilding View (%s) has thrown an exception during deserializing, its state cannot be restored. Report this to the mod author",
-                oclass.getName()), ex);
+                    String.format("A AbstractBuilding View (%s) has thrown an exception during deserializing, its state cannot be restored. Report this to the mod author",
+                            oclass.getName()), ex);
             return null;
         }
 
@@ -504,6 +590,14 @@ public abstract class AbstractBuilding
         }
         compound.setTag(TAG_CONTAINERS, containerTagList);
         compound.setBoolean(TAG_MIRROR, isMirrored);
+
+        compound.setInteger(TAG_CORNER1, this.cornerX1);
+        compound.setInteger(TAG_CORNER2, this.cornerX2);
+        compound.setInteger(TAG_CORNER3, this.cornerZ1);
+        compound.setInteger(TAG_CORNER4, this.cornerZ2);
+
+        compound.setInteger(TAG_HEIGHT, this.height);
+
     }
 
     /**
@@ -545,6 +639,23 @@ public abstract class AbstractBuilding
     }
 
     /**
+     * Deconstruct the building on destroyed.
+     */
+    public void deconstruct()
+    {
+        for(int x = cornerX1; x < cornerX2; x++)
+        {
+            for(int z = cornerZ1; z < cornerZ2; z++)
+            {
+                for(int y = getLocation().getY() - 1; y < getLocation().getY() + this.height; y++)
+                {
+                    getColony().getWorld().destroyBlock(new BlockPos(x,y,z), false);
+                }
+            }
+        }
+    }
+
+    /**
      * Method to do things when a block is destroyed.
      */
     public void onDestroyed()
@@ -557,9 +668,9 @@ public abstract class AbstractBuilding
         {
             InventoryHelper.dropInventoryItems(world, this.location, (IInventory) tileEntityNew);
             world.updateComparatorOutputLevel(this.location, block);
-            ConstructionTapeHelper.removeConstructionTape(this, world);
         }
-        ConstructionTapeHelper.removeConstructionTape(this, world);
+
+        ConstructionTapeHelper.removeConstructionTape(getCorners(), world);
     }
 
     /**
@@ -639,7 +750,8 @@ public abstract class AbstractBuilding
 
     /**
      * Requests an upgrade for the current building.
-     * @param player
+     *
+     * @param player the requesting player.
      */
     public void requestUpgrade(final EntityPlayer player)
     {
@@ -649,7 +761,7 @@ public abstract class AbstractBuilding
         }
         else
         {
-            player.addChatComponentMessage(new TextComponentTranslation("com.minecolonies.coremod.worker.noUpgrade"));
+            player.sendMessage(new TextComponentTranslation("com.minecolonies.coremod.worker.noUpgrade"));
         }
     }
 
@@ -789,13 +901,33 @@ public abstract class AbstractBuilding
     }
 
     /**
+     * Set the height of the building.
+     * @param height the height to set.
+     */
+    public void setHeight(final int height)
+    {
+        this.height = height;
+    }
+
+    /**
      * Called upon completion of an upgrade process.
+     * We suppress this warning since this parameter will be used in child classes which override this method.
      *
      * @param newLevel The new level.
      */
+    @SuppressWarnings("squid:S1172")
     public void onUpgradeComplete(final int newLevel)
     {
-        // Does nothing here
+        final WorkOrderBuild workOrder = new WorkOrderBuild(this, newLevel);
+        final StructureWrapper wrapper = new StructureWrapper(colony.getWorld(), workOrder.getStructureName());
+        final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
+                = ColonyUtils.calculateCorners(this.getLocation(),
+                colony.getWorld(),
+                wrapper,
+                workOrder.getRotation(colony.getWorld()),
+                workOrder.isMirrored());
+        this.height = wrapper.getHeight();
+        this.setCorners(corners.getFirst().getFirst(), corners.getFirst().getSecond(), corners.getSecond().getFirst(), corners.getSecond().getSecond());
     }
 
     /**
@@ -855,12 +987,14 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * register a block and position.
+     * Register a block and position.
+     * We suppress this warning since this parameter will be used in child classes which override this method.
      *
      * @param block to be registered
      * @param pos   of the block
      * @param world the world to place the tileentity in
      */
+    @SuppressWarnings("squid:S1172")
     public void registerBlockPosition(@NotNull Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
         final TileEntity tile = world.getTileEntity(pos);
