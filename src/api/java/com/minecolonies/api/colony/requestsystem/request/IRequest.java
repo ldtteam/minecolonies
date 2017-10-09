@@ -170,6 +170,8 @@ public interface IRequest<R>
 
     /**
      * Method to check if this request has children.
+     *
+     * @return true if it has children.
      */
     boolean hasChildren();
 
