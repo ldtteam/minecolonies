@@ -53,7 +53,7 @@ public class ColonyUtils
      * Calculated the corner of a building.
      * @param pos the central position.
      * @param world the world.
-     * @param structureName the name of the structure (resource location).
+     * @param wrapper the structureWrapper.
      * @param rotation the rotation.
      * @param isMirrored if its mirrored.
      * @return a tuple with the required corners.
