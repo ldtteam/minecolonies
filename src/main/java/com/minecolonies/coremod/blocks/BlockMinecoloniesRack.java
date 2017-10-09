@@ -283,7 +283,7 @@ public class BlockMinecoloniesRack extends Block
      * @param world the world.
      * @param pos the position.
      * @param player the player.
-     * @return
+     * @return the block pick result.
      */
     @Override
     public ItemStack getPickBlock(final IBlockState state, final RayTraceResult target, final World world, final BlockPos pos, final EntityPlayer player)
