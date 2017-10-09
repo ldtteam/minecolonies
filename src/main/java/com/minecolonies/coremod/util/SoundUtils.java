@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.util;
 
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.sounds.AbstractWorkerSounds;
 import com.minecolonies.coremod.sounds.ModSoundEvents;
@@ -18,6 +19,11 @@ import java.util.Random;
  */
 public final class SoundUtils
 {
+    /**
+     * Guard tower job literal.
+     */
+    private static final String GUARD_TOWER = "GuardTower";
+
     /**
      * Get a random between 1 and 100.
      */
@@ -69,6 +75,18 @@ public final class SoundUtils
             if (citizen.getWorkBuilding() != null)
             {
                 prefix = citizen.getWorkBuilding().getJobName();
+            }
+
+            if(GUARD_TOWER.equals(prefix) && citizen.getWorkBuilding() instanceof AbstractBuildingGuards)
+            {
+                if(((AbstractBuildingGuards) citizen.getWorkBuilding()).getJob() == AbstractBuildingGuards.GuardJob.RANGER)
+                {
+                    prefix = "archer";
+                }
+                else
+                {
+                    prefix = "knight";
+                }
             }
 
             for (final AbstractWorkerSounds sounds : ModSoundEvents.handlers)
@@ -140,6 +158,18 @@ public final class SoundUtils
             if (citizen.getWorkBuilding() != null)
             {
                 prefix = citizen.getWorkBuilding().getJobName();
+            }
+
+            if("GuardTower".equals(prefix) && citizen.getWorkBuilding() instanceof AbstractBuildingGuards)
+            {
+                if(((AbstractBuildingGuards) citizen.getWorkBuilding()).getJob() == AbstractBuildingGuards.GuardJob.RANGER)
+                {
+                    prefix = "archer";
+                }
+                else
+                {
+                    prefix = "knight";
+                }
             }
 
             for (final AbstractWorkerSounds sounds : ModSoundEvents.handlers)
