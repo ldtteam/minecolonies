@@ -46,17 +46,18 @@ public final class KnightSounds extends AbstractWorkerSounds
     {
         public static final SoundEvent generalPhrases    = ModSoundEvents.getSoundID("mob.guard.knight.male.generalPhrases");
         public static final SoundEvent noises            = ModSoundEvents.getSoundID("mob.guard.knight.male.noise");
-        public static final SoundEvent retrieve           = ModSoundEvents.getSoundID("mob.guard.knight.male.retrieve");
+        public static final SoundEvent retrieve          = ModSoundEvents.getSoundID("mob.guard.knight.male.retrieve");
         public static final SoundEvent offToBed          = ModSoundEvents.getSoundID("mob.guard.knight.male.offToBed");
         public static final SoundEvent badWeather        = ModSoundEvents.getSoundID("mob.guard.knight.male.badWeather");
         public static final SoundEvent saturationVeryLow = ModSoundEvents.getSoundID("mob.guard.knight.male.saturationVeryLow");
         public static final SoundEvent saturationLow     = ModSoundEvents.getSoundID("mob.guard.knight.male.saturationLow");
         public static final SoundEvent saturationHigh    = ModSoundEvents.getSoundID("mob.guard.knight.male.saturationHigh");
-        public static final SoundEvent levelUp    = ModSoundEvents.getSoundID("mob.guard.knight.male.levelup");
-        public static final SoundEvent badHousing    = ModSoundEvents.getSoundID("mob.guard.knight.male.badhousing");
+        public static final SoundEvent levelUp           = ModSoundEvents.getSoundID("mob.guard.knight.male.levelup");
+        public static final SoundEvent badHousing        = ModSoundEvents.getSoundID("mob.guard.knight.male.badhousing");
         public static final SoundEvent greeting          = ModSoundEvents.getSoundID("mob.guard.knight.male.greeting");
         public static final SoundEvent farewell          = ModSoundEvents.getSoundID("mob.guard.knight.male.farewell");
         public static final SoundEvent interaction       = ModSoundEvents.getSoundID("mob.guard.knight.male.interaction");
+
         /**
          * Private constructor to hide the implicit public one.
          */
@@ -117,15 +118,15 @@ public final class KnightSounds extends AbstractWorkerSounds
     @Override
     public String getWorkerString()
     {
-        return "GuardTower";
+        return "knight";
     }
 
     /**
      * Play interaction sound.
      *
-     * @param worldIn    world to play it in.
-     * @param position   position to play it at.
-     * @param isFemale   the gender.
+     * @param worldIn  world to play it in.
+     * @param position position to play it at.
+     * @param isFemale the gender.
      */
     public void playInteractionSound(final World worldIn, final BlockPos position, final boolean isFemale)
     {

@@ -30,12 +30,15 @@ public interface IRequester
 
     /**
      * Method to get the location of this locatable.
+     * @return the location.
      */
     @NotNull
     ILocation getLocation();
 
     /**
-     * Method called by the request system to notify this requester that a
+     * Method called by the request system to notify this requester that a request is complete.
+     *
+     * @param token the token of the request.
      */
     @NotNull
     void onRequestComplete(@NotNull final IToken token);
