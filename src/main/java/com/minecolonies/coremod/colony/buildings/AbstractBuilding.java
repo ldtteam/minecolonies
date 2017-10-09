@@ -713,6 +713,8 @@ public abstract class AbstractBuilding
 
     /**
      * Requests an upgrade for the current building.
+     *
+     * @param player the requesting player.
      */
     public void requestUpgrade(final EntityPlayer player)
     {
