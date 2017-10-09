@@ -523,7 +523,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
         if (building != null)
         {
-            building.registerBlockPosition(block, pos);
+            building.registerBlockPosition(block, pos, world);
         }
 
         if(block == ModBlocks.blockWayPoint)
