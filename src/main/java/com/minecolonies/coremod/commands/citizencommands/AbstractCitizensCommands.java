@@ -150,6 +150,8 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
     /**
      * Citizen commands have to overwrite this to handle their specialized code.
      *
+     * @param server the minecraft server.
+     * @param sender the command sender.
      * @param colonyId  the id for the colony
      * @param citizenId the id for the citizen
      */
