@@ -4,6 +4,7 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.util.ColonyUtils;
+import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.properties.PropertyDirection;
@@ -97,7 +98,8 @@ public final class ConstructionTapeHelper
     public static void placeConstructionTape(@NotNull final WorkOrderBuildDecoration workOrder, @NotNull final World world)
     {
         final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
-                = ColonyUtils.calculateCorners(workOrder.getBuildingLocation(), world, workOrder.getStructureName(), workOrder.getRotation(world), workOrder.isMirrored());
+                = ColonyUtils.calculateCorners(workOrder.getBuildingLocation(), world,
+                new StructureWrapper(world, workOrder.getStructureName()), workOrder.getRotation(world), workOrder.isMirrored());
         placeConstructionTape(workOrder.getBuildingLocation(), corners, world);
     }
 
@@ -109,7 +111,8 @@ public final class ConstructionTapeHelper
     public static void removeConstructionTape(@NotNull final WorkOrderBuildDecoration workOrder, @NotNull final World world)
     {
         final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
-                = ColonyUtils.calculateCorners(workOrder.getBuildingLocation(), world, workOrder.getStructureName(), workOrder.getRotation(world), workOrder.isMirrored());
+                = ColonyUtils.calculateCorners(workOrder.getBuildingLocation(), world,
+                new StructureWrapper(world, workOrder.getStructureName()), workOrder.getRotation(world), workOrder.isMirrored());
         removeConstructionTape(corners, world);
     }
 
