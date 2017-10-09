@@ -893,14 +893,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     @Override
-    public EnumActionResult applyPlayerInteraction(
-            final EntityPlayer player,
-            final Vec3d vec,
-            @Nullable final ItemStack itemInHand,
-            final EnumHand hand)
+    public EnumActionResult applyPlayerInteraction(final EntityPlayer player, final Vec3d vec, final EnumHand hand)
     {
         SoundUtils.playInteractionSoundAtCitizenWithChance(CompatibilityUtils.getWorld(this), this.getPosition(), 100, this);
-        return super.applyPlayerInteraction(player, vec, itemInHand, hand);
+        return super.applyPlayerInteraction(player, vec, hand);
     }
 
     /**
