@@ -1,6 +1,5 @@
 package com.minecolonies.api.colony.requestsystem.factory;
 
-import com.google.common.reflect.TypeToken;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +17,7 @@ public interface IFactory<Input, Output>
      * @return The type of request this factory can produce.
      */
     @NotNull
-    TypeToken<Output> getFactoryOutputType();
+    Class<? extends Output> getFactoryOutputType();
 
     /**
      * Used to determine which type this can produce.
@@ -26,7 +25,7 @@ public interface IFactory<Input, Output>
      * @return The class that represents the Type of Request this can produce.
      */
     @NotNull
-    TypeToken<Input> getFactoryInputType();
+    Class<? extends Input> getFactoryInputType();
 
     /**
      * Method to get a new instance of the output given the input and additional context data.

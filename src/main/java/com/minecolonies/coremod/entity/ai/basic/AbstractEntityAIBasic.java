@@ -667,7 +667,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Check if we need a tool.
      *
      * Do not use it to find a pickaxe as it need a minimum level
-     * @param tool tool required for block
+     * @param toolType tool required for block
      * @return true if we need a tool
      */
     private boolean checkForNeededTool(@NotNull final IToolType toolType, final int minimalLevel)
@@ -1171,7 +1171,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Checks if said tool of said level is usable.
      * if not, it updates the needsTool flag for said tool.
      *
-     * @param tool     the tool needed
+     * @param toolType     the tool needed
      * @param required the level needed (for pickaxe only)
      */
     private void updateToolFlag(@NotNull final IToolType toolType, final int required)

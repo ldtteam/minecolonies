@@ -37,7 +37,7 @@ public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<
     public ColonyViewBuildingViewMessage(@NotNull final AbstractBuilding building)
     {
         this.colonyId = building.getColony().getID();
-        this.buildingId = building.getID();
+        this.buildingId = building.getRequesterId();
         this.buildingData = Unpooled.buffer();
         building.serializeToView(this.buildingData);
     }

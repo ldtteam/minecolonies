@@ -1,8 +1,6 @@
 package com.minecolonies.api.colony.requestsystem;
 
 import com.google.common.reflect.TypeToken;
-import com.minecolonies.api.colony.requestsystem.factory.IFactory;
-import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.colony.requestsystem.token.StandardToken;
 import com.minecolonies.api.colony.requestsystem.token.StandardTokenFactory;

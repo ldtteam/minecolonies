@@ -1,7 +1,5 @@
 package com.minecolonies.api.colony.requestsystem.requester;
 
-import com.minecolonies.api.colony.requestsystem.factory.IFactory;
-
 /**
  * Interface describing objects that can construct IRequester objects.
  */

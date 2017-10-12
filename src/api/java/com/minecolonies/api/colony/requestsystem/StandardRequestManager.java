@@ -4,7 +4,6 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -12,7 +11,6 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.colony.requestsystem.token.StandardToken;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Suppression;
 import net.minecraft.nbt.NBTTagCompound;
@@ -364,7 +362,7 @@ public class StandardRequestManager implements IRequestManager
          */
         private static IToken registerResolver(final StandardRequestManager manager, final IRequestResolver resolver) throws IllegalArgumentException
         {
-            if (manager.resolverBiMap.containsKey(resolver.getID()))
+            if (manager.resolverBiMap.containsKey(resolver.getRequesterId()))
             {
                 throw new IllegalArgumentException("The token attached to this resolver is already registered. Cannot register twice!");
             }
@@ -376,7 +374,7 @@ public class StandardRequestManager implements IRequestManager
 
             Log.getLogger().debug("Registering resolver: " + resolver + " with request type: " + resolver.getRequestType().getName());
 
-            manager.resolverBiMap.put(resolver.getID(), resolver);
+            manager.resolverBiMap.put(resolver.getRequesterId(), resolver);
 
             if (!manager.requestClassResolverMap.containsKey(resolver.getRequestType()))
             {
@@ -385,7 +383,7 @@ public class StandardRequestManager implements IRequestManager
 
             manager.requestClassResolverMap.get(resolver.getRequestType()).add(resolver);
 
-            return resolver.getID();
+            return resolver.getRequesterId();
         }
 
         /**
@@ -443,21 +441,21 @@ public class StandardRequestManager implements IRequestManager
          */
         private static void removeResolver(final StandardRequestManager manager, final IRequestResolver resolver) throws IllegalArgumentException
         {
-            final IRequestResolver registeredResolver = getResolver(manager, resolver.getID());
+            final IRequestResolver registeredResolver = getResolver(manager, resolver.getRequesterId());
 
             if (!registeredResolver.equals(resolver))
             {
                 throw new IllegalArgumentException("The given resolver and the resolver that is registered with its token are not the same.");
             }
 
-            if (manager.resolverRequestMap.containsKey(registeredResolver.getID()) && manager.resolverRequestMap.get(registeredResolver.getID()).size() > 0)
+            if (manager.resolverRequestMap.containsKey(registeredResolver.getRequesterId()) && manager.resolverRequestMap.get(registeredResolver.getRequesterId()).size() > 0)
             {
                 throw new IllegalArgumentException("Cannot remove a resolver that is still in use. Reassign all registered requests before removing");
             }
 
             Log.getLogger().debug("Removing resolver: " + resolver + " with request type: " + resolver.getRequestType().getName());
 
-            manager.resolverBiMap.remove(resolver.getID());
+            manager.resolverBiMap.remove(resolver.getRequesterId());
             manager.requestClassResolverMap.get(resolver.getRequestType()).remove(resolver);
         }
 
@@ -536,15 +534,15 @@ public class StandardRequestManager implements IRequestManager
          */
         private static void addRequestToResolver(final StandardRequestManager manager, final IRequestResolver resolver, final IRequest request)
         {
-            if (!manager.resolverRequestMap.containsKey(resolver.getID()))
+            if (!manager.resolverRequestMap.containsKey(resolver.getRequesterId()))
             {
-                manager.resolverRequestMap.put(resolver.getID(), new ArrayList<>());
+                manager.resolverRequestMap.put(resolver.getRequesterId(), new ArrayList<>());
             }
 
             Log.getLogger().debug("Adding request: " + request + " to resolver: " + resolver);
 
-            manager.resolverRequestMap.get(resolver.getID()).add(request.getToken());
-            manager.requestResolverMap.put(request.getToken(), resolver.getID());
+            manager.resolverRequestMap.get(resolver.getRequesterId()).add(request.getToken());
+            manager.requestResolverMap.put(request.getToken(), resolver.getRequesterId());
         }
 
         /**
@@ -562,19 +560,19 @@ public class StandardRequestManager implements IRequestManager
          */
         private static void removeRequestFromResolver(final StandardRequestManager manager, final IRequestResolver resolver, final IRequest request) throws IllegalArgumentException
         {
-            if (!manager.resolverRequestMap.containsKey(resolver.getID()))
+            if (!manager.resolverRequestMap.containsKey(resolver.getRequesterId()))
             {
                 throw new IllegalArgumentException("The given resolver is unknown to this Manager");
             }
 
-            if (!manager.resolverRequestMap.get(resolver.getID()).contains(request.getToken()))
+            if (!manager.resolverRequestMap.get(resolver.getRequesterId()).contains(request.getToken()))
             {
                 throw new IllegalArgumentException("The given request is not registered to the given resolver.");
             }
 
             Log.getLogger().debug("Removing request: " + request + " from resolver: " + resolver);
 
-            manager.resolverRequestMap.get(resolver.getID()).remove(request.getToken());
+            manager.resolverRequestMap.get(resolver.getRequesterId()).remove(request.getToken());
             manager.requestResolverMap.remove(request.getToken());
         }
 
@@ -632,7 +630,7 @@ public class StandardRequestManager implements IRequestManager
         {
             final IToken<UUID> token = TokenHandler.generateNewToken(manager);
 
-            final IRequest<Request> constructedRequest = manager.getFactoryController().getNewInstance(request, new TypeToken<IRequest<Request>>() {}, requester, token);
+            final IRequest<Request> constructedRequest = manager.getFactoryController().getNewInstance(request, requester, token);
 
             Log.getLogger().debug("Creating request for: " + request + ", token: " + token + " and output: " + constructedRequest);
 
@@ -702,7 +700,7 @@ public class StandardRequestManager implements IRequestManager
             for (final IRequestResolver resolver : manager.requestClassResolverMap.get(request.getRequestType()))
             {
                 //Skip when the resolver is in the blacklist.
-                if (resolverTokenBlackList.contains(resolver.getID()))
+                if (resolverTokenBlackList.contains(resolver.getRequesterId()))
                 {
                     continue;
                 }
@@ -928,7 +926,7 @@ public class StandardRequestManager implements IRequestManager
         private static IToken<UUID> generateNewToken(final StandardRequestManager manager)
         {
             //Force generic type to be correct.
-            return manager.getFactoryController().getNewInstance(UUID.randomUUID(), new TypeToken<StandardToken>() {});
+            return manager.getFactoryController().getNewInstance(UUID.randomUUID());
         }
     }
 

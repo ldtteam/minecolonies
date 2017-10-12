@@ -184,7 +184,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
 
             if (!job.hasWorkOrder() && canBuild(citizen))
             {
-                final double distance = citizen.getWorkBuilding().getID().distanceSq(this.buildingLocation);
+                final double distance = citizen.getWorkBuilding().getRequesterId().distanceSq(this.buildingLocation);
                 if(claimedBy == null || distance < distanceToBuilder)
                 {
                     claimedBy = citizen;

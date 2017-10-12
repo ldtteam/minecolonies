@@ -424,7 +424,7 @@ public class Colony implements IColony
      */
     private void addBuilding(@NotNull final AbstractBuilding building)
     {
-        buildings.put(building.getID(), building);
+        buildings.put(building.getRequesterId(), building);
         building.markDirty();
 
         //  Limit 1 town hall
@@ -1757,16 +1757,16 @@ public class Colony implements IColony
      */
     public void removeBuilding(@NotNull final AbstractBuilding building)
     {
-        if (buildings.remove(building.getID()) != null)
+        if (buildings.remove(building.getRequesterId()) != null)
         {
             for (final EntityPlayerMP player : subscribers)
             {
-                MineColonies.getNetwork().sendTo(new ColonyViewRemoveBuildingMessage(this, building.getID()), player);
+                MineColonies.getNetwork().sendTo(new ColonyViewRemoveBuildingMessage(this, building.getRequesterId()), player);
             }
 
             Log.getLogger().info(String.format("Colony %d - removed AbstractBuilding %s of type %s",
               getID(),
-              building.getID(),
+              building.getRequesterId(),
               building.getSchematicName()));
         }
 

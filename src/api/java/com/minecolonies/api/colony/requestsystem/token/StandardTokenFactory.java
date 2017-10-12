@@ -1,7 +1,6 @@
 package com.minecolonies.api.colony.requestsystem.token;
 
 import com.google.common.reflect.TypeToken;
-import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 

@@ -1,5 +1,12 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.Tool;
+import com.minecolonies.api.colony.requestsystem.requester.IRequester;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
@@ -7,6 +14,7 @@ import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.blocks.*;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView;
+import com.minecolonies.coremod.colony.requestsystem.locations.StaticLocation;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
@@ -40,8 +48,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_HAND;
-
 /**
  * Base building class, has all the foundation for what a building stores and does.
  *
@@ -50,7 +56,7 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_H
  *
  */
 @SuppressWarnings("squid:S2390")
-public abstract class AbstractBuilding
+public abstract class AbstractBuilding implements IRequester
 {
     /**
      * Tag used to store the containers to NBT.
@@ -92,6 +98,11 @@ public abstract class AbstractBuilding
      * The tag to store the style of the building.
      */
     private static final String TAG_STYLE = "style";
+
+    /**
+     * The tag to store the requestor Id of the Building.
+     */
+    private static final String TAG_REQUESTOR_ID = "Requestor";
 
     /**
      * Tag if the building has no workOrder.
@@ -164,28 +175,34 @@ public abstract class AbstractBuilding
     @NotNull
     private final Colony colony;
     /**
-     * A list of ItemStacks with needed items and their quantity.
-     * This list is a diff between itemsNeeded in AbstractEntityAiBasic and
-     * the players inventory and their hut combined.
-     * So look here for what is currently still needed
-     * to fulfill the workers needs.
+     * List of all open requests made by this building.
      * <p>
-     * Will be cleared on restart, be aware!
+     * The key in this map is the class for the request type.
+     * The value is a list of tokens that represent the open requests inside the colony.
      */
     @NotNull
-    private List<ItemStack> itemsCurrentlyNeeded = new ArrayList<>();
+    private final Map<Class, List<IToken>> openRequests = new HashMap<>();
+
     /**
-     * the tool currenly needed by the worker.
+     * The ID of the building. Needed in the request system to identify it.
      */
-    private IToolType        neededTool          = ToolType.NONE;
+    private IToken requestorId;
+
     /**
-     * The minimum tool level we need to fulfill the tool request.
+     * Keeps track of which citizen created what request. Citizen -> Request direction.
      */
-    private int             needsToolLevel       = TOOL_LEVEL_HAND;
+    private HashMap<Integer, Collection<IToken>> citizensByRequests = new HashMap<>();
+
     /**
-     * Checks if there is a ongoing delivery for the currentItem.
+     * Keeps track of which citizen has completed requests. Citizen -> Request direction.
      */
-    private boolean         onGoingDelivery      = false;
+    private HashMap<Integer, Collection<IToken>> citizensByCompletedRequests = new HashMap<>();
+
+    /**
+     * Keeps track of which citizen created what request. Request -> Citizen direction.
+     */
+    private HashMap<IToken, Integer> requestsByCitizen = new HashMap<>();
+
     /**
      * The tileEntity of the building.
      */
@@ -402,6 +419,13 @@ public abstract class AbstractBuilding
         {
             this.height = compound.getInteger(TAG_HEIGHT);
         }
+
+        if(compound.hasKey(TAG_REQUESTOR_ID))
+        {
+            this.requestorId = StandardFactoryController.getInstance().getNewInstance(UUID.randomUUID());
+        } else {
+            this.requestorId = StandardFactoryController.getInstance().deserialize(compound.getCompoundTag(TAG_REQUESTOR_ID));
+        }
     }
 
     /**
@@ -593,6 +617,8 @@ public abstract class AbstractBuilding
         compound.setInteger(TAG_CORNER4, this.cornerZ2);
 
         compound.setInteger(TAG_HEIGHT, this.height);
+
+        compound.setTag(TAG_REQUESTOR_ID, StandardFactoryController.getInstance().serialize(this.requestorId));
 
     }
 
@@ -1045,69 +1071,6 @@ public abstract class AbstractBuilding
         return Collections.emptyMap();
     }
 
-    /**
-     * Check if the building is receiving the required items.
-     *
-     * @return true if so.
-     */
-    public boolean hasOnGoingDelivery()
-    {
-        return onGoingDelivery;
-    }
-
-    /**
-     * Check if the building is receiving the required items.
-     *
-     * @param valueToSet true or false
-     */
-    public void setOnGoingDelivery(final boolean valueToSet)
-    {
-        this.onGoingDelivery = valueToSet;
-    }
-
-    /**
-     * Check if the worker needs anything. Tool or item.
-     *
-     * @return true if so.
-     */
-    public boolean needsAnything()
-    {
-        return !itemsCurrentlyNeeded.isEmpty() || neededTool != ToolType.NONE;
-    }
-
-    /**
-     * Check if any items are needed at the moment.
-     *
-     * @return true if so.
-     */
-    public boolean areItemsNeeded()
-    {
-        return !itemsCurrentlyNeeded.isEmpty();
-    }
-
-    /**
-     * Check if the worker requires a specific tool.
-     *
-     * @param toolType type of tool to check for
-     * @return true if so.
-     */
-    public boolean needsTool(final IToolType toolType)
-    {
-        return neededTool.equals(toolType);
-    }
-
-    /**
-     * Set which tool the worker needs.
-     *
-     * @param neededTool    which tool is needed
-     * @param minimalLevel which minimal level for the tool
-     */
-    public void setNeedsTool(final IToolType neededTool, final int minimalLevel)
-    {
-        this.neededTool     = neededTool;
-        this.needsToolLevel = minimalLevel;
-    }
-
     @Override
     public boolean equals(final Object o)
     {
@@ -1125,9 +1088,13 @@ public abstract class AbstractBuilding
      *
      * @return which tool is needed
      */
-    public IToolType getNeedsTool()
+    public IToolType getNeedsTool(CitizenData citizenData)
     {
-        return neededTool;
+        final ImmutableList<IRequest<Tool>> openToolRequests = getOpenRequestsOfType(citizenData, Tool.class);
+        if (openToolRequests.isEmpty())
+            return ToolType.NONE;
+
+        return openToolRequests.stream().findFirst().get().getRequest().getToolClass();
     }
 
     /**
@@ -1140,18 +1107,6 @@ public abstract class AbstractBuilding
         return needsToolLevel;
     }
 
-    /**
-     * Add a neededItem to the currentlyNeededItem list.
-     *
-     * @param stack the stack to add.
-     */
-    public void addNeededItems(@Nullable final ItemStack stack)
-    {
-        if (stack != null)
-        {
-            itemsCurrentlyNeeded.add(stack);
-        }
-    }
 
     /**
      * This method makes a copy of the itemsCurrentlyNeeded.
@@ -1284,6 +1239,134 @@ public abstract class AbstractBuilding
     public void setMirror()
     {
         this.isMirrored = !isMirrored;
+    }
+
+    /**
+     * Internal method used to register a new Request to the request maps.
+     * Helper method.
+     *
+     * @param citizenId    The id of the citizen.
+     * @param requestToken The {@link IToken} that is used to represent the request.
+     * @param requested    The class of the type that has been requested eg. {@code ItemStack.class}
+     */
+    private void addRequestToMaps(@NotNull Integer citizenId, @NotNull IToken requestToken, @NotNull Class requested)
+    {
+        if (!openRequests.containsKey(requested))
+        {
+            openRequests.put(requested, new ArrayList<>());
+        }
+        openRequests.get(requested).add(requestToken);
+
+        requestsByCitizen.put(requestToken, citizenId);
+
+        if (!citizensByRequests.containsKey(citizenId))
+        {
+            citizensByRequests.put(citizenId, new ArrayList<>());
+        }
+        citizensByRequests.get(citizenId).add(requestToken);
+    }
+
+    public <Request> void createRequest(@NotNull CitizenData citizenData, @NotNull Request requested)
+    {
+        IToken requestToken = colony.getRequestManager().createAndAssignRequest(this, requested);
+
+        addRequestToMaps(citizenData.getID(), requestToken, requested.getClass());
+    }
+
+    @NotNull
+    public void onRequestComplete(@NotNull final IToken token)
+    {
+        Integer citizenThatRequested = requestsByCitizen.remove(token);
+        citizensByRequests.get(citizenThatRequested).remove(token);
+
+        if (citizensByRequests.get(citizenThatRequested).isEmpty())
+        {
+            citizensByRequests.remove(citizenThatRequested);
+        }
+
+        IRequest requestThatCompleted = getColony().getRequestManager().getRequestForToken(token);
+        openRequests.get(requestThatCompleted.getRequestType()).remove(token);
+
+        if (openRequests.get(requestThatCompleted.getRequestType()).isEmpty())
+        {
+            openRequests.remove(requestThatCompleted.getRequestType());
+        }
+
+        if (!citizensByCompletedRequests.containsKey(citizenThatRequested))
+        {
+            citizensByCompletedRequests.put(citizenThatRequested, new ArrayList<>());
+        }
+        citizensByCompletedRequests.get(citizenThatRequested).add(token);
+
+        getColony().getCitizen(citizenThatRequested);
+    }
+
+    public boolean hasWorkerOpenRequests(@NotNull CitizenData citizen)
+    {
+        return !getOpenRequests(citizen).isEmpty();
+    }
+
+    public <Request> boolean hasWorkerOpenRequestsOfType(@NotNull final CitizenData citizenData, final Class<Request> requestType)
+    {
+        return getOpenRequests(citizenData).stream()
+                 .map(getColony().getRequestManager()::getRequestForToken)
+                 .anyMatch(request -> request.getRequestType().equals(requestType));
+    }
+
+    public ImmutableList<IToken> getOpenRequests(@NotNull final CitizenData data)
+    {
+        if (!citizensByRequests.containsKey(data.getID()))
+        {
+            return ImmutableList.of();
+        }
+
+        return ImmutableList.copyOf(citizensByRequests.get(data.getID()));
+    }
+
+    public <Request> ImmutableList<IRequest<Request>> getOpenRequestsOfType(@NotNull final CitizenData citizenData, final Class<Request> requestType)
+    {
+        return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
+                                      .map(getColony().getRequestManager()::getRequestForToken)
+                                      .filter(request -> request.getRequestType().equals(requestType))
+                                      .map(request -> (IRequest<Request>) request)
+                                      .iterator());
+    }
+
+    public ImmutableList<IToken> getCompletedRequestsForCitizen(@NotNull final CitizenData data)
+    {
+        if (!citizensByCompletedRequests.containsKey(data.getID()))
+        {
+            return ImmutableList.of();
+        }
+
+        return ImmutableList.copyOf(citizensByCompletedRequests.get(data.getID()));
+    }
+
+    public void markRequestAsAccepted(@NotNull final CitizenData data, @NotNull final IToken token) throws IllegalArgumentException
+    {
+        if (!citizensByCompletedRequests.containsKey(data.getID()) || !citizensByCompletedRequests.get(data).contains(token))
+        {
+            throw new IllegalArgumentException("The given token " + token + " is not known as a completed request waiting for acceptance by the citizen.");
+        }
+
+        citizensByCompletedRequests.get(data.getID()).remove(token);
+        if (citizensByCompletedRequests.get(data.getID()).isEmpty())
+        {
+            citizensByCompletedRequests.remove(data.getID());
+        }
+    }
+
+    @NotNull
+    @Override
+    public ILocation getRequesterLocation()
+    {
+        return StandardFactoryController.getInstance().getNewInstance(getLocation(), 0);
+    }
+
+    @Override
+    public IToken getRequesterId()
+    {
+        return requestorId;
     }
 
     /**

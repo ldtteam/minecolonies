@@ -1,7 +1,10 @@
 package com.minecolonies.api.colony.requestsystem.requestable;
 
+import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.IToolType;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -10,8 +13,15 @@ import org.jetbrains.annotations.NotNull;
 public class Tool
 {
 
+    ////// --------------------------- NBTConstants --------------------------- \\\\\\
+    private static final String NBT_TYPE  = "Type";
+    private static final String NBT_MIN_LEVEL = "MinLevel";
+    private static final String NBT_MAX_LEVEL  = "MaxLevel";
+    private static final String NBT_RESULT = "Stack";
+    ////// --------------------------- NBTConstants --------------------------- \\\\\\
+
     @NotNull
-    private final String toolClass;
+    private final IToolType toolClass;
 
     @NotNull
     private final Integer minLevel;
@@ -22,12 +32,12 @@ public class Tool
     @NotNull
     private final ItemStack result;
 
-    public Tool(@NotNull final String toolClass, @NotNull final Integer minLevel, @NotNull final Integer maxLevel)
+    public Tool(@NotNull final IToolType toolClass, @NotNull final Integer minLevel, @NotNull final Integer maxLevel)
     {
         this(toolClass, minLevel, maxLevel, ItemStackUtils.EMPTY);
     }
 
-    public Tool(@NotNull final String toolClass, @NotNull final Integer minLevel, @NotNull final Integer maxLevel, @NotNull final ItemStack result)
+    public Tool(@NotNull final IToolType toolClass, @NotNull final Integer minLevel, @NotNull final Integer maxLevel, @NotNull final ItemStack result)
     {
         this.toolClass = toolClass;
         this.minLevel = minLevel;
@@ -41,7 +51,7 @@ public class Tool
      * @return The tool class that is requested.
      */
     @NotNull
-    public String getToolClass()
+    public IToolType getToolClass()
     {
         return toolClass;
     }
@@ -78,4 +88,25 @@ public class Tool
     {
         return result;
     }
+
+    /**
+     * Serializes this Tool into NBT.
+     *
+     * @param controller The IFactoryController used to serialize sub types.
+     * @return The NBTTagCompound containing the tool data.
+     */
+    @NotNull
+    public NBTTagCompound serialize(IFactoryController controller) {
+        NBTTagCompound compound = new NBTTagCompound();
+
+        compound.setString(NBT_TYPE, getToolClass().getName());
+        compound.setInteger(NBT_MIN_LEVEL, getMinLevel());
+        compound.setInteger(NBT_MAX_LEVEL, getMaxLevel());
+        compound.setTag(NBT_RESULT, getResult().serializeNBT());
+
+        return compound;
+    }
+
+
+
 }

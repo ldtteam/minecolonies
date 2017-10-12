@@ -112,9 +112,9 @@ public class EntityLocation implements ILocation
         /**
          * Moving the curly braces really makes the code hard to read.
          */
-        public TypeToken<EntityLocation> getFactoryOutputType()
+        public Class<EntityLocation> getFactoryOutputType()
         {
-            return new TypeToken<EntityLocation>() {};
+            return EntityLocation.class;
         }
 
         @NotNull
@@ -123,9 +123,9 @@ public class EntityLocation implements ILocation
         /**
          * Moving the curly braces really makes the code hard to read.
          */
-        public TypeToken<Entity> getFactoryInputType()
+        public Class<Entity> getFactoryInputType()
         {
-            return new TypeToken<Entity>() {};
+            return Entity.class;
         }
 
         /**

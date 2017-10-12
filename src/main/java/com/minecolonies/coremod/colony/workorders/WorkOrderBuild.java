@@ -45,7 +45,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
     public WorkOrderBuild(@NotNull final AbstractBuilding building, final int level)
     {
         super();
-        this.buildingLocation = building.getID();
+        this.buildingLocation = building.getRequesterId();
         this.upgradeLevel = level;
         this.upgradeName = building.getSchematicName() + level;
         this.buildingRotation = building.getRotation();
@@ -123,7 +123,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
 
     private static boolean isLocationTownhall(@NotNull final Colony colony, final BlockPos buildingLocation)
     {
-        return colony.hasTownHall() && colony.getTownHall() != null && colony.getTownHall().getID().equals(buildingLocation);
+        return colony.hasTownHall() && colony.getTownHall() != null && colony.getTownHall().getRequesterId().equals(buildingLocation);
     }
 
     /**
@@ -146,7 +146,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
 
         final int builderLevel = citizen.getWorkBuilding().getBuildingLevel();
         return builderLevel >= upgradeLevel || builderLevel == BuildingBuilder.MAX_BUILDING_LEVEL
-                 || (citizen.getWorkBuilding() != null && citizen.getWorkBuilding().getID().equals(buildingLocation))
+                 || (citizen.getWorkBuilding() != null && citizen.getWorkBuilding().getRequesterId().equals(buildingLocation))
                  || isLocationTownhall(citizen.getColony(), buildingLocation);
     }
 

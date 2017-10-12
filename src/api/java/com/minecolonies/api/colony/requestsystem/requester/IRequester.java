@@ -14,7 +14,7 @@ public interface IRequester
      *
      * @return The id of this requester.
      */
-    IToken getID();
+    IToken getRequesterId();
 
     /**
      * Method used to get the location that a delivery has to be brought to.
@@ -25,7 +25,7 @@ public interface IRequester
     @NotNull
     default ILocation getDeliveryLocation()
     {
-        return getLocation();
+        return getRequesterLocation();
     }
 
     /**
@@ -33,7 +33,7 @@ public interface IRequester
      * @return the location.
      */
     @NotNull
-    ILocation getLocation();
+    ILocation getRequesterLocation();
 
     /**
      * Method called by the request system to notify this requester that a request is complete.

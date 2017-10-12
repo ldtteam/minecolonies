@@ -1,6 +1,5 @@
 package com.minecolonies.api.colony.requestsystem.resolver;
 
-import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 
 /**

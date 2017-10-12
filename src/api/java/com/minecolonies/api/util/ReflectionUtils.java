@@ -2,8 +2,10 @@ package com.minecolonies.api.util;
 
 import com.google.common.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Utility class with methods regarding reflection.
@@ -21,13 +23,14 @@ public final class ReflectionUtils
     /**
      * Method to get all Super types of a given Class.
      *
-     * @param token The type to get the Supertypes for.
+     * @param clazz The type to get the Supertypes for.
      * @param <T>   The type to get the super types for.
      * @return A set with the super types of the given type.
      */
     @SuppressWarnings("unchecked")
-    public static <T> Set<TypeToken> getSuperClasses(final TypeToken<T> token)
+    public static <T> Set<Class> getSuperClasses(final Class<T> clazz)
     {
+        final TypeToken<T> token = new TypeToken() {};
         final HashSet<TypeToken> directSet = new HashSet<>(token.getTypes());
         final HashSet<TypeToken> resultingSet = new HashSet<>();
 
@@ -37,6 +40,6 @@ public final class ReflectionUtils
             resultingSet.add(TypeToken.of(t.getRawType()));
         });
 
-        return resultingSet;
+        return resultingSet.stream().map(t -> t.getRawType()).collect(Collectors.toSet());
     }
 }

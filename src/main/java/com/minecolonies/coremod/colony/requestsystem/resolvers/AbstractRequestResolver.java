@@ -30,14 +30,14 @@ public abstract class AbstractRequestResolver<R> implements IRequestResolver<R>
     }
 
     @Override
-    public IToken getID()
+    public IToken getRequesterId()
     {
         return token;
     }
 
     @NotNull
     @Override
-    public ILocation getLocation()
+    public ILocation getRequesterLocation()
     {
         return location;
     }

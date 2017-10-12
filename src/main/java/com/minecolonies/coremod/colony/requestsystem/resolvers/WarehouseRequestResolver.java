@@ -46,7 +46,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<ItemStack>
             return false;
         }
 
-        final TileEntity tileEntity = manager.getColony().getWorld().getTileEntity(getLocation().getInDimensionLocation());
+        final TileEntity tileEntity = manager.getColony().getWorld().getTileEntity(getRequesterLocation().getInDimensionLocation());
 
         if (tileEntity instanceof TileEntityWareHouse)
         {
@@ -67,7 +67,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<ItemStack>
     public List<IToken> attemptResolve(
                                         @NotNull final IRequestManager manager, @NotNull final IRequest<ItemStack> request)
     {
-        final TileEntity tileEntity = manager.getColony().getWorld().getTileEntity(getLocation().getInDimensionLocation());
+        final TileEntity tileEntity = manager.getColony().getWorld().getTileEntity(getRequesterLocation().getInDimensionLocation());
 
         if (tileEntity instanceof TileEntityWareHouse)
         {
@@ -140,14 +140,14 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<ItemStack>
         }
 
         @Override
-        public IToken getID()
+        public IToken getRequesterId()
         {
             return id;
         }
 
         @NotNull
         @Override
-        public ILocation getLocation()
+        public ILocation getRequesterLocation()
         {
             return location;
         }

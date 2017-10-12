@@ -4,6 +4,7 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.location.ILocationFactory;
+import jdk.nashorn.internal.ir.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -83,9 +84,9 @@ public class StaticLocation implements ILocation
         /**
          * Moving the curly braces really makes the code hard to read.
          */
-        public TypeToken<StaticLocation> getFactoryOutputType()
+        public Class<StaticLocation> getFactoryOutputType()
         {
-            return new TypeToken<StaticLocation>() {};
+            return StaticLocation.class;
         }
 
         @NotNull
@@ -94,9 +95,9 @@ public class StaticLocation implements ILocation
         /**
          * Moving the curly braces really makes the code hard to read.
          */
-        public TypeToken<BlockPos> getFactoryInputType()
+        public Class<BlockPos> getFactoryInputType()
         {
-            return new TypeToken<BlockPos>() {};
+            return BlockPos.class;
         }
 
         /**

@@ -714,13 +714,13 @@ public class CitizenData
         buf.writeBoolean(homeBuilding != null);
         if (homeBuilding != null)
         {
-            BlockPosUtil.writeToByteBuf(buf, homeBuilding.getID());
+            BlockPosUtil.writeToByteBuf(buf, homeBuilding.getRequesterId());
         }
 
         buf.writeBoolean(workBuilding != null);
         if (workBuilding != null)
         {
-            BlockPosUtil.writeToByteBuf(buf, workBuilding.getID());
+            BlockPosUtil.writeToByteBuf(buf, workBuilding.getRequesterId());
         }
 
         //  Attributes
