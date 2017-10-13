@@ -96,7 +96,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     /**
      * Position the guard should guard at.
      */
-    private BlockPos guardPos = this.getRequesterId();
+    private BlockPos guardPos = this.getID();
 
     /**
      * The job of the guard, following the GuarJob enum.

@@ -25,6 +25,7 @@ public final class StandardRequestFactories
 {
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
+    private static final String NBT_REQUESTER = "Requester";
     private static final String NBT_TOKEN     = "Token";
     private static final String NBT_STATE     = "State";
     private static final String NBT_REQUESTED = "Requested";
@@ -91,6 +92,7 @@ public final class StandardRequestFactories
         {
             final NBTTagCompound compound = new NBTTagCompound();
 
+            final NBTTagCompound requesterCompound = controller.serialize(request.getRequester());
             final NBTTagCompound tokenCompound = controller.serialize(request.getToken());
             final NBTTagInt stateCompound = request.getState().serializeNBT();
             final NBTTagCompound requestedCompound = request.getRequest().serializeNBT();
@@ -101,6 +103,7 @@ public final class StandardRequestFactories
                 childrenCompound.appendTag(controller.serialize(token));
             }
 
+            compound.setTag(NBT_REQUESTER, requestedCompound);
             compound.setTag(NBT_TOKEN, tokenCompound);
             compound.setTag(NBT_STATE, stateCompound);
             compound.setTag(NBT_REQUESTED, requestedCompound);
@@ -132,6 +135,7 @@ public final class StandardRequestFactories
         @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
         public StandardRequests.ItemStackRequest deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
         {
+            final IRequester requester = controller.deserialize(nbt.getCompoundTag(NBT_REQUESTER));
             final IToken token = controller.deserialize(nbt.getCompoundTag(NBT_TOKEN));
             final RequestState state = RequestState.deserializeNBT((NBTTagInt) nbt.getTag(NBT_STATE));
             final ItemStack requested = new ItemStack(nbt.getCompoundTag(NBT_REQUESTED));
@@ -144,7 +148,7 @@ public final class StandardRequestFactories
             }
 
             @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
-            final StandardRequests.ItemStackRequest request = controller.getNewInstance(requested, token, state);
+            final StandardRequests.ItemStackRequest request = controller.getNewInstance(requested, token, requester, state);
 
             if (nbt.hasKey(NBT_PARENT))
             {
@@ -193,6 +197,7 @@ public final class StandardRequestFactories
         {
             final NBTTagCompound compound = new NBTTagCompound();
 
+            final NBTTagCompound requesterCompound = controller.serialize(request.getRequester());
             final NBTTagCompound tokenCompound = controller.serialize(request.getToken());
             final NBTTagInt stateCompound = request.getState().serializeNBT();
             final NBTTagCompound requestedCompound = request.getRequest().serialize(controller);
@@ -203,6 +208,7 @@ public final class StandardRequestFactories
                 childrenCompound.appendTag(controller.serialize(token));
             }
 
+            compound.setTag(NBT_REQUESTER, requesterCompound);
             compound.setTag(NBT_TOKEN, tokenCompound);
             compound.setTag(NBT_STATE, stateCompound);
             compound.setTag(NBT_REQUESTED, requestedCompound);
@@ -234,6 +240,7 @@ public final class StandardRequestFactories
         @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
         public StandardRequests.DeliveryRequest deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
         {
+            final IRequester requester = controller.deserialize(nbt.getCompoundTag(NBT_REQUESTER));
             final IToken token = controller.deserialize(nbt.getCompoundTag(NBT_TOKEN));
             final RequestState state = RequestState.deserializeNBT((NBTTagInt) nbt.getTag(NBT_STATE));
             final Delivery requested = Delivery.deserialize(controller, nbt.getCompoundTag(NBT_REQUESTED));
@@ -246,7 +253,7 @@ public final class StandardRequestFactories
             }
 
             @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
-            final StandardRequests.DeliveryRequest request = controller.getNewInstance(requested, token, state);
+            final StandardRequests.DeliveryRequest request = controller.getNewInstance(requested, token, requester, state);
 
             if (nbt.hasKey(NBT_PARENT))
             {
@@ -315,6 +322,7 @@ public final class StandardRequestFactories
         {
             final NBTTagCompound compound = new NBTTagCompound();
 
+            final NBTTagCompound requesterCompound = controller.serialize(request.getRequester());
             final NBTTagCompound tokenCompound = controller.serialize(request.getToken());
             final NBTTagInt stateCompound = request.getState().serializeNBT();
             final NBTTagCompound requestedCompound = request.getRequest().serialize(controller);
@@ -325,6 +333,7 @@ public final class StandardRequestFactories
                 childrenCompound.appendTag(controller.serialize(token));
             }
 
+            compound.setTag(NBT_REQUESTER, requesterCompound);
             compound.setTag(NBT_TOKEN, tokenCompound);
             compound.setTag(NBT_STATE, stateCompound);
             compound.setTag(NBT_REQUESTED, requestedCompound);
@@ -348,6 +357,7 @@ public final class StandardRequestFactories
         @Override
         public StandardRequests.ToolRequest deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
         {
+            final IRequester requester = controller.deserialize(nbt.getCompoundTag(NBT_REQUESTER));
             final IToken token = controller.deserialize(nbt.getCompoundTag(NBT_TOKEN));
             final RequestState state = RequestState.deserializeNBT((NBTTagInt) nbt.getTag(NBT_STATE));
             final Tool requested = Tool.deserialize(controller, nbt.getCompoundTag(NBT_REQUESTED));
@@ -360,7 +370,7 @@ public final class StandardRequestFactories
             }
 
             @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
-            final StandardRequests.ToolRequest request = controller.getNewInstance(requested, token, state);
+            final StandardRequests.ToolRequest request = controller.getNewInstance(requested, token, requester, state);
 
             if (nbt.hasKey(NBT_PARENT))
             {
@@ -369,7 +379,7 @@ public final class StandardRequestFactories
 
             if (nbt.hasKey(NBT_RESULT))
             {
-                request.setResult(Delivery.deserialize(controller, nbt.getCompoundTag(NBT_RESULT)));
+                request.setResult(Tool.deserialize(controller, nbt.getCompoundTag(NBT_RESULT)));
             }
 
             return request;

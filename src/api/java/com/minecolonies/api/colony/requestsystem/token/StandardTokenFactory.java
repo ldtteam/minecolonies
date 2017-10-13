@@ -1,6 +1,6 @@
 package com.minecolonies.api.colony.requestsystem.token;
 
-import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,16 +19,16 @@ public class StandardTokenFactory implements ITokenFactory<UUID, StandardToken>
 
     @NotNull
     @Override
-    public TypeToken<StandardToken> getFactoryOutputType()
+    public Class<StandardToken> getFactoryOutputType()
     {
-        return new TypeToken<StandardToken>() {};
+        return StandardToken.class;
     }
 
     @NotNull
     @Override
-    public TypeToken<UUID> getFactoryInputType()
+    public Class<UUID> getFactoryInputType()
     {
-        return new TypeToken<UUID>() {};
+        return UUID.class;
     }
 
     /**

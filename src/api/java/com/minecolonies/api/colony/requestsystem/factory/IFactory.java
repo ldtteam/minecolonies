@@ -43,11 +43,11 @@ public interface IFactory<Input, Output>
      * Method to serialize a given constructable.
      *
      * @param controller The controller that can be used to serialize complicated types.
-     * @param request    The request to serialize.
+     * @param output    The request to serialize.
      * @return The serialized data of the given requets.
      */
     @NotNull
-    NBTTagCompound serialize(@NotNull IFactoryController controller, @NotNull Output request);
+    NBTTagCompound serialize(@NotNull IFactoryController controller, @NotNull Output output);
 
     /**
      * Method to deserialize a given constructable.

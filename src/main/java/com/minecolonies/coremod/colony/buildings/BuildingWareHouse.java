@@ -96,7 +96,7 @@ public class BuildingWareHouse extends AbstractBuilding
      */
     public boolean registerWithWareHouse(final BuildingDeliveryman buildingWorker)
     {
-        if (registeredDeliverymen.contains(new Vec3d(buildingWorker.getRequesterId())))
+        if (registeredDeliverymen.contains(new Vec3d(buildingWorker.getID())))
         {
             return true;
         }
@@ -111,7 +111,7 @@ public class BuildingWareHouse extends AbstractBuilding
             return false;
         }
 
-        registeredDeliverymen.add(new Vec3d(buildingWorker.getRequesterId()));
+        registeredDeliverymen.add(new Vec3d(buildingWorker.getID()));
         return true;
     }
 
@@ -189,7 +189,7 @@ public class BuildingWareHouse extends AbstractBuilding
      */
     public boolean canAccessWareHouse(final BuildingDeliveryman buildingWorker)
     {
-        return registeredDeliverymen.contains(new Vec3d(buildingWorker.getRequesterId()));
+        return registeredDeliverymen.contains(new Vec3d(buildingWorker.getID()));
     }
 
     /**

@@ -3,6 +3,7 @@ package com.minecolonies.api.colony.requestsystem.requestable;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.IToolType;
+import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
@@ -107,6 +108,23 @@ public class Tool
         return compound;
     }
 
+    /**
+     * Static method that constructs an instance from NBT.
+     *
+     * @param controller The {@link IFactoryController} to deserialize components with.
+     * @param nbt The nbt to serialize from.
+     * @return An instance of Tool with the data contained in the given NBT.
+     */
+    @NotNull
+    public static Tool deserialize(IFactoryController controller, NBTTagCompound nbt)
+    {
+        //TODO: Make this universal when an API exists.
+        IToolType type = ToolType.getToolType(nbt.getString(NBT_TYPE));
+        Integer minLevel = nbt.getInteger(NBT_MIN_LEVEL);
+        Integer maxLevel = nbt.getInteger(NBT_MAX_LEVEL);
+        ItemStack result = new ItemStack(nbt.getCompoundTag(NBT_RESULT));
 
+        return new Tool(type, minLevel, maxLevel, result);
+    }
 
 }

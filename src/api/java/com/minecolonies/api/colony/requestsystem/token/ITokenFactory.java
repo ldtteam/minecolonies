@@ -1,5 +1,6 @@
 package com.minecolonies.api.colony.requestsystem.token;
 
+import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import org.jetbrains.annotations.NotNull;
 
 /**

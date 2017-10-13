@@ -15,6 +15,7 @@ import com.minecolonies.coremod.blocks.*;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView;
 import com.minecolonies.coremod.colony.requestsystem.locations.StaticLocation;
+import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
@@ -56,7 +57,7 @@ import java.util.*;
  *
  */
 @SuppressWarnings("squid:S2390")
-public abstract class AbstractBuilding implements IRequester
+public abstract class AbstractBuilding
 {
     /**
      * Tag used to store the containers to NBT.
@@ -186,7 +187,7 @@ public abstract class AbstractBuilding implements IRequester
     /**
      * The ID of the building. Needed in the request system to identify it.
      */
-    private IToken requestorId;
+    private IRequester requestorId;
 
     /**
      * Keeps track of which citizen created what request. Citizen -> Request direction.
@@ -1268,9 +1269,12 @@ public abstract class AbstractBuilding implements IRequester
 
     public <Request> void createRequest(@NotNull CitizenData citizenData, @NotNull Request requested)
     {
+        final ILocation location = StandardFactoryController.getInstance().getNewInstance(getLocation(), getColony().getWorld().provider.getDimension());
+
+        final BuildingBasedRequester requester = StandardFactoryController.getInstance().getNewInstance(location, )
         IToken requestToken = colony.getRequestManager().createAndAssignRequest(this, requested);
 
-        addRequestToMaps(citizenData.getID(), requestToken, requested.getClass());
+        addRequestToMaps(citizenData.getId(), requestToken, requested.getClass());
     }
 
     @NotNull
@@ -1315,12 +1319,12 @@ public abstract class AbstractBuilding implements IRequester
 
     public ImmutableList<IToken> getOpenRequests(@NotNull final CitizenData data)
     {
-        if (!citizensByRequests.containsKey(data.getID()))
+        if (!citizensByRequests.containsKey(data.getId()))
         {
             return ImmutableList.of();
         }
 
-        return ImmutableList.copyOf(citizensByRequests.get(data.getID()));
+        return ImmutableList.copyOf(citizensByRequests.get(data.getId()));
     }
 
     public <Request> ImmutableList<IRequest<Request>> getOpenRequestsOfType(@NotNull final CitizenData citizenData, final Class<Request> requestType)
@@ -1334,39 +1338,26 @@ public abstract class AbstractBuilding implements IRequester
 
     public ImmutableList<IToken> getCompletedRequestsForCitizen(@NotNull final CitizenData data)
     {
-        if (!citizensByCompletedRequests.containsKey(data.getID()))
+        if (!citizensByCompletedRequests.containsKey(data.getId()))
         {
             return ImmutableList.of();
         }
 
-        return ImmutableList.copyOf(citizensByCompletedRequests.get(data.getID()));
+        return ImmutableList.copyOf(citizensByCompletedRequests.get(data.getId()));
     }
 
     public void markRequestAsAccepted(@NotNull final CitizenData data, @NotNull final IToken token) throws IllegalArgumentException
     {
-        if (!citizensByCompletedRequests.containsKey(data.getID()) || !citizensByCompletedRequests.get(data).contains(token))
+        if (!citizensByCompletedRequests.containsKey(data.getId()) || !citizensByCompletedRequests.get(data.getId()).contains(token))
         {
             throw new IllegalArgumentException("The given token " + token + " is not known as a completed request waiting for acceptance by the citizen.");
         }
 
-        citizensByCompletedRequests.get(data.getID()).remove(token);
-        if (citizensByCompletedRequests.get(data.getID()).isEmpty())
+        citizensByCompletedRequests.get(data.getId()).remove(token);
+        if (citizensByCompletedRequests.get(data.getId()).isEmpty())
         {
-            citizensByCompletedRequests.remove(data.getID());
+            citizensByCompletedRequests.remove(data.getId());
         }
-    }
-
-    @NotNull
-    @Override
-    public ILocation getRequesterLocation()
-    {
-        return StandardFactoryController.getInstance().getNewInstance(getLocation(), 0);
-    }
-
-    @Override
-    public IToken getRequesterId()
-    {
-        return requestorId;
     }
 
     /**

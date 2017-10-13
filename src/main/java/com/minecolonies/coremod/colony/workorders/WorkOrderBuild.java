@@ -45,7 +45,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
     public WorkOrderBuild(@NotNull final AbstractBuilding building, final int level)
     {
         super();
-        this.buildingLocation = building.getRequesterId();
+        this.buildingLocation = building.getID();
         this.upgradeLevel = level;
         this.upgradeName = building.getSchematicName() + level;
         this.buildingRotation = building.getRotation();
