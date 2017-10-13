@@ -14,7 +14,6 @@ import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.blocks.*;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView;
-import com.minecolonies.coremod.colony.requestsystem.locations.StaticLocation;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
@@ -25,8 +24,8 @@ import com.minecolonies.coremod.util.ColonyUtils;
 import com.minecolonies.coremod.util.StructureWrapper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
@@ -187,7 +186,7 @@ public abstract class AbstractBuilding
     /**
      * The ID of the building. Needed in the request system to identify it.
      */
-    private IRequester requestorId;
+    private IRequester requestor;
 
     /**
      * Keeps track of which citizen created what request. Citizen -> Request direction.
@@ -423,9 +422,9 @@ public abstract class AbstractBuilding
 
         if(compound.hasKey(TAG_REQUESTOR_ID))
         {
-            this.requestorId = StandardFactoryController.getInstance().getNewInstance(UUID.randomUUID());
+            this.requestor = StandardFactoryController.getInstance().getNewInstance(this);
         } else {
-            this.requestorId = StandardFactoryController.getInstance().deserialize(compound.getCompoundTag(TAG_REQUESTOR_ID));
+            this.requestor = StandardFactoryController.getInstance().deserialize(compound.getCompoundTag(TAG_REQUESTOR_ID));
         }
     }
 
@@ -619,8 +618,7 @@ public abstract class AbstractBuilding
 
         compound.setInteger(TAG_HEIGHT, this.height);
 
-        compound.setTag(TAG_REQUESTOR_ID, StandardFactoryController.getInstance().serialize(this.requestorId));
-
+        compound.setTag(TAG_REQUESTOR_ID, StandardFactoryController.getInstance().serialize(this.requestor));
     }
 
     /**
@@ -1269,10 +1267,7 @@ public abstract class AbstractBuilding
 
     public <Request> void createRequest(@NotNull CitizenData citizenData, @NotNull Request requested)
     {
-        final ILocation location = StandardFactoryController.getInstance().getNewInstance(getLocation(), getColony().getWorld().provider.getDimension());
-
-        final BuildingBasedRequester requester = StandardFactoryController.getInstance().getNewInstance(location, )
-        IToken requestToken = colony.getRequestManager().createAndAssignRequest(this, requested);
+        IToken requestToken = colony.getRequestManager().createAndAssignRequest(requestor, requested);
 
         addRequestToMaps(citizenData.getId(), requestToken, requested.getClass());
     }

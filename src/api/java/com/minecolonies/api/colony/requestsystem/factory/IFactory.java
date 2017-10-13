@@ -30,6 +30,7 @@ public interface IFactory<Input, Output>
     /**
      * Method to get a new instance of the output given the input and additional context data.
      *
+     * @param factoryController The controller calling this factory method.
      * @param input   The input to build a new output for.
      * @param context The context of the request.
      * @return The new output instance for a given input.
@@ -37,7 +38,7 @@ public interface IFactory<Input, Output>
      * @throws IllegalArgumentException is thrown when the factory cannot produce a new instance out of the given context and input.
      */
     @NotNull
-    Output getNewInstance(@NotNull Input input, @NotNull Object... context) throws IllegalArgumentException;
+    Output getNewInstance(@NotNull IFactoryController factoryController, @NotNull Input input, @NotNull Object... context) throws IllegalArgumentException;
 
     /**
      * Method to serialize a given constructable.

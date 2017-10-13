@@ -4,11 +4,12 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 
-public class BuildingBasedRequesterFactory implements IFactory<ILocation, BuildingBasedRequester>
+public class BuildingBasedRequesterFactory implements IFactory<AbstractBuilding, BuildingBasedRequester>
 {
     @NotNull
     @Override
@@ -19,23 +20,22 @@ public class BuildingBasedRequesterFactory implements IFactory<ILocation, Buildi
 
     @NotNull
     @Override
-    public Class<? extends ILocation> getFactoryInputType()
+    public Class<? extends AbstractBuilding> getFactoryInputType()
     {
-        return ILocation.class;
+        return AbstractBuilding.class;
     }
 
     @NotNull
     @Override
-    public BuildingBasedRequester getNewInstance(@NotNull final ILocation iLocation, @NotNull final Object... context) throws IllegalArgumentException
+    public BuildingBasedRequester getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final AbstractBuilding building, @NotNull final Object... context) throws IllegalArgumentException
     {
-        if (context.length != 1)
-            throw new IllegalArgumentException("To many context elements. Only 1 supported. The id of the requester.");
+        if (context.length != 0)
+            throw new IllegalArgumentException("To many context elements. Only 0 supported.");
 
-        if (!(context[0] instanceof IToken))
-            throw new IllegalArgumentException("Wrong context element type. Supported is: IToken");
+        final ILocation location = factoryController.getNewInstance(building.getLocation(), building.getColony().getWorld().provider.getDimension());
+        final IToken token = factoryController.getNewInstance();
 
-        IToken token = (IToken) context[0];
-        return new BuildingBasedRequester(iLocation, token);
+        return new BuildingBasedRequester(location, token);
     }
 
     @NotNull

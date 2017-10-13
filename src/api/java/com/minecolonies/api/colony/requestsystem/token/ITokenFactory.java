@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.requestsystem.token;
 
 import com.minecolonies.api.colony.requestsystem.factory.IFactory;
+import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -10,12 +11,13 @@ import org.jetbrains.annotations.NotNull;
  * @param <T>  The type of requesttoken.
  * @param <RT> The requesttoken type.
  */
-public interface ITokenFactory<T, RT extends IToken<T>> extends IFactory<T, RT>
+public interface ITokenFactory<T, RT extends IToken> extends IFactory<T, RT>
 {
 
     /**
      * Method to get a new instance of the output given the input and additional context data.
      *
+     * @param factoryController The factory controller that calls the factory method.
      * @param t       The input to build a new output for.
      * @param context The context of the token.
      * @return The new output instance for a given input.
@@ -24,7 +26,7 @@ public interface ITokenFactory<T, RT extends IToken<T>> extends IFactory<T, RT>
      */
     @NotNull
     @Override
-    default RT getNewInstance(@NotNull final T t, @NotNull final Object... context) throws IllegalArgumentException
+    default RT getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final T t, @NotNull final Object... context) throws IllegalArgumentException
     {
         if (context.length != 0)
         {
