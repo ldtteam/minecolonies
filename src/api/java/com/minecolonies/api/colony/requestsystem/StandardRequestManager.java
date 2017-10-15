@@ -12,6 +12,7 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.Suppression;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
@@ -372,16 +373,18 @@ public class StandardRequestManager implements IRequestManager
                 throw new IllegalArgumentException("The given resolver is already registered with a different token. Cannot register twice!");
             }
 
-            Log.getLogger().debug("Registering resolver: " + resolver + " with request type: " + resolver.getRequestType().getName());
-
             manager.resolverBiMap.put(resolver.getRequesterId(), resolver);
 
-            if (!manager.requestClassResolverMap.containsKey(resolver.getRequestType()))
-            {
-                manager.requestClassResolverMap.put(resolver.getRequestType(), new ArrayList<>());
-            }
+            Set<Class> resolverTypes = ReflectionUtils.getSuperClasses(resolver.getRequestType());
+            resolverTypes.forEach(c -> {
+                if (!manager.requestClassResolverMap.containsKey(c))
+                {
+                    manager.requestClassResolverMap.put(c, new ArrayList<>());
+                }
 
-            manager.requestClassResolverMap.get(resolver.getRequestType()).add(resolver);
+                Log.getLogger().debug("Registering resolver: " + resolver + " with request type: " + c);
+                manager.requestClassResolverMap.get(c).add(resolver);
+            });
 
             return resolver.getRequesterId();
         }
@@ -453,10 +456,13 @@ public class StandardRequestManager implements IRequestManager
                 throw new IllegalArgumentException("Cannot remove a resolver that is still in use. Reassign all registered requests before removing");
             }
 
-            Log.getLogger().debug("Removing resolver: " + resolver + " with request type: " + resolver.getRequestType().getName());
 
             manager.resolverBiMap.remove(resolver.getRequesterId());
-            manager.requestClassResolverMap.get(resolver.getRequestType()).remove(resolver);
+            Set<Class> requestTypes = ReflectionUtils.getSuperClasses(resolver.getRequestType());
+            requestTypes.forEach(c -> {
+                Log.getLogger().debug("Removing resolver: " + resolver + " with request type: " + c);
+                manager.requestClassResolverMap.get(c).remove(resolver);
+            });
         }
 
         /**
@@ -697,54 +703,58 @@ public class StandardRequestManager implements IRequestManager
 
             request.setState(new WrappedStaticStateRequestManager(manager), RequestState.ASSIGNING);
 
-            for (final IRequestResolver resolver : manager.requestClassResolverMap.get(request.getRequestType()))
-            {
-                //Skip when the resolver is in the blacklist.
-                if (resolverTokenBlackList.contains(resolver.getRequesterId()))
+            Set<Class> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+            for(Class requestType : requestTypes) {
+                for (final IRequestResolver resolver : manager.requestClassResolverMap.get(requestType))
                 {
-                    continue;
-                }
-
-                //Skip if preliminary check fails
-                if (!resolver.canResolve(manager, request))
-                {
-                    continue;
-                }
-
-                @Nullable final List<IToken> attemptResult = resolver.attemptResolve(new WrappedBlacklistAssignmentRequestManager(manager, resolverTokenBlackList), request);
-
-                //Skip if attempt failed (aka attemptResult == null)
-                if (attemptResult == null)
-                {
-                    continue;
-                }
-
-                //Successfully found a resolver. Registering
-                Log.getLogger().debug("Finished resolver assignment search for request: " + request + " successfully");
-                ResolverHandler.addRequestToResolver(manager, resolver, request);
-
-                for (final IToken childRequestToken :
-                  attemptResult)
-                {
-                    final IRequest childRequest = RequestHandler.getRequest(manager, childRequestToken);
-
-                    childRequest.setParent(request.getToken());
-                    request.addChild(childRequest.getToken());
-
-                    if (!isAssigned(manager, childRequestToken))
+                    //Skip when the resolver is in the blacklist.
+                    if (resolverTokenBlackList.contains(resolver.getRequesterId()))
                     {
-                        assignRequest(manager, childRequest, resolverTokenBlackList);
+                        continue;
                     }
-                }
 
-                request.setState(new WrappedStaticStateRequestManager(manager), RequestState.ASSIGNED);
+                    //Skip if preliminary check fails
+                    if (!resolver.canResolve(manager, request))
+                    {
+                        continue;
+                    }
 
-                if (!request.hasChildren())
-                {
-                    resolveRequest(manager, request);
+                    @Nullable final List<IToken> attemptResult = resolver.attemptResolve(new WrappedBlacklistAssignmentRequestManager(manager, resolverTokenBlackList), request);
+
+                    //Skip if attempt failed (aka attemptResult == null)
+                    if (attemptResult == null)
+                    {
+                        continue;
+                    }
+
+                    //Successfully found a resolver. Registering
+                    Log.getLogger().debug("Finished resolver assignment search for request: " + request + " successfully");
+                    ResolverHandler.addRequestToResolver(manager, resolver, request);
+
+                    for (final IToken childRequestToken :
+                      attemptResult)
+                    {
+                        final IRequest childRequest = RequestHandler.getRequest(manager, childRequestToken);
+
+                        childRequest.setParent(request.getToken());
+                        request.addChild(childRequest.getToken());
+
+                        if (!isAssigned(manager, childRequestToken))
+                        {
+                            assignRequest(manager, childRequest, resolverTokenBlackList);
+                        }
+                    }
+
+                    request.setState(new WrappedStaticStateRequestManager(manager), RequestState.ASSIGNED);
+
+                    if (!request.hasChildren())
+                    {
+                        resolveRequest(manager, request);
+                    }
+                    return;
                 }
-                return;
             }
+
 
             Log.getLogger().debug("Resolving failed. Attempting Fallback PlayerManager for: " + request);
             ResolverHandler.addRequestToResolver(manager, manager.playerResolver, request);
