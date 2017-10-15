@@ -411,7 +411,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                     if (isInHut(deliveredItemStack))
                     {
                         return NEEDS_ITEM;
-                    } else {
+                    }
+                    else
+                    {
                         //Seems like somebody else picked up our stack.
                         //Lets try this again.
                         getOwnBuilding().createRequest(worker.getCitizenData(), firstDeliverableRequest.getRequest());
@@ -970,13 +972,14 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             {
                 final int itemsLeft = ItemStackUtils.getSize(stack) - countOfItem;
                 @NotNull final ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft, itemDamage);
-                getOwnBuilding().addNeededItems(requiredStack);
+                getOwnBuilding().createRequest(worker.getCitizenData(), requiredStack);
                 allClear = false;
             }
-            else
+            //todo we need to find a way to cancel existing requests.
+            /*else
             {
                 getOwnBuilding().clearNeededItems();
-            }
+            }*/
         }
         if (allClear)
         {
@@ -1019,14 +1022,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 @NotNull final ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft, -1);
                 if(!isInNeededItems(tempStack))
                 {
-                    getOwnBuilding().addNeededItems(requiredStack);
+                    getOwnBuilding().createRequest(worker.getCitizenData(), requiredStack);
                 }
                 allClear = false;
             }
-            else
+            //todo we need to find a way to cancel existing requests.
+            /*else
             {
                 getOwnBuilding().clearNeededItems();
-            }
+            }*/
         }
         if (allClear)
         {
