@@ -166,12 +166,13 @@ public class EntityLocation implements ILocation
         /**
          * Method to get a new instance of a location given the input.
          *
+         * @param factoryController The {@link IFactoryController} that called this method.
          * @param input The input to build a new location for.
          * @return The new output instance for a given input.
          */
         @NotNull
         @Override
-        public EntityLocation getNewInstance(@NotNull final Entity input)
+        public EntityLocation getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final Entity input)
         {
             return new EntityLocation(input.getPersistentID());
         }

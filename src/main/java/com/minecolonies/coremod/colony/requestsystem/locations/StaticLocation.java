@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.requestsystem.locations;
 
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.location.ILocationFactory;
@@ -135,7 +136,7 @@ public class StaticLocation implements ILocation
 
         @NotNull
         @Override
-        public StaticLocation getNewInstance(@NotNull final BlockPos blockPos, @NotNull final Object... context)
+        public StaticLocation getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final BlockPos blockPos, @NotNull final Object... context)
         {
             if (context.length != NUMBER_OR_CONTEXTS)
             {
@@ -154,12 +155,13 @@ public class StaticLocation implements ILocation
          * Method to get a new instance of a location given the input.
          * Method not used in this factory.
          *
+         * @param factoryController The {@link IFactoryController} that called this method.
          * @param input The input to build a new location for.
          * @return The new output instance for a given input.
          */
         @NotNull
         @Override
-        public StaticLocation getNewInstance(@NotNull final BlockPos input)
+        public StaticLocation getNewInstance(@NotNull final IFactoryController factoryController , @NotNull final BlockPos input)
         {
             return new StaticLocation(input, 0);
         }

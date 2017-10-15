@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
+import com.minecolonies.api.colony.requestsystem.requestable.Tool;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.IToolType;
@@ -688,7 +689,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             return false;
         }
-        if (!getOwnBuilding().hasOnGoingDelivery())
+        if (!getOwnBuilding().hasWorkerOpenRequestsOfType(job.getCitizen(), Tool.class))
         {
             chatRequestTool(toolType, minimalLevel, maxToolLevel);
         }

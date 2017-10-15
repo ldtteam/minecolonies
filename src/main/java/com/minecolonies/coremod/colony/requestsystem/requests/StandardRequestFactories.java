@@ -44,17 +44,9 @@ public final class StandardRequestFactories
     @SuppressWarnings(Suppression.BIG_CLASS)
     public static final class ItemStackFactory implements IRequestFactory<ItemStack, StandardRequests.ItemStackRequest>
     {
-        /**
-         * Method to get a new instance of a request given the input and token.
-         *
-         * @param input        The input to build a new request for.
-         * @param location     The location of the requester.
-         * @param token        The token to build the request from.
-         * @param initialState The initial state of the request request.
-         * @return The new output instance for a given input.
-         */
         @Override
         public StandardRequests.ItemStackRequest getNewInstance(
+                                                                 @NotNull final IFactoryController factoryController,
                                                                  @NotNull final ItemStack input,
                                                                  @NotNull final IRequester location,
                                                                  @NotNull final IToken token,
@@ -103,7 +95,7 @@ public final class StandardRequestFactories
                 childrenCompound.appendTag(controller.serialize(token));
             }
 
-            compound.setTag(NBT_REQUESTER, requestedCompound);
+            compound.setTag(NBT_REQUESTER, requesterCompound);
             compound.setTag(NBT_TOKEN, tokenCompound);
             compound.setTag(NBT_STATE, stateCompound);
             compound.setTag(NBT_REQUESTED, requestedCompound);
@@ -271,6 +263,7 @@ public final class StandardRequestFactories
         /**
          * Method to get a new instance of a request given the input and token.
          *
+         * @param factoryController The {@link IFactoryController} that calls this factory method.
          * @param input        The input to build a new request for.
          * @param location     The location of the requester.
          * @param token        The token to build the request from.
@@ -279,6 +272,7 @@ public final class StandardRequestFactories
          */
         @Override
         public StandardRequests.DeliveryRequest getNewInstance(
+                                                                @NotNull final IFactoryController factoryController,
                                                                 @NotNull final Delivery input,
                                                                 @NotNull final IRequester location,
                                                                 @NotNull final IToken token,
@@ -294,6 +288,7 @@ public final class StandardRequestFactories
 
         @Override
         public StandardRequests.ToolRequest getNewInstance(
+                                                            @NotNull final IFactoryController factoryController,
                                                             @NotNull final Tool input,
                                                             @NotNull final IRequester location,
                                                             @NotNull final IToken token,

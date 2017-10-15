@@ -2,6 +2,7 @@ package com.minecolonies.api.colony.requestsystem.request;
 
 import com.minecolonies.api.colony.requestsystem.RequestState;
 import com.minecolonies.api.colony.requestsystem.factory.IFactory;
+import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +22,7 @@ public interface IRequestFactory<T, R extends IRequest<T>> extends IFactory<T, R
     /**
      * Method to get a new instance of the output given the input and additional context data.
      *
+     * @param factoryController The {@link IFactoryController} that calls this factory method.
      * @param t       The input to build a new output for.
      * @param context The context of the request.
      * @return The new output instance for a given input.
@@ -29,7 +31,7 @@ public interface IRequestFactory<T, R extends IRequest<T>> extends IFactory<T, R
      */
     @NotNull
     @Override
-    default R getNewInstance(@NotNull final T t, @NotNull final Object... context) throws IllegalArgumentException
+    default R getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final T t, @NotNull final Object... context) throws IllegalArgumentException
     {
         if (context.length != 2 && context.length != 3)
         {
@@ -51,7 +53,7 @@ public interface IRequestFactory<T, R extends IRequest<T>> extends IFactory<T, R
             IRequester requester = (IRequester) context[1];
             IToken token = (IToken) context[0];
 
-            return this.getNewInstance(t, requester, token);
+            return this.getNewInstance(factoryController, t, requester, token);
         }
 
         if (!(context[2] instanceof RequestState))
@@ -63,30 +65,32 @@ public interface IRequestFactory<T, R extends IRequest<T>> extends IFactory<T, R
         IToken token = (IToken) context[0];
         RequestState state = (RequestState) context[2];
 
-        return this.getNewInstance(t, requester, token, state);
+        return this.getNewInstance(factoryController, t, requester, token, state);
     }
 
     /**
      * Method to get a new instance of a request given the input and token.
      *
+     * @param factoryController The {@link IFactoryController} that calls this factory method.
      * @param input    The input to build a new request for.
      * @param location the location of the requester.
      * @param token    The token to build the request from.
      * @return The new output instance for a given input.
      */
-    default R getNewInstance(@NotNull final T input, @NotNull final IRequester location, @NotNull final IToken token)
+    default R getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final T input, @NotNull final IRequester location, @NotNull final IToken token)
     {
-        return this.getNewInstance(input, location, token, RequestState.CREATED);
+        return this.getNewInstance(factoryController, input, location, token, RequestState.CREATED);
     }
 
     /**
      * Method to get a new instance of a request given the input and token.
      *
+     * @param factoryController The {@link IFactoryController} that calls this factory method.
      * @param input        The input to build a new request for.
      * @param location     the location of the requester.
      * @param token        The token to build the request from.
      * @param initialState The initial state of the request request.
      * @return The new output instance for a given input.
      */
-    R getNewInstance(@NotNull T input, @NotNull IRequester location, @NotNull IToken token, @NotNull RequestState initialState);
+    R getNewInstance(@NotNull final IFactoryController factoryController, @NotNull T input, @NotNull IRequester location, @NotNull IToken token, @NotNull RequestState initialState);
 }
