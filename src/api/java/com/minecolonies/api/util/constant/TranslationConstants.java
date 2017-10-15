@@ -105,6 +105,41 @@ public final class TranslationConstants
     public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0                = "com.minecolonies.coremod.gui.workerHuts.level0";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_LUMBERJACK                        = "com.minecolonies.coremod.job.Lumberjack";
+    @NonNls
+    public static final String COM_MINECOLONIES_REQUESTS_DELIVERY                        = "com.minecolonies.coremod.request.delivery";
+    @NonNls
+    public static final String COM_MINECOLONIES_REQUESTS_FOOD                        = "com.minecolonies.coremod.request.food";
+    @NonNls
+    public static final String COM_MINECOLONIES_REQUESTS_BURNABLE                        = "com.minecolonies.coremod.request.burnable";
+    @NonNls
+    public static final String COM_MINECOLONIES_REQUESTS_TOOL_PRETYPE                        = "com.minecolonies.coremod.request.tool.pretype";
+    @NonNls
+    public static final String COM_MINECOLONIES_REQUESTS_TOOL_PREMINLEVEL                        = "com.minecolonies.coremod.request.tool.preminlevel";
+    @NonNls
+    public static final String COM_MINECOLONIES_REQUESTS_TOOL_PREMAXLEVEL                        = "com.minecolonies.coremod.request.tool.premaxlevel";
+    @NonNls
+    public static final String COM_MINECOLONIES_GENERAL_AND                      = "com.minecolonies.coremod.general.and";
+    @NonNls
+    public static final String COM_MINECOLONIES_TOOLTYPE_NONE                      = "com.minecolonies.coremod.tooltype.none";
+    @NonNls
+    public static final String COM_MINECOLONIES_TOOLTYPE_PICKAXE                      = "com.minecolonies.coremod.tooltype.pickaxe";
+    @NonNls
+    public static final String COM_MINECOLONIES_TOOLTYPE_SHOVEL                      = "com.minecolonies.coremod.tooltype.shovel";
+    @NonNls
+    public static final String COM_MINECOLONIES_TOOLTYPE_AXE                      = "com.minecolonies.coremod.tooltype.axe";
+    @NonNls
+    public static final String COM_MINECOLONIES_TOOLTYPE_HOE                      = "com.minecolonies.coremod.tooltype.hoe";
+    @NonNls
+    public static final String COM_MINECOLONIES_TOOLTYPE_SWORD                      = "com.minecolonies.coremod.tooltype.sword";
+    @NonNls
+    public static final String COM_MINECOLONIES_TOOLTYPE_BOW                      = "com.minecolonies.coremod.tooltype.bow";
+    @NonNls
+    public static final String COM_MINECOLONIES_TOOLTYPE_FISHINGROD                      = "com.minecolonies.coremod.tooltype.fishingrod";
+    @NonNls
+    public static final String COM_MINECOLONIES_TOOLTYPE_SHEARS                      = "com.minecolonies.coremod.tooltype.shears";
+    @NonNls
+    public static final String COM_MINECOLONIES_TOOLTYPE_SHIELD                     = "com.minecolonies.coremod.tooltype.shield";
+
 
     private TranslationConstants()
     {

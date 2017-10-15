@@ -1,5 +1,7 @@
 package com.minecolonies.api.util.constant;
 
+import net.minecraft.util.text.ITextComponent;
+
 public interface IToolType
 {
     /**
@@ -16,5 +18,11 @@ public interface IToolType
      * @return true if using material
      */
     boolean hasVariableMaterials();
+
+    /**
+     * Text displayed to the user.
+     * @return The text displayed to the user.
+     */
+    ITextComponent getDisplayName();
 }
 

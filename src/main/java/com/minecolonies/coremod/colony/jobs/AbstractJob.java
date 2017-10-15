@@ -72,8 +72,6 @@ public abstract class AbstractJob
     }
 
     private final CitizenData citizen;
-    @NotNull
-    private final List<ItemStack> itemsNeeded = new ArrayList<>();
     private       String          nameTag     = "";
 
     /**
@@ -168,12 +166,6 @@ public abstract class AbstractJob
      */
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
-        final NBTTagList itemsNeededTag = compound.getTagList(TAG_ITEMS_NEEDED, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < itemsNeededTag.tagCount(); i++)
-        {
-            final NBTTagCompound itemCompound = itemsNeededTag.getCompoundTagAt(i);
-            itemsNeeded.add(new ItemStack(itemCompound));
-        }
     }
 
     /**
@@ -228,103 +220,6 @@ public abstract class AbstractJob
         }
 
         compound.setString(TAG_TYPE, s);
-
-        if (!itemsNeeded.isEmpty())
-        {
-            @NotNull final NBTTagList itemsNeededTag = new NBTTagList();
-            for (@NotNull final ItemStack itemstack : itemsNeeded)
-            {
-                @NotNull final NBTTagCompound itemCompound = new NBTTagCompound();
-                itemstack.writeToNBT(itemCompound);
-                itemsNeededTag.appendTag(itemCompound);
-            }
-            compound.setTag(TAG_ITEMS_NEEDED, itemsNeededTag);
-        }
-    }
-
-    /**
-     * Does the Job have _all_ the needed items.
-     *
-     * @return true if the Job has no needed items.
-     */
-    public boolean isMissingNeededItem()
-    {
-        return !itemsNeeded.isEmpty();
-    }
-
-    /**
-     * Get the list of items needed by the Job.
-     *
-     * @return List of items needed by the Job.
-     */
-    @NotNull
-    public List<ItemStack> getItemsNeeded()
-    {
-        return Collections.unmodifiableList(itemsNeeded);
-    }
-
-    /**
-     * Reset the items needed.
-     */
-    public void clearItemsNeeded()
-    {
-        itemsNeeded.clear();
-    }
-
-    /**
-     * Add (or increment) an ItemStack to the items needed by the Job.
-     * We're not comparing item damage values since i.e a damaged rod is the same as a normal rod for our purpose.
-     *
-     * @param stack Item+count needed to do the job.
-     */
-    public void addItemNeeded(@NotNull final ItemStack stack)
-    {
-        for (@NotNull final ItemStack neededItem : itemsNeeded)
-        {
-            if (stack.isItemEqualIgnoreDurability(neededItem))
-            {
-                ItemStackUtils.changeSize(neededItem, ItemStackUtils.getSize(stack));
-                return;
-            }
-        }
-
-        itemsNeeded.add(stack.copy());
-    }
-
-    /**
-     * Remove a items from those required to do the Job.
-     * We're not comparing item damage values since i.e a damaged rod is the same as a normal rod for our purpose.
-     *
-     * @param stack ItemStack (item+count) to remove from the list of needed items.
-     * @return modified ItemStack with remaining items (or null).
-     */
-    @Nullable
-    public ItemStack removeItemNeeded(@NotNull final ItemStack stack)
-    {
-        @NotNull final ItemStack stackCopy = stack.copy();
-
-        if (stack.isEmpty())
-        {
-            return stackCopy;
-        }
-
-        for (@NotNull final ItemStack neededItem : itemsNeeded)
-        {
-            if (stack.isItemEqualIgnoreDurability(neededItem))
-            {
-                //todo make this sofisticated as soon as material handling has been implemented.
-                //final int itemsToRemove = Math.min(ItemStackUtils.getSize(neededItem), ItemStackUtils.getSize(stackCopy));
-                //ItemStackUtils.changeSize(neededItem, -itemsToRemove);
-                //ItemStackUtils.changeSize(stackCopy, -itemsToRemove);
-
-                //Deativate this if for now in order to keep working even if not all items are given. previously checked if stackSize is 0 and only removed then.
-                itemsNeeded.remove(neededItem);
-
-                break;
-            }
-        }
-
-        return ItemStackUtils.isEmpty(stackCopy) ? ItemStackUtils.EMPTY : stackCopy;
     }
 
     /**

@@ -48,6 +48,12 @@ public class Stack implements IDeliverable
         return stack.getCount();
     }
 
+    @NotNull
+    public ItemStack getStack()
+    {
+        return stack;
+    }
+
     @Override
     public void setResult(@NotNull final ItemStack result)
     {

@@ -469,3 +469,22 @@ com.minecolonies.coremod.worker.noUpgrade=No Upgrade available.
 com.minecolonies.coremod.worker.needBarracks=Please upgrade the Barracks first.
 com.minecolonies.coremod.gui.warehouse.upgrade=Upgrade Storage
 
+com.minecolonies.coremod.request.delivery=Delivery of:
+com.minecolonies.coremod.request.food=Food
+com.minecolonies.coremod.request.burnable=Fuel
+com.minecolonies.coremod.request.tool.pretype=Tool of class:
+com.minecolonies.coremod.request.tool.preminlevel=with minimal level:
+com.minecolonies.coremod.request.tool.premaxlevel=with maximal level:
+
+com.minecolonies.coremod.general.and= and
+
+com.minecolonies.coremod.tooltype.none=Unknown
+com.minecolonies.coremod.tooltype.pickaxe=Pickaxe
+com.minecolonies.coremod.tooltype.shovel=Shovel
+com.minecolonies.coremod.tooltype.axe=Axe
+com.minecolonies.coremod.tooltype.hoe=Hoe
+com.minecolonies.coremod.tooltype.sword=Sword
+com.minecolonies.coremod.tooltype.bow=Bow
+com.minecolonies.coremod.tooltype.fishingrod=Fishingrod
+com.minecolonies.coremod.tooltype.shears=Shears
+com.minecolonies.coremod.tooltype.shield=Shield

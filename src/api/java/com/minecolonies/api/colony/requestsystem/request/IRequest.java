@@ -6,6 +6,8 @@ import com.minecolonies.api.colony.requestsystem.RequestState;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -206,4 +208,12 @@ public interface IRequest<R>
      */
     @NotNull
     ItemStack getDelivery();
+
+    /**
+     * Method used to get a {@link ITextComponent} that can be displayed to the Player.
+     * Should represent the request, in case the player needs to fulfill it, or information about this request is required.
+     * @return The text that describes this Request.
+     */
+    @NotNull
+    ITextComponent getDisplayString();
 }

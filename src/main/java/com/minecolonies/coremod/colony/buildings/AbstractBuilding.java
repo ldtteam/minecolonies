@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.requestsystem.RequestState;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.Tool;
@@ -45,6 +46,7 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_HAND;
 
@@ -1274,20 +1276,19 @@ public abstract class AbstractBuilding
         return !getOpenRequestsOfType(citizenData, requestType).isEmpty();
     }
 
-    public ImmutableList<IToken> getOpenRequests(@NotNull final CitizenData data)
+    public ImmutableList<IRequest> getOpenRequests(@NotNull final CitizenData data)
     {
         if (!citizensByRequests.containsKey(data.getId()))
         {
             return ImmutableList.of();
         }
 
-        return ImmutableList.copyOf(citizensByRequests.get(data.getId()));
+        return ImmutableList.copyOf(citizensByRequests.get(data.getId()).stream().map(getColony().getRequestManager()::getRequestForToken).iterator());
     }
 
     public <Request> ImmutableList<IRequest<? extends Request>> getOpenRequestsOfType(@NotNull final CitizenData citizenData, final Class<Request> requestType)
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
-                                      .map(getColony().getRequestManager()::getRequestForToken)
                                       .filter(request -> {
                                           Set<Class> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
                                           return requestTypes.contains(requestType);
@@ -1296,14 +1297,26 @@ public abstract class AbstractBuilding
                                       .iterator());
     }
 
-    public ImmutableList<IToken> getCompletedRequests(@NotNull final CitizenData data)
+    public <Request> ImmutableList<IRequest<? extends Request>> getOpenRequestsOfTypeFiltered(@NotNull final CitizenData citizenData, final Class<Request> requestType, Predicate<IRequest<? extends Request>> filter)
+    {
+        return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
+                                      .filter(request -> {
+                                          Set<Class> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                                          return requestTypes.contains(requestType);
+                                      })
+                                      .map(request -> (IRequest<? extends Request>) request)
+                                      .filter(filter)
+                                      .iterator());
+    }
+
+    public ImmutableList<IRequest> getCompletedRequests(@NotNull final CitizenData data)
     {
         if (!citizensByCompletedRequests.containsKey(data.getId()))
         {
             return ImmutableList.of();
         }
 
-        return ImmutableList.copyOf(citizensByCompletedRequests.get(data.getId()));
+        return ImmutableList.copyOf(citizensByCompletedRequests.get(data.getId()).stream().map(getColony().getRequestManager()::getRequestForToken).iterator());
     }
 
     public boolean hasCitizenCompletedRequests(@NotNull final CitizenData data)
@@ -1314,9 +1327,17 @@ public abstract class AbstractBuilding
     public <Request> ImmutableList<IRequest<? extends Request>> getCompletedRequestsOfType(@NotNull final CitizenData citizenData, final Class<Request> requestType)
     {
         return ImmutableList.copyOf(getCompletedRequests(citizenData).stream()
-                                      .map(getColony().getRequestManager()::getRequestForToken)
                                       .filter(request -> request.getRequestType().equals(requestType))
                                       .map(request -> (IRequest<? extends Request>) request)
+                                      .iterator());
+    }
+
+    public <Request> ImmutableList<IRequest<? extends Request>> getCompletedRequestsOfTypeFiltered(@NotNull final CitizenData citizenData, final Class<Request> requestType, final Predicate<IRequest<? extends Request>> filter)
+    {
+        return ImmutableList.copyOf(getCompletedRequests(citizenData).stream()
+                                      .filter(request -> request.getRequestType().equals(requestType))
+                                      .map(request -> (IRequest<? extends Request>) request)
+                                      .filter(filter)
                                       .iterator());
     }
 
@@ -1332,6 +1353,8 @@ public abstract class AbstractBuilding
         {
             citizensByCompletedRequests.remove(data.getId());
         }
+
+        getColony().getRequestManager().updateRequestState(token, RequestState.RECEIVED);
     }
 
     /**

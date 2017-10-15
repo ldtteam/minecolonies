@@ -2,6 +2,8 @@ package com.minecolonies.coremod.entity.ai.basic;
 
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.Tool;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.util.*;
@@ -72,11 +74,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * The number of actions done before item dump.
      */
-    private static final int             ACTIONS_UNTIL_DUMP            = 32;
+    private static final int             ACTIONS_UNTIL_DUMP      = 32;
     /**
      * Hit a block every x ticks when mining.
      */
-    private static final int             HIT_EVERY_X_TICKS             = 5;
+    private static final int             HIT_EVERY_X_TICKS       = 5;
     /**
      * The list of all items and their quantity that were requested by the worker.
      * Warning: This list does not change, if you need to see what is currently missing,
@@ -85,21 +87,21 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Will be cleared on restart, be aware!
      */
     @NotNull
-    private final        List<ItemStack> itemsNeeded                   = new ArrayList<>();
+    private final        List<ItemStack> itemsNeeded             = new ArrayList<>();
     /**
      * The block the ai is currently working at or wants to work.
      */
     @Nullable
-    protected            BlockPos        currentWorkingLocation        = null;
+    protected            BlockPos        currentWorkingLocation  = null;
     /**
      * The block the ai is currently standing at or wants to stand.
      */
     @Nullable
-    protected            BlockPos        currentStandingLocation       = null;
+    protected            BlockPos        currentStandingLocation = null;
     /**
      * The time in ticks until the next action is made.
      */
-    private              int             delay                         = 0;
+    private              int             delay                   = 0;
 
     /**
      * If we have waited one delay.
@@ -167,11 +169,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 /*
                  * Check if inventory has to be dumped.
                  */
-                new AITarget(this::inventoryNeedsDump, INVENTORY_FULL),
+          new AITarget(this::inventoryNeedsDump, INVENTORY_FULL),
                 /**
                  * Reset to idle if no specific tool is needed.
                  */
-                new AITarget(() -> getState() == NEEDS_TOOL && this.getOwnBuilding().needsTool(ToolType.NONE), IDLE)
+          new AITarget(() -> getState() == NEEDS_TOOL && this.getOwnBuilding().needsTool(ToolType.NONE), IDLE)
         );
     }
 
@@ -374,8 +376,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private AIState waitForRequests()
     {
         delay = DELAY_RECHECK;
-        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waiting"),
-          new TextComponentString(getOwnBuilding().getFirstNeededItem().getDisplayName()));
+        updateWorkerStatusFromRequests();
         return lookForRequests();
     }
 
@@ -396,29 +397,46 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             {
                 delay += DELAY_RECHECK;
 
-                ImmutableList<IRequest<StandardRequests.ItemStackRequest>>
-                final ItemStack first = getOwnBuilding().getFirstNeededItem();
-                //Takes one Stack from the hut if existent
-                if (isInHut(first))
+                ImmutableList<IRequest> completedRequests = getOwnBuilding().getCompletedRequests(worker.getCitizenData());
+
+                completedRequests.stream().filter(r -> !(r.canBeDelivered())).forEach(r -> getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), r.getToken()));
+                IRequest firstDeliverableRequest = completedRequests.stream().filter(r -> r.canBeDelivered()).findFirst().orElse(null);
+
+                if (firstDeliverableRequest != null)
                 {
-                    return NEEDS_ITEM;
+                    getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), firstDeliverableRequest.getToken());
+
+                    final ItemStack deliveredItemStack = firstDeliverableRequest.getDelivery();
+                    //Takes one Stack from the hut if existent
+                    if (isInHut(deliveredItemStack))
+                    {
+                        return NEEDS_ITEM;
+                    } else {
+                        //Seems like somebody else picked up our stack.
+                        //Lets try this again.
+                        getOwnBuilding().createRequest(worker.getCitizenData(), firstDeliverableRequest.getRequest());
+                    }
                 }
+
             }
         }
 
         return NEEDS_ITEM;
     }
 
-
-    /**
-     * Updates the itemsCurrentlyNeeded with current values.
-     */
-    private void syncNeededItemsWithInventory()
+    private void updateWorkerStatusFromRequests()
     {
-        job.clearItemsNeeded();
-        itemsNeeded.forEach(job::addItemNeeded);
-        InventoryUtils.getItemHandlerAsList(new InvWrapper(worker.getInventoryCitizen())).forEach(job::removeItemNeeded);
-        getOwnBuilding().setItemsCurrentlyNeeded(job.getItemsNeeded());
+        if (!getOwnBuilding().hasWorkerOpenRequests(worker.getCitizenData()) && !getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()))
+        {
+            worker.setLatestStatus();
+            return;
+        }
+
+        IRequest request = getOwnBuilding().getCompletedRequests(worker.getCitizenData()).stream().findFirst().orElse(null);
+        if (request == null)
+            request = getOwnBuilding().getOpenRequests(worker.getCitizenData()).stream().findFirst().orElse(null);
+
+        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waiting"), request.getDisplayString());
     }
 
     /**
@@ -634,19 +652,20 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
     protected boolean checkForToolOrWeapon(@NotNull final IToolType toolType, final int minimalLevel)
     {
+        ImmutableList<IRequest<? extends Tool>> openToolRequests = getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), Tool.class, r -> r.getRequest().getToolClass().equals(toolType) && r.getRequest().getMinLevel() >= minimalLevel);
+        ImmutableList<IRequest<? extends Tool>> completedToolRequests = getOwnBuilding().getCompletedRequestsOfTypeFiltered(worker.getCitizenData(), Tool.class, r -> r.getRequest().getToolClass().equals(toolType) && r.getRequest().getMinLevel() >= minimalLevel);
+
         if (checkForNeededTool(toolType, minimalLevel))
         {
-            Tool request = new Tool(toolType, minimalLevel, ToolLevelConstants.TOOL_LEVEL_MAXIMUM);
-            getOwnBuilding().createRequest(job.getCitizen(), request);
-            return false;
+            if (openToolRequests.isEmpty() && completedToolRequests.isEmpty())
+            {
+                Tool request = new Tool(toolType, minimalLevel, ToolLevelConstants.TOOL_LEVEL_MAXIMUM);
+                getOwnBuilding().createRequest(job.getCitizen(), request);
+                return false;
+            }
         }
 
-        else if(getOwnBuilding().needsTool(toolType))
-        {
-            getOwnBuilding().setNeedsTool(ToolType.NONE, TOOL_LEVEL_HAND);
-        }
-
-        return getOwnBuilding().needsTool(toolType);
+        return openToolRequests.isEmpty() && completedToolRequests.isEmpty();
     }
 
     /**
@@ -1048,14 +1067,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private boolean isInNeededItems(final ItemStack tempStack)
     {
-        for(final ItemStack compareStack : getOwnBuilding().getCopyOfNeededItems())
-        {
-            if(compareStack.isItemEqual(tempStack))
-            {
-                return true;
-            }
-        }
-        return false;
+        ImmutableList<IRequest<? extends Stack>> openRequests = getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), Stack.class, r->ItemStack.areItemsEqual(r.getRequest().getStack(), tempStack));
+        ImmutableList<IRequest<? extends Stack>> completedRequests = getOwnBuilding().getCompletedRequestsOfTypeFiltered(worker.getCitizenData(), Stack.class, r->ItemStack.areItemsEqual(r.getRequest().getStack(), tempStack));
+
+        return !openRequests.isEmpty() || !completedRequests.isEmpty();
     }
 
     /**

@@ -5,7 +5,12 @@ import com.minecolonies.api.colony.requestsystem.requestable.*;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.ToolLevelConstants;
+import com.minecolonies.api.util.constant.TranslationConstants;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,6 +39,13 @@ public final class StandardRequests
         public ItemStackRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final Stack requested)
         {
             super(requester, token, state, requested);
+        }
+
+        @NotNull
+        @Override
+        public ITextComponent getDisplayString()
+        {
+            return getRequest().getStack().getTextComponent();
         }
     }
 
@@ -66,6 +78,13 @@ public final class StandardRequests
 
             return ItemStackUtils.EMPTY;
         }
+
+        @NotNull
+        @Override
+        public ITextComponent getDisplayString()
+        {
+            return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_DELIVERY).appendSibling(getDelivery().getTextComponent());
+        }
     }
 
     public static class ToolRequest extends AbstractRequest<Tool>
@@ -79,6 +98,32 @@ public final class StandardRequests
         public ToolRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final Tool requested)
         {
             super(requester, token, state, requested);
+        }
+
+        @NotNull
+        @Override
+        public ITextComponent getDisplayString()
+        {
+            final ITextComponent preType = new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_TOOL_PRETYPE);
+
+            if (getRequest().getMinLevel() > ToolLevelConstants.TOOL_LEVEL_HAND)
+            {
+                preType.appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_TOOL_PREMINLEVEL));
+                preType.appendText(ItemStackUtils.swapToolGrade(getRequest().getMinLevel()));
+            }
+
+            if (getRequest().getMaxLevel() < ToolLevelConstants.TOOL_LEVEL_MAXIMUM)
+            {
+                if (getRequest().getMinLevel() > ToolLevelConstants.TOOL_LEVEL_HAND)
+                {
+                    preType.appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_GENERAL_AND));
+                }
+
+                preType.appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_TOOL_PREMAXLEVEL));
+                preType.appendText(ItemStackUtils.swapToolGrade(getRequest().getMaxLevel()));
+            }
+
+            return preType;
         }
     }
 
@@ -98,6 +143,13 @@ public final class StandardRequests
         {
             super(requester, token, state, requested);
         }
+
+        @NotNull
+        @Override
+        public ITextComponent getDisplayString()
+        {
+            return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_FOOD);
+        }
     }
 
     public static class BurnableRequest extends AbstractRequest<Burnable>
@@ -115,6 +167,13 @@ public final class StandardRequests
                          @NotNull final Burnable requested)
         {
             super(requester, token, state, requested);
+        }
+
+        @NotNull
+        @Override
+        public ITextComponent getDisplayString()
+        {
+            return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_BURNABLE);
         }
     }
 }
