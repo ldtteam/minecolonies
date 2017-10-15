@@ -3,15 +3,18 @@ package com.minecolonies.coremod.client.model;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
+import org.jetbrains.annotations.NotNull;
 
-public class ModelEntityBakerMale extends ModelBiped
+public class ModelEntityCowFarmerMale extends ModelBiped
 {
-    //fields
-    ModelRenderer top;
-    ModelRenderer base;
-    ModelRenderer middle;
+    ModelRenderer bagR;
+    ModelRenderer bagL;
+    ModelRenderer bagBack;
+    ModelRenderer bagFront;
+    ModelRenderer bagWheat;
+    ModelRenderer bagBot;
 
-    public ModelEntityBakerMale()
+    public ModelEntityCowFarmerMale()
     {
         textureWidth = 128;
         textureHeight = 64;
@@ -23,12 +26,14 @@ public class ModelEntityBakerMale extends ModelBiped
         bipedRightArm.mirror = true;
         setRotation(bipedRightArm, 0F, 0F, 0F);
 
+        bipedLeftArm.mirror = true;
         bipedLeftArm = new ModelRenderer(this, 40, 16);
         bipedLeftArm.addBox(-1F, -2F, -2F, 4, 12, 4);
         bipedLeftArm.setRotationPoint(5F, 2F, 0F);
         bipedLeftArm.setTextureSize(128, 64);
         bipedLeftArm.mirror = true;
         setRotation(bipedLeftArm, 0F, 0F, 0F);
+        bipedLeftArm.mirror = false;
 
         bipedRightLeg = new ModelRenderer(this, 0, 16);
         bipedRightLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
@@ -37,12 +42,14 @@ public class ModelEntityBakerMale extends ModelBiped
         bipedRightLeg.mirror = true;
         setRotation(bipedRightLeg, 0F, 0F, 0F);
 
+        bipedLeftLeg.mirror = true;
         bipedLeftLeg = new ModelRenderer(this, 0, 16);
         bipedLeftLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
         bipedLeftLeg.setRotationPoint(2F, 12F, 0F);
         bipedLeftLeg.setTextureSize(128, 64);
         bipedLeftLeg.mirror = true;
         setRotation(bipedLeftLeg, 0F, 0F, 0F);
+        bipedLeftLeg.mirror = false;
 
         bipedBody = new ModelRenderer(this, 16, 16);
         bipedBody.addBox(-4F, 0F, -2F, 8, 12, 4);
@@ -58,35 +65,57 @@ public class ModelEntityBakerMale extends ModelBiped
         bipedHead.mirror = true;
         setRotation(bipedHead, 0F, 0F, 0F);
 
-        top = new ModelRenderer(this, 0, 53);
-        top.addBox(-2.5F, -11F, -4.6F, 5, 1, 7);
-        top.setRotationPoint(0F, 0F, 0F);
-        top.setTextureSize(128, 64);
-        top.mirror = true;
-        setRotation(top, -0.1858931F, 0F, 0F);
+        bagR = new ModelRenderer(this, 0, 34);
+        bagR.addBox(3F, 0F, 3F, 1, 9, 3);
+        bagR.setRotationPoint(0F, 0F, 0F);
+        bagR.setTextureSize(128, 64);
+        bagR.mirror = true;
+        setRotation(bagR, 0F, 0F, 0F);
 
-        base = new ModelRenderer(this, 0, 33);
-        base.addBox(-4.5F, -9F, -5.8F, 9, 2, 9);
-        base.setRotationPoint(0F, 0F, 0F);
-        base.setTextureSize(128, 64);
-        base.mirror = true;
-        setRotation(base, -0.1858931F, 0F, 0F);
+        bagL = new ModelRenderer(this, 1, 38);
+        bagL.addBox(-4F, 0F, 3F, 1, 9, 3);
+        bagL.setRotationPoint(0F, 0F, 0F);
+        bagL.setTextureSize(128, 64);
+        bagL.mirror = true;
+        setRotation(bagL, 0F, 0F, 0F);
 
-        middle = new ModelRenderer(this, 0, 44);
-        middle.addBox(-3.5F, -10F, -5F, 7, 1, 8);
-        middle.setRotationPoint(0F, 0F, 0F);
-        middle.setTextureSize(128, 64);
-        middle.mirror = true;
-        setRotation(middle, -0.1858931F, 0F, 0F);
+        bagBack = new ModelRenderer(this, 2, 34);
+        bagBack.addBox(-3F, 0F, 2F, 6, 9, 1);
+        bagBack.setRotationPoint(0F, 0F, 0F);
+        bagBack.setTextureSize(128, 64);
+        bagBack.mirror = true;
+        setRotation(bagBack, 0F, 0F, 0F);
 
-        bipedHead.addChild(base);
-        bipedHead.addChild(middle);
-        bipedHead.addChild(top);
+        bagFront = new ModelRenderer(this, 2, 39);
+        bagFront.addBox(-3F, 1F, 6F, 6, 8, 1);
+        bagFront.setRotationPoint(0F, 0F, 0F);
+        bagFront.setTextureSize(128, 64);
+        bagFront.mirror = true;
+        setRotation(bagFront, 0F, 0F, 0F);
 
-        bipedHeadwear.isHidden = true;
+        bagWheat = new ModelRenderer(this, 19, 37);
+        bagWheat.addBox(-3F, 1.5F, 3F, 6, 1, 3);
+        bagWheat.setRotationPoint(0F, 0F, 0F);
+        bagWheat.setTextureSize(128, 64);
+        bagWheat.mirror = true;
+        setRotation(bagWheat, 0F, 0F, 0F);
+
+        bagBot = new ModelRenderer(this, 0, 46);
+        bagBot.addBox(-3F, 9F, 3F, 6, 1, 3);
+        bagBot.setRotationPoint(0F, 0F, 0F);
+        bagBot.setTextureSize(128, 64);
+        bagBot.mirror = true;
+        setRotation(bagBot, 0F, 0F, 0F);
+
+        bipedBody.addChild(bagR);
+        bipedBody.addChild(bagL);
+        bipedBody.addChild(bagBack);
+        bipedBody.addChild(bagFront);
+        bipedBody.addChild(bagWheat);
+        bipedBody.addChild(bagBot);
     }
 
-    private void setRotation(final ModelRenderer model, final float x, final float y, final float z)
+    private void setRotation(@NotNull final ModelRenderer model, final float x, final float y, final float z)
     {
         model.rotateAngleX = x;
         model.rotateAngleY = y;
@@ -103,13 +132,6 @@ public class ModelEntityBakerMale extends ModelBiped
                                    final float scaleFactor,
                                    final Entity entityIn)
     {
-        final float bodyX = bipedBody.rotateAngleX;
-        final float headX = bipedHead.rotateAngleX;
-        bipedBody.rotateAngleX = bodyX;
-        bipedHead.rotateAngleX = headX;
-        base.rotateAngleX = headX;
-        middle.rotateAngleX = headX;
-        top.rotateAngleX = headX;
         super.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entityIn);
     }
 }
