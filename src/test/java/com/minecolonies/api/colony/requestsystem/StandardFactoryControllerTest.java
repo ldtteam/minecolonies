@@ -57,8 +57,8 @@ public class StandardFactoryControllerTest
     {
         StandardFactoryController.getInstance().registerNewFactory(new StaticLocation.Factory());
         StandardFactoryController.getInstance().registerNewFactory(new EntityLocation.Factory());
-        StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.ItemStackFactory());
-        StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.DeliveryFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.ItemStackRequestFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.DeliveryRequestFactory());
     }
 
     @Test(expected = IllegalArgumentException.class)

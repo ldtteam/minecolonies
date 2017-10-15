@@ -1,8 +1,7 @@
 package com.minecolonies.coremod.colony.requestsystem.requests;
 
 import com.minecolonies.api.colony.requestsystem.RequestState;
-import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
-import com.minecolonies.api.colony.requestsystem.requestable.Tool;
+import com.minecolonies.api.colony.requestsystem.requestable.*;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -24,28 +23,17 @@ public final class StandardRequests
     }
 
 
-    public static class ItemStackRequest extends AbstractRequest<ItemStack>
+    public static class ItemStackRequest extends AbstractRequest<Stack>
     {
 
-        public ItemStackRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final ItemStack requested)
+        public ItemStackRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final Stack requested)
         {
             super(requester, token, requested);
         }
 
-        public ItemStackRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final ItemStack requested)
+        public ItemStackRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final Stack requested)
         {
             super(requester, token, state, requested);
-        }
-
-        /**
-         * Method used to check if the result has been set.
-         *
-         * @return True when the result has been set, false when not.
-         */
-        @Override
-        public boolean hasResult()
-        {
-            return getResult() != null && !getResult().isEmpty();
         }
     }
 
@@ -71,7 +59,7 @@ public final class StandardRequests
         @Override
         public ItemStack getDelivery()
         {
-            if (getResult() != null && !getResult().getStack().isEmpty())
+            if (getResult() != null && !ItemStackUtils.isEmpty(getResult().getStack()))
             {
                 return getResult().getStack();
             }
@@ -92,22 +80,41 @@ public final class StandardRequests
         {
             super(requester, token, state, requested);
         }
+    }
 
-        /**
-         * Method to get the ItemStack used for the delivery.
-         *
-         * @return The ItemStack that the Deliveryman transports around. ItemStack.Empty means no getDelivery possible.
-         */
-        @Nullable
-        @Override
-        public ItemStack getDelivery()
+    public static class FoodRequest extends AbstractRequest<Food>
+    {
+
+        FoodRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final Food requested)
         {
-            if (getResult() != null && !getResult().getResult().isEmpty())
-            {
-                return getResult().getResult();
-            }
+            super(requester, token, requested);
+        }
 
-            return ItemStackUtils.EMPTY;
+        FoodRequest(
+                     @NotNull final IRequester requester,
+                     @NotNull final IToken token,
+                     @NotNull final RequestState state,
+                     @NotNull final Food requested)
+        {
+            super(requester, token, state, requested);
+        }
+    }
+
+    public static class BurnableRequest extends AbstractRequest<Burnable>
+    {
+
+        BurnableRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final Burnable requested)
+        {
+            super(requester, token, requested);
+        }
+
+        BurnableRequest(
+                         @NotNull final IRequester requester,
+                         @NotNull final IToken token,
+                         @NotNull final RequestState state,
+                         @NotNull final Burnable requested)
+        {
+            super(requester, token, state, requested);
         }
     }
 }

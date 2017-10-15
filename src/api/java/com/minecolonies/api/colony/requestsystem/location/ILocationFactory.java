@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.requestsystem.location;
 
 import com.minecolonies.api.colony.requestsystem.factory.IFactory;
+import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -16,6 +17,7 @@ public interface ILocationFactory<T, L extends ILocation> extends IFactory<T, L>
     /**
      * Method to get a new instance of the output given the input and additional context data.
      *
+     * @param factoryController The factory controller that called this method.
      * @param t       The input to build a new output for.
      * @param context The context of the location.
      * @return The new output instance for a given input.
@@ -24,7 +26,7 @@ public interface ILocationFactory<T, L extends ILocation> extends IFactory<T, L>
      */
     @NotNull
     @Override
-    default L getNewInstance(@NotNull final T t, @NotNull final Object... context) throws IllegalArgumentException
+    default L getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final T t, @NotNull final Object... context) throws IllegalArgumentException
     {
         if (context.length != 0)
         {

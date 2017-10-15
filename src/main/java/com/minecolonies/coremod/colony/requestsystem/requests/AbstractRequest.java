@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.RequestState;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -397,9 +398,9 @@ public abstract class AbstractRequest<R> implements IRequest<R>
     @Override
     public ItemStack getDelivery()
     {
-        if (getResult() instanceof ItemStack)
+        if (getResult() instanceof IDeliverable)
         {
-            return (ItemStack) getResult();
+            return ((IDeliverable) getResult()).getResult();
         }
 
         return deliveryStack;

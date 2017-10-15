@@ -1,12 +1,17 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
+import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.Tool;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.IToolType;
+import com.minecolonies.api.util.constant.ToolLevelConstants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
+import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
@@ -31,8 +36,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_HAND;
+import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 /**
@@ -151,11 +157,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                  * If yes, transition to NEEDS_ITEM.
                  * and wait for new items.
                  */
-          new AITarget(() -> this.getOwnBuilding().areItemsNeeded() && waitForRequest, this::waitForNeededItems),
-                /*
-                 * Wait for different tools.
-                 */
-          new AITarget(() -> !this.getOwnBuilding().needsTool(ToolType.NONE), this::waitForToolOrWeapon),
+          new AITarget(() -> this.getOwnBuilding().hasWorkerOpenRequests(worker.getCitizenData()), this::waitForRequests),
                 /*
                  * Dumps inventory as long as needs be.
                  * If inventory is dumped, execution continues
@@ -363,18 +365,18 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Looks for needed items as long as not all of them are there.
+     * If the worker has open requests their results will be queried until they all are completed
      * Also waits for DELAY_RECHECK.
      *
      * @return NEEDS_ITEM
      */
     @NotNull
-    private AIState waitForNeededItems()
+    private AIState waitForRequests()
     {
         delay = DELAY_RECHECK;
         worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waiting"),
-                new TextComponentString(getOwnBuilding().getFirstNeededItem().getDisplayName()));
-        return lookForNeededItems();
+          new TextComponentString(getOwnBuilding().getFirstNeededItem().getDisplayName()));
+        return lookForRequests();
     }
 
     /**
@@ -382,32 +384,31 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Poll this until all items are there.
      */
     @NotNull
-    private AIState lookForNeededItems()
+    private AIState lookForRequests()
     {
-        syncNeededItemsWithInventory();
-        if (!getOwnBuilding().areItemsNeeded())
+        if (!getOwnBuilding().hasWorkerOpenRequests(worker.getCitizenData()) && !getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()))
         {
-            itemsNeeded.clear();
-            job.clearItemsNeeded();
             return IDLE;
         }
-        if (!walkToBuilding())
+        if (getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()))
         {
-            delay += DELAY_RECHECK;
-            final ItemStack first = getOwnBuilding().getFirstNeededItem();
-            //Takes one Stack from the hut if existent
-            if (isInHut(first))
+            if (!walkToBuilding())
             {
-                return NEEDS_ITEM;
-            }
+                delay += DELAY_RECHECK;
 
-            if (!getOwnBuilding().hasOnGoingDelivery())
-            {
-                requestWithoutSpam(ItemStackUtils.getSize(first) + " " + first.getDisplayName());
+                ImmutableList<IRequest<StandardRequests.ItemStackRequest>>
+                final ItemStack first = getOwnBuilding().getFirstNeededItem();
+                //Takes one Stack from the hut if existent
+                if (isInHut(first))
+                {
+                    return NEEDS_ITEM;
+                }
             }
         }
+
         return NEEDS_ITEM;
     }
+
 
     /**
      * Updates the itemsCurrentlyNeeded with current values.
@@ -618,24 +619,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         InventoryUtils.transferItemStackIntoNextFreeSlotFromProvider(provider, slotIndex, new InvWrapper(worker.getInventoryCitizen()));
     }
 
-    /**
-     * Wait for a needed tool or weapon.
-     *
-     * @return NEEDS_SHOVEL
-     */
-    @NotNull
-    private AIState waitForToolOrWeapon()
-    {
-        final IToolType toolType = worker.getWorkBuilding().getNeedsTool();
-        if (toolType != ToolType.NONE && checkForToolOrWeapon(toolType, worker.getWorkBuilding().getNeededToolLevel()))
-        {
-            worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waiting"),
-                    new TextComponentString(toolType.getName()));
-            delay += DELAY_RECHECK;
-            return NEEDS_TOOL;
-        }
-        return IDLE;
-    }
 
     /**
      * Ensures that we have a appropriate tool available.
@@ -653,8 +636,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         if (checkForNeededTool(toolType, minimalLevel))
         {
-            getOwnBuilding().setNeedsTool(toolType, minimalLevel);
+            Tool request = new Tool(toolType, minimalLevel, ToolLevelConstants.TOOL_LEVEL_MAXIMUM);
+            getOwnBuilding().createRequest(job.getCitizen(), request);
+            return false;
         }
+
         else if(getOwnBuilding().needsTool(toolType))
         {
             getOwnBuilding().setNeedsTool(ToolType.NONE, TOOL_LEVEL_HAND);
@@ -688,59 +674,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             return false;
         }
-        if (!getOwnBuilding().hasOnGoingDelivery())
-        {
-            chatRequestTool(toolType, minimalLevel, maxToolLevel);
-        }
         return true;
-    }
-
-    private void chatRequestTool(@NotNull final IToolType toolType, final int minimalLevel, final int maximumLevel)
-    {
-        if (minimalLevel == TOOL_LEVEL_WOOD_OR_GOLD)
-        {
-            if (maximumLevel == TOOL_LEVEL_MAXIMUM)
-            {
-                //Any tool level will do
-                chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_SIMPLETOOLREQUEST, toolType.getName());
-            }
-            else
-            {
-                // tools at most ...
-                if (toolType.hasVariableMaterials())
-                {
-                    chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_TOOLREQUEST, toolType.getName(), ItemStackUtils.swapToolGrade(maximumLevel));
-                }
-                else
-                {
-                    chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_ENCHTOOLREQUEST, toolType.getName(), maximumLevel-1);
-                }
-            }
-        }
-        else if (maximumLevel == TOOL_LEVEL_MAXIMUM)
-        {
-            // at least
-            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_TOOLATLEASTREQUEST, toolType.getName(), ItemStackUtils.swapToolGrade(minimalLevel));
-
-        }
-        else if (minimalLevel > maximumLevel)
-        {
-            // need to upgrade the worker's hut
-            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUESTBETTERHUT, minimalLevel+AbstractBuildingWorker.WOOD_HUT_LEVEL);
-        }
-        else if (minimalLevel == maximumLevel)
-        {
-            // we need a specific grade
-            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_SPECIFICTOOLREQUEST, toolType.getName(), ItemStackUtils.swapToolGrade(maximumLevel));
-        }
-        else
-        {
-            // at least and at most
-            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUEST,
-               ItemStackUtils.swapToolGrade(minimalLevel),
-               ItemStackUtils.swapToolGrade(maximumLevel));
-
-        }
     }
 
     /**

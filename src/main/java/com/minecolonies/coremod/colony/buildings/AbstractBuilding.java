@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.buildings;
 
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
-import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.Tool;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
@@ -14,7 +13,6 @@ import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.blocks.*;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView;
-import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
@@ -47,6 +45,8 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+
+import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_HAND;
 
 /**
  * Base building class, has all the foundation for what a building stores and does.
@@ -1099,58 +1099,22 @@ public abstract class AbstractBuilding
     /**
      * Get which tool level the worker needs.
      *
+     * @param data The citizen for which a request is made.
+     * @param type The tooltype for which a request is made.
      * @return the tool level needed by the worker
      */
-    public int getNeededToolLevel()
+    public int getNeededToolLevel(@NotNull final CitizenData data, @NotNull final IToolType type)
     {
-        return needsToolLevel;
-    }
-
-
-    /**
-     * This method makes a copy of the itemsCurrentlyNeeded.
-     * Currently every call to this method needs a copy, if for some reason an outside
-     * class needs this list and a copy isn't desired, a new method should be created,
-     * and this doc should be changed to point to that new method.
-     *
-     * @return a copy of the itemsCurrentlyNeeded list.
-     */
-    public List<ItemStack> getCopyOfNeededItems()
-    {
-        return new ArrayList<>(itemsCurrentlyNeeded);
-    }
-
-    /**
-     * Getter for the first of the currentlyNeededItems.
-     *
-     * @return copy of the itemStack.
-     */
-    @Nullable
-    public ItemStack getFirstNeededItem()
-    {
-        if (itemsCurrentlyNeeded.isEmpty())
+        final ImmutableList<IRequest<Tool>> openToolRequests = getOpenRequestsOfType(data, Tool.class);
+        for(IRequest<Tool> toolRequest : openToolRequests)
         {
-            return null;
+            if (toolRequest.getRequest().getToolClass().equals(type))
+            {
+                return toolRequest.getRequest().getMinLevel();
+            }
         }
-        return itemsCurrentlyNeeded.get(0).copy();
-    }
 
-    /**
-     * Clear the currentlyNeededItem list.
-     */
-    public void clearNeededItems()
-    {
-        itemsCurrentlyNeeded.clear();
-    }
-
-    /**
-     * Overwrite the itemsCurrentlyNeededList with a new one.
-     *
-     * @param newList the new list to set.
-     */
-    public void setItemsCurrentlyNeeded(@NotNull final List<ItemStack> newList)
-    {
-        this.itemsCurrentlyNeeded = new ArrayList<>(newList);
+        return TOOL_LEVEL_HAND;
     }
 
     /**
@@ -1307,9 +1271,7 @@ public abstract class AbstractBuilding
 
     public <Request> boolean hasWorkerOpenRequestsOfType(@NotNull final CitizenData citizenData, final Class<Request> requestType)
     {
-        return getOpenRequests(citizenData).stream()
-                 .map(getColony().getRequestManager()::getRequestForToken)
-                 .anyMatch(request -> request.getRequestType().equals(requestType));
+        return !getOpenRequestsOfType(citizenData, requestType).isEmpty();
     }
 
     public ImmutableList<IToken> getOpenRequests(@NotNull final CitizenData data)
@@ -1322,16 +1284,19 @@ public abstract class AbstractBuilding
         return ImmutableList.copyOf(citizensByRequests.get(data.getId()));
     }
 
-    public <Request> ImmutableList<IRequest<Request>> getOpenRequestsOfType(@NotNull final CitizenData citizenData, final Class<Request> requestType)
+    public <Request> ImmutableList<IRequest<? extends Request>> getOpenRequestsOfType(@NotNull final CitizenData citizenData, final Class<Request> requestType)
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                       .map(getColony().getRequestManager()::getRequestForToken)
-                                      .filter(request -> request.getRequestType().equals(requestType))
-                                      .map(request -> (IRequest<Request>) request)
+                                      .filter(request -> {
+                                          Set<Class> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                                          return requestTypes.contains(requestType);
+                                      })
+                                      .map(request -> (IRequest<? extends Request>) request)
                                       .iterator());
     }
 
-    public ImmutableList<IToken> getCompletedRequestsForCitizen(@NotNull final CitizenData data)
+    public ImmutableList<IToken> getCompletedRequests(@NotNull final CitizenData data)
     {
         if (!citizensByCompletedRequests.containsKey(data.getId()))
         {
@@ -1339,6 +1304,20 @@ public abstract class AbstractBuilding
         }
 
         return ImmutableList.copyOf(citizensByCompletedRequests.get(data.getId()));
+    }
+
+    public boolean hasCitizenCompletedRequests(@NotNull final CitizenData data)
+    {
+        return !getCompletedRequests(data).isEmpty();
+    }
+
+    public <Request> ImmutableList<IRequest<? extends Request>> getCompletedRequestsOfType(@NotNull final CitizenData citizenData, final Class<Request> requestType)
+    {
+        return ImmutableList.copyOf(getCompletedRequests(citizenData).stream()
+                                      .map(getColony().getRequestManager()::getRequestForToken)
+                                      .filter(request -> request.getRequestType().equals(requestType))
+                                      .map(request -> (IRequest<? extends Request>) request)
+                                      .iterator());
     }
 
     public void markRequestAsAccepted(@NotNull final CitizenData data, @NotNull final IToken token) throws IllegalArgumentException

@@ -27,9 +27,9 @@ public final class StandardFactoryControllerInitializer
         StandardFactoryController.getInstance().registerNewFactory(new InitializedTokenFactory());
         StandardFactoryController.getInstance().registerNewFactory(new StaticLocation.Factory());
         StandardFactoryController.getInstance().registerNewFactory(new EntityLocation.Factory());
-        StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.ItemStackFactory());
-        StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.DeliveryFactory());
-        StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.ToolFacatory());
+        StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.ItemStackRequestFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.DeliveryRequestFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.ToolRequestFactory());
         StandardFactoryController.getInstance().registerNewFactory(new BuildingBasedRequesterFactory());
     }
 }

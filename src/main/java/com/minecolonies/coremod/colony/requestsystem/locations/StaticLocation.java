@@ -1,10 +1,8 @@
 package com.minecolonies.coremod.colony.requestsystem.locations;
 
-import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.location.ILocationFactory;
-import jdk.nashorn.internal.ir.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -135,7 +133,7 @@ public class StaticLocation implements ILocation
 
         @NotNull
         @Override
-        public StaticLocation getNewInstance(@NotNull final BlockPos blockPos, @NotNull final Object... context)
+        public StaticLocation getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final BlockPos blockPos, @NotNull final Object... context)
         {
             if (context.length != NUMBER_OR_CONTEXTS)
             {

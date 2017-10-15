@@ -10,7 +10,6 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.Suppression;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufUtil;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -264,7 +263,7 @@ public final class StandardFactoryController implements IFactoryController
         final Class outputClass = new TypeToken<Output>() {}.getRawType();
         final IFactory<Input, Output> factory = getFactoryForIO(input.getClass(), outputClass);
 
-        return factory.getNewInstance(input, context);
+        return factory.getNewInstance(this, input, context);
     }
 
     @Override

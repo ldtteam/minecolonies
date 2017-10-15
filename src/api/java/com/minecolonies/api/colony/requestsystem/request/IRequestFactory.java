@@ -2,6 +2,7 @@ package com.minecolonies.api.colony.requestsystem.request;
 
 import com.minecolonies.api.colony.requestsystem.RequestState;
 import com.minecolonies.api.colony.requestsystem.factory.IFactory;
+import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +22,7 @@ public interface IRequestFactory<T, R extends IRequest<T>> extends IFactory<T, R
     /**
      * Method to get a new instance of the output given the input and additional context data.
      *
+     * @param factoryController The factory controller that called this facotry method.
      * @param t       The input to build a new output for.
      * @param context The context of the request.
      * @return The new output instance for a given input.
@@ -29,7 +31,7 @@ public interface IRequestFactory<T, R extends IRequest<T>> extends IFactory<T, R
      */
     @NotNull
     @Override
-    default R getNewInstance(@NotNull final T t, @NotNull final Object... context) throws IllegalArgumentException
+    default R getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final T t, @NotNull final Object... context) throws IllegalArgumentException
     {
         if (context.length != 2 && context.length != 3)
         {

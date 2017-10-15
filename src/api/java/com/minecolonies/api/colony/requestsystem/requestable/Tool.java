@@ -11,14 +11,14 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Class used to represent tools inside the request system.
  */
-public class Tool
+public class Tool implements IDeliverable
 {
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
     private static final String NBT_TYPE  = "Type";
     private static final String NBT_MIN_LEVEL = "MinLevel";
     private static final String NBT_MAX_LEVEL  = "MaxLevel";
-    private static final String NBT_RESULT = "Stack";
+    private static final String NBT_RESULT = "Result";
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
     @NotNull
@@ -31,7 +31,7 @@ public class Tool
     private final Integer maxLevel;
 
     @NotNull
-    private final ItemStack result;
+    private ItemStack result;
 
     public Tool(@NotNull final IToolType toolClass, @NotNull final Integer minLevel, @NotNull final Integer maxLevel)
     {
@@ -97,13 +97,13 @@ public class Tool
      * @return The NBTTagCompound containing the tool data.
      */
     @NotNull
-    public NBTTagCompound serialize(IFactoryController controller) {
+    public static NBTTagCompound serialize(IFactoryController controller, Tool tool) {
         NBTTagCompound compound = new NBTTagCompound();
 
-        compound.setString(NBT_TYPE, getToolClass().getName());
-        compound.setInteger(NBT_MIN_LEVEL, getMinLevel());
-        compound.setInteger(NBT_MAX_LEVEL, getMaxLevel());
-        compound.setTag(NBT_RESULT, getResult().serializeNBT());
+        compound.setString(NBT_TYPE, tool.getToolClass().getName());
+        compound.setInteger(NBT_MIN_LEVEL, tool.getMinLevel());
+        compound.setInteger(NBT_MAX_LEVEL, tool.getMaxLevel());
+        compound.setTag(NBT_RESULT, tool.getResult().serializeNBT());
 
         return compound;
     }
@@ -118,7 +118,7 @@ public class Tool
     @NotNull
     public static Tool deserialize(IFactoryController controller, NBTTagCompound nbt)
     {
-        //TODO: Make this universal when an API exists.
+        //API:Map the given strings a proper way.
         IToolType type = ToolType.getToolType(nbt.getString(NBT_TYPE));
         Integer minLevel = nbt.getInteger(NBT_MIN_LEVEL);
         Integer maxLevel = nbt.getInteger(NBT_MAX_LEVEL);
@@ -127,4 +127,28 @@ public class Tool
         return new Tool(type, minLevel, maxLevel, result);
     }
 
+    @Override
+    public boolean matches(@NotNull final ItemStack stack)
+    {
+        //API:Map the given strings a proper way.
+        return !ItemStackUtils.isEmpty(stack)
+                 && stack.getCount() >= 1
+                 && stack.getItem().getToolClasses(stack).stream()
+                      .filter(s -> getToolClass().getName().equalsIgnoreCase(s))
+                      .map(ToolType::getToolType)
+                      .filter(t -> t != ToolType.NONE)
+                      .anyMatch(t -> ItemStackUtils.hasToolLevel(stack, t, getMinLevel(), getMaxLevel()));
+    }
+
+    @Override
+    public int getCount()
+    {
+        return 1;
+    }
+
+    @Override
+    public void setResult(@NotNull final ItemStack result)
+    {
+        this.result = result;
+    }
 }

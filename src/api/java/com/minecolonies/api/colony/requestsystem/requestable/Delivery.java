@@ -35,6 +35,24 @@ public class Delivery
     }
 
     @NotNull
+    public ILocation getStart()
+    {
+        return start;
+    }
+
+    @NotNull
+    public static NBTTagCompound serialize(@NotNull final IFactoryController controller, final Delivery delivery)
+    {
+        final NBTTagCompound compound = new NBTTagCompound();
+
+        compound.setTag(NBT_START, controller.serialize(delivery.getStart()));
+        compound.setTag(NBT_TARGET, controller.serialize(delivery.getTarget()));
+        compound.setTag(NBT_STACK, delivery.getStack().serializeNBT());
+
+        return compound;
+    }
+
+    @NotNull
     public static Delivery deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound compound)
     {
         final ILocation start = controller.deserialize(compound.getCompoundTag(NBT_START));
@@ -44,23 +62,6 @@ public class Delivery
         return new Delivery(start, target, stack);
     }
 
-    @NotNull
-    public ILocation getStart()
-    {
-        return start;
-    }
-
-    @NotNull
-    public NBTTagCompound serialize(@NotNull final IFactoryController controller)
-    {
-        final NBTTagCompound compound = new NBTTagCompound();
-
-        compound.setTag(NBT_START, controller.serialize(getStack()));
-        compound.setTag(NBT_TARGET, controller.serialize(getTarget()));
-        compound.setTag(NBT_STACK, getStack().serializeNBT());
-
-        return compound;
-    }
 
     @NotNull
     public ItemStack getStack()

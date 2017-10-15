@@ -16,7 +16,7 @@ public class RequestSystemInitializationHandler
         StandardFactoryController.getInstance().registerNewFactory(new StandardTokenFactory());
 
         //Requestables
-        StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.ItemStackFactory());
-        StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.DeliveryFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.ItemStackRequestFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.DeliveryRequestFactory());
     }
 }

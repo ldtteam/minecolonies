@@ -1766,7 +1766,7 @@ public class Colony implements IColony
 
             Log.getLogger().info(String.format("Colony %d - removed AbstractBuilding %s of type %s",
               getID(),
-              building.getRequesterId(),
+              building.getID(),
               building.getSchematicName()));
         }
 
