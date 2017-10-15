@@ -972,7 +972,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             {
                 final int itemsLeft = ItemStackUtils.getSize(stack) - countOfItem;
                 @NotNull final ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft, itemDamage);
-                getOwnBuilding().createRequest(worker.getCitizenData(), requiredStack);
+                final Stack request = new Stack(requiredStack);
+                getOwnBuilding().createRequest(worker.getCitizenData(), request);
                 allClear = false;
             }
             //todo we need to find a way to cancel existing requests.
@@ -1022,7 +1023,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 @NotNull final ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft, -1);
                 if(!isInNeededItems(tempStack))
                 {
-                    getOwnBuilding().createRequest(worker.getCitizenData(), requiredStack);
+                    final Stack request = new Stack(requiredStack);
+                    getOwnBuilding().createRequest(worker.getCitizenData(), request);
                 }
                 allClear = false;
             }
