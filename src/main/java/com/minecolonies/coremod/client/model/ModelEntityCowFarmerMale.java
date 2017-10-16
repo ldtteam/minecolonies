@@ -121,17 +121,4 @@ public class ModelEntityCowFarmerMale extends ModelBiped
         model.rotateAngleY = y;
         model.rotateAngleZ = z;
     }
-
-    @Override
-    public void setRotationAngles(
-                                   final float limbSwing,
-                                   final float limbSwingAmount,
-                                   final float ageInTicks,
-                                   final float netHeadYaw,
-                                   final float headPitch,
-                                   final float scaleFactor,
-                                   final Entity entityIn)
-    {
-        super.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entityIn);
-    }
 }

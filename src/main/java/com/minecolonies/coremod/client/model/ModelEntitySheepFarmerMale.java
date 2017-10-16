@@ -5,7 +5,7 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
-public class ModelEntitySheepFarmer extends ModelBiped
+public class ModelEntitySheepFarmerMale extends ModelBiped
 {
     //fields
     ModelRenderer bagR;
@@ -15,7 +15,7 @@ public class ModelEntitySheepFarmer extends ModelBiped
     ModelRenderer bagWheat;
     ModelRenderer bagBot;
 
-    public ModelEntitySheepFarmer()
+    public ModelEntitySheepFarmerMale()
     {
         textureWidth = 128;
         textureHeight = 64;

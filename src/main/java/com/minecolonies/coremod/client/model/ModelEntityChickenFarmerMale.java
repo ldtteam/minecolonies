@@ -53,12 +53,12 @@ public class ModelEntityChickenFarmerMale extends ModelBiped
         bipedRightLeg.mirror = true;
         setRotation(bipedRightLeg, 0F, 0F, 0F);
 
-        bipedLeftArm = new ModelRenderer(this, 0, 16);
-        bipedLeftArm.addBox(-2F, 0F, -2F, 4, 12, 4);
-        bipedLeftArm.setRotationPoint(2F, 12F, 0F);
-        bipedLeftArm.setTextureSize(128, 64);
-        bipedLeftArm.mirror = true;
-        setRotation(bipedLeftArm, 0F, 0F, 0F);
+        bipedLeftLeg = new ModelRenderer(this, 0, 16);
+        bipedLeftLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
+        bipedLeftLeg.setRotationPoint(2F, 12F, 0F);
+        bipedLeftLeg.setTextureSize(128, 64);
+        bipedLeftLeg.mirror = true;
+        setRotation(bipedLeftLeg, 0F, 0F, 0F);
 
         bipedHead = new ModelRenderer(this, 0, 0);
         bipedHead.addBox(-4F, -8F, -4F, 8, 8, 8);
@@ -110,18 +110,5 @@ public class ModelEntityChickenFarmerMale extends ModelBiped
         model.rotateAngleX = x;
         model.rotateAngleY = y;
         model.rotateAngleZ = z;
-    }
-
-    @Override
-    public void setRotationAngles(
-                                   final float limbSwing,
-                                   final float limbSwingAmount,
-                                   final float ageInTicks,
-                                   final float netHeadYaw,
-                                   final float headPitch,
-                                   final float scaleFactor,
-                                   final Entity entityIn)
-    {
-        super.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entityIn);
     }
 }

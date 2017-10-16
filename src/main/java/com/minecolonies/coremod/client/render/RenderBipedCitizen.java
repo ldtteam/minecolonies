@@ -31,8 +31,8 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         idToMaleModelMap.put(Model.BAKER, new ModelEntityBakerMale());
         idToMaleModelMap.put(Model.CHICKEN_FARMER, new ModelEntityChickenFarmerMale());
         idToMaleModelMap.put(Model.COW_FARMER, new ModelEntityCowFarmerMale());
-        idToMaleModelMap.put(Model.PIG_FARMER, new ModelEntityPigFarmer());
-        idToMaleModelMap.put(Model.SHEEP_FARMER, new ModelEntitySheepFarmer());
+        idToMaleModelMap.put(Model.PIG_FARMER, new ModelEntityPigFarmerMale());
+        idToMaleModelMap.put(Model.SHEEP_FARMER, new ModelEntitySheepFarmerMale());
 
         idToFemaleModelMap.put(Model.NOBLE, new ModelEntityCitizenFemaleNoble());
         idToFemaleModelMap.put(Model.ARISTOCRAT, new ModelEntityCitizenFemaleAristocrat());
