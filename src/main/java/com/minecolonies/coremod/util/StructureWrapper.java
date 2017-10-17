@@ -290,7 +290,7 @@ public final class StructureWrapper
                         {
                             final Entity entity = EntityList.createEntityFromNBT(info.entityData, world);
                             entity.setUniqueId(UUID.randomUUID());
-                            world.spawnEntityInWorld(entity);
+                            world.spawnEntity(entity);
                         }
                         catch (final RuntimeException e)
                         {

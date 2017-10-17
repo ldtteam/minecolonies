@@ -66,6 +66,7 @@ public class FakeWorld extends World
      * @param profilerIn    profiler.
      * @param client        and if is client.
      * @param entity        the tileEntity.
+     * @param simulateWorld if it is required to simulate the world.
      */
     public FakeWorld(
             final IBlockState blockState,
@@ -115,7 +116,7 @@ public class FakeWorld extends World
         if(tileEntityIn != null)
         {
             entityHashMap.put(pos, tileEntityIn);
-            tileEntityIn.setWorldObj(this);
+            tileEntityIn.setWorld(this);
         }
     }
 

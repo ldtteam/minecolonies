@@ -159,9 +159,7 @@ public final class ColonyManager
         try
         {
             final Colony colony = getColony(id);
-            Log.getLogger().info("Deleting colony " + id);
-            colonies.remove(id);
-            coloniesByWorld.get(colony.getDimension()).remove(colony);
+
             final Set<World> colonyWorlds = new HashSet<>();
             Log.getLogger().info("Removing citizens for " + id);
             for (final CitizenData citizenData : new ArrayList<>(colony.getCitizens().values()))
@@ -178,9 +176,9 @@ public final class ColonyManager
             Log.getLogger().info("Removing buildings for " + id);
             for (final AbstractBuilding building : new ArrayList<>(colony.getBuildings().values()))
             {
-
                 final BlockPos location = building.getLocation();
                 Log.getLogger().info("Delete Building at " + location);
+                building.deconstruct();
                 building.destroy();
                 for (final World world : colonyWorlds)
                 {
@@ -191,6 +189,11 @@ public final class ColonyManager
                     }
                 }
             }
+
+            Log.getLogger().info("Deleting colony: " + colony.getID());
+            colonies.remove(id);
+            coloniesByWorld.get(colony.getDimension()).remove(colony);
+
             Log.getLogger().info("Done with " + id);
         }
         catch (final RuntimeException e)
@@ -413,7 +416,7 @@ public final class ColonyManager
 
         for (@NotNull final ColonyView c : colonyViews)
         {
-            if (c.getDimension() == w.provider.getDimension())
+            if (c.getDimension() == w.provider.getDimension() && c.getCenter() != null)
             {
                 final long dist = c.getDistanceSquared(pos);
                 if (dist < closestDist)
@@ -678,7 +681,7 @@ public final class ColonyManager
      */
     public static void onClientTick(@NotNull final TickEvent.ClientTickEvent event)
     {
-        if (event.phase == TickEvent.Phase.END && Minecraft.getMinecraft().theWorld == null && !colonyViews.isEmpty())
+        if (event.phase == TickEvent.Phase.END && Minecraft.getMinecraft().world == null && !colonyViews.isEmpty())
         {
             //  Player has left the game, clear the Colony View cache
             colonyViews.clear();

@@ -276,9 +276,9 @@ public class TileEntityColonyBuilding extends TileEntityChest
     }
 
     @Override
-    public boolean isUseableByPlayer(@NotNull final EntityPlayer player)
+    public boolean isUsableByPlayer(final EntityPlayer player)
     {
-        return super.isUseableByPlayer(player) && this.hasAccessPermission(player);
+        return super.isUsableByPlayer(player) && this.hasAccessPermission(player);
     }
 
     /**

@@ -129,7 +129,7 @@ public final class RenderUtils
         final ModelHolder models = new ModelHolder(pos, iblockstate, iBlockExtendedState, sign, ibakedmodel);
         Structure.getQuads(models, models.quads);
 
-        new Structure(Minecraft.getMinecraft().theWorld).renderGhost(clientWorld, models, player, partialTicks, false);
+        new Structure(Minecraft.getMinecraft().world).renderGhost(clientWorld, models, player, partialTicks, false);
     }
 
     /**

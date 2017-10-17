@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.buildings.*;
@@ -54,7 +55,7 @@ import static com.minecolonies.api.util.constant.Constants.*;
 public class Colony implements IColony
 {
     //  Settings
-    private static final int    CITIZEN_CLEANUP_TICK_INCREMENT = 5 * 20;
+    private static final int    CITIZEN_CLEANUP_TICK_INCREMENT = 5 * TICKS_SECOND;
     private static final String TAG_ID                         = "id";
     private static final String TAG_NAME                       = "name";
     private static final String TAG_DIMENSION                  = "dimension";
@@ -126,7 +127,7 @@ public class Colony implements IColony
     /**
      * Amount of ticks that pass/hour.
      */
-    private static final int TICKS_HOUR = 20 * 60 * 60;
+    private static final int TICKS_HOUR = TICKS_SECOND * SECONDS_A_MINUTE * SECONDS_A_MINUTE;
 
     /**
      * The hours the colony is without contact with its players.
@@ -903,7 +904,7 @@ public class Colony implements IColony
         subscribers = new HashSet<>();
 
         // Add owners
-        world.getMinecraftServer().getPlayerList().getPlayerList()
+        world.getMinecraftServer().getPlayerList().getPlayers()
           .stream()
           .filter(permissions::isSubscriber)
           .forEachOrdered(subscribers::add);
@@ -1234,7 +1235,7 @@ public class Colony implements IColony
             //  Cleanup disappeared citizens
             //  It would be really nice if we didn't have to do this... but Citizens can disappear without dying!
             //  Every CITIZEN_CLEANUP_TICK_INCREMENT, cleanup any 'lost' citizens
-            if (shallUpdate(event.world) && areAllColonyChunksLoaded(event) && townHall != null)
+            if (shallUpdate(event.world, CITIZEN_CLEANUP_TICK_INCREMENT) && areAllColonyChunksLoaded(event) && townHall != null)
             {
                 //  All chunks within a good range of the colony should be loaded, so all citizens should be loaded
                 //  If we don't have any references to them, destroy the citizen
@@ -1250,13 +1251,17 @@ public class Colony implements IColony
                 int respawnInterval = Configurations.citizenRespawnInterval * TICKS_SECOND;
                 respawnInterval -= (SECONDS_A_MINUTE * townHall.getBuildingLevel());
 
-                if (event.world.getWorldTime() % Math.max(1, respawnInterval) == 0)
+                if ((event.world.getTotalWorldTime() + 1) % (respawnInterval + 1) == 0)
                 {
                     spawnCitizen();
                 }
             }
 
-            if (event.world.getDifficulty() != EnumDifficulty.PEACEFUL && Configurations.doBarbariansSpawn && MobEventsUtils.isItTimeToRaid(event.world, this))
+            if (shallUpdate(world, TICKS_SECOND) && event.world.getDifficulty() != EnumDifficulty.PEACEFUL
+                    && Configurations.doBarbariansSpawn
+                    && !world.getMinecraftServer().getPlayerList().getPlayers()
+                    .stream().filter(permissions::isSubscriber).collect(Collectors.toList()).isEmpty()
+                    && MobEventsUtils.isItTimeToRaid(event.world, this))
             {
                 MobEventsUtils.barbarianEvent(event.world, this);
             }
@@ -1289,9 +1294,9 @@ public class Colony implements IColony
      * @param world the world.
      * @return a boolean by random.
      */
-    private static boolean shallUpdate(final World world)
+    private static boolean shallUpdate(final World world, final int averageTicks)
     {
-        return world.getTotalWorldTime() % (new Random().nextInt(CITIZEN_CLEANUP_TICK_INCREMENT*2) + 1) == 0;
+        return world.getWorldTime() % (world.rand.nextInt(averageTicks * 2) + 1) == 0;
     }
 
     private void updateOverallHappiness()
@@ -1502,7 +1507,7 @@ public class Colony implements IColony
             entity.setColony(this, citizenData);
 
             entity.setPosition(spawnPoint.getX() + 0.5D, spawnPoint.getY() + 0.1D, spawnPoint.getZ() + 0.5D);
-            world.spawnEntityInWorld(entity);
+            world.spawnEntity(entity);
 
             checkAchievements();
 
@@ -2107,6 +2112,11 @@ public class Colony implements IColony
             final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = theBuilding.getCorners();
             minDistance
                     = Math.max(corners.getFirst().getFirst() - corners.getFirst().getSecond(), corners.getSecond().getFirst() - corners.getSecond().getSecond());
+        }
+
+        if(thePos.equals(center))
+        {
+            return center;
         }
 
         int radius = DEFAULT_SPAWN_RADIUS;

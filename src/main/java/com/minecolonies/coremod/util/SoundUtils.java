@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.util;
 
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.sounds.AbstractWorkerSounds;
 import com.minecolonies.coremod.sounds.ModSoundEvents;
@@ -18,6 +19,11 @@ import java.util.Random;
  */
 public final class SoundUtils
 {
+    /**
+     * Guard tower job literal.
+     */
+    private static final String GUARD_TOWER = "GuardTower";
+
     /**
      * Get a random between 1 and 100.
      */
@@ -71,6 +77,18 @@ public final class SoundUtils
                 prefix = citizen.getWorkBuilding().getJobName();
             }
 
+            if(GUARD_TOWER.equals(prefix) && citizen.getWorkBuilding() instanceof AbstractBuildingGuards)
+            {
+                if(((AbstractBuildingGuards) citizen.getWorkBuilding()).getJob() == AbstractBuildingGuards.GuardJob.RANGER)
+                {
+                    prefix = "archer";
+                }
+                else
+                {
+                    prefix = "knight";
+                }
+            }
+
             for (final AbstractWorkerSounds sounds : ModSoundEvents.handlers)
             {
                 if (sounds.getWorkerString().equals(prefix))
@@ -121,6 +139,46 @@ public final class SoundUtils
                     SoundCategory.NEUTRAL,
                     (float) VOLUME,
                     (float) PITCH);
+        }
+    }
+
+    /**
+     * Play an interaction sound with chance at the citizen.
+     * @param world the world.
+     * @param position the position.
+     * @param chance the chance.
+     * @param citizen the citizen.
+     */
+    public static void playInteractionSoundAtCitizenWithChance(@NotNull final World world, @NotNull final BlockPos position, final int chance, @NotNull final EntityCitizen citizen)
+    {
+        if (chance > rand.nextInt(ONE_HUNDRED))
+        {
+            String prefix = "";
+
+            if (citizen.getWorkBuilding() != null)
+            {
+                prefix = citizen.getWorkBuilding().getJobName();
+            }
+
+            if("GuardTower".equals(prefix) && citizen.getWorkBuilding() instanceof AbstractBuildingGuards)
+            {
+                if(((AbstractBuildingGuards) citizen.getWorkBuilding()).getJob() == AbstractBuildingGuards.GuardJob.RANGER)
+                {
+                    prefix = "archer";
+                }
+                else
+                {
+                    prefix = "knight";
+                }
+            }
+
+            for (final AbstractWorkerSounds sounds : ModSoundEvents.handlers)
+            {
+                if (sounds.getWorkerString().equals(prefix))
+                {
+                    sounds.playInteractionSound(world, citizen.getPosition(), citizen.isFemale());
+                }
+            }
         }
     }
 }

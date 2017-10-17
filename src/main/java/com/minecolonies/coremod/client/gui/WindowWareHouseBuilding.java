@@ -79,8 +79,8 @@ public class WindowWareHouseBuilding extends AbstractWindowBuilding<BuildingWare
         final BuildingBuilderResource resource = new BuildingBuilderResource(new ItemStack(Blocks.EMERALD_BLOCK, 1), 1);
 
         final int amountToSet;
-        final InventoryPlayer inventory = this.mc.thePlayer.inventory;
-        final boolean isCreative = this.mc.thePlayer.capabilities.isCreativeMode;
+        final InventoryPlayer inventory = this.mc.player.inventory;
+        final boolean isCreative = this.mc.player.capabilities.isCreativeMode;
         if (isCreative)
         {
             amountToSet = resource.getAmount();

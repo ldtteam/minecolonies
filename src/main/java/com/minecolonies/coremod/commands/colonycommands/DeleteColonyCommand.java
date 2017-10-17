@@ -69,7 +69,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand
 
             if (colony == null)
             {
-                sender.addChatMessage(new TextComponentString(NO_ARGUMENTS));
+                sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
                 return;
             }
             colonyId = colony.getID();
@@ -82,7 +82,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand
         final Colony colony = ColonyManager.getColony(colonyId);
         if (colony == null)
         {
-            sender.addChatMessage(new TextComponentString(NO_COLONY_FOUND_MESSAGE_ID));
+            sender.sendMessage(new TextComponentString(NO_COLONY_FOUND_MESSAGE_ID));
             return;
         }
 
@@ -93,7 +93,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand
             final EntityPlayer player = (EntityPlayer) sender;
             if (!canPlayerUseCommand(player, DELETECOLONY, colonyId))
             {
-                senderEntity.addChatMessage(new TextComponentString(NOT_PERMITTED));
+                senderEntity.sendMessage(new TextComponentString(NOT_PERMITTED));
                 return;
             }
         }

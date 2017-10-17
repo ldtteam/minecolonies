@@ -58,46 +58,46 @@ public class CitizenInfoCommand extends AbstractCitizensCommands
     {
         final CitizenData citizenData = colony.getCitizen(citizenId);
         final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
-        sender.addChatMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION,
+        sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION,
           citizenData.getId(),
           citizenData.getName())));
         if (entityCitizen == null)
         {
-            sender.addChatMessage(new TextComponentTranslation(CITIZEN_NOT_LOADED));
+            sender.sendMessage(new TextComponentTranslation(CITIZEN_NOT_LOADED));
             return;
         }
 
         final BlockPos citizenPosition = entityCitizen.getPosition();
-        sender.addChatMessage(new TextComponentString(String.format(CITIZEN_POSITION,
+        sender.sendMessage(new TextComponentString(String.format(CITIZEN_POSITION,
           citizenPosition.getX(),
           citizenPosition.getY(),
           citizenPosition.getZ())));
         final BlockPos homePosition = entityCitizen.getHomePosition();
-        sender.addChatMessage(new TextComponentString(String.format(CITIZEN_HOME_POSITION,
+        sender.sendMessage(new TextComponentString(String.format(CITIZEN_HOME_POSITION,
           homePosition.getX(),
           homePosition.getY(),
           homePosition.getZ())));
         if (entityCitizen.getWorkBuilding() == null)
         {
-            sender.addChatMessage(new TextComponentString(String.format(CITIZEN_WORK_POSITION_NULL)));
+            sender.sendMessage(new TextComponentString(String.format(CITIZEN_WORK_POSITION_NULL)));
         }
         else
         {
             final BlockPos workingPosition = entityCitizen.getWorkBuilding().getLocation();
-            sender.addChatMessage(new TextComponentString(String.format(CITIZEN_WORK_POSITION,
+            sender.sendMessage(new TextComponentString(String.format(CITIZEN_WORK_POSITION,
               workingPosition.getX(),
               workingPosition.getY(),
               workingPosition.getZ())));
         }
 
-        sender.addChatMessage(new TextComponentString(String.format(CITIZEN_HEALTH,
+        sender.sendMessage(new TextComponentString(String.format(CITIZEN_HEALTH,
           entityCitizen.getHealth(),
           entityCitizen.getMaxHealth())));
-        sender.addChatMessage(new TextComponentString(String.format(CITIZEN_LEVEL_AND_AGE,
+        sender.sendMessage(new TextComponentString(String.format(CITIZEN_LEVEL_AND_AGE,
           entityCitizen.getLevel(),
           entityCitizen.getAge(),
           entityCitizen.getExperienceLevel())));
-        sender.addChatMessage(new TextComponentString(String.format(CITIZEN_SKILLS,
+        sender.sendMessage(new TextComponentString(String.format(CITIZEN_SKILLS,
           entityCitizen.getCharisma(),
           entityCitizen.getDexterity(),
           entityCitizen.getEndurance(),
@@ -105,13 +105,13 @@ public class CitizenInfoCommand extends AbstractCitizensCommands
           entityCitizen.getStrength())));
         if (entityCitizen.getColonyJob() == null)
         {
-            sender.addChatMessage(new TextComponentString(String.format(CITIZEN_JOB_NULL)));
-            sender.addChatMessage(new TextComponentString(String.format(CITIZEN_NO_ACTIVITY)));
+            sender.sendMessage(new TextComponentString(String.format(CITIZEN_JOB_NULL)));
+            sender.sendMessage(new TextComponentString(String.format(CITIZEN_NO_ACTIVITY)));
         }
         else if (entityCitizen.getWorkBuilding() != null)
         {
-            sender.addChatMessage(new TextComponentString(String.format(CITIZEN_JOB, entityCitizen.getWorkBuilding().getJobName())));
-            sender.addChatMessage(new TextComponentString(String.format(CITIZEN_DESIRED_ACTIVITY,
+            sender.sendMessage(new TextComponentString(String.format(CITIZEN_JOB, entityCitizen.getWorkBuilding().getJobName())));
+            sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESIRED_ACTIVITY,
               entityCitizen.getDesiredActivity(),
               entityCitizen.getColonyJob().getNameTagDescription())));
         }

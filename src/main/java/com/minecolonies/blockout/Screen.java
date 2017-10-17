@@ -102,9 +102,9 @@ public class Screen extends GuiScreen
     {
         window.onUpdate();
 
-        if (!mc.thePlayer.isEntityAlive() || mc.thePlayer.isDead)
+        if (!mc.player.isEntityAlive() || mc.player.isDead)
         {
-            mc.thePlayer.closeScreen();
+            mc.player.closeScreen();
         }
     }
 

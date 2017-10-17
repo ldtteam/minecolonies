@@ -24,7 +24,7 @@ public final class CompatibilityUtils
      */
     public static World getWorld(final Entity entity)
     {
-        return entity.worldObj;
+        return entity.world;
     }
 
     /**
@@ -36,6 +36,6 @@ public final class CompatibilityUtils
      */
     public static void spawnEntity(final World world, final Entity entityToSpawn)
     {
-        world.spawnEntityInWorld(entityToSpawn);
+        world.spawnEntity(entityToSpawn);
     }
 }

@@ -271,8 +271,12 @@ public class BuildingLumberjack extends AbstractBuildingWorker
             for (int i = 0; i < size; i++)
             {
                 final ItemStack stack = ByteBufUtils.readItemStack(buf);
-                final boolean cut = buf.readBoolean();
-                treesToFell.put(new ItemStorage(stack), cut);
+
+                if(stack != null && stack.getItem() != null)
+                {
+                    final boolean cut = buf.readBoolean();
+                    treesToFell.put(new ItemStorage(stack), cut);
+                }
             }
 
             if(treesToFell.isEmpty())

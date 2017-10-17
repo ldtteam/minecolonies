@@ -61,13 +61,13 @@ public class RandomTeleportCommand extends AbstractSingleCommand
     {
         if (SPAWN_NO_TP >= LOWER_BOUNDS)
         {
-            sender.addChatMessage(new TextComponentString("Please have an admin raise the maxDistanceFromWorldSpawn number in config."));
+            sender.sendMessage(new TextComponentString("Please have an admin raise the maxDistanceFromWorldSpawn number in config."));
             return;
         }
 
         if (!canCommandSenderUseCommand(RTP))
         {
-            sender.addChatMessage(new TextComponentString("Not happenin bro!!, ask an OP to TP you."));
+            sender.sendMessage(new TextComponentString("Not happenin bro!!, ask an OP to TP you."));
             return;
         }
 
@@ -86,15 +86,15 @@ public class RandomTeleportCommand extends AbstractSingleCommand
               ServerUtils.getPlayerFromUUID(FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache()
                                               .getGameProfileForUsername(args[0]).getId(), world);
 
-            sender.addChatMessage(new TextComponentString("TPing Player: " + playerToTeleport.getName()));
+            sender.sendMessage(new TextComponentString("TPing Player: " + playerToTeleport.getName()));
         }
 
         if (playerToTeleport == null)
         {
-            sender.addChatMessage(new TextComponentString(CANT_FIND_PLAYER));
+            sender.sendMessage(new TextComponentString(CANT_FIND_PLAYER));
             return;
         }
-        playerToTeleport.addChatMessage(new TextComponentString("Buckle up buttercup, this ain't no joy ride!!!"));
+        playerToTeleport.sendMessage(new TextComponentString("Buckle up buttercup, this ain't no joy ride!!!"));
 
         teleportPlayer(sender, playerToTeleport);
         //.fallDistance is used to cancel out fall damage  basically if you have -5 it will reduce fall damage by 2.5 hearts
@@ -167,12 +167,12 @@ public class RandomTeleportCommand extends AbstractSingleCommand
                 }
                 else
                 {
-                    sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Please wait at least " + Configurations.teleportBuffer + " seconds to teleport again"));
+                    sender.getCommandSenderEntity().sendMessage(new TextComponentString("Please wait at least " + Configurations.teleportBuffer + " seconds to teleport again"));
                 }
                 return;
             }
         }
-        playerToTeleport.getCommandSenderEntity().addChatMessage(new TextComponentString("Couldn't find a safe spot.  Try again in a moment."));
+        playerToTeleport.getCommandSenderEntity().sendMessage(new TextComponentString("Couldn't find a safe spot.  Try again in a moment."));
     }
 
     @NotNull

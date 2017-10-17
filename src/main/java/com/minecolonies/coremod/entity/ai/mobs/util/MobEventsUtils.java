@@ -61,9 +61,19 @@ public final class MobEventsUtils
 
     public static void barbarianEvent(final World world, final Colony colony)
     {
+        if(world == null)
+        {
+            return;
+        }
+
         numberOfSpawns(colony);
 
         BlockPos targetSpawnPoint = calculateSpawnLocation(world, colony);
+
+        if(targetSpawnPoint.equals(colony.getCenter()))
+        {
+            return;
+        }
 
         if (Configurations.enableInDevelopmentFeatures)
         {
@@ -190,6 +200,11 @@ public final class MobEventsUtils
                 random.nextInt(2) < 1 ? EnumFacing.EAST : EnumFacing.WEST,
                 random.nextInt(2) < 1 ? EnumFacing.NORTH : EnumFacing.SOUTH);
 
+        if(pos.equals(colony.getCenter()))
+        {
+            return colony.getCenter();
+        }
+
         return BlockPosUtil.findLand(pos, world);
     }
 
@@ -262,31 +277,34 @@ public final class MobEventsUtils
         {
             return false;
         }
-        if ((world.getWorldTime() - TICKS_AFTER_HALF_DAY) % HALF_MINECRAFT_DAY == 0)
+
+        if (world.isDaytime())
         {
-            if (world.isDaytime())
+            if(!colony.hasWillRaidTonight())
             {
                 final boolean raid = raidThisNight(world);
                 if (Configurations.enableInDevelopmentFeatures)
                 {
                     LanguageHandler.sendPlayersMessage(
-                      colony.getMessageEntityPlayers(),
-                      "Will raid tonight: " + raid);
+                            colony.getMessageEntityPlayers(),
+                            "Will raid tonight: " + raid);
                 }
                 colony.setWillRaidTonight(raid);
-                return false;
             }
-            else if (colony.hasWillRaidTonight())
-            {
-                if (Configurations.enableInDevelopmentFeatures)
-                {
-                    LanguageHandler.sendPlayersMessage(
-                      colony.getMessageEntityPlayers(),
-                      "Night reached: raiding");
-                }
-                return true;
-            }
+            return false;
         }
+        else if (colony.hasWillRaidTonight())
+        {
+            colony.setWillRaidTonight(false);
+            if (Configurations.enableInDevelopmentFeatures)
+            {
+                LanguageHandler.sendPlayersMessage(
+                        colony.getMessageEntityPlayers(),
+                        "Night reached: raiding");
+            }
+            return true;
+        }
+
         return false;
     }
 

@@ -675,9 +675,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         @NotNull IBlockState stateToPlace = state;
 
         //Move out of the way when placing blocks
-        if (MathHelper.floor_double(worker.posX) == pos.getX()
-                && MathHelper.abs_int(pos.getY() - (int) worker.posY) <= 1
-                && MathHelper.floor_double(worker.posZ) == pos.getZ()
+        if (MathHelper.floor(worker.posX) == pos.getX()
+                && MathHelper.abs(pos.getY() - (int) worker.posY) <= 1
+                && MathHelper.floor(worker.posZ) == pos.getZ()
                 && worker.getNavigator().noPath())
         {
             worker.getNavigator().moveAwayFromXYZ(pos, RUN_AWAY_SPEED, 1.0);
@@ -881,7 +881,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                     entity.posZ,
                     entity.rotationYaw,
                     entity.rotationPitch);
-            if (!world.spawnEntityInWorld(entity))
+            if (!world.spawnEntity(entity))
             {
                 Log.getLogger().info("Failed to spawn entity");
             }

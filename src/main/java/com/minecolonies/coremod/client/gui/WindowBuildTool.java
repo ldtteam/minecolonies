@@ -440,7 +440,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         Structures.loadScannedStyleMaps();
 
         sections.clear();
-        final InventoryPlayer inventory = this.mc.thePlayer.inventory;
+        final InventoryPlayer inventory = this.mc.player.inventory;
         final List<String> allSections = Structures.getSections();
         for (String section : allSections)
         {
@@ -450,7 +450,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             }
         }
 
-        if( Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode)
+        if( Minecraft.getMinecraft().player.capabilities.isCreativeMode)
         {
             findPaneOfTypeByID(BUTTON_PASTE, Button.class).setVisible(true);
             findPaneOfTypeByID(BUTTON_PASTE_NICE, Button.class).setVisible(true);
@@ -703,7 +703,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void moveLeftClicked()
     {
-        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.thePlayer.getHorizontalFacing().rotateYCCW()));
+        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.player.getHorizontalFacing().rotateYCCW()));
     }
 
     /**
@@ -711,7 +711,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void moveRightClicked()
     {
-        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.thePlayer.getHorizontalFacing().rotateY()));
+        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.player.getHorizontalFacing().rotateY()));
     }
 
     /**
@@ -719,7 +719,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void moveForwardClicked()
     {
-        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.thePlayer.getHorizontalFacing()));
+        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.player.getHorizontalFacing()));
     }
 
     /**
@@ -727,7 +727,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void moveBackClicked()
     {
-        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.thePlayer.getHorizontalFacing().getOpposite()));
+        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.player.getHorizontalFacing().getOpposite()));
     }
 
     /**

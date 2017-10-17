@@ -273,8 +273,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                     {
                         ItemStackUtils.setSize(stack, 1);
                         request.add(stack);
-                        request.add(new ItemStack(Items.ITEM_FRAME, 1));
                     }
+                    request.add(new ItemStack(Items.ITEM_FRAME, 1));
                 }
                 else if (entity instanceof EntityArmorStand)
                 {

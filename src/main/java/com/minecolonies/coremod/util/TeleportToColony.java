@@ -56,7 +56,7 @@ public final class TeleportToColony
             if (args.length == 0)
             {
                 playerToTeleport = (EntityPlayer) sender;
-                colony = ColonyManager.getIColonyByOwner(((EntityPlayer) sender).worldObj, (EntityPlayer) sender);
+                colony = ColonyManager.getIColonyByOwner(((EntityPlayer) sender).world, (EntityPlayer) sender);
                 colonyId = colony.getID();
             }
             else
@@ -69,7 +69,7 @@ public final class TeleportToColony
         }
         else
         {
-            sender.addChatMessage(new TextComponentString(CANT_FIND_PLAYER));
+            sender.sendMessage(new TextComponentString(CANT_FIND_PLAYER));
             return;
         }
 
@@ -78,7 +78,7 @@ public final class TeleportToColony
             teleportPlayer(playerToTeleport, colonyId, sender);
             return;
         }
-        sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Please wait at least " + Configurations.teleportBuffer + " seconds to teleport again"));
+        sender.getCommandSenderEntity().sendMessage(new TextComponentString("Please wait at least " + Configurations.teleportBuffer + " seconds to teleport again"));
     }
 
     /**
@@ -94,11 +94,11 @@ public final class TeleportToColony
 
         if (townHall == null)
         {
-            sender.addChatMessage(new TextComponentString(NO_TOWNHALL));
+            sender.sendMessage(new TextComponentString(NO_TOWNHALL));
             return;
         }
 
-        playerToTeleport.addChatMessage(new TextComponentString("We got places to go, kid..."));
+        playerToTeleport.sendMessage(new TextComponentString("We got places to go, kid..."));
 
         final BlockPos position = townHall.getLocation();
 
@@ -107,7 +107,7 @@ public final class TeleportToColony
 
         if (dimension != colonyDimension)
         {
-            playerToTeleport.addChatMessage(new TextComponentString("Hold onto your pants, we're going Inter-Dimensional!"));
+            playerToTeleport.sendMessage(new TextComponentString("Hold onto your pants, we're going Inter-Dimensional!"));
             playerToTeleport.changeDimension(colonyDimension);
         }
 
@@ -117,7 +117,7 @@ public final class TeleportToColony
         }
         else
         {
-            playerToTeleport.addChatMessage(new TextComponentString(CANT_FIND_COLONY));
+            playerToTeleport.sendMessage(new TextComponentString(CANT_FIND_COLONY));
         }
     }
 }

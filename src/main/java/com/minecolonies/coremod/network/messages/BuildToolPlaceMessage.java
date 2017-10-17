@@ -124,7 +124,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
         final Structures.StructureName sn = new Structures.StructureName(message.structureName);
         if (!Structures.hasMD5(sn))
         {
-            player.addChatComponentMessage(new TextComponentString("Can not build " + message.workOrderName + ": schematic missing!"));
+            player.sendMessage(new TextComponentString("Can not build " + message.workOrderName + ": schematic missing!"));
             return;
         }
 
