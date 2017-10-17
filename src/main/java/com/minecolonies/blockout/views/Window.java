@@ -234,7 +234,7 @@ public class Window extends View
      */
     public void close()
     {
-        this.mc.thePlayer.closeScreen();
+        this.mc.player.closeScreen();
         this.mc.setIngameFocus();
     }
 

@@ -94,8 +94,8 @@ public class Node
         int z;
         if (hasDoubles)
         {
-            x = MathHelper.floor_double(compound.getDouble(TAG_X));
-            z = MathHelper.floor_double(compound.getDouble(TAG_Z));
+            x = MathHelper.floor(compound.getDouble(TAG_X));
+            z = MathHelper.floor(compound.getDouble(TAG_Z));
         }
         else
         {
@@ -113,8 +113,8 @@ public class Node
             if (hasDoubles)
             {
                 parent = new Vec2i(
-                        MathHelper.floor_double(compound.getDouble(TAG_PARENTX)),
-                        MathHelper.floor_double(compound.getDouble(TAG_PARENTZ)));
+                        MathHelper.floor(compound.getDouble(TAG_PARENTX)),
+                        MathHelper.floor(compound.getDouble(TAG_PARENTZ)));
             }
             else
             {

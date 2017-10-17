@@ -232,6 +232,70 @@ public class CitizenData
         colony.markCitizensDirty();
     }
 
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+
+        final CitizenData data = (CitizenData) o;
+
+        if (id != data.id)
+        {
+            return false;
+        }
+        if (female != data.female)
+        {
+            return false;
+        }
+        if (strength != data.strength)
+        {
+            return false;
+        }
+        if (endurance != data.endurance)
+        {
+            return false;
+        }
+        if (charisma != data.charisma)
+        {
+            return false;
+        }
+        if (intelligence != data.intelligence)
+        {
+            return false;
+        }
+        if (dexterity != data.dexterity)
+        {
+            return false;
+        }
+        if (name != null ? !name.equals(data.name) : (data.name != null))
+        {
+            return false;
+        }
+        return colony != null ? (data.colony != null && colony.getID() == data.colony.getID()) : (data.colony == null);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = id;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (female ? 1 : 0);
+        result = 31 * result + (colony != null ? colony.hashCode() : 0);
+        result = 31 * result + strength;
+        result = 31 * result + endurance;
+        result = 31 * result + charisma;
+        result = 31 * result + intelligence;
+        result = 31 * result + dexterity;
+        return result;
+    }
+
     /**
      * Create a CitizenData View given it's saved NBTTagCompound.
      *
@@ -481,9 +545,10 @@ public class CitizenData
         if (homeBuilding != null && building != null && !homeBuilding.equals(building))
         {
             homeBuilding.removeCitizen(this);
+            markDirty();
         }
 
-        if (building instanceof BuildingHome || building instanceof BuildingBarracksTower)
+        if (building == null || building instanceof BuildingHome || building instanceof BuildingBarracksTower)
         {
             homeBuilding = building;
             markDirty();

@@ -90,7 +90,7 @@ public class PathNavigate extends PathNavigateGround
     protected boolean isDirectPathBetweenPoints(final Vec3d start, final Vec3d end, final int sizeX, final int sizeY, final int sizeZ)
     {
         // TODO improve road walking. This is better in some situations, but still not great.
-        return !BlockUtils.isPathBlock(worldObj.getBlockState(new BlockPos(start.xCoord, start.yCoord - 1, start.zCoord)).getBlock())
+        return !BlockUtils.isPathBlock(world.getBlockState(new BlockPos(start.xCoord, start.yCoord - 1, start.zCoord)).getBlock())
                 && super.isDirectPathBetweenPoints(start, end, sizeX, sizeY, sizeZ);
     }
 
@@ -130,9 +130,9 @@ public class PathNavigate extends PathNavigateGround
     @Nullable
     public PathResult moveToXYZ(final double x, final double y, final double z, final double speed)
     {
-        int newX = MathHelper.floor_double(x);
+        int newX = MathHelper.floor(x);
         int newY = (int) y;
-        int newZ = MathHelper.floor_double(z);
+        int newZ = MathHelper.floor(z);
 
 
         if ((destination != null
@@ -307,7 +307,7 @@ public class PathNavigate extends PathNavigateGround
             }
             else
             {
-                if (BlockUtils.isPathBlock(worldObj.getBlockState(entity.getPosition().down()).getBlock()))
+                if (BlockUtils.isPathBlock(world.getBlockState(entity.getPosition().down()).getBlock()))
                 {
                     speed = ON_PATH_SPEED_MULTIPLIER * walkSpeed;
                 }

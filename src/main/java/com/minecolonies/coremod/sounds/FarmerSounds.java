@@ -68,7 +68,7 @@ public final class FarmerSounds extends AbstractWorkerSounds
     }
 
     /**
-     * Plays fisherman sounds.
+     * Plays Farmer sounds.
      * Suppressing Sonar Rule squid:S109
      * This rule wants to prevent magic numbers
      * But in this case the rule does not apply because its not a magic number its a % chance.
@@ -92,7 +92,7 @@ public final class FarmerSounds extends AbstractWorkerSounds
         switch (rand.nextInt(NUMBER_OF_SOUNDS + 1))
         {
             case 1:
-                final SoundEvent noises = FarmerSounds.Female.noises;
+                final SoundEvent noises = Female.noises;
                 SoundUtils.playSoundAtCitizenWithChance(worldIn, position, noises, getBasicSoundChance());
                 break;
             case 2:
@@ -103,11 +103,11 @@ public final class FarmerSounds extends AbstractWorkerSounds
                 SoundUtils.playSoundAtCitizenWithChance(worldIn, position, greeting, getBasicSoundChance() * 2);
                 break;
             case 4:
-                final SoundEvent farewell = Female.greeting;
+                final SoundEvent farewell = Female.farewell;
                 SoundUtils.playSoundAtCitizenWithChance(worldIn, position, farewell, getBasicSoundChance());
                 break;
             default:
-                final SoundEvent generalPhrases = FarmerSounds.Female.generalPhrases;
+                final SoundEvent generalPhrases = Female.generalPhrases;
                 SoundUtils.playSoundAtCitizenWithChance(worldIn, position, generalPhrases, getPhraseChance());
                 break;
         }
@@ -117,6 +117,24 @@ public final class FarmerSounds extends AbstractWorkerSounds
     public String getWorkerString()
     {
         return "Farmer";
+    }
+
+    /**
+     * Play interaction sound.
+     *
+     * @param worldIn    world to play it in.
+     * @param position   position to play it at.
+     * @param isFemale   the gender.
+     */
+    public void playInteractionSound(final World worldIn, final BlockPos position, final boolean isFemale)
+    {
+        //While there are no male sounds
+        if (!isFemale)
+        {
+            return;
+        }
+
+        SoundUtils.playSoundAtCitizenWithChance(worldIn, position, Female.interaction, getBasicSoundChance());
     }
 
     /**

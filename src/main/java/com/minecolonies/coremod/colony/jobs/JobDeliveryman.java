@@ -87,6 +87,16 @@ public class JobDeliveryman extends AbstractJob
         return null;
     }
 
+    @Override
+    public SoundEvent getBedTimeSound()
+    {
+        if (getCitizen() != null)
+        {
+            return getCitizen().isFemale() ? DeliverymanSounds.Female.offToBed : null;
+        }
+        return null;
+    }
+
     /**
      * Generate your AI class to register.
      *

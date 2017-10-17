@@ -432,7 +432,7 @@ tile.minecolonies.blockTimberFrame.name=Plain Timber Frame
 tile.minecolonies.blockMinecoloniesRack.name=Rack
 com.minecolonies.coremod.gui.workerHuts.saplingList=Tasklist
 
-com.minecolonies.coremod.status.waitingForWork=Searching a job
+com.minecolonies.coremod.status.waitingForWork=Searching job
 com.minecolonies.coremod.status.goingToHut=Going to Hut!
 com.minecolonies.coremod.status.sleeping=Let me sleep
 com.minecolonies.coremod.status.waiting=Waiting for:
@@ -461,6 +461,8 @@ com.minecolonies.coremod.status.hunting=Hunting
 com.minecolonies.coremod.status.searchingtree=Searching Tree
 com.minecolonies.coremod.status.chopping=Chopping
 com.minecolonies.coremod.status.stuckinleaves=Stuck in leaves!
+tile.minecolonies.blockWayPoint.name=Waypoint placeholder
+tile.minecolonies.blockHutBarracksTower.name=BarracksTower
 
 com.minecolonies.coremod.status.herder.deciding=Deciding what to do!
 com.minecolonies.coremod.status.herder.goingToHut=Going to my Hut!
@@ -493,3 +495,4 @@ com.minecolonies.coremod.gui.hiring.buttonFire=Fire
 com.minecolonies.coremod.worker.noUpgrade=No Upgrade available.
 com.minecolonies.coremod.worker.needBarracks=Please upgrade the Barracks first.
 com.minecolonies.coremod.gui.warehouse.upgrade=Upgrade Storage
+

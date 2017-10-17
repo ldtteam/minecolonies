@@ -1089,8 +1089,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
     /**
      * Try to take a list of items from the hut chest and request if neccessary.
+     *
      * @param list the list of items to retrieve.
      * @param shouldRequest determines if the request to the player should be made.
+     * @return true if it fond it.
      */
     public boolean tryToTakeFromListOrRequest(final boolean shouldRequest, final ItemStack...list)
     {

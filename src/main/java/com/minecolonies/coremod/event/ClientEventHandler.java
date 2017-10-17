@@ -59,8 +59,8 @@ public class ClientEventHandler
         Pathfinding.debugDraw(event.getPartialTicks());
 
         final Structure structure = Settings.instance.getActiveStructure();
-        final WorldClient world = Minecraft.getMinecraft().theWorld;
-        final EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+        final WorldClient world = Minecraft.getMinecraft().world;
+        final EntityPlayer player = Minecraft.getMinecraft().player;
 
         if (structure != null)
         {
@@ -101,7 +101,7 @@ public class ClientEventHandler
             }
 
             final ColonyView colony = ColonyManager.getClosestColonyView(world, player.getPosition());
-            if(colony != null && colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
+            if(colony != null && player != null && colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
             {
                 for(final CitizenDataView citizenDataView : new ArrayList<CitizenDataView>(colony.getCitizens().values()))
                 {

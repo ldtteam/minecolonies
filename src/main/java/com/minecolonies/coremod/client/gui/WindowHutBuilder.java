@@ -80,8 +80,8 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         if (newView instanceof BuildingBuilderView)
         {
             final BuildingBuilderView updatedView = (BuildingBuilderView) newView;
-            final InventoryPlayer inventory = this.mc.thePlayer.inventory;
-            final boolean isCreative = this.mc.thePlayer.capabilities.isCreativeMode;
+            final InventoryPlayer inventory = this.mc.player.inventory;
+            final boolean isCreative = this.mc.player.capabilities.isCreativeMode;
 
             resources.clear();
             resources.addAll(updatedView.getResources().values());

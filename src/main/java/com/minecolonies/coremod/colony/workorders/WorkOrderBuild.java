@@ -9,6 +9,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
+import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
@@ -71,7 +72,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
      *
      * @return Name after upgrade.
      */
-    private String getUpgradeName()
+    public String getUpgradeName()
     {
         return upgradeName;
     }
@@ -195,13 +196,26 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
     }
 
     @Override
+    public void onAdded(final Colony colony)
+    {
+        if (colony != null && colony.getWorld() != null)
+        {
+            final AbstractBuilding building = colony.getBuilding(this.getBuildingLocation());
+            if(building != null)
+            {
+                ConstructionTapeHelper.placeConstructionTape(building.getLocation(), building.getCorners(), colony.getWorld());
+            }
+        }
+    }
+
+    @Override
     public void onRemoved(final Colony colony)
     {
-        super.onRemoved(colony);
         final AbstractBuilding building = colony.getBuilding(getBuildingLocation());
         if (building != null)
         {
             building.markDirty();
+            ConstructionTapeHelper.removeConstructionTape(building.getCorners(), colony.getWorld());
         }
     }
 }

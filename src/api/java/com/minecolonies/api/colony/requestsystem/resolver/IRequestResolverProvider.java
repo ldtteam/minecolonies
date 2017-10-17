@@ -14,11 +14,14 @@ public interface IRequestResolverProvider
 
     /**
      * Unique token identifying this provider inside the request management system-
+     * @param <T> generic token.
+     * @return the token.
      */
     <T extends IToken> T getToken();
 
     /**
      * Method to get the resolvers that this provider provides.
+     * @return a list of resolvers.
      */
     ImmutableCollection<IRequestResolver> getResolvers();
 }

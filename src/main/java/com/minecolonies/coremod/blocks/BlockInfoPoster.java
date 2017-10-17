@@ -10,6 +10,7 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Mirror;
@@ -128,17 +129,9 @@ public class BlockInfoPoster extends BlockContainer
     }
 
     @Override
-    public IBlockState onBlockPlaced(
-            final World worldIn,
-            final BlockPos pos,
-            final EnumFacing facing,
-            final float hitX,
-            final float hitY,
-            final float hitZ,
-            final int meta,
-            @org.jetbrains.annotations.Nullable final EntityLivingBase placer)
+    public void onBlockPlacedBy(final World worldIn, final BlockPos pos, final IBlockState state, final EntityLivingBase placer, final ItemStack stack)
     {
         @NotNull final EnumFacing enumFacing = (placer == null) ? NORTH : fromAngle(placer.rotationYaw);
-        return this.getDefaultState().withProperty(FACING, enumFacing);
+        this.getDefaultState().withProperty(FACING, enumFacing);
     }
 }

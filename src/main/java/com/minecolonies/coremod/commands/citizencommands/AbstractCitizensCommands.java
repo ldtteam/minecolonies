@@ -46,7 +46,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
     {
         if (args.length == 0)
         {
-            sender.addChatMessage(new TextComponentString(NO_ARGUMENTS));
+            sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
             return;
         }
 
@@ -86,7 +86,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
 
         if (colony == null)
         {
-            sender.addChatMessage(new TextComponentString(NO_ARGUMENTS));
+            sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
             return;
         }
 
@@ -95,7 +95,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
             final EntityPlayer player = (EntityPlayer) sender;
             if (!canPlayerUseCommand(player, getCommand(), colonyId))
             {
-                player.addChatMessage(new TextComponentString(NOT_PERMITTED));
+                player.sendMessage(new TextComponentString(NOT_PERMITTED));
                 return;
             }
         }
@@ -104,7 +104,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
 
         if (citizenId == -1 || colony.getCitizen(citizenId) == null)
         {
-            sender.addChatMessage(new TextComponentString(NO_ARGUMENTS));
+            sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
             return;
         }
 
@@ -150,6 +150,8 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
     /**
      * Citizen commands have to overwrite this to handle their specialized code.
      *
+     * @param server the minecraft server.
+     * @param sender the command sender.
      * @param colonyId  the id for the colony
      * @param citizenId the id for the citizen
      */
