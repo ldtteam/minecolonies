@@ -69,7 +69,11 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
 
         final int numOfBreedableSheep = animals.stream().filter(sheepie -> sheepie.getGrowingAge() == 0).toArray().length;
 
-        if (maxAnimals())
+        if (!searchForItemsInArea().isEmpty())
+        {
+            return HERDER_PICKUP;
+        }
+        else if (maxAnimals())
         {
             return HERDER_BUTCHER;
         }

@@ -24,6 +24,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
@@ -34,6 +35,12 @@ import static com.minecolonies.coremod.entity.ai.util.AIState.*;
  */
 public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends EntityAnimal> extends AbstractEntityAIInteract<J>
 {
+
+    /**
+     * Tools and Items needed by the worker.
+     */
+    public final List<ToolType> toolsNeeded = new ArrayList<>();
+    public final List<ItemStack> itemsNeeded = new ArrayList<>();
 
     /**
      * Amount of animals needed to bread.
@@ -153,11 +160,25 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      */
     private AIState prepareForHerding()
     {
-        if (checkForToolOrWeapon(ToolType.AXE) && checkOrRequestItems(new ItemStack(getBreedingItem(), 2))
-              && (this instanceof EntityAIWorkShepherd && checkForToolOrWeapon(ToolType.SHEARS)))
+        toolsNeeded.add(ToolType.AXE);
+        itemsNeeded.add(new ItemStack(getBreedingItem(), 2));
+
+        for (final ToolType tool : toolsNeeded)
         {
-            return getState();
+            if (checkForToolOrWeapon(tool))
+            {
+                return getState();
+            }
         }
+
+        for (final ItemStack item : itemsNeeded)
+        {
+            if (!checkOrRequestItemsAsynch(false, item))
+            {
+                return getState();
+            }
+        }
+
         return HERDER_DECIDE;
     }
 
@@ -436,7 +457,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      */
     private boolean equipItem(final ItemStack itemStack)
     {
-        if (!checkOrRequestItems(itemStack))
+        if (!checkOrRequestItemsAsynch(true, itemStack))
         {
             worker.setHeldItem(getItemSlot(itemStack.getItem()));
             return true;

@@ -318,5 +318,15 @@ public enum AIState
     /**
      * Shear all the sheep!
      */
-    SHEPHERD_SHEAR
+    SHEPHERD_SHEAR,
+
+    /*
+ ###Cowboy###
+     */
+
+    /**
+     * Milk all the cows!
+     */
+    COWBOY_MILK
+
 }
