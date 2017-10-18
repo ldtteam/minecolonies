@@ -482,3 +482,4 @@ com.minecolonies.coremod.status.cooking=Cooking
 com.minecolonies.coremod.status.serving=Serving
 com.minecolonies.coremod.status.retrieving=Retrieving
 com.minecolonies.coremod.status.idling=Idling
+com.minecolonies.coremod.status.mining=Mining
