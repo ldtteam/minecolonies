@@ -24,7 +24,6 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
@@ -39,7 +38,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     /**
      * Tools and Items needed by the worker.
      */
-    public final List<ToolType> toolsNeeded = new ArrayList<>();
+    public final List<ToolType>  toolsNeeded = new ArrayList<>();
     public final List<ItemStack> itemsNeeded = new ArrayList<>();
 
     /**
@@ -123,6 +122,8 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
 
         final int numOfBreedableAnimals = animals.stream().filter(animal -> animal.getGrowingAge() == 0).toArray().length;
 
+        final boolean hasBreedingItem = worker.hasItemInInventory(getBreedingItem(), 0);
+
         if (!searchForItemsInArea().isEmpty())
         {
             return HERDER_PICKUP;
@@ -131,11 +132,11 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
         {
             return HERDER_BUTCHER;
         }
-        else if (numOfBreedableAnimals >= NUM_OF_ANIMALS_TO_BREED)
+        else if (numOfBreedableAnimals >= NUM_OF_ANIMALS_TO_BREED && hasBreedingItem)
         {
             return HERDER_BREED;
         }
-        return HERDER_DECIDE;
+        return PREPARING;
     }
 
     /**
@@ -163,6 +164,8 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
         toolsNeeded.add(ToolType.AXE);
         itemsNeeded.add(new ItemStack(getBreedingItem(), 2));
 
+        itemsNiceToHave().add(new ItemStack(getBreedingItem(), 2));
+
         for (final ToolType tool : toolsNeeded)
         {
             if (checkForToolOrWeapon(tool))
@@ -173,10 +176,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
 
         for (final ItemStack item : itemsNeeded)
         {
-            if (!checkOrRequestItemsAsynch(false, item))
-            {
-                return getState();
-            }
+            checkOrRequestItemsAsynch(false, item);
         }
 
         return HERDER_DECIDE;
@@ -455,7 +455,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      *
      * @return whether the item was equipped.
      */
-    private boolean equipItem(final ItemStack itemStack)
+    public boolean equipItem(final ItemStack itemStack)
     {
         if (!checkOrRequestItemsAsynch(true, itemStack))
         {
@@ -471,7 +471,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      * @param item The item to check for.
      * @return slot number.
      */
-    private int getItemSlot(final Item item)
+    public int getItemSlot(final Item item)
     {
         return InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(getInventory()), item, 0);
     }
@@ -498,7 +498,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     /**
      * Get breeding item for animal.
      */
-    private Item getBreedingItem()
+    public Item getBreedingItem()
     {
         if (getAnimalClass().equals(EntityChicken.class))
         {

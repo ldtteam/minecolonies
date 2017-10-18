@@ -40,6 +40,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
     public EntityAIWorkShepherd(@NotNull final JobShepherd job)
     {
         super(job, MAX_ANIMALS_PER_LEVEL);
+        toolsNeeded.add(ToolType.SHEARS);
         super.registerTargets(
           new AITarget(SHEPHERD_SHEAR, this::shearSheep)
         );
@@ -69,6 +70,8 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
 
         final int numOfBreedableSheep = animals.stream().filter(sheepie -> sheepie.getGrowingAge() == 0).toArray().length;
 
+        final boolean hasBreedingItem = worker.hasItemInInventory(getBreedingItem(), 0);
+
         if (!searchForItemsInArea().isEmpty())
         {
             return HERDER_PICKUP;
@@ -81,11 +84,11 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
         {
             return SHEPHERD_SHEAR;
         }
-        else if (numOfBreedableSheep >= NUM_OF_ANIMALS_TO_BREED)
+        else if (numOfBreedableSheep >= NUM_OF_ANIMALS_TO_BREED && hasBreedingItem)
         {
             return HERDER_BREED;
         }
-        return HERDER_DECIDE;
+        return PREPARING;
     }
 
     @Override
@@ -121,7 +124,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
         {
             worker.swingArm(EnumHand.MAIN_HAND);
             final List<ItemStack> items = sheep.onSheared(worker.getHeldItemMainhand(),
-              worker.worldObj,
+              worker.world,
               worker.getPosition(),
               net.minecraft.enchantment.EnchantmentHelper.getEnchantmentLevel(net.minecraft.init.Enchantments.FORTUNE, worker.getHeldItemMainhand()));
 

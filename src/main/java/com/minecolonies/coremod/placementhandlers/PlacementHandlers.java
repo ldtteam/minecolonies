@@ -85,7 +85,7 @@ public final class PlacementHandlers
             {
                 if (!infiniteResources)
                 {
-                    if (placer.checkOrRequestItems(false, new ItemStack(Items.FLINT_AND_STEEL, 1)))
+                    if (placer.checkOrRequestItemsSynch(false, new ItemStack(Items.FLINT_AND_STEEL, 1)))
                     {
                         return ActionProcessingResult.DENY;
                     }
@@ -122,7 +122,7 @@ public final class PlacementHandlers
 
             if (placer != null)
             {
-                if (!infiniteResources && placer.checkOrRequestItems(placer.getTotalAmount(new ItemStack(Blocks.DIRT))))
+                if (!infiniteResources && placer.checkOrRequestItemsSynch(placer.getTotalAmount(new ItemStack(Blocks.DIRT))))
                 {
                     return ActionProcessingResult.DENY;
                 }
@@ -149,7 +149,7 @@ public final class PlacementHandlers
                 return ActionProcessingResult.IGNORE;
             }
 
-            if (placer != null && !infiniteResources && placer.checkOrRequestItems(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState))))
+            if (placer != null && !infiniteResources && placer.checkOrRequestItemsSynch(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState))))
             {
                 return ActionProcessingResult.DENY;
             }
@@ -180,7 +180,7 @@ public final class PlacementHandlers
             }
 
             if (placer != null && !infiniteResources && blockState.getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT
-                    && placer.checkOrRequestItems(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState))))
+                    && placer.checkOrRequestItemsSynch(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState))))
             {
                 return ActionProcessingResult.DENY;
             }
@@ -216,7 +216,7 @@ public final class PlacementHandlers
             }
 
             if (placer != null && !infiniteResources && blockState.getValue(BlockDoublePlant.HALF).equals(BlockDoublePlant.EnumBlockHalf.LOWER)
-                    && placer.checkOrRequestItems(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState))))
+                    && placer.checkOrRequestItemsSynch(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState))))
             {
                 return ActionProcessingResult.DENY;
             }
@@ -275,7 +275,7 @@ public final class PlacementHandlers
 
                     for (final ItemStack stack : itemList)
                     {
-                        if (!ItemStackUtils.isEmpty(stack) && placer.checkOrRequestItems(placer.getTotalAmount(stack)))
+                        if (!ItemStackUtils.isEmpty(stack) && placer.checkOrRequestItemsSynch(placer.getTotalAmount(stack)))
                         {
                             return ActionProcessingResult.DENY;
                         }
@@ -348,7 +348,7 @@ public final class PlacementHandlers
 
             if (placer != null && !infiniteResources)
             {
-                if (!(placer.holdEfficientTool(blockState.getBlock()) || placer.checkOrRequestItems(placer.getTotalAmount(new ItemStack(Blocks.DIRT, 1)))))
+                if (!(placer.holdEfficientTool(blockState.getBlock()) || placer.checkOrRequestItemsSynch(placer.getTotalAmount(new ItemStack(Blocks.DIRT, 1)))))
                 {
                     return ActionProcessingResult.DENY;
                 }
@@ -400,7 +400,7 @@ public final class PlacementHandlers
 
             if (placer != null && !infiniteResources)
             {
-                if (placer.checkOrRequestItems(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(newBlockState))))
+                if (placer.checkOrRequestItemsSynch(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(newBlockState))))
                 {
                     return ActionProcessingResult.DENY;
                 }
@@ -441,7 +441,7 @@ public final class PlacementHandlers
 
                 for (final ItemStack stack : itemList)
                 {
-                    if (!ItemStackUtils.isEmpty(stack) && placer.checkOrRequestItems(placer.getTotalAmount(stack)))
+                    if (!ItemStackUtils.isEmpty(stack) && placer.checkOrRequestItemsSynch(placer.getTotalAmount(stack)))
                     {
                         return ActionProcessingResult.DENY;
                     }
@@ -513,7 +513,7 @@ public final class PlacementHandlers
 
                 for (final ItemStack stack : itemList)
                 {
-                    if (!ItemStackUtils.isEmpty(stack) && placer.checkOrRequestItems(placer.getTotalAmount(stack)))
+                    if (!ItemStackUtils.isEmpty(stack) && placer.checkOrRequestItemsSynch(placer.getTotalAmount(stack)))
                     {
                         return ActionProcessingResult.DENY;
                     }

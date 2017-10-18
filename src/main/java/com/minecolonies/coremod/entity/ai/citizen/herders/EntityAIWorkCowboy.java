@@ -7,6 +7,7 @@ import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
     public EntityAIWorkCowboy(@NotNull final JobCowboy job)
     {
         super(job, MAX_ANIMALS_PER_LEVEL);
+        itemsNiceToHave().add(new ItemStack(Items.BUCKET, 1));
         itemsNeeded.add(new ItemStack(Items.BUCKET));
         super.registerTargets(
           new AITarget(COWBOY_MILK, this::milkCows)
@@ -62,6 +64,9 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
 
         final int numOfBreedableAnimals = animals.stream().filter(animal -> animal.getGrowingAge() == 0).toArray().length;
 
+        final boolean hasBreedingItem = worker.hasItemInInventory(getBreedingItem(), 0);
+        final boolean hasBucket = worker.hasItemInInventory(Items.BUCKET, 0);
+
         if (!searchForItemsInArea().isEmpty())
         {
             return HERDER_PICKUP;
@@ -70,20 +75,38 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
         {
             return HERDER_BUTCHER;
         }
-        else if (numOfBreedableAnimals >= NUM_OF_ANIMALS_TO_BREED)
+        else if (numOfBreedableAnimals >= NUM_OF_ANIMALS_TO_BREED && hasBreedingItem)
         {
             return HERDER_BREED;
         }
-        else if (!checkOrRequestItemsAsynch(false, new ItemStack(Items.BUCKET)))
+        else if (hasBucket)
         {
             return COWBOY_MILK;
         }
-        return HERDER_DECIDE;
+        return PREPARING;
     }
 
     private AIState milkCows()
     {
-        System.out.println("Debug");
+        final EntityCow cow = searchForAnimals().stream().findFirst().orElse(null);
+
+        if (cow == null)
+        {
+            return HERDER_DECIDE;
+        }
+
+        if (!walkingToAnimal(cow) && equipItem(new ItemStack(Items.BUCKET, 1)))
+        {
+
+            if (worker.getInventoryCitizen().addItemStackToInventory(new ItemStack(Items.MILK_BUCKET)))
+            {
+                worker.removeHeldItem();
+                equipItem(new ItemStack(Items.MILK_BUCKET));
+                new InvWrapper(getInventory()).extractItem(getItemSlot(Items.BUCKET), 1, false);
+            }
+
+            incrementActionsDone();
+        }
 
         return HERDER_DECIDE;
     }
