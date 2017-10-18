@@ -247,11 +247,12 @@ public final class StructureWrapper
                     else
                     {
                         delayedBlocks.add(localPos);
+                        continue;
                     }
 
-                    if (this.structure.getBlockInfo(localPos).tileentityData != null)
+                    final NBTTagCompound tileEntityData = this.structure.getBlockInfo(localPos).tileentityData;
+                    if (tileEntityData != null)
                     {
-                        final NBTTagCompound tileEntityData = this.structure.getBlockInfo(localPos).tileentityData;
                         final TileEntity entity = TileEntity.create(world, tileEntityData);
                         world.setTileEntity(worldPos, entity);
                         world.markBlockRangeForRenderUpdate(worldPos, worldPos);
@@ -267,11 +268,12 @@ public final class StructureWrapper
 
             handleBlockPlacement(newWorldPos, localState, complete);
 
-            if (this.structure.getBlockInfo(coords).tileentityData != null && world.getTileEntity(newWorldPos) instanceof TileEntityFlowerPot)
+            final NBTTagCompound tileEntityData = this.structure.getBlockInfo(coords).tileentityData;
+            if (tileEntityData != null)
             {
-                final TileEntityFlowerPot tileentityflowerpot = (TileEntityFlowerPot) world.getTileEntity(newWorldPos);
-                tileentityflowerpot.readFromNBT(this.structure.getBlockInfo(coords).tileentityData);
-                world.setTileEntity(newWorldPos, tileentityflowerpot);
+                final TileEntity entity = TileEntity.create(world, tileEntityData);
+                world.setTileEntity(newWorldPos, entity);
+                world.markBlockRangeForRenderUpdate(newWorldPos, newWorldPos);
             }
         }
 
