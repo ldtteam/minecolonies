@@ -31,6 +31,7 @@ public class Constants
     public static final int    ENTITY_UPDATE_FREQUENCY          = 2;
     public static final int    ENTITY_UPDATE_FREQUENCY_FISHHOOK = 5;
     public static final int    MAX_ROTATIONS                    = 4;
-    public static final double  WHOLE_CIRCLE                    = 360.0;
-    public static final double  HALF_A_CIRCLE                   = 180;
+    public static final double WHOLE_CIRCLE                     = 360.0;
+    public static final double HALF_A_CIRCLE                    = 180;
+    public static final int    UPDATE_FLAG                      = 0x03;
 }
