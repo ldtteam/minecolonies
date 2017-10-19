@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Created by Asher on 16/9/17.
+ * The Chicken Herder job
  */
 public class JobChickenHerder extends AbstractJob
 {

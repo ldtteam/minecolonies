@@ -1006,6 +1006,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * This doesn't stop execution on false returned.
      * It does request asynchronously and make sure nothing is added twice.
      *
+     * This method assumes the citizen is already at his hut.
+     *
      * @param items the items needed
      * @return false if they are in inventory
      */
@@ -1019,6 +1021,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * This safeguard ensures you have said items before you execute a task.
      * This doesn't stop execution on false returned.
      * It does request asynchronously and make sure nothing is added twice.
+     *
+     * This method assumes the citizen is already at his hut.
      *
      * @param useItemDamage compare the itemDamage of the values.
      * @param items         the items needed
@@ -1037,7 +1041,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         for (final ItemStack item : items)
         {
-            if (!walkToBuilding() && isInHut(item))
+            if (isInHut(item))
             {
                 allClear = false;
             }

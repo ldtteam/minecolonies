@@ -16,7 +16,7 @@ import java.util.List;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 /**
- * Created by Asher on 16/9/17.
+ * The AI behind the {@link JobCowboy} for Breeding, Killing and Milking Cows.
  */
 public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, EntityCow>
 {
@@ -83,9 +83,15 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
         {
             return COWBOY_MILK;
         }
-        return PREPARING;
+        return START_WORKING;
     }
 
+    /**
+     * Makes the Cowboy "Milk" the cows (Honestly all he does is swap an empty
+     * bucket for a milk bucket, there's no actual "Milk" method in {@link EntityCow}
+     *
+     * @return The next {@link AIState}
+     */
     private AIState milkCows()
     {
         final EntityCow cow = searchForAnimals().stream().findFirst().orElse(null);

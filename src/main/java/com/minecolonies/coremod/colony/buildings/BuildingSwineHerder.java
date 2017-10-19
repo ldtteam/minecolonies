@@ -11,7 +11,7 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Creates a new building for the blacksmith.
+ * Creates a new building for the Swine Herder.
  */
 public class BuildingSwineHerder extends AbstractBuildingWorker
 {

@@ -5,7 +5,7 @@ import net.minecraft.entity.passive.EntityChicken;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Created by Asher on 16/9/17.
+ * The AI behind the {@link JobChickenHerder} for Breeding and Killing Chickens.
  */
 public class EntityAIWorkChickenHerder extends AbstractEntityAIHerder<JobChickenHerder, EntityChicken>
 {

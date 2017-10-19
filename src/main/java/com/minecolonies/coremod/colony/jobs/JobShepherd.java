@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 
 /**
- * Created by Asher on 3/9/17.
+ * The Shepherd job
  */
 public class JobShepherd extends AbstractJob
 {

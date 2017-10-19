@@ -17,7 +17,7 @@ import java.util.List;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 /**
- * Created by Asher on 15/9/17.
+ * The AI behind the {@link JobShepherd} for Breeding, Killing and Shearing sheep.
  */
 public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, EntitySheep>
 {
@@ -46,11 +46,6 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
         );
     }
 
-    /**
-     * Decides what job the shephered should switch to, breeding, butchering, or shearing.
-     *
-     * @return the next AIState the shepherd should switch to, after executing this method.
-     */
     @Override
     public AIState decideWhatToDo()
     {
@@ -100,7 +95,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
     /**
      * Shears a sheep, with a chance of dying it!
      *
-     * @return the wanted AiState
+     * @return The next {@link AIState}
      */
     private AIState shearSheep()
     {
@@ -147,6 +142,8 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
 
     /**
      * Possibly dyes a sheep based on their Worker Hut Level
+     *
+     * @param sheep the {@link EntitySheep} to possibly dye.
      */
     private void dyeSheepChance(final EntitySheep sheep)
     {

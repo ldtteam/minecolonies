@@ -5,7 +5,7 @@ import net.minecraft.entity.passive.EntityPig;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Created by Asher on 16/9/17.
+ * The AI behind the {@link JobSwineHerder} for Breeding and Killing Pigs.
  */
 public class EntityAIWorkSwineHerder extends AbstractEntityAIHerder<JobSwineHerder, EntityPig>
 {

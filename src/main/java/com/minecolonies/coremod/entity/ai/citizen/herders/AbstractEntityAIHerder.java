@@ -77,7 +77,8 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      * Creates the abstract part of the AI.
      * Always use this constructor!
      *
-     * @param job the job to fulfill
+     * @param job the job to fulfill.
+     * @param maxAnimalsMultiplier the number of max animals to add per hut level
      */
     public AbstractEntityAIHerder(@NotNull final J job, final int maxAnimalsMultiplier)
     {
@@ -102,9 +103,9 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     }
 
     /**
-     * Decides what job the herder should switch to, breeding, butchering, or shearing (If Shepherd).
+     * Decides what job the herder should switch to, breeding or Butchering.
      *
-     * @return the next AIState the shepherd should switch to, after executing this method.
+     * @return The next {@link AIState} the herder should switch to, after executing this method.
      */
     public AIState decideWhatToDo()
     {
@@ -136,13 +137,13 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
         {
             return HERDER_BREED;
         }
-        return PREPARING;
+        return START_WORKING;
     }
 
     /**
      * Redirects the herder to their building.
      *
-     * @return the next state.
+     * @return The next {@link AIState}.
      */
     private AIState startWorkingAtOwnBuilding()
     {
@@ -157,7 +158,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     /**
      * Prepares the herder for herding
      *
-     * @return the next AIState
+     * @return The next {@link AIState}.
      */
     private AIState prepareForHerding()
     {
@@ -185,7 +186,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     /**
      * Butcher some animals (Preferably Adults) that the herder looks after.
      *
-     * @return The next AIState.
+     * @return The next {@link AIState}.
      */
     private AIState butcherAnimals()
     {
@@ -198,7 +199,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
 
         if (!equipTool(ToolType.AXE))
         {
-            return PREPARING;
+            return START_WORKING;
         }
 
         EntityAnimal animal = searchForAnimals().stream().filter(animalToButcher -> !animalToButcher.isChild()).findFirst().orElse(null);
@@ -221,7 +222,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     /**
      * Breed some animals together.
      *
-     * @return The next AIState.
+     * @return The next {@link AIState}.
      */
     private AIState breedAnimals()
     {
@@ -251,7 +252,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
 
         if (!equipItem(new ItemStack(getBreedingItem(), 2)))
         {
-            return PREPARING;
+            return START_WORKING;
         }
 
         worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.herder.breeding"));
@@ -266,7 +267,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      * Specifically useful when he possibly leaves Butchered
      * drops OR with chickens (that drop feathers and etc)!
      *
-     * @return The next AIState.
+     * @return The next {@link AIState}.
      */
     private AIState pickupItems()
     {
@@ -285,7 +286,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     /**
      * Find animals in area.
      *
-     * @return the list of animals in the area.
+     * @return the {@link List} of animals in the area.
      */
     public List<T> searchForAnimals()
     {
@@ -304,7 +305,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     /**
      * Find items in hut area.
      *
-     * @return the list of items in the area.
+     * @return the {@link List} of {@link EntityItem} in the area.
      */
     public List<EntityItem> searchForItemsInArea()
     {
@@ -326,7 +327,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     /**
      * Creates a simple area around the Herder's Hut used for AABB calculations for finding animals.
      *
-     * @return The AABB.
+     * @return The {@link AxisAlignedBB} of the Hut Area
      */
     private AxisAlignedBB getTargetableArea()
     {
@@ -377,8 +378,8 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     /**
      * Breed two animals together!
      *
-     * @param animalOne the first animal to breed.
-     * @param animalTwo the second animal to breed.
+     * @param animalOne the first {@link EntityAnimal} to breed.
+     * @param animalTwo the second {@link EntityAnimal} to breed.
      */
     private void breedTwoAnimals(final EntityAnimal animalOne, final EntityAnimal animalTwo)
     {
@@ -418,6 +419,9 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
 
     /**
      * Sets the tool as held item.
+     *
+     * @param toolType the {@link ToolType} we want to equip
+     * @return true if the tool was equipped.
      */
     public boolean equipTool(final ToolType toolType)
     {
@@ -451,9 +455,10 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     }
 
     /**
-     * Sets the Item as held item or returns false.
+     * Sets the {@link ItemStack} as held item or returns false.
      *
-     * @return whether the item was equipped.
+     * @param itemStack the {@link ItemStack} to equip.
+     * @return true if the item was equipped.
      */
     public boolean equipItem(final ItemStack itemStack)
     {
@@ -468,8 +473,8 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     /**
      * Gets the slot in which the inserted item is in. (if any).
      *
-     * @param item The item to check for.
-     * @return slot number.
+     * @param item The {@link Item} to check for.
+     * @return slot number -1 if not in INV.
      */
     public int getItemSlot(final Item item)
     {
@@ -478,6 +483,8 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
 
     /**
      * Butcher an animal.
+     *
+     * @param animal the {@link EntityAnimal} we are butchering
      */
     private void butcherAnimal(final EntityAnimal animal)
     {
@@ -497,6 +504,8 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
 
     /**
      * Get breeding item for animal.
+     *
+     * @return the {@link Item} needed for breeding the animal.
      */
     public Item getBreedingItem()
     {
