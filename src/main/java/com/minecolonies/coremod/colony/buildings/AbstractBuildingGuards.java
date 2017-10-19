@@ -161,7 +161,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     {
         for(final EntityCitizen citizen: getWorkerEntities())
         {
-            if (newLevel > MAX_VISION_BONUS_MULTIPLIER)
+            if (citizen != null && newLevel > MAX_VISION_BONUS_MULTIPLIER)
             {
                 citizen.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(SharedMonsterAttributes.MAX_HEALTH.getDefaultValue() + getBonusHealth());
             }
