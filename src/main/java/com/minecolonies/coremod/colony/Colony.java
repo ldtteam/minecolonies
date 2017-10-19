@@ -135,9 +135,14 @@ public class Colony implements IColony
     private int lastContactInHours = 0;
 
     /**
-     * Whether or not this colony can be auto deleted =D. (set via command)
+     * Whether or not this colony can be auto deleted. (set via command)
      */
     private boolean canColonyBeAutoDeleted = true;
+
+    /**
+     * Whether or not this colony may have Barbarian events. (set via command)
+     */
+    private boolean canHaveBarbEvents = true;
 
     /**
      * Bonus happiness each factor added.
@@ -1257,10 +1262,12 @@ public class Colony implements IColony
                 }
             }
 
-            if (shallUpdate(world, TICKS_SECOND) && event.world.getDifficulty() != EnumDifficulty.PEACEFUL
+            if (shallUpdate(world, TICKS_SECOND)
+                    && event.world.getDifficulty() != EnumDifficulty.PEACEFUL
                     && Configurations.doBarbariansSpawn
+                    && canHaveBarbEvents
                     && !world.getMinecraftServer().getPlayerList().getPlayers()
-                    .stream().filter(permissions::isSubscriber).collect(Collectors.toList()).isEmpty()
+                        .stream().filter(permissions::isSubscriber).collect(Collectors.toList()).isEmpty()
                     && MobEventsUtils.isItTimeToRaid(event.world, this))
             {
                 MobEventsUtils.barbarianEvent(event.world, this);
@@ -2062,9 +2069,19 @@ public class Colony implements IColony
 
     public void setWillRaidTonight(final Boolean willRaid)
     {
-        willRaidTonight = willRaid;
+        this.willRaidTonight = willRaid;
     }
 
+    public void setCanHaveBarbEvents(final Boolean canHave)
+    {
+        this.canHaveBarbEvents = canHave;
+    }
+
+    @Override
+    public boolean canHaveBarbEvents()
+    {
+        return canHaveBarbEvents;
+    }
 
     @Override
     public boolean canBeAutoDeleted()
