@@ -223,29 +223,10 @@ public final class MobEventsUtils
 
         for (@NotNull final CitizenData citizen : citizensList)
         {
-            if (citizen.getJob() != null && citizen.getWorkBuilding() != null)
-            {
-                final int buildingLevel = citizen.getWorkBuilding().getBuildingLevel();
-                levels += buildingLevel;
-            }
+            levels += citizen.getLevel();
         }
 
-        for(final AbstractBuilding building: colony.getBuildings().values())
-        {
-            if(building instanceof BuildingBarracks)
-            {
-                levels+= building.getBuildingLevel() * 2;
-            }
-        }
-
-        if (colony.getTownHall() != null)
-        {
-            return levels + colony.getTownHall().getBuildingLevel() * 2;
-        }
-        else
-        {
-            return levels;
-        }
+        return levels;
     }
 
     /**
