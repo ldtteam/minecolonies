@@ -21,7 +21,8 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntityFlowerPot;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -245,13 +246,15 @@ public final class StructureWrapper
                     else
                     {
                         delayedBlocks.add(localPos);
+                        continue;
                     }
 
-                    if (this.structure.getBlockInfo(localPos).tileentityData != null && world.getTileEntity(worldPos) instanceof TileEntityFlowerPot)
+                    final NBTTagCompound tileEntityData = this.structure.getBlockInfo(localPos).tileentityData;
+                    if (tileEntityData != null)
                     {
-                        final TileEntityFlowerPot tileentityflowerpot = (TileEntityFlowerPot) world.getTileEntity(worldPos);
-                        tileentityflowerpot.readFromNBT(this.structure.getBlockInfo(localPos).tileentityData);
-                        world.setTileEntity(worldPos, tileentityflowerpot);
+                        final TileEntity entity = TileEntity.create(world, tileEntityData);
+                        world.setTileEntity(worldPos, entity);
+                        world.markBlockRangeForRenderUpdate(worldPos, worldPos);
                     }
                 }
             }
@@ -264,11 +267,12 @@ public final class StructureWrapper
 
             handleBlockPlacement(newWorldPos, localState, complete);
 
-            if (this.structure.getBlockInfo(coords).tileentityData != null && world.getTileEntity(newWorldPos) instanceof TileEntityFlowerPot)
+            final NBTTagCompound tileEntityData = this.structure.getBlockInfo(coords).tileentityData;
+            if (tileEntityData != null)
             {
-                final TileEntityFlowerPot tileentityflowerpot = (TileEntityFlowerPot) world.getTileEntity(newWorldPos);
-                tileentityflowerpot.readFromNBT(this.structure.getBlockInfo(coords).tileentityData);
-                world.setTileEntity(newWorldPos, tileentityflowerpot);
+                final TileEntity entity = TileEntity.create(world, tileEntityData);
+                world.setTileEntity(newWorldPos, entity);
+                world.markBlockRangeForRenderUpdate(newWorldPos, newWorldPos);
             }
         }
 
