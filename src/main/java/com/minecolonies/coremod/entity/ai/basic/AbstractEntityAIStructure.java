@@ -724,7 +724,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * Handle flower pots and spawn the right flower in it.
      * @param pos the position.
      */
-    public void handleFlowerPots(@NotNull final BlockPos pos)
+    public void handleTileEntityPlacement(@NotNull final BlockPos pos)
     {
         /**
          * Should be overwritten and implemented by certain entity if required.
