@@ -111,9 +111,6 @@ public final class ModSoundEvents
         registry.register(ArcherSounds.Female.farewell);
         registry.register(ArcherSounds.Female.interaction);
 
-        registry.register(CitizenSounds.Female.say);
-        registry.register(CitizenSounds.Male.say);
-
         registry.register(BarbarianSounds.barbarianHurt);
         registry.register(BarbarianSounds.barbarianDeath);
         registry.register(BarbarianSounds.barbarianSay);
