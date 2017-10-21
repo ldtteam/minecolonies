@@ -21,6 +21,7 @@ import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.AchievementUtils;
 import com.minecolonies.coremod.util.ColonyUtils;
 import com.minecolonies.coremod.util.ServerUtils;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -138,6 +139,11 @@ public class Colony implements IColony
      * Whether or not this colony can be auto deleted. (set via command)
      */
     private boolean canColonyBeAutoDeleted = true;
+
+    /**
+     * Whether or not the raid has been calculated for today.
+     */
+    private boolean hasRaidBeenCalculated = false;
 
     /**
      * Whether or not this colony may have Barbarian events. (set via command)
@@ -2065,6 +2071,17 @@ public class Colony implements IColony
     public boolean hasWillRaidTonight()
     {
         return willRaidTonight;
+    }
+
+    public void setHasRaidBeenCalculated(final Boolean hasSet)
+    {
+        hasRaidBeenCalculated = hasSet;
+    }
+
+    @Override
+    public boolean hasRaidBeenCalculated()
+    {
+        return hasRaidBeenCalculated;
     }
 
     public void setWillRaidTonight(final Boolean willRaid)

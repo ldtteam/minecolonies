@@ -61,7 +61,7 @@ public final class MobEventsUtils
 
     public static void barbarianEvent(final World world, final Colony colony)
     {
-        if(world == null)
+        if(world == null || !colony.canHaveBarbEvents())
         {
             return;
         }
@@ -259,8 +259,9 @@ public final class MobEventsUtils
             return false;
         }
 
-        if (world.isDaytime())
+        if (world.isDaytime() && !colony.hasRaidBeenCalculated())
         {
+            colony.setHasRaidBeenCalculated(true);
             if(!colony.hasWillRaidTonight())
             {
                 final boolean raid = raidThisNight(world);
@@ -274,8 +275,9 @@ public final class MobEventsUtils
             }
             return false;
         }
-        else if (colony.hasWillRaidTonight())
+        else if (colony.hasWillRaidTonight() && !world.isDaytime() && colony.hasRaidBeenCalculated())
         {
+            colony.setHasRaidBeenCalculated(false);
             colony.setWillRaidTonight(false);
             if (Configurations.enableInDevelopmentFeatures)
             {
@@ -284,6 +286,10 @@ public final class MobEventsUtils
                         "Night reached: raiding");
             }
             return true;
+        }
+        else if (!world.isDaytime() && colony.hasRaidBeenCalculated())
+        {
+            colony.setHasRaidBeenCalculated(false);
         }
 
         return false;
