@@ -96,11 +96,11 @@ public interface IColony
      * return whether or not a colony is allowed to have barbarian events triggered.
      * @return true if so.
      */
-    boolean getCanHaveBarbEvents();
+    boolean isCanHaveBarbEvents();
 
     /**
      * return whether or not the colony has had it's "RaidTonight" calculated yet.
      * @return true if so.
      */
-    boolean getHasRaidBeenCalculated();
+    boolean isHasRaidBeenCalculated();
 }

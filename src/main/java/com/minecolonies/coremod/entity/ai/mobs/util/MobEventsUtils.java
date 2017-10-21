@@ -257,7 +257,7 @@ public final class MobEventsUtils
             return false;
         }
 
-        if (world.isDaytime() && !colony.getHasRaidBeenCalculated())
+        if (world.isDaytime() && !colony.isHasRaidBeenCalculated())
         {
             colony.setHasRaidBeenCalculated(true);
             if(!colony.hasWillRaidTonight())
@@ -273,7 +273,7 @@ public final class MobEventsUtils
             }
             return false;
         }
-        else if (colony.hasWillRaidTonight() && !world.isDaytime() && colony.getHasRaidBeenCalculated())
+        else if (colony.hasWillRaidTonight() && !world.isDaytime() && colony.isHasRaidBeenCalculated())
         {
             colony.setHasRaidBeenCalculated(false);
             colony.setWillRaidTonight(false);
@@ -285,7 +285,7 @@ public final class MobEventsUtils
             }
             return true;
         }
-        else if (!world.isDaytime() && colony.getHasRaidBeenCalculated())
+        else if (!world.isDaytime() && colony.isHasRaidBeenCalculated())
         {
             colony.setHasRaidBeenCalculated(false);
         }

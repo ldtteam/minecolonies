@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -73,7 +74,7 @@ public class DisableBarbarianSpawnsCommand extends AbstractSingleCommand
 
         colony.setCanHaveBarbEvents(setBarbsTo);
 
-        sender.sendMessage(new TextComponentString("Colony \" Can have Barbarian Events \" now set to: " + colony.getCanHaveBarbEvents()));
+        sender.sendMessage(new TextComponentString("Colony \" Can have Barbarian Events \" now set to: " + colony.isCanHaveBarbEvents()));
     }
 
     @NotNull
@@ -84,30 +85,8 @@ public class DisableBarbarianSpawnsCommand extends AbstractSingleCommand
                                                  @NotNull final String[] args,
                                                  @Nullable final BlockPos pos)
     {
-        final List<String> possibilities = new ArrayList<>();
 
-        if (args.length == 0)
-        {
-            for (final Colony colony : ColonyManager.getColonies())
-            {
-                possibilities.add(Integer.toString(colony.getID()));
-            }
-
-            return possibilities;
-        }
-        else if (args.length == 1)
-        {
-            final int colonyId = getIthArgument(args, 0, -1);
-
-            final Colony colony = ColonyManager.getColony(colonyId);
-
-            if (colony != null)
-            {
-                possibilities.add(Boolean.toString(!colony.getCanHaveBarbEvents()));
-            }
-        }
-
-        return possibilities;
+        return Collections.emptyList();
     }
 
     @Override
