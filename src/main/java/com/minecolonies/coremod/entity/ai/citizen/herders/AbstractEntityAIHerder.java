@@ -11,6 +11,7 @@ import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.EntityChicken;
+import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -512,6 +513,10 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
         if (getAnimalClass().equals(EntityChicken.class))
         {
             return Items.WHEAT_SEEDS;
+        }
+        if (getAnimalClass().equals(EntityPig.class))
+        {
+            return Items.CARROT;
         }
         else
         {
