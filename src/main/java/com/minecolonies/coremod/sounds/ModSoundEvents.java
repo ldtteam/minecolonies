@@ -25,6 +25,8 @@ public final class ModSoundEvents
         handlers.add(new FarmerSounds());
         handlers.add(new KnightSounds());
         handlers.add(new ArcherSounds());
+        handlers.add(new BakerSounds());
+
     }
 
     /**
@@ -106,6 +108,18 @@ public final class ModSoundEvents
 
         GameRegistry.register(CitizenSounds.Female.say);
         GameRegistry.register(CitizenSounds.Male.say);
+
+        GameRegistry.register(BakerSounds.Female.hostile);
+        GameRegistry.register(BakerSounds.Female.saturationHigh);
+        GameRegistry.register(BakerSounds.Female.saturationLow);
+        GameRegistry.register(BakerSounds.Female.saturationVeryLow);
+        GameRegistry.register(BakerSounds.Female.badWeather);
+        GameRegistry.register(BakerSounds.Female.offToBed);
+        GameRegistry.register(BakerSounds.Female.generalPhrases);
+        GameRegistry.register(BakerSounds.Female.noises);
+        GameRegistry.register(BakerSounds.Female.greeting);
+        GameRegistry.register(BakerSounds.Female.farewell);
+        GameRegistry.register(BakerSounds.Female.interaction);
 
         GameRegistry.register(BarbarianSounds.barbarianHurt);
         GameRegistry.register(BarbarianSounds.barbarianDeath);
