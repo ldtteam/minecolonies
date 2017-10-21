@@ -1,11 +1,8 @@
 package com.minecolonies.coremod.commands.colonycommands;
 
-import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
