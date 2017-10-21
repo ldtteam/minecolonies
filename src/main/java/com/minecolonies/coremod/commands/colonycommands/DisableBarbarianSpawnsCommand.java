@@ -5,6 +5,7 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -76,7 +77,7 @@ public class DisableBarbarianSpawnsCommand extends AbstractSingleCommand
 
         colony.setCanHaveBarbEvents(setBarbsTo);
 
-        sender.sendMessage(new TextComponentString("Colony \" Can have Barbarian Events \" now set to: " + colony.canHaveBarbEvents()));
+        sender.sendMessage(new TextComponentString("Colony \" Can have Barbarian Events \" now set to: " + colony.getCanHaveBarbEvents()));
     }
 
     @NotNull
@@ -93,7 +94,7 @@ public class DisableBarbarianSpawnsCommand extends AbstractSingleCommand
         {
             for (final Colony colony : ColonyManager.getColonies())
             {
-                possibilities.add("" + colony.getID());
+                possibilities.add(Integer.toString(colony.getID()));
             }
 
             return possibilities;
@@ -106,7 +107,7 @@ public class DisableBarbarianSpawnsCommand extends AbstractSingleCommand
 
             if (colony != null)
             {
-                possibilities.add("" + !colony.canHaveBarbEvents());
+                possibilities.add(Boolean.toString(!colony.getCanHaveBarbEvents()));
             }
         }
 

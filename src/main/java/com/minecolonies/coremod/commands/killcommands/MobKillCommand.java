@@ -25,7 +25,7 @@ public class MobKillCommand extends AbstractKillCommand<EntityMob>
     }
 
     @Override
-    Class<EntityMob> getEntityClass()
+    public Class<EntityMob> getEntityClass()
     {
         return EntityMob.class;
     }

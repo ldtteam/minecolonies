@@ -25,7 +25,7 @@ public class BarbarianKillCommand extends AbstractKillCommand<AbstractEntityBarb
     }
 
     @Override
-    Class<AbstractEntityBarbarian> getEntityClass()
+    public Class<AbstractEntityBarbarian> getEntityClass()
     {
         return AbstractEntityBarbarian.class;
     }

@@ -691,13 +691,13 @@ public final class ColonyView implements IColony
     }
 
     @Override
-    public boolean canHaveBarbEvents()
+    public boolean getCanHaveBarbEvents()
     {
         return false;
     }
 
     @Override
-    public boolean hasRaidBeenCalculated()
+    public boolean getHasRaidBeenCalculated()
     {
         return false;
     }

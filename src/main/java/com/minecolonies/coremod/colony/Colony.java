@@ -2079,7 +2079,7 @@ public class Colony implements IColony
     }
 
     @Override
-    public boolean hasRaidBeenCalculated()
+    public boolean getHasRaidBeenCalculated()
     {
         return hasRaidBeenCalculated;
     }
@@ -2095,7 +2095,7 @@ public class Colony implements IColony
     }
 
     @Override
-    public boolean canHaveBarbEvents()
+    public boolean getCanHaveBarbEvents()
     {
         return canHaveBarbEvents;
     }

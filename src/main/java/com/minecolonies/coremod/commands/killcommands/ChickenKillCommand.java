@@ -25,7 +25,7 @@ public class ChickenKillCommand extends AbstractKillCommand<EntityChicken>
     }
 
     @Override
-    Class<EntityChicken> getEntityClass()
+    public Class<EntityChicken> getEntityClass()
     {
         return EntityChicken.class;
     }

@@ -6,8 +6,6 @@ import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.BuildingBarracks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -259,7 +257,7 @@ public final class MobEventsUtils
             return false;
         }
 
-        if (world.isDaytime() && !colony.hasRaidBeenCalculated())
+        if (world.isDaytime() && !colony.getHasRaidBeenCalculated())
         {
             colony.setHasRaidBeenCalculated(true);
             if(!colony.hasWillRaidTonight())
@@ -275,7 +273,7 @@ public final class MobEventsUtils
             }
             return false;
         }
-        else if (colony.hasWillRaidTonight() && !world.isDaytime() && colony.hasRaidBeenCalculated())
+        else if (colony.hasWillRaidTonight() && !world.isDaytime() && colony.getHasRaidBeenCalculated())
         {
             colony.setHasRaidBeenCalculated(false);
             colony.setWillRaidTonight(false);
@@ -287,7 +285,7 @@ public final class MobEventsUtils
             }
             return true;
         }
-        else if (!world.isDaytime() && colony.hasRaidBeenCalculated())
+        else if (!world.isDaytime() && colony.getHasRaidBeenCalculated())
         {
             colony.setHasRaidBeenCalculated(false);
         }

@@ -25,7 +25,7 @@ public class SheepKillCommand extends AbstractKillCommand<EntitySheep>
     }
 
     @Override
-    Class<EntitySheep> getEntityClass()
+    public Class<EntitySheep> getEntityClass()
     {
         return EntitySheep.class;
     }

@@ -35,7 +35,7 @@ public abstract class AbstractKillCommand<T extends Entity> extends AbstractSing
      *
      * @return The {@link Class} of the Entity.
      */
-    abstract Class<T> getEntityClass();
+    public abstract Class<T> getEntityClass();
 
     /**
      * Initialize this SubCommand with it's parents.
