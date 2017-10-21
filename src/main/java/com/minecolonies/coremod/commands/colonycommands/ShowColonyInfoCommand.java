@@ -131,7 +131,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
         sender.sendMessage(new TextComponentString(String.format(LAST_CONTACT_TEXT, colony.getLastContactInHours())));
         sender.sendMessage(new TextComponentString(IS_DELETABLE + !colony.canBeAutoDeleted()));
 
-        if (!colony.canHaveBarbEvents())
+        if (!colony.isCanHaveBarbEvents())
         {
             sender.sendMessage(new TextComponentString(CANNOT_BE_RAIDED));
         }

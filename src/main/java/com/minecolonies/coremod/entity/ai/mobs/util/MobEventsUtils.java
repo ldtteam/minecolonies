@@ -59,7 +59,7 @@ public final class MobEventsUtils
 
     public static void barbarianEvent(final World world, final Colony colony)
     {
-        if(world == null || !colony.canHaveBarbEvents())
+        if(world == null || !colony.isCanHaveBarbEvents())
         {
             return;
         }
