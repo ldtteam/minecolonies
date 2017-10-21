@@ -160,6 +160,7 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
             if (buttonPrevPage != null)
             {
                 buttonPrevPage.disable();
+                buttonPrevPage.hide();
             }
 
             if (title != null)
@@ -181,11 +182,15 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
                 findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
                 buttonPrevPage.setEnabled(false);
                 buttonNextPage.setEnabled(true);
+                buttonPrevPage.hide();
+                buttonNextPage.show();
                 break;
             case BUTTON_NEXTPAGE:
                 findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
                 buttonPrevPage.setEnabled(true);
                 buttonNextPage.setEnabled(false);
+                buttonPrevPage.show();
+                buttonNextPage.hide();
                 break;
             default:
                 super.onButtonClicked(button);

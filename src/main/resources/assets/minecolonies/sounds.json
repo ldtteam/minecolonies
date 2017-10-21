@@ -2239,7 +2239,7 @@
       {
         "name": "minecolonies:mob/baker/female/yessir",
         "stream": false
-      },
+      }
     ]
   },
 
@@ -2265,9 +2265,10 @@
       {
         "name": "minecolonies:mob/baker/female/hi",
         "stream": false
-      },
+      }
     ]
   },
+
   "mob.baker.female.farewell": {
     "category": "neutral",
     "sounds": [
@@ -2286,9 +2287,10 @@
       {
         "name": "minecolonies:mob/baker/female/goodbye",
         "stream": false
-      },
+      }
     ]
   },
+
   "mob.baker.female.generalPhrases": {
     "category": "neutral",
     "sounds": [
@@ -2510,6 +2512,5 @@
       }
     ]
   }
-
 
 }
