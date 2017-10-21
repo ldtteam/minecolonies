@@ -111,12 +111,23 @@ public final class BakerSounds extends AbstractWorkerSounds
         return "Deliveryman";
     }
 
+    /**
+     * Play interaction sound.
+     *
+     * @param worldIn  world to play it in.
+     * @param position position to play it at.
+     * @param isFemale the gender.
+     */
     @Override
-    public void playInteractionSound(final World world, final BlockPos position, final boolean female)
+    public void playInteractionSound(final World worldIn, final BlockPos position, final boolean isFemale)
     {
-        /**
-         * Do nothing, we have nothing for this worker.
-         */
+        //While there are no male sounds
+        if (!isFemale)
+        {
+            return;
+        }
+
+        SoundUtils.playSoundAtCitizenWithChance(worldIn, position, BakerSounds.Female.interaction, getBasicSoundChance());
     }
 
     /**
