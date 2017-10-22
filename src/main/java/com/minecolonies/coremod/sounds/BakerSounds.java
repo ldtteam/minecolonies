@@ -108,7 +108,7 @@ public final class BakerSounds extends AbstractWorkerSounds
     @Override
     public String getWorkerString()
     {
-        return "Deliveryman";
+        return "Baker";
     }
 
     /**
