@@ -29,6 +29,9 @@ public final class ModSoundEvents
         handlers.add(new FarmerSounds());
         handlers.add(new KnightSounds());
         handlers.add(new ArcherSounds());
+        handlers.add(new BakerSounds());
+        handlers.add(new BuilderSounds());
+
     }
 
     /**
@@ -110,6 +113,31 @@ public final class ModSoundEvents
         registry.register(ArcherSounds.Female.greeting);
         registry.register(ArcherSounds.Female.farewell);
         registry.register(ArcherSounds.Female.interaction);
+
+        registry.register(BakerSounds.Female.hostile);
+        registry.register(BakerSounds.Female.saturationHigh);
+        registry.register(BakerSounds.Female.saturationLow);
+        registry.register(BakerSounds.Female.saturationVeryLow);
+        registry.register(BakerSounds.Female.badWeather);
+        registry.register(BakerSounds.Female.offToBed);
+        registry.register(BakerSounds.Female.generalPhrases);
+        registry.register(BakerSounds.Female.noises);
+        registry.register(BakerSounds.Female.greeting);
+        registry.register(BakerSounds.Female.farewell);
+        registry.register(BakerSounds.Female.interaction);
+
+        registry.register(BuilderSounds.Female.hostile);
+        registry.register(BuilderSounds.Female.saturationHigh);
+        registry.register(BuilderSounds.Female.saturationLow);
+        registry.register(BuilderSounds.Female.saturationVeryLow);
+        registry.register(BuilderSounds.Female.badWeather);
+        registry.register(BuilderSounds.Female.offToBed);
+        registry.register(BuilderSounds.Female.generalPhrases);
+        registry.register(BuilderSounds.Female.noises);
+        registry.register(BuilderSounds.Female.greeting);
+        registry.register(BuilderSounds.Female.farewell);
+        registry.register(BuilderSounds.Female.interaction);
+        registry.register(BuilderSounds.Female.complete);
 
         registry.register(BarbarianSounds.barbarianHurt);
         registry.register(BarbarianSounds.barbarianDeath);

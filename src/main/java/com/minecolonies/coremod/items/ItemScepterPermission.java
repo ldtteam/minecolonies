@@ -82,8 +82,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
             final float hitZ)
     {
         final ItemStack scepter = playerIn.getHeldItem(hand);
-
-        if (worldIn.isRemote)
+        if (!worldIn.isRemote)
         {
             return EnumActionResult.SUCCESS;
         }
