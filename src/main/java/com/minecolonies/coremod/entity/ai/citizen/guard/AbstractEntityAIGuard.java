@@ -70,6 +70,11 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
     private static final double HEIGHT_DETECTION_RANGE = 10D;
 
     /**
+     * Max tries to find a position to path to.
+     */
+    private static final int MAX_TRIES = 10;
+
+    /**
      * Path that close to the patrol target.
      */
     private static final int PATH_CLOSE = 2;
@@ -540,6 +545,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
 
         final Random random = new Random();
 
+        int tries = 0;
         BlockPos pos = null;
         while (pos == null
                 || world.getBlockState(pos).getMaterial().isLiquid()
@@ -554,6 +560,13 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAIInteract<Job
                             .up(random.nextInt(UP_DOWN_RANGE))
                             .down(random.nextInt(UP_DOWN_RANGE));
             lastDirection = direction;
+
+            if(tries >= MAX_TRIES)
+            {
+                return this.getOwnBuilding().getLocation();
+            }
+
+            tries++;
         }
 
 

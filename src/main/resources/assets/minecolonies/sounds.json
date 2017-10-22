@@ -2143,5 +2143,744 @@
         "stream": false
       }
     ]
+  },
+
+  "mob.baker.female.levelup": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/baker/female/igetbetter",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.baker.female.hostile": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/baker/female/dangernear",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/helphelp",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/healme",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/healorbread",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/healplease",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/monstersblock",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/monstersbread",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.baker.female.interaction": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/baker/female/helpyouwiththat",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/ifyousayso",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/rightaway",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/whatcanido",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/whatisit",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/whatsittoday",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/whatwillitbe",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/whyyes",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/youaresowise",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/yourefunny",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/yesmlord",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/yessir",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.baker.female.greeting": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/baker/female/goodday",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/greattoseeyou",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/hello",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/hellothere",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/hi",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.baker.female.farewell": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/baker/female/backtoworkthen",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/byebye",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/byenow",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/goodbye",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.baker.female.generalPhrases": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/baker/female/beautifulweather",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/cheersluv",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/familyspace",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/fineweather",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/funkysmell",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/goodcrop",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/goingtofireme",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/greatdaytowork",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/howsthework",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/lovelivinghere",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/lovelyweather",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/no",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/notgoodenough",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/rightaway",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/surelovesmell",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/tellmeadventures",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/takecareofit",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/uhyeah",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.baker.female.noise": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/baker/female/ahem",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/breadburning",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/cough",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/coughing",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/finemorning",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/firstthedough",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/freshbread",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/groan",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/lookinggood",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/lovedancing",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/lovesinging",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/lovethatsmell",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/oneintheoven",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/shitethebread",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/sigh",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.baker.female.saturationVeryLow": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/baker/female/imstarving",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/dayssinceiate",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.baker.female.saturationLow": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/baker/female/havesomebread",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/imhungry",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.baker.female.saturationHigh": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/baker/female/eattoomuch",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.baker.female.badWeather": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/baker/female/dontlikerain",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/notgoingtowork",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/sawthesun",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/terriblerain",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.baker.female.offToBed": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/baker/female/timetosleep",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/yawn",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/baker/female/yawning",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.builder.female.levelup": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/builder/female/igetbetter",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.builder.female.hostile": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/builder/female/dangernear",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/healme",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/help",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/monstersblock",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.builder.female.interaction": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/builder/female/bestwork",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/helpyouwiththat",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/ifyousayso",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/lackingresources",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/whatcanido",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/whatisit",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/whatsittoday",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/yesmlord",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/yessir",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/youaresowise",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.builder.female.greeting": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/builder/female/goodday",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/goodtoseeyou",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/greattoseeyou",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/hellothere",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/hi",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.builder.female.farewell": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/builder/female/backtoworkthen",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/goodbye",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.builder.female.generalPhrases": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/builder/female/beautifulweather",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/buildfaster",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/doneworking",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/familyspace",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/fineday",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/fireme",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/getstarted",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/goodenough",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/greatday",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/howsthework",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/livinghere",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/lovelyweather",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/moresupplies",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/newhouse",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/no",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/rightaway",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/roofoverhead",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/sorefreshing",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/sorewarding",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/strongenough",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/takecareofit",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/tilmonday",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/uhyeah",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/upgrade",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/weekends",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/whatsnext",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/yes",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.builder.female.noise": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/builder/female/alltheday",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/coughing",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/freshtimber",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/humming",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/laughter",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/lovebuilding",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/sigh",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/singing",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/sniffing",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/waitingforwood",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/whistle",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.builder.female.complete": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/builder/female/projectcomplete",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/imdone",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.builder.female.saturationVeryLow": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/builder/female/imstarving",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/dayssinceiate",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.builder.female.saturationLow": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/builder/female/imhungry",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.builder.female.saturationHigh": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/builder/female/eattoomuch",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.builder.female.badWeather": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/builder/female/badweather",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/sawthesun",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/somebadweather",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/stopraining",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/terriblerain",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.builder.female.offToBed": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/builder/female/timetosleep",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/builder/female/yawn",
+        "stream": false
+      }
+    ]
   }
+
 }

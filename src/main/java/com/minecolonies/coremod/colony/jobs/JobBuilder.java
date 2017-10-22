@@ -7,7 +7,9 @@ import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.builder.EntityAIStructureBuilder;
+import com.minecolonies.coremod.sounds.BuilderSounds;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.SoundEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -160,5 +162,38 @@ public class JobBuilder extends AbstractJobStructure
         {
             workOrderId = order.getID();
         }
+    }
+
+    @Nullable
+    @Override
+    public SoundEvent getBadWeatherSound()
+    {
+        if (getCitizen() != null)
+        {
+            return getCitizen().isFemale() ? BuilderSounds.Female.badWeather : null;
+        }
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public SoundEvent getBedTimeSound()
+    {
+        if (getCitizen() != null)
+        {
+            return getCitizen().isFemale() ? BuilderSounds.Female.offToBed : null;
+        }
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public SoundEvent getMoveAwaySound()
+    {
+        if (getCitizen() != null)
+        {
+            return getCitizen().isFemale() ? BuilderSounds.Female.hostile : null;
+        }
+        return null;
     }
 }
