@@ -29,6 +29,9 @@ public final class ModSoundEvents
         handlers.add(new FarmerSounds());
         handlers.add(new KnightSounds());
         handlers.add(new ArcherSounds());
+        handlers.add(new BakerSounds());
+        handlers.add(new BuilderSounds());
+
     }
 
     /**
@@ -111,9 +114,34 @@ public final class ModSoundEvents
         registry.register(ArcherSounds.Female.farewell);
         registry.register(ArcherSounds.Female.interaction);
 
-        registry.register(BarbarianSounds.barbarianHurt);
-        registry.register(BarbarianSounds.barbarianDeath);
-        registry.register(BarbarianSounds.barbarianSay);
+        GameRegistry.register(BakerSounds.Female.hostile);
+        GameRegistry.register(BakerSounds.Female.saturationHigh);
+        GameRegistry.register(BakerSounds.Female.saturationLow);
+        GameRegistry.register(BakerSounds.Female.saturationVeryLow);
+        GameRegistry.register(BakerSounds.Female.badWeather);
+        GameRegistry.register(BakerSounds.Female.offToBed);
+        GameRegistry.register(BakerSounds.Female.generalPhrases);
+        GameRegistry.register(BakerSounds.Female.noises);
+        GameRegistry.register(BakerSounds.Female.greeting);
+        GameRegistry.register(BakerSounds.Female.farewell);
+        GameRegistry.register(BakerSounds.Female.interaction);
+
+        GameRegistry.register(BuilderSounds.Female.hostile);
+        GameRegistry.register(BuilderSounds.Female.saturationHigh);
+        GameRegistry.register(BuilderSounds.Female.saturationLow);
+        GameRegistry.register(BuilderSounds.Female.saturationVeryLow);
+        GameRegistry.register(BuilderSounds.Female.badWeather);
+        GameRegistry.register(BuilderSounds.Female.offToBed);
+        GameRegistry.register(BuilderSounds.Female.generalPhrases);
+        GameRegistry.register(BuilderSounds.Female.noises);
+        GameRegistry.register(BuilderSounds.Female.greeting);
+        GameRegistry.register(BuilderSounds.Female.farewell);
+        GameRegistry.register(BuilderSounds.Female.interaction);
+        GameRegistry.register(BuilderSounds.Female.complete);
+
+        GameRegistry.register(BarbarianSounds.barbarianHurt);
+        GameRegistry.register(BarbarianSounds.barbarianDeath);
+        GameRegistry.register(BarbarianSounds.barbarianSay);
     }
 
     /**
