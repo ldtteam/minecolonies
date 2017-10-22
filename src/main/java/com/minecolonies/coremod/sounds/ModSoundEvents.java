@@ -114,34 +114,34 @@ public final class ModSoundEvents
         registry.register(ArcherSounds.Female.farewell);
         registry.register(ArcherSounds.Female.interaction);
 
-        GameRegistry.register(BakerSounds.Female.hostile);
-        GameRegistry.register(BakerSounds.Female.saturationHigh);
-        GameRegistry.register(BakerSounds.Female.saturationLow);
-        GameRegistry.register(BakerSounds.Female.saturationVeryLow);
-        GameRegistry.register(BakerSounds.Female.badWeather);
-        GameRegistry.register(BakerSounds.Female.offToBed);
-        GameRegistry.register(BakerSounds.Female.generalPhrases);
-        GameRegistry.register(BakerSounds.Female.noises);
-        GameRegistry.register(BakerSounds.Female.greeting);
-        GameRegistry.register(BakerSounds.Female.farewell);
-        GameRegistry.register(BakerSounds.Female.interaction);
+        registry.register(BakerSounds.Female.hostile);
+        registry.register(BakerSounds.Female.saturationHigh);
+        registry.register(BakerSounds.Female.saturationLow);
+        registry.register(BakerSounds.Female.saturationVeryLow);
+        registry.register(BakerSounds.Female.badWeather);
+        registry.register(BakerSounds.Female.offToBed);
+        registry.register(BakerSounds.Female.generalPhrases);
+        registry.register(BakerSounds.Female.noises);
+        registry.register(BakerSounds.Female.greeting);
+        registry.register(BakerSounds.Female.farewell);
+        registry.register(BakerSounds.Female.interaction);
 
-        GameRegistry.register(BuilderSounds.Female.hostile);
-        GameRegistry.register(BuilderSounds.Female.saturationHigh);
-        GameRegistry.register(BuilderSounds.Female.saturationLow);
-        GameRegistry.register(BuilderSounds.Female.saturationVeryLow);
-        GameRegistry.register(BuilderSounds.Female.badWeather);
-        GameRegistry.register(BuilderSounds.Female.offToBed);
-        GameRegistry.register(BuilderSounds.Female.generalPhrases);
-        GameRegistry.register(BuilderSounds.Female.noises);
-        GameRegistry.register(BuilderSounds.Female.greeting);
-        GameRegistry.register(BuilderSounds.Female.farewell);
-        GameRegistry.register(BuilderSounds.Female.interaction);
-        GameRegistry.register(BuilderSounds.Female.complete);
+        registry.register(BuilderSounds.Female.hostile);
+        registry.register(BuilderSounds.Female.saturationHigh);
+        registry.register(BuilderSounds.Female.saturationLow);
+        registry.register(BuilderSounds.Female.saturationVeryLow);
+        registry.register(BuilderSounds.Female.badWeather);
+        registry.register(BuilderSounds.Female.offToBed);
+        registry.register(BuilderSounds.Female.generalPhrases);
+        registry.register(BuilderSounds.Female.noises);
+        registry.register(BuilderSounds.Female.greeting);
+        registry.register(BuilderSounds.Female.farewell);
+        registry.register(BuilderSounds.Female.interaction);
+        registry.register(BuilderSounds.Female.complete);
 
-        GameRegistry.register(BarbarianSounds.barbarianHurt);
-        GameRegistry.register(BarbarianSounds.barbarianDeath);
-        GameRegistry.register(BarbarianSounds.barbarianSay);
+        registry.register(BarbarianSounds.barbarianHurt);
+        registry.register(BarbarianSounds.barbarianDeath);
+        registry.register(BarbarianSounds.barbarianSay);
     }
 
     /**
