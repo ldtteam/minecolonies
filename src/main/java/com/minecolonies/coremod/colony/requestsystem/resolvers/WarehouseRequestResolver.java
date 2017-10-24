@@ -7,9 +7,12 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.buildings.BuildingWareHouse;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -18,7 +21,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * ----------------------- Not Documented Object ---------------------
@@ -42,13 +47,12 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
     @Override
     public boolean canResolve(@NotNull final IRequestManager manager, final IRequest<? extends IDeliverable> requestToCheck)
     {
-        final TileEntity tileEntity = manager.getColony().getWorld().getTileEntity(getRequesterLocation().getInDimensionLocation());
-
-        if (tileEntity instanceof TileEntityWareHouse)
+        if (!manager.getColony().getWorld().isRemote)
         {
-            final TileEntityWareHouse wareHouse = (TileEntityWareHouse) tileEntity;
+            Colony colony = (Colony) manager.getColony();
+            Set<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
 
-            return wareHouse.isInHut(requestToCheck.getRequest()::matches);
+            return wareHouses.stream().anyMatch(wareHouse -> wareHouse.hasMatchinItemStackInWarehouse(requestToCheck.getRequest()::matches));
         }
 
         return false;
@@ -63,6 +67,22 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
     public List<IToken> attemptResolve(
                                         @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
+        if (manager.getColony().getWorld().isRemote)
+            return null;
+
+        Colony colony = (Colony) manager.getColony();
+        Set<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
+
+        for(TileEntityWareHouse wareHouse : wareHouses) {
+            ItemStack matchingStack = wareHouse.getFirstMatchingItemStackInWarehouse(request.getRequest()::matches);
+            if (ItemStackUtils.isEmpty(matchingStack))
+                continue;
+
+            request.setDelivery(matchingStack);
+        }
+
+
+
         final TileEntity tileEntity = manager.getColony().getWorld().getTileEntity(getRequesterLocation().getInDimensionLocation());
 
         if (tileEntity instanceof TileEntityWareHouse)
@@ -83,7 +103,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
 
     @Nullable
     @Override
-    public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<ItemStack> request)
+    public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
         //Noop delivery has been completed
     }
@@ -91,7 +111,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
     @Nullable
     @Override
     public IRequest getFollowupRequestForCompletion(
-                                                     @NotNull final IRequestManager manager, @NotNull final IRequest<ItemStack> completedRequest)
+                                                     @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> completedRequest)
     {
         //No followup needed.
         return null;
@@ -99,14 +119,14 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
 
     @Nullable
     @Override
-    public IRequest onParentCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<ItemStack> request)
+    public IRequest onParentCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
         return null;
     }
 
     @Nullable
     @Override
-    public void onResolvingOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<ItemStack> request)
+    public void onResolvingOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
     }
 
@@ -114,6 +134,14 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
     @Override
     public void onRequestComplete(@NotNull final IToken token)
     {
+    }
+
+    private Set<TileEntityWareHouse> getWareHousesInColony(Colony colony)
+    {
+        return colony.getBuildings().values().stream()
+                 .filter(building -> building instanceof BuildingWareHouse)
+                 .map(building -> (TileEntityWareHouse) building.getTileEntity())
+                 .collect(Collectors.toSet());
     }
 
     @SuppressWarnings("squid:S2972")

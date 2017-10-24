@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -208,6 +207,16 @@ public interface IRequest<R>
      */
     @NotNull
     ItemStack getDelivery();
+
+    /**
+     * Method used to set the delivery on a Request.
+     * Should set the result.
+     *
+     * Noop this if it is not supported.
+     *
+     * @param delivery The delivery that is being made.
+     */
+    void setDelivery(@Nullable final ItemStack delivery);
 
     /**
      * Method used to get a {@link ITextComponent} that can be displayed to the Player.
