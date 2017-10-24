@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
@@ -18,8 +19,12 @@ import org.jetbrains.annotations.Nullable;
  */
 public class JobDeliveryman extends AbstractJob
 {
-    private static final String TAG_DESTINATION = "destination";
-    private BlockPos destination;
+    private static final String TAG_CURRENT_TASK = "currentTask";
+    private static final String TAG_RETURNING = "returning";
+
+    private IToken currentTask;
+
+    private boolean returning;
 
     /**
      * Instantiates the job for the deliveryman.
@@ -35,9 +40,9 @@ public class JobDeliveryman extends AbstractJob
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
-        if (compound.hasKey(TAG_DESTINATION))
+        if (compound.hasKey(TAG_CURRENT_TASK))
         {
-            destination = BlockPosUtil.readFromNBT(compound, TAG_DESTINATION);
+            currentTask = StandardFactoryController.getInstance().deserialize(compound.getCompoundTag(TAG_CURRENT_TASK));
         }
     }
 
@@ -59,9 +64,9 @@ public class JobDeliveryman extends AbstractJob
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        if (hasDestination())
+        if (hasTask())
         {
-            BlockPosUtil.writeToNBT(compound, TAG_DESTINATION, destination);
+            compound.setTag(TAG_CURRENT_TASK, StandardFactoryController.getInstance().serialize(currentTask));
         }
     }
 
@@ -110,38 +115,51 @@ public class JobDeliveryman extends AbstractJob
     }
 
     /**
-     * Returns whether or not the job has a destination.
+     * Returns whether or not the job has a currentTask.
      *
-     * @return true if has destination, otherwise false.
+     * @return true if has currentTask, otherwise false.
      */
-    public boolean hasDestination()
+    public boolean hasTask()
     {
-        return destination != null;
-    }
-
-    public boolean isNeeded()
-    {
-        final Colony colony = getCitizen().getColony();
-        return colony != null && !colony.getDeliverymanRequired().isEmpty();
+        return currentTask != null || returning;
     }
 
     /**
-     * Returns the {@link BlockPos} of the destination.
+     * Returns the {@link IToken} of the current Task.
      *
-     * @return {@link BlockPos} of the destination.
+     * @return {@link IToken} of the current Task.
      */
-    public BlockPos getDestination()
+    public IToken getCurrentTask()
     {
-        return destination;
+        return currentTask;
     }
 
     /**
-     * Sets the destination of the job.
+     * Sets the current task of the job.
      *
-     * @param destination {@link BlockPos} of the destination.
+     * @param currentTask {@link IToken} of the current task.
      */
-    public void setDestination(final BlockPos destination)
+    public void setCurrentTask(final IToken currentTask)
     {
-        this.destination = destination;
+        this.currentTask = currentTask;
+    }
+
+    /**
+     * Method used to check if this DMan is trying to return to the warehouse to clean up.
+     * @return True when this DMan is returning the warehouse to clean his inventory.
+     */
+    public boolean getReturning()
+    {
+        return returning;
+    }
+
+    /**
+     * Method used to set if this DMan needs to return and clear his inventory.
+     * A set task is preferred over the returning flag.
+     * @param returning True to return the DMan to the warehouse and clean, false not to.
+     */
+    public void setReturning(final boolean returning)
+    {
+        this.returning = returning;
     }
 }

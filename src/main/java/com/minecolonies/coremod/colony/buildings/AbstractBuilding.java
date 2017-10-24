@@ -1,11 +1,14 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.RequestState;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.Tool;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
+import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
+import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.IToolType;
@@ -58,7 +61,7 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_H
  *
  */
 @SuppressWarnings("squid:S2390")
-public abstract class AbstractBuilding
+public abstract class AbstractBuilding implements IRequestResolverProvider
 {
     /**
      * Tag used to store the containers to NBT.
@@ -1091,7 +1094,7 @@ public abstract class AbstractBuilding
      */
     public IToolType getNeedsTool(CitizenData citizenData)
     {
-        final ImmutableList<IRequest<Tool>> openToolRequests = getOpenRequestsOfType(citizenData, Tool.class);
+        final ImmutableList<IRequest<? extends Tool>> openToolRequests = getOpenRequestsOfType(citizenData, Tool.class);
         if (openToolRequests.isEmpty())
             return ToolType.NONE;
 
@@ -1107,8 +1110,8 @@ public abstract class AbstractBuilding
      */
     public int getNeededToolLevel(@NotNull final CitizenData data, @NotNull final IToolType type)
     {
-        final ImmutableList<IRequest<Tool>> openToolRequests = getOpenRequestsOfType(data, Tool.class);
-        for(IRequest<Tool> toolRequest : openToolRequests)
+        final ImmutableList<IRequest<? extends Tool>> openToolRequests = getOpenRequestsOfType(data, Tool.class);
+        for(IRequest<? extends Tool> toolRequest : openToolRequests)
         {
             if (toolRequest.getRequest().getToolClass().equals(type))
             {
@@ -1355,6 +1358,18 @@ public abstract class AbstractBuilding
         }
 
         getColony().getRequestManager().updateRequestState(token, RequestState.RECEIVED);
+    }
+
+    @Override
+    public IToken getToken()
+    {
+        return requestor.getRequesterId();
+    }
+
+    @Override
+    public ImmutableCollection<IRequestResolver> getResolvers()
+    {
+        return ImmutableList.of();
     }
 
     /**

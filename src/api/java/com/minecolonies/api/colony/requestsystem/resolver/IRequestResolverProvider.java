@@ -13,11 +13,10 @@ public interface IRequestResolverProvider
 {
 
     /**
-     * Unique token identifying this provider inside the request management system-
-     * @param <T> generic token.
+     * Unique token identifying this provider inside the request management system.
      * @return the token.
      */
-    <T extends IToken> T getToken();
+    IToken getToken();
 
     /**
      * Method to get the resolvers that this provider provides.

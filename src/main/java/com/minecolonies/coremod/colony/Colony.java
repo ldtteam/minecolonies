@@ -1889,16 +1889,6 @@ public class Colony implements IColony
         return null;
     }
 
-    public List<BlockPos> getDeliverymanRequired()
-    {
-
-        return citizens.values().stream()
-                 .filter(citizen -> citizen.getWorkBuilding() != null && citizen.getJob() != null)
-                 .filter(citizen -> !citizen.getJob().isMissingNeededItem())
-                 .map(citizen -> citizen.getWorkBuilding().getLocation())
-                 .collect(Collectors.toList());
-    }
-
     /**
      * Performed when a building of this colony finished his upgrade state.
      *

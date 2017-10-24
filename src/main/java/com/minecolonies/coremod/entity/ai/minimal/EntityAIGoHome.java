@@ -133,7 +133,6 @@ public class EntityAIGoHome extends EntityAIBase
                 && citizen.getCitizenData() != null && citizen.getCitizenData().getSaturation() < EntityCitizen.HIGH_SATURATION)
         {
             final double currentSaturation = citizen.getCitizenData().getSaturation();
-            boolean tookFood = false;
             final AbstractBuilding home = citizen.getColony().getBuilding(pos);
             if (home instanceof BuildingHome && currentSaturation < EntityCitizen.FULL_SATURATION)
             {
@@ -159,7 +158,6 @@ public class EntityAIGoHome extends EntityAIBase
                             ItemStackUtils.setSize(copy, 1);
                             citizen.getInventoryCitizen().setInventorySlotContents(slotToSet, copy);
                         }
-                        tookFood = true;
                         ItemStackUtils.changeSize(stack, -1);
 
                         if(ItemStackUtils.getSize(stack) <= 0)
@@ -170,38 +168,6 @@ public class EntityAIGoHome extends EntityAIBase
                     ((BuildingHome) home).checkIfFoodNeeded();
                 }
             }
-            if (!tookFood && home != null)
-            {
-                requestFoodIfRequired(currentSaturation, home);
-            }
-        }
-    }
-
-    private void requestFoodIfRequired(final double currentSaturation, @NotNull final AbstractBuilding home)
-    {
-        if (!(home instanceof BuildingHome) || (((BuildingHome) home).isFoodNeeded() && !((BuildingHome)home).hasOnGoingDelivery()))
-        {
-            if (currentSaturation <= 0)
-            {
-                chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_SATURATION_0);
-            }
-            else if (currentSaturation < EntityCitizen.LOW_SATURATION)
-            {
-                chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_SATURATION_3);
-            }
-            else if (currentSaturation < EntityCitizen.AVERAGE_SATURATION)
-            {
-                chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_SATURATION_5);
-            }
-            else if (currentSaturation < EntityCitizen.HIGH_SATURATION)
-            {
-                chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_SATURATION_7);
-            }
-        }
-
-        if(home instanceof BuildingHome)
-        {
-            ((BuildingHome)home).setFoodNeeded(true);
         }
     }
 

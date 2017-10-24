@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
@@ -10,6 +11,7 @@ import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolLevelConstants;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
@@ -173,7 +175,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 /**
                  * Reset to idle if no specific tool is needed.
                  */
-          new AITarget(() -> getState() == NEEDS_TOOL && this.getOwnBuilding().needsTool(ToolType.NONE), IDLE)
+          new AITarget(() -> getState() == NEEDS_TOOL && this.getOwnBuilding().getOpenRequestsOfType(worker.getCitizenData(), Tool.class).isEmpty(), IDLE)
         );
     }
 
@@ -183,7 +185,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @return the building associated with this AI's worker.
      */
     @Nullable
-    protected AbstractBuildingWorker getOwnBuilding()
+    public AbstractBuildingWorker getOwnBuilding()
     {
         return worker.getWorkBuilding();
     }
@@ -928,158 +930,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Require that items are in the workers inventory.
-     * This safeguard ensures you have said items before you execute a task.
-     * Please stop execution on false returned.
-     *
-     * @param items the items needed
-     * @return false if they are in inventory
-     */
-    public boolean checkOrRequestItems(@Nullable final ItemStack... items)
-    {
-        return checkOrRequestItems(true, items);
-    }
-
-    /**
-     * Require that items are in the workers inventory.
-     * This safeguard ensures you have said items before you execute a task.
-     * Please stop execution on false returned.
-     *
-     * @param useItemDamage compare the itemDamage of the values.
-     * @param items         the items needed
-     * @return false if they are in inventory
-     */
-    public boolean checkOrRequestItems(final boolean useItemDamage, @Nullable final ItemStack... items)
-    {
-        if (items == null)
-        {
-            return false;
-        }
-        boolean allClear = true;
-        for (final @Nullable ItemStack tempStack : items)
-        {
-            if (ItemStackUtils.isEmpty(tempStack))
-            {
-                continue;
-            }
-            final ItemStack stack = tempStack.copy();
-
-
-            final int itemDamage = useItemDamage ? stack.getItemDamage() : -1;
-            final int countOfItem = worker.getItemCountInInventory(stack.getItem(), itemDamage);
-
-            if (countOfItem < 1)
-            {
-                final int itemsLeft = ItemStackUtils.getSize(stack) - countOfItem;
-                @NotNull final ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft, itemDamage);
-                final Stack request = new Stack(requiredStack);
-                getOwnBuilding().createRequest(worker.getCitizenData(), request);
-                allClear = false;
-            }
-            //todo we need to find a way to cancel existing requests.
-            /*else
-            {
-                getOwnBuilding().clearNeededItems();
-            }*/
-        }
-        if (allClear)
-        {
-            return false;
-        }
-        itemsNeeded.clear();
-        Collections.addAll(itemsNeeded, items);
-        return true;
-    }
-
-    /**
-     * Require that items are in the workers inventory.
-     * This safeguard ensures you have said items before you execute a task.
-     * This doesn't stop execution on false returned.
-     * It does request asynchronously and make sure nothing is added twice.
-     *
-     * @param useItemDamage compare the itemDamage of the values.
-     * @param items         the items needed
-     * @return false if they are in inventory
-     */
-    public boolean checkOrRequestItemsAsynch(final boolean useItemDamage, @Nullable final ItemStack... items)
-    {
-        if (items == null)
-        {
-            return false;
-        }
-        boolean allClear = true;
-        for (final @Nullable ItemStack tempStack : items)
-        {
-            final ItemStack stack = tempStack.copy();
-            if (ItemStackUtils.isEmpty(stack))
-            {
-                continue;
-            }
-            final int itemDamage = useItemDamage ? stack.getItemDamage() : -1;
-            final int countOfItem = worker.getItemCountInInventory(stack.getItem(), itemDamage);
-            if (countOfItem < ItemStackUtils.getSize(tempStack))
-            {
-                final int itemsLeft = ItemStackUtils.getSize(stack) - countOfItem;
-                @NotNull final ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft, -1);
-                if(!isInNeededItems(tempStack))
-                {
-                    final Stack request = new Stack(requiredStack);
-                    getOwnBuilding().createRequest(worker.getCitizenData(), request);
-                }
-                allClear = false;
-            }
-            //todo we need to find a way to cancel existing requests.
-            /*else
-            {
-                getOwnBuilding().clearNeededItems();
-            }*/
-        }
-        if (allClear)
-        {
-            return false;
-        }
-        itemsNeeded.clear();
-        Collections.addAll(itemsNeeded, items);
-        this.waitForRequest = false;
-        return true;
-    }
-
-    /**
-     * Try to take a list of items from the hut chest and request if neccessary.
-     *
-     * @param list the list of items to retrieve.
-     * @param shouldRequest determines if the request to the player should be made.
-     * @return true if it fond it.
-     */
-    public boolean tryToTakeFromListOrRequest(final boolean shouldRequest, final ItemStack...list)
-    {
-        for (final @Nullable ItemStack tempStack : list)
-        {
-            if (InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), tempStack::isItemEqual) <
-                    ItemStackUtils.getSize(tempStack)
-                    && !isInHut(tempStack) && shouldRequest)
-            {
-                chatSpamFilter.requestTextStringWithoutSpam(tempStack.getDisplayName());
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Check if a certain itemStack is already in the neededItems list.
-     * @param tempStack the stack to test for.
-     * @return true if so.
-     */
-    private boolean isInNeededItems(final ItemStack tempStack)
-    {
-        ImmutableList<IRequest<? extends Stack>> openRequests = getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), Stack.class, r->ItemStack.areItemsEqual(r.getRequest().getStack(), tempStack));
-        ImmutableList<IRequest<? extends Stack>> completedRequests = getOwnBuilding().getCompletedRequestsOfTypeFiltered(worker.getCitizenData(), Stack.class, r->ItemStack.areItemsEqual(r.getRequest().getStack(), tempStack));
-
-        return !openRequests.isEmpty() || !completedRequests.isEmpty();
-    }
-
-    /**
      * Calculate the citizens inventory.
      *
      * @return A InventoryCitizen matching this ai's citizen.
@@ -1268,5 +1118,32 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private BlockPos getPositionInDirection(final EnumFacing facing, final int distance, final BlockPos targetPos)
     {
         return BlockPosUtil.getFloor(targetPos.offset(facing, distance), world);
+    }
+
+    public boolean checkIfRequestForItemExistOrCreate(@NotNull final ItemStack... stacks)
+    {
+        return checkIfRequestForItemExistOrCreate(Lists.newArrayList(stacks));
+    }
+
+    public boolean checkIfRequestForItemExistOrCreate(@NotNull final Collection<ItemStack> stacks)
+    {
+        return stacks.stream().anyMatch(s->!checkIfRequestForItemExistOrCreate(s));
+    }
+
+    public boolean checkIfRequestForItemExistOrCreate(@NotNull final ItemStack stack)
+    {
+        if (InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), s -> ItemStackUtils.compareItemStacksIgnoreStackSize(s, stack) && s.getCount() >= stack.getCount()))
+        {
+            return true;
+        }
+
+        if (getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), IDeliverable.class, (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack)).isEmpty())
+        {
+            Stack stackRequest = new Stack(stack);
+            getOwnBuilding().createRequest(worker.getCitizenData(), stackRequest);
+        }
+
+        return false;
+
     }
 }

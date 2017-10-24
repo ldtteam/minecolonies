@@ -384,16 +384,31 @@ public final class ItemStackUtils
     @NotNull
     public static Boolean compareItemStacksIgnoreStackSize(final ItemStack itemStack1, final ItemStack itemStack2)
     {
+        return compareItemStacksIgnoreStackSize(itemStack1, itemStack2, true, true);
+    }
+
+    /**
+     * Method to compare to stacks, ignoring their stacksize.
+     *
+     * @param itemStack1 The left stack to compare.
+     * @param itemStack2 The right stack to compare.
+     * @param matchMeta Set to true to match meta data.
+     * @param matchNBT Set to true to match nbt
+     * @return True when they are equal except the stacksize, false when not.
+     */
+    @NotNull
+    public static Boolean compareItemStacksIgnoreStackSize(final ItemStack itemStack1, final ItemStack itemStack2, final boolean matchMeta, final boolean matchNBT)
+    {
         if (!isEmpty(itemStack1) &&
-                !isEmpty(itemStack2) &&
-                itemStack1.getItem() == itemStack2.getItem() &&
-                itemStack1.getItemDamage() == itemStack2.getItemDamage())
+              !isEmpty(itemStack2) &&
+              itemStack1.getItem() == itemStack2.getItem() &&
+              (itemStack1.getItemDamage() == itemStack2.getItemDamage() || !matchMeta))
         {
             // Then sort on NBT
             if (itemStack1.hasTagCompound() && itemStack2.hasTagCompound())
             {
                 // Then sort on stack size
-                return ItemStack.areItemStackTagsEqual(itemStack1, itemStack2);
+                return ItemStack.areItemStackTagsEqual(itemStack1, itemStack2) || !matchNBT;
             }
             else
             {

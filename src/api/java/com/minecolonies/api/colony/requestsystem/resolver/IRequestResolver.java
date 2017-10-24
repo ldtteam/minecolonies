@@ -36,7 +36,7 @@ public interface IRequestResolver<R> extends IRequester
      * @param manager        The manager that is checking if this resolver could resolve that request.
      * @return True when this resolver COULD resolve the given request, false when not.
      */
-    boolean canResolve(@NotNull IRequestManager manager, IRequest<R> requestToCheck);
+    boolean canResolve(@NotNull IRequestManager manager, IRequest<? extends R> requestToCheck);
 
     /**
      * Method used to attempt a resolving operation.
@@ -53,7 +53,7 @@ public interface IRequestResolver<R> extends IRequester
      * @return The tokens of required requests if the attempt was successful (an empty list is allowed to indicate no requirements), null if the attempt failed.
      */
     @Nullable
-    List<IToken> attemptResolve(@NotNull IRequestManager manager, @NotNull IRequest<R> request);
+    List<IToken> attemptResolve(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request);
 
     /**
      * Method used to resolve a given request.
@@ -70,7 +70,7 @@ public interface IRequestResolver<R> extends IRequester
      *                          and all requirements should be available to this resolver at this point in time.
      */
     @Nullable
-    void resolve(@NotNull IRequestManager manager, @NotNull IRequest<R> request) throws RuntimeException;
+    void resolve(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request) throws RuntimeException;
 
     /**
      * Method called by the given manager to request a followup request.
@@ -81,7 +81,7 @@ public interface IRequestResolver<R> extends IRequester
      * @return The followup request for the completed request. Null if none is needed.
      */
     @Nullable
-    IRequest getFollowupRequestForCompletion(@NotNull IRequestManager manager, @NotNull IRequest<R> completedRequest);
+    IRequest getFollowupRequestForCompletion(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> completedRequest);
 
     /**
      * Method used to indicate to this resolver that a parent of a request assigned to him has been cancelled,
@@ -98,7 +98,7 @@ public interface IRequestResolver<R> extends IRequester
      * @return the new request if necessary.
      */
     @Nullable
-    IRequest onParentCancelled(@NotNull IRequestManager manager, @NotNull IRequest<R> request) throws IllegalArgumentException;
+    IRequest onParentCancelled(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request) throws IllegalArgumentException;
 
     /**
      * Method used to indicate to this resolver that a request that has been made is already fullfilled by a player (Overruled).
@@ -111,7 +111,7 @@ public interface IRequestResolver<R> extends IRequester
      * @throws IllegalArgumentException is thrown when the overrulling failed.
      */
     @Nullable
-    void onResolvingOverruled(@NotNull IRequestManager manager, @NotNull IRequest<R> request) throws IllegalArgumentException;
+    void onResolvingOverruled(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request) throws IllegalArgumentException;
 
     /**
      * The priority of this resolver.

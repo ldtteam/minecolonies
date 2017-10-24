@@ -73,6 +73,8 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         return writeToNBT(new NBTTagCompound());
     }
 
+
+    //TODO : Update
     @Override
     public void update()
     {
@@ -267,7 +269,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      * @param itemStackSelectionPredicate the type of item requested (amount is ignored).
      * @return true if a stack of that type was found
      */
-    private boolean isInHut(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    public boolean isInHut(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
         @Nullable final AbstractBuilding building = getBuilding();
         if (building != null)

@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.placementhandlers;
 
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -85,14 +87,20 @@ public final class PlacementHandlers
             {
                 if (!infiniteResources)
                 {
-                    if (placer.checkOrRequestItems(false, new ItemStack(Items.FLINT_AND_STEEL, 1)))
+                    final EntityCitizen citizen = placer.getWorker();
+                    final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(new InvWrapper(citizen.getInventoryCitizen()), s ->
+                                                                                                                                            s.getItem() == Items.FLINT_AND_STEEL);
+
+                    if (slot == -1)
                     {
+                        if (citizen.getWorkBuilding().getOpenRequestsOfTypeFiltered(citizen.getCitizenData(), Stack.class, (IRequest<? extends Stack> s) ->
+                                                                                                                             s.getRequest().getStack().getItem() == Items.FLINT_AND_STEEL).isEmpty()) {
+                            Stack stack = new Stack(new ItemStack(Items.FLINT_AND_STEEL, 1)).setMatchMeta(false).setMatchNBT(false);
+                            citizen.getWorkBuilding().createRequest(citizen.getCitizenData(), stack);
+                        }
                         return ActionProcessingResult.DENY;
                     }
 
-                    final EntityCitizen citizen = placer.getWorker();
-                    final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(new InvWrapper(citizen.getInventoryCitizen()), s ->
-                            s.getItem() == Items.FLINT_AND_STEEL);
                     final ItemStack item = slot == -1 ? ItemStackUtils.EMPTY : citizen.getInventoryCitizen().getStackInSlot(slot);
                     if (ItemStackUtils.isEmpty(item) || !(item.getItem() instanceof ItemFlintAndSteel))
                     {
@@ -122,10 +130,14 @@ public final class PlacementHandlers
 
             if (placer != null)
             {
-                if (!infiniteResources && placer.checkOrRequestItems(placer.getTotalAmount(new ItemStack(Blocks.DIRT))))
-                {
+                ItemStack placedStack = placer.getTotalAmount(new ItemStack(Blocks.DIRT));
+                if (!infiniteResources && placer.getOwnBuilding().getOpenRequestsOfTypeFiltered(placer.getWorker().getCitizenData(), Stack.class, (IRequest<? extends Stack> r) -> r.getRequest().matches(placedStack)).isEmpty()) {
+                    Stack stackRequest = new Stack(placedStack);
+                    placer.getOwnBuilding().createRequest(placer.getWorker().getCitizenData(), stackRequest);
+
                     return ActionProcessingResult.DENY;
                 }
+
                 placer.handleBuildingOverBlock(pos);
             }
             if (!world.setBlockState(pos, Blocks.DIRT.getDefaultState(), 0x03))
@@ -149,8 +161,11 @@ public final class PlacementHandlers
                 return ActionProcessingResult.IGNORE;
             }
 
-            if (placer != null && !infiniteResources && placer.checkOrRequestItems(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState))))
-            {
+            ItemStack placedStack = placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState));
+            if (!infiniteResources && placer.getOwnBuilding().getOpenRequestsOfTypeFiltered(placer.getWorker().getCitizenData(), Stack.class, (IRequest<? extends Stack> r) -> r.getRequest().matches(placedStack)).isEmpty()) {
+                Stack stackRequest = new Stack(placedStack);
+                placer.getOwnBuilding().createRequest(placer.getWorker().getCitizenData(), stackRequest);
+
                 return ActionProcessingResult.DENY;
             }
 
@@ -179,9 +194,11 @@ public final class PlacementHandlers
                 return ActionProcessingResult.IGNORE;
             }
 
-            if (placer != null && !infiniteResources && blockState.getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT
-                    && placer.checkOrRequestItems(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState))))
-            {
+            ItemStack placedStack = placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState));
+            if (!infiniteResources && blockState.getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT && placer.getOwnBuilding().getOpenRequestsOfTypeFiltered(placer.getWorker().getCitizenData(), Stack.class, (IRequest<? extends Stack> r) -> r.getRequest().matches(placedStack)).isEmpty()) {
+                Stack stackRequest = new Stack(placedStack);
+                placer.getOwnBuilding().createRequest(placer.getWorker().getCitizenData(), stackRequest);
+
                 return ActionProcessingResult.DENY;
             }
 
@@ -215,9 +232,12 @@ public final class PlacementHandlers
                 return ActionProcessingResult.IGNORE;
             }
 
-            if (placer != null && !infiniteResources && blockState.getValue(BlockDoublePlant.HALF).equals(BlockDoublePlant.EnumBlockHalf.LOWER)
-                    && placer.checkOrRequestItems(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState))))
-            {
+
+            ItemStack placedStack = placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState));
+            if (!infiniteResources && blockState.getValue(BlockDoublePlant.HALF).equals(BlockDoublePlant.EnumBlockHalf.LOWER) && placer.getOwnBuilding().getOpenRequestsOfTypeFiltered(placer.getWorker().getCitizenData(), Stack.class, (IRequest<? extends Stack> r) -> r.getRequest().matches(placedStack)).isEmpty()) {
+                Stack stackRequest = new Stack(placedStack);
+                placer.getOwnBuilding().createRequest(placer.getWorker().getCitizenData(), stackRequest);
+
                 return ActionProcessingResult.DENY;
             }
 
@@ -273,10 +293,14 @@ public final class PlacementHandlers
                     itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
                     itemList.addAll(placer.getItemsFromTileEntity());
 
+                    itemList.removeIf(s -> ItemStackUtils.isEmpty(s));
+
                     for (final ItemStack stack : itemList)
                     {
-                        if (!ItemStackUtils.isEmpty(stack) && placer.checkOrRequestItems(placer.getTotalAmount(stack)))
-                        {
+                        if (!infiniteResources && placer.getOwnBuilding().getOpenRequestsOfTypeFiltered(placer.getWorker().getCitizenData(), Stack.class, (IRequest<? extends Stack> r) -> r.getRequest().matches(stack)).isEmpty()) {
+                            Stack stackRequest = new Stack(stack);
+                            placer.getOwnBuilding().createRequest(placer.getWorker().getCitizenData(), stackRequest);
+
                             return ActionProcessingResult.DENY;
                         }
                     }
@@ -348,10 +372,19 @@ public final class PlacementHandlers
 
             if (placer != null && !infiniteResources)
             {
-                if (!(placer.holdEfficientTool(blockState.getBlock()) || placer.checkOrRequestItems(placer.getTotalAmount(new ItemStack(Blocks.DIRT, 1)))))
+                ItemStack placedStack = placer.getTotalAmount(new ItemStack(Blocks.DIRT,1));
+                if (!infiniteResources && !placer.holdEfficientTool(blockState.getBlock()))
                 {
                     return ActionProcessingResult.DENY;
                 }
+
+                if (!infiniteResources && placer.getOwnBuilding().getOpenRequestsOfTypeFiltered(placer.getWorker().getCitizenData(), Stack.class, (IRequest<? extends Stack> r) -> r.getRequest().matches(placedStack)).isEmpty()) {
+                    Stack stackRequest = new Stack(placedStack);
+                    placer.getOwnBuilding().createRequest(placer.getWorker().getCitizenData(), stackRequest);
+
+                    return ActionProcessingResult.DENY;
+                }
+
                 placer.handleBuildingOverBlock(pos);
             }
 
@@ -400,8 +433,11 @@ public final class PlacementHandlers
 
             if (placer != null && !infiniteResources)
             {
-                if (placer.checkOrRequestItems(placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(newBlockState))))
-                {
+                ItemStack placedStack = BlockUtils.getItemStackFromBlockState(newBlockState);
+                if (!infiniteResources && placer.getOwnBuilding().getOpenRequestsOfTypeFiltered(placer.getWorker().getCitizenData(), Stack.class, (IRequest<? extends Stack> r) -> r.getRequest().matches(placedStack)).isEmpty()) {
+                    Stack stackRequest = new Stack(placedStack);
+                    placer.getOwnBuilding().createRequest(placer.getWorker().getCitizenData(), stackRequest);
+
                     return ActionProcessingResult.DENY;
                 }
                 placer.handleBuildingOverBlock(pos);
@@ -439,10 +475,14 @@ public final class PlacementHandlers
                 itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
                 itemList.addAll(placer.getItemsFromTileEntity());
 
-                for (final ItemStack stack : itemList)
+                itemList.removeIf(s -> ItemStackUtils.isEmpty(s));
+
+                for (final ItemStack placedStack : itemList)
                 {
-                    if (stack != null && placer.checkOrRequestItems(placer.getTotalAmount(stack)))
-                    {
+                    if (!infiniteResources && placer.getOwnBuilding().getOpenRequestsOfTypeFiltered(placer.getWorker().getCitizenData(), Stack.class, (IRequest<? extends Stack> r) -> r.getRequest().matches(placedStack)).isEmpty()) {
+                        Stack stackRequest = new Stack(placedStack);
+                        placer.getOwnBuilding().createRequest(placer.getWorker().getCitizenData(), stackRequest);
+
                         return ActionProcessingResult.DENY;
                     }
                 }
@@ -511,10 +551,14 @@ public final class PlacementHandlers
                 itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
                 itemList.addAll(placer.getItemsFromTileEntity());
 
-                for (final ItemStack stack : itemList)
+                itemList.removeIf(s -> ItemStackUtils.isEmpty(s));
+
+                for (final ItemStack placedStack : itemList)
                 {
-                    if (!ItemStackUtils.isEmpty(stack) && placer.checkOrRequestItems(placer.getTotalAmount(stack)))
-                    {
+                    if (!infiniteResources && placer.getOwnBuilding().getOpenRequestsOfTypeFiltered(placer.getWorker().getCitizenData(), Stack.class, (IRequest<? extends Stack> r) -> r.getRequest().matches(placedStack)).isEmpty()) {
+                        Stack stackRequest = new Stack(placedStack);
+                        placer.getOwnBuilding().createRequest(placer.getWorker().getCitizenData(), stackRequest);
+
                         return ActionProcessingResult.DENY;
                     }
                 }

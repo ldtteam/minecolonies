@@ -3,6 +3,8 @@ package com.minecolonies.coremod.entity;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.util.*;
@@ -322,6 +324,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
         this.newNavigator.setEnterDoors(true);
 
         initTasks();
+    }
+
+    public ILocation getLocation()
+    {
+        return StandardFactoryController.getInstance().getNewInstance(this);
     }
 
     private synchronized void updateNavigatorField()
@@ -1173,14 +1180,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
             if(citizenData.getSaturation() < HIGH_SATURATION)
             {
                 tryToEat();
-            }
-            else
-            {
-                final AbstractBuilding home = getHomeBuilding();
-                if(home != null && home instanceof BuildingHome && ((BuildingHome)home).isFoodNeeded())
-                {
-                    ((BuildingHome)home).setFoodNeeded(false);
-                }
             }
         }
 

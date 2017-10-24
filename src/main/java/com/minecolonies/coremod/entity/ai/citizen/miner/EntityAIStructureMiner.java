@@ -114,7 +114,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     }
 
     @Override
-    protected BuildingMiner getOwnBuilding()
+    public BuildingMiner getOwnBuilding()
     {
         return (BuildingMiner) worker.getWorkBuilding();
     }
@@ -315,7 +315,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             return MINER_BUILDING_SHAFT;
         }
 
-        if (checkOrRequestItems(new ItemStack(Blocks.COBBLESTONE, 2), new ItemStack(Blocks.LADDER)))
+        if (checkIfRequestForItemExistOrCreate(new ItemStack(Blocks.COBBLESTONE, 2), new ItemStack(Blocks.LADDER)))
         {
             return state;
         }
@@ -580,7 +580,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
                 setDelay(1);
                 return false;
             }
-            if (checkOrRequestItems(new ItemStack(Blocks.COBBLESTONE)))
+            if (checkIfRequestForItemExistOrCreate(new ItemStack(Blocks.COBBLESTONE)))
             {
                 return false;
             }

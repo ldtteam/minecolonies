@@ -53,26 +53,6 @@ public class JobMiner extends AbstractJobStructure
         return new EntityAIStructureMiner(this);
     }
 
-    /**
-     * Adds items if job requires items not in inventory.
-     *
-     * @param stack Stack to check if it is a required item.
-     */
-    public void addItemNeededIfNotAlready(@NotNull final ItemStack stack)
-    {
-        final List<ItemStack> itemsNeeded = super.getItemsNeeded();
-
-        //check if stack is already in itemsNeeded
-        for (final ItemStack neededItem : itemsNeeded)
-        {
-            if (stack.isItemEqual(neededItem))
-            {
-                return;
-            }
-        }
-        addItemNeeded(stack);
-    }
-
     @Override
     public void triggerDeathAchievement(final DamageSource source, final EntityCitizen citizen)
     {

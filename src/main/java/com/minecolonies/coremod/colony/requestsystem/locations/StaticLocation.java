@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.requestsystem.locations;
 
+import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.location.ILocationFactory;
@@ -157,7 +158,7 @@ public class StaticLocation implements ILocation
          */
         @NotNull
         @Override
-        public StaticLocation getNewInstance(@NotNull final BlockPos input)
+        public StaticLocation getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final BlockPos input)
         {
             return new StaticLocation(input, 0);
         }

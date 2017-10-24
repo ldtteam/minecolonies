@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.colony.requestsystem.requestable.Food;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHomeBuilding;
@@ -40,6 +41,11 @@ public class BuildingHome extends AbstractBuildingHut
      * List storing all beds which have been registered to the building.
      */
     private static final String TAG_BEDS = "beds";
+
+    /**
+     * Constant determining how big of food request to start.
+     */
+    private static final int CONST_FOOD_REQUEST_SIZE = 5;
 
     /**
      * The string describing the hut.
@@ -184,33 +190,6 @@ public class BuildingHome extends AbstractBuildingHut
     }
 
     @Override
-    public boolean needsAnything()
-    {
-        return super.needsAnything() || isFoodNeeded();
-    }
-
-
-    /**
-     * Set food requirements for the building.
-     *
-     * @param foodNeeded set true if required.
-     */
-    public void setFoodNeeded(final boolean foodNeeded)
-    {
-        isFoodNeeded = foodNeeded;
-    }
-
-    /**
-     * Check food requirements of the building.
-     *
-     * @return true of false.
-     */
-    public boolean isFoodNeeded()
-    {
-        return isFoodNeeded;
-    }
-
-    @Override
     public int getMaxInhabitants()
     {
         return getBuildingLevel();
@@ -322,7 +301,13 @@ public class BuildingHome extends AbstractBuildingHut
      */
     public void checkIfFoodNeeded()
     {
-        setFoodNeeded(residents.stream().filter(resident -> resident.getSaturation() < EntityCitizen.HIGH_SATURATION).findFirst().isPresent());
+        residents.stream()
+          .filter(resident -> resident.getSaturation() < EntityCitizen.HIGH_SATURATION)
+          .filter(resident -> !hasWorkerOpenRequestsOfType(resident, Food.class))
+          .forEach(resident -> {
+              Food foodRequest = new Food(CONST_FOOD_REQUEST_SIZE);
+              createRequest(resident, foodRequest);
+          });
     }
 
     /**

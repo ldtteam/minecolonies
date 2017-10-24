@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.requestsystem.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
+import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -22,7 +23,7 @@ import java.util.UUID;
 /**
  * ----------------------- Not Documented Object ---------------------
  */
-public class WarehouseRequestResolver extends AbstractRequestResolver<ItemStack>
+public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverable>
 {
 
     public WarehouseRequestResolver(
@@ -33,26 +34,21 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<ItemStack>
     }
 
     @Override
-    public Class<? extends ItemStack> getRequestType()
+    public Class<? extends IDeliverable> getRequestType()
     {
-        return ItemStack.class;
+        return IDeliverable.class;
     }
 
     @Override
-    public boolean canResolve(@NotNull final IRequestManager manager, final IRequest<ItemStack> requestToCheck)
+    public boolean canResolve(@NotNull final IRequestManager manager, final IRequest<? extends IDeliverable> requestToCheck)
     {
-        if (ItemStackUtils.isEmpty(requestToCheck.getRequest()))
-        {
-            return false;
-        }
-
         final TileEntity tileEntity = manager.getColony().getWorld().getTileEntity(getRequesterLocation().getInDimensionLocation());
 
         if (tileEntity instanceof TileEntityWareHouse)
         {
             final TileEntityWareHouse wareHouse = (TileEntityWareHouse) tileEntity;
 
-            return wareHouse.isInHut(requestToCheck.getRequest());
+            return wareHouse.isInHut(requestToCheck.getRequest()::matches);
         }
 
         return false;
@@ -65,7 +61,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<ItemStack>
      * Moving the curly braces really makes the code hard to read.
      */
     public List<IToken> attemptResolve(
-                                        @NotNull final IRequestManager manager, @NotNull final IRequest<ItemStack> request)
+                                        @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
         final TileEntity tileEntity = manager.getColony().getWorld().getTileEntity(getRequesterLocation().getInDimensionLocation());
 
@@ -79,7 +75,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<ItemStack>
               new TypeToken<IToken>() {}), manager.getFactoryController().getNewInstance(pos, new TypeToken<ILocation>() {}), request.getToken()),
               new Delivery(manager.getFactoryController().getNewInstance(
                 pos,
-                new TypeToken<ILocation>() {}), request.getRequester().getDeliveryLocation(), request.getRequest())));
+                new TypeToken<ILocation>() {}), request.getRequester().getDeliveryLocation(), request.getRequest().)));
         }
 
         return Lists.newArrayList();
@@ -105,7 +101,6 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<ItemStack>
     @Override
     public IRequest onParentCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<ItemStack> request)
     {
-        //TODO Release the stack from the warehouse.
         return null;
     }
 
@@ -113,7 +108,12 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<ItemStack>
     @Override
     public void onResolvingOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<ItemStack> request)
     {
-        //TODO Release the stack from the warehouse.
+    }
+
+    @NotNull
+    @Override
+    public void onRequestComplete(@NotNull final IToken token)
+    {
     }
 
     @SuppressWarnings("squid:S2972")
@@ -158,12 +158,5 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<ItemStack>
         {
             warehouseRequestResolver.onRequestComplete(itemStackRequestToken);
         }
-    }
-
-    @NotNull
-    @Override
-    public void onRequestComplete(@NotNull final IToken token)
-    {
-        //TODO Release the DMan that did the job.
     }
 }
