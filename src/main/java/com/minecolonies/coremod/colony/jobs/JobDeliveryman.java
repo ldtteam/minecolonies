@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.colony.jobs;
 
+import com.minecolonies.api.colony.requestsystem.RequestState;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
@@ -125,13 +127,23 @@ public class JobDeliveryman extends AbstractJob
     }
 
     /**
-     * Returns the {@link IToken} of the current Task.
+     * Returns the {@link IRequest} of the current Task.
      *
-     * @return {@link IToken} of the current Task.
+     * @return {@link IRequest} of the current Task.
      */
-    public IToken getCurrentTask()
+    public IRequest getCurrentTask()
     {
-        return currentTask;
+        return getColony().getRequestManager().getRequestForToken(currentTask);
+    }
+
+    /**
+     * Sets the result of the currenttask.
+     *
+     * @param state the resultstate to set {@link RequestState}.
+     */
+    public void setRequestState(@NotNull final RequestState state)
+    {
+        getColony().getRequestManager().getRequestForToken(currentTask).setState(getColony().getRequestManager(), state);
     }
 
     /**

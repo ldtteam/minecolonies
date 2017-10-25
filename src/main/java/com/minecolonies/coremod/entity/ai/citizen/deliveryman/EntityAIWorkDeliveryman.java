@@ -306,6 +306,12 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         gatherTarget = null;
         worker.setHeldItem(SLOT_HAND);
 
+        if(job.getReturning())
+        {
+            job.setCurrentTask(null);
+            job.setReturning(false);
+        }
+
         return START_WORKING;
     }
 
@@ -323,13 +329,17 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         final BuildingDeliveryman deliveryHut = (getOwnBuilding() instanceof BuildingDeliveryman) ? (BuildingDeliveryman) getOwnBuilding() : null;
         ILocation buildingToDeliver = deliveryHut == null ? null : deliveryHut.getBuildingToDeliver();
-        if (deliveryHut == null || buildingToDeliver == null)
-        {
-            if(job.getCurrentTask() != null)
-            {
-                final IRequest request = worker.getColony().getRequestManager().getRequestForToken(job.getCurrentTask());
 
-                buildingToDeliver = request.getRequester().getRequesterLocation();
+        if(deliveryHut == null)
+        {
+            return START_WORKING;
+        }
+        else if (buildingToDeliver == null)
+        {
+            if(job.getCurrentTask() != null && deliveryHut != null)
+            {
+                final IRequest request = job.getCurrentTask();
+                deliveryHut.setBuildingToDeliver(request.getRequester().getRequesterLocation());
                 return getState();
             }
             return START_WORKING;
@@ -402,6 +412,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         worker.addExperience(1.0D);
         worker.setHeldItem(SLOT_HAND);
         deliveryHut.setBuildingToDeliver(null);
+        job.setRequestState(RequestState.COMPLETED);
+        job.setReturning(false);
 
         gatherTarget = buildingToDeliver.getInDimensionLocation();
         setDelay(WAIT_DELAY);
@@ -419,17 +431,13 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         final AbstractBuildingWorker ownBuilding = getOwnBuilding();
         if (ownBuilding instanceof BuildingDeliveryman)
         {
-            final IToken task = job.getCurrentTask();
-            if (task != null)
+            final IRequest request = job.getCurrentTask();
+            if (request != null)
             {
                 if (job.getReturning())
                 {
-                    job.setCurrentTask(null);
-                    job.setReturning(false);
-
                     return DUMPING;
                 }
-                final IRequest request = worker.getColony().getRequestManager().getRequestForToken(task);
                 ((BuildingDeliveryman) ownBuilding).setBuildingToDeliver(request.getRequester().getRequesterLocation());
                 if(InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), itemStack -> request.getDelivery().isItemEqualIgnoreDurability(itemStack)))
                 {
@@ -511,8 +519,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
         else if (job.getReturning())
         {
-            job.setReturning(false);
-            job.setCurrentTask(null);
             ((BuildingDeliveryman) ownBuilding).setBuildingToDeliver(null);
             return DUMPING;
         }
