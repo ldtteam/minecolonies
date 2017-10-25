@@ -524,8 +524,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
         else
         {
-            final IRequest request = worker.getColony().getRequestManager().getRequestForToken(job.getCurrentTask());
-            ((BuildingDeliveryman) ownBuilding).setBuildingToDeliver(request.getRequester().getRequesterLocation());
+            ((BuildingDeliveryman) ownBuilding).setBuildingToDeliver(job.getCurrentTask().getRequester().getRequesterLocation());
         }
 
         return PREPARE_DELIVERY;
