@@ -1,8 +1,10 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.IRequestManager;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
@@ -79,23 +81,16 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
                 continue;
 
             request.setDelivery(matchingStack);
-        }
 
+            BlockPos itemStackPos = wareHouse.getPositionOfChestWithItemStack(itemStack -> ItemStack.areItemsEqual(itemStack, matchingStack));
+            ILocation itemStackLocation = manager.getFactoryController().getNewInstance(itemStackPos, wareHouse.getWorld().provider.getDimension());
 
+            Delivery delivery = new Delivery(itemStackLocation, request.getRequester().getRequesterLocation(), matchingStack);
+            WarehouseChestDeliveryRequester requester = new WarehouseChestDeliveryRequester(this, StandardFactoryController.getInstance().getNewInstance(), itemStackLocation);
 
-        final TileEntity tileEntity = manager.getColony().getWorld().getTileEntity(getRequesterLocation().getInDimensionLocation());
+            IToken requestToken = manager.createRequest(requester, delivery);
 
-        if (tileEntity instanceof TileEntityWareHouse)
-        {
-            final TileEntityWareHouse wareHouse = (TileEntityWareHouse) tileEntity;
-            final BlockPos pos = wareHouse.getPositionOfChestWithItemStack(request.getRequest());
-
-            request.setResult(request.getRequest().copy());
-            return Lists.newArrayList(manager.createRequest(new WarehouseChestDeliveryRequester(this, manager.getFactoryController().getNewInstance(UUID.randomUUID(),
-              new TypeToken<IToken>() {}), manager.getFactoryController().getNewInstance(pos, new TypeToken<ILocation>() {}), request.getToken()),
-              new Delivery(manager.getFactoryController().getNewInstance(
-                pos,
-                new TypeToken<ILocation>() {}), request.getRequester().getDeliveryLocation(), request.getRequest().)));
+            return ImmutableList.of(requestToken);
         }
 
         return Lists.newArrayList();
@@ -153,18 +148,15 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
         private final WarehouseRequestResolver warehouseRequestResolver;
         private final IToken                   id;
         private final ILocation                location;
-        private final IToken                   itemStackRequestToken;
 
         private WarehouseChestDeliveryRequester(
                                                  final WarehouseRequestResolver warehouseRequestResolver,
                                                  final IToken id,
-                                                 final ILocation location,
-                                                 final IToken itemStackRequestToken)
+                                                 final ILocation location)
         {
             this.warehouseRequestResolver = warehouseRequestResolver;
             this.id = id;
             this.location = location;
-            this.itemStackRequestToken = itemStackRequestToken;
         }
 
         @Override
@@ -184,7 +176,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
         @Override
         public void onRequestComplete(@NotNull final IToken token)
         {
-            warehouseRequestResolver.onRequestComplete(itemStackRequestToken);
+            warehouseRequestResolver.onRequestComplete(token);
         }
     }
 }
