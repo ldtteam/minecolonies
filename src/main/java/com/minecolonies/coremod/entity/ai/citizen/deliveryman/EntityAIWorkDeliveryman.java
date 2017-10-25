@@ -3,7 +3,6 @@ package com.minecolonies.coremod.entity.ai.citizen.deliveryman;
 import com.minecolonies.api.colony.requestsystem.RequestState;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.Log;
@@ -50,11 +49,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      * Walking speed double at this level.
      */
     private static final double WALKING_SPEED_MULTIPLIER = 25;
-
-    /**
-     * Min distance to chest to take something out of it.
-     */
-    private static final int MIN_DISTANCE_TO_CHEST = 2;
 
     /**
      * The base movement speed of the deliveryman.

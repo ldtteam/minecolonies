@@ -265,7 +265,8 @@ public class BuildingFarmer extends AbstractBuildingWorker
     public boolean neededForWorker(@Nullable final ItemStack stack)
     {
         return !ItemStackUtils.isEmpty(stack) && (ItemStackUtils.hasToolLevel(stack, ToolType.HOE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel())
-                || ItemStackUtils.hasToolLevel(stack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()));
+                || ItemStackUtils.hasToolLevel(stack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel())
+                || super.neededForWorker(stack));
     }
 
     //we have to update our field from the colony!

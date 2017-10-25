@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
@@ -143,6 +144,31 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
      */
     public boolean neededForWorker(@Nullable final ItemStack stack)
     {
+        return isItemStackInRequest(stack);
+    }
+
+    /**
+     * Check if a certain ItemStack is in the request of a worker.
+     * @param stack the stack to chest.
+     * @return true if so.
+     */
+    public boolean isItemStackInRequest(@Nullable final ItemStack stack)
+    {
+        if(stack == null || stack.getItem() == null)
+        {
+            return false;
+        }
+
+        for(final CitizenData data: getWorker())
+        {
+            for(final IRequest request: getOpenRequests(data))
+            {
+                if(request.getDelivery().isItemEqualIgnoreDurability(stack))
+                {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 

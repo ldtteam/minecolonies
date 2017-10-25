@@ -330,7 +330,8 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
                 && (stack.getItem() instanceof ItemArmor
                 || stack.getItem() instanceof ItemTool
                 || stack.getItem() instanceof ItemSword
-                || stack.getItem() instanceof ItemBow);
+                || stack.getItem() instanceof ItemBow
+                || super.neededForWorker(stack));
     }
 
     /**
