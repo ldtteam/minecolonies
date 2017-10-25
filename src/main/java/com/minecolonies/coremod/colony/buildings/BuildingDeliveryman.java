@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.CitizenData;
@@ -23,7 +24,7 @@ public class BuildingDeliveryman extends AbstractBuildingWorker
     /**
      * Building the deliveryman will deliver somethingTo
      */
-    private AbstractBuilding buildingToDeliver;
+    private ILocation buildingToDeliver;
 
     /**
      * Instantiates a new warehouse building.
@@ -41,7 +42,7 @@ public class BuildingDeliveryman extends AbstractBuildingWorker
      *
      * @return the building.
      */
-    public AbstractBuilding getBuildingToDeliver()
+    public ILocation getBuildingToDeliver()
     {
         return this.buildingToDeliver;
     }
@@ -51,7 +52,7 @@ public class BuildingDeliveryman extends AbstractBuildingWorker
      *
      * @param building building to deliver to.
      */
-    public void setBuildingToDeliver(final AbstractBuilding building)
+    public void setBuildingToDeliver(final ILocation building)
     {
         this.buildingToDeliver = building;
     }
