@@ -6,13 +6,10 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.constant.IToolType;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.*;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
-import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.entity.ai.util.AIState;
@@ -25,8 +22,6 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,6 +31,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
@@ -69,6 +65,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      * Delay in ticks between every inventory operation.
      */
     private static final int DUMP_AND_GATHER_DELAY = 10;
+
+    /**
+     * Wait 10 seconds for the worker to gather.
+     */
+    private static final int WAIT_DELAY = TICKS_SECOND * 10;
 
     /**
      * Warehouse the deliveryman is assigned to.
@@ -358,31 +359,38 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
 
             final TileEntity tileEntity = world.getTileEntity(buildingToDeliver.getInDimensionLocation());
+            final ItemStack insertionResultStack;
 
-            if(tileEntity instanceof TileEntityColonyBuilding)
+            if(tileEntity instanceof TileEntityColonyBuilding && ((TileEntityColonyBuilding) tileEntity).getBuilding() instanceof AbstractBuildingWorker)
             {
                 final AbstractBuilding building = ((TileEntityColonyBuilding) tileEntity).getBuilding();
-                InventoryUtils.forceItemStackToItemHandler(new InvWrapper((TileEntityColonyBuilding) tileEntity), stack, itemStack -> );
-
+                insertionResultStack = InventoryUtils.forceItemStackToItemHandler(
+                        new InvWrapper((TileEntityColonyBuilding) tileEntity), stack, ((AbstractBuildingWorker) building)::neededForWorker);
+            }
+            else
+            {
+                insertionResultStack = InventoryUtils.forceItemStackToItemHandler(new InvWrapper((TileEntityColonyBuilding) tileEntity), stack, itemStack -> false);
             }
 
-
-
-            final ItemStack insertionResultStack = buildingToDeliver.forceTransferStack(stack, world);
             if (!ItemStackUtils.isEmpty(insertionResultStack))
             {
                 if (ItemStack.areItemStacksEqual(insertionResultStack, stack))
                 {
                     //same stack, we could not deliver ?
-                    if (buildingToDeliver instanceof AbstractBuildingWorker)
+                    if (buildingToDeliver instanceof TileEntityColonyBuilding && ((TileEntityColonyBuilding) tileEntity).getBuilding() instanceof AbstractBuildingWorker)
                     {
                         chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NAMEDCHESTFULL,
-                                ((AbstractBuildingWorker) buildingToDeliver).getMainWorker().getName());
+                                ((AbstractBuildingWorker) ((TileEntityColonyBuilding) tileEntity).getBuilding()).getMainWorker().getName());
+                    }
+                    else if(buildingToDeliver instanceof TileEntityColonyBuilding)
+                    {
+                        chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL,
+                                new TextComponentString(" :" + ((TileEntityColonyBuilding) tileEntity).getBuilding().getSchematicName()));
                     }
                     else
                     {
                         chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL,
-                                new TextComponentString(" :" + buildingToDeliver.getSchematicName()));
+                                new TextComponentString(buildingToDeliver.getInDimensionLocation().toString()));
                     }
                 }
 
@@ -395,7 +403,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         worker.setHeldItem(SLOT_HAND);
         deliveryHut.setBuildingToDeliver(null);
 
-        gatherTarget = buildingToDeliver.getLocation();
+        gatherTarget = buildingToDeliver.getInDimensionLocation();
+        setDelay(WAIT_DELAY);
         return GATHERING;
     }
 
