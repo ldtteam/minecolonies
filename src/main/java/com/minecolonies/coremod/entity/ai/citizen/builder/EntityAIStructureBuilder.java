@@ -62,6 +62,16 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     private static final int STRENGTH_MULTIPLIER = 1;
 
     /**
+     * Offset from the building to stand.
+     */
+    private static final int STAND_OFFSET = 3;
+
+    /**
+     * Base y height to start searching a suitable position.
+     */
+    private static final int BASE_Y_HEIGHT = 70;
+
+    /**
      * After how many actions should the builder dump his inventory.
      */
     private static final int ACTIONS_UNTIL_DUMP = 1024;
@@ -551,19 +561,19 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     public BlockPos getWorkingPosition(final BlockPos targetPosition)
     {
         StructureWrapper wrapper = job.getStructure();
-        final int x1 = wrapper.getPosition().getX() - wrapper.getOffset().getX() - 1;
-        final int z1 = wrapper.getPosition().getZ() - wrapper.getOffset().getZ() - 1;
-        final int x3 = wrapper.getPosition().getX() + (wrapper.getWidth() - wrapper.getOffset().getX());
-        final int z3 = wrapper.getPosition().getZ() + (wrapper.getLength() - wrapper.getOffset().getZ());
+        final int x1 = wrapper.getPosition().getX() - wrapper.getOffset().getX() - STAND_OFFSET;
+        final int z1 = wrapper.getPosition().getZ() - wrapper.getOffset().getZ() - STAND_OFFSET;
+        final int x3 = wrapper.getPosition().getX() + (wrapper.getWidth() - wrapper.getOffset().getX()) + STAND_OFFSET;
+        final int z3 = wrapper.getPosition().getZ() + (wrapper.getLength() - wrapper.getOffset().getZ() + STAND_OFFSET);
 
-        final BlockPos[] edges = new BlockPos[]{new BlockPos(x1, 70, z1), new BlockPos(x3, 70, z1), new BlockPos(x1, 70, z3), new BlockPos(x3, 70, z3)};
+        final BlockPos[] edges = new BlockPos[]{new BlockPos(x1, BASE_Y_HEIGHT, z1), new BlockPos(x3, 70, z1), new BlockPos(x1, BASE_Y_HEIGHT, z3), new BlockPos(x3, BASE_Y_HEIGHT, z3)};
 
         for(final BlockPos pos: edges)
         {
             final BlockPos basePos = world.getTopSolidOrLiquidBlock(pos);
             if (EntityUtils.checkForFreeSpace(world, basePos.down())
-                    && world.getBlockState(basePos.up()).getBlock() != Blocks.SAPLING
-                    && world.getBlockState(basePos).getMaterial().isSolid())
+                    && world.getBlockState(basePos).getBlock() != Blocks.SAPLING
+                    && world.getBlockState(basePos.down()).getMaterial().isSolid())
             {
                 return basePos;
             }
