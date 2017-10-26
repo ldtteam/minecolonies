@@ -45,7 +45,7 @@ public abstract class AbstractRequest<R> implements IRequest<R>
      * We don't want this field static.
      */
     @NotNull
-    private final ItemStack deliveryStack = ItemStackUtils.EMPTY;
+    private ItemStack deliveryStack = ItemStackUtils.EMPTY;
 
     AbstractRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final R requested)
     {
@@ -404,5 +404,19 @@ public abstract class AbstractRequest<R> implements IRequest<R>
         }
 
         return deliveryStack;
+    }
+
+    @Override
+    public void setDelivery(@Nullable final ItemStack delivery)
+    {
+        if (getResult() instanceof IDeliverable)
+        {
+            ((IDeliverable) getResult()).setResult(delivery);
+        }
+        else
+        {
+            this.deliveryStack = delivery;
+        }
+
     }
 }

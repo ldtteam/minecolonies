@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.requestsystem.IRequestManager;
+import com.minecolonies.api.colony.requestsystem.StandardRequestManager;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MathUtils;
@@ -91,6 +92,8 @@ public final class ColonyView implements IColony
      */
     private int lastContactInHours = 0;
 
+    private IRequestManager requestManager = new StandardRequestManager(this);
+
     /**
      * Base constructor for a colony.
      *
@@ -157,6 +160,8 @@ public final class ColonyView implements IColony
         buf.writeInt(colony.getLastContactInHours());
         buf.writeBoolean(colony.isManualHousing());
         //  Citizens are sent as a separate packet
+
+        ByteBufUtils.writeTag(buf, colony.getRequestManager().serializeNBT());
     }
 
     /**
@@ -453,6 +458,9 @@ public final class ColonyView implements IColony
         }
         this.lastContactInHours = buf.readInt();
         this.manualHousing = buf.readBoolean();
+
+        this.requestManager = new StandardRequestManager(this);
+        this.requestManager.deserializeNBT(ByteBufUtils.readTag(buf));
         return null;
     }
 
@@ -703,7 +711,7 @@ public final class ColonyView implements IColony
     {
         //No request system on the client side.
         //At least for now.
-        return null;
+        return requestManager;
     }
 
     @Override

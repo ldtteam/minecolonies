@@ -12,9 +12,13 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.Suppression;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTUtil;
+import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,6 +35,16 @@ import java.util.stream.Collectors;
 @SuppressWarnings(Suppression.BIG_CLASS)
 public class StandardRequestManager implements IRequestManager
 {
+    ////---------------------------NBTTags-------------------------\\\\
+    private static final String NBT_REQUEST_IDENTITY_MAP = "Request_Identities";
+    private static final String NBT_RESOLVER_REQUESTS_ASSIGNMENTS = "Resolver_Requests";
+    private static final String NBT_PLAYER = "Player";
+
+    private static final String NBT_TOKEN = "Token";
+    private static final String NBT_ASSIGNMENTS = "Assignments";
+
+    private static final String NBT_REQUEST = "Request";
+    ////---------------------------NBTTags-------------------------\\\\
 
     /**
      * BiMap that holds unique token to provider lookup.
@@ -110,7 +124,212 @@ public class StandardRequestManager implements IRequestManager
     @Override
     public NBTTagCompound serializeNBT()
     {
-        return null;
+        NBTTagCompound systemCompound = new NBTTagCompound();
+
+        NBTTagList requestIdentityList = new NBTTagList();
+        requestBiMap.keySet().forEach(token -> {
+            NBTTagCompound requestCompound = new NBTTagCompound();
+
+            requestCompound.setTag(NBT_TOKEN, getFactoryController().serialize(token));
+            requestCompound.setTag(NBT_REQUEST, getFactoryController().serialize(requestBiMap.get(token)));
+
+            requestIdentityList.appendTag(requestCompound);
+        });
+        systemCompound.setTag(NBT_REQUEST_IDENTITY_MAP, requestIdentityList);
+
+        NBTTagList resolverRequestAssignmentList = new NBTTagList();
+        resolverRequestMap.keySet().forEach(token -> {
+            NBTTagCompound assignmentCompound = new NBTTagCompound();
+
+            assignmentCompound.setTag(NBT_TOKEN, getFactoryController().serialize(token));
+            NBTTagList assignedList = new NBTTagList();
+            resolverRequestMap.get(token).forEach(assignedToken -> assignedList.appendTag(getFactoryController().serialize(assignedToken)));
+            assignmentCompound.setTag(NBT_ASSIGNMENTS, assignedList);
+
+            resolverRequestAssignmentList.appendTag(assignmentCompound);
+        });
+        systemCompound.setTag(NBT_RESOLVER_REQUESTS_ASSIGNMENTS, resolverRequestAssignmentList);
+
+        //TODO Save Player resolver.
+
+        return systemCompound;
+    }
+
+    /**
+     * Method used to deserialize the data inside the given nbt tag into this request system.
+     *
+     * @param nbt The data to deserialize.
+     */
+    @Override
+    public void deserializeNBT(final NBTTagCompound nbt)
+    {
+        NBTTagList requestIdentityList = nbt.getTagList(NBT_REQUEST_IDENTITY_MAP, Constants.NBT.TAG_COMPOUND);
+        requestBiMap.clear();
+        NBTUtils.streamCompound(requestIdentityList).forEach(identityCompound -> {
+            IToken token = getFactoryController().deserialize(identityCompound.getCompoundTag(NBT_TOKEN));
+            IRequest request = getFactoryController().deserialize(identityCompound.getCompoundTag(NBT_REQUEST));
+
+            requestBiMap.put(token, request);
+        });
+
+        NBTTagList resolverRequestAssignmentList = nbt.getTagList(NBT_RESOLVER_REQUESTS_ASSIGNMENTS, Constants.NBT.TAG_COMPOUND);
+        resolverRequestMap.clear();
+        requestResolverMap.clear();
+        NBTUtils.streamCompound(resolverRequestAssignmentList).forEach(assignmentCompound -> {
+            IToken token = getFactoryController().deserialize(assignmentCompound.getCompoundTag(NBT_TOKEN));
+            if (!resolverBiMap.containsKey(token))
+            {
+                Log.getLogger().error("Unknown resolver found in NBT Data. Something might be going wrong and requests might linger around!");
+                return;
+            }
+
+            NBTTagList assignmentsLists = assignmentCompound.getTagList(NBT_ASSIGNMENTS, Constants.NBT.TAG_COMPOUND);
+            Collection<IToken> assignedRequests = NBTUtils.streamCompound(assignmentsLists).map(tokenCompound -> {
+                IToken assignedToken = getFactoryController().deserialize(tokenCompound);
+
+                // Reverse mapping being restored.
+                requestResolverMap.put(assignedToken, token);
+
+                return assignedToken;
+            }).collect(Collectors.toList());
+
+            resolverRequestMap.put(token, assignedRequests);
+        });
+
+    }
+
+    /**
+     * Method used to get the FactoryController of the RequestManager.
+     *
+     * @return The FactoryController of this RequestManager.
+     */
+    @NotNull
+    @Override
+    public IFactoryController getFactoryController()
+    {
+        return StandardFactoryController.getInstance();
+    }
+
+
+    /**
+     * Method to create a request for a given object
+     *
+     * @param requester The requester.
+     * @param object    The Object that is being requested.
+     * @return The token representing the request.
+     *
+     * @throws IllegalArgumentException is thrown when this manager cannot produce a request for the given types.
+     */
+    @NotNull
+    @Override
+    public <T> IToken createRequest(@NotNull final IRequester requester, @NotNull final T object) throws IllegalArgumentException
+    {
+        final IRequest<T> request = RequestHandler.createRequest(this, requester, object);
+        return request.getToken();
+    }
+
+    /**
+     * Method used to assign a request to a resolver.
+     *
+     * @param token The token of the request to assign.
+     * @throws IllegalArgumentException when the token is not registered to a request, or is already assigned to a resolver.
+     */
+    @Override
+    public void assignRequest(@NotNull final IToken token) throws IllegalArgumentException
+    {
+        RequestHandler.assignRequest(this, RequestHandler.getRequest(this, token));
+    }
+
+    /**
+     * Method used to create and immediately assign a request.
+     *
+     * @param requester The requester of the requestable.
+     * @param object    The requestable
+     * @return The token that represents the request.
+     *
+     * @throws IllegalArgumentException when either createRequest or assignRequest have thrown an IllegalArgumentException
+     */
+    @NotNull
+    @Override
+    public <T> IToken createAndAssignRequest(@NotNull final IRequester requester, @NotNull final T object) throws IllegalArgumentException
+    {
+        final IToken token = createRequest(requester, object);
+        assignRequest(token);
+        return token;
+    }
+
+    /**
+     * Method to get a request for a given token.
+     * <p>
+     * Returned value is a defensive copy. However should not be modified!
+     *
+     * @param token The token to get a request for.
+     * @return The request of the given type for that token.
+     *
+     * @throws IllegalArgumentException when either their is no request with that token, or the token does not produce a request of the given type T.
+     */
+    @SuppressWarnings(Suppression.UNCHECKED)
+    @NotNull
+    @Override
+    public <T> IRequest<T> getRequestForToken(@NotNull final IToken token) throws IllegalArgumentException
+    {
+        final IRequest<T> internalRequest = RequestHandler.getRequest(this, token);
+
+        final NBTTagCompound requestData = getFactoryController().serialize(internalRequest);
+
+        return getFactoryController().deserialize(requestData);
+    }
+
+    /**
+     * Method to update the state of a given request.
+     *
+     * @param token The token that represents a given request to update.
+     * @param state The new state of that request.
+     * @throws IllegalArgumentException when the token is unknown to this manager.
+     */
+    @NotNull
+    @Override
+    public void updateRequestState(@NotNull final IToken token, @NotNull final RequestState state) throws IllegalArgumentException
+    {
+        final IRequest request = RequestHandler.getRequest(this, token);
+        request.setState(new WrappedStaticStateRequestManager(this), state);
+
+        switch (request.getState())
+        {
+            case COMPLETED:
+                RequestHandler.onRequestSuccessful(this, token);
+                return;
+            case OVERRULED:
+            case CANCELLED:
+                RequestHandler.onRequestCancelled(this, token);
+                return;
+            case RECEIVED:
+                RequestHandler.onRequestReceivedByRequester(this, token);
+                return;
+            default:
+        }
+    }
+
+    /**
+     * Method used to indicate to this manager that a new Provider has been added to the colony.
+     *
+     * @param provider The new provider.
+     */
+    @Override
+    public void onProviderAddedToColony(@NotNull final IRequestResolverProvider provider) throws IllegalArgumentException
+    {
+        ProviderHandler.registerProvider(this, provider);
+    }
+
+    /**
+     * Method used to indicate to this manager that Provider has been removed from the colony.
+     *
+     * @param provider The removed provider.
+     */
+    @Override
+    public void onProviderRemovedFromColony(@NotNull final IRequestResolverProvider provider) throws IllegalArgumentException
+    {
+        ProviderHandler.removeProvider(this, provider);
     }
 
     /**
@@ -794,7 +1013,7 @@ public class StandardRequestManager implements IRequestManager
             //Check if the request has a parent
             if (request.hasParent())
             {
-                final IRequest parentRequest = getRequest(manager, request.getToken());
+                final IRequest parentRequest = getRequest(manager, request.getParent());
 
                 //Assign the followup to the parent as a child so that processing is still halted.
                 if (followupRequest != null)
@@ -913,18 +1132,6 @@ public class StandardRequestManager implements IRequestManager
 
             return manager.requestBiMap.get(token);
         }
-    }
-
-    /**
-     * Method used to get the FactoryController of the RequestManager.
-     *
-     * @return The FactoryController of this RequestManager.
-     */
-    @NotNull
-    @Override
-    public IFactoryController getFactoryController()
-    {
-        return StandardFactoryController.getInstance();
     }
 
     /**
@@ -1146,137 +1353,5 @@ public class StandardRequestManager implements IRequestManager
         {
             //TODO: implement when link is created with workers
         }
-    }
-
-    /**
-     * Method to create a request for a given object
-     *
-     * @param requester The requester.
-     * @param object    The Object that is being requested.
-     * @return The token representing the request.
-     *
-     * @throws IllegalArgumentException is thrown when this manager cannot produce a request for the given types.
-     */
-    @NotNull
-    @Override
-    public <T> IToken createRequest(@NotNull final IRequester requester, @NotNull final T object) throws IllegalArgumentException
-    {
-        final IRequest<T> request = RequestHandler.createRequest(this, requester, object);
-        return request.getToken();
-    }
-
-    /**
-     * Method used to assign a request to a resolver.
-     *
-     * @param token The token of the request to assign.
-     * @throws IllegalArgumentException when the token is not registered to a request, or is already assigned to a resolver.
-     */
-    @Override
-    public void assignRequest(@NotNull final IToken token) throws IllegalArgumentException
-    {
-        RequestHandler.assignRequest(this, RequestHandler.getRequest(this, token));
-    }
-
-    /**
-     * Method used to create and immediately assign a request.
-     *
-     * @param requester The requester of the requestable.
-     * @param object    The requestable
-     * @return The token that represents the request.
-     *
-     * @throws IllegalArgumentException when either createRequest or assignRequest have thrown an IllegalArgumentException
-     */
-    @NotNull
-    @Override
-    public <T> IToken createAndAssignRequest(@NotNull final IRequester requester, @NotNull final T object) throws IllegalArgumentException
-    {
-        final IToken token = createRequest(requester, object);
-        assignRequest(token);
-        return token;
-    }
-
-    /**
-     * Method to get a request for a given token.
-     * <p>
-     * Returned value is a defensive copy. However should not be modified!
-     *
-     * @param token The token to get a request for.
-     * @return The request of the given type for that token.
-     *
-     * @throws IllegalArgumentException when either their is no request with that token, or the token does not produce a request of the given type T.
-     */
-    @SuppressWarnings(Suppression.UNCHECKED)
-    @NotNull
-    @Override
-    public <T> IRequest<T> getRequestForToken(@NotNull final IToken token) throws IllegalArgumentException
-    {
-        final IRequest<T> internalRequest = RequestHandler.getRequest(this, token);
-
-        final NBTTagCompound requestData = getFactoryController().serialize(internalRequest);
-
-        return getFactoryController().deserialize(requestData);
-    }
-
-    /**
-     * Method to update the state of a given request.
-     *
-     * @param token The token that represents a given request to update.
-     * @param state The new state of that request.
-     * @throws IllegalArgumentException when the token is unknown to this manager.
-     */
-    @NotNull
-    @Override
-    public void updateRequestState(@NotNull final IToken token, @NotNull final RequestState state) throws IllegalArgumentException
-    {
-        final IRequest request = RequestHandler.getRequest(this, token);
-        request.setState(new WrappedStaticStateRequestManager(this), state);
-
-        switch (request.getState())
-        {
-            case COMPLETED:
-                RequestHandler.onRequestSuccessful(this, token);
-                return;
-            case OVERRULED:
-            case CANCELLED:
-                RequestHandler.onRequestCancelled(this, token);
-                return;
-            case RECEIVED:
-                RequestHandler.onRequestReceivedByRequester(this, token);
-                return;
-            default:
-        }
-    }
-
-    /**
-     * Method used to indicate to this manager that a new Provider has been added to the colony.
-     *
-     * @param provider The new provider.
-     */
-    @Override
-    public void onProviderAddedToColony(@NotNull final IRequestResolverProvider provider) throws IllegalArgumentException
-    {
-        ProviderHandler.registerProvider(this, provider);
-    }
-
-    /**
-     * Method used to indicate to this manager that Provider has been removed from the colony.
-     *
-     * @param provider The removed provider.
-     */
-    @Override
-    public void onProviderRemovedFromColony(@NotNull final IRequestResolverProvider provider) throws IllegalArgumentException
-    {
-        ProviderHandler.removeProvider(this, provider);
-    }
-
-    /**
-     * Method used to deserialize the data inside the given nbt tag into this request system.
-     *
-     * @param nbt The data to deserialize.
-     */
-    @Override
-    public void deserializeNBT(final NBTTagCompound nbt)
-    {
-
     }
 }

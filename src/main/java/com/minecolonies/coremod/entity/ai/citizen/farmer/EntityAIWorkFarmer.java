@@ -223,10 +223,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             return PREPARING;
         }
 
-        if (checkOrRequestItemsAsynch(true, seeds))
-        {
-            tryToTakeFromListOrRequest(checkField && !containsPlants(currentField), seeds);
-        }
+        checkIfRequestForItemExistOrCreate(seeds);
 
         currentField.nextState();
         return PREPARING;
@@ -489,7 +486,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      * Checks if we can hoe, and does so if we can.
      *
      * @param position the position to check.
-     * @param field    the field that we are working with.
      * @return true if the farmer should move on.
      */
     private boolean hoeIfAble(final BlockPos position)
@@ -553,7 +549,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      * Checks if the ground should be hoed and the block above removed.
      *
      * @param position the position to check.
-     * @param field    the field close to this position.
      * @return true if should be hoed.
      */
     private boolean shouldHoe(@NotNull final BlockPos position)
@@ -603,7 +598,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      * @return building instance
      */
     @Override
-    protected BuildingFarmer getOwnBuilding()
+    public BuildingFarmer getOwnBuilding()
     {
         return (BuildingFarmer) worker.getWorkBuilding();
     }

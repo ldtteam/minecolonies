@@ -54,7 +54,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
             Colony colony = (Colony) manager.getColony();
             Set<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
 
-            return wareHouses.stream().anyMatch(wareHouse -> wareHouse.hasMatchinItemStackInWarehouse(requestToCheck.getRequest()::matches));
+            return wareHouses.stream().anyMatch(wareHouse -> wareHouse.hasMatchinItemStackInWarehouse(itemStack -> requestToCheck.getRequest().matches(itemStack)));
         }
 
         return false;
@@ -76,7 +76,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
         Set<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
 
         for(TileEntityWareHouse wareHouse : wareHouses) {
-            ItemStack matchingStack = wareHouse.getFirstMatchingItemStackInWarehouse(request.getRequest()::matches);
+            ItemStack matchingStack = wareHouse.getFirstMatchingItemStackInWarehouse(itemStack -> request.getRequest().matches(itemStack));
             if (ItemStackUtils.isEmpty(matchingStack))
                 continue;
 

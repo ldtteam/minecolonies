@@ -284,11 +284,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         }
 
         final ItemStack[] arrayToRequestAndRetrieve = list.toArray(new ItemStack[list.size()]);
-        if (checkOrRequestItemsAsynch(true, arrayToRequestAndRetrieve))
-        {
-            tryToTakeFromListOrRequest(shouldRequest(), arrayToRequestAndRetrieve);
-            return getState();
-        }
+        checkIfRequestForItemExistOrCreate(arrayToRequestAndRetrieve);
 
         InventoryUtils.removeStacksFromItemHandler(new InvWrapper(worker.getInventoryCitizen()), list);
         currentBakingProduct.nextState();
@@ -358,10 +354,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
             final List<RecipeStorage> recipes = BakerRecipes.getRecipes();
             final List<ItemStack> lastRecipe = recipes.get(recipes.size() - 1).getInput();
             final ItemStack[] arrayToRequestAndRetrieve = lastRecipe.toArray(new ItemStack[lastRecipe.size()]);
-            if(checkOrRequestItemsAsynch(true, arrayToRequestAndRetrieve))
-            {
-                tryToTakeFromListOrRequest(shouldRequest(), arrayToRequestAndRetrieve);
-            }
+            checkIfRequestForItemExistOrCreate(arrayToRequestAndRetrieve);
             setDelay(UNABLE_TO_CRAFT_DELAY);
             return PREPARING;
         }
@@ -503,7 +496,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
      * @return building instance
      */
     @Override
-    protected BuildingBaker getOwnBuilding()
+    public BuildingBaker getOwnBuilding()
     {
         return (BuildingBaker) worker.getWorkBuilding();
     }

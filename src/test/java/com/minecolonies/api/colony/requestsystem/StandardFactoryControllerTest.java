@@ -1,6 +1,8 @@
 package com.minecolonies.api.colony.requestsystem;
 
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.requestsystem.factory.IFactory;
+import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.colony.requestsystem.token.StandardToken;
 import com.minecolonies.api.colony.requestsystem.token.StandardTokenFactory;
@@ -41,14 +43,14 @@ public class StandardFactoryControllerTest
     @Test
     public void getFactoryForInput()
     {
-        final IFactory<UUID, ?> inputBasedFactory = StandardFactoryController.getInstance().getFactoryForInput(new TypeToken<UUID>() {});
+        final IFactory<UUID, ?> inputBasedFactory = StandardFactoryController.getInstance().getFactoryForInput(UUID.class);
         assertEquals(inputBasedFactory, factory);
     }
 
     @Test
     public void getFactoryForOutput()
     {
-        final IFactory<?, StandardToken> outputBasedFactory = StandardFactoryController.getInstance().getFactoryForOutput(new TypeToken<StandardToken>() {});
+        final IFactory<?, StandardToken> outputBasedFactory = StandardFactoryController.getInstance().getFactoryForOutput(StandardToken.class);
         assertEquals(outputBasedFactory, factory);
     }
 

@@ -70,6 +70,7 @@ public class Colony implements IColony
     private static final String TAG_WORK                       = "work";
     private static final String TAG_MANUAL_HIRING              = "manualHiring";
     private static final String TAG_MANUAL_HOUSING             = "manualHousing";
+    private static final String TAG_REQUESTMANAGER             = "requestManager";
     private static final String TAG_WAYPOINT                   = "waypoints";
     private static final String TAG_FREE_BLOCKS                = "freeBlocks";
     private static final String TAG_FREE_POSITIONS             = "freePositions";
@@ -415,6 +416,11 @@ public class Colony implements IColony
         }
         lastContactInHours = compound.getInteger(TAG_ABANDONED);
         manualHousing = compound.getBoolean(TAG_MANUAL_HOUSING);
+
+        if (compound.hasKey(TAG_REQUESTMANAGER))
+        {
+            this.requestManager.deserializeNBT(compound.getCompoundTag(TAG_REQUESTMANAGER));
+        }
     }
 
     /**
@@ -574,6 +580,7 @@ public class Colony implements IColony
         compound.setDouble(TAG_HAPPINESS, overallHappiness);
         compound.setInteger(TAG_ABANDONED, lastContactInHours);
         compound.setBoolean(TAG_MANUAL_HOUSING, manualHousing);
+        compound.setTag(TAG_REQUESTMANAGER, getRequestManager().serializeNBT());
     }
 
     /**
