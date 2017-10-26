@@ -192,7 +192,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
 
         final AbstractBuildingWorker buildingWorker = getOwnBuilding();
-        if(buildingWorker instanceof BuildingBuilder)
+        if (buildingWorker instanceof BuildingBuilder)
         {
             ((BuildingBuilder) buildingWorker).resetNeededResources();
         }
@@ -222,7 +222,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 continue;
             }
 
-            if(block instanceof BlockSolidSubstitution)
+            if (block instanceof BlockSolidSubstitution)
             {
                 blockState = getSolidSubstitution(job.getStructure().getBlockPosition());
                 block = blockState.getBlock();
@@ -291,7 +291,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                     request.add(entity.getPickedResult(new RayTraceResult(worker)));
                     entity.getArmorInventoryList().forEach(request::add);
                 }
-                else if(entity instanceof EntityMob)
+                else if (entity instanceof EntityMob)
                 {
                     //Don't try to request the monster.
                 }
@@ -453,7 +453,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     {
         final AbstractBuildingWorker buildingWorker = getOwnBuilding();
 
-        if(ItemStackUtils.isEmpty(stack))
+        if (ItemStackUtils.isEmpty(stack))
         {
             return ItemStackUtils.EMPTY;
         }
@@ -488,7 +488,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
         else
         {
-            final WorkOrderBuild woh = (wo instanceof WorkOrderBuild)?(WorkOrderBuild) wo : null;
+            final WorkOrderBuild woh = (wo instanceof WorkOrderBuild) ? (WorkOrderBuild) wo : null;
             if (woh != null)
             {
                 final AbstractBuilding building = job.getColony().getBuilding(wo.getBuildingLocation());
@@ -535,7 +535,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             building.registerBlockPosition(block, pos, world);
         }
 
-        if(block == ModBlocks.blockWayPoint)
+        if (block == ModBlocks.blockWayPoint)
         {
             worker.getColony().addWayPoint(pos, world.getBlockState(pos));
         }
@@ -566,9 +566,13 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         final int x3 = wrapper.getPosition().getX() + (wrapper.getWidth() - wrapper.getOffset().getX()) + STAND_OFFSET;
         final int z3 = wrapper.getPosition().getZ() + (wrapper.getLength() - wrapper.getOffset().getZ() + STAND_OFFSET);
 
-        final BlockPos[] edges = new BlockPos[]{new BlockPos(x1, BASE_Y_HEIGHT, z1), new BlockPos(x3, 70, z1), new BlockPos(x1, BASE_Y_HEIGHT, z3), new BlockPos(x3, BASE_Y_HEIGHT, z3)};
+        final BlockPos[] edges = new BlockPos[] {
+                new BlockPos(x1, BASE_Y_HEIGHT, z1),
+                new BlockPos(x3, 70, z1),
+                new BlockPos(x1, BASE_Y_HEIGHT, z3),
+                new BlockPos(x3, BASE_Y_HEIGHT, z3)};
 
-        for(final BlockPos pos: edges)
+        for (final BlockPos pos : edges)
         {
             final BlockPos basePos = world.getTopSolidOrLiquidBlock(pos);
             if (EntityUtils.checkForFreeSpace(world, basePos.down())
