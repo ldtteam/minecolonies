@@ -4,8 +4,10 @@ import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.baker.EntityAIWorkBaker;
+import com.minecolonies.coremod.sounds.BakerSounds;
 import net.minecraft.util.SoundEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_JOB_BAKER;
 
@@ -61,38 +63,36 @@ public class JobBaker extends AbstractJob
         return new EntityAIWorkBaker(this);
     }
 
-    /**
-     * Override this to let the worker return a bedTimeSound.
-     *
-     * @return soundEvent to be played.
-     */
-
-    @Override
-    public SoundEvent getBedTimeSound()
-    {
-       /** if (getCitizen() != null)
-        {
-            return getCitizen().isFemale() ? BakerSounds.Female.offToBed : BakerSounds.Male.offToBed;
-        }
-        */
-        return null;
-
-    }
-
-    /**
-     * Override this to let the worker return a badWeatherSound.
-     *
-     * @return soundEvent to be played.
-     */
+    @Nullable
     @Override
     public SoundEvent getBadWeatherSound()
     {
-        /**
         if (getCitizen() != null)
         {
-            return getCitizen().isFemale() ? BakerSounds.Female.badWeather : BakerSounds.Male.badWeather;
+            return getCitizen().isFemale() ? BakerSounds.Female.badWeather : null;
         }
-         */
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public SoundEvent getBedTimeSound()
+    {
+        if (getCitizen() != null)
+        {
+            return getCitizen().isFemale() ? BakerSounds.Female.offToBed : null;
+        }
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public SoundEvent getMoveAwaySound()
+    {
+        if (getCitizen() != null)
+        {
+            return getCitizen().isFemale() ? BakerSounds.Female.hostile : null;
+        }
         return null;
     }
 }
