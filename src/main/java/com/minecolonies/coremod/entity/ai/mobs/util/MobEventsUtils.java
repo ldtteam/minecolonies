@@ -58,22 +58,14 @@ public final class MobEventsUtils
             return;
         }
 
-        System.out.println("debug1");
-
         numberOfSpawns(colony);
 
-        System.out.println("debug2");
-
         final BlockPos targetSpawnPoint = calculateSpawnLocation(world, colony);
-
-        System.out.println("debug3");
 
         if(targetSpawnPoint.equals(colony.getCenter()))
         {
             return;
         }
-
-        System.out.println("debug4");
 
         if (Configurations.gameplay.enableInDevelopmentFeatures)
         {
@@ -82,13 +74,9 @@ public final class MobEventsUtils
               "Horde Spawn Point: " + targetSpawnPoint);
         }
 
-        System.out.println("debug6");
-
         LanguageHandler.sendPlayersMessage(
           colony.getMessageEntityPlayers(),
           "event.minecolonies.raidMessage");
-
-        System.out.println("debug7");
 
         BarbarianSpawnUtils.spawn(BARBARIAN, numberOfBarbarians, targetSpawnPoint, world);
         BarbarianSpawnUtils.spawn(ARCHER, numberOfArchers, targetSpawnPoint, world);
