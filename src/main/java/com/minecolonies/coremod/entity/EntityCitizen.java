@@ -183,11 +183,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Range required for the citizen to be home.
      */
-    private static final double RANGE_TO_BE_HOME           = 100;
+    private static final double RANGE_TO_BE_HOME           = 16;
     /**
      * If the entitiy is stuck for 2 minutes do something.
      */
-    private static final int    MAX_STUCK_TIME             = 20 * 60 * 2;
+    private static final int    MAX_STUCK_TIME             = 60;
 
     /**
      * The max amount of lines the latest log allows.
@@ -299,6 +299,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * Variable to check what time it is for the citizen.
      */
     private boolean isDay = true;
+
+    /**
+     * Field to try moving away from a location in order to pass it.
+     */
+    private boolean triedMovingAway = false;
 
     /**
      * Citizen constructor.
@@ -1134,9 +1139,17 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 updateColonyServer();
             }
 
-            if (getColonyJob() != null)
+            if (getColonyJob() != null || !CompatibilityUtils.getWorld(this).isDaytime())
             {
-                checkIfStuck();
+                if(ticksExisted % TICKS_20 == 0)
+                {
+                    checkIfStuck();
+
+                    if (ticksExisted % (MAX_STUCK_TIME * 2 + TICKS_20) == 0)
+                    {
+                        triedMovingAway = false;
+                    }
+                }
             }
             else
             {
@@ -1256,45 +1269,61 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
     private void checkIfStuck()
     {
-        if (this.currentPosition == null)
+        if (this.currentPosition == null || newNavigator == null)
         {
             this.currentPosition = this.getPosition();
             return;
         }
 
-        if (this.currentPosition.equals(this.getPosition()) && newNavigator != null && newNavigator.getDestination() != null)
+        if(this.getNavigator().getDestination() == null)
         {
-            stuckTime++;
-            if (stuckTime >= MAX_STUCK_TIME)
-            {
-                if (newNavigator.getDestination().distanceSq(posX, posY, posZ) < MOVE_AWAY_RANGE)
-                {
-                    stuckTime = 0;
-                    return;
-                }
-                final BlockPos destination = BlockPosUtil.getFloor(newNavigator.getDestination(), CompatibilityUtils.getWorld(this));
-                @Nullable final BlockPos spawnPoint =
-                        Utils.scanForBlockNearPoint
-                                (CompatibilityUtils.getWorld(this), destination, 1, 1, 1, 3,
-                                        Blocks.AIR,
-                                        Blocks.SNOW_LAYER,
-                                        Blocks.TALLGRASS,
-                                        Blocks.RED_FLOWER,
-                                        Blocks.YELLOW_FLOWER,
-                                        Blocks.CARPET);
-
-                WorkerUtil.setSpawnPoint(spawnPoint, this);
-                if (colony != null)
-                {
-                    Log.getLogger().info("Teleported stuck citizen " + this.getName() + " from colony: " + colony.getID() + " to target location");
-                }
-                stuckTime = 0;
-            }
+            return;
         }
-        else
+
+        if(!new AxisAlignedBB(this.currentPosition).expand(1, 1, 1)
+                .intersectsWith(new AxisAlignedBB(this.getPosition())) && !triedMovingAway)
         {
             stuckTime = 0;
             this.currentPosition = this.getPosition();
+            return;
+        }
+
+        stuckTime++;
+
+        if (stuckTime >= 5 && !triedMovingAway)
+        {
+            getNavigator().moveAwayFromXYZ(currentPosition, MOVE_AWAY_RANGE, 1);
+            triedMovingAway = true;
+            return;
+        }
+
+        if (stuckTime >= MAX_STUCK_TIME)
+        {
+            if (newNavigator.getDestination().distanceSq(posX, posY, posZ) < MOVE_AWAY_RANGE)
+            {
+                stuckTime = 0;
+                return;
+            }
+
+            triedMovingAway = false;
+
+            final BlockPos destination = BlockPosUtil.getFloor(newNavigator.getDestination(), CompatibilityUtils.getWorld(this));
+            @Nullable final BlockPos spawnPoint =
+                    Utils.scanForBlockNearPoint
+                            (CompatibilityUtils.getWorld(this), destination, 1, 1, 1, 3,
+                                    Blocks.AIR,
+                                    Blocks.SNOW_LAYER,
+                                    Blocks.TALLGRASS,
+                                    Blocks.RED_FLOWER,
+                                    Blocks.YELLOW_FLOWER,
+                                    Blocks.CARPET);
+
+            WorkerUtil.setSpawnPoint(spawnPoint, this);
+            if (colony != null)
+            {
+                Log.getLogger().info("Teleported stuck citizen " + this.getName() + " from colony: " + colony.getID() + " to target location");
+            }
+            stuckTime = 0;
         }
 
         this.currentPosition = this.getPosition();

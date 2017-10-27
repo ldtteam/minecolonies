@@ -8,6 +8,8 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Random;
+
 /**
  * Job that handles moving away from something.
  */
@@ -33,6 +35,11 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     protected final int avoidDistance;
 
     /**
+     * Random object.
+     */
+    private static final Random rand = new Random();
+
+    /**
      * Prepares the PathJob for the path finding system.
      *
      * @param world         world the entity is in.
@@ -55,7 +62,24 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
         dx *= scalar;
         dz *= scalar;
 
-        heuristicPoint = new BlockPos(start.getX() + (int) dx, start.getY(), start.getZ() + (int) dz);
+        int randomValue = rand.nextInt(4);
+
+        if(randomValue == 0)
+        {
+            heuristicPoint = new BlockPos(start.getX() + (int) dx, start.getY(), start.getZ() + (int) dz);
+        }
+        else if(randomValue == 1)
+        {
+            heuristicPoint = new BlockPos(start.getX() - (int) dx, start.getY(), start.getZ() - (int) dz);
+        }
+        else if(randomValue == 2)
+        {
+            heuristicPoint = new BlockPos(start.getX() + (int) dx, start.getY(), start.getZ() - (int) dz);
+        }
+        else
+        {
+            heuristicPoint = new BlockPos(start.getX() - (int) dx, start.getY(), start.getZ() + (int) dz);
+        }
     }
 
     /**
