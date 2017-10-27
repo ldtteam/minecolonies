@@ -1140,7 +1140,6 @@ public class Colony implements IColony
                         .stream().filter(permissions::isSubscriber).collect(Collectors.toList()).isEmpty()
                     && MobEventsUtils.isItTimeToRaid(event.world, this))
             {
-                System.out.println("debug");
                 MobEventsUtils.barbarianEvent(event.world, this);
             }
         }
