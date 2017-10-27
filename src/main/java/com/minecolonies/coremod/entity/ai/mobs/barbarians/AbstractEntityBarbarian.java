@@ -63,7 +63,7 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     /**
      * Amount of ticks to despawn the barbarian.
      */
-    private static final int TICKS_TO_DESPAWN = Constants.TICKS_SECOND * Constants.SECONDS_A_MINUTE * 20;
+    private static final int TICKS_TO_DESPAWN = Constants.TICKS_SECOND * Constants.SECONDS_A_MINUTE * 10;
 
     /**
      * Randomly execute it every this ticks.
@@ -73,7 +73,7 @@ public abstract class AbstractEntityBarbarian extends EntityMob
     /**
      * Sets the barbarians target colony on spawn Thus it never changes.
      */
-    private final        Colony colony                          = ColonyManager.getClosestColony(CompatibilityUtils.getWorld(this), this.getPosition());
+    private final Colony colony = ColonyManager.getClosestColony(CompatibilityUtils.getWorld(this), this.getPosition());
 
     /**
      * Current count of ticks.

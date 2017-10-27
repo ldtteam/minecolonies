@@ -6,8 +6,6 @@ import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.BuildingBarracks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -55,19 +53,27 @@ public final class MobEventsUtils
 
     public static void barbarianEvent(final World world, final Colony colony)
     {
-        if(world == null)
+        if(world == null || !colony.isCanHaveBarbEvents())
         {
             return;
         }
 
+        System.out.println("debug1");
+
         numberOfSpawns(colony);
 
+        System.out.println("debug2");
+
         final BlockPos targetSpawnPoint = calculateSpawnLocation(world, colony);
+
+        System.out.println("debug3");
 
         if(targetSpawnPoint.equals(colony.getCenter()))
         {
             return;
         }
+
+        System.out.println("debug4");
 
         if (Configurations.gameplay.enableInDevelopmentFeatures)
         {
@@ -76,9 +82,13 @@ public final class MobEventsUtils
               "Horde Spawn Point: " + targetSpawnPoint);
         }
 
+        System.out.println("debug6");
+
         LanguageHandler.sendPlayersMessage(
           colony.getMessageEntityPlayers(),
           "event.minecolonies.raidMessage");
+
+        System.out.println("debug7");
 
         BarbarianSpawnUtils.spawn(BARBARIAN, numberOfBarbarians, targetSpawnPoint, world);
         BarbarianSpawnUtils.spawn(ARCHER, numberOfArchers, targetSpawnPoint, world);
@@ -160,29 +170,10 @@ public final class MobEventsUtils
 
         for (@NotNull final CitizenData citizen : citizensList)
         {
-            if (citizen.getJob() != null && citizen.getWorkBuilding() != null)
-            {
-                final int buildingLevel = citizen.getWorkBuilding().getBuildingLevel();
-                levels += buildingLevel;
-            }
+            levels += citizen.getLevel();
         }
 
-        for(final AbstractBuilding building: colony.getBuildings().values())
-        {
-            if(building instanceof BuildingBarracks)
-            {
-                levels+= building.getBuildingLevel() * 2;
-            }
-        }
-
-        if (colony.getTownHall() != null)
-        {
-            return levels + colony.getTownHall().getBuildingLevel() * 2;
-        }
-        else
-        {
-            return 0;
-        }
+        return levels;
     }
 
     /**
@@ -215,8 +206,9 @@ public final class MobEventsUtils
             return false;
         }
 
-        if (world.isDaytime())
+        if (world.isDaytime() && !colony.isHasRaidBeenCalculated())
         {
+            colony.setHasRaidBeenCalculated(true);
             if(!colony.hasWillRaidTonight())
             {
                 final boolean raid = raidThisNight(world);
@@ -230,8 +222,9 @@ public final class MobEventsUtils
             }
             return false;
         }
-        else if (colony.hasWillRaidTonight())
+        else if (colony.hasWillRaidTonight() && !world.isDaytime() && colony.isHasRaidBeenCalculated())
         {
+            colony.setHasRaidBeenCalculated(false);
             colony.setWillRaidTonight(false);
             if (Configurations.gameplay.enableInDevelopmentFeatures)
             {
@@ -240,6 +233,10 @@ public final class MobEventsUtils
                         "Night reached: raiding");
             }
             return true;
+        }
+        else if (!world.isDaytime() && colony.isHasRaidBeenCalculated())
+        {
+            colony.setHasRaidBeenCalculated(false);
         }
 
         return false;
