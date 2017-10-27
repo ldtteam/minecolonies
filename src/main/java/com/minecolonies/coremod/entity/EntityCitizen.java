@@ -1275,7 +1275,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             return;
         }
 
-        if(this.getNavigator().getDestination() == null)
+        if(newNavigator.getDestination() == null || newNavigator.getDestination().distanceSq(posX, posY, posZ) < MOVE_AWAY_RANGE)
         {
             return;
         }
@@ -1292,7 +1292,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         if (stuckTime >= 5 && !triedMovingAway)
         {
-            getNavigator().moveAwayFromXYZ(currentPosition, MOVE_AWAY_RANGE, 1);
+            newNavigator.moveAwayFromXYZ(currentPosition, MOVE_AWAY_RANGE, 1);
             triedMovingAway = true;
             return;
         }
