@@ -206,11 +206,14 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         if (!workers.isEmpty())
         {
             @NotNull final NBTTagList workersTagList = new NBTTagList();
-            for (@NotNull final CitizenData data : workers)
+            for (@Nullable final CitizenData data : workers)
             {
-                final NBTTagCompound idCompound = new NBTTagCompound();
-                idCompound.setInteger(TAG_ID, data.getId());
-                workersTagList.appendTag(idCompound);
+                if(data != null)
+                {
+                    final NBTTagCompound idCompound = new NBTTagCompound();
+                    idCompound.setInteger(TAG_ID, data.getId());
+                    workersTagList.appendTag(idCompound);
+                }
             }
             compound.setTag(TAG_WORKER, workersTagList);
         }
