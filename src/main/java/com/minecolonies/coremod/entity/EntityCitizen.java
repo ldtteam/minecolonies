@@ -13,7 +13,6 @@ import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
-import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
@@ -249,6 +248,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * Full saturation amount.
      */
     public static final double FULL_SATURATION = 10;
+
+    /**
+     * Minimum stuck time for the worker to react.
+     */
+    private static final int MIN_STUCK_TIME    = 5;
 
     private static Field            navigatorField;
     private final  InventoryCitizen inventory;
@@ -1291,7 +1295,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         stuckTime++;
 
-        if (stuckTime >= 5 && !triedMovingAway)
+        if (stuckTime >= MIN_STUCK_TIME && !triedMovingAway)
         {
             newNavigator.moveAwayFromXYZ(currentPosition, MOVE_AWAY_RANGE, 1);
             triedMovingAway = true;
@@ -2163,9 +2167,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
             this.getWorkBuilding().onWakeUp();
         }
 
-        if(this.getHomeBuilding() != null)
+        final AbstractBuilding homeBuilding = this.getHomeBuilding();
+        if(homeBuilding != null)
         {
-            this.getHomeBuilding().onWakeUp();
+            homeBuilding.onWakeUp();
         }
     }
 

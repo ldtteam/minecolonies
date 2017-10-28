@@ -458,7 +458,9 @@ public abstract class AbstractBuilding
      */
     public void onWakeUp()
     {
-
+        /**
+         * Buildings override this if required.
+         */
     }
 
     /**

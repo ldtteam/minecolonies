@@ -16,7 +16,12 @@ import java.util.Random;
  */
 public class PathJobMoveAwayFromLocation extends AbstractPathJob
 {
-    private static final double TIE_BREAKER = 1.001D;
+    private static final double TIE_BREAKER    = 1.001D;
+
+    /**
+     * All directions to try to avoid to.
+     */
+    private static final int DIRECTIONS_TO_TRY = 4;
 
     /**
      * Position to run to, in order to avoid something.
@@ -68,8 +73,7 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
         dx *= scalar;
         dz *= scalar;
 
-        int randomValue = rand.nextInt(4);
-
+        final int randomValue = rand.nextInt(DIRECTIONS_TO_TRY);
 
         if(randomValue == 0)
         {
