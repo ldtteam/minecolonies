@@ -66,8 +66,31 @@ public class EntityAIGoHome extends EntityAIBase
     @Override
     public boolean shouldExecute()
     {
-        return (citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP && (!citizen.isAtHome() || isCitizenHungry()))
-                || isCitizenStarving();
+        if(citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP && !citizen.isAtHome())
+        {
+            return true;
+        }
+
+        final BlockPos homePos = citizen.getHomePosition();
+
+        if(homePos == null)
+        {
+            return true;
+        }
+
+        final AbstractBuilding homeBuilding = citizen.getColony().getBuilding(homePos);
+
+        if(!(homeBuilding instanceof BuildingHome))
+        {
+            return true;
+        }
+
+        if(isCitizenHungry() && !((BuildingHome) homeBuilding).isFoodNeeded())
+        {
+            return true;
+        }
+        
+        return isCitizenStarving() && citizen.getDesiredActivity() != EntityCitizen.DesiredActivity.SLEEP;
     }
 
     /**

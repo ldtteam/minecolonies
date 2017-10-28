@@ -13,6 +13,7 @@ import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
+import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
@@ -1192,7 +1193,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 final AbstractBuilding home = getHomeBuilding();
                 if(home != null && home instanceof BuildingHome && ((BuildingHome)home).isFoodNeeded())
                 {
-                    ((BuildingHome)home).setFoodNeeded(false);
+                    ((BuildingHome)home).checkIfFoodNeeded();
                 }
             }
         }
@@ -1641,7 +1642,18 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
     public boolean isAtHome()
     {
+        @Nullable final AbstractBuilding homeBuilding = getHomeBuilding();
         @Nullable final BlockPos homePosition = getHomePosition();
+
+        if(homeBuilding instanceof BuildingHome)
+        {
+            final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = homeBuilding.getCorners();
+            return new AxisAlignedBB(corners.getFirst().getFirst(), posY - 1, corners.getFirst().getSecond(),
+                    corners.getSecond().getFirst(),
+                    posY + 1,
+                    corners.getSecond().getSecond()).isVecInside(new Vec3d(this.getPosition()));
+        }
+
         return homePosition != null && homePosition.distanceSq((int) Math.floor(posX), (int) posY, (int) Math.floor(posZ)) <= RANGE_TO_BE_HOME;
     }
 
@@ -2149,6 +2161,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
         {
             setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.working"));
             this.getWorkBuilding().onWakeUp();
+        }
+
+        if(this.getHomeBuilding() != null)
+        {
+            this.getHomeBuilding().onWakeUp();
         }
     }
 

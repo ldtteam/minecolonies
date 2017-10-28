@@ -65,7 +65,7 @@ public class EntityAISleep extends EntityAIBase
         if (citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP)
         {
             final Colony colony = citizen.getColony();
-            if(colony == null || colony.getBuilding(citizen.getHomePosition()) != null)
+            if(colony == null || colony.getBuilding(citizen.getHomePosition()) == null)
             {
                 return true;
             }
@@ -80,10 +80,12 @@ public class EntityAISleep extends EntityAIBase
                         final World world = citizen.world;
                         IBlockState state = world.getBlockState(pos);
                         state = state.getBlock().getActualState(state, world, pos);
-                        if (state.getBlock() instanceof BlockBed && !state.getValue(BlockBed.OCCUPIED))
+                        if (state.getBlock() instanceof BlockBed
+                                && !state.getValue(BlockBed.OCCUPIED)
+                                && state.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.HEAD))
                         {
                             usedBed = pos;
-                            citizen.world.notifyBlockUpdate(pos, state, state.withProperty(BlockBed.OCCUPIED, true), 0);
+                            citizen.world.setBlockState(pos, state.withProperty(BlockBed.OCCUPIED, true), 0x03);
                             return true;
                         }
                     }
@@ -105,7 +107,7 @@ public class EntityAISleep extends EntityAIBase
             final IBlockState state = citizen.world.getBlockState(usedBed);
             if(state.getBlock() instanceof BlockBed)
             {
-                citizen.world.notifyBlockUpdate(usedBed, state, state.withProperty(BlockBed.OCCUPIED, false), 0);
+                citizen.world.setBlockState(usedBed, state.withProperty(BlockBed.OCCUPIED, false), 0x03);
             }
             usedBed = null;
         }
