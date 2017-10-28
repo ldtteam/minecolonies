@@ -1,5 +1,6 @@
 package com.minecolonies.api.colony.requestsystem.resolver;
 
+import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
@@ -26,7 +27,7 @@ public interface IRequestResolver<R> extends IRequester
      *
      * @return The class that represents this Type of Request this resolver can resolve.
      */
-    Class<? extends R> getRequestType();
+    TypeToken<? extends R> getRequestType();
 
     /**
      * A PreCheck used to determine if this request resolver is able to resolve a given request.

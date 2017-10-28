@@ -1,10 +1,14 @@
 package com.minecolonies.api.util;
 
 import com.google.common.reflect.TypeToken;
+import net.minecraftforge.fml.relauncher.FMLRelaunchLog;
+import org.apache.logging.log4j.core.config.AppenderControl;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -23,16 +27,15 @@ public final class ReflectionUtils
     /**
      * Method to get all Super types of a given Class.
      *
-     * @param clazz The type to get the Supertypes for.
+     * @param token The type to get the Supertypes for.
      * @param <T>   The type to get the super types for.
      * @return A set with the super types of the given type.
      */
     @SuppressWarnings("unchecked")
-    public static <T> Set<Class> getSuperClasses(final Class<T> clazz)
+    public static <T> Set<TypeToken> getSuperClasses(final TypeToken<T> token)
     {
-        final TypeToken<T> token = new TypeToken() {};
-        final HashSet<TypeToken> directSet = new HashSet<>(token.getTypes());
-        final HashSet<TypeToken> resultingSet = new HashSet<>();
+        final Set<TypeToken> directSet = new LinkedHashSet<>(token.getTypes());
+        final Set<TypeToken> resultingSet = new LinkedHashSet<>();
 
         directSet.forEach(t ->
         {
@@ -40,6 +43,14 @@ public final class ReflectionUtils
             resultingSet.add(TypeToken.of(t.getRawType()));
         });
 
-        return resultingSet.stream().map(t -> t.getRawType()).collect(Collectors.toSet());
+        return resultingSet;
+    }
+
+    public static void setFMLLoggingLevelOnConsoleToDebug(AppenderControl control)
+      throws NoSuchFieldException, IllegalAccessException
+    {
+        Field levelField = control.getClass().getField("level");
+        levelField.setAccessible(true);
+        levelField.set(control, Integer.MAX_VALUE);
     }
 }

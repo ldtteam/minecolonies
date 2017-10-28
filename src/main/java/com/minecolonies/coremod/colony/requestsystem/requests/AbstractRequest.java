@@ -2,8 +2,10 @@ package com.minecolonies.coremod.colony.requestsystem.requests;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.RequestState;
+import com.minecolonies.api.colony.requestsystem.StandardRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
@@ -47,7 +49,7 @@ public abstract class AbstractRequest<R> implements IRequest<R>
     @NotNull
     private ItemStack deliveryStack = ItemStackUtils.EMPTY;
 
-    AbstractRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final R requested)
+    protected AbstractRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final R requested)
     {
         this.requester = requester;
         this.token = token;
@@ -56,7 +58,7 @@ public abstract class AbstractRequest<R> implements IRequest<R>
         children = new ArrayList<>();
     }
 
-    AbstractRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final R requested)
+    protected AbstractRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final R requested)
     {
         this.requester = requester;
         this.token = token;
@@ -75,9 +77,9 @@ public abstract class AbstractRequest<R> implements IRequest<R>
     @NotNull
     @Override
     @SuppressWarnings("unchecked")
-    public Class<? extends R> getRequestType()
+    public TypeToken<? extends R> getRequestType()
     {
-        return (Class<? extends R>) getRequest().getClass();
+        return TypeToken.of((Class<? extends R>) getRequest().getClass());
     }
 
     /**
@@ -129,7 +131,7 @@ public abstract class AbstractRequest<R> implements IRequest<R>
     public void setState(@NotNull final IRequestManager manager, @NotNull final RequestState state)
     {
         this.state = state;
-        Log.getLogger().debug("Updated state from: " + getToken() + " to: " + state);
+        StandardRequestManager.LogHandler.log("Updated state from: " + getToken() + " to: " + state);
 
         if (this.hasParent() && this.getParent() != null)
         {
@@ -240,7 +242,7 @@ public abstract class AbstractRequest<R> implements IRequest<R>
     public <T extends IToken> void addChild(@NotNull final T child)
     {
         this.children.add(child);
-        Log.getLogger().debug("Added child:" + child + " to: " + getToken());
+        StandardRequestManager.LogHandler.log("Added child:" + child + " to: " + getToken());
     }
 
     /**
@@ -280,7 +282,7 @@ public abstract class AbstractRequest<R> implements IRequest<R>
     public <T extends IToken> void removeChild(@NotNull final T child)
     {
         this.children.remove(child);
-        Log.getLogger().debug("Removed child: " + child + " from: " + getToken());
+        StandardRequestManager.LogHandler.log("Removed child: " + child + " from: " + getToken());
     }
 
     /**
@@ -354,7 +356,7 @@ public abstract class AbstractRequest<R> implements IRequest<R>
     {
         if (!this.children.contains(child))
         {
-            //WHAT? Log and return.
+            //WHAT? log and return.
             Log.getLogger().warn("The given child:" + child + " could not update the parent:" + getToken() + " as it was not registered.");
         }
 
@@ -364,12 +366,13 @@ public abstract class AbstractRequest<R> implements IRequest<R>
             if (childRequest.getState() == RequestState.IN_PROGRESS && getState().ordinal() < RequestState.IN_PROGRESS.ordinal())
             {
                 setState(manager, RequestState.IN_PROGRESS);
-                Log.getLogger().debug("First child entering progression: " + child + " setting progression state for: " + getToken());
+                StandardRequestManager.LogHandler.log("First child entering progression: " + child + " setting progression state for: " + getToken());
             }
             if (childRequest.getState() == RequestState.COMPLETED)
             {
                 this.removeChild(child);
-                Log.getLogger().debug("Removed child:" + child + " from: " + getToken() + " as it was completed!");
+                StandardRequestManager.LogHandler.log("Removed child: " + child + " from: " + getToken() + " as it was completed!");
+                manager.updateRequestState(child, RequestState.RECEIVED);
             }
         }
         catch (final IllegalArgumentException ex)

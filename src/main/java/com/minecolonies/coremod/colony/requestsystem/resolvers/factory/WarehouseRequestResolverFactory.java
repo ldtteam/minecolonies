@@ -1,9 +1,11 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers.factory;
 
+import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverFactory;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.DeliveryRequestResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.WarehouseRequestResolver;
 import net.minecraft.nbt.NBTTagCompound;
@@ -18,16 +20,16 @@ public class WarehouseRequestResolverFactory implements IRequestResolverFactory<
 
     @NotNull
     @Override
-    public Class<? extends WarehouseRequestResolver> getFactoryOutputType()
+    public TypeToken<? extends WarehouseRequestResolver> getFactoryOutputType()
     {
-        return WarehouseRequestResolver.class;
+        return TypeToken.of(WarehouseRequestResolver.class);
     }
 
     @NotNull
     @Override
-    public Class<? extends ILocation> getFactoryInputType()
+    public TypeToken<? extends ILocation> getFactoryInputType()
     {
-        return ILocation.class;
+        return TypeToken.of(ILocation.class);
     }
 
     @NotNull
@@ -38,7 +40,7 @@ public class WarehouseRequestResolverFactory implements IRequestResolverFactory<
                                                    @NotNull final Object... context)
       throws IllegalArgumentException
     {
-        return new WarehouseRequestResolver(iLocation, factoryController.getNewInstance());
+        return new WarehouseRequestResolver(iLocation, factoryController.getNewInstance(TypeConstants.ITOKEN));
     }
 
     @NotNull

@@ -1,6 +1,8 @@
 package com.minecolonies.api.colony.requestsystem.token;
 
+import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
+import com.minecolonies.api.util.constant.TypeConstants;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -17,8 +19,8 @@ public class InitializedTokenFactory extends AbstractTokenFactory<FactoryVoidInp
 
     @NotNull
     @Override
-    public Class<? extends FactoryVoidInput> getFactoryInputType()
+    public TypeToken<? extends FactoryVoidInput> getFactoryInputType()
     {
-        return FactoryVoidInput.class;
+        return TypeConstants.FACTORYVOIDINPUT;
     }
 }

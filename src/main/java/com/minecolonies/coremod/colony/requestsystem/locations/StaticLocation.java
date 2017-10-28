@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.requestsystem.locations;
 
+import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
@@ -83,9 +84,9 @@ public class StaticLocation implements ILocation
         /**
          * Moving the curly braces really makes the code hard to read.
          */
-        public Class<StaticLocation> getFactoryOutputType()
+        public TypeToken<StaticLocation> getFactoryOutputType()
         {
-            return StaticLocation.class;
+            return TypeToken.of(StaticLocation.class);
         }
 
         @NotNull
@@ -94,9 +95,9 @@ public class StaticLocation implements ILocation
         /**
          * Moving the curly braces really makes the code hard to read.
          */
-        public Class<BlockPos> getFactoryInputType()
+        public TypeToken<BlockPos> getFactoryInputType()
         {
-            return BlockPos.class;
+            return TypeToken.of(BlockPos.class);
         }
 
         /**

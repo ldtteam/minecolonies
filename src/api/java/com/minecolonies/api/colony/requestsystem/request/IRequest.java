@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.requestsystem.request;
 
 import com.google.common.collect.ImmutableCollection;
+import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.RequestState;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
@@ -35,7 +36,7 @@ public interface IRequest<R>
      * @return The class that represents this Type of Request.
      */
     @NotNull
-    Class<? extends R> getRequestType();
+    TypeToken<? extends R> getRequestType();
 
     /**
      * Returns the current state of the request.

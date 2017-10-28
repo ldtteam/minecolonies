@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.requestsystem.requests;
 
+import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.RequestState;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -51,8 +52,14 @@ public final class StandardRequestFactories
     {
         O apply(IFactoryController controller, NBTTagCompound compound);
     }
+
+    @FunctionalInterface
+    public interface IObjectConstructor<T, O>
+    {
+        O construct(@NotNull final T requested, @NotNull final IToken token, @NotNull final IRequester requester, @NotNull final RequestState requestState);
+    }
     
-    private static <T> NBTTagCompound serializeToNBT(IFactoryController controller, IRequest<T> request, IObjectToNBTConverter<T> typeSerialization)
+    public static <T> NBTTagCompound serializeToNBT(IFactoryController controller, IRequest<T> request, IObjectToNBTConverter<T> typeSerialization)
     {
         final NBTTagCompound compound = new NBTTagCompound();
 
@@ -87,7 +94,7 @@ public final class StandardRequestFactories
         return compound;
     }
     
-    private static <T, R extends IRequest<T>> R deserializeFromNBT(IFactoryController controller, NBTTagCompound compound, INBTToObjectConverter<T> typeDeserialization)
+    public static <T, R extends IRequest<T>> R deserializeFromNBT(IFactoryController controller, NBTTagCompound compound, INBTToObjectConverter<T> typeDeserialization, IObjectConstructor<T, R> objectConstructor)
     {
         final IRequester requester = controller.deserialize(compound.getCompoundTag(NBT_REQUESTER));
         final IToken token = controller.deserialize(compound.getCompoundTag(NBT_TOKEN));
@@ -102,7 +109,10 @@ public final class StandardRequestFactories
         }
 
         @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
-        final R request = controller.getNewInstance(requested, token, requester, state);
+        //final R request = controller.getNewInstance(requested, token, requester, state);
+        final R request = objectConstructor.construct(requested, token, requester, state);
+
+        request.addChildren(childTokens);
 
         if (compound.hasKey(NBT_PARENT))
         {
@@ -142,17 +152,17 @@ public final class StandardRequestFactories
         @NotNull
         @Override
         @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
-        public Class<StandardRequests.ItemStackRequest> getFactoryOutputType()
+        public TypeToken<StandardRequests.ItemStackRequest> getFactoryOutputType()
         {
-            return StandardRequests.ItemStackRequest.class;
+            return TypeToken.of(StandardRequests.ItemStackRequest.class);
         }
 
         @NotNull
         @Override
         @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
-        public Class<Stack> getFactoryInputType()
+        public TypeToken<Stack> getFactoryInputType()
         {
-            return Stack.class;
+            return TypeToken.of(Stack.class);
         }
 
         /**
@@ -181,7 +191,8 @@ public final class StandardRequestFactories
         @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
         public StandardRequests.ItemStackRequest deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
         {
-            return deserializeFromNBT(controller, nbt, Stack::deserialize);
+            return deserializeFromNBT(controller, nbt, Stack::deserialize,
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ItemStackRequest.class), requested, token, requester, requestState));
         }
     }
 
@@ -192,17 +203,17 @@ public final class StandardRequestFactories
         @NotNull
         @Override
         @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
-        public Class<StandardRequests.DeliveryRequest> getFactoryOutputType()
+        public TypeToken<StandardRequests.DeliveryRequest> getFactoryOutputType()
         {
-            return StandardRequests.DeliveryRequest.class;
+            return TypeToken.of(StandardRequests.DeliveryRequest.class);
         }
 
         @NotNull
         @Override
         @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
-        public Class<Delivery> getFactoryInputType()
+        public TypeToken<Delivery> getFactoryInputType()
         {
-            return Delivery.class;
+            return TypeToken.of(Delivery.class);
         }
 
         /**
@@ -231,7 +242,8 @@ public final class StandardRequestFactories
         @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
         public StandardRequests.DeliveryRequest deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
         {
-            return deserializeFromNBT(controller, nbt, Delivery::deserialize);
+            return deserializeFromNBT(controller, nbt, Delivery::deserialize,
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.DeliveryRequest.class), requested, token, requester, requestState));
         }
 
         /**
@@ -270,16 +282,16 @@ public final class StandardRequestFactories
 
         @NotNull
         @Override
-        public Class<? extends StandardRequests.ToolRequest> getFactoryOutputType()
+        public TypeToken<? extends StandardRequests.ToolRequest> getFactoryOutputType()
         {
-            return StandardRequests.ToolRequest.class;
+            return TypeToken.of(StandardRequests.ToolRequest.class);
         }
 
         @NotNull
         @Override
-        public Class<? extends Tool> getFactoryInputType()
+        public TypeToken<? extends Tool> getFactoryInputType()
         {
-            return Tool.class;
+            return TypeToken.of(Tool.class);
         }
 
         @NotNull
@@ -293,7 +305,8 @@ public final class StandardRequestFactories
         @Override
         public StandardRequests.ToolRequest deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
         {
-            return deserializeFromNBT(controller, nbt, Tool::deserialize);
+            return deserializeFromNBT(controller, nbt, Tool::deserialize,
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ToolRequest.class), requested, token, requester, requestState));
         }
     }
 
@@ -313,16 +326,16 @@ public final class StandardRequestFactories
 
         @NotNull
         @Override
-        public Class<? extends StandardRequests.FoodRequest> getFactoryOutputType()
+        public TypeToken<? extends StandardRequests.FoodRequest> getFactoryOutputType()
         {
-            return StandardRequests.FoodRequest.class;
+            return TypeToken.of(StandardRequests.FoodRequest.class);
         }
 
         @NotNull
         @Override
-        public Class<? extends Food> getFactoryInputType()
+        public TypeToken<? extends Food> getFactoryInputType()
         {
-            return Food.class;
+            return TypeToken.of(Food.class);
         }
 
         @NotNull
@@ -336,7 +349,8 @@ public final class StandardRequestFactories
         @Override
         public StandardRequests.FoodRequest deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
         {
-            return deserializeFromNBT(controller, nbt, Food::deserialize);
+            return deserializeFromNBT(controller, nbt, Food::deserialize,
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.FoodRequest.class), requested, token, requester, requestState));
         }
     }
 
@@ -356,16 +370,16 @@ public final class StandardRequestFactories
 
         @NotNull
         @Override
-        public Class<? extends StandardRequests.BurnableRequest> getFactoryOutputType()
+        public TypeToken<? extends StandardRequests.BurnableRequest> getFactoryOutputType()
         {
-            return StandardRequests.BurnableRequest.class;
+            return TypeToken.of(StandardRequests.BurnableRequest.class);
         }
 
         @NotNull
         @Override
-        public Class<? extends Burnable> getFactoryInputType()
+        public TypeToken<? extends Burnable> getFactoryInputType()
         {
-            return Burnable.class;
+            return TypeToken.of(Burnable.class);
         }
 
         @NotNull
@@ -379,7 +393,8 @@ public final class StandardRequestFactories
         @Override
         public StandardRequests.BurnableRequest deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
         {
-            return deserializeFromNBT(controller, nbt, Burnable::deserialize);
+            return deserializeFromNBT(controller, nbt, Burnable::deserialize,
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.BurnableRequest.class), requested, token, requester, requestState));
         }
     }
 

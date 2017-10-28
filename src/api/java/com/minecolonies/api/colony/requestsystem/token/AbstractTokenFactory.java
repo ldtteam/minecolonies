@@ -1,6 +1,8 @@
 package com.minecolonies.api.colony.requestsystem.token;
 
+import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
+import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,9 +20,9 @@ public abstract class AbstractTokenFactory<I> implements ITokenFactory<I, Standa
 
     @NotNull
     @Override
-    public Class<StandardToken> getFactoryOutputType()
+    public TypeToken<StandardToken> getFactoryOutputType()
     {
-        return StandardToken.class;
+        return TypeConstants.STANDARDTOKEN;
     }
 
     /**

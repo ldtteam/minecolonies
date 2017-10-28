@@ -16,6 +16,10 @@ import static com.minecolonies.api.util.constant.Constants.*;
         @Config.Comment("All configurations related to citizen names")
         public static Names names = new Names();
 
+        @Config.Comment("All configurations related to the request system")
+        public static RequestSystem requestSystem = new RequestSystem();
+
+
         public static class Gameplay
         {
             @Config.Comment("Should builder place construction tape?")
@@ -767,5 +771,11 @@ import static com.minecolonies.api.util.constant.Constants.*;
                             "Hammond",
                             "Hampden"
                     };
+        }
+
+        public static class RequestSystem
+        {
+            @Config.Comment("Should the request system print out debug information? Useful in case of malfunctioning of set system.")
+            public  boolean enableDebugLogging = false;
         }
     }

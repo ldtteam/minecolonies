@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
 import com.google.common.collect.Lists;
+import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -29,9 +30,9 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
     }
 
     @Override
-    public Class<? extends Delivery> getRequestType()
+    public TypeToken<? extends Delivery> getRequestType()
     {
-        return Delivery.class;
+        return TypeToken.of(Delivery.class);
     }
 
     @Override

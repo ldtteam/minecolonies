@@ -1,5 +1,7 @@
 package com.minecolonies.api.colony.requestsystem.token;
 
+import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.util.constant.TypeConstants;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -12,9 +14,9 @@ public class StandardTokenFactory extends AbstractTokenFactory<UUID>
 
     @NotNull
     @Override
-    public Class<UUID> getFactoryInputType()
+    public TypeToken<UUID> getFactoryInputType()
     {
-        return UUID.class;
+        return TypeConstants.UUID;
     }
 
     /**

@@ -1,9 +1,11 @@
 package com.minecolonies.coremod.colony.requestsystem.requesters.factories;
 
+import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,16 +15,16 @@ public class BuildingBasedRequesterFactory implements IFactory<AbstractBuilding,
 {
     @NotNull
     @Override
-    public Class<? extends BuildingBasedRequester> getFactoryOutputType()
+    public TypeToken<? extends BuildingBasedRequester> getFactoryOutputType()
     {
-        return BuildingBasedRequester.class;
+        return TypeToken.of(BuildingBasedRequester.class);
     }
 
     @NotNull
     @Override
-    public Class<? extends AbstractBuilding> getFactoryInputType()
+    public TypeToken<? extends AbstractBuilding> getFactoryInputType()
     {
-        return AbstractBuilding.class;
+        return TypeToken.of(AbstractBuilding.class);
     }
 
     @NotNull
@@ -32,8 +34,8 @@ public class BuildingBasedRequesterFactory implements IFactory<AbstractBuilding,
         if (context.length != 0)
             throw new IllegalArgumentException("To many context elements. Only 0 supported.");
 
-        final ILocation location = factoryController.getNewInstance(building.getLocation(), building.getColony().getWorld().provider.getDimension());
-        final IToken token = factoryController.getNewInstance();
+        final ILocation location = factoryController.getNewInstance(TypeConstants.ILOCATION, building.getLocation(), building.getColony().getWorld().provider.getDimension());
+        final IToken token = factoryController.getNewInstance(TypeConstants.ITOKEN);
 
         return new BuildingBasedRequester(location, token);
     }
