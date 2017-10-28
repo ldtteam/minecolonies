@@ -1374,6 +1374,11 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
         return ImmutableList.of();
     }
 
+    public IRequester getRequestor()
+    {
+        return requestor;
+    }
+
     /**
      * The AbstractBuilding View is the client-side representation of a AbstractBuilding.
      * Views contain the AbstractBuilding's data that is relevant to a Client, in a more client-friendly form.

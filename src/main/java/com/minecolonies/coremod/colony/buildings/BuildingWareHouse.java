@@ -1,5 +1,8 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.Log;
@@ -9,6 +12,7 @@ import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.client.gui.WindowWareHouseBuilding;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.WarehouseRequestResolver;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityRack;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
@@ -179,6 +183,18 @@ public class BuildingWareHouse extends AbstractBuilding
                 }
             }
         }
+    }
+
+    @Override
+    public ImmutableCollection<IRequestResolver> getResolvers()
+    {
+        ImmutableCollection<IRequestResolver> supers = super.getResolvers();
+        ImmutableList.Builder<IRequestResolver> builder = ImmutableList.builder();
+
+        builder.addAll(supers);
+        builder.add(new WarehouseRequestResolver(getRequestor().getRequesterLocation(), getToken()));
+
+        return builder.build();
     }
 
     /**

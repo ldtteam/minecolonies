@@ -443,6 +443,8 @@ public class Colony implements IColony
         {
             wareHouse = (BuildingWareHouse) building;
         }
+
+        getRequestManager().onProviderAddedToColony(building);
     }
 
     /**
@@ -1785,6 +1787,8 @@ public class Colony implements IColony
         {
             wareHouse = null;
         }
+
+        getRequestManager().onProviderRemovedFromColony(building);
 
         //Allow Citizens to fix up any data that wasn't fixed up by the AbstractBuilding's own onDestroyed
         for (@NotNull final CitizenData citizen : citizens.values())
