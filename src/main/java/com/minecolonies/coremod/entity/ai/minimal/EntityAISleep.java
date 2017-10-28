@@ -91,10 +91,7 @@ public class EntityAISleep extends EntityAIBase
                     }
                 }
 
-                if(usedBed == null)
-                {
-                    usedBed = citizen.getHomePosition();
-                }
+                usedBed = citizen.getHomePosition();
             }
             else
             {
