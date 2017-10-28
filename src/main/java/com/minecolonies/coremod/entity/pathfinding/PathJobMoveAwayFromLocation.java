@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.pathfinding;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.Log;
 import net.minecraft.pathfinding.Path;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +36,11 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     protected final int avoidDistance;
 
     /**
+     * Direction he should run off to.
+     */
+    private final EnumFacing direction;
+
+    /**
      * Random object.
      */
     private static final Random rand = new Random();
@@ -64,21 +70,26 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
 
         int randomValue = rand.nextInt(4);
 
+
         if(randomValue == 0)
         {
-            heuristicPoint = new BlockPos(start.getX() + (int) dx, start.getY(), start.getZ() + (int) dz);
+            heuristicPoint = new BlockPos(start.getX() + (int) dx, start.getY(), start.getZ());
+            direction = EnumFacing.EAST;
         }
         else if(randomValue == 1)
         {
-            heuristicPoint = new BlockPos(start.getX() - (int) dx, start.getY(), start.getZ() - (int) dz);
+            heuristicPoint = new BlockPos(start.getX() - (int) dx, start.getY(), start.getZ());
+            direction = EnumFacing.WEST;
         }
         else if(randomValue == 2)
         {
-            heuristicPoint = new BlockPos(start.getX() + (int) dx, start.getY(), start.getZ() - (int) dz);
+            heuristicPoint = new BlockPos(start.getX(), start.getY(), start.getZ() - (int) dz);
+            direction = EnumFacing.NORTH;
         }
         else
         {
-            heuristicPoint = new BlockPos(start.getX() - (int) dx, start.getY(), start.getZ() + (int) dz);
+            heuristicPoint = new BlockPos(start.getX(), start.getY(), start.getZ() + (int) dz);
+            direction = EnumFacing.SOUTH;
         }
     }
 
@@ -127,7 +138,8 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     @Override
     protected boolean isAtDestination(@NotNull final Node n)
     {
-        return getNodeResultScore(n) >= (avoidDistance * avoidDistance);
+        final BlockPos vector = n.pos.subtract(avoid);
+        return getNodeResultScore(n) >= (avoidDistance * avoidDistance) && EnumFacing.getFacingFromVector(vector.getX(), 0, vector.getZ()).equals(direction);
     }
 
     /**
