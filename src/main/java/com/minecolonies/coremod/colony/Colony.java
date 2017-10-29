@@ -241,7 +241,7 @@ public class Colony implements IColony
      */
     Colony(final int id, @NotNull final World w, final BlockPos c)
     {
-        this(id, w.provider.getDimension());
+        this(id, w);
         center = c;
         world = w;
         this.permissions = new Permissions(this);
@@ -251,12 +251,13 @@ public class Colony implements IColony
      * Base constructor.
      *
      * @param id  The current id for the colony.
-     * @param dim The world the colony exists in.
+     * @param world The world the colony exists in.
      */
-    protected Colony(final int id, final int dim)
+    protected Colony(final int id, final World world)
     {
         this.id = id;
-        this.dimensionId = dim;
+        this.dimensionId = world.provider.getDimension();
+        this.world = world;
         this.permissions = new Permissions(this);
         this.colonyAchievements = new ArrayList<>();
 
@@ -288,11 +289,11 @@ public class Colony implements IColony
      * @return loaded colony.
      */
     @NotNull
-    public static Colony loadColony(@NotNull final NBTTagCompound compound)
+    public static Colony loadColony(@NotNull final NBTTagCompound compound, @NotNull final World world)
     {
         final int id = compound.getInteger(TAG_ID);
         final int dimensionId = compound.getInteger(TAG_DIMENSION);
-        @NotNull final Colony c = new Colony(id, dimensionId);
+        @NotNull final Colony c = new Colony(id, world);
         c.readFromNBT(compound);
         return c;
     }

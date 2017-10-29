@@ -696,7 +696,7 @@ public final class ColonyManager
                 @Nullable final NBTTagCompound data = loadNBTFromPath(file);
                 if (data != null)
                 {
-                    readFromNBT(data);
+                    readFromNBT(data, world);
                 }
                 if (serverUUID == null)
                 {
@@ -778,12 +778,12 @@ public final class ColonyManager
      *
      * @param compound NBT Tag.
      */
-    public static void readFromNBT(@NotNull final NBTTagCompound compound)
+    public static void readFromNBT(@NotNull final NBTTagCompound compound, @NotNull final World world)
     {
         final NBTTagList colonyTags = compound.getTagList(TAG_COLONIES, NBT.TAG_COMPOUND);
         for (int i = 0; i < colonyTags.tagCount(); ++i)
         {
-            @NotNull final Colony colony = Colony.loadColony(colonyTags.getCompoundTagAt(i));
+            @NotNull final Colony colony = Colony.loadColony(colonyTags.getCompoundTagAt(i), world);
             colonies.add(colony);
 
             addColonyByWorld(colony);
