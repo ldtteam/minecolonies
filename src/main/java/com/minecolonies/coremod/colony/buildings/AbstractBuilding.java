@@ -281,6 +281,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
     {
         location = pos;
         this.colony = colony;
+        this.requestor = StandardFactoryController.getInstance().getNewInstance(TypeToken.of(BuildingBasedRequester.class), this);
     }
 
     /**
@@ -447,7 +448,6 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
 
     private void loadRequestSystemFromNBT(NBTTagCompound compound)
     {
-
         if(compound.hasKey(TAG_REQUESTOR_ID))
         {
             this.requestor = StandardFactoryController.getInstance().getNewInstance(TypeToken.of(BuildingBasedRequester.class), this);

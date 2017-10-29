@@ -10,6 +10,7 @@ import com.minecolonies.blockout.Color;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.*;
 import com.minecolonies.blockout.views.ScrollingList;
+import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.blockout.views.View;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
@@ -213,6 +214,10 @@ public class WindowCitizen extends Window implements ButtonHandler
     private static final String LIST_ELEMENT_ID_REQUEST_STACK             = "requestStack";
     private static final String LIST_ELEMENT_ID_REQUEST_LOCATION             = "requestLocation";
 
+    private static final String BUTTON_PREVPAGE     = "prevPage";
+    private static final String BUTTON_NEXTPAGE     = "nextPage";
+    private static final String VIEW_PAGES          = "pages";
+
     private static final int RED       = Color.getByName("red", 0);
     private static final int DARKGREEN = Color.getByName("darkgreen", 0);
     private static final int BLACK     = Color.getByName("black", 0);
@@ -224,6 +229,9 @@ public class WindowCitizen extends Window implements ButtonHandler
      */
     private final CitizenDataView citizen;
 
+    private final Button buttonNextPage;
+    private final Button buttonPrevPage;
+
     /**
      * Constructor to initiate the citizen windows.
      *
@@ -233,6 +241,9 @@ public class WindowCitizen extends Window implements ButtonHandler
     {
         super(Constants.MOD_ID + CITIZEN_RESOURCE_SUFFIX);
         this.citizen = citizen;
+
+        buttonNextPage = findPaneOfTypeByID(BUTTON_NEXTPAGE, Button.class);
+        buttonPrevPage = findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class);
     }
 
     @Override
@@ -278,8 +289,10 @@ public class WindowCitizen extends Window implements ButtonHandler
     private ImmutableList<IRequest> getOpenRequestsOfCitizen()
     {
         ImmutableList.Builder<IRequest> builder = ImmutableList.builder();
-        builder.addAll(getOpenRequestsOfCitizenFromBuilding(citizen.getWorkBuilding()));
-        builder.addAll(getOpenRequestsOfCitizenFromBuilding(citizen.getHomeBuilding()));
+        if (citizen.getWorkBuilding() != null)
+            builder.addAll(getOpenRequestsOfCitizenFromBuilding(citizen.getWorkBuilding()));
+        if (citizen.getHomeBuilding() != null)
+            builder.addAll(getOpenRequestsOfCitizenFromBuilding(citizen.getHomeBuilding()));
         return builder.build();
     }
 
@@ -425,9 +438,23 @@ public class WindowCitizen extends Window implements ButtonHandler
     @Override
     public void onButtonClicked(@NotNull final Button button)
     {
-        if (button.getID().equals(INVENTORY_BUTTON_ID))
+        switch (button.getID())
         {
-            MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(citizen));
+            case BUTTON_PREVPAGE:
+                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
+                buttonPrevPage.setEnabled(false);
+                buttonNextPage.setEnabled(true);
+                break;
+            case BUTTON_NEXTPAGE:
+                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
+                buttonPrevPage.setEnabled(true);
+                buttonNextPage.setEnabled(false);
+                break;
+            case INVENTORY_BUTTON_ID:
+                MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(citizen));
+                break;
+            default:
+                break;
         }
     }
 }

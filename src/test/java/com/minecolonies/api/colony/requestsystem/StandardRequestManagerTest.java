@@ -23,6 +23,7 @@ import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControl
 import com.minecolonies.coremod.colony.requestsystem.requests.AbstractRequest;
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequestFactories;
 import com.minecolonies.coremod.test.ReflectionUtil;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.fml.relauncher.FMLRelaunchLog;
@@ -179,6 +180,12 @@ public class StandardRequestManagerTest
         @NotNull
         @Override
         public ITextComponent getDisplayString()
+        {
+            return null;
+        }
+
+        @Override
+        public List<ItemStack> getDisplayStacks()
         {
             return null;
         }
