@@ -7,7 +7,7 @@ import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests;
 public class RequestSystemInitializer
 {
 
-    public static void onPreInit()
+    public static void onPostInit()
     {
         StandardRequestManager.registerRequestableTypeMapping(Stack.class, StandardRequests.ItemStackRequest.class);
         StandardRequestManager.registerRequestableTypeMapping(Burnable.class, StandardRequests.BurnableRequest.class);
