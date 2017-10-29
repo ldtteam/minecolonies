@@ -133,6 +133,10 @@ public class JobDeliveryman extends AbstractJob
      */
     public IRequest getCurrentTask()
     {
+        if(currentTask == null)
+        {
+            return null;
+        }
         return getColony().getRequestManager().getRequestForToken(currentTask);
     }
 
