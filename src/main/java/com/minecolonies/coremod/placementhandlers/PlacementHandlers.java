@@ -161,12 +161,18 @@ public final class PlacementHandlers
                 return ActionProcessingResult.IGNORE;
             }
 
-            ItemStack placedStack = placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState));
-            if (!infiniteResources && placer.getOwnBuilding().getOpenRequestsOfTypeFiltered(placer.getWorker().getCitizenData(), Stack.class, (IRequest<? extends Stack> r) -> r.getRequest().matches(placedStack)).isEmpty()) {
-                Stack stackRequest = new Stack(placedStack);
-                placer.getOwnBuilding().createRequest(placer.getWorker().getCitizenData(), stackRequest);
+            if(placer != null && !infiniteResources)
+            {
+                ItemStack placedStack = placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState));
+                if (!infiniteResources && placer.getOwnBuilding()
+                        .getOpenRequestsOfTypeFiltered(placer.getWorker().getCitizenData(), Stack.class, (IRequest<? extends Stack> r) -> r.getRequest().matches(placedStack))
+                        .isEmpty())
+                {
+                    Stack stackRequest = new Stack(placedStack);
+                    placer.getOwnBuilding().createRequest(placer.getWorker().getCitizenData(), stackRequest);
 
-                return ActionProcessingResult.DENY;
+                    return ActionProcessingResult.DENY;
+                }
             }
 
             if (blockState.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.LOWER))
@@ -475,12 +481,17 @@ public final class PlacementHandlers
                 itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
                 itemList.addAll(placer.getItemsFromTileEntity());
 
-                itemList.removeIf(s -> ItemStackUtils.isEmpty(s));
+                itemList.removeIf(ItemStackUtils::isEmpty);
 
                 for (final ItemStack placedStack : itemList)
                 {
-                    if (!infiniteResources && placer.getOwnBuilding().getOpenRequestsOfTypeFiltered(placer.getWorker().getCitizenData(), Stack.class, (IRequest<? extends Stack> r) -> r.getRequest().matches(placedStack)).isEmpty()) {
-                        Stack stackRequest = new Stack(placedStack);
+                    if (placer.getOwnBuilding()
+                            .getOpenRequestsOfTypeFiltered(
+                                    placer.getWorker().getCitizenData(),
+                                    Stack.class,
+                                    (IRequest<? extends Stack> r) -> r.getRequest().matches(placedStack)).isEmpty())
+                    {
+                        final Stack stackRequest = new Stack(placedStack);
                         placer.getOwnBuilding().createRequest(placer.getWorker().getCitizenData(), stackRequest);
 
                         return ActionProcessingResult.DENY;
