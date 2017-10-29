@@ -19,6 +19,7 @@ import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.network.messages.MarkBuildingDirtyMessage;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.util.ExperienceUtils;
 import net.minecraft.client.gui.Gui;
@@ -212,7 +213,7 @@ public class WindowCitizen extends Window implements ButtonHandler
     private static final String WINDOW_ID_LIST_REQUESTS             = "requests";
     private static final String LIST_ELEMENT_ID_REQUEST_TEXT             = "requestText";
     private static final String LIST_ELEMENT_ID_REQUEST_STACK             = "requestStack";
-    private static final String LIST_ELEMENT_ID_REQUEST_LOCATION             = "requestLocation";
+    private static final String LIST_ELEMENT_ID_REQUEST_LOCATION             = "targetLocation";
 
     private static final String BUTTON_PREVPAGE     = "prevPage";
     private static final String BUTTON_NEXTPAGE     = "nextPage";

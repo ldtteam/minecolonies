@@ -1346,6 +1346,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
         IToken requestToken = colony.getRequestManager().createAndAssignRequest(requestor, requested);
 
         addRequestToMaps(citizenData.getId(), requestToken, requested.getClass());
+        markDirty();
     }
 
     @NotNull
@@ -1373,7 +1374,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
         }
         citizensByCompletedRequests.get(citizenThatRequested).add(token);
 
-        getColony().getCitizen(citizenThatRequested);
+        markDirty();
     }
 
     public boolean hasWorkerOpenRequests(@NotNull CitizenData citizen)
@@ -1465,6 +1466,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
         }
 
         getColony().getRequestManager().updateRequestState(token, RequestState.RECEIVED);
+        markDirty();
     }
 
     @Override
