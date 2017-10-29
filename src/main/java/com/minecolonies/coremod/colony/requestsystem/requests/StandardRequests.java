@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.requestsystem.requests;
 
+import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.*;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
@@ -7,12 +8,22 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolLevelConstants;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.blockout.Log;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Final class holding all the requests for requestables inside minecolonie
@@ -46,6 +57,12 @@ public final class StandardRequests
         public ITextComponent getDisplayString()
         {
             return getRequest().getStack().getTextComponent();
+        }
+
+        @Override
+        public List<ItemStack> getDisplayStacks()
+        {
+            return ImmutableList.of(getRequest().getStack());
         }
     }
 
@@ -85,19 +102,43 @@ public final class StandardRequests
         {
             return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_DELIVERY).appendSibling(getDelivery().getTextComponent());
         }
+
+        @Override
+        public List<ItemStack> getDisplayStacks()
+        {
+            return ImmutableList.of();
+        }
     }
 
     public static class ToolRequest extends AbstractRequest<Tool>
     {
 
+        private ImmutableList<ItemStack> toolExamples;
+
         public ToolRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final Tool requested)
         {
             super(requester, token, requested);
+            setup(requested);
         }
 
         public ToolRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final Tool requested)
         {
             super(requester, token, state, requested);
+            setup(requested);
+        }
+
+        private void setup(@NotNull Tool tool) {
+            toolExamples = ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(Item.REGISTRY.iterator(), Spliterator.ORDERED), false).flatMap(item -> {
+                NonNullList<ItemStack> stacks = NonNullList.create();
+                try {
+                    item.getSubItems(item, null, stacks);
+                } catch (Exception ex)
+                {
+                    Log.getLogger().warn("Failed to get sub items from: " + item.getRegistryName());
+                }
+
+                return stacks.stream().filter(tool::matches);
+            }).collect(Collectors.toList()));
         }
 
         @NotNull
@@ -125,10 +166,29 @@ public final class StandardRequests
 
             return preType;
         }
+
+        @Override
+        public List<ItemStack> getDisplayStacks()
+        {
+            return toolExamples;
+        }
     }
 
     public static class FoodRequest extends AbstractRequest<Food>
     {
+
+        private static final ImmutableList<ItemStack>
+          foodExamples = ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(Item.REGISTRY.iterator(), Spliterator.ORDERED), false).filter(item -> item instanceof ItemFood).flatMap(item -> {
+            NonNullList<ItemStack> stacks = NonNullList.create();
+            try {
+                item.getSubItems(item, null, stacks);
+            } catch (Exception ex)
+            {
+                Log.getLogger().warn("Failed to get sub items from: " + item.getRegistryName());
+            }
+
+            return stacks.stream();
+        }).collect(Collectors.toList()));
 
         FoodRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final Food requested)
         {
@@ -150,10 +210,28 @@ public final class StandardRequests
         {
             return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_FOOD);
         }
+
+        @Override
+        public List<ItemStack> getDisplayStacks()
+        {
+            return foodExamples;
+        }
     }
 
     public static class BurnableRequest extends AbstractRequest<Burnable>
     {
+
+        private static final ImmutableList<ItemStack> burnableExamples = ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(Item.REGISTRY.iterator(), Spliterator.ORDERED), false).flatMap(item -> {
+            NonNullList<ItemStack> stacks = NonNullList.create();
+            try {
+                item.getSubItems(item, null, stacks);
+            } catch (Exception ex)
+            {
+                Log.getLogger().warn("Failed to get sub items from: " + item.getRegistryName());
+            }
+
+            return stacks.stream().filter(TileEntityFurnace::isItemFuel);
+        }).collect(Collectors.toList()));
 
         BurnableRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final Burnable requested)
         {
@@ -174,6 +252,12 @@ public final class StandardRequests
         public ITextComponent getDisplayString()
         {
             return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_BURNABLE);
+        }
+
+        @Override
+        public List<ItemStack> getDisplayStacks()
+        {
+            return burnableExamples;
         }
     }
 }

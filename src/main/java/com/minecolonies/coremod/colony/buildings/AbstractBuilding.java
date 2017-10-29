@@ -45,6 +45,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,6 +53,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_HAND;
 
@@ -110,6 +112,19 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
      * The tag to store the requestor Id of the Building.
      */
     private static final String TAG_REQUESTOR_ID = "Requestor";
+
+    private static final String TAG_OPEN_REQUESTS = "OpenRequests";
+
+    private static final String TAG_CITIZEN_BY_REQUEST = "CitizenRequestAssignments";
+
+    private static final String TAG_CITIZEN_BY_COMPLETED_REQUEST = "CitizenRequestCompletedAssignments";
+
+    private static final String TAG_TOKEN = "Token";
+
+    private static final String TAG_ASSIGNMENTS = "Assignments";
+
+
+
 
     /**
      * Tag if the building has no workOrder.
@@ -188,7 +203,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
      * The value is a list of tokens that represent the open requests inside the colony.
      */
     @NotNull
-    private final Map<Class, List<IToken>> openRequests = new HashMap<>();
+    private final Map<Class, Collection<IToken>> openRequests = new HashMap<>();
 
     /**
      * The ID of the building. Needed in the request system to identify it.
@@ -198,17 +213,17 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
     /**
      * Keeps track of which citizen created what request. Citizen -> Request direction.
      */
-    private HashMap<Integer, Collection<IToken>> citizensByRequests = new HashMap<>();
+    private final HashMap<Integer, Collection<IToken>> citizensByRequests = new HashMap<>();
 
     /**
      * Keeps track of which citizen has completed requests. Citizen -> Request direction.
      */
-    private HashMap<Integer, Collection<IToken>> citizensByCompletedRequests = new HashMap<>();
+    private final HashMap<Integer, Collection<IToken>> citizensByCompletedRequests = new HashMap<>();
 
     /**
      * Keeps track of which citizen created what request. Request -> Citizen direction.
      */
-    private HashMap<IToken, Integer> requestsByCitizen = new HashMap<>();
+    private final HashMap<IToken, Integer> requestsByCitizen = new HashMap<>();
 
     /**
      * The tileEntity of the building.
@@ -427,12 +442,70 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
             this.height = compound.getInteger(TAG_HEIGHT);
         }
 
+        loadRequestSystemFromNBT(compound);
+    }
+
+    private void loadRequestSystemFromNBT(NBTTagCompound compound)
+    {
+
         if(compound.hasKey(TAG_REQUESTOR_ID))
         {
             this.requestor = StandardFactoryController.getInstance().getNewInstance(TypeToken.of(BuildingBasedRequester.class), this);
         } else {
             this.requestor = StandardFactoryController.getInstance().deserialize(compound.getCompoundTag(TAG_REQUESTOR_ID));
         }
+
+        this.openRequests.clear();
+        if (compound.hasKey(TAG_OPEN_REQUESTS))
+        {
+            NBTTagList requests = compound.getTagList(TAG_OPEN_REQUESTS, Constants.NBT.TAG_COMPOUND);
+            NBTUtils.streamCompound(requests).forEach(orc -> {
+                Class clazz;
+                try {
+                    clazz = Class.forName(orc.getString(TAG_TOKEN));
+                }
+                catch (ClassNotFoundException e)
+                {
+                    Log.getLogger().error("Missing request type from game: " + orc.getString(TAG_TOKEN));
+                    return;
+                }
+
+                NBTTagList assigned = orc.getTagList(TAG_ASSIGNMENTS, Constants.NBT.TAG_COMPOUND);
+                Collection<IToken> tokens = NBTUtils.streamCompound(assigned)
+                                              .map(tc -> (IToken) StandardFactoryController.getInstance().deserialize(tc))
+                                              .collect(Collectors.toList());
+
+                openRequests.put(clazz, tokens);
+            });
+        }
+
+        this.citizensByRequests.clear();
+        if (compound.hasKey(TAG_CITIZEN_BY_REQUEST))
+        {
+            NBTTagList citizensByRequestList = compound.getTagList(TAG_CITIZEN_BY_REQUEST, Constants.NBT.TAG_COMPOUND);
+            NBTUtils.streamCompound(citizensByRequestList).forEach(cbrc -> processIntegerKeyTokenList(cbrc, citizensByRequests));
+        }
+
+        this.citizensByCompletedRequests.clear();
+        if (compound.hasKey(TAG_CITIZEN_BY_COMPLETED_REQUEST))
+        {
+            NBTTagList citizensByCompletedRequestList = compound.getTagList(TAG_CITIZEN_BY_COMPLETED_REQUEST, Constants.NBT.TAG_COMPOUND);
+            NBTUtils.streamCompound(citizensByCompletedRequestList).forEach(cbrc -> processIntegerKeyTokenList(cbrc, citizensByCompletedRequests));
+        }
+
+        this.requestsByCitizen.clear();
+        this.citizensByRequests.keySet().forEach(citizen -> this.citizensByRequests.get(citizen).forEach(requestToken -> this.requestsByCitizen.put(requestToken, citizen)));
+    }
+
+    private static void processIntegerKeyTokenList(NBTTagCompound compound, Map<Integer, Collection<IToken>> outputMap)
+    {
+        Integer key = compound.getInteger(TAG_TOKEN);
+        NBTTagList assignments = compound.getTagList(TAG_ASSIGNMENTS, Constants.NBT.TAG_COMPOUND);
+        Collection<IToken> tokens = NBTUtils.streamCompound(assignments)
+                                      .map(tc -> (IToken) StandardFactoryController.getInstance().deserialize(tc))
+                                      .collect(Collectors.toList());
+
+        outputMap.put(key, tokens);
     }
 
     /**
@@ -625,7 +698,34 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
 
         compound.setInteger(TAG_HEIGHT, this.height);
 
+        writeRequestSystemToNBT(compound);
+    }
+
+    private void writeRequestSystemToNBT(NBTTagCompound compound){
         compound.setTag(TAG_REQUESTOR_ID, StandardFactoryController.getInstance().serialize(this.requestor));
+
+        compound.setTag(TAG_OPEN_REQUESTS, this.openRequests.keySet().stream().map(clazz -> {
+            NBTTagCompound requestTypeCompound = new NBTTagCompound();
+
+            requestTypeCompound.setString(TAG_TOKEN, clazz.getName());
+            requestTypeCompound.setTag(TAG_ASSIGNMENTS, this.openRequests.get(clazz).stream().map(token -> StandardFactoryController.getInstance().serialize(token)).collect(NBTUtils.toNBTTagList()));
+
+            return requestTypeCompound;
+        }).collect(NBTUtils.toNBTTagList()));
+
+        compound.setTag(TAG_CITIZEN_BY_REQUEST, writeIntegerKeyTokenListToNBT(this.citizensByRequests));
+        compound.setTag(TAG_CITIZEN_BY_COMPLETED_REQUEST, writeIntegerKeyTokenListToNBT(this.citizensByCompletedRequests));
+    }
+
+    private static NBTTagList writeIntegerKeyTokenListToNBT(Map<Integer, Collection<IToken>> input) {
+        return input.keySet().stream().map(key -> {
+            NBTTagCompound compound = new NBTTagCompound();
+
+            compound.setInteger(TAG_TOKEN, key);
+            compound.setTag(TAG_ASSIGNMENTS, input.get(key).stream().map(token->StandardFactoryController.getInstance().serialize(token)).collect(NBTUtils.toNBTTagList()));
+
+            return compound;
+        }).collect(NBTUtils.toNBTTagList());
     }
 
     /**
@@ -973,6 +1073,11 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
         buf.writeInt(getBuildingLevel());
         buf.writeInt(getMaxBuildingLevel());
         buf.writeInt(getCurrentWorkOrderLevel());
+
+        NBTTagCompound requestSystemCompound = new NBTTagCompound();
+        writeRequestSystemToNBT(requestSystemCompound);
+
+        ByteBufUtils.writeTag(buf, requestSystemCompound);
     }
 
     /**
@@ -1395,6 +1500,16 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
         private int workOrderLevel   = NO_WORK_ORDER;
 
         /**
+         * Keeps track of which citizen created what request. Citizen -> Request direction.
+         */
+        private HashMap<Integer, Collection<IToken>> citizensByRequests = new HashMap<>();
+
+        /**
+         * Keeps track of which citizen created what request. Request -> Citizen direction.
+         */
+        private final HashMap<IToken, Integer> requestsByCitizen = new HashMap<>();
+
+        /**
          * Creates a building view.
          *
          * @param c ColonyView the building is in.
@@ -1532,6 +1647,57 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
             buildingLevel = buf.readInt();
             buildingMaxLevel = buf.readInt();
             workOrderLevel = buf.readInt();
+
+            loadRequestSystemFromNBT(ByteBufUtils.readTag(buf));
         }
+
+        private void loadRequestSystemFromNBT(NBTTagCompound compound)
+        {
+            this.citizensByRequests.clear();
+            if (compound.hasKey(TAG_CITIZEN_BY_REQUEST))
+            {
+                NBTTagList citizensByRequestList = compound.getTagList(TAG_CITIZEN_BY_REQUEST, Constants.NBT.TAG_COMPOUND);
+                NBTUtils.streamCompound(citizensByRequestList).forEach(cbrc -> processIntegerKeyTokenList(cbrc, citizensByRequests));
+            }
+
+
+            this.requestsByCitizen.clear();
+            this.citizensByRequests.keySet().forEach(citizen -> this.citizensByRequests.get(citizen).forEach(requestToken -> this.requestsByCitizen.put(requestToken, citizen)));
+        }
+
+
+        public ImmutableList<IRequest> getOpenRequests(@NotNull final CitizenDataView data)
+        {
+            if (!citizensByRequests.containsKey(data.getId()))
+            {
+                return ImmutableList.of();
+            }
+
+            return ImmutableList.copyOf(citizensByRequests.get(data.getId()).stream().map(getColony().getRequestManager()::getRequestForToken).iterator());
+        }
+
+        public <Request> ImmutableList<IRequest<? extends Request>> getOpenRequestsOfType(@NotNull final CitizenDataView citizenData, final Class<Request> requestType)
+        {
+            return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
+                                          .filter(request -> {
+                                              Set<Class> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                                              return requestTypes.contains(requestType);
+                                          })
+                                          .map(request -> (IRequest<? extends Request>) request)
+                                          .iterator());
+        }
+
+        public <Request> ImmutableList<IRequest<? extends Request>> getOpenRequestsOfTypeFiltered(@NotNull final CitizenDataView citizenData, final Class<Request> requestType, Predicate<IRequest<? extends Request>> filter)
+        {
+            return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
+                                          .filter(request -> {
+                                              Set<Class> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                                              return requestTypes.contains(requestType);
+                                          })
+                                          .map(request -> (IRequest<? extends Request>) request)
+                                          .filter(filter)
+                                          .iterator());
+        }
+
     }
 }

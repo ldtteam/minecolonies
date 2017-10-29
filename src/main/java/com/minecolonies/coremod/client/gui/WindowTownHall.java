@@ -1014,7 +1014,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 //Searches citizen of id x
                 for (@NotNull final CitizenDataView citizen : citizens)
                 {
-                    if (citizen.getID() == workOrder.getClaimedBy())
+                    if (citizen.getId() == workOrder.getClaimedBy())
                     {
                         claimingCitizen = citizen.getName();
                         break;

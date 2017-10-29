@@ -783,7 +783,7 @@ public class Colony implements IColony
         world.getMinecraftServer().getPlayerList().getPlayers()
           .stream()
           .filter(permissions::isSubscriber)
-          .forEachOrdered(subscribers::add);
+          .forEach(subscribers::add);
 
         if (subscribers.isEmpty())
         {
@@ -1354,8 +1354,9 @@ public class Colony implements IColony
     /**
      * Marks the instance dirty.
      */
-    private void markDirty()
+    public void markDirty()
     {
+        ColonyManager.markDirty();
         isDirty = true;
     }
 

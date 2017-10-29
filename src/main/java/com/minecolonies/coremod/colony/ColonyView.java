@@ -512,7 +512,7 @@ public final class ColonyView implements IColony
         final CitizenDataView citizen = CitizenData.createCitizenDataView(id, buf);
         if (citizen != null)
         {
-            citizens.put(citizen.getID(), citizen);
+            citizens.put(citizen.getId(), citizen);
         }
 
         return null;
@@ -718,5 +718,12 @@ public final class ColonyView implements IColony
     public boolean hasWillRaidTonight()
     {
         return false;
+    }
+
+    @Override
+    public void markDirty()
+    {
+        //NOOP
+        return;
     }
 }

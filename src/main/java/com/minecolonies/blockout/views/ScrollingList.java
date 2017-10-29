@@ -5,6 +5,7 @@ import com.minecolonies.blockout.PaneParams;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.function.IntSupplier;
 
 /**
  * A ScrollingList is a View which can contain 0 or more children of a specific Pane or View type
@@ -41,6 +42,24 @@ public class ScrollingList extends ScrollingView
         dataProvider = p;
         refreshElementPanes();
     }
+
+    public void setDataProvider(final IntSupplier countSupplier, final IPaneUpdater paneUpdater){
+        setDataProvider(new DataProvider() {
+            @Override
+            public int getElementCount()
+            {
+                return countSupplier.getAsInt();
+            }
+
+            @Override
+            public void updateElement(final int index, final Pane rowPane)
+            {
+                paneUpdater.apply(index, rowPane);
+            }
+        });
+    }
+
+
 
     /**
      * Use the data provider to update all the element panes.
@@ -101,5 +120,16 @@ public class ScrollingList extends ScrollingView
          * @param rowPane the parent Pane for the row, containing the elements to update
          */
         void updateElement(int index, Pane rowPane);
+    }
+
+    @FunctionalInterface
+    public interface IPaneUpdater
+    {
+        /**
+         * Called to update a single pane of the given index with data.
+         * @param index The index to update.
+         * @param rowPane The pane to fill.
+         */
+        void apply(int index, Pane rowPane);
     }
 }

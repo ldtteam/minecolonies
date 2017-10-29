@@ -1,0 +1,21 @@
+<layout xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="file:../../../../../../java/com/minecolonies/blockout/blockOut.xsd">
+
+    <label size="100% 11" pos="0 0"
+           label="$(com.minecolonies.coremod.gui.citizen.requests)" color="black"
+           textalign="BOTTOM_MIDDLE"/>
+    <list id="requests" size="78% 85%" pos="30 20">
+        <box size="100% 30" linewidth="2">
+            <!--Item icon -->
+            <itemicon id="requestStack" size="16 16" pos="1 1"/>
+
+            <!--Request name-->
+            <label id="requestText" size="100 12" pos="20 3" textalign="MIDDLE_LEFT" color="black"/>
+
+            <!--Requester location-->
+            <label id="targetLocation" size="50 12" pos="2 18" textalign="MIDDLE_LEFT" color="black"/>
+
+            <!--TODO: Add player resolving buttons.-->
+        </box>
+    </list>
+</layout>

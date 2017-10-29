@@ -1,21 +1,34 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Alignment;
-import com.minecolonies.blockout.controls.Button;
-import com.minecolonies.blockout.controls.ButtonHandler;
-import com.minecolonies.blockout.controls.Image;
-import com.minecolonies.blockout.controls.Label;
+import com.minecolonies.blockout.Color;
+import com.minecolonies.blockout.Pane;
+import com.minecolonies.blockout.controls.*;
+import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.View;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.CitizenDataView;
+import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.util.ExperienceUtils;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+import java.util.function.IntSupplier;
 
 /**
  * Window for the citizen.
@@ -195,6 +208,17 @@ public class WindowCitizen extends Window implements ButtonHandler
      */
     private static final String WINDOW_ID_SATURATION_BAR = "saturationBar";
 
+    private static final String WINDOW_ID_LIST_REQUESTS             = "requests";
+    private static final String LIST_ELEMENT_ID_REQUEST_TEXT             = "requestText";
+    private static final String LIST_ELEMENT_ID_REQUEST_STACK             = "requestStack";
+    private static final String LIST_ELEMENT_ID_REQUEST_LOCATION             = "requestLocation";
+
+    private static final int RED       = Color.getByName("red", 0);
+    private static final int DARKGREEN = Color.getByName("darkgreen", 0);
+    private static final int BLACK     = Color.getByName("black", 0);
+
+    private int lifeCount = 0;
+
     /**
      * The citizenData.View object.
      */
@@ -211,6 +235,15 @@ public class WindowCitizen extends Window implements ButtonHandler
         this.citizen = citizen;
     }
 
+    @Override
+    public void onUpdate()
+    {
+        super.onUpdate();
+
+        if (!GuiScreen.isShiftKeyDown())
+            lifeCount++;
+    }
+
     /**
      * Called when the gui is opened by an player.
      */
@@ -223,6 +256,42 @@ public class WindowCitizen extends Window implements ButtonHandler
         createSaturationBar();
         createXpBar();
         createSkillContent();
+
+        final ScrollingList resourceList = findPaneOfTypeByID(WINDOW_ID_LIST_REQUESTS, ScrollingList.class);
+        resourceList.setDataProvider(() -> getOpenRequestsOfCitizen().size()
+          , (index, rowPane) -> {
+            IRequest request = getOpenRequestsOfCitizen().get(index);
+
+            ItemIcon exampleStackDisplay = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
+            List<ItemStack> displayStacks = request.getDisplayStacks();
+            ItemStack selectedStack = displayStacks.get((lifeCount / (20 * displayStacks.size())) % displayStacks.size());
+            exampleStackDisplay.setItem(selectedStack);
+
+            Label descriptionLabel = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_TEXT, Label.class);
+            descriptionLabel.setLabelText(request.getDisplayString().getFormattedText());
+
+            Label targetLabel = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Label.class);
+            targetLabel.setLabelText(request.getRequester().getDeliveryLocation().getInDimensionLocation().toString());
+        });
+    }
+
+    private ImmutableList<IRequest> getOpenRequestsOfCitizen()
+    {
+        ImmutableList.Builder<IRequest> builder = ImmutableList.builder();
+        builder.addAll(getOpenRequestsOfCitizenFromBuilding(citizen.getWorkBuilding()));
+        builder.addAll(getOpenRequestsOfCitizenFromBuilding(citizen.getHomeBuilding()));
+        return builder.build();
+    }
+
+    private ImmutableList<IRequest> getOpenRequestsOfCitizenFromBuilding(final BlockPos buildingPos)
+    {
+        ColonyView colonyView = ColonyManager.getClosestColonyView(FMLClientHandler.instance().getWorldClient(), buildingPos);
+        if (colonyView == null)
+            return ImmutableList.of();
+
+        AbstractBuilding.View building = colonyView.getBuilding(buildingPos);
+
+        return building.getOpenRequests(citizen);
     }
 
     /**

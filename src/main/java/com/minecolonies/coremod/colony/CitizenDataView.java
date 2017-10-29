@@ -77,7 +77,7 @@ public class CitizenDataView
      *
      * @return view Id.
      */
-    public int getID()
+    public int getId()
     {
         return id;
     }

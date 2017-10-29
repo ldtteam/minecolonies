@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Used to represent requests, of type R, made to the internal market of the colony.
@@ -226,4 +227,13 @@ public interface IRequest<R>
      */
     @NotNull
     ITextComponent getDisplayString();
+
+    /**
+     * Method used to get a {@link List<ItemStack>} that represents the stack.
+     * This list is used in GUI to show what the request is. If an empty list is returned then no stack is shown.
+     * If a list with multiple stacks is returned it will switch between the stacks once every second unless the player holds the shift key.
+     *
+     * @return A {@link List<ItemStack>} that represents this request.
+     */
+    List<ItemStack> getDisplayStacks();
 }

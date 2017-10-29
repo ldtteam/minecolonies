@@ -488,3 +488,5 @@ com.minecolonies.coremod.tooltype.bow=Bow
 com.minecolonies.coremod.tooltype.fishingrod=Fishingrod
 com.minecolonies.coremod.tooltype.shears=Shears
 com.minecolonies.coremod.tooltype.shield=Shield
+
+com.minecolonies.coremod.gui.citizen.requests=Open requests:

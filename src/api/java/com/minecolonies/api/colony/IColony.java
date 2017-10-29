@@ -97,4 +97,9 @@ public interface IColony
      * @return Boolean value true if raid, false if not
      */
     boolean hasWillRaidTonight();
+
+    /**
+     * Called to mark this colony dirty, and in need of syncing / saving.
+     */
+    void markDirty();
 }

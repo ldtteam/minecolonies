@@ -184,9 +184,9 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
             final CitizenDataView data = citizens.get(row);
             if (building instanceof BuildingHome.View)
             {
-                ((BuildingHome.View) building).addResident(data.getID());
+                ((BuildingHome.View) building).addResident(data.getId());
             }
-            MineColonies.getNetwork().sendToServer(new AssignUnassignMessage(this.building, true, data.getID()));
+            MineColonies.getNetwork().sendToServer(new AssignUnassignMessage(this.building, true, data.getId()));
         }
         else if (!button.getID().equals(BUTTON_CANCEL))
         {

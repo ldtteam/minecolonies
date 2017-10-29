@@ -239,6 +239,10 @@ public class StandardRequestManager implements IRequestManager
     public <T> IToken createRequest(@NotNull final IRequester requester, @NotNull final T object) throws IllegalArgumentException
     {
         final IRequest<T> request = RequestHandler.createRequest(this, requester, object);
+
+        if (colony != null)
+            colony.markDirty();
+
         return request.getToken();
     }
 
@@ -252,6 +256,9 @@ public class StandardRequestManager implements IRequestManager
     public void assignRequest(@NotNull final IToken token) throws IllegalArgumentException
     {
         RequestHandler.assignRequest(this, RequestHandler.getRequest(this, token));
+
+        if (colony != null)
+            colony.markDirty();
     }
 
     /**
@@ -310,6 +317,9 @@ public class StandardRequestManager implements IRequestManager
         LogHandler.log("Updating request state from:" + token + ". With original state: " + request.getState() + " to : " + state);
 
         request.setState(new WrappedStaticStateRequestManager(this), state);
+
+        if (colony != null)
+            colony.markDirty();
 
         switch (request.getState())
         {
