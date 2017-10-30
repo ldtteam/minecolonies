@@ -11,6 +11,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.DeliveryRequestResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.WarehouseRequestResolver;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
@@ -113,7 +114,7 @@ public class BuildingDeliveryman extends AbstractBuildingWorker
         ImmutableList.Builder<IRequestResolver> builder = ImmutableList.builder();
 
         builder.addAll(supers);
-        builder.add(new WarehouseRequestResolver(getRequestor().getRequesterLocation(), getToken()));
+        builder.add(new DeliveryRequestResolver(getRequestor().getRequesterLocation(), getToken()));
 
         return builder.build();
     }

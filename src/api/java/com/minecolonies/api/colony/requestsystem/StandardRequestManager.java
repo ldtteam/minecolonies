@@ -629,6 +629,7 @@ public class StandardRequestManager implements IRequestManager
             manager.resolverBiMap.put(resolver.getRequesterId(), resolver);
 
             Set<TypeToken> resolverTypes = ReflectionUtils.getSuperClasses(resolver.getRequestType());
+            resolverTypes.remove(TypeConstants.OBJECT);
             resolverTypes.forEach(c -> {
                 if (!manager.requestClassResolverMap.containsKey(c))
                 {
@@ -712,6 +713,7 @@ public class StandardRequestManager implements IRequestManager
 
             manager.resolverBiMap.remove(resolver.getRequesterId());
             Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(resolver.getRequestType());
+            requestTypes.remove(TypeConstants.OBJECT);
             requestTypes.forEach(c -> {
                 LogHandler.log("Removing resolver: " + resolver + " with request type: " + c);
                 manager.requestClassResolverMap.get(c).remove(resolver);
@@ -959,6 +961,7 @@ public class StandardRequestManager implements IRequestManager
             request.setState(new WrappedStaticStateRequestManager(manager), RequestState.ASSIGNING);
 
             Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+            requestTypes.remove(TypeConstants.OBJECT);
             for(TypeToken requestType : requestTypes) {
                 if (!manager.requestClassResolverMap.containsKey(requestType))
                     continue;

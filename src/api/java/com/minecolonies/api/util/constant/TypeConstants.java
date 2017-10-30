@@ -18,8 +18,10 @@ public class TypeConstants
     public static final TypeToken<ILocation>        ILOCATION        = TypeToken.of(ILocation.class);
     public static final TypeToken<UUID>             UUID             = TypeToken.of(java.util.UUID.class);
     public static final TypeToken<FactoryVoidInput> FACTORYVOIDINPUT = TypeToken.of(FactoryVoidInput.class);
-
+    public static final TypeToken<Object>           OBJECT           = TypeToken.of(Object.class);
 
     /////Implementations
     public static final TypeToken<StandardToken> STANDARDTOKEN = TypeToken.of(StandardToken.class);
+
+
 }

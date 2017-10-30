@@ -1867,6 +1867,12 @@ public class Colony implements IColony
         {
             MineColonies.getNetwork().sendTo(new ColonyViewRemoveCitizenMessage(this, citizen.getId()), player);
         }
+
+        if (citizen.getWorkBuilding() != null)
+            citizen.getWorkBuilding().cancelAllRequestsOfCitizen(citizen);
+
+        if (citizen.getHomeBuilding() != null)
+            citizen.getHomeBuilding().cancelAllRequestsOfCitizen(citizen);
     }
 
     /**

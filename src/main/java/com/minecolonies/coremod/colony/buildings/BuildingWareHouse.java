@@ -8,6 +8,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.blocks.BlockHutDeliveryman;
+import com.minecolonies.coremod.blocks.BlockHutWareHouse;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.client.gui.WindowWareHouseBuilding;
 import com.minecolonies.coremod.colony.Colony;
@@ -265,7 +266,7 @@ public class BuildingWareHouse extends AbstractBuilding
     public TileEntityWareHouse getTileEntity()
     {
         final Colony colony = getColony();
-        if ((tileEntity == null || tileEntity.isInvalid()) && colony != null && colony.getWorld().getBlockState(this.getLocation()).getBlock() != null)
+        if ((tileEntity == null || tileEntity.isInvalid()) && colony != null && colony.getWorld() != null && getLocation() != null && colony.getWorld().getBlockState(getLocation()) != null && colony.getWorld().getBlockState(this.getLocation()).getBlock() instanceof BlockHutWareHouse)
         {
             final TileEntity te = getColony().getWorld().getTileEntity(this.getLocation());
             if (te instanceof TileEntityWareHouse)

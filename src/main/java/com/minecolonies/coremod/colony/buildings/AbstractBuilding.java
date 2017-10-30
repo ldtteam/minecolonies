@@ -809,7 +809,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
      */
     public TileEntityColonyBuilding getTileEntity()
     {
-        if ((tileEntity == null || tileEntity.isInvalid()) && colony.getWorld().getBlockState(location).getBlock() != null)
+        if ((tileEntity == null || tileEntity.isInvalid()) && colony != null && colony.getWorld() != null && getLocation() != null && colony.getWorld().getBlockState(getLocation()) != null && colony.getWorld().getBlockState(this.getLocation()).getBlock() instanceof AbstractBlockHut)
         {
             final TileEntity te = getColony().getWorld().getTileEntity(location);
             if (te instanceof TileEntityColonyBuilding)
@@ -1468,6 +1468,29 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
 
         getColony().getRequestManager().updateRequestState(token, RequestState.RECEIVED);
         markDirty();
+    }
+
+    public void cancelAllRequestsOfCitizen(@NotNull final CitizenData data)
+    {
+        getOpenRequests(data).forEach(request -> {
+            getColony().getRequestManager().updateRequestState(request.getToken(), RequestState.CANCELLED);
+
+            openRequests.get(request.getRequest().getClass()).remove(request.getToken());
+            if (openRequests.get(request.getRequest().getClass()).isEmpty())
+                openRequests.remove(request.getRequest().getClass());
+
+            requestsByCitizen.remove(request.getToken());
+        });
+
+        getCompletedRequests(data).forEach(request -> {
+            getColony().getRequestManager().updateRequestState(request.getToken(), RequestState.RECEIVED);
+        });
+
+        if (citizensByRequests.containsKey(data.getId()))
+            citizensByRequests.remove(data.getId());
+
+        if (citizensByCompletedRequests.containsKey(data.getId()))
+            citizensByCompletedRequests.remove(data.getId());
     }
 
     @Override

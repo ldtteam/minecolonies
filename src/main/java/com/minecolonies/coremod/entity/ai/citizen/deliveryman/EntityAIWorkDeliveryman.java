@@ -195,6 +195,9 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private boolean gatherFromBuilding(@NotNull final AbstractBuilding building)
     {
+        if (building.getTileEntity() == null)
+            return false;
+
         if (currentSlot >= building.getTileEntity().getSizeInventory())
         {
             return true;

@@ -39,7 +39,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
     public boolean canResolve(
                                @NotNull final IRequestManager manager, final IRequest<? extends Delivery> requestToCheck)
     {
-        if (!manager.getColony().getWorld().isRemote)
+        if (manager.getColony().getWorld().isRemote)
             return false;
 
         Colony colony = (Colony) manager.getColony();
@@ -62,7 +62,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
     public List<IToken> attemptResolve(
                                         @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
     {
-        if (!manager.getColony().getWorld().isRemote)
+        if (manager.getColony().getWorld().isRemote)
             return null;
 
         Colony colony = (Colony) manager.getColony();
