@@ -1491,6 +1491,8 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
 
         if (citizensByCompletedRequests.containsKey(data.getId()))
             citizensByCompletedRequests.remove(data.getId());
+
+        markDirty();
     }
 
     @Override

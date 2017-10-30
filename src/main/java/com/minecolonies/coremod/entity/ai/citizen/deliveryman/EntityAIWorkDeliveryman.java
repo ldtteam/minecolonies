@@ -3,6 +3,8 @@ package com.minecolonies.coremod.entity.ai.citizen.deliveryman;
 import com.minecolonies.api.colony.requestsystem.RequestState;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
+import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.Log;
@@ -335,8 +337,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         {
             if(job.getCurrentTask() != null && deliveryHut != null)
             {
-                final IRequest request = job.getCurrentTask();
-                deliveryHut.setBuildingToDeliver(request.getRequester().getRequesterLocation());
+                final IRequest<? extends Delivery> request = job.getCurrentTask();
+                deliveryHut.setBuildingToDeliver(request.getRequest().getTarget());
                 return getState();
             }
             return START_WORKING;
@@ -428,14 +430,14 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         final AbstractBuildingWorker ownBuilding = getOwnBuilding();
         if (ownBuilding instanceof BuildingDeliveryman)
         {
-            final IRequest request = job.getCurrentTask();
+            final IRequest<? extends Delivery> request = job.getCurrentTask();
             if (request != null)
             {
                 if (job.getReturning())
                 {
                     return DUMPING;
                 }
-                ((BuildingDeliveryman) ownBuilding).setBuildingToDeliver(request.getRequester().getRequesterLocation());
+                ((BuildingDeliveryman) ownBuilding).setBuildingToDeliver(request.getRequest().getTarget());
                 if(InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), itemStack -> request.getDelivery().isItemEqualIgnoreDurability(itemStack)))
                 {
                     return DELIVERY;
@@ -453,15 +455,15 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      *
      * @param buildingToDeliver building to deliver to.
      */
-    private AIState gatherItems(@NotNull final IRequest request)
+    private AIState gatherItems(@NotNull final IRequest<? extends Delivery> request)
     {
-        final ILocation location = request.getRequester().getDeliveryLocation();
+        final ILocation location = request.getRequest().getStart();
 
         if(!location.isReachableFromLocation(worker.getLocation()))
         {
-            job.setCurrentTask(null);
             ((BuildingDeliveryman) getOwnBuilding()).setBuildingToDeliver(null);
-            request.setState(worker.getColony().getRequestManager(), RequestState.CANCELLED);
+            job.setRequestState(RequestState.CANCELLED);
+            job.setCurrentTask(null);
             return START_WORKING;
         }
 
@@ -487,9 +489,9 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return DELIVERY;
         }
 
-        job.setCurrentTask(null);
         ((BuildingDeliveryman) getOwnBuilding()).setBuildingToDeliver(null);
-        request.setState(worker.getColony().getRequestManager(), RequestState.CANCELLED);
+        job.setRequestState(RequestState.CANCELLED);
+        job.setCurrentTask(null);
         return START_WORKING;
     }
 
@@ -521,7 +523,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
         else
         {
-            ((BuildingDeliveryman) ownBuilding).setBuildingToDeliver(job.getCurrentTask().getRequester().getRequesterLocation());
+            ((BuildingDeliveryman) ownBuilding).setBuildingToDeliver(job.getCurrentTask().getRequest().getTarget());
         }
 
         return PREPARE_DELIVERY;

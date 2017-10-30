@@ -264,6 +264,8 @@ public class WindowCitizen extends Window implements ButtonHandler
     {
         findPaneOfTypeByID(WINDOW_ID_NAME, Label.class).setLabelText(citizen.getName());
 
+        buttonPrevPage.setEnabled(false);
+
         createHealthBar();
         createSaturationBar();
         createXpBar();

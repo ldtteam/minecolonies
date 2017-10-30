@@ -1099,6 +1099,13 @@ public class StandardRequestManager implements IRequestManager
         private static void onRequestCancelled(final StandardRequestManager manager, final IToken token)
         {
             final IRequest request = getRequest(manager, token);
+
+            if (!manager.requestResolverMap.containsKey(token))
+            {
+                manager.requestBiMap.remove(token);
+                return;
+            }
+
             final IRequestResolver resolver = ResolverHandler.getResolverForRequest(manager, token);
 
             final IRequest cleanUpRequest = resolver.onParentCancelled(manager, request);
@@ -1115,6 +1122,8 @@ public class StandardRequestManager implements IRequestManager
                     RequestHandler.assignRequest(manager, cleanUpRequest);
                 }
             }
+
+            onRequestReceivedByRequester(manager, token);
         }
 
         /**

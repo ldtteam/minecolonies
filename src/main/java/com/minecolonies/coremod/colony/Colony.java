@@ -1855,6 +1855,12 @@ public class Colony implements IColony
         //Remove the Citizen
         citizens.remove(citizen.getId());
 
+        if (citizen.getWorkBuilding() != null)
+            citizen.getWorkBuilding().cancelAllRequestsOfCitizen(citizen);
+
+        if (citizen.getHomeBuilding() != null)
+            citizen.getHomeBuilding().cancelAllRequestsOfCitizen(citizen);
+
         for (@NotNull final AbstractBuilding building : buildings.values())
         {
             building.removeCitizen(citizen);
@@ -1867,12 +1873,6 @@ public class Colony implements IColony
         {
             MineColonies.getNetwork().sendTo(new ColonyViewRemoveCitizenMessage(this, citizen.getId()), player);
         }
-
-        if (citizen.getWorkBuilding() != null)
-            citizen.getWorkBuilding().cancelAllRequestsOfCitizen(citizen);
-
-        if (citizen.getHomeBuilding() != null)
-            citizen.getHomeBuilding().cancelAllRequestsOfCitizen(citizen);
     }
 
     /**

@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.jobs;
 import com.minecolonies.api.colony.requestsystem.RequestState;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
@@ -131,7 +132,7 @@ public class JobDeliveryman extends AbstractJob
      *
      * @return {@link IRequest} of the current Task.
      */
-    public IRequest getCurrentTask()
+    public IRequest<? extends Delivery> getCurrentTask()
     {
         if(currentTask == null)
         {
