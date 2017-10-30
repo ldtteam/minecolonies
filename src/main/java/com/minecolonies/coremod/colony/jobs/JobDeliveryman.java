@@ -148,7 +148,7 @@ public class JobDeliveryman extends AbstractJob
      */
     public void setRequestState(@NotNull final RequestState state)
     {
-        getColony().getRequestManager().getRequestForToken(currentTask).setState(getColony().getRequestManager(), state);
+        getColony().getRequestManager().updateRequestState(currentTask, state);
     }
 
     /**

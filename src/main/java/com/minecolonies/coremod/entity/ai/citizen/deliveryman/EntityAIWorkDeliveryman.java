@@ -412,7 +412,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         worker.setHeldItem(SLOT_HAND);
         deliveryHut.setBuildingToDeliver(null);
         job.setRequestState(RequestState.COMPLETED);
-        job.setReturning(false);
 
         gatherTarget = buildingToDeliver.getInDimensionLocation();
         setDelay(WAIT_DELAY);
@@ -438,7 +437,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                     return DUMPING;
                 }
                 ((BuildingDeliveryman) ownBuilding).setBuildingToDeliver(request.getRequest().getTarget());
-                if(InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), itemStack -> request.getDelivery().isItemEqualIgnoreDurability(itemStack)))
+                if(InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), itemStack -> request.getRequest().getStack().isItemEqualIgnoreDurability(itemStack)))
                 {
                     return DELIVERY;
                 }
@@ -483,7 +482,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockType(), true);
         }
 
-        if(isInTileEntity(tileEntity, request.getDelivery()))
+        if(isInTileEntity(tileEntity, request.getRequest().getStack()))
         {
             setDelay(DUMP_AND_GATHER_DELAY);
             return DELIVERY;

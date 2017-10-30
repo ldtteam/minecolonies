@@ -401,9 +401,9 @@ public abstract class AbstractRequest<R> implements IRequest<R>
     @Override
     public ItemStack getDelivery()
     {
-        if (getResult() instanceof IDeliverable)
+        if (getRequest() instanceof IDeliverable)
         {
-            return ((IDeliverable) getResult()).getResult();
+            return ((IDeliverable) getRequest()).getResult();
         }
 
         return deliveryStack;
@@ -412,9 +412,9 @@ public abstract class AbstractRequest<R> implements IRequest<R>
     @Override
     public void setDelivery(@Nullable final ItemStack delivery)
     {
-        if (getResult() instanceof IDeliverable)
+        if (getRequest() instanceof IDeliverable)
         {
-            ((IDeliverable) getResult()).setResult(delivery);
+            ((IDeliverable) getRequest()).setResult(delivery);
         }
         else
         {

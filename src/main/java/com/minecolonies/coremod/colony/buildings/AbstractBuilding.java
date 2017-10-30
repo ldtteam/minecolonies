@@ -1362,11 +1362,11 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
         }
 
         IRequest requestThatCompleted = getColony().getRequestManager().getRequestForToken(token);
-        openRequests.get(requestThatCompleted.getRequestType()).remove(token);
+        openRequests.get(requestThatCompleted.getRequest().getClass()).remove(token);
 
-        if (openRequests.get(requestThatCompleted.getRequestType()).isEmpty())
+        if (openRequests.get(requestThatCompleted.getRequest().getClass()).isEmpty())
         {
-            openRequests.remove(requestThatCompleted.getRequestType());
+            openRequests.remove(requestThatCompleted.getRequest().getClass());
         }
 
         if (!citizensByCompletedRequests.containsKey(citizenThatRequested))

@@ -82,14 +82,14 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
             if (ItemStackUtils.isEmpty(matchingStack))
                 continue;
 
-            request.setDelivery(matchingStack);
+            request.setDelivery(matchingStack.copy());
 
             BlockPos itemStackPos = wareHouse.getPositionOfChestWithItemStack(itemStack -> ItemStack.areItemsEqual(itemStack, matchingStack));
             ILocation itemStackLocation = manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, itemStackPos, wareHouse.getWorld().provider.getDimension());
 
-            Delivery delivery = new Delivery(itemStackLocation, request.getRequester().getRequesterLocation(), matchingStack);
+            Delivery delivery = new Delivery(itemStackLocation, request.getRequester().getRequesterLocation(), matchingStack.copy());
 
-            IToken requestToken = manager.createRequest(request.getRequester(), delivery);
+            IToken requestToken = manager.createRequest(new WarehouseRequestResolver(request.getRequester().getRequesterLocation(), request.getToken()), delivery);
 
             return ImmutableList.of(requestToken);
         }
@@ -138,5 +138,45 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
                  .filter(building -> building instanceof BuildingWareHouse)
                  .map(building -> (TileEntityWareHouse) building.getTileEntity())
                  .collect(Collectors.toSet());
+    }
+
+    @SuppressWarnings("squid:S2972")
+    /**
+     * We have this class the way it is for a reason.
+     */
+    private final class WarehouseChestDeliveryRequester implements IRequester
+    {
+        private final WarehouseRequestResolver warehouseRequestResolver;
+        private final IToken                   id;
+        private final ILocation                location;
+
+        private WarehouseChestDeliveryRequester(
+                                                 final WarehouseRequestResolver warehouseRequestResolver,
+                                                 final IToken id,
+                                                 final ILocation location)
+        {
+            this.warehouseRequestResolver = warehouseRequestResolver;
+            this.id = id;
+            this.location = location;
+        }
+
+        @Override
+        public IToken getRequesterId()
+        {
+            return id;
+        }
+
+        @NotNull
+        @Override
+        public ILocation getRequesterLocation()
+        {
+            return location;
+        }
+
+        @NotNull
+        @Override
+        public void onRequestComplete(@NotNull final IToken token)
+        {
+        }
     }
 }
