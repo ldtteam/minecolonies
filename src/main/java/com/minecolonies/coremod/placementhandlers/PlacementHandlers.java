@@ -500,8 +500,8 @@ public final class PlacementHandlers
 
                 itemList.removeIf(ItemStackUtils::isEmpty);
 
-                final List<ItemStack> foundStacks = InventoryUtils.filterItemHandler(new InvWrapper(placer.getWorker().getInventoryCitizen()), itemList::contains);
-                itemList.removeIf(foundStacks::contains);
+                final List<ItemStack> foundStacks = InventoryUtils.filterItemHandler(new InvWrapper(placer.getWorker().getInventoryCitizen()), itemStack -> itemList.stream().anyMatch(targetStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, targetStack) && itemStack.getCount() >= targetStack.getCount()));
+                itemList.removeIf(itemStack -> foundStacks.stream().anyMatch(targetStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, targetStack) && targetStack.getCount() >= itemStack.getCount()));
 
                 for (final ItemStack placedStack : itemList)
                 {

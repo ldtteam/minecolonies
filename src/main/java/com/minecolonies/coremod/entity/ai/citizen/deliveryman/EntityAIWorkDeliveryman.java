@@ -307,7 +307,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         if(job.getReturning())
         {
-            job.setCurrentTask(null);
             job.setReturning(false);
         }
 
@@ -411,7 +410,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         worker.addExperience(1.0D);
         worker.setHeldItem(SLOT_HAND);
         deliveryHut.setBuildingToDeliver(null);
-        job.setRequestState(RequestState.COMPLETED);
+        job.finishRequest(true);
 
         gatherTarget = buildingToDeliver.getInDimensionLocation();
         setDelay(WAIT_DELAY);
@@ -452,7 +451,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      * Gather item from chest.
      * Gathers only one stack of the item.
      *
-     * @param buildingToDeliver building to deliver to.
+     * @param request request to gather
      */
     private AIState gatherItems(@NotNull final IRequest<? extends Delivery> request)
     {
@@ -461,8 +460,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         if(!location.isReachableFromLocation(worker.getLocation()))
         {
             ((BuildingDeliveryman) getOwnBuilding()).setBuildingToDeliver(null);
-            job.setRequestState(RequestState.CANCELLED);
-            job.setCurrentTask(null);
+            job.finishRequest(false);
             return START_WORKING;
         }
 
@@ -489,8 +487,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
 
         ((BuildingDeliveryman) getOwnBuilding()).setBuildingToDeliver(null);
-        job.setRequestState(RequestState.CANCELLED);
-        job.setCurrentTask(null);
+        job.finishRequest(true);
         return START_WORKING;
     }
 

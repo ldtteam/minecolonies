@@ -47,7 +47,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
                                                .values()
                                                .stream()
                                                .filter(c -> requestToCheck.getRequest().getTarget().isReachableFromLocation(c.getCitizenEntity().getLocation()))
-                                               .filter(c -> c.getJob() instanceof JobDeliveryman && !((JobDeliveryman) c.getJob()).hasTask())
+                                               .filter(c -> c.getJob() instanceof JobDeliveryman)
                                                .findFirst()
                                                .orElse(null);
 
@@ -70,20 +70,21 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
                                         .values()
                                         .stream()
                                         .filter(c -> request.getRequest().getTarget().isReachableFromLocation(c.getCitizenEntity().getLocation()))
-                                        .filter(c -> c.getJob() instanceof JobDeliveryman && !((JobDeliveryman) c.getJob()).hasTask())
-                                        .sorted(Comparator.comparing(c -> {
+                                        .filter(c -> c.getJob() instanceof JobDeliveryman)
+                                        .sorted(Comparator.comparing((CitizenData c) -> ((JobDeliveryman) c.getJob()).getTaskQueue().size()).thenComparing(Comparator.comparing(c ->{
                                             BlockPos targetPos = request.getRequest().getTarget().getInDimensionLocation();
                                             BlockPos entityLocation = c.getCitizenEntity().getLocation().getInDimensionLocation();
 
                                             return BlockPosUtil.getDistanceSquared(targetPos, entityLocation);
-                                        }))
+                                        })))
                                         .findFirst()
                                         .orElse(null);
 
         if (freeDeliveryMan == null)
             return null;
 
-        ((JobDeliveryman) freeDeliveryMan.getJob()).setCurrentTask(request.getToken());
+        JobDeliveryman job = (JobDeliveryman) freeDeliveryMan.getJob();
+        job.addRequest(request.getToken());
 
         return Lists.newArrayList();
     }
@@ -115,7 +116,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
             CitizenData freeDeliveryMan = colony.getCitizens()
                                             .values()
                                             .stream()
-                                            .filter(c -> c.getJob() instanceof JobDeliveryman && ((JobDeliveryman) c.getJob()).getCurrentTask().equals(request.getToken()))
+                                            .filter(c -> c.getJob() instanceof JobDeliveryman && ((JobDeliveryman) c.getJob()).getTaskQueue().contains(request.getToken()))
                                             .findFirst()
                                             .orElse(null);
 
@@ -124,8 +125,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
                 MineColonies.getLogger().error("Parent cancellation failed! Unknown request: " + request.getToken());
             } else {
                 JobDeliveryman job = (JobDeliveryman) freeDeliveryMan.getJob();
-                job.setCurrentTask(null);
-                job.setReturning(true);
+                job.onTaskDeletion(request.getToken());
             }
         }
 
