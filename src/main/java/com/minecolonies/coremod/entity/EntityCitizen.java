@@ -1285,7 +1285,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
 
         if(!new AxisAlignedBB(this.currentPosition).expand(1, 1, 1)
-                .intersectsWith(new AxisAlignedBB(this.getPosition())) && !triedMovingAway)
+                .intersects(new AxisAlignedBB(this.getPosition())) && !triedMovingAway)
         {
             stuckTime = 0;
             this.currentPosition = this.getPosition();
@@ -1654,7 +1654,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             return new AxisAlignedBB(corners.getFirst().getFirst(), posY - 1, corners.getFirst().getSecond(),
                     corners.getSecond().getFirst(),
                     posY + 1,
-                    corners.getSecond().getSecond()).isVecInside(new Vec3d(this.getPosition()));
+                    corners.getSecond().getSecond()).intersectsWithXZ(new Vec3d(this.getPosition()));
         }
 
         return homePosition != null && homePosition.distanceSq((int) Math.floor(posX), (int) posY, (int) Math.floor(posZ)) <= RANGE_TO_BE_HOME;
