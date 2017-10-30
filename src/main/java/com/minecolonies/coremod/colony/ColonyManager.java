@@ -21,6 +21,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServerMulti;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -680,7 +681,7 @@ public final class ColonyManager
      */
     public static void onWorldLoad(@NotNull final World world)
     {
-        if (!world.isRemote)
+        if (!world.isRemote && !(world instanceof WorldServerMulti))
         {
             if (numWorldsLoaded == 0)
             {

@@ -247,12 +247,20 @@ public final class PlacementHandlers
             }
 
 
-            ItemStack placedStack = placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState));
-            if (!infiniteResources && blockState.getValue(BlockDoublePlant.HALF).equals(BlockDoublePlant.EnumBlockHalf.LOWER) && placer.getOwnBuilding().getOpenRequestsOfTypeFiltered(placer.getWorker().getCitizenData(), Stack.class, (IRequest<? extends Stack> r) -> r.getRequest().matches(placedStack)).isEmpty()) {
-                Stack stackRequest = new Stack(placedStack);
-                placer.getOwnBuilding().createRequest(placer.getWorker().getCitizenData(), stackRequest);
+            if(placer != null && !infiniteResources)
+            {
+                ItemStack placedStack = placer.getTotalAmount(BlockUtils.getItemStackFromBlockState(blockState));
+                if (blockState.getValue(BlockDoublePlant.HALF).equals(BlockDoublePlant.EnumBlockHalf.LOWER)
+                        && placer.getOwnBuilding().getOpenRequestsOfTypeFiltered(
+                                placer.getWorker().getCitizenData(),
+                        Stack.class,
+                        (IRequest<? extends Stack> r) -> r.getRequest().matches(placedStack)).isEmpty())
+                {
+                    Stack stackRequest = new Stack(placedStack);
+                    placer.getOwnBuilding().createRequest(placer.getWorker().getCitizenData(), stackRequest);
 
-                return ActionProcessingResult.DENY;
+                    return ActionProcessingResult.DENY;
+                }
             }
 
             if (blockState.getValue(BlockDoublePlant.HALF).equals(BlockDoublePlant.EnumBlockHalf.LOWER))
