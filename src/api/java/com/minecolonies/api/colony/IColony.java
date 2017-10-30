@@ -97,4 +97,17 @@ public interface IColony
      * @return Boolean value true if raid, false if not
      */
     boolean hasWillRaidTonight();
+    boolean canBeAutoDeleted();
+
+    /**
+     * return whether or not a colony is allowed to have barbarian events triggered.
+     * @return true if so.
+     */
+    boolean isCanHaveBarbEvents();
+
+    /**
+     * return whether or not the colony has had it's "RaidTonight" calculated yet.
+     * @return true if so.
+     */
+    boolean isHasRaidBeenCalculated();
 }

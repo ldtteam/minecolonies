@@ -249,6 +249,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public static final double FULL_SATURATION = 10;
 
+    /**
+     * Minimum stuck time for the worker to react.
+     */
+    private static final int MIN_STUCK_TIME    = 5;
+
     private static Field            navigatorField;
     private final  InventoryCitizen inventory;
     @NotNull
@@ -1192,7 +1197,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 final AbstractBuilding home = getHomeBuilding();
                 if(home != null && home instanceof BuildingHome && ((BuildingHome)home).isFoodNeeded())
                 {
-                    ((BuildingHome)home).setFoodNeeded(false);
+                    ((BuildingHome)home).checkIfFoodNeeded();
                 }
             }
         }
@@ -1275,7 +1280,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             return;
         }
 
-        if(this.getNavigator().getDestination() == null)
+        if(newNavigator.getDestination() == null || newNavigator.getDestination().distanceSq(posX, posY, posZ) < MOVE_AWAY_RANGE)
         {
             return;
         }
@@ -1290,9 +1295,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         stuckTime++;
 
-        if (stuckTime >= 5 && !triedMovingAway)
+        if (stuckTime >= MIN_STUCK_TIME && !triedMovingAway)
         {
-            getNavigator().moveAwayFromXYZ(currentPosition, MOVE_AWAY_RANGE, 1);
+            newNavigator.moveAwayFromXYZ(currentPosition, MOVE_AWAY_RANGE, 1);
             triedMovingAway = true;
             return;
         }
@@ -1641,7 +1646,18 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
     public boolean isAtHome()
     {
+        @Nullable final AbstractBuilding homeBuilding = getHomeBuilding();
         @Nullable final BlockPos homePosition = getHomePosition();
+
+        if(homeBuilding instanceof BuildingHome)
+        {
+            final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = homeBuilding.getCorners();
+            return new AxisAlignedBB(corners.getFirst().getFirst(), posY - 1, corners.getFirst().getSecond(),
+                    corners.getSecond().getFirst(),
+                    posY + 1,
+                    corners.getSecond().getSecond()).isVecInside(new Vec3d(this.getPosition()));
+        }
+
         return homePosition != null && homePosition.distanceSq((int) Math.floor(posX), (int) posY, (int) Math.floor(posZ)) <= RANGE_TO_BE_HOME;
     }
 
@@ -2149,6 +2165,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
         {
             setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.working"));
             this.getWorkBuilding().onWakeUp();
+        }
+
+        final AbstractBuilding homeBuilding = this.getHomeBuilding();
+        if(homeBuilding != null)
+        {
+            homeBuilding.onWakeUp();
         }
     }
 
