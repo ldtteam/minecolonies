@@ -663,7 +663,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             if (openToolRequests.isEmpty() && completedToolRequests.isEmpty())
             {
-                Tool request = new Tool(toolType, minimalLevel, ToolLevelConstants.TOOL_LEVEL_MAXIMUM);
+                Tool request = new Tool(toolType, minimalLevel, getOwnBuilding().getMaxToolLevel() > minimalLevel ? minimalLevel : getOwnBuilding().getMaxToolLevel());
                 getOwnBuilding().createRequest(job.getCitizen(), request);
                 return false;
             }

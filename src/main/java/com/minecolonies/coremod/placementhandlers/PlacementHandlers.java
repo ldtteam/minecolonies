@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.placementhandlers;
 
+import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.util.BlockUtils;
@@ -499,6 +500,9 @@ public final class PlacementHandlers
 
                 itemList.removeIf(ItemStackUtils::isEmpty);
 
+                final List<ItemStack> foundStacks = InventoryUtils.filterItemHandler(new InvWrapper(placer.getWorker().getInventoryCitizen()), itemList::contains);
+                itemList.removeIf(foundStacks::contains);
+
                 for (final ItemStack placedStack : itemList)
                 {
                     if (placer.getOwnBuilding()
@@ -507,7 +511,7 @@ public final class PlacementHandlers
                                     Stack.class,
                                     (IRequest<? extends Stack> r) -> r.getRequest().matches(placedStack)).isEmpty())
                     {
-                        final Stack stackRequest = new Stack(placedStack);
+                        final Stack stackRequest = new Stack(placedStack.copy());
                         placer.getOwnBuilding().createRequest(placer.getWorker().getCitizenData(), stackRequest);
 
                         return ActionProcessingResult.DENY;
