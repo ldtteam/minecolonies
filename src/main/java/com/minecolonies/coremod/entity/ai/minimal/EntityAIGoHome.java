@@ -80,17 +80,12 @@ public class EntityAIGoHome extends EntityAIBase
 
         final AbstractBuilding homeBuilding = citizen.getColony().getBuilding(homePos);
 
-        if(!(homeBuilding instanceof BuildingHome))
+        if(citizen.getDesiredActivity() != EntityCitizen.DesiredActivity.SLEEP)
         {
-            return true;
+            return isCitizenStarving() && homeBuilding instanceof BuildingHome;
         }
 
-        if(isCitizenHungry() && !((BuildingHome) homeBuilding).isFoodNeeded())
-        {
-            return true;
-        }
-        
-        return isCitizenStarving() && citizen.getDesiredActivity() != EntityCitizen.DesiredActivity.SLEEP;
+        return (isCitizenHungry() && !((BuildingHome) homeBuilding).isFoodNeeded()) || !(homeBuilding instanceof BuildingHome);
     }
 
     /**
