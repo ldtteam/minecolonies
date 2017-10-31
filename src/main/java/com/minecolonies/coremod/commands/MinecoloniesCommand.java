@@ -33,6 +33,8 @@ public class MinecoloniesCommand extends AbstractSplitCommand
         .put(HomeTeleportCommand.DESC, new HomeTeleportCommand(DESC))
         .put(RaidAllTonightCommand.DESC, new RaidAllTonightCommand(DESC))
         .put(RaidAllNowCommand.DESC, new RaidAllNowCommand(DESC))
+        .put(WhoAmICommand.DESC, new WhoAmICommand(DESC))
+        .put(WhereAmICommand.DESC, new WhereAmICommand(DESC))
         .build();
 
     /**
