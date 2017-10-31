@@ -32,12 +32,12 @@ public class WhereAmICommand extends AbstractSingleCommand
     /**
      * Position description string.
      */
-    public static final String NONE_CLOSE = "You're not inside any colony, the closest colony is %d blocks away.";
+    public static final String NONE_CLOSE = "You're not inside any colony, the closest colony is approx %.2f blocks away.";
 
     /**
      * Position description string.
      */
-    public static final String INSIDE = "You're inside colony %s with id: %s, the colony center is %d blocks away.";
+    public static final String INSIDE = "You're inside colony %s with id: %s, the colony center is approx %.2f blocks away.";
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -63,16 +63,16 @@ public class WhereAmICommand extends AbstractSingleCommand
         final BlockPos center = colony.getCenter();
         final double distance = BlockPosUtil.getDistanceSquared(center, new BlockPos(playerPos.getX(), center.getY(), playerPos.getZ()));
 
-        if(distance >= MathUtils.square(Configurations.workingRangeTownHall + Configurations.townHallPadding))
+        if(distance >= MathUtils.square(Configurations.workingRangeTownHall + (double)Configurations.townHallPadding))
         {
-            sender.sendMessage(new TextComponentString(String.format(NONE_CLOSE, distance)));
+            sender.sendMessage(new TextComponentString(String.format(NONE_CLOSE, Math.sqrt(distance))));
             return;
         }
 
         final String colonyName = colony.getName();
         final String id = Integer.toString(colony.getID());
 
-        sender.sendMessage(new TextComponentString(String.format(INSIDE, colonyName, id, distance)));
+        sender.sendMessage(new TextComponentString(String.format(INSIDE, colonyName, id, Math.sqrt(distance))));
     }
 
     @NotNull
