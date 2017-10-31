@@ -85,7 +85,7 @@ public class EntityAIGoHome extends EntityAIBase
             return isCitizenStarving() && homeBuilding instanceof BuildingHome;
         }
 
-        return (isCitizenHungry() && !((BuildingHome) homeBuilding).isFoodNeeded()) || !(homeBuilding instanceof BuildingHome);
+        return !(homeBuilding instanceof BuildingHome) || (isCitizenHungry() && !((BuildingHome) homeBuilding).isFoodNeeded());
     }
 
     /**
