@@ -27,7 +27,7 @@ public class WhereAmICommand extends AbstractSingleCommand
     /**
      * Command description.
      */
-    public static final String DESC = "whoami";
+    public static final String DESC = "whereami";
 
     /**
      * Position description string.
