@@ -259,7 +259,12 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
     /**
      * Box to the x request.
      */
-    private static final String BOX_ID_REQUEST   = "requestx";
+    private static final String BOX_ID_REQUEST            = "requestx";
+
+    /**
+     * Hidden label id.
+     */
+    private static final String LIST_ELEMENT_ID_HIDDEN_LABEL = "hiddenlabel";
 
     /**
      * Life count.
@@ -340,25 +345,9 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
             final List<ItemStack> displayStacks = request.getDisplayStacks();
             final ItemStack selectedStack = displayStacks.get((lifeCount / (20 * displayStacks.size())) % displayStacks.size());
             exampleStackDisplay.setItem(selectedStack);
-            final String displayString = request.getDisplayString().getFormattedText();
-            final String[] labels = displayString.split("§r");
-            final Box box = rowPane.findPaneOfTypeByID(BOX_ID_REQUEST, Box.class);
-            int y = 10;
-            for(final String s: labels)
-            {
-                final Label descriptionLabel = new Label();
-                descriptionLabel.setColor(BLACK, BLACK);
-                descriptionLabel.setLabelText(s);
-                box.addChild(descriptionLabel);
-                descriptionLabel.setPosition(20, y);
-                y+=10;
-            }
-
+            rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_HIDDEN_LABEL, Label.class).setLabelText(request.getToken().toString());
             final Label targetLabel = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Label.class);
             targetLabel.setLabelText(getNicePositionString(request.getRequester().getDeliveryLocation().getInDimensionLocation()));
-            targetLabel.setPosition(1, y);
-
-            box.setSize(box.getWidth(), y + 10);
         });
 
         //Tool of class:§rwith minimal level:§rWood or Gold§r and§rwith maximal level:§rWood or Gold§r
