@@ -490,3 +490,4 @@ com.minecolonies.coremod.tooltype.shears=Shears
 com.minecolonies.coremod.tooltype.shield=Shield
 
 com.minecolonies.coremod.gui.citizen.requests=Open requests:
+com.minecolonies.coremod.gui.citizen.requestTitle=Requests

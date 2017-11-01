@@ -2,40 +2,39 @@ package com.minecolonies.coremod.client.gui;
 
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Alignment;
 import com.minecolonies.blockout.Color;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.*;
-import com.minecolonies.blockout.views.ScrollingList;
-import com.minecolonies.blockout.views.SwitchView;
-import com.minecolonies.blockout.views.View;
-import com.minecolonies.blockout.views.Window;
+import com.minecolonies.blockout.views.*;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.network.messages.MarkBuildingDirtyMessage;
+import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
+import com.minecolonies.coremod.network.messages.TransferItemsRequestMessage;
 import com.minecolonies.coremod.util.ExperienceUtils;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.client.FMLClientHandler;
+import org.fusesource.jansi.Ansi;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.function.IntSupplier;
 
 /**
  * Window for the citizen.
  */
-public class WindowCitizen extends Window implements ButtonHandler
+public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandler
 {
     /**
      * The label to find the inventory button.
@@ -65,6 +64,16 @@ public class WindowCitizen extends Window implements ButtonHandler
      * The label to find dexterity in the gui.
      */
     private static final String DEXTERITY               = "dexterity";
+
+    /**
+     * Id of the resource add button.
+     */
+    private static final String RESOURCE_ADD                       = "resourceAdd";
+
+    /**
+     * Nice representation string for a position.
+     */
+    private static final String POSITION_STRING = "x: %d - y: %d - z: %d";
 
     /**
      * Xp-bar height.
@@ -106,14 +115,6 @@ public class WindowCitizen extends Window implements ButtonHandler
      * The row where the full xpBar starts.
      */
     private static final int XP_BAR_FULL_ROW              = 69;
-    /**
-     * X position of the xpLabel.
-     */
-    private static final int XP_LABEL_X                   = -20;
-    /**
-     * Y position of the xpLabel.
-     */
-    private static final int XP_LABEL_Y                   = 38;
 
     /**
      * Row position of the empty heart icon.
@@ -210,19 +211,59 @@ public class WindowCitizen extends Window implements ButtonHandler
      */
     private static final String WINDOW_ID_SATURATION_BAR = "saturationBar";
 
+    /**
+     * Id of the gender button.
+     */
+    private static final String WINDOW_ID_GENDER = "gender";
+
+    /**
+     * Requests list id.
+     */
     private static final String WINDOW_ID_LIST_REQUESTS             = "requests";
+
+    /**
+     * Request text id.
+     */
     private static final String LIST_ELEMENT_ID_REQUEST_TEXT             = "requestText";
+
+    /**
+     * Requestst stack id.
+     */
     private static final String LIST_ELEMENT_ID_REQUEST_STACK             = "requestStack";
+
+    /**
+     * Target location id.
+     */
     private static final String LIST_ELEMENT_ID_REQUEST_LOCATION             = "targetLocation";
 
-    private static final String BUTTON_PREVPAGE     = "prevPage";
-    private static final String BUTTON_NEXTPAGE     = "nextPage";
+    /**
+     * Button id of the requests page.
+     */
+    private static final String BUTTON_REQUESTS     = "requestsTitle";
+
+    /**
+     * Button id to get back from the requests page.
+     */
+    private static final String BUTTON_BACK     = "back";
+
+    /**
+     * Id of the pages view.
+     */
     private static final String VIEW_PAGES          = "pages";
 
-    private static final int RED       = Color.getByName("red", 0);
-    private static final int DARKGREEN = Color.getByName("darkgreen", 0);
-    private static final int BLACK     = Color.getByName("black", 0);
+    /**
+     * Source of the female wax location.
+     */
+    private static final String FEMALE_SOURCE = "minecolonies:textures/gui/citizen/colonist_wax_female_smaller.png";
 
+    /**
+     * Box to the x request.
+     */
+    private static final String BOX_ID_REQUEST   = "requestx";
+
+    /**
+     * Life count.
+     */
     private int lifeCount = 0;
 
     /**
@@ -230,8 +271,21 @@ public class WindowCitizen extends Window implements ButtonHandler
      */
     private final CitizenDataView citizen;
 
-    private final Button buttonNextPage;
-    private final Button buttonPrevPage;
+    /**
+     * Button to the requests page.
+     */
+    private final Button buttonRequest;
+
+    /**
+     * Button to go back again.
+     */
+    private final Button back;
+
+    /**
+     * Black color.
+     */
+    private static final int BLACK     = Color.getByName("black", 0);
+
 
     /**
      * Constructor to initiate the citizen windows.
@@ -243,17 +297,25 @@ public class WindowCitizen extends Window implements ButtonHandler
         super(Constants.MOD_ID + CITIZEN_RESOURCE_SUFFIX);
         this.citizen = citizen;
 
-        buttonNextPage = findPaneOfTypeByID(BUTTON_NEXTPAGE, Button.class);
-        buttonPrevPage = findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class);
+        buttonRequest = findPaneOfTypeByID(BUTTON_REQUESTS, Button.class);
+        back = findPaneOfTypeByID(BUTTON_BACK, Button.class);
+        registerButton(RESOURCE_ADD, this::transferItems);
     }
+
+
 
     @Override
     public void onUpdate()
     {
+        //todo check if resource is available and disable button if so (or creative)
+        //final Button addButton = rowPane.findPaneOfTypeByID(RESOURCE_ADD, Button.class);
+
         super.onUpdate();
 
         if (!GuiScreen.isShiftKeyDown())
+        {
             lifeCount++;
+        }
     }
 
     /**
@@ -264,38 +326,71 @@ public class WindowCitizen extends Window implements ButtonHandler
     {
         findPaneOfTypeByID(WINDOW_ID_NAME, Label.class).setLabelText(citizen.getName());
 
-        buttonPrevPage.setEnabled(false);
-
         createHealthBar();
         createSaturationBar();
         createXpBar();
         createSkillContent();
 
         final ScrollingList resourceList = findPaneOfTypeByID(WINDOW_ID_LIST_REQUESTS, ScrollingList.class);
-        resourceList.setDataProvider(() -> getOpenRequestsOfCitizen().size()
-          , (index, rowPane) -> {
-            IRequest request = getOpenRequestsOfCitizen().get(index);
+        resourceList.setDataProvider(() -> getOpenRequestsOfCitizen().size(), (index, rowPane) ->
+        {
+            final IRequest request = getOpenRequestsOfCitizen().get(index);
 
-            ItemIcon exampleStackDisplay = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
-            List<ItemStack> displayStacks = request.getDisplayStacks();
-            ItemStack selectedStack = displayStacks.get((lifeCount / (20 * displayStacks.size())) % displayStacks.size());
+            final ItemIcon exampleStackDisplay = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
+            final List<ItemStack> displayStacks = request.getDisplayStacks();
+            final ItemStack selectedStack = displayStacks.get((lifeCount / (20 * displayStacks.size())) % displayStacks.size());
             exampleStackDisplay.setItem(selectedStack);
+            final String displayString = request.getDisplayString().getFormattedText();
+            final String[] labels = displayString.split("§r");
+            final Box box = rowPane.findPaneOfTypeByID(BOX_ID_REQUEST, Box.class);
+            int y = 10;
+            for(final String s: labels)
+            {
+                final Label descriptionLabel = new Label();
+                descriptionLabel.setColor(BLACK, BLACK);
+                descriptionLabel.setLabelText(s);
+                box.addChild(descriptionLabel);
+                descriptionLabel.setPosition(20, y);
+                y+=10;
+            }
 
-            Label descriptionLabel = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_TEXT, Label.class);
-            descriptionLabel.setLabelText(request.getDisplayString().getFormattedText());
+            final Label targetLabel = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Label.class);
+            targetLabel.setLabelText(getNicePositionString(request.getRequester().getDeliveryLocation().getInDimensionLocation()));
+            targetLabel.setPosition(1, y);
 
-            Label targetLabel = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Label.class);
-            targetLabel.setLabelText(request.getRequester().getDeliveryLocation().getInDimensionLocation().toString());
+            box.setSize(box.getWidth(), y + 10);
         });
+
+        //Tool of class:§rwith minimal level:§rWood or Gold§r and§rwith maximal level:§rWood or Gold§r
+
+        if(citizen.isFemale())
+        {
+            findPaneOfTypeByID(WINDOW_ID_GENDER, Image.class).setImage(FEMALE_SOURCE);
+        }
+    }
+
+    /**
+     * Get a nice represetation of the pos string.
+     * @param pos the position.
+     * @return a nice string.
+     */
+    private String getNicePositionString(final BlockPos pos)
+    {
+        return String.format(POSITION_STRING, pos.getX(), pos.getY(), pos.getZ());
     }
 
     private ImmutableList<IRequest> getOpenRequestsOfCitizen()
     {
         ImmutableList.Builder<IRequest> builder = ImmutableList.builder();
         if (citizen.getWorkBuilding() != null)
+        {
             builder.addAll(getOpenRequestsOfCitizenFromBuilding(citizen.getWorkBuilding()));
+        }
+
         if (citizen.getHomeBuilding() != null)
+        {
             builder.addAll(getOpenRequestsOfCitizenFromBuilding(citizen.getHomeBuilding()));
+        }
         return builder.build();
     }
 
@@ -303,7 +398,9 @@ public class WindowCitizen extends Window implements ButtonHandler
     {
         ColonyView colonyView = ColonyManager.getClosestColonyView(FMLClientHandler.instance().getWorldClient(), buildingPos);
         if (colonyView == null)
+        {
             return ImmutableList.of();
+        }
 
         AbstractBuilding.View building = colonyView.getBuilding(buildingPos);
 
@@ -394,7 +491,6 @@ public class WindowCitizen extends Window implements ButtonHandler
         final double experienceRatio = ExperienceUtils.getPercentOfLevelCompleted(citizen.getExperience(), citizen.getLevel());
 
         findPaneOfTypeByID(WINDOW_ID_XP, Label.class).setLabelText(Integer.toString(citizen.getLevel()));
-        findPaneOfTypeByID(WINDOW_ID_XP, Label.class).setPosition(XP_LABEL_X, XP_LABEL_Y);
 
         @NotNull final Image xpBar = new Image();
         xpBar.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN, XP_BAR_EMPTY_ROW, XP_BAR_WIDTH, XP_HEIGHT, false);
@@ -443,15 +539,11 @@ public class WindowCitizen extends Window implements ButtonHandler
     {
         switch (button.getID())
         {
-            case BUTTON_PREVPAGE:
-                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
-                buttonPrevPage.setEnabled(false);
-                buttonNextPage.setEnabled(true);
-                break;
-            case BUTTON_NEXTPAGE:
+            case BUTTON_REQUESTS:
                 findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
-                buttonPrevPage.setEnabled(true);
-                buttonNextPage.setEnabled(false);
+                break;
+            case BUTTON_BACK:
+                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
                 break;
             case INVENTORY_BUTTON_ID:
                 MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(citizen));
@@ -459,5 +551,33 @@ public class WindowCitizen extends Window implements ButtonHandler
             default:
                 break;
         }
+    }
+
+    /**
+     * On Button click transfert Items.
+     *
+     * @param button the clicked button.
+     */
+    private void transferItems(@NotNull final Button button)
+    {
+        final Pane pane = button.getParent();
+
+        //todo get item here to extract
+        /*final Label idLabel = pane.findPaneOfTypeByID(RESOURCE_ID, Label.class);
+        final int index = Integer.parseInt(idLabel.getLabelText());
+        final BuildingBuilderResource res = resources.get(index);
+        if (res == null)
+        {
+            Log.getLogger().warn("WindowHutBuilder.transferItems: Error - Could not find the resource.");
+        }
+        else
+        {
+            // The itemStack size should not be greater than itemStack.getMaxStackSize, We send 1 instead
+            // and use quantity for the size
+            @NotNull final ItemStack itemStack = new ItemStack(res.getItem(), 1, res.getDamageValue());
+            final Label quantityLabel = pane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class);
+            final int quantity = Integer.parseInt(quantityLabel.getLabelText());
+            MineColonies.getNetwork().sendToServer(new TransferItemsRequestMessage(this.building, itemStack, quantity));
+        }*/
     }
 }

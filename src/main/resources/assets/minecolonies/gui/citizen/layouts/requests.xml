@@ -5,7 +5,7 @@
            label="$(com.minecolonies.coremod.gui.citizen.requests)" color="black"
            textalign="BOTTOM_MIDDLE"/>
     <list id="requests" size="78% 85%" pos="30 20">
-        <box size="100% 30" linewidth="2">
+        <box id="requestx" size="100% 100%" linewidth="2">
             <!--Item icon -->
             <itemicon id="requestStack" size="16 16" pos="1 1"/>
 
@@ -15,7 +15,15 @@
             <!--Requester location-->
             <label id="targetLocation" size="50 12" pos="2 18" textalign="MIDDLE_LEFT" color="black"/>
 
+            <!-- Color green if possible? -->
+            <!--<button id="resourceAdd" size="16 16" label="↥" pos="0 12"/>-->
+
+           <!-- button to cancel the request-->
+            <!--<button id="cancel"/>-->
+
             <!--TODO: Add player resolving buttons.-->
         </box>
     </list>
+    <button id="back" align="BOTTOM_MIDDLE" size="20 20" pos="10 5" label="Back"/>
+
 </layout>
