@@ -3,6 +3,7 @@ package com.minecolonies.coremod.client.gui;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.RequestState;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.LanguageHandler;
@@ -361,7 +362,10 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
             final Label targetLabel = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Label.class);
             targetLabel.setLabelText(getNicePositionString(request.getRequester().getDeliveryLocation().getInDimensionLocation()));
 
-            if (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory), stack -> ((IRequest<? extends Stack>) request).getRequest().matches(stack)))
+            if (!(request.getRequest() instanceof IDeliverable))
+            {
+                rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
+            } else if (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory), stack -> ((IRequest<? extends IDeliverable>) request).getRequest().matches(stack)))
             {
                 rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
             }
@@ -580,7 +584,7 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
     {
         final int row = resourceList.getListElementIndexByPane(button);
         @NotNull final IRequest request = getOpenRequestsOfCitizen().get(row);
-        MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getToken().toString(), RequestState.COMPLETED));
+        MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getToken().toString(), RequestState.CANCELLED));
     }
 
     /**
@@ -592,9 +596,12 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
     {
         final int row = resourceList.getListElementIndexByPane(button);
         @NotNull final IRequest tRequest = getOpenRequestsOfCitizen().get(row);
-        @NotNull final IRequest<? extends Stack> request = (IRequest<? extends Stack>) tRequest;
 
-        //todo tools don't work =(
+        if (!(tRequest.getRequest() instanceof IDeliverable))
+            return;
+
+        @NotNull final IRequest<? extends IDeliverable> request = (IRequest<? extends IDeliverable>) tRequest;
+
         final Predicate<ItemStack> requestPredicate = stack -> request.getRequest().matches(stack);
         final int amount = request.getRequest().getCount();
 
