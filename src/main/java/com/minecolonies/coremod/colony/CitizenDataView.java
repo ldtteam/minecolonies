@@ -31,6 +31,11 @@ public class CitizenDataView
     private       boolean female;
 
     /**
+     * colony id of the citizen.
+     */
+    private int colonyId;
+
+    /**
      * Placeholder skills.
      */
     private int    level;
@@ -165,6 +170,15 @@ public class CitizenDataView
     }
 
     /**
+     * Get the colony id of the citizen.
+     * @return unique id of the colony.
+     */
+    public int getColonyId()
+    {
+        return colonyId;
+    }
+
+    /**
      * Strength getter.
      *
      * @return citizen Strength value.
@@ -279,6 +293,8 @@ public class CitizenDataView
             final TextComponentTranslation textComponent = new TextComponentTranslation(textComp);
             latestStatus[i] = textComponent;
         }
+
+        colonyId = buf.readInt();
     }
 
     /**

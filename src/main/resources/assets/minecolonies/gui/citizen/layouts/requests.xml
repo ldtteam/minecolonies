@@ -9,7 +9,7 @@
            label="$(com.minecolonies.coremod.gui.citizen.requests)" color="black"
            textalign="BOTTOM_MIDDLE"/>
     <list id="requests" size="78% 90%" pos="20 20">
-        <box id="requestx" size="85% 20" linewidth="2">
+        <box id="requestx" size="85% 38" linewidth="2">
             <!--Item icon -->
             <itemicon id="requestStack" size="16 16" pos="1 1"/>
 
@@ -18,17 +18,18 @@
 
             <!--Requester location-->
             <label id="targetLocation" size="50 12" pos="38 3" color="black"/>
-            <label id="hiddenlabel" visible="false"/>
             <!-- Color green if possible? -->
-            <!--<button id="resourceAdd" size="16 16" label="↥" pos="0 12"/>-->
+            <buttonimage id="fulfill" size="37 16" pos="20 20" textcolor="black"
+                         label="$(com.minecolonies.coremod.gui.citizen.requestsFulfill)" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
 
            <!-- button to cancel the request-->
-            <!--<button id="cancel"/>-->
+            <buttonimage id="cancel" size="37 16" pos="110 20" textcolor="black"
+                         label="$(com.minecolonies.coremod.gui.citizen.requestsCancel)" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
 
             <!--TODO: Add player resolving buttons.-->
         </box>
     </list>
-    <buttonimage id="back" align="BOTTOM_MIDDLE" size="37 16" pos="-30 5" textcolor="black"
+    <buttonimage id="back" size="37 16" pos="20 180" textcolor="black"
                  label="Back" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
 
 </layout>

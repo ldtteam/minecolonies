@@ -1,13 +1,13 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.requestsystem.RequestState;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.Stack;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Alignment;
-import com.minecolonies.blockout.Color;
-import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.*;
 import com.minecolonies.blockout.views.*;
 import com.minecolonies.coremod.MineColonies;
@@ -16,20 +16,23 @@ import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
-import com.minecolonies.coremod.network.messages.TransferItemsRequestMessage;
+import com.minecolonies.coremod.network.messages.TransferItemsFromCitizenRequestMessage;
+import com.minecolonies.coremod.network.messages.UpdateRequestStateMessage;
 import com.minecolonies.coremod.util.ExperienceUtils;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.client.FMLClientHandler;
-import org.fusesource.jansi.Ansi;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.function.Predicate;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0;
 
 /**
  * Window for the citizen.
@@ -39,36 +42,47 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
     /**
      * The label to find the inventory button.
      */
-    private static final String INVENTORY_BUTTON_ID     = "inventory";
+    private static final String INVENTORY_BUTTON_ID = "inventory";
+
     /**
      * The label to find the gui of the citizen.
      */
     private static final String CITIZEN_RESOURCE_SUFFIX = ":gui/windowcitizen.xml";
+
     /**
      * The label to find strength in the gui.
      */
-    private static final String STRENGTH                = "strength";
+    private static final String STRENGTH = "strength";
+
     /**
      * The label to find endurance in the gui.
      */
-    private static final String ENDURANCE               = "endurance";
+    private static final String ENDURANCE = "endurance";
+
     /**
      * The label to find charisma in the gui.
      */
-    private static final String CHARISMA                = "charisma";
+    private static final String CHARISMA = "charisma";
+
     /**
      * The label to find intelligence in the gui.
      */
-    private static final String INTELLIGENCE            = "intelligence";
+    private static final String INTELLIGENCE = "intelligence";
+
     /**
      * The label to find dexterity in the gui.
      */
-    private static final String DEXTERITY               = "dexterity";
+    private static final String DEXTERITY = "dexterity";
 
     /**
      * Id of the resource add button.
      */
-    private static final String RESOURCE_ADD                       = "resourceAdd";
+    private static final String REQUEST_FULLFIL = "fulfill";
+
+    /**
+     * Id of the resource add button.
+     */
+    private static final String REQUEST_CANCEL = "cancel";
 
     /**
      * Nice representation string for a position.
@@ -78,81 +92,97 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
     /**
      * Xp-bar height.
      */
-    private static final int XP_HEIGHT                    = 5;
+    private static final int XP_HEIGHT = 5;
+
     /**
      * The x-distance to the left border of the gui of the xpBar.
      */
-    private static final int LEFT_BORDER_X                = 10;
+    private static final int LEFT_BORDER_X = 10;
+
     /**
      * The y-distance to the top-left border of the gui of the xpBar.
      */
-    private static final int LEFT_BORDER_Y                = 10;
+    private static final int LEFT_BORDER_Y = 10;
+
     /**
      * The column in which the icon starts.
      */
-    private static final int XP_BAR_ICON_COLUMN           = 0;
+    private static final int XP_BAR_ICON_COLUMN = 0;
+
     /**
      * The column where the icon ends.
      */
-    private static final int XP_BAR_ICON_COLUMN_END       = 172;
+    private static final int XP_BAR_ICON_COLUMN_END = 172;
+
     /**
      * The width of the end piece of the xpBar.
      */
     private static final int XP_BAR_ICON_COLUMN_END_WIDTH = 10;
+
     /**
      * The offset where the end should be placed in the GUI.
      */
-    private static final int XP_BAR_ICON_END_OFFSET       = 90;
+    private static final int XP_BAR_ICON_END_OFFSET = 90;
+
     /**
      * The width of the xpBar (Original width is halved to fit in the gui).
      */
-    private static final int XP_BAR_WIDTH                 = 182 / 2;
+    private static final int XP_BAR_WIDTH = 182 / 2;
+
     /**
      * The row where the empty xpBar starts.
      */
-    private static final int XP_BAR_EMPTY_ROW             = 64;
+    private static final int XP_BAR_EMPTY_ROW = 64;
+
     /**
      * The row where the full xpBar starts.
      */
-    private static final int XP_BAR_FULL_ROW              = 69;
+    private static final int XP_BAR_FULL_ROW = 69;
 
     /**
      * Row position of the empty heart icon.
      */
     private static final int EMPTY_HEART_ICON_ROW_POS = 16;
+
     /**
      * Row position of the full heart icon.
      */
-    private static final int FULL_HEART_ICON_ROW_POS  = 53;
+    private static final int FULL_HEART_ICON_ROW_POS = 53;
+
     /**
      * Row position of the half/full heart icon.
      */
-    private static final int HALF_HEART_ICON_ROW_POS  = 62;
+    private static final int HALF_HEART_ICON_ROW_POS = 62;
+
     /**
      * Column position of the heart icons.
      */
-    private static final int HEART_ICON_COLUMN        = 0;
+    private static final int HEART_ICON_COLUMN = 0;
+
     /**
      * Dimension of the hearts.
      */
-    private static final int HEART_ICON_HEIGHT_WIDTH  = 9;
+    private static final int HEART_ICON_HEIGHT_WIDTH = 9;
+
     /**
      * The position x where the heart is placed.
      */
-    private static final int HEART_ICON_POS_X         = 10;
+    private static final int HEART_ICON_POS_X = 10;
+
     /**
      * The offset x where the next heart should be placed.
      */
-    private static final int HEART_ICON_OFFSET_X      = 10;
+    private static final int HEART_ICON_OFFSET_X = 10;
+
     /**
      * The position y where the heart is placed.
      */
-    private static final int HEART_ICON_POS_Y         = 10;
+    private static final int HEART_ICON_POS_Y = 10;
 
     /**
      * The position y where the saturation is placed.
      */
-    private static final int SATURATION_ICON_POS_Y  = 10;
+    private static final int SATURATION_ICON_POS_Y = 10;
 
     /**
      * Column of the saturation icon.
@@ -162,7 +192,7 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
     /**
      * Dimension of the hearts.
      */
-    private static final int SATURATION_ICON_HEIGHT_WIDTH  = 9;
+    private static final int SATURATION_ICON_HEIGHT_WIDTH = 9;
 
     /**
      * Saturation icon x position.
@@ -177,19 +207,22 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
     /**
      * The label to find name in the gui.
      */
-    private static final String WINDOW_ID_NAME        = "name";
+    private static final String WINDOW_ID_NAME = "name";
+
     /**
      * The label to find xpLabel in the gui.
      */
-    private static final String WINDOW_ID_XP          = "xpLabel";
+    private static final String WINDOW_ID_XP = "xpLabel";
+
     /**
      * The label to find xpBar in the gui.
      */
-    private static final String WINDOW_ID_XPBAR       = "xpBar";
+    private static final String WINDOW_ID_XPBAR = "xpBar";
+
     /**
      * The label to find healthBar in the gui.
      */
-    private static final String WINDOW_ID_HEALTHBAR   = "healthBar";
+    private static final String WINDOW_ID_HEALTHBAR = "healthBar";
 
     /**
      * The position of the empty saturation icon.
@@ -219,37 +252,32 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
     /**
      * Requests list id.
      */
-    private static final String WINDOW_ID_LIST_REQUESTS             = "requests";
-
-    /**
-     * Request text id.
-     */
-    private static final String LIST_ELEMENT_ID_REQUEST_TEXT             = "requestText";
+    private static final String WINDOW_ID_LIST_REQUESTS = "requests";
 
     /**
      * Requestst stack id.
      */
-    private static final String LIST_ELEMENT_ID_REQUEST_STACK             = "requestStack";
+    private static final String LIST_ELEMENT_ID_REQUEST_STACK = "requestStack";
 
     /**
      * Target location id.
      */
-    private static final String LIST_ELEMENT_ID_REQUEST_LOCATION             = "targetLocation";
+    private static final String LIST_ELEMENT_ID_REQUEST_LOCATION = "targetLocation";
 
     /**
      * Button id of the requests page.
      */
-    private static final String BUTTON_REQUESTS     = "requestsTitle";
+    private static final String BUTTON_REQUESTS = "requestsTitle";
 
     /**
      * Button id to get back from the requests page.
      */
-    private static final String BUTTON_BACK     = "back";
+    private static final String BUTTON_BACK = "back";
 
     /**
      * Id of the pages view.
      */
-    private static final String VIEW_PAGES          = "pages";
+    private static final String VIEW_PAGES = "pages";
 
     /**
      * Source of the female wax location.
@@ -257,14 +285,9 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
     private static final String FEMALE_SOURCE = "minecolonies:textures/gui/citizen/colonist_wax_female_smaller.png";
 
     /**
-     * Box to the x request.
+     * Id of the detail button
      */
-    private static final String BOX_ID_REQUEST            = "requestx";
-
-    /**
-     * Hidden label id.
-     */
-    private static final String LIST_ELEMENT_ID_HIDDEN_LABEL = "hiddenlabel";
+    private static final String REQUEST_DETAIL = "detail";
 
     /**
      * Life count.
@@ -277,20 +300,19 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
     private final CitizenDataView citizen;
 
     /**
-     * Button to the requests page.
+     * Scrollinglist of the resources.
      */
-    private final Button buttonRequest;
+    private final ScrollingList resourceList;
 
     /**
-     * Button to go back again.
+     * Inventory of the player.
      */
-    private final Button back;
+    private final InventoryPlayer inventory = this.mc.player.inventory;
 
     /**
-     * Black color.
+     * Is the player in creative or not.
      */
-    private static final int BLACK     = Color.getByName("black", 0);
-
+    private final boolean isCreative = this.mc.player.capabilities.isCreativeMode;
 
     /**
      * Constructor to initiate the citizen windows.
@@ -302,19 +324,15 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
         super(Constants.MOD_ID + CITIZEN_RESOURCE_SUFFIX);
         this.citizen = citizen;
 
-        buttonRequest = findPaneOfTypeByID(BUTTON_REQUESTS, Button.class);
-        back = findPaneOfTypeByID(BUTTON_BACK, Button.class);
-        registerButton(RESOURCE_ADD, this::transferItems);
+        registerButton(REQUEST_FULLFIL, this::fulfill);
+        registerButton(REQUEST_CANCEL, this::cancel);
+        registerButton(REQUEST_DETAIL, this::detailedClicked);
+        resourceList = findPaneOfTypeByID(WINDOW_ID_LIST_REQUESTS, ScrollingList.class);
     }
-
-
 
     @Override
     public void onUpdate()
     {
-        //todo check if resource is available and disable button if so (or creative)
-        //final Button addButton = rowPane.findPaneOfTypeByID(RESOURCE_ADD, Button.class);
-
         super.onUpdate();
 
         if (!GuiScreen.isShiftKeyDown())
@@ -336,23 +354,25 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
         createXpBar();
         createSkillContent();
 
-        final ScrollingList resourceList = findPaneOfTypeByID(WINDOW_ID_LIST_REQUESTS, ScrollingList.class);
         resourceList.setDataProvider(() -> getOpenRequestsOfCitizen().size(), (index, rowPane) ->
         {
             final IRequest request = getOpenRequestsOfCitizen().get(index);
-
             final ItemIcon exampleStackDisplay = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
             final List<ItemStack> displayStacks = request.getDisplayStacks();
             final ItemStack selectedStack = displayStacks.get((lifeCount / (20 * displayStacks.size())) % displayStacks.size());
             exampleStackDisplay.setItem(selectedStack);
-            rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_HIDDEN_LABEL, Label.class).setLabelText(request.getToken().toString());
             final Label targetLabel = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Label.class);
             targetLabel.setLabelText(getNicePositionString(request.getRequester().getDeliveryLocation().getInDimensionLocation()));
+
+            if (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory), stack -> ((IRequest<? extends Stack>) request).getRequest().matches(stack)))
+            {
+                rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
+            }
         });
 
         //Tool of class:§rwith minimal level:§rWood or Gold§r and§rwith maximal level:§rWood or Gold§r
 
-        if(citizen.isFemale())
+        if (citizen.isFemale())
         {
             findPaneOfTypeByID(WINDOW_ID_GENDER, Image.class).setImage(FEMALE_SOURCE);
         }
@@ -360,10 +380,11 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
 
     /**
      * Get a nice represetation of the pos string.
+     *
      * @param pos the position.
      * @return a nice string.
      */
-    private String getNicePositionString(final BlockPos pos)
+    private static String getNicePositionString(final BlockPos pos)
     {
         return String.format(POSITION_STRING, pos.getX(), pos.getY(), pos.getZ());
     }
@@ -507,15 +528,15 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
     private void createSkillContent()
     {
         findPaneOfTypeByID(STRENGTH, Label.class).setLabelText(
-          LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.strength", citizen.getStrength()));
+                LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.strength", citizen.getStrength()));
         findPaneOfTypeByID(ENDURANCE, Label.class).setLabelText(
-          LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.endurance", citizen.getEndurance()));
+                LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.endurance", citizen.getEndurance()));
         findPaneOfTypeByID(CHARISMA, Label.class).setLabelText(
-          LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.charisma", citizen.getCharisma()));
+                LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.charisma", citizen.getCharisma()));
         findPaneOfTypeByID(INTELLIGENCE, Label.class).setLabelText(
-          LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.intelligence", citizen.getIntelligence()));
+                LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.intelligence", citizen.getIntelligence()));
         findPaneOfTypeByID(DEXTERITY, Label.class).setLabelText(
-          LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.dexterity", citizen.getDexterity()));
+                LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.dexterity", citizen.getDexterity()));
     }
 
     /**
@@ -542,31 +563,45 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
         }
     }
 
+    private void detailedClicked(@NotNull final Button button)
+    {
+        final int row = resourceList.getListElementIndexByPane(button);
+        @NotNull final WindowRequestDetail window = new WindowRequestDetail(citizen, getOpenRequestsOfCitizen().get(row));
+        window.open();
+    }
+
+    private void cancel(@NotNull final Button button)
+    {
+        final int row = resourceList.getListElementIndexByPane(button);
+        @NotNull final IRequest request = getOpenRequestsOfCitizen().get(row);
+        MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getToken().toString(), RequestState.COMPLETED));
+    }
+
     /**
-     * On Button click transfert Items.
+     * On Button click transfert Items and fullfil.
      *
      * @param button the clicked button.
      */
-    private void transferItems(@NotNull final Button button)
+    private void fulfill(@NotNull final Button button)
     {
-        final Pane pane = button.getParent();
+        final int row = resourceList.getListElementIndexByPane(button);
+        @NotNull final IRequest tRequest = getOpenRequestsOfCitizen().get(row);
+        @NotNull final IRequest<? extends Stack> request = (IRequest<? extends Stack>) tRequest;
 
-        //todo get item here to extract
-        /*final Label idLabel = pane.findPaneOfTypeByID(RESOURCE_ID, Label.class);
-        final int index = Integer.parseInt(idLabel.getLabelText());
-        final BuildingBuilderResource res = resources.get(index);
-        if (res == null)
+        final Predicate<ItemStack> requestPredicate = stack -> request.getRequest().matches(stack);
+        final int amount = request.getRequest().getCount();
+
+        final int count = InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory), requestPredicate);
+
+        if (!isCreative && count <= 0)
         {
-            Log.getLogger().warn("WindowHutBuilder.transferItems: Error - Could not find the resource.");
+            return;
         }
-        else
-        {
-            // The itemStack size should not be greater than itemStack.getMaxStackSize, We send 1 instead
-            // and use quantity for the size
-            @NotNull final ItemStack itemStack = new ItemStack(res.getItem(), 1, res.getDamageValue());
-            final Label quantityLabel = pane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class);
-            final int quantity = Integer.parseInt(quantityLabel.getLabelText());
-            MineColonies.getNetwork().sendToServer(new TransferItemsRequestMessage(this.building, itemStack, quantity));
-        }*/
+
+        // The itemStack size should not be greater than itemStack.getMaxStackSize, We send 1 instead
+        // and use quantity for the size
+        @NotNull final ItemStack itemStack = inventory.getStackInSlot(InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(inventory), requestPredicate));
+        MineColonies.getNetwork().sendToServer(new TransferItemsFromCitizenRequestMessage(this.citizen, itemStack, isCreative ? amount : count, citizen.getColonyId()));
+        MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getToken(), RequestState.COMPLETED));
     }
 }

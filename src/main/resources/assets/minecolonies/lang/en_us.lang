@@ -491,3 +491,5 @@ com.minecolonies.coremod.tooltype.shield=Shield
 
 com.minecolonies.coremod.gui.citizen.requests=Open requests:
 com.minecolonies.coremod.gui.citizen.requestTitle=Requests
+com.minecolonies.coremod.gui.citizen.requestsCancel=Cancel
+com.minecolonies.coremod.gui.citizen.requestsFulfill=Fulfill

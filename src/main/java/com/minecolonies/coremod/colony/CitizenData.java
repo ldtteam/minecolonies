@@ -762,6 +762,8 @@ public class CitizenData
         {
             buf.writeInt(0);
         }
+
+        buf.writeInt(colony.getID());
     }
 
     /**
