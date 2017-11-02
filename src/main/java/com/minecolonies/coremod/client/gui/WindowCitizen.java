@@ -324,9 +324,6 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
         super(Constants.MOD_ID + CITIZEN_RESOURCE_SUFFIX);
         this.citizen = citizen;
 
-        registerButton(REQUEST_FULLFIL, this::fulfill);
-        registerButton(REQUEST_CANCEL, this::cancel);
-        registerButton(REQUEST_DETAIL, this::detailedClicked);
         resourceList = findPaneOfTypeByID(WINDOW_ID_LIST_REQUESTS, ScrollingList.class);
     }
 
@@ -558,6 +555,15 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
             case INVENTORY_BUTTON_ID:
                 MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(citizen));
                 break;
+            case REQUEST_DETAIL:
+                detailedClicked(button);
+                break;
+            case REQUEST_CANCEL:
+                cancel(button);
+                break;
+            case REQUEST_FULLFIL:
+                fulfill(button);
+                break;
             default:
                 break;
         }
@@ -588,6 +594,7 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
         @NotNull final IRequest tRequest = getOpenRequestsOfCitizen().get(row);
         @NotNull final IRequest<? extends Stack> request = (IRequest<? extends Stack>) tRequest;
 
+        //todo tools don't work =(
         final Predicate<ItemStack> requestPredicate = stack -> request.getRequest().matches(stack);
         final int amount = request.getRequest().getCount();
 

@@ -3,7 +3,7 @@
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
 
     <label size="100% 11" pos="0 50" textalign="TOP_MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.citizen.requests)"/>
-    <box id="requestDetail">
+    <box id="requestDetail" size="100% 100%" pos="100 70">
 
     </box>
     <button id="cancel" size="200 20" pos="110 194" label="$(gui.cancel)"/>

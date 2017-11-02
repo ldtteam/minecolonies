@@ -73,6 +73,6 @@ public class UpdateRequestStateMessage extends AbstractMessage<UpdateRequestStat
     {
         //todo orion I think you'll have to do this here.
         final IColony colony = ColonyManager.getColony(message.colonyId);
-        colony.getRequestManager().updateRequestState(message.requestId, message.state);
+        //colony.getRequestManager().updateRequestState(message.requestId, message.state);
     }
 }
