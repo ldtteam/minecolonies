@@ -69,7 +69,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
     /**
      * The last field tag.
      */
-    private static final String LAST_FIELD_TAG d= "lastField";
+    private static final String LAST_FIELD_TAG = "lastField";
 
     /**
      * The list of the fields the farmer manages.

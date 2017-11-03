@@ -14,7 +14,7 @@ tile.minecolonies.blockConstructionTape.name=Construction tape
 tile.blockHut.messageNoPermission=You don't have permission to open huts in %s.
 tile.blockHut.messageNoPermissionPlace=You don't have permission to place huts in %s.
 tile.blockHutTownHall.messageMaxSize=%d has reached max size
-tile.blockHutTownHall.messageColonistDead=The colonist %s has died at %d %d %d!
+tile.blockHutTownHall.messageColonistDead=The colonist %s has died at %d %d %d of %s!
 tile.blockHutTownHall.messagePlacedAlready=You have placed a Town Hall already
 tile.blockHutTownHall.messageInvalidWorld=You can't place a town hall in this world type
 tile.blockHutTownHall.messageTooClose=Too close to existing town hall
@@ -104,7 +104,7 @@ achievement.upgrade.townhall.max.desc=What a King!
 achievement.upgrade.townhall.first=We need a townhall!
 achievement.upgrade.townhall.first.desc=Build a townhall!
 tile.minecolonies.blockHutGuardTower.name=GuardTower
-tile.blockHutTownHall.messageGuardDead=The guard %s has died at %d %d %d!
+tile.blockHutTownHall.messageGuardDead=The guard %s has died at %d %d %d of %s !
 item.minecolonies.scepterGuard.name=Guard-scepter
 
 com.minecolonies.configgui.title=MineColonies Config
