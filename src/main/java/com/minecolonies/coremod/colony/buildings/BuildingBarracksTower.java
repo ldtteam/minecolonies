@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import net.minecraft.entity.player.EntityPlayer;
@@ -43,6 +44,21 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     public BuildingBarracksTower(final Colony c, final BlockPos l)
     {
         super(c, l);
+    }
+
+    @Override
+    public void setWorker(final CitizenData citizen)
+    {
+        super.setWorker(citizen);
+        if (citizen != null)
+        {
+            final AbstractBuilding building = citizen.getHomeBuilding();
+            if (building instanceof BuildingHome)
+            {
+                building.removeCitizen(citizen);
+            }
+            citizen.setHomeBuilding(this);
+        }
     }
 
     @Override

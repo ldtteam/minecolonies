@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
 import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.InventoryFunctions;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.jobs.JobGuard;
 import com.minecolonies.coremod.entity.ai.util.AIState;
@@ -172,7 +174,10 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
         {
             return AIState.GUARD_SEARCH_TARGET;
         }
-        worker.setHeldItem(worker.findFirstSlotInInventoryWith(Items.BOW, -1));
+        InventoryFunctions.matchFirstInProviderWithSimpleAction(worker,
+                stack -> !ItemStackUtils.isEmpty(stack)
+                        && ItemStackUtils.hasToolLevel(stack, ToolType.BOW, 0, getOwnBuilding().getMaxToolLevel()),
+                worker::setHeldItem);
         return super.searchTarget();
     }
 
