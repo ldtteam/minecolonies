@@ -124,10 +124,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
             }
             workers.add(citizen);
             citizen.setWorkBuilding(this);
-            if(this instanceof BuildingBarracksTower)
-            {
-                citizen.setHomeBuilding(this);
-            }
         }
 
         markDirty();
