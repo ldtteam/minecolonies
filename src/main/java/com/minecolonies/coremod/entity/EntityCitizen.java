@@ -857,17 +857,17 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Called when the mob's health reaches 0.
      *
-     * @param par1DamageSource the attacking entity.
+     * @param damageSource the attacking entity.
      */
     @Override
-    public void onDeath(final DamageSource par1DamageSource)
+    public void onDeath(final DamageSource damageSource)
     {
         double penalty = CITIZEN_DEATH_PENALTY;
-        if (par1DamageSource.getTrueSource() instanceof EntityPlayer)
+        if (damageSource.getTrueSource() instanceof EntityPlayer)
         {
             for (final Player player : PermissionUtils.getPlayersWithAtLeastRank(colony, Rank.OFFICER))
             {
-                if (player.getID().equals(par1DamageSource.getTrueSource().getUniqueID()))
+                if (player.getID().equals(damageSource.getTrueSource().getUniqueID()))
                 {
                     penalty = CITIZEN_KILL_PENALTY;
                     break;
@@ -881,24 +881,24 @@ public class EntityCitizen extends EntityAgeable implements INpc
         if (colony != null)
         {
             colony.decreaseOverallHappiness(penalty);
-            triggerDeathAchievement(par1DamageSource, getColonyJob());
+            triggerDeathAchievement(damageSource, getColonyJob());
             if (getColonyJob() instanceof JobGuard)
             {
                 LanguageHandler.sendPlayersMessage(
                         colony.getMessageEntityPlayers(),
                         "tile.blockHutTownHall.messageGuardDead",
-                        citizenData.getName(), (int) posX, (int) posY, (int) posZ);
+                        citizenData.getName(), (int) posX, (int) posY, (int) posZ, damageSource.damageType);
             }
             else
             {
                 LanguageHandler.sendPlayersMessage(
                         colony.getMessageEntityPlayers(),
                         "tile.blockHutTownHall.messageColonistDead",
-                        citizenData.getName(), (int) posX, (int) posY, (int) posZ);
+                        citizenData.getName(), (int) posX, (int) posY, (int) posZ, damageSource.damageType);
             }
             colony.removeCitizen(getCitizenData());
         }
-        super.onDeath(par1DamageSource);
+        super.onDeath(damageSource);
     }
 
     @Override
