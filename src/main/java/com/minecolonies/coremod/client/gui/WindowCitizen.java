@@ -4,13 +4,15 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.RequestState;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
-import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Alignment;
 import com.minecolonies.blockout.controls.*;
-import com.minecolonies.blockout.views.*;
+import com.minecolonies.blockout.views.ScrollingList;
+import com.minecolonies.blockout.views.SwitchView;
+import com.minecolonies.blockout.views.View;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.CitizenDataView;
@@ -32,8 +34,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.function.Predicate;
-
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0;
 
 /**
  * Window for the citizen.
@@ -358,7 +358,12 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
             final ItemIcon exampleStackDisplay = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
             final List<ItemStack> displayStacks = request.getDisplayStacks();
             final ItemStack selectedStack = displayStacks.get((lifeCount / (20 * displayStacks.size())) % displayStacks.size());
-            exampleStackDisplay.setItem(selectedStack);
+
+            if (!displayStacks.isEmpty())
+                exampleStackDisplay.setItem(selectedStack);
+            else
+                exampleStackDisplay.setItem(ItemStackUtils.EMPTY);
+
             final Label targetLabel = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Label.class);
             targetLabel.setLabelText(getNicePositionString(request.getRequester().getDeliveryLocation().getInDimensionLocation()));
 

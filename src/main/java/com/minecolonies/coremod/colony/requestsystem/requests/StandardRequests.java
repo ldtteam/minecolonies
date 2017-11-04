@@ -118,27 +118,11 @@ public final class StandardRequests
         public ToolRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final Tool requested)
         {
             super(requester, token, requested);
-            setup(requested);
         }
 
         public ToolRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final Tool requested)
         {
             super(requester, token, state, requested);
-            setup(requested);
-        }
-
-        private void setup(@NotNull Tool tool) {
-            toolExamples = ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(Item.REGISTRY.iterator(), Spliterator.ORDERED), false).flatMap(item -> {
-                NonNullList<ItemStack> stacks = NonNullList.create();
-                try {
-                    item.getSubItems(item, null, stacks);
-                } catch (Exception ex)
-                {
-                    Log.getLogger().warn("Failed to get sub items from: " + item.getRegistryName());
-                }
-
-                return stacks.stream().filter(tool::matches);
-            }).collect(Collectors.toList()));
         }
 
         @NotNull
@@ -172,6 +156,21 @@ public final class StandardRequests
         @Override
         public List<ItemStack> getDisplayStacks()
         {
+            if (toolExamples == null)
+            {
+                toolExamples = ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(Item.REGISTRY.iterator(), Spliterator.ORDERED), false).flatMap(item -> {
+                    NonNullList<ItemStack> stacks = NonNullList.create();
+                    try {
+                        item.getSubItems(item, null, stacks);
+                    } catch (Exception ex)
+                    {
+                        Log.getLogger().warn("Failed to get sub items from: " + item.getRegistryName());
+                    }
+
+                    return stacks.stream().filter(getRequest()::matches);
+                }).collect(Collectors.toList()));
+            }
+
             return toolExamples;
         }
     }
@@ -179,18 +178,8 @@ public final class StandardRequests
     public static class FoodRequest extends AbstractRequest<Food>
     {
 
-        private static final ImmutableList<ItemStack>
-          foodExamples = ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(Item.REGISTRY.iterator(), Spliterator.ORDERED), false).filter(item -> item instanceof ItemFood).flatMap(item -> {
-            NonNullList<ItemStack> stacks = NonNullList.create();
-            try {
-                item.getSubItems(item, null, stacks);
-            } catch (Exception ex)
-            {
-                Log.getLogger().warn("Failed to get sub items from: " + item.getRegistryName());
-            }
-
-            return stacks.stream();
-        }).collect(Collectors.toList()));
+        private static ImmutableList<ItemStack>
+          foodExamples;
 
         FoodRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final Food requested)
         {
@@ -216,6 +205,21 @@ public final class StandardRequests
         @Override
         public List<ItemStack> getDisplayStacks()
         {
+            if (foodExamples == null)
+            {
+                foodExamples  = ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(Item.REGISTRY.iterator(), Spliterator.ORDERED), false).filter(item -> item instanceof ItemFood).flatMap(item -> {
+                    NonNullList<ItemStack> stacks = NonNullList.create();
+                    try {
+                        item.getSubItems(item, null, stacks);
+                    } catch (Exception ex)
+                    {
+                        Log.getLogger().warn("Failed to get sub items from: " + item.getRegistryName());
+                    }
+
+                    return stacks.stream();
+                }).collect(Collectors.toList()));
+            }
+
             return foodExamples;
         }
     }
@@ -223,17 +227,7 @@ public final class StandardRequests
     public static class BurnableRequest extends AbstractRequest<Burnable>
     {
 
-        private static final ImmutableList<ItemStack> burnableExamples = ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(Item.REGISTRY.iterator(), Spliterator.ORDERED), false).flatMap(item -> {
-            NonNullList<ItemStack> stacks = NonNullList.create();
-            try {
-                item.getSubItems(item, null, stacks);
-            } catch (Exception ex)
-            {
-                Log.getLogger().warn("Failed to get sub items from: " + item.getRegistryName());
-            }
-
-            return stacks.stream().filter(TileEntityFurnace::isItemFuel);
-        }).collect(Collectors.toList()));
+        private static ImmutableList<ItemStack> burnableExamples;
 
         BurnableRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final Burnable requested)
         {
@@ -259,6 +253,21 @@ public final class StandardRequests
         @Override
         public List<ItemStack> getDisplayStacks()
         {
+            if (burnableExamples == null)
+            {
+                burnableExamples = ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(Item.REGISTRY.iterator(), Spliterator.ORDERED), false).flatMap(item -> {
+                    NonNullList<ItemStack> stacks = NonNullList.create();
+                    try {
+                        item.getSubItems(item, null, stacks);
+                    } catch (Exception ex)
+                    {
+                        Log.getLogger().warn("Failed to get sub items from: " + item.getRegistryName());
+                    }
+
+                    return stacks.stream().filter(TileEntityFurnace::isItemFuel);
+                }).collect(Collectors.toList()));
+            }
+
             return burnableExamples;
         }
     }

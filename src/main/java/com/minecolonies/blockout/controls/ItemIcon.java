@@ -1,5 +1,6 @@
 package com.minecolonies.blockout.controls;
 
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.PaneParams;
 import net.minecraft.client.gui.FontRenderer;
@@ -72,6 +73,9 @@ public class ItemIcon extends Pane
      */
     private void drawItemStack(final ItemStack stack, final int x, final int y)
     {
+        if (ItemStackUtils.isEmpty(itemStack))
+            return;
+
         final RenderItem itemRender = mc.getRenderItem();
 
         GlStateManager.translate(0.0F, 0.0F, GUI_ITEM_Z_TRANSLATE);
