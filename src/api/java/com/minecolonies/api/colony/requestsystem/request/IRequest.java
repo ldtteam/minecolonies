@@ -229,11 +229,11 @@ public interface IRequest<R>
     ITextComponent getDisplayString();
 
     /**
-     * Method used to get a {@link List<ItemStack>} that represents the stack.
+     * Method used to get a List<ItemStack> that represents the stack.
      * This list is used in GUI to show what the request is. If an empty list is returned then no stack is shown.
      * If a list with multiple stacks is returned it will switch between the stacks once every second unless the player holds the shift key.
      *
-     * @return A {@link List<ItemStack>} that represents this request.
+     * @return A List<ItemStack> that represents this request.
      */
     List<ItemStack> getDisplayStacks();
 }
