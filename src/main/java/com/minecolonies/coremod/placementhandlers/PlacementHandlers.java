@@ -581,6 +581,8 @@ public final class PlacementHandlers
      * Check the placers inventory for the items in the itemList and remove it of the list if found.
      * @param placer the placer.
      * @param itemList the list to check.
+     *
+     * @return true if need to request.
      */
     private static boolean checkForListInInvAndRequest(@NotNull final AbstractEntityAIStructure<?> placer, final List<ItemStack> itemList)
     {
@@ -600,9 +602,9 @@ public final class PlacementHandlers
                 Stack stackRequest = new Stack(placedStack);
                 placer.getOwnBuilding().createRequest(placer.getWorker().getCitizenData(), stackRequest);
 
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 }
