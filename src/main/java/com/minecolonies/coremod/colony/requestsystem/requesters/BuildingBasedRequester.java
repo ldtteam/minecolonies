@@ -89,4 +89,10 @@ public class BuildingBasedRequester implements IRequester
 
         return new BuildingBasedRequester(location, token);
     }
+
+    public AbstractBuilding getBuilding()
+    {
+        updateBuilding();
+        return building;
+    }
 }
