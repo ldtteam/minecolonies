@@ -5,9 +5,8 @@
 <image source="minecolonies:textures/gui/citizen/colonist_papper.png" pos="0 -15" size="190 244"/>
 
 
-    <label size="100% 11" pos="0 0"
-           label="$(com.minecolonies.coremod.gui.citizen.requests)" color="black"
-           textalign="BOTTOM_MIDDLE"/>
+    <label size="100% 11" pos="60 0"
+           label="$(com.minecolonies.coremod.gui.citizen.requests)" color="black"/>
     <list id="requests" size="78% 90%" pos="20 20">
         <box id="requestx" size="85% 38" linewidth="2">
             <!--Item icon -->
@@ -29,7 +28,7 @@
             <!--TODO: Add player resolving buttons.-->
         </box>
     </list>
-    <buttonimage id="back" size="37 16" pos="20 180" textcolor="black"
+    <buttonimage id="back" size="37 16" pos="75 180" textcolor="black"
                  label="Back" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
 
 </layout>
