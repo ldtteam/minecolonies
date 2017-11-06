@@ -8,6 +8,8 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.colony.requestsystem.requestable.IRetryable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
@@ -101,7 +103,15 @@ public class StandardRequestManager implements IRequestManager
      * TODO: Assign resolver once implemented.
      */
     @NotNull
-    private final static IRequestResolver                             playerResolver          = null;
+    private final IRequestResolver                             playerResolver = null;
+
+    /**
+     * The fallback resolver used to resolve using retries.
+     * Not all requests might support this feature, requests that do should implement {@link IRetryable} on their requestable.
+     * Anything that implements {@link IDeliverable} is by definition retryable.
+     */
+    @NotNull
+    private final IRequestResolver retryingResolver = null;
     /**
      * Colony of the manager.
      */
@@ -947,10 +957,11 @@ public class StandardRequestManager implements IRequestManager
          * @param manager                The manager to modify.
          * @param request                The request to assign.
          * @param resolverTokenBlackList Each resolver that has its token in this blacklist will be skipped when checking for a possible resolver.
+         * @return true when assigning successfully false when not.
          * @throws IllegalArgumentException is thrown when the request is unknown to this manager.
          */
         @SuppressWarnings(Suppression.UNCHECKED)
-        private static void assignRequest(final StandardRequestManager manager, final IRequest request, final Collection<IToken> resolverTokenBlackList)
+        private static boolean assignRequest(final StandardRequestManager manager, final IRequest request, final Collection<IToken> resolverTokenBlackList)
           throws IllegalArgumentException
         {
             //Check if the request is registered
@@ -966,7 +977,10 @@ public class StandardRequestManager implements IRequestManager
                 if (!manager.requestClassResolverMap.containsKey(requestType))
                     continue;
 
-                for (final IRequestResolver resolver : manager.requestClassResolverMap.get(requestType))
+                Collection<IRequestResolver> resolversForRequestType = manager.requestClassResolverMap.get(requestType);
+                resolversForRequestType = resolversForRequestType.stream().sorted(Comparator.comparing(IRequestResolver::getPriority)).collect(Collectors.toSet());
+
+                for (final IRequestResolver resolver : resolversForRequestType)
                 {
                     //Skip when the resolver is in the blacklist.
                     if (resolverTokenBlackList.contains(resolver.getRequesterId()))
@@ -1015,19 +1029,50 @@ public class StandardRequestManager implements IRequestManager
                         }
                     }
 
-                    return;
+                    return true;
                 }
             }
 
+            if (request.getRequest() instanceof IRetryable && manager.retryingResolver != null && ! resolverTokenBlackList.contains(manager.retryingResolver.getRequesterId()))
+            {
+                LogHandler.log("Initial resolving attempt failed. Attempting reassignment to retryable handler.");
 
-            LogHandler.log("Resolving failed. Attempting Fallback PlayerManager for: " + request);
+                ResolverHandler.addRequestToResolver(manager, manager.retryingResolver, request);
+                request.setState(new WrappedStaticStateRequestManager(manager), RequestState.ASSIGNED);
+                resolveRequest(manager, request);
 
-            if (true)
-                return;
+                return true;
+            }
 
-            ResolverHandler.addRequestToResolver(manager, manager.playerResolver, request);
-            request.setState(new WrappedStaticStateRequestManager(manager), RequestState.ASSIGNED);
-            resolveRequest(manager, request);
+            if (manager.playerResolver != null && !resolverTokenBlackList.contains(manager.playerResolver.getRequesterId()))
+            {
+                LogHandler.log("Resolving failed. Attempting Fallback PlayerManager for: " + request);
+
+                ResolverHandler.addRequestToResolver(manager, manager.playerResolver, request);
+                request.setState(new WrappedStaticStateRequestManager(manager), RequestState.ASSIGNED);
+                resolveRequest(manager, request);
+
+                return true;
+            }
+
+            return false;
+        }
+
+        /**
+         * Method used to reassign request
+         * @param manager
+         * @param request
+         * @param resolverTokenBlackList
+         * @return
+         * @throws IllegalArgumentException
+         */
+        private static boolean reassignRequest(final StandardRequestManager manager, final IRequest request, final Collection<IToken> resolverTokenBlackList) throws IllegalArgumentException
+        {
+            //Cancel the request to restart the search
+            //TODO Change: manager.updateRequestState(request.getToken(), RequestState.CANCELLED);
+
+            manager.updateRequestState(request.getToken(), RequestState.REPORTED);
+            return assignRequest(manager, request, resolverTokenBlackList);
         }
 
         /**
@@ -1085,8 +1130,6 @@ public class StandardRequestManager implements IRequestManager
             {
                 assignRequest(manager, followupRequest);
             }
-
-
         }
 
         /**
@@ -1173,8 +1216,12 @@ public class StandardRequestManager implements IRequestManager
             LogHandler.log("Removing " + token + " from the Manager as it has been completed and its package has been received by the requester.");
 
             manager.requestBiMap.remove(token);
-            manager.resolverRequestMap.get(manager.requestResolverMap.get(token)).remove(token);
-            manager.requestResolverMap.remove(token);
+
+            if (isAssigned(manager, token))
+            {
+                manager.resolverRequestMap.get(manager.requestResolverMap.get(token)).remove(token);
+                manager.requestResolverMap.remove(token);
+            }
         }
 
         /**

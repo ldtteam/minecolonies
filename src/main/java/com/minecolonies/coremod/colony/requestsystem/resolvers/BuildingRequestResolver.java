@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * ------------ Class not Documented ------------
+ * Resolver that checks if a deliverable request is already in the building it is being requested from.
  */
 public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverable>
 {
@@ -54,13 +54,16 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
         if (!(requestToCheck.getRequester() instanceof BuildingBasedRequester))
             return false;
 
+        if (!requestToCheck.getRequester().getRequesterLocation().equals(getRequesterLocation()))
+            return false;
+
         AbstractBuilding building = ((BuildingBasedRequester) requestToCheck.getRequester()).getBuilding();
 
         List<TileEntity> tileEntities = new ArrayList<>();
         tileEntities.add(building.getTileEntity());
         tileEntities.addAll(building.getAdditionalCountainers().stream().map(manager.getColony().getWorld()::getTileEntity).collect(Collectors.toSet()));
 
-        return tileEntities.stream().map(tileEntity -> InventoryUtils.filterProvider(tileEntity, requestToCheck.getRequest()::matches)).anyMatch(itemStacks -> !itemStacks.isEmpty());
+        return tileEntities.stream().map(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStack-> requestToCheck.getRequest().matches(itemStack))).anyMatch(itemStacks -> !itemStacks.isEmpty());
     }
 
     @Nullable

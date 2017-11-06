@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * An {@link IDeliverable} is an Requestable that can be delivered.
  */
-public interface IDeliverable
+public interface IDeliverable extends IRetryable
 {
 
     /**

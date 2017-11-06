@@ -9,13 +9,10 @@ import com.minecolonies.api.colony.requestsystem.requestable.Tool;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.IToolType;
-import com.minecolonies.api.util.constant.ToolLevelConstants;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
-import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
@@ -30,7 +27,6 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentBase;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -40,7 +36,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_HAND;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
@@ -482,7 +477,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 final TileEntity entity = world.getTileEntity(pos);
                 if (entity instanceof TileEntityChest)
                 {
-                    hasItem = isInTileEntity((TileEntityChest) entity, is);
+                    hasItem = isInTileEntity(entity, is);
 
                     if (hasItem)
                     {

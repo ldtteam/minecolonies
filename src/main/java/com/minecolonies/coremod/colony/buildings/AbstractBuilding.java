@@ -19,6 +19,7 @@ import com.minecolonies.coremod.blocks.*;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
@@ -1504,7 +1505,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
     @Override
     public ImmutableCollection<IRequestResolver> getResolvers()
     {
-        return ImmutableList.of();
+        return ImmutableList.of(new BuildingRequestResolver(getRequestor().getRequesterLocation(), getRequestor().getRequesterId()));
     }
 
     public IRequester getRequestor()
