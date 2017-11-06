@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.blocks.BlockHutDeliveryman;
@@ -193,7 +194,7 @@ public class BuildingWareHouse extends AbstractBuilding
         ImmutableList.Builder<IRequestResolver> builder = ImmutableList.builder();
 
         builder.addAll(supers);
-        builder.add(new WarehouseRequestResolver(getRequestor().getRequesterLocation(), getToken()));
+        builder.add(new WarehouseRequestResolver(getRequestor().getRequesterLocation(), getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
 
         return builder.build();
     }

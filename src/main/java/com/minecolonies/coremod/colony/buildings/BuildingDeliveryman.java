@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
+import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.CitizenData;
@@ -12,7 +13,6 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.DeliveryRequestResolver;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.WarehouseRequestResolver;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
@@ -114,7 +114,7 @@ public class BuildingDeliveryman extends AbstractBuildingWorker
         ImmutableList.Builder<IRequestResolver> builder = ImmutableList.builder();
 
         builder.addAll(supers);
-        builder.add(new DeliveryRequestResolver(getRequestor().getRequesterLocation(), getToken()));
+        builder.add(new DeliveryRequestResolver(getRequestor().getRequesterLocation(), getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
 
         return builder.build();
     }

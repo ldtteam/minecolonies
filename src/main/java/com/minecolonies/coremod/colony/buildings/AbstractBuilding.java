@@ -14,6 +14,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.blocks.*;
 import com.minecolonies.coremod.colony.*;
@@ -1505,7 +1506,8 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
     @Override
     public ImmutableCollection<IRequestResolver> getResolvers()
     {
-        return ImmutableList.of(new BuildingRequestResolver(getRequestor().getRequesterLocation(), getRequestor().getRequesterId()));
+        return ImmutableList.of(new BuildingRequestResolver(getRequestor().getRequesterLocation(), getColony().getRequestManager().getFactoryController().getNewInstance(
+          TypeConstants.ITOKEN)));
     }
 
     public IRequester getRequestor()
