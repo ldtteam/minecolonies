@@ -59,7 +59,7 @@ public final class StandardRequestFactories
         O construct(@NotNull final T requested, @NotNull final IToken token, @NotNull final IRequester requester, @NotNull final RequestState requestState);
     }
     
-    public static <T> NBTTagCompound serializeToNBT(IFactoryController controller, IRequest<T> request, IObjectToNBTConverter<T> typeSerialization)
+    public static <T extends IRequestable> NBTTagCompound serializeToNBT(IFactoryController controller, IRequest<T> request, IObjectToNBTConverter<T> typeSerialization)
     {
         final NBTTagCompound compound = new NBTTagCompound();
 
@@ -94,7 +94,7 @@ public final class StandardRequestFactories
         return compound;
     }
     
-    public static <T, R extends IRequest<T>> R deserializeFromNBT(IFactoryController controller, NBTTagCompound compound, INBTToObjectConverter<T> typeDeserialization, IObjectConstructor<T, R> objectConstructor)
+    public static <T extends IRequestable, R extends IRequest<T>> R deserializeFromNBT(IFactoryController controller, NBTTagCompound compound, INBTToObjectConverter<T> typeDeserialization, IObjectConstructor<T, R> objectConstructor)
     {
         final IRequester requester = controller.deserialize(compound.getCompoundTag(NBT_REQUESTER));
         final IToken token = controller.deserialize(compound.getCompoundTag(NBT_TOKEN));

@@ -3,6 +3,7 @@ package com.minecolonies.api.util.constant;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -21,6 +22,7 @@ public class TypeConstants
     public static final TypeToken<UUID>             UUID             = TypeToken.of(java.util.UUID.class);
     public static final TypeToken<FactoryVoidInput> FACTORYVOIDINPUT = TypeToken.of(FactoryVoidInput.class);
     public static final TypeToken<Object>           OBJECT           = TypeToken.of(Object.class);
+    public static final TypeToken<IRequestable> REQUESTABLE = TypeToken.of(IRequestable.class);
 
     /////Request system specific
     public static final TypeToken<IPlayerRequestResolver> PLAYER_REQUEST_RESOLVER = TypeToken.of(IPlayerRequestResolver.class);
