@@ -18,12 +18,9 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Transfer some items from the player inventory to the Builder's chest or additional chests.
- * Created: January 20, 2017
- *
- * @author xavierh
+ * Transfer some items from the player inventory to the Workers's Inventory.
  */
-public class TransferItemsFromCitizenRequestMessage extends AbstractMessage<TransferItemsFromCitizenRequestMessage, IMessage>
+public class TransferItemsToCitizenRequestMessage extends AbstractMessage<TransferItemsToCitizenRequestMessage, IMessage>
 {
     /**
      * The id of the building.
@@ -33,22 +30,22 @@ public class TransferItemsFromCitizenRequestMessage extends AbstractMessage<Tran
     /**
      * The id of the colony.
      */
-    private int      colonyId;
+    private int colonyId;
 
     /**
      * How many item need to be transfer from the player inventory to the building chest.
      */
-    private ItemStack      itemStack;
+    private ItemStack itemStack;
 
     /**
      * How many item need to be transfer from the player inventory to the building chest.
      */
-    private int      quantity;
+    private int quantity;
 
     /**
      * Empty constructor used when registering the message.
      */
-    public TransferItemsFromCitizenRequestMessage()
+    public TransferItemsToCitizenRequestMessage()
     {
         super();
     }
@@ -57,27 +54,26 @@ public class TransferItemsFromCitizenRequestMessage extends AbstractMessage<Tran
      * Creates a Transfer Items request message.
      *
      * @param citizenDataView Citizen of the request.
-     * @param itemStack to be take from the player for the building
-     * @param quantity of item needed to be transfered
-     * @param colonyId the colony id
+     * @param itemStack       to be take from the player for the building
+     * @param quantity        of item needed to be transfered
+     * @param colonyId        the colony id
      */
-    public TransferItemsFromCitizenRequestMessage(@NotNull final CitizenDataView citizenDataView, final ItemStack itemStack, final int quantity, final int colonyId)
+    public TransferItemsToCitizenRequestMessage(@NotNull final CitizenDataView citizenDataView, final ItemStack itemStack, final int quantity, final int colonyId)
     {
         super();
-        this.colonyId   = colonyId;
+        this.colonyId = colonyId;
         this.citizenId = citizenDataView.getId();
-        this.itemStack  = itemStack;
-        this.quantity   = quantity;
-
+        this.itemStack = itemStack;
+        this.quantity = quantity;
     }
 
     @Override
     public void fromBytes(@NotNull final ByteBuf buf)
     {
-        colonyId   = buf.readInt();
+        colonyId = buf.readInt();
         citizenId = buf.readInt();
-        itemStack  = ByteBufUtils.readItemStack(buf);
-        quantity   = buf.readInt();
+        itemStack = ByteBufUtils.readItemStack(buf);
+        quantity = buf.readInt();
     }
 
     @Override
@@ -85,12 +81,12 @@ public class TransferItemsFromCitizenRequestMessage extends AbstractMessage<Tran
     {
         buf.writeInt(colonyId);
         buf.writeInt(citizenId);
-        ByteBufUtils.writeItemStack(buf,itemStack);
+        ByteBufUtils.writeItemStack(buf, itemStack);
         buf.writeInt(quantity);
     }
 
     @Override
-    public void messageOnServerThread(final TransferItemsFromCitizenRequestMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final TransferItemsToCitizenRequestMessage message, final EntityPlayerMP player)
     {
 
         final Colony colony = ColonyManager.getColony(message.colonyId);
@@ -123,7 +119,7 @@ public class TransferItemsFromCitizenRequestMessage extends AbstractMessage<Tran
         final boolean isCreative = player.capabilities.isCreativeMode;
         final Item item = message.itemStack.getItem();
         final int amountToTake;
-        if(isCreative)
+        if (isCreative)
         {
             amountToTake = message.quantity;
         }
@@ -135,7 +131,7 @@ public class TransferItemsFromCitizenRequestMessage extends AbstractMessage<Tran
         final ItemStack itemStackToTake = new ItemStack(item, amountToTake, message.itemStack.getItemDamage());
 
         ItemStack remainingItemStack = InventoryUtils.addItemStackToItemHandlerWithResult(new InvWrapper(citizen.getInventoryCitizen()), itemStackToTake);
-        if(!isCreative)
+        if (!isCreative)
         {
             int amountToRemoveFromPlayer = amountToTake - ItemStackUtils.getSize(remainingItemStack);
             while (amountToRemoveFromPlayer > 0)

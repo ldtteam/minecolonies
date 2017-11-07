@@ -20,7 +20,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
-import com.minecolonies.coremod.network.messages.TransferItemsFromCitizenRequestMessage;
+import com.minecolonies.coremod.network.messages.TransferItemsToCitizenRequestMessage;
 import com.minecolonies.coremod.network.messages.UpdateRequestStateMessage;
 import com.minecolonies.coremod.util.ExperienceUtils;
 import net.minecraft.client.gui.Gui;
@@ -593,7 +593,7 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
     {
         final int row = resourceList.getListElementIndexByPane(button);
         @NotNull final IRequest request = getOpenRequestsOfCitizen().get(row);
-        MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getToken().toString(), RequestState.CANCELLED));
+        MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getToken(), RequestState.CANCELLED));
     }
 
     /**
@@ -624,7 +624,7 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
         // The itemStack size should not be greater than itemStack.getMaxStackSize, We send 1 instead
         // and use quantity for the size
         @NotNull final ItemStack itemStack = inventory.getStackInSlot(InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(inventory), requestPredicate));
-        MineColonies.getNetwork().sendToServer(new TransferItemsFromCitizenRequestMessage(this.citizen, itemStack, isCreative ? amount : count, citizen.getColonyId()));
+        MineColonies.getNetwork().sendToServer(new TransferItemsToCitizenRequestMessage(this.citizen, itemStack, isCreative ? amount : count, citizen.getColonyId()));
         MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getToken(), RequestState.COMPLETED));
     }
 }

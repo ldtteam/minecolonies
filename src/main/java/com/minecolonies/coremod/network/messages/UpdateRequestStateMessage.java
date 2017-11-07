@@ -2,6 +2,8 @@ package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.RequestState;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.colony.ColonyManager;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -22,7 +24,7 @@ public class UpdateRequestStateMessage extends AbstractMessage<UpdateRequestStat
     /**
      * The requestId
      */
-    private String requestId;
+    private IToken token;
 
     /**
      * The request state to set.
@@ -43,11 +45,11 @@ public class UpdateRequestStateMessage extends AbstractMessage<UpdateRequestStat
      * @param requestId the request id.
      * @param state the state to set.
      */
-    public UpdateRequestStateMessage(final int colonyId, final String requestId, final RequestState state)
+    public UpdateRequestStateMessage(final int colonyId, final IToken requestId, final RequestState state)
     {
         super();
         this.colonyId = colonyId;
-        this.requestId = requestId;
+        this.token = requestId;
         this.state = state;
     }
 
@@ -55,7 +57,7 @@ public class UpdateRequestStateMessage extends AbstractMessage<UpdateRequestStat
     public void fromBytes(@NotNull final ByteBuf buf)
     {
         colonyId = buf.readInt();
-        requestId = ByteBufUtils.readUTF8String(buf);
+        token = StandardFactoryController.getInstance().deserialize(ByteBufUtils.readTag(buf));
         state = RequestState.values()[buf.readInt()];
 
     }
@@ -64,15 +66,17 @@ public class UpdateRequestStateMessage extends AbstractMessage<UpdateRequestStat
     public void toBytes(@NotNull final ByteBuf buf)
     {
         buf.writeInt(colonyId);
-        ByteBufUtils.writeUTF8String(buf, requestId);
+        ByteBufUtils.writeTag(buf, StandardFactoryController.getInstance().serialize(token));
         buf.writeInt(state.ordinal());
     }
 
     @Override
     public void messageOnServerThread(final UpdateRequestStateMessage message, final EntityPlayerMP player)
     {
-        //todo orion I think you'll have to do this here.
         final IColony colony = ColonyManager.getColony(message.colonyId);
-        //colony.getRequestManager().updateRequestState(message.requestId, message.state);
+        if(colony != null)
+        {
+            colony.getRequestManager().updateRequestState(message.token, message.state);
+        }
     }
 }
