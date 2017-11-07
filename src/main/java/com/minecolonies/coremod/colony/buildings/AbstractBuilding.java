@@ -6,6 +6,7 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.RequestState;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.Tool;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
@@ -1354,7 +1355,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
         citizensByRequests.get(citizenId).add(requestToken);
     }
 
-    public <Request> void createRequest(@NotNull CitizenData citizenData, @NotNull Request requested)
+    public <Request extends IRequestable> void createRequest(@NotNull CitizenData citizenData, @NotNull Request requested)
     {
         IToken requestToken = colony.getRequestManager().createAndAssignRequest(requestor, requested);
 

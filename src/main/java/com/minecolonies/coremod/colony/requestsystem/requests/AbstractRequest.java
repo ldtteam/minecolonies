@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.requestsystem.RequestState;
 import com.minecolonies.api.colony.requestsystem.StandardRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -25,7 +26,7 @@ import java.util.List;
  *
  * @param <R> The type of request this is.
  */
-public abstract class AbstractRequest<R> implements IRequest<R>
+public abstract class AbstractRequest<R extends IRequestable> implements IRequest<R>
 {
 
     @NotNull

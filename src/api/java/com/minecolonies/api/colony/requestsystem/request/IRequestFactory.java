@@ -3,6 +3,7 @@ package com.minecolonies.api.colony.requestsystem.request;
 import com.minecolonies.api.colony.requestsystem.RequestState;
 import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
+import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
  * @param <T> The type of request.
  * @param <R> The request type.
  */
-public interface IRequestFactory<T, R extends IRequest<T>> extends IFactory<T, R>
+public interface IRequestFactory<T extends IRequestable, R extends IRequest<T>> extends IFactory<T, R>
 {
 
     int NUMBER_OF_PROPERTIES = 2;

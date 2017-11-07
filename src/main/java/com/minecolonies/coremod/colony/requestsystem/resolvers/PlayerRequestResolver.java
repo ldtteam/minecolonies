@@ -7,9 +7,11 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.util.ServerUtils;
 import net.minecraft.entity.player.EntityPlayer;
@@ -51,9 +53,9 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
     }
 
     @Override
-    public TypeToken getRequestType()
+    public TypeToken<IRequestable> getRequestType()
     {
-        return TypeToken.of(Object.class);
+        return TypeConstants.REQUESTABLE;
     }
 
     @Override
@@ -103,6 +105,7 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
     @Override
     public IRequest getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest completedRequest)
     {
+        //This is not what this method is for, but this is the closest we are getting right now, so why not.
         if (assignedRequests.contains(completedRequest.getToken()))
             assignedRequests.remove(completedRequest.getToken());
 

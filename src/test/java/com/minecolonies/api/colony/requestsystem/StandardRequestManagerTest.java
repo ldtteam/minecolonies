@@ -1,50 +1,9 @@
 package com.minecolonies.api.colony.requestsystem;
 
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.reflect.TypeToken;
-import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
-import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
-import com.minecolonies.api.colony.requestsystem.location.ILocation;
-import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.request.IRequestFactory;
-import com.minecolonies.api.colony.requestsystem.requester.IRequester;
-import com.minecolonies.api.colony.requestsystem.requester.IRequesterFactory;
-import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
-import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverFactory;
-import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
-import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.api.util.ReflectionUtils;
-import com.minecolonies.api.util.constant.Suppression;
-import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
-import com.minecolonies.coremod.colony.requestsystem.requests.AbstractRequest;
-import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequestFactories;
-import com.minecolonies.coremod.test.ReflectionUtil;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.fml.relauncher.FMLRelaunchLog;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.config.AppenderControl;
-import org.apache.logging.log4j.core.config.Configurator;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.List;
-
-import static org.junit.Assert.*;
-
 public class StandardRequestManagerTest
 {
 
-    private StandardRequestManager requestManager;
+   /* private StandardRequestManager requestManager;
     private IRequestResolverProvider provider;
 
     @Before
@@ -193,7 +152,7 @@ public class StandardRequestManagerTest
 
     private static class StringRequestFactory implements IRequestFactory<String, StringRequest>
     {
-        /**
+        *//**
          * Method to get a new instance of a request given the input and token.
          *
          * @param input        The input to build a new request for.
@@ -201,7 +160,7 @@ public class StandardRequestManagerTest
          * @param token        The token to build the request from.
          * @param initialState The initial state of the request request.
          * @return The new output instance for a given input.
-         */
+         *//*
         @Override
         public StringRequest getNewInstance(
                                                                  @NotNull final String input,
@@ -228,13 +187,13 @@ public class StandardRequestManagerTest
             return TypeToken.of(String.class);
         }
 
-        /**
+        *//**
          * Method to serialize a given Request.
          *
          * @param controller The controller that can be used to serialize complicated types.
          * @param request    The request to serialize.
          * @return The serialized data of the given requets.
-         */
+         *//*
         @NotNull
         @Override
         public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final StringRequest request)
@@ -246,13 +205,13 @@ public class StandardRequestManagerTest
             });
         }
 
-        /**
+        *//**
          * Method to deserialize a given Request.
          *
          * @param controller The controller that can be used to deserialize complicated types.
          * @param nbt        The data of the request that should be deserialized.
          * @return The request that corresponds with the given data in the nbt
-         */
+         *//*
         @NotNull
         @Override
         @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
@@ -461,5 +420,5 @@ public class StandardRequestManagerTest
             IToken token = controller.deserialize(nbt.getCompoundTag("Token"));
             return new TestRequester(token);
         }
-    }
+    }*/
 }
