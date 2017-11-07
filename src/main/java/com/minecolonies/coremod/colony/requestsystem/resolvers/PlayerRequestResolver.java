@@ -103,6 +103,7 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
     @Override
     public IRequest getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest completedRequest)
     {
+        //This is not what this method is for, but this is the closest we are getting right now, so why not.
         if (assignedRequests.contains(completedRequest.getToken()))
             assignedRequests.remove(completedRequest.getToken());
 
