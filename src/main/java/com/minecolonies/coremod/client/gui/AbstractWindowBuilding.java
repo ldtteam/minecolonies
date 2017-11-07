@@ -84,33 +84,7 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
     {
         MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(building));
     }
-
-    @Override
-    public void onUpdate()
-    {
-        super.onUpdate();
-
-        // Check if there is no page switcher
-        // Or that we are on the correct page
-        if (switchView == null || switchView.getCurrentView().getID().equals(PAGE_ACTIONS))
-        {
-            final AbstractBuilding.View buildingView = building.getColony().getBuilding(building.getID());
-
-            if (buttonPrevPage != null)
-            {
-                buttonPrevPage.disable();
-            }
-
-            if (title != null)
-            {
-                title.setLabelText(LanguageHandler.format(getBuildingName()) + " " + buildingView.getBuildingLevel());
-            }
-
-            updateButtonBuild(buildingView);
-            updateButtonRepair(buildingView);
-        }
-    }
-
+    
     /**
      * Returns the name of a building.
      *
@@ -179,6 +153,33 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
     }
 
     @Override
+    public void onUpdate()
+    {
+        super.onUpdate();
+
+        // Check if there is no page switcher
+        // Or that we are on the correct page
+        if (switchView == null || switchView.getCurrentView().getID().equals(PAGE_ACTIONS))
+        {
+            final AbstractBuilding.View buildingView = building.getColony().getBuilding(building.getID());
+
+            if (buttonPrevPage != null)
+            {
+                buttonPrevPage.disable();
+                buttonPrevPage.hide();
+            }
+
+            if (title != null)
+            {
+                title.setLabelText(LanguageHandler.format(getBuildingName()) + " " + buildingView.getBuildingLevel());
+            }
+
+            updateButtonBuild(buildingView);
+            updateButtonRepair(buildingView);
+        }
+    }
+
+    @Override
     public void onButtonClicked(@NotNull final Button button)
     {
         switch (button.getID())
@@ -187,11 +188,15 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
                 findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
                 buttonPrevPage.setEnabled(false);
                 buttonNextPage.setEnabled(true);
+                buttonPrevPage.hide();
+                buttonNextPage.show();
                 break;
             case BUTTON_NEXTPAGE:
                 findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
                 buttonPrevPage.setEnabled(true);
                 buttonNextPage.setEnabled(false);
+                buttonPrevPage.show();
+                buttonNextPage.hide();
                 break;
             default:
                 super.onButtonClicked(button);

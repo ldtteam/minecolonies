@@ -132,6 +132,21 @@ public class Colony implements IColony
     private int lastContactInHours = 0;
 
     /**
+     * Whether or not the raid has been calculated for today.
+     */
+    private boolean hasRaidBeenCalculated = false;
+
+    /**
+     * Whether or not this colony may have Barbarian events. (set via command)
+     */
+    private boolean canHaveBarbEvents = true;
+
+    /**
+     * Whether or not this colony may be auto-deleted.
+     */
+    private boolean canColonyBeAutoDeleted = true;
+
+    /**
      * Bonus happiness each factor added.
      */
     private static final double HAPPINESS_FACTOR = 0.1;
@@ -1127,10 +1142,12 @@ public class Colony implements IColony
                 }
             }
 
-            if (shallUpdate(world, TICKS_SECOND) && event.world.getDifficulty() != EnumDifficulty.PEACEFUL
+            if (shallUpdate(world, TICKS_SECOND)
+                    && event.world.getDifficulty() != EnumDifficulty.PEACEFUL
                     && Configurations.gameplay.doBarbariansSpawn
+                    && canHaveBarbEvents
                     && !world.getMinecraftServer().getPlayerList().getPlayers()
-                    .stream().filter(permissions::isSubscriber).collect(Collectors.toList()).isEmpty()
+                        .stream().filter(permissions::isSubscriber).collect(Collectors.toList()).isEmpty()
                     && MobEventsUtils.isItTimeToRaid(event.world, this))
             {
                 MobEventsUtils.barbarianEvent(event.world, this);
@@ -2056,9 +2073,42 @@ public class Colony implements IColony
         return willRaidTonight;
     }
 
+    public void setHasRaidBeenCalculated(final Boolean hasSet)
+    {
+        hasRaidBeenCalculated = hasSet;
+    }
+
+    @Override
+    public boolean isHasRaidBeenCalculated()
+    {
+        return hasRaidBeenCalculated;
+    }
+
     public void setWillRaidTonight(final Boolean willRaid)
     {
-        willRaidTonight = willRaid;
+        this.willRaidTonight = willRaid;
+    }
+
+    public void setCanHaveBarbEvents(final Boolean canHave)
+    {
+        this.canHaveBarbEvents = canHave;
+    }
+
+    @Override
+    public boolean isCanHaveBarbEvents()
+    {
+        return canHaveBarbEvents;
+    }
+
+    @Override
+    public boolean canBeAutoDeleted()
+    {
+        return canColonyBeAutoDeleted;
+    }
+
+    public void setCanBeAutoDeleter(final Boolean canBeDeleted)
+    {
+        this.canColonyBeAutoDeleted = canBeDeleted;
     }
 
     /**

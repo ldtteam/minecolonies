@@ -561,6 +561,16 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
     }
 
     /**
+     * executed when a new day start.
+     */
+    public void onWakeUp()
+    {
+        /**
+         * Buildings override this if required.
+         */
+    }
+
+    /**
      * Sets the corners of the building based on the schematic.
      *
      * @param x1 the first x corner.

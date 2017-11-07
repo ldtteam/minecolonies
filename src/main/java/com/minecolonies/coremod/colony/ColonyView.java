@@ -726,4 +726,22 @@ public final class ColonyView implements IColony
         //NOOP
         return;
     }
+
+    @Override
+    public boolean canBeAutoDeleted()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isCanHaveBarbEvents()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isHasRaidBeenCalculated()
+    {
+        return false;
+    }
 }

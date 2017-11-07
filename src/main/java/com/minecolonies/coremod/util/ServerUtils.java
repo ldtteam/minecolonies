@@ -136,7 +136,7 @@ public final class ServerUtils
     @Nullable
     public static EntityPlayer getPlayerFromUUID(@Nullable final UUID uuid, @NotNull final World world)
     {
-        if (uuid == null)
+        if (uuid == null || world == null || world.getMinecraftServer() == null)
         {
             return null;
         }

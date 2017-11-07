@@ -25,6 +25,7 @@ public class MinecoloniesCommand extends AbstractSplitCommand
     private final ImmutableMap<String, ISubCommand> subCommands =
       new ImmutableMap.Builder<String, ISubCommand>()
         .put(ColoniesCommand.DESC, new ColoniesCommand(DESC))
+        .put(DeleteCommand.DESC, new DeleteCommand(DESC))
         .put(ColonyCommand.DESC, new ColonyCommand(DESC))
         .put(CitizensCommand.DESC, new CitizensCommand(DESC))
         .put(RandomTeleportCommand.DESC, new RandomTeleportCommand(DESC))
@@ -32,6 +33,8 @@ public class MinecoloniesCommand extends AbstractSplitCommand
         .put(HomeTeleportCommand.DESC, new HomeTeleportCommand(DESC))
         .put(RaidAllTonightCommand.DESC, new RaidAllTonightCommand(DESC))
         .put(RaidAllNowCommand.DESC, new RaidAllNowCommand(DESC))
+        .put(WhoAmICommand.DESC, new WhoAmICommand(DESC))
+        .put(WhereAmICommand.DESC, new WhereAmICommand(DESC))
         .build();
 
     /**

@@ -102,4 +102,22 @@ public interface IColony
      * Called to mark this colony dirty, and in need of syncing / saving.
      */
     void markDirty();
+
+    /**
+     * Called to check if the colony can be deleted by an automatic cleanup.
+     * @return true if so.
+     */
+    boolean canBeAutoDeleted();
+
+    /**
+     * return whether or not a colony is allowed to have barbarian events triggered.
+     * @return true if so.
+     */
+    boolean isCanHaveBarbEvents();
+
+    /**
+     * return whether or not the colony has had it's "RaidTonight" calculated yet.
+     * @return true if so.
+     */
+    boolean isHasRaidBeenCalculated();
 }

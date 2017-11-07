@@ -38,6 +38,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.Constants.UPDATE_FLAG;
+
 /**
  * Class containing all placement handler implementations.
  *
@@ -123,7 +125,7 @@ public final class PlacementHandlers
                 }
                 placer.handleBuildingOverBlock(pos);
             }
-            world.setBlockState(pos, blockState, 0x03);
+            world.setBlockState(pos, blockState, UPDATE_FLAG);
             return ActionProcessingResult.ACCEPT;
         }
     }
@@ -150,8 +152,13 @@ public final class PlacementHandlers
                 }
 
                 placer.handleBuildingOverBlock(pos);
+
+                if (!world.setBlockState(pos, Blocks.DIRT.getDefaultState(), UPDATE_FLAG))
+                {
+                    return ActionProcessingResult.DENY;
+                }
             }
-            if (!world.setBlockState(pos, Blocks.DIRT.getDefaultState(), 0x03))
+            else if(!world.setBlockState(pos, Blocks.GRASS.getDefaultState(), UPDATE_FLAG))
             {
                 return ActionProcessingResult.DENY;
             }
@@ -227,8 +234,8 @@ public final class PlacementHandlers
                     placer.handleBuildingOverBlock(pos);
                 }
                 //pos.offset(facing) will get the other part of the bed
-                world.setBlockState(pos.offset(facing), blockState.withProperty(BlockBed.PART, BlockBed.EnumPartType.HEAD), 0x03);
-                world.setBlockState(pos, blockState.withProperty(BlockBed.PART, BlockBed.EnumPartType.FOOT), 0x03);
+                world.setBlockState(pos.offset(facing), blockState.withProperty(BlockBed.PART, BlockBed.EnumPartType.HEAD), UPDATE_FLAG);
+                world.setBlockState(pos, blockState.withProperty(BlockBed.PART, BlockBed.EnumPartType.FOOT), UPDATE_FLAG);
                 return blockState;
             }
             return ActionProcessingResult.ACCEPT;
@@ -264,8 +271,8 @@ public final class PlacementHandlers
                 {
                     placer.handleBuildingOverBlock(pos);
                 }
-                world.setBlockState(pos, blockState.withProperty(BlockDoublePlant.HALF, BlockDoublePlant.EnumBlockHalf.LOWER), 0x03);
-                world.setBlockState(pos.up(), blockState.withProperty(BlockDoublePlant.HALF, BlockDoublePlant.EnumBlockHalf.UPPER), 0x03);
+                world.setBlockState(pos, blockState.withProperty(BlockDoublePlant.HALF, BlockDoublePlant.EnumBlockHalf.LOWER), UPDATE_FLAG);
+                world.setBlockState(pos.up(), blockState.withProperty(BlockDoublePlant.HALF, BlockDoublePlant.EnumBlockHalf.UPPER), UPDATE_FLAG);
                 return blockState;
             }
             return ActionProcessingResult.ACCEPT;
@@ -320,14 +327,14 @@ public final class PlacementHandlers
 
                 placer.handleBuildingOverBlock(pos);
             }
-            if (!world.setBlockState(pos, blockState, 0x03))
+            if (!world.setBlockState(pos, blockState, UPDATE_FLAG))
             {
                 return false;
             }
 
             if (placer != null)
             {
-                placer.handleFlowerPots(pos);
+                placer.handleTileEntityPlacement(pos);
             }
             return blockState;
         }
@@ -400,7 +407,7 @@ public final class PlacementHandlers
                 placer.handleBuildingOverBlock(pos);
             }
 
-            if (!world.setBlockState(pos, Blocks.GRASS_PATH.getDefaultState(), 0x03))
+            if (!world.setBlockState(pos, Blocks.GRASS_PATH.getDefaultState(), UPDATE_FLAG))
             {
                 return ActionProcessingResult.DENY;
             }
@@ -456,14 +463,14 @@ public final class PlacementHandlers
 
             if (complete)
             {
-                if (!world.setBlockState(pos, blockState, 0x03))
+                if (!world.setBlockState(pos, blockState, UPDATE_FLAG))
                 {
                     return ActionProcessingResult.DENY;
                 }
             }
             else
             {
-                if (!world.setBlockState(pos, newBlockState, 0x03))
+                if (!world.setBlockState(pos, newBlockState, UPDATE_FLAG))
                 {
                     return ActionProcessingResult.DENY;
                 }
@@ -494,9 +501,14 @@ public final class PlacementHandlers
                 placer.handleBuildingOverBlock(pos);
             }
 
-            if (!world.setBlockState(pos, blockState, 0x03))
+            if (!world.setBlockState(pos, blockState, UPDATE_FLAG))
             {
                 return ActionProcessingResult.DENY;
+            }
+
+            if(placer != null)
+            {
+                placer.handleTileEntityPlacement(pos);
             }
 
             return blockState;
@@ -568,7 +580,7 @@ public final class PlacementHandlers
             {
                 BuildingWareHouse.handleBuildingOverChest(pos, (TileEntityChest) entity, world);
             }
-            else if (!world.setBlockState(pos, blockState, 0x03))
+            else if (!world.setBlockState(pos, blockState, UPDATE_FLAG))
             {
                 return ActionProcessingResult.DENY;
             }

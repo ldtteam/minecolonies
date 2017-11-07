@@ -309,6 +309,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
     /**
      * Paste a schematic in the world.
+     * @param complete if complete paste or partial.
      */
     private void paste(final boolean complete)
     {
@@ -316,7 +317,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         if (structureName.getPrefix().equals(Structures.SCHEMATICS_SCAN) && FMLCommonHandler.instance().getMinecraftServerInstance() == null)
         {
             //We need to check that the server have it too using the md5
-            requestScannedSchematic(structureName);
+            requestScannedSchematic(structureName, true, complete);
         }
         else
         {
@@ -812,9 +813,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     /**
      * Request to build a player scan.
      *
+     * @param paste if it should be pasted.
+     * @param complete if pasted, should it be complete.
      * @param structureName of the scan to be built.
      */
-    private void requestScannedSchematic(@NotNull final Structures.StructureName structureName)
+    private void requestScannedSchematic(@NotNull final Structures.StructureName structureName, final boolean paste, final boolean complete)
     {
         if (!Structures.isPlayerSchematicsAllowed())
         {
@@ -843,13 +846,27 @@ public class WindowBuildTool extends AbstractWindowSkeleton
                 Log.getLogger().warn("BuilderTool: server does not have " + serverSideName);
             }
 
-            MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(
-                                                                              serverSideName,
-                                                                              structureName.toString(),
-                                                                              Settings.instance.getPosition(),
-                                                                              Settings.instance.getRotation(),
-                                                                              false,
-                                                                              Settings.instance.getMirror()));
+            if(paste)
+            {
+                MineColonies.getNetwork().sendToServer(new BuildToolPasteMessage(
+                        serverSideName,
+                        structureName.toString(),
+                        Settings.instance.getPosition(),
+                        Settings.instance.getRotation(),
+                        false,
+                        Settings.instance.getMirror(),
+                        complete));
+            }
+            else
+            {
+                MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(
+                        serverSideName,
+                        structureName.toString(),
+                        Settings.instance.getPosition(),
+                        Settings.instance.getRotation(),
+                        false,
+                        Settings.instance.getMirror()));
+            }
         }
         else
         {
@@ -866,7 +883,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         if (structureName.getPrefix().equals(Structures.SCHEMATICS_SCAN) && FMLCommonHandler.instance().getMinecraftServerInstance() == null)
         {
             //We need to check that the server have it too using the md5
-            requestScannedSchematic(structureName);
+            requestScannedSchematic(structureName, false, false);
         }
         else
         {

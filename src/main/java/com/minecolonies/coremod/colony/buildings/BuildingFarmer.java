@@ -67,6 +67,11 @@ public class BuildingFarmer extends AbstractBuildingWorker
     private static final int                       BLOCK_UPDATE_FLAG = 3;
 
     /**
+     * The last field tag.
+     */
+    private static final String LAST_FIELD_TAG = "lastField";
+
+    /**
      * The list of the fields the farmer manages.
      */
     private final        ArrayList<Field>          farmerFields      = new ArrayList<>();
@@ -76,6 +81,12 @@ public class BuildingFarmer extends AbstractBuildingWorker
      */
     @Nullable
     private Field currentField;
+    /**
+     * The field the farmer worked on the last morning (first).
+     */
+    @Nullable
+    private Field lastField;
+
     /**
      * Fields should be assigned manually to the farmer.
      */
@@ -173,6 +184,15 @@ public class BuildingFarmer extends AbstractBuildingWorker
     public Field getFieldToWorkOn()
     {
         Collections.shuffle(farmerFields);
+
+        if(!farmerFields.isEmpty())
+        {
+            if(farmerFields.get(0).equals(lastField))
+            {
+                Collections.shuffle(farmerFields);
+            }
+            lastField = farmerFields.get(0);
+        }
         for (@NotNull final Field field : farmerFields)
         {
             if (field.needsWork())
@@ -285,6 +305,11 @@ public class BuildingFarmer extends AbstractBuildingWorker
             }
         }
         assignManually = compound.getBoolean(TAG_ASSIGN_MANUALLY);
+
+        if(compound.hasKey(LAST_FIELD_TAG))
+        {
+            lastField = Field.createFromNBT(getColony(), compound);
+        }
     }
 
     @Override
@@ -300,6 +325,13 @@ public class BuildingFarmer extends AbstractBuildingWorker
         }
         compound.setTag(TAG_FIELDS, fieldTagList);
         compound.setBoolean(TAG_ASSIGN_MANUALLY, assignManually);
+
+        if(lastField != null)
+        {
+            @NotNull final NBTTagCompound fieldCompound = new NBTTagCompound();
+            lastField.writeToNBT(fieldCompound);
+            compound.setTag(LAST_FIELD_TAG, fieldCompound);
+        }
     }
 
     @Override
