@@ -3,6 +3,7 @@ package com.minecolonies.api.colony.requestsystem;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -44,7 +45,7 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>
      * @throws IllegalArgumentException is thrown when this manager cannot produce a request for the given types.
      */
     @NotNull
-    <T> IToken createRequest(@NotNull IRequester requester, @NotNull T object) throws IllegalArgumentException;
+    <T extends IRequestable> IToken createRequest(@NotNull IRequester requester, @NotNull T object) throws IllegalArgumentException;
 
     /**
      * Method used to assign a request to a resolver.
@@ -66,7 +67,7 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>
      * @throws IllegalArgumentException when either createRequest or assignRequest have thrown an IllegalArgumentException
      */
     @NotNull
-    <T> IToken createAndAssignRequest(@NotNull IRequester requester, @NotNull T object) throws IllegalArgumentException;
+    <T extends IRequestable> IToken createAndAssignRequest(@NotNull IRequester requester, @NotNull T object) throws IllegalArgumentException;
 
     /**
      * Method to get a request for a given token.
@@ -78,7 +79,7 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>
      * @throws IllegalArgumentException when either their is no request with that token, or the token does not produce a request of the given type T.
      */
     @NotNull
-    <T> IRequest<T> getRequestForToken(@NotNull IToken token) throws IllegalArgumentException;
+    <T extends IRequestable> IRequest<T> getRequestForToken(@NotNull IToken token) throws IllegalArgumentException;
 
     /**
      * Method to update the state of a given request.
