@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.colony.ColonyManager;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +28,11 @@ public class UpdateRequestStateMessage extends AbstractMessage<UpdateRequestStat
     private IToken token;
 
     /**
+     * How many item need to be transfer from the player inventory to the building chest.
+     */
+    private ItemStack itemStack;
+
+    /**
      * The request state to set.
      */
     private RequestState state;
@@ -44,13 +50,15 @@ public class UpdateRequestStateMessage extends AbstractMessage<UpdateRequestStat
      * @param colonyId the colony id.
      * @param requestId the request id.
      * @param state the state to set.
+     * @param itemStack the involved itemStack.
      */
-    public UpdateRequestStateMessage(final int colonyId, final IToken requestId, final RequestState state)
+    public UpdateRequestStateMessage(final int colonyId, final IToken requestId, final RequestState state, final ItemStack itemStack)
     {
         super();
         this.colonyId = colonyId;
         this.token = requestId;
         this.state = state;
+        this.itemStack = itemStack;
     }
 
     @Override
@@ -59,7 +67,7 @@ public class UpdateRequestStateMessage extends AbstractMessage<UpdateRequestStat
         colonyId = buf.readInt();
         token = StandardFactoryController.getInstance().deserialize(ByteBufUtils.readTag(buf));
         state = RequestState.values()[buf.readInt()];
-
+        itemStack = ByteBufUtils.readItemStack(buf);
     }
 
     @Override
@@ -68,6 +76,7 @@ public class UpdateRequestStateMessage extends AbstractMessage<UpdateRequestStat
         buf.writeInt(colonyId);
         ByteBufUtils.writeTag(buf, StandardFactoryController.getInstance().serialize(token));
         buf.writeInt(state.ordinal());
+        ByteBufUtils.writeItemStack(buf, itemStack);
     }
 
     @Override
@@ -76,7 +85,8 @@ public class UpdateRequestStateMessage extends AbstractMessage<UpdateRequestStat
         final IColony colony = ColonyManager.getColony(message.colonyId);
         if(colony != null)
         {
-            colony.getRequestManager().updateRequestState(message.token, RequestState.OVERRULED);
+            colony.getRequestManager().updateRequestState(message.token, message.state);
+            colony.getRequestManager().getRequestForToken(token).setDelivery(message.itemStack);
         }
     }
 }

@@ -594,7 +594,7 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
     {
         final int row = resourceList.getListElementIndexByPane(button);
         @NotNull final IRequest request = getOpenRequestsOfCitizen().get(row);
-        MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getToken(), RequestState.CANCELLED));
+        MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getToken(), RequestState.CANCELLED, null));
     }
 
     /**
@@ -641,6 +641,6 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
 
         //todo we can resolve this like this later.
         //MineColonies.getNetwork().sendToServer(new TransferItemsToCitizenRequestMessage(this.citizen, itemStack, isCreative ? amount : count, citizen.getColonyId()));
-        MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getToken(), RequestState.COMPLETED));
+        MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getToken(), RequestState.OVERRULED, itemStack));
     }
 }

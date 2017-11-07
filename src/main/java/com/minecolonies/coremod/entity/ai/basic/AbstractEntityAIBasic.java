@@ -388,35 +388,33 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             return IDLE;
         }
-        if (getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()))
+        if (getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()) && !walkToBuilding())
         {
-            if (!walkToBuilding())
+            delay += DELAY_RECHECK;
+
+            ImmutableList<IRequest> completedRequests = getOwnBuilding().getCompletedRequests(worker.getCitizenData());
+
+            completedRequests.stream().filter(r -> !(r.canBeDelivered())).forEach(r -> getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), r.getToken()));
+            IRequest firstDeliverableRequest = completedRequests.stream().filter(r -> r.canBeDelivered()).findFirst().orElse(null);
+
+            if (firstDeliverableRequest != null)
             {
-                delay += DELAY_RECHECK;
+                getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), firstDeliverableRequest.getToken());
 
-                ImmutableList<IRequest> completedRequests = getOwnBuilding().getCompletedRequests(worker.getCitizenData());
-
-                completedRequests.stream().filter(r -> !(r.canBeDelivered())).forEach(r -> getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), r.getToken()));
-                IRequest firstDeliverableRequest = completedRequests.stream().filter(r -> r.canBeDelivered()).findFirst().orElse(null);
-
-                if (firstDeliverableRequest != null)
+                final ItemStack deliveredItemStack = firstDeliverableRequest.getDelivery();
+                //Takes one Stack from the hut if existent
+                if (InventoryUtils.findFirstSlotInItemHandlerWith(
+                        new InvWrapper(worker.getInventoryCitizen()), deliveredItemStack::isItemEqualIgnoreDurability) != -1
+                        || isInHut(deliveredItemStack))
                 {
-                    getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), firstDeliverableRequest.getToken());
-
-                    final ItemStack deliveredItemStack = firstDeliverableRequest.getDelivery();
-                    //Takes one Stack from the hut if existent
-                    if (isInHut(deliveredItemStack))
-                    {
-                        return NEEDS_ITEM;
-                    }
-                    else
-                    {
-                        //Seems like somebody else picked up our stack.
-                        //Lets try this again.
-                        getOwnBuilding().createRequest(worker.getCitizenData(), firstDeliverableRequest.getRequest());
-                    }
+                    return NEEDS_ITEM;
                 }
-
+                else
+                {
+                    //Seems like somebody else picked up our stack.
+                    //Lets try this again.
+                    getOwnBuilding().createRequest(worker.getCitizenData(), firstDeliverableRequest.getRequest());
+                }
             }
         }
 
