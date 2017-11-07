@@ -95,12 +95,17 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
             LanguageHandler.sendPlayersMessage(players,
                     request.getRequester().getRequesterLocation().toString(), colonyDescription, request.getDisplayString());
         }
+
+        assignedRequests.add(request.getToken());
     }
 
     @Nullable
     @Override
     public IRequest getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest completedRequest)
     {
+        if (assignedRequests.contains(completedRequest.getToken()))
+            assignedRequests.remove(completedRequest.getToken());
+
         return null;
     }
 
