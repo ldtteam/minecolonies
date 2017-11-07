@@ -5,6 +5,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
+import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.util.ChatSpamFilter;
 import com.minecolonies.coremod.util.SoundUtils;
@@ -85,7 +86,8 @@ public class EntityAIGoHome extends EntityAIBase
             return isCitizenStarving() && homeBuilding instanceof BuildingHome;
         }
 
-        return !(homeBuilding instanceof BuildingHome) || (isCitizenHungry() && !((BuildingHome) homeBuilding).isFoodNeeded());
+        return !(homeBuilding instanceof BuildingHome) || (isCitizenHungry() && !((BuildingHome) homeBuilding).hasWorkerOpenRequestsOfType(citizen.getCitizenData(),
+                StandardRequests.FoodRequest.class));
     }
 
     /**

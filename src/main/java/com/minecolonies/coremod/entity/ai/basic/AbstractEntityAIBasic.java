@@ -651,17 +651,22 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
     protected boolean checkForToolOrWeapon(@NotNull final IToolType toolType, final int minimalLevel)
     {
-        ImmutableList<IRequest<? extends Tool>> openToolRequests = getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), Tool.class, r -> r.getRequest().getToolClass().equals(toolType) && r.getRequest().getMinLevel() >= minimalLevel);
-        ImmutableList<IRequest<? extends Tool>> completedToolRequests = getOwnBuilding().getCompletedRequestsOfTypeFiltered(worker.getCitizenData(), Tool.class, r -> r.getRequest().getToolClass().equals(toolType) && r.getRequest().getMinLevel() >= minimalLevel);
+        final ImmutableList<IRequest<? extends Tool>> openToolRequests =
+                getOwnBuilding().getOpenRequestsOfTypeFiltered(
+                        worker.getCitizenData(),
+                        Tool.class, r -> r.getRequest().getToolClass().equals(toolType) && r.getRequest().getMinLevel() >= minimalLevel);
+        final ImmutableList<IRequest<? extends Tool>> completedToolRequests =
+                getOwnBuilding().getCompletedRequestsOfTypeFiltered(
+                        worker.getCitizenData(),
+                        Tool.class, r -> r.getRequest().getToolClass().equals(toolType) && r.getRequest().getMinLevel() >= minimalLevel);
 
-        if (checkForNeededTool(toolType, minimalLevel))
+        if (checkForNeededTool(toolType, minimalLevel) && openToolRequests.isEmpty() && completedToolRequests.isEmpty())
         {
-            if (openToolRequests.isEmpty() && completedToolRequests.isEmpty())
-            {
-                Tool request = new Tool(toolType, minimalLevel, getOwnBuilding().getMaxToolLevel() > minimalLevel ? minimalLevel : getOwnBuilding().getMaxToolLevel());
-                getOwnBuilding().createRequest(job.getCitizen(), request);
-                return false;
-            }
+
+            final Tool request = new Tool(toolType, minimalLevel, getOwnBuilding().getMaxToolLevel() < minimalLevel ? minimalLevel : getOwnBuilding().getMaxToolLevel());
+            getOwnBuilding().createRequest(job.getCitizen(), request);
+            return false;
+
         }
 
         return openToolRequests.isEmpty() && completedToolRequests.isEmpty();

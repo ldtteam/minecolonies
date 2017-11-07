@@ -1421,7 +1421,10 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
                                       .iterator());
     }
 
-    public <Request> ImmutableList<IRequest<? extends Request>> getOpenRequestsOfTypeFiltered(@NotNull final CitizenData citizenData, final Class<Request> requestType, Predicate<IRequest<? extends Request>> filter)
+    public <Request> ImmutableList<IRequest<? extends Request>> getOpenRequestsOfTypeFiltered(
+            @NotNull final CitizenData citizenData,
+            final Class<Request> requestType,
+            final Predicate<IRequest<? extends Request>> filter)
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                       .filter(request -> {
@@ -1456,7 +1459,10 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
                                       .iterator());
     }
 
-    public <Request> ImmutableList<IRequest<? extends Request>> getCompletedRequestsOfTypeFiltered(@NotNull final CitizenData citizenData, final Class<Request> requestType, final Predicate<IRequest<? extends Request>> filter)
+    public <Request> ImmutableList<IRequest<? extends Request>> getCompletedRequestsOfTypeFiltered(
+            @NotNull final CitizenData citizenData,
+            final Class<Request> requestType,
+            final Predicate<IRequest<? extends Request>> filter)
     {
         return ImmutableList.copyOf(getCompletedRequests(citizenData).stream()
                                       .filter(request -> request.getRequestType().equals(requestType))

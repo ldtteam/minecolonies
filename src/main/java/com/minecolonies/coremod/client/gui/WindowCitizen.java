@@ -581,8 +581,12 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
     private void detailedClicked(@NotNull final Button button)
     {
         final int row = resourceList.getListElementIndexByPane(button);
-        @NotNull final WindowRequestDetail window = new WindowRequestDetail(citizen, getOpenRequestsOfCitizen().get(row));
-        window.open();
+
+        if(getOpenRequestsOfCitizen().size() > row)
+        {
+            @NotNull final WindowRequestDetail window = new WindowRequestDetail(citizen, getOpenRequestsOfCitizen().get(row));
+            window.open();
+        }
     }
 
     private void cancel(@NotNull final Button button)
