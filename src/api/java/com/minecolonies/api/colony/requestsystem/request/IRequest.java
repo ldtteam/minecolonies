@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.RequestState;
+import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.item.ItemStack;
@@ -19,7 +20,7 @@ import java.util.List;
  *
  * @param <R> The type of request, eg ItemStack, FluidStack etc.
  */
-public interface IRequest<R>
+public interface IRequest<R extends IRequestable>
 {
 
     /**

@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
  * Class used to represent deliveries inside the request system.
  * This class can be used to request a getDelivery of a given ItemStack from a source to a target.
  */
-public class Delivery
+public class Delivery implements IRequestable
 {
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\

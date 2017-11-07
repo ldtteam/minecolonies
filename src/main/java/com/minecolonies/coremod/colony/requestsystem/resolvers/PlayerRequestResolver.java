@@ -5,16 +5,12 @@ import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.IRequestManager;
-import com.minecolonies.api.colony.requestsystem.RequestState;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
 import com.minecolonies.coremod.util.ServerUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextComponentString;
@@ -22,24 +18,24 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Resolver that checks if a deliverable request is already in the building it is being requested from.
  */
 public class PlayerRequestResolver implements IPlayerRequestResolver
 {
-    /**
-     * The default priority of a resolver.
-     * 100
-     */
-    protected static final int CONST_DEFAULT_RESOLVER_PRIORITY = 100;
 
     @NotNull
     private final ILocation location;
 
     @NotNull
     private final IToken token;
+
+    @NotNull
+    private final Set<IToken> assignedRequests = new HashSet<>();
 
     public PlayerRequestResolver(@NotNull final ILocation location, @NotNull final IToken token)
     {
@@ -57,7 +53,7 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
     @Override
     public TypeToken getRequestType()
     {
-        return TypeToken.of(IDeliverable.class);
+        return TypeToken.of(Object.class);
     }
 
     @Override
@@ -127,7 +123,7 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
     @Override
     public IToken getRequesterId()
     {
-        return null;
+        return token;
     }
 
     @NotNull
@@ -149,6 +145,12 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
     @Override
     public ImmutableList<IToken> getAllAssignedRequests()
     {
-        return null;
+        return ImmutableList.copyOf(assignedRequests);
+    }
+
+    public void setAllAssignedRequests(final Set<IToken> assignedRequests)
+    {
+        this.assignedRequests.clear();
+        this.assignedRequests.addAll(assignedRequests);
     }
 }

@@ -7,8 +7,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
+import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.IRetryable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
@@ -100,10 +102,9 @@ public class StandardRequestManager implements IRequestManager
     private final Map<TypeToken, Collection<IRequestResolver>> requestClassResolverMap = new HashMap<>();
     /**
      * The fallback resolver used to resolve directly to the player.
-     * TODO: Assign resolver once implemented.
      */
     @NotNull
-    private final IRequestResolver                             playerResolver = null;
+    private IRequestResolver                             playerResolver = null;
 
     /**
      * The fallback resolver used to resolve using retries.
@@ -111,7 +112,7 @@ public class StandardRequestManager implements IRequestManager
      * Anything that implements {@link IDeliverable} is by definition retryable.
      */
     @NotNull
-    private final IRequestResolver retryingResolver = null;
+    private IRequestResolver retryingResolver = null;
     /**
      * Colony of the manager.
      */
@@ -126,6 +127,12 @@ public class StandardRequestManager implements IRequestManager
     public StandardRequestManager(final IColony colony)
     {
         this.colony = colony;
+
+        final ILocation colonyLocation = getFactoryController().getNewInstance(TypeConstants.ILOCATION, colony.getCenter(), colony.getWorld().provider.getDimension());
+        this.playerResolver = getFactoryController().getNewInstance(TypeConstants.PLAYER_REQUEST_RESOLVER, colonyLocation, getFactoryController().getNewInstance(TypeConstants.ITOKEN));
+
+        ResolverHandler.registerResolver(this, this.playerResolver);
+        //TODO: Initialize the retrying resolver once finished.
     }
 
     /**
@@ -149,6 +156,8 @@ public class StandardRequestManager implements IRequestManager
     public NBTTagCompound serializeNBT()
     {
         NBTTagCompound systemCompound = new NBTTagCompound();
+
+        systemCompound.setTag(NBT_PLAYER, getFactoryController().serialize(playerResolver));
 
         NBTTagList requestIdentityList = new NBTTagList();
         requestBiMap.keySet().forEach(token -> {
@@ -174,7 +183,8 @@ public class StandardRequestManager implements IRequestManager
         });
         systemCompound.setTag(NBT_RESOLVER_REQUESTS_ASSIGNMENTS, resolverRequestAssignmentList);
 
-        //TODO Save Player resolver.
+
+        //TODO Save retrying resolver.
 
         return systemCompound;
     }
@@ -187,6 +197,9 @@ public class StandardRequestManager implements IRequestManager
     @Override
     public void deserializeNBT(final NBTTagCompound nbt)
     {
+        this.resolverBiMap.remove(playerResolver.getRequesterId());
+        this.playerResolver = getFactoryController().deserialize(nbt.getCompoundTag(NBT_PLAYER));
+
         NBTTagList requestIdentityList = nbt.getTagList(NBT_REQUEST_IDENTITY_MAP, Constants.NBT.TAG_COMPOUND);
         requestBiMap.clear();
         NBTUtils.streamCompound(requestIdentityList).forEach(identityCompound -> {
@@ -220,6 +233,8 @@ public class StandardRequestManager implements IRequestManager
             resolverRequestMap.put(token, assignedRequests);
         });
 
+
+        //TODO: Deserialize retrying resolver.
     }
 
     /**
@@ -246,7 +261,7 @@ public class StandardRequestManager implements IRequestManager
      */
     @NotNull
     @Override
-    public <T> IToken createRequest(@NotNull final IRequester requester, @NotNull final T object) throws IllegalArgumentException
+    public <T extends IRequestable> IToken createRequest(@NotNull final IRequester requester, @NotNull final T object) throws IllegalArgumentException
     {
         final IRequest<T> request = RequestHandler.createRequest(this, requester, object);
 
@@ -282,7 +297,7 @@ public class StandardRequestManager implements IRequestManager
      */
     @NotNull
     @Override
-    public <T> IToken createAndAssignRequest(@NotNull final IRequester requester, @NotNull final T object) throws IllegalArgumentException
+    public <T extends IRequestable> IToken createAndAssignRequest(@NotNull final IRequester requester, @NotNull final T object) throws IllegalArgumentException
     {
         final IToken token = createRequest(requester, object);
         assignRequest(token);
@@ -302,7 +317,7 @@ public class StandardRequestManager implements IRequestManager
     @SuppressWarnings(Suppression.UNCHECKED)
     @NotNull
     @Override
-    public <T> IRequest<T> getRequestForToken(@NotNull final IToken token) throws IllegalArgumentException
+    public <T extends IRequestable> IRequest<T> getRequestForToken(@NotNull final IToken token) throws IllegalArgumentException
     {
         final IRequest<T> internalRequest = RequestHandler.getRequest(this, token);
 
@@ -899,7 +914,7 @@ public class StandardRequestManager implements IRequestManager
     {
 
         @SuppressWarnings(Suppression.UNCHECKED)
-        private static <Request> IRequest<Request> createRequest(final StandardRequestManager manager, final IRequester requester, final Request request)
+        private static <Request extends IRequestable> IRequest<Request> createRequest(final StandardRequestManager manager, final IRequester requester, final Request request)
         {
             final IToken<UUID> token = TokenHandler.generateNewToken(manager);
 
@@ -1033,6 +1048,9 @@ public class StandardRequestManager implements IRequestManager
                 }
             }
 
+/*
+            THEORETICALLY this is not needed anymore. The system should take care of it.
+
             if (request.getRequest() instanceof IRetryable && manager.retryingResolver != null && ! resolverTokenBlackList.contains(manager.retryingResolver.getRequesterId()))
             {
                 LogHandler.log("Initial resolving attempt failed. Attempting reassignment to retryable handler.");
@@ -1054,6 +1072,7 @@ public class StandardRequestManager implements IRequestManager
 
                 return true;
             }
+*/
 
             return false;
         }
@@ -1318,7 +1337,7 @@ public class StandardRequestManager implements IRequestManager
          */
         @NotNull
         @Override
-        public <T> IToken createRequest(@NotNull final IRequester requester, @NotNull final T object) throws IllegalArgumentException
+        public <T extends IRequestable> IToken createRequest(@NotNull final IRequester requester, @NotNull final T object) throws IllegalArgumentException
         {
             return wrappedManager.createRequest(requester, object);
         }
@@ -1347,7 +1366,7 @@ public class StandardRequestManager implements IRequestManager
          */
         @NotNull
         @Override
-        public <T> IToken createAndAssignRequest(@NotNull final IRequester requester, @NotNull final T object) throws IllegalArgumentException
+        public <T extends IRequestable> IToken createAndAssignRequest(@NotNull final IRequester requester, @NotNull final T object) throws IllegalArgumentException
         {
             final IToken token = createRequest(requester, object);
             assignRequest(token);
@@ -1364,7 +1383,7 @@ public class StandardRequestManager implements IRequestManager
          */
         @NotNull
         @Override
-        public <T> IRequest<T> getRequestForToken(@NotNull final IToken token) throws IllegalArgumentException
+        public <T extends IRequestable> IRequest<T> getRequestForToken(@NotNull final IToken token) throws IllegalArgumentException
         {
             return RequestHandler.getRequest(wrappedManager, token);
         }
