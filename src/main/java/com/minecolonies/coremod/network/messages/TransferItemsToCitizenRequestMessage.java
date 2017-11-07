@@ -88,7 +88,6 @@ public class TransferItemsToCitizenRequestMessage extends AbstractMessage<Transf
     @Override
     public void messageOnServerThread(final TransferItemsToCitizenRequestMessage message, final EntityPlayerMP player)
     {
-
         final Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony == null)
         {

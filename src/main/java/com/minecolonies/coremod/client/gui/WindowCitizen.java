@@ -20,6 +20,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
+import com.minecolonies.coremod.network.messages.TransferItemsRequestMessage;
 import com.minecolonies.coremod.network.messages.TransferItemsToCitizenRequestMessage;
 import com.minecolonies.coremod.network.messages.UpdateRequestStateMessage;
 import com.minecolonies.coremod.util.ExperienceUtils;
@@ -623,8 +624,23 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
 
         // The itemStack size should not be greater than itemStack.getMaxStackSize, We send 1 instead
         // and use quantity for the size
-        @NotNull final ItemStack itemStack = inventory.getStackInSlot(InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(inventory), requestPredicate));
-        MineColonies.getNetwork().sendToServer(new TransferItemsToCitizenRequestMessage(this.citizen, itemStack, isCreative ? amount : count, citizen.getColonyId()));
+        @NotNull final ItemStack itemStack;
+        if(isCreative)
+        {
+            itemStack = request.getDisplayStacks().get(request.getDisplayStacks().size() - 1);
+        }
+        else
+        {
+            itemStack = inventory.getStackInSlot(InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(inventory), requestPredicate));
+        }
+
+
+        final AbstractBuilding.View building = ColonyManager.getColonyView(citizen.getColonyId()).getBuilding(citizen.getWorkBuilding());
+
+        MineColonies.getNetwork().sendToServer(new TransferItemsRequestMessage(building, itemStack, isCreative ? amount : count));
+
+        //todo we can resolve this like this later.
+        //MineColonies.getNetwork().sendToServer(new TransferItemsToCitizenRequestMessage(this.citizen, itemStack, isCreative ? amount : count, citizen.getColonyId()));
         MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getToken(), RequestState.COMPLETED));
     }
 }

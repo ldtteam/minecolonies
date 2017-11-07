@@ -76,7 +76,7 @@ public class UpdateRequestStateMessage extends AbstractMessage<UpdateRequestStat
         final IColony colony = ColonyManager.getColony(message.colonyId);
         if(colony != null)
         {
-            colony.getRequestManager().updateRequestState(message.token, message.state);
+            colony.getRequestManager().updateRequestState(message.token, RequestState.OVERRULED);
         }
     }
 }

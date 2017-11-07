@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
  */
 public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverable>
 {
-
     public BuildingRequestResolver(
                                     @NotNull final ILocation location,
                                     @NotNull final IToken token)

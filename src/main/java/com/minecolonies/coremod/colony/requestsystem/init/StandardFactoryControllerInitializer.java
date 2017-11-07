@@ -9,6 +9,7 @@ import com.minecolonies.coremod.colony.requestsystem.requesters.factories.Buildi
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequestFactories;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.factory.BuildingRequestResolverFactory;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.factory.DeliveryRequestResolverFactory;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.factory.PlayerRequestResolverFactory;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.factory.WarehouseRequestResolverFactory;
 
 /**
@@ -37,5 +38,7 @@ public final class StandardFactoryControllerInitializer
         StandardFactoryController.getInstance().registerNewFactory(new DeliveryRequestResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new WarehouseRequestResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new BuildingRequestResolverFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new PlayerRequestResolverFactory());
+
     }
 }
