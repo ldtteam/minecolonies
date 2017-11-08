@@ -18,6 +18,7 @@ import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.TownHallRenameMessage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -92,7 +93,10 @@ public final class ColonyView implements IColony
      */
     private int lastContactInHours = 0;
 
-    private IRequestManager requestManager = new StandardRequestManager(this);
+    /**
+     * The request manager on the colony view side.
+     */
+    private IRequestManager requestManager;
 
     /**
      * Base constructor for a colony.
@@ -702,7 +706,7 @@ public final class ColonyView implements IColony
     @Override
     public World getWorld()
     {
-        return null;
+        return Minecraft.getMinecraft().world;
     }
 
     @Nullable

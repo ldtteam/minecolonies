@@ -3,8 +3,11 @@ package com.minecolonies.coremod.network.messages;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.RequestState;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -47,9 +50,10 @@ public class UpdateRequestStateMessage extends AbstractMessage<UpdateRequestStat
 
     /**
      * Create an update request state message.
-     * @param colonyId the colony id.
+     *
+     * @param colonyId  the colony id.
      * @param requestId the request id.
-     * @param state the state to set.
+     * @param state     the state to set.
      * @param itemStack the involved itemStack.
      */
     public UpdateRequestStateMessage(final int colonyId, final IToken requestId, final RequestState state, final ItemStack itemStack)
@@ -83,10 +87,24 @@ public class UpdateRequestStateMessage extends AbstractMessage<UpdateRequestStat
     public void messageOnServerThread(final UpdateRequestStateMessage message, final EntityPlayerMP player)
     {
         final IColony colony = ColonyManager.getColony(message.colonyId);
-        if(colony != null)
+
+        if (colony instanceof Colony)
         {
+            final IRequest request = colony.getRequestManager().getRequestForToken(message.token);
+
+            if (message.state == RequestState.OVERRULED || message.state == RequestState.CANCELLED)
+            {
+                request.setDelivery(message.itemStack);
+                final AbstractBuilding building = ((Colony) colony).getBuilding(request.getRequester().getRequesterLocation().getInDimensionLocation());
+
+                if(building != null)
+                {
+                    building.onRequestComplete(message.token);
+                }
+            }
+
             colony.getRequestManager().updateRequestState(message.token, message.state);
-            colony.getRequestManager().getRequestForToken(token).setDelivery(message.itemStack);
+
         }
     }
 }

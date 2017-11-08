@@ -245,7 +245,11 @@ public class Colony implements IColony
      * Amount of ticks passed.
      */
     private int ticksPassed = 0;
-    private final IRequestManager requestManager = new StandardRequestManager(this);
+
+    /**
+     * The request manager assigned to the colony.
+     */
+    private IRequestManager requestManager;
 
     /**
      * Constructor for a newly created Colony.
@@ -260,6 +264,7 @@ public class Colony implements IColony
         center = c;
         world = w;
         this.permissions = new Permissions(this);
+        requestManager = new StandardRequestManager(this);
     }
 
     /**
@@ -310,7 +315,16 @@ public class Colony implements IColony
         final int dimensionId = compound.getInteger(TAG_DIMENSION);
         @NotNull final Colony c = new Colony(id, world);
         c.readFromNBT(compound);
+        c.setRequestManager();
         return c;
+    }
+
+    /**
+     * Sets the request manager on colony load.
+     */
+    private void setRequestManager()
+    {
+        requestManager = new StandardRequestManager(this);
     }
 
     /**
