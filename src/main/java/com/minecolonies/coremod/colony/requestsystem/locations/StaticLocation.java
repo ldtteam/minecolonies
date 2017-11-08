@@ -63,6 +63,12 @@ public class StaticLocation implements ILocation
         return location.getDimension() == getDimension();
     }
 
+    @Override
+    public String toString()
+    {
+        return "in dimension: " + dimension + " at position: " + pos.getX() + "." + pos.getY() + "." + pos.getZ() + " ";
+    }
+
     /**
      * Internal factory class.
      */

@@ -19,8 +19,8 @@ public class BuildingBasedRequester implements IRequester
 {
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
-    private static final String NBT_LOCATION     = "Location";
-    private static final String NBT_ID     = "Id";
+    private static final String NBT_LOCATION = "Location";
+    private static final String NBT_ID       = "Id";
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
     private final ILocation location;
@@ -29,7 +29,8 @@ public class BuildingBasedRequester implements IRequester
 
     private AbstractBuilding building = null;
 
-    public BuildingBasedRequester(final ILocation location, final IToken requesterId) {
+    public BuildingBasedRequester(final ILocation location, final IToken requesterId)
+    {
         this.location = location;
         this.requesterId = requesterId;
     }
@@ -54,17 +55,24 @@ public class BuildingBasedRequester implements IRequester
         updateBuilding();
 
         if (building == null)
+        {
             return;
+        }
 
         building.onRequestComplete(token);
     }
 
-    private void updateBuilding() {
+    private void updateBuilding()
+    {
         if (building != null)
+        {
             return;
+        }
 
         if (location == null)
+        {
             return;
+        }
 
         final World world = FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension(getRequesterLocation().getDimension());
         final Colony colony = ColonyManager.getColony(world, getRequesterLocation().getInDimensionLocation());
@@ -94,5 +102,11 @@ public class BuildingBasedRequester implements IRequester
     {
         updateBuilding();
         return building;
+    }
+
+    @Override
+    public String toString()
+    {
+        return getBuilding().getSchematicName() + " ";
     }
 }

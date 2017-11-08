@@ -91,11 +91,11 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
             {
                 players.remove(owner);
                 LanguageHandler.sendPlayerMessage(owner,
-                        request.getRequester().getRequesterLocation().toString(), request.getDisplayString());
+                        request.getRequester().toString(), request.getRequester().getRequesterLocation().toString(), request.getDisplayString());
             }
 
             LanguageHandler.sendPlayersMessage(players,
-                    request.getRequester().getRequesterLocation().toString(), colonyDescription, request.getDisplayString());
+                    request.getRequester().toString(), request.getRequester().getRequesterLocation().toString(), colonyDescription, request.getDisplayString());
         }
 
         assignedRequests.add(request.getToken());

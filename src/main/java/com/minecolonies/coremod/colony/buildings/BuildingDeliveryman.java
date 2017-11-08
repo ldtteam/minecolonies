@@ -114,7 +114,7 @@ public class BuildingDeliveryman extends AbstractBuildingWorker
         ImmutableList.Builder<IRequestResolver> builder = ImmutableList.builder();
 
         builder.addAll(supers);
-        builder.add(new DeliveryRequestResolver(getRequestor().getRequesterLocation(), getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+        builder.add(new DeliveryRequestResolver(getRequester().getRequesterLocation(), getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
 
         return builder.build();
     }

@@ -194,7 +194,7 @@ public class BuildingWareHouse extends AbstractBuilding
         ImmutableList.Builder<IRequestResolver> builder = ImmutableList.builder();
 
         builder.addAll(supers);
-        builder.add(new WarehouseRequestResolver(getRequestor().getRequesterLocation(), getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+        builder.add(new WarehouseRequestResolver(getRequester().getRequesterLocation(), getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
 
         return builder.build();
     }
