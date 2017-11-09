@@ -32,7 +32,23 @@ public class BlockPaperwall extends Block {
     public static final PropertyBool EAST = PropertyBool.create("east");
     public static final PropertyBool SOUTH = PropertyBool.create("south");
     public static final PropertyBool WEST = PropertyBool.create("west");
-    private static final AxisAlignedBB[] AABB_BY_INDEX = new AxisAlignedBB[]{new AxisAlignedBB(0.4375D, 0.0D, 0.4375D, 0.5625D, 1.0D, 0.5625D), new AxisAlignedBB(0.4375D, 0.0D, 0.4375D, 0.5625D, 1.0D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.4375D, 0.5625D, 1.0D, 0.5625D), new AxisAlignedBB(0.0D, 0.0D, 0.4375D, 0.5625D, 1.0D, 1.0D), new AxisAlignedBB(0.4375D, 0.0D, 0.0D, 0.5625D, 1.0D, 0.5625D), new AxisAlignedBB(0.4375D, 0.0D, 0.0D, 0.5625D, 1.0D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.5625D, 1.0D, 0.5625D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.5625D, 1.0D, 1.0D), new AxisAlignedBB(0.4375D, 0.0D, 0.4375D, 1.0D, 1.0D, 0.5625D), new AxisAlignedBB(0.4375D, 0.0D, 0.4375D, 1.0D, 1.0D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.4375D, 1.0D, 1.0D, 0.5625D), new AxisAlignedBB(0.0D, 0.0D, 0.4375D, 1.0D, 1.0D, 1.0D), new AxisAlignedBB(0.4375D, 0.0D, 0.0D, 1.0D, 1.0D, 0.5625D), new AxisAlignedBB(0.4375D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 0.5625D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D)};
+    private static final AxisAlignedBB[] AABB_BY_INDEX = new AxisAlignedBB[]{
+            new AxisAlignedBB(0.4375D, 0.0D, 0.4375D, 0.5625D, 1.0D, 0.5625D),
+            new AxisAlignedBB(0.4375D, 0.0D, 0.4375D, 0.5625D, 1.0D, 1.0D),
+            new AxisAlignedBB(0.0D, 0.0D, 0.4375D, 0.5625D, 1.0D, 0.5625D),
+            new AxisAlignedBB(0.0D, 0.0D, 0.4375D, 0.5625D, 1.0D, 1.0D),
+            new AxisAlignedBB(0.4375D, 0.0D, 0.0D, 0.5625D, 1.0D, 0.5625D),
+            new AxisAlignedBB(0.4375D, 0.0D, 0.0D, 0.5625D, 1.0D, 1.0D),
+            new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.5625D, 1.0D, 0.5625D),
+            new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.5625D, 1.0D, 1.0D),
+            new AxisAlignedBB(0.4375D, 0.0D, 0.4375D, 1.0D, 1.0D, 0.5625D),
+            new AxisAlignedBB(0.4375D, 0.0D, 0.4375D, 1.0D, 1.0D, 1.0D),
+            new AxisAlignedBB(0.0D, 0.0D, 0.4375D, 1.0D, 1.0D, 0.5625D),
+            new AxisAlignedBB(0.0D, 0.0D, 0.4375D, 1.0D, 1.0D, 1.0D),
+            new AxisAlignedBB(0.4375D, 0.0D, 0.0D, 1.0D, 1.0D, 0.5625D),
+            new AxisAlignedBB(0.4375D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D),
+            new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 0.5625D),
+            new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D)};
 
 
     /**
@@ -67,7 +83,12 @@ public class BlockPaperwall extends Block {
         setResistance(RESISTANCE);
     }
 
-    public void addCollisionBoxToList(@NotNull IBlockState state, @NotNull World worldIn, @NotNull BlockPos pos, @NotNull AxisAlignedBB entityBox, @NotNull List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn)
+    public void addCollisionBoxToList(@NotNull IBlockState state,
+                                      @NotNull World worldIn,
+                                      @NotNull BlockPos pos,
+                                      @NotNull AxisAlignedBB entityBox,
+                                      @NotNull List<AxisAlignedBB> collidingBoxes,
+                                      @Nullable Entity entityIn)
     {
         state = this.getActualState(state, worldIn, pos);
         addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_BY_INDEX[0]);
@@ -159,13 +180,19 @@ public boolean isOpaqueCube(@NotNull IBlockState state)
 
     private boolean canPaneConnectToBlock(Block blockIn)
     {
-        return blockIn.getDefaultState().isFullCube() || blockIn == this || blockIn == Blocks.GLASS || blockIn == Blocks.STAINED_GLASS || blockIn == Blocks.STAINED_GLASS_PANE || blockIn instanceof BlockPaperwall;
+        return blockIn.getDefaultState().isFullCube()
+                || blockIn == this || blockIn == Blocks.GLASS || blockIn == Blocks.STAINED_GLASS ||
+                blockIn == Blocks.STAINED_GLASS_PANE || blockIn instanceof BlockPaperwall;
     }
 
     @SideOnly(Side.CLIENT)
-    public boolean shouldSideBeRendered(@NotNull IBlockState blockState, @NotNull IBlockAccess blockAccess, @NotNull BlockPos pos, @NotNull EnumFacing side)
+    public boolean shouldSideBeRendered(@NotNull IBlockState blockState,
+                                        @NotNull IBlockAccess blockAccess,
+                                        @NotNull BlockPos pos,
+                                        @NotNull EnumFacing side)
     {
-        return blockAccess.getBlockState(pos.offset(side)).getBlock() != this && super.shouldSideBeRendered(blockState, blockAccess, pos, side);
+        return blockAccess.getBlockState
+                (pos.offset(side)).getBlock() != this && super.shouldSideBeRendered(blockState, blockAccess, pos, side);
     }
 
     @NotNull
@@ -193,11 +220,23 @@ public boolean isOpaqueCube(@NotNull IBlockState state)
         switch (rot)
         {
             case CLOCKWISE_180:
-                return state.withProperty(NORTH, state.getValue(SOUTH)).withProperty(EAST, state.getValue(WEST)).withProperty(SOUTH, state.getValue(NORTH)).withProperty(WEST, state.getValue(EAST));
+                return state.withProperty
+                        (NORTH, state.getValue(SOUTH)).withProperty
+                        (EAST, state.getValue(WEST)).withProperty
+                        (SOUTH, state.getValue(NORTH)).withProperty
+                        (WEST, state.getValue(EAST));
             case COUNTERCLOCKWISE_90:
-                return state.withProperty(NORTH, state.getValue(EAST)).withProperty(EAST, state.getValue(SOUTH)).withProperty(SOUTH, state.getValue(WEST)).withProperty(WEST, state.getValue(NORTH));
+                return state.withProperty
+                        (NORTH, state.getValue(EAST)).withProperty
+                        (EAST, state.getValue(SOUTH)).withProperty
+                        (SOUTH, state.getValue(WEST)).withProperty
+                        (WEST, state.getValue(NORTH));
             case CLOCKWISE_90:
-                return state.withProperty(NORTH, state.getValue(WEST)).withProperty(EAST, state.getValue(NORTH)).withProperty(SOUTH, state.getValue(EAST)).withProperty(WEST, state.getValue(SOUTH));
+                return state.withProperty
+                        (NORTH, state.getValue(WEST)).withProperty
+                        (EAST, state.getValue(NORTH)).withProperty
+                        (SOUTH, state.getValue(EAST)).withProperty
+                        (WEST, state.getValue(SOUTH));
             default:
                 return state;
         }
