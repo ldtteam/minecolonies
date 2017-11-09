@@ -84,48 +84,48 @@ public class BlockPaperwall extends Block
         setResistance(RESISTANCE);
     }
 
-    public void addCollisionBoxToList(@NotNull IBlockState Tempstate,
+    public void addCollisionBoxToList(@NotNull IBlockState state,
                                       @NotNull final World worldIn,
                                       @NotNull final BlockPos pos,
                                       @NotNull final AxisAlignedBB entityBox,
                                       @NotNull final List<AxisAlignedBB> collidingBoxes,
                                       @Nullable final Entity entityIn)
     {
-        Tempstate = this.getActualState(Tempstate, worldIn, pos);
+        state = this.getActualState(state, worldIn, pos);
         addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_BY_INDEX[0]);
 
-        if (Tempstate.getValue(NORTH))
+        if (state.getValue(NORTH))
         {
             addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_BY_INDEX[getBoundingBoxIndex(EnumFacing.NORTH)]);
         }
 
-        if (Tempstate.getValue(SOUTH))
+        if (state.getValue(SOUTH))
         {
             addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_BY_INDEX[getBoundingBoxIndex(EnumFacing.SOUTH)]);
         }
 
-        if (Tempstate.getValue(EAST))
+        if (state.getValue(EAST))
         {
             addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_BY_INDEX[getBoundingBoxIndex(EnumFacing.EAST)]);
         }
 
-        if (Tempstate.getValue(WEST))
+        if (state.getValue(WEST))
         {
             addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_BY_INDEX[getBoundingBoxIndex(EnumFacing.WEST)]);
         }
     }
-    private static int getBoundingBoxIndex(final EnumFacing SIDE)
+    private static int getBoundingBoxIndex(final EnumFacing side)
     {
-        return 1 << SIDE.getHorizontalIndex();
+        return 1 << side.getHorizontalIndex();
     }
 
     @NotNull
-    public AxisAlignedBB getBoundingBox(@NotNull IBlockState Tempstate,
+    public AxisAlignedBB getBoundingBox(@NotNull IBlockState tempState,
                                         @NotNull final IBlockAccess source,
                                         @NotNull final BlockPos pos)
     {
-        Tempstate = this.getActualState(Tempstate, source, pos);
-        return AABB_BY_INDEX[getBoundingBoxIndex(Tempstate)];
+        tempState = this.getActualState(tempState, source, pos);
+        return AABB_BY_INDEX[getBoundingBoxIndex(tempState)];
     }
 
     private static int getBoundingBoxIndex(final IBlockState state)
@@ -160,11 +160,11 @@ public class BlockPaperwall extends Block
      * metadata, such as fence connections.
      */
     @NotNull
-    public IBlockState getActualState(@NotNull final IBlockState Tempstate,
+    public IBlockState getActualState(@NotNull final IBlockState tempState,
                                       @NotNull final IBlockAccess worldIn,
                                       @NotNull final BlockPos pos)
     {
-        return Tempstate.withProperty(NORTH, canPaneConnectTo(worldIn, pos, EnumFacing.NORTH))
+        return tempState.withProperty(NORTH, canPaneConnectTo(worldIn, pos, EnumFacing.NORTH))
                 .withProperty(SOUTH, canPaneConnectTo(worldIn, pos, EnumFacing.SOUTH))
                 .withProperty(WEST, canPaneConnectTo(worldIn, pos, EnumFacing.WEST))
                 .withProperty(EAST, canPaneConnectTo(worldIn, pos, EnumFacing.EAST));
@@ -221,31 +221,31 @@ public class BlockPaperwall extends Block
      * blockstate.
      */
     @NotNull
-    public IBlockState withRotation(@NotNull final IBlockState Tempstate,
+    public IBlockState withRotation(@NotNull final IBlockState tempState,
                                     @NotNull final Rotation rot)
     {
         switch (rot)
         {
             case CLOCKWISE_180:
-                return Tempstate.withProperty
-                        (NORTH, Tempstate.getValue(SOUTH)).withProperty
-                        (EAST, Tempstate.getValue(WEST)).withProperty
-                        (SOUTH, Tempstate.getValue(NORTH)).withProperty
-                        (WEST, Tempstate.getValue(EAST));
+                return tempState.withProperty
+                        (NORTH, tempState.getValue(SOUTH)).withProperty
+                        (EAST, tempState.getValue(WEST)).withProperty
+                        (SOUTH, tempState.getValue(NORTH)).withProperty
+                        (WEST, tempState.getValue(EAST));
             case COUNTERCLOCKWISE_90:
-                return Tempstate.withProperty
-                        (NORTH, Tempstate.getValue(EAST)).withProperty
-                        (EAST, Tempstate.getValue(SOUTH)).withProperty
-                        (SOUTH, Tempstate.getValue(WEST)).withProperty
-                        (WEST, Tempstate.getValue(NORTH));
+                return tempState.withProperty
+                        (NORTH, tempState.getValue(EAST)).withProperty
+                        (EAST, tempState.getValue(SOUTH)).withProperty
+                        (SOUTH, tempState.getValue(WEST)).withProperty
+                        (WEST, tempState.getValue(NORTH));
             case CLOCKWISE_90:
-                return Tempstate.withProperty
-                        (NORTH, Tempstate.getValue(WEST)).withProperty
-                        (EAST, Tempstate.getValue(NORTH)).withProperty
-                        (SOUTH, Tempstate.getValue(EAST)).withProperty
-                        (WEST, Tempstate.getValue(SOUTH));
+                return tempState.withProperty
+                        (NORTH, tempState.getValue(WEST)).withProperty
+                        (EAST, tempState.getValue(NORTH)).withProperty
+                        (SOUTH, tempState.getValue(EAST)).withProperty
+                        (WEST, tempState.getValue(SOUTH));
             default:
-                return Tempstate;
+                return tempState;
         }
     }
 
@@ -254,16 +254,16 @@ public class BlockPaperwall extends Block
      * blockstate.
      */
     @NotNull
-    public IBlockState withMirror(@NotNull final IBlockState Tempstate, final @NotNull Mirror mirrorIn)
+    public IBlockState withMirror(@NotNull final IBlockState tempState, final @NotNull Mirror mirrorIn)
     {
         switch (mirrorIn)
         {
             case LEFT_RIGHT:
-                return Tempstate.withProperty(NORTH, Tempstate.getValue(SOUTH)).withProperty(SOUTH, Tempstate.getValue(NORTH));
+                return tempState.withProperty(NORTH, tempState.getValue(SOUTH)).withProperty(SOUTH, tempState.getValue(NORTH));
             case FRONT_BACK:
-                return Tempstate.withProperty(EAST, Tempstate.getValue(WEST)).withProperty(WEST, Tempstate.getValue(EAST));
+                return tempState.withProperty(EAST, tempState.getValue(WEST)).withProperty(WEST, tempState.getValue(EAST));
             default:
-                return super.withMirror(Tempstate, mirrorIn);
+                return super.withMirror(tempState, mirrorIn);
         }
     }
 
