@@ -314,8 +314,10 @@ public class Colony implements IColony
         final int id = compound.getInteger(TAG_ID);
         final int dimensionId = compound.getInteger(TAG_DIMENSION);
         @NotNull final Colony c = new Colony(id, world);
-        c.readFromNBT(compound);
+        c.setName(compound.getString(TAG_NAME));
+        c.center = BlockPosUtil.readFromNBT(compound, TAG_CENTER);
         c.setRequestManager();
+        c.readFromNBT(compound);
         return c;
     }
 
@@ -334,8 +336,7 @@ public class Colony implements IColony
      */
     private void readFromNBT(@NotNull final NBTTagCompound compound)
     {
-        name = compound.getString(TAG_NAME);
-        center = BlockPosUtil.readFromNBT(compound, TAG_CENTER);
+
 
         manualHiring = compound.getBoolean(TAG_MANUAL_HIRING);
         maxCitizens = compound.getInteger(TAG_MAX_CITIZENS);

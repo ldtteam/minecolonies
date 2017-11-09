@@ -1,0 +1,136 @@
+package com.minecolonies.coremod.items;
+
+import com.minecolonies.coremod.creativetab.ModCreativeTabs;
+import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
+
+/**
+ * Class describing the clipboard item.
+ */
+public class ItemClipBoard extends AbstractItemMinecolonies
+{
+    /**
+     * Max stack size of the item.
+     */
+    private static final int MAX_STACK_SIZE = 1;
+
+    /**
+     * Tag of the colony.
+     */
+    private static final String TAG_COLONY     = "colony";
+
+    /**
+     * Sets the name, creative tab, and registers the Ancient Tome item.
+     */
+    public ItemClipBoard()
+    {
+        super("clipboard");
+        super.setCreativeTab(ModCreativeTabs.MINECOLONIES);
+        setMaxStackSize(MAX_STACK_SIZE);
+    }
+
+    /**
+     * Handles mid air use.
+     *
+     * @param worldIn the world
+     * @param playerIn the player
+     * @param hand the hand
+     * @return the result
+     */
+    @Override
+    @NotNull
+    public ActionResult<ItemStack> onItemRightClick(
+            final World worldIn,
+            final EntityPlayer playerIn,
+            final EnumHand hand)
+    {
+        final ItemStack scepter = playerIn.getHeldItem(hand);
+
+        if (worldIn.isRemote)
+        {
+            return new ActionResult<>(EnumActionResult.SUCCESS, scepter);
+        }
+
+        final NBTTagCompound compound = checkForCompound(scepter);
+
+        if(compound.hasKey(TAG_COLONY))
+        {
+            final int colonyId = compound.getInteger(TAG_COLONY);
+            //todo open GUI
+        }
+
+        return new ActionResult<>(EnumActionResult.SUCCESS, scepter);
+    }
+
+    /**
+     * Used when clicking on block in world.
+     *
+     * @param playerIn the player
+     * @param worldIn the world
+     * @param pos the position
+     * @param hand the hand
+     * @param facing the facing hit
+     * @param hitX the x coordinate
+     * @param hitY the y coordinate
+     * @param hitZ the z coordinate
+     * @return the result
+     */
+    @Override
+    @NotNull
+    public EnumActionResult onItemUse(
+            final EntityPlayer playerIn,
+            final World worldIn,
+            final BlockPos pos,
+            final EnumHand hand,
+            final EnumFacing facing,
+            final float hitX,
+            final float hitY,
+            final float hitZ)
+    {
+        final ItemStack scepter = playerIn.getHeldItem(hand);
+        if (!worldIn.isRemote)
+        {
+            return EnumActionResult.SUCCESS;
+        }
+
+        final NBTTagCompound compound = checkForCompound(scepter);
+        final TileEntity entity = worldIn.getTileEntity(pos);
+
+        if(entity instanceof TileEntityColonyBuilding)
+        {
+            compound.setInteger(TAG_COLONY, ((TileEntityColonyBuilding) entity).getColonyId());
+        }
+        else if(compound.hasKey(TAG_COLONY))
+        {
+            final int colonyId = compound.getInteger(TAG_COLONY);
+            //todo open GUI
+        }
+
+        return EnumActionResult.SUCCESS;
+    }
+
+    /**
+     * Check for the compound and return it.
+     * If not available create and return it.
+     *
+     * @param scepter the scepter to check in for.
+     */
+    private static NBTTagCompound checkForCompound(final ItemStack scepter)
+    {
+        if (!scepter.hasTagCompound())
+        {
+            scepter.setTagCompound(new NBTTagCompound());
+        }
+        return scepter.getTagCompound();
+    }
+}
