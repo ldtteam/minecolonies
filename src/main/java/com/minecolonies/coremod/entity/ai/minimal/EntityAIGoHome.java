@@ -169,7 +169,7 @@ public class EntityAIGoHome extends EntityAIBase
                             InventoryUtils.forceItemStackToItemHandler(
                                     new InvWrapper(citizen.getInventoryCitizen()),
                                     new ItemStack(stack.getItem(), 1),
-                                    stack1 -> citizen.getWorkBuilding() == null || !citizen.getWorkBuilding().neededForWorker(stack1));
+                                    stack1 -> citizen.getWorkBuilding() == null);
                         }
                         else
                         {

@@ -1,7 +1,9 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutGuardTower;
@@ -14,6 +16,8 @@ import com.minecolonies.coremod.entity.EntityCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -25,6 +29,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
  * Building class of the guard tower.
@@ -122,6 +128,22 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     public AbstractBuildingGuards(final Colony c, final BlockPos l)
     {
         super(c, l);
+
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.BOW, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), 1);
+        keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.doesItemServeAsWeapon(itemStack), 1);
+
+        keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
+                && itemStack.getItem() instanceof ItemArmor
+                && ((ItemArmor) itemStack.getItem()).armorType == EntityEquipmentSlot.CHEST, 1);
+        keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
+                && itemStack.getItem() instanceof ItemArmor
+                && ((ItemArmor) itemStack.getItem()).armorType == EntityEquipmentSlot.HEAD, 1);
+        keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
+                && itemStack.getItem() instanceof ItemArmor
+                && ((ItemArmor) itemStack.getItem()).armorType == EntityEquipmentSlot.LEGS, 1);
+        keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
+                && itemStack.getItem() instanceof ItemArmor
+                && ((ItemArmor) itemStack.getItem()).armorType == EntityEquipmentSlot.FEET, 1);
     }
 
     /**
@@ -321,16 +343,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
             return patrolTargets.get(index);
         }
         return patrolTargets.get(0);
-    }
-
-    @Override
-    public boolean neededForWorker(@Nullable final ItemStack stack)
-    {
-        return !ItemStackUtils.isEmpty(stack)
-                && (stack.getItem() instanceof ItemArmor
-                || stack.getItem() instanceof ItemTool
-                || stack.getItem() instanceof ItemSword
-                || stack.getItem() instanceof ItemBow);
     }
 
     /**

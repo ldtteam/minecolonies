@@ -38,6 +38,7 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_HAND;
 
@@ -235,6 +236,11 @@ public abstract class AbstractBuilding
      * Height of the building.
      */
     private int height;
+
+    /**
+     * List of items the worker should keep.
+     */
+    protected final Map<Predicate<ItemStack>, Integer> keepX = new HashMap<>();
 
     /**
      * Constructor for a AbstractBuilding.
@@ -1057,9 +1063,9 @@ public abstract class AbstractBuilding
      *
      * @return a list of objects which should be kept.
      */
-    public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
+    public Map<Predicate<ItemStack>, Integer> getRequiredItemsAndAmount()
     {
-        return Collections.emptyMap();
+        return keepX;
     }
 
     /**
@@ -1246,6 +1252,42 @@ public abstract class AbstractBuilding
         {
             return InventoryUtils.addItemStackToProviderWithResult(tileEntity, stack);
         }
+    }
+
+    /**
+     * Check if the worker requires a certain amount of that item and the alreadykept list contains it.
+     * Always leave one stack behind if the worker requires a certain amount of it. Just to be sure.
+     *
+     * @param building         the building of the worker.
+     * @param stack            the stack to check it with.
+     * @param localAlreadyKept already kept items.
+     * @return true if it should be leave it behind.
+     */
+    public static boolean buildingRequiresCertainAmountOfItem(final AbstractBuilding building, final ItemStack stack, final List<ItemStorage> localAlreadyKept)
+    {
+        for (final Map.Entry<Predicate<ItemStack>, Integer> entry : building.getRequiredItemsAndAmount().entrySet())
+        {
+            if (entry.getKey().test(stack))
+            {
+                final ItemStorage kept = ItemStorage.getItemStackOfListMatchingPredicate(localAlreadyKept, entry.getKey());
+                if(kept != null)
+                {
+                    if(kept.getAmount() >= entry.getValue())
+                    {
+                        return false;
+                    }
+
+                    localAlreadyKept.remove(kept);
+                    kept.setAmount(kept.getAmount() + ItemStackUtils.getSize(stack));
+                    localAlreadyKept.add(kept);
+                    return true;
+                }
+
+                localAlreadyKept.add(new ItemStorage(stack));
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

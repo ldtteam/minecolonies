@@ -12,7 +12,6 @@ import com.minecolonies.coremod.colony.jobs.JobBaker;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakerRecipes;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakingProduct;
 import com.minecolonies.coremod.entity.ai.citizen.baker.ProductState;
-import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.entity.ai.util.RecipeStorage;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFurnace;
@@ -29,6 +28,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * Building for the baker.
@@ -95,10 +95,6 @@ public class BuildingBaker extends AbstractBuildingWorker
      */
     private int ticksPassed = 0;
 
-    /**
-     * List of items the worker should keep.
-     */
-    private final Map<ItemStorage, Integer> keepX = new HashMap<>();
 
     /**
      * Constructor for the baker building.
@@ -113,23 +109,9 @@ public class BuildingBaker extends AbstractBuildingWorker
         {
             for(final ItemStack stack: storage.getInput())
             {
-                keepX.put(new ItemStorage(stack, false), WHEAT_TO_KEEP);
+                keepX.put(stack::isItemEqual, WHEAT_TO_KEEP);
             }
         }
-    }
-
-
-    /**
-     * Override this method if you want to keep an amount of items in inventory and at the workers chest.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
-     *
-     * @return a list of objects which should be kept.
-     */
-    @Override
-    public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
-    {
-        return keepX;
     }
 
     /**
