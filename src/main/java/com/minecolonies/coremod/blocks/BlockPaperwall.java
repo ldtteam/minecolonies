@@ -50,7 +50,7 @@ public class BlockPaperwall extends Block {
      */
     private static final float RESISTANCE = 1F;
 
-    public BlockPaperwall()
+    BlockPaperwall()
     {
         super(Material.WOOD);
         initBlock();
@@ -172,7 +172,7 @@ public boolean isOpaqueCube(@NotNull IBlockState state)
     @SideOnly(Side.CLIENT)
     public BlockRenderLayer getBlockLayer()
     {
-        return BlockRenderLayer.CUTOUT_MIPPED;
+        return BlockRenderLayer.TRANSLUCENT;
     }
 
     /**
