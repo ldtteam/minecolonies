@@ -27,7 +27,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
-public class BlockPaperwall extends Block {
+public class BlockPaperwall extends Block
+{
     public static final PropertyBool NORTH = PropertyBool.create("north");
     public static final PropertyBool EAST = PropertyBool.create("east");
     public static final PropertyBool SOUTH = PropertyBool.create("south");
@@ -84,11 +85,11 @@ public class BlockPaperwall extends Block {
     }
 
     public void addCollisionBoxToList(@NotNull IBlockState state,
-                                      @NotNull World worldIn,
-                                      @NotNull BlockPos pos,
-                                      @NotNull AxisAlignedBB entityBox,
-                                      @NotNull List<AxisAlignedBB> collidingBoxes,
-                                      @Nullable Entity entityIn)
+                                      @NotNull final World worldIn,
+                                      @NotNull final BlockPos pos,
+                                      @NotNull final AxisAlignedBB entityBox,
+                                      @NotNull final List<AxisAlignedBB> collidingBoxes,
+                                      @Nullable final Entity entityIn)
     {
         state = this.getActualState(state, worldIn, pos);
         addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_BY_INDEX[0]);
@@ -113,13 +114,15 @@ public class BlockPaperwall extends Block {
             addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_BY_INDEX[getBoundingBoxIndex(EnumFacing.WEST)]);
         }
     }
-    private static int getBoundingBoxIndex(EnumFacing p_185729_0_)
+    private static int getBoundingBoxIndex(EnumFacing SIDE)
     {
-        return 1 << p_185729_0_.getHorizontalIndex();
+        return 1 << SIDE.getHorizontalIndex();
     }
 
     @NotNull
-    public AxisAlignedBB getBoundingBox(@NotNull IBlockState state, @NotNull IBlockAccess source, @NotNull BlockPos pos)
+    public AxisAlignedBB getBoundingBox(@NotNull IBlockState state,
+                                        @NotNull IBlockAccess source,
+                                        @NotNull final BlockPos pos)
     {
         state = this.getActualState(state, source, pos);
         return AABB_BY_INDEX[getBoundingBoxIndex(state)];
@@ -157,7 +160,9 @@ public class BlockPaperwall extends Block {
      * metadata, such as fence connections.
      */
     @NotNull
-    public IBlockState getActualState(@NotNull IBlockState state, @NotNull IBlockAccess worldIn, @NotNull BlockPos pos)
+    public IBlockState getActualState(@NotNull IBlockState state,
+                                      @NotNull IBlockAccess worldIn,
+                                      @NotNull final BlockPos pos)
     {
         return state.withProperty(NORTH, canPaneConnectTo(worldIn, pos, EnumFacing.NORTH))
                 .withProperty(SOUTH, canPaneConnectTo(worldIn, pos, EnumFacing.SOUTH))
@@ -165,20 +170,21 @@ public class BlockPaperwall extends Block {
                 .withProperty(EAST, canPaneConnectTo(worldIn, pos, EnumFacing.EAST));
     }
 
-/**
- * Used to determine ambient occlusion and culling when rebuilding chunks for render
- */
-public boolean isOpaqueCube(@NotNull IBlockState state)
-{
-    return false;
-}
+    /**
+    * Used to determine ambient occlusion and culling when rebuilding chunks for render
+    */
 
-    public boolean isFullCube(@NotNull IBlockState state)
+    public boolean isOpaqueCube(@NotNull final IBlockState state)
     {
         return false;
     }
 
-    private boolean canPaneConnectToBlock(Block blockIn)
+    public boolean isFullCube(@NotNull final IBlockState state)
+    {
+        return false;
+    }
+
+    private boolean canPaneConnectToBlock(final Block blockIn)
     {
         return blockIn.getDefaultState().isFullCube()
                 || blockIn == this || blockIn == Blocks.GLASS || blockIn == Blocks.STAINED_GLASS ||
@@ -186,10 +192,10 @@ public boolean isOpaqueCube(@NotNull IBlockState state)
     }
 
     @SideOnly(Side.CLIENT)
-    public boolean shouldSideBeRendered(@NotNull IBlockState blockState,
-                                        @NotNull IBlockAccess blockAccess,
+    public boolean shouldSideBeRendered(@NotNull final IBlockState blockState,
+                                        @NotNull final IBlockAccess blockAccess,
                                         @NotNull BlockPos pos,
-                                        @NotNull EnumFacing side)
+                                        @NotNull final EnumFacing side)
     {
         return blockAccess.getBlockState
                 (pos.offset(side)).getBlock() != this && super.shouldSideBeRendered(blockState, blockAccess, pos, side);
@@ -205,7 +211,7 @@ public boolean isOpaqueCube(@NotNull IBlockState state)
     /**
      * Convert the BlockState into the correct metadata value
      */
-    public int getMetaFromState(@NotNull IBlockState state)
+    public int getMetaFromState(@NotNull final IBlockState state)
     {
         return 0;
     }
@@ -215,7 +221,8 @@ public boolean isOpaqueCube(@NotNull IBlockState state)
      * blockstate.
      */
     @NotNull
-    public IBlockState withRotation(@NotNull IBlockState state, @NotNull Rotation rot)
+    public IBlockState withRotation(@NotNull IBlockState state,
+                                    @NotNull final Rotation rot)
     {
         switch (rot)
         {
@@ -247,7 +254,7 @@ public boolean isOpaqueCube(@NotNull IBlockState state)
      * blockstate.
      */
     @NotNull
-    public IBlockState withMirror(@NotNull IBlockState state, @NotNull Mirror mirrorIn)
+    public IBlockState withMirror(@NotNull IBlockState state, final @NotNull Mirror mirrorIn)
     {
         switch (mirrorIn)
         {
@@ -266,10 +273,10 @@ public boolean isOpaqueCube(@NotNull IBlockState state)
         return new BlockStateContainer(this, NORTH, EAST, WEST, SOUTH);
     }
 
-    private boolean canPaneConnectTo(IBlockAccess world, BlockPos pos, EnumFacing dir)
+    private boolean canPaneConnectTo(IBlockAccess world, BlockPos pos, final EnumFacing dir)
     {
-        BlockPos off = pos.offset(dir);
-        IBlockState state = world.getBlockState(off);
+        final BlockPos off = pos.offset(dir);
+        final IBlockState state = world.getBlockState(off);
         return canPaneConnectToBlock(state.getBlock()) || state.isSideSolid(world, off, dir.getOpposite());
     }
 }
