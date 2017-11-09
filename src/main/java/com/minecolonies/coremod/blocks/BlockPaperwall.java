@@ -128,7 +128,7 @@ public class BlockPaperwall extends Block
         return AABB_BY_INDEX[getBoundingBoxIndex(state)];
     }
 
-    private static int getBoundingBoxIndex(IBlockState state)
+    private static int getBoundingBoxIndex(final IBlockState state)
     {
         int i = 0;
 
