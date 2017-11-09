@@ -29,7 +29,9 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
@@ -857,7 +859,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 && (walkToBuilding()
                 || InventoryFunctions.matchFirstInHandlerWithAction(new InvWrapper(worker.getInventoryCitizen()),
                 itemStack -> !ItemStackUtils.isEmpty(itemStack) && !AbstractBuilding.buildingRequiresCertainAmountOfItem(buildingWorker, itemStack, alreadyKept),
-                (handler, slot) -> InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandlers(new InvWrapper(worker.getInventoryCitizen()), slot, new InvWrapper(buildingWorker.getTileEntity()))
+                (handler, slot) ->
+                        InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandlers(
+                                new InvWrapper(worker.getInventoryCitizen()), slot, new InvWrapper(buildingWorker.getTileEntity()))
                 ));
     }
 
