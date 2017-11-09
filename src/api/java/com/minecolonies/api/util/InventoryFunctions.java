@@ -237,7 +237,7 @@ public class InventoryFunctions
         /**
          * Method executed when a match has been found.
          *
-         * @param provider  The itemstack that matches the predicate for the search.
+         * @param handler  The itemstack that matches the predicate for the search.
          * @param slotIndex The slotindex in which this itemstack was found.
          */
         @Override
