@@ -361,17 +361,20 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
             final ItemStack selectedStack = displayStacks.get((lifeCount / (20 * displayStacks.size())) % displayStacks.size());
 
             if (!displayStacks.isEmpty())
+            {
                 exampleStackDisplay.setItem(selectedStack);
+            }
             else
+            {
                 exampleStackDisplay.setItem(ItemStackUtils.EMPTY);
+            }
 
             final Label targetLabel = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Label.class);
             targetLabel.setLabelText(getNicePositionString(request.getRequester().getDeliveryLocation().getInDimensionLocation()));
 
-            if (!(request.getRequest() instanceof IDeliverable))
-            {
-                rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
-            } else if (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory), stack -> ((IRequest<? extends IDeliverable>) request).getRequest().matches(stack)))
+            if (!(request.getRequest() instanceof IDeliverable)
+            || (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory),
+                    stack -> ((IRequest<? extends IDeliverable>) request).getRequest().matches(stack))))
             {
                 rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
             }
@@ -585,7 +588,7 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
 
         if(getOpenRequestsOfCitizen().size() > row)
         {
-            @NotNull final WindowRequestDetail window = new WindowRequestDetail(citizen, getOpenRequestsOfCitizen().get(row));
+            @NotNull final WindowRequestDetail window = new WindowRequestDetail(citizen, getOpenRequestsOfCitizen().get(row), citizen.getColonyId());
             window.open();
         }
     }

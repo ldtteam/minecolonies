@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.items;
 
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import net.minecraft.entity.player.EntityPlayer;
@@ -56,7 +57,7 @@ public class ItemClipBoard extends AbstractItemMinecolonies
     {
         final ItemStack scepter = playerIn.getHeldItem(hand);
 
-        if (worldIn.isRemote)
+        if (!worldIn.isRemote)
         {
             return new ActionResult<>(EnumActionResult.SUCCESS, scepter);
         }
@@ -66,7 +67,7 @@ public class ItemClipBoard extends AbstractItemMinecolonies
         if(compound.hasKey(TAG_COLONY))
         {
             final int colonyId = compound.getInteger(TAG_COLONY);
-            //todo open GUI
+            MineColonies.proxy.openClipBoardWindow(colonyId);
         }
 
         return new ActionResult<>(EnumActionResult.SUCCESS, scepter);
@@ -113,7 +114,8 @@ public class ItemClipBoard extends AbstractItemMinecolonies
         else if(compound.hasKey(TAG_COLONY))
         {
             final int colonyId = compound.getInteger(TAG_COLONY);
-            //todo open GUI
+            MineColonies.proxy.openClipBoardWindow(colonyId);
+
         }
 
         return EnumActionResult.SUCCESS;

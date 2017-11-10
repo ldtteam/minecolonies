@@ -5,6 +5,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.client.gui.WindowBuildTool;
 import com.minecolonies.coremod.client.gui.WindowCitizen;
+import com.minecolonies.coremod.client.gui.WindowClipBoard;
 import com.minecolonies.coremod.client.render.*;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererBarbarian;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererChiefBarbarian;
@@ -96,6 +97,13 @@ public class ClientProxy extends CommonProxy
         }
 
         @Nullable final WindowBuildTool window = new WindowBuildTool(pos);
+        window.open();
+    }
+
+    @Override
+    public void openClipBoardWindow(@Nullable final int colonyId)
+    {
+        @Nullable final WindowClipBoard window = new WindowClipBoard(colonyId);
         window.open();
     }
 
