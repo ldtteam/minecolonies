@@ -203,6 +203,14 @@ public class CommonProxy implements IProxy
     }
 
     @Override
+    public void openClipBoardWindow(final int ColonyId)
+    {
+        /*
+         * Intentionally left empty.
+         */
+    }
+
+    @Override
     public void registerRenderer()
     {
         /*

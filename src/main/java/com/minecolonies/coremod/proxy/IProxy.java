@@ -63,6 +63,13 @@ public interface IProxy
     void openBuildToolWindow(BlockPos pos);
 
     /**
+     * Opens a clipboard window.
+     *
+     * @param colonyId the colony id.
+     */
+    void openClipBoardWindow(int colonyId);
+
+    /**
      * Registers all block and item renderer.
      */
     void registerRenderer();

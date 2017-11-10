@@ -11,6 +11,7 @@ import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
@@ -45,16 +46,22 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     private final IRequest request;
 
     /**
+     * The colony id.
+     */
+    private final int colonyId;
+
+    /**
      * Constructor for the window when the player wants to hire a worker for a certain job.
      *
      * @param c       the colony view.
      * @param request the building position.
      */
-    public WindowRequestDetail(final CitizenDataView c, final IRequest request)
+    public WindowRequestDetail(@Nullable final CitizenDataView c, final IRequest request, final int colonyId)
     {
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
         this.citizen = c;
         this.request = request;
+        this.colonyId = colonyId;
     }
 
     /**
@@ -91,6 +98,11 @@ public class WindowRequestDetail extends Window implements ButtonHandler
         if (citizen != null)
         {
             MineColonies.proxy.showCitizenWindow(citizen);
+        }
+        else
+        {
+            MineColonies.proxy.openClipBoardWindow(colonyId);
+
         }
     }
 }
