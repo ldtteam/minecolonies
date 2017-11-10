@@ -1258,7 +1258,6 @@ public abstract class AbstractBuilding
      * Check if the worker requires a certain amount of that item and the alreadykept list contains it.
      * Always leave one stack behind if the worker requires a certain amount of it. Just to be sure.
      *
-     * @param building         the building of the worker.
      * @param stack            the stack to check it with.
      * @param localAlreadyKept already kept items.
      * @return true if it should be leave it behind.
