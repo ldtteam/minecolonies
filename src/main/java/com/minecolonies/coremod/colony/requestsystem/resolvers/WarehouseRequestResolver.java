@@ -117,7 +117,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
 
     @Nullable
     @Override
-    public IRequest onParentCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    public IRequest onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
         return null;
     }

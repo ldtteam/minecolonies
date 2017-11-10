@@ -12,7 +12,6 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
-import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -107,7 +106,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
 
     @Nullable
     @Override
-    public IRequest onParentCancelled(
+    public IRequest onRequestCancelled(
                                        @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request) throws IllegalArgumentException
     {
         if (!manager.getColony().getWorld().isRemote)
@@ -137,7 +136,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
     public void onResolvingOverruled(
                                       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request) throws IllegalArgumentException
     {
-        onParentCancelled(manager, request);
+        onRequestCancelled(manager, request);
     }
 
     @NotNull

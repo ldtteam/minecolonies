@@ -94,7 +94,7 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
 
     @Nullable
     @Override
-    public IRequest onParentCancelled(
+    public IRequest onRequestCancelled(
                                        @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request) throws IllegalArgumentException
     {
         return null;

@@ -54,7 +54,12 @@ public enum RequestState
     /**
      * State used to indicate that this request has been received by the requester.
      */
-    RECEIVED;
+    RECEIVED,
+
+    /**
+     * State used to indicate that a request is cancelled overruled, yet processing is still continuing to ensure proper cleanup.
+     */
+    FINALIZING;
 
     /**
      * Index list used to read and write from NBT

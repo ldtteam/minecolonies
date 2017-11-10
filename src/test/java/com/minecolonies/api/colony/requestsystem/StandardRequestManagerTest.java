@@ -265,7 +265,7 @@ public class StandardRequestManagerTest
 
         @Nullable
         @Override
-        public IRequest onParentCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends String> request) throws IllegalArgumentException
+        public IRequest onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends String> request) throws IllegalArgumentException
         {
             return null;
         }

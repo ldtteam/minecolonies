@@ -353,13 +353,14 @@ public class StandardRequestManager implements IRequestManager
                 RequestHandler.onRequestSuccessful(this, token);
                 return;
             case OVERRULED:
+                LogHandler.log("Request overruled: " + token + ". Notifying parent, children and requester...");
             case CANCELLED:
                 LogHandler.log("Request cancelled: " + token + ". Notifying parent, children and requester...");
                 RequestHandler.onRequestCancelled(this, token);
                 return;
             case RECEIVED:
                 LogHandler.log("Request received: " + token + ". Removing from system...");
-                RequestHandler.onRequestReceivedByRequester(this, token);
+                RequestHandler.cleanRequestData(this, token);
                 return;
             default:
         }
@@ -513,7 +514,7 @@ public class StandardRequestManager implements IRequestManager
                     final IRequest assignedRequest = RequestHandler.getRequest(manager, requestToken);
                     if (assignedRequest.hasChildren())
                     {
-                        //Iterate over all children and call there onParentCancelled method to get a new cleanup parent.
+                        //Iterate over all children and call there onRequestCancelled method to get a new cleanup parent.
                         for (final Object objectToken :
                           assignedRequest.getChildren())
                         {
@@ -527,7 +528,7 @@ public class StandardRequestManager implements IRequestManager
                                 {
                                     //Get the child request
                                     final IRequestResolver childResolver = ResolverHandler.getResolverForRequest(manager, childToken);
-                                    final IRequest cleanUpRequest = childResolver.onParentCancelled(manager, childRequest);
+                                    final IRequest cleanUpRequest = childResolver.onRequestCancelled(manager, childRequest);
 
                                     //Switch out the parent, and add the old child to the followup request as new child
                                     if (cleanUpRequest != null)
@@ -1152,7 +1153,33 @@ public class StandardRequestManager implements IRequestManager
         }
 
         /**
-         * Method used to handle requests that were cancelled or overruled.
+         * Method used to handle requests that were overruled.
+         *
+         * @param manager The manager that got notified of the cancellation or overruling.
+         * @param token   The token of the request that got cancelled or overruled
+         */
+        @SuppressWarnings(Suppression.UNCHECKED)
+        private static void onRequestOverruled(final StandardRequestManager manager, final IToken token)
+        {
+            final IRequest request = getRequest(manager, token);
+
+            if (!manager.requestResolverMap.containsKey(token))
+            {
+                manager.requestBiMap.remove(token);
+                return;
+            }
+
+            final IRequestResolver resolver = ResolverHandler.getResolverForRequest(manager, token);
+
+            final IRequest cleanUpRequest = resolver.onResolvingOverruled(manager, request);
+            processCleanUpRequest(manager, request, cleanUpRequest);
+            manager.updateRequestState(token, RequestState.FINALIZING);
+
+            cleanRequestData(manager, token);
+        }
+
+        /**
+         * Method used to handle requests that were cancelled.
          *
          * @param manager The manager that got notified of the cancellation or overruling.
          * @param token   The token of the request that got cancelled or overruled
@@ -1170,22 +1197,34 @@ public class StandardRequestManager implements IRequestManager
 
             final IRequestResolver resolver = ResolverHandler.getResolverForRequest(manager, token);
 
-            final IRequest cleanUpRequest = resolver.onParentCancelled(manager, request);
+            final IRequest cleanUpRequest = resolver.onRequestCancelled(manager, request);
+            processCleanUpRequest(manager, request, cleanUpRequest);
+            manager.updateRequestState(token, RequestState.FINALIZING);
 
-            if (cleanUpRequest != null)
+            cleanRequestData(manager, token);
+        }
+
+        /**
+         * Method used to handle the cleanup request handling that is required when a request is cancelled or overruled.
+         *
+         * @param manager The manager that is handling the requests.
+         * @param current The current request that is being cancelled / overruled.
+         * @param cleanUp The new, not yet assigned, request that should replace the current request in the processing chain.
+         */
+        private static void processCleanUpRequest(final StandardRequestManager manager, final IRequest current, final IRequest cleanUp)
+        {
+            if (cleanUp != null)
             {
                 //Switch out the parent, and add the old child to the cleanup request as new child
-                cleanUpRequest.addChild(token);
-                request.setParent(cleanUpRequest.getToken());
+                cleanUp.addChild(current.getToken());
+                current.setParent(cleanUp.getToken());
 
                 //Assign the new followup request if it is not assigned yet.
-                if (!RequestHandler.isAssigned(manager, cleanUpRequest.getToken()))
+                if (!RequestHandler.isAssigned(manager, cleanUp.getToken()))
                 {
-                    RequestHandler.assignRequest(manager, cleanUpRequest);
+                    RequestHandler.assignRequest(manager, cleanUp);
                 }
             }
-
-            onRequestReceivedByRequester(manager, token);
         }
 
         /**
@@ -1230,9 +1269,10 @@ public class StandardRequestManager implements IRequestManager
          * @param token   The token of the request.
          * @throws IllegalArgumentException Thrown when the token is unknown.
          */
-        private static void onRequestReceivedByRequester(final StandardRequestManager manager, final IToken token) throws IllegalArgumentException
+        private static void cleanRequestData(final StandardRequestManager manager, final IToken token) throws IllegalArgumentException
         {
             LogHandler.log("Removing " + token + " from the Manager as it has been completed and its package has been received by the requester.");
+            getRequest(manager, token);
 
             manager.requestBiMap.remove(token);
 

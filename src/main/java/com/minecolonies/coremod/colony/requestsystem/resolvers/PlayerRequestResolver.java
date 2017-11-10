@@ -114,7 +114,7 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
 
     @Nullable
     @Override
-    public IRequest onParentCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest request) throws IllegalArgumentException
+    public IRequest onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest request) throws IllegalArgumentException
     {
         return null;
     }
