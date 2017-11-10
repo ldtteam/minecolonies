@@ -354,6 +354,8 @@ public class StandardRequestManager implements IRequestManager
                 return;
             case OVERRULED:
                 LogHandler.log("Request overruled: " + token + ". Notifying parent, children and requester...");
+                RequestHandler.onRequestOverruled(this, token);
+                break;
             case CANCELLED:
                 LogHandler.log("Request cancelled: " + token + ". Notifying parent, children and requester...");
                 RequestHandler.onRequestCancelled(this, token);
@@ -514,7 +516,7 @@ public class StandardRequestManager implements IRequestManager
                     final IRequest assignedRequest = RequestHandler.getRequest(manager, requestToken);
                     if (assignedRequest.hasChildren())
                     {
-                        //Iterate over all children and call there onRequestCancelled method to get a new cleanup parent.
+                        //Iterate over all children and call there onRequestCancelledOrOverruled method to get a new cleanup parent.
                         for (final Object objectToken :
                           assignedRequest.getChildren())
                         {
@@ -528,7 +530,7 @@ public class StandardRequestManager implements IRequestManager
                                 {
                                     //Get the child request
                                     final IRequestResolver childResolver = ResolverHandler.getResolverForRequest(manager, childToken);
-                                    final IRequest cleanUpRequest = childResolver.onRequestCancelled(manager, childRequest);
+                                    final IRequest cleanUpRequest = childResolver.onRequestCancelledOrOverruled(manager, childRequest);
 
                                     //Switch out the parent, and add the old child to the followup request as new child
                                     if (cleanUpRequest != null)
@@ -1153,7 +1155,8 @@ public class StandardRequestManager implements IRequestManager
         }
 
         /**
-         * Method used to handle requests that were overruled.
+         * Method used to handle requests that were overruled or cancelled.
+         * Cancels all children first, handles the creation of clean up requests.
          *
          * @param manager The manager that got notified of the cancellation or overruling.
          * @param token   The token of the request that got cancelled or overruled
@@ -1169,17 +1172,27 @@ public class StandardRequestManager implements IRequestManager
                 return;
             }
 
-            final IRequestResolver resolver = ResolverHandler.getResolverForRequest(manager, token);
+            //Lets cancel all our children first, else this would make a big fat mess.
+            if (request.hasChildren())
+            {
+                final ImmutableCollection<IToken> currentChildren = request.getChildren();
+                currentChildren.forEach(t -> onRequestCancelled(manager, t));
+            }
 
-            final IRequest cleanUpRequest = resolver.onResolvingOverruled(manager, request);
-            processCleanUpRequest(manager, request, cleanUpRequest);
-            manager.updateRequestState(token, RequestState.FINALIZING);
+            //Now lets get ourselfs a clean up.
+            final IRequestResolver targetResolver = ResolverHandler.getResolverForRequest(manager, request);
+            processParentReplacement(manager, request, targetResolver.onRequestCancelledOrOverruled(manager, request));
 
-            cleanRequestData(manager, token);
+            manager.updateRequestState(token, RequestState.COMPLETED);
+
+            //Notify requester
+            final IRequester requester = request.getRequester();
+            requester.onRequestComplete(token);
         }
 
         /**
-         * Method used to handle requests that were cancelled.
+         * Method used to handle requests that were overruled or cancelled.
+         * Cancels all children first, handles the creation of clean up requests.
          *
          * @param manager The manager that got notified of the cancellation or overruling.
          * @param token   The token of the request that got cancelled or overruled
@@ -1195,34 +1208,54 @@ public class StandardRequestManager implements IRequestManager
                 return;
             }
 
-            final IRequestResolver resolver = ResolverHandler.getResolverForRequest(manager, token);
+            //Lets cancel all our children first, else this would make a big fat mess.
+            if (request.hasChildren())
+            {
+                final ImmutableCollection<IToken> currentChildren = request.getChildren();
+                currentChildren.forEach(t -> onRequestCancelled(manager, t));
+            }
 
-            final IRequest cleanUpRequest = resolver.onRequestCancelled(manager, request);
-            processCleanUpRequest(manager, request, cleanUpRequest);
+            //Now lets get ourselfs a clean up.
+            final IRequestResolver targetResolver = ResolverHandler.getResolverForRequest(manager, request);
+            processParentReplacement(manager, request, targetResolver.onRequestCancelledOrOverruled(manager, request));
+
             manager.updateRequestState(token, RequestState.FINALIZING);
+
+            //Notify the requester.
+            final IRequester requester = request.getRequester();
+            requester.onRequestCancelled(token);
 
             cleanRequestData(manager, token);
         }
 
         /**
-         * Method used to handle the cleanup request handling that is required when a request is cancelled or overruled.
+         * Method used during clean up to process Parent replacement.
          *
-         * @param manager The manager that is handling the requests.
-         * @param current The current request that is being cancelled / overruled.
-         * @param cleanUp The new, not yet assigned, request that should replace the current request in the processing chain.
+         * @param manager The manager which is handling the cleanup.
+         * @param target The target request, which gets their parent replaced.
+         * @param newParent The new cleanup request used to cleanup the target when it is finished.
          */
-        private static void processCleanUpRequest(final StandardRequestManager manager, final IRequest current, final IRequest cleanUp)
+        private static void processParentReplacement(final StandardRequestManager manager, final IRequest target, final IRequest newParent)
         {
-            if (cleanUp != null)
+            //Clear out the existing parent.
+            if (target.hasParent())
+            {
+                final IRequest currentParent = RequestHandler.getRequest(manager, target.getParent());
+
+                currentParent.removeChild(target.getToken());
+                target.setParent(null);
+            }
+
+            if (newParent != null)
             {
                 //Switch out the parent, and add the old child to the cleanup request as new child
-                cleanUp.addChild(current.getToken());
-                current.setParent(cleanUp.getToken());
+                newParent.addChild(target.getToken());
+                target.setParent(newParent.getToken());
 
-                //Assign the new followup request if it is not assigned yet.
-                if (!RequestHandler.isAssigned(manager, cleanUp.getToken()))
+                //Assign the new parent request if it is not assigned yet.
+                if (!RequestHandler.isAssigned(manager, newParent.getToken()))
                 {
-                    RequestHandler.assignRequest(manager, cleanUp);
+                    RequestHandler.assignRequest(manager, newParent);
                 }
             }
         }

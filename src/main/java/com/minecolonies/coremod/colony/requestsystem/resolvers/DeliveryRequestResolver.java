@@ -106,7 +106,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
 
     @Nullable
     @Override
-    public IRequest onRequestCancelled(
+    public IRequest onRequestCancelledOrOverruled(
                                        @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request) throws IllegalArgumentException
     {
         if (!manager.getColony().getWorld().isRemote)
@@ -136,7 +136,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
     public void onResolvingOverruled(
                                       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request) throws IllegalArgumentException
     {
-        onRequestCancelled(manager, request);
+        onRequestCancelledOrOverruled(manager, request);
     }
 
     @NotNull

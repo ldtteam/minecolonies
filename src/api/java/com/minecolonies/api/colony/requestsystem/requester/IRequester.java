@@ -42,4 +42,11 @@ public interface IRequester
      */
     @NotNull
     void onRequestComplete(@NotNull final IToken token);
+
+    /**
+     * Method called by the request system to notify this requester that a request has been overruled.
+     * @param token The token of the request.
+     */
+    @NotNull
+    void onRequestCancelled(@NotNull final IToken token);
 }

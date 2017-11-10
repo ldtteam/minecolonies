@@ -99,23 +99,7 @@ public interface IRequestResolver<R> extends IRequester
      * @return the new request if necessary. It should not be assigned yet.
      */
     @Nullable
-    IRequest onRequestCancelled(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request) throws IllegalArgumentException;
-
-    /**
-     * Method used to indicate to this resolver that a request that has been made is already fullfilled by a player (Overruled).
-     *
-     * If a followup request is needed (For example picking up crafting results to bring them to storage) a request can be made to the given manager
-     * which will properly handle the processing of the new request.
-     *
-     * The returned request will then be used as the new parent and should be used to clean up the results of this request.
-     *
-     * @param manager The manager that indicates the overrulling.
-     * @param request The request that has been overruled.
-     * @return a request that should be used as a parent for this request. It should not be assigned yet.
-     * @throws IllegalArgumentException is thrown when the overrulling failed.
-     */
-    @Nullable
-    IRequest onResolvingOverruled(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request) throws IllegalArgumentException;
+    IRequest onRequestCancelledOrOverruled(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request) throws IllegalArgumentException;
 
     /**
      * The priority of this resolver.

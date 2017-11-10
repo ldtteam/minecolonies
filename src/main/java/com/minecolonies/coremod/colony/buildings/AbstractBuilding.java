@@ -1391,6 +1391,14 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
         markDirty();
     }
 
+    @NotNull
+    public void onRequestCancelled(@NotNull final IToken token)
+    {
+        //TODO: Delete token out of all maps.
+
+        markDirty();
+    }
+
     public boolean hasWorkerOpenRequests(@NotNull CitizenData citizen)
     {
         return !getOpenRequests(citizen).isEmpty();

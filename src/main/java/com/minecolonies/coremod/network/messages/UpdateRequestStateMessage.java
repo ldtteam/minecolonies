@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -91,20 +90,12 @@ public class UpdateRequestStateMessage extends AbstractMessage<UpdateRequestStat
         if (colony instanceof Colony)
         {
             final IRequest request = colony.getRequestManager().getRequestForToken(message.token);
-
-            if (message.state == RequestState.OVERRULED || message.state == RequestState.CANCELLED)
+            if (message.state == RequestState.OVERRULED)
             {
                 request.setDelivery(message.itemStack);
-                final AbstractBuilding building = ((Colony) colony).getBuilding(request.getRequester().getRequesterLocation().getInDimensionLocation());
-
-                if(building != null)
-                {
-                    building.onRequestComplete(message.token);
-                }
             }
 
             colony.getRequestManager().updateRequestState(message.token, message.state);
-
         }
     }
 }

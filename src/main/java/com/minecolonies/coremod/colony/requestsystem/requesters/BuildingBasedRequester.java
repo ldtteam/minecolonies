@@ -62,6 +62,20 @@ public class BuildingBasedRequester implements IRequester
         building.onRequestComplete(token);
     }
 
+    @NotNull
+    @Override
+    public void onRequestCancelled(@NotNull final IToken token)
+    {
+        updateBuilding();
+
+        if (building == null)
+        {
+            return;
+        }
+
+        building.onRequestCancelled(token);
+    }
+
     private void updateBuilding()
     {
         if (building != null)
