@@ -440,6 +440,11 @@ public final class PlacementHandlers
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
                 @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
+            if(world.getBlockState(pos).equals(blockState))
+            {
+                return ActionProcessingResult.ACCEPT;
+            }
+
             if (placer != null && !infiniteResources)
             {
                 final List<ItemStack> itemList = new ArrayList<>();
