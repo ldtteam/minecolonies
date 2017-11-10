@@ -1263,9 +1263,9 @@ public abstract class AbstractBuilding
      * @param localAlreadyKept already kept items.
      * @return true if it should be leave it behind.
      */
-    public static boolean buildingRequiresCertainAmountOfItem(final AbstractBuilding building, final ItemStack stack, final List<ItemStorage> localAlreadyKept)
+    public boolean buildingRequiresCertainAmountOfItem(final ItemStack stack, final List<ItemStorage> localAlreadyKept)
     {
-        for (final Map.Entry<Predicate<ItemStack>, Integer> entry : building.getRequiredItemsAndAmount().entrySet())
+        for (final Map.Entry<Predicate<ItemStack>, Integer> entry : getRequiredItemsAndAmount().entrySet())
         {
             if (entry.getKey().test(stack))
             {

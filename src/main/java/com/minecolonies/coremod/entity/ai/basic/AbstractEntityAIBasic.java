@@ -858,7 +858,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         return buildingWorker != null
                 && (walkToBuilding()
                 || InventoryFunctions.matchFirstInHandlerWithAction(new InvWrapper(worker.getInventoryCitizen()),
-                itemStack -> !ItemStackUtils.isEmpty(itemStack) && !AbstractBuilding.buildingRequiresCertainAmountOfItem(buildingWorker, itemStack, alreadyKept),
+                itemStack -> !ItemStackUtils.isEmpty(itemStack) && !buildingWorker.buildingRequiresCertainAmountOfItem(itemStack, alreadyKept),
                 (handler, slot) ->
                         InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandlers(
                                 new InvWrapper(worker.getInventoryCitizen()), slot, new InvWrapper(buildingWorker.getTileEntity()))
