@@ -100,17 +100,16 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
         return null;
     }
 
-    @Nullable
+    @NotNull
     @Override
-    public void onResolvingOverruled(
-                                      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request) throws IllegalArgumentException
+    public void onRequestComplete(@NotNull final IToken token)
     {
 
     }
 
     @NotNull
     @Override
-    public void onRequestComplete(@NotNull final IToken token)
+    public void onRequestCancelled(@NotNull final IToken token)
     {
 
     }

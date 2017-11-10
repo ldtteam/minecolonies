@@ -122,16 +122,18 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
         return null;
     }
 
-    @Nullable
-    @Override
-    public void onResolvingOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
-    {
-    }
 
     @NotNull
     @Override
     public void onRequestComplete(@NotNull final IToken token)
     {
+    }
+
+    @NotNull
+    @Override
+    public void onRequestCancelled(@NotNull final IToken token)
+    {
+
     }
 
     private Set<TileEntityWareHouse> getWareHousesInColony(Colony colony)
@@ -179,6 +181,13 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
         @Override
         public void onRequestComplete(@NotNull final IToken token)
         {
+        }
+
+        @NotNull
+        @Override
+        public void onRequestCancelled(@NotNull final IToken token)
+        {
+
         }
     }
 }

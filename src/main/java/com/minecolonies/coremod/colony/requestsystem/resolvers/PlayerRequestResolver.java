@@ -119,15 +119,6 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
         return null;
     }
 
-    @Nullable
-    @Override
-    public void onResolvingOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest request) throws IllegalArgumentException
-    {
-        /**
-         * Not especifically needed right now.
-         */
-    }
-
     @Override
     public IToken getRequesterId()
     {
@@ -148,6 +139,13 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
         /**
          * Nothing to do here right now.
          */
+    }
+
+    @NotNull
+    @Override
+    public void onRequestCancelled(@NotNull final IToken token)
+    {
+
     }
 
     @Override

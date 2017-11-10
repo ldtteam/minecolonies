@@ -131,18 +131,17 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
         return null;
     }
 
-    @Nullable
-    @Override
-    public void onResolvingOverruled(
-                                      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request) throws IllegalArgumentException
-    {
-        onRequestCancelledOrOverruled(manager, request);
-    }
-
     @NotNull
     @Override
     public void onRequestComplete(@NotNull final IToken token)
     {
         //We are not scheduling any child requests. So this should never be called.
+    }
+
+    @NotNull
+    @Override
+    public void onRequestCancelled(@NotNull final IToken token)
+    {
+        //Noop
     }
 }

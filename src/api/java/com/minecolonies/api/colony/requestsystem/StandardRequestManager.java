@@ -1051,47 +1051,22 @@ public class StandardRequestManager implements IRequestManager
                 }
             }
 
-/*
-            THEORETICALLY this is not needed anymore. The system should take care of it.
-
-            if (request.getRequest() instanceof IRetryable && manager.retryingResolver != null && ! resolverTokenBlackList.contains(manager.retryingResolver.getRequesterId()))
-            {
-                LogHandler.log("Initial resolving attempt failed. Attempting reassignment to retryable handler.");
-
-                ResolverHandler.addRequestToResolver(manager, manager.retryingResolver, request);
-                request.setState(new WrappedStaticStateRequestManager(manager), RequestState.ASSIGNED);
-                resolveRequest(manager, request);
-
-                return true;
-            }
-
-            if (manager.playerResolver != null && !resolverTokenBlackList.contains(manager.playerResolver.getRequesterId()))
-            {
-                LogHandler.log("Resolving failed. Attempting Fallback PlayerManager for: " + request);
-
-                ResolverHandler.addRequestToResolver(manager, manager.playerResolver, request);
-                request.setState(new WrappedStaticStateRequestManager(manager), RequestState.ASSIGNED);
-                resolveRequest(manager, request);
-
-                return true;
-            }
-*/
-
             return false;
         }
 
         /**
-         * Method used to reassign request
-         * @param manager
-         * @param request
-         * @param resolverTokenBlackList
-         * @return
-         * @throws IllegalArgumentException
+         * Method used to reassign the request to a resolver that is not in the given blacklist.
+         * Cancels the request internally without notify the requester, and attempts a reassign. If the reassignment failed, it is assigned back to the orignal resolver.
+         * @param manager The manager that is reassigning a request.
+         * @param request The request that is being reassigned.
+         * @param resolverTokenBlackList The blacklist to which not to assign the request.
+         * @return True when the reassignment was successful, false when not.
+         * @throws IllegalArgumentException Thrown when something went wrong.
          */
         private static boolean reassignRequest(final StandardRequestManager manager, final IRequest request, final Collection<IToken> resolverTokenBlackList) throws IllegalArgumentException
         {
             //Cancel the request to restart the search
-            //TODO Change: manager.updateRequestState(request.getToken(), RequestState.CANCELLED);
+            processInternalCancellation(manager, request.getToken());
 
             manager.updateRequestState(request.getToken(), RequestState.REPORTED);
             return assignRequest(manager, request, resolverTokenBlackList);
@@ -1183,11 +1158,8 @@ public class StandardRequestManager implements IRequestManager
             final IRequestResolver targetResolver = ResolverHandler.getResolverForRequest(manager, request);
             processParentReplacement(manager, request, targetResolver.onRequestCancelledOrOverruled(manager, request));
 
+            //This will notify everyone :D
             manager.updateRequestState(token, RequestState.COMPLETED);
-
-            //Notify requester
-            final IRequester requester = request.getRequester();
-            requester.onRequestComplete(token);
         }
 
         /**
@@ -1199,6 +1171,30 @@ public class StandardRequestManager implements IRequestManager
          */
         @SuppressWarnings(Suppression.UNCHECKED)
         private static void onRequestCancelled(final StandardRequestManager manager, final IToken token)
+        {
+            final IRequest request = RequestHandler.getRequest(manager, token);
+
+            if (request == null)
+            {
+                return;
+            }
+
+            processInternalCancellation(manager, token);
+
+            //Notify the requester.
+            final IRequester requester = request.getRequester();
+            requester.onRequestCancelled(token);
+
+            cleanRequestData(manager, token);
+        }
+
+        /**
+         * Method used to handle cancellation internally without notifying the requester that the request has been cancelled.
+         *
+         * @param manager The manager for which the cancellation is internally processed.
+         * @param token The token which is internally processed.
+         */
+        private static void processInternalCancellation(final StandardRequestManager manager, final IToken token)
         {
             final IRequest request = getRequest(manager, token);
 
@@ -1220,12 +1216,6 @@ public class StandardRequestManager implements IRequestManager
             processParentReplacement(manager, request, targetResolver.onRequestCancelledOrOverruled(manager, request));
 
             manager.updateRequestState(token, RequestState.FINALIZING);
-
-            //Notify the requester.
-            final IRequester requester = request.getRequester();
-            requester.onRequestCancelled(token);
-
-            cleanRequestData(manager, token);
         }
 
         /**

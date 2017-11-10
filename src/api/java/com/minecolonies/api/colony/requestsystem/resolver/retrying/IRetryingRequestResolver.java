@@ -11,5 +11,9 @@ public interface IRetryingRequestResolver extends IQueuedRequestResolver<IRetrya
      */
     int getMaximalTries();
 
-
+    /**
+     * Method to get the maximal ticks between retries.
+     * @return The maximal amount of ticks between retries.
+     */
+    int getMaximalDelayBetweenRetriesInTicks();
 }

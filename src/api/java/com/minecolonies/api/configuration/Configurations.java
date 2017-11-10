@@ -777,5 +777,11 @@ import static com.minecolonies.api.util.constant.Constants.*;
         {
             @Config.Comment("Should the request system print out debug information? Useful in case of malfunctioning of set system.")
             public  boolean enableDebugLogging = false;
+
+            @Config.Comment("The maximal amount of tries that the request system will perform for retryable requests. Higher increases server load.")
+            public int maximalRetries = 3;
+
+            @Config.Comment("The amount of ticks between retries of the request system for retryable requests. Lower increases server load.")
+            public int delayBetweenRetries = 120;
         }
     }
