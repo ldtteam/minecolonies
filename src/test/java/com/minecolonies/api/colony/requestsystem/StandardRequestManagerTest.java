@@ -1,24 +1,62 @@
 package com.minecolonies.api.colony.requestsystem;
 
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
+import com.minecolonies.api.colony.requestsystem.factory.IFactory;
+import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
+import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.request.IRequestFactory;
+import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
+import com.minecolonies.api.colony.requestsystem.requester.IRequester;
+import com.minecolonies.api.colony.requestsystem.requester.IRequesterFactory;
+import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
+import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverFactory;
+import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.constant.Suppression;
+import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
+import com.minecolonies.coremod.colony.requestsystem.requests.AbstractRequest;
+import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequestFactories;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.text.ITextComponent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 public class StandardRequestManagerTest
 {
 
-   /* private StandardRequestManager requestManager;
+    private StandardRequestManager requestManager;
     private IRequestResolverProvider provider;
 
     @Before
     public void setUp() throws Exception
     {
         Configurations.requestSystem.enableDebugLogging = true;
-        requestManager = new StandardRequestManager(null);
+        requestManager = new StandardRequestManager();
 
         StandardFactoryControllerInitializer.onPreInit();
 
+        StandardFactoryController.getInstance().registerNewFactory(new StringRequestableFactory());
         StandardFactoryController.getInstance().registerNewFactory(new StringRequestFactory());
         StandardFactoryController.getInstance().registerNewFactory(new StringResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new TestRequesterFactory());
 
-        StandardRequestManager.registerRequestableTypeMapping(String.class, StringRequest.class);
+        StandardRequestManager.registerRequestableTypeMapping(StringRequestable.class, StringRequest.class);
 
         provider = new TestResolvingProvider();
     }
@@ -35,8 +73,11 @@ public class StandardRequestManagerTest
     {
         requestManager.onProviderAddedToColony(provider);
 
-        requestManager.createRequest(TestRequester.INSTANCE, "Hello");
-        requestManager.createRequest(TestRequester.INSTANCE, "Test 2");
+
+        final StringRequestable hello = new StringRequestable("Hello");
+        final StringRequestable Test2 = new StringRequestable("Test 2");
+        requestManager.createRequest(TestRequester.INSTANCE, hello);
+        requestManager.createRequest(TestRequester.INSTANCE, Test2);
 
         NBTTagCompound compound = requestManager.serializeNBT();
 
@@ -48,12 +89,14 @@ public class StandardRequestManagerTest
     {
         requestManager.onProviderAddedToColony(provider);
 
-        requestManager.createRequest(TestRequester.INSTANCE, "Hello");
-        requestManager.createAndAssignRequest(TestRequester.INSTANCE, "Test 2");
+        final StringRequestable hello = new StringRequestable("Hello");
+        final StringRequestable Test2 = new StringRequestable("Test 2");
+        requestManager.createRequest(TestRequester.INSTANCE, hello);
+        requestManager.createAndAssignRequest(TestRequester.INSTANCE, Test2);
 
         NBTTagCompound compound = requestManager.serializeNBT();
 
-        StandardRequestManager deserializedVariant = new StandardRequestManager(null);
+        StandardRequestManager deserializedVariant = new StandardRequestManager();
         deserializedVariant.onProviderAddedToColony(provider);
         deserializedVariant.deserializeNBT(compound);
     }
@@ -69,12 +112,13 @@ public class StandardRequestManagerTest
     {
         requestManager.onProviderAddedToColony(provider);
 
-        IToken token = requestManager.createAndAssignRequest(TestRequester.INSTANCE, "Hello");
+        final StringRequestable requestable = new StringRequestable("Hello");
+        IToken token = requestManager.createAndAssignRequest(TestRequester.INSTANCE, requestable);
         assertNotNull(token);
 
-        IRequest<? extends String> request = requestManager.getRequestForToken(token);
+        IRequest<? extends StringRequestable> request = requestManager.getRequestForToken(token);
         assertNotNull(request);
-        assertEquals("Hello", request.getRequest());
+        assertEquals(requestable, request.getRequest());
 
         requestManager.onProviderRemovedFromColony(provider);
     }
@@ -84,7 +128,8 @@ public class StandardRequestManagerTest
     {
         requestManager.onProviderAddedToColony(provider);
 
-        IToken token = requestManager.createAndAssignRequest(TestRequester.INSTANCE, "Hello");
+        final StringRequestable hello = new StringRequestable("Hello");
+        IToken token = requestManager.createAndAssignRequest(TestRequester.INSTANCE, hello);
 
         RequestState originalState = requestManager.getRequestForToken(token).getState();
         assertEquals(RequestState.COMPLETED, originalState);
@@ -123,15 +168,15 @@ public class StandardRequestManagerTest
         }
     }
 
-    private static class StringRequest extends AbstractRequest<String>
+    private static class StringRequest extends AbstractRequest<StringRequestable>
     {
 
-        StringRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final String requested)
+        StringRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final StringRequestable requested)
         {
             super(requester, token, requested);
         }
 
-        StringRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final String requested)
+        StringRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final StringRequestable requested)
         {
             super(requester, token, state, requested);
         }
@@ -150,20 +195,12 @@ public class StandardRequestManagerTest
         }
     }
 
-    private static class StringRequestFactory implements IRequestFactory<String, StringRequest>
+    private static class StringRequestFactory implements IRequestFactory<StringRequestable, StringRequest>
     {
-        *//**
-         * Method to get a new instance of a request given the input and token.
-         *
-         * @param input        The input to build a new request for.
-         * @param location     The location of the requester.
-         * @param token        The token to build the request from.
-         * @param initialState The initial state of the request request.
-         * @return The new output instance for a given input.
-         *//*
+
         @Override
         public StringRequest getNewInstance(
-                                                                 @NotNull final String input,
+                                                                 @NotNull final StringRequestable input,
                                                                  @NotNull final IRequester location,
                                                                  @NotNull final IToken token,
                                                                  @NotNull final RequestState initialState)
@@ -182,99 +219,151 @@ public class StandardRequestManagerTest
         @NotNull
         @Override
         @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
-        public TypeToken<String> getFactoryInputType()
+        public TypeToken<StringRequestable> getFactoryInputType()
         {
-            return TypeToken.of(String.class);
+            return TypeToken.of(StringRequestable.class);
         }
 
-        *//**
-         * Method to serialize a given Request.
-         *
-         * @param controller The controller that can be used to serialize complicated types.
-         * @param request    The request to serialize.
-         * @return The serialized data of the given requets.
-         *//*
         @NotNull
         @Override
         public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final StringRequest request)
         {
             return StandardRequestFactories.serializeToNBT(controller, request, (controller1, object) -> {
                 NBTTagCompound compound = new NBTTagCompound();
-                compound.setString("String", object);
+                compound.setTag("String", controller.serialize(request.getRequest()));
                 return compound;
             });
         }
 
-        *//**
-         * Method to deserialize a given Request.
-         *
-         * @param controller The controller that can be used to deserialize complicated types.
-         * @param nbt        The data of the request that should be deserialized.
-         * @return The request that corresponds with the given data in the nbt
-         *//*
         @NotNull
         @Override
         @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
         public StringRequest deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
         {
-            return StandardRequestFactories.deserializeFromNBT(controller, nbt, ((controller1, compound) -> compound.getString("String")),
+            return StandardRequestFactories.deserializeFromNBT(controller, nbt, ((controller1, compound) -> controller1.deserialize(compound.getCompoundTag("String"))),
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StringRequest.class), requested, token, requester, requestState));
         }
     }
 
-    private static class StringResolver implements IRequestResolver<String>
+    private static class StringRequestable implements IRequestable
     {
+        final String content;
+
+        private StringRequestable(final String content) {this.content = content;}
 
         @Override
-        public TypeToken<? extends String> getRequestType()
+        public boolean equals(final Object o)
+        {
+            if (this == o)
+            {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass())
+            {
+                return false;
+            }
+
+            final StringRequestable that = (StringRequestable) o;
+
+            return content != null ? content.equals(that.content) : that.content == null;
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return content != null ? content.hashCode() : 0;
+        }
+    }
+
+    private static class StringRequestableFactory implements IFactory<String, StringRequestable>
+    {
+
+        @NotNull
+        @Override
+        public TypeToken<? extends StringRequestable> getFactoryOutputType()
+        {
+            return TypeToken.of(StringRequestable.class);
+        }
+
+        @NotNull
+        @Override
+        public TypeToken<? extends String> getFactoryInputType()
         {
             return TypeToken.of(String.class);
         }
 
+        @NotNull
         @Override
-        public boolean canResolve(@NotNull final IRequestManager manager, final IRequest<? extends String> requestToCheck)
+        public StringRequestable getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final String s, @NotNull final Object... context)
+          throws IllegalArgumentException
+        {
+            return new StringRequestable(s);
+        }
+
+        @NotNull
+        @Override
+        public NBTTagCompound serialize(
+                                         @NotNull final IFactoryController controller, @NotNull final StringRequestable stringRequestable)
+        {
+            final NBTTagCompound compound = new NBTTagCompound();
+            compound.setString("s", stringRequestable.content);
+            return compound;
+        }
+
+        @NotNull
+        @Override
+        public StringRequestable deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
+        {
+            return new StringRequestable(nbt.getString("s"));
+        }
+    }
+
+    private static class StringResolver implements IRequestResolver<StringRequestable>
+    {
+
+        @Override
+        public TypeToken<? extends StringRequestable> getRequestType()
+        {
+            return TypeToken.of(StringRequestable.class);
+        }
+
+        @Override
+        public boolean canResolve(@NotNull final IRequestManager manager, final IRequest<? extends StringRequestable> requestToCheck)
         {
             return true;
         }
 
         @Nullable
         @Override
-        public List<IToken> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends String> request)
+        public List<IToken> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends StringRequestable> request)
         {
-            if (request.getRequest().length() == 1)
+            if (request.getRequest().content.length() == 1)
                 return Lists.newArrayList();
             else
-                return Lists.newArrayList(manager.createRequest(TestRequester.INSTANCE, request.getRequest().substring(1)));
+                return Lists.newArrayList(manager.createRequest(TestRequester.INSTANCE, new StringRequestable(request.getRequest().content.substring(1))));
         }
 
         @Nullable
         @Override
-        public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends String> request) throws RuntimeException
+        public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends StringRequestable> request) throws RuntimeException
         {
-            System.out.println(request.getRequest());
+            System.out.println(request.getRequest().content);
             manager.updateRequestState(request.getToken(), RequestState.COMPLETED);
         }
 
         @Nullable
         @Override
         public IRequest getFollowupRequestForCompletion(
-                                                         @NotNull final IRequestManager manager, @NotNull final IRequest<? extends String> completedRequest)
+                                                         @NotNull final IRequestManager manager, @NotNull final IRequest<? extends StringRequestable> completedRequest)
         {
             return null;
         }
 
         @Nullable
         @Override
-        public IRequest onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends String> request) throws IllegalArgumentException
+        public IRequest onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends StringRequestable> request) throws IllegalArgumentException
         {
             return null;
-        }
-
-        @Nullable
-        @Override
-        public void onResolvingOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends String> request) throws IllegalArgumentException
-        {
-
         }
 
         @Override
@@ -299,6 +388,13 @@ public class StandardRequestManagerTest
         @NotNull
         @Override
         public void onRequestComplete(@NotNull final IToken token)
+        {
+            //NOOP
+        }
+
+        @NotNull
+        @Override
+        public void onRequestCancelled(@NotNull final IToken token)
         {
             //NOOP
         }
@@ -344,7 +440,8 @@ public class StandardRequestManagerTest
         }
     }
 
-    private static class TestRequester implements IRequester {
+    private static class TestRequester implements IRequester
+    {
 
         static final TestRequester INSTANCE= new TestRequester();
 
@@ -372,6 +469,13 @@ public class StandardRequestManagerTest
         @NotNull
         @Override
         public void onRequestComplete(@NotNull final IToken token)
+        {
+            return;
+        }
+
+        @NotNull
+        @Override
+        public void onRequestCancelled(@NotNull final IToken token)
         {
             return;
         }
@@ -420,5 +524,5 @@ public class StandardRequestManagerTest
             IToken token = controller.deserialize(nbt.getCompoundTag("Token"));
             return new TestRequester(token);
         }
-    }*/
+    }
 }

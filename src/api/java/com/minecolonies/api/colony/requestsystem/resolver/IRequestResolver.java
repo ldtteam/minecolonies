@@ -3,6 +3,7 @@ package com.minecolonies.api.colony.requestsystem.resolver;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +20,7 @@ import java.util.List;
  *
  * @param <R> The request type that this resolver can provide.
  */
-public interface IRequestResolver<R> extends IRequester
+public interface IRequestResolver<R extends IRequestable> extends IRequester
 {
 
     /**

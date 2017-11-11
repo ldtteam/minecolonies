@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import org.jetbrains.annotations.NotNull;
@@ -8,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * ----------------------- Not Documented Object ---------------------
  */
-public abstract class AbstractRequestResolver<R> implements IRequestResolver<R>
+public abstract class AbstractRequestResolver<R extends IRequestable> implements IRequestResolver<R>
 {
 
     /**

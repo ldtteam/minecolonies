@@ -139,6 +139,16 @@ public class StandardRequestManager implements IRequestManager
     }
 
     /**
+     * Constructor for unit tests.
+     */
+    StandardRequestManager()
+    {
+        this.colony = null;
+        this.playerResolver = null;
+        this.retryingResolver = null;
+    }
+
+    /**
      * The colony this manager manages the requests for.
      *
      * @return The colony this manager manages the requests for.
@@ -160,8 +170,11 @@ public class StandardRequestManager implements IRequestManager
     {
         NBTTagCompound systemCompound = new NBTTagCompound();
 
-        systemCompound.setTag(NBT_PLAYER, getFactoryController().serialize(playerResolver));
-        systemCompound.setTag(NBT_RETRYING, getFactoryController().serialize(retryingResolver));
+        if (this.playerResolver != null)
+            systemCompound.setTag(NBT_PLAYER, getFactoryController().serialize(playerResolver));
+
+        if (this.retryingResolver != null)
+            systemCompound.setTag(NBT_RETRYING, getFactoryController().serialize(retryingResolver));
 
         NBTTagList requestIdentityList = new NBTTagList();
         requestBiMap.keySet().forEach(token -> {
@@ -198,14 +211,27 @@ public class StandardRequestManager implements IRequestManager
     @Override
     public void deserializeNBT(final NBTTagCompound nbt)
     {
-        this.resolverBiMap.remove(playerResolver.getRequesterId());
-        this.resolverBiMap.remove(retryingResolver.getRequesterId());
+        if (playerResolver != null)
+            this.resolverBiMap.remove(playerResolver.getRequesterId());
 
-        this.playerResolver = getFactoryController().deserialize(nbt.getCompoundTag(NBT_PLAYER));
-        this.retryingResolver = getFactoryController().deserialize(nbt.getCompoundTag(NBT_RETRYING));
+        if (retryingResolver != null)
+            this.resolverBiMap.remove(retryingResolver.getRequesterId());
 
-        ResolverHandler.registerResolver(this, this.playerResolver);
-        ResolverHandler.registerResolver(this, this.retryingResolver);
+        if (nbt.hasKey(NBT_PLAYER))
+            this.playerResolver = getFactoryController().deserialize(nbt.getCompoundTag(NBT_PLAYER));
+        else
+            this.playerResolver = null;
+
+        if (nbt.hasKey(NBT_RETRYING))
+            this.retryingResolver = getFactoryController().deserialize(nbt.getCompoundTag(NBT_RETRYING));
+        else
+            this.retryingResolver = null;
+
+        if (this.playerResolver != null)
+            ResolverHandler.registerResolver(this, this.playerResolver);
+
+        if (this.retryingResolver != null)
+            ResolverHandler.registerResolver(this, this.retryingResolver);
 
         NBTTagList requestIdentityList = nbt.getTagList(NBT_REQUEST_IDENTITY_MAP, Constants.NBT.TAG_COMPOUND);
         requestBiMap.clear();

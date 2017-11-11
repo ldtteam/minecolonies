@@ -109,7 +109,6 @@ public final class StandardRequestFactories
         }
 
         @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
-        //final R request = controller.getNewInstance(requested, token, requester, state);
         final R request = objectConstructor.construct(requested, token, requester, state);
 
         request.addChildren(childTokens);
