@@ -249,6 +249,16 @@ public class StandardRequestManager implements IRequestManager
         return StandardFactoryController.getInstance();
     }
 
+    /**
+     * Get the player resolve.
+     * @return the player resolver object.
+     */
+    @NotNull
+    @Override
+    public IRequestResolver getPlayerResolver()
+    {
+        return this.playerResolver;
+    }
 
     /**
      * Method to create a request for a given object
@@ -1499,6 +1509,13 @@ public class StandardRequestManager implements IRequestManager
         public void deserializeNBT(final NBTTagCompound nbt)
         {
             wrappedManager.deserializeNBT(nbt);
+        }
+
+        @NotNull
+        @Override
+        public IRequestResolver getPlayerResolver()
+        {
+            return null;
         }
     }
 
