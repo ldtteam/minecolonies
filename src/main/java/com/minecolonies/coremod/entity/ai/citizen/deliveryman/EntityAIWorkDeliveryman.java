@@ -205,7 +205,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         final ItemStack stack = building.getTileEntity().getStackInSlot(currentSlot);
         if (workerRequiresItem(building, stack, alreadyKept)
-                || (building instanceof BuildingHome && stack.getItem() instanceof ItemFood))
+                || (building instanceof BuildingHome
+                && stack.getItem() instanceof ItemFood))
         {
             return false;
         }
@@ -243,46 +244,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     public static boolean workerRequiresItem(final AbstractBuilding building, final ItemStack stack, final List<ItemStorage> localAlreadyKept)
     {
-        return (building instanceof AbstractBuildingWorker && ((AbstractBuildingWorker) building).neededForWorker(stack))
-                || buildingRequiresCertainAmountOfItem(building, stack, localAlreadyKept);
-    }
-
-    /**
-     * Check if the worker requires a certain amount of that item and if the deliveryman already kept it.
-     * Always leave one stack behind if the worker requires a certain amount of it. Just to be sure.
-     *
-     * @param building         the building of the worker.
-     * @param stack            the stack to check it with.
-     * @param localAlreadyKept already kept items.
-     * @return true if deliveryman should leave it behind.
-     */
-    private static boolean buildingRequiresCertainAmountOfItem(final AbstractBuilding building, final ItemStack stack, final List<ItemStorage> localAlreadyKept)
-    {
-        for (final Map.Entry<ItemStorage, Integer> entry : building.getRequiredItemsAndAmount().entrySet())
-        {
-            if (entry.getKey().getItemStack().isItemEqual(stack))
-            {
-                if (localAlreadyKept.contains(entry.getKey()))
-                {
-                    final int index = localAlreadyKept.indexOf(entry.getKey());
-                    final ItemStorage temp = localAlreadyKept.get(index);
-
-                    if (temp.getAmount() >= entry.getValue())
-                    {
-                        return false;
-                    }
-
-                    localAlreadyKept.remove(index);
-                    temp.setAmount(temp.getAmount() + ItemStackUtils.getSize(stack));
-                    localAlreadyKept.add(temp);
-                    return true;
-                }
-
-                localAlreadyKept.add(entry.getKey());
-                return true;
-            }
-        }
-        return false;
+        return building.buildingRequiresCertainAmountOfItem(stack, localAlreadyKept);
     }
 
     /**
@@ -371,7 +333,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             {
                 final AbstractBuilding building = ((TileEntityColonyBuilding) tileEntity).getBuilding();
                 insertionResultStack = InventoryUtils.forceItemStackToItemHandler(
-                        new InvWrapper((TileEntityColonyBuilding) tileEntity), stack, ((AbstractBuildingWorker) building)::neededForWorker);
+                        new InvWrapper((TileEntityColonyBuilding) tileEntity), stack, ((AbstractBuildingWorker) building)::isItemStackInRequest);
             }
             else
             {

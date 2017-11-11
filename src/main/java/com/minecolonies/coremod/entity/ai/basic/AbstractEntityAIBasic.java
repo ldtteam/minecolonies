@@ -33,7 +33,10 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
@@ -761,16 +764,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Dump the workers inventory into his building chest.
-     * Only useful tools are kept!
-     * Only dumps one block at a time!
-     */
-    private boolean dumpOneMoreSlot()
-    {
-        return dumpOneMoreSlot(getOwnBuilding()::neededForWorker);
-    }
-
-    /**
      * Checks if the worker inventory and his building chest are full.
      *
      * @return true if both are full, else false
@@ -811,120 +804,20 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param keepIt used to test it that stack should be kept
      * @return true if is has to dump more.
      */
-    private boolean dumpOneMoreSlot(@NotNull final Predicate<ItemStack> keepIt)
+    private boolean dumpOneMoreSlot()
     {
         //Items already kept in the inventory
-        final Map<ItemStorage, Integer> alreadyKept = new HashMap<>();
-        final Map<ItemStorage, Integer> shouldKeep = getOwnBuilding().getRequiredItemsAndAmount();
-
+        final List<ItemStorage> alreadyKept = new ArrayList<>();
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
 
         return buildingWorker != null
                 && (walkToBuilding()
-                || InventoryFunctions.matchFirstInProvider(worker,
-                (slot, stack) -> !(ItemStackUtils.isEmpty(stack) || keepIt.test(stack)) && shouldDumpItem(alreadyKept, shouldKeep, buildingWorker, stack, slot)));
-    }
-
-    /**
-     * Checks if an item should be kept and deposits the rest into his chest.
-     *
-     * @param alreadyKept    already kept items.
-     * @param shouldKeep     items that should be kept.
-     * @param buildingWorker the building of the worker.
-     * @param stack          the stack being analyzed.
-     * @param slot           the iteration inside the inventory.
-     * @return true if should be dumped.
-     */
-    private boolean shouldDumpItem(
-                                    @NotNull final Map<ItemStorage, Integer> alreadyKept, @NotNull final Map<ItemStorage, Integer> shouldKeep,
-                                    @NotNull final AbstractBuildingWorker buildingWorker, @NotNull final ItemStack stack, final int slot)
-    {
-        @Nullable final ItemStack returnStack;
-        int amountToKeep = 0;
-        if (keptEnough(alreadyKept, shouldKeep, stack))
-        {
-            returnStack = InventoryUtils.addItemStackToProviderWithResult(buildingWorker.getTileEntity(), stack.copy());
-        }
-        else
-        {
-            final ItemStorage tempStorage = new ItemStorage(stack, false);
-            final ItemStack tempStack = handleKeepX(alreadyKept, shouldKeep, tempStorage);
-            if (ItemStackUtils.isEmpty(tempStack))
-            {
-                return false;
-            }
-            amountToKeep = ItemStackUtils.getSize(stack) - tempStorage.getAmount();
-            returnStack = InventoryUtils.addItemStackToProviderWithResult(buildingWorker.getTileEntity(), tempStack);
-        }
-        if (ItemStackUtils.isEmpty(returnStack))
-        {
-            new InvWrapper(worker.getInventoryCitizen()).extractItem(slot, ItemStackUtils.getSize(stack) - amountToKeep, false);
-            return amountToKeep == 0;
-        }
-
-        new InvWrapper(worker.getInventoryCitizen()).extractItem(slot, ItemStackUtils.getSize(stack) - ItemStackUtils.getSize(returnStack) - amountToKeep, false);
-
-        //Check that we are not inserting into a full inventory.
-        return ItemStackUtils.getSize(stack) != ItemStackUtils.getSize(returnStack);
-    }
-
-    /**
-     * Checks if enough items have been marked as to be kept already.
-     *
-     * @param alreadyKept kept items.
-     * @param shouldKeep  items to keep.
-     * @param stack       stack to analyse.
-     * @return true if the the item shouldn't be kept.
-     */
-    private static boolean keptEnough(@NotNull final Map<ItemStorage, Integer> alreadyKept, @NotNull final Map<ItemStorage, Integer> shouldKeep, @NotNull final ItemStack stack)
-    {
-        final ArrayList<Map.Entry<ItemStorage, Integer>> tempKeep = new ArrayList<>(shouldKeep.entrySet());
-        for (final Map.Entry<ItemStorage, Integer> tempEntry : tempKeep)
-        {
-            final ItemStorage tempStorage = tempEntry.getKey();
-            if (tempStorage != null && tempStorage.getItem() == stack.getItem() && tempStorage.getDamageValue() != stack.getItemDamage())
-            {
-                shouldKeep.put(new ItemStorage(stack, tempStorage.ignoreDamageValue()), tempEntry.getValue());
-                break;
-            }
-        }
-        final ItemStorage tempStorage = new ItemStorage(stack, false);
-
-        //Check first if the the item shouldn't be kept if it should be kept check if we already kept enough of them.
-        return shouldKeep.get(tempStorage) == null
-                 || (alreadyKept.get(tempStorage) != null
-                       && alreadyKept.get(tempStorage) >= shouldKeep.get(tempStorage));
-    }
-
-    /**
-     * Handle the cases when X items should be kept.
-     *
-     * @param alreadyKept already kept items.
-     * @param shouldKeep  to keep items.
-     * @param tempStorage item to analyze.
-     * @return InventoryUtils.EMPTY if should be kept entirely, else itemStack with amount which should be dumped.
-     */
-    @Nullable
-    private static ItemStack handleKeepX(
-                                          @NotNull final Map<ItemStorage, Integer> alreadyKept,
-                                          @NotNull final Map<ItemStorage, Integer> shouldKeep, @NotNull final ItemStorage tempStorage)
-    {
-        int amountKept = 0;
-        if (alreadyKept.get(tempStorage) != null)
-        {
-            amountKept = alreadyKept.remove(tempStorage);
-        }
-
-        if (shouldKeep.get(tempStorage) >= (tempStorage.getAmount() + amountKept))
-        {
-            alreadyKept.put(tempStorage, tempStorage.getAmount() + amountKept);
-            return ItemStackUtils.EMPTY;
-        }
-        alreadyKept.put(tempStorage, shouldKeep.get(tempStorage));
-        final int dump = tempStorage.getAmount() + amountKept - shouldKeep.get(tempStorage);
-
-        //Create tempStack with the amount of items that should be dumped.
-        return new ItemStack(tempStorage.getItem(), dump, tempStorage.getDamageValue());
+                || InventoryFunctions.matchFirstInHandlerWithAction(new InvWrapper(worker.getInventoryCitizen()),
+                itemStack -> !ItemStackUtils.isEmpty(itemStack) && !buildingWorker.buildingRequiresCertainAmountOfItem(itemStack, alreadyKept),
+                (handler, slot) ->
+                        InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandlers(
+                                new InvWrapper(worker.getInventoryCitizen()), slot, new InvWrapper(buildingWorker.getTileEntity()))
+                ));
     }
 
     /**

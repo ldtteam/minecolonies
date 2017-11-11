@@ -242,6 +242,11 @@ public class Colony implements IColony
     private double overallHappiness = 5;
 
     /**
+     * Colony permission event handler.
+     */
+    private final ColonyPermissionEventHandler eventHandler;
+
+    /**
      * Amount of ticks passed.
      */
     private int ticksPassed = 0;
@@ -282,7 +287,8 @@ public class Colony implements IColony
         this.colonyAchievements = new ArrayList<>();
 
         // Register a new event handler
-        MinecraftForge.EVENT_BUS.register(new ColonyPermissionEventHandler(this));
+        eventHandler = new ColonyPermissionEventHandler(this);
+        MinecraftForge.EVENT_BUS.register(eventHandler);
 
         for (final String s : Configurations.gameplay.freeToInteractBlocks)
         {
@@ -452,6 +458,15 @@ public class Colony implements IColony
         {
             this.requestManager.deserializeNBT(compound.getCompoundTag(TAG_REQUESTMANAGER));
         }
+    }
+
+    /**
+     * Get the event handler assigned to the colony.
+     * @return the ColonyPermissionEventHandler.
+     */
+    public ColonyPermissionEventHandler getEventHandler()
+    {
+        return eventHandler;
     }
 
     /**
