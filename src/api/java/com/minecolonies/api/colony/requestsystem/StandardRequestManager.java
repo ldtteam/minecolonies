@@ -264,6 +264,13 @@ public class StandardRequestManager implements IRequestManager
         return this.playerResolver;
     }
 
+    @NotNull
+    @Override
+    public IRetryingRequestResolver getRetryingRequestResolver()
+    {
+        return this.retryingResolver;
+    }
+
     /**
      * Method to create a request for a given object
      *
@@ -1545,6 +1552,13 @@ public class StandardRequestManager implements IRequestManager
         public void update()
         {
             wrappedManager.update();
+        }
+
+        @NotNull
+        @Override
+        public IRetryingRequestResolver getRetryingRequestResolver()
+        {
+            return wrappedManager.getRetryingRequestResolver();
         }
     }
 
