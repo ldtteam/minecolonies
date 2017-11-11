@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutFisherman;
@@ -8,14 +10,10 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobFisherman;
-import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
+import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
  * The fishermans building.
@@ -31,8 +29,6 @@ public class BuildingFisherman extends AbstractBuildingWorker
      */
     private static final String FISHERMAN          = "Fisherman";
 
-    private final Map<ItemStorage, Integer> keepX = new HashMap<>();
-
     /**
      * Public constructor of the building, creates an object of the building.
      *
@@ -42,8 +38,7 @@ public class BuildingFisherman extends AbstractBuildingWorker
     public BuildingFisherman(final Colony c, final BlockPos l)
     {
         super(c, l);
-
-        keepX.put(new ItemStorage(new ItemStack(Items.FISHING_ROD), true), 1);
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.FISHINGROD, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), 1);
     }
 
     /**
@@ -85,19 +80,6 @@ public class BuildingFisherman extends AbstractBuildingWorker
         {
             this.getColony().triggerAchievement(ModAchievements.achievementUpgradeFisherMax);
         }
-    }
-
-    /**
-     * Override this method if you want to keep an amount of items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
-     *
-     * @return a list of objects which should be kept.
-     */
-    @Override
-    public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
-    {
-        return keepX;
     }
 
     /**
