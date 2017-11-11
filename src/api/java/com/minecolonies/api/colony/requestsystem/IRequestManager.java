@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
+import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -113,5 +114,5 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>
      * @return the player resolver object.
      */
     @NotNull
-    IRequestResolver getPlayerResolver();
+    IPlayerRequestResolver getPlayerResolver();
 }

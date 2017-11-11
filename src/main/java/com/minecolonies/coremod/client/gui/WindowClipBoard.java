@@ -3,7 +3,6 @@ package com.minecolonies.coremod.client.gui;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.RequestState;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
@@ -132,21 +131,17 @@ public class WindowClipBoard extends AbstractWindowSkeleton
         final ImmutableList.Builder<IRequest> requests = ImmutableList.builder();
         final ColonyView view = ColonyManager.getColonyView(colonyId);
 
-        if(view ==null)
+        if (view == null)
         {
             return requests.build();
         }
 
-        final IRequestResolver resolver = view.getRequestManager().getPlayerResolver();
+        final PlayerRequestResolver resolver = view.getRequestManager().getPlayerResolver();
 
-        if(resolver instanceof PlayerRequestResolver)
+        ImmutableList<IToken> requestTokens = resolver.getAllAssignedRequests();
+        for (IToken token : requestTokens)
         {
-            ImmutableList<IToken> requestTokens = ((PlayerRequestResolver) resolver).getAllAssignedRequests();
-
-            for(IToken token: requestTokens)
-            {
-                requests.add(view.getRequestManager().getRequestForToken(token));
-            }
+            requests.add(view.getRequestManager().getRequestForToken(token));
         }
 
         return requests.build();
@@ -177,7 +172,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
     {
         final int row = resourceList.getListElementIndexByPane(button);
 
-        if(getOpenRequests().size() > row)
+        if (getOpenRequests().size() > row)
         {
             @NotNull final WindowRequestDetail window = new WindowRequestDetail(null, getOpenRequests().get(row), colonyId);
             window.open();
