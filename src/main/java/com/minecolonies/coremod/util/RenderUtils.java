@@ -12,7 +12,6 @@ import com.minecolonies.structures.helpers.Settings;
 import com.minecolonies.structures.helpers.Structure;
 import com.minecolonies.structures.lib.ModelHolder;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockWallSign;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -21,7 +20,6 @@ import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
