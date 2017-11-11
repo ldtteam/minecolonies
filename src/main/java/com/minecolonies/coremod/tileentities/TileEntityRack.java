@@ -356,6 +356,13 @@ public class TileEntityRack extends TileEntity
         }
     }
 
+    public void softReset()
+    {
+        this.neighbor = BlockPos.ORIGIN;
+        single = true;
+        this.main = false;
+    }
+
     public IItemHandlerModifiable getInventory()
     {
         return inventory;
@@ -380,7 +387,7 @@ public class TileEntityRack extends TileEntity
             {
                 return (T) inventory;
             }
-            else
+            else if(getOtherChest() != null)
             {
                 if (main)
                 {
