@@ -16,6 +16,7 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
+import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.Log;
@@ -48,6 +49,7 @@ public class StandardRequestManager implements IRequestManager
     private static final String NBT_REQUEST_IDENTITY_MAP = "Request_Identities";
     private static final String NBT_RESOLVER_REQUESTS_ASSIGNMENTS = "Resolver_Requests";
     private static final String NBT_PLAYER = "Player";
+    private static final String NBT_RETRYING = "Retrying";
 
     private static final String NBT_TOKEN = "Token";
     private static final String NBT_ASSIGNMENTS = "Assignments";
@@ -113,7 +115,7 @@ public class StandardRequestManager implements IRequestManager
      * Anything that implements {@link IDeliverable} is by definition retryable.
      */
     @NotNull
-    private IRequestResolver retryingResolver = null;
+    private IRetryingRequestResolver retryingResolver = null;
     /**
      * Colony of the manager.
      */
@@ -133,7 +135,7 @@ public class StandardRequestManager implements IRequestManager
         this.playerResolver = getFactoryController().getNewInstance(TypeConstants.PLAYER_REQUEST_RESOLVER, colonyLocation, getFactoryController().getNewInstance(TypeConstants.ITOKEN));
 
         ResolverHandler.registerResolver(this, this.playerResolver);
-        //TODO: Initialize the retrying resolver once finished.
+        ResolverHandler.registerResolver(this, this.retryingResolver);
     }
 
     /**
@@ -159,6 +161,7 @@ public class StandardRequestManager implements IRequestManager
         NBTTagCompound systemCompound = new NBTTagCompound();
 
         systemCompound.setTag(NBT_PLAYER, getFactoryController().serialize(playerResolver));
+        systemCompound.setTag(NBT_RETRYING, getFactoryController().serialize(retryingResolver));
 
         NBTTagList requestIdentityList = new NBTTagList();
         requestBiMap.keySet().forEach(token -> {
@@ -184,9 +187,6 @@ public class StandardRequestManager implements IRequestManager
         });
         systemCompound.setTag(NBT_RESOLVER_REQUESTS_ASSIGNMENTS, resolverRequestAssignmentList);
 
-
-        //TODO Save retrying resolver.
-
         return systemCompound;
     }
 
@@ -199,7 +199,13 @@ public class StandardRequestManager implements IRequestManager
     public void deserializeNBT(final NBTTagCompound nbt)
     {
         this.resolverBiMap.remove(playerResolver.getRequesterId());
+        this.resolverBiMap.remove(retryingResolver.getRequesterId());
+
         this.playerResolver = getFactoryController().deserialize(nbt.getCompoundTag(NBT_PLAYER));
+        this.retryingResolver = getFactoryController().deserialize(nbt.getCompoundTag(NBT_RETRYING));
+
+        ResolverHandler.registerResolver(this, this.playerResolver);
+        ResolverHandler.registerResolver(this, this.retryingResolver);
 
         NBTTagList requestIdentityList = nbt.getTagList(NBT_REQUEST_IDENTITY_MAP, Constants.NBT.TAG_COMPOUND);
         requestBiMap.clear();
@@ -233,9 +239,6 @@ public class StandardRequestManager implements IRequestManager
 
             resolverRequestMap.put(token, assignedRequests);
         });
-
-
-        //TODO: Deserialize retrying resolver.
     }
 
     /**
@@ -313,6 +316,13 @@ public class StandardRequestManager implements IRequestManager
         final IToken token = createRequest(requester, object);
         assignRequest(token);
         return token;
+    }
+
+    @Override
+    public boolean reassignRequest(@NotNull final IToken token, @NotNull final Collection<IToken> resolverTokenBlackList) throws IllegalArgumentException
+    {
+        final IRequest request = RequestHandler.getRequest(this, token);
+        return RequestHandler.reassignRequest(this, request, resolverTokenBlackList);
     }
 
     /**
@@ -399,6 +409,12 @@ public class StandardRequestManager implements IRequestManager
     public void onProviderRemovedFromColony(@NotNull final IRequestResolverProvider provider) throws IllegalArgumentException
     {
         ProviderHandler.removeProvider(this, provider);
+    }
+
+    @Override
+    public void update()
+    {
+        this.retryingResolver.update();
     }
 
     /**
@@ -1447,6 +1463,12 @@ public class StandardRequestManager implements IRequestManager
             return token;
         }
 
+        @Override
+        public boolean reassignRequest(@NotNull final IToken token, @NotNull final Collection<IToken> resolverTokenBlackList) throws IllegalArgumentException
+        {
+            return wrappedManager.reassignRequest(token, resolverTokenBlackList);
+        }
+
         /**
          * Method to get a request for a given token.
          *
@@ -1517,6 +1539,12 @@ public class StandardRequestManager implements IRequestManager
         public IPlayerRequestResolver getPlayerResolver()
         {
             return wrappedManager.getPlayerResolver();
+        }
+
+        @Override
+        public void update()
+        {
+            wrappedManager.update();
         }
     }
 

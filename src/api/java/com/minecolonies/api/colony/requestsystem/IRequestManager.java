@@ -1,5 +1,6 @@
 package com.minecolonies.api.colony.requestsystem;
 
+import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -10,14 +11,17 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvid
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ITickable;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
 
 /**
  * Interface used to describe classes that function as managers for requests inside a colony.
  * Extends INBTSerializable to allow for easy reading and writing from NBT.
  */
-public interface IRequestManager extends INBTSerializable<NBTTagCompound>
+public interface IRequestManager extends INBTSerializable<NBTTagCompound>, ITickable
 {
 
     /**
@@ -70,6 +74,14 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>
      */
     @NotNull
     <T extends IRequestable> IToken createAndAssignRequest(@NotNull IRequester requester, @NotNull T object) throws IllegalArgumentException;
+
+    /**
+     * Method used to reassign a given request.
+     * @param token The token of the request that should be reassigned.
+     * @return true when the reassignment was successful, false when not.
+     * @throws IllegalArgumentException when the token is not known to this manager.
+     */
+    boolean reassignRequest(@NotNull IToken token, @NotNull Collection<IToken> resolverTokenBlackList) throws IllegalArgumentException;
 
     /**
      * Method to get a request for a given token.

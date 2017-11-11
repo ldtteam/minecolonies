@@ -49,7 +49,7 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
     @Override
     public int getPriority()
     {
-        return 0;
+        return AbstractRequestResolver.CONST_DEFAULT_RESOLVER_PRIORITY - 100;
     }
 
     @Override
