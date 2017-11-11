@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
+import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;
@@ -127,4 +128,11 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>, ITick
      */
     @NotNull
     IPlayerRequestResolver getPlayerResolver();
+
+    /**
+     * Get the retrying request resolver.
+     * @return The retrying request resolver.
+     */
+    @NotNull
+    IRetryingRequestResolver getRetryingRequestResolver();
 }

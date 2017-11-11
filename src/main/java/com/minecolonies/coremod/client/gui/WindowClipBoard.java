@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.RequestState;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
+import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
@@ -20,7 +21,10 @@ import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * ClipBoard window.
@@ -72,14 +76,6 @@ public class WindowClipBoard extends AbstractWindowSkeleton
      */
     private final int colonyId;
 
-    /**
-     * Creates a window build tool.
-     * This requires X, Y and Z coordinates.
-     * If a structure is active, recalculates the X Y Z with offset.
-     * Otherwise the given parameters are used.
-     *
-     * @param pos coordinate.
-     */
     public WindowClipBoard(@Nullable final int colonyId)
     {
         super(Constants.MOD_ID + BUILD_TOOL_RESOURCE_SUFFIX);
@@ -99,10 +95,10 @@ public class WindowClipBoard extends AbstractWindowSkeleton
             final IRequest request = getOpenRequests().get(index);
             final ItemIcon exampleStackDisplay = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
             final List<ItemStack> displayStacks = request.getDisplayStacks();
-            final ItemStack selectedStack = displayStacks.get((lifeCount / (20 * displayStacks.size())) % displayStacks.size());
 
             if (!displayStacks.isEmpty())
             {
+                final ItemStack selectedStack = displayStacks.get((lifeCount / (20 * displayStacks.size())) % displayStacks.size());
                 exampleStackDisplay.setItem(selectedStack);
             }
             else
@@ -137,12 +133,13 @@ public class WindowClipBoard extends AbstractWindowSkeleton
         }
 
         final IPlayerRequestResolver resolver = view.getRequestManager().getPlayerResolver();
+        final IRetryingRequestResolver retryingRequestResolver = view.getRequestManager().getRetryingRequestResolver();
 
-        ImmutableList<IToken> requestTokens = resolver.getAllAssignedRequests();
-        for (IToken token : requestTokens)
-        {
-            requests.add(view.getRequestManager().getRequestForToken(token));
-        }
+        final Set<IToken> requestTokens = new HashSet<>();
+        requestTokens.addAll(resolver.getAllAssignedRequests());
+        requestTokens.addAll(retryingRequestResolver.getAllAssignedRequests());
+
+        requests.addAll(requestTokens.stream().map(view.getRequestManager()::getRequestForToken).collect(Collectors.toSet()));
 
         return requests.build();
     }
@@ -172,7 +169,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
     {
         final int row = resourceList.getListElementIndexByPane(button);
 
-        if (getOpenRequests().size() > row)
+        if (getOpenRequests().size() > row && row >= 0)
         {
             @NotNull final WindowRequestDetail window = new WindowRequestDetail(null, getOpenRequests().get(row), colonyId);
             window.open();
@@ -182,7 +179,11 @@ public class WindowClipBoard extends AbstractWindowSkeleton
     private void cancel(@NotNull final Button button)
     {
         final int row = resourceList.getListElementIndexByPane(button);
-        @NotNull final IRequest request = getOpenRequests().get(row);
-        MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(colonyId, request.getToken(), RequestState.CANCELLED, null));
+
+        if (getOpenRequests().size() > row && row >= 0)
+        {
+            @NotNull final IRequest request = getOpenRequests().get(row);
+            MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(colonyId, request.getToken(), RequestState.CANCELLED, null));
+        }
     }
 }

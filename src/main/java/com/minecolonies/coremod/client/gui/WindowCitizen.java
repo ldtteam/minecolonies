@@ -358,10 +358,10 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
             final IRequest request = getOpenRequestsOfCitizen().get(index);
             final ItemIcon exampleStackDisplay = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
             final List<ItemStack> displayStacks = request.getDisplayStacks();
-            final ItemStack selectedStack = displayStacks.get((lifeCount / (20 * displayStacks.size())) % displayStacks.size());
 
             if (!displayStacks.isEmpty())
             {
+                final ItemStack selectedStack = displayStacks.get((lifeCount / (20 * displayStacks.size())) % displayStacks.size());
                 exampleStackDisplay.setItem(selectedStack);
             }
             else
@@ -596,8 +596,12 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
     private void cancel(@NotNull final Button button)
     {
         final int row = resourceList.getListElementIndexByPane(button);
-        @NotNull final IRequest request = getOpenRequestsOfCitizen().get(row);
-        MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getToken(), RequestState.CANCELLED, null));
+
+        if (getOpenRequestsOfCitizen().size() > row && row >= 0)
+        {
+            @NotNull final IRequest request = getOpenRequestsOfCitizen().get(row);
+            MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getToken(), RequestState.CANCELLED, null));
+        }
     }
 
     /**
@@ -608,42 +612,43 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
     private void fulfill(@NotNull final Button button)
     {
         final int row = resourceList.getListElementIndexByPane(button);
-        @NotNull final IRequest tRequest = getOpenRequestsOfCitizen().get(row);
 
-        if (!(tRequest.getRequest() instanceof IDeliverable))
-            return;
-
-        @NotNull final IRequest<? extends IDeliverable> request = (IRequest<? extends IDeliverable>) tRequest;
-
-        final Predicate<ItemStack> requestPredicate = stack -> request.getRequest().matches(stack);
-        final int amount = request.getRequest().getCount();
-
-        final int count = InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory), requestPredicate);
-
-        if (!isCreative && count <= 0)
+        if (getOpenRequestsOfCitizen().size() > row && row >= 0)
         {
-            return;
+            @NotNull final IRequest tRequest = getOpenRequestsOfCitizen().get(row);
+
+            if (!(tRequest.getRequest() instanceof IDeliverable))
+                return;
+
+            @NotNull final IRequest<? extends IDeliverable> request = (IRequest<? extends IDeliverable>) tRequest;
+
+            final Predicate<ItemStack> requestPredicate = stack -> request.getRequest().matches(stack);
+            final int amount = request.getRequest().getCount();
+
+            final int count = InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory), requestPredicate);
+
+            if (!isCreative && count <= 0)
+            {
+                return;
+            }
+
+            // The itemStack size should not be greater than itemStack.getMaxStackSize, We send 1 instead
+            // and use quantity for the size
+            @NotNull final ItemStack itemStack;
+            if(isCreative)
+            {
+                itemStack = request.getDisplayStacks().get(request.getDisplayStacks().size() - 1);
+            }
+            else
+            {
+                itemStack = inventory.getStackInSlot(InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(inventory), requestPredicate));
+            }
+
+
+            final AbstractBuilding.View building = ColonyManager.getColonyView(citizen.getColonyId()).getBuilding(citizen.getWorkBuilding());
+
+            MineColonies.getNetwork().sendToServer(new TransferItemsRequestMessage(building, itemStack, isCreative ? amount : count));
+            MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getToken(), RequestState.OVERRULED, itemStack));
         }
-
-        // The itemStack size should not be greater than itemStack.getMaxStackSize, We send 1 instead
-        // and use quantity for the size
-        @NotNull final ItemStack itemStack;
-        if(isCreative)
-        {
-            itemStack = request.getDisplayStacks().get(request.getDisplayStacks().size() - 1);
-        }
-        else
-        {
-            itemStack = inventory.getStackInSlot(InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(inventory), requestPredicate));
-        }
-
-
-        final AbstractBuilding.View building = ColonyManager.getColonyView(citizen.getColonyId()).getBuilding(citizen.getWorkBuilding());
-
-        MineColonies.getNetwork().sendToServer(new TransferItemsRequestMessage(building, itemStack, isCreative ? amount : count));
-
-        //todo we can resolve this like this later.
-        //MineColonies.getNetwork().sendToServer(new TransferItemsToCitizenRequestMessage(this.citizen, itemStack, isCreative ? amount : count, citizen.getColonyId()));
-        MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getToken(), RequestState.OVERRULED, itemStack));
     }
 }
