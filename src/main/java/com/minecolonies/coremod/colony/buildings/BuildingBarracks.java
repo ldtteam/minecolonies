@@ -65,6 +65,7 @@ public class BuildingBarracks extends AbstractBuilding
                     final AbstractBuilding building = getColony().getBuilding(tuple.getFirst());
                     if (building instanceof BuildingBarracksTower)
                     {
+                        building.setStyle(this.getStyle());
                         ((BuildingBarracksTower) building).addBarracks(getLocation());
                     }
                 }

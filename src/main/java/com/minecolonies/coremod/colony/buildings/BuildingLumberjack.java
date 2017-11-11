@@ -25,7 +25,6 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.oredict.OreDictionary;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -61,11 +60,6 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     private static final int SAPLINGS_TO_KEEP = 32;
 
     /**
-     * List of the items the lumberjack has to keep.
-     */
-    private final Map<ItemStorage, Integer> keepX = new HashMap<>();
-
-    /**
      * List of saplings the lumberjack should, or should not fell (true if should, false if should not).
      */
     private final Map<ItemStorage, Boolean> treesToFell = new LinkedHashMap<>();
@@ -80,8 +74,8 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     {
         super(c, l);
 
-        final ItemStack stack = new ItemStack(Blocks.SAPLING);
-        keepX.put(new ItemStorage(stack, false), SAPLINGS_TO_KEEP);
+        keepX.put(new ItemStack(Blocks.SAPLING)::isItemEqual, SAPLINGS_TO_KEEP);
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), 1);
     }
 
     /**
@@ -193,19 +187,6 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     }
 
     /**
-     * Override this method if you want to keep an amount of items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
-     *
-     * @return a list of objects which should be kept.
-     */
-    @Override
-    public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
-    {
-        return keepX;
-    }
-
-    /**
      * Getter of the job description.
      *
      * @return the description of the lumberjacks job.
@@ -215,20 +196,6 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     public String getJobName()
     {
         return LUMBERJACK;
-    }
-
-    /**
-     * Override this method if you want to keep some items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
-     *
-     * @param stack the stack to decide on
-     * @return true if the stack should remain in inventory
-     */
-    @Override
-    public boolean neededForWorker(@Nullable final ItemStack stack)
-    {
-        return ItemStackUtils.hasToolLevel(stack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel());
     }
 
     /**
