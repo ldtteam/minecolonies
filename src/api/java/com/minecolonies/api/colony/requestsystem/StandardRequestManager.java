@@ -1515,7 +1515,7 @@ public class StandardRequestManager implements IRequestManager
         @Override
         public IRequestResolver getPlayerResolver()
         {
-            return null;
+            return wrappedManager.getPlayerResolver();
         }
     }
 
