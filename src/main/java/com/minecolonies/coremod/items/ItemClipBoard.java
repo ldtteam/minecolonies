@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.items;
 
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
@@ -12,6 +13,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -69,6 +71,10 @@ public class ItemClipBoard extends AbstractItemMinecolonies
             final int colonyId = compound.getInteger(TAG_COLONY);
             MineColonies.proxy.openClipBoardWindow(colonyId);
         }
+        else
+        {
+            LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.item.clipboard.needColony");
+        }
 
         return new ActionResult<>(EnumActionResult.SUCCESS, scepter);
     }
@@ -110,12 +116,12 @@ public class ItemClipBoard extends AbstractItemMinecolonies
         if(entity instanceof TileEntityColonyBuilding)
         {
             compound.setInteger(TAG_COLONY, ((TileEntityColonyBuilding) entity).getColonyId());
+            LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.item.clipboard.newColony", ((TileEntityColonyBuilding) entity).getColonyId());
         }
         else if(compound.hasKey(TAG_COLONY))
         {
             final int colonyId = compound.getInteger(TAG_COLONY);
             MineColonies.proxy.openClipBoardWindow(colonyId);
-
         }
 
         return EnumActionResult.SUCCESS;

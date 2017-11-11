@@ -496,3 +496,6 @@ com.minecolonies.coremod.gui.citizen.requestsCancel=Cancel
 com.minecolonies.coremod.gui.citizen.requestsFulfill=Fulfill
 
 item.minecolonies.clipboard.name=Clipboard
+
+com.minecolonies.coremod.item.clipboard.needColony=Please shift-right click the colony to register your clipboard to it.
+com.minecolonies.coremod.item.clipboard.needColony=Registered to colony %d.

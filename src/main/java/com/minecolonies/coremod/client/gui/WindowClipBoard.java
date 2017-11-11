@@ -3,6 +3,8 @@ package com.minecolonies.coremod.client.gui;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.RequestState;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.controls.Button;
@@ -10,6 +12,9 @@ import com.minecolonies.blockout.controls.ItemIcon;
 import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.PlayerRequestResolver;
 import com.minecolonies.coremod.network.messages.UpdateRequestStateMessage;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
@@ -105,6 +110,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
             {
                 exampleStackDisplay.setItem(ItemStackUtils.EMPTY);
             }
+            rowPane.findPaneOfTypeByID("requester", Label.class).setLabelText(request.getRequester().toString());
 
             final Label targetLabel = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Label.class);
             targetLabel.setLabelText(request.getRequester().getDeliveryLocation().toString());
@@ -123,9 +129,27 @@ public class WindowClipBoard extends AbstractWindowSkeleton
 
     private ImmutableList<IRequest> getOpenRequests()
     {
-        ImmutableList.Builder<IRequest> builder = ImmutableList.builder();
+        final ImmutableList.Builder<IRequest> requests = ImmutableList.builder();
+        final ColonyView view = ColonyManager.getColonyView(colonyId);
 
-        return builder.build();
+        if(view ==null)
+        {
+            return requests.build();
+        }
+
+        final IRequestResolver resolver = view.getRequestManager().getPlayerResolver();
+
+        if(resolver instanceof PlayerRequestResolver)
+        {
+            ImmutableList<IToken> requestTokens = ((PlayerRequestResolver) resolver).getAllAssignedRequests();
+
+            for(IToken token: requestTokens)
+            {
+                requests.add(view.getRequestManager().getRequestForToken(token));
+            }
+        }
+
+        return requests.build();
     }
 
     /**

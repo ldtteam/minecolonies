@@ -1,14 +1,14 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="250 244" pause="false"
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 244" pause="false"
         lightbox="false"
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
 
-<image source="minecolonies:textures/gui/citizen/colonist_papper.png" pos="0 -15" size="190 244"/>
+<image source="minecolonies:textures/gui/citizen/colonist_papper.png" pos="0 0" size="190 244"/>
 
 
-    <label size="100% 11" pos="60 0"
+    <label size="100% 11" pos="60 20"
            label="$(com.minecolonies.coremod.gui.citizen.requests)" color="black"/>
-    <list id="requests" size="78% 90%" pos="20 20">
-        <box id="requestx" size="85% 38" linewidth="2">
+    <list id="requests" size="78% 90%" pos="20 40">
+        <box id="requestx" size="100% 38" linewidth="2">
             <!--Item icon -->
             <itemicon id="requestStack" size="16 16" pos="1 1"/>
 
@@ -17,9 +17,9 @@
 
             <!--Requester location-->
             <label id="targetLocation" size="50 12" pos="38 3" color="black"/>
-
+            <label id="requester" size="50 12" pos="38 20" color="black"/>
            <!-- button to cancel the request-->
-            <buttonimage id="cancel" size="37 16" pos="110 20" textcolor="black"
+            <buttonimage id="cancel" size="37 16" pos="100 20" textcolor="black"
                          label="$(com.minecolonies.coremod.gui.citizen.requestsCancel)" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
         </box>
     </list>
