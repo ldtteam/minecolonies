@@ -117,4 +117,10 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     {
 
     }
+
+    @Override
+    public void update()
+    {
+
+    }
 }
