@@ -3,6 +3,7 @@ package com.minecolonies.coremod.client.gui;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.RequestState;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
@@ -13,7 +14,6 @@ import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.PlayerRequestResolver;
 import com.minecolonies.coremod.network.messages.UpdateRequestStateMessage;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
@@ -136,7 +136,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
             return requests.build();
         }
 
-        final PlayerRequestResolver resolver = view.getRequestManager().getPlayerResolver();
+        final IPlayerRequestResolver resolver = view.getRequestManager().getPlayerResolver();
 
         ImmutableList<IToken> requestTokens = resolver.getAllAssignedRequests();
         for (IToken token : requestTokens)
