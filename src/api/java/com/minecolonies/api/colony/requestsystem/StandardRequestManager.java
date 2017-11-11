@@ -15,6 +15,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.IRetryable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
+import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.Log;
@@ -104,7 +105,7 @@ public class StandardRequestManager implements IRequestManager
      * The fallback resolver used to resolve directly to the player.
      */
     @NotNull
-    private IRequestResolver                             playerResolver = null;
+    private IPlayerRequestResolver                             playerResolver = null;
 
     /**
      * The fallback resolver used to resolve using retries.
@@ -255,7 +256,7 @@ public class StandardRequestManager implements IRequestManager
      */
     @NotNull
     @Override
-    public IRequestResolver getPlayerResolver()
+    public IPlayerRequestResolver getPlayerResolver()
     {
         return this.playerResolver;
     }
@@ -1513,7 +1514,7 @@ public class StandardRequestManager implements IRequestManager
 
         @NotNull
         @Override
-        public IRequestResolver getPlayerResolver()
+        public IPlayerRequestResolver getPlayerResolver()
         {
             return wrappedManager.getPlayerResolver();
         }
