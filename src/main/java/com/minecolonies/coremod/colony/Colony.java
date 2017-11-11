@@ -241,6 +241,11 @@ public class Colony implements IColony
     private final Set<Block> freeBlocks = new HashSet<>();
 
     /**
+     * Colony permission event handler.
+     */
+    private final ColonyPermissionEventHandler eventHandler;
+
+    /**
      * Amount of ticks passed.
      */
     private int ticksPassed = 0;
@@ -274,7 +279,8 @@ public class Colony implements IColony
         this.colonyAchievements = new ArrayList<>();
 
         // Register a new event handler
-        MinecraftForge.EVENT_BUS.register(new ColonyPermissionEventHandler(this));
+        eventHandler = new ColonyPermissionEventHandler(this);
+        MinecraftForge.EVENT_BUS.register(eventHandler);
 
         for (final String s : Configurations.freeToInteractBlocks)
         {
@@ -430,6 +436,15 @@ public class Colony implements IColony
         lastContactInHours = compound.getInteger(TAG_ABANDONED);
         manualHousing = compound.getBoolean(TAG_MANUAL_HOUSING);
         canColonyBeAutoDeleted = compound.getBoolean(TAG_DELETABLE);
+    }
+
+    /**
+     * Get the event handler assigned to the colony.
+     * @return the ColonyPermissionEventHandler.
+     */
+    public ColonyPermissionEventHandler getEventHandler()
+    {
+        return eventHandler;
     }
 
     /**
