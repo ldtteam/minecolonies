@@ -84,32 +84,32 @@ public class BlockPaperwall extends Block
         setResistance(RESISTANCE);
     }
 
-    public void addCollisionBoxToList(@NotNull IBlockState state,
+    public void addCollisionBoxToList(@NotNull IBlockState iBlockState,
                                       @NotNull final World worldIn,
                                       @NotNull final BlockPos pos,
                                       @NotNull final AxisAlignedBB entityBox,
                                       @NotNull final List<AxisAlignedBB> collidingBoxes,
                                       @Nullable final Entity entityIn)
     {
-        state = this.getActualState(state, worldIn, pos);
+        iBlockState = this.getActualState(iBlockState, worldIn, pos);
         addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_BY_INDEX[0]);
 
-        if (state.getValue(NORTH))
+        if (iBlockState.getValue(NORTH))
         {
             addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_BY_INDEX[getBoundingBoxIndex(EnumFacing.NORTH)]);
         }
 
-        if (state.getValue(SOUTH))
+        if (iBlockState.getValue(SOUTH))
         {
             addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_BY_INDEX[getBoundingBoxIndex(EnumFacing.SOUTH)]);
         }
 
-        if (state.getValue(EAST))
+        if (iBlockState.getValue(EAST))
         {
             addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_BY_INDEX[getBoundingBoxIndex(EnumFacing.EAST)]);
         }
 
-        if (state.getValue(WEST))
+        if (iBlockState.getValue(WEST))
         {
             addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_BY_INDEX[getBoundingBoxIndex(EnumFacing.WEST)]);
         }
@@ -120,12 +120,12 @@ public class BlockPaperwall extends Block
     }
 
     @NotNull
-    public AxisAlignedBB getBoundingBox(@NotNull IBlockState tempState,
+    public AxisAlignedBB getBoundingBox(@NotNull IBlockState blockState,
                                         @NotNull final IBlockAccess source,
                                         @NotNull final BlockPos pos)
     {
-        tempState = this.getActualState(tempState, source, pos);
-        return AABB_BY_INDEX[getBoundingBoxIndex(tempState)];
+        blockState = this.getActualState(blockState, source, pos);
+        return AABB_BY_INDEX[getBoundingBoxIndex(blockState)];
     }
 
     private static int getBoundingBoxIndex(final IBlockState state)
