@@ -12,7 +12,6 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
-import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSlab;
@@ -27,9 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
@@ -191,8 +188,6 @@ public class BuildingMiner extends AbstractBuildingWorker
      */
     private       boolean     foundLadder = false;
 
-    private final Map<ItemStorage, Integer> keepX = new HashMap<>();
-
     /**
      * Required constructor.
      *
@@ -211,13 +206,16 @@ public class BuildingMiner extends AbstractBuildingWorker
         final ItemStack stackPlanks = new ItemStack(Blocks.PLANKS);
         final ItemStack stackDirt = new ItemStack(Blocks.DIRT);
 
-        keepX.put(new ItemStorage(stackLadder, false), STACK_MAX_SIZE);
-        keepX.put(new ItemStorage(stackFence, false), STACK_MAX_SIZE);
-        keepX.put(new ItemStorage(stackTorch, false), STACK_MAX_SIZE);
-        keepX.put(new ItemStorage(stackCobble, false), STACK_MAX_SIZE);
-        keepX.put(new ItemStorage(stackSlab, false), STACK_MAX_SIZE);
-        keepX.put(new ItemStorage(stackPlanks, false), STACK_MAX_SIZE);
-        keepX.put(new ItemStorage(stackDirt, false), STACK_MAX_SIZE);
+        keepX.put(stackLadder::isItemEqual, STACK_MAX_SIZE);
+        keepX.put(stackFence::isItemEqual, STACK_MAX_SIZE);
+        keepX.put(stackTorch::isItemEqual, STACK_MAX_SIZE);
+        keepX.put(stackCobble::isItemEqual, STACK_MAX_SIZE);
+        keepX.put(stackSlab::isItemEqual, STACK_MAX_SIZE);
+        keepX.put(stackPlanks::isItemEqual, STACK_MAX_SIZE);
+        keepX.put(stackDirt::isItemEqual, STACK_MAX_SIZE);
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.PICKAXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), STACK_MAX_SIZE);
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.SHOVEL, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), STACK_MAX_SIZE);
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), STACK_MAX_SIZE);
     }
 
     /**
@@ -284,27 +282,6 @@ public class BuildingMiner extends AbstractBuildingWorker
     public AbstractJob createJob(final CitizenData citizen)
     {
         return new JobMiner(citizen);
-    }
-
-    @Override
-    public boolean neededForWorker(@Nullable final ItemStack stack)
-    {
-        return ItemStackUtils.hasToolLevel(stack, ToolType.PICKAXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel())
-            || ItemStackUtils.hasToolLevel(stack, ToolType.SHOVEL, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel())
-            || ItemStackUtils.hasToolLevel(stack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel());
-    }
-
-    /**
-     * Override this method if you want to keep an amount of items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
-     *
-     * @return a list of objects which should be kept.
-     */
-    @Override
-    public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
-    {
-        return keepX;
     }
 
     /**
