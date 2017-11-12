@@ -284,7 +284,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         }
 
         final ItemStack[] arrayToRequestAndRetrieve = list.toArray(new ItemStack[list.size()]);
-        checkIfRequestForItemExistOrCreate(arrayToRequestAndRetrieve);
+        checkIfRequestForItemExistOrCreateAsynch(arrayToRequestAndRetrieve);
 
         InventoryUtils.removeStacksFromItemHandler(new InvWrapper(worker.getInventoryCitizen()), list);
         currentBakingProduct.nextState();
@@ -292,28 +292,6 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         getOwnBuilding().addToTasks(ProductState.RAW, currentBakingProduct);
 
         return getState();
-    }
-
-    /**
-     * Determines if the Baker should request to the chat.
-     *
-     * @return true if he has nothing to do at the moment.
-     */
-    private boolean shouldRequest()
-    {
-        final BuildingBaker bakerBuilding = getOwnBuilding();
-        for (final BakingProduct bakingProduct : bakerBuilding.getFurnacesWithProduct().values())
-        {
-            if (bakingProduct != null)
-            {
-                return true;
-            }
-        }
-
-        final List<BakingProduct> preparedList = bakerBuilding.getTasks().get(ProductState.PREPARED);
-        final List<BakingProduct> bakedList = bakerBuilding.getTasks().get(ProductState.BAKED);
-
-        return (preparedList == null || preparedList.isEmpty()) && (bakedList == null || bakedList.isEmpty());
     }
 
     /**

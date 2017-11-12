@@ -1028,16 +1028,33 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         return BlockPosUtil.getFloor(targetPos.offset(facing, distance), world);
     }
 
+    /**
+     * Requests a list of itemstacks.
+     *
+     * @param stacks the stacks.
+     * @return true if they're in the inventory.
+     */
     public boolean checkIfRequestForItemExistOrCreate(@NotNull final ItemStack... stacks)
     {
         return checkIfRequestForItemExistOrCreate(Lists.newArrayList(stacks));
     }
 
+    /**
+     * Check if any of the stacks is in the inventory.
+     * @param stacks the list of stacks.
+     * @return true if so.
+     */
     public boolean checkIfRequestForItemExistOrCreate(@NotNull final Collection<ItemStack> stacks)
     {
         return stacks.stream().allMatch(s->checkIfRequestForItemExistOrCreate(s));
     }
 
+    /**
+     * Check if a stack has been requested already or is in the inventory.
+     * If not in the inventory and not requested already, create request
+     * @param stack the requested stack.
+     * @return true if in the inventory, else false.
+     */
     public boolean checkIfRequestForItemExistOrCreate(@NotNull final ItemStack stack)
     {
         if (InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), s -> ItemStackUtils.compareItemStacksIgnoreStackSize(s, stack) && s.getCount() >= stack.getCount()))
@@ -1052,6 +1069,50 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
 
         return false;
+    }
 
+    /**
+     * Requests a list of itemstacks.
+     *
+     * @param stacks the stacks.
+     * @return true if they're in the inventory.
+     */
+    public boolean checkIfRequestForItemExistOrCreateAsynch(@NotNull final ItemStack... stacks)
+    {
+        return checkIfRequestForItemExistOrCreateAsynch(Lists.newArrayList(stacks));
+    }
+
+    /**
+     * Check if any of the stacks is in the inventory.
+     * @param stacks the list of stacks.
+     * @return true if so.
+     */
+    public boolean checkIfRequestForItemExistOrCreateAsynch(@NotNull final Collection<ItemStack> stacks)
+    {
+        return stacks.stream().allMatch(s->checkIfRequestForItemExistOrCreateAsynch(s));
+    }
+
+    /**
+     * Check if a stack has been requested already or is in the inventory.
+     * If not in the inventory and not requested already, create request
+     * @param stack the requested stack.
+     * @return true if in the inventory, else false.
+     */
+    public boolean checkIfRequestForItemExistOrCreateAsynch(@NotNull final ItemStack stack)
+    {
+        if (InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()),
+                s -> ItemStackUtils.compareItemStacksIgnoreStackSize(s, stack) && s.getCount() >= stack.getCount()))
+        {
+            return true;
+        }
+
+        if (getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), IDeliverable.class,
+                (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack)).isEmpty())
+        {
+            Stack stackRequest = new Stack(stack);
+            createRequestAsync(stackRequest);
+        }
+
+        return false;
     }
 }
