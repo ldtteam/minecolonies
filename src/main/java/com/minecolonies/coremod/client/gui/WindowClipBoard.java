@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -98,7 +99,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
 
             if (!displayStacks.isEmpty())
             {
-                final ItemStack selectedStack = displayStacks.get((lifeCount / (20 * displayStacks.size())) % displayStacks.size());
+                final ItemStack selectedStack = displayStacks.get((lifeCount / 20) % displayStacks.size());
                 exampleStackDisplay.setItem(selectedStack);
             }
             else
@@ -139,7 +140,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
         requestTokens.addAll(resolver.getAllAssignedRequests());
         requestTokens.addAll(retryingRequestResolver.getAllAssignedRequests());
 
-        requests.addAll(requestTokens.stream().map(view.getRequestManager()::getRequestForToken).collect(Collectors.toSet()));
+        requests.addAll(requestTokens.stream().map(view.getRequestManager()::getRequestForToken).filter(Objects::nonNull).collect(Collectors.toSet()));
 
         return requests.build();
     }

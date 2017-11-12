@@ -361,7 +361,7 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
 
             if (!displayStacks.isEmpty())
             {
-                final ItemStack selectedStack = displayStacks.get((lifeCount / (20 * displayStacks.size())) % displayStacks.size());
+                final ItemStack selectedStack = displayStacks.get((lifeCount / 20) % displayStacks.size());
                 exampleStackDisplay.setItem(selectedStack);
             }
             else

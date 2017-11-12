@@ -15,6 +15,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
@@ -91,9 +92,9 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>, ITick
      * @param <T>   The type of request that is being looked for.
      * @return The request of the given type for that token.
      *
-     * @throws IllegalArgumentException when either their is no request with that token, or the token does not produce a request of the given type T.
+     * @throws IllegalArgumentException when the token does not produce a request of the given type T.
      */
-    @NotNull
+    @Nullable
     <T extends IRequestable> IRequest<T> getRequestForToken(@NotNull IToken token) throws IllegalArgumentException;
 
     /**

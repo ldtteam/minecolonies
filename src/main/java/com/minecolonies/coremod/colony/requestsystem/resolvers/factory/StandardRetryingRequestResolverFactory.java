@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.StandardRetryingRequestResolver;
+import com.sun.org.apache.bcel.internal.generic.ILOAD;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +24,7 @@ public class StandardRetryingRequestResolverFactory implements IFactory<IRequest
 {
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
     private static final String NBT_TOKEN  = "Token";
+    private static final String NBT_LOCATION = "Location";
     private static final String NBT_VALUE = "Value";
     private static final String NBT_TRIES = "Requests";
     private static final String NBT_DELAYS = "Delays";
@@ -77,6 +79,9 @@ public class StandardRetryingRequestResolverFactory implements IFactory<IRequest
             return delayCompound;
         }).collect(NBTUtils.toNBTTagList()));
 
+        compound.setTag(NBT_TOKEN, controller.serialize(standardRetryingRequestResolver.getRequesterId()));
+        compound.setTag(NBT_LOCATION, controller.serialize(standardRetryingRequestResolver.getRequesterLocation()));
+
         return compound;
     }
 
@@ -98,7 +103,10 @@ public class StandardRetryingRequestResolverFactory implements IFactory<IRequest
             return new HashMap.SimpleEntry<>(token, tries);
         }).collect(Collectors.toMap(HashMap.SimpleEntry::getKey, HashMap.SimpleEntry::getValue));
 
-        final StandardRetryingRequestResolver retryingRequestResolver = new StandardRetryingRequestResolver();
+        final IToken token = controller.deserialize(nbt.getCompoundTag(NBT_TOKEN));
+        final ILocation location = controller.deserialize(nbt.getCompoundTag(NBT_LOCATION));
+
+        final StandardRetryingRequestResolver retryingRequestResolver = new StandardRetryingRequestResolver(token, location);
         retryingRequestResolver.updateData(assignments, delays);
         return retryingRequestResolver;
     }

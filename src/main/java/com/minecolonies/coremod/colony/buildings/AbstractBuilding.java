@@ -1460,7 +1460,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
             return ImmutableList.of();
         }
 
-        return ImmutableList.copyOf(citizensByRequests.get(data.getId()).stream().map(getColony().getRequestManager()::getRequestForToken).iterator());
+        return ImmutableList.copyOf(citizensByRequests.get(data.getId()).stream().map(getColony().getRequestManager()::getRequestForToken).filter(Objects::nonNull).iterator());
     }
 
     public <Request> ImmutableList<IRequest<? extends Request>> getOpenRequestsOfType(@NotNull final CitizenData citizenData, final Class<Request> requestType)
@@ -1496,7 +1496,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
             return ImmutableList.of();
         }
 
-        return ImmutableList.copyOf(citizensByCompletedRequests.get(data.getId()).stream().map(getColony().getRequestManager()::getRequestForToken).iterator());
+        return ImmutableList.copyOf(citizensByCompletedRequests.get(data.getId()).stream().map(getColony().getRequestManager()::getRequestForToken).filter(Objects::nonNull).iterator());
     }
 
     public boolean hasCitizenCompletedRequests(@NotNull final CitizenData data)
@@ -1773,7 +1773,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
                 return ImmutableList.of();
             }
 
-            return ImmutableList.copyOf(citizensByRequests.get(data.getId()).stream().map(getColony().getRequestManager()::getRequestForToken).iterator());
+            return ImmutableList.copyOf(citizensByRequests.get(data.getId()).stream().map(getColony().getRequestManager()::getRequestForToken).filter(Objects::nonNull).iterator());
         }
 
         public <Request> ImmutableList<IRequest<? extends Request>> getOpenRequestsOfType(@NotNull final CitizenDataView citizenData, final Class<Request> requestType)

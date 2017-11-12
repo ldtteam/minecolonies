@@ -30,18 +30,22 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
 
     public StandardRetryingRequestResolver(final IRequestManager manager) {
         this.updateManager(manager);
+
+        this.id = manager.getFactoryController().getNewInstance(TypeConstants.ITOKEN);
+        this.location = manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, manager.getColony().getCenter(), manager.getColony().getWorld().provider.getDimension());
+
     }
 
-    public StandardRetryingRequestResolver()
+    public StandardRetryingRequestResolver(final IToken id, final ILocation location)
     {
+        this.id = id;
+        this.location = location;
     }
 
     @Override
     public void updateManager(final IRequestManager manager)
     {
         this.manager = manager;
-        this.id = manager.getFactoryController().getNewInstance(TypeConstants.ITOKEN);
-        this.location = manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, manager.getColony().getCenter(), manager.getColony().getWorld().provider.getDimension());
     }
 
     @Override

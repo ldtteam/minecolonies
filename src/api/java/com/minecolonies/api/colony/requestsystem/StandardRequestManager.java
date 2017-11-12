@@ -27,6 +27,8 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -266,7 +268,12 @@ public class StandardRequestManager implements IRequestManager
             IToken token = getFactoryController().deserialize(assignmentCompound.getCompoundTag(NBT_TOKEN));
             if (!resolverBiMap.containsKey(token))
             {
-                Log.getLogger().error("Unknown resolver found in NBT Data. Something might be going wrong and requests might linger around!");
+                //Since we use dynamic resolvers some might not exist on the client side.
+                //If we would not do this check it would spam the log.
+                if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER)
+                {
+                    Log.getLogger().error("Unknown resolver found in NBT Data. Something might be going wrong and requests might linger around!");
+                }
                 return;
             }
 
@@ -386,11 +393,16 @@ public class StandardRequestManager implements IRequestManager
      * @throws IllegalArgumentException when either their is no request with that token, or the token does not produce a request of the given type T.
      */
     @SuppressWarnings(Suppression.UNCHECKED)
-    @NotNull
+    @Nullable
     @Override
     public <T extends IRequestable> IRequest<T> getRequestForToken(@NotNull final IToken token) throws IllegalArgumentException
     {
-        final IRequest<T> internalRequest = RequestHandler.getRequest(this, token);
+        final IRequest<T> internalRequest = RequestHandler.getRequestOrNull(this, token);
+
+        if (internalRequest == null)
+        {
+            return null;
+        }
 
         final NBTTagCompound requestData = getFactoryController().serialize(internalRequest);
 
@@ -1402,6 +1414,17 @@ public class StandardRequestManager implements IRequestManager
                 throw new IllegalArgumentException("The given token is not registered as a request to this manager");
             }
 
+            return getRequestOrNull(manager, token);
+        }
+
+        /**
+         * Method used to get a registered request fora given token.
+         *
+         * @param token The token to get the request for.
+         * @return The request or null when no request with that token exists.
+         */
+        private static IRequest getRequestOrNull(final StandardRequestManager manager, final IToken token)
+        {
             LogHandler.log("Retrieving the request for: " + token);
 
             return manager.requestBiMap.get(token);
@@ -1537,7 +1560,7 @@ public class StandardRequestManager implements IRequestManager
         @Override
         public <T extends IRequestable> IRequest<T> getRequestForToken(@NotNull final IToken token) throws IllegalArgumentException
         {
-            return RequestHandler.getRequest(wrappedManager, token);
+            return RequestHandler.getRequestOrNull(wrappedManager, token);
         }
 
         /**

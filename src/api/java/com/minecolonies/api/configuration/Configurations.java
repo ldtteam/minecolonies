@@ -782,6 +782,6 @@ import static com.minecolonies.api.util.constant.Constants.*;
             public int maximalRetries = 3;
 
             @Config.Comment("The amount of ticks between retries of the request system for retryable requests. Lower increases server load.")
-            public int delayBetweenRetries = 120;
+            public int delayBetweenRetries = 1200;
         }
     }

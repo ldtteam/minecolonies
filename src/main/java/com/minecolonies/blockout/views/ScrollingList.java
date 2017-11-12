@@ -59,7 +59,12 @@ public class ScrollingList extends ScrollingView
         });
     }
 
-
+    @Override
+    public void onUpdate()
+    {
+        super.onUpdate();
+        refreshElementPanes();
+    }
 
     /**
      * Use the data provider to update all the element panes.
