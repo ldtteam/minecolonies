@@ -1026,7 +1026,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     public boolean checkIfRequestForItemExistOrCreate(@NotNull final Collection<ItemStack> stacks)
     {
-        return stacks.stream().allMatch(s->checkIfRequestForItemExistOrCreate(s));
+        return stacks.stream().allMatch(s->!checkIfRequestForItemExistOrCreate(s));
     }
 
     /**
