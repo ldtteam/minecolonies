@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
+import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
@@ -130,6 +131,9 @@ public class Tool implements IDeliverable
     @Override
     public boolean matches(@NotNull final ItemStack stack)
     {
+        if (getToolClass().equals(ToolType.HOE))
+            return stack.getItem() instanceof ItemHoe;
+
         //API:Map the given strings a proper way.
         return !ItemStackUtils.isEmpty(stack)
                  && stack.getCount() >= 1

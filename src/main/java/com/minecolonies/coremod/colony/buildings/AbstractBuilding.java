@@ -1464,6 +1464,11 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
         return !getOpenRequests(citizen).isEmpty();
     }
 
+    public boolean hasWorkerOpenRequestsFiltered(@NotNull CitizenData citizen, @NotNull Predicate<IRequest> selectionPredicate)
+    {
+        return getOpenRequests(citizen).stream().anyMatch(selectionPredicate);
+    }
+
     public <Request> boolean hasWorkerOpenRequestsOfType(@NotNull final CitizenData citizenData, final Class<Request> requestType)
     {
         return !getOpenRequestsOfType(citizenData, requestType).isEmpty();
