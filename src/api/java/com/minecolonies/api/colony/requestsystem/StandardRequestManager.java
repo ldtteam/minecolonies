@@ -133,7 +133,7 @@ public class StandardRequestManager implements IRequestManager
 
         final ILocation colonyLocation = getFactoryController().getNewInstance(TypeConstants.ILOCATION, colony.getCenter(), colony.getWorld().provider.getDimension());
         this.playerResolver = getFactoryController().getNewInstance(TypeConstants.PLAYER_REQUEST_RESOLVER, colonyLocation, getFactoryController().getNewInstance(TypeConstants.ITOKEN));
-
+        this.retryingResolver = getFactoryController().getNewInstance(TypeConstants.RETRYING_REQUEST_RESOLVER, this);
         ResolverHandler.registerResolver(this, this.playerResolver);
         ResolverHandler.registerResolver(this, this.retryingResolver);
     }
