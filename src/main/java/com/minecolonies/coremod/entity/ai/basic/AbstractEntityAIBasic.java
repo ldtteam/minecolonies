@@ -390,6 +390,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
             if (firstDeliverableRequest != null)
             {
+                boolean async = false;
+                if (isRequestAsync(firstDeliverableRequest.getToken()))
+                {
+                    async = true;
+                    job.getAsyncRequests().remove(firstDeliverableRequest.getToken());
+                }
                 getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), firstDeliverableRequest.getToken());
 
                 final ItemStack deliveredItemStack = firstDeliverableRequest.getDelivery();
@@ -404,8 +410,14 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 {
                     //Seems like somebody else picked up our stack.
                     //Lets try this again.
-                    //TODO:Async
-                    createRequest(firstDeliverableRequest.getRequest());
+                    if (!async)
+                    {
+                        createRequest(firstDeliverableRequest.getRequest());
+                    }
+                    else
+                    {
+                        createRequestAsync(firstDeliverableRequest.getRequest());
+                    }
                 }
             }
         }
@@ -1014,7 +1026,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     public boolean checkIfRequestForItemExistOrCreate(@NotNull final Collection<ItemStack> stacks)
     {
-        return stacks.stream().allMatch(s->!checkIfRequestForItemExistOrCreate(s));
+        return stacks.stream().allMatch(s->checkIfRequestForItemExistOrCreate(s));
     }
 
     /**
