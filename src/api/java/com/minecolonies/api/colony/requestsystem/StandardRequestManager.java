@@ -19,11 +19,13 @@ import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestR
 import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.api.util.constant.TypeConstants;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
@@ -215,12 +217,12 @@ public class StandardRequestManager implements IRequestManager
     {
         if (playerResolver != null)
         {
-            this.resolverBiMap.remove(playerResolver.getRequesterId());
+            ResolverHandler.removeResolverInternal(this, this.playerResolver);
         }
 
         if (retryingResolver != null)
         {
-            this.resolverBiMap.remove(retryingResolver.getRequesterId());
+            ResolverHandler.removeResolverInternal(this, this.playerResolver);
         }
 
         if (nbt.hasKey(NBT_PLAYER))
@@ -449,6 +451,19 @@ public class StandardRequestManager implements IRequestManager
                 return;
             default:
         }
+    }
+
+    @Override
+    public void overruleRequest(@NotNull final IToken token, @Nullable final ItemStack stack) throws IllegalArgumentException
+    {
+        final IRequest request = RequestHandler.getRequest(this, token);
+
+        if (!ItemStackUtils.isEmpty(stack))
+        {
+            request.setDelivery(stack);
+        }
+
+        updateRequestState(token, RequestState.OVERRULED);
     }
 
     /**
@@ -828,6 +843,11 @@ public class StandardRequestManager implements IRequestManager
             }
 
 
+            removeResolverInternal(manager, resolver);
+        }
+
+        private static void removeResolverInternal(final StandardRequestManager manager, final IRequestResolver resolver)
+        {
             manager.resolverBiMap.remove(resolver.getRequesterId());
             Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(resolver.getRequestType());
             requestTypes.remove(TypeConstants.OBJECT);
@@ -1575,6 +1595,12 @@ public class StandardRequestManager implements IRequestManager
         public void updateRequestState(@NotNull final IToken token, @NotNull final RequestState state) throws IllegalArgumentException
         {
             wrappedManager.updateRequestState(token, state);
+        }
+
+        @Override
+        public void overruleRequest(@NotNull final IToken token, @Nullable final ItemStack stack) throws IllegalArgumentException
+        {
+            wrappedManager.overruleRequest(token, stack);
         }
 
         /**

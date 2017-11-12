@@ -99,7 +99,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
 
             if (!displayStacks.isEmpty())
             {
-                final ItemStack selectedStack = displayStacks.get((lifeCount / 20) % displayStacks.size());
+                final ItemStack selectedStack = displayStacks.get((lifeCount / 30) % displayStacks.size());
                 exampleStackDisplay.setItem(selectedStack);
             }
             else

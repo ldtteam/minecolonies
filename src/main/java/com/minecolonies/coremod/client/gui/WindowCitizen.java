@@ -21,7 +21,6 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.TransferItemsRequestMessage;
-import com.minecolonies.coremod.network.messages.TransferItemsToCitizenRequestMessage;
 import com.minecolonies.coremod.network.messages.UpdateRequestStateMessage;
 import com.minecolonies.coremod.util.ExperienceUtils;
 import net.minecraft.client.gui.Gui;
@@ -361,7 +360,7 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
 
             if (!displayStacks.isEmpty())
             {
-                final ItemStack selectedStack = displayStacks.get((lifeCount / 20) % displayStacks.size());
+                final ItemStack selectedStack = displayStacks.get((lifeCount / 30) % displayStacks.size());
                 exampleStackDisplay.setItem(selectedStack);
             }
             else
@@ -637,13 +636,12 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
             @NotNull final ItemStack itemStack;
             if(isCreative)
             {
-                itemStack = request.getDisplayStacks().get(request.getDisplayStacks().size() - 1);
+                itemStack = request.getDisplayStacks().stream().findFirst().orElse(ItemStack.EMPTY);
             }
             else
             {
                 itemStack = inventory.getStackInSlot(InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(inventory), requestPredicate));
             }
-
 
             final AbstractBuilding.View building = ColonyManager.getColonyView(citizen.getColonyId()).getBuilding(citizen.getWorkBuilding());
 

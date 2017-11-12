@@ -1,16 +1,15 @@
 package com.minecolonies.api.colony.requestsystem;
 
-import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
-import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -106,6 +105,16 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>, ITick
      */
     @NotNull
     void updateRequestState(@NotNull IToken token, @NotNull RequestState state) throws IllegalArgumentException;
+
+    /**
+     * Method used to overrule a request.
+     * Updates the state and sets the delivery if applicable.
+     *
+     * @param token The token of the request that is being overruled.
+     * @param stack The stack that should be treated as delivery. If no delivery is possible, this is null.
+     * @throws IllegalArgumentException Thrown when either token does not match to a request.
+     */
+    void overruleRequest(@NotNull IToken token, @Nullable ItemStack stack) throws IllegalArgumentException;
 
     /**
      * Method used to indicate to this manager that a new Provider has been added to the colony.

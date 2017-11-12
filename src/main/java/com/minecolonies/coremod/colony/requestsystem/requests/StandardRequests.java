@@ -62,7 +62,7 @@ public final class StandardRequests
         @Override
         public List<ItemStack> getDisplayStacks()
         {
-            return ImmutableList.of(getRequest().getStack());
+            return ImmutableList.of(getRequest().getStack().copy());
         }
     }
 

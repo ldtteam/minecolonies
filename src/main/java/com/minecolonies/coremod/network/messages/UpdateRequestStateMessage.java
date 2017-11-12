@@ -3,7 +3,6 @@ package com.minecolonies.coremod.network.messages;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.RequestState;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
-import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -89,12 +88,11 @@ public class UpdateRequestStateMessage extends AbstractMessage<UpdateRequestStat
 
         if (colony instanceof Colony)
         {
-            final IRequest request = colony.getRequestManager().getRequestForToken(message.token);
             if (message.state == RequestState.OVERRULED)
             {
-                request.setDelivery(message.itemStack);
+                colony.getRequestManager().overruleRequest(message.token, message.itemStack);
+                return;
             }
-
             colony.getRequestManager().updateRequestState(message.token, message.state);
         }
     }
