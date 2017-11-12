@@ -459,9 +459,11 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
     {
         if(compound.hasKey(TAG_REQUESTOR_ID))
         {
-            this.requester = StandardFactoryController.getInstance().getNewInstance(TypeToken.of(BuildingBasedRequester.class), this);
-        } else {
             this.requester = StandardFactoryController.getInstance().deserialize(compound.getCompoundTag(TAG_REQUESTOR_ID));
+        }
+        else
+        {
+            this.requester = StandardFactoryController.getInstance().getNewInstance(TypeToken.of(BuildingBasedRequester.class), this);
         }
 
         this.openRequests.clear();
