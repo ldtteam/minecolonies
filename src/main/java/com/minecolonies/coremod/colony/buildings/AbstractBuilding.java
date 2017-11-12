@@ -1438,7 +1438,23 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
     @NotNull
     public void onRequestCancelled(@NotNull final IToken token)
     {
-        //TODO: Delete token out of all maps.
+        Integer citizenThatRequested = requestsByCitizen.remove(token);
+        citizensByRequests.get(citizenThatRequested).remove(token);
+
+        if (citizensByRequests.get(citizenThatRequested).isEmpty())
+        {
+            citizensByRequests.remove(citizenThatRequested);
+        }
+
+        IRequest requestThatCompleted = getColony().getRequestManager().getRequestForToken(token);
+        openRequests.get(requestThatCompleted.getRequest().getClass()).remove(token);
+
+        if (openRequests.get(requestThatCompleted.getRequest().getClass()).isEmpty())
+        {
+            openRequests.remove(requestThatCompleted.getRequest().getClass());
+        }
+
+        getColony().getCitizen(citizenThatRequested).onRequestCancelled(token);
 
         markDirty();
     }

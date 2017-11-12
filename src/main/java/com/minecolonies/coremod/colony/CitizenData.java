@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.colony;
 
+import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
@@ -884,4 +886,33 @@ public class CitizenData
     {
         return this.saturation;
     }
+
+
+    public <Request extends IRequestable> IToken createRequest(@NotNull Request requested)
+    {
+        return getWorkBuilding().createRequest(this, requested);
+    }
+
+    public <Request extends IRequestable> IToken createRequestAsync(@NotNull Request requested)
+    {
+        IToken requestedToken = getWorkBuilding().createRequest(this, requested);
+
+        job.getAsyncRequests().add(requestedToken);
+
+        return requestedToken;
+    }
+
+    public boolean isRequestAsync(@NotNull IToken token)
+    {
+        return job.getAsyncRequests().contains(token);
+    }
+
+    public void onRequestCancelled(@NotNull IToken token)
+    {
+        if (isRequestAsync(token))
+        {
+            job.getAsyncRequests().remove(token);
+        }
+    }
+
 }

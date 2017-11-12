@@ -111,7 +111,7 @@ public final class PlacementHandlers
                                     s.getRequest().getStack().getItem() == Items.FLINT_AND_STEEL).isEmpty())
                             {
                                 Stack stack = new Stack(new ItemStack(Items.FLINT_AND_STEEL, 1)).setMatchMeta(false).setMatchNBT(false);
-                                placer.createRequest(stack);
+                                placer.getWorker().getCitizenData().createRequest(stack);
                             }
                             return ActionProcessingResult.DENY;
                         }
@@ -663,7 +663,7 @@ public final class PlacementHandlers
                     .isEmpty())
             {
                 Stack stackRequest = new Stack(placedStack);
-                placer.createRequest(stackRequest);
+                placer.getWorker().getCitizenData().createRequest(stackRequest);
 
                 return true;
             }

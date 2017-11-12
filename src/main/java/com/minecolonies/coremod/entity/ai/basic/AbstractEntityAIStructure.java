@@ -844,7 +844,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 {
                     if (getOwnBuilding().getOpenRequestsOfTypeFiltered(getWorker().getCitizenData(), Stack.class, (IRequest<? extends Stack> r) -> r.getRequest().matches(stack)).isEmpty()) {
                         Stack stackRequest = new Stack(stack);
-                        createRequest(stackRequest);
+                        worker.getCitizenData().createRequest(stackRequest);
 
                         return false;
                     }

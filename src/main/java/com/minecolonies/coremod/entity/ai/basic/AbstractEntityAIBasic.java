@@ -4,10 +4,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
-import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.Tool;
-import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.IToolType;
@@ -35,7 +33,9 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
@@ -389,7 +389,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             if (firstDeliverableRequest != null)
             {
                 boolean async = false;
-                if (isRequestAsync(firstDeliverableRequest.getToken()))
+                if (worker.getCitizenData().isRequestAsync(firstDeliverableRequest.getToken()))
                 {
                     async = true;
                     job.getAsyncRequests().remove(firstDeliverableRequest.getToken());
@@ -410,36 +410,17 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                     //Lets try this again.
                     if (!async)
                     {
-                        createRequest(firstDeliverableRequest.getRequest());
+                        worker.getCitizenData().createRequest(firstDeliverableRequest.getRequest());
                     }
                     else
                     {
-                        createRequestAsync(firstDeliverableRequest.getRequest());
+                        worker.getCitizenData().createRequestAsync(firstDeliverableRequest.getRequest());
                     }
                 }
             }
         }
 
         return NEEDS_ITEM;
-    }
-
-    public <Request extends IRequestable> IToken createRequest(@NotNull Request requested)
-    {
-        return getOwnBuilding().createRequest(worker.getCitizenData(), requested);
-    }
-
-    public <Request extends IRequestable> IToken createRequestAsync(@NotNull Request requested)
-    {
-        IToken requestedToken = getOwnBuilding().createRequest(worker.getCitizenData(), requested);
-
-        job.getAsyncRequests().add(requestedToken);
-
-        return requestedToken;
-    }
-
-    public boolean isRequestAsync(@NotNull IToken token)
-    {
-        return job.getAsyncRequests().contains(token);
     }
 
     private void updateWorkerStatusFromRequests()
@@ -683,7 +664,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
 
             final Tool request = new Tool(toolType, minimalLevel, getOwnBuilding().getMaxToolLevel() < minimalLevel ? minimalLevel : getOwnBuilding().getMaxToolLevel());
-            createRequest(request);
+            worker.getCitizenData().createRequest(request);
             return false;
 
         }
@@ -1065,7 +1046,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         if (getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), IDeliverable.class, (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack)).isEmpty())
         {
             Stack stackRequest = new Stack(stack);
-            createRequest(stackRequest);
+            worker.getCitizenData().createRequest(stackRequest);
         }
 
         return false;
@@ -1110,7 +1091,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack)).isEmpty())
         {
             Stack stackRequest = new Stack(stack);
-            createRequestAsync(stackRequest);
+            worker.getCitizenData().createRequestAsync(stackRequest);
         }
 
         return false;
