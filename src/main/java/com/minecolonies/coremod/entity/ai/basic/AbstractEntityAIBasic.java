@@ -28,7 +28,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentBase;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -145,7 +144,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                  * If yes, transition to NEEDS_ITEM.
                  * and wait for new items.
                  */
-          new AITarget(() -> getState() == NEEDS_ITEM || !this.getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), IRequestable.class, (iRequest -> !isRequestAsync(iRequest.getToken()))).isEmpty() || this.getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()), this::waitForRequests),
+          new AITarget(() -> getState() == NEEDS_ITEM
+                  || !this.getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), IRequestable.class,
+                  (iRequest -> !isRequestAsync(iRequest.getToken()))).isEmpty()
+                  || this.getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()), this::waitForRequests),
                 /*
                  * Dumps inventory as long as needs be.
                  * If inventory is dumped, execution continues
@@ -440,7 +442,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         IRequest request = getOwnBuilding().getCompletedRequests(worker.getCitizenData()).stream().findFirst().orElse(null);
         if (request == null)
+        {
             request = getOwnBuilding().getOpenRequests(worker.getCitizenData()).stream().findFirst().orElse(null);
+        }
 
         worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waiting"), request.getDisplayString());
     }
@@ -498,16 +502,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Request an Item without spamming the chat.
-     *
-     * @param chat the Item Name
-     */
-    private void requestWithoutSpam(@NotNull final String chat)
-    {
-        chatSpamFilter.requestTextStringWithoutSpam(chat);
-    }
-
-    /**
      * Sets the block the AI is currently walking to.
      *
      * @param stand where to walk to
@@ -557,16 +551,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                         itemStackSelectionPredicate,
                         this::takeItemStackFromProvider
                 );
-    }
-
-    /**
-     * Request an Item without spamming the chat.
-     *
-     * @param chat the Item Name
-     */
-    private void requestWithoutSpam(@NotNull final TextComponentBase chat)
-    {
-        chatSpamFilter.requestTextComponentWithoutSpam(chat);
     }
 
     /**
@@ -700,11 +684,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             return true;
         }
-        if (retrieveToolInHut(toolType, minimalLevel))
-        {
-            return false;
-        }
-        return true;
+        return !retrieveToolInHut(toolType, minimalLevel);
     }
 
     /**
@@ -1016,30 +996,93 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         return BlockPosUtil.getFloor(targetPos.offset(facing, distance), world);
     }
 
+    /**
+     * Requests a list of itemstacks.
+     *
+     * @param stacks the stacks.
+     * @return true if they're in the inventory.
+     */
     public boolean checkIfRequestForItemExistOrCreate(@NotNull final ItemStack... stacks)
     {
         return checkIfRequestForItemExistOrCreate(Lists.newArrayList(stacks));
     }
 
+    /**
+     * Check if any of the stacks is in the inventory.
+     * @param stacks the list of stacks.
+     * @return true if so.
+     */
     public boolean checkIfRequestForItemExistOrCreate(@NotNull final Collection<ItemStack> stacks)
     {
-        return stacks.stream().anyMatch(s->!checkIfRequestForItemExistOrCreate(s));
+        return stacks.stream().allMatch(s->!checkIfRequestForItemExistOrCreate(s));
     }
 
+    /**
+     * Check if a stack has been requested already or is in the inventory.
+     * If not in the inventory and not requested already, create request
+     * @param stack the requested stack.
+     * @return true if in the inventory, else false.
+     */
     public boolean checkIfRequestForItemExistOrCreate(@NotNull final ItemStack stack)
     {
-        if (InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), s -> ItemStackUtils.compareItemStacksIgnoreStackSize(s, stack) && s.getCount() >= stack.getCount()))
+        if (InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()),
+                s -> ItemStackUtils.compareItemStacksIgnoreStackSize(s, stack) && s.getCount() >= stack.getCount()))
         {
             return true;
         }
 
-        if (getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), IDeliverable.class, (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack)).isEmpty())
+        if (getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), IDeliverable.class,
+                (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack)).isEmpty())
         {
             Stack stackRequest = new Stack(stack);
             createRequest(stackRequest);
         }
 
         return false;
+    }
 
+    /**
+     * Requests a list of itemstacks.
+     *
+     * @param stacks the stacks.
+     * @return true if they're in the inventory.
+     */
+    public boolean checkIfRequestForItemExistOrCreateAsynch(@NotNull final ItemStack... stacks)
+    {
+        return checkIfRequestForItemExistOrCreateAsynch(Lists.newArrayList(stacks));
+    }
+
+    /**
+     * Check if any of the stacks is in the inventory.
+     * @param stacks the list of stacks.
+     * @return true if so.
+     */
+    public boolean checkIfRequestForItemExistOrCreateAsynch(@NotNull final Collection<ItemStack> stacks)
+    {
+        return stacks.stream().allMatch(s->!checkIfRequestForItemExistOrCreateAsynch(s));
+    }
+
+    /**
+     * Check if a stack has been requested already or is in the inventory.
+     * If not in the inventory and not requested already, create request
+     * @param stack the requested stack.
+     * @return true if in the inventory, else false.
+     */
+    public boolean checkIfRequestForItemExistOrCreateAsynch(@NotNull final ItemStack stack)
+    {
+        if (InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()),
+                s -> ItemStackUtils.compareItemStacksIgnoreStackSize(s, stack) && s.getCount() >= stack.getCount()))
+        {
+            return true;
+        }
+
+        if (getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), IDeliverable.class,
+                (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack)).isEmpty())
+        {
+            Stack stackRequest = new Stack(stack);
+            createRequestAsync(stackRequest);
+        }
+
+        return false;
     }
 }

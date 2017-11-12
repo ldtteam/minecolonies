@@ -223,7 +223,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             return PREPARING;
         }
 
-        checkIfRequestForItemExistOrCreate(seeds);
+        checkIfRequestForItemExistOrCreateAsynch(seeds);
 
         currentField.nextState();
         return PREPARING;
