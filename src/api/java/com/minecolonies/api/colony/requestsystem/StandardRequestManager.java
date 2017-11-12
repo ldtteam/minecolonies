@@ -90,7 +90,7 @@ public class StandardRequestManager implements IRequestManager
      * Map that holds the requests that are linked to a given resolver.
      */
     @NotNull
-    private final Map<IToken, Collection<IToken>> resolverRequestMap = new HashMap<>();
+    private final Map<IToken, Set<IToken>> resolverRequestMap = new HashMap<>();
 
     /**
      * Map that holds the resolver that is linked to a given request.
@@ -212,26 +212,43 @@ public class StandardRequestManager implements IRequestManager
     public void deserializeNBT(final NBTTagCompound nbt)
     {
         if (playerResolver != null)
+        {
             this.resolverBiMap.remove(playerResolver.getRequesterId());
+        }
 
         if (retryingResolver != null)
+        {
             this.resolverBiMap.remove(retryingResolver.getRequesterId());
+        }
 
         if (nbt.hasKey(NBT_PLAYER))
+        {
             this.playerResolver = getFactoryController().deserialize(nbt.getCompoundTag(NBT_PLAYER));
+        }
         else
+        {
             this.playerResolver = null;
+        }
 
         if (nbt.hasKey(NBT_RETRYING))
+        {
             this.retryingResolver = getFactoryController().deserialize(nbt.getCompoundTag(NBT_RETRYING));
+            this.retryingResolver.updateManager(this);
+        }
         else
+        {
             this.retryingResolver = null;
+        }
 
         if (this.playerResolver != null)
+        {
             ResolverHandler.registerResolver(this, this.playerResolver);
+        }
 
         if (this.retryingResolver != null)
+        {
             ResolverHandler.registerResolver(this, this.retryingResolver);
+        }
 
         NBTTagList requestIdentityList = nbt.getTagList(NBT_REQUEST_IDENTITY_MAP, Constants.NBT.TAG_COMPOUND);
         requestBiMap.clear();
@@ -254,14 +271,14 @@ public class StandardRequestManager implements IRequestManager
             }
 
             NBTTagList assignmentsLists = assignmentCompound.getTagList(NBT_ASSIGNMENTS, Constants.NBT.TAG_COMPOUND);
-            Collection<IToken> assignedRequests = NBTUtils.streamCompound(assignmentsLists).map(tokenCompound -> {
+            Set<IToken> assignedRequests = NBTUtils.streamCompound(assignmentsLists).map(tokenCompound -> {
                 IToken assignedToken = getFactoryController().deserialize(tokenCompound);
 
                 // Reverse mapping being restored.
                 requestResolverMap.put(assignedToken, token);
 
                 return assignedToken;
-            }).collect(Collectors.toList());
+            }).collect(Collectors.toSet());
 
             resolverRequestMap.put(token, assignedRequests);
         });
@@ -885,7 +902,7 @@ public class StandardRequestManager implements IRequestManager
         {
             if (!manager.resolverRequestMap.containsKey(resolver.getRequesterId()))
             {
-                manager.resolverRequestMap.put(resolver.getRequesterId(), new ArrayList<>());
+                manager.resolverRequestMap.put(resolver.getRequesterId(), new HashSet<>());
             }
 
             LogHandler.log("Adding request: " + request + " to resolver: " + resolver);
@@ -1051,24 +1068,29 @@ public class StandardRequestManager implements IRequestManager
 
             Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
             requestTypes.remove(TypeConstants.OBJECT);
+
+            Set<IToken> failedResolvers = new HashSet<>();
+
             for(TypeToken requestType : requestTypes) {
                 if (!manager.requestClassResolverMap.containsKey(requestType))
                     continue;
 
                 Collection<IRequestResolver> resolversForRequestType = manager.requestClassResolverMap.get(requestType);
-                resolversForRequestType = resolversForRequestType.stream().sorted(Comparator.comparing(IRequestResolver::getPriority)).collect(Collectors.toSet());
+                resolversForRequestType = resolversForRequestType.stream().filter(r -> !failedResolvers.contains(r.getRequesterId())).sorted(Comparator.comparing(r -> -1 * r.getPriority())).collect(Collectors.toSet());
 
                 for (final IRequestResolver resolver : resolversForRequestType)
                 {
                     //Skip when the resolver is in the blacklist.
                     if (resolverTokenBlackList.contains(resolver.getRequesterId()))
                     {
+                        failedResolvers.add(resolver.getRequesterId());
                         continue;
                     }
 
                     //Skip if preliminary check fails
                     if (!resolver.canResolve(manager, request))
                     {
+                        failedResolvers.add(resolver.getRequesterId());
                         continue;
                     }
 
@@ -1077,6 +1099,7 @@ public class StandardRequestManager implements IRequestManager
                     //Skip if attempt failed (aka attemptResult == null)
                     if (attemptResult == null)
                     {
+                        failedResolvers.add(resolver.getRequesterId());
                         continue;
                     }
 

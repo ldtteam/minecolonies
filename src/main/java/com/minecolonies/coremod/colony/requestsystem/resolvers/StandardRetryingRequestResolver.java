@@ -101,7 +101,7 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     public void resolve(
                          @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request) throws RuntimeException
     {
-        assignedRequests.put(request.getToken(), getMaximalDelayBetweenRetriesInTicks());
+        delays.put(request.getToken(), getMaximalDelayBetweenRetriesInTicks());
 
         if (assignedRequests.containsKey(request.getToken()))
         {
@@ -188,10 +188,10 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
             final Set<IToken> blackList = assignedRequests.get(t) < getMaximalTries() ? ImmutableSet.of() : ImmutableSet.of(id);
 
             this.setCurrent(t);
-            final boolean assignmentResult = !manager.reassignRequest(t, blackList);
+            final boolean assignmentResult = manager.reassignRequest(t, blackList);
             this.setCurrent(null);
 
-            return assignmentResult;
+            return !assignmentResult;
         }).collect(Collectors.toSet());
 
         successfully.forEach(t -> {

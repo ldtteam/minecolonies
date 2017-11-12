@@ -803,6 +803,8 @@ public class Colony implements IColony
             b.onServerTick(event);
         }
 
+        getRequestManager().update();
+
         if (event.phase == TickEvent.Phase.END)
         {
             updateSubscribers();

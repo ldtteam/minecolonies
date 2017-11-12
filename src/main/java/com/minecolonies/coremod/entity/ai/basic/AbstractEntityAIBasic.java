@@ -145,7 +145,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                  * If yes, transition to NEEDS_ITEM.
                  * and wait for new items.
                  */
-          new AITarget(() -> getState() == NEEDS_ITEM || !this.getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), IRequestable.class, (iRequest -> !isRequestAsync(iRequest.getToken()))).isEmpty() || this.getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()), this::waitForRequests),
+          new AITarget(() -> getState() == NEEDS_ITEM || this.getOwnBuilding().hasWorkerOpenRequests(worker.getCitizenData()) || this.getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()), this::waitForRequests),
                 /*
                  * Dumps inventory as long as needs be.
                  * If inventory is dumped, execution continues
