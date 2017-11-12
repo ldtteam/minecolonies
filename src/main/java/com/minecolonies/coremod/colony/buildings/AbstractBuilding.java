@@ -112,7 +112,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
     private static final String TAG_STYLE = "style";
 
     /**
-     * The tag to store the requestor Id of the Building.
+     * The tag to store the requester Id of the Building.
      */
     private static final String TAG_REQUESTOR_ID = "Requestor";
 
@@ -211,7 +211,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
     /**
      * The ID of the building. Needed in the request system to identify it.
      */
-    private IRequester requestor;
+    private IRequester requester;
 
     /**
      * Keeps track of which citizen created what request. Citizen -> Request direction.
@@ -290,7 +290,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
         location = pos;
         this.colony = colony;
 
-        this.requestor = StandardFactoryController.getInstance().getNewInstance(TypeToken.of(BuildingBasedRequester.class), this);
+        this.requester = StandardFactoryController.getInstance().getNewInstance(TypeToken.of(BuildingBasedRequester.class), this);
     }
 
     /**
@@ -723,7 +723,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
     }
 
     private void writeRequestSystemToNBT(NBTTagCompound compound){
-        compound.setTag(TAG_REQUESTOR_ID, StandardFactoryController.getInstance().serialize(this.requestor));
+        compound.setTag(TAG_REQUESTOR_ID, StandardFactoryController.getInstance().serialize(this.requester));
 
         compound.setTag(TAG_OPEN_REQUESTS, this.openRequests.keySet().stream().map(clazz -> {
             NBTTagCompound requestTypeCompound = new NBTTagCompound();
@@ -1397,12 +1397,14 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
         citizensByRequests.get(citizenId).add(requestToken);
     }
 
-    public <Request extends IRequestable> void createRequest(@NotNull CitizenData citizenData, @NotNull Request requested)
+    public <Request extends IRequestable> IToken createRequest(@NotNull CitizenData citizenData, @NotNull Request requested)
     {
-        IToken requestToken = colony.getRequestManager().createAndAssignRequest(requestor, requested);
+        IToken requestToken = colony.getRequestManager().createAndAssignRequest(requester, requested);
 
         addRequestToMaps(citizenData.getId(), requestToken, requested.getClass());
         markDirty();
+
+        return requestToken;
     }
 
     @NotNull
@@ -1567,7 +1569,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
     @Override
     public IToken getToken()
     {
-        return requestor.getRequesterId();
+        return requester.getRequesterId();
     }
 
     @Override
@@ -1579,7 +1581,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
 
     public IRequester getRequester()
     {
-        return requestor;
+        return requester;
     }
 
     /**

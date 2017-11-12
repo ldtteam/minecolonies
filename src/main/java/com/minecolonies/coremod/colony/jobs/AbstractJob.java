@@ -1,16 +1,16 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import net.minecraft.entity.ai.EntityAITasks;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.util.Constants;
@@ -19,7 +19,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.Suppression.CLASSES_SHOULD_NOT_ACCESS_STATIC_MEMBERS_OF_THEIR_OWN_SUBCLASSES_DURING_INITIALIZATION;
 
@@ -35,7 +39,7 @@ import static com.minecolonies.api.util.constant.Suppression.CLASSES_SHOULD_NOT_
 public abstract class AbstractJob
 {
     private static final String TAG_TYPE = "type";
-    private static final String TAG_ITEMS_NEEDED = "itemsNeeded";
+    private static final String TAG_ASYNC_REQUESTS = "asyncRequests";
 
     private static final String MAPPING_PLACEHOLDER = "Placeholder";
     private static final String MAPPING_BUILDER     = "Builder";
@@ -73,6 +77,12 @@ public abstract class AbstractJob
 
     private final CitizenData citizen;
     private       String          nameTag     = "";
+
+
+    /**
+     * A set of tokens that point to requests for which we do not wait.
+     */
+    private Set<IToken> asyncRequests = new HashSet<>();
 
     /**
      * Initialize citizen data.
@@ -166,6 +176,14 @@ public abstract class AbstractJob
      */
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
+        this.asyncRequests.clear();
+        if (compound.hasKey(TAG_ASYNC_REQUESTS))
+        {
+            this.asyncRequests.addAll(NBTUtils.streamCompound(compound.getTagList(TAG_ASYNC_REQUESTS, Constants.NBT.TAG_COMPOUND))
+                                        .map(StandardFactoryController.getInstance()::deserialize)
+                                        .map(o -> (IToken) o)
+                                        .collect(Collectors.toSet()));
+        }
     }
 
     /**
@@ -220,6 +238,7 @@ public abstract class AbstractJob
         }
 
         compound.setString(TAG_TYPE, s);
+        compound.setTag(TAG_ASYNC_REQUESTS, getAsyncRequests().stream().map(StandardFactoryController.getInstance()::serialize).collect(NBTUtils.toNBTTagList()));
     }
 
     /**
@@ -310,5 +329,10 @@ public abstract class AbstractJob
     public void triggerDeathAchievement(final DamageSource source, final EntityCitizen citizen)
     {
 
+    }
+
+    public Set<IToken> getAsyncRequests()
+    {
+        return asyncRequests;
     }
 }

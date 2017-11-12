@@ -4,8 +4,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.Tool;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.IToolType;
@@ -33,10 +35,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
@@ -79,15 +78,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Hit a block every x ticks when mining.
      */
     private static final int             HIT_EVERY_X_TICKS       = 5;
-    /**
-     * The list of all items and their quantity that were requested by the worker.
-     * Warning: This list does not change, if you need to see what is currently missing,
-     * look at @see #itemsCurrentlyNeeded for things the miner needs.
-     * <p>
-     * Will be cleared on restart, be aware!
-     */
-    @NotNull
-    private final        List<ItemStack> itemsNeeded             = new ArrayList<>();
+
     /**
      * The block the ai is currently working at or wants to work.
      */
@@ -124,11 +115,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private int exceptionTimer = 1;
 
     /**
-     * Check to see if the worker wants to stand still waiting for the request to be fullfilled.
-     */
-    private boolean waitForRequest = true;
-
-    /**
      * Sets up some important skeleton stuff for every ai.
      *
      * @param job the job class
@@ -159,7 +145,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                  * If yes, transition to NEEDS_ITEM.
                  * and wait for new items.
                  */
-          new AITarget(() -> getState() == NEEDS_ITEM || this.getOwnBuilding().hasWorkerOpenRequests(worker.getCitizenData()) || this.getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()), this::waitForRequests),
+          new AITarget(() -> getState() == NEEDS_ITEM || !this.getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), IRequestable.class, (iRequest -> !isRequestAsync(iRequest.getToken()))).isEmpty() || this.getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()), this::waitForRequests),
                 /*
                  * Dumps inventory as long as needs be.
                  * If inventory is dumped, execution continues
@@ -416,12 +402,32 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 {
                     //Seems like somebody else picked up our stack.
                     //Lets try this again.
-                    getOwnBuilding().createRequest(worker.getCitizenData(), firstDeliverableRequest.getRequest());
+                    //TODO:Async
+                    createRequest(firstDeliverableRequest.getRequest());
                 }
             }
         }
 
         return NEEDS_ITEM;
+    }
+
+    public <Request extends IRequestable> IToken createRequest(@NotNull Request requested)
+    {
+        return getOwnBuilding().createRequest(worker.getCitizenData(), requested);
+    }
+
+    public <Request extends IRequestable> IToken createRequestAsync(@NotNull Request requested)
+    {
+        IToken requestedToken = getOwnBuilding().createRequest(worker.getCitizenData(), requested);
+
+        job.getAsyncRequests().add(requestedToken);
+
+        return requestedToken;
+    }
+
+    public boolean isRequestAsync(@NotNull IToken token)
+    {
+        return job.getAsyncRequests().contains(token);
     }
 
     private void updateWorkerStatusFromRequests()
@@ -665,7 +671,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
 
             final Tool request = new Tool(toolType, minimalLevel, getOwnBuilding().getMaxToolLevel() < minimalLevel ? minimalLevel : getOwnBuilding().getMaxToolLevel());
-            getOwnBuilding().createRequest(job.getCitizen(), request);
+            createRequest(request);
             return false;
 
         }
@@ -801,7 +807,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Dumps one inventory slot into the building chest.
      *
-     * @param keepIt used to test it that stack should be kept
      * @return true if is has to dump more.
      */
     private boolean dumpOneMoreSlot()
@@ -1031,7 +1036,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         if (getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), IDeliverable.class, (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack)).isEmpty())
         {
             Stack stackRequest = new Stack(stack);
-            getOwnBuilding().createRequest(worker.getCitizenData(), stackRequest);
+            createRequest(stackRequest);
         }
 
         return false;
