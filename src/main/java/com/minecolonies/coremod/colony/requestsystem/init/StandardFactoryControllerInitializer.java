@@ -7,10 +7,7 @@ import com.minecolonies.coremod.colony.requestsystem.locations.EntityLocation;
 import com.minecolonies.coremod.colony.requestsystem.locations.StaticLocation;
 import com.minecolonies.coremod.colony.requestsystem.requesters.factories.BuildingBasedRequesterFactory;
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequestFactories;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.factory.BuildingRequestResolverFactory;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.factory.DeliveryRequestResolverFactory;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.factory.PlayerRequestResolverFactory;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.factory.WarehouseRequestResolverFactory;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.factory.*;
 
 /**
  * Initializer for the {@link StandardFactoryControllerInitializer}
@@ -39,6 +36,7 @@ public final class StandardFactoryControllerInitializer
         StandardFactoryController.getInstance().registerNewFactory(new WarehouseRequestResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new BuildingRequestResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new PlayerRequestResolverFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new StandardRetryingRequestResolverFactory());
 
     }
 }
