@@ -11,6 +11,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.BuildingWareHouse;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
+import com.minecolonies.coremod.tileentities.TileEntityRack;
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -67,6 +68,7 @@ public final class PlacementHandlers
         handlers.add(new BlockSolidSubstitutionPlacementHandler());
         handlers.add(new ChestPlacementHandler());
         handlers.add(new WayPointBlockPlacementHandler());
+        handlers.add(new RackPlacementHandler());
         handlers.add(new GeneralBlockPlacementHandler());
     }
 
@@ -440,6 +442,11 @@ public final class PlacementHandlers
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
                 @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
+            if(world.getBlockState(pos).equals(blockState))
+            {
+                return ActionProcessingResult.ACCEPT;
+            }
+
             if (placer != null && !infiniteResources)
             {
                 final List<ItemStack> itemList = new ArrayList<>();
@@ -512,7 +519,7 @@ public final class PlacementHandlers
                 @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
                 @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
         {
-            if (!(blockState.getBlock() instanceof BlockChest && !(blockState.getBlock() instanceof BlockMinecoloniesRack)))
+            if (!(blockState.getBlock() instanceof BlockChest))
             {
                 return ActionProcessingResult.IGNORE;
             }
@@ -540,6 +547,53 @@ public final class PlacementHandlers
             else if (!world.setBlockState(pos, blockState, UPDATE_FLAG))
             {
                 return ActionProcessingResult.DENY;
+            }
+
+            return blockState;
+        }
+    }
+
+    public static class RackPlacementHandler implements IPlacementHandler
+    {
+        @Override
+        public Object handle(
+                @NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState,
+                @Nullable final AbstractEntityAIStructure<?> placer, final boolean infiniteResources, final boolean complete)
+        {
+            if (!(blockState.getBlock() instanceof BlockMinecoloniesRack))
+            {
+                return ActionProcessingResult.IGNORE;
+            }
+
+            if (placer != null && !infiniteResources)
+            {
+                final List<ItemStack> itemList = new ArrayList<>();
+                itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
+                itemList.addAll(placer.getItemsFromTileEntity());
+
+                for (final ItemStack stack : itemList)
+                {
+                    if (!ItemStackUtils.isEmpty(stack) && placer.checkOrRequestItems(placer.getTotalAmount(stack)))
+                    {
+                        return ActionProcessingResult.DENY;
+                    }
+                }
+            }
+
+            TileEntity entity = world.getTileEntity(pos);
+            if (entity instanceof TileEntityChest)
+            {
+                BuildingWareHouse.handleBuildingOverChest(pos, (TileEntityChest) entity, world);
+            }
+            else if (!world.setBlockState(pos, blockState, UPDATE_FLAG))
+            {
+                return ActionProcessingResult.DENY;
+            }
+
+            entity = world.getTileEntity(pos);
+            if(entity instanceof TileEntityRack && ((TileEntityRack) entity).isMain())
+            {
+                ((TileEntityRack) entity).softReset();
             }
 
             return blockState;

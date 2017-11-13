@@ -15,7 +15,6 @@ import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
 import com.minecolonies.coremod.entity.ai.citizen.farmer.Field;
 import com.minecolonies.coremod.entity.ai.citizen.farmer.FieldView;
-import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.network.messages.AssignFieldMessage;
 import com.minecolonies.coremod.network.messages.AssignmentModeMessage;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
@@ -32,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER;
@@ -104,11 +104,6 @@ public class BuildingFarmer extends AbstractBuildingWorker
     private static final int SEEDS_TO_KEEP = 64;
 
     /**
-     * List of items the farmer should keep.
-     */
-    private final Map<ItemStorage, Integer> keepX = new HashMap<>();
-
-    /**
      * Public constructor which instantiates the building.
      *
      * @param c the colony the building is in.
@@ -122,10 +117,12 @@ public class BuildingFarmer extends AbstractBuildingWorker
         final ItemStack stackPotatoe = new ItemStack(Items.POTATO);
         final ItemStack stackReed = new ItemStack(Items.BEETROOT_SEEDS);
 
-        keepX.put(new ItemStorage(stackSeed, false), SEEDS_TO_KEEP);
-        keepX.put(new ItemStorage(stackCarrot, false), SEEDS_TO_KEEP);
-        keepX.put(new ItemStorage(stackPotatoe, false), SEEDS_TO_KEEP);
-        keepX.put(new ItemStorage(stackReed, false), SEEDS_TO_KEEP);
+        keepX.put(stackSeed::isItemEqual, SEEDS_TO_KEEP);
+        keepX.put(stackCarrot::isItemEqual, SEEDS_TO_KEEP);
+        keepX.put(stackPotatoe::isItemEqual, SEEDS_TO_KEEP);
+        keepX.put(stackReed::isItemEqual, SEEDS_TO_KEEP);
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.HOE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), 1);
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), 1);
     }
 
     /**
@@ -218,15 +215,16 @@ public class BuildingFarmer extends AbstractBuildingWorker
      * @return a list of objects which should be kept.
      */
     @Override
-    public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
+    public Map<Predicate<ItemStack>, Integer> getRequiredItemsAndAmount()
     {
-        final Map<ItemStorage, Integer> toKeep = new HashMap<>(keepX);
+        final Map<Predicate<ItemStack>, Integer> toKeep = new HashMap<>(keepX);
+        toKeep.putAll(keepX);
         for (final Field field : farmerFields)
         {
             if (!ItemStackUtils.isEmpty(field.getSeed()))
             {
                 final ItemStack seedStack = field.getSeed();
-                toKeep.put(new ItemStorage(seedStack, false), SEEDS_TO_KEEP);
+                toKeep.put(seedStack::isItemEqual, SEEDS_TO_KEEP);
             }
         }
         return toKeep;
@@ -277,21 +275,6 @@ public class BuildingFarmer extends AbstractBuildingWorker
             }
         }
         return new JobFarmer(citizen);
-    }
-
-    /**
-     * Override this method if you want to keep some items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
-     *
-     * @param stack the stack to decide on
-     * @return true if the stack should remain in inventory
-     */
-    @Override
-    public boolean neededForWorker(@Nullable final ItemStack stack)
-    {
-        return !ItemStackUtils.isEmpty(stack) && (ItemStackUtils.hasToolLevel(stack, ToolType.HOE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel())
-                                                    || ItemStackUtils.hasToolLevel(stack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()));
     }
 
     //we have to update our field from the colony!
