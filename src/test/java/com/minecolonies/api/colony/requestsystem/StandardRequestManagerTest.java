@@ -36,6 +36,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class StandardRequestManagerTest
 {
@@ -123,7 +124,7 @@ public class StandardRequestManagerTest
         requestManager.onProviderRemovedFromColony(provider);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void updateRequestState() throws Exception
     {
         requestManager.onProviderAddedToColony(provider);
@@ -135,7 +136,7 @@ public class StandardRequestManagerTest
         assertEquals(RequestState.COMPLETED, originalState);
 
         requestManager.updateRequestState(token, RequestState.RECEIVED);
-        requestManager.getRequestForToken(token);
+        assertNull(requestManager.getRequestForToken(token));
     }
 
     @Test
