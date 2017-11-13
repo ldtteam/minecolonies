@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
 import net.minecraft.tileentity.TileEntity;
@@ -81,6 +82,19 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
     public void resolve(
                          @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request) throws RuntimeException
     {
+        AbstractBuilding building = ((BuildingBasedRequester) request.getRequester()).getBuilding();
+
+        List<TileEntity> tileEntities = new ArrayList<>();
+        tileEntities.add(building.getTileEntity());
+        tileEntities.addAll(building.getAdditionalCountainers().stream().map(manager.getColony().getWorld()::getTileEntity).collect(Collectors.toSet()));
+
+        request.setDelivery(tileEntities.stream()
+          .map(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStack-> request.getRequest().matches(itemStack)))
+          .filter(itemStacks -> !itemStacks.isEmpty())
+          .flatMap(List::stream)
+          .findFirst()
+          .orElse(ItemStackUtils.EMPTY));
+
         manager.updateRequestState(request.getToken(), RequestState.COMPLETED);
     }
 

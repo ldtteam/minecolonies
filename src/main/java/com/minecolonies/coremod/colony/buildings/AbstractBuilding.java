@@ -1359,9 +1359,12 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
 
     public <Request extends IRequestable> IToken createRequest(@NotNull CitizenData citizenData, @NotNull Request requested)
     {
-        IToken requestToken = colony.getRequestManager().createAndAssignRequest(requester, requested);
+        IToken requestToken = colony.getRequestManager().createRequest(requester, requested);
 
         addRequestToMaps(citizenData.getId(), requestToken,  TypeToken.of(requested.getClass()));
+
+        colony.getRequestManager().assignRequest(requestToken);
+
         markDirty();
 
         return requestToken;
