@@ -74,7 +74,7 @@ public class PermissionsMessage
         @Override
         public void fromBytes(@NotNull final ByteBuf buf)
         {
-            ByteBuf newBuf = buf.retain();
+            final ByteBuf newBuf = buf.retain();
             colonyID = newBuf.readInt();
             data = newBuf;
         }
