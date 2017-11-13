@@ -6,6 +6,7 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.RequestState;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
@@ -1451,7 +1452,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                       .filter(request -> {
-                                          Set<Class> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                                          Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
                                           return requestTypes.contains(requestType);
                                       })
                                       .map(request -> (IRequest<? extends Request>) request)
@@ -1465,7 +1466,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                       .filter(request -> {
-                                          Set<Class> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                                          Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
                                           return requestTypes.contains(requestType);
                                       })
                                       .map(request -> (IRequest<? extends Request>) request)
@@ -1492,7 +1493,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
     {
         return ImmutableList.copyOf(getCompletedRequests(citizenData).stream()
                                       .filter(request -> {
-                                          Set<Class> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                                          Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
                                           return requestTypes.contains(requestType);
                                       })
                                       .map(request -> (IRequest<? extends Request>) request)
@@ -1506,7 +1507,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
     {
         return ImmutableList.copyOf(getCompletedRequests(citizenData).stream()
                                       .filter(request -> {
-                                          Set<Class> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                                          Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
                                           return requestTypes.contains(requestType);
                                       })
                                       .map(request -> (IRequest<? extends Request>) request)
@@ -1554,6 +1555,42 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
             citizensByCompletedRequests.remove(data.getId());
 
         markDirty();
+    }
+
+    public void overruleNextOpenRequestWithStack(@NotNull final ItemStack stack)
+    {
+        if (ItemStackUtils.isEmpty(stack))
+            return;
+
+        for(int citizenId : citizensByRequests.keySet())
+        {
+            final CitizenData data = getColony().getCitizen(citizenId);
+
+            if (data == null)
+                continue;
+
+            final IRequest<? extends IDeliverable> target = getOpenRequestsOfTypeFiltered(data, TypeToken.of(IDeliverable.class), request -> request.getRequest().matches(stack)).stream().findFirst().orElse(null);
+            if (target == null)
+                continue;
+
+            getColony().getRequestManager().overruleRequest(target.getToken(), stack.copy());
+            return;
+        }
+    }
+
+    public void overruleNextOpenRequestOfCitizenWithStack(@NotNull final CitizenData citizenData, @NotNull final ItemStack stack)
+    {
+        if (ItemStackUtils.isEmpty(stack))
+            return;
+
+        final IRequest target = getOpenRequestsOfTypeFiltered(citizenData, TypeToken.of(IDeliverable.class), request -> request.getRequest().matches(stack)).stream()
+                                  .findFirst()
+                                  .orElse(null);
+
+        if (target == null)
+            return;
+
+        getColony().getRequestManager().overruleRequest(target.getToken(), stack.copy());
     }
 
     @Override
@@ -1770,7 +1807,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
         {
             return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                           .filter(request -> {
-                                              Set<Class> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                                              Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
                                               return requestTypes.contains(requestType);
                                           })
                                           .map(request -> (IRequest<? extends Request>) request)
@@ -1781,7 +1818,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
         {
             return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                           .filter(request -> {
-                                              Set<Class> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                                              Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
                                               return requestTypes.contains(requestType);
                                           })
                                           .map(request -> (IRequest<? extends Request>) request)

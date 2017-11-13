@@ -1,7 +1,12 @@
 package com.minecolonies.coremod.inventory;
 
+import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.entity.ai.citizen.farmer.Field;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
+import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityRack;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -14,35 +19,86 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
  */
 public class GuiHandler implements IGuiHandler
 {
+    public enum ID
+    {
+        DEFAULT,
+        BUILDING_INVENTORY,
+        CITIZEN_INVENTORY
+    }
+
     @Override
     public Object getServerGuiElement(final int id, final EntityPlayer player, final World world, final int x, final int y, final int z)
     {
-        final BlockPos pos = new BlockPos(x, y, z);
-        final TileEntity tileEntity = world.getTileEntity(pos);
-        if(tileEntity instanceof ScarecrowTileEntity)
+        if (id==ID.DEFAULT.ordinal())
         {
-            return new Field((ScarecrowTileEntity) tileEntity, player.inventory, world, pos);
-        }
-        else if(tileEntity instanceof TileEntityRack)
+            final BlockPos pos = new BlockPos(x, y, z);
+            final TileEntity tileEntity = world.getTileEntity(pos);
+            if(tileEntity instanceof ScarecrowTileEntity)
+            {
+                return new Field((ScarecrowTileEntity) tileEntity, player.inventory, world, pos);
+            }
+            else if(tileEntity instanceof TileEntityRack)
+            {
+                return new ContainerRack((TileEntityRack) tileEntity, ((TileEntityRack) tileEntity).getOtherChest(), player.inventory, pos);
+            }
+        } else if (id==ID.BUILDING_INVENTORY.ordinal())
         {
-            return new ContainerRack((TileEntityRack) tileEntity, ((TileEntityRack) tileEntity).getOtherChest(), player.inventory, pos);
+            TileEntity entity = world.getTileEntity(new BlockPos(x,y,z));
+            if (entity instanceof TileEntityColonyBuilding)
+            {
+                final TileEntityColonyBuilding tileEntityColonyBuilding = (TileEntityColonyBuilding) entity;
+                final Colony colony = ColonyManager.getColony(world, tileEntityColonyBuilding.getPos());
+
+                return new ContainerMinecoloniesBuildingInventory(player.inventory, tileEntityColonyBuilding, player, colony.getID(), tileEntityColonyBuilding.getPos());
+            }
+        } else if (id==ID.CITIZEN_INVENTORY.ordinal())
+        {
+            final BlockPos target = new BlockPos(x,y,z);
+            final Colony colony = ColonyManager.getClosestColony(world, target);
+
+            final CitizenData citizen = colony.getCitizens().values().stream().filter(citizenData -> {
+                final BlockPos citizenPos = new BlockPos(citizenData.getCitizenEntity().getPosition().getX(), citizenData.getCitizenEntity().getPosition().getY(),citizenData.getCitizenEntity().getPosition().getZ());
+                return citizenPos.equals(target);
+            }).findFirst().orElse(null);
+
+            if (citizen == null)
+                return null;
+
+            final AbstractBuilding building = citizen.getWorkBuilding();
+            
+            return new ContainerMinecoloniesCitizenInventory(player.inventory, citizen.getCitizenEntity().getInventoryCitizen(), player, colony.getID(), building.getID(), citizen.getId());
         }
+
         return null;
     }
 
     @Override
     public Object getClientGuiElement(final int id, final EntityPlayer player, final World world, final int x, final int y, final int z)
     {
-        final BlockPos pos = new BlockPos(x, y, z);
-        final TileEntity tileEntity = world.getTileEntity(pos);
-        if(tileEntity instanceof ScarecrowTileEntity)
+        if (id == ID.DEFAULT.ordinal())
         {
-            return new GuiField(player.inventory, (ScarecrowTileEntity) tileEntity, world, pos);
+            final BlockPos pos = new BlockPos(x, y, z);
+            final TileEntity tileEntity = world.getTileEntity(pos);
+            if(tileEntity instanceof ScarecrowTileEntity)
+            {
+                return new GuiField(player.inventory, (ScarecrowTileEntity) tileEntity, world, pos);
+            }
+            else if(tileEntity instanceof TileEntityRack)
+            {
+                return new GuiRack(player.inventory, (TileEntityRack) tileEntity, ((TileEntityRack) tileEntity).getOtherChest(), world, pos);
+            } 
         }
-        else if(tileEntity instanceof TileEntityRack)
+        else if (id==ID.BUILDING_INVENTORY.ordinal())
         {
-            return new GuiRack(player.inventory, (TileEntityRack) tileEntity, ((TileEntityRack) tileEntity).getOtherChest(), world, pos);
+            final ContainerMinecoloniesBuildingInventory buildingInventory = (ContainerMinecoloniesBuildingInventory) getServerGuiElement(id, player,world,x,y,z);
+            return new GuiMinecoloniesBuildingInventory(buildingInventory);
         }
+        else if (id==ID.CITIZEN_INVENTORY.ordinal())
+        {
+            final ContainerMinecoloniesCitizenInventory citizenInventory = (ContainerMinecoloniesCitizenInventory) getServerGuiElement(id, player,world,x,y,z);
+            return new GuiMinecoloniesCitizenInventory(citizenInventory);
+        }
+
         return null;
     }
 }

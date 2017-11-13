@@ -9,6 +9,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.inventory.GuiHandler;
 import com.minecolonies.coremod.inventory.InventoryField;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -162,9 +163,8 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
             {
                 citizen.getInventoryCitizen().setCustomName(message.name);
             }
-            //TODO(OrionDevelopment): Convert next line to:
-            //player.displayGUIChest(new IItemHandlerToIInventoryWrapper(citizen.getInventoryCitizen(), citizen.getInventoryCitizen()));
-            player.displayGUIChest(citizen.getInventoryCitizen());
+
+            player.openGui(MineColonies.instance, GuiHandler.ID.CITIZEN_INVENTORY.ordinal(), player.world, citizen.getPosition().getX(), citizen.getPosition().getY(), citizen.getPosition().getZ());
         }
     }
 
@@ -177,7 +177,8 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
             {
                 chest.setCustomName(message.name);
             }
-            player.displayGUIChest(chest);
+
+            player.openGui(MineColonies.instance, GuiHandler.ID.CITIZEN_INVENTORY.ordinal(), player.world, chest.getPos().getX(), chest.getPos().getY(), chest.getPos().getY());
         }
     }
 
@@ -190,7 +191,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
             {
                 // inventoryField.setCustomName(message.name);
             }
-            player.openGui(MineColonies.instance, 1, player.getEntityWorld(), player.getPosition().getX(), player.getPosition().getY(), player.getPosition().getZ());
+            player.openGui(MineColonies.instance, GuiHandler.ID.BUILDING_INVENTORY.ordinal(), player.getEntityWorld(), player.getPosition().getX(), player.getPosition().getY(), player.getPosition().getZ());
         }
     }
 
