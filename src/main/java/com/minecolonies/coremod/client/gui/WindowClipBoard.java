@@ -90,13 +90,13 @@ public class WindowClipBoard extends AbstractWindowSkeleton
     {
         resourceList.setDataProvider(() -> getOpenRequests().size(), (index, rowPane) ->
         {
-            final Collection<IRequest> openRequests = getOpenRequests();
+            final ImmutableList<IRequest> openRequests = getOpenRequests();
             if (index < 0 || index >= openRequests.size())
             {
                 return;
             }
 
-            final IRequest request = getOpenRequests().get(index);
+            final IRequest request = openRequests.get(index);
             final ItemIcon exampleStackDisplay = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
             final List<ItemStack> displayStacks = request.getDisplayStacks();
 

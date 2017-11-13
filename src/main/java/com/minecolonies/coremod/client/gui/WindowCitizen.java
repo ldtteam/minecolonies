@@ -354,7 +354,13 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
 
         resourceList.setDataProvider(() -> getOpenRequestsOfCitizen().size(), (index, rowPane) ->
         {
-            final IRequest request = getOpenRequestsOfCitizen().get(index);
+            final ImmutableList<IRequest> openRequests = getOpenRequestsOfCitizen();
+            if (index < 0 || index >= openRequests.size())
+            {
+                return;
+            }
+
+            final IRequest request = openRequests.get(index);
             final ItemIcon exampleStackDisplay = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
             final List<ItemStack> displayStacks = request.getDisplayStacks();
 
