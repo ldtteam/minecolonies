@@ -590,12 +590,6 @@ public final class PlacementHandlers
                 return ActionProcessingResult.DENY;
             }
 
-            entity = world.getTileEntity(pos);
-            if(entity instanceof TileEntityRack && ((TileEntityRack) entity).isMain())
-            {
-                ((TileEntityRack) entity).softReset();
-            }
-
             return blockState;
         }
     }
