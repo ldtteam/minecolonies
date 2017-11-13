@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
+import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -16,8 +17,6 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
-
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * EntityCitizen go home AI.
@@ -87,7 +86,7 @@ public class EntityAIGoHome extends EntityAIBase
         }
 
         return !(homeBuilding instanceof BuildingHome) || (isCitizenHungry() && !((BuildingHome) homeBuilding).hasWorkerOpenRequestsOfType(citizen.getCitizenData(),
-                StandardRequests.FoodRequest.class));
+                TypeToken.of(StandardRequests.FoodRequest.class)));
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.requestable.Food;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
@@ -330,7 +331,7 @@ public class BuildingHome extends AbstractBuildingHut
     {
         residents.stream()
           .filter(resident -> resident.getSaturation() < EntityCitizen.HIGH_SATURATION)
-          .filter(resident -> !hasWorkerOpenRequestsOfType(resident, Food.class))
+          .filter(resident -> !hasWorkerOpenRequestsOfType(resident, TypeToken.of(Food.class)))
           .forEach(resident -> {
               Food foodRequest = new Food(CONST_FOOD_REQUEST_SIZE);
               createRequest(resident, foodRequest);

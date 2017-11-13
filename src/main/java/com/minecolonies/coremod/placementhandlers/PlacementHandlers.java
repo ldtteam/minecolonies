@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.placementhandlers;
 
+import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.InventoryUtils;
@@ -107,7 +109,7 @@ public final class PlacementHandlers
 
                         if(foundStacks.isEmpty())
                         {
-                            if (citizen.getWorkBuilding().getOpenRequestsOfTypeFiltered(citizen.getCitizenData(), Stack.class, (IRequest<? extends Stack> s) ->
+                            if (citizen.getWorkBuilding().getOpenRequestsOfTypeFiltered(citizen.getCitizenData(), TypeToken.of(Stack.class), (IRequest<? extends Stack> s) ->
                                     s.getRequest().getStack().getItem() == Items.FLINT_AND_STEEL).isEmpty())
                             {
                                 Stack stack = new Stack(new ItemStack(Items.FLINT_AND_STEEL, 1)).setMatchMeta(false).setMatchNBT(false);
@@ -659,7 +661,7 @@ public final class PlacementHandlers
         for (final ItemStack placedStack : itemList)
         {
             if (placer.getOwnBuilding()
-                    .getOpenRequestsOfTypeFiltered(placer.getWorker().getCitizenData(), Stack.class, (IRequest<? extends Stack> r) -> r.getRequest().matches(placedStack))
+                    .getOpenRequestsOfTypeFiltered(placer.getWorker().getCitizenData(), TypeToken.of(IDeliverable.class), (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(placedStack))
                     .isEmpty())
             {
                 Stack stackRequest = new Stack(placedStack);

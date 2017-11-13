@@ -21,10 +21,7 @@ import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -93,6 +90,12 @@ public class WindowClipBoard extends AbstractWindowSkeleton
     {
         resourceList.setDataProvider(() -> getOpenRequests().size(), (index, rowPane) ->
         {
+            final Collection<IRequest> openRequests = getOpenRequests();
+            if (index < 0 || index >= openRequests.size())
+            {
+                return;
+            }
+
             final IRequest request = getOpenRequests().get(index);
             final ItemIcon exampleStackDisplay = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
             final List<ItemStack> displayStacks = request.getDisplayStacks();

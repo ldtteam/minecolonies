@@ -131,17 +131,19 @@ public class Tool implements IDeliverable
     @Override
     public boolean matches(@NotNull final ItemStack stack)
     {
-        if (getToolClass().equals(ToolType.HOE))
-            return stack.getItem() instanceof ItemHoe;
-
         //API:Map the given strings a proper way.
-        return !ItemStackUtils.isEmpty(stack)
+        boolean toolTypeResult = !ItemStackUtils.isEmpty(stack)
                  && stack.getCount() >= 1
                  && stack.getItem().getToolClasses(stack).stream()
                       .filter(s -> getToolClass().getName().equalsIgnoreCase(s))
                       .map(ToolType::getToolType)
                       .filter(t -> t != ToolType.NONE)
                       .anyMatch(t -> ItemStackUtils.hasToolLevel(stack, t, getMinLevel(), getMaxLevel()));
+
+        if (!toolTypeResult)
+            return stack.getItem() instanceof ItemHoe;
+
+        return toolTypeResult;
     }
 
     @Override

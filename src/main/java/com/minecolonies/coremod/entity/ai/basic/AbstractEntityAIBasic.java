@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.basic;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
@@ -159,7 +160,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 /**
                  * Reset to idle if no specific tool is needed.
                  */
-          new AITarget(() -> getState() == NEEDS_TOOL && this.getOwnBuilding().getOpenRequestsOfType(worker.getCitizenData(), Tool.class).isEmpty(), IDLE)
+          new AITarget(() -> getState() == NEEDS_TOOL && this.getOwnBuilding().getOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Tool.class)).isEmpty(), IDLE)
         );
     }
 
@@ -654,22 +655,26 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         final ImmutableList<IRequest<? extends Tool>> openToolRequests =
                 getOwnBuilding().getOpenRequestsOfTypeFiltered(
                         worker.getCitizenData(),
-                        Tool.class, r -> r.getRequest().getToolClass().equals(toolType) && r.getRequest().getMinLevel() >= minimalLevel);
+                        TypeToken.of(Tool.class),
+                  r -> r.getRequest().getToolClass().equals(toolType) && r.getRequest().getMinLevel() >= minimalLevel);
         final ImmutableList<IRequest<? extends Tool>> completedToolRequests =
                 getOwnBuilding().getCompletedRequestsOfTypeFiltered(
                         worker.getCitizenData(),
-                        Tool.class, r -> r.getRequest().getToolClass().equals(toolType) && r.getRequest().getMinLevel() >= minimalLevel);
+                  TypeToken.of(Tool.class),
+                  r -> r.getRequest().getToolClass().equals(toolType) && r.getRequest().getMinLevel() >= minimalLevel);
 
-        if (checkForNeededTool(toolType, minimalLevel) && openToolRequests.isEmpty() && completedToolRequests.isEmpty())
+        if (checkForNeededTool(toolType, minimalLevel))
         {
+            if (openToolRequests.isEmpty() && completedToolRequests.isEmpty())
+            {
+                final Tool request = new Tool(toolType, minimalLevel, getOwnBuilding().getMaxToolLevel() < minimalLevel ? minimalLevel : getOwnBuilding().getMaxToolLevel());
+                worker.getCitizenData().createRequest(request);
+            }
 
-            final Tool request = new Tool(toolType, minimalLevel, getOwnBuilding().getMaxToolLevel() < minimalLevel ? minimalLevel : getOwnBuilding().getMaxToolLevel());
-            worker.getCitizenData().createRequest(request);
-            return false;
-
+            return true;
         }
 
-        return openToolRequests.isEmpty() && completedToolRequests.isEmpty();
+        return false;
     }
 
     /**
@@ -1043,7 +1048,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             return true;
         }
 
-        if (getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), IDeliverable.class, (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack)).isEmpty())
+        if (getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeToken.of(IDeliverable.class), (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack)).isEmpty())
         {
             Stack stackRequest = new Stack(stack);
             worker.getCitizenData().createRequest(stackRequest);
@@ -1087,7 +1092,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             return true;
         }
 
-        if (getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), IDeliverable.class,
+        if (getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeToken.of(IDeliverable.class),
                 (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack)).isEmpty())
         {
             Stack stackRequest = new Stack(stack);
