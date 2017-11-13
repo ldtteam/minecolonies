@@ -457,7 +457,7 @@ public final class PlacementHandlers
             if (placer != null && !infiniteResources)
             {
                 final List<ItemStack> itemList = new ArrayList<>();
-                itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
+                itemList.add(BlockUtils.getItemStackFromBlockState(newBlockState));
                 if(checkForListInInvAndRequest(placer, itemList))
                 {
                     return IPlacementHandler.ActionProcessingResult.DENY;
