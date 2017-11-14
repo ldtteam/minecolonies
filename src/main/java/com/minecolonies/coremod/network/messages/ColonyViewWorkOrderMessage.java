@@ -45,9 +45,10 @@ public class ColonyViewWorkOrderMessage implements IMessage, IMessageHandler<Col
     @Override
     public void fromBytes(@NotNull final ByteBuf buf)
     {
-        colonyId = buf.readInt();
-        workOrderId = buf.readInt();
-        workOrderBuffer = buf;
+        final ByteBuf newbuf = buf.retain();
+        colonyId = newbuf.readInt();
+        workOrderId = newbuf.readInt();
+        workOrderBuffer = newbuf;
     }
 
     @Override
