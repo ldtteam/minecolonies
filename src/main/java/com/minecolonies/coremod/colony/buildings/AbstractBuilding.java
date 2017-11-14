@@ -1013,9 +1013,7 @@ public abstract class AbstractBuilding
     @SuppressWarnings("squid:S1172")
     public void registerBlockPosition(@NotNull Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
-        final TileEntity tile = world.getTileEntity(pos);
-
-        if (tile != null && !InventoryUtils.getItemHandlersFromProvider(tile).isEmpty())
+        if (block instanceof BlockContainer || block instanceof BlockMinecoloniesRack)
         {
             addContainerPosition(pos);
         }
