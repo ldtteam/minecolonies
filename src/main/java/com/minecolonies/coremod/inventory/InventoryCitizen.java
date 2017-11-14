@@ -2,6 +2,7 @@ package com.minecolonies.coremod.inventory;
 
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.crash.CrashReport;
@@ -76,7 +77,7 @@ public class InventoryCitizen implements IInventory
     /**
      * The citizen which owns the inventory.
      */
-    private EntityCitizen citizen;
+    private CitizenData citizen;
 
     /**
      * Creates the inventory of the citizen.
@@ -85,7 +86,7 @@ public class InventoryCitizen implements IInventory
      * @param localeEnabled Boolean whether the inventory has a custom name.
      * @param citizen       Citizen owner of the inventory.
      */
-    public InventoryCitizen(final String title, final boolean localeEnabled, final EntityCitizen citizen)
+    public InventoryCitizen(final String title, final boolean localeEnabled, final CitizenData citizen)
     {
         this.citizen = citizen;
         if (localeEnabled)
@@ -531,7 +532,7 @@ public class InventoryCitizen implements IInventory
         this.inventoryChanged = true;
         if (this.citizen != null)
         {
-            this.citizen.onInventoryChanged();
+            this.citizen.markDirty();
         }
     }
 
@@ -921,6 +922,14 @@ public class InventoryCitizen implements IInventory
             }
         }
 
+        if (!ItemStackUtils.isEmpty(itemStack))
+        {
+            final NBTTagCompound stackCompound = new NBTTagCompound();
+            stackCompound.setByte("Slot", (byte) 200);
+            itemStack.writeToNBT(stackCompound);
+            nbtTagListIn.appendTag(stackCompound);
+        }
+
         return nbtTagListIn;
     }
 
@@ -954,6 +963,10 @@ public class InventoryCitizen implements IInventory
                 else if (j >= 150 && j < this.offHandInventory.size() + 150)
                 {
                     this.offHandInventory.set(j - 150, itemstack);
+                }
+                else if (j == 200)
+                {
+                    this.itemStack = itemStack;
                 }
             }
         }

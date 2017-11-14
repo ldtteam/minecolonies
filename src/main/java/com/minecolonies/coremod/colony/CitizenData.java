@@ -13,9 +13,12 @@ import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
+import com.minecolonies.coremod.inventory.InventoryCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -115,6 +118,9 @@ public class CitizenData
     @Nullable
     private EntityCitizen entity;
 
+
+    private final InventoryCitizen inventory;
+
     /**
      * Attributes, which influence the workers behaviour.
      * May be added more later.
@@ -154,6 +160,7 @@ public class CitizenData
     {
         this.id = id;
         this.colony = colony;
+        inventory = new InventoryCitizen("Minecolonies Inventory", true);
     }
 
     /**
@@ -200,6 +207,11 @@ public class CitizenData
         if (compound.hasKey("job"))
         {
             setJob(AbstractJob.createFromNBT(this, compound.getCompoundTag("job")));
+        }
+
+        if (compound.hasKey("inventory"))
+        {
+            inventory.readFromNBT(compound.getTagList("inventory", Constants.NBT.TAG_COMPOUND));
         }
     }
 
@@ -699,6 +711,8 @@ public class CitizenData
             job.writeToNBT(jobCompound);
             compound.setTag("job", jobCompound);
         }
+
+        compound.setTag("inventory", inventory.writeToNBT(new NBTTagList()));
     }
 
     /**
@@ -766,6 +780,10 @@ public class CitizenData
         }
 
         buf.writeInt(colony.getID());
+
+        NBTTagCompound compound = new NBTTagCompound();
+        compound.setTag("inventory", inventory.writeToNBT(new NBTTagList()));
+        ByteBufUtils.writeTag(buf, compound);
     }
 
     /**
@@ -887,6 +905,10 @@ public class CitizenData
         return this.saturation;
     }
 
+    public InventoryCitizen getInventory()
+    {
+        return inventory;
+    }
 
     public <Request extends IRequestable> IToken createRequest(@NotNull Request requested)
     {

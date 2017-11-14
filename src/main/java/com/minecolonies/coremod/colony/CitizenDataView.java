@@ -1,10 +1,13 @@
 package com.minecolonies.coremod.colony;
 
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.coremod.inventory.InventoryCitizen;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -66,6 +69,8 @@ public class CitizenDataView
      * The 4 lines of the latest status.
      */
     private ITextComponent[] latestStatus = new ITextComponent[MAX_LINES_OF_LATEST_LOG];
+
+    private InventoryCitizen inventoryCitizen;
 
     /**
      * Set View id.
@@ -295,6 +300,11 @@ public class CitizenDataView
         }
 
         colonyId = buf.readInt();
+
+        NBTTagCompound compound = ByteBufUtils.readTag(buf);
+        inventoryCitizen = new InventoryCitizen(this.name, true);
+        inventoryCitizen.readFromNBT(compound.getTagList("inventory", Constants.NBT.TAG_COMPOUND));
+
     }
 
     /**
@@ -305,4 +315,5 @@ public class CitizenDataView
     {
         return latestStatus.clone();
     }
+
 }

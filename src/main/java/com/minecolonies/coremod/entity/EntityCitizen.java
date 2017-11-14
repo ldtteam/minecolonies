@@ -258,7 +258,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private static final int MIN_STUCK_TIME    = 5;
 
     private static Field            navigatorField;
-    private final  InventoryCitizen inventory;
     @NotNull
     private final Map<String, Integer> statusMessages = new HashMap<>();
     private final PathNavigate newNavigator;
@@ -579,10 +578,13 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public void onInventoryChanged()
     {
-        final AbstractBuildingWorker building = citizenData.getWorkBuilding();
-        if (building != null)
+        if (citizenData != null)
         {
-            building.markDirty();
+            final AbstractBuildingWorker building = citizenData.getWorkBuilding();
+            if (building != null)
+            {
+                building.markDirty();
+            }
         }
     }
 
@@ -997,7 +999,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
         {
-            return (T) new InvWrapper(inventory);
+            return (T) new InvWrapper(getCitizenData().getInventory());
         }
 
         return super.getCapability(capability, facing);
@@ -1099,8 +1101,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
             compound.setInteger(TAG_CITIZEN, citizenData.getId());
         }
 
-        compound.setTag("Inventory", this.inventory.writeToNBT(new NBTTagList()));
-        compound.setInteger(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot());
         compound.setString(TAG_LAST_JOB, lastJob);
         compound.setBoolean(TAG_DAY, isDay);
     }
@@ -1119,9 +1119,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
             updateColonyServer();
         }
         final NBTTagList nbttaglist = compound.getTagList("Inventory", 10);
-        this.inventory.readFromNBT(nbttaglist);
-
-        inventory.setHeldItem(compound.getInteger(TAG_HELD_ITEM_SLOT));
+        this.getCitizenData().getInventory().readFromNBT(nbttaglist);
+        this.getCitizenData().getInventory().setHeldItem(compound.getInteger(TAG_HELD_ITEM_SLOT));
         lastJob = compound.getString(TAG_LAST_JOB);
         isDay = compound.getBoolean(TAG_DAY);
     }
