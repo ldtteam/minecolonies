@@ -290,6 +290,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 {
                     request.add(entity.getPickedResult(new RayTraceResult(worker)));
                     entity.getArmorInventoryList().forEach(request::add);
+                    entity.getHeldEquipment().forEach(request::add);
                 }
                 else if (entity instanceof EntityMob)
                 {
