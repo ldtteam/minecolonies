@@ -79,10 +79,11 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>, ITick
     /**
      * Method used to reassign a given request.
      * @param token The token of the request that should be reassigned.
-     * @return true when the reassignment was successful, false when not.
+     * @return The token of the resolver that has gotten the assignment, null if none was found.
      * @throws IllegalArgumentException when the token is not known to this manager.
      */
-    boolean reassignRequest(@NotNull IToken token, @NotNull Collection<IToken> resolverTokenBlackList) throws IllegalArgumentException;
+    @Nullable
+    IToken reassignRequest(@NotNull IToken token, @NotNull Collection<IToken> resolverTokenBlackList) throws IllegalArgumentException;
 
     /**
      * Method to get a request for a given token.

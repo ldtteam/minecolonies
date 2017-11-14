@@ -192,10 +192,16 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
             final Set<IToken> blackList = assignedRequests.get(t) < getMaximalTries() ? ImmutableSet.of() : ImmutableSet.of(id);
 
             this.setCurrent(t);
-            final boolean assignmentResult = manager.reassignRequest(t, blackList);
+            final IToken resultingResolver = manager.reassignRequest(t, blackList);
             this.setCurrent(null);
 
-            return !assignmentResult;
+            if (resultingResolver != null && !resultingResolver.equals(getRequesterId()))
+            {
+                assignedRequests.remove(t);
+                delays.remove(t);
+            }
+
+            return resultingResolver != null;
         }).collect(Collectors.toSet());
 
         successfully.forEach(t -> {

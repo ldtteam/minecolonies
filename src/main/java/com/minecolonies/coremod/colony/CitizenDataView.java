@@ -4,10 +4,10 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,6 +20,9 @@ import org.jetbrains.annotations.Nullable;
  */
 public class CitizenDataView
 {
+
+    private static final String                 TAG_HELD_ITEM_SLOT   = "HeldItemSlot";
+
     /**
      * The max amount of lines the latest log allows.
      */
@@ -70,7 +73,7 @@ public class CitizenDataView
      */
     private ITextComponent[] latestStatus = new ITextComponent[MAX_LINES_OF_LATEST_LOG];
 
-    private InventoryCitizen inventoryCitizen;
+    private InventoryCitizen inventory;
 
     /**
      * Set View id.
@@ -302,8 +305,10 @@ public class CitizenDataView
         colonyId = buf.readInt();
 
         NBTTagCompound compound = ByteBufUtils.readTag(buf);
-        inventoryCitizen = new InventoryCitizen(this.name, true);
-        inventoryCitizen.readFromNBT(compound.getTagList("inventory", Constants.NBT.TAG_COMPOUND));
+        inventory = new InventoryCitizen(this.name, true);
+        final NBTTagList nbttaglist = compound.getTagList("inventory", 10);
+        this.inventory.readFromNBT(nbttaglist);
+        this.inventory.setHeldItem(compound.getInteger(TAG_HELD_ITEM_SLOT));
 
     }
 
@@ -316,4 +321,8 @@ public class CitizenDataView
         return latestStatus.clone();
     }
 
+    public InventoryCitizen getInventory()
+    {
+        return inventory;
+    }
 }

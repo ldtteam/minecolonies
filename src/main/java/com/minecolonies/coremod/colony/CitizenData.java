@@ -18,7 +18,6 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -54,6 +53,7 @@ public class CitizenData
     private static final String TAG_SKILL_INTELLIGENCE  = "intelligence";
     private static final String TAG_SKILL_DEXTERITY     = "dexterity";
     private static final String TAG_SATURATION          = "saturation";
+    private static final String                 TAG_HELD_ITEM_SLOT   = "HeldItemSlot";
 
     /**
      * Minimum saturation of a citizen.
@@ -160,7 +160,7 @@ public class CitizenData
     {
         this.id = id;
         this.colony = colony;
-        inventory = new InventoryCitizen("Minecolonies Inventory", true);
+        inventory = new InventoryCitizen("Minecolonies Inventory", true, this);
     }
 
     /**
@@ -211,7 +211,9 @@ public class CitizenData
 
         if (compound.hasKey("inventory"))
         {
-            inventory.readFromNBT(compound.getTagList("inventory", Constants.NBT.TAG_COMPOUND));
+            final NBTTagList nbttaglist = compound.getTagList("inventory", 10);
+            this.inventory.readFromNBT(nbttaglist);
+            this.inventory.setHeldItem(compound.getInteger(TAG_HELD_ITEM_SLOT));
         }
     }
 
@@ -713,6 +715,7 @@ public class CitizenData
         }
 
         compound.setTag("inventory", inventory.writeToNBT(new NBTTagList()));
+        compound.setInteger(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot());
     }
 
     /**

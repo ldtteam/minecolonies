@@ -312,6 +312,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     private boolean triedMovingAway = false;
 
+    private NBTTagCompound dataBackup = null;
+
     /**
      * Citizen constructor.
      *
@@ -323,7 +325,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
         setSize((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT);
         this.enablePersistence();
         this.setAlwaysRenderNameTag(Configurations.gameplay.alwaysRenderNameTag);
-        this.inventory = new InventoryCitizen("Minecolonies Inventory", false, this);
         this.newNavigator = new PathNavigate(this, world);
         updateNavigatorField();
         if (CompatibilityUtils.getWorld(this).isRemote)
@@ -1118,11 +1119,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
         {
             updateColonyServer();
         }
-        final NBTTagList nbttaglist = compound.getTagList("Inventory", 10);
-        this.getCitizenData().getInventory().readFromNBT(nbttaglist);
-        this.getCitizenData().getInventory().setHeldItem(compound.getInteger(TAG_HELD_ITEM_SLOT));
+
         lastJob = compound.getString(TAG_LAST_JOB);
         isDay = compound.getBoolean(TAG_DAY);
+
+        if (compound.hasKey(TAG_HELD_ITEM_SLOT))
+            this.dataBackup = compound;
     }
 
     /**
@@ -1199,6 +1201,14 @@ public class EntityCitizen extends EntityAgeable implements INpc
             {
                 tryToEat();
             }
+        }
+
+        if (dataBackup != null)
+        {
+            final NBTTagList nbttaglist = dataBackup.getTagList("Inventory", 10);
+            this.getCitizenData().getInventory().readFromNBT(nbttaglist);
+            this.getCitizenData().getInventory().setHeldItem(dataBackup.getInteger(TAG_HELD_ITEM_SLOT));
+            dataBackup = null;
         }
 
         checkHeal();
@@ -1576,7 +1586,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         //Drop actual inventory
         for (int i = 0; i < new InvWrapper(getInventoryCitizen()).getSlots(); i++)
         {
-            final ItemStack itemstack = inventory.getStackInSlot(i);
+            final ItemStack itemstack = getCitizenData().getInventory().getStackInSlot(i);
             if (ItemStackUtils.getSize(itemstack) > 0)
             {
                 entityDropItem(itemstack);
@@ -1601,7 +1611,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @NotNull
     public InventoryCitizen getInventoryCitizen()
     {
-        return inventory;
+        return getCitizenData().getInventory();
     }
 
     /**
@@ -1700,12 +1710,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
             return;
         }
 
-        final ItemStack stack = inventory.getStackInSlot(slot);
+        final ItemStack stack = getCitizenData().getInventory().getStackInSlot(slot);
         if(!ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof ItemFood && citizenData != null)
         {
             final int heal = ((ItemFood) stack.getItem()).getHealAmount(stack);
             citizenData.increaseSaturation(heal);
-            inventory.decrStackSize(slot, 1);
+            getCitizenData().getInventory().decrStackSize(slot, 1);
             citizenData.markDirty();
         }
     }
@@ -1917,8 +1927,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public void setHeldItem(final int slot)
     {
-        inventory.setHeldItem(slot);
-        setItemStackToSlot(EntityEquipmentSlot.MAINHAND, inventory.getStackInSlot(slot));
+        getCitizenData().getInventory().setHeldItem(slot);
+        setItemStackToSlot(EntityEquipmentSlot.MAINHAND, getCitizenData().getInventory().getStackInSlot(slot));
     }
 
     /**
@@ -2008,7 +2018,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public void damageItemInHand(final int damage)
     {
-        final ItemStack heldItem = inventory.getHeldItemMainhand();
+        final ItemStack heldItem = getCitizenData().getInventory().getHeldItemMainhand();
         //If we hit with bare hands, ignore
         if (heldItem == null)
         {

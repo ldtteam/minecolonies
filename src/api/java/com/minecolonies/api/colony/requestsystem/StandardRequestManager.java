@@ -378,7 +378,8 @@ public class StandardRequestManager implements IRequestManager
     }
 
     @Override
-    public boolean reassignRequest(@NotNull final IToken token, @NotNull final Collection<IToken> resolverTokenBlackList) throws IllegalArgumentException
+    @Nullable
+    public IToken reassignRequest(@NotNull final IToken token, @NotNull final Collection<IToken> resolverTokenBlackList) throws IllegalArgumentException
     {
         final IRequest request = RequestHandler.getRequest(this, token);
         return RequestHandler.reassignRequest(this, request, resolverTokenBlackList);
@@ -1084,11 +1085,11 @@ public class StandardRequestManager implements IRequestManager
          * @param manager                The manager to modify.
          * @param request                The request to assign.
          * @param resolverTokenBlackList Each resolver that has its token in this blacklist will be skipped when checking for a possible resolver.
-         * @return true when assigning successfully false when not.
+         * @return The token of the resolver that has gotten the request assigned, null if none was found.
          * @throws IllegalArgumentException is thrown when the request is unknown to this manager.
          */
         @SuppressWarnings(Suppression.UNCHECKED)
-        private static boolean assignRequest(final StandardRequestManager manager, final IRequest request, final Collection<IToken> resolverTokenBlackList)
+        private static IToken assignRequest(final StandardRequestManager manager, final IRequest request, final Collection<IToken> resolverTokenBlackList)
           throws IllegalArgumentException
         {
             //Check if the request is registered
@@ -1162,11 +1163,11 @@ public class StandardRequestManager implements IRequestManager
                         }
                     }
 
-                    return true;
+                    return resolver.getRequesterId();
                 }
             }
 
-            return false;
+            return null;
         }
 
         /**
@@ -1175,10 +1176,10 @@ public class StandardRequestManager implements IRequestManager
          * @param manager The manager that is reassigning a request.
          * @param request The request that is being reassigned.
          * @param resolverTokenBlackList The blacklist to which not to assign the request.
-         * @return True when the reassignment was successful, false when not.
+         * @return The token of the resolver that has gotten the request assigned, null if none was found.
          * @throws IllegalArgumentException Thrown when something went wrong.
          */
-        private static boolean reassignRequest(final StandardRequestManager manager, final IRequest request, final Collection<IToken> resolverTokenBlackList) throws IllegalArgumentException
+        private static IToken reassignRequest(final StandardRequestManager manager, final IRequest request, final Collection<IToken> resolverTokenBlackList) throws IllegalArgumentException
         {
             //Cancel the request to restart the search
             processInternalCancellation(manager, request.getToken());
@@ -1563,7 +1564,7 @@ public class StandardRequestManager implements IRequestManager
         }
 
         @Override
-        public boolean reassignRequest(@NotNull final IToken token, @NotNull final Collection<IToken> resolverTokenBlackList) throws IllegalArgumentException
+        public IToken reassignRequest(@NotNull final IToken token, @NotNull final Collection<IToken> resolverTokenBlackList) throws IllegalArgumentException
         {
             return wrappedManager.reassignRequest(token, resolverTokenBlackList);
         }
