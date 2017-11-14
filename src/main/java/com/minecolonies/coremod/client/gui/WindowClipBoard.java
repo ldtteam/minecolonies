@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.minecolonies.api.colony.requestsystem.RequestState;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
@@ -16,8 +17,10 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.network.messages.UpdateRequestStateMessage;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -128,12 +131,12 @@ public class WindowClipBoard extends AbstractWindowSkeleton
 
     private ImmutableList<IRequest> getOpenRequests()
     {
-        final ImmutableList.Builder<IRequest> requests = ImmutableList.builder();
+        final ArrayList<IRequest> requests = Lists.newArrayList();
         final ColonyView view = ColonyManager.getColonyView(colonyId);
 
         if (view == null)
         {
-            return requests.build();
+            return ImmutableList.of();
         }
 
         final IPlayerRequestResolver resolver = view.getRequestManager().getPlayerResolver();
@@ -145,7 +148,10 @@ public class WindowClipBoard extends AbstractWindowSkeleton
 
         requests.addAll(requestTokens.stream().map(view.getRequestManager()::getRequestForToken).filter(Objects::nonNull).collect(Collectors.toSet()));
 
-        return requests.build();
+        final BlockPos playerPos = Minecraft.getMinecraft().player.getPosition();
+        requests.sort(Comparator.comparing(request -> request.getRequester().getRequesterLocation().getInDimensionLocation().getDistance(playerPos.getX(), playerPos.getY(), playerPos.getZ())));
+
+        return ImmutableList.copyOf(requests);
     }
 
     /**
