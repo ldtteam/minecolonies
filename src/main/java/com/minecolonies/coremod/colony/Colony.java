@@ -343,6 +343,15 @@ public class Colony implements IColony
             topCitizenId = Math.max(topCitizenId, data.getId());
         }
 
+        // Fields before Buildings, because the Farmer needs them.
+        final NBTTagList fieldTagList = compound.getTagList(TAG_FIELDS, NBT.TAG_COMPOUND);
+        for (int i = 0; i < fieldTagList.tagCount(); ++i)
+        {
+            final NBTTagCompound fieldCompound = fieldTagList.getCompoundTagAt(i);
+            final Field f = Field.createFromNBT(this, fieldCompound);
+            addField(f);
+        }
+
         //  Buildings
         final NBTTagList buildingTagList = compound.getTagList(TAG_BUILDINGS, NBT.TAG_COMPOUND);
         for (int i = 0; i < buildingTagList.tagCount(); ++i)
@@ -353,15 +362,6 @@ public class Colony implements IColony
             {
                 addBuilding(b);
             }
-        }
-
-        // Fields
-        final NBTTagList fieldTagList = compound.getTagList(TAG_FIELDS, NBT.TAG_COMPOUND);
-        for (int i = 0; i < fieldTagList.tagCount(); ++i)
-        {
-            final NBTTagCompound fieldCompound = fieldTagList.getCompoundTagAt(i);
-            final Field f = Field.createFromNBT(this, fieldCompound);
-            addField(f);
         }
 
         // Restore colony achievements
