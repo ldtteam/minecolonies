@@ -336,6 +336,14 @@ public class TileEntityRack extends TileEntity
     public void neighborChanged(final BlockPos newNeighbor)
     {
         final TileEntity entity = world.getTileEntity(newNeighbor);
+
+        if(!this.neighbor.equals(BlockPos.ORIGIN)
+                && this.neighbor.distanceSq(this.pos) > 1
+                && entity instanceof TileEntityRack)
+        {
+            softReset();
+        }
+
         if (this.neighbor.equals(BlockPos.ORIGIN) && world.getBlockState(newNeighbor).getBlock() instanceof BlockMinecoloniesRack
                 && !(entity instanceof TileEntityRack && ((TileEntityRack) entity).getOtherChest() != null))
         {
