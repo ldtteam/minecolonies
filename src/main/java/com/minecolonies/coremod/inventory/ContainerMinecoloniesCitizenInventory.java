@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.inventory;
 
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -50,6 +51,8 @@ public class ContainerMinecoloniesCitizenInventory extends Container
                     @Override
                     public void putStack(final ItemStack stack)
                     {
+                        MineColonies.getLogger().warn("Putting stack: " + stack + " into " + slotNumber);
+
                         super.putStack(stack);
                         if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER && !ItemStackUtils.isEmpty(stack))
                         {

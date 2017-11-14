@@ -1,8 +1,6 @@
 package com.minecolonies.coremod.inventory;
 
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.entity.ai.citizen.farmer.Field;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
@@ -47,7 +45,7 @@ public class GuiHandler implements IGuiHandler
             if (entity instanceof TileEntityColonyBuilding)
             {
                 final TileEntityColonyBuilding tileEntityColonyBuilding = (TileEntityColonyBuilding) entity;
-                final Colony colony = ColonyManager.getColony(world, tileEntityColonyBuilding.getPos());
+                final Colony colony = ColonyManager.getClosestColony(world, tileEntityColonyBuilding.getPos());
 
                 return new ContainerMinecoloniesBuildingInventory(player.inventory, tileEntityColonyBuilding, player, colony.getID(), tileEntityColonyBuilding.getPos());
             }
@@ -95,8 +93,21 @@ public class GuiHandler implements IGuiHandler
         }
         else if (id==ID.CITIZEN_INVENTORY.ordinal())
         {
-            final ContainerMinecoloniesCitizenInventory citizenInventory = (ContainerMinecoloniesCitizenInventory) getServerGuiElement(id, player,world,x,y,z);
-            return new GuiMinecoloniesCitizenInventory(citizenInventory);
+            final BlockPos target = new BlockPos(x,y,z);
+            final ColonyView colony = ColonyManager.getClosestColonyView(world, target);
+
+            final CitizenDataView citizen = colony.getCitizens().values().stream().filter(citizenData -> {
+                final BlockPos citizenPos = new BlockPos(citizenData., citizenData.getCitizenEntity().getPosition().getY(),citizenData.getCitizenEntity().getPosition().getZ());
+                return citizenPos.equals(target);
+            }).findFirst().orElse(null);
+
+            if (citizen == null)
+                return null;
+
+            final AbstractBuilding.View building = colony.getBuilding(citizen.getWorkBuilding());
+
+            final ContainerMinecoloniesCitizenInventory containerMinecoloniesCitizenInventory = new ContainerMinecoloniesCitizenInventory(player.inventory, citizen.getCitizenEntity().getInventoryCitizen(), player, colony.getID(), building.getID(), citizen.getId());
+            return new GuiMinecoloniesCitizenInventory(containerMinecoloniesCitizenInventory);
         }
 
         return null;

@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.RequestState;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import io.netty.buffer.ByteBuf;
@@ -31,7 +32,7 @@ public class UpdateRequestStateMessage extends AbstractMessage<UpdateRequestStat
     /**
      * How many item need to be transfer from the player inventory to the building chest.
      */
-    private ItemStack itemStack;
+    private ItemStack itemStack = ItemStackUtils.EMPTY;
 
     /**
      * The request state to set.
@@ -69,7 +70,10 @@ public class UpdateRequestStateMessage extends AbstractMessage<UpdateRequestStat
         colonyId = buf.readInt();
         token = StandardFactoryController.getInstance().deserialize(ByteBufUtils.readTag(buf));
         state = RequestState.values()[buf.readInt()];
-        itemStack = ByteBufUtils.readItemStack(buf);
+        if (state == RequestState.OVERRULED)
+        {
+            itemStack = ByteBufUtils.readItemStack(buf);
+        }
     }
 
     @Override
@@ -78,7 +82,10 @@ public class UpdateRequestStateMessage extends AbstractMessage<UpdateRequestStat
         buf.writeInt(colonyId);
         ByteBufUtils.writeTag(buf, StandardFactoryController.getInstance().serialize(token));
         buf.writeInt(state.ordinal());
-        ByteBufUtils.writeItemStack(buf, itemStack);
+        if (state == RequestState.OVERRULED)
+        {
+            ByteBufUtils.writeItemStack(buf, itemStack);
+        }
     }
 
     @Override

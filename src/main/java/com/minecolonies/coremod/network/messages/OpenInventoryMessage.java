@@ -178,7 +178,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
                 chest.setCustomName(message.name);
             }
 
-            player.openGui(MineColonies.instance, GuiHandler.ID.CITIZEN_INVENTORY.ordinal(), player.world, chest.getPos().getX(), chest.getPos().getY(), chest.getPos().getY());
+            player.openGui(MineColonies.instance, GuiHandler.ID.BUILDING_INVENTORY.ordinal(), player.world, chest.getPos().getX(), chest.getPos().getY(), chest.getPos().getZ());
         }
     }
 
