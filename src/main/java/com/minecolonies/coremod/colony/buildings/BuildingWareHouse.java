@@ -9,6 +9,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.blocks.BlockHutDeliveryman;
+import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.BlockHutWareHouse;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.client.gui.WindowWareHouseBuilding;
@@ -141,7 +142,7 @@ public class BuildingWareHouse extends AbstractBuilding
     @Override
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
-        if (block instanceof BlockContainer && world != null)
+        if ((block instanceof BlockContainer || block instanceof BlockMinecoloniesRack)&& world != null)
         {
             final TileEntity entity = getColony().getWorld().getTileEntity(pos);
             if (entity instanceof TileEntityChest)

@@ -256,12 +256,12 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     {
         worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.dumping"));
 
-        if (!worker.isWorkerAtSiteWithMove(wareHouse.getLocation(), MIN_DISTANCE_TO_WAREHOUSE))
+        if (!worker.isWorkerAtSiteWithMove(getWareHouse().getLocation(), MIN_DISTANCE_TO_WAREHOUSE))
         {
             return DUMPING;
         }
 
-        wareHouse.getTileEntity().dumpInventoryIntoWareHouse(worker.getInventoryCitizen());
+        getWareHouse().getTileEntity().dumpInventoryIntoWareHouse(worker.getInventoryCitizen());
         gatherTarget = null;
         worker.setHeldItem(SLOT_HAND);
 
@@ -458,7 +458,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private AIState checkWareHouse()
     {
-        if (!worker.isWorkerAtSiteWithMove(wareHouse.getLocation(), MIN_DISTANCE_TO_WAREHOUSE))
+        if (!worker.isWorkerAtSiteWithMove(getWareHouse().getLocation(), MIN_DISTANCE_TO_WAREHOUSE))
         {
             return START_WORKING;
         }
@@ -486,6 +486,30 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     }
 
     /**
+     * Gets the colony's warehouse for the Deliveryman.
+     */
+    public BuildingWareHouse getWareHouse()
+    {
+        final Map<BlockPos, AbstractBuilding> buildings = job.getColony().getBuildings();
+        for (final AbstractBuilding building : buildings.values())
+        {
+            if (building == null)
+            {
+                continue;
+            }
+
+            final Colony buildingColony = building.getColony();
+            final Colony ownColony = worker.getColony();
+            if (building instanceof BuildingWareHouse && ownColony != null && buildingColony != null && buildingColony.getID() == ownColony.getID()
+                  && ((BuildingWareHouse) building).registerWithWareHouse((BuildingDeliveryman) this.getOwnBuilding()))
+            {
+                return (BuildingWareHouse) building;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Check if the deliveryman code should be executed.
      * More concretely if he has a warehouse to work at.
      *
@@ -495,7 +519,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     {
         worker.setAIMoveSpeed((float) (BASE_MOVEMENT_SPEED + BASE_MOVEMENT_SPEED * worker.getLevel() / WALKING_SPEED_MULTIPLIER));
 
-        if (wareHouse != null && wareHouse.getTileEntity() != null)
+        if (getWareHouse() != null && getWareHouse().getTileEntity() != null)
         {
             return false;
         }
@@ -513,7 +537,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             if (building instanceof BuildingWareHouse && ownColony != null && buildingColony != null && buildingColony.getID() == ownColony.getID()
                     && ((BuildingWareHouse) building).registerWithWareHouse((BuildingDeliveryman) this.getOwnBuilding()))
             {
-                wareHouse = (BuildingWareHouse) building;
                 return false;
             }
         }
