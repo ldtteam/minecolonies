@@ -1008,7 +1008,7 @@ public abstract class AbstractBuilding
     @SuppressWarnings("squid:S1172")
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
-        if (block instanceof BlockContainer)
+        if (block instanceof BlockContainer || block instanceof BlockMinecoloniesRack)
         {
             addContainerPosition(pos);
         }
