@@ -45,9 +45,10 @@ public class ColonyViewMessage implements IMessage, IMessageHandler<ColonyViewMe
     @Override
     public void fromBytes(@NotNull final ByteBuf buf)
     {
-        colonyId = buf.readInt();
-        isNewSubscription = buf.readBoolean();
-        colonyBuffer = buf;
+        final ByteBuf newBuf = buf.retain();
+        colonyId = newBuf.readInt();
+        isNewSubscription = newBuf.readBoolean();
+        colonyBuffer = newBuf;
     }
 
     @Override
