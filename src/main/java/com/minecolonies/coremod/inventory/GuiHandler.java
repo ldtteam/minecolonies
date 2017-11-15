@@ -86,7 +86,7 @@ public class GuiHandler implements IGuiHandler
             if (entity instanceof TileEntityColonyBuilding)
             {
                 final TileEntityColonyBuilding tileEntityColonyBuilding = (TileEntityColonyBuilding) entity;
-                return new GuiChest(tileEntityColonyBuilding, player.inventory);
+                return new GuiChest(player.inventory, tileEntityColonyBuilding);
             }
         }
         else if (id==ID.CITIZEN_INVENTORY.ordinal())
