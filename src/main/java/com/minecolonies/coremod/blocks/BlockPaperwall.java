@@ -91,41 +91,43 @@ public class BlockPaperwall extends Block
                                       @NotNull final List<AxisAlignedBB> collidingBoxes,
                                       @Nullable final Entity entityIn)
     {
-        iBlockState = this.getActualState(iBlockState, worldIn, pos);
+        IBlockState tempState = this.getActualState(iBlockState, worldIn, pos);
         addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_BY_INDEX[0]);
 
-        if (iBlockState.getValue(NORTH))
+        if (tempState.getValue(NORTH))
         {
             addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_BY_INDEX[getBoundingBoxIndex(EnumFacing.NORTH)]);
         }
 
-        if (iBlockState.getValue(SOUTH))
+        if (tempState.getValue(SOUTH))
         {
             addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_BY_INDEX[getBoundingBoxIndex(EnumFacing.SOUTH)]);
         }
 
-        if (iBlockState.getValue(EAST))
+        if (tempState.getValue(EAST))
         {
             addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_BY_INDEX[getBoundingBoxIndex(EnumFacing.EAST)]);
         }
 
-        if (iBlockState.getValue(WEST))
+        if (tempState.getValue(WEST))
         {
             addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_BY_INDEX[getBoundingBoxIndex(EnumFacing.WEST)]);
         }
     }
+
     private static int getBoundingBoxIndex(final EnumFacing side)
     {
         return 1 << side.getHorizontalIndex();
     }
 
     @NotNull
-    public AxisAlignedBB getBoundingBox(@NotNull IBlockState blockState1,
+    public AxisAlignedBB getBoundingBox(@NotNull IBlockState blockState,
                                         @NotNull final IBlockAccess source,
-                                        @NotNull final BlockPos pos)
-    {
-        blockState1 = this.getActualState(blockState1, source, pos);
-        return AABB_BY_INDEX[getBoundingBoxIndex(blockState1)];
+                                        @NotNull final BlockPos pos) {
+        IBlockState tempState = this.getActualState(blockState, source, pos);
+        {
+            return AABB_BY_INDEX[getBoundingBoxIndex(tempState)];
+        }
     }
 
     private static int getBoundingBoxIndex(final IBlockState state)
