@@ -1,7 +1,7 @@
 {
     "parent": "block/pane_side",
     "textures": {
-        "edge": "minecolonies:blocks/blockPaperwallTop",
-        "pane": "minecolonies:blocks/blockPaperwall"
+        "edge": "minecolonies:blocks/blockJunglePaperwallTop",
+        "pane": "minecolonies:blocks/blockJunglePaperwall"
     }
 }

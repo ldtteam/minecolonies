@@ -1,6 +1,6 @@
 {
     "parent": "block/pane_noside",
     "textures": {
-        "pane": "minecolonies:blocks/blockPaperwall"
+        "pane": "minecolonies:blocks/blockJunglePaperwall"
     }
 }

@@ -7,6 +7,7 @@ import net.minecraft.block.Block;
 import java.util.List;
 import javax.annotation.Nullable;
 
+import net.minecraft.block.BlockLog;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
@@ -36,7 +37,10 @@ import org.jetbrains.annotations.NotNull;
 public class BlockPaperwall extends Block
 {
     private static final PropertyEnum<BlockPlanks.EnumType>
-            VARIANT = PropertyEnum.create("variant", BlockPlanks.EnumType.class);
+            VARIANT = PropertyEnum.create("variant", BlockPlanks.EnumType.class,
+            p_apply_1_ -> p_apply_1_.getMetadata() < 4);
+    private static final PropertyEnum<BlockLog.EnumAxis>
+            LOG_AXIS = PropertyEnum.create("axis", BlockLog.EnumAxis.class);
     public static final PropertyBool NORTH = PropertyBool.create("north");
     public static final PropertyBool EAST = PropertyBool.create("east");
     public static final PropertyBool SOUTH = PropertyBool.create("south");
@@ -130,6 +134,7 @@ public class BlockPaperwall extends Block
         if (tempState.getValue(NORTH))
         {
             addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_BY_INDEX[getBoundingBoxIndex(EnumFacing.NORTH)]);
+
         }
 
         if (tempState.getValue(SOUTH))
@@ -302,7 +307,7 @@ public class BlockPaperwall extends Block
     @NotNull
     protected BlockStateContainer createBlockState()
     {
-        return new BlockStateContainer(this, NORTH, EAST, WEST, SOUTH);
+        return new BlockStateContainer(this, VARIANT, LOG_AXIS, NORTH, EAST, WEST, SOUTH);
     }
 
     private boolean canPaneConnectTo(final IBlockAccess world, final BlockPos pos, final EnumFacing dir)
