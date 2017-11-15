@@ -121,13 +121,11 @@ public class BlockPaperwall extends Block
     }
 
     @NotNull
-    public AxisAlignedBB getBoundingBox(@NotNull final IBlockState blockState,
-                                        @NotNull final IBlockAccess source,
-                                        @NotNull final BlockPos pos)
-        {
-            final IBlockState tempState = this.getActualState(blockState, source, pos);
-            return AABB_BY_INDEX[getBoundingBoxIndex(tempState)];
-        }
+    public AxisAlignedBB getBoundingBox(@NotNull final IBlockState blockState, @NotNull final IBlockAccess source, @NotNull final BlockPos pos)
+    {
+        final IBlockState tempState = this.getActualState(blockState, source, pos);
+        return AABB_BY_INDEX[getBoundingBoxIndex(tempState)];
+    }
 
     private static int getBoundingBoxIndex(final IBlockState state)
     {
