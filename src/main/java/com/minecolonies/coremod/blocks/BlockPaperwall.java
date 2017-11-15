@@ -7,13 +7,19 @@ import net.minecraft.block.Block;
 import java.util.List;
 import javax.annotation.Nullable;
 
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
+import net.minecraft.block.BlockPlanks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Mirror;
@@ -29,6 +35,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class BlockPaperwall extends Block
 {
+    private static final PropertyEnum<BlockPlanks.EnumType>
+            VARIANT = PropertyEnum.create("variant", BlockPlanks.EnumType.class);
     public static final PropertyBool NORTH = PropertyBool.create("north");
     public static final PropertyBool EAST = PropertyBool.create("east");
     public static final PropertyBool SOUTH = PropertyBool.create("south");
@@ -70,9 +78,13 @@ public class BlockPaperwall extends Block
     BlockPaperwall()
     {
         super(Material.WOOD);
+        this.setDefaultState(this.blockState.getBaseState().withProperty(VARIANT, BlockPlanks.EnumType.JUNGLE));
         initBlock();
     }
-
+    public int damageDropped(@NotNull IBlockState state)
+    {
+        return state.getValue(VARIANT).getMetadata();
+    }
     private void initBlock()
     {
         setRegistryName(BLOCK_NAME);
@@ -82,6 +94,27 @@ public class BlockPaperwall extends Block
         GameRegistry.register((new ItemBlock(this)).setRegistryName(this.getRegistryName()));
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void getSubBlocks(@NotNull Item itemIn, @NotNull CreativeTabs tab, @NotNull List<ItemStack> list)
+    {
+        for (BlockPlanks.EnumType blockpaperwall$enumtype : BlockPlanks.EnumType.values())
+        {
+            list.add(new ItemStack(itemIn, 1, blockpaperwall$enumtype.getMetadata()));
+        }
+    }
+
+    @NotNull
+    public IBlockState getStateFromMeta(int meta)
+    {
+        return this.getDefaultState().withProperty(VARIANT, BlockPlanks.EnumType.byMetadata(meta));
+    }
+
+    @NotNull
+    public MapColor getMapColor(@NotNull IBlockState state)
+    {
+        return state.getValue(VARIANT).getMapColor();
     }
 
     public void addCollisionBoxToList(@NotNull final IBlockState iBlockState,
