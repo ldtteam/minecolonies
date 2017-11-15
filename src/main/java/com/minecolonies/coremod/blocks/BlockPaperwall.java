@@ -115,7 +115,6 @@ public class BlockPaperwall extends Block
         }
     }
 
-
     private static int getBoundingBoxIndex(final EnumFacing side)
     {
         return 1 << side.getHorizontalIndex();
@@ -126,7 +125,7 @@ public class BlockPaperwall extends Block
                                         @NotNull final IBlockAccess source,
                                         @NotNull final BlockPos pos)
         {
-        final IBlockState tempState = this.getActualState(blockState, source, pos);
+            final IBlockState tempState = this.getActualState(blockState, source, pos);
             return AABB_BY_INDEX[getBoundingBoxIndex(tempState)];
         }
 
