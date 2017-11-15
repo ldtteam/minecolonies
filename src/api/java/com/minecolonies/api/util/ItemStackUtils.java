@@ -9,6 +9,7 @@ import net.minecraft.nbt.NBTTagList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
@@ -117,7 +118,7 @@ public final class ItemStackUtils
         final int level = Compatibility.isTinkersWeapon(stack) ?  Compatibility.getToolLevel(stack) : getMiningLevel(stack, toolType);
         return isTool(stack, toolType) && verifyToolLevel(stack, level, minimalLevel, maximumLevel);
     }
-
+    
     /**
      * Wrapper method to check if a stack is empty.
      * Used for easy updating to 1.11.

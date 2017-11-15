@@ -34,8 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static com.minecolonies.coremod.placementhandlers.IPlacementHandler.ActionProcessingResult.ACCEPT;
-import static com.minecolonies.coremod.placementhandlers.IPlacementHandler.ActionProcessingResult.DENY;
 import static com.minecolonies.coremod.placementhandlers.IPlacementHandler.ActionProcessingResult.IGNORE;
 
 /**

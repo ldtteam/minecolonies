@@ -471,4 +471,6 @@ com.minecolonies.coremod.worker.noUpgrade=No Upgrade available.
 com.minecolonies.coremod.worker.needBarracks=Please upgrade the Barracks first.
 com.minecolonies.coremod.gui.warehouse.upgrade=Upgrade Storage
 item.minecolonies.scepterPermission.name=PermissionScepter
+achievement.upgrade.guard.first=The killer
+achievement.upgrade.guard.last=Cleanup crew
 tile.minecolonies.blockPaperwall.name=Paper wall
