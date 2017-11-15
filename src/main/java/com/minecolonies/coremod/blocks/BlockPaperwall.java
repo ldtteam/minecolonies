@@ -84,14 +84,14 @@ public class BlockPaperwall extends Block
         setResistance(RESISTANCE);
     }
 
-    public void addCollisionBoxToList(@NotNull IBlockState iBlockState,
+    public void addCollisionBoxToList(@NotNull final IBlockState iBlockState,
                                       @NotNull final World worldIn,
                                       @NotNull final BlockPos pos,
                                       @NotNull final AxisAlignedBB entityBox,
                                       @NotNull final List<AxisAlignedBB> collidingBoxes,
                                       @Nullable final Entity entityIn)
     {
-        IBlockState tempState = this.getActualState(iBlockState, worldIn, pos);
+        final IBlockState tempState = this.getActualState(iBlockState, worldIn, pos);
         addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_BY_INDEX[0]);
 
         if (tempState.getValue(NORTH))
@@ -115,16 +115,18 @@ public class BlockPaperwall extends Block
         }
     }
 
+
     private static int getBoundingBoxIndex(final EnumFacing side)
     {
         return 1 << side.getHorizontalIndex();
     }
 
     @NotNull
-    public AxisAlignedBB getBoundingBox(@NotNull IBlockState blockState,
+    public AxisAlignedBB getBoundingBox(@NotNull final IBlockState blockState,
                                         @NotNull final IBlockAccess source,
-                                        @NotNull final BlockPos pos) {
-        IBlockState tempState = this.getActualState(blockState, source, pos);
+                                        @NotNull final BlockPos pos)
+    {
+       final IBlockState tempState = this.getActualState(blockState, source, pos);
         {
             return AABB_BY_INDEX[getBoundingBoxIndex(tempState)];
         }
