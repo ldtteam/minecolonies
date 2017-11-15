@@ -20,6 +20,11 @@ import net.minecraftforge.fml.relauncher.Side;
  */
 public class ContainerMinecoloniesCitizenInventory extends Container
 {
+    /**
+     * Amount of columns in the player inventory.
+     */
+    private static final int INVENTORY_COLUMNS = 9;
+
     private final IInventory lowerChestInventory;
     private final IInventory playerInventory;
     private final int        numRows;
@@ -53,13 +58,13 @@ public class ContainerMinecoloniesCitizenInventory extends Container
                     {
                         if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER && !ItemStackUtils.isEmpty(stack))
                         {
-                            super.putStack(stack);
                             final Colony colony = ColonyManager.getColony(colonyId);
                             final AbstractBuilding building = colony.getBuilding(buildingId);
                             final CitizenData citizenData = colony.getCitizen(citizenId);
 
                             building.overruleNextOpenRequestOfCitizenWithStack(citizenData, stack);
                         }
+                        super.putStack(stack);
                     }
                 });
             }
@@ -96,39 +101,42 @@ public class ContainerMinecoloniesCitizenInventory extends Container
      * @param index Index of the {@link Slot}. This index is relative to the list of slots in this {@code Container},
      * {@link #inventorySlots}.
      */
+    @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index)
     {
-        ItemStack itemstack = ItemStack.EMPTY;
-        Slot slot = (Slot)this.inventorySlots.get(index);
+        final Slot slot = this.inventorySlots.get(index);
 
-        if (slot != null && slot.getHasStack())
+        if (slot == null || !slot.getHasStack())
         {
-            ItemStack itemstack1 = slot.getStack();
-            itemstack = itemstack1.copy();
-
-            if (index < this.numRows * 9)
-            {
-                if (!this.mergeItemStack(itemstack1, this.numRows * 9, this.inventorySlots.size(), true))
-                {
-                    return ItemStack.EMPTY;
-                }
-            }
-            else if (!this.mergeItemStack(itemstack1, 0, this.numRows * 9, false))
-            {
-                return ItemStack.EMPTY;
-            }
-
-            if (itemstack1.isEmpty())
-            {
-                slot.putStack(ItemStack.EMPTY);
-            }
-            else
-            {
-                slot.onSlotChanged();
-            }
+            return ItemStackUtils.EMPTY;
         }
 
-        return itemstack;
+        final ItemStack stackCopy = slot.getStack().copy();
+
+        final int maxIndex = this.numRows * INVENTORY_COLUMNS;
+
+        if (index < maxIndex)
+        {
+            if (!this.mergeItemStack(stackCopy, maxIndex, this.inventorySlots.size(), true))
+            {
+                return ItemStackUtils.EMPTY;
+            }
+        }
+        else if (!this.mergeItemStack(stackCopy, 0, maxIndex, false))
+        {
+            return ItemStackUtils.EMPTY;
+        }
+
+        if (ItemStackUtils.getSize(stackCopy) == 0)
+        {
+            slot.putStack(ItemStackUtils.EMPTY);
+        }
+        else
+        {
+            slot.onSlotChanged();
+        }
+
+        return stackCopy;
     }
 
     /**

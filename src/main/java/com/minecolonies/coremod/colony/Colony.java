@@ -1693,7 +1693,11 @@ public class Colony implements IColony
      */
     public AbstractBuilding getBuilding(final BlockPos buildingId)
     {
-        return buildings.get(buildingId);
+        if(buildingId != null)
+        {
+            return buildings.get(buildingId);
+        }
+        return null;
     }
 
     /**

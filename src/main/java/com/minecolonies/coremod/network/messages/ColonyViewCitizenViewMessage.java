@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -47,8 +48,7 @@ public class ColonyViewCitizenViewMessage implements IMessage, IMessageHandler<C
     {
         colonyId = buf.readInt();
         citizenId = buf.readInt();
-        this.citizenBuffer = Unpooled.buffer();
-        buf.readBytes(citizenBuffer, buf.readableBytes());
+        this.citizenBuffer = buf.retain();
     }
 
     @Override

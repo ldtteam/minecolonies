@@ -40,7 +40,8 @@ public class GuiHandler implements IGuiHandler
             {
                 return new ContainerRack((TileEntityRack) tileEntity, ((TileEntityRack) tileEntity).getOtherChest(), player.inventory, pos);
             }
-        } else if (id==ID.BUILDING_INVENTORY.ordinal())
+        }
+        else if (id==ID.BUILDING_INVENTORY.ordinal())
         {
             TileEntity entity = world.getTileEntity(new BlockPos(x,y,z));
             if (entity instanceof TileEntityColonyBuilding)
@@ -50,11 +51,12 @@ public class GuiHandler implements IGuiHandler
 
                 return new ContainerMinecoloniesBuildingInventory(player.inventory, tileEntityColonyBuilding, player, colony.getID(), tileEntityColonyBuilding.getPos());
             }
-        } else if (id==ID.CITIZEN_INVENTORY.ordinal())
+        }
+        else if (id==ID.CITIZEN_INVENTORY.ordinal())
         {
             final Colony colony = ColonyManager.getColony(x);
             final CitizenData citizen = colony.getCitizen(y);
-            final AbstractBuilding building = citizen.getWorkBuilding();
+            final AbstractBuilding building = citizen.getWorkBuilding() == null ? null : citizen.getWorkBuilding();
             
             return new ContainerMinecoloniesCitizenInventory(player.inventory, citizen.getCitizenEntity().getInventoryCitizen(), player, colony.getID(), building.getID(), citizen.getId());
         }
