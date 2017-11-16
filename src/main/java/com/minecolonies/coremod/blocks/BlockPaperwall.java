@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 import net.minecraft.block.BlockLog;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
@@ -21,10 +22,7 @@ import net.minecraft.block.BlockPlanks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.Rotation;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -36,11 +34,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class BlockPaperwall extends Block
 {
-    private static final PropertyEnum<BlockPlanks.EnumType>
-            VARIANT = PropertyEnum.create("variant", BlockPlanks.EnumType.class,
-            p_apply_1_ -> p_apply_1_.getMetadata() < 4);
-    private static final PropertyEnum<BlockLog.EnumAxis>
-            LOG_AXIS = PropertyEnum.create("axis", BlockLog.EnumAxis.class);
+    private static final PropertyEnum<BlockPaperwall.EnumType>
+            VARIANT = PropertyEnum.create("variant", EnumType.class);
+
     public static final PropertyBool NORTH = PropertyBool.create("north");
     public static final PropertyBool EAST = PropertyBool.create("east");
     public static final PropertyBool SOUTH = PropertyBool.create("south");
@@ -82,13 +78,10 @@ public class BlockPaperwall extends Block
     BlockPaperwall()
     {
         super(Material.WOOD);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(VARIANT, BlockPlanks.EnumType.JUNGLE));
+        this.setDefaultState(this.blockState.getBaseState().withProperty(VARIANT, BlockPaperwall.EnumType.JUNGLE));
         initBlock();
     }
-    public int damageDropped(@NotNull IBlockState state)
-    {
-        return state.getValue(VARIANT).getMetadata();
-    }
+
     private void initBlock()
     {
         setRegistryName(BLOCK_NAME);
@@ -100,8 +93,14 @@ public class BlockPaperwall extends Block
         setResistance(RESISTANCE);
     }
 
+    @Override
+    public int damageDropped(@NotNull final IBlockState state)
+    {
+        return state.getValue(VARIANT).getMetadata();
+    }
+
     @SideOnly(Side.CLIENT)
-    public void getSubBlocks(@NotNull Item itemIn, @NotNull CreativeTabs tab, @NotNull List<ItemStack> list)
+    public void getSubBlocks(@NotNull final Item itemIn, @NotNull final CreativeTabs tab, @NotNull final List<ItemStack> list)
     {
         for (BlockPlanks.EnumType blockpaperwall$enumtype : BlockPlanks.EnumType.values())
         {
@@ -112,15 +111,17 @@ public class BlockPaperwall extends Block
     @NotNull
     public IBlockState getStateFromMeta(int meta)
     {
-        return this.getDefaultState().withProperty(VARIANT, BlockPlanks.EnumType.byMetadata(meta));
+        return this.getDefaultState().withProperty(VARIANT, BlockPaperwall.EnumType.byMetadata(meta));
     }
 
     @NotNull
+    @Override
     public MapColor getMapColor(@NotNull IBlockState state)
     {
         return state.getValue(VARIANT).getMapColor();
     }
 
+    @Override
     public void addCollisionBoxToList(@NotNull final IBlockState iBlockState,
                                       @NotNull final World worldIn,
                                       @NotNull final BlockPos pos,
@@ -159,6 +160,7 @@ public class BlockPaperwall extends Block
     }
 
     @NotNull
+    @Override
     public AxisAlignedBB getBoundingBox(@NotNull final IBlockState blockState, @NotNull final IBlockAccess source, @NotNull final BlockPos pos)
     {
         final IBlockState tempState = this.getActualState(blockState, source, pos);
@@ -197,6 +199,7 @@ public class BlockPaperwall extends Block
      * metadata, such as fence connections.
      */
     @NotNull
+    @Override
     public IBlockState getActualState(@NotNull final IBlockState tempState,
                                       @NotNull final IBlockAccess worldIn,
                                       @NotNull final BlockPos pos)
@@ -210,12 +213,13 @@ public class BlockPaperwall extends Block
     /**
     * Used to determine ambient occlusion and culling when rebuilding chunks for render
     */
-
+    @Override
     public boolean isOpaqueCube(@NotNull final IBlockState state)
     {
         return false;
     }
 
+    @Override
     public boolean isFullCube(@NotNull final IBlockState state)
     {
         return false;
@@ -229,6 +233,7 @@ public class BlockPaperwall extends Block
     }
 
     @SideOnly(Side.CLIENT)
+    @Override
     public boolean shouldSideBeRendered(@NotNull final IBlockState blockState,
                                         @NotNull final IBlockAccess blockAccess,
                                         @NotNull final BlockPos pos,
@@ -240,6 +245,7 @@ public class BlockPaperwall extends Block
 
     @NotNull
     @SideOnly(Side.CLIENT)
+    @Override
     public BlockRenderLayer getBlockLayer()
     {
         return BlockRenderLayer.TRANSLUCENT;
@@ -248,6 +254,7 @@ public class BlockPaperwall extends Block
     /**
      * Convert the BlockState into the correct metadata value
      */
+    @Override
     public int getMetaFromState(@NotNull final IBlockState state)
     {
         return 0;
@@ -258,6 +265,7 @@ public class BlockPaperwall extends Block
      * blockstate.
      */
     @NotNull
+    @Override
     public IBlockState withRotation(@NotNull final IBlockState tempState,
                                     @NotNull final Rotation rot)
     {
@@ -291,6 +299,7 @@ public class BlockPaperwall extends Block
      * blockstate.
      */
     @NotNull
+    @Override
     public IBlockState withMirror(@NotNull final IBlockState tempState, final @NotNull Mirror mirrorIn)
     {
         switch (mirrorIn)
@@ -305,9 +314,10 @@ public class BlockPaperwall extends Block
     }
 
     @NotNull
+    @Override
     protected BlockStateContainer createBlockState()
     {
-        return new BlockStateContainer(this, VARIANT, LOG_AXIS, NORTH, EAST, WEST, SOUTH);
+        return new BlockStateContainer(this, new IProperty[] {NORTH, EAST, WEST, SOUTH, VARIANT});
     }
 
     private boolean canPaneConnectTo(final IBlockAccess world, final BlockPos pos, final EnumFacing dir)
@@ -315,5 +325,79 @@ public class BlockPaperwall extends Block
         final BlockPos off = pos.offset(dir);
         final IBlockState state = world.getBlockState(off);
         return canPaneConnectToBlock(state.getBlock()) || state.isSideSolid(world, off, dir.getOpposite());
+    }
+
+    public static enum EnumType implements IStringSerializable
+    {
+        OAK(0, "oak", MapColor.WOOD),
+        SPRUCE(1, "spruce", MapColor.OBSIDIAN),
+        BIRCH(2, "birch", MapColor.SAND),
+        JUNGLE(3, "jungle", MapColor.DIRT);
+
+        private static final BlockPaperwall.EnumType[] META_LOOKUP = new BlockPaperwall.EnumType[values().length];
+        private final int meta;
+        private final String name;
+        private final String unlocalizedName;
+        /** The color that represents this entry on a map. */
+        private final MapColor mapColor;
+
+        private EnumType(int metaIn, String nameIn, MapColor mapColorIn)
+        {
+            this(metaIn, nameIn, nameIn, mapColorIn);
+        }
+
+        private EnumType(int metaIn, String nameIn, String unlocalizedNameIn, MapColor mapColorIn)
+        {
+            this.meta = metaIn;
+            this.name = nameIn;
+            this.unlocalizedName = unlocalizedNameIn;
+            this.mapColor = mapColorIn;
+        }
+
+        public int getMetadata()
+        {
+            return this.meta;
+        }
+
+        /**
+         * The color which represents this entry on a map.
+         */
+        public MapColor getMapColor()
+        {
+            return this.mapColor;
+        }
+
+        public String toString()
+        {
+            return this.name;
+        }
+
+        public static BlockPaperwall.EnumType byMetadata(int meta)
+        {
+            if (meta < 0 || meta >= META_LOOKUP.length)
+            {
+                meta = 0;
+            }
+
+            return META_LOOKUP[meta];
+        }
+
+        public String getName()
+        {
+            return this.name;
+        }
+
+        public String getUnlocalizedName()
+        {
+            return this.unlocalizedName;
+        }
+
+        static
+        {
+            for (BlockPaperwall.EnumType blockpaperwall$enumtype : values())
+            {
+                META_LOOKUP[blockpaperwall$enumtype.getMetadata()] = blockpaperwall$enumtype;
+            }
+        }
     }
 }
