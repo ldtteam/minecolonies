@@ -7,7 +7,6 @@ import net.minecraft.block.Block;
 import java.util.List;
 import javax.annotation.Nullable;
 
-import net.minecraft.block.BlockLog;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -317,7 +316,7 @@ public class BlockPaperwall extends Block
     @Override
     protected BlockStateContainer createBlockState()
     {
-        return new BlockStateContainer(this, new IProperty[] {NORTH, EAST, WEST, SOUTH, VARIANT});
+        return new BlockStateContainer(this, NORTH, EAST, WEST, SOUTH, VARIANT);
     }
 
     private boolean canPaneConnectTo(final IBlockAccess world, final BlockPos pos, final EnumFacing dir)
@@ -327,7 +326,7 @@ public class BlockPaperwall extends Block
         return canPaneConnectToBlock(state.getBlock()) || state.isSideSolid(world, off, dir.getOpposite());
     }
 
-    public static enum EnumType implements IStringSerializable
+    public enum EnumType implements IStringSerializable
     {
         OAK(0, "oak", MapColor.WOOD),
         SPRUCE(1, "spruce", MapColor.OBSIDIAN),
@@ -341,12 +340,12 @@ public class BlockPaperwall extends Block
         /** The color that represents this entry on a map. */
         private final MapColor mapColor;
 
-        private EnumType(int metaIn, String nameIn, MapColor mapColorIn)
+        EnumType(int metaIn, String nameIn, MapColor mapColorIn)
         {
             this(metaIn, nameIn, nameIn, mapColorIn);
         }
 
-        private EnumType(int metaIn, String nameIn, String unlocalizedNameIn, MapColor mapColorIn)
+        EnumType(int metaIn, String nameIn, String unlocalizedNameIn, MapColor mapColorIn)
         {
             this.meta = metaIn;
             this.name = nameIn;
@@ -382,6 +381,7 @@ public class BlockPaperwall extends Block
             return META_LOOKUP[meta];
         }
 
+        @NotNull
         public String getName()
         {
             return this.name;
