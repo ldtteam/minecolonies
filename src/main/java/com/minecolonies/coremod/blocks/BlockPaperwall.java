@@ -99,7 +99,7 @@ public class BlockPaperwall extends Block
     }
 
     @SideOnly(Side.CLIENT)
-    public void getSubBlocks(@NotNull final Item itemIn, @NotNull final CreativeTabs tab, @NotNull final List<ItemStack> list)
+    public void getSubBlocks(@NotNull final Item itemIn, final CreativeTabs tab, @NotNull final List<ItemStack> list)
     {
         for (BlockPlanks.EnumType blockpaperwall$enumtype : BlockPlanks.EnumType.values())
         {
