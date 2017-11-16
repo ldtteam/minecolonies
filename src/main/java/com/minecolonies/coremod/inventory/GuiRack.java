@@ -159,4 +159,11 @@ public class GuiRack extends GuiContainer
             return new ResourceLocation(Constants.MOD_ID, String.format(LOCATION, Integer.toString(inventoryRows * SLOTS_EACH_ROW)));
         }
     }
+
+    @Override
+    public void drawScreen(final int mouseX, final int mouseY, final float partialTicks)
+    {
+        super.drawScreen(mouseX, mouseY, partialTicks);
+        this.renderHoveredToolTip(mouseX, mouseY);
+    }
 }
