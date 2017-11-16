@@ -1,0 +1,7 @@
+{
+    "parent": "block/pane_side_alt",
+    "textures": {
+        "edge": "minecolonies:blocks/blockJunglePaperwallTop",
+        "pane": "minecolonies:blocks/blockJunglePaperwall"
+    }
+}

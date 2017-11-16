@@ -1,0 +1,7 @@
+{
+    "parent": "block/pane_post",
+    "textures": {
+        "edge": "minecolonies:blocks/blockJunglePaperwallTop",
+        "pane": "minecolonies:blocks/blockJunglePaperwall"
+    }
+}
