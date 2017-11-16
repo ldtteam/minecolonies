@@ -155,7 +155,7 @@ public final class ColonyManager
      *
      * @param id the colonies id.
      */
-    public static void deleteColony(final int id)
+    public static void deleteColony(final int id, boolean canDelete)
     {
         try
         {
@@ -174,23 +174,22 @@ public final class ColonyManager
                     colonyWorlds.add(world);
                 }
             }
-            Log.getLogger().info("Removing buildings for " + id);
-            for (final AbstractBuilding building : new ArrayList<>(colony.getBuildings().values()))
-            {
+
+            if (canDelete = true) {
+                Log.getLogger().info("Removing buildings for " + id);
+                for (final AbstractBuilding building : new ArrayList<>(colony.getBuildings().values())) {
                 final BlockPos location = building.getLocation();
                 Log.getLogger().info("Delete Building at " + location);
                 building.deconstruct();
                 building.destroy();
-                for (final World world : colonyWorlds)
-                {
-                    if (world.getBlockState(location).getBlock() instanceof AbstractBlockHut)
-                    {
+                for (final World world : colonyWorlds) {
+                    if (world.getBlockState(location).getBlock() instanceof AbstractBlockHut) {
                         Log.getLogger().info("Found Block, deleting " + world.getBlockState(location).getBlock());
                         world.setBlockToAir(location);
                     }
                 }
             }
-
+        }
             MinecraftForge.EVENT_BUS.unregister(colony.getEventHandler());
             Log.getLogger().info("Deleting colony: " + colony.getID());
             colonies.remove(id);
