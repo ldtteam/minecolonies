@@ -58,8 +58,8 @@ public class DeleteColonyCommand extends AbstractSingleCommand
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
         final int colonyId;
-
-        if (args.length == 0)
+        boolean canDestroy = Boolean.parseBoolean(args[1]);
+        if (args == null || args.length == 0)
         {
             IColony colony = null;
             if (sender instanceof EntityPlayer)
@@ -98,7 +98,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand
             }
         }
 
-        server.addScheduledTask(() -> ColonyManager.deleteColony(colony.getID()));
+        server.addScheduledTask(() -> ColonyManager.deleteColony(colony.getID(), canDestroy));
     }
 
     @NotNull

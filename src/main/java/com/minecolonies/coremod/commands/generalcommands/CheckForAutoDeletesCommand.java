@@ -46,6 +46,8 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
+        boolean canDestroy = Boolean.parseBoolean(args[1]);
+
         if (sender instanceof EntityPlayer && !isPlayerOpped(sender))
         {
             sender.sendMessage(new TextComponentString("Must be OP to use command"));
@@ -77,7 +79,7 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand
                 sender.sendMessage(new TextComponentString("Successful"));
                 for (final Colony col : coloniesToDelete)
                 {
-                    server.addScheduledTask(() -> ColonyManager.deleteColony(col.getID()));
+                    server.addScheduledTask(() -> ColonyManager.deleteColony(col.getID(), canDestroy));
                 }
             }
         }
