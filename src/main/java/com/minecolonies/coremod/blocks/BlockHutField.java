@@ -34,6 +34,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Locale;
+
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 import static net.minecraft.util.EnumFacing.NORTH;
 import static net.minecraft.util.EnumFacing.fromAngle;
@@ -96,7 +98,7 @@ public class BlockHutField extends BlockContainer
     private void initBlock()
     {
         setRegistryName(REGISTRY_NAME);
-        setUnlocalizedName(Constants.MOD_ID.toLowerCase() + "." + "blockHutField");
+        setUnlocalizedName(Constants.MOD_ID.toLowerCase(Locale.ENGLISH) + "." + REGISTRY_NAME);
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
         //Blast resistance for creepers etc. makes them explosion proof.
         setResistance(RESISTANCE);
