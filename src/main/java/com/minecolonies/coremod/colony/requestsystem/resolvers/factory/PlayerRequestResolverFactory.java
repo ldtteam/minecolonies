@@ -29,6 +29,8 @@ public class PlayerRequestResolverFactory implements IFactory<IRequestManager, P
     private static final String NBT_ASSIGNED_REQUESTS = "Requests";
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
+    private static final Integer CONST_PLAYER_RESOLVER_ID_SCALE = -1;
+
     @NotNull
     @Override
     public TypeToken<? extends PlayerRequestResolver> getFactoryOutputType()
@@ -50,7 +52,7 @@ public class PlayerRequestResolverFactory implements IFactory<IRequestManager, P
       throws IllegalArgumentException
     {
         final ILocation location = factoryController.getNewInstance(TypeConstants.ILOCATION, iRequestManager.getColony().getCenter(), iRequestManager.getColony().getWorld().provider.getDimension());
-        final IToken token = factoryController.getNewInstance(TypeConstants.ITOKEN, iRequestManager.getColony().getID());
+        final IToken token = factoryController.getNewInstance(TypeConstants.ITOKEN, iRequestManager.getColony().getID() * CONST_PLAYER_RESOLVER_ID_SCALE);
         return new PlayerRequestResolver(location, token);
     }
 

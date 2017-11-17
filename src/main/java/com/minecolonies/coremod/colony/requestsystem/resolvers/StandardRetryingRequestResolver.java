@@ -24,6 +24,8 @@ import java.util.stream.Collectors;
 public class StandardRetryingRequestResolver implements IRetryingRequestResolver
 {
 
+    private static final Integer CONST_RETRYING_ID_SCALE = -20000;
+
     private IRequestManager manager;
     private ILocation location;
     private IToken id;
@@ -34,7 +36,7 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     public StandardRetryingRequestResolver(final IFactoryController factoryController, final IRequestManager manager) {
         this.updateManager(manager);
 
-        this.id = factoryController.getNewInstance(TypeConstants.ITOKEN, manager.getColony().getID());
+        this.id = factoryController.getNewInstance(TypeConstants.ITOKEN, manager.getColony().getID() * CONST_RETRYING_ID_SCALE);
         this.location = factoryController.getNewInstance(TypeConstants.ILOCATION, manager.getColony().getCenter(), manager.getColony().getWorld().provider.getDimension());
 
     }
@@ -109,13 +111,6 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
                          @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request) throws RuntimeException
     {
         delays.put(request.getToken(), getMaximalDelayBetweenRetriesInTicks());
-
-        if (assignedRequests.containsKey(request.getToken()))
-        {
-            assignedRequests.put(request.getToken(), assignedRequests.get(request.getToken()) + 1);
-            return;
-        }
-
         assignedRequests.put(request.getToken(), 1);
     }
 
@@ -194,9 +189,13 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
         final Set<IToken> successfully = retryables.stream().filter(t -> {
             final Set<IToken> blackList = assignedRequests.get(t) < getMaximalTries() ? ImmutableSet.of() : ImmutableSet.of(id);
 
+            Integer currentAttempt = assignedRequests.get(t);
+
             this.setCurrent(t);
             final IToken resultingResolver = manager.reassignRequest(t, blackList);
             this.setCurrent(null);
+
+            assignedRequests.put(t, ++currentAttempt);
 
             if (resultingResolver != null && !resultingResolver.equals(getRequesterId()))
             {
