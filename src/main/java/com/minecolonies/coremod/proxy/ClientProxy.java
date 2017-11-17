@@ -2,6 +2,7 @@ package com.minecolonies.coremod.proxy;
 
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.blocks.BlockPaperwall;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.client.gui.WindowBuildTool;
 import com.minecolonies.coremod.client.gui.WindowCitizen;
@@ -28,7 +29,9 @@ import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.BlockStateMapper;
 import net.minecraft.client.renderer.block.statemap.IStateMapper;
+import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
@@ -144,6 +147,7 @@ public class ClientProxy extends CommonProxy
         itemModelMesher.register(Item.getItemFromBlock(ModBlocks.blockWayPoint), 0,
                 new ModelResourceLocation(ModBlocks.blockWayPoint.getRegistryName(), INVENTORY));
 
+
         itemModelMesher.register(ModItems.buildTool, 0, new ModelResourceLocation(ModItems.buildTool.getRegistryName(), INVENTORY));
         itemModelMesher.register(ModItems.caliper, 0, new ModelResourceLocation(ModItems.caliper.getRegistryName(), INVENTORY));
         itemModelMesher.register(ModItems.scanTool, 0, new ModelResourceLocation(ModItems.scanTool.getRegistryName(), INVENTORY));
@@ -154,12 +158,20 @@ public class ClientProxy extends CommonProxy
         itemModelMesher.register(ModItems.ancientTome, 0, new ModelResourceLocation(ModItems.ancientTome.getRegistryName(), INVENTORY));
         itemModelMesher.register(ModItems.chiefSword, 0, new ModelResourceLocation(ModItems.chiefSword.getRegistryName(), INVENTORY));
 
-
         // Achievement proxy Items
         itemModelMesher.register(ModItems.itemAchievementProxySettlement, 0, new ModelResourceLocation(ModItems.itemAchievementProxySettlement.getRegistryName(), INVENTORY));
         itemModelMesher.register(ModItems.itemAchievementProxyTown, 0, new ModelResourceLocation(ModItems.itemAchievementProxyTown.getRegistryName(), INVENTORY));
         itemModelMesher.register(ModItems.itemAchievementProxyCity, 0, new ModelResourceLocation(ModItems.itemAchievementProxyCity.getRegistryName(), INVENTORY));
         itemModelMesher.register(ModItems.itemAchievementProxyMetropolis, 0, new ModelResourceLocation(ModItems.itemAchievementProxyMetropolis.getRegistryName(), INVENTORY));
+
+
+        ModelLoader.setCustomStateMapper(ModBlocks.blockPaperwall, new StateMap.Builder().withName(BlockPaperwall.VARIANT).build());
+
+        for(final BlockPaperwall.EnumType type: BlockPaperwall.EnumType.values())
+        {
+            ModelLoader.setCustomModelResourceLocation(new ItemBlock(ModBlocks.blockPaperwall), type.getMetadata(),
+                    new ModelResourceLocation(Constants.MOD_ID, BlockPaperwall.BLOCK_NAME + "_" + type.getName()));
+        }
     }
 
     @Override

@@ -5,58 +5,29 @@ import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import net.minecraft.block.Block;
 
 import java.util.List;
-import javax.annotation.Nullable;
 
+import net.minecraft.block.BlockPane;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.Entity;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
-public class BlockPaperwall extends Block
+public class BlockPaperwall extends BlockPane
 {
-    private static final PropertyEnum<BlockPaperwall.EnumType>
-            VARIANT = PropertyEnum.create("variant", EnumType.class);
-
-    public static final PropertyBool NORTH = PropertyBool.create("north");
-    public static final PropertyBool EAST = PropertyBool.create("east");
-    public static final PropertyBool SOUTH = PropertyBool.create("south");
-    public static final PropertyBool WEST = PropertyBool.create("west");
-    private static final AxisAlignedBB[] AABB_BY_INDEX = new AxisAlignedBB[]{
-            new AxisAlignedBB(0.4375D, 0.0D, 0.4375D, 0.5625D, 1.0D, 0.5625D),
-            new AxisAlignedBB(0.4375D, 0.0D, 0.4375D, 0.5625D, 1.0D, 1.0D),
-            new AxisAlignedBB(0.0D, 0.0D, 0.4375D, 0.5625D, 1.0D, 0.5625D),
-            new AxisAlignedBB(0.0D, 0.0D, 0.4375D, 0.5625D, 1.0D, 1.0D),
-            new AxisAlignedBB(0.4375D, 0.0D, 0.0D, 0.5625D, 1.0D, 0.5625D),
-            new AxisAlignedBB(0.4375D, 0.0D, 0.0D, 0.5625D, 1.0D, 1.0D),
-            new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.5625D, 1.0D, 0.5625D),
-            new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.5625D, 1.0D, 1.0D),
-            new AxisAlignedBB(0.4375D, 0.0D, 0.4375D, 1.0D, 1.0D, 0.5625D),
-            new AxisAlignedBB(0.4375D, 0.0D, 0.4375D, 1.0D, 1.0D, 1.0D),
-            new AxisAlignedBB(0.0D, 0.0D, 0.4375D, 1.0D, 1.0D, 0.5625D),
-            new AxisAlignedBB(0.0D, 0.0D, 0.4375D, 1.0D, 1.0D, 1.0D),
-            new AxisAlignedBB(0.4375D, 0.0D, 0.0D, 1.0D, 1.0D, 0.5625D),
-            new AxisAlignedBB(0.4375D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D),
-            new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 0.5625D),
-            new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D)};
-
+    public static final PropertyEnum<BlockPaperwall.EnumType> VARIANT = PropertyEnum.create("variant", EnumType.class);
 
     /**
      * The hardness this block has.
@@ -66,7 +37,7 @@ public class BlockPaperwall extends Block
     /**
      * This blocks name.
      */
-    private static final String BLOCK_NAME = "blockPaperwall";
+    public static final String BLOCK_NAME = "blockPaperwall";
 
     /**
      * The resistance this block has.
@@ -75,7 +46,7 @@ public class BlockPaperwall extends Block
 
     BlockPaperwall()
     {
-        super(Material.WOOD);
+        super(Material.GLASS, true);
         this.setDefaultState(this.blockState.getBaseState().withProperty(VARIANT, BlockPaperwall.EnumType.JUNGLE));
         initBlock();
     }
@@ -91,204 +62,95 @@ public class BlockPaperwall extends Block
         setResistance(RESISTANCE);
     }
 
+    /**
+     * Gets the metadata of the item this Block can drop. This method is called when the block gets destroyed. It
+     * returns the metadata of the dropped item based on the old metadata of the block.
+     */
     @Override
-    public int damageDropped(@NotNull final IBlockState state)
+    public int damageDropped(IBlockState state)
     {
         return state.getValue(VARIANT).getMetadata();
     }
 
+    /**
+     * returns a list of blocks with the same ID, but different meta (eg: wood returns 4 blocks)
+     */
+    @Override
     @SideOnly(Side.CLIENT)
-    public void getSubBlocks(@NotNull final Item itemIn, final CreativeTabs tab, @NotNull final List<ItemStack> list)
+    public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list)
     {
-        for (BlockPaperwall.EnumType blockpaperwall$enumtype : BlockPaperwall.EnumType.values())
+        for (int i = 0; i < EnumType.values().length; ++i)
         {
-            list.add(new ItemStack(itemIn, 1, blockpaperwall$enumtype.getMetadata()));
+            list.add(new ItemStack(itemIn, 1, i));
         }
     }
 
-    @NotNull
-    public IBlockState getStateFromMeta(int meta)
-    {
-        return this.getDefaultState().withProperty(VARIANT, BlockPaperwall.EnumType.byMetadata(meta));
-    }
-
-    @NotNull
+    /**
+     * Get the MapColor for this Block and the given BlockState
+     */
     @Override
-    public MapColor getMapColor(@NotNull IBlockState state)
+    public MapColor getMapColor(IBlockState state)
     {
         return state.getValue(VARIANT).getMapColor();
     }
 
     @Override
-    public void addCollisionBoxToList(@NotNull final IBlockState iBlockState,
-                                      @NotNull final World worldIn,
-                                      @NotNull final BlockPos pos,
-                                      @NotNull final AxisAlignedBB entityBox,
-                                      @NotNull final List<AxisAlignedBB> collidingBoxes,
-                                      @Nullable final Entity entityIn)
-    {
-        final IBlockState tempState = this.getActualState(iBlockState, worldIn, pos);
-        addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_BY_INDEX[0]);
-
-        if (tempState.getValue(NORTH))
-        {
-            addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_BY_INDEX[getBoundingBoxIndex(EnumFacing.NORTH)]);
-
-        }
-
-        if (tempState.getValue(SOUTH))
-        {
-            addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_BY_INDEX[getBoundingBoxIndex(EnumFacing.SOUTH)]);
-        }
-
-        if (tempState.getValue(EAST))
-        {
-            addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_BY_INDEX[getBoundingBoxIndex(EnumFacing.EAST)]);
-        }
-
-        if (tempState.getValue(WEST))
-        {
-            addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_BY_INDEX[getBoundingBoxIndex(EnumFacing.WEST)]);
-        }
-    }
-
-    private static int getBoundingBoxIndex(final EnumFacing side)
-    {
-        return 1 << side.getHorizontalIndex();
-    }
-
-    @NotNull
-    @Override
-    public AxisAlignedBB getBoundingBox(@NotNull final IBlockState blockState, @NotNull final IBlockAccess source, @NotNull final BlockPos pos)
-    {
-        final IBlockState tempState = this.getActualState(blockState, source, pos);
-        return AABB_BY_INDEX[getBoundingBoxIndex(tempState)];
-    }
-
-    private static int getBoundingBoxIndex(final IBlockState state)
-    {
-        int i = 0;
-
-        if (state.getValue(NORTH))
-        {
-            i |= getBoundingBoxIndex(EnumFacing.NORTH);
-        }
-
-        if (state.getValue(EAST))
-        {
-            i |= getBoundingBoxIndex(EnumFacing.EAST);
-        }
-
-        if (state.getValue(SOUTH))
-        {
-            i |= getBoundingBoxIndex(EnumFacing.SOUTH);
-        }
-
-        if (state.getValue(WEST))
-        {
-            i |= getBoundingBoxIndex(EnumFacing.WEST);
-        }
-
-        return i;
-    }
-
-    /**
-     * Get the actual Block state of this Block at the given position. This applies properties not visible in the
-     * metadata, such as fence connections.
-     */
-    @NotNull
-    @Override
-    public IBlockState getActualState(@NotNull final IBlockState tempState,
-                                      @NotNull final IBlockAccess worldIn,
-                                      @NotNull final BlockPos pos)
-    {
-        return tempState.withProperty(NORTH, canPaneConnectTo(worldIn, pos, EnumFacing.NORTH))
-                .withProperty(SOUTH, canPaneConnectTo(worldIn, pos, EnumFacing.SOUTH))
-                .withProperty(WEST, canPaneConnectTo(worldIn, pos, EnumFacing.WEST))
-                .withProperty(EAST, canPaneConnectTo(worldIn, pos, EnumFacing.EAST));
-    }
-
-    /**
-    * Used to determine ambient occlusion and culling when rebuilding chunks for render
-    */
-    @Override
-    public boolean isOpaqueCube(@NotNull final IBlockState state)
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isFullCube(@NotNull final IBlockState state)
-    {
-        return false;
-    }
-
-    private boolean canPaneConnectToBlock(final Block blockIn)
-    {
-        return blockIn.getDefaultState().isFullCube()
-                || blockIn == this || blockIn == Blocks.GLASS || blockIn == Blocks.STAINED_GLASS ||
-                blockIn == Blocks.STAINED_GLASS_PANE || blockIn instanceof BlockPaperwall;
-    }
-
     @SideOnly(Side.CLIENT)
-    @Override
-    public boolean shouldSideBeRendered(@NotNull final IBlockState blockState,
-                                        @NotNull final IBlockAccess blockAccess,
-                                        @NotNull final BlockPos pos,
-                                        @NotNull final EnumFacing side)
-    {
-        return blockAccess.getBlockState
-                (pos.offset(side)).getBlock() != this && super.shouldSideBeRendered(blockState, blockAccess, pos, side);
-    }
-
-    @NotNull
-    @SideOnly(Side.CLIENT)
-    @Override
     public BlockRenderLayer getBlockLayer()
     {
         return BlockRenderLayer.TRANSLUCENT;
     }
 
     /**
+     * Convert the given metadata into a BlockState for this Block
+     */
+    @Override
+    public IBlockState getStateFromMeta(int meta)
+    {
+        return this.getDefaultState().withProperty(VARIANT, EnumType.byMetadata(meta));
+    }
+
+    /**
      * Convert the BlockState into the correct metadata value
      */
     @Override
-    public int getMetaFromState(@NotNull final IBlockState state)
+    public int getMetaFromState(IBlockState state)
     {
-        return 0;
+        return state.getValue(VARIANT).getMetadata();
+    }
+
+    @Override
+    public boolean canPaneConnectTo(IBlockAccess world, BlockPos pos, EnumFacing dir)
+    {
+        BlockPos off = pos.offset(dir);
+        IBlockState state = world.getBlockState(off);
+        return canPaneConnectToBlock(state.getBlock())
+                || state.isSideSolid(world, off, dir.getOpposite()) || state.getBlock() instanceof BlockPaperwall;
     }
 
     /**
      * Returns the blockstate with the given rotation from the passed blockstate. If inapplicable, returns the passed
      * blockstate.
      */
-    @NotNull
     @Override
-    public IBlockState withRotation(@NotNull final IBlockState tempState,
-                                    @NotNull final Rotation rot)
+    public IBlockState withRotation(IBlockState state, Rotation rot)
     {
         switch (rot)
         {
             case CLOCKWISE_180:
-                return tempState.withProperty
-                        (NORTH, tempState.getValue(SOUTH)).withProperty
-                        (EAST, tempState.getValue(WEST)).withProperty
-                        (SOUTH, tempState.getValue(NORTH)).withProperty
-                        (WEST, tempState.getValue(EAST));
+                return state.withProperty(NORTH, state.getValue(SOUTH))
+                        .withProperty(EAST, state.getValue(WEST)).withProperty(SOUTH, state.getValue(NORTH))
+                        .withProperty(WEST, state.getValue(EAST));
             case COUNTERCLOCKWISE_90:
-                return tempState.withProperty
-                        (NORTH, tempState.getValue(EAST)).withProperty
-                        (EAST, tempState.getValue(SOUTH)).withProperty
-                        (SOUTH, tempState.getValue(WEST)).withProperty
-                        (WEST, tempState.getValue(NORTH));
+                return state.withProperty(NORTH, state.getValue(EAST))
+                        .withProperty(EAST, state.getValue(SOUTH)).withProperty(SOUTH, state.getValue(WEST))
+                        .withProperty(WEST, state.getValue(NORTH));
             case CLOCKWISE_90:
-                return tempState.withProperty
-                        (NORTH, tempState.getValue(WEST)).withProperty
-                        (EAST, tempState.getValue(NORTH)).withProperty
-                        (SOUTH, tempState.getValue(EAST)).withProperty
-                        (WEST, tempState.getValue(SOUTH));
+                return state.withProperty(NORTH, state.getValue(WEST))
+                        .withProperty(EAST, state.getValue(NORTH)).withProperty(SOUTH, state.getValue(EAST))
+                        .withProperty(WEST, state.getValue(SOUTH));
             default:
-                return tempState;
+                return state;
         }
     }
 
@@ -296,34 +158,26 @@ public class BlockPaperwall extends Block
      * Returns the blockstate with the given mirror of the passed blockstate. If inapplicable, returns the passed
      * blockstate.
      */
-    @NotNull
     @Override
-    public IBlockState withMirror(@NotNull final IBlockState tempState, final @NotNull Mirror mirrorIn)
+    public IBlockState withMirror(IBlockState state, Mirror mirrorIn)
     {
         switch (mirrorIn)
         {
             case LEFT_RIGHT:
-                return tempState.withProperty(NORTH, tempState.getValue(SOUTH)).withProperty(SOUTH, tempState.getValue(NORTH));
+                return state.withProperty(NORTH, state.getValue(SOUTH)).withProperty(SOUTH, state.getValue(NORTH));
             case FRONT_BACK:
-                return tempState.withProperty(EAST, tempState.getValue(WEST)).withProperty(WEST, tempState.getValue(EAST));
+                return state.withProperty(EAST, state.getValue(WEST)).withProperty(WEST, state.getValue(EAST));
             default:
-                return super.withMirror(tempState, mirrorIn);
+                return super.withMirror(state, mirrorIn);
         }
     }
 
-    @NotNull
     @Override
     protected BlockStateContainer createBlockState()
     {
-        return new BlockStateContainer(this, VARIANT, NORTH, EAST, WEST, SOUTH);
+        return new BlockStateContainer(this, new IProperty[] {NORTH, EAST, WEST, SOUTH, VARIANT});
     }
 
-    private boolean canPaneConnectTo(final IBlockAccess world, final BlockPos pos, final EnumFacing dir)
-    {
-        final BlockPos off = pos.offset(dir);
-        final IBlockState state = world.getBlockState(off);
-        return canPaneConnectToBlock(state.getBlock()) || state.isSideSolid(world, off, dir.getOpposite());
-    }
 
     public enum EnumType implements IStringSerializable
     {
@@ -365,6 +219,7 @@ public class BlockPaperwall extends Block
             return this.mapColor;
         }
 
+        @Override
         public String toString()
         {
             return this.name;
