@@ -86,7 +86,7 @@ public class BlockPaperwall extends BlockPane
      * returns the metadata of the dropped item based on the old metadata of the block.
      */
     @Override
-    public int damageDropped(IBlockState state)
+    public int damageDropped(final IBlockState state)
     {
         return state.getValue(VARIANT).getMetadata();
     }
@@ -108,7 +108,7 @@ public class BlockPaperwall extends BlockPane
      * Get the MapColor for this Block and the given BlockState
      */
     @Override
-    public MapColor getMapColor(IBlockState state)
+    public MapColor getMapColor(final IBlockState state)
     {
         return state.getValue(VARIANT).getMapColor();
     }
@@ -124,7 +124,7 @@ public class BlockPaperwall extends BlockPane
      * Convert the given metadata into a BlockState for this Block
      */
     @Override
-    public IBlockState getStateFromMeta(int meta)
+    public IBlockState getStateFromMeta(final int meta)
     {
         return this.getDefaultState().withProperty(VARIANT, EnumType.byMetadata(meta));
     }
@@ -133,13 +133,13 @@ public class BlockPaperwall extends BlockPane
      * Convert the BlockState into the correct metadata value
      */
     @Override
-    public int getMetaFromState(IBlockState state)
+    public int getMetaFromState(final IBlockState state)
     {
         return state.getValue(VARIANT).getMetadata();
     }
 
     @Override
-    public boolean canPaneConnectTo(IBlockAccess world, BlockPos pos, EnumFacing dir)
+    public boolean canPaneConnectTo(final IBlockAccess world, final BlockPos pos, final EnumFacing dir)
     {
         BlockPos off = pos.offset(dir);
         IBlockState state = world.getBlockState(off);
@@ -152,7 +152,7 @@ public class BlockPaperwall extends BlockPane
      * blockstate.
      */
     @Override
-    public IBlockState withRotation(IBlockState state, Rotation rot)
+    public IBlockState withRotation(final IBlockState state, final Rotation rot)
     {
         switch (rot)
         {
@@ -178,7 +178,7 @@ public class BlockPaperwall extends BlockPane
      * blockstate.
      */
     @Override
-    public IBlockState withMirror(IBlockState state, Mirror mirrorIn)
+    public IBlockState withMirror(final IBlockState state, final Mirror mirrorIn)
     {
         switch (mirrorIn)
         {
@@ -251,12 +251,13 @@ public class BlockPaperwall extends BlockPane
 
         public static BlockPaperwall.EnumType byMetadata(int meta)
         {
-            if (meta < 0 || meta >= META_LOOKUP.length)
+            int tempMeta = meta;
+            if (tempMeta < 0 || tempMeta >= META_LOOKUP.length)
             {
-                meta = 0;
+                tempMeta = 0;
             }
 
-            return META_LOOKUP[meta];
+            return META_LOOKUP[tempMeta];
         }
 
         @NotNull
@@ -272,9 +273,9 @@ public class BlockPaperwall extends BlockPane
 
         static
         {
-            for (BlockPaperwall.EnumType blockpaperwall$enumtype : values())
+            for (BlockPaperwall.EnumType enumtype : values())
             {
-                META_LOOKUP[blockpaperwall$enumtype.getMetadata()] = blockpaperwall$enumtype;
+                META_LOOKUP[enumtype.getMetadata()] = enumtype;
             }
         }
     }
