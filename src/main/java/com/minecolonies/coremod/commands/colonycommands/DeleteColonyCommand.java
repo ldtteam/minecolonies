@@ -59,7 +59,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand
     {
         final int colonyId;
         boolean canDestroy = true;
-        if (args == null || args.length == 0)
+        if (args.length == 0)
         {
             IColony colony = null;
             if (sender instanceof EntityPlayer)
