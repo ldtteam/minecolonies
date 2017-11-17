@@ -7,8 +7,10 @@ import net.minecraftforge.fml.common.registry.IForgeRegistry;
 /**
  * Class to create the modBlocks.
  * References to the blocks can be made here
+ *
+ * We disabled the following finals since we are neither able to mark the items as final, nor do we want to provide public accessors.
  */
-@SuppressWarnings({"squid:ClassVariableVisibilityCheck", "squid:S2444"})
+@SuppressWarnings({"squid:ClassVariableVisibilityCheck", "squid:S2444", "squid:S1444"})
 public class ModBlocks
 {
     /*
@@ -40,9 +42,6 @@ public class ModBlocks
     public static BlockHutBarracksTower       blockHutBarracksTower;
     public static BlockInfoPoster             blockInfoPoster;
     public static BlockPaperwall              blockPaperWall;
-
-    // Deactivated for now
-    // public static  Block blockBarrel        = new BlockBarrel();
 
     /**
      * Private constructor to hide the implicit public one.

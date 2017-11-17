@@ -5,8 +5,10 @@ import net.minecraftforge.fml.common.registry.IForgeRegistry;
 
 /**
  * Class handling the registering of the mod items.
+ *
+ * We disabled the following finals since we are neither able to mark the items as final, nor do we want to provide public accessors.
  */
-@SuppressWarnings("squid:S1444")
+@SuppressWarnings({"squid:ClassVariableVisibilityCheck", "squid:S2444", "squid:S1444"})
 public final class ModItems
 {
     public static Item supplyChest;
@@ -23,9 +25,6 @@ public final class ModItems
     public static Item itemAchievementProxyTown;
     public static Item itemAchievementProxyCity;
     public static Item itemAchievementProxyMetropolis;
-
-    // deactivated for now
-    // public static final Item compost    = new ItemCompost();
 
     /**
      * Private constructor to hide the implicit public one.
