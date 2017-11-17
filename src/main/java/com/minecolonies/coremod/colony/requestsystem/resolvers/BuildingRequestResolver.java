@@ -57,7 +57,7 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
         if (!requestToCheck.getRequester().getRequesterLocation().equals(getRequesterLocation()))
             return false;
 
-        AbstractBuilding building = ((BuildingBasedRequester) requestToCheck.getRequester()).getBuilding();
+        AbstractBuilding building = (AbstractBuilding) ((BuildingBasedRequester) requestToCheck.getRequester()).getBuilding();
 
         List<TileEntity> tileEntities = new ArrayList<>();
         tileEntities.add(building.getTileEntity());
@@ -82,7 +82,7 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
     public void resolve(
                          @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request) throws RuntimeException
     {
-        AbstractBuilding building = ((BuildingBasedRequester) request.getRequester()).getBuilding();
+        AbstractBuilding building = (AbstractBuilding) ((BuildingBasedRequester) request.getRequester()).getBuilding();
 
         List<TileEntity> tileEntities = new ArrayList<>();
         tileEntities.add(building.getTileEntity());

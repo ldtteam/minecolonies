@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.RequestState;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
@@ -41,6 +42,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -64,7 +67,7 @@ import java.util.stream.Collectors;
  *
  */
 @SuppressWarnings("squid:S2390")
-public abstract class AbstractBuilding implements IRequestResolverProvider
+public abstract class AbstractBuilding implements IRequestResolverProvider, IRequester
 {
     /**
      * Tag used to store the containers to NBT.
@@ -1611,12 +1614,38 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
         return requester;
     }
 
+    @Override
+    public IToken getRequesterId()
+    {
+        return getToken();
+    }
+
+    @NotNull
+    @Override
+    public ILocation getRequesterLocation()
+    {
+        return getRequester().getRequesterLocation();
+    }
+
+    @NotNull
+    @Override
+    public ITextComponent getDisplayName(@NotNull final IToken token)
+    {
+        if (!requestsByCitizen.containsKey(token))
+        {
+            return new TextComponentString("<UNKNOWN>");
+        }
+
+        Integer citizenData = requestsByCitizen.get(token);
+        return new TextComponentString(getColony().getCitizen(citizenData).getName());
+    }
+
     /**
      * The AbstractBuilding View is the client-side representation of a AbstractBuilding.
      * Views contain the AbstractBuilding's data that is relevant to a Client, in a more client-friendly form.
      * Mutable operations on a View result in a message to the server to perform the operation.
      */
-    public static class View
+    public static class View implements IRequester
     {
         private final ColonyView colony;
         @NotNull
@@ -1826,5 +1855,45 @@ public abstract class AbstractBuilding implements IRequestResolverProvider
                                           .iterator());
         }
 
+        @Override
+        public IToken getRequesterId()
+        {
+            //NOOP; Is Client side view.
+            return null;
+        }
+
+        @NotNull
+        @Override
+        public ILocation getRequesterLocation()
+        {
+            //NOOP; Is Client side view.
+            return null;
+        }
+
+        @NotNull
+        @Override
+        public void onRequestComplete(@NotNull final IToken token)
+        {
+            //NOOP; Is Client side view.
+        }
+
+        @NotNull
+        @Override
+        public void onRequestCancelled(@NotNull final IToken token)
+        {
+            //NOOP; Is Client side view.
+        }
+
+        @NotNull
+        @Override
+        public ITextComponent getDisplayName(@NotNull final IToken token)
+        {
+            if (!requestsByCitizen.containsKey(token))
+            {
+                return new TextComponentString("<UNKNOWN>");
+            }
+
+            return new TextComponentString(getColony().getCitizen(requestsByCitizen.get(token)).getName());
+        }
     }
 }

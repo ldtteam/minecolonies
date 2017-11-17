@@ -3,8 +3,10 @@ package com.minecolonies.api.colony;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.requestsystem.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -121,4 +123,12 @@ public interface IColony
      * @return true if so.
      */
     boolean isHasRaidBeenCalculated();
+
+    /**
+     * Method used to get a {@link IRequester} from a given Position. Is always a Building.
+     * @param pos The position to get the Building that acts as a requester.
+     * @return The {@link IRequester} from the position, or null.
+     */
+    @Nullable
+    IRequester getRequesterBuildingForPosition(@NotNull final BlockPos pos);
 }

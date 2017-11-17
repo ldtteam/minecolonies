@@ -52,7 +52,7 @@ public class StandardRetryingRequestResolverFactory implements IFactory<IRequest
         if (context.length != 0)
             throw new IllegalArgumentException("Context is not empty.");
 
-        return new StandardRetryingRequestResolver(iRequestManager);
+        return new StandardRetryingRequestResolver(factoryController, iRequestManager);
     }
 
     @NotNull

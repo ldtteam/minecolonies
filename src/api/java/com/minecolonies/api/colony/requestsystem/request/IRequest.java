@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -236,5 +237,13 @@ public interface IRequest<R extends IRequestable>
      *
      * @return A List of ItemStacks that represents this request.
      */
+    @NotNull
     List<ItemStack> getDisplayStacks();
+
+    /**
+     * Method used to get a ResourceLocation that is displayed instead of the {@link #getDisplayStacks()}, when {@link #getDisplayStacks()} returns an empty list.
+     * @return The ResourceLocation of the Image dat is displayed when their are no DisplayStacks.
+     */
+    @NotNull
+    ResourceLocation getDisplayIcon();
 }

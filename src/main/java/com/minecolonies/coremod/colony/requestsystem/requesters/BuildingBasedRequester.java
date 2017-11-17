@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.requestsystem.requesters;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
@@ -8,6 +9,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +29,7 @@ public class BuildingBasedRequester implements IRequester
 
     private final IToken requesterId;
 
-    private AbstractBuilding building = null;
+    private IRequester building = null;
 
     public BuildingBasedRequester(final ILocation location, final IToken requesterId)
     {
@@ -76,6 +78,13 @@ public class BuildingBasedRequester implements IRequester
         building.onRequestCancelled(token);
     }
 
+    @NotNull
+    @Override
+    public ITextComponent getDisplayName(@NotNull final IToken token)
+    {
+        return getBuilding().getDisplayName(token);
+    }
+
     private void updateBuilding()
     {
         if (building != null)
@@ -89,9 +98,9 @@ public class BuildingBasedRequester implements IRequester
         }
 
         final World world = FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension(getRequesterLocation().getDimension());
-        final Colony colony = ColonyManager.getColony(world, getRequesterLocation().getInDimensionLocation());
+        final IColony colony = ColonyManager.getClosestIColony(world, getRequesterLocation().getInDimensionLocation());
 
-        building = colony.getBuilding(getRequesterLocation().getInDimensionLocation());
+        building = colony.getRequesterBuildingForPosition(getRequesterLocation().getInDimensionLocation());
     }
 
     public NBTTagCompound serialize(IFactoryController controller)
@@ -112,15 +121,9 @@ public class BuildingBasedRequester implements IRequester
         return new BuildingBasedRequester(location, token);
     }
 
-    public AbstractBuilding getBuilding()
+    public IRequester getBuilding()
     {
         updateBuilding();
         return building;
-    }
-
-    @Override
-    public String toString()
-    {
-        return getBuilding().getSchematicName() + " ";
     }
 }

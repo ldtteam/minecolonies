@@ -14,6 +14,7 @@ import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
@@ -107,6 +108,14 @@ public final class StandardRequests
         public List<ItemStack> getDisplayStacks()
         {
             return ImmutableList.of();
+        }
+
+        @NotNull
+        @Override
+        public ResourceLocation getDisplayIcon()
+        {
+            //TODO: Add correct logo.
+            return super.getDisplayIcon();
         }
     }
 

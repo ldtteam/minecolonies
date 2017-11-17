@@ -1,6 +1,9 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers.factory;
 
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.requestsystem.IRequestManager;
+import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverFactory;
@@ -18,7 +21,7 @@ import java.util.stream.Collectors;
 /**
  * ------------ Class not Documented ------------
  */
-public class PlayerRequestResolverFactory implements IRequestResolverFactory<PlayerRequestResolver>
+public class PlayerRequestResolverFactory implements IFactory<IRequestManager, PlayerRequestResolver>
 {
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
     private static final String NBT_TOKEN  = "Token";
@@ -35,18 +38,20 @@ public class PlayerRequestResolverFactory implements IRequestResolverFactory<Pla
 
     @NotNull
     @Override
-    public TypeToken<? extends ILocation> getFactoryInputType()
+    public TypeToken<? extends IRequestManager> getFactoryInputType()
     {
-        return TypeConstants.ILOCATION;
+        return TypeToken.of(IRequestManager.class);
     }
 
     @NotNull
     @Override
     public PlayerRequestResolver getNewInstance(
-                                                   @NotNull final IFactoryController factoryController, @NotNull final ILocation iLocation, @NotNull final Object... context)
+                                                   @NotNull final IFactoryController factoryController, @NotNull final IRequestManager iRequestManager, @NotNull final Object... context)
       throws IllegalArgumentException
     {
-        return new PlayerRequestResolver(iLocation, factoryController.getNewInstance(TypeConstants.ITOKEN));
+        final ILocation location = factoryController.getNewInstance(TypeConstants.ILOCATION, iRequestManager.getColony().getCenter(), iRequestManager.getColony().getWorld().provider.getDimension());
+        final IToken token = factoryController.getNewInstance(TypeConstants.ITOKEN, iRequestManager.getColony().getID());
+        return new PlayerRequestResolver(location, token);
     }
 
     @NotNull

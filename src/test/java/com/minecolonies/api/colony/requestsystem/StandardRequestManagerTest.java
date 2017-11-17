@@ -26,6 +26,7 @@ import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequestFac
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.After;
@@ -399,6 +400,14 @@ public class StandardRequestManagerTest
         {
             //NOOP
         }
+
+        @NotNull
+        @Override
+        public ITextComponent getDisplayName(@NotNull final IToken token)
+        {
+            //Not used in test.
+            return null;
+        }
     }
 
     private static class StringResolverFactory implements IRequestResolverFactory<StringResolver>
@@ -479,6 +488,13 @@ public class StandardRequestManagerTest
         public void onRequestCancelled(@NotNull final IToken token)
         {
             return;
+        }
+
+        @NotNull
+        @Override
+        public ITextComponent getDisplayName(@NotNull final IToken token)
+        {
+            return new TextComponentString("Test Requester");
         }
     }
 

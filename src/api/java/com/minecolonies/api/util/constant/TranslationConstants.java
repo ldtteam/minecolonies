@@ -139,7 +139,12 @@ public final class TranslationConstants
     public static final String COM_MINECOLONIES_TOOLTYPE_SHEARS                      = "com.minecolonies.coremod.tooltype.shears";
     @NonNls
     public static final String COM_MINECOLONIES_TOOLTYPE_SHIELD                     = "com.minecolonies.coremod.tooltype.shield";
-
+    @NonNls
+    public static final String COM_MINECOLONIES_BUILDING_WAREHOUSE_NAME             = "com.minecolonies.coremod.buildings.warehouse.name";
+    @NonNls
+    public static final String COM_MINECOLONIES_CLIPBOARD_NEED_COLONY = "com.minecolonies.coremod.item.clipboard.needColony";
+    @NonNls
+    public static final String COM_MINECOLONIES_CLIPBOARD_COLONY_SET ="com.minecolonies.coremod.item.clipboard.registered";
 
     private TranslationConstants()
     {

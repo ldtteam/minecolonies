@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
@@ -57,14 +58,14 @@ public class ItemClipBoard extends AbstractItemMinecolonies
             final EntityPlayer playerIn,
             final EnumHand hand)
     {
-        final ItemStack scepter = playerIn.getHeldItem(hand);
+        final ItemStack cllipboard = playerIn.getHeldItem(hand);
 
         if (!worldIn.isRemote)
         {
-            return new ActionResult<>(EnumActionResult.SUCCESS, scepter);
+            return new ActionResult<>(EnumActionResult.SUCCESS, cllipboard);
         }
 
-        final NBTTagCompound compound = checkForCompound(scepter);
+        final NBTTagCompound compound = checkForCompound(cllipboard);
 
         if(compound.hasKey(TAG_COLONY))
         {
@@ -73,10 +74,10 @@ public class ItemClipBoard extends AbstractItemMinecolonies
         }
         else
         {
-            LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.item.clipboard.needColony");
+            LanguageHandler.sendPlayerMessage(playerIn, TranslationConstants.COM_MINECOLONIES_CLIPBOARD_NEED_COLONY);
         }
 
-        return new ActionResult<>(EnumActionResult.SUCCESS, scepter);
+        return new ActionResult<>(EnumActionResult.SUCCESS, cllipboard);
     }
 
     /**
@@ -104,19 +105,19 @@ public class ItemClipBoard extends AbstractItemMinecolonies
             final float hitY,
             final float hitZ)
     {
-        final ItemStack scepter = playerIn.getHeldItem(hand);
+        final ItemStack clipboard = playerIn.getHeldItem(hand);
         if (!worldIn.isRemote)
         {
             return EnumActionResult.SUCCESS;
         }
 
-        final NBTTagCompound compound = checkForCompound(scepter);
+        final NBTTagCompound compound = checkForCompound(clipboard);
         final TileEntity entity = worldIn.getTileEntity(pos);
 
         if(entity instanceof TileEntityColonyBuilding)
         {
             compound.setInteger(TAG_COLONY, ((TileEntityColonyBuilding) entity).getColonyId());
-            LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.item.clipboard.newColony", ((TileEntityColonyBuilding) entity).getColonyId());
+            LanguageHandler.sendPlayerMessage(playerIn, TranslationConstants.COM_MINECOLONIES_CLIPBOARD_COLONY_SET, ((TileEntityColonyBuilding) entity).getColonyId());
         }
         else if(compound.hasKey(TAG_COLONY))
         {

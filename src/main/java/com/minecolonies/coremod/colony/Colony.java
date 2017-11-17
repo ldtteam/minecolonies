@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.requestsystem.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.StandardRequestManager;
+import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.MineColonies;
@@ -2118,6 +2119,13 @@ public class Colony implements IColony
     public boolean isHasRaidBeenCalculated()
     {
         return hasRaidBeenCalculated;
+    }
+
+    @Nullable
+    @Override
+    public IRequester getRequesterBuildingForPosition(@NotNull final BlockPos pos)
+    {
+        return getBuilding(pos);
     }
 
     public void setWillRaidTonight(final Boolean willRaid)

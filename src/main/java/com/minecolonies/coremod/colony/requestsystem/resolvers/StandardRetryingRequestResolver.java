@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.StandardRequestManager;
+import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IRetryable;
@@ -12,6 +13,8 @@ import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequ
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.TypeConstants;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,11 +31,11 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     private HashMap<IToken, Integer> delays = new HashMap<>();
     private HashMap<IToken, Integer> assignedRequests = new HashMap<>();
 
-    public StandardRetryingRequestResolver(final IRequestManager manager) {
+    public StandardRetryingRequestResolver(final IFactoryController factoryController, final IRequestManager manager) {
         this.updateManager(manager);
 
-        this.id = manager.getFactoryController().getNewInstance(TypeConstants.ITOKEN);
-        this.location = manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, manager.getColony().getCenter(), manager.getColony().getWorld().provider.getDimension());
+        this.id = factoryController.getNewInstance(TypeConstants.ITOKEN, manager.getColony().getID());
+        this.location = factoryController.getNewInstance(TypeConstants.ILOCATION, manager.getColony().getCenter(), manager.getColony().getWorld().provider.getDimension());
 
     }
 
@@ -233,5 +236,12 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     public HashMap<IToken, Integer> getAssignedRequests()
     {
         return assignedRequests;
+    }
+
+    @NotNull
+    @Override
+    public ITextComponent getDisplayName(@NotNull final IToken token)
+    {
+        return new TextComponentString("Player");
     }
 }

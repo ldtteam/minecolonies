@@ -4,6 +4,8 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -47,5 +49,12 @@ public abstract class AbstractRequestResolver<R extends IRequestable> implements
     public int getPriority()
     {
         return CONST_DEFAULT_RESOLVER_PRIORITY;
+    }
+
+    @NotNull
+    @Override
+    public ITextComponent getDisplayName(@NotNull final IToken token)
+    {
+        return new TextComponentString("Request System");
     }
 }

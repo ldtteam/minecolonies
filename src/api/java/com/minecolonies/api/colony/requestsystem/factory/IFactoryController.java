@@ -178,4 +178,14 @@ public interface IFactoryController
      * @throws ClassCastException       thrown when a Factory is known for the given input, but does not produce the given output.
      */
     <Output> Output getNewInstance(@NotNull final TypeToken<? extends Output> requestedType) throws IllegalArgumentException, ClassCastException;
+
+    /**
+     * Method used to register a TypeOverride handler.
+     * Useful if the Client side has a different Handler.
+     * Or if an upgrade between version is needed.
+     * @param overrideHandler The override handler to register.
+     * @param <Input> The input that that the handler converts from.
+     * @param <Output> The output type that the handler converts to.
+     */
+    <Input, Output> void registerNewTypeOverrideHandler(@NotNull final ITypeOverrideHandler<Input, Output> overrideHandler);
 }

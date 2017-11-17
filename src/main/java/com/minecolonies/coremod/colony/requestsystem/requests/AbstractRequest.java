@@ -14,6 +14,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.Log;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -422,5 +423,12 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
             this.deliveryStack = delivery;
         }
 
+    }
+
+    @NotNull
+    @Override
+    public ResourceLocation getDisplayIcon()
+    {
+        return new ResourceLocation("missingno");
     }
 }

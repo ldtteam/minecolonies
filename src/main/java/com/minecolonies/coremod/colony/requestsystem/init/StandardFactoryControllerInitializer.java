@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.requestsystem.init;
 
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.InitializedTokenFactory;
+import com.minecolonies.api.colony.requestsystem.token.RandomSeededTokenFactory;
 import com.minecolonies.api.colony.requestsystem.token.StandardTokenFactory;
 import com.minecolonies.coremod.colony.requestsystem.locations.EntityLocation;
 import com.minecolonies.coremod.colony.requestsystem.locations.StaticLocation;
@@ -26,6 +27,7 @@ public final class StandardFactoryControllerInitializer
     {
         StandardFactoryController.getInstance().registerNewFactory(new StandardTokenFactory());
         StandardFactoryController.getInstance().registerNewFactory(new InitializedTokenFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new RandomSeededTokenFactory());
         StandardFactoryController.getInstance().registerNewFactory(new StaticLocation.Factory());
         StandardFactoryController.getInstance().registerNewFactory(new EntityLocation.Factory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.ItemStackRequestFactory());
