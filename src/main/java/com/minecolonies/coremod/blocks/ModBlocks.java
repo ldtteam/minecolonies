@@ -8,6 +8,7 @@ import net.minecraftforge.fml.common.registry.IForgeRegistry;
  * Class to create the modBlocks.
  * References to the blocks can be made here
  */
+@SuppressWarnings({"squid:ClassVariableVisibilityCheck", "squid:S2444"})
 public class ModBlocks
 {
     /*
