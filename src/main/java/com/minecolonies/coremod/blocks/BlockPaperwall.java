@@ -141,8 +141,8 @@ public class BlockPaperwall extends BlockPane
     @Override
     public boolean canPaneConnectTo(final IBlockAccess world, final BlockPos pos, final EnumFacing dir)
     {
-        BlockPos off = pos.offset(dir);
-        IBlockState state = world.getBlockState(off);
+        final BlockPos off = pos.offset(dir);
+        final IBlockState state = world.getBlockState(off);
         return canPaneConnectToBlock(state.getBlock())
                 || state.isSideSolid(world, off, dir.getOpposite()) || state.getBlock() instanceof BlockPaperwall;
     }
@@ -217,12 +217,12 @@ public class BlockPaperwall extends BlockPane
         /** The color that represents this entry on a map. */
         private final MapColor mapColor;
 
-        EnumType(int metaIn, String nameIn, MapColor mapColorIn)
+        EnumType(final int metaIn, final String nameIn, final MapColor mapColorIn)
         {
             this(metaIn, nameIn, nameIn, mapColorIn);
         }
 
-        EnumType(int metaIn, String nameIn, String unlocalizedNameIn, MapColor mapColorIn)
+        EnumType(final int metaIn, final String nameIn, final String unlocalizedNameIn, final MapColor mapColorIn)
         {
             this.meta = metaIn;
             this.name = nameIn;
