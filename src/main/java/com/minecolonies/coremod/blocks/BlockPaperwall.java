@@ -3,9 +3,6 @@ package com.minecolonies.coremod.blocks;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import net.minecraft.block.Block;
-
-import java.util.List;
-
 import net.minecraft.block.BlockPane;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -24,6 +21,8 @@ import net.minecraftforge.fml.common.registry.IForgeRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class BlockPaperwall extends BlockPane
 {

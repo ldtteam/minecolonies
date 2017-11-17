@@ -2,7 +2,6 @@ package com.minecolonies.coremod.proxy;
 
 import com.minecolonies.coremod.colony.CitizenDataView;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.client.event.ModelRegistryEvent;
 
 import javax.annotation.Nullable;
 import java.io.File;
