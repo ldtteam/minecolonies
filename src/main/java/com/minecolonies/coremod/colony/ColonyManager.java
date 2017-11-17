@@ -155,7 +155,7 @@ public final class ColonyManager
      *
      * @param id the colonies id.
      */
-    public static void deleteColony(final int id, boolean canDestroy)
+    public static void deleteColony(final int id, final boolean canDestroy)
     {
         try
         {
@@ -173,7 +173,9 @@ public final class ColonyManager
                     citizenData.getCitizenEntity().onDeath(CONSOLE_DAMAGE_SOURCE);
                     colonyWorlds.add(world);
                 }
-            }if(canDestroy){
+            }
+            if(canDestroy)
+            {
             Log.getLogger().info("Removing buildings for " + id);
             for (final AbstractBuilding building : new ArrayList<>(colony.getBuildings().values()))
             {
