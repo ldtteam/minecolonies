@@ -74,4 +74,9 @@ public interface IProxy
      */
     @Nullable
     File getSchematicsFolder();
+
+    /**
+     * Event to register all models.
+     */
+    void registerModels();
 }

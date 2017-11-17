@@ -11,6 +11,7 @@ import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.util.RecipeHandler;
 import gigaherz.guidebook.client.BookRegistryEvent;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Optional;
@@ -87,6 +88,18 @@ public class MineColonies
 
         proxy.registerEntityRendering();
     }
+
+    /**
+     * Event handler for forge pre init event.
+     *
+     * @param event the forge pre init event.
+     */
+    @Mod.EventHandler
+    public void registerModels(@NotNull final ModelRegistryEvent event)
+    {
+        proxy.registerModels();
+    }
+
 
     /**
      * Event handler for forge init event.

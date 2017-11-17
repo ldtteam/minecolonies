@@ -211,4 +211,12 @@ public class CommonProxy implements IProxy
     {
         return null;
     }
+
+    @Override
+    public void registerModels()
+    {
+        /*
+         * Intentionally left empty.
+         */
+    }
 }
