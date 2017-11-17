@@ -55,7 +55,7 @@ public final class StandardRequests
 
         @NotNull
         @Override
-        public ITextComponent getDisplayString()
+        public ITextComponent getShortDisplayString()
         {
             return getRequest().getStack().getTextComponent();
         }
@@ -99,7 +99,7 @@ public final class StandardRequests
 
         @NotNull
         @Override
-        public ITextComponent getDisplayString()
+        public ITextComponent getShortDisplayString()
         {
             return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_DELIVERY).appendSibling(getDelivery().getTextComponent());
         }
@@ -136,7 +136,7 @@ public final class StandardRequests
 
         @NotNull
         @Override
-        public ITextComponent getDisplayString()
+        public ITextComponent getLongDisplayString()
         {
             final ITextComponent preType = new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_TOOL_PRETYPE);
 
@@ -158,6 +158,17 @@ public final class StandardRequests
                 preType.appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_TOOL_PREMAXLEVEL));
                 preType.appendText(ItemStackUtils.swapToolGrade(getRequest().getMaxLevel()));
             }
+
+            return preType;
+        }
+
+        @NotNull
+        @Override
+        public ITextComponent getShortDisplayString()
+        {
+            final ITextComponent preType = new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_TOOL_PRETYPE);
+
+            preType.appendSibling(getRequest().getToolClass().getDisplayName());
 
             return preType;
         }
@@ -206,7 +217,7 @@ public final class StandardRequests
 
         @NotNull
         @Override
-        public ITextComponent getDisplayString()
+        public ITextComponent getShortDisplayString()
         {
             return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_FOOD);
         }
@@ -254,7 +265,7 @@ public final class StandardRequests
 
         @NotNull
         @Override
-        public ITextComponent getDisplayString()
+        public ITextComponent getShortDisplayString()
         {
             return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_BURNABLE);
         }

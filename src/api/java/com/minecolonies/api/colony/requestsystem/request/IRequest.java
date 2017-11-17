@@ -223,12 +223,20 @@ public interface IRequest<R extends IRequestable>
     void setDelivery(@Nullable final ItemStack delivery);
 
     /**
-     * Method used to get a {@link ITextComponent} that can be displayed to the Player.
+     * Method used to get a {@link ITextComponent} that can be displayed to the Player and describes the request in short.
      * Should represent the request, in case the player needs to fulfill it, or information about this request is required.
      * @return The text that describes this Request.
      */
     @NotNull
-    ITextComponent getDisplayString();
+    ITextComponent getShortDisplayString();
+
+    /**
+     * Method used to get a {@link ITextComponent} that can be displayed to the Player and describes so that the player can complete it.
+     * Should represent the request, in case the player needs to fulfill it, or information about this request is required.
+     * @return The text that describes this Request.
+     */
+    @NotNull
+    ITextComponent getLongDisplayString();
 
     /**
      * Method used to get a List of ItemStacks that represents the stack.

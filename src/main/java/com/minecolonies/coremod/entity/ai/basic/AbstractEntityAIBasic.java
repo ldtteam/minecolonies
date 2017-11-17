@@ -436,7 +436,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         if (request == null)
             request = getOwnBuilding().getOpenRequests(worker.getCitizenData()).stream().findFirst().orElse(null);
 
-        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waiting"), request.getDisplayString());
+        worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waiting"), request.getShortDisplayString());
     }
 
     /**

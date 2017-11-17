@@ -13,8 +13,6 @@ import com.minecolonies.coremod.colony.CitizenDataView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
-
 /**
  * Window for the request detail.
  */
@@ -71,7 +69,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     @Override
     public void onOpened()
     {
-        final String displayString = request.getDisplayString().getFormattedText();
+        final String displayString = request.getShortDisplayString().getFormattedText();
         final String[] labels = displayString.split("§r");
         final Box box = findPaneOfTypeByID(BOX_ID_REQUEST, Box.class);
         int y = 10;

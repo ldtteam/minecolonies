@@ -185,7 +185,7 @@ public class StandardRequestManagerTest
 
         @NotNull
         @Override
-        public ITextComponent getDisplayString()
+        public ITextComponent getShortDisplayString()
         {
             return null;
         }
