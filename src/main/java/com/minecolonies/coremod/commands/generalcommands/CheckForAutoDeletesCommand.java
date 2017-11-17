@@ -46,7 +46,7 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        boolean canDestroy = Boolean.parseBoolean(args[1]);
+        boolean canDestroy = Configurations.autoDestroyColonyBlocks;
 
         if (sender instanceof EntityPlayer && !isPlayerOpped(sender))
         {
