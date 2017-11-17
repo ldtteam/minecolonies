@@ -10,8 +10,8 @@ import net.minecraftforge.fml.common.registry.IForgeRegistry;
  *
  * We disabled the following finals since we are neither able to mark the items as final, nor do we want to provide public accessors.
  */
-@SuppressWarnings({"squid:ClassVariableVisibilityCheck", "squid:S2444", "squid:S1444"})
-public class ModBlocks
+@SuppressWarnings({"squid:ClassVariableVisibilityCheck", "squid:S2444", "squid:S1444", "squid:S1820" , })
+public final class ModBlocks
 {
     /*
      * Creating objects for all blocks in the mod.
