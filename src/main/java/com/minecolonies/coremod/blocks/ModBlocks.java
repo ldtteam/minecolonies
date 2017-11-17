@@ -36,6 +36,7 @@ public final class ModBlocks
     public static final Block blockHutBarracks            = new BlockHutBarracks();
     public static final Block blockHutBarracksTower       = new BlockHutBarracksTower();
     public static final Block blockInfoPoster             = new BlockInfoPoster();
+    public static final Block blockPaperwall              = new BlockPaperwall();
 
 
     // Deactivated for now
