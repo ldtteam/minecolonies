@@ -15,6 +15,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Locale;
 
 /**
  * Building for the Barracks.
@@ -112,21 +113,24 @@ public class BuildingBarracks extends AbstractBuilding
         }
 
         EnumFacing facing = EnumFacing.NORTH;
+
+        final int offset = getStyle().toLowerCase(Locale.ENGLISH).contains("birch") ? TOWER_OFFSET + 1: TOWER_OFFSET;
+
         switch (tempLevel)
         {
             case Constants.ROTATE_ONCE:
-                position = position.offset(EnumFacing.SOUTH, TOWER_OFFSET).offset(EnumFacing.WEST, TOWER_OFFSET);
+                position = position.offset(EnumFacing.SOUTH, offset).offset(EnumFacing.WEST, offset);
                 break;
             case Constants.ROTATE_TWICE:
-                position = position.offset(EnumFacing.NORTH, TOWER_OFFSET).offset(EnumFacing.EAST, TOWER_OFFSET);
+                position = position.offset(EnumFacing.NORTH, offset).offset(EnumFacing.EAST, offset);
                 facing = EnumFacing.SOUTH;
                 break;
             case Constants.ROTATE_THREE_TIMES:
-                position = position.offset(EnumFacing.SOUTH, TOWER_OFFSET).offset(EnumFacing.EAST, TOWER_OFFSET);
+                position = position.offset(EnumFacing.SOUTH, offset).offset(EnumFacing.EAST, offset);
                 facing = EnumFacing.WEST;
                 break;
             case Constants.MAX_ROTATIONS:
-                position = position.offset(EnumFacing.NORTH, TOWER_OFFSET).offset(EnumFacing.WEST, TOWER_OFFSET);
+                position = position.offset(EnumFacing.NORTH, offset).offset(EnumFacing.WEST, offset);
                 facing = EnumFacing.EAST;
                 break;
             default:
