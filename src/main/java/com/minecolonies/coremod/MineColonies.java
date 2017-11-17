@@ -90,18 +90,6 @@ public class MineColonies
     }
 
     /**
-     * Event handler for forge pre init event.
-     *
-     * @param event the forge pre init event.
-     */
-    @Mod.EventHandler
-    public void registerModels(@NotNull final ModelRegistryEvent event)
-    {
-        proxy.registerModels();
-    }
-
-
-    /**
      * Event handler for forge init event.
      *
      * @param event the forge init event.
