@@ -24,13 +24,11 @@ import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
 import com.minecolonies.structures.event.RenderEventHandler;
 import com.minecolonies.structures.helpers.Settings;
-import mezz.jei.RecipeRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
@@ -228,8 +226,8 @@ public class ClientProxy extends CommonProxy
 
         for(final BlockPaperwall.EnumType type: BlockPaperwall.EnumType.values())
         {
-            ModelLoader.setCustomModelResourceLocation(new ItemBlock(ModBlocks.blockPaperWall), type.getMetadata(),
-                    new ModelResourceLocation(ModBlocks.blockPaperWall.getRegistryName() + "_" + type.getName()));
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockPaperWall), type.getMetadata(),
+                    new ModelResourceLocation(ModBlocks.blockPaperWall.getRegistryName()  + "_" + type.getName(), INVENTORY));
         }
     }
 
