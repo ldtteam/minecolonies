@@ -24,6 +24,7 @@ import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
 import com.minecolonies.structures.event.RenderEventHandler;
 import com.minecolonies.structures.helpers.Settings;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMap;
@@ -33,6 +34,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -105,6 +107,31 @@ public class ClientProxy extends CommonProxy
 
         @Nullable final WindowBuildTool window = new WindowBuildTool(pos);
         window.open();
+    }
+
+    /**
+     * Called when registering blocks,
+     * we have to register all our modblocks here.
+     *
+     * @param event the registery event for blocks.
+     */
+    @SubscribeEvent
+    public void registerBlocks(@NotNull final RegistryEvent.Register<Block> event)
+    {
+        ModBlocks.init(event.getRegistry());
+    }
+
+    /**
+     * Called when registering items,
+     * we have to register all our mod items here.
+     *
+     * @param event the registery event for items.
+     */
+    @SubscribeEvent
+    public void registerItems(@NotNull final RegistryEvent.Register<Item> event)
+    {
+        ModItems.init(event.getRegistry());
+        ModBlocks.registerItemBlock(event.getRegistry());
     }
 
     /**
@@ -195,12 +222,12 @@ public class ClientProxy extends CommonProxy
                 new ModelResourceLocation(ModItems.itemAchievementProxyMetropolis.getRegistryName(), INVENTORY));
 
 
-        ModelLoader.setCustomStateMapper(ModBlocks.blockPaperwall, new StateMap.Builder().withName(BlockPaperwall.VARIANT).build());
+        ModelLoader.setCustomStateMapper(ModBlocks.blockPaperWall, new StateMap.Builder().withName(BlockPaperwall.VARIANT).build());
 
         for(final BlockPaperwall.EnumType type: BlockPaperwall.EnumType.values())
         {
-            ModelLoader.setCustomModelResourceLocation(new ItemBlock(ModBlocks.blockPaperwall), type.getMetadata(),
-                    new ModelResourceLocation(ModBlocks.blockPaperwall.getRegistryName() + "_" + type.getName()));
+            ModelLoader.setCustomModelResourceLocation(new ItemBlock(ModBlocks.blockPaperWall), type.getMetadata(),
+                    new ModelResourceLocation(ModBlocks.blockPaperWall.getRegistryName() + "_" + type.getName()));
         }
     }
 

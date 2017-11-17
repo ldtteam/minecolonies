@@ -2,6 +2,7 @@ package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
@@ -10,6 +11,7 @@ import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -20,6 +22,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
@@ -58,8 +61,28 @@ public class BlockInfoPoster extends BlockContainer
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, NORTH));
         setRegistryName(BLOCK_NAME);
         setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(Locale.ENGLISH), BLOCK_NAME));
-        GameRegistry.register((new ItemBlock(this)).setRegistryName(this.getRegistryName()));
-        GameRegistry.register(this);
+    }
+
+    /**
+     * Registery block at gameregistry.
+     * @param registry the registry to use.
+     * @return the block itself.
+     */
+    public BlockInfoPoster registerBlock(final IForgeRegistry<Block> registry)
+    {
+        registry.register(this);
+        return this;
+    }
+
+    /**
+     * Registery block at gameregistry.
+     * @param registry the registry to use.
+     * @return the block itself.
+     */
+    public Block registerItemBlock(final IForgeRegistry<Item> registry)
+    {
+        registry.register((new ItemBlock(this)).setRegistryName(this.getRegistryName()));
+        return this;
     }
 
     @Override

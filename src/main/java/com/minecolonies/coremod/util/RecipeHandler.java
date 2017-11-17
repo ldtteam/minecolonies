@@ -103,7 +103,7 @@ public final class RecipeHandler
             
         //Building blocks
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockTimberFrame, FOUR_BLOCKS), " W ", " W ", " WB", 'W', PLANK_WOOD, 'B', ModItems.buildTool));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockPaperwall, EIGHT_BLOCKS), "SSS", "PPP", "SSS", 'S', WOODEN_STICK, 'P', PAPER));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockPaperWall, EIGHT_BLOCKS), "SSS", "PPP", "SSS", 'S', WOODEN_STICK, 'P', PAPER));
 
         //Field
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutField, 1), 
