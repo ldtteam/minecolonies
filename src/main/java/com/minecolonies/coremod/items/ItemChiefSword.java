@@ -42,7 +42,6 @@ public class ItemChiefSword extends ItemSword
         super.setUnlocalizedName(Constants.MOD_ID.toLowerCase() + "." + ITEM_NAME);
         setRegistryName(ITEM_NAME);
         super.setCreativeTab(ModCreativeTabs.MINECOLONIES);
-        GameRegistry.register(this);
     }
 
     @Override

@@ -19,10 +19,10 @@ public final class ModItems
     public static Item ancientTome;
     public static Item chiefSword;
 
-    public static final Item itemAchievementProxySettlement = new ItemAchievementProxy("sizeSettlement");
-    public static final Item itemAchievementProxyTown       = new ItemAchievementProxy("sizeTown");
-    public static final Item itemAchievementProxyCity       = new ItemAchievementProxy("sizeCity");
-    public static final Item itemAchievementProxyMetropolis = new ItemAchievementProxy("sizeMetropolis");
+    public static Item itemAchievementProxySettlement;
+    public static Item itemAchievementProxyTown;
+    public static Item itemAchievementProxyCity;
+    public static Item itemAchievementProxyMetropolis;
 
     // deactivated for now
     // public static final Item compost    = new ItemCompost();
@@ -52,6 +52,10 @@ public final class ModItems
         supplyCamp = new ItemSupplyCampDeployer();
         ancientTome = new ItemAncientTome();
         chiefSword = new ItemChiefSword();
+        itemAchievementProxySettlement = new ItemAchievementProxy("sizeSettlement");
+        itemAchievementProxyTown       = new ItemAchievementProxy("sizeTown");
+        itemAchievementProxyCity       = new ItemAchievementProxy("sizeCity");
+        itemAchievementProxyMetropolis = new ItemAchievementProxy("sizeMetropolis");
 
         registry.register(supplyChest);
         registry.register(buildTool);
@@ -62,5 +66,9 @@ public final class ModItems
         registry.register(supplyCamp);
         registry.register(ancientTome);
         registry.register(chiefSword);
+        registry.register(itemAchievementProxySettlement);
+        registry.register(itemAchievementProxyTown);
+        registry.register(itemAchievementProxyCity);
+        registry.register(itemAchievementProxyMetropolis);
     }
 }

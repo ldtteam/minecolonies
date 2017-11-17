@@ -111,6 +111,6 @@ public class ModBlocks
         blockHutBarracksTower.registerItemBlock(registry);
         blockHutBarracks.registerItemBlock(registry);
         blockInfoPoster.registerItemBlock(registry);
-
+        blockPaperWall.registerItemBlock(registry);
     }
 }

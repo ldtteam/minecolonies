@@ -24,6 +24,7 @@ import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
 import com.minecolonies.structures.event.RenderEventHandler;
 import com.minecolonies.structures.helpers.Settings;
+import mezz.jei.RecipeRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -116,7 +117,8 @@ public class ClientProxy extends CommonProxy
      * @param event the registery event for blocks.
      */
     @SubscribeEvent
-    public void registerBlocks(@NotNull final RegistryEvent.Register<Block> event)
+
+    public static void registerBlocks(@NotNull final RegistryEvent.Register<Block> event)
     {
         ModBlocks.init(event.getRegistry());
     }
@@ -128,7 +130,7 @@ public class ClientProxy extends CommonProxy
      * @param event the registery event for items.
      */
     @SubscribeEvent
-    public void registerItems(@NotNull final RegistryEvent.Register<Item> event)
+    public static void registerItems(@NotNull final RegistryEvent.Register<Item> event)
     {
         ModItems.init(event.getRegistry());
         ModBlocks.registerItemBlock(event.getRegistry());
@@ -222,7 +224,7 @@ public class ClientProxy extends CommonProxy
                 new ModelResourceLocation(ModItems.itemAchievementProxyMetropolis.getRegistryName(), INVENTORY));
 
 
-        ModelLoader.setCustomStateMapper(ModBlocks.blockPaperWall, new StateMap.Builder().withName(BlockPaperwall.VARIANT).build());
+        ModelLoader.setCustomStateMapper(ModBlocks.blockPaperWall, new StateMap.Builder().withName(BlockPaperwall.VARIANT).withSuffix("_blockPaperwall").build());
 
         for(final BlockPaperwall.EnumType type: BlockPaperwall.EnumType.values())
         {
