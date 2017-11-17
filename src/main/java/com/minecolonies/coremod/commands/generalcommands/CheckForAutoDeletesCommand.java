@@ -46,7 +46,6 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-
         if (sender instanceof EntityPlayer && !isPlayerOpped(sender))
         {
             sender.sendMessage(new TextComponentString("Must be OP to use command"));
