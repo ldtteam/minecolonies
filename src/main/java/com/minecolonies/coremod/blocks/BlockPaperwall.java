@@ -17,7 +17,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
-import net.minecraft.block.BlockPlanks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -101,7 +100,7 @@ public class BlockPaperwall extends Block
     @SideOnly(Side.CLIENT)
     public void getSubBlocks(@NotNull final Item itemIn, final CreativeTabs tab, @NotNull final List<ItemStack> list)
     {
-        for (BlockPlanks.EnumType blockpaperwall$enumtype : BlockPlanks.EnumType.values())
+        for (BlockPaperwall.EnumType blockpaperwall$enumtype : BlockPaperwall.EnumType.values())
         {
             list.add(new ItemStack(itemIn, 1, blockpaperwall$enumtype.getMetadata()));
         }
@@ -316,7 +315,7 @@ public class BlockPaperwall extends Block
     @Override
     protected BlockStateContainer createBlockState()
     {
-        return new BlockStateContainer(this, NORTH, EAST, WEST, SOUTH, VARIANT);
+        return new BlockStateContainer(this, VARIANT, NORTH, EAST, WEST, SOUTH);
     }
 
     private boolean canPaneConnectTo(final IBlockAccess world, final BlockPos pos, final EnumFacing dir)
