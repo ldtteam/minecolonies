@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.colony.jobs;
 
 import com.google.common.collect.ImmutableList;
-import com.minecolonies.api.colony.requestsystem.RequestState;
+import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.Delivery;

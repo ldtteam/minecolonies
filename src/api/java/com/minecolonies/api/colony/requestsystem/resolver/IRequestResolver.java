@@ -1,7 +1,7 @@
 package com.minecolonies.api.colony.requestsystem.resolver;
 
 import com.google.common.reflect.TypeToken;
-import com.minecolonies.api.colony.requestsystem.IRequestManager;
+import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;

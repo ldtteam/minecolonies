@@ -2,7 +2,7 @@ package com.minecolonies.coremod.client.gui;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.minecolonies.api.colony.requestsystem.RequestState;
+import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
