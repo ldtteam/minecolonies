@@ -1633,11 +1633,11 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     {
         if (!requestsByCitizen.containsKey(token))
         {
-            return new TextComponentString("<UNKNOWN>");
+            return new TextComponentString(this.getSchematicName() + " <UNKNOWN>");
         }
 
         Integer citizenData = requestsByCitizen.get(token);
-        return new TextComponentString(getColony().getCitizen(citizenData).getName());
+        return new TextComponentString(this.getSchematicName() + " " + getColony().getCitizen(citizenData).getName());
     }
 
     /**

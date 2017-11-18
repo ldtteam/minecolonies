@@ -126,11 +126,8 @@ public class WindowClipBoard extends AbstractWindowSkeleton
             {
                 exampleStackDisplay.setItem(ItemStackUtils.EMPTY);
             }
-            rowPane.findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().toString());
-            rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class).setLabelText(request.getRequester().toString());
-
-            final Label targetLabel = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Label.class);
-            targetLabel.setLabelText(request.getRequester().getDeliveryLocation().toString());
+            rowPane.findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getDisplayName(request.getToken()).getFormattedText());
+            rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class).setLabelText(request.getShortDisplayString().getFormattedText());
         });
     }
 

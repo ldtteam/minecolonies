@@ -8,20 +8,19 @@
     <label size="100% 11" pos="60 30"
            label="$(com.minecolonies.coremod.gui.citizen.requests)" color="black"/>
     <list id="requests" size="78% 70%" pos="20 50">
-        <box id="requestx" size="100% 38" linewidth="2">
+        <box id="requestx" size="100% 40" linewidth="2">
             <!--Item icon -->
-            <itemicon id="requestStack" size="16 16" pos="1 1"/>
+            <itemicon id="requestStack" size="16 16" pos="1 3"/>
 
             <!--Request name-->
-            <buttonimage id="detail" size="16 16" pos="1 20" source="minecolonies:textures/gui/citizen/detail_button.png"/>
+            <buttonimage id="detail" size="16 16" pos="1 23" source="minecolonies:textures/gui/citizen/detail_button.png"/>
 
 
             <label id="shortDetail" size="50 12" pos="20 1" color="black"/>
 
-            <label id="targetLocation" size="50 12" pos="20 20" color="black"/>
-            <label id="requester" size="50 12" pos="20 40" color="black"/>
+            <label id="requester" size="50 12" pos="20 13" color="black"/>
            <!-- button to cancel the request-->
-            <buttonimage id="cancel" size="37 16" pos="20 60" textcolor="black"
+            <buttonimage id="cancel" size="37 16" pos="50 23" textcolor="black"
                          label="$(com.minecolonies.coremod.gui.citizen.requestsCancel)" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
         </box>
     </list>
