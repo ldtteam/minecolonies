@@ -7,7 +7,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.fml.common.registry.IForgeRegistry;
 
-public abstract class AbstractBlockMinecoloniesPane extends BlockPane
+public abstract class AbstractBlockMinecoloniesPane extends BlockPane  implements IBlockMinecolonies
 {
     protected AbstractBlockMinecoloniesPane(final Material materialIn, final boolean canDrop)
     {
@@ -19,7 +19,7 @@ public abstract class AbstractBlockMinecoloniesPane extends BlockPane
      * @param registry the registry to use.
      * @return the block itself.
      */
-    public AbstractBlockMinecoloniesPane registerBlock(final IForgeRegistry<Block> registry)
+    public IBlockMinecolonies registerBlock(final IForgeRegistry<Block> registry)
     {
         registry.register(this);
         return this;

@@ -9,7 +9,7 @@ import net.minecraft.item.ItemBlock;
 
 import net.minecraftforge.fml.common.registry.IForgeRegistry;
 
-public abstract class AbstractBlockMinecoloniesContainer extends BlockContainer
+public abstract class AbstractBlockMinecoloniesContainer extends BlockContainer  implements IBlockMinecolonies
 {
     public AbstractBlockMinecoloniesContainer(final Material blockMaterialIn, final MapColor blockMapColorIn)
     {
@@ -26,7 +26,7 @@ public abstract class AbstractBlockMinecoloniesContainer extends BlockContainer
      * @param registry the registry to use.
      * @return the block itself.
      */
-    public AbstractBlockMinecoloniesContainer registerBlock(final IForgeRegistry<Block> registry)
+    public IBlockMinecolonies registerBlock(final IForgeRegistry<Block> registry)
     {
         registry.register(this);
         return this;
