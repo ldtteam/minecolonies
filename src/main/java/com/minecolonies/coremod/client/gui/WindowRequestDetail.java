@@ -116,10 +116,19 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     @Override
     public void onOpened()
     {
-        final String[] labels = WordUtils.wrap(request.getLongDisplayString().getFormattedText()
+        String[] labels = request.getLongDisplayString().getFormattedText()
+                .replace(":",":\n")
                 .replace("§r"," ")
-                .replace(":",":\n"), 40, "\n", true)
-                .split("\n");
+                .split("(?<=\n)");
+
+        final StringBuilder finalLabel = new StringBuilder();
+
+        for(final String s: labels)
+        {
+            finalLabel.append(WordUtils.wrap(s, 40, "\n", true));
+        }
+
+        labels = finalLabel.toString().split("\n");
         final Box box = findPaneOfTypeByID(BOX_ID_REQUEST, Box.class);
         int y = 10;
         for (final String s : labels)
