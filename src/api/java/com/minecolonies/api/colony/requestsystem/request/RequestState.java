@@ -1,4 +1,4 @@
-package com.minecolonies.api.colony.requestsystem;
+package com.minecolonies.api.colony.requestsystem.request;
 
 import net.minecraft.nbt.NBTTagInt;
 

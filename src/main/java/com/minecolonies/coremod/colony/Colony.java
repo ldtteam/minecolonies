@@ -2,8 +2,8 @@ package com.minecolonies.coremod.colony;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Rank;
-import com.minecolonies.api.colony.requestsystem.IRequestManager;
-import com.minecolonies.api.colony.requestsystem.StandardRequestManager;
+import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
+import com.minecolonies.api.colony.requestsystem.manager.StandardRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;

@@ -1,12 +1,10 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers.factory;
 
 import com.google.common.reflect.TypeToken;
-import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.requestsystem.IRequestManager;
+import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
-import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverFactory;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;

@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.colony.requestsystem.requests;
 
 import com.google.common.reflect.TypeToken;
-import com.minecolonies.api.colony.requestsystem.RequestState;
+import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.IRequestFactory;

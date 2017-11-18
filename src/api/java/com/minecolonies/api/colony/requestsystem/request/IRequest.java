@@ -2,8 +2,8 @@ package com.minecolonies.api.colony.requestsystem.request;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.reflect.TypeToken;
-import com.minecolonies.api.colony.requestsystem.IRequestManager;
-import com.minecolonies.api.colony.requestsystem.RequestState;
+import com.minecolonies.api.colony.requestsystem.manager.AssigningStrategy;
+import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -23,6 +23,15 @@ import java.util.List;
  */
 public interface IRequest<R extends IRequestable>
 {
+
+    /**
+     * Method to get the assigning strategy for this request.
+     * @return The assigning strategy for this request.
+     */
+    default AssigningStrategy getStrategy()
+    {
+        return AssigningStrategy.PRIORITY_BASED;
+    }
 
     /**
      * The unique token representing the request outside of the management system.

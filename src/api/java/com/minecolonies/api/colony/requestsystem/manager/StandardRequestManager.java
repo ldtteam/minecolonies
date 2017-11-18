@@ -1,4 +1,4 @@
-package com.minecolonies.api.colony.requestsystem;
+package com.minecolonies.api.colony.requestsystem.manager;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -6,8 +6,9 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.requestsystem.request.RequestState;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
-import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
@@ -1091,6 +1092,31 @@ public class StandardRequestManager implements IRequestManager
         private static IToken assignRequest(final StandardRequestManager manager, final IRequest request, final Collection<IToken> resolverTokenBlackList)
           throws IllegalArgumentException
         {
+            switch (request.getStrategy())
+            {
+                case PRIORITY_BASED:
+                    return assignRequestDefault(manager, request, resolverTokenBlackList);
+                case FASTED_FIRST:
+                    return assignRequestFastest(manager, request, resolverTokenBlackList);
+            }
+
+            return null;
+        }
+
+        /**
+         * Method used to assign a given request to a resolver. Does take a given blacklist of resolvers into account.
+         * Uses the default assigning strategy: {@link AssigningStrategy#PRIORITY_BASED}
+         *
+         * @param manager                The manager to modify.
+         * @param request                The request to assign.
+         * @param resolverTokenBlackList Each resolver that has its token in this blacklist will be skipped when checking for a possible resolver.
+         * @return The token of the resolver that has gotten the request assigned, null if none was found.
+         * @throws IllegalArgumentException is thrown when the request is unknown to this manager.
+         */
+        @SuppressWarnings(Suppression.UNCHECKED)
+        private static IToken assignRequestDefault(final StandardRequestManager manager, final IRequest request, final Collection<IToken> resolverTokenBlackList)
+          throws IllegalArgumentException
+        {
             //Check if the request is registered
             getRequest(manager, request.getToken());
 
@@ -1168,6 +1194,100 @@ public class StandardRequestManager implements IRequestManager
 
             return null;
         }
+
+        /**
+         * Method used to assign a given request to a resolver. Does take a given blacklist of resolvers into account.
+         * Uses the default assigning strategy: {@link AssigningStrategy#FASTED_FIRST}
+         *
+         * @param manager                The manager to modify.
+         * @param request                The request to assign.
+         * @param resolverTokenBlackList Each resolver that has its token in this blacklist will be skipped when checking for a possible resolver.
+         * @return The token of the resolver that has gotten the request assigned, null if none was found.
+         * @throws IllegalArgumentException is thrown when the request is unknown to this manager.
+         */
+        @SuppressWarnings(Suppression.UNCHECKED)
+        private static IToken assignRequestFastest(final StandardRequestManager manager, final IRequest request, final Collection<IToken> resolverTokenBlackList)
+          throws IllegalArgumentException
+        {
+            //Check if the request is registered
+            getRequest(manager, request.getToken());
+
+            LogHandler.log("Starting resolver assignment search for request: " + request);
+
+            request.setState(new WrappedStaticStateRequestManager(manager), RequestState.ASSIGNING);
+
+            Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+            requestTypes.remove(TypeConstants.OBJECT);
+
+            Set<IToken> failedResolvers = new HashSet<>();
+
+            for(TypeToken requestType : requestTypes) {
+                if (!manager.requestClassResolverMap.containsKey(requestType))
+                    continue;
+
+                Collection<IRequestResolver> resolversForRequestType = manager.requestClassResolverMap.get(requestType);
+                resolversForRequestType = resolversForRequestType.stream().filter(r -> !failedResolvers.contains(r.getRequesterId()) && !resolverTokenBlackList.contains(r.getRequesterId())).collect(
+                  Collectors.toSet());
+
+                for (final IRequestResolver resolver : resolversForRequestType)
+                {
+                    //Skip when the resolver is in the blacklist.
+                    if (resolverTokenBlackList.contains(resolver.getRequesterId()))
+                    {
+                        failedResolvers.add(resolver.getRequesterId());
+                        continue;
+                    }
+
+                    //Skip if preliminary check fails
+                    if (!resolver.canResolve(manager, request))
+                    {
+                        failedResolvers.add(resolver.getRequesterId());
+                        continue;
+                    }
+
+                    @Nullable final List<IToken> attemptResult = resolver.attemptResolve(new WrappedBlacklistAssignmentRequestManager(manager, resolverTokenBlackList), request);
+
+                    //Skip if attempt failed (aka attemptResult == null)
+                    if (attemptResult == null)
+                    {
+                        failedResolvers.add(resolver.getRequesterId());
+                        continue;
+                    }
+
+                    //Successfully found a resolver. Registering
+                    LogHandler.log("Finished resolver assignment search for request: " + request + " successfully");
+                    ResolverHandler.addRequestToResolver(manager, resolver, request);
+
+                    for (final IToken childRequestToken :
+                      attemptResult)
+                    {
+                        final IRequest childRequest = RequestHandler.getRequest(manager, childRequestToken);
+
+                        childRequest.setParent(request.getToken());
+                        request.addChild(childRequest.getToken());
+
+                        if (!isAssigned(manager, childRequestToken))
+                        {
+                            assignRequest(manager, childRequest, resolverTokenBlackList);
+                        }
+                    }
+
+                    if (request.getState().ordinal() < RequestState.IN_PROGRESS.ordinal())
+                    {
+                        request.setState(new WrappedStaticStateRequestManager(manager), RequestState.IN_PROGRESS);
+                        if (!request.hasChildren())
+                        {
+                            resolveRequest(manager, request);
+                        }
+                    }
+
+                    return resolver.getRequesterId();
+                }
+            }
+
+            return null;
+        }
+
 
         /**
          * Method used to reassign the request to a resolver that is not in the given blacklist.
@@ -1714,6 +1834,30 @@ public class StandardRequestManager implements IRequestManager
         public void updateRequestState(@NotNull final IToken token, @NotNull final RequestState state) throws IllegalArgumentException
         {
             //TODO: implement when link is created with workers
+        }
+    }
+
+    /**
+     * Wrapper for a assignment result.
+     */
+    private final static class AssigningResult
+    {
+        private final IRequestResolver resolver;
+        private final List<IToken> children;
+
+        private AssigningResult(final IRequestResolver resolver, final List<IToken> children) {
+            this.resolver = resolver;
+            this.children = children;
+        }
+
+        public IRequestResolver getResolver()
+        {
+            return resolver;
+        }
+
+        public List<IToken> getChildren()
+        {
+            return children;
         }
     }
 }

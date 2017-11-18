@@ -1,8 +1,7 @@
 package com.minecolonies.api.colony;
 
 import com.minecolonies.api.colony.permissions.IPermissions;
-import com.minecolonies.api.colony.requestsystem.IRequestManager;
-import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

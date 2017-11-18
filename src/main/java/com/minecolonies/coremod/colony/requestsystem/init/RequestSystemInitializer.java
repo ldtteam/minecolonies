@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.requestsystem.init;
 
-import com.minecolonies.api.colony.requestsystem.StandardRequestManager;
+import com.minecolonies.api.colony.requestsystem.manager.StandardRequestManager;
 import com.minecolonies.api.colony.requestsystem.requestable.*;
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests;
 
