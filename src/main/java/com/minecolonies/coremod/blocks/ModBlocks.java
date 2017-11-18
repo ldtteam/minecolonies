@@ -58,30 +58,30 @@ public final class ModBlocks
      */
     public static void init(final IForgeRegistry<Block> registry)
     {
-        blockConstructionTape = (BlockConstructionTape) new BlockConstructionTape().registerBlock(registry);
-        blockConstructionTapeCorner = (BlockConstructionTapeCorner) new BlockConstructionTapeCorner().registerBlock(registry);
-        blockHutBaker = (BlockHutBaker) new BlockHutBaker().registerBlock(registry);
-        blockHutBlacksmith = (BlockHutBlacksmith) new BlockHutBlacksmith().registerBlock(registry);
-        blockHutBuilder = (BlockHutBuilder) new BlockHutBuilder().registerBlock(registry);
-        blockHutCitizen = (BlockHutCitizen) new BlockHutCitizen().registerBlock(registry);
-        blockHutDeliveryman = (BlockHutDeliveryman) new BlockHutDeliveryman().registerBlock(registry);
-        blockHutFarmer = (BlockHutFarmer) new BlockHutFarmer().registerBlock(registry);
+        blockConstructionTape = new BlockConstructionTape().registerBlock(registry);
+        blockConstructionTapeCorner = new BlockConstructionTapeCorner().registerBlock(registry);
+        blockHutBaker = new BlockHutBaker().registerBlock(registry);
+        blockHutBlacksmith = new BlockHutBlacksmith().registerBlock(registry);
+        blockHutBuilder = new BlockHutBuilder().registerBlock(registry);
+        blockHutCitizen = new BlockHutCitizen().registerBlock(registry);
+        blockHutDeliveryman = new BlockHutDeliveryman().registerBlock(registry);
+        blockHutFarmer = new BlockHutFarmer().registerBlock(registry);
         blockHutField = new BlockHutField().registerBlock(registry);
-        blockHutFisherman = (BlockHutFisherman) new BlockHutFisherman().registerBlock(registry);
-        blockHutGuardTower = (BlockHutGuardTower) new BlockHutGuardTower().registerBlock(registry);
-        blockHutLumberjack = (BlockHutLumberjack) new BlockHutLumberjack().registerBlock(registry);
-        blockHutMiner = (BlockHutMiner) new BlockHutMiner().registerBlock(registry);
-        blockHutStonemason = (BlockHutStonemason) new BlockHutStonemason().registerBlock(registry);
-        blockHutTownHall = (BlockHutTownHall) new BlockHutTownHall().registerBlock(registry);
-        blockHutWareHouse = (BlockHutWareHouse) new BlockHutWareHouse().registerBlock(registry);
-        blockSolidSubstitution = (BlockSolidSubstitution) new BlockSolidSubstitution().registerBlock(registry);
-        blockSubstitution = (BlockSubstitution) new BlockSubstitution().registerBlock(registry);
-        blockRack = (BlockMinecoloniesRack) new BlockMinecoloniesRack().registerBlock(registry);
-        blockTimberFrame = (BlockTimberFrame) new BlockTimberFrame().registerBlock(registry);
-        blockWayPoint = (BlockWaypoint) new BlockWaypoint().registerBlock(registry);
-        blockHutBarracks = (BlockHutBarracks) new BlockHutBarracks().registerBlock(registry);
-        blockHutBarracksTower = (BlockHutBarracksTower) new BlockHutBarracksTower().registerBlock(registry);
-        blockInfoPoster = (BlockInfoPoster) new BlockInfoPoster().registerBlock(registry);
+        blockHutFisherman = new BlockHutFisherman().registerBlock(registry);
+        blockHutGuardTower = new BlockHutGuardTower().registerBlock(registry);
+        blockHutLumberjack = new BlockHutLumberjack().registerBlock(registry);
+        blockHutMiner = new BlockHutMiner().registerBlock(registry);
+        blockHutStonemason = new BlockHutStonemason().registerBlock(registry);
+        blockHutTownHall = new BlockHutTownHall().registerBlock(registry);
+        blockHutWareHouse = new BlockHutWareHouse().registerBlock(registry);
+        blockSolidSubstitution = new BlockSolidSubstitution().registerBlock(registry);
+        blockSubstitution = new BlockSubstitution().registerBlock(registry);
+        blockRack = new BlockMinecoloniesRack().registerBlock(registry);
+        blockTimberFrame = new BlockTimberFrame().registerBlock(registry);
+        blockWayPoint = new BlockWaypoint().registerBlock(registry);
+        blockHutBarracks = new BlockHutBarracks().registerBlock(registry);
+        blockHutBarracksTower = new BlockHutBarracksTower().registerBlock(registry);
+        blockInfoPoster = new BlockInfoPoster().registerBlock(registry);
         blockPaperWall = new BlockPaperwall().registerBlock(registry);
     }
 

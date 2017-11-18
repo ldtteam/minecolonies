@@ -2,6 +2,7 @@ package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
@@ -29,7 +30,7 @@ import static net.minecraft.util.EnumFacing.*;
  * This Block has the same purpose as the BlockConstructionTape.
  * The only difference is: it's a corner piece.
  */
-public class BlockConstructionTapeCorner extends AbstractBlockMinecolonies
+public class BlockConstructionTapeCorner extends AbstractBlockMinecolonies<BlockConstructionTapeCorner>
 {
 
     /**

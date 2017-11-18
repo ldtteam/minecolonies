@@ -27,7 +27,7 @@ import static net.minecraft.util.EnumFacing.fromAngle;
 /**
  * Class for the minecolonies info Poster.
  */
-public class BlockInfoPoster extends AbstractBlockMinecoloniesContainer
+public class BlockInfoPoster extends AbstractBlockMinecoloniesContainer<BlockInfoPoster>
 {
     public static final PropertyDirection FACING = BlockHorizontal.FACING;
 

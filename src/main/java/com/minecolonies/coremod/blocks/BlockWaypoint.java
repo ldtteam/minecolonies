@@ -17,7 +17,7 @@ import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
  * Every solid block can be substituted by this block in schematics.
  * This helps make schematics independent from location and ground.
  */
-public class BlockWaypoint extends AbstractBlockMinecolonies
+public class BlockWaypoint extends AbstractBlockMinecolonies<BlockWaypoint>
 {
 
     /**

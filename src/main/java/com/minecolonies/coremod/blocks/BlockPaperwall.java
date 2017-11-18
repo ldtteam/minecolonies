@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class BlockPaperwall extends BlockPane
+public class BlockPaperwall extends AbstractBlockMinecoloniesPane<BlockPaperwall>
 {
     public static final PropertyEnum<BlockPaperwall.EnumType> VARIANT = PropertyEnum.create("variant", EnumType.class);
 

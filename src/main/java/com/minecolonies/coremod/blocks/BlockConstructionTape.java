@@ -30,7 +30,7 @@ import static net.minecraft.util.EnumFacing.WEST;
  * This block is used as a border to show the size of the building.
  * It also shows that the building is in the progress of being built.
  */
-public class BlockConstructionTape extends AbstractBlockMinecolonies
+public class BlockConstructionTape extends AbstractBlockMinecolonies<BlockConstructionTape>
 {
 
     /**

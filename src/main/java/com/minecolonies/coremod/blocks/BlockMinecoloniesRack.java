@@ -40,7 +40,7 @@ import java.util.List;
 /**
  * Block for the shelves of the warehouse.
  */
-public class BlockMinecoloniesRack extends AbstractBlockMinecolonies
+public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMinecoloniesRack>
 {
     public static final PropertyEnum<BlockMinecoloniesRack.EnumType> VARIANT
             = PropertyEnum.<BlockMinecoloniesRack.EnumType>create("variant", BlockMinecoloniesRack.EnumType.class);

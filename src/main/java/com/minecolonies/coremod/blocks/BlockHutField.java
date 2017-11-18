@@ -43,7 +43,7 @@ import static net.minecraft.util.EnumFacing.fromAngle;
 /**
  * The class handling the fieldBlocks, placement and activation.
  */
-public class BlockHutField extends BlockContainer
+public class BlockHutField extends AbstractBlockMinecoloniesContainer<BlockHutField>
 {
     /**
      * The position it faces.
@@ -105,28 +105,6 @@ public class BlockHutField extends BlockContainer
         //Hardness of 10 takes a long time to mine to not loose progress.
         setHardness(HARDNESS);
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, NORTH));
-    }
-
-    /**
-     * Registery block at gameregistry.
-     * @param registry the registry to use.
-     * @return the block itself.
-     */
-    public BlockHutField registerBlock(final IForgeRegistry<Block> registry)
-    {
-        registry.register(this);
-        return this;
-    }
-
-    /**
-     * Registery block at gameregistry.
-     * @param registry the registry to use.
-     * @return the block itself.
-     */
-    public Block registerItemBlock(final IForgeRegistry<Item> registry)
-    {
-        registry.register((new ItemBlock(this)).setRegistryName(this.getRegistryName()));
-        return this;
     }
 
     @NotNull

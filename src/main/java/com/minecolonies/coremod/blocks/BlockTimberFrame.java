@@ -8,7 +8,7 @@ import net.minecraft.block.state.IBlockState;
 /**
  * Decorative block
  */
-public class BlockTimberFrame extends AbstractBlockMinecolonies
+public class BlockTimberFrame extends AbstractBlockMinecolonies<BlockTimberFrame>
 {
 
     /**

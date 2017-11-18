@@ -37,7 +37,7 @@ import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
  * <p>
  * All AbstractBlockHut[something] should extend this class.
  */
-public abstract class AbstractBlockHut extends AbstractBlockMinecolonies implements ITileEntityProvider, IBuilderUndestroyable
+public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends AbstractBlockMinecolonies<B> implements ITileEntityProvider, IBuilderUndestroyable
 {
     public static final  PropertyDirection FACING     = BlockHorizontal.FACING;
     private static final float             HARDNESS   = 10F;
