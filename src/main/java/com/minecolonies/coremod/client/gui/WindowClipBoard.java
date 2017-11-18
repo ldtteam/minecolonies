@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequ
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.blockout.Color;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.ItemIcon;
 import com.minecolonies.blockout.controls.Label;
@@ -46,11 +47,6 @@ public class WindowClipBoard extends AbstractWindowSkeleton
      * Requestst stack id.
      */
     private static final String LIST_ELEMENT_ID_REQUEST_STACK = "requestStack";
-
-    /**
-     * Target location id.
-     */
-    private static final String LIST_ELEMENT_ID_REQUEST_LOCATION = "targetLocation";
 
     /**
      * Id of the resource add button.
@@ -127,7 +123,9 @@ public class WindowClipBoard extends AbstractWindowSkeleton
                 exampleStackDisplay.setItem(ItemStackUtils.EMPTY);
             }
             rowPane.findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getDisplayName(request.getToken()).getFormattedText());
-            rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class).setLabelText(request.getShortDisplayString().getFormattedText());
+
+            rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
+                    .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f",""));
         });
     }
 

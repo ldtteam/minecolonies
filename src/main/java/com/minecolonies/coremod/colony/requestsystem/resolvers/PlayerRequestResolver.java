@@ -91,16 +91,17 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
             if (owner != null)
             {
                 players.remove(owner);
-                LanguageHandler.sendPlayerMessage(owner,
+
+                LanguageHandler.sendPlayerMessage(owner, "com.minecolonies.requestsystem.playerresolver",
                         request.getRequester().getDisplayName(request.getToken()).getFormattedText(),
                         request.getRequester().getRequesterLocation().toString(),
                         request.getShortDisplayString());
             }
 
-            LanguageHandler.sendPlayersMessage(players,
-                    request.getRequester().getDisplayName(request.getToken()).getFormattedText(),
+            LanguageHandler.sendPlayersMessage(players, "com.minecolonies.requestsystem.playerresolver",
+                    colonyDescription + " " + request.getRequester().getDisplayName(request.getToken()).getFormattedText(),
                     request.getRequester().getRequesterLocation().toString(),
-                    colonyDescription, request.getShortDisplayString());
+                    request.getShortDisplayString());
         }
 
         assignedRequests.add(request.getToken());

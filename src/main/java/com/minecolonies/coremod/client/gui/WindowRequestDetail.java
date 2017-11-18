@@ -1,17 +1,24 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Color;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.ButtonHandler;
+import com.minecolonies.blockout.controls.ItemIcon;
 import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.Box;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.item.ItemStack;
+import org.apache.commons.lang3.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * Window for the request detail.
@@ -32,6 +39,36 @@ public class WindowRequestDetail extends Window implements ButtonHandler
      * Id of the request detail box.
      */
     private static final String BOX_ID_REQUEST = "requestDetail";
+
+    /**
+     * Id of the requester label.
+     */
+    private static final String REQUESTER = "requester";
+
+    /**
+     * Requestst stack id.
+     */
+    private static final String LIST_ELEMENT_ID_REQUEST_STACK = "requestStack";
+
+    /**
+     * The divider for the life count.
+     */
+    private static final int LIFE_COUNT_DIVIDER               = 30;
+
+    /**
+     * Location string.
+     */
+    private static final String LIST_ELEMENT_ID_REQUEST_LOCATION = "targetLocation";
+
+    /**
+     * Resolver string.
+     */
+    private static final String RESOLVER                            = "resolver";
+
+    /**
+     * Life count.
+     */
+    private int lifeCount = 0;
 
     /**
      * The citizen of the request.
@@ -62,6 +99,16 @@ public class WindowRequestDetail extends Window implements ButtonHandler
         this.colonyId = colonyId;
     }
 
+    @Override
+    public void onUpdate()
+    {
+        super.onUpdate();
+        if (!GuiScreen.isShiftKeyDown())
+        {
+            lifeCount++;
+        }
+    }
+
     /**
      * Called when the GUI has been opened.
      * Will fill the fields and lists.
@@ -69,8 +116,10 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     @Override
     public void onOpened()
     {
-        final String displayString = request.getShortDisplayString().getFormattedText();
-        final String[] labels = displayString.split("§r");
+        final String[] labels = WordUtils.wrap(request.getLongDisplayString().getFormattedText()
+                .replace("§r"," ")
+                .replace(":",":\n"), 40, "\n", true)
+                .split("\n");
         final Box box = findPaneOfTypeByID(BOX_ID_REQUEST, Box.class);
         int y = 10;
         for (final String s : labels)
@@ -82,6 +131,25 @@ public class WindowRequestDetail extends Window implements ButtonHandler
             descriptionLabel.setPosition(20, y);
             y += 10;
         }
+
+        final ItemIcon exampleStackDisplay = findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
+        final List<ItemStack> displayStacks = request.getDisplayStacks();
+
+        if (!displayStacks.isEmpty())
+        {
+            exampleStackDisplay.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()));
+            exampleStackDisplay.setSize(64,64);
+        }
+        else
+        {
+            exampleStackDisplay.setItem(ItemStackUtils.EMPTY);
+        }
+
+        findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getDisplayName(request.getToken()).getFormattedText());
+        final Label targetLabel = findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Label.class);
+        targetLabel.setLabelText(request.getRequester().getDeliveryLocation().toString());
+        //findPaneOfTypeByID(RESOLVER, Label.class).setLabelText(re().getDisplayName(request.getToken()).getFormattedText());
+
         box.setSize(box.getWidth(), y);
     }
 

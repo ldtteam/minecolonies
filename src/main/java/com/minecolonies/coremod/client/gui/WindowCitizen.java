@@ -291,6 +291,21 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
     private static final String REQUEST_DETAIL = "detail";
 
     /**
+     * Id of the short detail label.
+     */
+    private static final String REQUEST_SHORT_DETAIL = "shortDetail";
+
+    /**
+     * Id of the requester label.
+     */
+    private static final String REQUESTER = "requester";
+
+    /**
+     * The divider for the life count.
+     */
+    private static final int LIFE_COUNT_DIVIDER = 30;
+
+    /**
      * Life count.
      */
     private int lifeCount = 0;
@@ -366,16 +381,15 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
 
             if (!displayStacks.isEmpty())
             {
-                final ItemStack selectedStack = displayStacks.get((lifeCount / 30) % displayStacks.size());
-                exampleStackDisplay.setItem(selectedStack);
+                exampleStackDisplay.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()));
             }
             else
             {
                 exampleStackDisplay.setItem(ItemStackUtils.EMPTY);
             }
-
-            final Label targetLabel = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Label.class);
-            targetLabel.setLabelText(getNicePositionString(request.getRequester().getDeliveryLocation().getInDimensionLocation()));
+            rowPane.findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getDisplayName(request.getToken()).getFormattedText());
+            rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
+                    .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f",""));
 
             if (!(request.getRequest() instanceof IDeliverable)
             || (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory),
