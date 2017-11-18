@@ -16,6 +16,7 @@ import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -57,7 +58,7 @@ public final class StandardRequests
         @Override
         public ITextComponent getShortDisplayString()
         {
-            return getRequest().getStack().getTextComponent();
+            return new TextComponentTranslation(getRequest().getCount() + " " + getRequest().getStack().getTextComponent().getFormattedText());
         }
 
         @Override

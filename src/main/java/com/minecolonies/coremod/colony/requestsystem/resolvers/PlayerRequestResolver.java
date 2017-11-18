@@ -94,7 +94,7 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
 
                 LanguageHandler.sendPlayerMessage(owner, "com.minecolonies.requestsystem.playerresolver",
                         request.getRequester().getDisplayName(request.getToken()).getFormattedText(),
-                        request.getShortDisplayString(),
+                        request.getShortDisplayString().getFormattedText(),
                         request.getRequester().getRequesterLocation().toString()
                 );
             }

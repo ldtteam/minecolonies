@@ -501,7 +501,7 @@ com.minecolonies.coremod.item.clipboard.needColony=Please shift-right click the 
 com.minecolonies.coremod.item.clipboard.registered=Registered to colony %d.
 achievement.upgrade.guard.first=The killer
 achievement.upgrade.guard.last=Cleanup crew
-com.minecolonies.requestsystem.playerresolver=%s Is in need of %s at %s.
+com.minecolonies.requestsystem.playerresolver=%s is in need of %s at %s.
 
 #Buildings
 com.minecolonies.coremod.buildings.warehouse.name=Warehouse
