@@ -78,7 +78,8 @@ public class ItemIcon extends Pane
 
         final RenderItem itemRender = mc.getRenderItem();
 
-        GlStateManager.translate(0.0F, 0.0F, GUI_ITEM_Z_TRANSLATE);
+        GlStateManager.translate(x, y, GUI_ITEM_Z_TRANSLATE);
+        GlStateManager.scale(this.getWidth()/16, 1, this.getHeight()/16);
         this.zLevel = GUI_ITEM_Z_LEVEL;
         itemRender.zLevel = GUI_ITEM_Z_LEVEL;
         FontRenderer font = stack.getItem().getFontRenderer(stack);
@@ -86,8 +87,8 @@ public class ItemIcon extends Pane
         {
             font = mc.fontRenderer;
         }
-        itemRender.renderItemAndEffectIntoGUI(stack, x, y);
-        itemRender.renderItemOverlayIntoGUI(font, stack, x, y, null);
+        itemRender.renderItemAndEffectIntoGUI(stack, 0, 0);
+        itemRender.renderItemOverlayIntoGUI(font, stack, 0, 0, null);
         this.zLevel = 0.0F;
         itemRender.zLevel = 0.0F;
     }

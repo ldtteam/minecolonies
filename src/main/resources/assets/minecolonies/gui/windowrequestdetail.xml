@@ -4,7 +4,7 @@
 
     <label size="100% 11" pos="0 15" textalign="TOP_MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.citizen.requests)"/>
 
-    <itemicon id="requestStack" size="64 64" pos="70 70"/>
+    <itemicon id="requestStack" size="32 32" pos="70 70"/>
 
     <box id="requestDetail" size="100% 50%" pos="100 70">
 

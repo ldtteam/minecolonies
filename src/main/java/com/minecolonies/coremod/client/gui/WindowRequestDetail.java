@@ -138,7 +138,6 @@ public class WindowRequestDetail extends Window implements ButtonHandler
         if (!displayStacks.isEmpty())
         {
             exampleStackDisplay.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()));
-            exampleStackDisplay.setSize(64,64);
         }
         else
         {

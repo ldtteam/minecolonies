@@ -94,14 +94,15 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
 
                 LanguageHandler.sendPlayerMessage(owner, "com.minecolonies.requestsystem.playerresolver",
                         request.getRequester().getDisplayName(request.getToken()).getFormattedText(),
-                        request.getRequester().getRequesterLocation().toString(),
-                        request.getShortDisplayString());
+                        request.getShortDisplayString(),
+                        request.getRequester().getRequesterLocation().toString()
+                );
             }
 
             LanguageHandler.sendPlayersMessage(players, "com.minecolonies.requestsystem.playerresolver",
                     colonyDescription + " " + request.getRequester().getDisplayName(request.getToken()).getFormattedText(),
-                    request.getRequester().getRequesterLocation().toString(),
-                    request.getShortDisplayString());
+                    request.getShortDisplayString(),
+                    request.getRequester().getRequesterLocation().toString());
         }
 
         assignedRequests.add(request.getToken());
