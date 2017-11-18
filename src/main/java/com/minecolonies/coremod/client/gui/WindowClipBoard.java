@@ -58,9 +58,24 @@ public class WindowClipBoard extends AbstractWindowSkeleton
     private static final String REQUEST_CANCEL = "cancel";
 
     /**
-     * Id of the detail button
+     * Id of the detail button.
      */
     private static final String REQUEST_DETAIL = "detail";
+
+    /**
+     * Id of the short detail label.
+     */
+    private static final String REQUEST_SHORT_DETAIL = "shortDetail";
+
+    /**
+     * Id of the requester label.
+     */
+    private static final String REQUESTER = "requester";
+
+    /**
+     * The divider for the life count.
+     */
+    private static final int LIFE_COUNT_DIVIDER = 30;
 
     /**
      * Life count.
@@ -105,14 +120,14 @@ public class WindowClipBoard extends AbstractWindowSkeleton
 
             if (!displayStacks.isEmpty())
             {
-                final ItemStack selectedStack = displayStacks.get((lifeCount / 30) % displayStacks.size());
-                exampleStackDisplay.setItem(selectedStack);
+                exampleStackDisplay.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()));
             }
             else
             {
                 exampleStackDisplay.setItem(ItemStackUtils.EMPTY);
             }
-            rowPane.findPaneOfTypeByID("requester", Label.class).setLabelText(request.getRequester().toString());
+            rowPane.findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().toString());
+            rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class).setLabelText(request.getRequester().toString());
 
             final Label targetLabel = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Label.class);
             targetLabel.setLabelText(request.getRequester().getDeliveryLocation().toString());
@@ -149,7 +164,9 @@ public class WindowClipBoard extends AbstractWindowSkeleton
         requests.addAll(requestTokens.stream().map(view.getRequestManager()::getRequestForToken).filter(Objects::nonNull).collect(Collectors.toSet()));
 
         final BlockPos playerPos = Minecraft.getMinecraft().player.getPosition();
-        requests.sort(Comparator.comparing(request -> request.getRequester().getRequesterLocation().getInDimensionLocation().getDistance(playerPos.getX(), playerPos.getY(), playerPos.getZ())));
+        requests.sort(Comparator.comparing(
+                request -> request.getRequester().getRequesterLocation().getInDimensionLocation()
+                        .getDistance(playerPos.getX(), playerPos.getY(), playerPos.getZ())));
 
         return ImmutableList.copyOf(requests);
     }
