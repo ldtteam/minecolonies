@@ -473,3 +473,4 @@ com.minecolonies.coremod.gui.warehouse.upgrade=Upgrade Storage
 item.minecolonies.scepterPermission.name=PermissionScepter
 achievement.upgrade.guard.first=The killer
 achievement.upgrade.guard.last=Cleanup crew
+tile.minecolonies.blockPaperwall.name=Paper wall
