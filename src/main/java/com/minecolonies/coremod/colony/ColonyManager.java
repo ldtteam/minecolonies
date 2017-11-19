@@ -155,7 +155,7 @@ public final class ColonyManager
      *
      * @param id the colonies id.
      */
-    public static void deleteColony(final int id)
+    public static void deleteColony(final int id, final boolean canDestroy)
     {
         try
         {
@@ -174,6 +174,8 @@ public final class ColonyManager
                     colonyWorlds.add(world);
                 }
             }
+            if(canDestroy)
+            {
             Log.getLogger().info("Removing buildings for " + id);
             for (final AbstractBuilding building : new ArrayList<>(colony.getBuildings().values()))
             {
@@ -190,6 +192,7 @@ public final class ColonyManager
                     }
                 }
             }
+        }
 
             MinecraftForge.EVENT_BUS.unregister(colony.getEventHandler());
             Log.getLogger().info("Deleting colony: " + colony.getID());
