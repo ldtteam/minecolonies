@@ -4,14 +4,13 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Color;
-import com.minecolonies.blockout.controls.Button;
-import com.minecolonies.blockout.controls.ButtonHandler;
-import com.minecolonies.blockout.controls.ItemIcon;
-import com.minecolonies.blockout.controls.Label;
+import com.minecolonies.blockout.controls.*;
 import com.minecolonies.blockout.views.Box;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
+import com.minecolonies.coremod.colony.ColonyManager;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.text.WordUtils;
@@ -64,6 +63,11 @@ public class WindowRequestDetail extends Window implements ButtonHandler
      * Resolver string.
      */
     private static final String RESOLVER                            = "resolver";
+
+    /**
+     * Resolver string.
+     */
+    private static final String DELIVERY_IMAGE                            = "deliveryImage";
 
     /**
      * Life count.
@@ -150,13 +154,16 @@ public class WindowRequestDetail extends Window implements ButtonHandler
         }
         else
         {
-            exampleStackDisplay.setItem(ItemStackUtils.EMPTY);
+            findPaneOfTypeByID(DELIVERY_IMAGE, Image.class).setVisible(true);
         }
 
         findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getDisplayName(request.getToken()).getFormattedText());
         final Label targetLabel = findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Label.class);
         targetLabel.setLabelText(request.getRequester().getDeliveryLocation().toString());
-        //findPaneOfTypeByID(RESOLVER, Label.class).setLabelText(re().getDisplayName(request.getToken()).getFormattedText());
+
+        ColonyManager.getColony(colonyId).getRequestManager().
+
+        findPaneOfTypeByID(RESOLVER, Label.class).setLabelText(.getResolverFromRequest(request.getToken));
 
         box.setSize(box.getWidth(), y);
     }

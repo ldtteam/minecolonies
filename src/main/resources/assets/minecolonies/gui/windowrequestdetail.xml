@@ -7,6 +7,7 @@
     <label size="100% 11" pos="0 15" textalign="TOP_MIDDLE" color="black" label="$(com.minecolonies.coremod.gui.citizen.requests)"/>
 
     <itemicon id="requestStack" size="32 32" pos="10 40"/>
+    <image id="deliveryImage" source="minecolonies:textures/gui/citizen/delivery.png" size="32 32" pos="10 40" visible="false"/>
 
     <box id="requestDetail" size="100% 50%" pos="20 70">
 
