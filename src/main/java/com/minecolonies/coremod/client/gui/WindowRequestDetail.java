@@ -28,7 +28,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     /**
      * Black color.
      */
-    private static final int WHITE = Color.getByName("white", 0);
+    private static final int BLACK = Color.getByName("black", 0);
 
     /**
      * Link to the xml file of the window.
@@ -125,7 +125,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
 
         for(final String s: labels)
         {
-            finalLabel.append(WordUtils.wrap(s, 40, "\n", true));
+            finalLabel.append(WordUtils.wrap(s, 30, "\n", true));
         }
 
         labels = finalLabel.toString().split("\n");
@@ -134,10 +134,10 @@ public class WindowRequestDetail extends Window implements ButtonHandler
         for (final String s : labels)
         {
             final Label descriptionLabel = new Label();
-            descriptionLabel.setColor(WHITE, WHITE);
+            descriptionLabel.setColor(BLACK, BLACK);
             descriptionLabel.setLabelText(s);
             box.addChild(descriptionLabel);
-            descriptionLabel.setPosition(20, y);
+            descriptionLabel.setPosition(1, y);
             y += 10;
         }
 
