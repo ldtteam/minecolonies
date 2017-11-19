@@ -13,6 +13,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.wrapped.WrappedBlacklistAssignmentRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.wrapped.WrappedStaticStateRequestManager;
@@ -86,7 +87,10 @@ public final class RequestHandler
             case PRIORITY_BASED:
                 return assignRequestDefault(manager, request, resolverTokenBlackList);
             case FASTED_FIRST:
-                return assignRequestFastest(manager, request, resolverTokenBlackList);
+            {
+                MineColonies.getLogger().warn("Fastest First strategy not implemented yet.");
+                return assignRequestDefault(manager, request, resolverTokenBlackList);
+            }
         }
 
         return null;
@@ -154,7 +158,7 @@ public final class RequestHandler
                 //Successfully found a resolver. Registering
                 LogHandler.log("Finished resolver assignment search for request: " + request + " successfully");
                 
-                if (!manager.isSimulation())
+                if (!manager.isDataSimulation())
                 {
                     ResolverHandler.addRequestToResolver(manager, resolver, request);
                 }
@@ -178,7 +182,7 @@ public final class RequestHandler
                     request.setState(new WrappedStaticStateRequestManager(manager), RequestState.IN_PROGRESS);
                     if (!request.hasChildren())
                     {
-                        if(!manager.isSimulation())
+                        if(!manager.isDataSimulation())
                         {
                             resolveRequest(manager, request);
                         }
@@ -191,120 +195,6 @@ public final class RequestHandler
 
         return null;
     }
-
-    /**
-     * Method used to assign a given request to a resolver. Does take a given blacklist of resolvers into account.
-     * Uses the default assigning strategy: {@link AssigningStrategy#FASTED_FIRST}
-     *
-     * @param manager                The manager to modify.
-     * @param request                The request to assign.
-     * @param resolverTokenBlackList Each resolver that has its token in this blacklist will be skipped when checking for a possible resolver.
-     * @return The token of the resolver that has gotten the request assigned, null if none was found.
-     * @throws IllegalArgumentException is thrown when the request is unknown to this manager.
-     */
-    @SuppressWarnings(Suppression.UNCHECKED)
-    public static IToken assignRequestFastest(final IStandardRequestManager manager, final IRequest request, final Collection<IToken> resolverTokenBlackList)
-      throws IllegalArgumentException
-    {
-        //Check if the request is registered
-        getRequest(manager, request.getToken());
-
-        LogHandler.log("Starting resolver assignment search for request: " + request);
-
-        request.setState(new WrappedStaticStateRequestManager(manager), RequestState.ASSIGNING);
-
-        Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
-        requestTypes.remove(TypeConstants.OBJECT);
-
-        Set<IToken> failedResolvers = new HashSet<>();
-
-        for(TypeToken requestType : requestTypes) {
-            if (!manager.getRequestClassResolverMap().containsKey(requestType))
-                continue;
-
-            Collection<IRequestResolver> resolversForRequestType = manager.getRequestClassResolverMap().get(requestType);
-            resolversForRequestType = resolversForRequestType
-                                        .stream()
-                                        .filter(r -> !failedResolvers.contains(r.getRequesterId()) && !resolverTokenBlackList.contains(r.getRequesterId()))
-                                        .collect(Collectors.toSet());
-
-            AssigningResult results = resolversForRequestType
-                                              .stream()
-                                              .filter(r -> {
-                                                  final boolean result = r.canResolve(manager, request);
-                                                  if (!result)
-                                                      failedResolvers.add(r.getRequesterId());
-
-                                                  return result;
-                                              })
-                                              .map(r -> {
-                                                  
-                                              })
-                                              .filter(a -> a.children != null)
-                                              .sorted().findFirst().orElse(null);
-            
-            if (results == null)
-
-
-            for (final IRequestResolver resolver : resolversForRequestType)
-            {
-                //Skip when the resolver is in the blacklist.
-                if (resolverTokenBlackList.contains(resolver.getRequesterId()))
-                {
-                    failedResolvers.add(resolver.getRequesterId());
-                    continue;
-                }
-
-                //Skip if preliminary check fails
-                if (!resolver.canResolve(manager, request))
-                {
-                    failedResolvers.add(resolver.getRequesterId());
-                    continue;
-                }
-
-                @Nullable final List<IToken> attemptResult = resolver.attemptResolve(new WrappedBlacklistAssignmentRequestManager(manager, resolverTokenBlackList), request);
-
-                //Skip if attempt failed (aka attemptResult == null)
-                if (attemptResult == null)
-                {
-                    failedResolvers.add(resolver.getRequesterId());
-                    continue;
-                }
-
-                //Successfully found a resolver. Registering
-                LogHandler.log("Finished resolver assignment search for request: " + request + " successfully");
-                ResolverHandler.addRequestToResolver(manager, resolver, request);
-
-                for (final IToken childRequestToken :
-                  attemptResult)
-                {
-                    final IRequest childRequest = RequestHandler.getRequest(manager, childRequestToken);
-
-                    childRequest.setParent(request.getToken());
-                    request.addChild(childRequest.getToken());
-
-                    if (!isAssigned(manager, childRequestToken))
-                    {
-                        assignRequestFastest(manager, childRequest, resolverTokenBlackList);
-                    }
-                }
-
-                if (request.getState().ordinal() < RequestState.IN_PROGRESS.ordinal())
-                {
-                    request.setState(new WrappedStaticStateRequestManager(manager), RequestState.IN_PROGRESS);
-                    if (!request.hasChildren())
-                    {
-                        resolveRequest(manager, request);
-                    }
-                }
-
-                return resolver.getRequesterId();
-            }
-        }
-
-        return null;
-    }
-
 
     /**
      * Method used to reassign the request to a resolver that is not in the given blacklist.

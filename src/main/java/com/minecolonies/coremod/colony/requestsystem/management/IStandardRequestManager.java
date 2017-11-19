@@ -42,5 +42,8 @@ public interface IStandardRequestManager extends IRequestManager
     Map<TypeToken, Collection<IRequestResolver>> getRequestClassResolverMap();
 
     @NotNull
-    boolean isSimulation();
+    boolean isDataSimulation();
+
+    @NotNull
+    boolean isResolvingSimulation();
 }

@@ -555,10 +555,15 @@ public class StandardRequestManager implements IStandardRequestManager
 
     @NotNull
     @Override
-    public boolean isSimulation()
+    public boolean isDataSimulation()
     {
         return false;
     }
 
-
+    @NotNull
+    @Override
+    public boolean isResolvingSimulation()
+    {
+        return false;
+    }
 }
