@@ -3,7 +3,6 @@ package com.minecolonies.coremod.blocks;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockPane;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -64,21 +63,9 @@ public class BlockPaperwall extends AbstractBlockMinecoloniesPane<BlockPaperwall
      * @param registry the registry to use.
      * @return the block itself.
      */
-    public BlockPaperwall registerBlock(final IForgeRegistry<Block> registry)
-    {
-        registry.register(this);
-        return this;
-    }
-
-    /**
-     * Registery block at gameregistry.
-     * @param registry the registry to use.
-     * @return the block itself.
-     */
-    public Block registerItemBlock(final IForgeRegistry<Item> registry)
+    public void registerItemBlock(final IForgeRegistry<Item> registry)
     {
         registry.register((new ItemColored(this, true)).setRegistryName(this.getRegistryName()));
-        return this;
     }
 
     /**
