@@ -11,6 +11,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Color;
 import com.minecolonies.blockout.controls.Button;
+import com.minecolonies.blockout.controls.Image;
 import com.minecolonies.blockout.controls.ItemIcon;
 import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
@@ -62,6 +63,11 @@ public class WindowClipBoard extends AbstractWindowSkeleton
      * Id of the short detail label.
      */
     private static final String REQUEST_SHORT_DETAIL = "shortDetail";
+
+    /**
+     * Resolver string.
+     */
+    private static final String DELIVERY_IMAGE = "deliveryImage";
 
     /**
      * Id of the requester label.
@@ -120,7 +126,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
             }
             else
             {
-                exampleStackDisplay.setItem(ItemStackUtils.EMPTY);
+                findPaneOfTypeByID(DELIVERY_IMAGE, Image.class).setVisible(true);
             }
             rowPane.findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getDisplayName(request.getToken()).getFormattedText());
 

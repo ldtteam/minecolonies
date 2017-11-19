@@ -5,7 +5,6 @@ import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Alignment;
@@ -38,7 +37,7 @@ import java.util.function.Predicate;
 /**
  * Window for the citizen.
  */
-public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandler
+public class WindowCitizen extends AbstractWindowSkeleton
 {
     /**
      * The label to find the inventory button.
@@ -261,9 +260,9 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
     private static final String LIST_ELEMENT_ID_REQUEST_STACK = "requestStack";
 
     /**
-     * Target location id.
+     * Resolver string.
      */
-    private static final String LIST_ELEMENT_ID_REQUEST_LOCATION = "targetLocation";
+    private static final String DELIVERY_IMAGE = "deliveryImage";
 
     /**
      * Button id of the requests page.
@@ -385,7 +384,7 @@ public class WindowCitizen extends AbstractWindowSkeleton implements ButtonHandl
             }
             else
             {
-                exampleStackDisplay.setItem(ItemStackUtils.EMPTY);
+                findPaneOfTypeByID(DELIVERY_IMAGE, Image.class).setVisible(true);
             }
             rowPane.findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getDisplayName(request.getToken()).getFormattedText());
             rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)

@@ -10,7 +10,6 @@ import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyManager;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.text.WordUtils;
@@ -52,7 +51,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     /**
      * The divider for the life count.
      */
-    private static final int LIFE_COUNT_DIVIDER               = 30;
+    private static final int LIFE_COUNT_DIVIDER = 30;
 
     /**
      * Location string.
@@ -60,14 +59,24 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     private static final String LIST_ELEMENT_ID_REQUEST_LOCATION = "targetLocation";
 
     /**
-     * Resolver string.
+     * Y offset each text line.
      */
-    private static final String RESOLVER                            = "resolver";
+    private static final int Y_OFFSET_EACH_TEXTFIELD = 10;
+
+    /**
+     * Wrap after x amount of symbols the text.
+     */
+    private static final int WRAP_AFTER_X = 30;
 
     /**
      * Resolver string.
      */
-    private static final String DELIVERY_IMAGE                            = "deliveryImage";
+    private static final String RESOLVER = "resolver";
+
+    /**
+     * Resolver string.
+     */
+    private static final String DELIVERY_IMAGE = "deliveryImage";
 
     /**
      * Life count.
@@ -133,20 +142,20 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     public void onOpened()
     {
         String[] labels = request.getLongDisplayString().getFormattedText()
-                .replace(":",":\n")
-                .replace("§r"," ")
+                .replace(":", ":\n")
+                .replace("§r", " ")
                 .split("(?<=\n)");
 
         final StringBuilder finalLabel = new StringBuilder();
 
-        for(final String s: labels)
+        for (final String s : labels)
         {
-            finalLabel.append(WordUtils.wrap(s, 30, "\n", true));
+            finalLabel.append(WordUtils.wrap(s, WRAP_AFTER_X, "\n", true));
         }
 
         labels = finalLabel.toString().split("\n");
         final Box box = findPaneOfTypeByID(BOX_ID_REQUEST, Box.class);
-        int y = 10;
+        int y = Y_OFFSET_EACH_TEXTFIELD;
         for (final String s : labels)
         {
             final Label descriptionLabel = new Label();
@@ -154,7 +163,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
             descriptionLabel.setLabelText(s);
             box.addChild(descriptionLabel);
             descriptionLabel.setPosition(1, y);
-            y += 10;
+            y += Y_OFFSET_EACH_TEXTFIELD;
         }
 
         final ItemIcon exampleStackDisplay = findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
@@ -173,9 +182,9 @@ public class WindowRequestDetail extends Window implements ButtonHandler
         final Label targetLabel = findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Label.class);
         targetLabel.setLabelText(request.getRequester().getDeliveryLocation().toString());
 
-        ColonyManager.getColony(colonyId).getRequestManager().
-
-        findPaneOfTypeByID(RESOLVER, Label.class).setLabelText(.getResolverFromRequest(request.getToken));
+        findPaneOfTypeByID(RESOLVER, Label.class).setLabelText(
+                ColonyManager.getColony(colonyId).getRequestManager().getResolverForRequest(
+                        request.getToken()).getDisplayName(request.getToken()).getFormattedText());
 
         box.setSize(box.getWidth(), y);
     }
@@ -195,7 +204,6 @@ public class WindowRequestDetail extends Window implements ButtonHandler
         else
         {
             MineColonies.proxy.openClipBoardWindow(colonyId);
-
         }
     }
 }
