@@ -141,7 +141,7 @@ public class Tool implements IDeliverable
                       .anyMatch(t -> ItemStackUtils.hasToolLevel(stack, t, getMinLevel(), getMaxLevel()));
 
         if (!toolTypeResult)
-            return stack.getItem() instanceof ItemHoe;
+            return stack.getItem() instanceof ItemHoe && toolClass.equals(ToolType.HOE);
 
         return toolTypeResult;
     }

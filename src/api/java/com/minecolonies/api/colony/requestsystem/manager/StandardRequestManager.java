@@ -412,6 +412,24 @@ public class StandardRequestManager implements IRequestManager
         return getFactoryController().deserialize(requestData);
     }
 
+    @NotNull
+    @Override
+    public <T extends IRequestable> IRequestResolver<T> getResolverForToken(@NotNull final IToken token) throws IllegalArgumentException
+    {
+        final IRequestResolver<T> resolver = ResolverHandler.getResolver(this, token);
+
+        return getFactoryController().deserialize(getFactoryController().serialize(resolver));
+    }
+
+    @Nullable
+    @Override
+    public <T extends IRequestable> IRequestResolver<T> getResolverForRequest(@NotNull final IToken requestToken) throws IllegalArgumentException
+    {
+        final IRequest request = RequestHandler.getRequest(this, requestToken);
+
+        return getResolverForToken(ResolverHandler.getResolverForRequest(this, request).getRequesterId());
+    }
+
     /**
      * Method to update the state of a given request.
      *
@@ -1701,6 +1719,34 @@ public class StandardRequestManager implements IRequestManager
         public <T extends IRequestable> IRequest<T> getRequestForToken(@NotNull final IToken token) throws IllegalArgumentException
         {
             return RequestHandler.getRequestOrNull(wrappedManager, token);
+        }
+
+        /**
+         * Method to get a resolver from its token.
+         *
+         * @param token@return The resolver registered with the given token.
+         * @throws IllegalArgumentException when the token is unknown.
+         */
+        @NotNull
+        @Override
+        public <T extends IRequestable> IRequestResolver<T> getResolverForToken(@NotNull final IToken token) throws IllegalArgumentException
+        {
+            return wrappedManager.getResolverForToken(token);
+        }
+
+        /**
+         * Method to get a resolver for a given request.
+         *
+         * @param requestToken The token of the request to get resolver for.
+         * @return Null if the request is not yet resolved, or else the assigned resolver.
+         *
+         * @throws IllegalArgumentException Thrown when the token is unknown.
+         */
+        @Nullable
+        @Override
+        public <T extends IRequestable> IRequestResolver<T> getResolverForRequest(@NotNull final IToken requestToken) throws IllegalArgumentException
+        {
+            return wrappedManager.getResolverForRequest(requestToken);
         }
 
         /**

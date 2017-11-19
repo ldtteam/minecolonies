@@ -107,6 +107,18 @@ public class WindowRequestDetail extends Window implements ButtonHandler
         {
             lifeCount++;
         }
+
+        final ItemIcon exampleStackDisplay = findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
+        final List<ItemStack> displayStacks = request.getDisplayStacks();
+
+        if (!displayStacks.isEmpty())
+        {
+            exampleStackDisplay.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()));
+        }
+        else
+        {
+            exampleStackDisplay.setItem(ItemStackUtils.EMPTY);
+        }
     }
 
     /**
