@@ -50,6 +50,9 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
      * When this attempt was not successful, eg. this resolver could not schedule a crafting operation, a Null object should be returned.
      * In that case the next resolver will be tried by the manager.
      *
+     * IT IS VITAL THAT THE REQUEST RETURNED ARE NOT YET ASSIGNED. SIMULATION AND OTHER STRATEGIES WILL FAIL ELSE!
+     * THE MANAGER GIVEN WILL HANDLE ASSIGNING HIMSELF!
+     *
      * @param request The request to resolve.
      * @param manager The manager that is attempting to resolve using this resolver.
      * @return The tokens of required requests if the attempt was successful (an empty list is allowed to indicate no requirements), null if the attempt failed.

@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
-import com.minecolonies.api.colony.requestsystem.manager.StandardRequestManager;
+import com.minecolonies.coremod.colony.requestsystem.management.handlers.LogHandler;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -176,7 +176,7 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     @Override
     public void update()
     {
-        StandardRequestManager.LogHandler.log("Starting reassignment.");
+        LogHandler.log("Starting reassignment.");
 
         //Lets decrement all delays
         getAllAssignedRequests().forEach(t -> {
@@ -207,10 +207,10 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
         }).collect(Collectors.toSet());
 
         successfully.forEach(t -> {
-            StandardRequestManager.LogHandler.log("Failed to reassign a retryable request: " + id);
+            LogHandler.log("Failed to reassign a retryable request: " + id);
         });
 
-        StandardRequestManager.LogHandler.log("Finished reassignment.");
+        LogHandler.log("Finished reassignment.");
     }
 
     public void setCurrent(@Nullable final IToken token)

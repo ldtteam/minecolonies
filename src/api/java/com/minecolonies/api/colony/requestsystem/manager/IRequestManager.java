@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
+import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
@@ -96,7 +97,26 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>, ITick
      * @throws IllegalArgumentException when the token does not produce a request of the given type T.
      */
     @Nullable
-    <T extends IRequestable> IRequest<T> getRequestForToken(@NotNull IToken token) throws IllegalArgumentException;
+    <T extends IRequestable> IRequest<T> getRequestForToken(@NotNull final IToken token) throws IllegalArgumentException;
+
+    /**
+     * Method to get a resolver from its token.
+     * @param <T> The type of request that the resolver can process.
+     * @return The resolver registered with the given token.
+     * @throws IllegalArgumentException when the token is unknown.
+     */
+    @NotNull
+    <T extends IRequestable> IRequestResolver<T> getResolverForToken(@NotNull final IToken token) throws IllegalArgumentException;
+
+    /**
+     * Method to get a resolver for a given request.
+     * @param requestToken The token of the request to get resolver for.
+     * @param <T> The type of request that the resolver can process.
+     * @return Null if the request is not yet resolved, or else the assigned resolver.
+     * @throws IllegalArgumentException Thrown when the token is unknown.
+     */
+    @Nullable
+    <T extends IRequestable> IRequestResolver<T> getResolverForRequest(@NotNull final IToken requestToken) throws IllegalArgumentException;
 
     /**
      * Method to update the state of a given request.

@@ -23,6 +23,7 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
+import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.requests.AbstractRequest;
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequestFactories;
 import net.minecraft.item.ItemStack;
@@ -58,7 +59,7 @@ public class StandardRequestManagerTest
         StandardFactoryController.getInstance().registerNewFactory(new StringResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new TestRequesterFactory());
 
-        StandardRequestManager.registerRequestableTypeMapping(StringRequestable.class, StringRequest.class);
+        RequestMappingHandler.registerRequestableTypeMapping(StringRequestable.class, StringRequest.class);
 
         provider = new TestResolvingProvider();
     }
