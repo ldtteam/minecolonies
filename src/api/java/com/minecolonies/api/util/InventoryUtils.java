@@ -471,13 +471,12 @@ public class InventoryUtils
      * @return A list with all the unique IItemHandlers a provider has.
      */
     @NotNull
-    public static List<IItemHandler> getItemHandlersFromProvider(@NotNull final ICapabilityProvider provider)
+    public static Set<IItemHandler> getItemHandlersFromProvider(@NotNull final ICapabilityProvider provider)
     {
-        final List<IItemHandler> handlerList = Arrays.stream(EnumFacing.VALUES)
+        final Set<IItemHandler> handlerList = Arrays.stream(EnumFacing.VALUES)
                                                       .filter(facing -> provider.hasCapability(ITEM_HANDLER_CAPABILITY, facing))
                                                       .map(facing -> provider.getCapability(ITEM_HANDLER_CAPABILITY, facing))
-                                                      .distinct()
-                                                      .collect(Collectors.toList());
+                                                      .collect(Collectors.toSet());
 
         if (provider.hasCapability(ITEM_HANDLER_CAPABILITY, null))
         {
