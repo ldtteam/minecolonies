@@ -12,6 +12,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import org.jetbrains.annotations.NotNull;
 
+
 /**
  * Recipe storage for minecolonies.
  */
@@ -28,10 +29,18 @@ public final class RecipeHandler
     private static final String PLANK_WOOD = "plankWood";
 
     /**
+     * Paper string description.
+     */
+    private static final String PAPER = "paper";
+
+    /**
      * The amount of items returned by certain crafting recipes
      */
 
     private static final int FOUR_BLOCKS = 4;
+
+    private static  final int EIGHT_BLOCKS = 8;
+
 
     private static final int ONE_FORTH_OF_A_STACK = 16;
     /**
@@ -93,7 +102,12 @@ public final class RecipeHandler
 
         //Block Rack
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockRack, 1),
-                "XXX", "X#X", "XXX", 'X', "PLANK_WOOD", '#', Blocks.IRON_BARS));
+                "XXX", "X#X", "XXX", 'X', PLANK_WOOD, '#', Blocks.IRON_BARS));
+            
+        //Building blocks
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockTimberFrame, FOUR_BLOCKS), " W ", " W ", " WB", 'W', PLANK_WOOD, 'B', ModItems.buildTool));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockPaperWall, EIGHT_BLOCKS), "SSS", "PPP", "SSS", 'S', WOODEN_STICK, 'P', PAPER));
+
         //Field
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.blockHutField, 1), 
                 " Y ", "X#X", " X ", 'X', WOODEN_STICK, '#', Items.LEATHER, 'Y', Blocks.HAY_BLOCK));

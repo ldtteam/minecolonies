@@ -2,18 +2,15 @@ package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.ItemBlock;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 
 /**
  * Decorative block
  */
-public class BlockTimberFrame extends Block
+public class BlockTimberFrame extends AbstractBlockMinecolonies<BlockTimberFrame>
 {
 
     /**
@@ -49,8 +46,6 @@ public class BlockTimberFrame extends Block
         setRegistryName(BLOCK_NAME);
         setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(), BLOCK_NAME));
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
-        GameRegistry.register(this);
-        GameRegistry.register((new ItemBlock(this)).setRegistryName(this.getRegistryName()));
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);
     }

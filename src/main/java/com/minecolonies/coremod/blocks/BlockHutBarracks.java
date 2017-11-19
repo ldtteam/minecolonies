@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Block of the Barracks.
  */
-public class BlockHutBarracks extends AbstractBlockHut
+public class BlockHutBarracks extends AbstractBlockHut<BlockHutBarracks>
 {
     /**
      * Default constructor.
