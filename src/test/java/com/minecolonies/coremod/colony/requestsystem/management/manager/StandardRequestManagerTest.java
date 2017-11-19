@@ -1,4 +1,4 @@
-package com.minecolonies.api.colony.requestsystem.manager;
+package com.minecolonies.coremod.colony.requestsystem.management.manager;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
@@ -9,6 +9,8 @@ import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
+import com.minecolonies.api.colony.requestsystem.manager.RequestMappingHandler;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.IRequestFactory;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
@@ -23,7 +25,6 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
-import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.requests.AbstractRequest;
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequestFactories;
 import net.minecraft.item.ItemStack;
@@ -43,7 +44,7 @@ import static org.junit.Assert.*;
 public class StandardRequestManagerTest
 {
 
-    private StandardRequestManager requestManager;
+    private StandardRequestManager   requestManager;
     private IRequestResolverProvider provider;
 
     @Before
@@ -151,7 +152,7 @@ public class StandardRequestManagerTest
     private static class TestResolvingProvider implements IRequestResolverProvider
     {
 
-        private final IToken token;
+        private final IToken                                token;
         private final ImmutableCollection<IRequestResolver> resolvers;
 
         private TestResolvingProvider() {token = StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN);
@@ -203,10 +204,10 @@ public class StandardRequestManagerTest
 
         @Override
         public StringRequest getNewInstance(
-                                                                 @NotNull final StringRequestable input,
-                                                                 @NotNull final IRequester location,
-                                                                 @NotNull final IToken token,
-                                                                 @NotNull final RequestState initialState)
+                                             @NotNull final StringRequestable input,
+                                             @NotNull final IRequester location,
+                                             @NotNull final IToken token,
+                                             @NotNull final RequestState initialState)
         {
             return new StringRequest(location, token, initialState, input);
         }
