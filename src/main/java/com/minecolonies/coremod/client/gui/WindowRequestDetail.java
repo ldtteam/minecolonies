@@ -142,8 +142,9 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     public void onOpened()
     {
         String[] labels = request.getLongDisplayString().getFormattedText()
-                .replace(":", ":\n")
                 .replace("§r", " ")
+                .replace(": ", ":\n")
+
                 .split("(?<=\n)");
 
         final StringBuilder finalLabel = new StringBuilder();
@@ -182,7 +183,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
         final Label targetLabel = findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Label.class);
         targetLabel.setLabelText(request.getRequester().getDeliveryLocation().toString());
 
-        findPaneOfTypeByID(RESOLVER, Label.class).setLabelText(
+        findPaneOfTypeByID(RESOLVER, Label.class).setLabelText("Resolver: " +
                 ColonyManager.getColony(colonyId).getRequestManager().getResolverForRequest(
                         request.getToken()).getDisplayName(request.getToken()).getFormattedText());
 
