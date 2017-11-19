@@ -7,8 +7,11 @@ import net.minecraftforge.registries.IForgeRegistry;
 /**
  * Class to create the modBlocks.
  * References to the blocks can be made here
+ *
+ * We disabled the following finals since we are neither able to mark the items as final, nor do we want to provide public accessors.
  */
-public class ModBlocks
+@SuppressWarnings({"squid:ClassVariableVisibilityCheck", "squid:S2444", "squid:S1444", "squid:S1820" , })
+public final class ModBlocks
 {
     /*
      * Creating objects for all blocks in the mod.
@@ -38,10 +41,7 @@ public class ModBlocks
     public static BlockHutBarracks            blockHutBarracks;
     public static BlockHutBarracksTower       blockHutBarracksTower;
     public static BlockInfoPoster             blockInfoPoster;
-
-
-    // Deactivated for now
-    // public static  Block blockBarrel        = new BlockBarrel();
+    public static BlockPaperwall              blockPaperWall;
 
     /**
      * Private constructor to hide the implicit public one.
@@ -60,28 +60,29 @@ public class ModBlocks
     {
         blockConstructionTape = new BlockConstructionTape().registerBlock(registry);
         blockConstructionTapeCorner = new BlockConstructionTapeCorner().registerBlock(registry);
-        blockHutBaker = (BlockHutBaker) new BlockHutBaker().registerBlock(registry);
-        blockHutBlacksmith = (BlockHutBlacksmith) new BlockHutBlacksmith().registerBlock(registry);
-        blockHutBuilder = (BlockHutBuilder) new BlockHutBuilder().registerBlock(registry);
-        blockHutCitizen = (BlockHutCitizen) new BlockHutCitizen().registerBlock(registry);
-        blockHutDeliveryman = (BlockHutDeliveryman) new BlockHutDeliveryman().registerBlock(registry);
-        blockHutFarmer = (BlockHutFarmer) new BlockHutFarmer().registerBlock(registry);
+        blockHutBaker = new BlockHutBaker().registerBlock(registry);
+        blockHutBlacksmith = new BlockHutBlacksmith().registerBlock(registry);
+        blockHutBuilder = new BlockHutBuilder().registerBlock(registry);
+        blockHutCitizen = new BlockHutCitizen().registerBlock(registry);
+        blockHutDeliveryman = new BlockHutDeliveryman().registerBlock(registry);
+        blockHutFarmer = new BlockHutFarmer().registerBlock(registry);
         blockHutField = new BlockHutField().registerBlock(registry);
-        blockHutFisherman = (BlockHutFisherman) new BlockHutFisherman().registerBlock(registry);
-        blockHutGuardTower = (BlockHutGuardTower) new BlockHutGuardTower().registerBlock(registry);
-        blockHutLumberjack = (BlockHutLumberjack) new BlockHutLumberjack().registerBlock(registry);
-        blockHutMiner = (BlockHutMiner) new BlockHutMiner().registerBlock(registry);
-        blockHutStonemason = (BlockHutStonemason) new BlockHutStonemason().registerBlock(registry);
-        blockHutTownHall = (BlockHutTownHall) new BlockHutTownHall().registerBlock(registry);
-        blockHutWareHouse = (BlockHutWareHouse) new BlockHutWareHouse().registerBlock(registry);
+        blockHutFisherman = new BlockHutFisherman().registerBlock(registry);
+        blockHutGuardTower = new BlockHutGuardTower().registerBlock(registry);
+        blockHutLumberjack = new BlockHutLumberjack().registerBlock(registry);
+        blockHutMiner = new BlockHutMiner().registerBlock(registry);
+        blockHutStonemason = new BlockHutStonemason().registerBlock(registry);
+        blockHutTownHall = new BlockHutTownHall().registerBlock(registry);
+        blockHutWareHouse = new BlockHutWareHouse().registerBlock(registry);
         blockSolidSubstitution = new BlockSolidSubstitution().registerBlock(registry);
         blockSubstitution = new BlockSubstitution().registerBlock(registry);
         blockRack = new BlockMinecoloniesRack().registerBlock(registry);
         blockTimberFrame = new BlockTimberFrame().registerBlock(registry);
         blockWayPoint = new BlockWaypoint().registerBlock(registry);
-        blockHutBarracks = (BlockHutBarracks) new BlockHutBarracks().registerBlock(registry);
-        blockHutBarracksTower = (BlockHutBarracksTower) new BlockHutBarracksTower().registerBlock(registry);
+        blockHutBarracks = new BlockHutBarracks().registerBlock(registry);
+        blockHutBarracksTower = new BlockHutBarracksTower().registerBlock(registry);
         blockInfoPoster = new BlockInfoPoster().registerBlock(registry);
+        blockPaperWall = new BlockPaperwall().registerBlock(registry);
     }
 
     public static void registerItemBlock(final IForgeRegistry<Item> registry)
@@ -110,6 +111,6 @@ public class ModBlocks
         blockHutBarracksTower.registerItemBlock(registry);
         blockHutBarracks.registerItemBlock(registry);
         blockInfoPoster.registerItemBlock(registry);
-
+        blockPaperWall.registerItemBlock(registry);
     }
 }

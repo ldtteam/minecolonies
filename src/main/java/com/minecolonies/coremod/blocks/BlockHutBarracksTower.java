@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Block of the BarracksTower.
  */
-public class BlockHutBarracksTower extends AbstractBlockHut
+public class BlockHutBarracksTower extends AbstractBlockHut<BlockHutBarracksTower>
 {
     /**
      * Default constructor.

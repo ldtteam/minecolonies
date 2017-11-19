@@ -21,7 +21,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
@@ -41,7 +40,7 @@ import java.util.List;
 /**
  * Block for the shelves of the warehouse.
  */
-public class BlockMinecoloniesRack extends Block
+public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMinecoloniesRack>
 {
     public static final PropertyEnum<BlockMinecoloniesRack.EnumType> VARIANT
             = PropertyEnum.<BlockMinecoloniesRack.EnumType>create("variant", BlockMinecoloniesRack.EnumType.class);
@@ -385,28 +384,6 @@ public class BlockMinecoloniesRack extends Block
     public BlockRenderLayer getBlockLayer()
     {
         return BlockRenderLayer.SOLID;
-    }
-
-    /**
-     * Registery block at gameregistry.
-     * @param registry the registry to use.
-     * @return the block itself.
-     */
-    public BlockMinecoloniesRack registerBlock(final IForgeRegistry<Block> registry)
-    {
-        registry.register(this);
-        return this;
-    }
-
-    /**
-     * Registery block at gameregistry.
-     * @param registry the registry to use.
-     * @return the block itself.
-     */
-    public Block registerItemBlock(final IForgeRegistry<Item> registry)
-    {
-        registry.register((new ItemBlock(this)).setRegistryName(this.getRegistryName()));
-        return this;
     }
 
     public enum EnumType implements IStringSerializable
