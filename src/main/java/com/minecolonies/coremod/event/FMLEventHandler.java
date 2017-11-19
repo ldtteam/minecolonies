@@ -80,7 +80,7 @@ public class FMLEventHandler
         {
             MineColonies.getNetwork().sendTo(new ServerUUIDMessage(), (EntityPlayerMP) event.player);
             MineColonies.getNetwork().sendTo(new ColonyStylesMessage(), (EntityPlayerMP) event.player);
-            ColonyManager.syncAllColoniesAchievements();
+            //ColonyManager.syncAllColoniesAchievements();
         }
     }
 

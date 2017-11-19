@@ -203,7 +203,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
     }
 
     @Override
-    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos)
+    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
         //Only the chests because he shouldn't fill up the furnaces.
         if (block instanceof BlockChest)

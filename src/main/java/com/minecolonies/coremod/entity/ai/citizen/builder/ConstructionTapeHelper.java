@@ -2,17 +2,15 @@ package com.minecolonies.coremod.entity.ai.citizen.builder;
 
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.coremod.blocks.ModBlocks;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
-import com.minecolonies.coremod.util.StructureWrapper;
+import com.minecolonies.coremod.util.ColonyUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Mirror;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -37,40 +35,104 @@ public final class ConstructionTapeHelper
     }
 
     /**
-     * Proxy to place the tape also with the building only.
+     * Check if a block is placeable and return new Y position.
      *
-     * @param building the building.
-     * @param world    the world.
+     * @param x     Block X position.
+     * @param y     Block Y position.
+     * @param z     Block Z position.
+     * @param world the world.
+     * @return The new Y position.
      */
-    public static void placeConstructionTape(@NotNull final AbstractBuilding building, @NotNull final World world)
+
+    public static int checkIfPlaceable(@NotNull final int x, @NotNull final int y, @NotNull final int z, @NotNull final World world)
     {
-        placeConstructionTape(new WorkOrderBuild(building, 1), world);
+        int newY = y;
+        boolean working = true;
+        while (working)
+        {
+            final BlockPos block = new BlockPos(x, newY, z);
+            final BlockPos blockMin1 = new BlockPos(x, newY - 1, z);
+            if (world.getBlockState(block).getMaterial().isReplaceable())
+            {
+                if (world.getBlockState(blockMin1).getMaterial().isReplaceable() && newY >= 1)
+                {
+                    newY = newY - 1;
+                }
+                else
+                {
+                    working = false;
+                }
+            }
+            else
+            {
+                newY = newY + 1;
+            }
+        }
+        return newY > 0 ? newY : y;
     }
+
+    /**
+     * @param world            the world.
+     * @param block            the block.
+     * @param tapeOrTapeCorner Is the checked block supposed to be ConstructionTape or ConstructionTapeCorner.
+     */
+    public static void removeTapeIfNecessary(@NotNull final World world, @NotNull final BlockPos block, @NotNull final Block tapeOrTapeCorner)
+    {
+        for (int y = MINHEIGHT; y <= MAXHEIGHT; y++)
+        {
+            final BlockPos newBlock = new BlockPos(block.getX(), y, block.getZ());
+            if (world.getBlockState(newBlock).getBlock() == tapeOrTapeCorner)
+            {
+                world.setBlockState(newBlock, Blocks.AIR.getDefaultState());
+                break;
+            }
+        }
+    }
+
+    /**
+     * Calculates the borders for the workOrderBuildDecoration and sends it to the placement.
+     * @param workOrder the workOrder.
+     * @param world the world.
+     */
+    public static void placeConstructionTape(@NotNull final WorkOrderBuildDecoration workOrder, @NotNull final World world)
+    {
+        final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
+                = ColonyUtils.calculateCorners(workOrder.getBuildingLocation(), world, workOrder.getStructureName(), workOrder.getRotation(world), workOrder.isMirrored());
+        placeConstructionTape(workOrder.getBuildingLocation(), corners, world);
+    }
+
+    /**
+     * Calculates the borders for the workOrderBuildDecoration and sends it to the removal.
+     * @param workOrder the workOrder.
+     * @param world the world.
+     */
+    public static void removeConstructionTape(@NotNull final WorkOrderBuildDecoration workOrder, @NotNull final World world)
+    {
+        final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
+                = ColonyUtils.calculateCorners(workOrder.getBuildingLocation(), world, workOrder.getStructureName(), workOrder.getRotation(world), workOrder.isMirrored());
+        removeConstructionTape(corners, world);
+    }
+
 
     /**
      * Place construction tape.
      *
-     * @param workOrder the workorder.
-     * @param world     the world.
+     * @param pos the building pos
+     * @param corners the corner positions.
+     * @param world the world.
      */
-
-    public static void placeConstructionTape(@NotNull final WorkOrderBuildDecoration workOrder, @NotNull final World world)
+    public static void placeConstructionTape(final BlockPos pos, final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners, @NotNull final World world)
     {
         if (Configurations.gameplay.builderPlaceConstructionTape)
         {
-            final StructureWrapper wrapper = new StructureWrapper(world, workOrder.getStructureName());
-            final BlockPos pos = workOrder.getBuildingLocation();
             final IBlockState constructionTape = ModBlocks.blockConstructionTape.getDefaultState();
             final IBlockState constructionTapeCorner = ModBlocks.blockConstructionTapeCorner.getDefaultState();
 
-            wrapper.rotate(workOrder.getRotation(world), world, workOrder.getBuildingLocation(), workOrder.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE);
-            wrapper.setPosition(pos);
-
-            final int x1 = wrapper.getPosition().getX() - wrapper.getOffset().getX() - 1;
-            final int z1 = wrapper.getPosition().getZ() - wrapper.getOffset().getZ() - 1;
-            final int x3 = wrapper.getPosition().getX() + (wrapper.getWidth() - wrapper.getOffset().getX());
-            final int z3 = wrapper.getPosition().getZ() + (wrapper.getLength() - wrapper.getOffset().getZ());
-            final int y = wrapper.getPosition().getY();
+            final int x1 = corners.getFirst().getFirst();
+            final int x3 = corners.getFirst().getSecond();
+            final int z1 = corners.getSecond().getFirst();
+            final int z3 = corners.getSecond().getSecond();
+            final int y = pos.getY();
             int newY;
 
             if (x1 < x3)
@@ -137,71 +199,17 @@ public final class ConstructionTapeHelper
     }
 
     /**
-     * Check if a block is placeable and return new Y position.
-     *
-     * @param x     Block X position.
-     * @param y     Block Y position.
-     * @param z     Block Z position.
-     * @param world the world.
-     * @return The new Y position.
-     */
-
-    public static int checkIfPlaceable(@NotNull final int x, @NotNull final int y, @NotNull final int z, @NotNull final World world)
-    {
-        int newY = y;
-        boolean working = true;
-        while (working)
-        {
-            final BlockPos block = new BlockPos(x, newY, z);
-            final BlockPos blockMin1 = new BlockPos(x, newY - 1, z);
-            if (world.getBlockState(block).getMaterial().isReplaceable())
-            {
-                if (world.getBlockState(blockMin1).getMaterial().isReplaceable() && newY >= 1)
-                {
-                    newY = newY - 1;
-                }
-                else
-                {
-                    working = false;
-                }
-            }
-            else
-            {
-                newY = newY + 1;
-            }
-        }
-        return newY > 0 ? newY : y;
-    }
-
-    /**
-     * Proxy to remove the tape also with the building only.
-     *
-     * @param building the building.
-     * @param world    the world.
-     */
-    public static void removeConstructionTape(@NotNull final AbstractBuilding building, @NotNull final World world)
-    {
-        removeConstructionTape(new WorkOrderBuild(building, 1), world);
-    }
-
-    /**
      * Remove construction tape.
      *
-     * @param workOrder the workorder.
-     * @param world     the world.
+     * @param corners the corner positions.
+     * @param world    the world.
      */
-
-    public static void removeConstructionTape(@NotNull final WorkOrderBuildDecoration workOrder, @NotNull final World world)
+    public static void removeConstructionTape(final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners, @NotNull final World world)
     {
-        final StructureWrapper wrapper = new StructureWrapper(world, workOrder.getStructureName());
-        final BlockPos pos = workOrder.getBuildingLocation();
-        final int tempRotation =  workOrder.getRotation(world);
-        wrapper.rotate(tempRotation, world, workOrder.getBuildingLocation(), workOrder.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE);
-        wrapper.setPosition(pos);
-        final int x1 = wrapper.getPosition().getX() - wrapper.getOffset().getX() - 1;
-        final int z1 = wrapper.getPosition().getZ() - wrapper.getOffset().getZ() - 1;
-        final int x3 = wrapper.getPosition().getX() + (wrapper.getWidth() - wrapper.getOffset().getX());
-        final int z3 = wrapper.getPosition().getZ() + (wrapper.getLength() - wrapper.getOffset().getZ());
+        final int x1 = corners.getFirst().getFirst();
+        final int x3 = corners.getFirst().getSecond();
+        final int z1 = corners.getSecond().getFirst();
+        final int z3 = corners.getSecond().getSecond();
         if (x1 < x3)
         {
             for (int i = x1; i <= x3; i++)
@@ -242,6 +250,7 @@ public final class ConstructionTapeHelper
                 removeTapeIfNecessary(world, block2, ModBlocks.blockConstructionTape);
             }
         }
+
         final BlockPos corner1 = new BlockPos(x1, 0, z1);
         final BlockPos corner2 = new BlockPos(x1, 0, z3);
         final BlockPos corner3 = new BlockPos(x3, 0, z1);
@@ -250,23 +259,5 @@ public final class ConstructionTapeHelper
         removeTapeIfNecessary(world, corner2, ModBlocks.blockConstructionTapeCorner);
         removeTapeIfNecessary(world, corner3, ModBlocks.blockConstructionTapeCorner);
         removeTapeIfNecessary(world, corner4, ModBlocks.blockConstructionTapeCorner);
-    }
-
-    /**
-     * @param world            the world.
-     * @param block            the block.
-     * @param tapeOrTapeCorner Is the checked block supposed to be ConstructionTape or ConstructionTapeCorner.
-     */
-    public static void removeTapeIfNecessary(@NotNull final World world, @NotNull final BlockPos block, @NotNull final Block tapeOrTapeCorner)
-    {
-        for (int y = MINHEIGHT; y <= MAXHEIGHT; y++)
-        {
-            final BlockPos newBlock = new BlockPos(block.getX(), y, block.getZ());
-            if (world.getBlockState(newBlock).getBlock() == tapeOrTapeCorner)
-            {
-                world.setBlockState(newBlock, Blocks.AIR.getDefaultState());
-                break;
-            }
-        }
     }
 }

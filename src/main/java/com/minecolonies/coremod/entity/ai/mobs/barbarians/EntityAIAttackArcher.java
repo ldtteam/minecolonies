@@ -86,12 +86,12 @@ public class EntityAIAttackArcher extends EntityAIBase
         final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
         //Lower the variable higher the chance that the arrows hits the target.
 
-        arrowEntity.setThrowableHeading(xVector, yVector + distance * AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, (float) ARROW_SPEED, (float) HIT_CHANCE);
+        arrowEntity.shoot(xVector, yVector + distance * AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, (float) ARROW_SPEED, (float) HIT_CHANCE);
 
         entity.faceEntity(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
         entity.getLookHelper().setLookPositionWithEntity(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
 
-        if (entity.getDistanceToEntity(target) >= MAX_ATTACK_DISTANCE || !entity.canEntityBeSeen(target))
+        if (entity.getDistance(target) >= MAX_ATTACK_DISTANCE || !entity.canEntityBeSeen(target))
         {
             entity.getNavigator().tryMoveToEntityLiving(target, ATTACK_SPEED);
         }

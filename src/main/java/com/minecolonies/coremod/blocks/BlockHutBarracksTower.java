@@ -32,7 +32,7 @@ public class BlockHutBarracksTower extends AbstractBlockHut
 
     /**
      * This returns a complete list of items dropped from this block.
-     *
+     * @deprecated but we still need it.
      * @param world   The current world
      * @param pos     Block position in world
      * @param state   Current state
@@ -40,6 +40,7 @@ public class BlockHutBarracksTower extends AbstractBlockHut
      * @return A ArrayList containing all items this block drops
      */
     @Override
+    @Deprecated
     public List<ItemStack> getDrops(final IBlockAccess world, final BlockPos pos, final IBlockState state, final int fortune)
     {
         return Collections.emptyList();
