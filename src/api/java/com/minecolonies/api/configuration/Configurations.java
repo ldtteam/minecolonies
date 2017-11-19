@@ -93,6 +93,10 @@ import static com.minecolonies.api.util.constant.Constants.*;
             @Config.Comment("Which level counts as op level on the server")
             public  int opLevelForServer = 3;
 
+            @Config.Comment("Sets the amount of hours until a colony will be deleted after not seeing it's mayor, set to zero to disable")
+            public  int autoDeleteColoniesInHours = 0;
+            @Config.Comment("Sets weither or not Colony structures are destroyed automatically.")
+            public  boolean autoDestroyColonyBlocks = true;
             @Config.Comment("Should the player be allowed to use the '/mc rtp' command?")
             public  boolean canPlayerUseRTPCommand = true;
 
