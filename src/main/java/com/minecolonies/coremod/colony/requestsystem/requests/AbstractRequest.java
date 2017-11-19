@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
-import com.minecolonies.api.colony.requestsystem.manager.StandardRequestManager;
+import com.minecolonies.coremod.colony.requestsystem.management.handlers.LogHandler;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
@@ -134,7 +134,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     public void setState(@NotNull final IRequestManager manager, @NotNull final RequestState state)
     {
         this.state = state;
-        StandardRequestManager.LogHandler.log("Updated state from: " + getToken() + " to: " + state);
+        LogHandler.log("Updated state from: " + getToken() + " to: " + state);
 
         if (this.hasParent() && this.getParent() != null)
         {
@@ -245,7 +245,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     public <T extends IToken> void addChild(@NotNull final T child)
     {
         this.children.add(child);
-        StandardRequestManager.LogHandler.log("Added child:" + child + " to: " + getToken());
+        LogHandler.log("Added child:" + child + " to: " + getToken());
     }
 
     /**
@@ -285,7 +285,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     public <T extends IToken> void removeChild(@NotNull final T child)
     {
         this.children.remove(child);
-        StandardRequestManager.LogHandler.log("Removed child: " + child + " from: " + getToken());
+        LogHandler.log("Removed child: " + child + " from: " + getToken());
     }
 
     /**
@@ -369,12 +369,12 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
             if (childRequest.getState() == RequestState.IN_PROGRESS && getState().ordinal() < RequestState.IN_PROGRESS.ordinal())
             {
                 setState(manager, RequestState.IN_PROGRESS);
-                StandardRequestManager.LogHandler.log("First child entering progression: " + child + " setting progression state for: " + getToken());
+                LogHandler.log("First child entering progression: " + child + " setting progression state for: " + getToken());
             }
             if (childRequest.getState() == RequestState.COMPLETED)
             {
                 this.removeChild(child);
-                StandardRequestManager.LogHandler.log("Removed child: " + child + " from: " + getToken() + " as it was completed!");
+                LogHandler.log("Removed child: " + child + " from: " + getToken() + " as it was completed!");
                 manager.updateRequestState(child, RequestState.RECEIVED);
             }
         }
