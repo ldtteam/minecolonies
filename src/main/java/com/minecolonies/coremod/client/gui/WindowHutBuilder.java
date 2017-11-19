@@ -243,7 +243,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
             @NotNull final ItemStack itemStack = new ItemStack(res.getItem(), 1, res.getDamageValue());
             final Label quantityLabel = pane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class);
             final int quantity = Integer.parseInt(quantityLabel.getLabelText());
-            MineColonies.getNetwork().sendToServer(new TransferItemsRequestMessage(this.building, itemStack, quantity));
+            MineColonies.getNetwork().sendToServer(new TransferItemsRequestMessage(this.building, itemStack, quantity, true));
         }
     }
 }

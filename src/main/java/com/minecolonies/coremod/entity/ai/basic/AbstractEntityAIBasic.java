@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.basic;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
@@ -22,6 +23,7 @@ import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
@@ -37,7 +39,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST;
@@ -424,6 +428,19 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         return NEEDS_ITEM;
     }
 
+    private boolean checkAndPickFromBuilding(@NotNull final ItemStack stack)
+    {
+        final Set<TileEntity> tileEntities = Sets.newHashSet();
+        tileEntities.add(getOwnBuilding().getTileEntity());
+        tileEntities.addAll(getOwnBuilding().getAdditionalCountainers().stream().map(getOwnBuilding().getColony().getWorld()::getTileEntity).collect(Collectors.toSet()));
+
+        final ItemStack workingStack = stack.copy();
+        tileEntities.forEach(tileEntity -> {
+            int slotIndex = InventoryUtils.findFirstSlotInProviderNotEmptyWith(tileEntity, stackInContainer -> ItemStackUtils.areItemStacksMergable(stackInContainer, workingStack) && stackInContainer.getCount() >= workingStack.getCount());
+
+        });
+    }
+
     private void updateWorkerStatusFromRequests()
     {
         if (!getOwnBuilding().hasWorkerOpenRequests(worker.getCitizenData()) && !getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()))
@@ -454,8 +471,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Check all chests in the worker hut for a required item.
-     *
+     * Check all chests in theorker hut for a required item.
+     * w
      * @param is the type of item requested (amount is ignored)
      * @return true if a stack of that type was found
      */
@@ -489,16 +506,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
 
         return false;
-    }
-
-    /**
-     * Request an Item without spamming the chat.
-     *
-     * @param chat the Item Name
-     */
-    private void requestWithoutSpam(@NotNull final String chat)
-    {
-        chatSpamFilter.requestTextStringWithoutSpam(chat);
     }
 
     /**

@@ -44,6 +44,10 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
      * How many item need to be transfer from the player inventory to the building chest.
      */
     private int      quantity;
+    /**
+     * Attempt a resolve or not.
+     */
+    private boolean attemptResolve;
 
     /**
      * Empty constructor used when registering the message.
@@ -61,14 +65,14 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
      * @param itemStack to be take from the player for the building
      * @param quantity of item needed to be transfered
      */
-    public TransferItemsRequestMessage(@NotNull final AbstractBuilding.View building, final ItemStack itemStack, final int quantity)
+    public TransferItemsRequestMessage(@NotNull final AbstractBuilding.View building, final ItemStack itemStack, final int quantity, final boolean attemptResolve)
     {
         super();
         this.colonyId   = building.getColony().getID();
         this.buildingId = building.getID();
         this.itemStack  = itemStack;
         this.quantity   = quantity;
-
+        this.attemptResolve = attemptResolve;
     }
 
     @Override
@@ -78,6 +82,7 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
         buildingId = BlockPosUtil.readFromByteBuf(buf);
         itemStack  = ByteBufUtils.readItemStack(buf);
         quantity   = buf.readInt();
+        attemptResolve = buf.readBoolean();
     }
 
     @Override
@@ -87,6 +92,7 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
         BlockPosUtil.writeToByteBuf(buf, buildingId);
         ByteBufUtils.writeItemStack(buf,itemStack);
         buf.writeInt(quantity);
+        buf.writeBoolean(attemptResolve);
     }
 
     @Override
@@ -160,6 +166,10 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
                 final ItemStack itemsTaken = player.inventory.decrStackSize(slot, amountToRemoveFromPlayer);
                 amountToRemoveFromPlayer -= ItemStackUtils.getSize(itemsTaken);
             }
+        }
+
+        if (attemptResolve) {
+            building.overruleNextOpenRequestWithStack(itemStack);
         }
     }
 }
