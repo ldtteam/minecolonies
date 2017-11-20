@@ -384,8 +384,11 @@ public class WindowCitizen extends AbstractWindowSkeleton
             }
             else
             {
-                findPaneOfTypeByID(DELIVERY_IMAGE, Image.class).setVisible(true);
+                final Image logo = findPaneOfTypeByID(DELIVERY_IMAGE, Image.class);
+                logo.setVisible(true);
+                logo.setImage(request.getDisplayIcon());
             }
+
             rowPane.findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getDisplayName(request.getToken()).getFormattedText());
             rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
                     .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f",""));

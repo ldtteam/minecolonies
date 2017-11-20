@@ -176,7 +176,9 @@ public class WindowRequestDetail extends Window implements ButtonHandler
         }
         else
         {
-            findPaneOfTypeByID(DELIVERY_IMAGE, Image.class).setVisible(true);
+            final Image logo = findPaneOfTypeByID(DELIVERY_IMAGE, Image.class);
+            logo.setVisible(true);
+            logo.setImage(request.getDisplayIcon());
         }
 
         findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getDisplayName(request.getToken()).getFormattedText());

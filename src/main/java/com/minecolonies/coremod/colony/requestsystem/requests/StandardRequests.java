@@ -16,7 +16,6 @@ import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -115,8 +114,7 @@ public final class StandardRequests
         @Override
         public ResourceLocation getDisplayIcon()
         {
-            //TODO: Add correct logo.
-            return super.getDisplayIcon();
+            return new ResourceLocation("minecolonies:textures/gui/citizen/colonist_button_small.png");
         }
     }
 
@@ -167,11 +165,7 @@ public final class StandardRequests
         @Override
         public ITextComponent getShortDisplayString()
         {
-            final ITextComponent preType = new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_TOOL_PRETYPE);
-
-            preType.appendSibling(getRequest().getToolClass().getDisplayName());
-
-            return preType;
+            return getRequest().getToolClass().getDisplayName();
         }
 
         @Override

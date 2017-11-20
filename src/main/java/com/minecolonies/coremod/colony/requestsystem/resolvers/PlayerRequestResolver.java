@@ -86,7 +86,7 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
         {
             final List<EntityPlayer> players = new ArrayList<>(((Colony) colony).getMessageEntityPlayers());
             final EntityPlayer owner = ServerUtils.getPlayerFromUUID(colony.getWorld(), ((Colony) colony).getPermissions().getOwner());
-            final TextComponentString colonyDescription = new TextComponentString(" at " + colony.getName() + ":");
+            final TextComponentString colonyDescription = new TextComponentString(colony.getName() + ":");
 
             if (owner != null)
             {
@@ -100,8 +100,8 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
             }
 
             LanguageHandler.sendPlayersMessage(players, "com.minecolonies.requestsystem.playerresolver",
-                    colonyDescription + " " + request.getRequester().getDisplayName(request.getToken()).getFormattedText(),
-                    request.getShortDisplayString(),
+                    colonyDescription.getFormattedText() + " " + request.getRequester().getDisplayName(request.getToken()).getFormattedText(),
+                    request.getShortDisplayString().getFormattedText(),
                     request.getRequester().getRequesterLocation().toString());
         }
 

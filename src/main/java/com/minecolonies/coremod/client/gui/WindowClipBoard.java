@@ -2,14 +2,12 @@ package com.minecolonies.coremod.client.gui;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.blockout.Color;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.Image;
 import com.minecolonies.blockout.controls.ItemIcon;
@@ -126,8 +124,11 @@ public class WindowClipBoard extends AbstractWindowSkeleton
             }
             else
             {
-                findPaneOfTypeByID(DELIVERY_IMAGE, Image.class).setVisible(true);
+                final Image logo = findPaneOfTypeByID(DELIVERY_IMAGE, Image.class);
+                logo.setVisible(true);
+                logo.setImage(request.getDisplayIcon());
             }
+
             rowPane.findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getDisplayName(request.getToken()).getFormattedText());
 
             rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
