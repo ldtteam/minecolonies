@@ -299,12 +299,14 @@ public class BuildingLumberjack extends AbstractBuildingWorker
             {
                 if (saps.getHasSubtypes())
                 {
-                    final NonNullList<ItemStack> list = NonNullList.create();
-                    saps.getItem().getSubItems(CreativeTabs.DECORATIONS, list);
-
-                    for (final ItemStack stack : list)
+                    for(CreativeTabs tabs: CreativeTabs.CREATIVE_TAB_ARRAY)
                     {
-                        finalSaplings.put(new ItemStorage(stack), true);
+                        final NonNullList<ItemStack> list = NonNullList.create();
+                        saps.getItem().getSubItems(tabs, list);
+                        for (final ItemStack stack : list)
+                        {
+                            finalSaplings.put(new ItemStorage(stack), true);
+                        }
                     }
                 }
             }
