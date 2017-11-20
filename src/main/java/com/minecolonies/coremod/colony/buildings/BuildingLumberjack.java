@@ -294,14 +294,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
 
             if(treesToFell.isEmpty())
             {
-                final List<ItemStack> saplings = new ArrayList<>();
-                final int[] saplingId = OreDictionary.getOreIDs(new ItemStack(Blocks.SAPLING));
-
-                for (final int i : saplingId)
-                {
-                    saplings.addAll(OreDictionary.getOres(OreDictionary.getOreName(i)));
-                }
-                treesToFell.putAll(calcSaplings(saplings));
+                treesToFell.putAll(calcSaplings(OreDictionary.getOres("treeSapling")));
 
                 for(final Map.Entry<ItemStorage, Boolean> entry : treesToFell.entrySet())
                 {
