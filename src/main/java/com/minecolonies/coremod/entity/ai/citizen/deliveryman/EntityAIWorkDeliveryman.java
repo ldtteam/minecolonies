@@ -174,6 +174,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return null;
         }
 
+        //todo get random building with weight
         final Collection<AbstractBuilding> buildingList = worker.getColony().getBuildings().values();
         final Object[] buildingArray = buildingList.toArray();
 

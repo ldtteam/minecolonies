@@ -15,7 +15,6 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvid
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.blocks.*;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
@@ -118,20 +117,24 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         addMapping("Barracks", BuildingBarracks.class, BuildingBarracks.View.class, BlockHutBarracks.class);
         addMapping("BarracksTower", BuildingBarracksTower.class, BuildingBarracksTower.View.class, BlockHutBarracksTower.class);
     }
+
     /**
      * A list which contains the position of all containers which belong to the
      * worker building.
      */
     private final List<BlockPos> containerList = new ArrayList<>();
+
     /**
      * The location of the building.
      */
     private final BlockPos location;
+
     /**
      * The colony the building belongs to.
      */
     @NotNull
     private final Colony colony;
+
     /**
      * List of all open requests made by this building.
      * <p>
@@ -391,6 +394,19 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         }
 
         loadRequestSystemFromNBT(compound);
+
+        if(compound.hasKey(TAG_PRIO))
+        {
+            final int prio = compound.getInteger(TAG_PRIO);
+            if(prio == -1)
+            {
+                this.pickUpPriority = 1;
+            }
+            else
+            {
+                this.pickUpPriority = prio;
+            }
+        }
     }
 
     private void loadRequestSystemFromNBT(NBTTagCompound compound)
@@ -410,12 +426,13 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
             NBTTagList requests = compound.getTagList(TAG_OPEN_REQUESTS, Constants.NBT.TAG_COMPOUND);
             NBTUtils.streamCompound(requests).forEach(orc -> {
                 Class clazz;
-                try {
+                try
+                {
                     clazz = Class.forName(orc.getString(TAG_TOKEN));
                 }
-                catch (ClassNotFoundException e)
+                catch (final ClassNotFoundException e)
                 {
-                    Log.getLogger().error("Missing request type from game: " + orc.getString(TAG_TOKEN));
+                    Log.getLogger().error("Missing request type from game: " + orc.getString(TAG_TOKEN), e);
                     return;
                 }
 
@@ -658,6 +675,8 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         compound.setInteger(TAG_HEIGHT, this.height);
 
         writeRequestSystemToNBT(compound);
+
+        compound.setInteger(TAG_PRIO, this.pickUpPriority);
     }
 
     private void writeRequestSystemToNBT(NBTTagCompound compound){
@@ -667,7 +686,8 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
             NBTTagCompound requestTypeCompound = new NBTTagCompound();
 
             requestTypeCompound.setString(TAG_TOKEN, clazz.getRawType().getName());
-            requestTypeCompound.setTag(TAG_ASSIGNMENTS, this.openRequests.get(clazz).stream().map(token -> StandardFactoryController.getInstance().serialize(token)).collect(NBTUtils.toNBTTagList()));
+            requestTypeCompound.setTag(TAG_ASSIGNMENTS, this.openRequests.get(clazz)
+                    .stream().map(token -> StandardFactoryController.getInstance().serialize(token)).collect(NBTUtils.toNBTTagList()));
 
             return requestTypeCompound;
         }).collect(NBTUtils.toNBTTagList()));
@@ -767,7 +787,12 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
      */
     public TileEntityColonyBuilding getTileEntity()
     {
-        if ((tileEntity == null || tileEntity.isInvalid()) && colony != null && colony.getWorld() != null && getLocation() != null && colony.getWorld().getBlockState(getLocation()) != null && colony.getWorld().getBlockState(this.getLocation()).getBlock() instanceof AbstractBlockHut)
+        if ((tileEntity == null || tileEntity.isInvalid())
+                && colony != null
+                && colony.getWorld() != null
+                && getLocation() != null
+                && colony.getWorld().getBlockState(getLocation())
+                != null && colony.getWorld().getBlockState(this.getLocation()).getBlock() instanceof AbstractBlockHut)
         {
             final TileEntity te = getColony().getWorld().getTileEntity(location);
             if (te instanceof TileEntityColonyBuilding)
@@ -1079,6 +1104,16 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     }
 
     /**
+     * Returns the mirror of the current building.
+     *
+     * @return boolean value of the mirror.
+     */
+    public boolean isMirrored()
+    {
+        return isMirrored;
+    }
+
+    /**
      * Register a block and position.
      * We suppress this warning since this parameter will be used in child classes which override this method.
      *
@@ -1125,6 +1160,24 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     public List<BlockPos> getAdditionalCountainers()
     {
         return new ArrayList<>(containerList);
+    }
+
+    /**
+     * Get the pick up priority of the building.
+     * @return the priority, an integer.
+     */
+    public int getPickUpPriority()
+    {
+        return this.pickUpPriority;
+    }
+
+    /**
+     * Set new pickUp priority
+     * @param newPrio the new prio to set.
+     */
+    public void setPickUpPriority(final int newPrio)
+    {
+        this.pickUpPriority = newPrio;
     }
 
     //------------------------- Starting Required Tools/Item handling -------------------------//
@@ -1255,16 +1308,6 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         return InventoryUtils.forceItemStackToProvider(provider, itemStack, (ItemStack stack) -> EntityAIWorkDeliveryman.workerRequiresItem(this, stack, localAlreadyKept));
     }
 
-    /**
-     * Returns the mirror of the current building.
-     *
-     * @return boolean value of the mirror.
-     */
-    public boolean isMirrored()
-    {
-        return isMirrored;
-    }
-
     //------------------------- Ending Required Tools/Item handling -------------------------//
 
     /**
@@ -1274,6 +1317,8 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     {
         this.isMirrored = !isMirrored;
     }
+
+    //------------------------- !START! RequestSystem handling for minecolonies buildings -------------------------//
 
     /**
      * Internal method used to register a new Request to the request maps.
@@ -1300,7 +1345,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         citizensByRequests.get(citizenId).add(requestToken);
     }
 
-    public <Request extends IRequestable> IToken createRequest(@NotNull CitizenData citizenData, @NotNull Request requested)
+    public <R extends IRequestable> IToken createRequest(@NotNull CitizenData citizenData, @NotNull R requested)
     {
         IToken requestToken = colony.getRequestManager().createRequest(requester, requested);
 
@@ -1375,7 +1420,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         return getOpenRequests(citizen).stream().anyMatch(selectionPredicate);
     }
 
-    public <Request> boolean hasWorkerOpenRequestsOfType(@NotNull final CitizenData citizenData, final TypeToken<Request> requestType)
+    public <R> boolean hasWorkerOpenRequestsOfType(@NotNull final CitizenData citizenData, final TypeToken<R> requestType)
     {
         return !getOpenRequestsOfType(citizenData, requestType).isEmpty();
     }
@@ -1390,28 +1435,30 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         return ImmutableList.copyOf(citizensByRequests.get(data.getId()).stream().map(getColony().getRequestManager()::getRequestForToken).filter(Objects::nonNull).iterator());
     }
 
-    public <Request> ImmutableList<IRequest<? extends Request>> getOpenRequestsOfType(@NotNull final CitizenData citizenData, final TypeToken<Request> requestType)
+    public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfType(
+            @NotNull final CitizenData citizenData,
+            final TypeToken<R> requestType)
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                       .filter(request -> {
                                           Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
                                           return requestTypes.contains(requestType);
                                       })
-                                      .map(request -> (IRequest<? extends Request>) request)
+                                      .map(request -> (IRequest<? extends R>) request)
                                       .iterator());
     }
 
-    public <Request> ImmutableList<IRequest<? extends Request>> getOpenRequestsOfTypeFiltered(
+    public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfTypeFiltered(
             @NotNull final CitizenData citizenData,
-            final TypeToken<Request> requestType,
-            final Predicate<IRequest<? extends Request>> filter)
+            final TypeToken<R> requestType,
+            final Predicate<IRequest<? extends R>> filter)
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                       .filter(request -> {
                                           Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
                                           return requestTypes.contains(requestType);
                                       })
-                                      .map(request -> (IRequest<? extends Request>) request)
+                                      .map(request -> (IRequest<? extends R>) request)
                                       .filter(filter)
                                       .iterator());
     }
@@ -1423,7 +1470,8 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
             return ImmutableList.of();
         }
 
-        return ImmutableList.copyOf(citizensByCompletedRequests.get(data.getId()).stream().map(getColony().getRequestManager()::getRequestForToken).filter(Objects::nonNull).iterator());
+        return ImmutableList.copyOf(citizensByCompletedRequests.get(data.getId()).stream()
+                .map(getColony().getRequestManager()::getRequestForToken).filter(Objects::nonNull).iterator());
     }
 
     public boolean hasCitizenCompletedRequests(@NotNull final CitizenData data)
@@ -1431,28 +1479,28 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         return !getCompletedRequests(data).isEmpty();
     }
 
-    public <Request> ImmutableList<IRequest<? extends Request>> getCompletedRequestsOfType(@NotNull final CitizenData citizenData, final TypeToken<Request> requestType)
+    public <R> ImmutableList<IRequest<? extends R>> getCompletedRequestsOfType(@NotNull final CitizenData citizenData, final TypeToken<R> requestType)
     {
         return ImmutableList.copyOf(getCompletedRequests(citizenData).stream()
                                       .filter(request -> {
                                           Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
                                           return requestTypes.contains(requestType);
                                       })
-                                      .map(request -> (IRequest<? extends Request>) request)
+                                      .map(request -> (IRequest<? extends R>) request)
                                       .iterator());
     }
 
-    public <Request> ImmutableList<IRequest<? extends Request>> getCompletedRequestsOfTypeFiltered(
+    public <R> ImmutableList<IRequest<? extends R>> getCompletedRequestsOfTypeFiltered(
             @NotNull final CitizenData citizenData,
-            final TypeToken<Request> requestType,
-            final Predicate<IRequest<? extends Request>> filter)
+            final TypeToken<R> requestType,
+            final Predicate<IRequest<? extends R>> filter)
     {
         return ImmutableList.copyOf(getCompletedRequests(citizenData).stream()
                                       .filter(request -> {
                                           Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
                                           return requestTypes.contains(requestType);
                                       })
-                                      .map(request -> (IRequest<? extends Request>) request)
+                                      .map(request -> (IRequest<? extends R>) request)
                                       .filter(filter)
                                       .iterator());
     }
@@ -1476,44 +1524,66 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
 
     public void cancelAllRequestsOfCitizen(@NotNull final CitizenData data)
     {
-        getOpenRequests(data).forEach(request -> {
+        getOpenRequests(data).forEach(request ->
+        {
             getColony().getRequestManager().updateRequestState(request.getToken(), RequestState.CANCELLED);
 
             openRequests.get(request.getRequest().getClass()).remove(request.getToken());
             if (openRequests.get(request.getRequest().getClass()).isEmpty())
+            {
                 openRequests.remove(request.getRequest().getClass());
+            }
 
             requestsByCitizen.remove(request.getToken());
         });
 
-        getCompletedRequests(data).forEach(request -> {
-            getColony().getRequestManager().updateRequestState(request.getToken(), RequestState.RECEIVED);
-        });
+        getCompletedRequests(data).forEach(request -> getColony().getRequestManager().updateRequestState(request.getToken(), RequestState.RECEIVED));
 
         if (citizensByRequests.containsKey(data.getId()))
+        {
             citizensByRequests.remove(data.getId());
+        }
 
         if (citizensByCompletedRequests.containsKey(data.getId()))
+        {
             citizensByCompletedRequests.remove(data.getId());
+        }
 
         markDirty();
     }
 
+    /**
+     * Overrule the next open request with a give stack.
+     *
+     * We squid:s135 which takes care that there are not too many continue statements in a loop since it makes sense here
+     * out of performance reasons.
+     *
+     * @param stack the stack.
+     */
+    @SuppressWarnings("squid:S135")
     public void overruleNextOpenRequestWithStack(@NotNull final ItemStack stack)
     {
         if (ItemStackUtils.isEmpty(stack))
+        {
             return;
+        }
 
         for(int citizenId : citizensByRequests.keySet())
         {
             final CitizenData data = getColony().getCitizen(citizenId);
 
             if (data == null)
+            {
                 continue;
+            }
 
-            final IRequest<? extends IDeliverable> target = getOpenRequestsOfTypeFiltered(data, TypeToken.of(IDeliverable.class), request -> request.getRequest().matches(stack)).stream().findFirst().orElse(null);
+            final IRequest<? extends IDeliverable> target = getOpenRequestsOfTypeFiltered(data, TypeToken.of(IDeliverable.class),
+                    request -> request.getRequest().matches(stack)).stream().findFirst().orElse(null);
+
             if (target == null)
+            {
                 continue;
+            }
 
             getColony().getRequestManager().overruleRequest(target.getToken(), stack.copy());
             return;
@@ -1523,14 +1593,18 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     public boolean overruleNextOpenRequestOfCitizenWithStack(@NotNull final CitizenData citizenData, @NotNull final ItemStack stack)
     {
         if (ItemStackUtils.isEmpty(stack))
+        {
             return false;
+        }
 
         final IRequest target = getOpenRequestsOfTypeFiltered(citizenData, TypeToken.of(IDeliverable.class), request -> request.getRequest().matches(stack)).stream()
                                   .findFirst()
                                   .orElse(null);
 
         if (target == null)
+        {
             return false;
+        }
 
         getColony().getRequestManager().overruleRequest(target.getToken(), stack.copy());
         return true;
@@ -1580,7 +1654,6 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         return new TextComponentString(this.getSchematicName() + " " + getColony().getCitizen(citizenData).getName());
     }
 
-
-
+    //------------------------- !END! RequestSystem handling for minecolonies buildings -------------------------//
 
 }
