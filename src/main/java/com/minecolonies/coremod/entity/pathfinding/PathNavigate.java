@@ -179,8 +179,14 @@ public class PathNavigate extends PathNavigateGround
     }
 
     @Override
-    public boolean setPath(@NotNull final Path path, final double speed)
+    public boolean setPath(@Nullable final Path path, final double speed)
     {
+        if (path == null)
+        {
+            this.currentPath = null;
+            return false;
+        }
+
         final int pathLength = path.getCurrentPathLength();
         Path tempPath = null;
         if (pathLength > 0 && !(path.getPathPointFromIndex(0) instanceof PathPointExtended))
