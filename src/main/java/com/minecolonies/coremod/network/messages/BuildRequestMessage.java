@@ -5,6 +5,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
@@ -54,7 +55,7 @@ public class BuildRequestMessage extends AbstractMessage<BuildRequestMessage, IM
      * @param building AbstractBuilding of the request.
      * @param mode     Mode of the request, 1 is repair, 0 is build.
      */
-    public BuildRequestMessage(@NotNull final AbstractBuilding.View building, final int mode)
+    public BuildRequestMessage(@NotNull final AbstractBuildingView building, final int mode)
     {
         super();
         this.colonyId = building.getColony().getID();

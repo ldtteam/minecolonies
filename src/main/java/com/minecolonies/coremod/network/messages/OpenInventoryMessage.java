@@ -8,6 +8,7 @@ import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.inventory.GuiHandler;
 import com.minecolonies.coremod.inventory.InventoryField;
@@ -73,7 +74,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
      *
      * @param building {@link AbstractBuilding.View}
      */
-    public OpenInventoryMessage(@NotNull final AbstractBuilding.View building)
+    public OpenInventoryMessage(@NotNull final AbstractBuildingView building)
     {
         super();
         inventoryType = InventoryType.INVENTORY_CHEST;

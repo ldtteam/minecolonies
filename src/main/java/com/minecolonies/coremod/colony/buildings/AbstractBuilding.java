@@ -18,6 +18,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.blocks.*;
 import com.minecolonies.coremod.colony.*;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
@@ -58,6 +59,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * Base building class, has all the foundation for what a building stores and does.
@@ -70,77 +72,9 @@ import java.util.stream.Collectors;
 public abstract class AbstractBuilding implements IRequestResolverProvider, IRequester
 {
     /**
-     * Tag used to store the containers to NBT.
-     */
-    private static final String TAG_CONTAINERS = "Containers";
-
-    /**
-     * The tag to store the building type.
-     */
-    private static final String TAG_BUILDING_TYPE = "type";
-
-    /**
-     * The tag to store the building location.
-     * Location is unique (within a Colony) and so can double as the Id.
-     */
-    private static final String TAG_LOCATION = "location";
-
-    /**
-     * The tag to store the level of the building.
-     */
-    private static final String TAG_BUILDING_LEVEL = "level";
-
-    /**
-     * The tag to store the rotation of the building.
-     */
-    private static final String TAG_ROTATION = "rotation";
-
-    /**
-     * The tag to store the md5 hash of the schematic.
-     */
-    private static final String TAG_SCHEMATIC_MD5 = "schematicMD5";
-
-    /**
-     * The tag to store the mirror of the building.
-     */
-    private static final String TAG_MIRROR = "mirror";
-
-    /**
-     * The tag to store the style of the building.
-     */
-    private static final String TAG_STYLE = "style";
-
-    /**
-     * The tag to store the requester Id of the Building.
-     */
-    private static final String TAG_REQUESTOR_ID = "Requestor";
-
-    private static final String TAG_OPEN_REQUESTS = "OpenRequests";
-
-    private static final String TAG_CITIZEN_BY_REQUEST = "CitizenRequestAssignments";
-
-    private static final String TAG_CITIZEN_BY_COMPLETED_REQUEST = "CitizenRequestCompletedAssignments";
-
-    private static final String TAG_TOKEN = "Token";
-
-    private static final String TAG_ASSIGNMENTS = "Assignments";
-
-
-
-
-    /**
      * Tag if the building has no workOrder.
      */
-    private static final int NO_WORK_ORDER = 0;
-
-    /**
-     * Tags used to store the building corners to nbt and retrieve them.
-     */
-    private static final String TAG_CORNER1 = "corner1";
-    private static final String TAG_CORNER2 = "corner2";
-    private static final String TAG_CORNER3 = "corner3";
-    private static final String TAG_CORNER4 = "corner4";
-    private static final String TAG_HEIGHT  = "height";
+    public static final int NO_WORK_ORDER = 0;
 
     /**
      * Map to resolve names to class.
@@ -269,6 +203,11 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     private int cornerZ2;
 
     /**
+     * Priority of the building in the pickUpList.
+     */
+    private int pickUpPriority = 1;
+
+    /**
      * Height of the building.
      */
     private int height;
@@ -305,7 +244,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     private static void addMapping(
             final String name,
             @NotNull final Class<? extends AbstractBuilding> buildingClass,
-            @NotNull final Class<? extends AbstractBuilding.View> viewClass,
+            @NotNull final Class<? extends AbstractBuildingView> viewClass,
             @NotNull final Class<? extends AbstractBlockHut> parentBlock)
     {
         final int buildingHashCode = buildingClass.getName().hashCode();
@@ -507,7 +446,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         this.citizensByRequests.keySet().forEach(citizen -> this.citizensByRequests.get(citizen).forEach(requestToken -> this.requestsByCitizen.put(requestToken, citizen)));
     }
 
-    private static void processIntegerKeyTokenList(NBTTagCompound compound, Map<Integer, Collection<IToken>> outputMap)
+    public static void processIntegerKeyTokenList(NBTTagCompound compound, Map<Integer, Collection<IToken>> outputMap)
     {
         Integer key = compound.getInteger(TAG_TOKEN);
         NBTTagList assignments = compound.getTagList(TAG_ASSIGNMENTS, Constants.NBT.TAG_COMPOUND);
@@ -612,9 +551,9 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
      * @return {@link AbstractBuilding.View} created from reading the buf.
      */
     @Nullable
-    public static View createBuildingView(final ColonyView colony, final BlockPos id, @NotNull final ByteBuf buf)
+    public static AbstractBuildingView createBuildingView(final ColonyView colony, final BlockPos id, @NotNull final ByteBuf buf)
     {
-        @Nullable View view = null;
+        @Nullable AbstractBuildingView view = null;
         @Nullable Class<?> oclass = null;
 
         try
@@ -625,7 +564,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
             if (oclass != null)
             {
                 final Constructor<?> constructor = oclass.getDeclaredConstructor(ColonyView.class, BlockPos.class);
-                view = (View) constructor.newInstance(colony, id);
+                view = (AbstractBuildingView) constructor.newInstance(colony, id);
             }
         }
         catch (@NotNull NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException exception)
@@ -1641,260 +1580,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         return new TextComponentString(this.getSchematicName() + " " + getColony().getCitizen(citizenData).getName());
     }
 
-    /**
-     * The AbstractBuilding View is the client-side representation of a AbstractBuilding.
-     * Views contain the AbstractBuilding's data that is relevant to a Client, in a more client-friendly form.
-     * Mutable operations on a View result in a message to the server to perform the operation.
-     */
-    public static class View implements IRequester
-    {
-        private final ColonyView colony;
-        @NotNull
-        private final BlockPos   location;
-
-        private int buildingLevel    = 0;
-        private int buildingMaxLevel = 0;
-        private int workOrderLevel   = NO_WORK_ORDER;
-
-        /**
-         * Keeps track of which citizen created what request. Citizen -> Request direction.
-         */
-        private HashMap<Integer, Collection<IToken>> citizensByRequests = new HashMap<>();
-
-        /**
-         * Keeps track of which citizen created what request. Request -> Citizen direction.
-         */
-        private final HashMap<IToken, Integer> requestsByCitizen = new HashMap<>();
-
-        /**
-         * Creates a building view.
-         *
-         * @param c ColonyView the building is in.
-         * @param l The location of the building.
-         */
-        protected View(final ColonyView c, @NotNull final BlockPos l)
-        {
-            colony = c;
-            location = new BlockPos(l);
-        }
-
-        /**
-         * Gets the id for this building.
-         *
-         * @return A BlockPos because the building ID is its location.
-         */
-        @NotNull
-        public BlockPos getID()
-        {
-            // Location doubles as ID
-            return location;
-        }
-
-        /**
-         * Gets the location of this building.
-         *
-         * @return A BlockPos, where this building is.
-         */
-        @NotNull
-        public BlockPos getLocation()
-        {
-            return location;
-        }
-
-        /**
-         * Gets the ColonyView that this building belongs to.
-         *
-         * @return ColonyView, client side interpretations of Colony.
-         */
-        public ColonyView getColony()
-        {
-            return colony;
-        }
-
-        /**
-         * Get the current level of the building.
-         *
-         * @return AbstractBuilding current level.
-         */
-        public int getBuildingLevel()
-        {
-            return buildingLevel;
-        }
-
-        /**
-         * Get the max level of the building.
-         *
-         * @return AbstractBuilding max level.
-         */
-        public int getBuildingMaxLevel()
-        {
-            return buildingMaxLevel;
-        }
-
-        /**
-         * Checks if this building is at its max level.
-         *
-         * @return true if the building is at its max level.
-         */
-        public boolean isBuildingMaxLevel()
-        {
-            return buildingLevel >= buildingMaxLevel;
-        }
-
-        /**
-         * Get the current work order level.
-         *
-         * @return 0 if none, othewise the current level worked on
-         */
-        public int getCurrentWorkOrderLevel()
-        {
-            return workOrderLevel;
-        }
-
-        /**
-         * Get the current work order level.
-         *
-         * @return 0 if none, othewise the current level worked on
-         */
-        public boolean hasWorkOrder()
-        {
-            return workOrderLevel != NO_WORK_ORDER;
-        }
-
-        public boolean isBuilding()
-        {
-            return workOrderLevel != NO_WORK_ORDER && workOrderLevel > buildingLevel;
-        }
-
-        public boolean isRepairing()
-        {
-            return workOrderLevel != NO_WORK_ORDER && workOrderLevel == buildingLevel;
-        }
-
-        /**
-         * Open the associated BlockOut window for this building.
-         */
-        public void openGui()
-        {
-            @Nullable final Window window = getWindow();
-            if (window != null)
-            {
-                window.open();
-            }
-        }
-
-        /**
-         * Will return the window if this building has an associated BlockOut window.
-         *
-         * @return BlockOut window.
-         */
-        @Nullable
-        public Window getWindow()
-        {
-            return null;
-        }
-
-        /**
-         * Read this view from a {@link ByteBuf}.
-         *
-         * @param buf The buffer to read this view from.
-         */
-        public void deserialize(@NotNull final ByteBuf buf)
-        {
-            buildingLevel = buf.readInt();
-            buildingMaxLevel = buf.readInt();
-            workOrderLevel = buf.readInt();
-
-            loadRequestSystemFromNBT(ByteBufUtils.readTag(buf));
-        }
-
-        private void loadRequestSystemFromNBT(NBTTagCompound compound)
-        {
-            this.citizensByRequests.clear();
-            if (compound.hasKey(TAG_CITIZEN_BY_REQUEST))
-            {
-                NBTTagList citizensByRequestList = compound.getTagList(TAG_CITIZEN_BY_REQUEST, Constants.NBT.TAG_COMPOUND);
-                NBTUtils.streamCompound(citizensByRequestList).forEach(cbrc -> processIntegerKeyTokenList(cbrc, citizensByRequests));
-            }
 
 
-            this.requestsByCitizen.clear();
-            this.citizensByRequests.keySet().forEach(citizen -> this.citizensByRequests.get(citizen).forEach(requestToken -> this.requestsByCitizen.put(requestToken, citizen)));
-        }
 
-
-        public ImmutableList<IRequest> getOpenRequests(@NotNull final CitizenDataView data)
-        {
-            if (!citizensByRequests.containsKey(data.getId()))
-            {
-                return ImmutableList.of();
-            }
-
-            return ImmutableList.copyOf(citizensByRequests.get(data.getId()).stream().map(getColony().getRequestManager()::getRequestForToken).filter(Objects::nonNull).iterator());
-        }
-
-        public <Request> ImmutableList<IRequest<? extends Request>> getOpenRequestsOfType(@NotNull final CitizenDataView citizenData, final Class<Request> requestType)
-        {
-            return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
-                                          .filter(request -> {
-                                              Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
-                                              return requestTypes.contains(requestType);
-                                          })
-                                          .map(request -> (IRequest<? extends Request>) request)
-                                          .iterator());
-        }
-
-        public <Request> ImmutableList<IRequest<? extends Request>> getOpenRequestsOfTypeFiltered(@NotNull final CitizenDataView citizenData, final Class<Request> requestType, Predicate<IRequest<? extends Request>> filter)
-        {
-            return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
-                                          .filter(request -> {
-                                              Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
-                                              return requestTypes.contains(requestType);
-                                          })
-                                          .map(request -> (IRequest<? extends Request>) request)
-                                          .filter(filter)
-                                          .iterator());
-        }
-
-        @Override
-        public IToken getRequesterId()
-        {
-            //NOOP; Is Client side view.
-            return null;
-        }
-
-        @NotNull
-        @Override
-        public ILocation getRequesterLocation()
-        {
-            //NOOP; Is Client side view.
-            return null;
-        }
-
-        @NotNull
-        @Override
-        public void onRequestComplete(@NotNull final IToken token)
-        {
-            //NOOP; Is Client side view.
-        }
-
-        @NotNull
-        @Override
-        public void onRequestCancelled(@NotNull final IToken token)
-        {
-            //NOOP; Is Client side view.
-        }
-
-        @NotNull
-        @Override
-        public ITextComponent getDisplayName(@NotNull final IToken token)
-        {
-            if (!requestsByCitizen.containsKey(token))
-            {
-                return new TextComponentString("<UNKNOWN>");
-            }
-
-            return new TextComponentString(getColony().getCitizen(requestsByCitizen.get(token)).getName());
-        }
-    }
 }

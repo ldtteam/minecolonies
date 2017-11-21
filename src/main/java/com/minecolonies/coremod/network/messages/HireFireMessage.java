@@ -7,6 +7,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
@@ -53,7 +54,7 @@ public class HireFireMessage extends AbstractMessage<HireFireMessage, IMessage>
      * @param hire      hire or fire the citizens
      * @param citizenID the id of the citizen to fill the job.
      */
-    public HireFireMessage(@NotNull final AbstractBuilding.View building, final boolean hire, final int citizenID)
+    public HireFireMessage(@NotNull final AbstractBuildingView building, final boolean hire, final int citizenID)
     {
         super();
         this.colonyId = building.getColony().getID();

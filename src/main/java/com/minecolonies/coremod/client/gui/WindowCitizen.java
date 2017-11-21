@@ -18,6 +18,7 @@ import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.TransferItemsRequestMessage;
 import com.minecolonies.coremod.network.messages.UpdateRequestStateMessage;
@@ -443,7 +444,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
             return ImmutableList.of();
         }
 
-        AbstractBuilding.View building = colonyView.getBuilding(buildingPos);
+        AbstractBuildingView building = colonyView.getBuilding(buildingPos);
 
         return building.getOpenRequests(citizen);
     }
@@ -665,7 +666,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
                 itemStack = inventory.getStackInSlot(InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(inventory), requestPredicate));
             }
 
-            final AbstractBuilding.View building = ColonyManager.getColonyView(citizen.getColonyId()).getBuilding(citizen.getWorkBuilding());
+            final AbstractBuildingView building = ColonyManager.getColonyView(citizen.getColonyId()).getBuilding(citizen.getWorkBuilding());
 
             MineColonies.getNetwork().sendToServer(new TransferItemsRequestMessage(building, itemStack, isCreative ? amount : count, false));
             MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getToken(), RequestState.OVERRULED, itemStack));

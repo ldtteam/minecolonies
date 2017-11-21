@@ -10,6 +10,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.util.AchievementUtils;
 import io.netty.buffer.ByteBuf;
@@ -351,12 +352,12 @@ public final class ColonyManager
      * @param pos Block position.
      * @return Returns the view belonging to the building at (x, y, z).
      */
-    public static AbstractBuilding.View getBuildingView(final BlockPos pos)
+    public static AbstractBuildingView getBuildingView(final BlockPos pos)
     {
         //  On client we will just check all known views
         for (@NotNull final ColonyView colony : colonyViews)
         {
-            final AbstractBuilding.View building = colony.getBuilding(pos);
+            final AbstractBuildingView building = colony.getBuilding(pos);
             if (building != null)
             {
                 return building;

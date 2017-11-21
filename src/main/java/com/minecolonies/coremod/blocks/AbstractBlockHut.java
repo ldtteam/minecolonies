@@ -6,6 +6,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import net.minecraft.block.Block;
@@ -208,7 +209,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
          */
         if (worldIn.isRemote)
         {
-            @Nullable final AbstractBuilding.View building = ColonyManager.getBuildingView(pos);
+            @Nullable final AbstractBuildingView building = ColonyManager.getBuildingView(pos);
 
             if (building != null
                   && building.getColony() != null

@@ -8,6 +8,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingWareHouse;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -45,7 +46,7 @@ public class UpgradeWarehouseMessage extends AbstractMessage<UpgradeWarehouseMes
      *
      * @param building AbstractBuilding of the request.
      */
-    public UpgradeWarehouseMessage(@NotNull final AbstractBuilding.View building)
+    public UpgradeWarehouseMessage(@NotNull final AbstractBuildingView building)
     {
         super();
         this.colonyId   = building.getColony().getID();

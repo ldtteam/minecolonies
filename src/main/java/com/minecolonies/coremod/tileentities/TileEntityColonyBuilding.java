@@ -6,6 +6,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -220,7 +221,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
      *
      * @return {@link AbstractBuilding.View} the tile entity is associated with.
      */
-    public AbstractBuilding.View getBuildingView()
+    public AbstractBuildingView getBuildingView()
     {
         final ColonyView c = ColonyManager.getColonyView(colonyId);
         return c == null ? null : c.getBuilding(getPosition());

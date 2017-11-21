@@ -13,6 +13,7 @@ import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.AssignUnassignMessage;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -69,7 +70,7 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
     /**
      * The view of the current building.
      */
-    private final AbstractBuilding.View building;
+    private final AbstractBuildingView building;
 
     /**
      * List of citizens which can be assigned.

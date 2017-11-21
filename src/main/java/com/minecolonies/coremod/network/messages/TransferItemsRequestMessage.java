@@ -7,6 +7,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
@@ -65,7 +66,7 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
      * @param itemStack to be take from the player for the building
      * @param quantity of item needed to be transfered
      */
-    public TransferItemsRequestMessage(@NotNull final AbstractBuilding.View building, final ItemStack itemStack, final int quantity, final boolean attemptResolve)
+    public TransferItemsRequestMessage(@NotNull final AbstractBuildingView building, final ItemStack itemStack, final int quantity, final boolean attemptResolve)
     {
         super();
         this.colonyId   = building.getColony().getID();

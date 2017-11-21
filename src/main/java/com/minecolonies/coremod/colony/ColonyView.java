@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.configuration.Configurations;
@@ -36,16 +37,16 @@ public final class ColonyView implements IColony
 {
     //  General Attributes
     private final int id;
-    private final Map<Integer, WorkOrderView>          workOrders  = new HashMap<>();
+    private final Map<Integer, WorkOrderView>         workOrders  = new HashMap<>();
     //  Administration/permissions
     @NotNull
-    private final Permissions.View                     permissions = new Permissions.View();
+    private final Permissions.View                    permissions = new Permissions.View();
     @NotNull
-    private final Map<BlockPos, AbstractBuilding.View> buildings   = new HashMap<>();
+    private final Map<BlockPos, AbstractBuildingView> buildings   = new HashMap<>();
     //  Citizenry
     @NotNull
-    private final Map<Integer, CitizenDataView>        citizens    = new HashMap<>();
-    private       String                               name        = "Unknown";
+    private final Map<Integer, CitizenDataView>       citizens    = new HashMap<>();
+    private       String                              name        = "Unknown";
     private int      dimensionId;
     private BlockPos center;
 
@@ -300,7 +301,7 @@ public final class ColonyView implements IColony
      * @return {@link AbstractBuilding.View} of a AbstractBuilding for the given
      * Coordinates/ID, or null.
      */
-    public AbstractBuilding.View getBuilding(final int x, final int y, final int z)
+    public AbstractBuildingView getBuilding(final int x, final int y, final int z)
     {
         return getBuilding(new BlockPos(x, y, z));
     }
@@ -313,7 +314,7 @@ public final class ColonyView implements IColony
      * @return {@link AbstractBuilding.View} of a AbstractBuilding for the given
      * Coordinates/ID, or null.
      */
-    public AbstractBuilding.View getBuilding(final BlockPos buildingId)
+    public AbstractBuildingView getBuilding(final BlockPos buildingId)
     {
         return buildings.get(buildingId);
     }
@@ -545,7 +546,7 @@ public final class ColonyView implements IColony
     @Nullable
     public IMessage handleColonyViewRemoveBuildingMessage(final BlockPos buildingId)
     {
-        final AbstractBuilding.View building = buildings.remove(buildingId);
+        final AbstractBuildingView building = buildings.remove(buildingId);
         if (townHall == building)
         {
             townHall = null;
@@ -579,7 +580,7 @@ public final class ColonyView implements IColony
     @Nullable
     public IMessage handleColonyBuildingViewMessage(final BlockPos buildingId, @NotNull final ByteBuf buf)
     {
-        @Nullable final AbstractBuilding.View building = AbstractBuilding.createBuildingView(this, buildingId, buf);
+        @Nullable final AbstractBuildingView building = AbstractBuilding.createBuildingView(this, buildingId, buf);
         if (building != null)
         {
             buildings.put(building.getID(), building);

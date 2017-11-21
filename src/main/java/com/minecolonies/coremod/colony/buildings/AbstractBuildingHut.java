@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,7 +35,7 @@ public abstract class AbstractBuildingHut extends AbstractBuilding
     /**
      * BuildingHut view for the client.
      */
-    public static class View extends AbstractBuilding.View
+    public static class View extends AbstractBuildingView
     {
         /**
          * Constructor for the BuildingHut view.

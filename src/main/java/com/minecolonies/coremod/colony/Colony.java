@@ -50,6 +50,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.ColonyConstants.*;
 
 /**
  * This class describes a colony and contains all the data and methods for
@@ -57,75 +59,10 @@ import static com.minecolonies.api.util.constant.Constants.*;
  */
 public class Colony implements IColony
 {
-    //  Settings
-    private static final int    CITIZEN_CLEANUP_TICK_INCREMENT = 5 * TICKS_SECOND;
-    private static final String TAG_ID                         = "id";
-    private static final String TAG_NAME                       = "name";
-    private static final String TAG_DIMENSION                  = "dimension";
-    private static final String TAG_CENTER                     = "center";
-    private static final String TAG_MAX_CITIZENS               = "maxCitizens";
-    private static final String TAG_BUILDINGS                  = "buildings";
-    private static final String TAG_CITIZENS                   = "citizens";
-    private static final String TAG_ACHIEVEMENT                = "achievement";
-    private static final String TAG_ACHIEVEMENT_LIST           = "achievementlist";
-    private static final String TAG_WORK                       = "work";
-    private static final String TAG_MANUAL_HIRING              = "manualHiring";
-    private static final String TAG_MANUAL_HOUSING             = "manualHousing";
-    private static final String TAG_REQUESTMANAGER             = "requestManager";
-    private static final String TAG_WAYPOINT                   = "waypoints";
-    private static final String TAG_FREE_BLOCKS                = "freeBlocks";
-    private static final String TAG_FREE_POSITIONS             = "freePositions";
-    private static final String TAG_HAPPINESS                  = "happiness";
-    private static final String TAG_ABANDONED                  = "abandoned";
-
-    //statistics tags
-    private static final String TAG_STATISTICS            = "statistics";
-    private static final String TAG_MINER_STATISTICS      = "minerStatistics";
-    private static final String TAG_MINER_ORES            = "ores";
-    private static final String TAG_MINER_DIAMONDS        = "diamonds";
-    private static final String TAG_FARMER_STATISTICS     = "farmerStatistics";
-    private static final String TAG_FARMER_WHEAT          = "wheat";
-    private static final String TAG_FARMER_POTATOES       = "potatoes";
-    private static final String TAG_FARMER_CARROTS        = "carrots";
-    private static final String TAG_GUARD_STATISTICS      = "guardStatistics";
-    private static final String TAG_GUARD_MOBS            = "mobs";
-    private static final String TAG_BUILDER_STATISTICS    = "builderStatistics";
-    private static final String TAG_BUILDER_HUTS          = "huts";
-    private static final String TAG_FISHERMAN_STATISTICS  = "fishermanStatistics";
-    private static final String TAG_FISHERMAN_FISH        = "fish";
-    private static final String TAG_LUMBERJACK_STATISTICS = "lumberjackStatistics";
-    private static final String TAG_LUMBERJACK_TREES      = "trees";
-    private static final String TAG_LUMBERJACK_SAPLINGS   = "saplings";
-    private static final int    NUM_ACHIEVEMENT_FIRST     = 1;
-    private static final int    NUM_ACHIEVEMENT_SECOND    = 25;
-    private static final int    NUM_ACHIEVEMENT_THIRD     = 100;
-    private static final int    NUM_ACHIEVEMENT_FOURTH    = 500;
-    private static final int    NUM_ACHIEVEMENT_FIFTH     = 1000;
-
-    /**
-     * The default spawn radius required for barbarians.
-     */
-    private static final int DEFAULT_SPAWN_RADIUS = 10;
-
-    /**
-     * Max spawn radius of the barbarians.
-     */
-    private static final int MAX_SPAWN_RADIUS = 75;
-
     /**
      * Whether there will be a raid in this colony tonight.
      */
     private boolean willRaidTonight = false;
-
-    /**
-     * Amount of ticks that pass/hour.
-     */
-    private static final int TICKS_HOUR = TICKS_SECOND * SECONDS_A_MINUTE * SECONDS_A_MINUTE;
-
-    /**
-     * Average happiness of a citizen.
-     */
-    private static final double AVERAGE_HAPPINESS = 5.0;
 
     /**
      * The hours the colony is without contact with its players.
@@ -148,41 +85,28 @@ public class Colony implements IColony
     private boolean canColonyBeAutoDeleted = true;
 
     /**
-     * Bonus happiness each factor added.
-     */
-    private static final double HAPPINESS_FACTOR = 0.1;
-
-    /**
-     * Saturation at which a citizen starts being happy.
-     */
-    private static final int WELL_SATURATED_LIMIT = 5;
-
-    /**
      * Variable to determine if its currently day or night.
      */
     private boolean isDay = true;
 
     /**
-     * Max overall happiness.
+     * Id of the colony.
      */
-    private static final double MAX_OVERALL_HAPPINESS = 10;
+    private final int id;
 
     /**
-     * Min overall happiness.
+     * Dimension of the colony.
      */
-    private static final double MIN_OVERALL_HAPPINESS = 1;
-
-    //private int autoHostile = 0;//Off
-    private static final String TAG_FIELDS                        = "fields";
-    private static final int    CHECK_WAYPOINT_EVERY              = 100;
-    private static final double MAX_SQ_DIST_SUBSCRIBER_UPDATE     = MathUtils.square(Configurations.gameplay.workingRangeTownHall + 16D);
-    private static final double MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE = MathUtils.square(Configurations.gameplay.workingRangeTownHall * 2D);
-    private final int id;
-    //  General Attributes
     private final int dimensionId;
-    //  Buildings
-    private final Map<BlockPos, Field>       fields    = new HashMap<>();
-    //Additional Waypoints.
+
+    /**
+     * List of fields of the colony.
+     */
+    private final Map<BlockPos, Field> fields = new HashMap<>();
+
+    /**
+     * List of waypoints of the colony.
+     */
     private final Map<BlockPos, IBlockState> wayPoints = new HashMap<>();
 
     /**
@@ -190,56 +114,118 @@ public class Colony implements IColony
      */
     private BuildingWareHouse wareHouse = null;
 
+    /**
+     * List of achievements within the colony.
+     */
     @NotNull
     private final List<Achievement> colonyAchievements;
-    //  Workload and Jobs
-    private final WorkManager                     workManager       = new WorkManager(this);
+
+    /**
+     * Work Manager of the colony (Request System).
+     */
+    private final WorkManager workManager = new WorkManager(this);
+
+    /**
+     * List of building in the colony.
+     */
     @NotNull
-    private final Map<BlockPos, AbstractBuilding> buildings         = new HashMap<>();
-    //  Citizenry
+    private final Map<BlockPos, AbstractBuilding> buildings = new HashMap<>();
+
+    /**
+     * List of citizens.
+     */
     @NotNull
-    private final Map<Integer, CitizenData>       citizens          = new HashMap<>();
+    private final Map<Integer, CitizenData> citizens = new HashMap<>();
+
     /**
      * The Positions which players can freely interact.
      */
-    private final Set<BlockPos>                   freePositions     = new HashSet<>();
+    private final Set<BlockPos> freePositions = new HashSet<>();
+
     /**
      * The Blocks which players can freely interact with.
      */
-    private final Set<Block>                      freeBlocks        = new HashSet<>();
-    private       int                             minedOres         = 0;
-    private       int                             minedDiamonds     = 0;
-    private       int                             harvestedWheat    = 0;
-    private       int                             harvestedPotatoes = 0;
-    private       int                             harvestedCarrots  = 0;
-    private       int                             killedMobs        = 0;
-    private       int                             builtHuts         = 0;
-    private       int                             caughtFish        = 0;
-    private       int                             felledTrees       = 0;
-    private       int                             plantedSaplings   = 0;
-    //  Runtime Data
-    @Nullable
-    private       World                           world             = null;
-    //  Updates and Subscriptions
-    @NotNull
-    private       Set<EntityPlayerMP>             subscribers      = new HashSet<>();
-    private       boolean                         isDirty          = false;
-    private       boolean                         isCitizensDirty  = false;
-    private       boolean                         isBuildingsDirty = false;
-    private       boolean                         manualHiring     = false;
-    private       boolean                         manualHousing     = false;
+    private final Set<Block> freeBlocks = new HashSet<>();
 
-    private       boolean                         isFieldsDirty    = false;
-    private       String                          name             = "ERROR(Wasn't placed by player)";
-    private BlockPos         center;
-    //  Administration/permissions
+    /**
+     * Statistical values.
+     */
+    private int minedOres         = 0;
+    private int minedDiamonds     = 0;
+    private int harvestedWheat    = 0;
+    private int harvestedPotatoes = 0;
+    private int harvestedCarrots  = 0;
+    private int killedMobs        = 0;
+    private int builtHuts         = 0;
+    private int caughtFish        = 0;
+    private int felledTrees       = 0;
+    private int plantedSaplings   = 0;
+
+    /**
+     * The world the colony currently runs on.
+     */
+    @Nullable
+    private World world = null;
+
+    /**
+     * List of players subscribing to the colony.
+     */
     @NotNull
-    private Permissions      permissions;
+    private Set<EntityPlayerMP> subscribers = new HashSet<>();
+
+    /**
+     * Variables taking care of updating the views.
+     */
+    private boolean isDirty          = false;
+    private boolean isCitizensDirty  = false;
+    private boolean isBuildingsDirty = false;
+    private boolean isFieldsDirty    = false;
+
+    /**
+     * The hiring mode in the colony.
+     */
+    private boolean manualHiring = false;
+
+    /**
+     * The housing mode in the colony.
+     */
+    private boolean manualHousing = false;
+
+    /**
+     * The name of the colony.
+     */
+    private String name = "ERROR(Wasn't placed by player)";
+
+    /**
+     * The center of the colony.
+     */
+    private BlockPos center;
+
+    /**
+     * The colony permission object.
+     */
+    @NotNull
+    private Permissions permissions;
+
+    /**
+     * The townhall of the colony.
+     */
     @Nullable
     private BuildingTownHall townHall;
-    private int topCitizenId = 0;
-    private int maxCitizens  = Configurations.gameplay.maxCitizens;
 
+    /**
+     * The highest citizen id.
+     */
+    private int topCitizenId = 0;
+
+    /**
+     * Max citizens without housing.
+     */
+    private int maxCitizens = Configurations.gameplay.maxCitizens;
+
+    /**
+     * Overall happyness of the colony.
+     */
     private double overallHappiness = 5;
 
     /**
@@ -343,8 +329,6 @@ public class Colony implements IColony
      */
     private void readFromNBT(@NotNull final NBTTagCompound compound)
     {
-
-
         manualHiring = compound.getBoolean(TAG_MANUAL_HIRING);
         maxCitizens = compound.getInteger(TAG_MAX_CITIZENS);
 

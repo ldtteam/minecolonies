@@ -8,6 +8,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingHut;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.BuildRequestMessage;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import org.jetbrains.annotations.NotNull;
@@ -95,7 +96,7 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
     /**
      * Update the state and label for the Build button.
      */
-    private void updateButtonBuild(final AbstractBuilding.View buildingView)
+    private void updateButtonBuild(final AbstractBuildingView buildingView)
     {
         if (buttonBuild == null)
         {
@@ -134,7 +135,7 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
     /**
      * Update the state and label for the Repair button.
      */
-    private void updateButtonRepair(final AbstractBuilding.View buildingView)
+    private void updateButtonRepair(final AbstractBuildingView buildingView)
     {
         if (buttonRepair == null)
         {
@@ -161,7 +162,7 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
         // Or that we are on the correct page
         if (switchView == null || switchView.getCurrentView().getID().equals(PAGE_ACTIONS))
         {
-            final AbstractBuilding.View buildingView = building.getColony().getBuilding(building.getID());
+            final AbstractBuildingView buildingView = building.getColony().getBuilding(building.getID());
 
             if (buttonPrevPage != null)
             {

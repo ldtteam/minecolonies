@@ -13,6 +13,7 @@ import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView;
 import com.minecolonies.coremod.network.messages.MarkBuildingDirtyMessage;
 import com.minecolonies.coremod.network.messages.TransferItemsRequestMessage;
@@ -74,7 +75,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
      */
     private void pullResourcesFromHut()
     {
-        final AbstractBuilding.View newView = builder.getColony().getBuilding(builder.getID());
+        final AbstractBuildingView newView = builder.getColony().getBuilding(builder.getID());
         if (newView instanceof BuildingBuilderView)
         {
             final BuildingBuilderView updatedView = (BuildingBuilderView) newView;
