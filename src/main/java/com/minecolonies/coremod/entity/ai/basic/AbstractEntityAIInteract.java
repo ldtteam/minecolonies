@@ -65,12 +65,12 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     /**
      * Horizontal range in which the worker picks up items.
      */
-    private static final float RANGE_HORIZONTAL_PICKUP = 45.0F;
+    public static final float RANGE_HORIZONTAL_PICKUP = 45.0F;
 
     /**
      * Vertical range in which the worker picks up items.
      */
-    private static final float RANGE_VERTICAL_PICKUP   = 3.0F;
+    public static final float RANGE_VERTICAL_PICKUP   = 3.0F;
 
     /**
      * Number of ticks the worker is standing still.

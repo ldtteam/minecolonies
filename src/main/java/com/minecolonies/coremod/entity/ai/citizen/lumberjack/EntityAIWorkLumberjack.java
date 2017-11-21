@@ -18,6 +18,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -550,6 +551,26 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         }
         timeWaited++;
         return false;
+    }
+
+    /**
+     * Fill the list of the item positions to gather.
+     */
+    @Override
+    public void fillItemsList()
+    {
+        if(job.tree != null)
+        {
+            searchForItems(new AxisAlignedBB(job.tree.getLocation())
+                    .expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP)
+                    .expand(-RANGE_HORIZONTAL_PICKUP, -RANGE_VERTICAL_PICKUP, -RANGE_HORIZONTAL_PICKUP));
+        }
+        else
+        {
+            searchForItems(worker.getEntityBoundingBox()
+                    .expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP)
+                    .expand(-RANGE_HORIZONTAL_PICKUP, -RANGE_VERTICAL_PICKUP, -RANGE_HORIZONTAL_PICKUP));
+        }
     }
 
     /**
