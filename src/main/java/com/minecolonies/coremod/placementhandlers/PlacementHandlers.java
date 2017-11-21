@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.BlockSolidSubstitution;
 import com.minecolonies.coremod.blocks.BlockWaypoint;
@@ -16,7 +15,6 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.BuildingWareHouse;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
-import com.minecolonies.coremod.tileentities.TileEntityRack;
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -662,8 +660,7 @@ public final class PlacementHandlers
                             (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(placedStack))
                     .isEmpty())
             {
-                final  Stack stackRequest = new Stack(placer.getTotalAmount(placedStack));
-
+                final Stack stackRequest = new Stack(placer.getTotalAmount(placedStack));
                 placer.getWorker().getCitizenData().createRequest(stackRequest);
 
                 return true;
