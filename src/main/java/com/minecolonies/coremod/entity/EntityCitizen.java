@@ -1904,6 +1904,14 @@ public class EntityCitizen extends EntityAgeable implements INpc
                         (float) ((this.rand.nextGaussian() * 0.7D + 1.0D) * 2.0D));
                 this.onItemPickup(entityItem, ItemStackUtils.getSize(itemStack) - resultingStackSize);
 
+                final ItemStack overrulingStack = itemStack.copy();
+                overrulingStack.setCount(ItemStackUtils.getSize(itemStack) - resultingStackSize);
+
+                if (getWorkBuilding() != null && !ItemStackUtils.isEmpty(overrulingStack))
+                {
+                    getWorkBuilding().overruleNextOpenRequestOfCitizenWithStack(getCitizenData(), overrulingStack);
+                }
+
                 if (ItemStackUtils.isEmpty(resultStack))
                 {
                     entityItem.setDead();
