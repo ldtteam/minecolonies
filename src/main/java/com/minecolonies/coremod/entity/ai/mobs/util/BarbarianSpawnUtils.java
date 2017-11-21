@@ -113,8 +113,8 @@ public final class BarbarianSpawnUtils
     {
         barbarian.tasks.addTask(PRIORITY_ZERO, new EntityAISwimming(barbarian));
         barbarian.tasks.addTask(PRIORITY_FOUR, new EntityAIWalkToRandomHuts(barbarian, AI_MOVE_SPEED));
-        barbarian.tasks.addTask(PRIORITY_TWO, new EntityAINearestAttackableTarget<>(barbarian, EntityPlayer.class, true));
-        barbarian.tasks.addTask(PRIORITY_THREE, new EntityAINearestAttackableTarget<>(barbarian, EntityCitizen.class, true));
+        barbarian.targetTasks.addTask(PRIORITY_TWO, new EntityAINearestAttackableTarget<>(barbarian, EntityPlayer.class, true));
+        barbarian.targetTasks.addTask(PRIORITY_THREE, new EntityAINearestAttackableTarget<>(barbarian, EntityCitizen.class, true));
         barbarian.tasks.addTask(PRIORITY_FIVE, new EntityAIWatchClosest(barbarian, EntityPlayer.class, MAX_WATCH_DISTANCE));
 
         if (barbarian instanceof EntityArcherBarbarian)
