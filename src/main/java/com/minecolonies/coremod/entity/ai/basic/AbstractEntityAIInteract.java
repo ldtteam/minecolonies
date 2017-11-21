@@ -276,7 +276,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      */
     public void fillItemsList()
     {
-        searchForItems(worker.getEntityBoundingBox().expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP));
+        searchForItems(worker.getEntityBoundingBox().expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP).expand(-RANGE_HORIZONTAL_PICKUP, -RANGE_VERTICAL_PICKUP, -RANGE_HORIZONTAL_PICKUP));
     }
 
     /**

@@ -99,7 +99,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * Time in ticks to wait before placing a sapling.
      * Is used to collect falling saplings from the ground.
      */
-    private static final int MAX_WAITING_TIME = 100;
+    private static final int MAX_WAITING_TIME = 50;
 
     /**
      * Number of ticks to wait for tree.
@@ -113,39 +113,49 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * range of the lumberjack.
      */
     private static final int   WAIT_BEFORE_SEARCH      = 100;
+
     /**
      * Time in ticks before incrementing the search radius.
      */
     private static final int   WAIT_BEFORE_INCREMENT   = 20;
 
+
     /**
      * How often should strength factor into the lumberjacks skill modifier.
      */
     private static final int   STRENGTH_MULTIPLIER     = 2;
+
     /**
      * How often should charisma factor into the lumberjacks skill modifier.
      */
     private static final int   CHARISMA_MULTIPLIER     = 1;
+
     /**
      * Return to chest after half a stack.
      */
     private static final int   MAX_BLOCKS_MINED        = 32;
+
     /**
      * The time in ticks the lumberjack has waited already.
      * Directly connected with the MAX_WAITING_TIME.
      */
     private              int   timeWaited              = 0;
+
     /**
      * Number of ticks the lumberjack is standing still.
      */
     private              int   stillTicks              = 0;
+
     /**
      * Used to store the walk distance
      * to check if the lumberjack is still walking.
      */
     private              int   previousDistance        = 0;
 
-
+    /**
+     * Variable describing if the lj looked in his hut for a certain sapling.
+     */
+    private boolean checkedInHut = false;
 
     /**
      * The active pathfinding job used to walk to trees.
@@ -354,11 +364,14 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     {
         worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.chopping"));
 
-        final BlockPos location = job.tree.getLocation();
-        if (!walkToTree(job.tree.getStumpLocations().get(0)))
+        if(job.tree.hasLogs() || checkedInHut)
         {
-            checkIfStuckOnLeaves(location);
-            return getState();
+            final BlockPos location = job.tree.getLocation();
+            if (!walkToTree(job.tree.getStumpLocations().get(0)))
+            {
+                checkIfStuckOnLeaves(location);
+                return getState();
+            }
         }
 
         if (!job.tree.hasLogs() && (!job.tree.isSlimeTree() || !job.tree.hasLeaves()))
@@ -458,6 +471,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         if (plantSapling(job.tree.getLocation()))
         {
             job.tree = null;
+            checkedInHut = false;
         }
     }
 
@@ -520,6 +534,12 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
                     soundType.getPitch());
             worker.swingArm(worker.getActiveHand());
             this.getOwnBuilding().getColony().incrementStatistic("saplings");
+        }
+
+        if(timeWaited >= MAX_WAITING_TIME/2 && !checkedInHut && !walkToBuilding())
+        {
+            isInHut(new ItemStack(Blocks.SAPLING, 1, job.tree.getVariant()));
+            checkedInHut = true;
         }
 
         if (job.tree.getStumpLocations().isEmpty() || timeWaited >= MAX_WAITING_TIME)
