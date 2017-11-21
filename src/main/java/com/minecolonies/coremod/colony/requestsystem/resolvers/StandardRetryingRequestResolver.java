@@ -111,7 +111,7 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
                          @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request) throws RuntimeException
     {
         delays.put(request.getToken(), getMaximalDelayBetweenRetriesInTicks());
-        assignedRequests.put(request.getToken(), 1);
+        assignedRequests.put(request.getToken(), assignedRequests.containsKey(request.getToken()) ? assignedRequests.get(request.getToken()) + 1 : 1);
     }
 
     @Nullable

@@ -1907,9 +1907,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 final ItemStack overrulingStack = itemStack.copy();
                 overrulingStack.setCount(ItemStackUtils.getSize(itemStack) - resultingStackSize);
 
-                if (getWorkBuilding() != null && !ItemStackUtils.isEmpty(overrulingStack))
+                if (getColonyJob() != null)
                 {
-                    getWorkBuilding().overruleNextOpenRequestOfCitizenWithStack(getCitizenData(), overrulingStack);
+                    getColonyJob().onStackPickUp(overrulingStack);
                 }
 
                 if (ItemStackUtils.isEmpty(resultStack))

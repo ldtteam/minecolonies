@@ -10,6 +10,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import net.minecraft.entity.ai.EntityAITasks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
@@ -334,5 +335,31 @@ public abstract class AbstractJob
     public Set<IToken> getAsyncRequests()
     {
         return asyncRequests;
+    }
+
+    /**
+     * Method called when a stack is pickup by the entity.
+     * @param pickedUpStack The stack that is being picked up.
+     * @return true when the stack has been used to resolve a request, false when not.
+     */
+    public boolean onStackPickUp(@NotNull final ItemStack pickedUpStack)
+    {
+        if (getCitizen().getWorkBuilding() != null)
+        {
+            if (getCitizen().getWorkBuilding().overruleNextOpenRequestOfCitizenWithStack(getCitizen(), pickedUpStack.copy()))
+            {
+                return true;
+            }
+        }
+
+        if (getCitizen().getHomeBuilding() != null)
+        {
+            if (getCitizen().getHomeBuilding().overruleNextOpenRequestOfCitizenWithStack(getCitizen(), pickedUpStack.copy()))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -1581,19 +1581,20 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         }
     }
 
-    public void overruleNextOpenRequestOfCitizenWithStack(@NotNull final CitizenData citizenData, @NotNull final ItemStack stack)
+    public boolean overruleNextOpenRequestOfCitizenWithStack(@NotNull final CitizenData citizenData, @NotNull final ItemStack stack)
     {
         if (ItemStackUtils.isEmpty(stack))
-            return;
+            return false;
 
         final IRequest target = getOpenRequestsOfTypeFiltered(citizenData, TypeToken.of(IDeliverable.class), request -> request.getRequest().matches(stack)).stream()
                                   .findFirst()
                                   .orElse(null);
 
         if (target == null)
-            return;
+            return false;
 
         getColony().getRequestManager().overruleRequest(target.getToken(), stack.copy());
+        return true;
     }
 
     @Override

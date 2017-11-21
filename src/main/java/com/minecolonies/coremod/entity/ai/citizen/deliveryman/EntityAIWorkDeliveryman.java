@@ -1,8 +1,10 @@
 package com.minecolonies.coremod.entity.ai.citizen.deliveryman;
 
+import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.Log;
@@ -31,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
-import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
@@ -269,6 +270,9 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         {
             job.setReturning(false);
         }
+
+        final Collection<IToken> finallyAssignedTokens = worker.getColony().getRequestManager().getPlayerResolver().getAllAssignedRequests();
+        finallyAssignedTokens.forEach(iToken -> worker.getColony().getRequestManager().reassignRequest(iToken, ImmutableList.of()));
 
         return START_WORKING;
     }
