@@ -5,8 +5,6 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -14,7 +12,9 @@ import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.TownHallRenameMessage;
@@ -53,12 +53,12 @@ public final class ColonyView implements IColony
     /**
      * Defines if workers are hired manually or automatically.
      */
-    private       boolean          manualHiring = false;
+    private boolean manualHiring = false;
 
     /**
      * Defines if workers are housed manually or automatically.
      */
-    private       boolean          manualHousing = false;
+    private boolean manualHousing = false;
 
     //  Buildings
     @Nullable
@@ -158,7 +158,7 @@ public final class ColonyView implements IColony
         buf.writeBoolean(colony.hasWarehouse());
 
         buf.writeInt(waypoints.size());
-        for(final BlockPos block: waypoints)
+        for (final BlockPos block : waypoints)
         {
             BlockPosUtil.writeToByteBuf(buf, block);
         }
@@ -298,7 +298,7 @@ public final class ColonyView implements IColony
      * @param x x-coordinate.
      * @param y y-coordinate.
      * @param z z-coordinate.
-     * @return {@link AbstractBuilding.View} of a AbstractBuilding for the given
+     * @return {@link AbstractBuildingView} of a AbstractBuilding for the given
      * Coordinates/ID, or null.
      */
     public AbstractBuildingView getBuilding(final int x, final int y, final int z)
@@ -311,7 +311,7 @@ public final class ColonyView implements IColony
      * ChunkCoordinates.
      *
      * @param buildingId Coordinates/ID of the AbstractBuilding.
-     * @return {@link AbstractBuilding.View} of a AbstractBuilding for the given
+     * @return {@link AbstractBuildingView} of a AbstractBuilding for the given
      * Coordinates/ID, or null.
      */
     public AbstractBuildingView getBuilding(final BlockPos buildingId)
@@ -458,7 +458,7 @@ public final class ColonyView implements IColony
         this.hasWarehouse = buf.readBoolean();
 
         final int wayPointListSize = buf.readInt();
-        for(int i = 0; i < wayPointListSize; i++)
+        for (int i = 0; i < wayPointListSize; i++)
         {
             wayPoints.add(BlockPosUtil.readFromByteBuf(buf));
         }
@@ -616,6 +616,7 @@ public final class ColonyView implements IColony
 
     /**
      * Getter for the overall happiness.
+     *
      * @return the happiness, a double.
      */
     public double getOverallHappiness()
@@ -671,15 +672,6 @@ public final class ColonyView implements IColony
     public boolean hasTownHall()
     {
         return townHall != null;
-    }
-
-    /**
-     * Get a list of all waypoints in the colony view.
-     * @return a copy of the list.
-     */
-    public Set<BlockPos> getWayPoints()
-    {
-        return new HashSet<>(wayPoints);
     }
 
     /**
@@ -756,5 +748,15 @@ public final class ColonyView implements IColony
     public IRequester getRequesterBuildingForPosition(@NotNull final BlockPos pos)
     {
         return getBuilding(pos);
+    }
+
+    /**
+     * Get a list of all waypoints in the colony view.
+     *
+     * @return a copy of the list.
+     */
+    public Set<BlockPos> getWayPoints()
+    {
+        return new HashSet<>(wayPoints);
     }
 }

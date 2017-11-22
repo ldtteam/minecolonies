@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers.factory;
 
 import com.google.common.reflect.TypeToken;
-import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverFactory;
@@ -14,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 public class DeliveryRequestResolverFactory implements IRequestResolverFactory<DeliveryRequestResolver>
 {
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
-    private static final String NBT_TOKEN  = "Token";
+    private static final String NBT_TOKEN    = "Token";
     private static final String NBT_LOCATION = "Location";
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 

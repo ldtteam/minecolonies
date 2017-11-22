@@ -1,9 +1,7 @@
 package com.minecolonies.api.colony.requestsystem.resolver;
 
-import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
-import com.minecolonies.api.colony.requestsystem.token.IToken;
 
 /**
  * Interface describing an object that is capable of constructing a specific {@link IRequestResolver}

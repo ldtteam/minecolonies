@@ -20,20 +20,23 @@ public interface IDeliverable extends IRetryable
 
     /**
      * Method called to get the amount of items that need to be in the stack.
+     *
      * @return The amount of items that
      */
     int getCount();
 
     /**
-     * Method to set the result of a delivery.
-     * @param result The result of the delivery.
-     */
-    void setResult(@NotNull final ItemStack result);
-
-    /**
      * Method to get the result of the delivery.
+     *
      * @return The result of the delivery.
      */
     @NotNull
     ItemStack getResult();
+
+    /**
+     * Method to set the result of a delivery.
+     *
+     * @param result The result of the delivery.
+     */
+    void setResult(@NotNull final ItemStack result);
 }

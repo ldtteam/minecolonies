@@ -35,7 +35,7 @@ public final class AchievementUtils
         @NotNull final List<Player> players = PermissionUtils.getPlayersWithAtLeastRank(colony, Rank.OFFICER);
 
 
-        if(colony.getWorld() != null)
+        if (colony.getWorld() != null)
         {
             @NotNull final List<EntityPlayer> lPlayer = ServerUtils.getPlayersFromPermPlayer(players, colony.getWorld());
 

@@ -26,6 +26,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
 
     /**
      * Method used to check if this warehouse holds any of the requested itemstacks.
+     *
      * @param itemStackSelectionPredicate The predicate to check with.
      * @return True when the warehouse holds a stack, false when not.
      */
@@ -36,6 +37,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
 
     /**
      * Method to get the first matching ItemStack in the Warehouse.
+     *
      * @param itemStackSelectionPredicate The predicate to select the ItemStack with.
      * @return The first matching ItemStack.
      */
@@ -135,6 +137,34 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     }
 
     /**
+     * Check if a similar item is in the rack.
+     *
+     * @param stack             the stack to check.
+     * @param entity            the entity.
+     * @param ignoreDamageValue should the damage value be ignored.
+     * @return true if so.
+     */
+    private static boolean isInRack(final ItemStack stack, final TileEntity entity, final boolean ignoreDamageValue)
+    {
+        return entity instanceof TileEntityRack && !((TileEntityRack) entity).isEmpty() && ((TileEntityRack) entity).hasItemStack(stack, ignoreDamageValue)
+                 && InventoryUtils.findSlotInProviderNotFullWithItem(entity, stack.getItem(), ignoreDamageValue ? -1 : stack.getItemDamage(), ItemStackUtils.getSize(stack)) != -1;
+    }
+
+    /**
+     * Check if a similar item is in the chest.
+     *
+     * @param stack             the stack to check.
+     * @param entity            the entity.
+     * @param ignoreDamageValue should the damage value be ignored.
+     * @return true if so.
+     */
+    private static boolean isInChest(final ItemStack stack, final TileEntity entity, final boolean ignoreDamageValue)
+    {
+        return entity instanceof TileEntityChest
+                 && InventoryUtils.findSlotInProviderNotFullWithItem(entity, stack.getItem(), ignoreDamageValue ? -1 : stack.getItemDamage(), ItemStackUtils.getSize(stack)) != -1;
+    }
+
+    /**
      * Searches a chest with a similar item as the incoming stack.
      *
      * @param stack the stack.
@@ -152,34 +182,6 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             }
         }
         return null;
-    }
-
-    /**
-     * Check if a similar item is in the rack.
-     *
-     * @param stack             the stack to check.
-     * @param entity            the entity.
-     * @param ignoreDamageValue should the damage value be ignored.
-     * @return true if so.
-     */
-    private static boolean isInRack(final ItemStack stack, final TileEntity entity, final boolean ignoreDamageValue)
-    {
-        return entity instanceof TileEntityRack && !((TileEntityRack) entity).isEmpty() && ((TileEntityRack) entity).hasItemStack(stack, ignoreDamageValue)
-                && InventoryUtils.findSlotInProviderNotFullWithItem(entity, stack.getItem(), ignoreDamageValue ? -1 : stack.getItemDamage(), ItemStackUtils.getSize(stack)) != -1;
-    }
-
-    /**
-     * Check if a similar item is in the chest.
-     *
-     * @param stack             the stack to check.
-     * @param entity            the entity.
-     * @param ignoreDamageValue should the damage value be ignored.
-     * @return true if so.
-     */
-    private static boolean isInChest(final ItemStack stack, final TileEntity entity, final boolean ignoreDamageValue)
-    {
-        return entity instanceof TileEntityChest
-                && InventoryUtils.findSlotInProviderNotFullWithItem(entity, stack.getItem(), ignoreDamageValue ? -1 : stack.getItemDamage(), ItemStackUtils.getSize(stack)) != -1;
     }
 
     /**

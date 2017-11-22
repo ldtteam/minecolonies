@@ -110,17 +110,17 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     {
         super(job);
         super.registerTargets(
-                new AITarget(IDLE, START_WORKING),
-                new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
-                new AITarget(PREPARING, this::prepareForBaking),
-                new AITarget(BAKER_KNEADING, this::kneadTheDough),
-                new AITarget(BAKER_BAKING, this::bake),
-                new AITarget(BAKER_TAKE_OUT_OF_OVEN, this::takeFromOven),
-                new AITarget(BAKER_FINISHING, this::finishing)
+          new AITarget(IDLE, START_WORKING),
+          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
+          new AITarget(PREPARING, this::prepareForBaking),
+          new AITarget(BAKER_KNEADING, this::kneadTheDough),
+          new AITarget(BAKER_BAKING, this::bake),
+          new AITarget(BAKER_TAKE_OUT_OF_OVEN, this::takeFromOven),
+          new AITarget(BAKER_FINISHING, this::finishing)
         );
         worker.setSkillModifier(
-                INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
-                        + DEXTERITY_MULTIPLIER * worker.getCitizenData().getDexterity());
+          INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
+            + DEXTERITY_MULTIPLIER * worker.getCitizenData().getDexterity());
         worker.setCanPickUpLoot(true);
     }
 
@@ -169,10 +169,26 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         return getState();
     }
 
+    /**
+     * Returns the fisherman's work building.
+     *
+     * @return building instance
+     */
+    @Override
+    public BuildingBaker getOwnBuilding()
+    {
+        return (BuildingBaker) worker.getWorkBuilding();
+    }
+
     @Override
     protected int getActionsDoneUntilDumping()
     {
         return UNTIL_DUMP;
+    }
+
+    private int getRequiredProgressForKneading()
+    {
+        return PROGRESS_MULTIPLIER / Math.min(worker.getLevel() + 1, MAX_LEVEL) * KNEADING_TIME;
     }
 
     private AIState takeFromOven()
@@ -248,53 +264,6 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     }
 
     /**
-     * Craft a new product from a given Storage.
-     *
-     * @param storage the given storage.
-     * @return the next state to transit to.
-     */
-    private AIState craftNewProduct(final RecipeStorage storage)
-    {
-        final List<ItemStack> list = new ArrayList<>();
-
-        ItemStack copy = null;
-        for (final ItemStack stack : storage.getInput())
-        {
-            if (stack.getItem() != Items.WHEAT)
-            {
-                list.add(stack);
-            }
-            else
-            {
-                copy = stack.copy();
-            }
-        }
-
-        if (copy != null)
-        {
-            //Wheat will be reduced by chance only (Between 3 and 6- getBuildingLevel, meaning 3-5, 3-4, 3-3, 3-2, 3-1)
-            final int form = (getOwnBuilding().getMaxBuildingLevel() + 1) - (getOwnBuilding().getBuildingLevel() + ItemStackUtils.getSize(copy));
-            int req = 0;
-            if (form != 0)
-            {
-                req = form < 0 ? -worker.getRandom().nextInt(Math.abs(form)) : worker.getRandom().nextInt(form);
-            }
-            ItemStackUtils.changeSize(copy, req);
-            list.add(copy);
-        }
-
-        final ItemStack[] arrayToRequestAndRetrieve = list.toArray(new ItemStack[list.size()]);
-        checkIfRequestForItemExistOrCreateAsynch(arrayToRequestAndRetrieve);
-
-        InventoryUtils.removeStacksFromItemHandler(new InvWrapper(worker.getInventoryCitizen()), list);
-        currentBakingProduct.nextState();
-        getOwnBuilding().removeFromTasks(ProductState.UNCRAFTED, currentBakingProduct);
-        getOwnBuilding().addToTasks(ProductState.RAW, currentBakingProduct);
-
-        return getState();
-    }
-
-    /**
      * Create a new product depending on what the baker has available on resources.
      *
      * @return the next state to transit to.
@@ -340,6 +309,53 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         final BakingProduct bakingProduct = new BakingProduct(storage.getPrimaryOutput().copy(), recipeId);
         getOwnBuilding().addToTasks(bakingProduct.getState(), bakingProduct);
         currentBakingProduct = bakingProduct;
+        return getState();
+    }
+
+    /**
+     * Craft a new product from a given Storage.
+     *
+     * @param storage the given storage.
+     * @return the next state to transit to.
+     */
+    private AIState craftNewProduct(final RecipeStorage storage)
+    {
+        final List<ItemStack> list = new ArrayList<>();
+
+        ItemStack copy = null;
+        for (final ItemStack stack : storage.getInput())
+        {
+            if (stack.getItem() != Items.WHEAT)
+            {
+                list.add(stack);
+            }
+            else
+            {
+                copy = stack.copy();
+            }
+        }
+
+        if (copy != null)
+        {
+            //Wheat will be reduced by chance only (Between 3 and 6- getBuildingLevel, meaning 3-5, 3-4, 3-3, 3-2, 3-1)
+            final int form = (getOwnBuilding().getMaxBuildingLevel() + 1) - (getOwnBuilding().getBuildingLevel() + ItemStackUtils.getSize(copy));
+            int req = 0;
+            if (form != 0)
+            {
+                req = form < 0 ? -worker.getRandom().nextInt(Math.abs(form)) : worker.getRandom().nextInt(form);
+            }
+            ItemStackUtils.changeSize(copy, req);
+            list.add(copy);
+        }
+
+        final ItemStack[] arrayToRequestAndRetrieve = list.toArray(new ItemStack[list.size()]);
+        checkIfRequestForItemExistOrCreateAsynch(arrayToRequestAndRetrieve);
+
+        InventoryUtils.removeStacksFromItemHandler(new InvWrapper(worker.getInventoryCitizen()), list);
+        currentBakingProduct.nextState();
+        getOwnBuilding().removeFromTasks(ProductState.UNCRAFTED, currentBakingProduct);
+        getOwnBuilding().addToTasks(ProductState.RAW, currentBakingProduct);
+
         return getState();
     }
 
@@ -469,17 +485,6 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     }
 
     /**
-     * Returns the fisherman's work building.
-     *
-     * @return building instance
-     */
-    @Override
-    public BuildingBaker getOwnBuilding()
-    {
-        return (BuildingBaker) worker.getWorkBuilding();
-    }
-
-    /**
      * Returns the fisherman's worker instance. Called from outside this class.
      *
      * @return citizen object.
@@ -488,10 +493,5 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     public EntityCitizen getCitizen()
     {
         return worker;
-    }
-
-    private int getRequiredProgressForKneading()
-    {
-        return PROGRESS_MULTIPLIER / Math.min(worker.getLevel() + 1, MAX_LEVEL) * KNEADING_TIME;
     }
 }

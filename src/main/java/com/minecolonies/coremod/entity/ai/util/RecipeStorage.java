@@ -37,12 +37,13 @@ public class RecipeStorage
 
     /**
      * Create an instance of the recipe storage.
-     * @param input the list of input items (required for the recipe).
-     * @param gridSize the required grid size to make it.
-     * @param primaryOutput the primary output of the recipe.
+     *
+     * @param input           the list of input items (required for the recipe).
+     * @param gridSize        the required grid size to make it.
+     * @param primaryOutput   the primary output of the recipe.
      * @param secondaryOutput the secondary output (like buckets or similar).
      */
-    public RecipeStorage(final List<ItemStack> input, final int gridSize, final ItemStack primaryOutput, final ItemStack...secondaryOutput)
+    public RecipeStorage(final List<ItemStack> input, final int gridSize, final ItemStack primaryOutput, final ItemStack... secondaryOutput)
     {
         this.input = Collections.unmodifiableList(input);
         this.primaryOutput = primaryOutput;
@@ -55,6 +56,7 @@ public class RecipeStorage
      * Suppressing Sonar Rule Squid:S2384
      * The rule thinks we should return a copy of the list and not the list itself.
      * But in this case the rule does not apply because the list is an unmodifiable list already
+     *
      * @return the list.
      */
     @SuppressWarnings("squid:S2384")
@@ -65,6 +67,7 @@ public class RecipeStorage
 
     /**
      * Get the list of output items.
+     *
      * @return the copy of the list.
      */
     @SuppressWarnings("squid:S2384")
@@ -75,6 +78,7 @@ public class RecipeStorage
 
     /**
      * Getter for the primary output.
+     *
      * @return the itemStack to be produced.
      */
     public ItemStack getPrimaryOutput()
@@ -84,6 +88,7 @@ public class RecipeStorage
 
     /**
      * Get the grid size.
+     *
      * @return the integer representing it. (2x2 = 4, 3x3 = 9, etc)
      */
     public int getGridSize()
@@ -93,32 +98,33 @@ public class RecipeStorage
 
     /**
      * Method to check if with the help of inventories this recipe can be fullfilled.
+     *
      * @param inventories the inventories to check.
      * @return true if possible, else false.
      */
-    public boolean canFullFillRecipe(@NotNull final IItemHandler...inventories)
+    public boolean canFullFillRecipe(@NotNull final IItemHandler... inventories)
     {
-        for(final ItemStack stack: input)
+        for (final ItemStack stack : input)
         {
             int amountNeeded = ItemStackUtils.getSize(stack);
             boolean hasStack = false;
-            for(final IItemHandler handler: inventories)
+            for (final IItemHandler handler : inventories)
             {
                 hasStack = InventoryUtils.hasItemInItemHandler(handler, itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.isItemEqual(stack));
 
-                if(hasStack)
+                if (hasStack)
                 {
                     final int count = InventoryUtils.getItemCountInItemHandler(handler, itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.isItemEqual(stack));
-                    if(count >= amountNeeded)
+                    if (count >= amountNeeded)
                     {
                         break;
                     }
                     hasStack = false;
-                    amountNeeded-= count;
+                    amountNeeded -= count;
                 }
             }
 
-            if(!hasStack)
+            if (!hasStack)
             {
                 return false;
             }

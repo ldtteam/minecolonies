@@ -7,10 +7,9 @@ import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
-
 import net.minecraftforge.fml.common.registry.IForgeRegistry;
 
-public abstract class AbstractBlockMinecoloniesContainer<B extends AbstractBlockMinecoloniesContainer<B>> extends BlockContainer  implements IBlockMinecolonies<B>
+public abstract class AbstractBlockMinecoloniesContainer<B extends AbstractBlockMinecoloniesContainer<B>> extends BlockContainer implements IBlockMinecolonies<B>
 {
     public AbstractBlockMinecoloniesContainer(final Material blockMaterialIn, final MapColor blockMapColorIn)
     {
@@ -24,6 +23,7 @@ public abstract class AbstractBlockMinecoloniesContainer<B extends AbstractBlock
 
     /**
      * Registery block at gameregistry.
+     *
      * @param registry the registry to use.
      * @return the block itself.
      */
@@ -37,6 +37,7 @@ public abstract class AbstractBlockMinecoloniesContainer<B extends AbstractBlock
 
     /**
      * Registery block at gameregistry.
+     *
      * @param registry the registry to use.
      */
     @Override

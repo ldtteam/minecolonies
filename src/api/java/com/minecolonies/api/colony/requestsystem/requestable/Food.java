@@ -31,46 +31,49 @@ public class Food implements IDeliverable
         this.result = result;
     }
 
-    @Override
-    public boolean matches(@NotNull final ItemStack stack)
-    {
-        return stack.getItem() instanceof ItemFood && stack.getCount() >= getCount();
-    }
-
-    @Override
-    public int getCount()
-    {
-        return count;
-    }
-
-    @Override
-    public void setResult(@NotNull final ItemStack result)
-    {
-        this.result = result;
-    }
-
-    @NotNull
-    @Override
-    public ItemStack getResult()
-    {
-        return result;
-    }
-
     public static NBTTagCompound serialize(IFactoryController controller, Food food)
     {
         NBTTagCompound compound = new NBTTagCompound();
         compound.setInteger(NBT_COUNT, food.count);
 
         if (!ItemStackUtils.isEmpty(food.result))
+        {
             compound.setTag(NBT_RESULT, food.result.serializeNBT());
+        }
 
         return compound;
     }
 
-    public static Food deserialize(IFactoryController controller, NBTTagCompound compound) {
+    public static Food deserialize(IFactoryController controller, NBTTagCompound compound)
+    {
         int count = compound.getInteger(NBT_COUNT);
         ItemStack result = compound.hasKey(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompoundTag(NBT_RESULT)) : ItemStackUtils.EMPTY;
 
         return new Food(count, result);
     }
+
+    @Override
+    public boolean matches(@NotNull final ItemStack stack)
+    {
+        return stack.getItem() instanceof ItemFood && stack.getCount() >= getCount();
+    }    @Override
+    public void setResult(@NotNull final ItemStack result)
+    {
+        this.result = result;
+    }
+
+    @Override
+    public int getCount()
+    {
+        return count;
+    }    @NotNull
+    @Override
+    public ItemStack getResult()
+    {
+        return result;
+    }
+
+
+
+
 }

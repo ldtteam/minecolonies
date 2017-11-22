@@ -39,7 +39,7 @@ import static com.minecolonies.api.util.constant.Suppression.CLASSES_SHOULD_NOT_
 @SuppressWarnings(CLASSES_SHOULD_NOT_ACCESS_STATIC_MEMBERS_OF_THEIR_OWN_SUBCLASSES_DURING_INITIALIZATION)
 public abstract class AbstractJob
 {
-    private static final String TAG_TYPE = "type";
+    private static final String TAG_TYPE           = "type";
     private static final String TAG_ASYNC_REQUESTS = "asyncRequests";
 
     private static final String MAPPING_PLACEHOLDER = "Placeholder";
@@ -77,8 +77,7 @@ public abstract class AbstractJob
     }
 
     private final CitizenData citizen;
-    private       String          nameTag     = "";
-
+    private String nameTag = "";
 
     /**
      * A set of tokens that point to requests for which we do not wait.
@@ -158,7 +157,7 @@ public abstract class AbstractJob
             catch (final RuntimeException ex)
             {
                 Log.getLogger().error(String.format("A Job %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-                        compound.getString(TAG_TYPE), oclass.getName()), ex);
+                  compound.getString(TAG_TYPE), oclass.getName()), ex);
                 job = null;
             }
         }
@@ -205,16 +204,6 @@ public abstract class AbstractJob
     }
 
     /**
-     * Get the CitizenData that this Job belongs to.
-     *
-     * @return CitizenData that owns this Job.
-     */
-    public CitizenData getCitizen()
-    {
-        return citizen;
-    }
-
-    /**
      * Get the Colony that this Job is associated with (shortcut for getCitizen().getColony()).
      *
      * @return {@link Colony} of the citizen.
@@ -240,6 +229,11 @@ public abstract class AbstractJob
 
         compound.setString(TAG_TYPE, s);
         compound.setTag(TAG_ASYNC_REQUESTS, getAsyncRequests().stream().map(StandardFactoryController.getInstance()::serialize).collect(NBTUtils.toNBTTagList()));
+    }
+
+    public Set<IToken> getAsyncRequests()
+    {
+        return asyncRequests;
     }
 
     /**
@@ -332,13 +326,9 @@ public abstract class AbstractJob
 
     }
 
-    public Set<IToken> getAsyncRequests()
-    {
-        return asyncRequests;
-    }
-
     /**
      * Method called when a stack is pickup by the entity.
+     *
      * @param pickedUpStack The stack that is being picked up.
      * @return true when the stack has been used to resolve a request, false when not.
      */
@@ -361,5 +351,15 @@ public abstract class AbstractJob
         }
 
         return false;
+    }
+
+    /**
+     * Get the CitizenData that this Job belongs to.
+     *
+     * @return CitizenData that owns this Job.
+     */
+    public CitizenData getCitizen()
+    {
+        return citizen;
     }
 }

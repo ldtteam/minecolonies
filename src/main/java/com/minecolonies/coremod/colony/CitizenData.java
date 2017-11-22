@@ -29,6 +29,10 @@ import java.util.Random;
  */
 public class CitizenData
 {
+    /**
+     * Maximum saturation of a citizen.
+     */
+    public static final int MAX_SATURATION = 10;
     private static final float  MAX_HEALTH              = 20.0F;
     /**
      * Max level of an attribute a citizen may initially have.
@@ -53,74 +57,55 @@ public class CitizenData
     private static final String TAG_SKILL_INTELLIGENCE  = "intelligence";
     private static final String TAG_SKILL_DEXTERITY     = "dexterity";
     private static final String TAG_SATURATION          = "saturation";
-    private static final String                 TAG_HELD_ITEM_SLOT   = "HeldItemSlot";
-
+    private static final String TAG_HELD_ITEM_SLOT      = "HeldItemSlot";
     /**
      * Minimum saturation of a citizen.
      */
     private static final int MIN_SATURATION = 0;
-
-    /**
-     * Maximum saturation of a citizen.
-     */
-    public static final int MAX_SATURATION = 10;
-
     /**
      * The unique citizen id.
      */
     private final int id;
-
-    /**
-     * The name of the citizen.
-     */
-    private String name;
-
-    /**
-     * Boolean gender, true = female, false = male.
-     */
-    private boolean female;
-
-    /**
-     * The id of the citizens texture.
-     */
-    private int textureId;
-
     /**
      * The colony the citizen belongs to.
      */
     private final Colony colony;
-
+    private final InventoryCitizen inventory;
+    /**
+     * The name of the citizen.
+     */
+    private String name;
+    /**
+     * Boolean gender, true = female, false = male.
+     */
+    private boolean female;
+    /**
+     * The id of the citizens texture.
+     */
+    private int textureId;
     /**
      * The home building of the citizen.
      */
     @Nullable
     private AbstractBuilding homeBuilding;
-
     /**
      * The work building of the citizen.
      */
     @Nullable
     private AbstractBuildingWorker workBuilding;
-
     /**
      * The job of the citizen.
      */
     private AbstractJob job;
-
     /**
      * If the citizen is dirty (Has to be updated on client side).
      */
     private boolean dirty;
-
     /**
      * Its entitity.
      */
     @Nullable
     private EntityCitizen entity;
-
-
-    private final InventoryCitizen inventory;
-
     /**
      * Attributes, which influence the workers behaviour.
      * May be added more later.
@@ -249,6 +234,70 @@ public class CitizenData
         colony.markCitizensDirty();
     }
 
+    /**
+     * Create a CitizenData View given it's saved NBTTagCompound.
+     *
+     * @param id  The citizen's id.
+     * @param buf The network data.
+     * @return View object of the citizen.
+     */
+    @Nullable
+    public static CitizenDataView createCitizenDataView(final int id, final ByteBuf buf)
+    {
+        @Nullable CitizenDataView citizenDataView = new CitizenDataView(id);
+
+        try
+        {
+            citizenDataView.deserialize(buf);
+        }
+        catch (final RuntimeException ex)
+        {
+            Log.getLogger().error(String.format("A CitizenData.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
+              citizenDataView.getId()), ex);
+            citizenDataView = null;
+        }
+
+        return citizenDataView;
+    }
+
+    /**
+     * Returns a random element in a list.
+     *
+     * @param rand  Random object.
+     * @param array Array to select from.
+     * @return Random element from array.
+     */
+    private static String getRandomElement(@NotNull final Random rand, @NotNull final String[] array)
+    {
+        return array[rand.nextInt(array.length)];
+    }
+
+    /**
+     * Returns a random capital letter from the alphabet.
+     *
+     * @param rand Random object.
+     * @return Random capital letter.
+     */
+    private static char getRandomLetter(@NotNull final Random rand)
+    {
+        return (char) (rand.nextInt(LETTERS_IN_THE_ALPHABET) + 'A');
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = id;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (female ? 1 : 0);
+        result = 31 * result + (colony != null ? colony.hashCode() : 0);
+        result = 31 * result + strength;
+        result = 31 * result + endurance;
+        result = 31 * result + charisma;
+        result = 31 * result + intelligence;
+        result = 31 * result + dexterity;
+        return result;
+    }
+
     @Override
     public boolean equals(final Object o)
     {
@@ -298,47 +347,6 @@ public class CitizenData
         return colony != null ? (data.colony != null && colony.getID() == data.colony.getID()) : (data.colony == null);
     }
 
-    @Override
-    public int hashCode()
-    {
-        int result = id;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (female ? 1 : 0);
-        result = 31 * result + (colony != null ? colony.hashCode() : 0);
-        result = 31 * result + strength;
-        result = 31 * result + endurance;
-        result = 31 * result + charisma;
-        result = 31 * result + intelligence;
-        result = 31 * result + dexterity;
-        return result;
-    }
-
-    /**
-     * Create a CitizenData View given it's saved NBTTagCompound.
-     *
-     * @param id  The citizen's id.
-     * @param buf The network data.
-     * @return View object of the citizen.
-     */
-    @Nullable
-    public static CitizenDataView createCitizenDataView(final int id, final ByteBuf buf)
-    {
-        @Nullable CitizenDataView citizenDataView = new CitizenDataView(id);
-
-        try
-        {
-            citizenDataView.deserialize(buf);
-        }
-        catch (final RuntimeException ex)
-        {
-            Log.getLogger().error(String.format("A CitizenData.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-                    citizenDataView.getId()), ex);
-            citizenDataView = null;
-        }
-
-        return citizenDataView;
-    }
-
     /**
      * Returns the colony of the citizen.
      *
@@ -383,7 +391,7 @@ public class CitizenData
         final int levelCap = (int) colony.getOverallHappiness();
         @NotNull final Random random = new Random();
 
-        if(levelCap <= 1)
+        if (levelCap <= 1)
         {
             intelligence = 1;
             charisma = 1;
@@ -416,12 +424,12 @@ public class CitizenData
         if (female)
         {
             citizenName = String.format("%s %s. %s", getRandomElement(rand, Configurations.names.femaleFirstNames), getRandomLetter(rand),
-                    getRandomElement(rand, Configurations.names.lastNames));
+              getRandomElement(rand, Configurations.names.lastNames));
         }
         else
         {
             citizenName = String.format("%s %s. %s", getRandomElement(rand, Configurations.names.maleFirstNames), getRandomLetter(rand),
-                    getRandomElement(rand, Configurations.names.lastNames));
+              getRandomElement(rand, Configurations.names.lastNames));
         }
         for (int i = 1; i <= this.getColony().getMaxCitizens(); i++)
         {
@@ -431,29 +439,6 @@ public class CitizenData
             }
         }
         return citizenName;
-    }
-
-    /**
-     * Returns a random element in a list.
-     *
-     * @param rand  Random object.
-     * @param array Array to select from.
-     * @return Random element from array.
-     */
-    private static String getRandomElement(@NotNull final Random rand, @NotNull final String[] array)
-    {
-        return array[rand.nextInt(array.length)];
-    }
-
-    /**
-     * Returns a random capital letter from the alphabet.
-     *
-     * @param rand Random object.
-     * @return Random capital letter.
-     */
-    private static char getRandomLetter(@NotNull final Random rand)
-    {
-        return (char) (rand.nextInt(LETTERS_IN_THE_ALPHABET) + 'A');
     }
 
     /**
@@ -768,11 +753,11 @@ public class CitizenData
         ByteBufUtils.writeUTF8String(buf, (job != null) ? job.getName() : "");
 
         final EntityCitizen citizen = getCitizenEntity();
-        if(citizen != null)
+        if (citizen != null)
         {
             final ITextComponent[] latestStatus = citizen.getLatestStatus();
             buf.writeInt(latestStatus.length);
-            for(int i = 0; i < latestStatus.length; i++)
+            for (int i = 0; i < latestStatus.length; i++)
             {
                 ByteBufUtils.writeUTF8String(buf, latestStatus[i] == null ? "" : latestStatus[i].getUnformattedText());
             }
@@ -807,35 +792,6 @@ public class CitizenData
     public void setLevel(final int lvl)
     {
         this.level = lvl;
-    }
-
-    /**
-     * Getter for the saturation.
-     *
-     * @param extraSaturation the extra saturation
-     */
-    public void increaseSaturation(final double extraSaturation)
-    {
-        this.saturation = Math.min(MAX_SATURATION, this.saturation + Math.abs(extraSaturation));
-    }
-
-    /**
-     * Getter for the saturation.
-     *
-     * @param extraSaturation the saturation to remove.
-     */
-    public void decreaseSaturation(final double extraSaturation)
-    {
-        this.saturation = Math.max(MIN_SATURATION, this.saturation - Math.abs(extraSaturation));
-    }
-
-    /**
-     * Resets the experience and the experience level of the citizen.
-     */
-    public void resetExperienceAndLevel()
-    {
-        this.level = 0;
-        this.experience = 0;
     }
 
     /**
@@ -908,6 +864,35 @@ public class CitizenData
         return this.saturation;
     }
 
+    /**
+     * Getter for the saturation.
+     *
+     * @param extraSaturation the extra saturation
+     */
+    public void increaseSaturation(final double extraSaturation)
+    {
+        this.saturation = Math.min(MAX_SATURATION, this.saturation + Math.abs(extraSaturation));
+    }
+
+    /**
+     * Getter for the saturation.
+     *
+     * @param extraSaturation the saturation to remove.
+     */
+    public void decreaseSaturation(final double extraSaturation)
+    {
+        this.saturation = Math.max(MIN_SATURATION, this.saturation - Math.abs(extraSaturation));
+    }
+
+    /**
+     * Resets the experience and the experience level of the citizen.
+     */
+    public void resetExperienceAndLevel()
+    {
+        this.level = 0;
+        this.experience = 0;
+    }
+
     public InventoryCitizen getInventory()
     {
         return inventory;
@@ -927,11 +912,6 @@ public class CitizenData
         return requestedToken;
     }
 
-    public boolean isRequestAsync(@NotNull IToken token)
-    {
-        return job.getAsyncRequests().contains(token);
-    }
-
     public void onRequestCancelled(@NotNull IToken token)
     {
         if (isRequestAsync(token))
@@ -940,4 +920,8 @@ public class CitizenData
         }
     }
 
+    public boolean isRequestAsync(@NotNull IToken token)
+    {
+        return job.getAsyncRequests().contains(token);
+    }
 }

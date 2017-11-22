@@ -35,12 +35,6 @@ public class Delivery implements IRequestable
     }
 
     @NotNull
-    public ILocation getStart()
-    {
-        return start;
-    }
-
-    @NotNull
     public static NBTTagCompound serialize(@NotNull final IFactoryController controller, final Delivery delivery)
     {
         final NBTTagCompound compound = new NBTTagCompound();
@@ -53,15 +47,16 @@ public class Delivery implements IRequestable
     }
 
     @NotNull
-    public static Delivery deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound compound)
+    public ILocation getStart()
     {
-        final ILocation start = controller.deserialize(compound.getCompoundTag(NBT_START));
-        final ILocation target = controller.deserialize(compound.getCompoundTag(NBT_TARGET));
-        final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompoundTag(NBT_STACK));
-
-        return new Delivery(start, target, stack);
+        return start;
     }
 
+    @NotNull
+    public ILocation getTarget()
+    {
+        return target;
+    }
 
     @NotNull
     public ItemStack getStack()
@@ -70,8 +65,12 @@ public class Delivery implements IRequestable
     }
 
     @NotNull
-    public ILocation getTarget()
+    public static Delivery deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound compound)
     {
-        return target;
+        final ILocation start = controller.deserialize(compound.getCompoundTag(NBT_START));
+        final ILocation target = controller.deserialize(compound.getCompoundTag(NBT_TARGET));
+        final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompoundTag(NBT_STACK));
+
+        return new Delivery(start, target, stack);
     }
 }

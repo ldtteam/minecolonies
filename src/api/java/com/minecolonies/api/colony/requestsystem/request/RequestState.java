@@ -73,7 +73,6 @@ public enum RequestState
          */
         Collections.addAll(indexList, RequestState.values());
     }
-
     /**
      * This is an empty constructor, i don't know why, Orion probably does =D.
      */

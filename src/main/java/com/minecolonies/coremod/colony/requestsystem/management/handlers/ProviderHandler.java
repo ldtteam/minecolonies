@@ -180,7 +180,6 @@ public final class ProviderHandler
                 {
                     LogHandler.log("Finished reassignment of: " + requestToken + " - Assigned to: " + manager.getRequestResolverMap().get(requestToken));
                 }
-
             }
 
             ResolverHandler.removeResolver(manager, resolverToken);

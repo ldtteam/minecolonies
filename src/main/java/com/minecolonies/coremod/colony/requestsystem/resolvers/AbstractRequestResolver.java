@@ -45,16 +45,16 @@ public abstract class AbstractRequestResolver<R extends IRequestable> implements
         return location;
     }
 
-    @Override
-    public int getPriority()
-    {
-        return CONST_DEFAULT_RESOLVER_PRIORITY;
-    }
-
     @NotNull
     @Override
     public ITextComponent getDisplayName(@NotNull final IToken token)
     {
         return new TextComponentString("Request System");
+    }
+
+    @Override
+    public int getPriority()
+    {
+        return CONST_DEFAULT_RESOLVER_PRIORITY;
     }
 }

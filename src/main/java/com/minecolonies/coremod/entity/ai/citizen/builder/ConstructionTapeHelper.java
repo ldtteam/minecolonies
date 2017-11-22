@@ -36,93 +36,25 @@ public final class ConstructionTapeHelper
     }
 
     /**
-     * Check if a block is placeable and return new Y position.
-     *
-     * @param x     Block X position.
-     * @param y     Block Y position.
-     * @param z     Block Z position.
-     * @param world the world.
-     * @return The new Y position.
-     */
-
-    public static int checkIfPlaceable(@NotNull final int x, @NotNull final int y, @NotNull final int z, @NotNull final World world)
-    {
-        int newY = y;
-        boolean working = true;
-        while (working)
-        {
-            final BlockPos block = new BlockPos(x, newY, z);
-            final BlockPos blockMin1 = new BlockPos(x, newY - 1, z);
-            if (world.getBlockState(block).getMaterial().isReplaceable())
-            {
-                if (world.getBlockState(blockMin1).getMaterial().isReplaceable() && newY >= 1)
-                {
-                    newY = newY - 1;
-                }
-                else
-                {
-                    working = false;
-                }
-            }
-            else
-            {
-                newY = newY + 1;
-            }
-        }
-        return newY > 0 ? newY : y;
-    }
-
-    /**
-     * @param world            the world.
-     * @param block            the block.
-     * @param tapeOrTapeCorner Is the checked block supposed to be ConstructionTape or ConstructionTapeCorner.
-     */
-    public static void removeTapeIfNecessary(@NotNull final World world, @NotNull final BlockPos block, @NotNull final Block tapeOrTapeCorner)
-    {
-        for (int y = MINHEIGHT; y <= MAXHEIGHT; y++)
-        {
-            final BlockPos newBlock = new BlockPos(block.getX(), y, block.getZ());
-            if (world.getBlockState(newBlock).getBlock() == tapeOrTapeCorner)
-            {
-                world.setBlockState(newBlock, Blocks.AIR.getDefaultState());
-                break;
-            }
-        }
-    }
-
-    /**
      * Calculates the borders for the workOrderBuildDecoration and sends it to the placement.
+     *
      * @param workOrder the workOrder.
-     * @param world the world.
+     * @param world     the world.
      */
     public static void placeConstructionTape(@NotNull final WorkOrderBuildDecoration workOrder, @NotNull final World world)
     {
         final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
-                = ColonyUtils.calculateCorners(workOrder.getBuildingLocation(), world,
-                new StructureWrapper(world, workOrder.getStructureName()), workOrder.getRotation(world), workOrder.isMirrored());
+          = ColonyUtils.calculateCorners(workOrder.getBuildingLocation(), world,
+          new StructureWrapper(world, workOrder.getStructureName()), workOrder.getRotation(world), workOrder.isMirrored());
         placeConstructionTape(workOrder.getBuildingLocation(), corners, world);
     }
 
     /**
-     * Calculates the borders for the workOrderBuildDecoration and sends it to the removal.
-     * @param workOrder the workOrder.
-     * @param world the world.
-     */
-    public static void removeConstructionTape(@NotNull final WorkOrderBuildDecoration workOrder, @NotNull final World world)
-    {
-        final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
-                = ColonyUtils.calculateCorners(workOrder.getBuildingLocation(), world,
-                new StructureWrapper(world, workOrder.getStructureName()), workOrder.getRotation(world), workOrder.isMirrored());
-        removeConstructionTape(corners, world);
-    }
-
-
-    /**
      * Place construction tape.
      *
-     * @param pos the building pos
+     * @param pos     the building pos
      * @param corners the corner positions.
-     * @param world the world.
+     * @param world   the world.
      */
     public static void placeConstructionTape(final BlockPos pos, final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners, @NotNull final World world)
     {
@@ -202,10 +134,61 @@ public final class ConstructionTapeHelper
     }
 
     /**
+     * Check if a block is placeable and return new Y position.
+     *
+     * @param x     Block X position.
+     * @param y     Block Y position.
+     * @param z     Block Z position.
+     * @param world the world.
+     * @return The new Y position.
+     */
+
+    public static int checkIfPlaceable(@NotNull final int x, @NotNull final int y, @NotNull final int z, @NotNull final World world)
+    {
+        int newY = y;
+        boolean working = true;
+        while (working)
+        {
+            final BlockPos block = new BlockPos(x, newY, z);
+            final BlockPos blockMin1 = new BlockPos(x, newY - 1, z);
+            if (world.getBlockState(block).getMaterial().isReplaceable())
+            {
+                if (world.getBlockState(blockMin1).getMaterial().isReplaceable() && newY >= 1)
+                {
+                    newY = newY - 1;
+                }
+                else
+                {
+                    working = false;
+                }
+            }
+            else
+            {
+                newY = newY + 1;
+            }
+        }
+        return newY > 0 ? newY : y;
+    }
+
+    /**
+     * Calculates the borders for the workOrderBuildDecoration and sends it to the removal.
+     *
+     * @param workOrder the workOrder.
+     * @param world     the world.
+     */
+    public static void removeConstructionTape(@NotNull final WorkOrderBuildDecoration workOrder, @NotNull final World world)
+    {
+        final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
+          = ColonyUtils.calculateCorners(workOrder.getBuildingLocation(), world,
+          new StructureWrapper(world, workOrder.getStructureName()), workOrder.getRotation(world), workOrder.isMirrored());
+        removeConstructionTape(corners, world);
+    }
+
+    /**
      * Remove construction tape.
      *
      * @param corners the corner positions.
-     * @param world    the world.
+     * @param world   the world.
      */
     public static void removeConstructionTape(final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners, @NotNull final World world)
     {
@@ -262,5 +245,23 @@ public final class ConstructionTapeHelper
         removeTapeIfNecessary(world, corner2, ModBlocks.blockConstructionTapeCorner);
         removeTapeIfNecessary(world, corner3, ModBlocks.blockConstructionTapeCorner);
         removeTapeIfNecessary(world, corner4, ModBlocks.blockConstructionTapeCorner);
+    }
+
+    /**
+     * @param world            the world.
+     * @param block            the block.
+     * @param tapeOrTapeCorner Is the checked block supposed to be ConstructionTape or ConstructionTapeCorner.
+     */
+    public static void removeTapeIfNecessary(@NotNull final World world, @NotNull final BlockPos block, @NotNull final Block tapeOrTapeCorner)
+    {
+        for (int y = MINHEIGHT; y <= MAXHEIGHT; y++)
+        {
+            final BlockPos newBlock = new BlockPos(block.getX(), y, block.getZ());
+            if (world.getBlockState(newBlock).getBlock() == tapeOrTapeCorner)
+            {
+                world.setBlockState(newBlock, Blocks.AIR.getDefaultState());
+                break;
+            }
+        }
     }
 }

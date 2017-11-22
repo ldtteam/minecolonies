@@ -74,6 +74,7 @@ public class FMLEventHandler
 
     /**
      * Called when the config is changed, used to synch between file and game.
+     *
      * @param event the on config changed event.
      */
     @SubscribeEvent

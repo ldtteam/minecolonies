@@ -5,7 +5,7 @@ import net.minecraftforge.fml.common.registry.IForgeRegistry;
 
 /**
  * Class handling the registering of the mod items.
- *
+ * <p>
  * We disabled the following finals since we are neither able to mark the items as final, nor do we want to provide public accessors.
  */
 @SuppressWarnings({"squid:ClassVariableVisibilityCheck", "squid:S2444", "squid:S1444"})
@@ -39,7 +39,6 @@ public final class ModItems
 
     /**
      * Initates all the blocks. At the correct time.
-     * @param registry
      */
     public static void init(final IForgeRegistry<Item> registry)
     {
@@ -54,8 +53,8 @@ public final class ModItems
         chiefSword = new ItemChiefSword();
         clipboard = new ItemClipBoard();
         itemAchievementProxySettlement = new ItemAchievementProxy("sizeSettlement");
-        itemAchievementProxyTown       = new ItemAchievementProxy("sizeTown");
-        itemAchievementProxyCity       = new ItemAchievementProxy("sizeCity");
+        itemAchievementProxyTown = new ItemAchievementProxy("sizeTown");
+        itemAchievementProxyCity = new ItemAchievementProxy("sizeCity");
         itemAchievementProxyMetropolis = new ItemAchievementProxy("sizeMetropolis");
 
         registry.register(supplyChest);

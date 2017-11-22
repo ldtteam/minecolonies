@@ -34,7 +34,9 @@ public final class RequestHandler
     {
         final IToken<UUID> token = TokenHandler.generateNewToken(manager);
 
-        final IRequest<Request> constructedRequest = manager.getFactoryController().getNewInstance(TypeToken.of((Class<? extends IRequest<Request>>) RequestMappingHandler.getRequestableMappings().get(request.getClass())), request, token, requester);
+        final IRequest<Request> constructedRequest = manager.getFactoryController()
+                                                       .getNewInstance(TypeToken.of((Class<? extends IRequest<Request>>) RequestMappingHandler.getRequestableMappings()
+                                                                                                                           .get(request.getClass())), request, token, requester);
 
         LogHandler.log("Creating request for: " + request + ", token: " + token + " and output: " + constructedRequest);
 
@@ -76,6 +78,7 @@ public final class RequestHandler
      * @param request                The request to assign.
      * @param resolverTokenBlackList Each resolver that has its token in this blacklist will be skipped when checking for a possible resolver.
      * @return The token of the resolver that has gotten the request assigned, null if none was found.
+     *
      * @throws IllegalArgumentException is thrown when the request is unknown to this manager.
      */
     @SuppressWarnings(Suppression.UNCHECKED)
@@ -104,6 +107,7 @@ public final class RequestHandler
      * @param request                The request to assign.
      * @param resolverTokenBlackList Each resolver that has its token in this blacklist will be skipped when checking for a possible resolver.
      * @return The token of the resolver that has gotten the request assigned, null if none was found.
+     *
      * @throws IllegalArgumentException is thrown when the request is unknown to this manager.
      */
     @SuppressWarnings(Suppression.UNCHECKED)
@@ -122,9 +126,12 @@ public final class RequestHandler
 
         Set<IToken> failedResolvers = new HashSet<>();
 
-        for(TypeToken requestType : requestTypes) {
+        for (TypeToken requestType : requestTypes)
+        {
             if (!manager.getRequestClassResolverMap().containsKey(requestType))
+            {
                 continue;
+            }
 
             Collection<IRequestResolver> resolversForRequestType = manager.getRequestClassResolverMap().get(requestType);
             resolversForRequestType = resolversForRequestType.stream()
@@ -160,7 +167,7 @@ public final class RequestHandler
 
                 //Successfully found a resolver. Registering
                 LogHandler.log("Finished resolver assignment search for request: " + request + " successfully");
-                
+
                 if (!manager.isDataSimulation())
                 {
                     ResolverHandler.addRequestToResolver(manager, resolver, request);
@@ -185,7 +192,7 @@ public final class RequestHandler
                     request.setState(new WrappedStaticStateRequestManager(manager), RequestState.IN_PROGRESS);
                     if (!request.hasChildren())
                     {
-                        if(!manager.isDataSimulation())
+                        if (!manager.isDataSimulation())
                         {
                             resolveRequest(manager, request);
                         }
@@ -202,13 +209,16 @@ public final class RequestHandler
     /**
      * Method used to reassign the request to a resolver that is not in the given blacklist.
      * Cancels the request internally without notify the requester, and attempts a reassign. If the reassignment failed, it is assigned back to the orignal resolver.
-     * @param manager The manager that is reassigning a request.
-     * @param request The request that is being reassigned.
+     *
+     * @param manager                The manager that is reassigning a request.
+     * @param request                The request that is being reassigned.
      * @param resolverTokenBlackList The blacklist to which not to assign the request.
      * @return The token of the resolver that has gotten the request assigned, null if none was found.
+     *
      * @throws IllegalArgumentException Thrown when something went wrong.
      */
-    public static IToken reassignRequest(final IStandardRequestManager manager, final IRequest request, final Collection<IToken> resolverTokenBlackList) throws IllegalArgumentException
+    public static IToken reassignRequest(final IStandardRequestManager manager, final IRequest request, final Collection<IToken> resolverTokenBlackList)
+      throws IllegalArgumentException
     {
         //Cancel the request to restart the search
         processInternalCancellation(manager, request.getToken());
@@ -337,7 +347,7 @@ public final class RequestHandler
      * Method used to handle cancellation internally without notifying the requester that the request has been cancelled.
      *
      * @param manager The manager for which the cancellation is internally processed.
-     * @param token The token which is internally processed.
+     * @param token   The token which is internally processed.
      */
     public static void processInternalCancellation(final IStandardRequestManager manager, final IToken token)
     {
@@ -366,8 +376,8 @@ public final class RequestHandler
     /**
      * Method used during clean up to process Parent replacement.
      *
-     * @param manager The manager which is handling the cleanup.
-     * @param target The target request, which gets their parent replaced.
+     * @param manager   The manager which is handling the cleanup.
+     * @param target    The target request, which gets their parent replaced.
      * @param newParent The new cleanup request used to cleanup the target when it is finished.
      */
     public static void processParentReplacement(final IStandardRequestManager manager, final IRequest target, final IRequest newParent)
@@ -486,16 +496,12 @@ public final class RequestHandler
     private final static class AssigningResult implements Comparable<AssigningResult>
     {
         private final IRequestResolver resolver;
-        private final List<IToken> children;
+        private final List<IToken>     children;
 
-        private AssigningResult(final IRequestResolver resolver, final List<IToken> children) {
+        private AssigningResult(final IRequestResolver resolver, final List<IToken> children)
+        {
             this.resolver = resolver;
             this.children = children;
-        }
-
-        public IRequestResolver getResolver()
-        {
-            return resolver;
         }
 
         public List<IToken> getChildren()
@@ -507,6 +513,11 @@ public final class RequestHandler
         public int compareTo(@NotNull final AssigningResult o)
         {
             return this.children.size() != o.children.size() ? this.children.size() - o.children.size() : o.getResolver().getPriority() - this.getResolver().getPriority();
+        }
+
+        public IRequestResolver getResolver()
+        {
+            return resolver;
         }
     }
 }

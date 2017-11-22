@@ -34,7 +34,7 @@ public final class StandardFactoryController implements IFactoryController
     /**
      * Instance variable.
      */
-    private static final StandardFactoryController  INSTANCE              = new StandardFactoryController();
+    private static final StandardFactoryController     INSTANCE              = new StandardFactoryController();
     /**
      * Primary (main) Input mappings.
      */
@@ -44,25 +44,25 @@ public final class StandardFactoryController implements IFactoryController
      * Primary (main) Output mappings.
      */
     @NotNull
-    private final        Map<TypeToken, Set<IFactory>>   primaryOutputMappings = new HashMap<>();
+    private final        Map<TypeToken, Set<IFactory>> primaryOutputMappings = new HashMap<>();
 
     /**
      * Secondary (super) output mappings
      */
     @NotNull
-    private final Map<TypeToken, Set<IFactory>>            secondaryOutputMappings    = new HashMap<>();
+    private final Map<TypeToken, Set<IFactory>>                secondaryOutputMappings = new HashMap<>();
     /**
      * A cache that holds all Mappers and their search secondary IO types.
      * Filled during runtime to speed up searches to factories when both Input and Output type are secondary types.
      */
     @NotNull
-    private final Cache<Tuple<TypeToken, TypeToken>, IFactory> secondaryMappingsCache = CacheBuilder.newBuilder().build();
+    private final Cache<Tuple<TypeToken, TypeToken>, IFactory> secondaryMappingsCache  = CacheBuilder.newBuilder().build();
 
     /**
      * List of the override handlers.
      */
     @NotNull
-    private final List<ITypeOverrideHandler> typeOverrideHandlers                     = new ArrayList<>();
+    private final List<ITypeOverrideHandler> typeOverrideHandlers = new ArrayList<>();
 
     /**
      * Private constructor. Throws IllegalStateException if already created.
@@ -202,7 +202,9 @@ public final class StandardFactoryController implements IFactoryController
         Set<IFactory> primaryOutputFactories = primaryOutputMappings.get(factory.getFactoryOutputType());
 
         if (primaryInputFactories.contains(factory) || primaryOutputFactories.contains(factory))
+        {
             throw new IllegalArgumentException("Cannot register the same factory twice!");
+        }
 
         primaryInputFactories.add(factory);
         primaryOutputFactories.add(factory);
@@ -276,7 +278,8 @@ public final class StandardFactoryController implements IFactoryController
     }
 
     @Override
-    public <Input, Output> Output getNewInstance(@NotNull final TypeToken<? extends Output> requestedType, @NotNull final Input input, @NotNull final Object... context) throws IllegalArgumentException, ClassCastException
+    public <Input, Output> Output getNewInstance(@NotNull final TypeToken<? extends Output> requestedType, @NotNull final Input input, @NotNull final Object... context)
+      throws IllegalArgumentException, ClassCastException
     {
         TypeToken<? extends Input> inputToken = TypeToken.of((Class<? extends Input>) input.getClass());
         final IFactory<Input, Output> factory = getFactoryForIO(inputToken, requestedType);

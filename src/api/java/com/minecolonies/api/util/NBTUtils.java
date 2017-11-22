@@ -1,6 +1,5 @@
 package com.minecolonies.api.util;
 
-import com.google.common.collect.Iterators;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -17,18 +16,20 @@ import java.util.stream.StreamSupport;
 public class NBTUtils
 {
 
-    public static Stream<NBTBase> streamBase(NBTTagList list)
-    {
-        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(new TagListIterator(list), Spliterator.ORDERED), false);
-    }
-
     public static Stream<NBTTagCompound> streamCompound(NBTTagList list)
     {
         return streamBase(list).filter(b -> b instanceof NBTTagCompound).map(b -> (NBTTagCompound) b);
     }
 
-    public static Collector<NBTTagCompound, NBTTagList, NBTTagList> toNBTTagList() {
-        return new Collector<NBTTagCompound, NBTTagList, NBTTagList>() {
+    public static Stream<NBTBase> streamBase(NBTTagList list)
+    {
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(new TagListIterator(list), Spliterator.ORDERED), false);
+    }
+
+    public static Collector<NBTTagCompound, NBTTagList, NBTTagList> toNBTTagList()
+    {
+        return new Collector<NBTTagCompound, NBTTagList, NBTTagList>()
+        {
             @Override
             public Supplier<NBTTagList> supplier()
             {
@@ -68,11 +69,11 @@ public class NBTUtils
         };
     }
 
+    private static class TagListIterator implements Iterator<NBTBase>
+    {
 
-    private static class TagListIterator implements Iterator<NBTBase>{
-
-        private int currentIndex = 0;
         private final NBTTagList list;
+        private int currentIndex = 0;
 
         private TagListIterator(final NBTTagList list) {this.list = list;}
 
@@ -88,6 +89,4 @@ public class NBTUtils
             return list.getCompoundTagAt(currentIndex++);
         }
     }
-
-
 }

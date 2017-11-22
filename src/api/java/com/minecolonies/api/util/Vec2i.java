@@ -19,16 +19,6 @@ public class Vec2i
         this.z = z;
     }
 
-    public int getX()
-    {
-        return x;
-    }
-
-    public int getZ()
-    {
-        return z;
-    }
-
     public long distanceSq(@NotNull final Vec2i vec2i)
     {
         return distanceSq(vec2i.getX(), vec2i.getZ());
@@ -40,6 +30,22 @@ public class Vec2i
         final long zDiff = (long) this.getZ() - y;
 
         return xDiff * xDiff + zDiff * zDiff;
+    }
+
+    public int getX()
+    {
+        return x;
+    }
+
+    public int getZ()
+    {
+        return z;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return (x << 16) + z;
     }
 
     @Override
@@ -57,11 +63,5 @@ public class Vec2i
         final Vec2i vec2i = (Vec2i) o;
 
         return x == vec2i.x && z == vec2i.z;
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return (x << 16) + z;
     }
 }

@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverFactory;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.DeliveryRequestResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.WarehouseRequestResolver;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 public class WarehouseRequestResolverFactory implements IRequestResolverFactory<WarehouseRequestResolver>
 {
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
-    private static final String NBT_TOKEN  = "Token";
+    private static final String NBT_TOKEN    = "Token";
     private static final String NBT_LOCATION = "Location";
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
@@ -35,9 +34,9 @@ public class WarehouseRequestResolverFactory implements IRequestResolverFactory<
     @NotNull
     @Override
     public WarehouseRequestResolver getNewInstance(
-                                                   @NotNull final IFactoryController factoryController,
-                                                   @NotNull final ILocation iLocation,
-                                                   @NotNull final Object... context)
+                                                    @NotNull final IFactoryController factoryController,
+                                                    @NotNull final ILocation iLocation,
+                                                    @NotNull final Object... context)
       throws IllegalArgumentException
     {
         return new WarehouseRequestResolver(iLocation, factoryController.getNewInstance(TypeConstants.ITOKEN));

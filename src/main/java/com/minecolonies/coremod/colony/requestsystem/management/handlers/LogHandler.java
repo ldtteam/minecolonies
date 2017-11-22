@@ -13,6 +13,7 @@ public final class LogHandler
 
     /**
      * Method used to log a string when the debug logging for the system is enabled.
+     *
      * @param logEntry The string to write.
      */
     public static void log(String logEntry)

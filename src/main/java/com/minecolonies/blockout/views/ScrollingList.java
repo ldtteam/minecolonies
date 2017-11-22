@@ -37,14 +37,10 @@ public class ScrollingList extends ScrollingView
         super(params);
     }
 
-    public void setDataProvider(final DataProvider p)
+    public void setDataProvider(final IntSupplier countSupplier, final IPaneUpdater paneUpdater)
     {
-        dataProvider = p;
-        refreshElementPanes();
-    }
-
-    public void setDataProvider(final IntSupplier countSupplier, final IPaneUpdater paneUpdater){
-        setDataProvider(new DataProvider() {
+        setDataProvider(new DataProvider()
+        {
             @Override
             public int getElementCount()
             {
@@ -59,10 +55,9 @@ public class ScrollingList extends ScrollingView
         });
     }
 
-    @Override
-    public void onUpdate()
+    public void setDataProvider(final DataProvider p)
     {
-        super.onUpdate();
+        dataProvider = p;
         refreshElementPanes();
     }
 
@@ -72,6 +67,13 @@ public class ScrollingList extends ScrollingView
     public void refreshElementPanes()
     {
         ((ScrollingListContainer) container).refreshElementPanes(dataProvider, listNodeParams);
+    }
+
+    @Override
+    public void onUpdate()
+    {
+        super.onUpdate();
+        refreshElementPanes();
     }
 
     @NotNull
@@ -132,7 +134,8 @@ public class ScrollingList extends ScrollingView
     {
         /**
          * Called to update a single pane of the given index with data.
-         * @param index The index to update.
+         *
+         * @param index   The index to update.
          * @param rowPane The pane to fill.
          */
         void apply(int index, Pane rowPane);

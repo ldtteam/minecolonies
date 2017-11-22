@@ -26,6 +26,7 @@ public interface IRequest<R extends IRequestable>
 
     /**
      * Method to get the assigning strategy for this request.
+     *
      * @return The assigning strategy for this request.
      */
     default AssigningStrategy getStrategy()
@@ -63,7 +64,7 @@ public interface IRequest<R extends IRequestable>
      * It is not recommended to call this method from outside of the request management system.
      *
      * @param manager the request manager.
-     * @param state The new state of this request.
+     * @param state   The new state of this request.
      */
     void setState(@NotNull IRequestManager manager, @NotNull RequestState state);
 
@@ -122,7 +123,7 @@ public interface IRequest<R extends IRequestable>
     /**
      * Method used to set the parent of a request.
      *
-     * @param <T> generic token.
+     * @param <T>    generic token.
      * @param parent The new parent, or null to clear the existing one.
      */
     <T extends IToken> void setParent(@Nullable T parent);
@@ -137,7 +138,7 @@ public interface IRequest<R extends IRequestable>
     /**
      * Method used to add a single Child.
      *
-     * @param <T> generic token.
+     * @param <T>   generic token.
      * @param child The new child request to add.
      */
     <T extends IToken> void addChild(@NotNull T child);
@@ -145,7 +146,7 @@ public interface IRequest<R extends IRequestable>
     /**
      * Method to add multiple children in a single call.
      *
-     * @param <T> generic token.
+     * @param <T>      generic token.
      * @param children An array of children to add.
      */
     <T extends IToken> void addChildren(@NotNull T... children);
@@ -153,7 +154,7 @@ public interface IRequest<R extends IRequestable>
     /**
      * Method to add multiple children in a single call.
      *
-     * @param <T> generic token.
+     * @param <T>      generic token.
      * @param children A collection of children to add.
      */
     <T extends IToken> void addChildren(@NotNull Collection<T> children);
@@ -161,7 +162,7 @@ public interface IRequest<R extends IRequestable>
     /**
      * Method used to remove a single Child.
      *
-     * @param <T> generic token.
+     * @param <T>   generic token.
      * @param child The new child request to remove.
      */
     <T extends IToken> void removeChild(@NotNull T child);
@@ -169,7 +170,7 @@ public interface IRequest<R extends IRequestable>
     /**
      * Method to remove multiple children in a single call.
      *
-     * @param <T> generic token.
+     * @param <T>      generic token.
      * @param children An array of children to remove.
      */
     <T extends IToken> void removeChildren(@NotNull T... children);
@@ -177,7 +178,7 @@ public interface IRequest<R extends IRequestable>
     /**
      * Method to remove multiple children in a single call.
      *
-     * @param <T> generic token.
+     * @param <T>      generic token.
      * @param children A collection of children to remove.
      */
     <T extends IToken> void removeChildren(@NotNull Collection<T> children);
@@ -224,7 +225,7 @@ public interface IRequest<R extends IRequestable>
     /**
      * Method used to set the delivery on a Request.
      * Should set the result.
-     *
+     * <p>
      * Noop this if it is not supported.
      *
      * @param delivery The delivery that is being made.
@@ -234,6 +235,7 @@ public interface IRequest<R extends IRequestable>
     /**
      * Method used to get a {@link ITextComponent} that can be displayed to the Player and describes the request in short.
      * Should represent the request, in case the player needs to fulfill it, or information about this request is required.
+     *
      * @return The text that describes this Request.
      */
     @NotNull
@@ -242,6 +244,7 @@ public interface IRequest<R extends IRequestable>
     /**
      * Method used to get a {@link ITextComponent} that can be displayed to the Player and describes so that the player can complete it.
      * Should represent the request, in case the player needs to fulfill it, or information about this request is required.
+     *
      * @return The text that describes this Request.
      */
     @NotNull
@@ -259,6 +262,7 @@ public interface IRequest<R extends IRequestable>
 
     /**
      * Method used to get a ResourceLocation that is displayed instead of the {@link #getDisplayStacks()}, when {@link #getDisplayStacks()} returns an empty list.
+     *
      * @return The ResourceLocation of the Image dat is displayed when their are no DisplayStacks.
      */
     @NotNull

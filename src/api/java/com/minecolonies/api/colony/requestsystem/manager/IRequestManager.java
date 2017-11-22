@@ -1,9 +1,9 @@
 package com.minecolonies.api.colony.requestsystem.manager;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
@@ -80,8 +80,10 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>, ITick
 
     /**
      * Method used to reassign a given request.
+     *
      * @param token The token of the request that should be reassigned.
      * @return The token of the resolver that has gotten the assignment, null if none was found.
+     *
      * @throws IllegalArgumentException when the token is not known to this manager.
      */
     @Nullable
@@ -101,8 +103,10 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>, ITick
 
     /**
      * Method to get a resolver from its token.
+     *
      * @param <T> The type of request that the resolver can process.
      * @return The resolver registered with the given token.
+     *
      * @throws IllegalArgumentException when the token is unknown.
      */
     @NotNull
@@ -110,9 +114,11 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>, ITick
 
     /**
      * Method to get a resolver for a given request.
+     *
      * @param requestToken The token of the request to get resolver for.
-     * @param <T> The type of request that the resolver can process.
+     * @param <T>          The type of request that the resolver can process.
      * @return Null if the request is not yet resolved, or else the assigned resolver.
+     *
      * @throws IllegalArgumentException Thrown when the token is unknown.
      */
     @Nullable
@@ -156,6 +162,7 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>, ITick
 
     /**
      * Get the player resolve.
+     *
      * @return the player resolver object.
      */
     @NotNull
@@ -163,6 +170,7 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>, ITick
 
     /**
      * Get the retrying request resolver.
+     *
      * @return The retrying request resolver.
      */
     @NotNull

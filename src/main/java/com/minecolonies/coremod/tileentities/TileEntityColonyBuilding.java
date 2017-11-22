@@ -130,6 +130,16 @@ public class TileEntityColonyBuilding extends TileEntityChest
     }
 
     /**
+     * Returns the position of the tile entity.
+     *
+     * @return Block Coordinates of the tile entity.
+     */
+    public BlockPos getPosition()
+    {
+        return pos;
+    }
+
+    /**
      * Sets the colony of the tile entity.
      *
      * @param c Colony to set in references.
@@ -183,16 +193,6 @@ public class TileEntityColonyBuilding extends TileEntityChest
     }
 
     /**
-     * Returns the position of the tile entity.
-     *
-     * @return Block Coordinates of the tile entity.
-     */
-    public BlockPos getPosition()
-    {
-        return pos;
-    }
-
-    /**
      * Returns the building associated with the tile entity.
      *
      * @return {@link AbstractBuilding} associated with the tile entity.
@@ -219,7 +219,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
     /**
      * Returns the view of the building associated with the tile entity.
      *
-     * @return {@link AbstractBuilding.View} the tile entity is associated with.
+     * @return {@link AbstractBuildingView} the tile entity is associated with.
      */
     public AbstractBuildingView getBuildingView()
     {

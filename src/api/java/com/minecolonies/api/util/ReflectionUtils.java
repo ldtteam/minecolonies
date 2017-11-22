@@ -1,15 +1,11 @@
 package com.minecolonies.api.util;
 
 import com.google.common.reflect.TypeToken;
-import net.minecraftforge.fml.relauncher.FMLRelaunchLog;
 import org.apache.logging.log4j.core.config.AppenderControl;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * Utility class with methods regarding reflection.

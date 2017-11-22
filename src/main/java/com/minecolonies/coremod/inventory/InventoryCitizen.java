@@ -178,6 +178,15 @@ public class InventoryCitizen implements IInventory
     }
 
     /**
+     * Returns the number of slots in the inventory.
+     *
+     * @return the size of the inventory.
+     */
+    @Override
+    public int getSizeInventory()
+    {
+        return this.mainInventory.size();
+    }    /**
      * Get the name of this object. For citizens this returns their name.
      *
      * @return the name of the inventory.
@@ -187,28 +196,6 @@ public class InventoryCitizen implements IInventory
     public String getName()
     {
         return this.hasCustomName() ? this.customName : "citizen.inventory";
-    }
-
-    /**
-     * Checks if the inventory is named.
-     *
-     * @return true if the inventory has a custom name.
-     */
-    @Override
-    public boolean hasCustomName()
-    {
-        return this.customName != null;
-    }
-
-    /**
-     * Returns the number of slots in the inventory.
-     *
-     * @return the size of the inventory.
-     */
-    @Override
-    public int getSizeInventory()
-    {
-        return this.mainInventory.size();
     }
 
     /**
@@ -244,6 +231,15 @@ public class InventoryCitizen implements IInventory
         }
 
         return true;
+    }    /**
+     * Checks if the inventory is named.
+     *
+     * @return true if the inventory has a custom name.
+     */
+    @Override
+    public boolean hasCustomName()
+    {
+        return this.customName != null;
     }
 
     /**
@@ -385,16 +381,6 @@ public class InventoryCitizen implements IInventory
     }
 
     /**
-     * Get the formatted TextComponent that will be used for the sender's username in chat.
-     */
-    @NotNull
-    @Override
-    public ITextComponent getDisplayName()
-    {
-        return this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName());
-    }
-
-    /**
      * Do not give this method the name canInteractWith because it clashes with Container.
      *
      * @param player the player acessing the inventory.
@@ -440,6 +426,14 @@ public class InventoryCitizen implements IInventory
         /*
          * This may be filled in order to specify some custom handling.
          */
+    }    /**
+     * Get the formatted TextComponent that will be used for the sender's username in chat.
+     */
+    @NotNull
+    @Override
+    public ITextComponent getDisplayName()
+    {
+        return this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName());
     }
 
     /**
@@ -603,5 +597,10 @@ public class InventoryCitizen implements IInventory
     {
         this.itemStack = itemStackIn;
     }
+
+
+
+
+
 
 }

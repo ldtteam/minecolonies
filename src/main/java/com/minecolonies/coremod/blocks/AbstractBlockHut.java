@@ -5,7 +5,6 @@ import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
@@ -302,8 +301,8 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      * EntityLivingBase, ItemStack)
      */
     public void onBlockPlacedByBuildTool(
-                                                @NotNull final World worldIn, @NotNull final BlockPos pos,
-                                                final IBlockState state, final EntityLivingBase placer, final ItemStack stack, final boolean mirror, final String style)
+                                          @NotNull final World worldIn, @NotNull final BlockPos pos,
+                                          final IBlockState state, final EntityLivingBase placer, final ItemStack stack, final boolean mirror, final String style)
     {
         final TileEntity tileEntity = worldIn.getTileEntity(pos);
         if (tileEntity instanceof TileEntityColonyBuilding)

@@ -16,7 +16,7 @@ public final class ModSoundEvents
 {
     /**
      * List of sound handlers.
-     *
+     * <p>
      * (Making this Protected isn't viable in current state)
      */
     @SuppressWarnings(Suppression.MAKE_PROTECTED)
@@ -31,9 +31,7 @@ public final class ModSoundEvents
         handlers.add(new ArcherSounds());
         handlers.add(new BakerSounds());
         handlers.add(new BuilderSounds());
-
     }
-
     /**
      * Private constructor to hide the implicit public one.
      */

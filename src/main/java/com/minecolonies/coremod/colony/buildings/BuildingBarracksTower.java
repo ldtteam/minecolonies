@@ -46,6 +46,40 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
         super(c, l);
     }
 
+    /**
+     * Gets the name of the schematic.
+     *
+     * @return Guard schematic name.
+     */
+    @NotNull
+    @Override
+    public String getSchematicName()
+    {
+        return GUARD_TOWER;
+    }
+
+    @Override
+    public void requestUpgrade(final EntityPlayer player)
+    {
+        final int buildingLevel = getBuildingLevel();
+        final AbstractBuilding building = getColony().getBuilding(barracks);
+        if (building != null && buildingLevel < getMaxBuildingLevel() && buildingLevel < building.getBuildingLevel())
+        {
+            requestWorkOrder(buildingLevel + 1);
+        }
+        else
+        {
+            player.sendMessage(new TextComponentTranslation("com.minecolonies.coremod.worker.needBarracks"));
+        }
+    }
+
+    @Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        super.onUpgradeComplete(newLevel);
+        getColony().calculateMaxCitizens();
+    }
+
     @Override
     public void setWorker(final CitizenData citizen)
     {
@@ -88,40 +122,6 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
         {
             compound.setTag(TAG_POS, NBTUtil.createPosTag(barracks));
         }
-    }
-
-    /**
-     * Gets the name of the schematic.
-     *
-     * @return Guard schematic name.
-     */
-    @NotNull
-    @Override
-    public String getSchematicName()
-    {
-        return GUARD_TOWER;
-    }
-
-    @Override
-    public void requestUpgrade(final EntityPlayer player)
-    {
-        final int buildingLevel = getBuildingLevel();
-        final AbstractBuilding building = getColony().getBuilding(barracks);
-        if (building != null && buildingLevel < getMaxBuildingLevel() && buildingLevel < building.getBuildingLevel())
-        {
-            requestWorkOrder(buildingLevel + 1);
-        }
-        else
-        {
-            player.sendMessage(new TextComponentTranslation("com.minecolonies.coremod.worker.needBarracks"));
-        }
-    }
-
-    @Override
-    public void onUpgradeComplete(final int newLevel)
-    {
-        super.onUpgradeComplete(newLevel);
-        getColony().calculateMaxCitizens();
     }
 
     @Override

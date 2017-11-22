@@ -59,28 +59,29 @@ public class BlockWaypoint extends AbstractBlockMinecolonies<BlockWaypoint>
     }
 
     /**
-     * Used to determine ambient occlusion and culling when rebuilding chunks
-     * for render.
-     * @deprecated
-     *
-     * @return true
-     */
-    //todo: remove once we no longer need to support this
-    @SuppressWarnings(DEPRECATION)
-    @Override
-    @Deprecated
-    public boolean isOpaqueCube(final IBlockState state)
-    {
-        return false;
-    }
-
-    /**
      * @deprecated (Remove this as soon as minecraft offers anything better).
      */
     @SuppressWarnings(DEPRECATION)
     @Override
     @Deprecated
     public boolean isFullBlock(final IBlockState state)
+    {
+        return false;
+    }
+
+    /**
+     * Used to determine ambient occlusion and culling when rebuilding chunks
+     * for render.
+     *
+     * @return true
+     *
+     * @deprecated
+     */
+    //todo: remove once we no longer need to support this
+    @SuppressWarnings(DEPRECATION)
+    @Override
+    @Deprecated
+    public boolean isOpaqueCube(final IBlockState state)
     {
         return false;
     }

@@ -42,7 +42,8 @@ import java.util.List;
 public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMinecoloniesRack>
 {
     public static final PropertyEnum<BlockMinecoloniesRack.EnumType> VARIANT
-            = PropertyEnum.<BlockMinecoloniesRack.EnumType>create("variant", BlockMinecoloniesRack.EnumType.class);
+                                                                                  =
+      PropertyEnum.<BlockMinecoloniesRack.EnumType>create("variant", BlockMinecoloniesRack.EnumType.class);
     public static final int                                          DEFAULT_META = BlockMinecoloniesRack.EnumType.DEFAULT.getMetadata();
     public static final int                                          FULL_META    = EnumType.FULL.getMetadata();
 
@@ -92,218 +93,15 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
         setLightOpacity(LIGHT_OPACITY);
     }
 
-    @Override
-    public void getSubBlocks(final Item itemIn, final CreativeTabs tab, final NonNullList<ItemStack> list)
-    {
-        list.add(new ItemStack(this, 1, EnumType.DEFAULT.getMetadata()));
-    }
-
-    @Override
-    public void onBlockPlacedBy(
-            final World worldIn, final BlockPos pos, final IBlockState state, final EntityLivingBase placer, final ItemStack stack)
-    {
-        IBlockState tempState = state;
-        tempState = tempState.withProperty(VARIANT, EnumType.byMetadata(stack.getItemDamage()));
-        tempState = tempState.withProperty(FACING, placer.getHorizontalFacing().getOpposite());
-
-        worldIn.setBlockState(pos, tempState, 2);
-    }
-
-    /**
-     * @deprecated but we still need this because there is nothing better.
-     */
-    @Deprecated
-    @Override
-    public IBlockState getStateFromMeta(final int meta)
-    {
-        final EnumFacing enumFacing = EnumFacing.getHorizontal(meta);
-        return this.getDefaultState().withProperty(FACING, enumFacing);
-    }
-
-    /**
-     * @deprecated but we still need this because there is nothing better.
-     */
-    @Override
-    public IBlockState getActualState(final IBlockState state, final IBlockAccess worldIn, final BlockPos pos)
-    {
-        final TileEntity entity = worldIn.getTileEntity(pos);
-
-        if(!(entity instanceof TileEntityRack))
-        {
-            return super.getActualState(state, worldIn, pos);
-        }
-
-        final TileEntityRack rack = (TileEntityRack) entity;
-        if (rack.isEmpty() && (rack.getOtherChest() == null || rack.getOtherChest().isEmpty()))
-        {
-            if(rack.getOtherChest() != null)
-            {
-                if(rack.isMain())
-                {
-                    return state.withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.DEFAULTDOUBLE)
-                            .withProperty(FACING, BlockPosUtil.getFacing(rack.getNeighbor(), pos));
-                }
-                else
-                {
-                    return state.withProperty(BlockMinecoloniesRack.VARIANT, EnumType.EMPTYAIR);
-                }
-            }
-            else
-            {
-                return state.withProperty(BlockMinecoloniesRack.VARIANT, EnumType.DEFAULT);
-            }
-        }
-        else
-        {
-            if(rack.getOtherChest() != null)
-            {
-                if(rack.isMain())
-                {
-                    return state.withProperty(BlockMinecoloniesRack.VARIANT, EnumType.FULLDOUBLE)
-                            .withProperty(FACING, BlockPosUtil.getFacing(rack.getNeighbor(), pos));
-                }
-                else
-                {
-                    return state.withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.EMPTYAIR);
-                }
-            }
-            else
-            {
-                return state.withProperty(BlockMinecoloniesRack.VARIANT, EnumType.FULL);
-            }
-        }
-    }
-
     /**
      * Check if a certain block should be replaced with a rack.
+     *
      * @param block the block to check.
      * @return true if so.
      */
     public static boolean shouldBlockBeReplacedWithRack(final Block block)
     {
         return block == Blocks.CHEST || block == ModBlocks.blockRack;
-    }
-
-    @Override
-    public int getMetaFromState(@NotNull final IBlockState state)
-    {
-        return state.getValue(FACING).getHorizontalIndex();
-    }
-
-    @Override
-    public void neighborChanged(final IBlockState state, final World worldIn, final BlockPos pos, final Block blockIn, final BlockPos fromPos)
-    {
-        if (state.getBlock() instanceof BlockMinecoloniesRack)
-        {
-            final TileEntity rack = worldIn.getTileEntity(pos);
-            for (final EnumFacing offsetFacing : BlockHorizontal.FACING.getAllowedValues())
-            {
-                final BlockPos neighbor = pos.offset(offsetFacing);
-                final Block block = worldIn.getBlockState(neighbor).getBlock();
-                if (rack instanceof TileEntityRack && pos.getY() == neighbor.getY() && !pos.equals(neighbor) && !pos.equals(BlockPos.ORIGIN)
-                        && (block instanceof BlockMinecoloniesRack || blockIn instanceof BlockMinecoloniesRack))
-                {
-                    ((TileEntityRack) rack).neighborChanged(neighbor);
-                }
-            }
-        }
-        super.neighborChanged(state, worldIn, pos, blockIn, fromPos);    }
-
-    /**
-     * This returns a complete list of items dropped from this block.
-     *
-     * @param world   The current world
-     * @param pos     Block position in world
-     * @param state   Current state
-     * @param fortune Breakers fortune level
-     * @return A ArrayList containing all items this block drops
-     */
-    @Override
-    public List<ItemStack> getDrops(final IBlockAccess world, final BlockPos pos, final IBlockState state, final int fortune)
-    {
-        final List<ItemStack> drops = new ArrayList<>();
-
-        drops.add(new ItemStack(this, 1));
-
-        return drops;
-    }
-
-    @Override
-    public void breakBlock(final World worldIn, final BlockPos pos, final IBlockState state)
-    {
-        final TileEntity tileentity = worldIn.getTileEntity(pos);
-
-        if (tileentity instanceof TileEntityRack)
-        {
-            final IItemHandler handler = ((TileEntityRack) tileentity).getInventory();
-            InventoryUtils.dropItemHandler(handler, worldIn, pos.getX(), pos.getY(), pos.getZ());
-        }
-
-        super.breakBlock(worldIn, pos, state);
-    }
-
-    @Override
-    public boolean onBlockActivated(
-            final World worldIn,
-            final BlockPos pos,
-            final IBlockState state,
-            final EntityPlayer playerIn,
-            final EnumHand hand,
-            final EnumFacing facing,
-            final float hitX,
-            final float hitY,
-            final float hitZ)
-    {
-        /*
-        If the world is client, open the gui of the building
-         */
-        if (!worldIn.isRemote)
-        {
-            final Colony colony = ColonyManager.getColony(worldIn, pos);
-            final TileEntity tileEntity = worldIn.getTileEntity(pos);
-
-            if ((colony == null || colony.getPermissions().hasPermission(playerIn, Action.ACCESS_HUTS))
-                    && tileEntity instanceof TileEntityRack)
-            {
-                playerIn.openGui(MineColonies.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Called when a user uses the creative pick block button on this block
-     * @param state the state.
-     * @param target the target.
-     * @param world the world.
-     * @param pos the position.
-     * @param player the player.
-     * @return the block pick result.
-     */
-    @Override
-    public ItemStack getPickBlock(final IBlockState state, final RayTraceResult target, final World world, final BlockPos pos, final EntityPlayer player)
-    {
-        return new ItemStack(this, 1);
-    }
-
-    @NotNull
-    @Override
-    protected BlockStateContainer createBlockState()
-    {
-        return new BlockStateContainer(this, FACING, VARIANT);
-    }
-
-    @Override
-    public boolean hasTileEntity(final IBlockState state)
-    {
-        return true;
-    }
-
-    @Override
-    public TileEntity createTileEntity(final World world, final IBlockState state)
-    {
-        return new TileEntityRack();
     }
 
     /**
@@ -317,10 +115,75 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
     }
 
     /**
-     * Convert the given metadata into a BlockState for this Block.
-     *
-     * @deprecated (Remove this as soon as minecraft offers anything better).
+     * @deprecated but we still need this because there is nothing better.
      */
+    @Deprecated
+    @Override
+    public IBlockState getStateFromMeta(final int meta)
+    {
+        final EnumFacing enumFacing = EnumFacing.getHorizontal(meta);
+        return this.getDefaultState().withProperty(FACING, enumFacing);
+    }
+
+    @Override
+    public int getMetaFromState(@NotNull final IBlockState state)
+    {
+        return state.getValue(FACING).getHorizontalIndex();
+    }
+
+    /**
+     * @deprecated but we still need this because there is nothing better.
+     */
+    @Override
+    public IBlockState getActualState(final IBlockState state, final IBlockAccess worldIn, final BlockPos pos)
+    {
+        final TileEntity entity = worldIn.getTileEntity(pos);
+
+        if (!(entity instanceof TileEntityRack))
+        {
+            return super.getActualState(state, worldIn, pos);
+        }
+
+        final TileEntityRack rack = (TileEntityRack) entity;
+        if (rack.isEmpty() && (rack.getOtherChest() == null || rack.getOtherChest().isEmpty()))
+        {
+            if (rack.getOtherChest() != null)
+            {
+                if (rack.isMain())
+                {
+                    return state.withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.DEFAULTDOUBLE)
+                             .withProperty(FACING, BlockPosUtil.getFacing(rack.getNeighbor(), pos));
+                }
+                else
+                {
+                    return state.withProperty(BlockMinecoloniesRack.VARIANT, EnumType.EMPTYAIR);
+                }
+            }
+            else
+            {
+                return state.withProperty(BlockMinecoloniesRack.VARIANT, EnumType.DEFAULT);
+            }
+        }
+        else
+        {
+            if (rack.getOtherChest() != null)
+            {
+                if (rack.isMain())
+                {
+                    return state.withProperty(BlockMinecoloniesRack.VARIANT, EnumType.FULLDOUBLE)
+                             .withProperty(FACING, BlockPosUtil.getFacing(rack.getNeighbor(), pos));
+                }
+                else
+                {
+                    return state.withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.EMPTYAIR);
+                }
+            }
+            else
+            {
+                return state.withProperty(BlockMinecoloniesRack.VARIANT, EnumType.FULL);
+            }
+        }
+    }
 
     /**
      * Convert the BlockState into the correct metadata value.
@@ -366,12 +229,153 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
         return false;
     }
 
+    @Override
+    public void neighborChanged(final IBlockState state, final World worldIn, final BlockPos pos, final Block blockIn, final BlockPos fromPos)
+    {
+        if (state.getBlock() instanceof BlockMinecoloniesRack)
+        {
+            final TileEntity rack = worldIn.getTileEntity(pos);
+            for (final EnumFacing offsetFacing : BlockHorizontal.FACING.getAllowedValues())
+            {
+                final BlockPos neighbor = pos.offset(offsetFacing);
+                final Block block = worldIn.getBlockState(neighbor).getBlock();
+                if (rack instanceof TileEntityRack && pos.getY() == neighbor.getY() && !pos.equals(neighbor) && !pos.equals(BlockPos.ORIGIN)
+                      && (block instanceof BlockMinecoloniesRack || blockIn instanceof BlockMinecoloniesRack))
+                {
+                    ((TileEntityRack) rack).neighborChanged(neighbor);
+                }
+            }
+        }
+        super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
+    }
+
+    @Override
+    public void breakBlock(final World worldIn, final BlockPos pos, final IBlockState state)
+    {
+        final TileEntity tileentity = worldIn.getTileEntity(pos);
+
+        if (tileentity instanceof TileEntityRack)
+        {
+            final IItemHandler handler = ((TileEntityRack) tileentity).getInventory();
+            InventoryUtils.dropItemHandler(handler, worldIn, pos.getX(), pos.getY(), pos.getZ());
+        }
+
+        super.breakBlock(worldIn, pos, state);
+    }
+
     @NotNull
     @Override
     @SideOnly(Side.CLIENT)
     public BlockRenderLayer getBlockLayer()
     {
         return BlockRenderLayer.SOLID;
+    }
+
+    @Override
+    public boolean onBlockActivated(
+                                     final World worldIn,
+                                     final BlockPos pos,
+                                     final IBlockState state,
+                                     final EntityPlayer playerIn,
+                                     final EnumHand hand,
+                                     final EnumFacing facing,
+                                     final float hitX,
+                                     final float hitY,
+                                     final float hitZ)
+    {
+        /*
+        If the world is client, open the gui of the building
+         */
+        if (!worldIn.isRemote)
+        {
+            final Colony colony = ColonyManager.getColony(worldIn, pos);
+            final TileEntity tileEntity = worldIn.getTileEntity(pos);
+
+            if ((colony == null || colony.getPermissions().hasPermission(playerIn, Action.ACCESS_HUTS))
+                  && tileEntity instanceof TileEntityRack)
+            {
+                playerIn.openGui(MineColonies.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void onBlockPlacedBy(
+                                 final World worldIn, final BlockPos pos, final IBlockState state, final EntityLivingBase placer, final ItemStack stack)
+    {
+        IBlockState tempState = state;
+        tempState = tempState.withProperty(VARIANT, EnumType.byMetadata(stack.getItemDamage()));
+        tempState = tempState.withProperty(FACING, placer.getHorizontalFacing().getOpposite());
+
+        worldIn.setBlockState(pos, tempState, 2);
+    }
+
+    @Override
+    public void getSubBlocks(final Item itemIn, final CreativeTabs tab, final NonNullList<ItemStack> list)
+    {
+        list.add(new ItemStack(this, 1, EnumType.DEFAULT.getMetadata()));
+    }
+
+    /**
+     * Convert the given metadata into a BlockState for this Block.
+     *
+     * @deprecated (Remove this as soon as minecraft offers anything better).
+     */
+
+    @NotNull
+    @Override
+    protected BlockStateContainer createBlockState()
+    {
+        return new BlockStateContainer(this, FACING, VARIANT);
+    }
+
+    @Override
+    public boolean hasTileEntity(final IBlockState state)
+    {
+        return true;
+    }
+
+    @Override
+    public TileEntity createTileEntity(final World world, final IBlockState state)
+    {
+        return new TileEntityRack();
+    }
+
+    /**
+     * This returns a complete list of items dropped from this block.
+     *
+     * @param world   The current world
+     * @param pos     Block position in world
+     * @param state   Current state
+     * @param fortune Breakers fortune level
+     * @return A ArrayList containing all items this block drops
+     */
+    @Override
+    public List<ItemStack> getDrops(final IBlockAccess world, final BlockPos pos, final IBlockState state, final int fortune)
+    {
+        final List<ItemStack> drops = new ArrayList<>();
+
+        drops.add(new ItemStack(this, 1));
+
+        return drops;
+    }
+
+    /**
+     * Called when a user uses the creative pick block button on this block
+     *
+     * @param state  the state.
+     * @param target the target.
+     * @param world  the world.
+     * @param pos    the position.
+     * @param player the player.
+     * @return the block pick result.
+     */
+    @Override
+    public ItemStack getPickBlock(final IBlockState state, final RayTraceResult target, final World world, final BlockPos pos, final EntityPlayer player)
+    {
+        return new ItemStack(this, 1);
     }
 
     public enum EnumType implements IStringSerializable
@@ -383,6 +387,13 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
         EMPTYAIR(4, "blockrackair", "dontrender");
 
         private static final BlockMinecoloniesRack.EnumType[] META_LOOKUP = new BlockMinecoloniesRack.EnumType[values().length];
+        static
+        {
+            for (final BlockMinecoloniesRack.EnumType blockRack : values())
+            {
+                META_LOOKUP[blockRack.getMetadata()] = blockRack;
+            }
+        }
         private final int    meta;
         private final String name;
         private final String unlocalizedName;
@@ -392,17 +403,6 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
             this.meta = meta;
             this.name = name;
             this.unlocalizedName = unlocalizedName;
-        }
-
-        public int getMetadata()
-        {
-            return this.meta;
-        }
-
-        @Override
-        public String toString()
-        {
-            return this.name;
         }
 
         public static BlockMinecoloniesRack.EnumType byMetadata(final int meta)
@@ -416,6 +416,17 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
             return META_LOOKUP[tempMeta];
         }
 
+        public int getMetadata()
+        {
+            return this.meta;
+        }
+
+        @Override
+        public String toString()
+        {
+            return this.name;
+        }
+
         public String getName()
         {
             return this.name;
@@ -424,14 +435,6 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
         public String getUnlocalizedName()
         {
             return this.unlocalizedName;
-        }
-
-        static
-        {
-            for (final BlockMinecoloniesRack.EnumType blockRack : values())
-            {
-                META_LOOKUP[blockRack.getMetadata()] = blockRack;
-            }
         }
     }
 }

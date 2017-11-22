@@ -3,10 +3,10 @@ package com.minecolonies.coremod.colony.requestsystem.resolvers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
-import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
-import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -41,12 +41,6 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
     }
 
     @Override
-    public int getPriority()
-    {
-        return CONST_DEFAULT_RESOLVER_PRIORITY + 50;
-    }
-
-    @Override
     public TypeToken<? extends IDeliverable> getRequestType()
     {
         return TypeToken.of(IDeliverable.class);
@@ -76,15 +70,20 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
                                         @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
         if (manager.getColony().getWorld().isRemote)
+        {
             return null;
+        }
 
         Colony colony = (Colony) manager.getColony();
         Set<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
 
-        for(TileEntityWareHouse wareHouse : wareHouses) {
+        for (TileEntityWareHouse wareHouse : wareHouses)
+        {
             ItemStack matchingStack = wareHouse.getFirstMatchingItemStackInWarehouse(itemStack -> request.getRequest().matches(itemStack));
             if (ItemStackUtils.isEmpty(matchingStack))
+            {
                 continue;
+            }
 
             request.setDelivery(matchingStack.copy());
 
@@ -124,6 +123,13 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
         return null;
     }
 
+    private Set<TileEntityWareHouse> getWareHousesInColony(Colony colony)
+    {
+        return colony.getBuildings().values().stream()
+                 .filter(building -> building instanceof BuildingWareHouse)
+                 .map(building -> (TileEntityWareHouse) building.getTileEntity())
+                 .collect(Collectors.toSet());
+    }
 
     @NotNull
     @Override
@@ -138,18 +144,16 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
 
     }
 
-    private Set<TileEntityWareHouse> getWareHousesInColony(Colony colony)
-    {
-        return colony.getBuildings().values().stream()
-                 .filter(building -> building instanceof BuildingWareHouse)
-                 .map(building -> (TileEntityWareHouse) building.getTileEntity())
-                 .collect(Collectors.toSet());
-    }
-
     @NotNull
     @Override
     public ITextComponent getDisplayName(@NotNull final IToken token)
     {
         return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_BUILDING_WAREHOUSE_NAME);
+    }
+
+    @Override
+    public int getPriority()
+    {
+        return CONST_DEFAULT_RESOLVER_PRIORITY + 50;
     }
 }

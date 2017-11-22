@@ -129,28 +129,28 @@ public class BuildingMiner extends AbstractBuildingWorker
     /**
      * Max depth the miner reaches at level 3.
      */
-    private static final int                       MAX_DEPTH_LEVEL_3  = 5;
+    private static final int         MAX_DEPTH_LEVEL_3  = 5;
     /**
      * Stores the levels of the miners mine. This could be a map with (depth,level).
      */
     @NotNull
-    private final        List<Level>               levels             = new ArrayList<>();
+    private final        List<Level> levels             = new ArrayList<>();
     /**
      * True if shaft is at bottom limit.
      */
-    public               boolean                   clearedShaft       = false;
+    public               boolean     clearedShaft       = false;
     /**
      * Defines the material used for the structure of the horizontal shaft.
      */
-    private              Block                     shaftBlock         = Blocks.PLANKS;
+    private              Block       shaftBlock         = Blocks.PLANKS;
     /**
      * Defines the material used for the fence of the shaft.
      */
-    private              Block                     fenceBlock         = Blocks.OAK_FENCE;
+    private              Block       fenceBlock         = Blocks.OAK_FENCE;
     /**
      * Here we can detect multiples of 5.
      */
-    private              int                       startingLevelShaft = 0;
+    private              int         startingLevelShaft = 0;
     /**
      * The location of the topmost cobblestone the ladder starts at.
      */

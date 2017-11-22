@@ -4,8 +4,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
@@ -48,12 +48,6 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
     }
 
     @Override
-    public int getPriority()
-    {
-        return AbstractRequestResolver.CONST_DEFAULT_RESOLVER_PRIORITY - 100;
-    }
-
-    @Override
     public TypeToken<IRequestable> getRequestType()
     {
         return TypeConstants.REQUESTABLE;
@@ -82,7 +76,7 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
     public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest request) throws RuntimeException
     {
         final IColony colony = manager.getColony();
-        if(colony instanceof Colony)
+        if (colony instanceof Colony)
         {
             final List<EntityPlayer> players = new ArrayList<>(((Colony) colony).getMessageEntityPlayers());
             final EntityPlayer owner = ServerUtils.getPlayerFromUUID(colony.getWorld(), ((Colony) colony).getPermissions().getOwner());
@@ -93,16 +87,16 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
                 players.remove(owner);
 
                 LanguageHandler.sendPlayerMessage(owner, "com.minecolonies.requestsystem.playerresolver",
-                        request.getRequester().getDisplayName(request.getToken()).getFormattedText(),
-                        request.getShortDisplayString().getFormattedText(),
-                        request.getRequester().getRequesterLocation().toString()
+                  request.getRequester().getDisplayName(request.getToken()).getFormattedText(),
+                  request.getShortDisplayString().getFormattedText(),
+                  request.getRequester().getRequesterLocation().toString()
                 );
             }
 
             LanguageHandler.sendPlayersMessage(players, "com.minecolonies.requestsystem.playerresolver",
-                    colonyDescription.getFormattedText() + " " + request.getRequester().getDisplayName(request.getToken()).getFormattedText(),
-                    request.getShortDisplayString().getFormattedText(),
-                    request.getRequester().getRequesterLocation().toString());
+              colonyDescription.getFormattedText() + " " + request.getRequester().getDisplayName(request.getToken()).getFormattedText(),
+              request.getShortDisplayString().getFormattedText(),
+              request.getRequester().getRequesterLocation().toString());
         }
 
         assignedRequests.add(request.getToken());
@@ -114,7 +108,9 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
     {
         //This is not what this method is for, but this is the closest we are getting right now, so why not.
         if (assignedRequests.contains(completedRequest.getToken()))
+        {
             assignedRequests.remove(completedRequest.getToken());
+        }
 
         return null;
     }
@@ -124,6 +120,12 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
     public IRequest onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest request) throws IllegalArgumentException
     {
         return null;
+    }
+
+    @Override
+    public int getPriority()
+    {
+        return AbstractRequestResolver.CONST_DEFAULT_RESOLVER_PRIORITY - 100;
     }
 
     @Override
@@ -155,6 +157,13 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
 
     }
 
+    @NotNull
+    @Override
+    public ITextComponent getDisplayName(@NotNull final IToken token)
+    {
+        return new TextComponentString("Player");
+    }
+
     @Override
     public ImmutableList<IToken> getAllAssignedRequests()
     {
@@ -165,12 +174,5 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
     {
         this.assignedRequests.clear();
         this.assignedRequests.addAll(assignedRequests);
-    }
-
-    @NotNull
-    @Override
-    public ITextComponent getDisplayName(@NotNull final IToken token)
-    {
-        return new TextComponentString("Player");
     }
 }

@@ -76,21 +76,18 @@ public class WindowClipBoard extends AbstractWindowSkeleton
      * The divider for the life count.
      */
     private static final int LIFE_COUNT_DIVIDER = 30;
-
-    /**
-     * Life count.
-     */
-    private int lifeCount = 0;
-
     /**
      * Scrollinglist of the resources.
      */
     private final ScrollingList resourceList;
-
     /**
      * The colony id.
      */
     private final int colonyId;
+    /**
+     * Life count.
+     */
+    private int lifeCount = 0;
 
     public WindowClipBoard(@Nullable final int colonyId)
     {
@@ -132,18 +129,8 @@ public class WindowClipBoard extends AbstractWindowSkeleton
             rowPane.findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getDisplayName(request.getToken()).getFormattedText());
 
             rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
-                    .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f",""));
+              .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f", ""));
         });
-    }
-
-    @Override
-    public void onUpdate()
-    {
-        super.onUpdate();
-        if (!GuiScreen.isShiftKeyDown())
-        {
-            lifeCount++;
-        }
     }
 
     private ImmutableList<IRequest> getOpenRequests()
@@ -167,10 +154,20 @@ public class WindowClipBoard extends AbstractWindowSkeleton
 
         final BlockPos playerPos = Minecraft.getMinecraft().player.getPosition();
         requests.sort(Comparator.comparing(
-                request -> request.getRequester().getRequesterLocation().getInDimensionLocation()
-                        .getDistance(playerPos.getX(), playerPos.getY(), playerPos.getZ())));
+          request -> request.getRequester().getRequesterLocation().getInDimensionLocation()
+                       .getDistance(playerPos.getX(), playerPos.getY(), playerPos.getZ())));
 
         return ImmutableList.copyOf(requests);
+    }
+
+    @Override
+    public void onUpdate()
+    {
+        super.onUpdate();
+        if (!GuiScreen.isShiftKeyDown())
+        {
+            lifeCount++;
+        }
     }
 
     /**

@@ -77,26 +77,22 @@ public class WindowRequestDetail extends Window implements ButtonHandler
      * Resolver string.
      */
     private static final String DELIVERY_IMAGE = "deliveryImage";
-
-    /**
-     * Life count.
-     */
-    private int lifeCount = 0;
-
     /**
      * The citizen of the request.
      */
     private final CitizenDataView citizen;
-
     /**
      * The request itself.
      */
     private final IRequest request;
-
     /**
      * The colony id.
      */
     private final int colonyId;
+    /**
+     * Life count.
+     */
+    private int lifeCount = 0;
 
     /**
      * Constructor for the window when the player wants to hire a worker for a certain job.
@@ -142,10 +138,10 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     public void onOpened()
     {
         String[] labels = request.getLongDisplayString().getFormattedText()
-                .replace("§r", " ")
-                .replace(": ", ":\n")
+                            .replace("§r", " ")
+                            .replace(": ", ":\n")
 
-                .split("(?<=\n)");
+                            .split("(?<=\n)");
 
         final StringBuilder finalLabel = new StringBuilder();
 
@@ -186,8 +182,8 @@ public class WindowRequestDetail extends Window implements ButtonHandler
         targetLabel.setLabelText(request.getRequester().getDeliveryLocation().toString());
 
         findPaneOfTypeByID(RESOLVER, Label.class).setLabelText("Resolver: " +
-                ColonyManager.getColony(colonyId).getRequestManager().getResolverForRequest(
-                        request.getToken()).getDisplayName(request.getToken()).getFormattedText());
+                                                                 ColonyManager.getColony(colonyId).getRequestManager().getResolverForRequest(
+                                                                   request.getToken()).getDisplayName(request.getToken()).getFormattedText());
 
         box.setSize(box.getWidth(), y);
     }

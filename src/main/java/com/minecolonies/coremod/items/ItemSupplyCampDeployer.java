@@ -147,6 +147,35 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
         return checkAndPlaceSupplyCamp(world, pos, chestFacing);
     }
 
+    /**
+     * Fills the content of the supplychest with the buildTool and townHall.
+     *
+     * @param chest the chest to fill.
+     */
+    private static void fillChest(@Nullable final TileEntityChest chest)
+    {
+        if (chest == null)
+        {
+            Log.getLogger().error("Supply chest tile entity was null.");
+            return;
+        }
+        chest.setInventorySlotContents(0, new ItemStack(ModBlocks.blockHutTownHall));
+        chest.setInventorySlotContents(1, new ItemStack(ModItems.buildTool));
+        chest.setInventorySlotContents(2, guideBook);
+    }
+
+    /**
+     * Check if any of the coordinates is in any colony.
+     *
+     * @param world the world to check in.
+     * @param pos   the first position.
+     * @return false if no colony found.
+     */
+    private static boolean isInsideAColony(final World world, final BlockPos pos)
+    {
+        return ColonyManager.isCoordinateInAnyColony(world, pos);
+    }
+
     private boolean checkAndPlaceSupplyCamp(final World world, @NotNull final BlockPos pos, @NotNull final EnumFacing direction)
     {
         EnumFacing facing = direction;
@@ -188,34 +217,5 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
             }
         }
         return false;
-    }
-
-    /**
-     * Fills the content of the supplychest with the buildTool and townHall.
-     *
-     * @param chest the chest to fill.
-     */
-    private static void fillChest(@Nullable final TileEntityChest chest)
-    {
-        if (chest == null)
-        {
-            Log.getLogger().error("Supply chest tile entity was null.");
-            return;
-        }
-        chest.setInventorySlotContents(0, new ItemStack(ModBlocks.blockHutTownHall));
-        chest.setInventorySlotContents(1, new ItemStack(ModItems.buildTool));
-        chest.setInventorySlotContents(2, guideBook);
-    }
-
-    /**
-     * Check if any of the coordinates is in any colony.
-     *
-     * @param world the world to check in.
-     * @param pos   the first position.
-     * @return false if no colony found.
-     */
-    private static boolean isInsideAColony(final World world, final BlockPos pos)
-    {
-        return ColonyManager.isCoordinateInAnyColony(world, pos);
     }
 }

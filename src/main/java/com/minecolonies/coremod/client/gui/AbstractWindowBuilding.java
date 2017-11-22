@@ -5,7 +5,6 @@ import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingHut;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
@@ -85,7 +84,34 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
     {
         MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(building));
     }
-    
+
+    @Override
+    public void onUpdate()
+    {
+        super.onUpdate();
+
+        // Check if there is no page switcher
+        // Or that we are on the correct page
+        if (switchView == null || switchView.getCurrentView().getID().equals(PAGE_ACTIONS))
+        {
+            final AbstractBuildingView buildingView = building.getColony().getBuilding(building.getID());
+
+            if (buttonPrevPage != null)
+            {
+                buttonPrevPage.disable();
+                buttonPrevPage.hide();
+            }
+
+            if (title != null)
+            {
+                title.setLabelText(LanguageHandler.format(getBuildingName()) + " " + buildingView.getBuildingLevel());
+            }
+
+            updateButtonBuild(buildingView);
+            updateButtonRepair(buildingView);
+        }
+    }
+
     /**
      * Returns the name of a building.
      *
@@ -150,33 +176,6 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
         else
         {
             buttonRepair.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.repair"));
-        }
-    }
-
-    @Override
-    public void onUpdate()
-    {
-        super.onUpdate();
-
-        // Check if there is no page switcher
-        // Or that we are on the correct page
-        if (switchView == null || switchView.getCurrentView().getID().equals(PAGE_ACTIONS))
-        {
-            final AbstractBuildingView buildingView = building.getColony().getBuilding(building.getID());
-
-            if (buttonPrevPage != null)
-            {
-                buttonPrevPage.disable();
-                buttonPrevPage.hide();
-            }
-
-            if (title != null)
-            {
-                title.setLabelText(LanguageHandler.format(getBuildingName()) + " " + buildingView.getBuildingLevel());
-            }
-
-            updateButtonBuild(buildingView);
-            updateButtonRepair(buildingView);
         }
     }
 

@@ -11,7 +11,6 @@ import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView;
@@ -33,17 +32,17 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     /**
      * The builders gui file.
      */
-    private static final String HUT_BUILDER_RESOURCE_SUFFIX        = ":gui/windowhutbuilder.xml";
-    private static final String LIST_RESOURCES                     = "resources";
-    private static final String PAGE_RESOURCES                     = "resourceActions";
-    private static final String VIEW_PAGES                         = "pages";
-    private static final String RESOURCE_NAME                      = "resourceName";
-    private static final String RESOURCE_AVAILABLE_NEEDED          = "resourceAvailableNeeded";
-    private static final String RESOURCE_MISSING                   = "resourceMissing";
-    private static final String RESOURCE_ADD                       = "resourceAdd";
-    private static final String RESOURCE_ID                        = "resourceId";
-    private static final String RESOURCE_QUANTITY_MISSING          = "resourceQuantity";
-    private static final String RESOURCE_ICON                      = "resourceIcon";
+    private static final String HUT_BUILDER_RESOURCE_SUFFIX = ":gui/windowhutbuilder.xml";
+    private static final String LIST_RESOURCES              = "resources";
+    private static final String PAGE_RESOURCES              = "resourceActions";
+    private static final String VIEW_PAGES                  = "pages";
+    private static final String RESOURCE_NAME               = "resourceName";
+    private static final String RESOURCE_AVAILABLE_NEEDED   = "resourceAvailableNeeded";
+    private static final String RESOURCE_MISSING            = "resourceMissing";
+    private static final String RESOURCE_ADD                = "resourceAdd";
+    private static final String RESOURCE_ID                 = "resourceId";
+    private static final String RESOURCE_QUANTITY_MISSING   = "resourceQuantity";
+    private static final String RESOURCE_ICON               = "resourceIcon";
 
     private static final int RED       = Color.getByName("red", 0);
     private static final int DARKGREEN = Color.getByName("darkgreen", 0);
@@ -87,7 +86,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
             for (final BuildingBuilderResource resource : resources)
             {
                 final int amountToSet;
-                if(isCreative)
+                if (isCreative)
                 {
                     amountToSet = resource.getAmount();
                 }
@@ -96,7 +95,6 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
                     amountToSet = InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory), resource.getItem(), resource.getDamageValue());
                 }
                 resource.setPlayerAmount(amountToSet);
-
             }
 
             resources.sort(new BuildingBuilderResource.ResourceComparator());
@@ -196,6 +194,18 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(new ItemStack(resource.getItem(), 1, resource.getDamageValue()));
     }
 
+    /**
+     * Returns the name of a building.
+     *
+     * @return Name of a building.
+     */
+    @NotNull
+    @Override
+    public String getBuildingName()
+    {
+        return "com.minecolonies.coremod.gui.workerHuts.buildersHut";
+    }
+
     @Override
     public void onUpdate()
     {
@@ -207,18 +217,6 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
             pullResourcesFromHut();
             window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class).refreshElementPanes();
         }
-    }
-
-    /**
-     * Returns the name of a building.
-     *
-     * @return Name of a building.
-     */
-    @NotNull
-    @Override
-    public String getBuildingName()
-    {
-        return "com.minecolonies.coremod.gui.workerHuts.buildersHut";
     }
 
     /**

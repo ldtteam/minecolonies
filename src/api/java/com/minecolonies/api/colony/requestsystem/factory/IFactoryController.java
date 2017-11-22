@@ -2,10 +2,9 @@ package com.minecolonies.api.colony.requestsystem.factory;
 
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.util.constant.Suppression;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
-import io.netty.buffer.ByteBuf;
-import sun.font.Type1Font;
 
 /**
  * Interface used to describe classes that function as Factory controllers.
@@ -41,20 +40,6 @@ public interface IFactoryController
     }
 
     /**
-     * Method to get a factory for a given combination of input and output types.
-     *
-     * @param inputTypeToken The input type of the factory.
-     * @param outputTypeToken The output type of the factory.
-     * @param <Input> The input type of the factory
-     * @param <Output> The output type of the factory.
-     * @return A factory that takes the input type and produces the output type.
-     * @throws IllegalArgumentException Thrown when no factory exists for the combination of input and output.
-     */
-    @SuppressWarnings(Suppression.UNCHECKED)
-    <Input, Output> IFactory<Input, Output> getFactoryForIO(@NotNull final TypeToken<? extends Input> inputTypeToken, @NotNull final TypeToken<? extends Output> outputTypeToken)
-      throws IllegalArgumentException;
-
-    /**
      * Method used to get a factory for a given input class.
      *
      * @param clazz   The class of the input type of the requested factory.
@@ -64,6 +49,21 @@ public interface IFactoryController
      * @throws IllegalArgumentException is thrown when the given input class is unknown to this Factory Controller.
      */
     <Input> IFactory<Input, ?> getFactoryForInput(@NotNull final TypeToken<? extends Input> clazz) throws IllegalArgumentException;
+
+    /**
+     * Method to get a factory for a given combination of input and output types.
+     *
+     * @param inputTypeToken  The input type of the factory.
+     * @param outputTypeToken The output type of the factory.
+     * @param <Input>         The input type of the factory
+     * @param <Output>        The output type of the factory.
+     * @return A factory that takes the input type and produces the output type.
+     *
+     * @throws IllegalArgumentException Thrown when no factory exists for the combination of input and output.
+     */
+    @SuppressWarnings(Suppression.UNCHECKED)
+    <Input, Output> IFactory<Input, Output> getFactoryForIO(@NotNull final TypeToken<? extends Input> inputTypeToken, @NotNull final TypeToken<? extends Output> outputTypeToken)
+      throws IllegalArgumentException;
 
     /**
      * Method used to get a factory for a given Output class name.
@@ -136,8 +136,9 @@ public interface IFactoryController
 
     /**
      * Method used to quickly write an object into the given {@link ByteBuf}.
-     * @param buffer The buffer to write into.
-     * @param object The object to write.
+     *
+     * @param buffer   The buffer to write into.
+     * @param object   The object to write.
      * @param <Output> The type of the object to write.
      * @throws IllegalArgumentException is thrown when the given output type is unknown to this controller.
      */
@@ -145,33 +146,36 @@ public interface IFactoryController
 
     /**
      * Method used to quickly read an object from a given {@link ByteBuf}
-     * @param buffer The buffer to read from.
+     *
+     * @param buffer   The buffer to read from.
      * @param <Output> The type to read.
      * @return An instance of the given output type, with its stored data from the buffer.
+     *
      * @throws IllegalArgumentException is thrown when the requested type is unknown to this controller.
      */
-    <Output>Output readFromBuffer(@NotNull final ByteBuf buffer) throws IllegalArgumentException;
+    <Output> Output readFromBuffer(@NotNull final ByteBuf buffer) throws IllegalArgumentException;
 
     /**
      * Method used to create a new instance of the given input.
      *
      * @param requestedType The typetoken for the requested type.
-     * @param input    The input to process.
-     * @param context  The context for the creation.
-     * @param <Input>  The type of input.
-     * @param <Output> The type of output.
+     * @param input         The input to process.
+     * @param context       The context for the creation.
+     * @param <Input>       The type of input.
+     * @param <Output>      The type of output.
      * @return The output from the factory, created by the given input and output.
      *
      * @throws IllegalArgumentException thrown when the output and input do not match a factory known to this controller.
      * @throws ClassCastException       thrown when a Factory is known for the given input, but does not produce the given output.
      */
-    <Input, Output> Output getNewInstance(@NotNull final TypeToken<? extends Output> requestedType, @NotNull final Input input, @NotNull final Object... context) throws IllegalArgumentException, ClassCastException;
+    <Input, Output> Output getNewInstance(@NotNull final TypeToken<? extends Output> requestedType, @NotNull final Input input, @NotNull final Object... context)
+      throws IllegalArgumentException, ClassCastException;
 
     /**
      * Method used to create a new instance of the given output.
      *
      * @param requestedType The typetoken of the requested type.
-     * @param <Output> The type of output.
+     * @param <Output>      The type of output.
      * @return The output from the factory, created by the given input and output.
      *
      * @throws IllegalArgumentException thrown when the output and input do not match a factory known to this controller.
@@ -183,9 +187,10 @@ public interface IFactoryController
      * Method used to register a TypeOverride handler.
      * Useful if the Client side has a different Handler.
      * Or if an upgrade between version is needed.
+     *
      * @param overrideHandler The override handler to register.
-     * @param <Input> The input that that the handler converts from.
-     * @param <Output> The output type that the handler converts to.
+     * @param <Input>         The input that that the handler converts from.
+     * @param <Output>        The output type that the handler converts to.
      */
     <Input, Output> void registerNewTypeOverrideHandler(@NotNull final ITypeOverrideHandler<Input, Output> overrideHandler);
 }

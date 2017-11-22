@@ -20,35 +20,34 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
-
 /**
  * Transfer some items from the player inventory to the Builder's chest or additional chests.
  * Created: January 20, 2017
  *
  * @author xavierh
  */
-public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsRequestMessage, IMessage>
+public class TransferItemsRequestMessage extends AbstractMessage<TransferItemsRequestMessage, IMessage>
 {
     /**
      * The id of the building.
      */
-    private BlockPos buildingId;
+    private BlockPos  buildingId;
     /**
      * The id of the colony.
      */
-    private int      colonyId;
+    private int       colonyId;
     /**
      * How many item need to be transfer from the player inventory to the building chest.
      */
-    private ItemStack      itemStack;
+    private ItemStack itemStack;
     /**
      * How many item need to be transfer from the player inventory to the building chest.
      */
-    private int      quantity;
+    private int       quantity;
     /**
      * Attempt a resolve or not.
      */
-    private boolean attemptResolve;
+    private boolean   attemptResolve;
 
     /**
      * Empty constructor used when registering the message.
@@ -62,27 +61,27 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
     /**
      * Creates a Transfer Items request message.
      *
-     * @param building AbstractBuilding of the request.
+     * @param building  AbstractBuilding of the request.
      * @param itemStack to be take from the player for the building
-     * @param quantity of item needed to be transfered
+     * @param quantity  of item needed to be transfered
      */
     public TransferItemsRequestMessage(@NotNull final AbstractBuildingView building, final ItemStack itemStack, final int quantity, final boolean attemptResolve)
     {
         super();
-        this.colonyId   = building.getColony().getID();
+        this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
-        this.itemStack  = itemStack;
-        this.quantity   = quantity;
+        this.itemStack = itemStack;
+        this.quantity = quantity;
         this.attemptResolve = attemptResolve;
     }
 
     @Override
     public void fromBytes(@NotNull final ByteBuf buf)
     {
-        colonyId   = buf.readInt();
+        colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
-        itemStack  = ByteBufUtils.readItemStack(buf);
-        quantity   = buf.readInt();
+        itemStack = ByteBufUtils.readItemStack(buf);
+        quantity = buf.readInt();
         attemptResolve = buf.readBoolean();
     }
 
@@ -91,7 +90,7 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
-        ByteBufUtils.writeItemStack(buf,itemStack);
+        ByteBufUtils.writeItemStack(buf, itemStack);
         buf.writeInt(quantity);
         buf.writeBoolean(attemptResolve);
     }
@@ -123,7 +122,7 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
         final boolean isCreative = player.capabilities.isCreativeMode;
         final Item item = message.itemStack.getItem();
         final int amountToTake;
-        if(isCreative)
+        if (isCreative)
         {
             amountToTake = message.quantity;
         }
@@ -158,7 +157,7 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
             building.getTileEntity().markDirty();
         }
 
-        if(!isCreative)
+        if (!isCreative)
         {
             int amountToRemoveFromPlayer = amountToTake - ItemStackUtils.getSize(remainingItemStack);
             while (amountToRemoveFromPlayer > 0)
@@ -169,7 +168,8 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
             }
         }
 
-        if (attemptResolve) {
+        if (attemptResolve)
+        {
             building.overruleNextOpenRequestWithStack(itemStack);
         }
     }

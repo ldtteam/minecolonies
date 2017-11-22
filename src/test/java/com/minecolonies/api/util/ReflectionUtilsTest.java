@@ -2,7 +2,6 @@ package com.minecolonies.api.util;
 
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.colony.requestsystem.token.StandardToken;
 import com.minecolonies.api.util.constant.TypeConstants;
 import org.junit.Test;
 

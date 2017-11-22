@@ -7,7 +7,6 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.inventory.GuiHandler;
@@ -72,7 +71,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
     /**
      * Creates an open inventory message for a building.
      *
-     * @param building {@link AbstractBuilding.View}
+     * @param building {@link AbstractBuildingView}
      */
     public OpenInventoryMessage(@NotNull final AbstractBuildingView building)
     {
@@ -85,7 +84,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
     /**
      * Creates an open inventory message for a field.
      *
-     * @param field    {@link AbstractBuilding.View}
+     * @param field    {@link AbstractBuildingView}
      * @param colonyId the colony associated with the inventory.
      */
     public OpenInventoryMessage(final BlockPos field, final int colonyId)
@@ -192,7 +191,12 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
             {
                 // inventoryField.setCustomName(message.name);
             }
-            player.openGui(MineColonies.instance, GuiHandler.ID.BUILDING_INVENTORY.ordinal(), player.getEntityWorld(), player.getPosition().getX(), player.getPosition().getY(), player.getPosition().getZ());
+            player.openGui(MineColonies.instance,
+              GuiHandler.ID.BUILDING_INVENTORY.ordinal(),
+              player.getEntityWorld(),
+              player.getPosition().getX(),
+              player.getPosition().getY(),
+              player.getPosition().getZ());
         }
     }
 

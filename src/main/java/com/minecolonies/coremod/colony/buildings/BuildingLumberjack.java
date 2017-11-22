@@ -98,52 +98,6 @@ public class BuildingLumberjack extends AbstractBuildingWorker
         return Collections.unmodifiableMap(treesToFell);
     }
 
-    @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
-    {
-        if(treesToFell.isEmpty())
-        {
-            super.readFromNBT(compound);
-            treesToFell.clear();
-
-            final NBTTagList saplingTagList = compound.getTagList(TAG_SAPLINGS, Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < saplingTagList.tagCount(); ++i)
-            {
-                final NBTTagCompound saplingCompound = saplingTagList.getCompoundTagAt(i);
-                final ItemStack stack = new ItemStack(saplingCompound);
-                final boolean cut = saplingCompound.getBoolean(TAG_CUT);
-                treesToFell.put(new ItemStorage(stack), cut);
-            }
-        }
-    }
-
-    @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
-    {
-        super.writeToNBT(compound);
-        @NotNull final NBTTagList saplingTagList = new NBTTagList();
-        for (@NotNull final Map.Entry<ItemStorage, Boolean> entry : treesToFell.entrySet())
-        {
-            @NotNull final NBTTagCompound saplingCompound = new NBTTagCompound();
-            entry.getKey().getItemStack().writeToNBT(saplingCompound);
-            saplingCompound.setBoolean(TAG_CUT, entry.getValue());
-            saplingTagList.appendTag(saplingCompound);
-        }
-        compound.setTag(TAG_SAPLINGS, saplingTagList);
-    }
-
-    @Override
-    public void serializeToView(@NotNull final ByteBuf buf)
-    {
-        super.serializeToView(buf);
-        buf.writeInt(treesToFell.size());
-        for (final Map.Entry<ItemStorage, Boolean> entry : treesToFell.entrySet())
-        {
-            ByteBufUtils.writeItemStack(buf, entry.getKey().getItemStack());
-            buf.writeBoolean(entry.getValue());
-        }
-    }
-
     /**
      * Getter of the schematic name.
      *
@@ -186,6 +140,53 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     }
 
     /**
+     * Create the job for the lumberjack.
+     *
+     * @param citizen the citizen to take the job.
+     * @return the new job.
+     */
+    @NotNull
+    @Override
+    public AbstractJob createJob(final CitizenData citizen)
+    {
+        return new JobLumberjack(citizen);
+    }
+
+    @Override
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    {
+        if (treesToFell.isEmpty())
+        {
+            super.readFromNBT(compound);
+            treesToFell.clear();
+
+            final NBTTagList saplingTagList = compound.getTagList(TAG_SAPLINGS, Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < saplingTagList.tagCount(); ++i)
+            {
+                final NBTTagCompound saplingCompound = saplingTagList.getCompoundTagAt(i);
+                final ItemStack stack = new ItemStack(saplingCompound);
+                final boolean cut = saplingCompound.getBoolean(TAG_CUT);
+                treesToFell.put(new ItemStorage(stack), cut);
+            }
+        }
+    }
+
+    @Override
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    {
+        super.writeToNBT(compound);
+        @NotNull final NBTTagList saplingTagList = new NBTTagList();
+        for (@NotNull final Map.Entry<ItemStorage, Boolean> entry : treesToFell.entrySet())
+        {
+            @NotNull final NBTTagCompound saplingCompound = new NBTTagCompound();
+            entry.getKey().getItemStack().writeToNBT(saplingCompound);
+            saplingCompound.setBoolean(TAG_CUT, entry.getValue());
+            saplingTagList.appendTag(saplingCompound);
+        }
+        compound.setTag(TAG_SAPLINGS, saplingTagList);
+    }
+
+    /**
      * Getter of the job description.
      *
      * @return the description of the lumberjacks job.
@@ -197,17 +198,16 @@ public class BuildingLumberjack extends AbstractBuildingWorker
         return LUMBERJACK;
     }
 
-    /**
-     * Create the job for the lumberjack.
-     *
-     * @param citizen the citizen to take the job.
-     * @return the new job.
-     */
-    @NotNull
     @Override
-    public AbstractJob createJob(final CitizenData citizen)
+    public void serializeToView(@NotNull final ByteBuf buf)
     {
-        return new JobLumberjack(citizen);
+        super.serializeToView(buf);
+        buf.writeInt(treesToFell.size());
+        for (final Map.Entry<ItemStorage, Boolean> entry : treesToFell.entrySet())
+        {
+            ByteBufUtils.writeItemStack(buf, entry.getKey().getItemStack());
+            buf.writeBoolean(entry.getValue());
+        }
     }
 
     /**
@@ -222,6 +222,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
 
         /**
          * Public constructor of the view, creates an instance of it.
+         *
          * @param c the colony.
          * @param l the position.
          */
@@ -240,14 +241,14 @@ public class BuildingLumberjack extends AbstractBuildingWorker
             {
                 final ItemStack stack = ByteBufUtils.readItemStack(buf);
 
-                if(stack != null && stack.getItem() != null)
+                if (stack != null && stack.getItem() != null)
                 {
                     final boolean cut = buf.readBoolean();
                     treesToFell.put(new ItemStorage(stack), cut);
                 }
             }
 
-            if(treesToFell.isEmpty())
+            if (treesToFell.isEmpty())
             {
                 final List<ItemStack> saplings = new ArrayList<>();
                 final int[] saplingId = OreDictionary.getOreIDs(new ItemStack(Blocks.SAPLING));
@@ -258,18 +259,11 @@ public class BuildingLumberjack extends AbstractBuildingWorker
                 }
                 treesToFell.putAll(calcSaplings(saplings));
 
-                for(final Map.Entry<ItemStorage, Boolean> entry : treesToFell.entrySet())
+                for (final Map.Entry<ItemStorage, Boolean> entry : treesToFell.entrySet())
                 {
                     MineColonies.getNetwork().sendToServer(new LumberjackSaplingSelectorMessage(this, entry.getKey().getItemStack(), entry.getValue()));
                 }
             }
-        }
-
-        @NotNull
-        @Override
-        public Window getWindow()
-        {
-            return new WindowHutLumberjack(this);
         }
 
         @NotNull
@@ -288,6 +282,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
 
         /**
          * Calculates all saplings ingame and return an itemStorage map of it.
+         *
          * @param saplings the saplings.
          * @return the itemStorage map.
          */
@@ -308,6 +303,13 @@ public class BuildingLumberjack extends AbstractBuildingWorker
                 }
             }
             return finalSaplings;
+        }
+
+        @NotNull
+        @Override
+        public Window getWindow()
+        {
+            return new WindowHutLumberjack(this);
         }
     }
 }

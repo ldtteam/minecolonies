@@ -13,14 +13,16 @@ public interface IToolType
 
     /**
      * Whether or not the tool use material.
-     *
+     * <p>
      * such as wood, gold, stone, iron or diamond
+     *
      * @return true if using material
      */
     boolean hasVariableMaterials();
 
     /**
      * Text displayed to the user.
+     *
      * @return The text displayed to the user.
      */
     ITextComponent getDisplayName();

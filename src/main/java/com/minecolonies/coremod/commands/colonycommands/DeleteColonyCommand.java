@@ -77,7 +77,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand
         else
         {
             colonyId = getIthArgument(args, 0, -1);
-            if(args.length > 1)
+            if (args.length > 1)
             {
                 canDestroy = Boolean.parseBoolean(args[1]);
             }

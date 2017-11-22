@@ -524,13 +524,6 @@ public class Permissions implements IPermissions
         compound.setBoolean(TAG_UPDATE, updatedPermissionAlready);
     }
 
-    @Override
-    @NotNull
-    public Map<UUID, Player> getPlayers()
-    {
-        return Collections.unmodifiableMap(players);
-    }
-
     /**
      * Returns a set of UUID's that have permission to send (and receive) messages.
      *
@@ -542,6 +535,11 @@ public class Permissions implements IPermissions
                  .filter(player -> hasPermission(player.getRank(), Action.RECEIVE_MESSAGES))
                  .map(Player::getID)
                  .collect(Collectors.toSet());
+    }    @Override
+    @NotNull
+    public Map<UUID, Player> getPlayers()
+    {
+        return Collections.unmodifiableMap(players);
     }
 
     /**
@@ -636,20 +634,6 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * Returns the rank belonging to the UUID.
-     *
-     * @param id UUID that you want to check rank of.
-     * @return Rank of the UUID.
-     */
-    @NotNull
-    @Override
-    public Rank getRank(final UUID id)
-    {
-        final Player player = players.get(id);
-        return player != null ? player.getRank() : Rank.NEUTRAL;
-    }
-
-    /**
      * Sets the player's rank to a given rank.
      *
      * @param id    UUID of the player of the new rank.
@@ -698,6 +682,18 @@ public class Permissions implements IPermissions
         markDirty();
         AchievementUtils.syncAchievements(colony);
         return true;
+    }    /**
+     * Returns the rank belonging to the UUID.
+     *
+     * @param id UUID that you want to check rank of.
+     * @return Rank of the UUID.
+     */
+    @NotNull
+    @Override
+    public Rank getRank(final UUID id)
+    {
+        final Player player = players.get(id);
+        return player != null ? player.getRank() : Rank.NEUTRAL;
     }
 
     /**
@@ -789,12 +785,6 @@ public class Permissions implements IPermissions
         return dirty;
     }
 
-    @Override
-    public boolean isColonyMember(@NotNull final EntityPlayer player)
-    {
-        return players.containsKey(player.getGameProfile().getId());
-    }
-
     /**
      * Marks instance not dirty.
      */
@@ -854,6 +844,10 @@ public class Permissions implements IPermissions
             promote = p;
             demote = d;
         }
+    }    @Override
+    public boolean isColonyMember(@NotNull final EntityPlayer player)
+    {
+        return players.containsKey(player.getGameProfile().getId());
     }
 
     /**
@@ -872,12 +866,6 @@ public class Permissions implements IPermissions
             return userRank;
         }
 
-        @NotNull
-        public Map<UUID, Player> getPlayers()
-        {
-            return Collections.unmodifiableMap(players);
-        }
-
         /**
          * Gets all player by a certain rank.
          *
@@ -892,6 +880,10 @@ public class Permissions implements IPermissions
                 .stream()
                 .filter(player -> player.getRank() == rank)
                 .collect(Collectors.toSet()));
+        }        @NotNull
+        public Map<UUID, Player> getPlayers()
+        {
+            return Collections.unmodifiableMap(players);
         }
 
         /**
@@ -1022,6 +1014,8 @@ public class Permissions implements IPermissions
             }
         }
 
+
+
         /**
          * Get the rank of a certain player.
          *
@@ -1054,6 +1048,8 @@ public class Permissions implements IPermissions
             return players.containsKey(player.getUniqueID());
         }
     }
+
+
 
 
 

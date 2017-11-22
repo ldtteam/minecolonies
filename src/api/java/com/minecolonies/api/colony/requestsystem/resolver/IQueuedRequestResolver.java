@@ -8,6 +8,7 @@ public interface IQueuedRequestResolver<R extends IRequestable> extends IRequest
 {
     /**
      * Method to get a list of all assigned tokens to this resolver.
+     *
      * @return A list of all assigned tokens.
      */
     ImmutableList<IToken> getAllAssignedRequests();

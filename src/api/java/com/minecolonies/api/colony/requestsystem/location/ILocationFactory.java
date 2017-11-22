@@ -18,8 +18,8 @@ public interface ILocationFactory<T, L extends ILocation> extends IFactory<T, L>
      * Method to get a new instance of the output given the input and additional context data.
      *
      * @param factoryController The {@link IFactoryController} that called this factory method.
-     * @param t       The input to build a new output for.
-     * @param context The context of the location.
+     * @param t                 The input to build a new output for.
+     * @param context           The context of the location.
      * @return The new output instance for a given input.
      *
      * @throws IllegalArgumentException is thrown when the factory cannot produce a new instance out of the given context and input.
@@ -40,7 +40,7 @@ public interface ILocationFactory<T, L extends ILocation> extends IFactory<T, L>
      * Method to get a new instance of a location given the input.
      *
      * @param factoryController The {@link IFactoryController} that called this factory method.
-     * @param input The input to build a new location for.
+     * @param input             The input to build a new location for.
      * @return The new output instance for a given input.
      */
     @NotNull

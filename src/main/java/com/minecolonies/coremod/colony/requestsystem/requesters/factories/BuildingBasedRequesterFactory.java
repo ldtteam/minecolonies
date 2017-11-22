@@ -29,10 +29,13 @@ public class BuildingBasedRequesterFactory implements IFactory<AbstractBuilding,
 
     @NotNull
     @Override
-    public BuildingBasedRequester getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final AbstractBuilding building, @NotNull final Object... context) throws IllegalArgumentException
+    public BuildingBasedRequester getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final AbstractBuilding building, @NotNull final Object... context)
+      throws IllegalArgumentException
     {
         if (context.length != 0)
+        {
             throw new IllegalArgumentException("To many context elements. Only 0 supported.");
+        }
 
         final ILocation location = factoryController.getNewInstance(TypeConstants.ILOCATION, building.getLocation(), building.getColony().getWorld().provider.getDimension());
         final IToken token = factoryController.getNewInstance(TypeConstants.ITOKEN);

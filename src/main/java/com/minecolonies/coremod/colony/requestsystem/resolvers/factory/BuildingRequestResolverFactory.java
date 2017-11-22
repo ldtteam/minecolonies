@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 public class BuildingRequestResolverFactory implements IRequestResolverFactory<BuildingRequestResolver>
 {
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
-    private static final String NBT_TOKEN  = "Token";
+    private static final String NBT_TOKEN    = "Token";
     private static final String NBT_LOCATION = "Location";
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 

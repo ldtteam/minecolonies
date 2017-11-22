@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.colony.requestsystem.requests;
 
 import com.google.common.reflect.TypeToken;
-import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.IRequestFactory;
+import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.*;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -34,98 +34,6 @@ public final class StandardRequestFactories
     private static final String NBT_CHILDREN  = "Children";
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
-    /**
-     * Private constructor to hide the implicit public one.
-     */
-    private StandardRequestFactories()
-    {
-    }
-
-    @FunctionalInterface
-    public interface IObjectToNBTConverter<O>
-    {
-        NBTTagCompound apply(IFactoryController controller, O object);
-    }
-    
-    @FunctionalInterface
-    public interface INBTToObjectConverter<O>
-    {
-        O apply(IFactoryController controller, NBTTagCompound compound);
-    }
-
-    @FunctionalInterface
-    public interface IObjectConstructor<T, O>
-    {
-        O construct(@NotNull final T requested, @NotNull final IToken token, @NotNull final IRequester requester, @NotNull final RequestState requestState);
-    }
-    
-    public static <T extends IRequestable> NBTTagCompound serializeToNBT(IFactoryController controller, IRequest<T> request, IObjectToNBTConverter<T> typeSerialization)
-    {
-        final NBTTagCompound compound = new NBTTagCompound();
-
-        final NBTTagCompound requesterCompound = controller.serialize(request.getRequester());
-        final NBTTagCompound tokenCompound = controller.serialize(request.getToken());
-        final NBTTagInt stateCompound = request.getState().serializeNBT();
-        final NBTTagCompound requestedCompound = typeSerialization.apply(controller, request.getRequest());
-
-        final NBTTagList childrenCompound = new NBTTagList();
-        for (final IToken token : request.getChildren())
-        {
-            childrenCompound.appendTag(controller.serialize(token));
-        }
-
-        compound.setTag(NBT_REQUESTER, requesterCompound);
-        compound.setTag(NBT_TOKEN, tokenCompound);
-        compound.setTag(NBT_STATE, stateCompound);
-        compound.setTag(NBT_REQUESTED, requestedCompound);
-
-        if (request.hasResult())
-        {
-            compound.setTag(NBT_RESULT, typeSerialization.apply(controller, request.getResult()));
-        }
-
-        if (request.hasParent())
-        {
-            compound.setTag(NBT_PARENT, controller.serialize(request.getParent()));
-        }
-
-        compound.setTag(NBT_CHILDREN, childrenCompound);
-
-        return compound;
-    }
-    
-    public static <T extends IRequestable, R extends IRequest<T>> R deserializeFromNBT(IFactoryController controller, NBTTagCompound compound, INBTToObjectConverter<T> typeDeserialization, IObjectConstructor<T, R> objectConstructor)
-    {
-        final IRequester requester = controller.deserialize(compound.getCompoundTag(NBT_REQUESTER));
-        final IToken token = controller.deserialize(compound.getCompoundTag(NBT_TOKEN));
-        final RequestState state = RequestState.deserializeNBT((NBTTagInt) compound.getTag(NBT_STATE));
-        final T requested = typeDeserialization.apply(controller, compound.getCompoundTag(NBT_REQUESTED));
-
-        final List<IToken> childTokens = new ArrayList<>();
-        final NBTTagList childCompound = compound.getTagList(NBT_CHILDREN, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < childCompound.tagCount(); i++)
-        {
-            childTokens.add(controller.deserialize(childCompound.getCompoundTagAt(i)));
-        }
-
-        @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
-        final R request = objectConstructor.construct(requested, token, requester, state);
-
-        request.addChildren(childTokens);
-
-        if (compound.hasKey(NBT_PARENT))
-        {
-            request.setParent(controller.deserialize(compound.getCompoundTag(NBT_PARENT)));
-        }
-
-        if (compound.hasKey(NBT_RESULT))
-        {
-            request.setResult(typeDeserialization.apply(controller, compound.getCompoundTag(NBT_RESULT)));
-        }
-
-        return request;
-    }
-    
     @SuppressWarnings(Suppression.BIG_CLASS)
     public static final class ItemStackRequestFactory implements IRequestFactory<Stack, StandardRequests.ItemStackRequest>
     {
@@ -175,7 +83,7 @@ public final class StandardRequestFactories
         @Override
         public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.ItemStackRequest request)
         {
-            return serializeToNBT(controller, request, Stack::serialize);    
+            return serializeToNBT(controller, request, Stack::serialize);
         }
 
         /**
@@ -191,7 +99,11 @@ public final class StandardRequestFactories
         public StandardRequests.ItemStackRequest deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
         {
             return deserializeFromNBT(controller, nbt, Stack::deserialize,
-              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ItemStackRequest.class), requested, token, requester, requestState));
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ItemStackRequest.class),
+                requested,
+                token,
+                requester,
+                requestState));
         }
     }
 
@@ -242,7 +154,11 @@ public final class StandardRequestFactories
         public StandardRequests.DeliveryRequest deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
         {
             return deserializeFromNBT(controller, nbt, Delivery::deserialize,
-              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.DeliveryRequest.class), requested, token, requester, requestState));
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.DeliveryRequest.class),
+                requested,
+                token,
+                requester,
+                requestState));
         }
 
         /**
@@ -305,7 +221,11 @@ public final class StandardRequestFactories
         public StandardRequests.ToolRequest deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
         {
             return deserializeFromNBT(controller, nbt, Tool::deserialize,
-              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ToolRequest.class), requested, token, requester, requestState));
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ToolRequest.class),
+                requested,
+                token,
+                requester,
+                requestState));
         }
     }
 
@@ -349,7 +269,11 @@ public final class StandardRequestFactories
         public StandardRequests.FoodRequest deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
         {
             return deserializeFromNBT(controller, nbt, Food::deserialize,
-              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.FoodRequest.class), requested, token, requester, requestState));
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.FoodRequest.class),
+                requested,
+                token,
+                requester,
+                requestState));
         }
     }
 
@@ -359,10 +283,10 @@ public final class StandardRequestFactories
 
         @Override
         public StandardRequests.BurnableRequest getNewInstance(
-                                                            @NotNull final Burnable input,
-                                                            @NotNull final IRequester location,
-                                                            @NotNull final IToken token,
-                                                            @NotNull final RequestState initialState)
+                                                                @NotNull final Burnable input,
+                                                                @NotNull final IRequester location,
+                                                                @NotNull final IToken token,
+                                                                @NotNull final RequestState initialState)
         {
             return new StandardRequests.BurnableRequest(location, token, initialState, input);
         }
@@ -393,9 +317,106 @@ public final class StandardRequestFactories
         public StandardRequests.BurnableRequest deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
         {
             return deserializeFromNBT(controller, nbt, Burnable::deserialize,
-              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.BurnableRequest.class), requested, token, requester, requestState));
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.BurnableRequest.class),
+                requested,
+                token,
+                requester,
+                requestState));
         }
     }
 
+    /**
+     * Private constructor to hide the implicit public one.
+     */
+    private StandardRequestFactories()
+    {
+    }
 
+    public static <T extends IRequestable> NBTTagCompound serializeToNBT(IFactoryController controller, IRequest<T> request, IObjectToNBTConverter<T> typeSerialization)
+    {
+        final NBTTagCompound compound = new NBTTagCompound();
+
+        final NBTTagCompound requesterCompound = controller.serialize(request.getRequester());
+        final NBTTagCompound tokenCompound = controller.serialize(request.getToken());
+        final NBTTagInt stateCompound = request.getState().serializeNBT();
+        final NBTTagCompound requestedCompound = typeSerialization.apply(controller, request.getRequest());
+
+        final NBTTagList childrenCompound = new NBTTagList();
+        for (final IToken token : request.getChildren())
+        {
+            childrenCompound.appendTag(controller.serialize(token));
+        }
+
+        compound.setTag(NBT_REQUESTER, requesterCompound);
+        compound.setTag(NBT_TOKEN, tokenCompound);
+        compound.setTag(NBT_STATE, stateCompound);
+        compound.setTag(NBT_REQUESTED, requestedCompound);
+
+        if (request.hasResult())
+        {
+            compound.setTag(NBT_RESULT, typeSerialization.apply(controller, request.getResult()));
+        }
+
+        if (request.hasParent())
+        {
+            compound.setTag(NBT_PARENT, controller.serialize(request.getParent()));
+        }
+
+        compound.setTag(NBT_CHILDREN, childrenCompound);
+
+        return compound;
+    }
+
+    public static <T extends IRequestable, R extends IRequest<T>> R deserializeFromNBT(
+                                                                                        IFactoryController controller,
+                                                                                        NBTTagCompound compound,
+                                                                                        INBTToObjectConverter<T> typeDeserialization,
+                                                                                        IObjectConstructor<T, R> objectConstructor)
+    {
+        final IRequester requester = controller.deserialize(compound.getCompoundTag(NBT_REQUESTER));
+        final IToken token = controller.deserialize(compound.getCompoundTag(NBT_TOKEN));
+        final RequestState state = RequestState.deserializeNBT((NBTTagInt) compound.getTag(NBT_STATE));
+        final T requested = typeDeserialization.apply(controller, compound.getCompoundTag(NBT_REQUESTED));
+
+        final List<IToken> childTokens = new ArrayList<>();
+        final NBTTagList childCompound = compound.getTagList(NBT_CHILDREN, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < childCompound.tagCount(); i++)
+        {
+            childTokens.add(controller.deserialize(childCompound.getCompoundTagAt(i)));
+        }
+
+        @SuppressWarnings(Suppression.LEFT_CURLY_BRACE) final R request = objectConstructor.construct(requested, token, requester, state);
+
+        request.addChildren(childTokens);
+
+        if (compound.hasKey(NBT_PARENT))
+        {
+            request.setParent(controller.deserialize(compound.getCompoundTag(NBT_PARENT)));
+        }
+
+        if (compound.hasKey(NBT_RESULT))
+        {
+            request.setResult(typeDeserialization.apply(controller, compound.getCompoundTag(NBT_RESULT)));
+        }
+
+        return request;
+    }
+
+    @FunctionalInterface
+    public interface IObjectToNBTConverter<O>
+    {
+        NBTTagCompound apply(IFactoryController controller, O object);
+    }
+
+    @FunctionalInterface
+    public interface INBTToObjectConverter<O>
+    {
+        O apply(IFactoryController controller, NBTTagCompound compound);
+    }
+
+    @FunctionalInterface
+    public interface IObjectConstructor<T, O>
+    {
+        O construct(@NotNull final T requested, @NotNull final IToken token, @NotNull final IRequester requester, @NotNull final RequestState requestState);
+    }
 }

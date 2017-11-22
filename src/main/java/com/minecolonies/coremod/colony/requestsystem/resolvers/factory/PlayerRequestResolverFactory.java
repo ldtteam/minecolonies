@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers.factory;
 
 import com.google.common.reflect.TypeToken;
-import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -22,8 +22,8 @@ import java.util.stream.Collectors;
 public class PlayerRequestResolverFactory implements IFactory<IRequestManager, PlayerRequestResolver>
 {
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
-    private static final String NBT_TOKEN  = "Token";
-    private static final String NBT_LOCATION = "Location";
+    private static final String NBT_TOKEN             = "Token";
+    private static final String NBT_LOCATION          = "Location";
     private static final String NBT_ASSIGNED_REQUESTS = "Requests";
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
@@ -46,10 +46,13 @@ public class PlayerRequestResolverFactory implements IFactory<IRequestManager, P
     @NotNull
     @Override
     public PlayerRequestResolver getNewInstance(
-                                                   @NotNull final IFactoryController factoryController, @NotNull final IRequestManager iRequestManager, @NotNull final Object... context)
+                                                 @NotNull final IFactoryController factoryController,
+                                                 @NotNull final IRequestManager iRequestManager,
+                                                 @NotNull final Object... context)
       throws IllegalArgumentException
     {
-        final ILocation location = factoryController.getNewInstance(TypeConstants.ILOCATION, iRequestManager.getColony().getCenter(), iRequestManager.getColony().getWorld().provider.getDimension());
+        final ILocation location =
+          factoryController.getNewInstance(TypeConstants.ILOCATION, iRequestManager.getColony().getCenter(), iRequestManager.getColony().getWorld().provider.getDimension());
         final IToken token = factoryController.getNewInstance(TypeConstants.ITOKEN, iRequestManager.getColony().getID() * CONST_PLAYER_RESOLVER_ID_SCALE);
         return new PlayerRequestResolver(location, token);
     }
@@ -72,8 +75,9 @@ public class PlayerRequestResolverFactory implements IFactory<IRequestManager, P
         final IToken token = controller.deserialize(nbt.getCompoundTag(NBT_TOKEN));
         final ILocation location = controller.deserialize(nbt.getCompoundTag(NBT_LOCATION));
 
-        final Set<IToken> assignedRequests = NBTUtils.streamCompound(nbt.getTagList(NBT_ASSIGNED_REQUESTS, Constants.NBT.TAG_COMPOUND)).map(c -> (IToken) controller.deserialize(c)).collect(
-          Collectors.toSet());
+        final Set<IToken> assignedRequests =
+          NBTUtils.streamCompound(nbt.getTagList(NBT_ASSIGNED_REQUESTS, Constants.NBT.TAG_COMPOUND)).map(c -> (IToken) controller.deserialize(c)).collect(
+            Collectors.toSet());
 
         final PlayerRequestResolver resolver = new PlayerRequestResolver(location, token);
         resolver.setAllAssignedRequests(assignedRequests);

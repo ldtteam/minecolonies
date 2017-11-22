@@ -11,7 +11,6 @@ public class CowKillCommand extends AbstractKillCommand<EntityCow>
 
     /**
      * Initialize this SubCommand with it's parents.
-     *
      */
     public CowKillCommand()
     {

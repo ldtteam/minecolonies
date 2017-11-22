@@ -5,10 +5,10 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.IRetryable;
@@ -23,7 +23,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.colony.requestsystem.management.*;
+import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.LogHandler;
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.ProviderHandler;
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.RequestHandler;
@@ -38,7 +38,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -52,12 +55,12 @@ import java.util.stream.Collectors;
 public class StandardRequestManager implements IStandardRequestManager
 {
     ////---------------------------NBTTags-------------------------\\\\
-    private static final String NBT_REQUEST_IDENTITY_MAP = "Request_Identities";
+    private static final String NBT_REQUEST_IDENTITY_MAP          = "Request_Identities";
     private static final String NBT_RESOLVER_REQUESTS_ASSIGNMENTS = "Resolver_Requests";
-    private static final String NBT_PLAYER = "Player";
-    private static final String NBT_RETRYING = "Retrying";
+    private static final String NBT_PLAYER                        = "Player";
+    private static final String NBT_RETRYING                      = "Retrying";
 
-    private static final String NBT_TOKEN = "Token";
+    private static final String NBT_TOKEN       = "Token";
     private static final String NBT_ASSIGNMENTS = "Assignments";
 
     private static final String NBT_REQUEST = "Request";
@@ -105,11 +108,15 @@ public class StandardRequestManager implements IStandardRequestManager
     @NotNull
     private final Map<TypeToken, Collection<IRequestResolver>> requestClassResolverMap = new HashMap<>();
     /**
+     * Colony of the manager.
+     */
+    @NotNull
+    private final IColony colony;
+    /**
      * The fallback resolver used to resolve directly to the player.
      */
     @NotNull
-    private IPlayerRequestResolver                             playerResolver = null;
-
+    private       IPlayerRequestResolver                       playerResolver          = null;
     /**
      * The fallback resolver used to resolve using retries.
      * Not all requests might support this feature, requests that do should implement {@link IRetryable} on their requestable.
@@ -117,11 +124,6 @@ public class StandardRequestManager implements IStandardRequestManager
      */
     @NotNull
     private IRetryingRequestResolver retryingResolver = null;
-    /**
-     * Colony of the manager.
-     */
-    @NotNull
-    private final IColony colony;
 
     public StandardRequestManager(final IColony colony)
     {
@@ -156,6 +158,227 @@ public class StandardRequestManager implements IStandardRequestManager
     }
 
     /**
+     * Method used to get the FactoryController of the RequestManager.
+     *
+     * @return The FactoryController of this RequestManager.
+     */
+    @NotNull
+    @Override
+    public IFactoryController getFactoryController()
+    {
+        return StandardFactoryController.getInstance();
+    }
+
+    /**
+     * Method to create a request for a given object
+     *
+     * @param requester The requester.
+     * @param object    The Object that is being requested.
+     * @return The token representing the request.
+     *
+     * @throws IllegalArgumentException is thrown when this manager cannot produce a request for the given types.
+     */
+    @NotNull
+    @Override
+    public <T extends IRequestable> IToken createRequest(@NotNull final IRequester requester, @NotNull final T object) throws IllegalArgumentException
+    {
+        final IRequest<T> request = RequestHandler.createRequest(this, requester, object);
+
+        if (colony != null)
+        {
+            colony.markDirty();
+        }
+
+        return request.getToken();
+    }
+
+    /**
+     * Method used to assign a request to a resolver.
+     *
+     * @param token The token of the request to assign.
+     * @throws IllegalArgumentException when the token is not registered to a request, or is already assigned to a resolver.
+     */
+    @Override
+    public void assignRequest(@NotNull final IToken token) throws IllegalArgumentException
+    {
+        RequestHandler.assignRequest(this, RequestHandler.getRequest(this, token));
+
+        if (colony != null)
+        {
+            colony.markDirty();
+        }
+    }
+
+    /**
+     * Method used to create and immediately assign a request.
+     *
+     * @param requester The requester of the requestable.
+     * @param object    The requestable
+     * @return The token that represents the request.
+     *
+     * @throws IllegalArgumentException when either createRequest or assignRequest have thrown an IllegalArgumentException
+     */
+    @NotNull
+    @Override
+    public <T extends IRequestable> IToken createAndAssignRequest(@NotNull final IRequester requester, @NotNull final T object) throws IllegalArgumentException
+    {
+        final IToken token = createRequest(requester, object);
+        assignRequest(token);
+        return token;
+    }
+
+    @Override
+    @Nullable
+    public IToken reassignRequest(@NotNull final IToken token, @NotNull final Collection<IToken> resolverTokenBlackList) throws IllegalArgumentException
+    {
+        final IRequest request = RequestHandler.getRequest(this, token);
+        return RequestHandler.reassignRequest(this, request, resolverTokenBlackList);
+    }
+
+    /**
+     * Method to get a request for a given token.
+     * <p>
+     * Returned value is a defensive copy. However should not be modified!
+     *
+     * @param token The token to get a request for.
+     * @return The request of the given type for that token.
+     *
+     * @throws IllegalArgumentException when either their is no request with that token, or the token does not produce a request of the given type T.
+     */
+    @SuppressWarnings(Suppression.UNCHECKED)
+    @Nullable
+    @Override
+    public <T extends IRequestable> IRequest<T> getRequestForToken(@NotNull final IToken token) throws IllegalArgumentException
+    {
+        final IRequest<T> internalRequest = RequestHandler.getRequestOrNull(this, token);
+
+        if (internalRequest == null)
+        {
+            return null;
+        }
+
+        final NBTTagCompound requestData = getFactoryController().serialize(internalRequest);
+
+        return getFactoryController().deserialize(requestData);
+    }
+
+    @NotNull
+    @Override
+    public <T extends IRequestable> IRequestResolver<T> getResolverForToken(@NotNull final IToken token) throws IllegalArgumentException
+    {
+        final IRequestResolver<T> resolver = ResolverHandler.getResolver(this, token);
+
+        return getFactoryController().deserialize(getFactoryController().serialize(resolver));
+    }
+
+    @Nullable
+    @Override
+    public <T extends IRequestable> IRequestResolver<T> getResolverForRequest(@NotNull final IToken requestToken) throws IllegalArgumentException
+    {
+        final IRequest request = RequestHandler.getRequest(this, requestToken);
+
+        return getResolverForToken(ResolverHandler.getResolverForRequest(this, request).getRequesterId());
+    }
+
+    /**
+     * Method to update the state of a given request.
+     *
+     * @param token The token that represents a given request to update.
+     * @param state The new state of that request.
+     * @throws IllegalArgumentException when the token is unknown to this manager.
+     */
+    @NotNull
+    @Override
+    public void updateRequestState(@NotNull final IToken token, @NotNull final RequestState state) throws IllegalArgumentException
+    {
+        final IRequest request = RequestHandler.getRequest(this, token);
+
+        LogHandler.log("Updating request state from:" + token + ". With original state: " + request.getState() + " to : " + state);
+
+        request.setState(new WrappedStaticStateRequestManager(this), state);
+
+        if (colony != null)
+        {
+            colony.markDirty();
+        }
+
+        switch (request.getState())
+        {
+            case COMPLETED:
+                LogHandler.log("Request completed: " + token + ". Notifying parent and requester...");
+                RequestHandler.onRequestSuccessful(this, token);
+                return;
+            case OVERRULED:
+                LogHandler.log("Request overruled: " + token + ". Notifying parent, children and requester...");
+                RequestHandler.onRequestOverruled(this, token);
+                break;
+            case CANCELLED:
+                LogHandler.log("Request cancelled: " + token + ". Notifying parent, children and requester...");
+                RequestHandler.onRequestCancelled(this, token);
+                return;
+            case RECEIVED:
+                LogHandler.log("Request received: " + token + ". Removing from system...");
+                RequestHandler.cleanRequestData(this, token);
+                return;
+            default:
+        }
+    }
+
+    @Override
+    public void overruleRequest(@NotNull final IToken token, @Nullable final ItemStack stack) throws IllegalArgumentException
+    {
+        final IRequest request = RequestHandler.getRequest(this, token);
+
+        if (!ItemStackUtils.isEmpty(stack))
+        {
+            request.setDelivery(stack);
+        }
+
+        updateRequestState(token, RequestState.OVERRULED);
+    }
+
+    /**
+     * Method used to indicate to this manager that a new Provider has been added to the colony.
+     *
+     * @param provider The new provider.
+     */
+    @Override
+    public void onProviderAddedToColony(@NotNull final IRequestResolverProvider provider) throws IllegalArgumentException
+    {
+        ProviderHandler.registerProvider(this, provider);
+    }
+
+    /**
+     * Method used to indicate to this manager that Provider has been removed from the colony.
+     *
+     * @param provider The removed provider.
+     */
+    @Override
+    public void onProviderRemovedFromColony(@NotNull final IRequestResolverProvider provider) throws IllegalArgumentException
+    {
+        ProviderHandler.removeProvider(this, provider);
+    }
+
+    /**
+     * Get the player resolve.
+     *
+     * @return the player resolver object.
+     */
+    @NotNull
+    @Override
+    public IPlayerRequestResolver getPlayerResolver()
+    {
+        return this.playerResolver;
+    }
+
+    @NotNull
+    @Override
+    public IRetryingRequestResolver getRetryingRequestResolver()
+    {
+        return this.retryingResolver;
+    }
+
+    /**
      * Method used to serialize the current request system to NBT.
      *
      * @return The NBTData that describes the current request system
@@ -166,10 +389,14 @@ public class StandardRequestManager implements IStandardRequestManager
         NBTTagCompound systemCompound = new NBTTagCompound();
 
         if (this.playerResolver != null)
+        {
             systemCompound.setTag(NBT_PLAYER, getFactoryController().serialize(playerResolver));
+        }
 
         if (this.retryingResolver != null)
+        {
             systemCompound.setTag(NBT_RETRYING, getFactoryController().serialize(retryingResolver));
+        }
 
         NBTTagList requestIdentityList = new NBTTagList();
         requestBiMap.keySet().forEach(token -> {
@@ -282,220 +509,6 @@ public class StandardRequestManager implements IStandardRequestManager
 
             resolverRequestMap.put(token, assignedRequests);
         });
-    }
-
-    /**
-     * Method used to get the FactoryController of the RequestManager.
-     *
-     * @return The FactoryController of this RequestManager.
-     */
-    @NotNull
-    @Override
-    public IFactoryController getFactoryController()
-    {
-        return StandardFactoryController.getInstance();
-    }
-
-    /**
-     * Get the player resolve.
-     * @return the player resolver object.
-     */
-    @NotNull
-    @Override
-    public IPlayerRequestResolver getPlayerResolver()
-    {
-        return this.playerResolver;
-    }
-
-    @NotNull
-    @Override
-    public IRetryingRequestResolver getRetryingRequestResolver()
-    {
-        return this.retryingResolver;
-    }
-
-    /**
-     * Method to create a request for a given object
-     *
-     * @param requester The requester.
-     * @param object    The Object that is being requested.
-     * @return The token representing the request.
-     *
-     * @throws IllegalArgumentException is thrown when this manager cannot produce a request for the given types.
-     */
-    @NotNull
-    @Override
-    public <T extends IRequestable> IToken createRequest(@NotNull final IRequester requester, @NotNull final T object) throws IllegalArgumentException
-    {
-        final IRequest<T> request = RequestHandler.createRequest(this, requester, object);
-
-        if (colony != null)
-            colony.markDirty();
-
-        return request.getToken();
-    }
-
-    /**
-     * Method used to assign a request to a resolver.
-     *
-     * @param token The token of the request to assign.
-     * @throws IllegalArgumentException when the token is not registered to a request, or is already assigned to a resolver.
-     */
-    @Override
-    public void assignRequest(@NotNull final IToken token) throws IllegalArgumentException
-    {
-        RequestHandler.assignRequest(this, RequestHandler.getRequest(this, token));
-
-        if (colony != null)
-            colony.markDirty();
-    }
-
-    /**
-     * Method used to create and immediately assign a request.
-     *
-     * @param requester The requester of the requestable.
-     * @param object    The requestable
-     * @return The token that represents the request.
-     *
-     * @throws IllegalArgumentException when either createRequest or assignRequest have thrown an IllegalArgumentException
-     */
-    @NotNull
-    @Override
-    public <T extends IRequestable> IToken createAndAssignRequest(@NotNull final IRequester requester, @NotNull final T object) throws IllegalArgumentException
-    {
-        final IToken token = createRequest(requester, object);
-        assignRequest(token);
-        return token;
-    }
-
-    @Override
-    @Nullable
-    public IToken reassignRequest(@NotNull final IToken token, @NotNull final Collection<IToken> resolverTokenBlackList) throws IllegalArgumentException
-    {
-        final IRequest request = RequestHandler.getRequest(this, token);
-        return RequestHandler.reassignRequest(this, request, resolverTokenBlackList);
-    }
-
-    /**
-     * Method to get a request for a given token.
-     * <p>
-     * Returned value is a defensive copy. However should not be modified!
-     *
-     * @param token The token to get a request for.
-     * @return The request of the given type for that token.
-     *
-     * @throws IllegalArgumentException when either their is no request with that token, or the token does not produce a request of the given type T.
-     */
-    @SuppressWarnings(Suppression.UNCHECKED)
-    @Nullable
-    @Override
-    public <T extends IRequestable> IRequest<T> getRequestForToken(@NotNull final IToken token) throws IllegalArgumentException
-    {
-        final IRequest<T> internalRequest = RequestHandler.getRequestOrNull(this, token);
-
-        if (internalRequest == null)
-        {
-            return null;
-        }
-
-        final NBTTagCompound requestData = getFactoryController().serialize(internalRequest);
-
-        return getFactoryController().deserialize(requestData);
-    }
-
-    @NotNull
-    @Override
-    public <T extends IRequestable> IRequestResolver<T> getResolverForToken(@NotNull final IToken token) throws IllegalArgumentException
-    {
-        final IRequestResolver<T> resolver = ResolverHandler.getResolver(this, token);
-
-        return getFactoryController().deserialize(getFactoryController().serialize(resolver));
-    }
-
-    @Nullable
-    @Override
-    public <T extends IRequestable> IRequestResolver<T> getResolverForRequest(@NotNull final IToken requestToken) throws IllegalArgumentException
-    {
-        final IRequest request = RequestHandler.getRequest(this, requestToken);
-
-        return getResolverForToken(ResolverHandler.getResolverForRequest(this, request).getRequesterId());
-    }
-
-    /**
-     * Method to update the state of a given request.
-     *
-     * @param token The token that represents a given request to update.
-     * @param state The new state of that request.
-     * @throws IllegalArgumentException when the token is unknown to this manager.
-     */
-    @NotNull
-    @Override
-    public void updateRequestState(@NotNull final IToken token, @NotNull final RequestState state) throws IllegalArgumentException
-    {
-        final IRequest request = RequestHandler.getRequest(this, token);
-
-        LogHandler.log("Updating request state from:" + token + ". With original state: " + request.getState() + " to : " + state);
-
-        request.setState(new WrappedStaticStateRequestManager(this), state);
-
-        if (colony != null)
-            colony.markDirty();
-
-        switch (request.getState())
-        {
-            case COMPLETED:
-                LogHandler.log("Request completed: " + token + ". Notifying parent and requester...");
-                RequestHandler.onRequestSuccessful(this, token);
-                return;
-            case OVERRULED:
-                LogHandler.log("Request overruled: " + token + ". Notifying parent, children and requester...");
-                RequestHandler.onRequestOverruled(this, token);
-                break;
-            case CANCELLED:
-                LogHandler.log("Request cancelled: " + token + ". Notifying parent, children and requester...");
-                RequestHandler.onRequestCancelled(this, token);
-                return;
-            case RECEIVED:
-                LogHandler.log("Request received: " + token + ". Removing from system...");
-                RequestHandler.cleanRequestData(this, token);
-                return;
-            default:
-        }
-    }
-
-    @Override
-    public void overruleRequest(@NotNull final IToken token, @Nullable final ItemStack stack) throws IllegalArgumentException
-    {
-        final IRequest request = RequestHandler.getRequest(this, token);
-
-        if (!ItemStackUtils.isEmpty(stack))
-        {
-            request.setDelivery(stack);
-        }
-
-        updateRequestState(token, RequestState.OVERRULED);
-    }
-
-    /**
-     * Method used to indicate to this manager that a new Provider has been added to the colony.
-     *
-     * @param provider The new provider.
-     */
-    @Override
-    public void onProviderAddedToColony(@NotNull final IRequestResolverProvider provider) throws IllegalArgumentException
-    {
-        ProviderHandler.registerProvider(this, provider);
-    }
-
-    /**
-     * Method used to indicate to this manager that Provider has been removed from the colony.
-     *
-     * @param provider The removed provider.
-     */
-    @Override
-    public void onProviderRemovedFromColony(@NotNull final IRequestResolverProvider provider) throws IllegalArgumentException
-    {
-        ProviderHandler.removeProvider(this, provider);
     }
 
     @Override

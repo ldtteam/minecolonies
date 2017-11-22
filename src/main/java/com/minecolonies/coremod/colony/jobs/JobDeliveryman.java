@@ -28,7 +28,7 @@ import java.util.List;
 public class JobDeliveryman extends AbstractJob
 {
     private static final String TAG_CURRENT_TASK = "currentTask";
-    private static final String TAG_RETURNING = "returning";
+    private static final String TAG_RETURNING    = "returning";
 
     private LinkedList<IToken> taskQueue = new LinkedList<>();
 
@@ -87,6 +87,28 @@ public class JobDeliveryman extends AbstractJob
         compound.setBoolean(TAG_RETURNING, returning);
     }
 
+    /**
+     * Generate your AI class to register.
+     *
+     * @return your personal AI instance.
+     */
+    @NotNull
+    @Override
+    public AbstractAISkeleton<JobDeliveryman> generateAI()
+    {
+        return new EntityAIWorkDeliveryman(this);
+    }
+
+    @Override
+    public SoundEvent getBedTimeSound()
+    {
+        if (getCitizen() != null)
+        {
+            return getCitizen().isFemale() ? DeliverymanSounds.Female.offToBed : null;
+        }
+        return null;
+    }
+
     @Nullable
     @Override
     public SoundEvent getBadWeatherSound()
@@ -109,28 +131,6 @@ public class JobDeliveryman extends AbstractJob
         return null;
     }
 
-    @Override
-    public SoundEvent getBedTimeSound()
-    {
-        if (getCitizen() != null)
-        {
-            return getCitizen().isFemale() ? DeliverymanSounds.Female.offToBed : null;
-        }
-        return null;
-    }
-
-    /**
-     * Generate your AI class to register.
-     *
-     * @return your personal AI instance.
-     */
-    @NotNull
-    @Override
-    public AbstractAISkeleton<JobDeliveryman> generateAI()
-    {
-        return new EntityAIWorkDeliveryman(this);
-    }
-
     /**
      * Returns whether or not the job has a currentTask.
      *
@@ -148,7 +148,7 @@ public class JobDeliveryman extends AbstractJob
      */
     public IRequest<? extends Delivery> getCurrentTask()
     {
-        if(taskQueue.isEmpty())
+        if (taskQueue.isEmpty())
         {
             return null;
         }
@@ -157,6 +157,7 @@ public class JobDeliveryman extends AbstractJob
 
     /**
      * Method used to add a request to the queue
+     *
      * @param token The token of the requests to add.
      */
     public void addRequest(@NotNull final IToken token)
@@ -166,12 +167,15 @@ public class JobDeliveryman extends AbstractJob
 
     /**
      * Method called to mark the current request as finished.
+     *
      * @param successful True when the processing was successful, false when not.
      */
     public void finishRequest(@NotNull final boolean successful)
     {
         if (taskQueue.isEmpty())
+        {
             return;
+        }
 
         this.setReturning(true);
         IToken current = taskQueue.removeFirst();
@@ -181,6 +185,7 @@ public class JobDeliveryman extends AbstractJob
 
     /**
      * Called when a task that is being scheduled is being canceled.
+     *
      * @param token token of the task to be deleted.
      */
     public void onTaskDeletion(@NotNull final IToken token)
@@ -198,6 +203,7 @@ public class JobDeliveryman extends AbstractJob
 
     /**
      * Method to get the task queue of this job.
+     *
      * @return The task queue.
      */
     public List<IToken> getTaskQueue()
@@ -207,6 +213,7 @@ public class JobDeliveryman extends AbstractJob
 
     /**
      * Method used to check if this DMan is trying to return to the warehouse to clean up.
+     *
      * @return True when this DMan is returning the warehouse to clean his inventory.
      */
     public boolean getReturning()
@@ -217,6 +224,7 @@ public class JobDeliveryman extends AbstractJob
     /**
      * Method used to set if this DMan needs to return and clear his inventory.
      * A set task is preferred over the returning flag.
+     *
      * @param returning True to return the DMan to the warehouse and clean, false not to.
      */
     public void setReturning(final boolean returning)

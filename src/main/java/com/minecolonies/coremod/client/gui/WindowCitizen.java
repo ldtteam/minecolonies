@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.google.common.collect.ImmutableList;
-import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.LanguageHandler;
@@ -17,7 +17,6 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.TransferItemsRequestMessage;
@@ -304,31 +303,26 @@ public class WindowCitizen extends AbstractWindowSkeleton
      * The divider for the life count.
      */
     private static final int LIFE_COUNT_DIVIDER = 30;
-
-    /**
-     * Life count.
-     */
-    private int lifeCount = 0;
-
     /**
      * The citizenData.View object.
      */
     private final CitizenDataView citizen;
-
     /**
      * Scrollinglist of the resources.
      */
     private final ScrollingList resourceList;
-
     /**
      * Inventory of the player.
      */
     private final InventoryPlayer inventory = this.mc.player.inventory;
-
     /**
      * Is the player in creative or not.
      */
     private final boolean isCreative = this.mc.player.capabilities.isCreativeMode;
+    /**
+     * Life count.
+     */
+    private int lifeCount = 0;
 
     /**
      * Constructor to initiate the citizen windows.
@@ -341,6 +335,17 @@ public class WindowCitizen extends AbstractWindowSkeleton
         this.citizen = citizen;
 
         resourceList = findPaneOfTypeByID(WINDOW_ID_LIST_REQUESTS, ScrollingList.class);
+    }
+
+    /**
+     * Get a nice represetation of the pos string.
+     *
+     * @param pos the position.
+     * @return a nice string.
+     */
+    private static String getNicePositionString(final BlockPos pos)
+    {
+        return String.format(POSITION_STRING, pos.getX(), pos.getY(), pos.getZ());
     }
 
     @Override
@@ -392,11 +397,11 @@ public class WindowCitizen extends AbstractWindowSkeleton
 
             rowPane.findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getDisplayName(request.getToken()).getFormattedText());
             rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
-                    .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f",""));
+              .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f", ""));
 
             if (!(request.getRequest() instanceof IDeliverable)
-            || (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory),
-                    stack -> ((IRequest<? extends IDeliverable>) request).getRequest().matches(stack))))
+                  || (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory),
+              stack -> ((IRequest<? extends IDeliverable>) request).getRequest().matches(stack))))
             {
                 rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
             }
@@ -408,45 +413,6 @@ public class WindowCitizen extends AbstractWindowSkeleton
         {
             findPaneOfTypeByID(WINDOW_ID_GENDER, Image.class).setImage(FEMALE_SOURCE);
         }
-    }
-
-    /**
-     * Get a nice represetation of the pos string.
-     *
-     * @param pos the position.
-     * @return a nice string.
-     */
-    private static String getNicePositionString(final BlockPos pos)
-    {
-        return String.format(POSITION_STRING, pos.getX(), pos.getY(), pos.getZ());
-    }
-
-    private ImmutableList<IRequest> getOpenRequestsOfCitizen()
-    {
-        ImmutableList.Builder<IRequest> builder = ImmutableList.builder();
-        if (citizen.getWorkBuilding() != null)
-        {
-            builder.addAll(getOpenRequestsOfCitizenFromBuilding(citizen.getWorkBuilding()));
-        }
-
-        if (citizen.getHomeBuilding() != null)
-        {
-            builder.addAll(getOpenRequestsOfCitizenFromBuilding(citizen.getHomeBuilding()));
-        }
-        return builder.build();
-    }
-
-    private ImmutableList<IRequest> getOpenRequestsOfCitizenFromBuilding(final BlockPos buildingPos)
-    {
-        ColonyView colonyView = ColonyManager.getClosestColonyView(FMLClientHandler.instance().getWorldClient(), buildingPos);
-        if (colonyView == null)
-        {
-            return ImmutableList.of();
-        }
-
-        AbstractBuildingView building = colonyView.getBuilding(buildingPos);
-
-        return building.getOpenRequests(citizen);
     }
 
     /**
@@ -560,15 +526,43 @@ public class WindowCitizen extends AbstractWindowSkeleton
     private void createSkillContent()
     {
         findPaneOfTypeByID(STRENGTH, Label.class).setLabelText(
-                LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.strength", citizen.getStrength()));
+          LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.strength", citizen.getStrength()));
         findPaneOfTypeByID(ENDURANCE, Label.class).setLabelText(
-                LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.endurance", citizen.getEndurance()));
+          LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.endurance", citizen.getEndurance()));
         findPaneOfTypeByID(CHARISMA, Label.class).setLabelText(
-                LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.charisma", citizen.getCharisma()));
+          LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.charisma", citizen.getCharisma()));
         findPaneOfTypeByID(INTELLIGENCE, Label.class).setLabelText(
-                LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.intelligence", citizen.getIntelligence()));
+          LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.intelligence", citizen.getIntelligence()));
         findPaneOfTypeByID(DEXTERITY, Label.class).setLabelText(
-                LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.dexterity", citizen.getDexterity()));
+          LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.dexterity", citizen.getDexterity()));
+    }
+
+    private ImmutableList<IRequest> getOpenRequestsOfCitizen()
+    {
+        ImmutableList.Builder<IRequest> builder = ImmutableList.builder();
+        if (citizen.getWorkBuilding() != null)
+        {
+            builder.addAll(getOpenRequestsOfCitizenFromBuilding(citizen.getWorkBuilding()));
+        }
+
+        if (citizen.getHomeBuilding() != null)
+        {
+            builder.addAll(getOpenRequestsOfCitizenFromBuilding(citizen.getHomeBuilding()));
+        }
+        return builder.build();
+    }
+
+    private ImmutableList<IRequest> getOpenRequestsOfCitizenFromBuilding(final BlockPos buildingPos)
+    {
+        ColonyView colonyView = ColonyManager.getClosestColonyView(FMLClientHandler.instance().getWorldClient(), buildingPos);
+        if (colonyView == null)
+        {
+            return ImmutableList.of();
+        }
+
+        AbstractBuildingView building = colonyView.getBuilding(buildingPos);
+
+        return building.getOpenRequests(citizen);
     }
 
     /**
@@ -608,7 +602,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
     {
         final int row = resourceList.getListElementIndexByPane(button);
 
-        if(getOpenRequestsOfCitizen().size() > row)
+        if (getOpenRequestsOfCitizen().size() > row)
         {
             @NotNull final WindowRequestDetail window = new WindowRequestDetail(citizen, getOpenRequestsOfCitizen().get(row), citizen.getColonyId());
             window.open();
@@ -640,7 +634,9 @@ public class WindowCitizen extends AbstractWindowSkeleton
             @NotNull final IRequest tRequest = getOpenRequestsOfCitizen().get(row);
 
             if (!(tRequest.getRequest() instanceof IDeliverable))
+            {
                 return;
+            }
 
             @NotNull final IRequest<? extends IDeliverable> request = (IRequest<? extends IDeliverable>) tRequest;
 
@@ -657,7 +653,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
             // The itemStack size should not be greater than itemStack.getMaxStackSize, We send 1 instead
             // and use quantity for the size
             @NotNull final ItemStack itemStack;
-            if(isCreative)
+            if (isCreative)
             {
                 itemStack = request.getDisplayStacks().stream().findFirst().orElse(ItemStack.EMPTY);
             }

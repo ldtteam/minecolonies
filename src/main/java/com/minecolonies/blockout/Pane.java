@@ -20,6 +20,8 @@ public class Pane extends Gui
 {
     @NotNull
     private static final Deque<ScissorsInfo> scissorsInfoStack = new ConcurrentLinkedDeque<>();
+    private static final int SCISSOR_X_INDEX = 12;
+    private static final int SCISSOR_Y_INDEX = 13;
     protected static Pane lastClickedPane;
     protected static Pane focus;
     protected static boolean   debugging = false;
@@ -36,9 +38,6 @@ public class Pane extends Gui
     //  Runtime
     protected Window window;
     protected View   parent;
-
-    private static final int SCISSOR_X_INDEX = 12;
-    private static final int SCISSOR_Y_INDEX = 13;
 
     /**
      * Default constructor.

@@ -10,11 +10,15 @@ import net.minecraft.util.ResourceLocation;
  */
 public class GuiMinecoloniesBuildingInventory extends GuiContainer
 {
-    /** The ResourceLocation containing the chest GUI texture. */
+    /**
+     * The ResourceLocation containing the chest GUI texture.
+     */
     private static final ResourceLocation CHEST_GUI_TEXTURE = new ResourceLocation("textures/gui/container/generic_54.png");
     private final IInventory upperChestInventory;
     private final IInventory lowerChestInventory;
-    /** window height is calculated with these values; the more rows, the heigher */
+    /**
+     * window height is calculated with these values; the more rows, the heigher
+     */
     private final int        inventoryRows;
 
     public GuiMinecoloniesBuildingInventory(final ContainerMinecoloniesBuildingInventory containerMinecoloniesBuildingInventory)

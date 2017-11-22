@@ -42,14 +42,14 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
 
     /**
      * Method used to attempt a resolving operation.
-     *
+     * <p>
      * When this attempt was successful a List with tokens of required requests is returned.
      * This list maybe empty.
      * The list should indicate all sub requests that should be fullfilled before the @code{resolve(IRequest request)} method is called.
-     *
+     * <p>
      * When this attempt was not successful, eg. this resolver could not schedule a crafting operation, a Null object should be returned.
      * In that case the next resolver will be tried by the manager.
-     *
+     * <p>
      * IT IS VITAL THAT THE REQUEST RETURNED ARE NOT YET ASSIGNED. SIMULATION AND OTHER STRATEGIES WILL FAIL ELSE!
      * THE MANAGER GIVEN WILL HANDLE ASSIGNING HIMSELF!
      *
@@ -63,9 +63,9 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
     /**
      * Method used to resolve a given request.
      * Is called the moment all Child requests are resolved.
-     *
+     * <p>
      * The resolver should update the state through the given manager.
-     *
+     * <p>
      * When this method is called all requirements need be fullfilled for this resolver.
      * If this is not the case it will throw a RunTimeException
      *
@@ -91,16 +91,17 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
     /**
      * Method used to indicate to this resolver that a parent of a request assigned to him has been cancelled,
      * and that the resolver of the parent did not return a cleanup request.
-     *
+     * <p>
      * If a followup request is needed (For example picking up crafting results to bring them to storage) a request can be made to the given manager
      * which will properly handle the processing of the new request.
-     *
+     * <p>
      * The returned request will then be used as the new parent and should be used to clean up the results of this request.
      *
      * @param manager The manager that indicates the cancelling or overrulling
      * @param request The request that has been cancelled or overrulled.
-     * @throws IllegalArgumentException is thrown when the cancelling or overrulling failed.
      * @return the new request if necessary. It should not be assigned yet.
+     *
+     * @throws IllegalArgumentException is thrown when the cancelling or overrulling failed.
      */
     @Nullable
     IRequest onRequestCancelledOrOverruled(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request) throws IllegalArgumentException;

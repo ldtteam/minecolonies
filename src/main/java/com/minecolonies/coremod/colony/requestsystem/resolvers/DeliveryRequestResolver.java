@@ -2,8 +2,8 @@ package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
-import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -39,19 +39,23 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
                                @NotNull final IRequestManager manager, final IRequest<? extends Delivery> requestToCheck)
     {
         if (manager.getColony().getWorld().isRemote)
+        {
             return false;
+        }
 
         Colony colony = (Colony) manager.getColony();
         CitizenData freeDeliveryMan = colony.getCitizens()
-                                               .values()
-                                               .stream()
-                                               .filter(c -> requestToCheck.getRequest().getTarget().isReachableFromLocation(c.getCitizenEntity().getLocation()))
-                                               .filter(c -> c.getJob() instanceof JobDeliveryman)
-                                               .findFirst()
-                                               .orElse(null);
+                                        .values()
+                                        .stream()
+                                        .filter(c -> requestToCheck.getRequest().getTarget().isReachableFromLocation(c.getCitizenEntity().getLocation()))
+                                        .filter(c -> c.getJob() instanceof JobDeliveryman)
+                                        .findFirst()
+                                        .orElse(null);
 
         if (freeDeliveryMan == null)
+        {
             return false;
+        }
 
         return true;
     }
@@ -62,7 +66,9 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
                                         @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
     {
         if (manager.getColony().getWorld().isRemote)
+        {
             return null;
+        }
 
         Colony colony = (Colony) manager.getColony();
         CitizenData freeDeliveryMan = colony.getCitizens()
@@ -70,17 +76,20 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
                                         .stream()
                                         .filter(c -> request.getRequest().getTarget().isReachableFromLocation(c.getCitizenEntity().getLocation()))
                                         .filter(c -> c.getJob() instanceof JobDeliveryman)
-                                        .sorted(Comparator.comparing((CitizenData c) -> ((JobDeliveryman) c.getJob()).getTaskQueue().size()).thenComparing(Comparator.comparing(c ->{
-                                            BlockPos targetPos = request.getRequest().getTarget().getInDimensionLocation();
-                                            BlockPos entityLocation = c.getCitizenEntity().getLocation().getInDimensionLocation();
+                                        .sorted(Comparator.comparing((CitizenData c) -> ((JobDeliveryman) c.getJob()).getTaskQueue().size())
+                                                  .thenComparing(Comparator.comparing(c -> {
+                                                      BlockPos targetPos = request.getRequest().getTarget().getInDimensionLocation();
+                                                      BlockPos entityLocation = c.getCitizenEntity().getLocation().getInDimensionLocation();
 
-                                            return BlockPosUtil.getDistanceSquared(targetPos, entityLocation);
-                                        })))
+                                                      return BlockPosUtil.getDistanceSquared(targetPos, entityLocation);
+                                                  })))
                                         .findFirst()
                                         .orElse(null);
 
         if (freeDeliveryMan == null)
+        {
             return null;
+        }
 
         JobDeliveryman job = (JobDeliveryman) freeDeliveryMan.getJob();
         job.addRequest(request.getToken());
@@ -107,7 +116,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
     @Nullable
     @Override
     public IRequest onRequestCancelledOrOverruled(
-                                       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request) throws IllegalArgumentException
+                                                   @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request) throws IllegalArgumentException
     {
         if (!manager.getColony().getWorld().isRemote)
         {
@@ -122,7 +131,9 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
             if (freeDeliveryMan == null)
             {
                 MineColonies.getLogger().error("Parent cancellation failed! Unknown request: " + request.getToken());
-            } else {
+            }
+            else
+            {
                 JobDeliveryman job = (JobDeliveryman) freeDeliveryMan.getJob();
                 job.onTaskDeletion(request.getToken());
             }

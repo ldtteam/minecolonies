@@ -498,14 +498,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     }
 
     /**
-     * Re-sorts the WorkOrders list according to the priorities inside the list.
-     */
-    private void sortWorkOrders()
-    {
-        workOrders.sort(Comparator.comparing(WorkOrderView::getPriority, Comparator.reverseOrder()));
-    }
-
-    /**
      * Clears and resets all citizens.
      */
     private void updateWorkOrders()
@@ -513,6 +505,14 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         workOrders.clear();
         workOrders.addAll(townHall.getColony().getWorkOrders());
         sortWorkOrders();
+    }
+
+    /**
+     * Re-sorts the WorkOrders list according to the priorities inside the list.
+     */
+    private void sortWorkOrders()
+    {
+        workOrders.sort(Comparator.comparing(WorkOrderView::getPriority, Comparator.reverseOrder()));
     }
 
     private void removeBlock(final Button button)
@@ -806,7 +806,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     {
         super.onOpened();
 
-        if(lastTabButton != null)
+        if (lastTabButton != null)
         {
             return;
         }
@@ -1094,6 +1094,17 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         lastTabButton.setPosition(lastTabButton.getX() + RIBBON_OFFSET, findPaneOfTypeByID(lastTabButton.getID() + "1", ButtonImage.class).getY());
     }
 
+    /**
+     * Returns the name of a building.
+     *
+     * @return Name of a building.
+     */
+    @Override
+    public String getBuildingName()
+    {
+        return townHall.getColony().getName();
+    }
+
     @Override
     public void onUpdate()
     {
@@ -1112,17 +1123,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         }
         updateWorkOrders();
         window.findPaneOfTypeByID(LIST_WORKORDER, ScrollingList.class).refreshElementPanes();
-    }
-
-    /**
-     * Returns the name of a building.
-     *
-     * @return Name of a building.
-     */
-    @Override
-    public String getBuildingName()
-    {
-        return townHall.getColony().getName();
     }
 
     /**

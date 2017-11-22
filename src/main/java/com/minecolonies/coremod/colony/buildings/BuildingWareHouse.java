@@ -9,8 +9,8 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.blocks.BlockHutDeliveryman;
-import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.BlockHutWareHouse;
+import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.client.gui.WindowWareHouseBuilding;
 import com.minecolonies.coremod.colony.Colony;
@@ -57,7 +57,7 @@ public class BuildingWareHouse extends AbstractBuilding
     /**
      * The storage tag for the storage capacity.
      */
-    private static final String TAG_STORAGE     = "tagStorage" ;
+    private static final String TAG_STORAGE = "tagStorage";
 
     /**
      * The list of deliverymen registered to this building.
@@ -132,72 +132,11 @@ public class BuildingWareHouse extends AbstractBuilding
         {
             final Colony colony = getColony();
             if (colony != null && colony.getWorld() != null
-                    && (!(colony.getWorld().getBlockState(new BlockPos(pos)) instanceof BlockHutDeliveryman) || colony.isCoordInColony(colony.getWorld(), new BlockPos(pos))))
+                  && (!(colony.getWorld().getBlockState(new BlockPos(pos)) instanceof BlockHutDeliveryman) || colony.isCoordInColony(colony.getWorld(), new BlockPos(pos))))
             {
                 registeredDeliverymen.remove(pos);
             }
         }
-    }
-
-    @Override
-    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
-    {
-        if ((block instanceof BlockContainer || block instanceof BlockMinecoloniesRack)&& world != null)
-        {
-            final TileEntity entity = getColony().getWorld().getTileEntity(pos);
-            if (entity instanceof TileEntityChest)
-            {
-                handleBuildingOverChest(pos, (TileEntityChest) entity, world);
-            }
-            addContainerPosition(pos);
-        }
-    }
-
-    /**
-     * Handles the chest placement.
-     *
-     * @param pos   at pos.
-     * @param chest the entity.
-     * @param world the world.
-     */
-    public static void handleBuildingOverChest(@NotNull final BlockPos pos, final TileEntityChest chest, final World world)
-    {
-        final List<ItemStack> inventory = new ArrayList<>();
-        final int size = chest.getSingleChestHandler().getSlots();
-        for (int slot = 0; slot < size; slot++)
-        {
-            final ItemStack stack = chest.getSingleChestHandler().getStackInSlot(slot);
-            if (!ItemStackUtils.isEmpty(stack))
-            {
-                inventory.add(stack.copy());
-            }
-            chest.getSingleChestHandler().extractItem(slot, Integer.MAX_VALUE, false);
-        }
-
-        world.setBlockState(pos, ModBlocks.blockRack.getDefaultState(), 0x03);
-        final TileEntity entity = world.getTileEntity(pos);
-        if (entity instanceof TileEntityRack)
-        {
-            for (final ItemStack stack : inventory)
-            {
-                if (!ItemStackUtils.isEmpty(stack))
-                {
-                    InventoryUtils.addItemStackToItemHandler(((TileEntityRack) entity).getInventory(), stack);
-                }
-            }
-        }
-    }
-
-    @Override
-    public ImmutableCollection<IRequestResolver> getResolvers()
-    {
-        ImmutableCollection<IRequestResolver> supers = super.getResolvers();
-        ImmutableList.Builder<IRequestResolver> builder = ImmutableList.builder();
-
-        builder.addAll(supers);
-        builder.add(new WarehouseRequestResolver(getRequester().getRequesterLocation(), getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
-
-        return builder.build();
     }
 
     /**
@@ -268,7 +207,8 @@ public class BuildingWareHouse extends AbstractBuilding
     public TileEntityWareHouse getTileEntity()
     {
         final Colony colony = getColony();
-        if ((tileEntity == null || tileEntity.isInvalid()) && colony != null && colony.getWorld() != null && getLocation() != null && colony.getWorld().getBlockState(getLocation()) != null && colony.getWorld().getBlockState(this.getLocation()).getBlock() instanceof BlockHutWareHouse)
+        if ((tileEntity == null || tileEntity.isInvalid()) && colony != null && colony.getWorld() != null && getLocation() != null
+              && colony.getWorld().getBlockState(getLocation()) != null && colony.getWorld().getBlockState(this.getLocation()).getBlock() instanceof BlockHutWareHouse)
         {
             final TileEntity te = getColony().getWorld().getTileEntity(this.getLocation());
             if (te instanceof TileEntityWareHouse)
@@ -285,6 +225,81 @@ public class BuildingWareHouse extends AbstractBuilding
         return tileEntity;
     }
 
+    @Override
+    public int getMaxBuildingLevel()
+    {
+        return MAX_LEVEL;
+    }
+
+    @Override
+    public void serializeToView(@NotNull final ByteBuf buf)
+    {
+        super.serializeToView(buf);
+        buf.writeBoolean(storageUpgrade < MAX_STORAGE_UPGRADE);
+    }
+
+    @Override
+    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
+    {
+        if ((block instanceof BlockContainer || block instanceof BlockMinecoloniesRack) && world != null)
+        {
+            final TileEntity entity = getColony().getWorld().getTileEntity(pos);
+            if (entity instanceof TileEntityChest)
+            {
+                handleBuildingOverChest(pos, (TileEntityChest) entity, world);
+            }
+            addContainerPosition(pos);
+        }
+    }
+
+    /**
+     * Handles the chest placement.
+     *
+     * @param pos   at pos.
+     * @param chest the entity.
+     * @param world the world.
+     */
+    public static void handleBuildingOverChest(@NotNull final BlockPos pos, final TileEntityChest chest, final World world)
+    {
+        final List<ItemStack> inventory = new ArrayList<>();
+        final int size = chest.getSingleChestHandler().getSlots();
+        for (int slot = 0; slot < size; slot++)
+        {
+            final ItemStack stack = chest.getSingleChestHandler().getStackInSlot(slot);
+            if (!ItemStackUtils.isEmpty(stack))
+            {
+                inventory.add(stack.copy());
+            }
+            chest.getSingleChestHandler().extractItem(slot, Integer.MAX_VALUE, false);
+        }
+
+        world.setBlockState(pos, ModBlocks.blockRack.getDefaultState(), 0x03);
+        final TileEntity entity = world.getTileEntity(pos);
+        if (entity instanceof TileEntityRack)
+        {
+            for (final ItemStack stack : inventory)
+            {
+                if (!ItemStackUtils.isEmpty(stack))
+                {
+                    InventoryUtils.addItemStackToItemHandler(((TileEntityRack) entity).getInventory(), stack);
+                }
+            }
+        }
+    }
+
+    @Override
+    public ImmutableCollection<IRequestResolver> getResolvers()
+    {
+        ImmutableCollection<IRequestResolver> supers = super.getResolvers();
+        ImmutableList.Builder<IRequestResolver> builder = ImmutableList.builder();
+
+        builder.addAll(supers);
+        builder.add(new WarehouseRequestResolver(getRequester().getRequesterLocation(),
+                                                  getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+
+        return builder.build();
+    }
+
     /**
      * Upgrade all containers by 9 slots.
      *
@@ -292,7 +307,7 @@ public class BuildingWareHouse extends AbstractBuilding
      */
     public void upgradeContainers(final World world)
     {
-        if(storageUpgrade < MAX_STORAGE_UPGRADE)
+        if (storageUpgrade < MAX_STORAGE_UPGRADE)
         {
             for (final BlockPos pos : getAdditionalCountainers())
             {
@@ -305,19 +320,6 @@ public class BuildingWareHouse extends AbstractBuilding
             storageUpgrade++;
         }
         markDirty();
-    }
-
-    @Override
-    public int getMaxBuildingLevel()
-    {
-        return MAX_LEVEL;
-    }
-
-    @Override
-    public void serializeToView(@NotNull final ByteBuf buf)
-    {
-        super.serializeToView(buf);
-        buf.writeBoolean(storageUpgrade < MAX_STORAGE_UPGRADE);
     }
 
     /**

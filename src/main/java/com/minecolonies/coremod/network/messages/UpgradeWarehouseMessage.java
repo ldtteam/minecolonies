@@ -31,7 +31,7 @@ public class UpgradeWarehouseMessage extends AbstractMessage<UpgradeWarehouseMes
     /**
      * The id of the colony.
      */
-    private int      colonyId;
+    private int colonyId;
 
     /**
      * Empty constructor used when registering the message.
@@ -49,15 +49,14 @@ public class UpgradeWarehouseMessage extends AbstractMessage<UpgradeWarehouseMes
     public UpgradeWarehouseMessage(@NotNull final AbstractBuildingView building)
     {
         super();
-        this.colonyId   = building.getColony().getID();
+        this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
-
     }
 
     @Override
     public void fromBytes(@NotNull final ByteBuf buf)
     {
-        colonyId   = buf.readInt();
+        colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
     }
 
@@ -78,7 +77,7 @@ public class UpgradeWarehouseMessage extends AbstractMessage<UpgradeWarehouseMes
             return;
         }
 
-        if(!colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
+        if (!colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
         {
             return;
         }
@@ -93,10 +92,11 @@ public class UpgradeWarehouseMessage extends AbstractMessage<UpgradeWarehouseMes
         ((BuildingWareHouse) building).upgradeContainers(player.world);
 
         final boolean isCreative = player.capabilities.isCreativeMode;
-        if(!isCreative)
+        if (!isCreative)
         {
             final int slot = InventoryUtils.
-                    findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory), itemStack -> itemStack.isItemEqual(new ItemStack(Blocks.EMERALD_BLOCK)));
+                                             findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory),
+                                               itemStack -> itemStack.isItemEqual(new ItemStack(Blocks.EMERALD_BLOCK)));
             player.inventory.decrStackSize(slot, 1);
         }
     }

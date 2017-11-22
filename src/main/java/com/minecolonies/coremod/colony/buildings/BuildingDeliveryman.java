@@ -75,6 +75,19 @@ public class BuildingDeliveryman extends AbstractBuildingWorker
         return 5;
     }
 
+    @Override
+    public ImmutableCollection<IRequestResolver> getResolvers()
+    {
+        ImmutableCollection<IRequestResolver> supers = super.getResolvers();
+        ImmutableList.Builder<IRequestResolver> builder = ImmutableList.builder();
+
+        builder.addAll(supers);
+        builder.add(new DeliveryRequestResolver(getRequester().getRequesterLocation(),
+                                                 getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+
+        return builder.build();
+    }
+
     @NotNull
     @Override
     public AbstractJob createJob(final CitizenData citizen)
@@ -105,18 +118,6 @@ public class BuildingDeliveryman extends AbstractBuildingWorker
     public void serializeToView(@NotNull final ByteBuf buf)
     {
         super.serializeToView(buf);
-    }
-
-    @Override
-    public ImmutableCollection<IRequestResolver> getResolvers()
-    {
-        ImmutableCollection<IRequestResolver> supers = super.getResolvers();
-        ImmutableList.Builder<IRequestResolver> builder = ImmutableList.builder();
-
-        builder.addAll(supers);
-        builder.add(new DeliveryRequestResolver(getRequester().getRequesterLocation(), getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
-
-        return builder.build();
     }
 
     /**

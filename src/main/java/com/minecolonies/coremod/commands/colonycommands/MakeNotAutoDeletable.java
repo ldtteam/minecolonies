@@ -90,10 +90,10 @@ public class MakeNotAutoDeletable extends AbstractSingleCommand
     @NotNull
     @Override
     public List<String> getTabCompletionOptions(
-            @NotNull final MinecraftServer server,
-            @NotNull final ICommandSender sender,
-            @NotNull final String[] args,
-            @Nullable final BlockPos pos)
+                                                 @NotNull final MinecraftServer server,
+                                                 @NotNull final ICommandSender sender,
+                                                 @NotNull final String[] args,
+                                                 @Nullable final BlockPos pos)
     {
         return Collections.emptyList();
     }
@@ -102,8 +102,8 @@ public class MakeNotAutoDeletable extends AbstractSingleCommand
     public boolean isUsernameIndex(@NotNull final String[] args, final int index)
     {
         return index == 0
-                && args.length > 0
-                && !args[0].isEmpty()
-                && getIthArgument(args, 0, Integer.MAX_VALUE) == Integer.MAX_VALUE;
+                 && args.length > 0
+                 && !args[0].isEmpty()
+                 && getIthArgument(args, 0, Integer.MAX_VALUE) == Integer.MAX_VALUE;
     }
 }

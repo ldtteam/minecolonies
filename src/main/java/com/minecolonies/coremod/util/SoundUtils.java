@@ -78,9 +78,9 @@ public final class SoundUtils
                 prefix = citizen.getWorkBuilding().getJobName();
             }
 
-            if(GUARD_TOWER.equals(prefix) && citizen.getWorkBuilding() instanceof AbstractBuildingGuards)
+            if (GUARD_TOWER.equals(prefix) && citizen.getWorkBuilding() instanceof AbstractBuildingGuards)
             {
-                if(((AbstractBuildingGuards) citizen.getWorkBuilding()).getJob() == AbstractBuildingGuards.GuardJob.RANGER)
+                if (((AbstractBuildingGuards) citizen.getWorkBuilding()).getJob() == AbstractBuildingGuards.GuardJob.RANGER)
                 {
                     prefix = "archer";
                 }
@@ -110,11 +110,11 @@ public final class SoundUtils
     public static void playSoundAtCitizen(@NotNull final World worldIn, @NotNull final BlockPos position, @NotNull final SoundEvent event)
     {
         worldIn.playSound((EntityPlayer) null,
-                position,
-                event,
-                SoundCategory.NEUTRAL,
-                (float) VOLUME,
-                (float) PITCH);
+          position,
+          event,
+          SoundCategory.NEUTRAL,
+          (float) VOLUME,
+          (float) PITCH);
     }
 
     /**
@@ -135,20 +135,21 @@ public final class SoundUtils
         if (chance > rand.nextInt(ONE_HUNDRED))
         {
             worldIn.playSound((EntityPlayer) null,
-                    position,
-                    event,
-                    SoundCategory.NEUTRAL,
-                    (float) VOLUME,
-                    (float) PITCH);
+              position,
+              event,
+              SoundCategory.NEUTRAL,
+              (float) VOLUME,
+              (float) PITCH);
         }
     }
 
     /**
      * Play an interaction sound with chance at the citizen.
-     * @param world the world.
+     *
+     * @param world    the world.
      * @param position the position.
-     * @param chance the chance.
-     * @param citizen the citizen.
+     * @param chance   the chance.
+     * @param citizen  the citizen.
      */
     public static void playInteractionSoundAtCitizenWithChance(@NotNull final World world, @NotNull final BlockPos position, final int chance, @NotNull final EntityCitizen citizen)
     {
@@ -161,9 +162,9 @@ public final class SoundUtils
                 prefix = citizen.getWorkBuilding().getJobName();
             }
 
-            if("GuardTower".equals(prefix) && citizen.getWorkBuilding() instanceof AbstractBuildingGuards)
+            if ("GuardTower".equals(prefix) && citizen.getWorkBuilding() instanceof AbstractBuildingGuards)
             {
-                if(((AbstractBuildingGuards) citizen.getWorkBuilding()).getJob() == AbstractBuildingGuards.GuardJob.RANGER)
+                if (((AbstractBuildingGuards) citizen.getWorkBuilding()).getJob() == AbstractBuildingGuards.GuardJob.RANGER)
                 {
                     prefix = "archer";
                 }

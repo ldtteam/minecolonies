@@ -22,11 +22,11 @@ import org.jetbrains.annotations.NotNull;
  */
 public class WorkOrderBuild extends WorkOrderBuildDecoration
 {
-    private static final String TAG_UPGRADE_LEVEL  = "upgradeLevel";
-    private static final String TAG_UPGRADE_NAME   = "upgrade";
+    private static final String TAG_UPGRADE_LEVEL = "upgradeLevel";
+    private static final String TAG_UPGRADE_NAME  = "upgrade";
 
-    private   int      upgradeLevel;
-    private   String   upgradeName;
+    private int    upgradeLevel;
+    private String upgradeName;
 
     /**
      * Unused constructor for reflection.
@@ -54,11 +54,11 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
 
         //normalize the structureName
         Structures.StructureName sn = new Structures.StructureName(Structures.SCHEMATICS_PREFIX, building.getStyle(), this.getUpgradeName());
-        if(building.getTileEntity() != null && !building.getTileEntity().getStyle().isEmpty())
+        if (building.getTileEntity() != null && !building.getTileEntity().getStyle().isEmpty())
         {
             final String previousStructureName = sn.toString();
             sn = new Structures.StructureName(Structures.SCHEMATICS_PREFIX, building.getTileEntity().getStyle(), this.getUpgradeName());
-            Log.getLogger().info("WorkOrderBuild at location " + this.buildingLocation + " is using " +  sn + " instead of " + previousStructureName);
+            Log.getLogger().info("WorkOrderBuild at location " + this.buildingLocation + " is using " + sn + " instead of " + previousStructureName);
         }
 
 
@@ -103,53 +103,6 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
         compound.setString(TAG_UPGRADE_NAME, upgradeName);
     }
 
-    /**
-     * Is this WorkOrder still valid?  If not, it will be deleted.
-     *
-     * @param colony The colony that owns the Work Order.
-     * @return True if the building for this work order still exists.
-     */
-    @Override
-    public boolean isValid(@NotNull final Colony colony)
-    {
-        return colony.getBuilding(buildingLocation) != null;
-    }
-
-    @Override
-    protected String getValue()
-    {
-        return upgradeName;
-    }
-
-    private static boolean isLocationTownhall(@NotNull final Colony colony, final BlockPos buildingLocation)
-    {
-        return colony.hasTownHall() && colony.getTownHall() != null && colony.getTownHall().getID().equals(buildingLocation);
-    }
-
-    /**
-     * Returns the level up level of the building.
-     *
-     * @return Level after upgrade.
-     */
-    public int getUpgradeLevel()
-    {
-        return upgradeLevel;
-    }
-
-    @Override
-    protected boolean canBuild(@NotNull final CitizenData citizen)
-    {
-        //  A Build WorkOrder may be fulfilled by a Builder as long as any ONE of the following is true:
-        //  - The Builder's Work AbstractBuilding is built
-        //  - OR the WorkOrder is for the Builder's Work AbstractBuilding
-        //  - OR the WorkOrder is for the TownHall
-
-        final int builderLevel = citizen.getWorkBuilding().getBuildingLevel();
-        return builderLevel >= upgradeLevel || builderLevel == BuildingBuilder.MAX_BUILDING_LEVEL
-                 || (citizen.getWorkBuilding() != null && citizen.getWorkBuilding().getID().equals(buildingLocation))
-                 || isLocationTownhall(citizen.getColony(), buildingLocation);
-    }
-
     @Override
     protected void sendBuilderMessage(@NotNull final Colony colony, final boolean hasBuilder, final boolean sendMessage)
     {
@@ -174,6 +127,38 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
     }
 
     @Override
+    protected boolean canBuild(@NotNull final CitizenData citizen)
+    {
+        //  A Build WorkOrder may be fulfilled by a Builder as long as any ONE of the following is true:
+        //  - The Builder's Work AbstractBuilding is built
+        //  - OR the WorkOrder is for the Builder's Work AbstractBuilding
+        //  - OR the WorkOrder is for the TownHall
+
+        final int builderLevel = citizen.getWorkBuilding().getBuildingLevel();
+        return builderLevel >= upgradeLevel || builderLevel == BuildingBuilder.MAX_BUILDING_LEVEL
+                 || (citizen.getWorkBuilding() != null && citizen.getWorkBuilding().getID().equals(buildingLocation))
+                 || isLocationTownhall(citizen.getColony(), buildingLocation);
+    }
+
+    /**
+     * Is this WorkOrder still valid?  If not, it will be deleted.
+     *
+     * @param colony The colony that owns the Work Order.
+     * @return True if the building for this work order still exists.
+     */
+    @Override
+    public boolean isValid(@NotNull final Colony colony)
+    {
+        return colony.getBuilding(buildingLocation) != null;
+    }
+
+    @Override
+    protected String getValue()
+    {
+        return upgradeName;
+    }
+
+    @Override
     public int getRotation(final World world)
     {
         if (buildingRotation == 0 && world != null)
@@ -188,20 +173,12 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
     }
 
     @Override
-    public void onCompleted(final Colony colony)
-    {
-        final BlockPos buildingLocation = getBuildingLocation();
-        final AbstractBuilding building = colony.getBuilding(buildingLocation);
-        colony.onBuildingUpgradeComplete(building, getUpgradeLevel());
-    }
-
-    @Override
     public void onAdded(final Colony colony)
     {
         if (colony != null && colony.getWorld() != null)
         {
             final AbstractBuilding building = colony.getBuilding(this.getBuildingLocation());
-            if(building != null)
+            if (building != null)
             {
                 ConstructionTapeHelper.placeConstructionTape(building.getLocation(), building.getCorners(), colony.getWorld());
             }
@@ -217,5 +194,28 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
             building.markDirty();
             ConstructionTapeHelper.removeConstructionTape(building.getCorners(), colony.getWorld());
         }
+    }
+
+    private static boolean isLocationTownhall(@NotNull final Colony colony, final BlockPos buildingLocation)
+    {
+        return colony.hasTownHall() && colony.getTownHall() != null && colony.getTownHall().getID().equals(buildingLocation);
+    }
+
+    @Override
+    public void onCompleted(final Colony colony)
+    {
+        final BlockPos buildingLocation = getBuildingLocation();
+        final AbstractBuilding building = colony.getBuilding(buildingLocation);
+        colony.onBuildingUpgradeComplete(building, getUpgradeLevel());
+    }
+
+    /**
+     * Returns the level up level of the building.
+     *
+     * @return Level after upgrade.
+     */
+    public int getUpgradeLevel()
+    {
+        return upgradeLevel;
     }
 }

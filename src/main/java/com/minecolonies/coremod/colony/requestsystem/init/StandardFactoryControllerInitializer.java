@@ -39,6 +39,5 @@ public final class StandardFactoryControllerInitializer
         StandardFactoryController.getInstance().registerNewFactory(new BuildingRequestResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new PlayerRequestResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardRetryingRequestResolverFactory());
-
     }
 }

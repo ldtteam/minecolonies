@@ -48,6 +48,44 @@ public class BuildingBarracks extends AbstractBuilding
         super(c, l);
     }
 
+    /**
+     * Gets the name of the schematic.
+     *
+     * @return Barracks schematic name.
+     */
+    @NotNull
+    @Override
+    public String getSchematicName()
+    {
+        return BARRACKS;
+    }
+
+    @Override
+    public void onDestroyed()
+    {
+        final World world = getColony().getWorld();
+        if (world != null)
+        {
+            for (int i = 1; i <= this.getBuildingLevel(); i++)
+            {
+                final Tuple<BlockPos, EnumFacing> tuple = getPositionAndFacingForLevel(i);
+                world.setBlockState(tuple.getFirst(), Blocks.AIR.getDefaultState());
+            }
+        }
+        super.onDestroyed();
+    }
+
+    /**
+     * Gets the max level of the Barracks's hut.
+     *
+     * @return The max level of the Barracks's hut.
+     */
+    @Override
+    public int getMaxBuildingLevel()
+    {
+        return BARRACKS_HUT_MAX_LEVEL;
+    }
+
     @Override
     public void onUpgradeComplete(final int newLevel)
     {
@@ -58,7 +96,7 @@ public class BuildingBarracks extends AbstractBuilding
             {
                 final Tuple<BlockPos, EnumFacing> tuple = getPositionAndFacingForLevel(i);
 
-                if(!(world.getBlockState(tuple.getFirst()).getBlock() instanceof BlockHutBarracksTower))
+                if (!(world.getBlockState(tuple.getFirst()).getBlock() instanceof BlockHutBarracksTower))
                 {
                     world.setBlockState(tuple.getFirst(), ModBlocks.blockHutBarracksTower.getDefaultState().withProperty(BlockHutBarracksTower.FACING, tuple.getSecond()));
                     getColony().addNewBuilding((TileEntityColonyBuilding) world.getTileEntity(tuple.getFirst()));
@@ -114,7 +152,7 @@ public class BuildingBarracks extends AbstractBuilding
 
         EnumFacing facing = EnumFacing.NORTH;
 
-        final int offset = getStyle().toLowerCase(Locale.ENGLISH).contains("birch") ? TOWER_OFFSET + 1: TOWER_OFFSET;
+        final int offset = getStyle().toLowerCase(Locale.ENGLISH).contains("birch") ? TOWER_OFFSET + 1 : TOWER_OFFSET;
 
         switch (tempLevel)
         {
@@ -138,44 +176,6 @@ public class BuildingBarracks extends AbstractBuilding
         }
 
         return new Tuple<>(position, facing);
-    }
-
-    @Override
-    public void onDestroyed()
-    {
-        final World world = getColony().getWorld();
-        if (world != null)
-        {
-            for (int i = 1; i <= this.getBuildingLevel(); i++)
-            {
-                final Tuple<BlockPos, EnumFacing> tuple = getPositionAndFacingForLevel(i);
-                world.setBlockState(tuple.getFirst(), Blocks.AIR.getDefaultState());
-            }
-        }
-        super.onDestroyed();
-    }
-
-    /**
-     * Gets the name of the schematic.
-     *
-     * @return Barracks schematic name.
-     */
-    @NotNull
-    @Override
-    public String getSchematicName()
-    {
-        return BARRACKS;
-    }
-
-    /**
-     * Gets the max level of the Barracks's hut.
-     *
-     * @return The max level of the Barracks's hut.
-     */
-    @Override
-    public int getMaxBuildingLevel()
-    {
-        return BARRACKS_HUT_MAX_LEVEL;
     }
 
     /**

@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers.factory;
 
 import com.google.common.reflect.TypeToken;
-import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.StandardRetryingRequestResolver;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class StandardRetryingRequestResolverFactory implements IFactory<IRequestManager, StandardRetryingRequestResolver>
 {
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
-    private static final String NBT_TOKEN  = "Token";
+    private static final String NBT_TOKEN = "Token";
     private static final String NBT_LOCATION = "Location";
     private static final String NBT_VALUE = "Value";
     private static final String NBT_TRIES = "Requests";
@@ -42,11 +42,16 @@ public class StandardRetryingRequestResolverFactory implements IFactory<IRequest
 
     @NotNull
     @Override
-    public StandardRetryingRequestResolver getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final IRequestManager iRequestManager, @NotNull final Object... context)
+    public StandardRetryingRequestResolver getNewInstance(
+                                                           @NotNull final IFactoryController factoryController,
+                                                           @NotNull final IRequestManager iRequestManager,
+                                                           @NotNull final Object... context)
       throws IllegalArgumentException
     {
         if (context.length != 0)
+        {
             throw new IllegalArgumentException("Context is not empty.");
+        }
 
         return new StandardRetryingRequestResolver(factoryController, iRequestManager);
     }

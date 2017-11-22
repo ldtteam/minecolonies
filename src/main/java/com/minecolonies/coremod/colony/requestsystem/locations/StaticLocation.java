@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony.requestsystem.locations;
 
 import com.google.common.reflect.TypeToken;
-import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.location.ILocationFactory;

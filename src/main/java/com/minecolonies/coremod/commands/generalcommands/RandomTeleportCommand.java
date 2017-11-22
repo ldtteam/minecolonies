@@ -102,24 +102,6 @@ public class RandomTeleportCommand extends AbstractSingleCommand
     }
 
     /**
-     * Get a random coordinate to teleport to.
-     */
-    private static int getRandCoordinate()
-    {
-        final Random rnd = new Random();
-
-        int x = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
-
-        /* keeping X out of the spawn radius */
-        while (x > -SPAWN_NO_TP && x < SPAWN_NO_TP)
-        {
-            x = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
-        }
-
-        return x;
-    }
-
-    /**
      * Method used to teleport the player.
      *
      * @param sender           the sender to have access to the world.
@@ -136,7 +118,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand
             final int x = getRandCoordinate();
             final int z = getRandCoordinate();
 
-            if (sender.getEntityWorld().getWorldBorder().getSize() > (sender.getEntityWorld().getSpawnPoint().getDistance(x,STARTING_Y,z)))
+            if (sender.getEntityWorld().getWorldBorder().getSize() > (sender.getEntityWorld().getSpawnPoint().getDistance(x, STARTING_Y, z)))
             {
                 continue;
             }
@@ -167,12 +149,31 @@ public class RandomTeleportCommand extends AbstractSingleCommand
                 }
                 else
                 {
-                    sender.getCommandSenderEntity().sendMessage(new TextComponentString("Please wait at least " + Configurations.gameplay.teleportBuffer + " seconds to teleport again"));
+                    sender.getCommandSenderEntity()
+                      .sendMessage(new TextComponentString("Please wait at least " + Configurations.gameplay.teleportBuffer + " seconds to teleport again"));
                 }
                 return;
             }
         }
         playerToTeleport.getCommandSenderEntity().sendMessage(new TextComponentString("Couldn't find a safe spot.  Try again in a moment."));
+    }
+
+    /**
+     * Get a random coordinate to teleport to.
+     */
+    private static int getRandCoordinate()
+    {
+        final Random rnd = new Random();
+
+        int x = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
+
+        /* keeping X out of the spawn radius */
+        while (x > -SPAWN_NO_TP && x < SPAWN_NO_TP)
+        {
+            x = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
+        }
+
+        return x;
     }
 
     @NotNull

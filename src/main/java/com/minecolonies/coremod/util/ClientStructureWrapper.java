@@ -59,16 +59,6 @@ public final class ClientStructureWrapper
     }
 
     /**
-     * Send a message to the player informing him that the schematic is too big.
-     *
-     * @param maxSize is the maximum size allowed in bytes.
-     */
-    public static void sendMessageSchematicTooBig(final int maxSize)
-    {
-        LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "com.minecolonies.coremod.network.messages.schematicsavemessage.toobig", maxSize);
-    }
-
-    /**
      * Checks if directory exists, else creates it.
      *
      * @param directory the directory to check.
@@ -79,5 +69,15 @@ public final class ClientStructureWrapper
         {
             Log.getLogger().error("Directory doesn't exist and failed to be created: " + directory.toString());
         }
+    }
+
+    /**
+     * Send a message to the player informing him that the schematic is too big.
+     *
+     * @param maxSize is the maximum size allowed in bytes.
+     */
+    public static void sendMessageSchematicTooBig(final int maxSize)
+    {
+        LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "com.minecolonies.coremod.network.messages.schematicsavemessage.toobig", maxSize);
     }
 }

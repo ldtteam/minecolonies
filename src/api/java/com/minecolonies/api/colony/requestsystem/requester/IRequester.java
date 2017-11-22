@@ -31,6 +31,7 @@ public interface IRequester
 
     /**
      * Method to get the location of this locatable.
+     *
      * @return the location.
      */
     @NotNull
@@ -46,6 +47,7 @@ public interface IRequester
 
     /**
      * Method called by the request system to notify this requester that a request has been overruled.
+     *
      * @param token The token of the request.
      */
     @NotNull
@@ -53,6 +55,7 @@ public interface IRequester
 
     /**
      * Gets the name of the requester that requested the request given by the token.
+     *
      * @param token The token of the request for which the name of the requester is retrieved
      * @return The display name of the requester.
      */

@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.inventory;
 
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -29,9 +28,9 @@ public class ContainerMinecoloniesCitizenInventory extends Container
     private final IInventory playerInventory;
     private final int        numRows;
 
-    private final int colonyId;
+    private final int      colonyId;
     private final BlockPos buildingId;
-    private final int citizenId;
+    private final int      citizenId;
 
     public ContainerMinecoloniesCitizenInventory(
                                                   IInventory playerInventory,
@@ -52,7 +51,8 @@ public class ContainerMinecoloniesCitizenInventory extends Container
         {
             for (int k = 0; k < 9; ++k)
             {
-                this.addSlotToContainer(new Slot(chestInventory, k + j * 9, 8 + k * 18, 18 + j * 18) {
+                this.addSlotToContainer(new Slot(chestInventory, k + j * 9, 8 + k * 18, 18 + j * 18)
+                {
                     @Override
                     public void putStack(final ItemStack stack)
                     {
@@ -86,20 +86,12 @@ public class ContainerMinecoloniesCitizenInventory extends Container
     }
 
     /**
-     * Determines whether supplied player can use this container
-     */
-    public boolean canInteractWith(EntityPlayer playerIn)
-    {
-        return this.lowerChestInventory.isUsableByPlayer(playerIn);
-    }
-
-    /**
      * Handle when the stack in slot {@code index} is shift-clicked. Normally this moves the stack between the player
      * inventory and the other inventory(s).
      *
      * @param playerIn Player that interacted with this {@code Container}.
-     * @param index Index of the {@link Slot}. This index is relative to the list of slots in this {@code Container},
-     * {@link #inventorySlots}.
+     * @param index    Index of the {@link Slot}. This index is relative to the list of slots in this {@code Container},
+     *                 {@link #inventorySlots}.
      */
     @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index)
@@ -146,6 +138,14 @@ public class ContainerMinecoloniesCitizenInventory extends Container
     {
         super.onContainerClosed(playerIn);
         this.lowerChestInventory.closeInventory(playerIn);
+    }
+
+    /**
+     * Determines whether supplied player can use this container
+     */
+    public boolean canInteractWith(EntityPlayer playerIn)
+    {
+        return this.lowerChestInventory.isUsableByPlayer(playerIn);
     }
 
     /**

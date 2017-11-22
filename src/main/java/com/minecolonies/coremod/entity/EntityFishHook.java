@@ -680,10 +680,10 @@ public final class EntityFishHook extends Entity
         entityitem.motionZ = distanceZ * 0.1;
         CompatibilityUtils.getWorld(this).spawnEntity(entityitem);
         CompatibilityUtils.getWorld(citizen).spawnEntity(new EntityXPOrb(CompatibilityUtils.getWorld(citizen),
-                                                   citizenPosX,
-                                                   citizenPosY + 0.D,
-                                                   citizenPosZ + 0.5,
-                                                   this.rand.nextInt(6) + 1));
+                                                                          citizenPosX,
+                                                                          citizenPosY + 0.D,
+                                                                          citizenPosZ + 0.5,
+                                                                          this.rand.nextInt(6) + 1));
     }
 
     /**
@@ -728,8 +728,8 @@ public final class EntityFishHook extends Entity
     {
         final LootContext.Builder lootContextBuilder = new LootContext.Builder((WorldServer) CompatibilityUtils.getWorld(this));
         return CompatibilityUtils.getWorld(this).getLootTableManager()
-                .getLootTableFromLocation(lootTable)
-                .generateLootForPools(this.rand, lootContextBuilder.build()).stream().findFirst().orElse(null);
+                 .getLootTableFromLocation(lootTable)
+                 .generateLootForPools(this.rand, lootContextBuilder.build()).stream().findFirst().orElse(null);
     }
 
     /**

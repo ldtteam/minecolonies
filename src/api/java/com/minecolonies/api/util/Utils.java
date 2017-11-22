@@ -246,5 +246,4 @@ public final class Utils
     {
         return data ^ flag;
     }
-
 }

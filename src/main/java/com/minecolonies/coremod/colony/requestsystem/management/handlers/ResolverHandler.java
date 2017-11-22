@@ -153,17 +153,6 @@ public final class ResolverHandler
         removeResolverInternal(manager, resolver);
     }
 
-    public static void removeResolverInternal(final IStandardRequestManager manager, final IRequestResolver resolver)
-    {
-        manager.getResolverBiMap().remove(resolver.getRequesterId());
-        Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(resolver.getRequestType());
-        requestTypes.remove(TypeConstants.OBJECT);
-        requestTypes.forEach(c -> {
-            LogHandler.log("Removing resolver: " + resolver + " with request type: " + c);
-            manager.getRequestClassResolverMap().get(c).remove(resolver);
-        });
-    }
-
     /**
      * Method to get a resolver from a given token.
      * <p>
@@ -188,6 +177,17 @@ public final class ResolverHandler
         LogHandler.log("Retrieving resolver for: " + token);
 
         return manager.getResolverBiMap().get(token);
+    }
+
+    public static void removeResolverInternal(final IStandardRequestManager manager, final IRequestResolver resolver)
+    {
+        manager.getResolverBiMap().remove(resolver.getRequesterId());
+        Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(resolver.getRequestType());
+        requestTypes.remove(TypeConstants.OBJECT);
+        requestTypes.forEach(c -> {
+            LogHandler.log("Removing resolver: " + resolver + " with request type: " + c);
+            manager.getRequestClassResolverMap().get(c).remove(resolver);
+        });
     }
 
     /**

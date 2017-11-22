@@ -66,34 +66,28 @@ public class TileEntityRack extends TileEntity
      * Slots per line.
      */
     private static final int SLOT_PER_LINE = 9;
-
+    /**
+     * The content of the chest.
+     */
+    private final Map<ItemStorage, Integer> content = new HashMap<>();
     /**
      * Variable which determines if it is a single or doublechest.
      */
     private boolean single = true;
-
     /**
      * Neighbor position of the rack (double chest).
      */
     private BlockPos neighbor = BlockPos.ORIGIN;
-
     /**
      * Is this the main chest of the doubleChest.
      */
     private boolean main = false;
-
     /**
      * Size multiplier of the inventory.
      * 0 = default value.
      * 1 = 1*9 additional slots, and so on.
      */
     private int size = 0;
-
-    /**
-     * The content of the chest.
-     */
-    private final Map<ItemStorage, Integer> content = new HashMap<>();
-
     /**
      * The inventory of the tileEntity.
      */
@@ -117,17 +111,6 @@ public class TileEntityRack extends TileEntity
     public boolean hasItemStack(final ItemStack stack)
     {
         return content.containsKey(new ItemStorage(stack));
-    }
-
-    /**
-     * Checks if the chest is empty.
-     * This method checks the content list, it is therefore extremely fast.
-     *
-     * @return true if so.
-     */
-    public boolean isEmpty()
-    {
-        return content.isEmpty();
     }
 
     /**
@@ -199,6 +182,32 @@ public class TileEntityRack extends TileEntity
     }
 
     /**
+     * Upgrade the rack by 1. This adds 9 more slots and copies the inventory to the new one.
+     */
+    public void upgradeItemStorage()
+    {
+        ++size;
+        final IItemHandlerModifiable tempInventory = new ItemStackHandler(DEFAULT_SIZE + size * SLOT_PER_LINE)
+        {
+            @Override
+            protected void onContentsChanged(final int slot)
+            {
+                updateItemStorage();
+                super.onContentsChanged(slot);
+            }
+        };
+
+        for (int slot = 0; slot < inventory.getSlots(); slot++)
+        {
+            tempInventory.setStackInSlot(slot, inventory.getStackInSlot(slot));
+        }
+
+        inventory = tempInventory;
+        final IBlockState state = world.getBlockState(pos);
+        world.notifyBlockUpdate(pos, state, state, 0x03);
+    }
+
+    /**
      * Scans through the whole storage and updates it.
      */
     public void updateItemStorage()
@@ -243,7 +252,7 @@ public class TileEntityRack extends TileEntity
 
                     typeHere = world.getBlockState(pos).withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.EMPTYAIR);
                     typeNeighbor = world.getBlockState(neighbor).withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.DEFAULTDOUBLE)
-                            .withProperty(BlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(pos, neighbor));
+                                     .withProperty(BlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(pos, neighbor));
                 }
                 else
                 {
@@ -257,7 +266,7 @@ public class TileEntityRack extends TileEntity
                 {
                     typeHere = world.getBlockState(pos).withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.EMPTYAIR);
                     typeNeighbor = world.getBlockState(neighbor).withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.FULLDOUBLE)
-                            .withProperty(BlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(pos, neighbor));
+                                     .withProperty(BlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(pos, neighbor));
                 }
                 else
                 {
@@ -274,58 +283,34 @@ public class TileEntityRack extends TileEntity
     }
 
     /**
-     * Upgrade the rack by 1. This adds 9 more slots and copies the inventory to the new one.
-     */
-    public void upgradeItemStorage()
-    {
-        ++size;
-        final IItemHandlerModifiable tempInventory = new ItemStackHandler(DEFAULT_SIZE + size * SLOT_PER_LINE)
-        {
-            @Override
-            protected void onContentsChanged(final int slot)
-            {
-                updateItemStorage();
-                super.onContentsChanged(slot);
-            }
-        };
-
-        for (int slot = 0; slot < inventory.getSlots(); slot++)
-        {
-            tempInventory.setStackInSlot(slot, inventory.getStackInSlot(slot));
-        }
-
-        inventory = tempInventory;
-        final IBlockState state = world.getBlockState(pos);
-        world.notifyBlockUpdate(pos, state, state, 0x03);
-    }
-
-    /**
-     * Define the neighbor for a block.
+     * Get the other double chest or null.
      *
-     * @param neighbor the neighbor to define.
+     * @return the tileEntity of the other half or null.
      */
-    public void setNeighbor(final BlockPos neighbor)
+    public TileEntityRack getOtherChest()
     {
-        if (!neighbor.equals(BlockPos.ORIGIN))
+        if (neighbor.equals(BlockPos.ORIGIN))
         {
-            this.neighbor = neighbor;
-            this.single = false;
+            return null;
         }
-        else
+        final TileEntity tileEntity = world.getTileEntity(neighbor);
+        if (tileEntity instanceof TileEntityRack)
         {
-            this.neighbor = BlockPos.ORIGIN;
-            this.single = true;
+            ((TileEntityRack) tileEntity).setNeighbor(this.getPos());
+            return (TileEntityRack) tileEntity;
         }
+        return null;
     }
 
     /**
-     * Check if this is the main chest of the double chest.
+     * Checks if the chest is empty.
+     * This method checks the content list, it is therefore extremely fast.
      *
      * @return true if so.
      */
-    public boolean isMain()
+    public boolean isEmpty()
     {
-        return this.main;
+        return content.isEmpty();
     }
 
     /**
@@ -337,15 +322,15 @@ public class TileEntityRack extends TileEntity
     {
         final TileEntity entity = world.getTileEntity(newNeighbor);
 
-        if(!this.neighbor.equals(BlockPos.ORIGIN)
-                && this.neighbor.distanceSq(this.pos) > 1
-                && entity instanceof TileEntityRack)
+        if (!this.neighbor.equals(BlockPos.ORIGIN)
+              && this.neighbor.distanceSq(this.pos) > 1
+              && entity instanceof TileEntityRack)
         {
             softReset();
         }
 
         if (this.neighbor.equals(BlockPos.ORIGIN) && world.getBlockState(newNeighbor).getBlock() instanceof BlockMinecoloniesRack
-                && !(entity instanceof TileEntityRack && ((TileEntityRack) entity).getOtherChest() != null))
+              && !(entity instanceof TileEntityRack && ((TileEntityRack) entity).getOtherChest() != null))
         {
             this.neighbor = newNeighbor;
             single = false;
@@ -371,43 +356,19 @@ public class TileEntityRack extends TileEntity
         this.main = false;
     }
 
+    /**
+     * Check if this is the main chest of the double chest.
+     *
+     * @return true if so.
+     */
+    public boolean isMain()
+    {
+        return this.main;
+    }
+
     public IItemHandlerModifiable getInventory()
     {
         return inventory;
-    }
-
-    @Override
-    public boolean hasCapability(final Capability<?> capability, final EnumFacing facing)
-    {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-        {
-            return true;
-        }
-        return super.hasCapability(capability, facing);
-    }
-
-    @Override
-    public <T> T getCapability(final Capability<T> capability, final EnumFacing facing)
-    {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-        {
-            if (single)
-            {
-                return (T) inventory;
-            }
-            else if(getOtherChest() != null)
-            {
-                if (main)
-                {
-                    return (T) new CombinedInvWrapper(inventory, getOtherChest().inventory);
-                }
-                else
-                {
-                    return (T) new CombinedInvWrapper(getOtherChest().inventory, inventory);
-                }
-            }
-        }
-        return super.getCapability(capability, facing);
     }
 
     @Override
@@ -478,32 +439,6 @@ public class TileEntityRack extends TileEntity
         compound.setTag(TAG_INVENTORY, inventoryTagList);
         compound.setBoolean(TAG_MAIN, main);
         return super.writeToNBT(compound);
-    }
-
-    @Override
-    public boolean shouldRefresh(final World world, final BlockPos pos, final IBlockState oldState, final IBlockState newSate)
-    {
-        return oldState.getBlock() != newSate.getBlock();
-    }
-
-    /**
-     * Get the other double chest or null.
-     *
-     * @return the tileEntity of the other half or null.
-     */
-    public TileEntityRack getOtherChest()
-    {
-        if (neighbor.equals(BlockPos.ORIGIN))
-        {
-            return null;
-        }
-        final TileEntity tileEntity = world.getTileEntity(neighbor);
-        if (tileEntity instanceof TileEntityRack)
-        {
-            ((TileEntityRack) tileEntity).setNeighbor(this.getPos());
-            return (TileEntityRack) tileEntity;
-        }
-        return null;
     }
 
     @Override
@@ -583,6 +518,46 @@ public class TileEntityRack extends TileEntity
         main = compound.getBoolean(TAG_MAIN);
     }
 
+    @Override
+    public boolean shouldRefresh(final World world, final BlockPos pos, final IBlockState oldState, final IBlockState newSate)
+    {
+        return oldState.getBlock() != newSate.getBlock();
+    }
+
+    @Override
+    public boolean hasCapability(final Capability<?> capability, final EnumFacing facing)
+    {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+        {
+            return true;
+        }
+        return super.hasCapability(capability, facing);
+    }
+
+    @Override
+    public <T> T getCapability(final Capability<T> capability, final EnumFacing facing)
+    {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+        {
+            if (single)
+            {
+                return (T) inventory;
+            }
+            else if (getOtherChest() != null)
+            {
+                if (main)
+                {
+                    return (T) new CombinedInvWrapper(inventory, getOtherChest().inventory);
+                }
+                else
+                {
+                    return (T) new CombinedInvWrapper(getOtherChest().inventory, inventory);
+                }
+            }
+        }
+        return super.getCapability(capability, facing);
+    }
+
     /**
      * Get the neighbor of the entity.
      *
@@ -591,5 +566,24 @@ public class TileEntityRack extends TileEntity
     public BlockPos getNeighbor()
     {
         return neighbor;
+    }
+
+    /**
+     * Define the neighbor for a block.
+     *
+     * @param neighbor the neighbor to define.
+     */
+    public void setNeighbor(final BlockPos neighbor)
+    {
+        if (!neighbor.equals(BlockPos.ORIGIN))
+        {
+            this.neighbor = neighbor;
+            this.single = false;
+        }
+        else
+        {
+            this.neighbor = BlockPos.ORIGIN;
+            this.single = true;
+        }
     }
 }

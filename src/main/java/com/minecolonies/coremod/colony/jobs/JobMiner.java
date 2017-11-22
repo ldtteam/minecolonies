@@ -6,11 +6,8 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.miner.EntityAIStructureMiner;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 /**
  * Class used for variables regarding his job.
@@ -66,5 +63,4 @@ public class JobMiner extends AbstractJobStructure
             citizen.getColony().triggerAchievement(ModAchievements.achievementMinerDeathFall);
         }
     }
-
 }

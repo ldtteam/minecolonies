@@ -5,9 +5,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
@@ -35,6 +33,24 @@ public class BuildingBasedRequester implements IRequester
     {
         this.location = location;
         this.requesterId = requesterId;
+    }
+
+    public static BuildingBasedRequester deserialize(IFactoryController controller, NBTTagCompound compound)
+    {
+        ILocation location = controller.deserialize(compound.getCompoundTag(NBT_LOCATION));
+        IToken token = controller.deserialize(compound.getCompoundTag(NBT_ID));
+
+        return new BuildingBasedRequester(location, token);
+    }
+
+    public NBTTagCompound serialize(IFactoryController controller)
+    {
+        NBTTagCompound compound = new NBTTagCompound();
+
+        compound.setTag(NBT_LOCATION, controller.serialize(getRequesterLocation()));
+        compound.setTag(NBT_ID, controller.serialize(getRequesterId()));
+
+        return compound;
     }
 
     @Override
@@ -85,6 +101,12 @@ public class BuildingBasedRequester implements IRequester
         return getBuilding().getDisplayName(token);
     }
 
+    public IRequester getBuilding()
+    {
+        updateBuilding();
+        return building;
+    }
+
     private void updateBuilding()
     {
         if (building != null)
@@ -101,29 +123,5 @@ public class BuildingBasedRequester implements IRequester
         final IColony colony = ColonyManager.getClosestIColony(world, getRequesterLocation().getInDimensionLocation());
 
         building = colony.getRequesterBuildingForPosition(getRequesterLocation().getInDimensionLocation());
-    }
-
-    public NBTTagCompound serialize(IFactoryController controller)
-    {
-        NBTTagCompound compound = new NBTTagCompound();
-
-        compound.setTag(NBT_LOCATION, controller.serialize(getRequesterLocation()));
-        compound.setTag(NBT_ID, controller.serialize(getRequesterId()));
-
-        return compound;
-    }
-
-    public static BuildingBasedRequester deserialize(IFactoryController controller, NBTTagCompound compound)
-    {
-        ILocation location = controller.deserialize(compound.getCompoundTag(NBT_LOCATION));
-        IToken token = controller.deserialize(compound.getCompoundTag(NBT_ID));
-
-        return new BuildingBasedRequester(location, token);
-    }
-
-    public IRequester getBuilding()
-    {
-        updateBuilding();
-        return building;
     }
 }

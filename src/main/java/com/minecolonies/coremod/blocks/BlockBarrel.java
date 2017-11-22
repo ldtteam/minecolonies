@@ -25,7 +25,7 @@ import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 
 public class BlockBarrel extends Block
 {
-    private static final int MIN_FULLNESS = 0;
+    private static final int MIN_FULLNESS           = 0;
     private static final int MAX_FULLNESS           = 16;
     private static final int BARRELSTATE_FILLING    = 0;
     private static final int BARRELSTATE_COMPOSTING = 1;
@@ -60,6 +60,7 @@ public class BlockBarrel extends Block
     }
 
     //todo: register block with new method
+
     /**
      * initialize the block
      */

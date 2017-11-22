@@ -9,14 +9,13 @@ import net.minecraft.util.ChatAllowedCharacters;
  */
 public class TextFieldVanilla extends TextField
 {
-    private boolean backgroundEnabled = true;
+    private static final int   BACKGROUND_WIDTH_OFFSET       = 8;
+    private static final float BACKGROUND_X_TRANSLATE        = 4F;
+    private static final int   BACKGROUND_Y_TRANSLATE_OFFSET = 8;
+    private static final int   BACKGROUND_MOUSE_OFFSET_X     = 4;
+    private boolean backgroundEnabled    = true;
     private int     backgroundOuterColor = 0xFFA0A0A0;
     private int     backgroundInnerColor = 0xFF000000;
-
-    private static final int BACKGROUND_WIDTH_OFFSET = 8;
-    private static final float BACKGROUND_X_TRANSLATE = 4F;
-    private static final int BACKGROUND_Y_TRANSLATE_OFFSET = 8;
-    private static final int BACKGROUND_MOUSE_OFFSET_X = 4;
 
     /**
      * Required default constructor.

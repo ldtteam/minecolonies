@@ -199,6 +199,20 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
         wrappedManager.onProviderRemovedFromColony(provider);
     }
 
+    @NotNull
+    @Override
+    public IPlayerRequestResolver getPlayerResolver()
+    {
+        return wrappedManager.getPlayerResolver();
+    }
+
+    @NotNull
+    @Override
+    public IRetryingRequestResolver getRetryingRequestResolver()
+    {
+        return wrappedManager.getRetryingRequestResolver();
+    }
+
     @Override
     public NBTTagCompound serializeNBT()
     {
@@ -211,23 +225,9 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
         wrappedManager.deserializeNBT(nbt);
     }
 
-    @NotNull
-    @Override
-    public IPlayerRequestResolver getPlayerResolver()
-    {
-        return wrappedManager.getPlayerResolver();
-    }
-
     @Override
     public void update()
     {
         wrappedManager.update();
-    }
-
-    @NotNull
-    @Override
-    public IRetryingRequestResolver getRetryingRequestResolver()
-    {
-        return wrappedManager.getRetryingRequestResolver();
     }
 }

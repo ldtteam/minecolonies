@@ -2,10 +2,10 @@ package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
-import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
-import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
@@ -49,13 +49,19 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
                                @NotNull final IRequestManager manager, final IRequest<? extends IDeliverable> requestToCheck)
     {
         if (manager.getColony().getWorld().isRemote)
+        {
             return false;
+        }
 
         if (!(requestToCheck.getRequester() instanceof BuildingBasedRequester))
+        {
             return false;
+        }
 
         if (!requestToCheck.getRequester().getRequesterLocation().equals(getRequesterLocation()))
+        {
             return false;
+        }
 
         AbstractBuilding building = (AbstractBuilding) ((BuildingBasedRequester) requestToCheck.getRequester()).getBuilding();
 
@@ -63,7 +69,9 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
         tileEntities.add(building.getTileEntity());
         tileEntities.addAll(building.getAdditionalCountainers().stream().map(manager.getColony().getWorld()::getTileEntity).collect(Collectors.toSet()));
 
-        return tileEntities.stream().map(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStack-> requestToCheck.getRequest().matches(itemStack))).anyMatch(itemStacks -> !itemStacks.isEmpty());
+        return tileEntities.stream()
+                 .map(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStack -> requestToCheck.getRequest().matches(itemStack)))
+                 .anyMatch(itemStacks -> !itemStacks.isEmpty());
     }
 
     @Nullable
@@ -72,7 +80,9 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
                                         @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
         if (canResolve(manager, request))
+        {
             return Lists.newArrayList();
+        }
 
         return null;
     }
@@ -89,11 +99,11 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
         tileEntities.addAll(building.getAdditionalCountainers().stream().map(manager.getColony().getWorld()::getTileEntity).collect(Collectors.toSet()));
 
         request.setDelivery(tileEntities.stream()
-          .map(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStack-> request.getRequest().matches(itemStack)))
-          .filter(itemStacks -> !itemStacks.isEmpty())
-          .flatMap(List::stream)
-          .findFirst()
-          .orElse(ItemStackUtils.EMPTY));
+                              .map(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStack -> request.getRequest().matches(itemStack)))
+                              .filter(itemStacks -> !itemStacks.isEmpty())
+                              .flatMap(List::stream)
+                              .findFirst()
+                              .orElse(ItemStackUtils.EMPTY));
 
         manager.updateRequestState(request.getToken(), RequestState.COMPLETED);
     }
@@ -109,7 +119,7 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
     @Nullable
     @Override
     public IRequest onRequestCancelledOrOverruled(
-                                       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request) throws IllegalArgumentException
+                                                   @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request) throws IllegalArgumentException
     {
         return null;
     }

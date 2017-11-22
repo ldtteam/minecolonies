@@ -155,7 +155,9 @@ public class StandardRequestManagerTest
         private final IToken                                token;
         private final ImmutableCollection<IRequestResolver> resolvers;
 
-        private TestResolvingProvider() {token = StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN);
+        private TestResolvingProvider()
+        {
+            token = StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN);
             resolvers = ImmutableList.of(new StringResolver());
         }
 
@@ -256,6 +258,12 @@ public class StandardRequestManagerTest
         private StringRequestable(final String content) {this.content = content;}
 
         @Override
+        public int hashCode()
+        {
+            return content != null ? content.hashCode() : 0;
+        }
+
+        @Override
         public boolean equals(final Object o)
         {
             if (this == o)
@@ -270,12 +278,6 @@ public class StandardRequestManagerTest
             final StringRequestable that = (StringRequestable) o;
 
             return content != null ? content.equals(that.content) : that.content == null;
-        }
-
-        @Override
-        public int hashCode()
-        {
-            return content != null ? content.hashCode() : 0;
         }
     }
 
@@ -342,9 +344,13 @@ public class StandardRequestManagerTest
         public List<IToken> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends StringRequestable> request)
         {
             if (request.getRequest().content.length() == 1)
+            {
                 return Lists.newArrayList();
+            }
             else
+            {
                 return Lists.newArrayList(manager.createRequest(TestRequester.INSTANCE, new StringRequestable(request.getRequest().content.substring(1))));
+            }
         }
 
         @Nullable
@@ -365,7 +371,8 @@ public class StandardRequestManagerTest
 
         @Nullable
         @Override
-        public IRequest onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends StringRequestable> request) throws IllegalArgumentException
+        public IRequest onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends StringRequestable> request)
+          throws IllegalArgumentException
         {
             return null;
         }
@@ -455,11 +462,12 @@ public class StandardRequestManagerTest
     private static class TestRequester implements IRequester
     {
 
-        static final TestRequester INSTANCE= new TestRequester();
+        static final TestRequester INSTANCE = new TestRequester();
 
         private final IToken token;
 
-        private TestRequester() {
+        private TestRequester()
+        {
             this(StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN));
         }
 

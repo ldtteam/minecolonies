@@ -22,6 +22,7 @@ public final class RequestMappingHandler
 
     /**
      * Method used to get a map with the mappings.
+     *
      * @return The mappings.
      */
     public static BiMap<Class, Class> getRequestableMappings()

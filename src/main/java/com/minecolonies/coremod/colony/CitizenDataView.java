@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 public class CitizenDataView
 {
 
-    private static final String                 TAG_HELD_ITEM_SLOT   = "HeldItemSlot";
+    private static final String TAG_HELD_ITEM_SLOT = "HeldItemSlot";
 
     /**
      * The max amount of lines the latest log allows.
@@ -104,7 +104,7 @@ public class CitizenDataView
     {
         return entityId;
     }
-    
+
     /**
      * Entity name getter.
      *
@@ -179,6 +179,7 @@ public class CitizenDataView
 
     /**
      * Get the colony id of the citizen.
+     *
      * @return unique id of the colony.
      */
     public int getColonyId()
@@ -218,6 +219,7 @@ public class CitizenDataView
 
     /**
      * Get the saturation of the citizen.
+     *
      * @return the saturation a double.
      */
     public double getSaturation()
@@ -295,7 +297,7 @@ public class CitizenDataView
         job = ByteBufUtils.readUTF8String(buf);
 
         final int length = buf.readInt();
-        for(int i = 0; i < length; i++)
+        for (int i = 0; i < length; i++)
         {
             final String textComp = ByteBufUtils.readUTF8String(buf);
             final TextComponentTranslation textComponent = new TextComponentTranslation(textComp);
@@ -309,11 +311,11 @@ public class CitizenDataView
         final NBTTagList nbttaglist = compound.getTagList("inventory", 10);
         this.inventory.readFromNBT(nbttaglist);
         this.inventory.setHeldItem(compound.getInteger(TAG_HELD_ITEM_SLOT));
-
     }
 
     /**
      * Get the array of the latest status.
+     *
      * @return the array of ITextComponents.
      */
     public ITextComponent[] getLatestStatus()

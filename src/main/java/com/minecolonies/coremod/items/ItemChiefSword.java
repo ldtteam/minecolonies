@@ -25,11 +25,11 @@ public class ItemChiefSword extends ItemSword
     private static final Potion LEVITATION_EFFECT = Potion.getPotionById(25);
     private static final Potion GLOW_EFFECT       = Potion.getPotionById(24);
 
-    private static final int GLOW_EFFECT_DURATION = 30;
+    private static final int GLOW_EFFECT_DURATION   = 30;
     private static final int GLOW_EFFECT_MULTIPLIER = 20;
-    private static final int GLOW_EFFECT_DISTANCE = 30;
+    private static final int GLOW_EFFECT_DISTANCE   = 30;
 
-    private static final int LEVITATION_EFFECT_DURATION = 20;
+    private static final int LEVITATION_EFFECT_DURATION   = 20;
     private static final int LEVITATION_EFFECT_MULTIPLIER = 3;
 
     /**
@@ -52,7 +52,6 @@ public class ItemChiefSword extends ItemSword
             final Stream<AbstractEntityBarbarian> barbarians = BarbarianUtils.getBarbariansCloseToEntity(entityIn, GLOW_EFFECT_DISTANCE).stream();
             barbarians.forEach(entity -> entity.addPotionEffect(new PotionEffect(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER)));
         }
-
     }
 
     @Override

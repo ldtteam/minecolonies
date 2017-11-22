@@ -14,6 +14,7 @@ public final class TokenHandler
 
     /**
      * Generates a new Token for the request system.
+     *
      * @param manager The manager to generate a new token for.
      * @return The new token.
      */

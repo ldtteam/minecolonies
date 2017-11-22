@@ -32,8 +32,8 @@ import org.jetbrains.annotations.Nullable;
  */
 public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage, IMessage>
 {
-    private boolean complete;
-    private String structureName;
+    private boolean  complete;
+    private String   structureName;
     private String   workOrderName;
     private int      rotation;
     private BlockPos pos;
@@ -60,10 +60,11 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
      * @param mirror        the mirror of the building or decoration.
      * @param complete      paste it complete (with structure blocks) or without.
      */
-    public BuildToolPasteMessage(final String structureName,
-            final String workOrderName, final BlockPos pos,
-            final int rotation, final boolean isHut,
-            final Mirror mirror, final boolean complete)
+    public BuildToolPasteMessage(
+                                  final String structureName,
+                                  final String workOrderName, final BlockPos pos,
+                                  final int rotation, final boolean isHut,
+                                  final Mirror mirror, final boolean complete)
     {
         super();
         this.structureName = structureName;
@@ -138,7 +139,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
                 handleHut(CompatibilityUtils.getWorld(player), player, sn, message.rotation, message.pos, message.mirror);
             }
             StructureWrapper.loadAndPlaceStructureWithRotation(player.world, message.structureName,
-                    message.pos, message.rotation, message.mirror ? Mirror.FRONT_BACK : Mirror.NONE, message.complete);
+              message.pos, message.rotation, message.mirror ? Mirror.FRONT_BACK : Mirror.NONE, message.complete);
         }
     }
 
@@ -148,20 +149,19 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
      * @param world         World the hut is being placed into.
      * @param player        Who placed the hut.
      * @param sn            The name of the structure.
-     * @param workOrderName The name of the work order.
      * @param rotation      The number of times the structure should be rotated.
      * @param buildPos      The location the hut is being placed.
      * @param mirror        Whether or not the strcture is mirrored.
      */
     private static void handleHut(
-            @NotNull final World world, @NotNull final EntityPlayer player,
-            final Structures.StructureName sn,
-            final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
+                                   @NotNull final World world, @NotNull final EntityPlayer player,
+                                   final Structures.StructureName sn,
+                                   final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
     {
         final Colony tempColony = ColonyManager.getClosestColony(world, buildPos);
         if (tempColony != null
-                && !tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
-                && BlockPosUtil.getDistance2D(tempColony.getCenter(), buildPos) >= Configurations.gameplay.workingRangeTownHall * 2 + Configurations.gameplay.townHallPadding)
+              && !tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
+              && BlockPosUtil.getDistance2D(tempColony.getCenter(), buildPos) >= Configurations.gameplay.workingRangeTownHall * 2 + Configurations.gameplay.townHallPadding)
         {
             return;
         }
@@ -183,15 +183,14 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
      * @param world         World the hut is being placed into.
      * @param player        Who placed the hut.
      * @param sn            The name of the structure.
-     * @param workOrderName The name of the work order.
      * @param rotation      The number of times the structure should be rotated.
      * @param buildPos      The location the hut is being placed.
      * @param mirror        Whether or not the strcture is mirrored.
      */
     private static void setupBuilding(
-            @NotNull final World world, @NotNull final EntityPlayer player,
-            final Structures.StructureName sn,
-            final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
+                                       @NotNull final World world, @NotNull final EntityPlayer player,
+                                       final Structures.StructureName sn,
+                                       final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
     {
         @Nullable final AbstractBuilding building = ColonyManager.getBuilding(world, buildPos);
 
@@ -214,14 +213,14 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
                 }
             }
             String name = sn.toString();
-            name = name.substring(name.length()-1);
+            name = name.substring(name.length() - 1);
 
             try
             {
                 final int level = Integer.parseInt(name);
                 building.setBuildingLevel(level);
             }
-            catch(final NumberFormatException e)
+            catch (final NumberFormatException e)
             {
                 Log.getLogger().warn("Couldn't parse the level.", e);
             }

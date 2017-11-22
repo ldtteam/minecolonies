@@ -52,7 +52,7 @@ public class WhereAmICommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        if(!(sender instanceof EntityPlayer))
+        if (!(sender instanceof EntityPlayer))
         {
             Log.getLogger().info("In the console...");
             return;
@@ -63,7 +63,7 @@ public class WhereAmICommand extends AbstractSingleCommand
         final BlockPos center = colony.getCenter();
         final double distance = BlockPosUtil.getDistanceSquared(center, new BlockPos(playerPos.getX(), center.getY(), playerPos.getZ()));
 
-        if(distance >= MathUtils.square(Configurations.gameplay.workingRangeTownHall + (double)Configurations.gameplay.townHallPadding))
+        if (distance >= MathUtils.square(Configurations.gameplay.workingRangeTownHall + (double) Configurations.gameplay.townHallPadding))
         {
             sender.sendMessage(new TextComponentString(String.format(NONE_CLOSE, Math.sqrt(distance))));
             return;

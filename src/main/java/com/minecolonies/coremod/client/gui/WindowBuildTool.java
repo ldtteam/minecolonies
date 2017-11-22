@@ -173,7 +173,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     /**
      * Rotation to rotateWithMirror left.
      */
-    private static final int ROTATE_LEFT  = 3;
+    private static final int ROTATE_LEFT = 3;
 
     /**
      * Id of the paste button.
@@ -190,59 +190,49 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     @NotNull
     private final List<String> sections = new ArrayList<>();
-
+    /**
+     * Button to rename a scanned schematic.
+     */
+    private final Button renameButton;
+    /**
+     * Button to delete a scanned schematic.
+     */
+    private final Button deleteButton;
     /**
      * List of style for the section.
      */
     @NotNull
     private List<String> styles = new ArrayList<>();
-
     /**
      * List of decorations or level possible to make with the style.
      */
     @NotNull
     private List<String> schematics = new ArrayList<>();
-
     /**
      * Current position the hut/decoration is rendered at.
      */
     @NotNull
     private BlockPos pos = new BlockPos(0, 0, 0);
-
     /**
      * Current rotation of the hut/decoration.
      */
     private int rotation = 0;
-
     /**
      * Drop down list for section.
      */
-    private       DropDownList     sectionsDropDownList;
-
+    private DropDownList sectionsDropDownList;
     /**
      * Drop down list for style.
      */
-    private       DropDownList     stylesDropDownList;
-
+    private DropDownList stylesDropDownList;
     /**
      * Drop down list for schematic.
      */
-    private       DropDownList     schematicsDropDownList;
-
-    /**
-     * Button to rename a scanned schematic.
-     */
-    private final Button           renameButton;
-
-    /**
-     * Button to delete a scanned schematic.
-     */
-    private final Button           deleteButton;
-
+    private DropDownList schematicsDropDownList;
     /**
      * Confirmation dialog when deleting a scanned schematic.
      */
-    private       DialogDoneCancel confirmDeleteDialog;
+    private DialogDoneCancel confirmDeleteDialog;
 
     /**
      * Creates a window build tool.
@@ -292,75 +282,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         registerButton(BUTTON_DELETE, this::deleteClicked);
         renameButton = findPaneOfTypeByID(BUTTON_RENAME, Button.class);
         deleteButton = findPaneOfTypeByID(BUTTON_DELETE, Button.class);
-    }
-
-    private void pasteNice()
-    {
-        paste(false);
-    }
-
-    /**
-     * Paste a schematic in the world.
-     */
-    private void pasteComplete()
-    {
-        paste(true);
-    }
-
-    /**
-     * Paste a schematic in the world.
-     * @param complete if complete paste or partial.
-     */
-    private void paste(final boolean complete)
-    {
-        final Structures.StructureName structureName = new Structures.StructureName(schematics.get(schematicsDropDownList.getSelectedIndex()));
-        if (structureName.getPrefix().equals(Structures.SCHEMATICS_SCAN) && FMLCommonHandler.instance().getMinecraftServerInstance() == null)
-        {
-            //We need to check that the server have it too using the md5
-            requestScannedSchematic(structureName, true, complete);
-        }
-        else
-        {
-            MineColonies.getNetwork().sendToServer(new BuildToolPasteMessage(
-                    structureName.toString(),
-                    structureName.toString(),
-                    Settings.instance.getPosition(),
-                    Settings.instance.getRotation(),
-                    structureName.isHut(),
-                    Settings.instance.getMirror(),
-                    complete));
-        }
-
-        Settings.instance.reset();
-        close();
-    }
-
-    /**
-     * Drop down class for sections.
-     */
-    private class SectionDropDownList implements DropDownList.DataProvider
-    {
-        @Override
-        public int getElementCount()
-        {
-            return sections.size();
-        }
-
-        @Override
-        public String getLabel(final int index)
-        {
-            final String name = sections.get(index);
-            if (Structures.SCHEMATICS_SCAN.equals(name))
-            {
-                return LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.scans");
-            }
-            else if (Structures.SCHEMATICS_PREFIX.equals(name))
-            {
-                return LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.decorations");
-            }
-            //should be a hut
-            return LanguageHandler.format("tile.minecolonies.blockHut" + name + ".name");
-        }
     }
 
     /**
@@ -439,6 +360,128 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     }
 
     /**
+     * Move the schematic up.
+     */
+    private static void moveUpClicked()
+    {
+        Settings.instance.moveTo(new BlockPos(0, 1, 0));
+    }
+
+    /**
+     * Move the structure down.
+     */
+    private static void moveDownClicked()
+    {
+        Settings.instance.moveTo(new BlockPos(0, -1, 0));
+    }
+
+    private void pasteNice()
+    {
+        paste(false);
+    }
+
+    /**
+     * Paste a schematic in the world.
+     *
+     * @param complete if complete paste or partial.
+     */
+    private void paste(final boolean complete)
+    {
+        final Structures.StructureName structureName = new Structures.StructureName(schematics.get(schematicsDropDownList.getSelectedIndex()));
+        if (structureName.getPrefix().equals(Structures.SCHEMATICS_SCAN) && FMLCommonHandler.instance().getMinecraftServerInstance() == null)
+        {
+            //We need to check that the server have it too using the md5
+            requestScannedSchematic(structureName, true, complete);
+        }
+        else
+        {
+            MineColonies.getNetwork().sendToServer(new BuildToolPasteMessage(
+                                                                              structureName.toString(),
+                                                                              structureName.toString(),
+                                                                              Settings.instance.getPosition(),
+                                                                              Settings.instance.getRotation(),
+                                                                              structureName.isHut(),
+                                                                              Settings.instance.getMirror(),
+                                                                              complete));
+        }
+
+        Settings.instance.reset();
+        close();
+    }
+
+    /**
+     * Request to build a player scan.
+     *
+     * @param paste         if it should be pasted.
+     * @param complete      if pasted, should it be complete.
+     * @param structureName of the scan to be built.
+     */
+    private void requestScannedSchematic(@NotNull final Structures.StructureName structureName, final boolean paste, final boolean complete)
+    {
+        if (!Structures.isPlayerSchematicsAllowed())
+        {
+            return;
+        }
+
+        if (Structures.hasMD5(structureName))
+        {
+            final String md5 = Structures.getMD5(structureName.toString());
+            final String serverSideName = Structures.SCHEMATICS_CACHE + '/' + md5;
+            if (!Structures.hasMD5(new Structures.StructureName(serverSideName)))
+            {
+                final InputStream stream = Structure.getStream(structureName.toString());
+                if (stream != null)
+                {
+                    Log.getLogger().info("BuilderTool: sending schematic " + structureName + "(md5:" + md5 + ") to the server");
+                    MineColonies.getNetwork().sendToServer(new SchematicSaveMessage(Structure.getStreamAsByteArray(stream)));
+                }
+                else
+                {
+                    Log.getLogger().warn("BuilderTool: Can not load " + structureName);
+                }
+            }
+            else
+            {
+                Log.getLogger().warn("BuilderTool: server does not have " + serverSideName);
+            }
+
+            if (paste)
+            {
+                MineColonies.getNetwork().sendToServer(new BuildToolPasteMessage(
+                                                                                  serverSideName,
+                                                                                  structureName.toString(),
+                                                                                  Settings.instance.getPosition(),
+                                                                                  Settings.instance.getRotation(),
+                                                                                  false,
+                                                                                  Settings.instance.getMirror(),
+                                                                                  complete));
+            }
+            else
+            {
+                MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(
+                                                                                  serverSideName,
+                                                                                  structureName.toString(),
+                                                                                  Settings.instance.getPosition(),
+                                                                                  Settings.instance.getRotation(),
+                                                                                  false,
+                                                                                  Settings.instance.getMirror()));
+            }
+        }
+        else
+        {
+            Log.getLogger().warn("BuilderTool: Can not send schematic without md5: " + structureName);
+        }
+    }
+
+    /**
+     * Paste a schematic in the world.
+     */
+    private void pasteComplete()
+    {
+        paste(true);
+    }
+
+    /**
      * Called when the window is opened.
      * Sets up the buttons for either hut mode or decoration mode.
      */
@@ -458,13 +501,78 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             }
         }
 
-        if( Minecraft.getMinecraft().player.capabilities.isCreativeMode)
+        if (Minecraft.getMinecraft().player.capabilities.isCreativeMode)
         {
             findPaneOfTypeByID(BUTTON_PASTE, Button.class).setVisible(true);
             findPaneOfTypeByID(BUTTON_PASTE_NICE, Button.class).setVisible(true);
         }
 
         setStructureName(Settings.instance.getStructureName());
+    }
+
+
+    /**
+     * ---------------- Schematic Navigation Handling -----------------
+     */
+
+    /**
+     * Called when the window is closed.
+     * If there is a current structure, its information is stored in {@link Settings}.
+     */
+    @Override
+    public void onClosed()
+    {
+        if (Settings.instance.getActiveStructure() != null)
+        {
+            Settings.instance.setSchematicInfo(schematics.get(schematicsDropDownList.getSelectedIndex()), rotation);
+        }
+    }
+
+    /**
+     * Check if the player inventory has a certain hut.
+     *
+     * @param inventory the player inventory.
+     * @param hut       the hut.
+     * @return true if so.
+     */
+    private static boolean inventoryHasHut(@NotNull final InventoryPlayer inventory, final String hut)
+    {
+        return inventory.hasItemStack(new ItemStack(Block.getBlockFromName(Constants.MOD_ID + HUT_PREFIX + hut)));
+    }
+
+    /**
+     * Set the structure name.
+     *
+     * @param structureName name of the structure name
+     *                      Ex: schematics/wooden/Builder2
+     */
+    private void setStructureName(final String structureName)
+    {
+        if (structureName != null)
+        {
+            final Structures.StructureName sn = new Structures.StructureName(structureName);
+            final int sectionIndex = sections.indexOf(sn.getSection());
+            if (sectionIndex != -1)
+            {
+                sectionsDropDownList.setSelectedIndex(sectionIndex);
+                final int styleIndex = styles.indexOf(sn.getStyle());
+                if (styleIndex != -1)
+                {
+                    stylesDropDownList.setSelectedIndex(styleIndex);
+                    final int schematicIndex = schematics.indexOf(sn.toString());
+                    if (schematicIndex != -1)
+                    {
+                        schematicsDropDownList.setSelectedIndex(schematicIndex);
+                        return;
+                    }
+                }
+            }
+        }
+
+        //We did not find the structure, select the first of each
+        sectionsDropDownList.setSelectedIndex(0);
+        stylesDropDownList.setSelectedIndex(0);
+        schematicsDropDownList.setSelectedIndex(0);
     }
 
     @Override
@@ -480,21 +588,54 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     }
 
     /**
-     * Called when the window is closed.
-     * If there is a current structure, its information is stored in {@link Settings}.
+     * Changes the current structure.
+     * Set to button position at that time
      */
-    @Override
-    public void onClosed()
+    private void changeSchematic()
     {
-        if (Settings.instance.getActiveStructure() != null)
+        final String sname = schematics.get(schematicsDropDownList.getSelectedIndex());
+        final Structures.StructureName structureName = new Structures.StructureName(sname);
+        final Structure structure = new Structure(null,
+                                                   structureName.toString(),
+                                                   new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation()))
+                                                     .setMirror(Settings.instance.getMirror()));
+
+        final String md5 = Structures.getMD5(structureName.toString());
+        if (structure.isTemplateMissing() || !structure.isCorrectMD5(md5))
         {
-            Settings.instance.setSchematicInfo(schematics.get(schematicsDropDownList.getSelectedIndex()), rotation);
+            if (structure.isTemplateMissing())
+            {
+                Log.getLogger().info("Template structure " + structureName + " missing");
+            }
+            else
+            {
+                Log.getLogger().info("structure " + structureName + " md5 error");
+            }
+
+            Log.getLogger().info("Request To Server for structure " + structureName);
+            if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
+            {
+                MineColonies.getNetwork().sendToServer(new SchematicRequestMessage(structureName.toString()));
+                return;
+            }
+            else
+            {
+                Log.getLogger().error("WindowBuildTool: Need to download schematic on a standalone client/server. This should never happen");
+            }
+        }
+
+
+        Settings.instance.setStructureName(structureName.toString());
+        Settings.instance.setActiveSchematic(structure);
+
+        if (Settings.instance.getPosition() == null)
+        {
+            Settings.instance.setPosition(this.pos);
         }
     }
 
-
-    /**
-     * ---------------- Schematic Navigation Handling -----------------
+    /*
+     * ---------------- Button Handling -----------------
      */
 
     /**
@@ -530,6 +671,58 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     }
 
     /**
+     * Go to the next schematic.
+     */
+    private void nextSchematic()
+    {
+        schematicsDropDownList.selectNext();
+    }
+
+    /**
+     * Go to the previous schematic.
+     */
+    private void previousSchematic()
+    {
+        schematicsDropDownList.selectPrevious();
+    }
+
+    /*
+     * ---------------- Button Handling -----------------
+     */
+
+    /**
+     * called every time one of the dropdownlist changed.
+     *
+     * @param list the dropdown list which change
+     */
+    private void onDropDownListChanged(final DropDownList list)
+    {
+        if (list == sectionsDropDownList)
+        {
+            final String name = sections.get(sectionsDropDownList.getSelectedIndex());
+            if (Structures.SCHEMATICS_SCAN.equals(name))
+            {
+                renameButton.setVisible(true);
+                deleteButton.setVisible(true);
+            }
+            else
+            {
+                renameButton.setVisible(false);
+                deleteButton.setVisible(false);
+            }
+            updateStyles();
+        }
+        else if (list == stylesDropDownList)
+        {
+            updateSchematics();
+        }
+        else if (list == schematicsDropDownList)
+        {
+            changeSchematic();
+        }
+    }
+
+    /**
      * Update the styles list but try to keep the same one.
      */
     private void updateStyles()
@@ -553,26 +746,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         stylesDropDownList.setSelectedIndex(newIndex);
     }
 
-    /*
-     * ---------------- Button Handling -----------------
-     */
-
-    /**
-     * Go to the next schematic.
-     */
-    private void nextSchematic()
-    {
-        schematicsDropDownList.selectNext();
-    }
-    
-    /**
-     * Go to the previous schematic.
-     */
-    private void previousSchematic()
-    {
-        schematicsDropDownList.selectPrevious();
-    }
-    
     /**
      * Update the list a available schematics.
      */
@@ -608,105 +781,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         findPaneOfTypeByID(DROPDOWN_SCHEMATIC_ID, DropDownList.class).setEnabled(enabled);
         findPaneOfTypeByID(BUTTON_NEXT_SCHEMATIC_ID, Button.class).setEnabled(enabled);
         schematicsDropDownList.setSelectedIndex(newIndex);
-    }
-
-    /**
-     * called every time one of the dropdownlist changed.
-     *
-     * @param list the dropdown list which change
-     */
-    private void onDropDownListChanged(final DropDownList list)
-    {
-        if (list == sectionsDropDownList)
-        {
-            final String name = sections.get(sectionsDropDownList.getSelectedIndex());
-            if (Structures.SCHEMATICS_SCAN.equals(name))
-            {
-                renameButton.setVisible(true);
-                deleteButton.setVisible(true);
-            }
-            else
-            {
-                renameButton.setVisible(false);
-                deleteButton.setVisible(false);
-            }
-            updateStyles();
-        }
-        else if (list == stylesDropDownList)
-        {
-            updateSchematics();
-        }
-        else if (list == schematicsDropDownList)
-        {
-            changeSchematic();
-        }
-    }
-
-    /**
-     * Set the structure name.
-     *
-     * @param structureName name of the structure name
-     *               Ex: schematics/wooden/Builder2
-     */
-    private void setStructureName(final String structureName)
-    {
-        if (structureName != null)
-        {
-            final Structures.StructureName sn = new Structures.StructureName(structureName);
-            final int sectionIndex = sections.indexOf(sn.getSection());
-            if (sectionIndex != -1)
-            {
-                sectionsDropDownList.setSelectedIndex(sectionIndex);
-                final int styleIndex = styles.indexOf(sn.getStyle());
-                if (styleIndex != -1)
-                {
-                    stylesDropDownList.setSelectedIndex(styleIndex);
-                    final int schematicIndex = schematics.indexOf(sn.toString());
-                    if (schematicIndex != -1)
-                    {
-                        schematicsDropDownList.setSelectedIndex(schematicIndex);
-                        return;
-                    }
-                }
-            }
-        }
-
-        //We did not find the structure, select the first of each
-        sectionsDropDownList.setSelectedIndex(0);
-        stylesDropDownList.setSelectedIndex(0);
-        schematicsDropDownList.setSelectedIndex(0);
-    }
-
-    /**
-     * Check if the player inventory has a certain hut.
-     *
-     * @param inventory the player inventory.
-     * @param hut       the hut.
-     * @return true if so.
-     */
-    private static boolean inventoryHasHut(@NotNull final InventoryPlayer inventory, final String hut)
-    {
-        return inventory.hasItemStack(new ItemStack(Block.getBlockFromName(Constants.MOD_ID + HUT_PREFIX + hut)));
-    }
-
-    /*
-     * ---------------- Button Handling -----------------
-     */
-
-    /**
-     * Move the schematic up.
-     */
-    private static void moveUpClicked()
-    {
-        Settings.instance.moveTo(new BlockPos(0, 1, 0));
-    }
-
-    /**
-     * Move the structure down.
-     */
-    private static void moveDownClicked()
-    {
-        Settings.instance.moveTo(new BlockPos(0, -1, 0));
     }
 
     /**
@@ -750,6 +824,41 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         updateRotation(rotation);
     }
 
+
+    /*
+     * ---------------- Miscellaneous ----------------
+     */
+
+    /**
+     * Updates the rotation of the structure depending on the input.
+     *
+     * @param rotation the rotation to be set.
+     */
+    private static void updateRotation(final int rotation)
+    {
+        final PlacementSettings settings = new PlacementSettings();
+        switch (rotation)
+        {
+            case ROTATE_RIGHT:
+                settings.setRotation(Rotation.CLOCKWISE_90);
+                break;
+            case ROTATE_180:
+                settings.setRotation(Rotation.CLOCKWISE_180);
+                break;
+            case ROTATE_LEFT:
+                settings.setRotation(Rotation.COUNTERCLOCKWISE_90);
+                break;
+            default:
+                settings.setRotation(Rotation.NONE);
+        }
+        Settings.instance.setRotation(rotation);
+
+        if (Settings.instance.getActiveStructure() != null)
+        {
+            Settings.instance.getActiveStructure().setPlacementSettings(settings.setMirror(Settings.instance.getMirror()));
+        }
+    }
+
     /**
      * Rotate the structure counter clockwise.
      */
@@ -757,121 +866,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     {
         rotation = (rotation + ROTATE_LEFT) % POSSIBLE_ROTATIONS;
         updateRotation(rotation);
-    }
-
-
-    /*
-     * ---------------- Miscellaneous ----------------
-     */
-
-    /**
-     * Changes the current structure.
-     * Set to button position at that time
-     */
-    private void changeSchematic()
-    {
-        final String sname = schematics.get(schematicsDropDownList.getSelectedIndex());
-        final Structures.StructureName structureName = new Structures.StructureName(sname);
-        final Structure structure = new Structure(null,
-                                             structureName.toString(),
-                                             new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())).setMirror(Settings.instance.getMirror()));
-
-        final String md5 = Structures.getMD5(structureName.toString());
-        if (structure.isTemplateMissing() || !structure.isCorrectMD5(md5))
-        {
-            if (structure.isTemplateMissing())
-            {
-                Log.getLogger().info("Template structure " + structureName + " missing");
-            }
-            else
-            {
-                Log.getLogger().info("structure " + structureName + " md5 error");
-            }
-
-            Log.getLogger().info("Request To Server for structure " + structureName);
-            if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
-            {
-                MineColonies.getNetwork().sendToServer(new SchematicRequestMessage(structureName.toString()));
-                return;
-            }
-            else
-            {
-                Log.getLogger().error("WindowBuildTool: Need to download schematic on a standalone client/server. This should never happen");
-            }
-        }
-
-
-        Settings.instance.setStructureName(structureName.toString());
-        Settings.instance.setActiveSchematic(structure);
-
-        if (Settings.instance.getPosition() == null)
-        {
-            Settings.instance.setPosition(this.pos);
-        }
-    }
-
-    /**
-     * Request to build a player scan.
-     *
-     * @param paste if it should be pasted.
-     * @param complete if pasted, should it be complete.
-     * @param structureName of the scan to be built.
-     */
-    private void requestScannedSchematic(@NotNull final Structures.StructureName structureName, final boolean paste, final boolean complete)
-    {
-        if (!Structures.isPlayerSchematicsAllowed())
-        {
-            return;
-        }
-
-        if (Structures.hasMD5(structureName))
-        {
-            final String md5 = Structures.getMD5(structureName.toString());
-            final String serverSideName = Structures.SCHEMATICS_CACHE + '/' + md5;
-            if (!Structures.hasMD5(new Structures.StructureName(serverSideName)))
-            {
-                final InputStream stream = Structure.getStream(structureName.toString());
-                if (stream != null)
-                {
-                    Log.getLogger().info("BuilderTool: sending schematic " + structureName + "(md5:" + md5 + ") to the server");
-                    MineColonies.getNetwork().sendToServer(new SchematicSaveMessage(Structure.getStreamAsByteArray(stream)));
-                }
-                else
-                {
-                    Log.getLogger().warn("BuilderTool: Can not load " + structureName);
-                }
-            }
-            else
-            {
-                Log.getLogger().warn("BuilderTool: server does not have " + serverSideName);
-            }
-
-            if(paste)
-            {
-                MineColonies.getNetwork().sendToServer(new BuildToolPasteMessage(
-                        serverSideName,
-                        structureName.toString(),
-                        Settings.instance.getPosition(),
-                        Settings.instance.getRotation(),
-                        false,
-                        Settings.instance.getMirror(),
-                        complete));
-            }
-            else
-            {
-                MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(
-                        serverSideName,
-                        structureName.toString(),
-                        Settings.instance.getPosition(),
-                        Settings.instance.getRotation(),
-                        false,
-                        Settings.instance.getMirror()));
-            }
-        }
-        else
-        {
-            Log.getLogger().warn("BuilderTool: Can not send schematic without md5: " + structureName);
-        }
     }
 
     /**
@@ -910,36 +904,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     }
 
     /**
-     * Updates the rotation of the structure depending on the input.
-     *
-     * @param rotation the rotation to be set.
-     */
-    private static void updateRotation(final int rotation)
-    {
-        final PlacementSettings settings = new PlacementSettings();
-        switch (rotation)
-        {
-            case ROTATE_RIGHT:
-                settings.setRotation(Rotation.CLOCKWISE_90);
-                break;
-            case ROTATE_180:
-                settings.setRotation(Rotation.CLOCKWISE_180);
-                break;
-            case ROTATE_LEFT:
-                settings.setRotation(Rotation.COUNTERCLOCKWISE_90);
-                break;
-            default:
-                settings.setRotation(Rotation.NONE);
-        }
-        Settings.instance.setRotation(rotation);
-
-        if (Settings.instance.getActiveStructure() != null)
-        {
-            Settings.instance.getActiveStructure().setPlacementSettings(settings.setMirror(Settings.instance.getMirror()));
-        }
-    }
-
-    /**
      * Action performed when rename button is clicked.
      */
     private void renameClicked()
@@ -965,7 +929,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     /**
      * handle when a dialog is closed.
      *
-     * @param dialog which is being closed.
+     * @param dialog   which is being closed.
      * @param buttonId is the id of the button used to close the dialog.
      */
     public void onDialogClosed(final DialogDoneCancel dialog, final int buttonId)
@@ -974,7 +938,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         {
             final Structures.StructureName structureName = new Structures.StructureName(schematics.get(schematicsDropDownList.getSelectedIndex()));
             if (Structures.SCHEMATICS_SCAN.equals(structureName.getPrefix())
-                && Structures.deleteScannedStructure(structureName))
+                  && Structures.deleteScannedStructure(structureName))
             {
                 Structures.loadScannedStyleMaps();
                 if (schematics.size() > 1)
@@ -991,6 +955,34 @@ public class WindowBuildTool extends AbstractWindowSkeleton
                     sectionsDropDownList.selectNext();
                 }
             }
+        }
+    }
+
+    /**
+     * Drop down class for sections.
+     */
+    private class SectionDropDownList implements DropDownList.DataProvider
+    {
+        @Override
+        public int getElementCount()
+        {
+            return sections.size();
+        }
+
+        @Override
+        public String getLabel(final int index)
+        {
+            final String name = sections.get(index);
+            if (Structures.SCHEMATICS_SCAN.equals(name))
+            {
+                return LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.scans");
+            }
+            else if (Structures.SCHEMATICS_PREFIX.equals(name))
+            {
+                return LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.decorations");
+            }
+            //should be a hut
+            return LanguageHandler.format("tile.minecolonies.blockHut" + name + ".name");
         }
     }
 }

@@ -22,7 +22,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldServerMulti;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
@@ -61,11 +60,11 @@ public final class ColonyManager
     /**
      * The tag of the colonies.
      */
-    private static final String                     TAG_COLONIES          = "colonies";
+    private static final String TAG_COLONIES = "colonies";
     /**
      * The tag of the pseudo unique identifier
      */
-    private static final String                     TAG_UUID              = "uuid";
+    private static final String TAG_UUID     = "uuid";
 
     /**
      * The damage source used to kill citizens.
@@ -109,11 +108,11 @@ public final class ColonyManager
      * Indicate if a schematic have just been downloaded.
      * Client only
      */
-    private static boolean schematicDownloaded = false;
+    private static          boolean schematicDownloaded = false;
     /**
      * Pseudo unique id for the server
      */
-    private static volatile UUID serverUUID = null;
+    private static volatile UUID    serverUUID          = null;
 
     private ColonyManager()
     {
@@ -151,7 +150,7 @@ public final class ColonyManager
 
     private static void addColonyByWorld(final Colony colony)
     {
-        if(colony.getDimension() >= 0)
+        if (colony.getDimension() >= 0)
         {
             coloniesByWorld.computeIfAbsent(colony.getDimension(), ArrayList::new).add(colony);
         }
@@ -189,16 +188,19 @@ public final class ColonyManager
                     colonyWorlds.add(world);
                 }
             }
-            if(canDestroy)
+            if (canDestroy)
             {
                 Log.getLogger().info("Removing buildings for " + id);
-                for (final AbstractBuilding building : new ArrayList<>(colony.getBuildings().values())) {
+                for (final AbstractBuilding building : new ArrayList<>(colony.getBuildings().values()))
+                {
                     final BlockPos location = building.getLocation();
                     Log.getLogger().info("Delete Building at " + location);
                     building.deconstruct();
                     building.destroy();
-                    for (final World world : colonyWorlds) {
-                        if (world.getBlockState(location).getBlock() instanceof AbstractBlockHut) {
+                    for (final World world : colonyWorlds)
+                    {
+                        if (world.getBlockState(location).getBlock() instanceof AbstractBlockHut)
+                        {
                             Log.getLogger().info("Found Block, deleting " + world.getBlockState(location).getBlock());
                             world.setBlockToAir(location);
                         }
@@ -327,6 +329,7 @@ public final class ColonyManager
 
     /**
      * Get all colonies in all worlds.
+     *
      * @param abandonedSince time in hours since the last contact.
      * @return a list of colonies.
      */
@@ -336,7 +339,7 @@ public final class ColonyManager
         final List<Colony> sortedList = new ArrayList<>();
         for (final Colony colony : colonies.getCopyAsList())
         {
-            if(colony.getLastContactInHours() >= abandonedSince)
+            if (colony.getLastContactInHours() >= abandonedSince)
             {
                 sortedList.add(colony);
             }
@@ -344,7 +347,6 @@ public final class ColonyManager
 
         return sortedList;
     }
-
 
     /**
      * Get a AbstractBuilding by position.
@@ -816,16 +818,6 @@ public final class ColonyManager
     }
 
     /**
-     * Set the server UUID.
-     *
-     * @param uuid the universal unique id
-     */
-    public static void setServerUUID(final UUID uuid)
-    {
-        serverUUID = uuid;
-    }
-
-    /**
      * Get the Universal Unique ID for the server.
      *
      * @return the server Universal Unique ID for ther
@@ -833,6 +825,16 @@ public final class ColonyManager
     public static UUID getServerUUID()
     {
         return serverUUID;
+    }
+
+    /**
+     * Set the server UUID.
+     *
+     * @param uuid the universal unique id
+     */
+    public static void setServerUUID(final UUID uuid)
+    {
+        serverUUID = uuid;
     }
 
     /**
@@ -845,7 +847,7 @@ public final class ColonyManager
     {
         if (!world.isRemote && !(world instanceof WorldServerMulti))
         {
-            if(world.provider.getDimension() == 0)
+            if (world.provider.getDimension() == 0)
             {
                 saveColonies();
             }

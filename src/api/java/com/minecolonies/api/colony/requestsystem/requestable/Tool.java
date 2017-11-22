@@ -16,10 +16,10 @@ public class Tool implements IDeliverable
 {
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
-    private static final String NBT_TYPE  = "Type";
+    private static final String NBT_TYPE      = "Type";
     private static final String NBT_MIN_LEVEL = "MinLevel";
-    private static final String NBT_MAX_LEVEL  = "MaxLevel";
-    private static final String NBT_RESULT = "Result";
+    private static final String NBT_MAX_LEVEL = "MaxLevel";
+    private static final String NBT_RESULT    = "Result";
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
     @NotNull
@@ -45,6 +45,25 @@ public class Tool implements IDeliverable
         this.minLevel = minLevel;
         this.maxLevel = maxLevel;
         this.result = result;
+    }
+
+    /**
+     * Serializes this Tool into NBT.
+     *
+     * @param controller The IFactoryController used to serialize sub types.
+     * @return The NBTTagCompound containing the tool data.
+     */
+    @NotNull
+    public static NBTTagCompound serialize(IFactoryController controller, Tool tool)
+    {
+        NBTTagCompound compound = new NBTTagCompound();
+
+        compound.setString(NBT_TYPE, tool.getToolClass().getName());
+        compound.setInteger(NBT_MIN_LEVEL, tool.getMinLevel());
+        compound.setInteger(NBT_MAX_LEVEL, tool.getMaxLevel());
+        compound.setTag(NBT_RESULT, tool.getResult().serializeNBT());
+
+        return compound;
     }
 
     /**
@@ -78,9 +97,7 @@ public class Tool implements IDeliverable
     public Integer getMaxLevel()
     {
         return maxLevel;
-    }
-
-    /**
+    }    /**
      * The resulting stack if set during creation, else ItemStack.Empty.
      *
      * @return The resulting stack.
@@ -92,28 +109,10 @@ public class Tool implements IDeliverable
     }
 
     /**
-     * Serializes this Tool into NBT.
-     *
-     * @param controller The IFactoryController used to serialize sub types.
-     * @return The NBTTagCompound containing the tool data.
-     */
-    @NotNull
-    public static NBTTagCompound serialize(IFactoryController controller, Tool tool) {
-        NBTTagCompound compound = new NBTTagCompound();
-
-        compound.setString(NBT_TYPE, tool.getToolClass().getName());
-        compound.setInteger(NBT_MIN_LEVEL, tool.getMinLevel());
-        compound.setInteger(NBT_MAX_LEVEL, tool.getMaxLevel());
-        compound.setTag(NBT_RESULT, tool.getResult().serializeNBT());
-
-        return compound;
-    }
-
-    /**
      * Static method that constructs an instance from NBT.
      *
      * @param controller The {@link IFactoryController} to deserialize components with.
-     * @param nbt The nbt to serialize from.
+     * @param nbt        The nbt to serialize from.
      * @return An instance of Tool with the data contained in the given NBT.
      */
     @NotNull
@@ -133,15 +132,17 @@ public class Tool implements IDeliverable
     {
         //API:Map the given strings a proper way.
         boolean toolTypeResult = !ItemStackUtils.isEmpty(stack)
-                 && stack.getCount() >= 1
-                 && stack.getItem().getToolClasses(stack).stream()
-                      .filter(s -> getToolClass().getName().equalsIgnoreCase(s))
-                      .map(ToolType::getToolType)
-                      .filter(t -> t != ToolType.NONE)
-                      .anyMatch(t -> ItemStackUtils.hasToolLevel(stack, t, getMinLevel(), getMaxLevel()));
+                                   && stack.getCount() >= 1
+                                   && stack.getItem().getToolClasses(stack).stream()
+                                        .filter(s -> getToolClass().getName().equalsIgnoreCase(s))
+                                        .map(ToolType::getToolType)
+                                        .filter(t -> t != ToolType.NONE)
+                                        .anyMatch(t -> ItemStackUtils.hasToolLevel(stack, t, getMinLevel(), getMaxLevel()));
 
         if (!toolTypeResult)
+        {
             return stack.getItem() instanceof ItemHoe && toolClass.equals(ToolType.HOE);
+        }
 
         return toolTypeResult;
     }
@@ -151,6 +152,8 @@ public class Tool implements IDeliverable
     {
         return 1;
     }
+
+
 
     @Override
     public void setResult(@NotNull final ItemStack result)

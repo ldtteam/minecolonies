@@ -3,7 +3,6 @@ package com.minecolonies.api.util.constant;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.MathUtils;
 
-import static com.minecolonies.api.util.constant.Constants.SECONDS_A_MINUTE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
 /**

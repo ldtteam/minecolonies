@@ -113,7 +113,7 @@ public class BuildingHome extends AbstractBuildingHut
     public void onWakeUp()
     {
         final World world = getColony().getWorld();
-        if(world == null)
+        if (world == null)
         {
             return;
         }
@@ -123,18 +123,12 @@ public class BuildingHome extends AbstractBuildingHut
             IBlockState state = world.getBlockState(pos);
             state = state.getBlock().getActualState(state, world, pos);
             if (state.getBlock() instanceof BlockBed
-                    && !state.getValue(BlockBed.OCCUPIED)
-                    && state.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.HEAD))
+                  && !state.getValue(BlockBed.OCCUPIED)
+                  && state.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.HEAD))
             {
                 world.setBlockState(pos, state.withProperty(BlockBed.OCCUPIED, false), 0x03);
             }
         }
-    }
-
-    @NotNull
-    public List<BlockPos> getBedList()
-    {
-        return new ArrayList<>(bedList);
     }
 
     @NotNull
@@ -170,20 +164,11 @@ public class BuildingHome extends AbstractBuildingHut
     }
 
     @Override
-    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
-    {
-        if (block == Blocks.BED)
-        {
-            bedList.add(pos);
-        }
-    }
-
-    @Override
     public void onDestroyed()
     {
         residents.stream()
-                .filter(Objects::nonNull)
-                .forEach(citizen -> citizen.setHomeBuilding(null));
+          .filter(Objects::nonNull)
+          .forEach(citizen -> citizen.setHomeBuilding(null));
         residents.clear();
         super.onDestroyed();
     }
@@ -231,7 +216,7 @@ public class BuildingHome extends AbstractBuildingHut
             // Move the citizen to a better hut
             if (citizen.getHomeBuilding() != null && citizen.getHomeBuilding().getBuildingLevel() < this.getBuildingLevel())
             {
-                if(citizen.getHomeBuilding() instanceof BuildingHome)
+                if (citizen.getHomeBuilding() instanceof BuildingHome)
                 {
                     // The citizen can move to this hut to improve conditions
                     citizen.getHomeBuilding().removeCitizen(citizen);
@@ -250,16 +235,6 @@ public class BuildingHome extends AbstractBuildingHut
     }
 
     /**
-     * Checks if the building is full.
-     *
-     * @return true if so.
-     */
-    public boolean isFull()
-    {
-        return residents.size() >= getMaxInhabitants();
-    }
-
-    /**
      * Adds the citizen to the building.
      *
      * @param citizen Citizen to add.
@@ -270,6 +245,16 @@ public class BuildingHome extends AbstractBuildingHut
         citizen.setHomeBuilding(this);
 
         markDirty();
+    }
+
+    /**
+     * Checks if the building is full.
+     *
+     * @return true if so.
+     */
+    public boolean isFull()
+    {
+        return residents.size() >= getMaxInhabitants();
     }
 
     @Override
@@ -310,6 +295,21 @@ public class BuildingHome extends AbstractBuildingHut
     {
         super.setBuildingLevel(level);
         getColony().calculateMaxCitizens();
+    }
+
+    @Override
+    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
+    {
+        if (block == Blocks.BED)
+        {
+            bedList.add(pos);
+        }
+    }
+
+    @NotNull
+    public List<BlockPos> getBedList()
+    {
+        return new ArrayList<>(bedList);
     }
 
     /**

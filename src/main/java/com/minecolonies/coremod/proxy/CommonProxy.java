@@ -218,17 +218,17 @@ public class CommonProxy implements IProxy
          */
     }
 
+    @Override
+    public File getSchematicsFolder()
+    {
+        return null;
+    }
+
     /**
      * Used for entity IDs, starts at 0 & increments for each call.
      */
     private int getNextEntityId()
     {
         return nextEntityId++;
-    }
-
-    @Override
-    public File getSchematicsFolder()
-    {
-        return null;
     }
 }

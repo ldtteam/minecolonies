@@ -42,21 +42,18 @@ public class AbstractBuildingView implements IRequester
     private final ColonyView colony;
     @NotNull
     private final BlockPos   location;
-
-    private int buildingLevel    = 0;
-    private int buildingMaxLevel = 0;
-    private int buildingDmPrio = 1;
-    private int workOrderLevel   = NO_WORK_ORDER;
-
-    /**
-     * Keeps track of which citizen created what request. Citizen -> Request direction.
-     */
-    private HashMap<Integer, Collection<IToken>> citizensByRequests = new HashMap<>();
-
     /**
      * Keeps track of which citizen created what request. Request -> Citizen direction.
      */
     private final HashMap<IToken, Integer> requestsByCitizen = new HashMap<>();
+    private int buildingLevel    = 0;
+    private int buildingMaxLevel = 0;
+    private int buildingDmPrio   = 1;
+    private int workOrderLevel   = NO_WORK_ORDER;
+    /**
+     * Keeps track of which citizen created what request. Citizen -> Request direction.
+     */
+    private HashMap<Integer, Collection<IToken>> citizensByRequests = new HashMap<>();
 
     /**
      * Creates a building view.
@@ -91,16 +88,6 @@ public class AbstractBuildingView implements IRequester
     public BlockPos getLocation()
     {
         return location;
-    }
-
-    /**
-     * Gets the ColonyView that this building belongs to.
-     *
-     * @return ColonyView, client side interpretations of Colony.
-     */
-    public ColonyView getColony()
-    {
-        return colony;
     }
 
     /**
@@ -215,6 +202,16 @@ public class AbstractBuildingView implements IRequester
         this.citizensByRequests.keySet().forEach(citizen -> this.citizensByRequests.get(citizen).forEach(requestToken -> this.requestsByCitizen.put(requestToken, citizen)));
     }
 
+    public <Request> ImmutableList<IRequest<? extends Request>> getOpenRequestsOfType(@NotNull final CitizenDataView citizenData, final Class<Request> requestType)
+    {
+        return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
+                                      .filter(request -> {
+                                          Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                                          return requestTypes.contains(requestType);
+                                      })
+                                      .map(request -> (IRequest<? extends Request>) request)
+                                      .iterator());
+    }
 
     public ImmutableList<IRequest> getOpenRequests(@NotNull final CitizenDataView data)
     {
@@ -226,30 +223,29 @@ public class AbstractBuildingView implements IRequester
         return ImmutableList.copyOf(citizensByRequests.get(data.getId()).stream().map(getColony().getRequestManager()::getRequestForToken).filter(Objects::nonNull).iterator());
     }
 
-    public <Request> ImmutableList<IRequest<? extends Request>> getOpenRequestsOfType(@NotNull final CitizenDataView citizenData, final Class<Request> requestType)
+    /**
+     * Gets the ColonyView that this building belongs to.
+     *
+     * @return ColonyView, client side interpretations of Colony.
+     */
+    public ColonyView getColony()
     {
-        return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
-                .filter(request -> {
-                    Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
-                    return requestTypes.contains(requestType);
-                })
-                .map(request -> (IRequest<? extends Request>) request)
-                .iterator());
+        return colony;
     }
 
     public <Request> ImmutableList<IRequest<? extends Request>> getOpenRequestsOfTypeFiltered(
-            @NotNull final CitizenDataView citizenData,
-            final Class<Request> requestType,
-            Predicate<IRequest<? extends Request>> filter)
+                                                                                               @NotNull final CitizenDataView citizenData,
+                                                                                               final Class<Request> requestType,
+                                                                                               Predicate<IRequest<? extends Request>> filter)
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
-                .filter(request -> {
-                    Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
-                    return requestTypes.contains(requestType);
-                })
-                .map(request -> (IRequest<? extends Request>) request)
-                .filter(filter)
-                .iterator());
+                                      .filter(request -> {
+                                          Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                                          return requestTypes.contains(requestType);
+                                      })
+                                      .map(request -> (IRequest<? extends Request>) request)
+                                      .filter(filter)
+                                      .iterator());
     }
 
     @Override

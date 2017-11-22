@@ -143,7 +143,6 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
      * @param world         World the hut is being placed into.
      * @param player        Who placed the hut.
      * @param sn            The name of the structure.
-     * @param workOrderName The name of the work order.
      * @param rotation      The number of times the structure should be rotated.
      * @param buildPos      The location the hut is being placed.
      * @param mirror        Whether or not the strcture is mirrored.
@@ -160,7 +159,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
               && (!tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
                     && !(block instanceof BlockHutTownHall
                            && BlockPosUtil.getDistance2D(tempColony.getCenter(), buildPos) >=
-                Configurations.gameplay.workingRangeTownHall * 2 + Configurations.gameplay.townHallPadding)))
+                                Configurations.gameplay.workingRangeTownHall * 2 + Configurations.gameplay.townHallPadding)))
         {
             return;
         }
@@ -180,51 +179,6 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
         else
         {
             LanguageHandler.sendPlayerMessage(player, BuildToolPlaceMessage.NO_HUT_IN_INVENTORY);
-        }
-    }
-
-    /**
-     * setup the building once it has been placed.
-     *
-     * @param world         World the hut is being placed into.
-     * @param player        Who placed the hut.
-     * @param sn            The name of the structure.
-     * @param workOrderName The name of the work order.
-     * @param rotation      The number of times the structure should be rotated.
-     * @param buildPos      The location the hut is being placed.
-     * @param mirror        Whether or not the strcture is mirrored.
-     */
-    private static void setupBuilding(
-                                      @NotNull final World world, @NotNull final EntityPlayer player,
-                                      final Structures.StructureName sn,
-                                      final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
-    {
-        @Nullable final AbstractBuilding building = ColonyManager.getBuilding(world, buildPos);
-
-        if (building == null)
-        {
-            Log.getLogger().error("BuildTool: building is null!");
-        }
-        else
-        {
-            if (building.getTileEntity() != null)
-            {
-                final Colony colony = ColonyManager.getColony(world, buildPos);
-                if (colony == null)
-                {
-                    Log.getLogger().info("No colony for " + player.getName());
-                }
-                else
-                {
-                    building.getTileEntity().setColony(colony);
-                }
-            }
-            building.setStyle(sn.getStyle());
-            building.setRotation(rotation);
-            if (mirror)
-            {
-                building.setMirror();
-            }
         }
     }
 
@@ -252,6 +206,50 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
         else
         {
             Log.getLogger().error("handleDecoration: Could not build " + sn);
+        }
+    }
+
+    /**
+     * setup the building once it has been placed.
+     *
+     * @param world         World the hut is being placed into.
+     * @param player        Who placed the hut.
+     * @param sn            The name of the structure.
+     * @param rotation      The number of times the structure should be rotated.
+     * @param buildPos      The location the hut is being placed.
+     * @param mirror        Whether or not the strcture is mirrored.
+     */
+    private static void setupBuilding(
+                                       @NotNull final World world, @NotNull final EntityPlayer player,
+                                       final Structures.StructureName sn,
+                                       final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
+    {
+        @Nullable final AbstractBuilding building = ColonyManager.getBuilding(world, buildPos);
+
+        if (building == null)
+        {
+            Log.getLogger().error("BuildTool: building is null!");
+        }
+        else
+        {
+            if (building.getTileEntity() != null)
+            {
+                final Colony colony = ColonyManager.getColony(world, buildPos);
+                if (colony == null)
+                {
+                    Log.getLogger().info("No colony for " + player.getName());
+                }
+                else
+                {
+                    building.getTileEntity().setColony(colony);
+                }
+            }
+            building.setStyle(sn.getStyle());
+            building.setRotation(rotation);
+            if (mirror)
+            {
+                building.setMirror();
+            }
         }
     }
 }
