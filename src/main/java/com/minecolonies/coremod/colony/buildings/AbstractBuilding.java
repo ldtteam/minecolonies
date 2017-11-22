@@ -1179,9 +1179,9 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
      */
     public void alterPickUpPriority(final int value)
     {
-        if(this.pickUpPriority + value < 0)
+        if(this.pickUpPriority + value < 1)
         {
-            this.pickUpPriority = 0;
+            this.pickUpPriority = 1;
         }
         else if(this.pickUpPriority + value > MAX_PRIO)
         {

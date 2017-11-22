@@ -115,7 +115,7 @@ public class ClientProxy extends CommonProxy
         @Nullable final WindowClipBoard window = new WindowClipBoard(colonyId);
         window.open();
     }
-    
+
     /**
      * Called when registering blocks,
      * we have to register all our modblocks here.

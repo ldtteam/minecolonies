@@ -59,7 +59,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     /**
      * Delay in ticks between every inventory operation.
      */
-    private static final int DUMP_AND_GATHER_DELAY = 10;
+    private static final int DUMP_AND_GATHER_DELAY = 3;
 
     /**
      * Wait 10 seconds for the worker to gather.
@@ -158,6 +158,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             {
                 this.alreadyKept = new ArrayList<>();
                 this.currentSlot = 0;
+                building.setBeingGathered(false);
                 if(hasGathered)
                 {
                     this.hasGathered = false;
@@ -166,6 +167,12 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 else
                 {
                     building.alterPickUpPriority(-1);
+
+                    if(job.getCurrentTask() == null)
+                    {
+                        gatherTarget = null;
+                        return GATHERING;
+                    }
                 }
                 return DUMPING;
             }
@@ -190,7 +197,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         final BlockPos pos = getWeightedRandom();
 
-        if (pos == null)
+        if (pos != null)
         {
             return pos;
         }
