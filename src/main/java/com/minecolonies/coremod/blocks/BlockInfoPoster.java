@@ -2,8 +2,6 @@ package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -11,8 +9,6 @@ import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -21,8 +17,6 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
@@ -33,7 +27,7 @@ import static net.minecraft.util.EnumFacing.fromAngle;
 /**
  * Class for the minecolonies info Poster.
  */
-public class BlockInfoPoster extends BlockContainer
+public class BlockInfoPoster extends AbstractBlockMinecoloniesContainer<BlockInfoPoster>
 {
     public static final PropertyDirection FACING = BlockHorizontal.FACING;
 
@@ -61,28 +55,6 @@ public class BlockInfoPoster extends BlockContainer
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, NORTH));
         setRegistryName(BLOCK_NAME);
         setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(Locale.ENGLISH), BLOCK_NAME));
-    }
-
-    /**
-     * Registery block at gameregistry.
-     * @param registry the registry to use.
-     * @return the block itself.
-     */
-    public BlockInfoPoster registerBlock(final IForgeRegistry<Block> registry)
-    {
-        registry.register(this);
-        return this;
-    }
-
-    /**
-     * Registery block at gameregistry.
-     * @param registry the registry to use.
-     * @return the block itself.
-     */
-    public BlockInfoPoster registerItemBlock(final IForgeRegistry<Item> registry)
-    {
-        registry.register((new ItemBlock(this)).setRegistryName(this.getRegistryName()));
-        return this;
     }
 
     @Override

@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
  * Hut for the blacksmith.
  * No different from {@link AbstractBlockHut}
  */
-public class BlockHutBlacksmith extends AbstractBlockHut
+public class BlockHutBlacksmith extends AbstractBlockHut<BlockHutBlacksmith>
 {
     protected BlockHutBlacksmith()
     {
