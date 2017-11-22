@@ -76,6 +76,11 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     public static final int NO_WORK_ORDER = 0;
 
     /**
+     * Max priority of a building.
+     */
+    private static final int MAX_PRIO = 10;
+
+    /**
      * Map to resolve names to class.
      */
     @NotNull
@@ -94,7 +99,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
      * Map to resolve classNameHash to class.
      */
     @NotNull
-    private static final Map<Integer, Class<?>> classNameHashToViewClassMap = new HashMap<>();
+    private static final Map<Integer, Class<?>> classNameHashToViewClassMap   = new HashMap<>();
 
     /*
      * Add all the mappings.
@@ -209,6 +214,11 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
      * Priority of the building in the pickUpList.
      */
     private int pickUpPriority = 1;
+
+    /**
+     * Is being gathered right now
+     */
+    private boolean beingGathered = false;
 
     /**
      * Height of the building.
@@ -397,15 +407,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
 
         if(compound.hasKey(TAG_PRIO))
         {
-            final int prio = compound.getInteger(TAG_PRIO);
-            if(prio == -1)
-            {
-                this.pickUpPriority = 1;
-            }
-            else
-            {
-                this.pickUpPriority = prio;
-            }
+            this.pickUpPriority = compound.getInteger(TAG_PRIO);
         }
     }
 
@@ -1172,12 +1174,41 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     }
 
     /**
-     * Set new pickUp priority
-     * @param newPrio the new prio to set.
+     * Increase or decrease the current pickup priority.
+     * @param newPrio the new prio to add to.
      */
-    public void setPickUpPriority(final int newPrio)
+    public void alterPickUpPriority(final int value)
     {
-        this.pickUpPriority = newPrio;
+        if(this.pickUpPriority + value < 0)
+        {
+            this.pickUpPriority = 0;
+        }
+        else if(this.pickUpPriority + value > MAX_PRIO)
+        {
+            this.pickUpPriority = MAX_PRIO;
+        }
+        else
+        {
+            this.pickUpPriority += value;
+        }
+    }
+
+    /**
+     * Check if a building is being gathered.
+     * @return true if so.
+     */
+    public boolean isBeingGathered()
+    {
+        return this.beingGathered;
+    }
+
+    /**
+     * Set if a building is being gathered.
+     * @param gathering value to set.
+     */
+    public void setBeingGathered(final boolean gathering)
+    {
+        this.beingGathered = gathering;
     }
 
     //------------------------- Starting Required Tools/Item handling -------------------------//

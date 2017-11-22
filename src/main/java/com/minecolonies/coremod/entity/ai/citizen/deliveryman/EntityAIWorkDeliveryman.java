@@ -67,6 +67,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     private static final int WAIT_DELAY = TICKS_SECOND * 10;
 
     /**
+     * The inventory's slot which is held in hand.
+     */
+    private static final int SLOT_HAND = 0;
+
+    /**
      * Warehouse the deliveryman is assigned to.
      */
     private BuildingWareHouse wareHouse = null;
@@ -87,9 +92,9 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     private List<ItemStorage> alreadyKept = new ArrayList<>();
 
     /**
-     * The inventory's slot which is held in hand.
+     * To check if the dman gathered anything on his trip.
      */
-    private static final int SLOT_HAND = 0;
+    private boolean hasGathered = false;
 
     /**
      * Initialize the deliveryman and add all his tasks.
@@ -153,6 +158,15 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             {
                 this.alreadyKept = new ArrayList<>();
                 this.currentSlot = 0;
+                if(hasGathered)
+                {
+                    this.hasGathered = false;
+                    building.alterPickUpPriority(1);
+                }
+                else
+                {
+                    building.alterPickUpPriority(-1);
+                }
                 return DUMPING;
             }
             currentSlot++;
@@ -174,7 +188,13 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return null;
         }
 
-        //todo get random building with weight
+        final BlockPos pos = getWeightedRandom();
+
+        if (pos == null)
+        {
+            return pos;
+        }
+
         final Collection<AbstractBuilding> buildingList = worker.getColony().getBuildings().values();
         final Object[] buildingArray = buildingList.toArray();
 
@@ -189,6 +209,38 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         return building.getLocation();
     }
 
+    private BlockPos getWeightedRandom()
+    {
+        double completeWeight = 0.0;
+        for (AbstractBuilding building : worker.getColony().getBuildings().values())
+        {
+            if(!building.isBeingGathered())
+            {
+                completeWeight += building.getPickUpPriority();
+            }
+        }
+        double r = Math.random() * completeWeight;
+        double countWeight = 0.0;
+        for (AbstractBuilding building : worker.getColony().getBuildings().values())
+        {
+            if(!building.isBeingGathered())
+            {
+                countWeight += building.getPickUpPriority();
+                if (countWeight >= r)
+                {
+                    //Don't let any other dman pick up for now.
+                    building.setBeingGathered(true);
+                    return building.getID();
+                }
+                else
+                {
+                    building.alterPickUpPriority(1);
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * Gather not needed Items from building.
      *
@@ -198,7 +250,9 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     private boolean gatherFromBuilding(@NotNull final AbstractBuilding building)
     {
         if (building.getTileEntity() == null)
+        {
             return false;
+        }
 
         if (currentSlot >= building.getTileEntity().getSizeInventory())
         {
@@ -213,6 +267,12 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return false;
         }
 
+        if(ItemStackUtils.isEmpty(building.getTileEntity().getStackInSlot(currentSlot)))
+        {
+            return false;
+        }
+
+        hasGathered = true;
         InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandlers(building.getTileEntity().getSingleChestHandler(), currentSlot, new InvWrapper(worker.getInventoryCitizen()));
         building.markDirty();
         setDelay(DUMP_AND_GATHER_DELAY);
@@ -337,6 +397,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             if(tileEntity instanceof TileEntityColonyBuilding && ((TileEntityColonyBuilding) tileEntity).getBuilding() instanceof AbstractBuildingWorker)
             {
                 final AbstractBuilding building = ((TileEntityColonyBuilding) tileEntity).getBuilding();
+                building.alterPickUpPriority(1);
                 insertionResultStack = InventoryUtils.forceItemStackToItemHandler(
                         new InvWrapper((TileEntityColonyBuilding) tileEntity), stack, ((AbstractBuildingWorker) building)::isItemStackInRequest);
             }
@@ -371,6 +432,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 workerInventory.insertItem(i, insertionResultStack, false);
             }
         }
+
 
         worker.addExperience(1.0D);
         worker.setHeldItem(SLOT_HAND);
