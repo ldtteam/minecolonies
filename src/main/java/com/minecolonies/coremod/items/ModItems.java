@@ -1,29 +1,30 @@
 package com.minecolonies.coremod.items;
 
 import net.minecraft.item.Item;
+import net.minecraftforge.fml.common.registry.IForgeRegistry;
 
 /**
  * Class handling the registering of the mod items.
+ *
+ * We disabled the following finals since we are neither able to mark the items as final, nor do we want to provide public accessors.
  */
+@SuppressWarnings({"squid:ClassVariableVisibilityCheck", "squid:S2444", "squid:S1444"})
 public final class ModItems
 {
-    public static final Item supplyChest  = new ItemSupplyChestDeployer();
-    public static final Item buildTool    = new ItemBuildTool();
-    public static final Item scanTool     = new ItemScanTool();
-    public static final Item permTool     = new ItemScepterPermission();
-    public static final Item caliper      = new ItemCaliper();
-    public static final Item scepterGuard = new ItemScepterGuard();
-    public static final Item supplyCamp   = new ItemSupplyCampDeployer();
-    public static final Item ancientTome  = new ItemAncientTome();
-    public static final Item chiefSword   = new ItemChiefSword();
+    public static Item supplyChest;
+    public static Item buildTool;
+    public static Item scanTool;
+    public static Item permTool;
+    public static Item caliper;
+    public static Item scepterGuard;
+    public static Item supplyCamp;
+    public static Item ancientTome;
+    public static Item chiefSword;
 
-    public static final Item itemAchievementProxySettlement = new ItemAchievementProxy("sizeSettlement");
-    public static final Item itemAchievementProxyTown       = new ItemAchievementProxy("sizeTown");
-    public static final Item itemAchievementProxyCity       = new ItemAchievementProxy("sizeCity");
-    public static final Item itemAchievementProxyMetropolis = new ItemAchievementProxy("sizeMetropolis");
-
-    // deactivated for now
-    // public static final Item compost    = new ItemCompost();
+    public static Item itemAchievementProxySettlement;
+    public static Item itemAchievementProxyTown;
+    public static Item itemAchievementProxyCity;
+    public static Item itemAchievementProxyMetropolis;
 
     /**
      * Private constructor to hide the implicit public one.
@@ -33,5 +34,40 @@ public final class ModItems
         /*
          * Intentionally left empty.
          */
+    }
+
+    /**
+     * Initates all the blocks. At the correct time.
+     * @param registry
+     */
+    public static void init(final IForgeRegistry<Item> registry)
+    {
+        supplyChest = new ItemSupplyChestDeployer();
+        buildTool = new ItemBuildTool();
+        scanTool = new ItemScanTool();
+        permTool = new ItemScepterPermission();
+        caliper = new ItemCaliper();
+        scepterGuard = new ItemScepterGuard();
+        supplyCamp = new ItemSupplyCampDeployer();
+        ancientTome = new ItemAncientTome();
+        chiefSword = new ItemChiefSword();
+        itemAchievementProxySettlement = new ItemAchievementProxy("sizeSettlement");
+        itemAchievementProxyTown       = new ItemAchievementProxy("sizeTown");
+        itemAchievementProxyCity       = new ItemAchievementProxy("sizeCity");
+        itemAchievementProxyMetropolis = new ItemAchievementProxy("sizeMetropolis");
+
+        registry.register(supplyChest);
+        registry.register(buildTool);
+        registry.register(scanTool);
+        registry.register(permTool);
+        registry.register(caliper);
+        registry.register(scepterGuard);
+        registry.register(supplyCamp);
+        registry.register(ancientTome);
+        registry.register(chiefSword);
+        registry.register(itemAchievementProxySettlement);
+        registry.register(itemAchievementProxyTown);
+        registry.register(itemAchievementProxyCity);
+        registry.register(itemAchievementProxyMetropolis);
     }
 }
