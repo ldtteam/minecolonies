@@ -567,7 +567,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
      * @param colony The owning colony.
      * @param id     Chunk coordinate of the block a view is created for.
      * @param buf    The network data.
-     * @return {@link AbstractBuilding.View} created from reading the buf.
+     * @return {@link AbstractBuildingView} created from reading the buf.
      */
     @Nullable
     public static AbstractBuildingView createBuildingView(final ColonyView colony, final BlockPos id, @NotNull final ByteBuf buf)
@@ -1058,6 +1058,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         buf.writeInt(this.getClass().getName().hashCode());
         buf.writeInt(getBuildingLevel());
         buf.writeInt(getMaxBuildingLevel());
+        buf.writeInt(getPickUpPriority());
         buf.writeInt(getCurrentWorkOrderLevel());
 
         NBTTagCompound requestSystemCompound = new NBTTagCompound();
@@ -1175,7 +1176,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
 
     /**
      * Increase or decrease the current pickup priority.
-     * @param newPrio the new prio to add to.
+     * @param value the new prio to add to.
      */
     public void alterPickUpPriority(final int value)
     {

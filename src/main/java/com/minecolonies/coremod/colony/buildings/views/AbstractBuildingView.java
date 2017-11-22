@@ -45,6 +45,7 @@ public class AbstractBuildingView implements IRequester
 
     private int buildingLevel    = 0;
     private int buildingMaxLevel = 0;
+    private int buildingDmPrio = 1;
     private int workOrderLevel   = NO_WORK_ORDER;
 
     /**
@@ -194,6 +195,7 @@ public class AbstractBuildingView implements IRequester
     {
         buildingLevel = buf.readInt();
         buildingMaxLevel = buf.readInt();
+        buildingDmPrio = buf.readInt();
         workOrderLevel = buf.readInt();
 
         loadRequestSystemFromNBT(ByteBufUtils.readTag(buf));
@@ -289,5 +291,10 @@ public class AbstractBuildingView implements IRequester
         }
 
         return new TextComponentString(getColony().getCitizen(requestsByCitizen.get(token)).getName());
+    }
+
+    public int getBuildingDmPrio()
+    {
+        return buildingDmPrio;
     }
 }
