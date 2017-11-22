@@ -96,31 +96,6 @@ public class FMLEventHandler
     }
 
     /**
-     * Called when registering blocks,
-     * we have to register all our modblocks here.
-     *
-     * @param event the registery event for blocks.
-     */
-    @SubscribeEvent
-    public void registerBlocks(@NotNull final RegistryEvent.Register<Block> event)
-    {
-        ModBlocks.init(event.getRegistry());
-    }
-
-    /**
-     * Called when registering items,
-     * we have to register all our mod items here.
-     *
-     * @param event the registery event for items.
-     */
-    @SubscribeEvent
-    public void registerItems(@NotNull final RegistryEvent.Register<Item> event)
-    {
-        ModItems.init(event.getRegistry());
-        ModBlocks.registerItemBlock(event.getRegistry());
-    }
-
-    /**
      * Called when registering sounds,
      * we have to register all our mod items here.
      *
