@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
  * Hut for the town hall.
  * Sets the working range for the town hall in the constructor
  */
-public class BlockHutTownHall extends AbstractBlockHut
+public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
 {
     protected BlockHutTownHall()
     {

@@ -21,7 +21,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
@@ -29,7 +28,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
@@ -41,7 +39,7 @@ import java.util.List;
 /**
  * Block for the shelves of the warehouse.
  */
-public class BlockMinecoloniesRack extends Block
+public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMinecoloniesRack>
 {
     public static final PropertyEnum<BlockMinecoloniesRack.EnumType> VARIANT
             = PropertyEnum.<BlockMinecoloniesRack.EnumType>create("variant", BlockMinecoloniesRack.EnumType.class);
@@ -88,8 +86,6 @@ public class BlockMinecoloniesRack extends Block
         setRegistryName(BLOCK_NAME);
         setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(), BLOCK_NAME));
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
-        GameRegistry.register(this);
-        GameRegistry.register((new ItemBlock(this)).setRegistryName(this.getRegistryName()));
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(VARIANT, EnumType.DEFAULT));
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);

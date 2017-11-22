@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
  * Hut for the builder.
  * No different from {@link AbstractBlockHut}
  */
-public class BlockHutBuilder extends AbstractBlockHut
+public class BlockHutBuilder extends AbstractBlockHut<BlockHutBuilder>
 {
     protected BlockHutBuilder()
     {

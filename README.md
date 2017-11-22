@@ -107,7 +107,7 @@ In order to get the most up-to-date builds, you'll have to periodically update y
 #### Submitting a PR
 So you found a bug in our code?  Think you can make it more efficient?  Want to help in general?  Great!
 
-1. If you haven't already, create a BitBucket account.
+1. If you haven't already, create a Github account.
 2. Click the `Fork` icon located at the top-right, when you click on the triple dots of this page (below your username).
 3. Make the changes that you want to and commit them.
 	* If you're making changes locally, you'll have to do `git commit -a` and `git push` in your command line.

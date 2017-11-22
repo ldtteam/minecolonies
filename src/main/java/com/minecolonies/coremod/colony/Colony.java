@@ -345,6 +345,15 @@ public class Colony implements IColony
             topCitizenId = Math.max(topCitizenId, data.getId());
         }
 
+        // Fields before Buildings, because the Farmer needs them.
+        final NBTTagList fieldTagList = compound.getTagList(TAG_FIELDS, NBT.TAG_COMPOUND);
+        for (int i = 0; i < fieldTagList.tagCount(); ++i)
+        {
+            final NBTTagCompound fieldCompound = fieldTagList.getCompoundTagAt(i);
+            final Field f = Field.createFromNBT(this, fieldCompound);
+            addField(f);
+        }
+
         //  Buildings
         final NBTTagList buildingTagList = compound.getTagList(TAG_BUILDINGS, NBT.TAG_COMPOUND);
         for (int i = 0; i < buildingTagList.tagCount(); ++i)
@@ -355,15 +364,6 @@ public class Colony implements IColony
             {
                 addBuilding(b);
             }
-        }
-
-        // Fields
-        final NBTTagList fieldTagList = compound.getTagList(TAG_FIELDS, NBT.TAG_COMPOUND);
-        for (int i = 0; i < fieldTagList.tagCount(); ++i)
-        {
-            final NBTTagCompound fieldCompound = fieldTagList.getCompoundTagAt(i);
-            final Field f = Field.createFromNBT(this, fieldCompound);
-            addField(f);
         }
 
         // Restore colony achievements
@@ -2134,17 +2134,15 @@ public class Colony implements IColony
         return canColonyBeAutoDeleted;
     }
 
-    public void setCanBeAutoDeleter(final Boolean canBeDeleted)
+    /**
+     * This sets whether or not a colony can be automatically deleted Via command, or an on-tick check.
+     * @param canBeDeleted whether the colony is able to be deleted automatically
+     */
+    public void setCanBeAutoDeleted(final Boolean canBeDeleted)
     {
         this.canColonyBeAutoDeleted = canBeDeleted;
     }
 
-    /**
-     * Gets a random spot inside the colony, in the named direction, where the chunk is loaded.
-     * @param directionX the first direction parameter.
-     * @param directionZ the second direction paramter.
-     * @return the position.
-     */
     public BlockPos getRandomOutsiderInDirection(final EnumFacing directionX, final EnumFacing directionZ)
     {
         final List<BlockPos> positions = wayPoints.keySet().stream().filter(pos -> isInDirection(directionX, directionZ, center.subtract(pos))).collect(Collectors.toList());
