@@ -106,23 +106,25 @@ public class ItemClipBoard extends AbstractItemMinecolonies
             final float hitZ)
     {
         final ItemStack clipboard = playerIn.getHeldItem(hand);
-        if (!worldIn.isRemote)
-        {
-            return EnumActionResult.SUCCESS;
-        }
-
+        
         final NBTTagCompound compound = checkForCompound(clipboard);
         final TileEntity entity = worldIn.getTileEntity(pos);
 
         if(entity instanceof TileEntityColonyBuilding)
         {
             compound.setInteger(TAG_COLONY, ((TileEntityColonyBuilding) entity).getColonyId());
-            LanguageHandler.sendPlayerMessage(playerIn, TranslationConstants.COM_MINECOLONIES_CLIPBOARD_COLONY_SET, ((TileEntityColonyBuilding) entity).getColonyId());
+            if (!worldIn.isRemote)
+            {
+                LanguageHandler.sendPlayerMessage(playerIn, TranslationConstants.COM_MINECOLONIES_CLIPBOARD_COLONY_SET, ((TileEntityColonyBuilding) entity).getColonyId());
+            }
         }
         else if(compound.hasKey(TAG_COLONY))
         {
-            final int colonyId = compound.getInteger(TAG_COLONY);
-            MineColonies.proxy.openClipBoardWindow(colonyId);
+            if (!worldIn.isRemote)
+            {
+                final int colonyId = compound.getInteger(TAG_COLONY);
+                MineColonies.proxy.openClipBoardWindow(colonyId);
+            }
         }
 
         return EnumActionResult.SUCCESS;
