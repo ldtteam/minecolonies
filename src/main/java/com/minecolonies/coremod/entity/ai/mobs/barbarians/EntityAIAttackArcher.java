@@ -54,7 +54,8 @@ public class EntityAIAttackArcher extends EntityAIBase
      *
      * @return Boolean value on whether or not to continue executing
      */
-    public boolean continueExecuting()
+    @Override
+    public boolean shouldContinueExecuting()
     {
         if (target.isEntityAlive() && entity.isEntityAlive())
         {
@@ -67,6 +68,7 @@ public class EntityAIAttackArcher extends EntityAIBase
     /**
      * Is executed when the ai Starts Executing
      */
+    @Override
     public void startExecuting()
     {
         attack(target);

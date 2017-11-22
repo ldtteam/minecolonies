@@ -250,14 +250,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
 
             if(treesToFell.isEmpty())
             {
-                final List<ItemStack> saplings = new ArrayList<>();
-                final int[] saplingId = OreDictionary.getOreIDs(new ItemStack(Blocks.SAPLING));
-
-                for (final int i : saplingId)
-                {
-                    saplings.addAll(OreDictionary.getOres(OreDictionary.getOreName(i)));
-                }
-                treesToFell.putAll(calcSaplings(saplings));
+                treesToFell.putAll(calcSaplings(OreDictionary.getOres("treeSapling")));
 
                 for(final Map.Entry<ItemStorage, Boolean> entry : treesToFell.entrySet())
                 {
@@ -299,12 +292,14 @@ public class BuildingLumberjack extends AbstractBuildingWorker
             {
                 if (saps.getHasSubtypes())
                 {
-                    final NonNullList<ItemStack> list = NonNullList.create();
-                    saps.getItem().getSubItems(CreativeTabs.DECORATIONS, list);
-
-                    for (final ItemStack stack : list)
+                    for(CreativeTabs tabs: CreativeTabs.CREATIVE_TAB_ARRAY)
                     {
-                        finalSaplings.put(new ItemStorage(stack), true);
+                        final NonNullList<ItemStack> list = NonNullList.create();
+                        saps.getItem().getSubItems(tabs, list);
+                        for (final ItemStack stack : list)
+                        {
+                            finalSaplings.put(new ItemStorage(stack), true);
+                        }
                     }
                 }
             }
