@@ -1,6 +1,7 @@
 package com.minecolonies.structures.helpers;
 
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
+import com.minecolonies.coremod.client.gui.WindowBuildTool;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
@@ -30,6 +31,21 @@ public final class Settings
     private             boolean                  isPendingReset = false;
 
     /**
+     * Check if the tool is in the static schematic mode.
+     */
+    private boolean staticSchematicMode = false;
+
+    /**
+     * Name of the static schematic if existent.
+     */
+    private String staticSchematicName = "";
+
+    /**
+     * Possible free to place structure.
+     */
+    private WindowBuildTool.FreeMode freeMode;
+
+    /**
      * Private constructor to hide implicit one.
      */
     private Settings()
@@ -37,6 +53,18 @@ public final class Settings
         /**
          * Intentionally left empty.
          */
+    }
+
+    /**
+     * Set up the static mode.
+     * @param name the name of the schematic.
+     * @param freeMode the mode.
+     */
+    public void setupStaticMode(final String name, final WindowBuildTool.FreeMode freeMode)
+    {
+        this.staticSchematicMode = true;
+        this.staticSchematicName = name;
+        this.freeMode = freeMode;
     }
 
     /**
@@ -227,5 +255,32 @@ public final class Settings
         {
             return Mirror.NONE;
         }
+    }
+
+    /**
+     * Check if static mode.
+     * @return true if so.
+     */
+    public boolean isStaticSchematicMode()
+    {
+        return staticSchematicMode;
+    }
+
+    /**
+     * Get the schematic name of the static mode.
+     * @return the string.
+     */
+    public String getStaticSchematicName()
+    {
+        return staticSchematicName;
+    }
+
+    /**
+     * Getter of the mode in static mode.
+     * @return the FreeMode (enum).
+     */
+    public WindowBuildTool.FreeMode getFreeMode()
+    {
+        return freeMode;
     }
 }
