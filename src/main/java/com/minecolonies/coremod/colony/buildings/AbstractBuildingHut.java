@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class AbstractBuildingHut extends AbstractBuilding
 {
+
     /**
      * Simple constructor, just calls super.
      *

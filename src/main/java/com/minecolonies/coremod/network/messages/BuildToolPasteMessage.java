@@ -10,6 +10,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.StructureName;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.event.EventHandler;
@@ -125,7 +126,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
     @Override
     public void messageOnServerThread(final BuildToolPasteMessage message, final EntityPlayerMP player)
     {
-        final Structures.StructureName sn = new Structures.StructureName(message.structureName);
+        final StructureName sn = new StructureName(message.structureName);
         if (!Structures.hasMD5(sn))
         {
             player.sendMessage(new TextComponentString("Can not build " + message.workOrderName + ": schematic missing!"));
@@ -155,7 +156,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
      */
     private static void handleHut(
                                    @NotNull final World world, @NotNull final EntityPlayer player,
-                                   final Structures.StructureName sn,
+                                   final StructureName sn,
                                    final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
     {
         final Colony tempColony = ColonyManager.getClosestColony(world, buildPos);
@@ -189,7 +190,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
      */
     private static void setupBuilding(
                                        @NotNull final World world, @NotNull final EntityPlayer player,
-                                       final Structures.StructureName sn,
+                                       final StructureName sn,
                                        final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
     {
         @Nullable final AbstractBuilding building = ColonyManager.getBuilding(world, buildPos);

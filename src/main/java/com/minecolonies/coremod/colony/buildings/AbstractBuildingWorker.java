@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
@@ -185,6 +186,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
             }
             catch (final Exception e)
             {
+                MineColonies.getLogger().warn("Warning: Updating data structures:", e);
                 final CitizenData worker = getColony().getCitizen(compound.getInteger(TAG_WORKER));
                 workers.add(worker);
                 if (worker != null)

@@ -72,7 +72,7 @@ public class BuildingDeliveryman extends AbstractBuildingWorker
     @Override
     public int getMaxBuildingLevel()
     {
-        return 5;
+        return CONST_DEFAULT_MAX_BUILDING_LEVEL;
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.buildings.*;
@@ -57,8 +58,12 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
  * This class describes a colony and contains all the data and methods for
  * manipulating a Colony.
  */
+@SuppressWarnings(Suppression.BIG_CLASS)
 public class Colony implements IColony
 {
+    private static final int CONST_CHUNKSIZE = 16;
+    private static final int DEFAULT_OVERALL_HAPPYNESS = 5;
+
     /**
      * Id of the colony.
      */
@@ -201,7 +206,7 @@ public class Colony implements IColony
     /**
      * Overall happyness of the colony.
      */
-    private double overallHappiness = 5;
+    private double overallHappiness = DEFAULT_OVERALL_HAPPYNESS;
     /**
      * Amount of ticks passed.
      */
@@ -274,7 +279,6 @@ public class Colony implements IColony
     public static Colony loadColony(@NotNull final NBTTagCompound compound, @NotNull final World world)
     {
         final int id = compound.getInteger(TAG_ID);
-        final int dimensionId = compound.getInteger(TAG_DIMENSION);
         @NotNull final Colony c = new Colony(id, world);
         c.setName(compound.getString(TAG_NAME));
         c.center = BlockPosUtil.readFromNBT(compound, TAG_CENTER);
@@ -1176,11 +1180,11 @@ public class Colony implements IColony
     private boolean areAllColonyChunksLoaded(@NotNull final TickEvent.WorldTickEvent event)
     {
         final int distanceFromCenter = Configurations.gameplay.workingRangeTownHall + 48 /* 3 chunks */ + 15 /* round up a chunk */;
-        for (int x = -distanceFromCenter; x <= distanceFromCenter; x += 16)
+        for (int x = -distanceFromCenter; x <= distanceFromCenter; x += CONST_CHUNKSIZE)
         {
-            for (int z = -distanceFromCenter; z <= distanceFromCenter; z += 16)
+            for (int z = -distanceFromCenter; z <= distanceFromCenter; z += CONST_CHUNKSIZE)
             {
-                if (!event.world.isBlockLoaded(new BlockPos(getCenter().getX() + x, 128, getCenter().getZ() + z)))
+                if (!event.world.isBlockLoaded(new BlockPos(getCenter().getX() + x, 1, getCenter().getZ() + z)))
                 {
                     return false;
                 }

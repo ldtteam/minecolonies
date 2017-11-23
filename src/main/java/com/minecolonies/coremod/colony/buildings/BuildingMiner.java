@@ -138,7 +138,7 @@ public class BuildingMiner extends AbstractBuildingWorker
     /**
      * True if shaft is at bottom limit.
      */
-    public               boolean     clearedShaft       = false;
+    private               boolean     clearedShaft       = false;
     /**
      * Defines the material used for the structure of the horizontal shaft.
      */
@@ -627,6 +627,16 @@ public class BuildingMiner extends AbstractBuildingWorker
     public Block getFenceBlock()
     {
         return fenceBlock;
+    }
+
+    public boolean hasClearedShaft()
+    {
+        return clearedShaft;
+    }
+
+    public void setClearedShaft(final boolean clearedShaft)
+    {
+        this.clearedShaft = clearedShaft;
     }
 
     /**

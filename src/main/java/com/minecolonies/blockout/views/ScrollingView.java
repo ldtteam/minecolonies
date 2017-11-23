@@ -26,6 +26,17 @@ public class ScrollingView extends View
         setup();
     }
 
+    /**
+     * Load from xml.
+     *
+     * @param params xml parameters.
+     */
+    public ScrollingView(final PaneParams params)
+    {
+        super(params);
+        setup();
+    }
+
     private void setup()
     {
         container = createScrollingContainer();
@@ -43,17 +54,6 @@ public class ScrollingView extends View
     protected ScrollingContainer createScrollingContainer()
     {
         return new ScrollingContainer(this);
-    }
-
-    /**
-     * Load from xml.
-     *
-     * @param params xml parameters.
-     */
-    public ScrollingView(final PaneParams params)
-    {
-        super(params);
-        setup();
     }
 
     @Override

@@ -14,6 +14,7 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.blocks.*;
 import com.minecolonies.coremod.colony.*;
@@ -70,6 +71,9 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 @SuppressWarnings("squid:S2390")
 public abstract class AbstractBuilding implements IRequestResolverProvider, IRequester
 {
+
+    protected static final int CONST_DEFAULT_MAX_BUILDING_LEVEL = 5;
+
     /**
      * Tag if the building has no workOrder.
      */
@@ -340,11 +344,11 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
 
         final String md5 = compound.getString(TAG_SCHEMATIC_MD5);
         final int testLevel = buildingLevel == 0 ? 1 : buildingLevel;
-        final Structures.StructureName sn = new Structures.StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + testLevel);
+        final StructureName sn = new StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + testLevel);
 
         if (!Structures.hasMD5(sn))
         {
-            final Structures.StructureName newStructureName = Structures.getStructureNameByMD5(md5);
+            final StructureName newStructureName = Structures.getStructureNameByMD5(md5);
             if (newStructureName != null
                   && newStructureName.getPrefix().equals(sn.getPrefix())
                   && newStructureName.getSchematic().equals(sn.getSchematic()))
@@ -638,7 +642,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         {
             compound.setString(TAG_BUILDING_TYPE, s);
             BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
-            final Structures.StructureName structureName = new Structures.StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + buildingLevel);
+            final StructureName structureName = new StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + buildingLevel);
             if (Structures.hasMD5(structureName))
             {
                 compound.setString(TAG_SCHEMATIC_MD5, Structures.getMD5(structureName.toString()));
@@ -1401,6 +1405,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         return !getOpenRequestsOfType(citizenData, requestType).isEmpty();
     }
 
+    @SuppressWarnings(Suppression.GENERIC_WILDCARD)
     public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfType(
                                                                            @NotNull final CitizenData citizenData,
                                                                            final TypeToken<R> requestType)

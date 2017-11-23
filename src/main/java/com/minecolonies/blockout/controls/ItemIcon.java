@@ -16,7 +16,7 @@ import net.minecraft.util.ResourceLocation;
  */
 public class ItemIcon extends Pane
 {
-    private static final float GUI_ITEM_Z_LEVEL     = 200.0F;
+    private static final float DEFAULT_ITEMSTACK_SIZE = 16f;
     private static final float GUI_ITEM_Z_TRANSLATE = 32.0F;
     /**
      * ItemStack represented in the itemIcon.
@@ -81,7 +81,7 @@ public class ItemIcon extends Pane
         final RenderItem itemRender = mc.getRenderItem();
 
         GlStateManager.translate(x, y, GUI_ITEM_Z_TRANSLATE);
-        GlStateManager.scale(this.getWidth() / 16f, this.getHeight() / 16f, 1f);
+        GlStateManager.scale(this.getWidth() / DEFAULT_ITEMSTACK_SIZE, this.getHeight() / DEFAULT_ITEMSTACK_SIZE, 1f);
 
         FontRenderer font = stack.getItem().getFontRenderer(stack);
         if (font == null)

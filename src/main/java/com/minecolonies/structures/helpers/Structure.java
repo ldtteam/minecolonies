@@ -7,6 +7,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.StructureName;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.structures.fake.FakeWorld;
 import com.minecolonies.structures.lib.ModelHolder;
@@ -190,7 +191,7 @@ public class Structure
     @Nullable
     public static InputStream getStream(final String structureName)
     {
-        final Structures.StructureName sn = new Structures.StructureName(structureName);
+        final StructureName sn = new StructureName(structureName);
         InputStream inputstream = null;
         if (Structures.SCHEMATICS_CACHE.equals(sn.getPrefix()))
         {

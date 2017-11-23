@@ -41,11 +41,11 @@ import java.util.List;
  */
 public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMinecoloniesRack>
 {
-    public static final PropertyEnum<BlockMinecoloniesRack.EnumType> VARIANT
+    public static final PropertyEnum<RackType> VARIANT
                                                                                   =
-      PropertyEnum.<BlockMinecoloniesRack.EnumType>create("variant", BlockMinecoloniesRack.EnumType.class);
-    public static final int                                          DEFAULT_META = BlockMinecoloniesRack.EnumType.DEFAULT.getMetadata();
-    public static final int                                          FULL_META    = EnumType.FULL.getMetadata();
+      PropertyEnum.<RackType>create("variant", RackType.class);
+    public static final int                    DEFAULT_META = RackType.DEFAULT.getMetadata();
+    public static final int                    FULL_META    = RackType.FULL.getMetadata();
 
     /**
      * The position it faces.
@@ -87,7 +87,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
         setRegistryName(BLOCK_NAME);
         setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(), BLOCK_NAME));
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(VARIANT, EnumType.DEFAULT));
+        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(VARIANT, RackType.DEFAULT));
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);
         setLightOpacity(LIGHT_OPACITY);
@@ -151,17 +151,17 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
             {
                 if (rack.isMain())
                 {
-                    return state.withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.DEFAULTDOUBLE)
+                    return state.withProperty(BlockMinecoloniesRack.VARIANT, RackType.DEFAULTDOUBLE)
                              .withProperty(FACING, BlockPosUtil.getFacing(rack.getNeighbor(), pos));
                 }
                 else
                 {
-                    return state.withProperty(BlockMinecoloniesRack.VARIANT, EnumType.EMPTYAIR);
+                    return state.withProperty(BlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
                 }
             }
             else
             {
-                return state.withProperty(BlockMinecoloniesRack.VARIANT, EnumType.DEFAULT);
+                return state.withProperty(BlockMinecoloniesRack.VARIANT, RackType.DEFAULT);
             }
         }
         else
@@ -170,17 +170,17 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
             {
                 if (rack.isMain())
                 {
-                    return state.withProperty(BlockMinecoloniesRack.VARIANT, EnumType.FULLDOUBLE)
+                    return state.withProperty(BlockMinecoloniesRack.VARIANT, RackType.FULLDOUBLE)
                              .withProperty(FACING, BlockPosUtil.getFacing(rack.getNeighbor(), pos));
                 }
                 else
                 {
-                    return state.withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.EMPTYAIR);
+                    return state.withProperty(BlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
                 }
             }
             else
             {
-                return state.withProperty(BlockMinecoloniesRack.VARIANT, EnumType.FULL);
+                return state.withProperty(BlockMinecoloniesRack.VARIANT, RackType.FULL);
             }
         }
     }
@@ -306,7 +306,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
                                  final World worldIn, final BlockPos pos, final IBlockState state, final EntityLivingBase placer, final ItemStack stack)
     {
         IBlockState tempState = state;
-        tempState = tempState.withProperty(VARIANT, EnumType.byMetadata(stack.getItemDamage()));
+        tempState = tempState.withProperty(VARIANT, RackType.byMetadata(stack.getItemDamage()));
         tempState = tempState.withProperty(FACING, placer.getHorizontalFacing().getOpposite());
 
         worldIn.setBlockState(pos, tempState, 2);
@@ -315,7 +315,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
     @Override
     public void getSubBlocks(final Item itemIn, final CreativeTabs tab, final NonNullList<ItemStack> list)
     {
-        list.add(new ItemStack(this, 1, EnumType.DEFAULT.getMetadata()));
+        list.add(new ItemStack(this, 1, RackType.DEFAULT.getMetadata()));
     }
 
     /**
@@ -326,6 +326,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
 
     @NotNull
     @Override
+    @Deprecated
     protected BlockStateContainer createBlockState()
     {
         return new BlockStateContainer(this, FACING, VARIANT);
@@ -376,65 +377,5 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
     public ItemStack getPickBlock(final IBlockState state, final RayTraceResult target, final World world, final BlockPos pos, final EntityPlayer player)
     {
         return new ItemStack(this, 1);
-    }
-
-    public enum EnumType implements IStringSerializable
-    {
-        DEFAULT(0, "blockrackemptysingle", "emptysingle"),
-        FULL(1, "blockrackfullsingle", "fullsingle"),
-        DEFAULTDOUBLE(2, "blockrackempty", "empty"),
-        FULLDOUBLE(3, "blockrackfull", "full"),
-        EMPTYAIR(4, "blockrackair", "dontrender");
-
-        private static final BlockMinecoloniesRack.EnumType[] META_LOOKUP = new BlockMinecoloniesRack.EnumType[values().length];
-        static
-        {
-            for (final BlockMinecoloniesRack.EnumType blockRack : values())
-            {
-                META_LOOKUP[blockRack.getMetadata()] = blockRack;
-            }
-        }
-        private final int    meta;
-        private final String name;
-        private final String unlocalizedName;
-
-        EnumType(final int meta, final String name, final String unlocalizedName)
-        {
-            this.meta = meta;
-            this.name = name;
-            this.unlocalizedName = unlocalizedName;
-        }
-
-        public static BlockMinecoloniesRack.EnumType byMetadata(final int meta)
-        {
-            int tempMeta = meta;
-            if (tempMeta < 0 || tempMeta >= META_LOOKUP.length)
-            {
-                tempMeta = 0;
-            }
-
-            return META_LOOKUP[tempMeta];
-        }
-
-        public int getMetadata()
-        {
-            return this.meta;
-        }
-
-        @Override
-        public String toString()
-        {
-            return this.name;
-        }
-
-        public String getName()
-        {
-            return this.name;
-        }
-
-        public String getUnlocalizedName()
-        {
-            return this.unlocalizedName;
-        }
     }
 }

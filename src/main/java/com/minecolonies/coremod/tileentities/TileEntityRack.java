@@ -4,6 +4,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
+import com.minecolonies.coremod.blocks.RackType;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -250,13 +251,13 @@ public class TileEntityRack extends TileEntity
                 if (getOtherChest() != null && world.getBlockState(neighbor).getBlock() instanceof BlockMinecoloniesRack)
                 {
 
-                    typeHere = world.getBlockState(pos).withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.EMPTYAIR);
-                    typeNeighbor = world.getBlockState(neighbor).withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.DEFAULTDOUBLE)
+                    typeHere = world.getBlockState(pos).withProperty(BlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
+                    typeNeighbor = world.getBlockState(neighbor).withProperty(BlockMinecoloniesRack.VARIANT, RackType.DEFAULTDOUBLE)
                                      .withProperty(BlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(pos, neighbor));
                 }
                 else
                 {
-                    typeHere = world.getBlockState(pos).withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.DEFAULT);
+                    typeHere = world.getBlockState(pos).withProperty(BlockMinecoloniesRack.VARIANT, RackType.DEFAULT);
                     typeNeighbor = null;
                 }
             }
@@ -264,13 +265,13 @@ public class TileEntityRack extends TileEntity
             {
                 if (getOtherChest() != null && world.getBlockState(neighbor).getBlock() instanceof BlockMinecoloniesRack)
                 {
-                    typeHere = world.getBlockState(pos).withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.EMPTYAIR);
-                    typeNeighbor = world.getBlockState(neighbor).withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.FULLDOUBLE)
+                    typeHere = world.getBlockState(pos).withProperty(BlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
+                    typeNeighbor = world.getBlockState(neighbor).withProperty(BlockMinecoloniesRack.VARIANT, RackType.FULLDOUBLE)
                                      .withProperty(BlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(pos, neighbor));
                 }
                 else
                 {
-                    typeHere = world.getBlockState(pos).withProperty(BlockMinecoloniesRack.VARIANT, BlockMinecoloniesRack.EnumType.FULL);
+                    typeHere = world.getBlockState(pos).withProperty(BlockMinecoloniesRack.VARIANT, RackType.FULL);
                     typeNeighbor = null;
                 }
             }

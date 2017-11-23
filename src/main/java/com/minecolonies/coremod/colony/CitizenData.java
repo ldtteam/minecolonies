@@ -6,6 +6,7 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingBarracksTower;
@@ -27,6 +28,7 @@ import java.util.Random;
 /**
  * Extra data for Citizens.
  */
+@SuppressWarnings(Suppression.BIG_CLASS)
 public class CitizenData
 {
     /**
@@ -58,6 +60,8 @@ public class CitizenData
     private static final String TAG_SKILL_DEXTERITY     = "dexterity";
     private static final String TAG_SATURATION          = "saturation";
     private static final String TAG_HELD_ITEM_SLOT      = "HeldItemSlot";
+    private static final String TAG_INVENTORY = "inventory";
+
     /**
      * Minimum saturation of a citizen.
      */
@@ -194,9 +198,9 @@ public class CitizenData
             setJob(AbstractJob.createFromNBT(this, compound.getCompoundTag("job")));
         }
 
-        if (compound.hasKey("inventory"))
+        if (compound.hasKey(TAG_INVENTORY))
         {
-            final NBTTagList nbttaglist = compound.getTagList("inventory", 10);
+            final NBTTagList nbttaglist = compound.getTagList(TAG_INVENTORY, 10);
             this.inventory.readFromNBT(nbttaglist);
             this.inventory.setHeldItem(compound.getInteger(TAG_HELD_ITEM_SLOT));
         }
@@ -298,6 +302,7 @@ public class CitizenData
         return result;
     }
 
+    @SuppressWarnings(Suppression.TOO_MANY_RETURNS)
     @Override
     public boolean equals(final Object o)
     {
@@ -699,7 +704,7 @@ public class CitizenData
             compound.setTag("job", jobCompound);
         }
 
-        compound.setTag("inventory", inventory.writeToNBT(new NBTTagList()));
+        compound.setTag(TAG_INVENTORY, inventory.writeToNBT(new NBTTagList()));
         compound.setInteger(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot());
     }
 
@@ -898,12 +903,12 @@ public class CitizenData
         return inventory;
     }
 
-    public <Request extends IRequestable> IToken createRequest(@NotNull Request requested)
+    public <R extends IRequestable> IToken createRequest(@NotNull R requested)
     {
         return getWorkBuilding().createRequest(this, requested);
     }
 
-    public <Request extends IRequestable> IToken createRequestAsync(@NotNull Request requested)
+    public <R extends IRequestable> IToken createRequestAsync(@NotNull R requested)
     {
         IToken requestedToken = getWorkBuilding().createRequest(this, requested);
 

@@ -5,6 +5,7 @@ import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.StructureName;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
@@ -62,7 +63,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     {
         super();
         //normalise structure name
-        final Structures.StructureName sn = new Structures.StructureName(structureName);
+        final StructureName sn = new StructureName(structureName);
         this.structureName = sn.toString();
         this.workOrderName = workOrderName;
         this.buildingRotation = rotation;
@@ -92,7 +93,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     {
         super.readFromNBT(compound);
         buildingLocation = BlockPosUtil.readFromNBT(compound, TAG_BUILDING);
-        final Structures.StructureName sn = new Structures.StructureName(compound.getString(TAG_SCHEMATIC_NAME));
+        final StructureName sn = new StructureName(compound.getString(TAG_SCHEMATIC_NAME));
         structureName = sn.toString();
         workOrderName = compound.getString(TAG_WORKORDER_NAME);
         cleared = compound.getBoolean(TAG_IS_CLEARED);
@@ -100,7 +101,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         if (!Structures.hasMD5(structureName))
         {
             // If the schematic move we can use the MD5 hash to find it
-            final Structures.StructureName newSN = Structures.getStructureNameByMD5(md5);
+            final StructureName newSN = Structures.getStructureNameByMD5(md5);
             if (newSN == null)
             {
                 Log.getLogger().error("WorkOrderBuildDecoration.readFromNBT: Could not find " + structureName);

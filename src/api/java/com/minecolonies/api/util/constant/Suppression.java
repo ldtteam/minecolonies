@@ -120,6 +120,17 @@ public final class Suppression
     @NonNls
     public static final String MAKE_PROTECTED = "squid:S2386";
 
+    /**
+     * Yeah generics are complicated. No reason to not use fully though.
+     */
+    @NonNls
+    public static final String GENERIC_WILDCARD = "squid:S1452";
+
+    /**
+     * Sometimes it is just needed to have many returns so the code is easily readable.
+     */
+    @NonNls
+    public static final String TOO_MANY_RETURNS = "squid:S1142";
     private Suppression()
     {
         //empty default

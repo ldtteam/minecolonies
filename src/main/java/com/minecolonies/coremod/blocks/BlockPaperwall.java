@@ -18,28 +18,27 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.common.registry.IForgeRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
 
 public class BlockPaperwall extends AbstractBlockMinecoloniesPane<BlockPaperwall>
 {
-    public static final PropertyEnum<BlockPaperwall.EnumType> VARIANT = PropertyEnum.create("variant", EnumType.class);
+    public static final PropertyEnum<PaperwallType> VARIANT        = PropertyEnum.create("variant", PaperwallType.class);
     /**
      * This blocks name.
      */
-    public static final String BLOCK_NAME = "blockPaperwall";
+    public static final String                      BLOCK_NAME     = "blockPaperwall";
     /**
      * The hardness this block has.
      */
-    private static final float BLOCK_HARDNESS = 3F;
+    private static final float                      BLOCK_HARDNESS = 3F;
     /**
      * The resistance this block has.
      */
-    private static final float RESISTANCE = 1F;
+    private static final float                      RESISTANCE     = 1F;
 
     public BlockPaperwall()
     {
         super(Material.GLASS, true);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(VARIANT, BlockPaperwall.EnumType.JUNGLE));
+        this.setDefaultState(this.blockState.getBaseState().withProperty(VARIANT, PaperwallType.JUNGLE));
         initBlock();
     }
 
@@ -79,7 +78,7 @@ public class BlockPaperwall extends AbstractBlockMinecoloniesPane<BlockPaperwall
     @Override
     public IBlockState getStateFromMeta(final int meta)
     {
-        return this.getDefaultState().withProperty(VARIANT, EnumType.byMetadata(meta));
+        return this.getDefaultState().withProperty(VARIANT, PaperwallType.byMetadata(meta));
     }
 
     /**
@@ -101,7 +100,7 @@ public class BlockPaperwall extends AbstractBlockMinecoloniesPane<BlockPaperwall
     @Override
     public void getSubBlocks(final Item itemIn, final CreativeTabs tab, final NonNullList<ItemStack> list)
     {
-        for (final BlockPaperwall.EnumType type : BlockPaperwall.EnumType.values())
+        for (final PaperwallType type : PaperwallType.values())
         {
             list.add(new ItemStack(itemIn, 1, type.getMetadata()));
         }
@@ -180,83 +179,5 @@ public class BlockPaperwall extends AbstractBlockMinecoloniesPane<BlockPaperwall
         final IBlockState state = world.getBlockState(off);
         return canPaneConnectToBlock(state.getBlock())
                  || state.isSideSolid(world, off, dir.getOpposite()) || state.getBlock() instanceof BlockPaperwall;
-    }
-
-    public enum EnumType implements IStringSerializable
-    {
-        OAK(0, "oak", MapColor.WOOD),
-        SPRUCE(1, "spruce", MapColor.OBSIDIAN),
-        BIRCH(2, "birch", MapColor.SAND),
-        JUNGLE(3, "jungle", MapColor.DIRT);
-
-        private static final BlockPaperwall.EnumType[] META_LOOKUP = new BlockPaperwall.EnumType[values().length];
-        static
-        {
-            for (BlockPaperwall.EnumType enumtype : values())
-            {
-                META_LOOKUP[enumtype.getMetadata()] = enumtype;
-            }
-        }
-        private final int      meta;
-        private final String   name;
-        private final String   unlocalizedName;
-        /**
-         * The color that represents this entry on a map.
-         */
-        private final MapColor mapColor;
-
-        EnumType(final int metaIn, final String nameIn, final MapColor mapColorIn)
-        {
-            this(metaIn, nameIn, nameIn, mapColorIn);
-        }
-
-        EnumType(final int metaIn, final String nameIn, final String unlocalizedNameIn, final MapColor mapColorIn)
-        {
-            this.meta = metaIn;
-            this.name = nameIn;
-            this.unlocalizedName = unlocalizedNameIn;
-            this.mapColor = mapColorIn;
-        }
-
-        public static BlockPaperwall.EnumType byMetadata(int meta)
-        {
-            int tempMeta = meta;
-            if (tempMeta < 0 || tempMeta >= META_LOOKUP.length)
-            {
-                tempMeta = 0;
-            }
-
-            return META_LOOKUP[tempMeta];
-        }
-
-        public int getMetadata()
-        {
-            return this.meta;
-        }
-
-        /**
-         * The color which represents this entry on a map.
-         */
-        public MapColor getMapColor()
-        {
-            return this.mapColor;
-        }
-
-        @Override
-        public String toString()
-        {
-            return this.name;
-        }
-
-        @NotNull
-        public String getName()
-        {
-            return this.name;
-        }
-
-        public String getUnlocalizedName()
-        {
-            return this.unlocalizedName;
-        }
     }
 }

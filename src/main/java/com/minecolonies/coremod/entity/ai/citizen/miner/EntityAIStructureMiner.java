@@ -190,13 +190,13 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             if (getOwnBuilding().getNumberOfLevels() == 0)
             {
                 chatSpamFilter.talkWithoutSpam("entity.miner.messageRequiresBetterHut");
-                getOwnBuilding().clearedShaft = false;
+                getOwnBuilding().setClearedShaft(false);
                 return IDLE;
             }
-            getOwnBuilding().clearedShaft = true;
+            getOwnBuilding().setClearedShaft(true);
             return MINER_MINING_NODE;
         }
-        getOwnBuilding().clearedShaft = false;
+        getOwnBuilding().setClearedShaft(false);
         return MINER_MINING_SHAFT;
     }
 
@@ -719,7 +719,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     {
         final BuildingMiner minerBuilding = getOwnBuilding();
         //If shaft isn't cleared we're in shaft clearing mode.
-        if (minerBuilding.clearedShaft)
+        if (minerBuilding.hasClearedShaft())
         {
             minerBuilding.getCurrentLevel().closeNextNode(getRotation());
         }

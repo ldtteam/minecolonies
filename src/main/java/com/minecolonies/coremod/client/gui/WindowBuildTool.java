@@ -8,6 +8,7 @@ import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.views.DropDownList;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.StructureName;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.network.messages.BuildToolPasteMessage;
 import com.minecolonies.coremod.network.messages.BuildToolPlaceMessage;
@@ -345,7 +346,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             @Override
             public String getLabel(final int index)
             {
-                final Structures.StructureName sn = new Structures.StructureName(schematics.get(index));
+                final StructureName sn = new StructureName(schematics.get(index));
                 return sn.getLocalizedName();
             }
         });
@@ -387,7 +388,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void paste(final boolean complete)
     {
-        final Structures.StructureName structureName = new Structures.StructureName(schematics.get(schematicsDropDownList.getSelectedIndex()));
+        final StructureName structureName = new StructureName(schematics.get(schematicsDropDownList.getSelectedIndex()));
         if (structureName.getPrefix().equals(Structures.SCHEMATICS_SCAN) && FMLCommonHandler.instance().getMinecraftServerInstance() == null)
         {
             //We need to check that the server have it too using the md5
@@ -416,7 +417,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      * @param complete      if pasted, should it be complete.
      * @param structureName of the scan to be built.
      */
-    private void requestScannedSchematic(@NotNull final Structures.StructureName structureName, final boolean paste, final boolean complete)
+    private void requestScannedSchematic(@NotNull final StructureName structureName, final boolean paste, final boolean complete)
     {
         if (!Structures.isPlayerSchematicsAllowed())
         {
@@ -427,7 +428,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         {
             final String md5 = Structures.getMD5(structureName.toString());
             final String serverSideName = Structures.SCHEMATICS_CACHE + '/' + md5;
-            if (!Structures.hasMD5(new Structures.StructureName(serverSideName)))
+            if (!Structures.hasMD5(new StructureName(serverSideName)))
             {
                 final InputStream stream = Structure.getStream(structureName.toString());
                 if (stream != null)
@@ -550,7 +551,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     {
         if (structureName != null)
         {
-            final Structures.StructureName sn = new Structures.StructureName(structureName);
+            final StructureName sn = new StructureName(structureName);
             final int sectionIndex = sections.indexOf(sn.getSection());
             if (sectionIndex != -1)
             {
@@ -594,7 +595,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     private void changeSchematic()
     {
         final String sname = schematics.get(schematicsDropDownList.getSelectedIndex());
-        final Structures.StructureName structureName = new Structures.StructureName(sname);
+        final StructureName structureName = new StructureName(sname);
         final Structure structure = new Structure(null,
                                                    structureName.toString(),
                                                    new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation()))
@@ -756,14 +757,14 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         {
             schematic = schematics.get(schematicsDropDownList.getSelectedIndex());
         }
-        final String currentSchematic = schematic.isEmpty() ? "" : (new Structures.StructureName(schematic)).getSchematic();
+        final String currentSchematic = schematic.isEmpty() ? "" : (new StructureName(schematic)).getSchematic();
         final String section = sections.get(sectionsDropDownList.getSelectedIndex());
         final String style = styles.get(stylesDropDownList.getSelectedIndex());
         schematics = Structures.getSchematicsFor(section, style);
         int newIndex = -1;
         for (int i = 0; i < schematics.size(); i++)
         {
-            final Structures.StructureName sn = new Structures.StructureName(schematics.get(i));
+            final StructureName sn = new StructureName(schematics.get(i));
             if (sn.getSchematic().equals(currentSchematic))
             {
                 newIndex = i;
@@ -873,7 +874,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void confirmClicked()
     {
-        final Structures.StructureName structureName = new Structures.StructureName(schematics.get(schematicsDropDownList.getSelectedIndex()));
+        final StructureName structureName = new StructureName(schematics.get(schematicsDropDownList.getSelectedIndex()));
         if (structureName.getPrefix().equals(Structures.SCHEMATICS_SCAN) && FMLCommonHandler.instance().getMinecraftServerInstance() == null)
         {
             //We need to check that the server have it too using the md5
@@ -908,7 +909,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void renameClicked()
     {
-        final Structures.StructureName structureName = new Structures.StructureName(schematics.get(schematicsDropDownList.getSelectedIndex()));
+        final StructureName structureName = new StructureName(schematics.get(schematicsDropDownList.getSelectedIndex()));
         @NotNull final WindowStructureNameEntry window = new WindowStructureNameEntry(structureName);
         window.open();
     }
@@ -920,7 +921,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     {
         confirmDeleteDialog = new DialogDoneCancel(getWindow());
         confirmDeleteDialog.setHandler(this::onDialogClosed);
-        final Structures.StructureName structureName = new Structures.StructureName(schematics.get(schematicsDropDownList.getSelectedIndex()));
+        final StructureName structureName = new StructureName(schematics.get(schematicsDropDownList.getSelectedIndex()));
         confirmDeleteDialog.setTitle(LanguageHandler.format("com.minecolonies.coremod.gui.structure.delete.title"));
         confirmDeleteDialog.setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.structure.delete.body", structureName.toString()));
         confirmDeleteDialog.open();
@@ -936,7 +937,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     {
         if (dialog == confirmDeleteDialog && buttonId == DialogDoneCancel.DONE)
         {
-            final Structures.StructureName structureName = new Structures.StructureName(schematics.get(schematicsDropDownList.getSelectedIndex()));
+            final StructureName structureName = new StructureName(schematics.get(schematicsDropDownList.getSelectedIndex()));
             if (Structures.SCHEMATICS_SCAN.equals(structureName.getPrefix())
                   && Structures.deleteScannedStructure(structureName))
             {

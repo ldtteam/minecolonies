@@ -214,13 +214,9 @@ public class BuildingHome extends AbstractBuildingHut
         for (@NotNull final CitizenData citizen : getColony().getCitizens().values())
         {
             // Move the citizen to a better hut
-            if (citizen.getHomeBuilding() != null && citizen.getHomeBuilding().getBuildingLevel() < this.getBuildingLevel())
+            if (citizen.getHomeBuilding() instanceof BuildingHome && citizen.getHomeBuilding().getBuildingLevel() < this.getBuildingLevel())
             {
-                if (citizen.getHomeBuilding() instanceof BuildingHome)
-                {
-                    // The citizen can move to this hut to improve conditions
-                    citizen.getHomeBuilding().removeCitizen(citizen);
-                }
+                citizen.getHomeBuilding().removeCitizen(citizen);
             }
             if (citizen.getHomeBuilding() == null)
             {

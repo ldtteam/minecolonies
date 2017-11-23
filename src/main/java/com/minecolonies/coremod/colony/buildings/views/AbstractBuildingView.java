@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.ReflectionUtils;
+import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyView;
@@ -37,7 +38,7 @@ import static com.minecolonies.coremod.colony.buildings.AbstractBuilding.process
  * Views contain the AbstractBuilding's data that is relevant to a Client, in a more client-friendly form.
  * Mutable operations on a View result in a message to the server to perform the operation.
  */
-public class AbstractBuildingView implements IRequester
+public abstract class AbstractBuildingView implements IRequester
 {
     private final ColonyView colony;
     @NotNull
@@ -202,14 +203,15 @@ public class AbstractBuildingView implements IRequester
         this.citizensByRequests.keySet().forEach(citizen -> this.citizensByRequests.get(citizen).forEach(requestToken -> this.requestsByCitizen.put(requestToken, citizen)));
     }
 
-    public <Request> ImmutableList<IRequest<? extends Request>> getOpenRequestsOfType(@NotNull final CitizenDataView citizenData, final Class<Request> requestType)
+    @SuppressWarnings(Suppression.GENERIC_WILDCARD)
+    public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfType(@NotNull final CitizenDataView citizenData, final Class<R> requestType)
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                       .filter(request -> {
                                           Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
                                           return requestTypes.contains(requestType);
                                       })
-                                      .map(request -> (IRequest<? extends Request>) request)
+                                      .map(request -> (IRequest<? extends R>) request)
                                       .iterator());
     }
 
@@ -233,17 +235,18 @@ public class AbstractBuildingView implements IRequester
         return colony;
     }
 
-    public <Request> ImmutableList<IRequest<? extends Request>> getOpenRequestsOfTypeFiltered(
+    @SuppressWarnings(Suppression.GENERIC_WILDCARD)
+    public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfTypeFiltered(
                                                                                                @NotNull final CitizenDataView citizenData,
-                                                                                               final Class<Request> requestType,
-                                                                                               Predicate<IRequest<? extends Request>> filter)
+                                                                                               final Class<R> requestType,
+                                                                                               Predicate<IRequest<? extends R>> filter)
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                       .filter(request -> {
                                           Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
                                           return requestTypes.contains(requestType);
                                       })
-                                      .map(request -> (IRequest<? extends Request>) request)
+                                      .map(request -> (IRequest<? extends R>) request)
                                       .filter(filter)
                                       .iterator());
     }
