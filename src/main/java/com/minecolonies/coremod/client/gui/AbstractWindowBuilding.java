@@ -19,6 +19,11 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View> extends AbstractWindowSkeleton
 {
+    /**
+     * Id of the type label in the GUI.
+     */
+    private static final String LABEL_BUILDINGTYPE = "type";
+
     private static final String BUTTON_BUILD        = "build";
     private static final String BUTTON_REPAIR       = "repair";
     private static final String BUTTON_INVENTORY    = "inventory";
@@ -59,6 +64,7 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
         buttonPrevPage = findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class);
         buttonBuild = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
         buttonRepair = findPaneOfTypeByID(BUTTON_REPAIR, Button.class);
+        findPaneOfTypeByID(LABEL_BUILDINGTYPE, Label.class).setLabelText(building.getBuildingDmPrio() + "/10");
     }
 
     /**

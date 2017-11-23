@@ -157,7 +157,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
         {
             final Label descriptionLabel = new Label();
             descriptionLabel.setColor(BLACK, BLACK);
-            descriptionLabel.setLabelText(s);
+            descriptionLabel.setLabelText("§r§0" + s);
             box.addChild(descriptionLabel);
             descriptionLabel.setPosition(1, y);
             y += Y_OFFSET_EACH_TEXTFIELD;
