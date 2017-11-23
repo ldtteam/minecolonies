@@ -129,6 +129,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
             {
                 citizen.resetExperienceAndLevel();
             }
+            tempCitizen.setLastJob(getJobName());
             workers.add(citizen);
             citizen.setWorkBuilding(this);
         }
