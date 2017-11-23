@@ -603,7 +603,16 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             newIndex = 0;
         }
 
-        final boolean enabled = styles.size() > 1;
+        final boolean enabled;
+        if(Settings.instance.isStaticSchematicMode())
+        {
+            enabled = false;
+        }
+        else
+        {
+            enabled = styles.size() > 1;
+        }
+
         findPaneOfTypeByID(BUTTON_PREVIOUS_STYLE_ID, Button.class).setEnabled(enabled);
         findPaneOfTypeByID(DROPDOWN_STYLE_ID, DropDownList.class).setEnabled(enabled);
         findPaneOfTypeByID(BUTTON_NEXT_STYLE_ID, Button.class).setEnabled(enabled);
@@ -669,7 +678,16 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             newIndex = 0;
         }
 
-        final boolean enabled = schematics.size() > 1;
+        final boolean enabled;
+        if(Settings.instance.isStaticSchematicMode())
+        {
+            enabled = false;
+        }
+        else
+        {
+            enabled = schematics.size() > 1;
+        }
+        
         findPaneOfTypeByID(BUTTON_PREVIOUS_SCHEMATIC_ID, Button.class).setEnabled(enabled);
         findPaneOfTypeByID(DROPDOWN_SCHEMATIC_ID, DropDownList.class).setEnabled(enabled);
         findPaneOfTypeByID(BUTTON_NEXT_SCHEMATIC_ID, Button.class).setEnabled(enabled);
@@ -946,7 +964,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     {
         if(Settings.instance.isStaticSchematicMode())
         {
-            check_and_place();
+            checkAndPlace();
         }
         else
         {
@@ -972,7 +990,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         }
     }
 
-    private void check_and_place()
+    private void checkAndPlace()
     {
         if(FreeMode.SUPPLYSHIP == Settings.instance.getFreeMode()
                 && ItemSupplyChestDeployer.canShipBePlaced(Minecraft.getMinecraft().world, Settings.instance.getPosition(),
@@ -994,7 +1012,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         {
             LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "item.supplyChestDeployer.invalid");
         }
-        
+
         Settings.instance.reset();
         close();
     }
