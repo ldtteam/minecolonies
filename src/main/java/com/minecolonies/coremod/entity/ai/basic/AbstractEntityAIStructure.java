@@ -182,30 +182,26 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         return AIState.IDLE;
     }
 
+    /**
+     * Fill the list of the item positions to gather.
+     */
     @Override
-    public List<BlockPos> searchForItems()
+    public void fillItemsList()
     {
         worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.gathering"));
 
         if(currentStructure == null)
         {
-            return Collections.emptyList();
+            return;
         }
 
         final BlockPos centerPos = currentStructure.getCenter();
         if(centerPos.getY() == 0)
         {
-            return Collections.emptyList();
+            return;
         }
 
-        AxisAlignedBB boundingBox
-                = new AxisAlignedBB(centerPos).expand(currentStructure.getLength() / 2.0, currentStructure.getHeight(), currentStructure.getWidth() / 2.0);
-
-        return world.getEntitiesWithinAABB(EntityItem.class, boundingBox)
-                .stream()
-                .filter(item -> item != null && !item.isDead)
-                .map(BlockPosUtil::fromEntity)
-                .collect(Collectors.toList());
+        searchForItems(new AxisAlignedBB(centerPos).expand(currentStructure.getLength() / 2.0, currentStructure.getHeight(), currentStructure.getWidth()));
     }
 
     private AIState completeBuild()
