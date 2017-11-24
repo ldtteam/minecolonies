@@ -11,6 +11,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.network.messages.LumberjackSaplingSelectorMessage;
 import io.netty.buffer.ByteBuf;
@@ -26,6 +27,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
@@ -45,6 +47,11 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     private static final String TAG_CUT = "shouldCut";
 
     /**
+     * A default sapling itemStack.
+     */
+    private static final ItemStack SAPLING_STACK = new ItemStack(Blocks.SAPLING);
+
+    /**
      * The maximum upgrade of the building.
      */
     private static final int    MAX_BUILDING_LEVEL = 5;
@@ -52,11 +59,6 @@ public class BuildingLumberjack extends AbstractBuildingWorker
      * The job description.
      */
     private static final String LUMBERJACK         = "Lumberjack";
-
-    /**
-     * Sets the amount of saplings the lumberjack should keep.
-     */
-    private static final int SAPLINGS_TO_KEEP = 32;
 
     /**
      * List of saplings the lumberjack should, or should not fell (true if should, false if should not).
@@ -73,8 +75,52 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     {
         super(c, l);
 
-        keepX.put(new ItemStack(Blocks.SAPLING)::isItemEqual, SAPLINGS_TO_KEEP);
         keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), 1);
+    }
+
+    @Override
+    public Map<Predicate<ItemStack>, Integer> getRequiredItemsAndAmount()
+    {
+        final Map<Predicate<ItemStack>, Integer> tempKeep = super.getRequiredItemsAndAmount();
+        final EntityCitizen mainWorker = getMainWorkerEntity();
+        if(mainWorker == null)
+        {
+            return tempKeep;
+        }
+
+        final int invSIze = mainWorker.getInventoryCitizen().getSizeInventory();
+        int keptStacks = 0;
+        for(int i = 0; i < invSIze; i++)
+        {
+            final ItemStack stack = mainWorker.getInventoryCitizen().getStackInSlot(i);
+
+            if(ItemStackUtils.isEmpty(stack) && stack.getItem() != SAPLING_STACK.getItem())
+            {
+                continue;
+            }
+
+            boolean isAlreadyInList = false;
+            for(Map.Entry<Predicate<ItemStack>, Integer> entry : tempKeep.entrySet())
+            {
+                if(entry.getKey().test(stack))
+                {
+                    isAlreadyInList = true;
+                }
+            }
+
+            if(!isAlreadyInList)
+            {
+                tempKeep.put(stack::isItemEqual, com.minecolonies.api.util.constant.Constants.STACKSIZE);
+                keptStacks++;
+
+                if (keptStacks >= getMaxBuildingLevel() * 2)
+                {
+                    return tempKeep;
+                }
+            }
+        }
+
+        return tempKeep;
     }
 
     /**
@@ -249,14 +295,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
 
             if(treesToFell.isEmpty())
             {
-                final List<ItemStack> saplings = new ArrayList<>();
-                final int[] saplingId = OreDictionary.getOreIDs(new ItemStack(Blocks.SAPLING));
-
-                for (final int i : saplingId)
-                {
-                    saplings.addAll(OreDictionary.getOres(OreDictionary.getOreName(i)));
-                }
-                treesToFell.putAll(calcSaplings(saplings));
+                treesToFell.putAll(calcSaplings(OreDictionary.getOres("treeSapling")));
 
                 for(final Map.Entry<ItemStorage, Boolean> entry : treesToFell.entrySet())
                 {
