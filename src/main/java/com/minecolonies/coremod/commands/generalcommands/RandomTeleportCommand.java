@@ -94,8 +94,6 @@ public class RandomTeleportCommand extends AbstractSingleCommand
             sender.sendMessage(new TextComponentString(CANT_FIND_PLAYER));
             return;
         }
-        playerToTeleport.sendMessage(new TextComponentString("Buckle up buttercup, this ain't no joy ride!!!"));
-
         teleportPlayer(sender, playerToTeleport);
         //.fallDistance is used to cancel out fall damage  basically if you have -5 it will reduce fall damage by 2.5 hearts
         playerToTeleport.fallDistance = FALL_DISTANCE;
@@ -136,7 +134,8 @@ public class RandomTeleportCommand extends AbstractSingleCommand
             final int x = getRandCoordinate();
             final int z = getRandCoordinate();
 
-            if (sender.getEntityWorld().getWorldBorder().getSize() > (sender.getEntityWorld().getSpawnPoint().getDistance(x, STARTING_Y, z)))
+            if (sender.getEntityWorld().getWorldBorder().getSize()
+                    < (sender.getEntityWorld().getSpawnPoint().getDistance(x, sender.getEntityWorld().getSpawnPoint().getY(), z)))
             {
                 continue;
             }
@@ -162,12 +161,15 @@ public class RandomTeleportCommand extends AbstractSingleCommand
             {
                 if (MinecoloniesCommand.canExecuteCommand((EntityPlayer) sender))
                 {
-
+                    playerToTeleport.sendMessage(new TextComponentString("Buckle up buttercup, this ain't no joy ride!!!"));
+                    playerToTeleport.setHealth(playerToTeleport.getMaxHealth());
                     playerToTeleport.setPositionAndUpdate(groundPosition.getX(), groundPosition.getY() + SAFETY_DROP, groundPosition.getZ());
+                    playerToTeleport.setHealth(playerToTeleport.getMaxHealth());
                 }
                 else
                 {
-                    sender.getCommandSenderEntity().sendMessage(new TextComponentString("Please wait at least " + Configurations.gameplay.teleportBuffer + " seconds to teleport again"));
+                    sender.getCommandSenderEntity().sendMessage(
+                            new TextComponentString("Please wait at least " + Configurations.gameplay.teleportBuffer + " seconds to teleport again"));
                 }
                 return;
             }
