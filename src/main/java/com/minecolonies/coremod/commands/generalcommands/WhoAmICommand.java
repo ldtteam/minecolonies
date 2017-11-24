@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.commands.generalcommands;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.blockout.Log;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import net.minecraft.command.CommandException;
