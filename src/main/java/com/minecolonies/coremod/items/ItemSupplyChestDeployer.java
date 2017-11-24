@@ -74,7 +74,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
             placeSupplyShip(pos, playerIn.getHorizontalFacing());
         }
 
-        return EnumActionResult.SUCCESS;
+        return EnumActionResult.FAIL;
     }
 
     @NotNull
@@ -88,7 +88,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
             placeSupplyShip(null, playerIn.getHorizontalFacing());
         }
 
-        return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+        return new ActionResult<>(EnumActionResult.FAIL, stack);
     }
 
     private void placeSupplyShip(@Nullable final BlockPos pos, @NotNull final EnumFacing direction)

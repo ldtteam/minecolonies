@@ -68,7 +68,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
             placeSupplyCamp(pos, playerIn.getHorizontalFacing());
         }
 
-        return EnumActionResult.SUCCESS;
+        return EnumActionResult.FAIL;
     }
 
     @NotNull
@@ -82,7 +82,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
             placeSupplyCamp(null, playerIn.getHorizontalFacing());
         }
 
-        return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+        return new ActionResult<>(EnumActionResult.FAIL, stack);
     }
 
     private void placeSupplyCamp(@Nullable final BlockPos pos, @NotNull final EnumFacing direction)
