@@ -266,10 +266,12 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     private String staticSchematicName = "";
 
     /**
-     * Possible free to place structure.
+     * Creates a window build tool for a specific structure.
+     * @param pos the position.
+     * @param structureName the structure name.
+     * @param rotation the rotation.
+     * @param mode the mode.
      */
-    private FreeMode freeMode;
-
     public WindowBuildTool(@Nullable final BlockPos pos, final String structureName, final int rotation, final FreeMode mode)
     {
         super(Constants.MOD_ID + BUILD_TOOL_RESOURCE_SUFFIX);
@@ -281,7 +283,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             staticSchematicMode = true;
             Settings.instance.setRotation(rotation);
             this.rotation = rotation;
-            this.freeMode = mode;
         }
         renameButton = findPaneOfTypeByID(BUTTON_RENAME, Button.class);
         deleteButton = findPaneOfTypeByID(BUTTON_DELETE, Button.class);

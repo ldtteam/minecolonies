@@ -42,6 +42,11 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     private static final int OFFSET_Y = -2;
 
     /**
+     * Height to scan in which should be air.
+     */
+    private static final int SCAN_HEIGHT = 7;
+
+    /**
      * Creates a new supplychest deployer. The item is not stackable.
      */
     public ItemSupplyChestDeployer()
@@ -151,7 +156,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         {
             for(int x = pos.getX() - size.getX() / 2 + 1; x < pos.getX() + size.getX() / 2 + 1; x++)
             {
-                if(!world.isAirBlock(new BlockPos(x, pos.getY() + 7, z)))
+                if(!world.isAirBlock(new BlockPos(x, pos.getY() + SCAN_HEIGHT, z)))
                 {
                     return false;
                 }

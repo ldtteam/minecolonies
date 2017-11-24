@@ -42,7 +42,12 @@ import java.util.List;
  */
 public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage, IMessage>
 {
-    private boolean                  complete;
+    /**
+     * Height of the chest in the supplyship to be placed.
+     */
+    private static final int SUPPLY_SHIP_CHEST_HEIGHT = 6;
+
+    private boolean complete;
     private String                   structureName;
     private String                   workOrderName;
     private int                      rotation;
@@ -188,7 +193,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
             if(message.freeMode == WindowBuildTool.FreeMode.SUPPLYSHIP)
             {
                 stacks.add(new ItemStack(ModItems.supplyChest));
-                chestHeight = 6;
+                chestHeight = SUPPLY_SHIP_CHEST_HEIGHT;
             }
             else if(message.freeMode == WindowBuildTool.FreeMode.SUPPLYCAMP)
             {
