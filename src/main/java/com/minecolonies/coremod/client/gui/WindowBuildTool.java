@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.api.util.BlockUtils;
-import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Log;
@@ -10,8 +9,8 @@ import com.minecolonies.blockout.views.DropDownList;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.Structures;
+import com.minecolonies.coremod.items.ItemSupplyCampDeployer;
 import com.minecolonies.coremod.items.ItemSupplyChestDeployer;
-import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.network.messages.BuildToolPasteMessage;
 import com.minecolonies.coremod.network.messages.BuildToolPlaceMessage;
 import com.minecolonies.coremod.network.messages.SchematicRequestMessage;
@@ -26,7 +25,6 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -377,7 +375,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
                     Settings.instance.getRotation(),
                     structureName.isHut(),
                     Settings.instance.getMirror(),
-                    complete));
+                    complete, Settings.instance.getFreeMode()));
         }
 
         Settings.instance.reset();
@@ -938,7 +936,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
                         Settings.instance.getRotation(),
                         false,
                         Settings.instance.getMirror(),
-                        complete));
+                        complete, null));
             }
             else
             {
@@ -992,26 +990,31 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
     private void checkAndPlace()
     {
-        if(FreeMode.SUPPLYSHIP == Settings.instance.getFreeMode()
-                && ItemSupplyChestDeployer.canShipBePlaced(Minecraft.getMinecraft().world, Settings.instance.getPosition(),
-                Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()))))
+        if(FreeMode.SUPPLYSHIP == Settings.instance.getFreeMode())
         {
-            final List<ItemStack> stacks = new ArrayList<>();
-            stacks.add(new ItemStack(ModItems.supplyChest));
-
-            if(InventoryUtils.removeStacksFromItemHandler(new InvWrapper(Minecraft.getMinecraft().player.inventory), stacks))
+            if(ItemSupplyChestDeployer.canShipBePlaced(Minecraft.getMinecraft().world, Settings.instance.getPosition(),
+                    Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()))))
             {
                 pasteNice();
             }
             else
             {
-                LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "item.supplyChestDeployer.missing");
+                LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "item.supplyChestDeployer.invalid");
             }
         }
-        else
+        else if(FreeMode.SUPPLYCAMP == Settings.instance.getFreeMode())
         {
-            LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "item.supplyChestDeployer.invalid");
+            if(ItemSupplyCampDeployer.canCampBePlaced(Minecraft.getMinecraft().world, Settings.instance.getPosition(),
+                    Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()))))
+            {
+                pasteNice();
+            }
+            else
+            {
+                LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "item.supplyCampDeployer.invalid");
+            }
         }
+
 
         Settings.instance.reset();
         close();

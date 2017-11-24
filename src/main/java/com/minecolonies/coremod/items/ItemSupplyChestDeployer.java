@@ -1,23 +1,16 @@
 package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.util.BlockUtils;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.client.gui.WindowBuildTool;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
-import net.minecraft.block.BlockChest;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,12 +40,6 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * Offset y of the supply chest.
      */
     private static final int OFFSET_Y = -2;
-
-    /**
-     * Our guide Book.
-     */
-    @GameRegistry.ItemStackHolder(value = "gbook:guidebook", nbt = "{Book:\"minecolonies:book/minecolonies.xml\"}")
-    public static ItemStack guideBook;
 
     /**
      * Creates a new supplychest deployer. The item is not stackable.
@@ -98,40 +85,6 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
 
         return new ActionResult<>(EnumActionResult.SUCCESS, stack);
     }
-
-    /**
-     * Checks if the player already placed a supply chest.
-     *
-     * @param player the player.
-     * @return boolean, returns true when player hasn't placed before, or when
-     * infinite placing is on.
-     */
-    private static boolean isFirstPlacing(@NotNull final EntityPlayer player)
-    {
-        //todo might want to invent something here for that.
-        /* if (Configurations.allowInfiniteSupplyChests || !player.hasAchievement(ModAchievements.achievementGetSupply))
-        {
-            return true;
-        }*/
-        return true;
-        /*LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.error.supplyChestAlreadyPlaced");
-        return false;*/
-    }
-
-    /**
-     * Spawns the ship and supply chest.
-     *
-     * @param world world obj.
-     * @param pos   coordinate clicked.
-     */
-    private void spawnShip(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final EnumFacing chestFacing)
-    {
-        world.setBlockState(pos.up(), Blocks.CHEST.getDefaultState().withProperty(BlockChest.FACING, chestFacing));
-        //todo ItemStackUtils.changeSize(stack, -1);
-
-        fillChest((TileEntityChest) world.getTileEntity(pos.up()));
-    }
-
 
     private void placeSupplyShip(@Nullable final BlockPos pos, @NotNull final EnumFacing direction)
     {
@@ -205,23 +158,6 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
             }
         }
         return true;
-    }
-
-    /**
-     * Fills the content of the supplychest with the buildTool and townHall.
-     *
-     * @param chest the chest to fill.
-     */
-    private static void fillChest(@Nullable final TileEntityChest chest)
-    {
-        if (chest == null)
-        {
-            Log.getLogger().error("Supply chest tile entity was null.");
-            return;
-        }
-        chest.setInventorySlotContents(0, new ItemStack(ModBlocks.blockHutTownHall));
-        chest.setInventorySlotContents(1, new ItemStack(ModItems.buildTool));
-        chest.setInventorySlotContents(2, guideBook);
     }
 
     /**
