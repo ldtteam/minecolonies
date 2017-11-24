@@ -18,7 +18,7 @@
                     <box size="100% 30" linewidth="2">
 
                         <button id="assignFarm" pos="95 10" size="40 15"/>
-                        <itemicon id="icon" pos="0 0"/>
+                        <itemicon id="icon" size="16 16" pos="0 0"/>
                         <label id="worker" color="black" pos="20 5"/>
                         <label id="dist" color="black" pos="15 15"/>
                         <label id="dir" color="black" pos="35 15"/>
