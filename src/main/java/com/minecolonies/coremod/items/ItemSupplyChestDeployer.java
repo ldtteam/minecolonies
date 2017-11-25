@@ -139,19 +139,11 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     }
 
     /**
-     * Checks if the ship can be placed and returns the direction it can face.
-     * <pre>
-     * 0: cannot be placed.
-     * 2: can be placed at north.
-     * 3: can be placed at south.
-     * 4: can be placed at west.
-     * 5: can be placed at east.
-     * </pre>
-     *
-     * @param world world obj.
-     * @param pos   coordinate clicked.
-     * @param facing the enum facing.
-     * @return facings it can be placed at.
+     * Checks if the ship can be placed.
+     * @param world the world.
+     * @param pos the pos.
+     * @param size the size.
+     * @return true if so.
      */
     @NotNull
     public static boolean canShipBePlaced(@NotNull final World world, @NotNull final BlockPos pos, final BlockPos size)
