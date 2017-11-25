@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.blocks.BlockHutDeliveryman;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
@@ -106,7 +105,6 @@ public class BuildingWareHouse extends AbstractBuilding
         {
             if (!registeredDeliverymen.isEmpty())
             {
-                Log.getLogger().info(getColony().getName() + " " + Arrays.toString(registeredDeliverymen.toArray()));
                 checkForRegisteredDeliverymen();
             }
             return false;

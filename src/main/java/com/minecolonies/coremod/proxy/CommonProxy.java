@@ -3,6 +3,7 @@ package com.minecolonies.coremod.proxy;
 import com.minecolonies.api.configuration.ConfigurationHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.client.gui.WindowBuildTool;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
@@ -13,7 +14,6 @@ import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianSpawnUtils;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.event.FMLEventHandler;
 import com.minecolonies.coremod.inventory.GuiHandler;
-import com.minecolonies.coremod.sounds.ModSoundEvents;
 import com.minecolonies.coremod.tileentities.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
@@ -184,6 +184,14 @@ public class CommonProxy implements IProxy
 
     @Override
     public void openBuildToolWindow(final BlockPos pos)
+    {
+        /*
+         * Intentionally left empty.
+         */
+    }
+
+    @Override
+    public void openBuildToolWindow(final BlockPos pos, final String structureName, final int rotation, final WindowBuildTool.FreeMode mode)
     {
         /*
          * Intentionally left empty.
