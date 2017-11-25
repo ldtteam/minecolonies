@@ -35,7 +35,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand
     private static final int    LOWER_BOUNDS     = Configurations.gameplay.maxDistanceFromWorldSpawn;
     private static final int    SPAWN_NO_TP      = Configurations.gameplay.minDistanceFromWorldSpawn;
     private static final int    STARTING_Y       = 250;
-    private static final double SAFETY_DROP      = 8;
+    private static final double SAFETY_DROP      = 6;
     private static final int    FALL_DISTANCE    = 5;
     private static final String CANT_FIND_PLAYER = "No player found for teleport, please define one.";
 
