@@ -108,6 +108,18 @@ public class ClientProxy extends CommonProxy
         window.open();
     }
 
+    @Override
+    public void openBuildToolWindow(final BlockPos pos, final String structureName, final int rotation, final WindowBuildTool.FreeMode mode)
+    {
+        if (pos == null && Settings.instance.getActiveStructure() == null)
+        {
+            return;
+        }
+
+        @Nullable final WindowBuildTool window = new WindowBuildTool(pos, structureName, rotation, mode);
+        window.open();
+    }
+
     /**
      * Called when registering blocks,
      * we have to register all our modblocks here.

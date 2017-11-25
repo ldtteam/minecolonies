@@ -75,7 +75,7 @@ public class Structure
     /**
      * Rotation by 180°.
      */
-    private static final double ONE_HUNDED_EIGHTY_DEGREES = 270D;
+    private static final double ONE_HUNDED_EIGHTY_DEGREES = 180D;
 
     /**
      * Used for scale.
