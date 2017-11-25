@@ -59,11 +59,11 @@ public interface IProxy
     void openBuildToolWindow(final BlockPos pos);
 
     /**
-     * Opens a build tool window.
-     *
-     * @param rotateThreeTimes
-     * @param pos coordinates.
-     * @param mode
+     * Opens a build tool window for a specific structure.
+     * @param pos the position.
+     * @param structureName the structure name.
+     * @param rotation the rotation.
+     * @param mode the mode.
      */
     void openBuildToolWindow(final BlockPos pos, final String structureName, final int rotation, final WindowBuildTool.FreeMode mode);
 
