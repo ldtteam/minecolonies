@@ -118,11 +118,11 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
     }
 
     /**
-     * Checks if the camp can be placed and returns the direction it can face.
-     * @param world world obj.
-     * @param pos   coordinate clicked.
-     * @param facing the enum facing.
-     * @return facings it can be placed at.
+     * Checks if the camp can be placed.
+     * @param world the world.
+     * @param pos the position.
+     * @param size the size.
+     * @return true if so.
      */
     @NotNull
     public static boolean canCampBePlaced(@NotNull final World world, @NotNull final BlockPos pos, final BlockPos size)
