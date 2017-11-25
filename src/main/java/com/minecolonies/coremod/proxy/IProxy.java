@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.proxy;
 
+import com.minecolonies.coremod.client.gui.WindowBuildTool;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import net.minecraft.util.math.BlockPos;
 
@@ -55,7 +56,16 @@ public interface IProxy
      *
      * @param pos coordinates.
      */
-    void openBuildToolWindow(BlockPos pos);
+    void openBuildToolWindow(final BlockPos pos);
+
+    /**
+     * Opens a build tool window.
+     *
+     * @param rotateThreeTimes
+     * @param pos coordinates.
+     * @param mode
+     */
+    void openBuildToolWindow(final BlockPos pos, final String structureName, final int rotation, final WindowBuildTool.FreeMode mode);
 
     /**
      * Registers all block and item renderer.

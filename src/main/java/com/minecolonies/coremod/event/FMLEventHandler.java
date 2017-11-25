@@ -1,21 +1,13 @@
 package com.minecolonies.coremod.event;
 
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.blocks.BlockConstructionTape;
-import com.minecolonies.coremod.blocks.BlockConstructionTapeCorner;
-import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.items.*;
 import com.minecolonies.coremod.network.messages.ColonyStylesMessage;
 import com.minecolonies.coremod.network.messages.ServerUUIDMessage;
 import com.minecolonies.coremod.sounds.ModSoundEvents;
-import net.minecraft.block.Block;
-import net.minecraft.client.audio.Sound;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
