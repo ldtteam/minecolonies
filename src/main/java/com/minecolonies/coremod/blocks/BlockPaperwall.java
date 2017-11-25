@@ -62,7 +62,6 @@ public class BlockPaperwall extends AbstractBlockMinecoloniesPane<BlockPaperwall
     /**
      * Registery block at gameregistry.
      * @param registry the registry to use.
-     * @return the block itself.
      */
     @Override
     public void registerItemBlock(final IForgeRegistry<Item> registry)
