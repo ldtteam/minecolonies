@@ -218,7 +218,7 @@ public class ClientProxy extends CommonProxy
               new ModelResourceLocation(ModBlocks.blockPaperWall.getRegistryName() + "_" + type.getName(), INVENTORY));
         }
     }
-    
+
     @Override
     public void openClipBoardWindow(@Nullable final int colonyId)
     {
