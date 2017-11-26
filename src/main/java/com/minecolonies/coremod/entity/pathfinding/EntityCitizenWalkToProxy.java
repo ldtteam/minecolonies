@@ -30,6 +30,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
 
     /**
      * Creates a walkToProxy for a certain worker.
+     *
      * @param entity the citizen entity.
      */
     public EntityCitizenWalkToProxy(final EntityCitizen entity)
@@ -100,7 +101,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
                 }
 
                 addToProxyList(
-                        new BlockPos(
+                  new BlockPos(
                                 ladderPos.getX() + building.getVectorX() * OTHER_SIDE_OF_SHAFT,
                                 level.getDepth(),
                                 ladderPos.getZ() + building.getVectorZ() * OTHER_SIDE_OF_SHAFT));
@@ -120,7 +121,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
 
                 //Then add the ladder position as the latest node.
                 addToProxyList(
-                        new BlockPos(
+                  new BlockPos(
                                 ladderPos.getX() + building.getVectorX() * OTHER_SIDE_OF_SHAFT,
                                 level.getDepth(),
                                 ladderPos.getZ() + building.getVectorZ() * OTHER_SIDE_OF_SHAFT));
@@ -173,21 +174,6 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
         return getProxy(target, citizen.getPosition(), distanceToPath);
     }
 
-    /**
-     * Method to call to detect if an entity living is at site with move.
-     * @param entity the entity to check.
-     * @param x the x value.
-     * @param y the y value.
-     * @param z the z value.
-     * @param range the range.
-     * @return true if so.
-     */
-    @Override
-    public boolean isLivingAtSiteWithMove(final EntityLiving entity, final int x, final int y, final int z, final int range)
-    {
-        return WorkerUtil.isWorkerAtSiteWithMove((EntityCitizen) entity, x, y, z, range);
-    }
-
     private void calculateNodes(final Level level, final int levelDepth)
     {
         final List<BlockPos> nodesToTarget = new ArrayList<>();
@@ -202,5 +188,21 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
         {
             addToProxyList(nodesToTarget.get(i));
         }
+    }
+
+    /**
+     * Method to call to detect if an entity living is at site with move.
+     *
+     * @param entity the entity to check.
+     * @param x      the x value.
+     * @param y      the y value.
+     * @param z      the z value.
+     * @param range  the range.
+     * @return true if so.
+     */
+    @Override
+    public boolean isLivingAtSiteWithMove(final EntityLiving entity, final int x, final int y, final int z, final int range)
+    {
+        return WorkerUtil.isWorkerAtSiteWithMove((EntityCitizen) entity, x, y, z, range);
     }
 }

@@ -7,4 +7,9 @@
             label="$(com.minecolonies.coremod.gui.workerHuts.upgrade)"/>
     <button id="repair" align="TOP_MIDDLE" size="116 20" pos="0 88"
             label="$(com.minecolonies.coremod.gui.workerHuts.repair)"/>
+    <label size="100% 11" pos="0 172"
+           label="$(com.minecolonies.coremod.gui.workerHuts.buildPrio)"
+           textalign="MIDDLE" color="black"/>
+    <label id="type" size="100% 11" pos="0 182"
+           textalign="MIDDLE" color="black"/>
 </layout>

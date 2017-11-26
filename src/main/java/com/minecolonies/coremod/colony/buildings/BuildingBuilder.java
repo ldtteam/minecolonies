@@ -72,20 +72,6 @@ public class BuildingBuilder extends AbstractBuildingWorker
         keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), 1);
     }
 
-    @Override
-    public Map<Predicate<ItemStack>, Integer> getRequiredItemsAndAmount()
-    {
-        final Map<Predicate<ItemStack>, Integer> toKeep = new HashMap<>(keepX);
-        toKeep.putAll(keepX);
-
-        for(final BuildingBuilderResource stack: neededResources.values())
-        {
-            toKeep.put(stack.getItemStack()::isItemEqual, stack.getAmount());
-        }
-
-        return toKeep;
-    }
-
     /**
      * Getter of the schematic name.
      *
@@ -127,6 +113,54 @@ public class BuildingBuilder extends AbstractBuildingWorker
         }
     }
 
+    @Override
+    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
+    {
+        //Only the chests because he shouldn't fill up the furnaces.
+        if (block instanceof BlockChest)
+        {
+            addContainerPosition(pos);
+        }
+    }
+
+    @Override
+    public Map<Predicate<ItemStack>, Integer> getRequiredItemsAndAmount()
+    {
+        final Map<Predicate<ItemStack>, Integer> toKeep = new HashMap<>(keepX);
+        toKeep.putAll(keepX);
+
+        for (final BuildingBuilderResource stack : neededResources.values())
+        {
+            toKeep.put(stack.getItemStack()::isItemEqual, stack.getAmount());
+        }
+
+        return toKeep;
+    }
+
+    @Override
+    public ItemStack transferStack(@NotNull final ItemStack stack, @NotNull final World world)
+    {
+        @NotNull final ItemStack resultStack = super.transferStack(stack, world);
+
+        if (ItemStackUtils.isEmpty(resultStack))
+        {
+            this.markDirty();
+        }
+
+        return resultStack;
+    }
+
+    @Override
+    public ItemStack forceTransferStack(final ItemStack stack, final World world)
+    {
+        final ItemStack itemStack = super.forceTransferStack(stack, world);
+        if (ItemStackUtils.isEmpty(itemStack))
+        {
+            this.markDirty();
+        }
+
+        return itemStack;
+    }
 
     /**
      * Create the job for the builder.
@@ -163,7 +197,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         for (@NotNull final BuildingBuilderResource resource : neededResources.values())
         {
             @NotNull final NBTTagCompound neededRes = new NBTTagCompound();
-            final ItemStack itemStack = new ItemStack(resource.getItem(),resource.getAmount(),resource.getDamageValue());
+            final ItemStack itemStack = new ItemStack(resource.getItem(), resource.getAmount(), resource.getDamageValue());
             itemStack.writeToNBT(neededRes);
 
             neededResTagList.appendTag(neededRes);
@@ -204,13 +238,51 @@ public class BuildingBuilder extends AbstractBuildingWorker
         }
     }
 
-    @Override
-    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
+    /**
+     * Update the available resources.
+     * <p>
+     * which are needed for the build and in the builder's chest or inventory
+     */
+    private void updateAvailableResources()
     {
-        //Only the chests because he shouldn't fill up the furnaces.
-        if (block instanceof BlockChest)
+        final EntityCitizen builder = getMainWorkerEntity();
+
+        InventoryCitizen builderInventory = null;
+        if (builder != null)
         {
-            addContainerPosition(pos);
+            builderInventory = builder.getInventoryCitizen();
+        }
+
+
+        for (@NotNull final Map.Entry<String, BuildingBuilderResource> entry : neededResources.entrySet())
+        {
+            final BuildingBuilderResource resource = entry.getValue();
+
+            resource.setAvailable(0);
+
+            if (builderInventory != null)
+            {
+                resource.addAvailable(InventoryUtils.getItemCountInItemHandler(new InvWrapper(builderInventory), resource.getItem(), resource.getDamageValue()));
+            }
+
+            final TileEntity chestInventory = this.getTileEntity();
+            if (chestInventory != null)
+            {
+                resource.addAvailable(InventoryUtils.getItemCountInProvider(chestInventory, resource.getItem(), resource.getDamageValue()));
+            }
+
+            //Count in the additional chests as well
+            if (builder != null)
+            {
+                for (final BlockPos pos : getAdditionalCountainers())
+                {
+                    final TileEntity entity = CompatibilityUtils.getWorld(builder).getTileEntity(pos);
+                    if (entity instanceof TileEntityChest)
+                    {
+                        resource.addAvailable(InventoryUtils.getItemCountInProvider(entity, resource.getItem(), resource.getDamageValue()));
+                    }
+                }
+            }
         }
     }
 
@@ -226,7 +298,8 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
     /**
      * Add a new resource to the needed list.
-     *  @param res    the resource.
+     *
+     * @param res    the resource.
      * @param amount the amount.
      */
     public void addNeededResource(@Nullable final ItemStack res, final int amount)
@@ -242,7 +315,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         }
         else
         {
-            resource.setAmount(resource.getAmount()+amount);
+            resource.setAmount(resource.getAmount() + amount);
         }
         this.neededResources.put(res.getUnlocalizedName(), resource);
         this.markDirty();
@@ -283,55 +356,6 @@ public class BuildingBuilder extends AbstractBuildingWorker
     }
 
     /**
-     * Update the available resources.
-     *
-     * which are needed for the build and in the builder's chest or inventory
-     */
-    private void updateAvailableResources()
-    {
-        final EntityCitizen builder = getMainWorkerEntity();
-
-        InventoryCitizen builderInventory = null;
-        if (builder!=null)
-        {
-            builderInventory = builder.getInventoryCitizen();
-        }
-
-
-        for (@NotNull final Map.Entry<String, BuildingBuilderResource> entry : neededResources.entrySet())
-        {
-            final BuildingBuilderResource resource = entry.getValue();
-
-            resource.setAvailable(0);
-
-            if (builderInventory!=null)
-            {
-                resource.addAvailable(InventoryUtils.getItemCountInItemHandler(new InvWrapper(builderInventory), resource.getItem(), resource.getDamageValue()));
-            }
-
-            final TileEntity chestInventory = this.getTileEntity();
-            if (chestInventory!=null)
-            {
-                resource.addAvailable(InventoryUtils.getItemCountInProvider(chestInventory, resource.getItem(), resource.getDamageValue()));
-            }
-
-            //Count in the additional chests as well
-            if (builder!=null)
-            {
-                for(final BlockPos pos : getAdditionalCountainers())
-                {
-                    final TileEntity entity = CompatibilityUtils.getWorld(builder).getTileEntity(pos);
-                    if(entity instanceof TileEntityChest)
-                    {
-                        resource.addAvailable(InventoryUtils.getItemCountInProvider(entity, resource.getItem(), resource.getDamageValue()));
-                    }
-                }
-            }
-
-        }
-    }
-
-    /**
      * Check if the builder requires a certain ItemStack for the current construction.
      *
      * @param stack the stack to test.
@@ -340,30 +364,5 @@ public class BuildingBuilder extends AbstractBuildingWorker
     public boolean requiresResourceForBuilding(final ItemStack stack)
     {
         return neededResources.containsKey(stack.getUnlocalizedName());
-    }
-
-    @Override
-    public ItemStack transferStack(@NotNull final ItemStack stack, @NotNull final World world)
-    {
-        @NotNull final ItemStack resultStack = super.transferStack(stack, world);
-
-        if (ItemStackUtils.isEmpty(resultStack))
-        {
-            this.markDirty();
-        }
-
-        return resultStack;
-    }
-
-    @Override
-    public ItemStack forceTransferStack(final ItemStack stack, final World world)
-    {
-        final ItemStack itemStack = super.forceTransferStack(stack, world);
-        if (ItemStackUtils.isEmpty(itemStack))
-        {
-            this.markDirty();
-        }
-
-        return itemStack;
     }
 }

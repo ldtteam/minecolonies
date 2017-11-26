@@ -2,7 +2,6 @@ package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
@@ -147,7 +146,7 @@ public class BlockConstructionTapeCorner extends AbstractBlockMinecolonies<Block
     /**
      * How much light goes through the block.
      */
-    private static final int    LIGHT_OPACITY    = 0;
+    private static final int LIGHT_OPACITY = 0;
 
     /**
      * Constructor for the Substitution block.
@@ -312,14 +311,14 @@ public class BlockConstructionTapeCorner extends AbstractBlockMinecolonies<Block
     @NotNull
     @Override
     public IBlockState getStateForPlacement(
-                                                   final World worldIn,
-                                                   final BlockPos pos,
-                                                   final EnumFacing facing,
-                                                   final float hitX,
-                                                   final float hitY,
-                                                   final float hitZ,
-                                                   final int meta,
-                                                   final EntityLivingBase placer)
+                                             final World worldIn,
+                                             final BlockPos pos,
+                                             final EnumFacing facing,
+                                             final float hitX,
+                                             final float hitY,
+                                             final float hitZ,
+                                             final int meta,
+                                             final EntityLivingBase placer)
     {
         @NotNull final EnumFacing enumFacing = (placer == null) ? EnumFacing.NORTH : EnumFacing.fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);

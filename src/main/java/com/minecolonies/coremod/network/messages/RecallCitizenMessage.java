@@ -77,7 +77,7 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
             @Nullable final AbstractBuildingWorker building = colony.getBuilding(message.buildingId, AbstractBuildingWorker.class);
             if (building != null)
             {
-                for(int i = 0; i < building.getWorkerEntities().size(); i++)
+                for (int i = 0; i < building.getWorkerEntities().size(); i++)
                 {
                     EntityCitizen citizen = building.getWorkerEntities().get(i);
                     if (citizen == null)

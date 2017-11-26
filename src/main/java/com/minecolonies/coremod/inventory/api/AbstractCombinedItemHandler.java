@@ -160,15 +160,6 @@ public abstract class AbstractCombinedItemHandler
     }
 
     /**
-     * Get the name of this object. For players this returns their username.
-     */
-    @Override
-    public String getName()
-    {
-        return hasCustomName() ? customName : defaultName;
-    }
-
-    /**
      * Returns the ItemStack in a given slot.
      * <p>
      * The result's stack size may be greater than the itemstacks max size.
@@ -202,6 +193,13 @@ public abstract class AbstractCombinedItemHandler
         }
 
         return null;
+    }    /**
+     * Get the name of this object. For players this returns their username.
+     */
+    @Override
+    public String getName()
+    {
+        return hasCustomName() ? customName : defaultName;
     }
 
     /**
@@ -268,6 +266,8 @@ public abstract class AbstractCombinedItemHandler
     {
         return handlers;
     }
+
+
 
     /**
      * Method to set the name of this {@link IWorldNameable}.

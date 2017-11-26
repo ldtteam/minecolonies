@@ -3,6 +3,7 @@ package com.minecolonies.coremod;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.achievements.ModAchievements;
+import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
 import com.minecolonies.coremod.commands.CommandEntryPoint;
 import com.minecolonies.coremod.event.ClientEventHandler;
@@ -42,14 +43,14 @@ public class MineColonies
      * Forge created instance of the Mod.
      */
     @Mod.Instance(Constants.MOD_ID)
-    public static  MineColonies         instance;
+    public static MineColonies instance;
     /**
      * Access to the proxy associated with your current side. Variable updated
      * by forge.
      */
     @SidedProxy(clientSide = Constants.CLIENT_PROXY_LOCATION, serverSide = Constants.SERVER_PROXY_LOCATION)
 
-    public static  IProxy               proxy;
+    public static IProxy       proxy;
 
     private static SimpleNetworkWrapper network;
 
@@ -87,6 +88,15 @@ public class MineColonies
     public static Logger getLogger()
     {
         return logger;
+    }
+
+    @Optional.Method(modid = "gbook")
+    @SubscribeEvent
+    public static void registerBook(final BookRegistryEvent event)
+    {
+        System.out.println("Hello " + Constants.MOD_ID + ":book/minecolonies.xml");
+        System.out.println(new ResourceLocation(Constants.MOD_ID + ":book/minecolonies.xml"));
+        event.register(new ResourceLocation(Constants.MOD_ID + ":book/minecolonies.xml"));
     }
 
     /**
@@ -182,6 +192,8 @@ public class MineColonies
         getNetwork().registerMessage(LumberjackSaplingSelectorMessage.class, LumberjackSaplingSelectorMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(UpgradeWarehouseMessage.class, UpgradeWarehouseMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(BuildToolPasteMessage.class, BuildToolPasteMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(TransferItemsToCitizenRequestMessage.class, TransferItemsToCitizenRequestMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(UpdateRequestStateMessage.class, UpdateRequestStateMessage.class, ++id, Side.SERVER);
 
         // Schematic transfer messages
         getNetwork().registerMessage(SchematicRequestMessage.class, SchematicRequestMessage.class, ++id, Side.SERVER);
@@ -201,7 +213,7 @@ public class MineColonies
     @Mod.EventHandler
     public void postInit(final FMLPostInitializationEvent event)
     {
-        // Load unimportant resources
+        RequestSystemInitializer.onPostInit();
     }
 
     @Mod.EventHandler

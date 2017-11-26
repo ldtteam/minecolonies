@@ -7,8 +7,9 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.inventory.GuiHandler;
 import com.minecolonies.coremod.inventory.InventoryField;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -70,9 +71,9 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
     /**
      * Creates an open inventory message for a building.
      *
-     * @param building {@link AbstractBuilding.View}
+     * @param building {@link AbstractBuildingView}
      */
-    public OpenInventoryMessage(@NotNull final AbstractBuilding.View building)
+    public OpenInventoryMessage(@NotNull final AbstractBuildingView building)
     {
         super();
         inventoryType = InventoryType.INVENTORY_CHEST;
@@ -83,7 +84,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
     /**
      * Creates an open inventory message for a field.
      *
-     * @param field    {@link AbstractBuilding.View}
+     * @param field    {@link AbstractBuildingView}
      * @param colonyId the colony associated with the inventory.
      */
     public OpenInventoryMessage(final BlockPos field, final int colonyId)
@@ -162,9 +163,8 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
             {
                 citizen.getInventoryCitizen().setCustomName(message.name);
             }
-            //TODO(OrionDevelopment): Convert next line to:
-            //player.displayGUIChest(new IItemHandlerToIInventoryWrapper(citizen.getInventoryCitizen(), citizen.getInventoryCitizen()));
-            player.displayGUIChest(citizen.getInventoryCitizen());
+
+            player.openGui(MineColonies.instance, GuiHandler.ID.CITIZEN_INVENTORY.ordinal(), player.world, citizen.getColony().getID(), citizen.getCitizenData().getId(), 0);
         }
     }
 
@@ -177,7 +177,8 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
             {
                 chest.setCustomName(message.name);
             }
-            player.displayGUIChest(chest);
+
+            player.openGui(MineColonies.instance, GuiHandler.ID.BUILDING_INVENTORY.ordinal(), player.world, chest.getPos().getX(), chest.getPos().getY(), chest.getPos().getZ());
         }
     }
 
@@ -190,7 +191,12 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
             {
                 // inventoryField.setCustomName(message.name);
             }
-            player.openGui(MineColonies.instance, 1, player.getEntityWorld(), player.getPosition().getX(), player.getPosition().getY(), player.getPosition().getZ());
+            player.openGui(MineColonies.instance,
+              GuiHandler.ID.BUILDING_INVENTORY.ordinal(),
+              player.getEntityWorld(),
+              player.getPosition().getX(),
+              player.getPosition().getY(),
+              player.getPosition().getZ());
         }
     }
 

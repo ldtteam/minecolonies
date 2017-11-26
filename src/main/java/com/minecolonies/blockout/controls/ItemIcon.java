@@ -1,5 +1,6 @@
 package com.minecolonies.blockout.controls;
 
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.PaneParams;
 import net.minecraft.client.gui.FontRenderer;
@@ -15,7 +16,7 @@ import net.minecraft.util.ResourceLocation;
  */
 public class ItemIcon extends Pane
 {
-    private static final float GUI_ITEM_Z_LEVEL = 200.0F;
+    private static final float DEFAULT_ITEMSTACK_SIZE = 16f;
     private static final float GUI_ITEM_Z_TRANSLATE = 32.0F;
     /**
      * ItemStack represented in the itemIcon.
@@ -72,19 +73,22 @@ public class ItemIcon extends Pane
      */
     private void drawItemStack(final ItemStack stack, final int x, final int y)
     {
+        if (ItemStackUtils.isEmpty(itemStack))
+        {
+            return;
+        }
+
         final RenderItem itemRender = mc.getRenderItem();
 
-        GlStateManager.translate(0.0F, 0.0F, GUI_ITEM_Z_TRANSLATE);
-        this.zLevel = GUI_ITEM_Z_LEVEL;
-        itemRender.zLevel = GUI_ITEM_Z_LEVEL;
+        GlStateManager.translate(x, y, GUI_ITEM_Z_TRANSLATE);
+        GlStateManager.scale(this.getWidth() / DEFAULT_ITEMSTACK_SIZE, this.getHeight() / DEFAULT_ITEMSTACK_SIZE, 1f);
+
         FontRenderer font = stack.getItem().getFontRenderer(stack);
         if (font == null)
         {
             font = mc.fontRenderer;
         }
-        itemRender.renderItemAndEffectIntoGUI(stack, x, y);
-        itemRender.renderItemOverlayIntoGUI(font, stack, x, y, null);
-        this.zLevel = 0.0F;
-        itemRender.zLevel = 0.0F;
+        itemRender.renderItemAndEffectIntoGUI(stack, 0, 0);
+        itemRender.renderItemOverlayIntoGUI(font, stack, 0, 0, null);
     }
 }

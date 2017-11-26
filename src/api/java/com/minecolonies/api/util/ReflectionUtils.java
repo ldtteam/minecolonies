@@ -1,8 +1,10 @@
 package com.minecolonies.api.util;
 
 import com.google.common.reflect.TypeToken;
+import org.apache.logging.log4j.core.config.AppenderControl;
 
-import java.util.HashSet;
+import java.lang.reflect.Field;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -28,8 +30,8 @@ public final class ReflectionUtils
     @SuppressWarnings("unchecked")
     public static <T> Set<TypeToken> getSuperClasses(final TypeToken<T> token)
     {
-        final HashSet<TypeToken> directSet = new HashSet<>(token.getTypes());
-        final HashSet<TypeToken> resultingSet = new HashSet<>();
+        final Set<TypeToken> directSet = new LinkedHashSet<>(token.getTypes());
+        final Set<TypeToken> resultingSet = new LinkedHashSet<>();
 
         directSet.forEach(t ->
         {
@@ -38,5 +40,13 @@ public final class ReflectionUtils
         });
 
         return resultingSet;
+    }
+
+    public static void setFMLLoggingLevelOnConsoleToDebug(AppenderControl control)
+      throws NoSuchFieldException, IllegalAccessException
+    {
+        Field levelField = control.getClass().getField("level");
+        levelField.setAccessible(true);
+        levelField.set(control, Integer.MAX_VALUE);
     }
 }

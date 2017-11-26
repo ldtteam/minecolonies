@@ -6,6 +6,7 @@ import com.minecolonies.blockout.controls.ButtonHandler;
 import com.minecolonies.blockout.controls.TextField;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.StructureName;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.structures.helpers.Settings;
 import org.jetbrains.annotations.NotNull;
@@ -20,15 +21,15 @@ public class WindowStructureNameEntry extends Window implements ButtonHandler
     private static final String INPUT_NAME                     = "name";
     private static final String STRUCTURE_NAME_RESOURCE_SUFFIX = ":gui/windowstructurenameentry.xml";
 
-    private final Structures.StructureName structureName;
-    private final TextField                inputName;
+    private final StructureName structureName;
+    private final TextField     inputName;
 
     /**
      * Constructor for a structure rename entry window.
      *
-     * @param s {@link Structures.StructureName}
+     * @param s {@link StructureName}
      */
-    public WindowStructureNameEntry(final Structures.StructureName s)
+    public WindowStructureNameEntry(final StructureName s)
     {
         super(Constants.MOD_ID + STRUCTURE_NAME_RESOURCE_SUFFIX);
         this.structureName = s;
@@ -49,7 +50,7 @@ public class WindowStructureNameEntry extends Window implements ButtonHandler
             final String name = inputName.getText();
             if (!name.isEmpty())
             {
-                final Structures.StructureName newStructureName = Structures.renameScannedStructure(structureName, name);
+                final StructureName newStructureName = Structures.renameScannedStructure(structureName, name);
                 if (newStructureName != null)
                 {
                     Settings.instance.setStructureName(newStructureName.toString());

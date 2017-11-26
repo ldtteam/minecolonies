@@ -1,25 +1,38 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.api.util.BlockPosUtil;
+import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.request.RequestState;
+import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.coremod.sounds.DeliverymanSounds;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Class of the deliveryman job.
  */
 public class JobDeliveryman extends AbstractJob
 {
-    private static final String TAG_DESTINATION = "destination";
-    private BlockPos destination;
+    private static final String TAG_CURRENT_TASK = "currentTask";
+    private static final String TAG_RETURNING    = "returning";
+
+    private LinkedList<IToken> taskQueue = new LinkedList<>();
+
+    private boolean returning;
 
     /**
      * Instantiates the job for the deliveryman.
@@ -35,9 +48,19 @@ public class JobDeliveryman extends AbstractJob
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
-        if (compound.hasKey(TAG_DESTINATION))
+        taskQueue.clear();
+        if (compound.hasKey(TAG_CURRENT_TASK))
         {
-            destination = BlockPosUtil.readFromNBT(compound, TAG_DESTINATION);
+            NBTTagList queuItems = compound.getTagList(TAG_CURRENT_TASK, Constants.NBT.TAG_COMPOUND);
+            NBTUtils.streamCompound(queuItems)
+              .map(tokenCompound -> (IToken) StandardFactoryController.getInstance().deserialize(tokenCompound))
+              .forEach(taskQueue::add);
+        }
+
+        returning = false;
+        if (compound.hasKey(TAG_RETURNING))
+        {
+            returning = compound.getBoolean(TAG_RETURNING);
         }
     }
 
@@ -59,10 +82,31 @@ public class JobDeliveryman extends AbstractJob
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        if (hasDestination())
+        NBTTagList queuList = taskQueue.stream().map(iToken -> StandardFactoryController.getInstance().serialize(iToken)).collect(NBTUtils.toNBTTagList());
+        compound.setTag(TAG_CURRENT_TASK, queuList);
+        compound.setBoolean(TAG_RETURNING, returning);
+    }
+
+    /**
+     * Generate your AI class to register.
+     *
+     * @return your personal AI instance.
+     */
+    @NotNull
+    @Override
+    public AbstractAISkeleton<JobDeliveryman> generateAI()
+    {
+        return new EntityAIWorkDeliveryman(this);
+    }
+
+    @Override
+    public SoundEvent getBedTimeSound()
+    {
+        if (getCitizen() != null)
         {
-            BlockPosUtil.writeToNBT(compound, TAG_DESTINATION, destination);
+            return getCitizen().isFemale() ? DeliverymanSounds.Female.offToBed : null;
         }
+        return null;
     }
 
     @Nullable
@@ -87,61 +131,104 @@ public class JobDeliveryman extends AbstractJob
         return null;
     }
 
-    @Override
-    public SoundEvent getBedTimeSound()
+    /**
+     * Returns whether or not the job has a currentTask.
+     *
+     * @return true if has currentTask, otherwise false.
+     */
+    public boolean hasTask()
     {
-        if (getCitizen() != null)
+        return !taskQueue.isEmpty() || returning;
+    }
+
+    /**
+     * Returns the {@link IRequest} of the current Task.
+     *
+     * @return {@link IRequest} of the current Task.
+     */
+    public IRequest<? extends Delivery> getCurrentTask()
+    {
+        if (taskQueue.isEmpty())
         {
-            return getCitizen().isFemale() ? DeliverymanSounds.Female.offToBed : null;
+            return null;
         }
-        return null;
+        return getColony().getRequestManager().getRequestForToken(taskQueue.peekFirst());
     }
 
     /**
-     * Generate your AI class to register.
+     * Method used to add a request to the queue
      *
-     * @return your personal AI instance.
+     * @param token The token of the requests to add.
      */
-    @NotNull
-    @Override
-    public AbstractAISkeleton<JobDeliveryman> generateAI()
+    public void addRequest(@NotNull final IToken token)
     {
-        return new EntityAIWorkDeliveryman(this);
+        taskQueue.add(token);
     }
 
     /**
-     * Returns whether or not the job has a destination.
+     * Method called to mark the current request as finished.
      *
-     * @return true if has destination, otherwise false.
+     * @param successful True when the processing was successful, false when not.
      */
-    public boolean hasDestination()
+    public void finishRequest(@NotNull final boolean successful)
     {
-        return destination != null;
-    }
+        if (taskQueue.isEmpty())
+        {
+            return;
+        }
 
-    public boolean isNeeded()
-    {
-        final Colony colony = getCitizen().getColony();
-        return colony != null && !colony.getDeliverymanRequired().isEmpty();
-    }
+        this.setReturning(true);
+        IToken current = taskQueue.removeFirst();
 
-    /**
-     * Returns the {@link BlockPos} of the destination.
-     *
-     * @return {@link BlockPos} of the destination.
-     */
-    public BlockPos getDestination()
-    {
-        return destination;
+        getColony().getRequestManager().updateRequestState(current, successful ? RequestState.COMPLETED : RequestState.CANCELLED);
     }
 
     /**
-     * Sets the destination of the job.
+     * Called when a task that is being scheduled is being canceled.
      *
-     * @param destination {@link BlockPos} of the destination.
+     * @param token token of the task to be deleted.
      */
-    public void setDestination(final BlockPos destination)
+    public void onTaskDeletion(@NotNull final IToken token)
     {
-        this.destination = destination;
+        if (taskQueue.contains(token))
+        {
+            if (taskQueue.peek().equals(token))
+            {
+                this.setReturning(true);
+            }
+
+            taskQueue.remove(token);
+        }
+    }
+
+    /**
+     * Method to get the task queue of this job.
+     *
+     * @return The task queue.
+     */
+    public List<IToken> getTaskQueue()
+    {
+        return ImmutableList.copyOf(taskQueue);
+    }
+
+    /**
+     * Method used to check if this DMan is trying to return to the warehouse to clean up.
+     *
+     * @return True when this DMan is returning the warehouse to clean his inventory.
+     */
+    public boolean getReturning()
+    {
+        return returning;
+    }
+
+    /**
+     * Method used to set if this DMan needs to return and clear his inventory.
+     * A set task is preferred over the returning flag.
+     *
+     * @param returning True to return the DMan to the warehouse and clean, false not to.
+     */
+    public void setReturning(final boolean returning)
+    {
+        this.returning = returning;
     }
 }

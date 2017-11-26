@@ -42,19 +42,6 @@ public final class WorkerUtil
     }
 
     /**
-     * Attempt to move to XYZ.
-     * True when found and destination is set.
-     *
-     * @param citizen     Citizen to move to XYZ.
-     * @param destination Chunk coordinate of the distance.
-     * @return True when found, and destination is set, otherwise false.
-     */
-    public static PathResult moveLivingToXYZ(@NotNull final EntityCitizen citizen, @NotNull final BlockPos destination)
-    {
-        return citizen.getNavigator().moveToXYZ(destination.getX(), destination.getY(), destination.getZ(), 1.0);
-    }
-
-    /**
      * Checks if a worker is at his working site.
      * If he isn't, sets it's path to the location.
      *
@@ -67,7 +54,7 @@ public final class WorkerUtil
      */
     public static boolean isWorkerAtSiteWithMove(@NotNull final EntityCitizen worker, final int x, final int y, final int z, final int range)
     {
-        if(!EntityUtils.isLivingAtSiteWithMove(worker, x, y, z, range))
+        if (!EntityUtils.isLivingAtSiteWithMove(worker, x, y, z, range))
         {
             //If not moving the try setting the point where the entity should move to
             if (worker.getNavigator().noPath() && !EntityUtils.tryMoveLivingToXYZ(worker, x, y, z))
@@ -77,6 +64,19 @@ public final class WorkerUtil
             return false;
         }
         return true;
+    }
+
+    /**
+     * Attempt to move to XYZ.
+     * True when found and destination is set.
+     *
+     * @param citizen     Citizen to move to XYZ.
+     * @param destination Chunk coordinate of the distance.
+     * @return True when found, and destination is set, otherwise false.
+     */
+    public static PathResult moveLivingToXYZ(@NotNull final EntityCitizen citizen, @NotNull final BlockPos destination)
+    {
+        return citizen.getNavigator().moveToXYZ(destination.getX(), destination.getY(), destination.getZ(), 1.0);
     }
 
     /**
@@ -106,6 +106,7 @@ public final class WorkerUtil
     /**
      * Get a Tooltype for a certain block.
      * We need this because minecraft has a lot of blocks which have strange or no required tool.
+     *
      * @param target the target block.
      * @return the toolType to use.
      */
@@ -113,11 +114,11 @@ public final class WorkerUtil
     {
         final IToolType toolType = ToolType.getToolType(target.getHarvestTool(target.getDefaultState()));
 
-        if(toolType == ToolType.NONE && target.getDefaultState().getMaterial() == Material.WOOD)
+        if (toolType == ToolType.NONE && target.getDefaultState().getMaterial() == Material.WOOD)
         {
             return ToolType.AXE;
         }
-        else if(target == Blocks.HARDENED_CLAY || target == Blocks.STAINED_HARDENED_CLAY)
+        else if (target == Blocks.HARDENED_CLAY || target == Blocks.STAINED_HARDENED_CLAY)
         {
             return ToolType.PICKAXE;
         }
@@ -127,6 +128,7 @@ public final class WorkerUtil
     /**
      * Get the correct havestlevel for a certain block.
      * We need this because minecraft has a lot of blocks which have strange or no required harvestlevel.
+     *
      * @param target the target block.
      * @return the required harvestLevel.
      */
@@ -134,14 +136,13 @@ public final class WorkerUtil
     {
         final int required = target.getHarvestLevel(target.getDefaultState());
 
-        if((required == -1 && target.getDefaultState().getMaterial() == Material.WOOD)
-                || target == Blocks.HARDENED_CLAY || target == Blocks.STAINED_HARDENED_CLAY)
+        if ((required == -1 && target.getDefaultState().getMaterial() == Material.WOOD)
+              || target == Blocks.HARDENED_CLAY || target == Blocks.STAINED_HARDENED_CLAY)
         {
             return 0;
         }
         return required;
     }
-
 
     /**
      * Returns whether or not a citizen is heading to a specific location.

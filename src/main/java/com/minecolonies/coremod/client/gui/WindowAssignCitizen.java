@@ -11,8 +11,8 @@ import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.AssignUnassignMessage;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -61,25 +61,22 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
      * Id of the job label in the GUI.
      */
     private static final String CITIZEN_JOB = "job";
-
-    /**
-     * Contains all the citizens.
-     */
-    private List<CitizenDataView> citizens = new ArrayList<>();
     /**
      * The view of the current building.
      */
-    private final AbstractBuilding.View building;
-
+    private final AbstractBuildingView building;
     /**
      * List of citizens which can be assigned.
      */
     private final ScrollingList citizenList;
-
     /**
      * The colony.
      */
     private final ColonyView colony;
+    /**
+     * Contains all the citizens.
+     */
+    private List<CitizenDataView> citizens = new ArrayList<>();
 
     /**
      * Constructor for the window when the player wants to assign a worker for a certain home building.
@@ -150,7 +147,7 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
                     rowPane.findPaneOfTypeByID(CITIZEN_JOB, Label.class).setLabelText(LanguageHandler.format(citizen.getJob()));
 
                     final Button done = rowPane.findPaneOfTypeByID(CITIZEN_DONE, Button.class);
-                    if(colony.isManualHousing())
+                    if (colony.isManualHousing())
                     {
                         done.enable();
                     }
@@ -184,9 +181,9 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
             final CitizenDataView data = citizens.get(row);
             if (building instanceof BuildingHome.View)
             {
-                ((BuildingHome.View) building).addResident(data.getID());
+                ((BuildingHome.View) building).addResident(data.getId());
             }
-            MineColonies.getNetwork().sendToServer(new AssignUnassignMessage(this.building, true, data.getID()));
+            MineColonies.getNetwork().sendToServer(new AssignUnassignMessage(this.building, true, data.getId()));
         }
         else if (!button.getID().equals(BUTTON_CANCEL))
         {

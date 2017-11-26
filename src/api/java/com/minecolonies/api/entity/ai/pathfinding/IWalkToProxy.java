@@ -72,11 +72,12 @@ public interface IWalkToProxy
 
     /**
      * Method to call to detect if an entity living is at site with move.
+     *
      * @param entity the entity to check.
-     * @param x the x value.
-     * @param y the y value.
-     * @param z the z value.
-     * @param range the range.
+     * @param x      the x value.
+     * @param y      the y value.
+     * @param z      the z value.
+     * @param range  the range.
      * @return true if so.
      */
     boolean isLivingAtSiteWithMove(final EntityLiving entity, final int x, final int y, final int z, final int range);

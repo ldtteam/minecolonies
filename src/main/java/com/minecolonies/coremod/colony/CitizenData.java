@@ -1,9 +1,12 @@
 package com.minecolonies.coremod.colony;
 
+import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingBarracksTower;
@@ -11,8 +14,10 @@ import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
+import com.minecolonies.coremod.inventory.InventoryCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
@@ -23,8 +28,13 @@ import java.util.Random;
 /**
  * Extra data for Citizens.
  */
+@SuppressWarnings(Suppression.BIG_CLASS)
 public class CitizenData
 {
+    /**
+     * Maximum saturation of a citizen.
+     */
+    public static final int MAX_SATURATION = 10;
     private static final float  MAX_HEALTH              = 20.0F;
     /**
      * Max level of an attribute a citizen may initially have.
@@ -49,70 +59,57 @@ public class CitizenData
     private static final String TAG_SKILL_INTELLIGENCE  = "intelligence";
     private static final String TAG_SKILL_DEXTERITY     = "dexterity";
     private static final String TAG_SATURATION          = "saturation";
+    private static final String TAG_HELD_ITEM_SLOT      = "HeldItemSlot";
+    private static final String TAG_INVENTORY = "inventory";
 
     /**
      * Minimum saturation of a citizen.
      */
     private static final int MIN_SATURATION = 0;
-
-    /**
-     * Maximum saturation of a citizen.
-     */
-    public static final int MAX_SATURATION = 10;
-
     /**
      * The unique citizen id.
      */
     private final int id;
-
-    /**
-     * The name of the citizen.
-     */
-    private String name;
-
-    /**
-     * Boolean gender, true = female, false = male.
-     */
-    private boolean female;
-
-    /**
-     * The id of the citizens texture.
-     */
-    private int textureId;
-
     /**
      * The colony the citizen belongs to.
      */
     private final Colony colony;
-
+    private final InventoryCitizen inventory;
+    /**
+     * The name of the citizen.
+     */
+    private String name;
+    /**
+     * Boolean gender, true = female, false = male.
+     */
+    private boolean female;
+    /**
+     * The id of the citizens texture.
+     */
+    private int textureId;
     /**
      * The home building of the citizen.
      */
     @Nullable
     private AbstractBuilding homeBuilding;
-
     /**
      * The work building of the citizen.
      */
     @Nullable
     private AbstractBuildingWorker workBuilding;
-
     /**
      * The job of the citizen.
      */
     private AbstractJob job;
-
     /**
      * If the citizen is dirty (Has to be updated on client side).
      */
     private boolean dirty;
-
     /**
      * Its entitity.
      */
     @Nullable
     private EntityCitizen entity;
-
     /**
      * Attributes, which influence the workers behaviour.
      * May be added more later.
@@ -152,6 +149,7 @@ public class CitizenData
     {
         this.id = id;
         this.colony = colony;
+        inventory = new InventoryCitizen("Minecolonies Inventory", true, this);
     }
 
     /**
@@ -199,6 +197,13 @@ public class CitizenData
         {
             setJob(AbstractJob.createFromNBT(this, compound.getCompoundTag("job")));
         }
+
+        if (compound.hasKey(TAG_INVENTORY))
+        {
+            final NBTTagList nbttaglist = compound.getTagList(TAG_INVENTORY, 10);
+            this.inventory.readFromNBT(nbttaglist);
+            this.inventory.setHeldItem(compound.getInteger(TAG_HELD_ITEM_SLOT));
+        }
     }
 
     /**
@@ -233,6 +238,71 @@ public class CitizenData
         colony.markCitizensDirty();
     }
 
+    /**
+     * Create a CitizenData View given it's saved NBTTagCompound.
+     *
+     * @param id  The citizen's id.
+     * @param buf The network data.
+     * @return View object of the citizen.
+     */
+    @Nullable
+    public static CitizenDataView createCitizenDataView(final int id, final ByteBuf buf)
+    {
+        @Nullable CitizenDataView citizenDataView = new CitizenDataView(id);
+
+        try
+        {
+            citizenDataView.deserialize(buf);
+        }
+        catch (final RuntimeException ex)
+        {
+            Log.getLogger().error(String.format("A CitizenData.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
+              citizenDataView.getId()), ex);
+            citizenDataView = null;
+        }
+
+        return citizenDataView;
+    }
+
+    /**
+     * Returns a random element in a list.
+     *
+     * @param rand  Random object.
+     * @param array Array to select from.
+     * @return Random element from array.
+     */
+    private static String getRandomElement(@NotNull final Random rand, @NotNull final String[] array)
+    {
+        return array[rand.nextInt(array.length)];
+    }
+
+    /**
+     * Returns a random capital letter from the alphabet.
+     *
+     * @param rand Random object.
+     * @return Random capital letter.
+     */
+    private static char getRandomLetter(@NotNull final Random rand)
+    {
+        return (char) (rand.nextInt(LETTERS_IN_THE_ALPHABET) + 'A');
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = id;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (female ? 1 : 0);
+        result = 31 * result + (colony != null ? colony.hashCode() : 0);
+        result = 31 * result + strength;
+        result = 31 * result + endurance;
+        result = 31 * result + charisma;
+        result = 31 * result + intelligence;
+        result = 31 * result + dexterity;
+        return result;
+    }
+
+    @SuppressWarnings(Suppression.TOO_MANY_RETURNS)
     @Override
     public boolean equals(final Object o)
     {
@@ -282,47 +352,6 @@ public class CitizenData
         return colony != null ? (data.colony != null && colony.getID() == data.colony.getID()) : (data.colony == null);
     }
 
-    @Override
-    public int hashCode()
-    {
-        int result = id;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (female ? 1 : 0);
-        result = 31 * result + (colony != null ? colony.hashCode() : 0);
-        result = 31 * result + strength;
-        result = 31 * result + endurance;
-        result = 31 * result + charisma;
-        result = 31 * result + intelligence;
-        result = 31 * result + dexterity;
-        return result;
-    }
-
-    /**
-     * Create a CitizenData View given it's saved NBTTagCompound.
-     *
-     * @param id  The citizen's id.
-     * @param buf The network data.
-     * @return View object of the citizen.
-     */
-    @Nullable
-    public static CitizenDataView createCitizenDataView(final int id, final ByteBuf buf)
-    {
-        @Nullable CitizenDataView citizenDataView = new CitizenDataView(id);
-
-        try
-        {
-            citizenDataView.deserialize(buf);
-        }
-        catch (final RuntimeException ex)
-        {
-            Log.getLogger().error(String.format("A CitizenData.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-                    citizenDataView.getID()), ex);
-            citizenDataView = null;
-        }
-
-        return citizenDataView;
-    }
-
     /**
      * Returns the colony of the citizen.
      *
@@ -367,7 +396,7 @@ public class CitizenData
         final int levelCap = (int) colony.getOverallHappiness();
         @NotNull final Random random = new Random();
 
-        if(levelCap <= 1)
+        if (levelCap <= 1)
         {
             intelligence = 1;
             charisma = 1;
@@ -400,12 +429,12 @@ public class CitizenData
         if (female)
         {
             citizenName = String.format("%s %s. %s", getRandomElement(rand, Configurations.names.femaleFirstNames), getRandomLetter(rand),
-                    getRandomElement(rand, Configurations.names.lastNames));
+              getRandomElement(rand, Configurations.names.lastNames));
         }
         else
         {
             citizenName = String.format("%s %s. %s", getRandomElement(rand, Configurations.names.maleFirstNames), getRandomLetter(rand),
-                    getRandomElement(rand, Configurations.names.lastNames));
+              getRandomElement(rand, Configurations.names.lastNames));
         }
         for (int i = 1; i <= this.getColony().getMaxCitizens(); i++)
         {
@@ -415,29 +444,6 @@ public class CitizenData
             }
         }
         return citizenName;
-    }
-
-    /**
-     * Returns a random element in a list.
-     *
-     * @param rand  Random object.
-     * @param array Array to select from.
-     * @return Random element from array.
-     */
-    private static String getRandomElement(@NotNull final Random rand, @NotNull final String[] array)
-    {
-        return array[rand.nextInt(array.length)];
-    }
-
-    /**
-     * Returns a random capital letter from the alphabet.
-     *
-     * @param rand Random object.
-     * @return Random capital letter.
-     */
-    private static char getRandomLetter(@NotNull final Random rand)
-    {
-        return (char) (rand.nextInt(LETTERS_IN_THE_ALPHABET) + 'A');
     }
 
     /**
@@ -697,6 +703,9 @@ public class CitizenData
             job.writeToNBT(jobCompound);
             compound.setTag("job", jobCompound);
         }
+
+        compound.setTag(TAG_INVENTORY, inventory.writeToNBT(new NBTTagList()));
+        compound.setInteger(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot());
     }
 
     /**
@@ -749,11 +758,11 @@ public class CitizenData
         ByteBufUtils.writeUTF8String(buf, (job != null) ? job.getName() : "");
 
         final EntityCitizen citizen = getCitizenEntity();
-        if(citizen != null)
+        if (citizen != null)
         {
             final ITextComponent[] latestStatus = citizen.getLatestStatus();
             buf.writeInt(latestStatus.length);
-            for(int i = 0; i < latestStatus.length; i++)
+            for (int i = 0; i < latestStatus.length; i++)
             {
                 ByteBufUtils.writeUTF8String(buf, latestStatus[i] == null ? "" : latestStatus[i].getUnformattedText());
             }
@@ -762,6 +771,12 @@ public class CitizenData
         {
             buf.writeInt(0);
         }
+
+        buf.writeInt(colony.getID());
+
+        NBTTagCompound compound = new NBTTagCompound();
+        compound.setTag("inventory", inventory.writeToNBT(new NBTTagList()));
+        ByteBufUtils.writeTag(buf, compound);
     }
 
     /**
@@ -890,5 +905,37 @@ public class CitizenData
     public double getSaturation()
     {
         return this.saturation;
+    }
+
+    public InventoryCitizen getInventory()
+    {
+        return inventory;
+    }
+
+    public <R extends IRequestable> IToken createRequest(@NotNull R requested)
+    {
+        return getWorkBuilding().createRequest(this, requested);
+    }
+
+    public <R extends IRequestable> IToken createRequestAsync(@NotNull R requested)
+    {
+        IToken requestedToken = getWorkBuilding().createRequest(this, requested);
+
+        job.getAsyncRequests().add(requestedToken);
+
+        return requestedToken;
+    }
+
+    public void onRequestCancelled(@NotNull IToken token)
+    {
+        if (isRequestAsync(token))
+        {
+            job.getAsyncRequests().remove(token);
+        }
+    }
+
+    public boolean isRequestAsync(@NotNull IToken token)
+    {
+        return job.getAsyncRequests().contains(token);
     }
 }

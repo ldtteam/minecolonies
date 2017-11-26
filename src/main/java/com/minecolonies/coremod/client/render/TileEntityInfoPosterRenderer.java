@@ -53,7 +53,7 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
     /**
      * Y-Offset in order to have the scarecrow over ground.
      */
-    private static final double YOFFSET    = 0.2;
+    private static final double YOFFSET = 0.2;
 
     /**
      * 90° offset.
@@ -68,7 +68,7 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
     /**
      * 270° offset.
      */
-    private static final int THREE_QUARTERS  = 270;
+    private static final int THREE_QUARTERS = 270;
 
     /**
      * Max text length.
@@ -78,12 +78,12 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
     /**
      * Text offset at x.
      */
-    private static final int TEXT_OFFSET_X   = 10;
+    private static final int TEXT_OFFSET_X = 10;
 
     /**
      * Text offset at y.
      */
-    private static final int TEXT_OFFSET_Y   = 5;
+    private static final int TEXT_OFFSET_Y = 5;
 
     /**
      * The ModelSign instance for use in this renderer
@@ -98,7 +98,7 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
             model = loadModel();
         }
 
-        if(model == null)
+        if (model == null)
         {
             return;
         }
@@ -112,15 +112,15 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
         double plusX = 0;
         double plusZ = 0;
 
-        switch(facing)
+        switch (facing)
         {
             case NINETY_DEGREE:
-                plusX +=1;
-                plusZ+=1;
+                plusX += 1;
+                plusZ += 1;
                 break;
             case HALF_ROTATION:
-                plusZ+=1;
-                facing= 0;
+                plusZ += 1;
+                facing = 0;
                 break;
             case 0:
                 facing = HALF_ROTATION;
@@ -158,9 +158,38 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
         renderText(actualState, plusZ, plusX, te, x, y, z);
     }
 
+    private static IBakedModel loadModel()
+    {
+        try
+        {
+            final IModel mod = ModelLoaderRegistry.getModel(new ResourceLocation(Constants.MOD_ID, "block/blockInfoPoster"));
+            final IModelState state = mod.getDefaultState();
+            return mod.bake(state, DefaultVertexFormats.BLOCK, ModelLoader.defaultTextureGetter());
+        }
+        catch (final Exception e)
+        {
+            Log.getLogger().error("Error loading infoPoster texture", e);
+        }
+        return null;
+    }
 
-    private void renderText(final IBlockState actualState, final double addZ, final double addX, final TileEntityInfoPoster te,
-            final double x, final double y, final double z)
+    private static void renderModel(final World world, final IBakedModel model, final BlockPos pos, final int alpha)
+    {
+        final IBlockState state = world.getBlockState(pos);
+        final IBlockState actualState = state.getBlock().getActualState(state, world, pos);
+        final IBlockState iBlockExtendedState = state.getBlock().getExtendedState(state, world, pos);
+
+        for (final EnumFacing facing : EnumFacing.values())
+        {
+            renderQuads(world, actualState, pos, model.getQuads(actualState, facing, 0), alpha);
+        }
+
+        renderQuads(world, actualState, pos, model.getQuads(iBlockExtendedState, null, 0), alpha);
+    }
+
+    private void renderText(
+                             final IBlockState actualState, final double addZ, final double addX, final TileEntityInfoPoster te,
+                             final double x, final double y, final double z)
     {
         GlStateManager.pushMatrix();
         final FontRenderer fontrenderer = this.getFontRenderer();
@@ -168,7 +197,7 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
         double plusZ = addZ;
 
         int facing = (int) actualState.getValue(BlockWallSign.FACING).getHorizontalAngle();
-        switch(facing)
+        switch (facing)
         {
             case NINETY_DEGREE:
                 facing = THREE_QUARTERS;
@@ -210,35 +239,6 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
         GlStateManager.depthMask(true);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.popMatrix();
-    }
-
-    private static IBakedModel loadModel()
-    {
-        try
-        {
-            final IModel mod = ModelLoaderRegistry.getModel(new ResourceLocation(Constants.MOD_ID, "block/blockInfoPoster"));
-            final IModelState state = mod.getDefaultState();
-            return mod.bake(state, DefaultVertexFormats.BLOCK, ModelLoader.defaultTextureGetter());
-        }
-        catch (final Exception e)
-        {
-            Log.getLogger().error("Error loading infoPoster texture", e);
-        }
-        return null;
-    }
-
-    private static void renderModel(final World world, final IBakedModel model, final BlockPos pos, final int alpha)
-    {
-        final IBlockState state = world.getBlockState(pos);
-        final IBlockState actualState = state.getBlock().getActualState(state, world, pos);
-        final IBlockState iBlockExtendedState = state.getBlock().getExtendedState(state, world, pos);
-
-        for (final EnumFacing facing : EnumFacing.values())
-        {
-            renderQuads(world, actualState, pos, model.getQuads(actualState, facing, 0), alpha);
-        }
-
-        renderQuads(world, actualState, pos, model.getQuads(iBlockExtendedState, null, 0), alpha);
     }
 
     private static void renderQuads(final World world, final IBlockState actualState, final BlockPos pos, final List<BakedQuad> quads, final int alpha)

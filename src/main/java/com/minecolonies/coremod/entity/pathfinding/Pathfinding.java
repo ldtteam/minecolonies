@@ -209,10 +209,10 @@ public final class Pathfinding
 
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(
-                GlStateManager.SourceFactor.SRC_ALPHA,
-                GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
-                GlStateManager.SourceFactor.ONE,
-                GlStateManager.DestFactor.ZERO);
+          GlStateManager.SourceFactor.SRC_ALPHA,
+          GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
+          GlStateManager.SourceFactor.ONE,
+          GlStateManager.DestFactor.ZERO);
         GlStateManager.disableTexture2D();
 
         final int i = Math.max(fontrenderer.getStringWidth(s1), fontrenderer.getStringWidth(s2)) / 2;

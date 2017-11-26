@@ -54,9 +54,9 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
         if (list[colonyID] != null)
         {
             throw new IllegalArgumentException(
-                                                      String.format("Already a colony registered to id=%d, colony=%s, not creating new colony",
-                                                              colonyID,
-                                                              list[colonyID].getName()));
+                                                String.format("Already a colony registered to id=%d, colony=%s, not creating new colony",
+                                                  colonyID,
+                                                  list[colonyID].getName()));
         }
 
         final Colony colony = new Colony(colonyID, world, position);
@@ -93,10 +93,10 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
         if (existingColony != null && existingColony != colony)
         {
             throw new IllegalArgumentException(
-                                                      String.format("Already a colony registered to id=%d, colony=%s, not changing to colony=%s",
-                                                              colony.getID(),
-                                                              existingColony.getName(),
-                                                              colony.getName()));
+                                                String.format("Already a colony registered to id=%d, colony=%s, not changing to colony=%s",
+                                                  colony.getID(),
+                                                  existingColony.getName(),
+                                                  colony.getName()));
         }
 
         while (colony.getID() >= list.length)

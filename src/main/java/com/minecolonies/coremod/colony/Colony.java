@@ -2,14 +2,16 @@ package com.minecolonies.coremod.colony;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Rank;
-import com.minecolonies.api.colony.requestsystem.IRequestManager;
-import com.minecolonies.api.colony.requestsystem.StandardRequestManager;
+import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
+import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.MineColoniesAchievement;
 import com.minecolonies.coremod.colony.buildings.*;
 import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
@@ -46,209 +48,172 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.ColonyConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * This class describes a colony and contains all the data and methods for
  * manipulating a Colony.
  */
+@SuppressWarnings({Suppression.BIG_CLASS, Suppression.SPLIT_CLASS})
 public class Colony implements IColony
 {
-    //  Settings
-    private static final int    CITIZEN_CLEANUP_TICK_INCREMENT = 5 * TICKS_SECOND;
-    private static final String TAG_ID                         = "id";
-    private static final String TAG_NAME                       = "name";
-    private static final String TAG_DIMENSION                  = "dimension";
-    private static final String TAG_CENTER                     = "center";
-    private static final String TAG_MAX_CITIZENS               = "maxCitizens";
-    private static final String TAG_BUILDINGS                  = "buildings";
-    private static final String TAG_CITIZENS                   = "citizens";
-    private static final String TAG_ACHIEVEMENT                = "achievement";
-    private static final String TAG_ACHIEVEMENT_LIST           = "achievementlist";
-    private static final String TAG_WORK                       = "work";
-    private static final String TAG_MANUAL_HIRING              = "manualHiring";
-    private static final String TAG_MANUAL_HOUSING             = "manualHousing";
-    private static final String TAG_WAYPOINT                   = "waypoints";
-    private static final String TAG_FREE_BLOCKS                = "freeBlocks";
-    private static final String TAG_FREE_POSITIONS             = "freePositions";
-    private static final String TAG_HAPPINESS                  = "happiness";
-    private static final String TAG_ABANDONED                  = "abandoned";
-    private static final String TAG_DELETABLE                  = "deletable";
-
-    //statistics tags
-    private static final String TAG_STATISTICS            = "statistics";
-    private static final String TAG_MINER_STATISTICS      = "minerStatistics";
-    private static final String TAG_MINER_ORES            = "ores";
-    private static final String TAG_MINER_DIAMONDS        = "diamonds";
-    private static final String TAG_FARMER_STATISTICS     = "farmerStatistics";
-    private static final String TAG_FARMER_WHEAT          = "wheat";
-    private static final String TAG_FARMER_POTATOES       = "potatoes";
-    private static final String TAG_FARMER_CARROTS        = "carrots";
-    private static final String TAG_GUARD_STATISTICS      = "guardStatistics";
-    private static final String TAG_GUARD_MOBS            = "mobs";
-    private static final String TAG_BUILDER_STATISTICS    = "builderStatistics";
-    private static final String TAG_BUILDER_HUTS          = "huts";
-    private static final String TAG_FISHERMAN_STATISTICS  = "fishermanStatistics";
-    private static final String TAG_FISHERMAN_FISH        = "fish";
-    private static final String TAG_LUMBERJACK_STATISTICS = "lumberjackStatistics";
-    private static final String TAG_LUMBERJACK_TREES      = "trees";
-    private static final String TAG_LUMBERJACK_SAPLINGS   = "saplings";
-    private static final int    NUM_ACHIEVEMENT_FIRST     = 1;
-    private static final int    NUM_ACHIEVEMENT_SECOND    = 25;
-    private static final int    NUM_ACHIEVEMENT_THIRD     = 100;
-    private static final int    NUM_ACHIEVEMENT_FOURTH    = 500;
-    private static final int    NUM_ACHIEVEMENT_FIFTH     = 1000;
+    private static final int CONST_CHUNKSIZE = 16;
+    private static final int DEFAULT_OVERALL_HAPPYNESS = 5;
 
     /**
-     * The default spawn radius required for barbarians.
+     * Id of the colony.
      */
-    private static final int DEFAULT_SPAWN_RADIUS = 10;
-
-    /**
-     * Max spawn radius of the barbarians.
-     */
-    private static final int MAX_SPAWN_RADIUS = 75;
-
-    /**
-     * Whether there will be a raid in this colony tonight.
-     */
-    private boolean willRaidTonight = false;
-
-    /**
-     * Amount of ticks that pass/hour.
-     */
-    private static final int TICKS_HOUR = TICKS_SECOND * SECONDS_A_MINUTE * SECONDS_A_MINUTE;
-
-    /**
-     * Average happiness of a citizen.
-     */
-    private static final double AVERAGE_HAPPINESS = 5.0;
-
-    /**
-     * The hours the colony is without contact with its players.
-     */
-    private int lastContactInHours = 0;
-
-    /**
-     * Whether or not the raid has been calculated for today.
-     */
-    private boolean hasRaidBeenCalculated = false;
-
-    /**
-     * Whether or not this colony may have Barbarian events. (set via command)
-     */
-    private boolean canHaveBarbEvents = true;
-
-    /**
-     * Whether or not this colony may be auto-deleted.
-     */
-    private boolean canColonyBeAutoDeleted = true;
-
-    /**
-     * Bonus happiness each factor added.
-     */
-    private static final double HAPPINESS_FACTOR = 0.1;
-
-    /**
-     * Saturation at which a citizen starts being happy.
-     */
-    private static final int WELL_SATURATED_LIMIT = 5;
-
-    /**
-     * Variable to determine if its currently day or night.
-     */
-    private boolean isDay = true;
-
-    /**
-     * Max overall happiness.
-     */
-    private static final double MAX_OVERALL_HAPPINESS = 10;
-
-    /**
-     * Min overall happiness.
-     */
-    private static final double MIN_OVERALL_HAPPINESS = 1;
-
-    //private int autoHostile = 0;//Off
-    private static final String TAG_FIELDS                        = "fields";
-    private static final int    CHECK_WAYPOINT_EVERY              = 100;
-    private static final double MAX_SQ_DIST_SUBSCRIBER_UPDATE     = MathUtils.square(Configurations.gameplay.workingRangeTownHall + 16D);
-    private static final double MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE = MathUtils.square(Configurations.gameplay.workingRangeTownHall * 2D);
     private final int id;
-    //  General Attributes
-    private final int dimensionId;
-    //  Buildings
-    private final Map<BlockPos, Field>       fields    = new HashMap<>();
-    //Additional Waypoints.
-    private final Map<BlockPos, IBlockState> wayPoints = new HashMap<>();
-
     /**
-     * The warehouse building position. Initially null.
+     * Dimension of the colony.
      */
-    private BuildingWareHouse wareHouse = null;
-
+    private final int dimensionId;
+    /**
+     * List of fields of the colony.
+     */
+    private final Map<BlockPos, Field> fields = new HashMap<>();
+    /**
+     * List of waypoints of the colony.
+     */
+    private final Map<BlockPos, IBlockState> wayPoints = new HashMap<>();
+    /**
+     * List of achievements within the colony.
+     */
     @NotNull
-    private final List<Advancement> colonyAchievements;
-    //  Workload and Jobs
-    private final WorkManager                     workManager       = new WorkManager(this);
+    private final List<Achievement> colonyAchievements;
+    /**
+     * Work Manager of the colony (Request System).
+     */
+    private final WorkManager workManager = new WorkManager(this);
+    /**
+     * List of building in the colony.
+     */
     @NotNull
-    private final Map<BlockPos, AbstractBuilding> buildings         = new HashMap<>();
-    //  Citizenry
+    private final Map<BlockPos, AbstractBuilding> buildings = new HashMap<>();
+    /**
+     * List of citizens.
+     */
     @NotNull
-    private final Map<Integer, CitizenData>       citizens          = new HashMap<>();
+    private final Map<Integer, CitizenData> citizens = new HashMap<>();
     /**
      * The Positions which players can freely interact.
      */
-    private final Set<BlockPos>                   freePositions     = new HashSet<>();
+    private final Set<BlockPos> freePositions = new HashSet<>();
     /**
      * The Blocks which players can freely interact with.
      */
-    private final Set<Block>                      freeBlocks        = new HashSet<>();
-    private       int                             minedOres         = 0;
-    private       int                             minedDiamonds     = 0;
-    private       int                             harvestedWheat    = 0;
-    private       int                             harvestedPotatoes = 0;
-    private       int                             harvestedCarrots  = 0;
-    private       int                             killedMobs        = 0;
-    private       int                             builtHuts         = 0;
-    private       int                             caughtFish        = 0;
-    private       int                             felledTrees       = 0;
-    private       int                             plantedSaplings   = 0;
-    //  Runtime Data
-    @Nullable
-    private       World                           world             = null;
-    //  Updates and Subscriptions
-    @NotNull
-    private       Set<EntityPlayerMP>             subscribers      = new HashSet<>();
-    private       boolean                         isDirty          = false;
-    private       boolean                         isCitizensDirty  = false;
-    private       boolean                         isBuildingsDirty = false;
-    private       boolean                         manualHiring     = false;
-    private       boolean                         manualHousing     = false;
-
-    private       boolean                         isFieldsDirty    = false;
-    private       String                          name             = "ERROR(Wasn't placed by player)";
-    private BlockPos         center;
-    //  Administration/permissions
-    @NotNull
-    private Permissions      permissions;
-    @Nullable
-    private BuildingTownHall townHall;
-    private int topCitizenId = 0;
-    private int maxCitizens  = Configurations.gameplay.maxCitizens;
-
-    private double overallHappiness = 5;
-
+    private final Set<Block> freeBlocks = new HashSet<>();
     /**
      * Colony permission event handler.
      */
     private final ColonyPermissionEventHandler eventHandler;
-
+    /**
+     * Whether there will be a raid in this colony tonight.
+     */
+    private boolean willRaidTonight = false;
+    /**
+     * The hours the colony is without contact with its players.
+     */
+    private int lastContactInHours = 0;
+    /**
+     * Whether or not the raid has been calculated for today.
+     */
+    private boolean hasRaidBeenCalculated = false;
+    /**
+     * Whether or not this colony may have Barbarian events. (set via command)
+     */
+    private boolean canHaveBarbEvents = true;
+    /**
+     * Whether or not this colony may be auto-deleted.
+     */
+    private boolean canColonyBeAutoDeleted = true;
+    /**
+     * Variable to determine if its currently day or night.
+     */
+    private boolean isDay = true;
+    /**
+     * The warehouse building position. Initially null.
+     */
+    private BuildingWareHouse wareHouse = null;
+    /**
+     * Statistical values.
+     */
+    private int minedOres         = 0;
+    private int minedDiamonds     = 0;
+    private int harvestedWheat    = 0;
+    private int harvestedPotatoes = 0;
+    private int harvestedCarrots  = 0;
+    private int killedMobs        = 0;
+    private int builtHuts         = 0;
+    private int caughtFish        = 0;
+    private int felledTrees       = 0;
+    private int plantedSaplings   = 0;
+    /**
+     * The world the colony currently runs on.
+     */
+    @Nullable
+    private World world = null;
+    /**
+     * List of players subscribing to the colony.
+     */
+    @NotNull
+    private Set<EntityPlayerMP> subscribers = new HashSet<>();
+    /**
+     * Variables taking care of updating the views.
+     */
+    private boolean isDirty          = false;
+    private boolean isCitizensDirty  = false;
+    private boolean isBuildingsDirty = false;
+    private boolean isFieldsDirty    = false;
+    /**
+     * The hiring mode in the colony.
+     */
+    private boolean manualHiring = false;
+    /**
+     * The housing mode in the colony.
+     */
+    private boolean manualHousing = false;
+    /**
+     * The name of the colony.
+     */
+    private String name = "ERROR(Wasn't placed by player)";
+    /**
+     * The center of the colony.
+     */
+    private BlockPos center;
+    /**
+     * The colony permission object.
+     */
+    @NotNull
+    private Permissions permissions;
+    /**
+     * The townhall of the colony.
+     */
+    @Nullable
+    private BuildingTownHall townHall;
+    /**
+     * The highest citizen id.
+     */
+    private int topCitizenId = 0;
+    /**
+     * Max citizens without housing.
+     */
+    private int maxCitizens = Configurations.gameplay.maxCitizens;
+    /**
+     * Overall happyness of the colony.
+     */
+    private double overallHappiness = DEFAULT_OVERALL_HAPPYNESS;
     /**
      * Amount of ticks passed.
      */
     private int ticksPassed = 0;
-    private final IRequestManager requestManager = new StandardRequestManager(this);
+
+    /**
+     * The request manager assigned to the colony.
+     */
+    private IRequestManager requestManager;
 
     /**
      * Constructor for a newly created Colony.
@@ -259,22 +224,24 @@ public class Colony implements IColony
      */
     Colony(final int id, @NotNull final World w, final BlockPos c)
     {
-        this(id, w.provider.getDimension());
+        this(id, w);
         center = c;
         world = w;
         this.permissions = new Permissions(this);
+        requestManager = new StandardRequestManager(this);
     }
 
     /**
      * Base constructor.
      *
-     * @param id  The current id for the colony.
-     * @param dim The world the colony exists in.
+     * @param id    The current id for the colony.
+     * @param world The world the colony exists in.
      */
-    protected Colony(final int id, final int dim)
+    protected Colony(final int id, final World world)
     {
         this.id = id;
-        this.dimensionId = dim;
+        this.dimensionId = world.provider.getDimension();
+        this.world = world;
         this.permissions = new Permissions(this);
         this.colonyAchievements = new ArrayList<>();
 
@@ -307,13 +274,23 @@ public class Colony implements IColony
      * @return loaded colony.
      */
     @NotNull
-    public static Colony loadColony(@NotNull final NBTTagCompound compound)
+    public static Colony loadColony(@NotNull final NBTTagCompound compound, @NotNull final World world)
     {
         final int id = compound.getInteger(TAG_ID);
-        final int dimensionId = compound.getInteger(TAG_DIMENSION);
-        @NotNull final Colony c = new Colony(id, dimensionId);
+        @NotNull final Colony c = new Colony(id, world);
+        c.setName(compound.getString(TAG_NAME));
+        c.center = BlockPosUtil.readFromNBT(compound, TAG_CENTER);
+        c.setRequestManager();
         c.readFromNBT(compound);
         return c;
+    }
+
+    /**
+     * Sets the request manager on colony load.
+     */
+    private void setRequestManager()
+    {
+        requestManager = new StandardRequestManager(this);
     }
 
     /**
@@ -323,9 +300,6 @@ public class Colony implements IColony
      */
     private void readFromNBT(@NotNull final NBTTagCompound compound)
     {
-        name = compound.getString(TAG_NAME);
-        center = BlockPosUtil.readFromNBT(compound, TAG_CENTER);
-
         manualHiring = compound.getBoolean(TAG_MANUAL_HIRING);
         maxCitizens = compound.getInteger(TAG_MAX_CITIZENS);
 
@@ -437,16 +411,21 @@ public class Colony implements IColony
         }
         lastContactInHours = compound.getInteger(TAG_ABANDONED);
         manualHousing = compound.getBoolean(TAG_MANUAL_HOUSING);
-        canColonyBeAutoDeleted = compound.getBoolean(TAG_DELETABLE);
+
+        if (compound.hasKey(TAG_REQUESTMANAGER))
+        {
+            this.requestManager.deserializeNBT(compound.getCompoundTag(TAG_REQUESTMANAGER));
+        }
     }
 
     /**
-     * Get the event handler assigned to the colony.
-     * @return the ColonyPermissionEventHandler.
+     * Add a Building to the Colony.
+     *
+     * @param field Field to add to the colony.
      */
-    public ColonyPermissionEventHandler getEventHandler()
+    private void addField(@NotNull final Field field)
     {
-        return eventHandler;
+        fields.put(field.getID(), field);
     }
 
     /**
@@ -469,16 +448,18 @@ public class Colony implements IColony
         {
             wareHouse = (BuildingWareHouse) building;
         }
+
+        getRequestManager().onProviderAddedToColony(building);
     }
 
     /**
-     * Add a Building to the Colony.
+     * Get the event handler assigned to the colony.
      *
-     * @param field Field to add to the colony.
+     * @return the ColonyPermissionEventHandler.
      */
-    private void addField(@NotNull final Field field)
+    public ColonyPermissionEventHandler getEventHandler()
     {
-        fields.put(field.getID(), field);
+        return eventHandler;
     }
 
     /**
@@ -607,7 +588,7 @@ public class Colony implements IColony
         compound.setDouble(TAG_HAPPINESS, overallHappiness);
         compound.setInteger(TAG_ABANDONED, lastContactInHours);
         compound.setBoolean(TAG_MANUAL_HOUSING, manualHousing);
-        compound.setBoolean(TAG_DELETABLE, canColonyBeAutoDeleted);
+        compound.setTag(TAG_REQUESTMANAGER, getRequestManager().serializeNBT());
     }
 
     /**
@@ -782,6 +763,8 @@ public class Colony implements IColony
             b.onServerTick(event);
         }
 
+        getRequestManager().update();
+
         if (event.phase == TickEvent.Phase.END)
         {
             updateSubscribers();
@@ -808,7 +791,7 @@ public class Colony implements IColony
         world.getMinecraftServer().getPlayerList().getPlayers()
           .stream()
           .filter(permissions::isSubscriber)
-          .forEachOrdered(subscribers::add);
+          .forEach(subscribers::add);
 
         if (subscribers.isEmpty())
         {
@@ -992,20 +975,6 @@ public class Colony implements IColony
     }
 
     /**
-     * Sends packages to update the schematics.
-     *
-     * @param hasNewSubscribers the new subscribers.
-     */
-    private void sendSchematicsPackets(final boolean hasNewSubscribers)
-    {
-        if (Structures.isDirty() || hasNewSubscribers)
-        {
-            subscribers.stream()
-              .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyStylesMessage(), player));
-        }
-    }
-
-    /**
      * Sends packages to update the fields.
      *
      * @param hasNewSubscribers the new subscribers.
@@ -1021,6 +990,20 @@ public class Colony implements IColony
                     subscribers.forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewBuildingViewMessage(building), player));
                 }
             }
+        }
+    }
+
+    /**
+     * Sends packages to update the schematics.
+     *
+     * @param hasNewSubscribers the new subscribers.
+     */
+    private void sendSchematicsPackets(final boolean hasNewSubscribers)
+    {
+        if (Structures.isDirty() || hasNewSubscribers)
+        {
+            subscribers.stream()
+              .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyStylesMessage(), player));
         }
     }
 
@@ -1152,12 +1135,12 @@ public class Colony implements IColony
             }
 
             if (shallUpdate(world, TICKS_SECOND)
-                    && event.world.getDifficulty() != EnumDifficulty.PEACEFUL
-                    && Configurations.gameplay.doBarbariansSpawn
-                    && canHaveBarbEvents
-                    && !world.getMinecraftServer().getPlayerList().getPlayers()
+                  && event.world.getDifficulty() != EnumDifficulty.PEACEFUL
+                  && Configurations.gameplay.doBarbariansSpawn
+                  && canHaveBarbEvents
+                  && !world.getMinecraftServer().getPlayerList().getPlayers()
                         .stream().filter(permissions::isSubscriber).collect(Collectors.toList()).isEmpty()
-                    && MobEventsUtils.isItTimeToRaid(event.world, this))
+                  && MobEventsUtils.isItTimeToRaid(event.world, this))
             {
                 MobEventsUtils.barbarianEvent(event.world, this);
             }
@@ -1193,6 +1176,68 @@ public class Colony implements IColony
     private static boolean shallUpdate(final World world, final int averageTicks)
     {
         return world.getWorldTime() % (world.rand.nextInt(averageTicks * 2) + 1) == 0;
+    }
+
+    private boolean areAllColonyChunksLoaded(@NotNull final TickEvent.WorldTickEvent event)
+    {
+        final int distanceFromCenter = Configurations.gameplay.workingRangeTownHall + 48 /* 3 chunks */ + 15 /* round up a chunk */;
+        for (int x = -distanceFromCenter; x <= distanceFromCenter; x += CONST_CHUNKSIZE)
+        {
+            for (int z = -distanceFromCenter; z <= distanceFromCenter; z += CONST_CHUNKSIZE)
+            {
+                if (!event.world.isBlockLoaded(new BlockPos(getCenter().getX() + x, 1, getCenter().getZ() + z)))
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private void cleanUpBuildings(@NotNull final TickEvent.WorldTickEvent event)
+    {
+        @Nullable final List<AbstractBuilding> removedBuildings = new ArrayList<>();
+
+        //Need this list, we may enter he while we add a building in the real world.
+        final List<AbstractBuilding> tempBuildings = new ArrayList<>(buildings.values());
+
+        for (@NotNull final AbstractBuilding building : tempBuildings)
+        {
+            final BlockPos loc = building.getLocation();
+            if (event.world.isBlockLoaded(loc) && !building.isMatchingBlock(event.world.getBlockState(loc).getBlock()))
+            {
+                //  Sanity cleanup
+                removedBuildings.add(building);
+            }
+        }
+
+        @NotNull final ArrayList<Field> tempFields = new ArrayList<>(fields.values());
+
+        for (@NotNull final Field field : tempFields)
+        {
+            if (event.world.isBlockLoaded(field.getLocation()))
+            {
+                final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) event.world.getTileEntity(field.getID());
+                if (scarecrow == null)
+                {
+                    fields.remove(field.getID());
+                }
+                else
+                {
+                    field.setInventoryField(scarecrow.getInventoryField());
+                }
+            }
+        }
+
+        removedBuildings.forEach(AbstractBuilding::destroy);
+    }
+
+    /**
+     * Spawn a brand new Citizen.
+     */
+    private void spawnCitizen()
+    {
+        spawnCitizen(null);
     }
 
     private void updateOverallHappiness()
@@ -1277,79 +1322,6 @@ public class Colony implements IColony
     }
 
     /**
-     * Returns the world the colony is in.
-     *
-     * @return World the colony is in.
-     */
-    @Nullable
-    public World getWorld()
-    {
-        return world;
-    }
-
-    private boolean areAllColonyChunksLoaded(@NotNull final TickEvent.WorldTickEvent event)
-    {
-        final int distanceFromCenter = Configurations.gameplay.workingRangeTownHall + 48 /* 3 chunks */ + 15 /* round up a chunk */;
-        for (int x = -distanceFromCenter; x <= distanceFromCenter; x += 16)
-        {
-            for (int z = -distanceFromCenter; z <= distanceFromCenter; z += 16)
-            {
-                if (!event.world.isBlockLoaded(new BlockPos(getCenter().getX() + x, 128, getCenter().getZ() + z)))
-                {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    private void cleanUpBuildings(@NotNull final TickEvent.WorldTickEvent event)
-    {
-        @Nullable final List<AbstractBuilding> removedBuildings = new ArrayList<>();
-
-        //Need this list, we may enter he while we add a building in the real world.
-        final List<AbstractBuilding> tempBuildings = new ArrayList<>(buildings.values());
-
-        for (@NotNull final AbstractBuilding building : tempBuildings)
-        {
-            final BlockPos loc = building.getLocation();
-            if (event.world.isBlockLoaded(loc) && !building.isMatchingBlock(event.world.getBlockState(loc).getBlock()))
-            {
-                //  Sanity cleanup
-                removedBuildings.add(building);
-            }
-        }
-
-        @NotNull final ArrayList<Field> tempFields = new ArrayList<>(fields.values());
-
-        for (@NotNull final Field field : tempFields)
-        {
-            if (event.world.isBlockLoaded(field.getLocation()))
-            {
-                final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) event.world.getTileEntity(field.getID());
-                if (scarecrow == null)
-                {
-                    fields.remove(field.getID());
-                }
-                else
-                {
-                    field.setInventoryField(scarecrow.getInventoryField());
-                }
-            }
-        }
-
-        removedBuildings.forEach(AbstractBuilding::destroy);
-    }
-
-    /**
-     * Spawn a brand new Citizen.
-     */
-    private void spawnCitizen()
-    {
-        spawnCitizen(null);
-    }
-
-    /**
      * Returns the center of the colony.
      *
      * @return Chunk Coordinates of the center of the colony.
@@ -1376,14 +1348,6 @@ public class Colony implements IColony
     {
         name = n;
         markDirty();
-    }
-
-    /**
-     * Marks the instance dirty.
-     */
-    private void markDirty()
-    {
-        isDirty = true;
     }
 
     @NotNull
@@ -1430,12 +1394,93 @@ public class Colony implements IColony
         return wareHouse != null;
     }
 
-    /**
-     * Updates all subscribers of fields etc.
-     */
-    private void markFieldsDirty()
+    @Override
+    public int getLastContactInHours()
     {
-        isFieldsDirty = true;
+        return lastContactInHours;
+    }
+
+    /**
+     * Returns the world the colony is in.
+     *
+     * @return World the colony is in.
+     */
+    @Nullable
+    public World getWorld()
+    {
+        return world;
+    }
+
+    @Nullable
+    @Override
+    public IRequestManager getRequestManager()
+    {
+        return requestManager;
+    }
+
+    @Override
+    public boolean hasWillRaidTonight()
+    {
+        return willRaidTonight;
+    }
+
+    /**
+     * Marks the instance dirty.
+     */
+    public void markDirty()
+    {
+        ColonyManager.markDirty();
+        isDirty = true;
+    }
+
+    @Override
+    public boolean canBeAutoDeleted()
+    {
+        return canColonyBeAutoDeleted;
+    }
+
+    @Override
+    public boolean isCanHaveBarbEvents()
+    {
+        return canHaveBarbEvents;
+    }
+
+    @Override
+    public boolean isHasRaidBeenCalculated()
+    {
+        return hasRaidBeenCalculated;
+    }
+
+    public void setHasRaidBeenCalculated(final Boolean hasSet)
+    {
+        hasRaidBeenCalculated = hasSet;
+    }
+
+    @Nullable
+    @Override
+    public IRequester getRequesterBuildingForPosition(@NotNull final BlockPos pos)
+    {
+        return getBuilding(pos);
+    }
+
+    /**
+     * Get building in Colony by ID.
+     *
+     * @param buildingId ID (coordinates) of the building to get.
+     * @return AbstractBuilding belonging to the given ID.
+     */
+    public AbstractBuilding getBuilding(final BlockPos buildingId)
+    {
+        if (buildingId != null)
+        {
+            return buildings.get(buildingId);
+        }
+        return null;
+    }
+
+    public void setCanHaveBarbEvents(final Boolean canHave)
+    {
+        this.canHaveBarbEvents = canHave;
     }
 
     /**
@@ -1494,6 +1539,28 @@ public class Colony implements IColony
 
             markCitizensDirty();
         }
+    }
+
+    /**
+     * Increase the overall happiness by an amount, cap at max.
+     *
+     * @param amount the amount.
+     */
+    public void increaseOverallHappiness(final double amount)
+    {
+        this.overallHappiness = Math.min(this.overallHappiness + Math.abs(amount), MAX_OVERALL_HAPPINESS);
+        this.markDirty();
+    }
+
+    /**
+     * Decrease the overall happiness by an amount, cap at min.
+     *
+     * @param amount the amount.
+     */
+    public void decreaseOverallHappiness(final double amount)
+    {
+        this.overallHappiness = Math.max(this.overallHappiness - Math.abs(amount), MIN_OVERALL_HAPPINESS);
+        this.markDirty();
     }
 
     /**
@@ -1663,14 +1730,11 @@ public class Colony implements IColony
     }
 
     /**
-     * Get building in Colony by ID.
-     *
-     * @param buildingId ID (coordinates) of the building to get.
-     * @return AbstractBuilding belonging to the given ID.
+     * Updates all subscribers of fields etc.
      */
-    public AbstractBuilding getBuilding(final BlockPos buildingId)
+    private void markFieldsDirty()
     {
-        return buildings.get(buildingId);
+        isFieldsDirty = true;
     }
 
     /**
@@ -1766,7 +1830,7 @@ public class Colony implements IColony
 
         for (final AbstractBuilding b : buildings.values())
         {
-            if(b.getBuildingLevel() > 0)
+            if (b.getBuildingLevel() > 0)
             {
                 if (b instanceof BuildingHome)
                 {
@@ -1815,6 +1879,8 @@ public class Colony implements IColony
         {
             wareHouse = null;
         }
+
+        getRequestManager().onProviderRemovedFromColony(building);
 
         //Allow Citizens to fix up any data that wasn't fixed up by the AbstractBuilding's own onDestroyed
         for (@NotNull final CitizenData citizen : citizens.values())
@@ -1879,6 +1945,16 @@ public class Colony implements IColony
         //Remove the Citizen
         citizens.remove(citizen.getId());
 
+        if (citizen.getWorkBuilding() != null)
+        {
+            citizen.getWorkBuilding().cancelAllRequestsOfCitizen(citizen);
+        }
+
+        if (citizen.getHomeBuilding() != null)
+        {
+            citizen.getHomeBuilding().cancelAllRequestsOfCitizen(citizen);
+        }
+
         for (@NotNull final AbstractBuilding building : buildings.values())
         {
             building.removeCitizen(citizen);
@@ -1924,16 +2000,6 @@ public class Colony implements IColony
         }
 
         return null;
-    }
-
-    public List<BlockPos> getDeliverymanRequired()
-    {
-
-        return citizens.values().stream()
-                 .filter(citizen -> citizen.getWorkBuilding() != null && citizen.getJob() != null)
-                 .filter(citizen -> !citizen.getJob().isMissingNeededItem())
-                 .map(citizen -> citizen.getWorkBuilding().getLocation())
-                 .collect(Collectors.toList());
     }
 
     /**
@@ -2012,38 +2078,6 @@ public class Colony implements IColony
     }
 
     /**
-     * Getter for overall happiness.
-     *
-     * @return the overall happiness.
-     */
-    public double getOverallHappiness()
-    {
-        return this.overallHappiness;
-    }
-
-    /**
-     * Increase the overall happiness by an amount, cap at max.
-     *
-     * @param amount the amount.
-     */
-    public void increaseOverallHappiness(final double amount)
-    {
-        this.overallHappiness = Math.min(this.overallHappiness + Math.abs(amount), MAX_OVERALL_HAPPINESS);
-        this.markDirty();
-    }
-
-    /**
-     * Decrease the overall happiness by an amount, cap at min.
-     *
-     * @param amount the amount.
-     */
-    public void decreaseOverallHappiness(final double amount)
-    {
-        this.overallHappiness = Math.max(this.overallHappiness - Math.abs(amount), MIN_OVERALL_HAPPINESS);
-        this.markDirty();
-    }
-
-    /**
      * Returns a map with all buildings within the colony.
      * Key is ID (Coordinates), value is building object.
      *
@@ -2056,6 +2090,16 @@ public class Colony implements IColony
     }
 
     /**
+     * Getter for overall happiness.
+     *
+     * @return the overall happiness.
+     */
+    public double getOverallHappiness()
+    {
+        return this.overallHappiness;
+    }
+
+    /**
      * Get all the waypoints of the colony.
      *
      * @return copy of hashmap.
@@ -2065,65 +2109,14 @@ public class Colony implements IColony
         return new HashMap<>(wayPoints);
     }
 
-    @Override
-    public int getLastContactInHours()
-    {
-        return lastContactInHours;
-    }
-
-    @Nullable
-    @Override
-    public IRequestManager getRequestManager()
-    {
-        return requestManager;
-    }
-
-    @Override
-    public boolean hasWillRaidTonight()
-    {
-        return willRaidTonight;
-    }
-
-    public void setHasRaidBeenCalculated(final Boolean hasSet)
-    {
-        hasRaidBeenCalculated = hasSet;
-    }
-
-    @Override
-    public boolean isHasRaidBeenCalculated()
-    {
-        return hasRaidBeenCalculated;
-    }
-
     public void setWillRaidTonight(final Boolean willRaid)
     {
         this.willRaidTonight = willRaid;
     }
 
-    public void setCanHaveBarbEvents(final Boolean canHave)
-    {
-        this.canHaveBarbEvents = canHave;
-    }
-
-    @Override
-    public boolean isCanHaveBarbEvents()
-    {
-        return canHaveBarbEvents;
-    }
-
-    @Override
-    public boolean canBeAutoDeleted()
-    {
-        return canColonyBeAutoDeleted;
-    }
-
-    public void setCanBeAutoDeleter(final Boolean canBeDeleted)
-    {
-        this.canColonyBeAutoDeleted = canBeDeleted;
-    }
-
     /**
      * This sets whether or not a colony can be automatically deleted Via command, or an on-tick check.
+     *
      * @param canBeDeleted whether the colony is able to be deleted automatically
      */
     public void setCanBeAutoDeleted(final Boolean canBeDeleted)
@@ -2145,10 +2138,10 @@ public class Colony implements IColony
         BlockPos thePos = center;
         double distance = 0;
         AbstractBuilding theBuilding = null;
-        for(final BlockPos pos: positions)
+        for (final BlockPos pos : positions)
         {
             final double currentDistance = center.distanceSq(pos);
-            if(currentDistance > distance && world.isAreaLoaded(pos, DEFAULT_SPAWN_RADIUS))
+            if (currentDistance > distance && world.isAreaLoaded(pos, DEFAULT_SPAWN_RADIUS))
             {
                 distance = currentDistance;
                 thePos = pos;
@@ -2157,26 +2150,26 @@ public class Colony implements IColony
         }
 
         int minDistance = 0;
-        if(theBuilding != null)
+        if (theBuilding != null)
         {
             final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = theBuilding.getCorners();
             minDistance
-                    = Math.max(corners.getFirst().getFirst() - corners.getFirst().getSecond(), corners.getSecond().getFirst() - corners.getSecond().getSecond());
+              = Math.max(corners.getFirst().getFirst() - corners.getFirst().getSecond(), corners.getSecond().getFirst() - corners.getSecond().getSecond());
         }
 
-        if(thePos.equals(center))
+        if (thePos.equals(center))
         {
             return center;
         }
 
         int radius = DEFAULT_SPAWN_RADIUS;
-        while(world.isAreaLoaded(thePos, radius))
+        while (world.isAreaLoaded(thePos, radius))
         {
-            radius+=DEFAULT_SPAWN_RADIUS;
+            radius += DEFAULT_SPAWN_RADIUS;
         }
 
         thePos = thePos.offset(directionX, Math.max(minDistance, Math.min(radius, MAX_SPAWN_RADIUS)));
-        thePos = thePos.offset(directionZ, Math.max(minDistance,Math.min(radius, MAX_SPAWN_RADIUS)));
+        thePos = thePos.offset(directionZ, Math.max(minDistance, Math.min(radius, MAX_SPAWN_RADIUS)));
 
         final int randomDegree = world.rand.nextInt((int) WHOLE_CIRCLE);
 
@@ -2192,9 +2185,10 @@ public class Colony implements IColony
 
     /**
      * Check if a certain vector matches two directions.
+     *
      * @param directionX the direction x.
      * @param directionZ the direction z.
-     * @param vector the vector.
+     * @param vector     the vector.
      * @return true if so.
      */
     private static boolean isInDirection(final EnumFacing directionX, final EnumFacing directionZ, final BlockPos vector)

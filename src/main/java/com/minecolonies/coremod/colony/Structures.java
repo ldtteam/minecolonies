@@ -1,14 +1,11 @@
 package com.minecolonies.coremod.colony;
 
 import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.structures.helpers.Structure;
-import net.minecraft.block.Block;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -22,8 +19,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.*;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static com.minecolonies.api.util.constant.Suppression.EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS;
@@ -36,34 +31,28 @@ public final class Structures
     /**
      * Extension used by the schematic files.
      */
-    public static final  String                                        SCHEMATIC_EXTENSION   = ".nbt";
-
-    /**
-     * Schematic's path in the jar file.
-     */
-    private static final String                                        SCHEMATICS_ASSET_PATH = "/assets/minecolonies/";
-
-    /**
-     * Schematic's path separator.
-     */
-    private static final String                                        SCHEMATICS_SEPARATOR = "/";
-
+    public static final String SCHEMATIC_EXTENSION = ".nbt";
     /**
      * Storage location for the "normal" schematics.
      * In the jar file or on the local hard drive
      */
-    public static final  String                                        SCHEMATICS_PREFIX     = "schematics";
-
+    public static final String SCHEMATICS_PREFIX = "schematics";
     /**
      * Storage location for the cached schematics.
      */
-    public static final  String                                        SCHEMATICS_CACHE      = "cache";
-
+    public static final String SCHEMATICS_CACHE = "cache";
     /**
      * Storage location for the player's schematics.
      */
-    public static final  String                                        SCHEMATICS_SCAN       = "scans";
-
+    public static final String SCHEMATICS_SCAN = "scans";
+    /**
+     * Schematic's path in the jar file.
+     */
+    public static final String SCHEMATICS_ASSET_PATH = "/assets/minecolonies/";
+    /**
+     * Schematic's path separator.
+     */
+    public static final String SCHEMATICS_SEPARATOR = "/";
     /**
      * Maximum size for a compressed schematic.
      */
@@ -78,7 +67,7 @@ public final class Structures
      * - scans/458764687564687654 => scans -> <none> -> 458764687564687654 , scan/458764687564687654
      */
     @NotNull
-    private static       Map<String, Map<String, Map<String, String>>> schematicsMap         = new HashMap<>();
+    private static Map<String, Map<String, Map<String, String>>> schematicsMap = new HashMap<>();
 
     /**
      * md5 hash for the schematics.
@@ -165,7 +154,7 @@ public final class Structures
         }
         catch (@NotNull final URISyntaxException e)
         {
-            Log.getLogger().error("loadStyleMaps : ",e);
+            Log.getLogger().error("loadStyleMaps : ", e);
             return;
         }
 
@@ -215,6 +204,19 @@ public final class Structures
         final File schematicsFolder = Structure.getClientSchematicsFolder();
         checkDirectory(schematicsFolder.toPath().resolve(SCHEMATICS_SCAN).toFile());
         loadSchematicsForPrefix(schematicsFolder.toPath(), SCHEMATICS_SCAN);
+    }
+
+    /**
+     * check/create a directory and its parents.
+     *
+     * @param directory to be created
+     */
+    private static void checkDirectory(@NotNull final File directory)
+    {
+        if (!directory.exists() && !directory.mkdirs())
+        {
+            Log.getLogger().error("Directory doesn't exist and failed to be created: " + directory.toString());
+        }
     }
 
     /**
@@ -289,54 +291,6 @@ public final class Structures
     }
 
     /**
-     * return true if the schematics list have changed.
-     *
-     * @return True if dirty, otherwise false
-     */
-    public static boolean isDirty()
-    {
-        return dirty;
-    }
-
-    /**
-     * mark Structures as not dirty.
-     */
-    public static void clearDirty()
-    {
-        dirty = false;
-    }
-
-    /**
-     * mark Structures as dirty.
-     */
-    private static void markDirty()
-    {
-        dirty = true;
-    }
-
-    /**
-     * Whether ot not the server allow players schematics.
-     *
-     * @return True if the server accept schematics otherwise False
-     */
-    @SideOnly(Side.CLIENT)
-    public static boolean isPlayerSchematicsAllowed()
-    {
-        return allowPlayerSchematics;
-    }
-
-    /**
-     * Set if the server allow player schematics
-     *
-     * @param allowed True if the server allow it otherwise False
-     */
-    @SideOnly(Side.CLIENT)
-    public static void setAllowPlayerSchematics(final boolean allowed)
-    {
-        allowPlayerSchematics = allowed;
-    }
-
-    /**
      * add a schematic in the schematicsMap.
      *
      * @param structureName the structure to add
@@ -365,15 +319,55 @@ public final class Structures
     }
 
     /**
+     * return true if the schematics list have changed.
+     *
+     * @return True if dirty, otherwise false
+     */
+    public static boolean isDirty()
+    {
+        return dirty;
+    }
+
+    /**
+     * mark Structures as not dirty.
+     */
+    public static void clearDirty()
+    {
+        dirty = false;
+    }
+
+    /**
+     * Whether ot not the server allow players schematics.
+     *
+     * @return True if the server accept schematics otherwise False
+     */
+    @SideOnly(Side.CLIENT)
+    public static boolean isPlayerSchematicsAllowed()
+    {
+        return allowPlayerSchematics;
+    }
+
+    /**
+     * Set if the server allow player schematics
+     *
+     * @param allowed True if the server allow it otherwise False
+     */
+    @SideOnly(Side.CLIENT)
+    public static void setAllowPlayerSchematics(final boolean allowed)
+    {
+        allowPlayerSchematics = allowed;
+    }
+
+    /**
      * rename a scanned structure.
      * rename the file and the md5 entry
      *
      * @param structureName the structure to rename
-     * @param name New name for the schematic as in style/schematicname
+     * @param name          New name for the schematic as in style/schematicname
      * @return the new structureName
      */
     @SideOnly(Side.CLIENT)
-    public static Structures.StructureName renameScannedStructure(@NotNull final StructureName structureName, @NotNull final String name)
+    public static StructureName renameScannedStructure(@NotNull final StructureName structureName, @NotNull final String name)
     {
         if (!SCHEMATICS_SCAN.equals(structureName.getPrefix()))
         {
@@ -415,6 +409,38 @@ public final class Structures
     }
 
     /**
+     * check if a structure exist.
+     *
+     * @param structureName name of the structure as 'hut/wooden/Builder1'
+     * @return the md5 hash or and empty String if not found
+     */
+    public static boolean hasMD5(@NotNull final StructureName structureName)
+    {
+        return hasMD5(structureName.toString());
+    }
+
+    /**
+     * get the md5 hash for a structure name.
+     *
+     * @param structureName name of the structure as 'hut/wooden/Builder1'
+     * @return the md5 hash String or null if not found
+     */
+    public static String getMD5(@NotNull final String structureName)
+    {
+        if (!md5Map.containsKey(structureName))
+        {
+            return null;
+        }
+
+        return md5Map.get(structureName);
+    }
+
+    public static boolean hasMD5(@NotNull final String structureName)
+    {
+        return md5Map.containsKey(structureName);
+    }
+
+    /**
      * delete a scanned structure.
      * delete the file and the md5 entry
      *
@@ -448,19 +474,6 @@ public final class Structures
             Log.getLogger().warn("Failed to delete structure " + structureName);
         }
         return false;
-    }
-
-    /**
-     * check/create a directory and its parents.
-     *
-     * @param directory to be created
-     */
-    private static void checkDirectory(@NotNull final File directory)
-    {
-        if (!directory.exists() && !directory.mkdirs())
-        {
-            Log.getLogger().error("Directory doesn't exist and failed to be created: " + directory.toString());
-        }
     }
 
     /**
@@ -502,7 +515,7 @@ public final class Structures
      * Get a list of schematics for this section and style.
      *
      * @param section such as Builder, schematics. scans ...
-     * @param style limit the list for schematics to this style.
+     * @param style   limit the list for schematics to this style.
      * @return the list of schematics
      */
     @NotNull
@@ -520,256 +533,6 @@ public final class Structures
             }
         }
         return new ArrayList<>();
-    }
-
-    /**
-     * Class to handle schematic naming.
-     * It does extract information from a schematic using its name.
-     */
-    public static class StructureName
-    {
-        private static final Pattern levelPattern              = Pattern.compile("[^0-9]+([0-9]+)$");
-        private static final String  LOCALIZED_SCHEMATIC_LEVEL = "com.minecolonies.coremod.gui.buildtool.hut.level";
-        /**
-         * as in Builder, Citizen, TownHall, ... and decorations
-         */
-        private              String  section                   = "";
-        private              String  prefix                    = "";
-        private              String  style                     = "";
-        private              String  schematic                 = "";
-        private              String  hut                       = "";
-
-        /**
-         * Create a StructureName object from a schematic name.
-         *
-         * @param structureName as huts/stone/Builder1 or decorations/Walls/Gate
-         */
-        public StructureName(@NotNull final String structureName)
-        {
-            init(structureName);
-        }
-
-        /**
-         * Create a StructureName
-         *
-         * @param prefix    should be schematics, scan or cache.
-         * @param style     ex: wood, stone, walls/stone
-         * @param schematic as in Builder1, Gate, without the nbt extension.
-         */
-        public StructureName(@NotNull final String prefix, final String style, @NotNull final String schematic)
-        {
-            String name = prefix;
-            if (style != null && !style.isEmpty())
-            {
-                name = name + SCHEMATICS_SEPARATOR + style;
-            }
-            name = name + SCHEMATICS_SEPARATOR + schematic;
-            init(name);
-        }
-
-        /**
-         * fill the StructureName property by parsing the string.
-         */
-        private void init(@NotNull final String structureName)
-        {
-            if (structureName.isEmpty())
-            {
-                return;
-            }
-
-            String name = structureName;
-
-            if (name.startsWith(SCHEMATICS_SCAN + SCHEMATICS_SEPARATOR))
-            {
-                prefix = SCHEMATICS_SCAN;
-            }
-            else if (name.startsWith(SCHEMATICS_CACHE + SCHEMATICS_SEPARATOR))
-            {
-                prefix = SCHEMATICS_CACHE;
-            }
-            else
-            {
-                if (!name.startsWith(SCHEMATICS_PREFIX + SCHEMATICS_SEPARATOR))
-                {
-                    name = SCHEMATICS_PREFIX + SCHEMATICS_SEPARATOR + name;
-                }
-                prefix = SCHEMATICS_PREFIX;
-            }
-
-            name = name.substring(prefix.length() + 1);
-            final int lastSeparator = name.lastIndexOf(SCHEMATICS_SEPARATOR);
-            if (lastSeparator == -1)
-            {
-                schematic = name;
-            }
-            else
-            {
-                style = name.substring(0, lastSeparator);
-                schematic = name.substring(lastSeparator + 1);
-            }
-
-            //The section is the prefix, except fot hut
-            section = prefix;
-            if (prefix.equals(SCHEMATICS_PREFIX))
-            {
-                hut = schematic.split("\\d+")[0];
-                section = SCHEMATICS_PREFIX;
-
-                if (Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut) != null)
-                {
-                    section = hut;
-                }
-                else
-                {
-                    hut = "";
-                }
-            }
-        }
-
-        /**
-         * Whether the schematic is a huit or not.
-         * This is done using the naming convention only, should start by huts/
-         * and a minecolonies block name should exist.
-         *
-         * @return True is it is a hut otherwise False
-         */
-        public boolean isHut()
-        {
-            return !hut.isEmpty();
-        }
-
-        /**
-         * get the hut name.
-         * such as Builder, Citizen, ...
-         *
-         * @return the name of the hut.
-         */
-        public String getHutName()
-        {
-            return hut;
-        }
-
-        /**
-         * Get the section for the schematic.
-         * it should be huts, scan, the block name (if isHut)
-         *
-         * @return the section the schematic belong to.
-         */
-        public String getSection()
-        {
-            return section;
-        }
-
-        /**
-         * Get the prefix for the schematics
-         *
-         * @return huts, decorations, cache or scan.
-         */
-        public String getPrefix()
-        {
-            return prefix;
-        }
-
-        /**
-         * get the style for the schematic.
-         *
-         * @return the style of the schematic.
-         */
-        public String getStyle()
-        {
-            return style;
-        }
-
-        /**
-         * Get the name of the schematic.
-         * For Builder's hut, it would be Builder1 (or Builder2. or ...)
-         *
-         * @return the schematic name
-         */
-        public String getSchematic()
-        {
-            return schematic;
-        }
-
-        /**
-         * Get the localized name.
-         * Examples:
-         * - schematics/stone/Builder1 return Level 1
-         * - schematics/walls/Gate return Gate
-         * @return the localized name of the schematic
-         */
-        public String getLocalizedName()
-        {
-            if (isHut())
-            {
-                final Matcher matcher = levelPattern.matcher(schematic);
-                if (matcher.find())
-                {
-                    final int level = Integer.parseInt(matcher.group(1));
-                    return LanguageHandler.format(LOCALIZED_SCHEMATIC_LEVEL, level);
-                }
-            }
-            return schematic;
-        }
-
-        /**
-         * Get the full name of the schematic.
-         * Examples: schematics/stone/Builder4 or scans/test/myown
-         * This is what Structure.getStream use as a parameter.
-         *
-         * @return the full name of the schematics
-         */
-        public String toString()
-        {
-            if (style == null || style.isEmpty())
-            {
-                return prefix + SCHEMATICS_SEPARATOR + schematic;
-            }
-            return prefix + SCHEMATICS_SEPARATOR + style + SCHEMATICS_SEPARATOR + schematic;
-        }
-    }
-
-    /**
-     * check if a structure exist.
-     *
-     * @param structureName name of the structure as 'hut/wooden/Builder1'
-     * @return the md5 hash or and empty String if not found
-     */
-    public static boolean hasMD5(@NotNull final StructureName structureName)
-    {
-        return hasMD5(structureName.toString());
-    }
-
-    public static boolean hasMD5(@NotNull final String structureName)
-    {
-        return md5Map.containsKey(structureName);
-    }
-
-    /**
-     * add the md5 as a known structure in cache.
-     *
-     * @param md5 hash of the structure
-     */
-    public static void addMD5ToCache(@NotNull final String md5)
-    {
-        markDirty();
-        md5Map.put(Structures.SCHEMATICS_CACHE + SCHEMATICS_SEPARATOR + md5, md5);
-    }
-
-    /**
-     * get the md5 hash for a structure name.
-     *
-     * @param structureName name of the structure as 'hut/wooden/Builder1'
-     * @return the md5 hash String or null if not found
-     */
-    public static String getMD5(@NotNull final String structureName)
-    {
-        if (!md5Map.containsKey(structureName))
-        {
-            return null;
-        }
-
-        return md5Map.get(structureName);
     }
 
     /**
@@ -805,54 +568,71 @@ public final class Structures
     }
 
     /**
-     * get the set of cached schematic.
+     * For use on client side by the ColonyStylesMessage.
+     *
+     * @param md5s new md5Map.
      */
-    private static Set<String> getCachedMD5s()
+    @SideOnly(Side.CLIENT)
+    public static void setMD5s(final Map<String, String> md5s)
     {
-        final Set<String> md5Set = new HashSet<>();
-        for (final Map.Entry<String, String> md5 : md5Map.entrySet())
+        // First clear all section except scans
+        schematicsMap.entrySet().removeIf(entry -> !entry.getKey().equals(SCHEMATICS_SCAN));
+
+        // Then we update all mdp hash and fill the schematicsMap
+        for (final Map.Entry<String, String> md5 : md5s.entrySet())
         {
             final StructureName sn = new StructureName(md5.getKey());
-            if (sn.getSection().equals(SCHEMATICS_CACHE))
+            if (!sn.getSection().equals(SCHEMATICS_SCAN))
             {
-                md5Set.add(md5.getKey());
+                md5Map.put(md5.getKey(), md5.getValue());
+                addSchematic(sn);
             }
         }
-        return md5Set;
     }
 
     /**
-     * delete a cached structure.
-     * delete the file and the md5 entry
+     * Save a schematic in the cache.
+     * This method is valid on the client and server
+     * The schematic will be save under the cache directory using is md5 hash as a name.
      *
-     * @param structureName the structure to delete
-     * @return True if the structure have been deleted, False otherwise
+     * @param bytes representing the schematic.
+     * @return True is the schematic have been saved successfully.
      */
-    private static boolean deleteCachedStructure(@NotNull final StructureName structureName)
+    public static boolean handleSaveSchematicMessage(final byte[] bytes)
     {
-        if (!SCHEMATICS_CACHE.equals(structureName.getPrefix()))
+        if (!canStoreNewSchematic())
         {
-            Log.getLogger().warn("Delete failed: Invalid name " + structureName);
+            Log.getLogger().warn("Could not store schematic in cache");
             return false;
         }
 
-        if (!hasMD5(structureName))
+        final String md5 = Structure.calculateMD5(bytes);
+        if (md5 != null)
         {
-            Log.getLogger().warn("Delete failed: No MD5 hash found for " + structureName);
-            return false;
-        }
-
-        final File structureFile = MineColonies.proxy.getSchematicsFolder().toPath().resolve(structureName.toString() + SCHEMATIC_EXTENSION).toFile();
-        if (structureFile.delete())
-        {
-            md5Map.remove(structureName.toString());
-            return true;
+            Log.getLogger().info("Structures.handleSaveSchematicMessage: received new schematic md5:" + md5);
+            final File schematicsFolder = Structure.getCachedSchematicsFolder();
+            final File schematicFile = schematicsFolder.toPath().resolve(SCHEMATICS_CACHE + SCHEMATICS_SEPARATOR + md5 + SCHEMATIC_EXTENSION).toFile();
+            checkDirectory(schematicFile.getParentFile());
+            try (OutputStream outputstream = new FileOutputStream(schematicFile))
+            {
+                outputstream.write(bytes);
+                Structures.addMD5ToCache(md5);
+            }
+            catch (@NotNull final IOException e)
+            {
+                Log.getLogger().warn("Exception while trying to save a schematic.", e);
+                return false;
+            }
         }
         else
         {
-            Log.getLogger().warn("Failed to delete structure " + structureName);
+            Log.getLogger().info("Structures.handleSaveSchematicMessage: Could not calculate the MD5 hash");
+            return false;
         }
-        return false;
+
+        //Let the gui know we just save a schematic
+        ColonyManager.setSchematicDownloaded(true);
+        return true;
     }
 
     /**
@@ -911,70 +691,72 @@ public final class Structures
     }
 
     /**
-     * Save a schematic in the cache.
-     * This method is valid on the client and server
-     * The schematic will be save under the cache directory using is md5 hash as a name.
+     * add the md5 as a known structure in cache.
      *
-     * @param bytes representing the schematic.
-     * @return True is the schematic have been saved successfully.
+     * @param md5 hash of the structure
      */
-    public static boolean handleSaveSchematicMessage(final byte[] bytes)
+    public static void addMD5ToCache(@NotNull final String md5)
     {
-        if (!canStoreNewSchematic())
-        {
-            Log.getLogger().warn("Could not store schematic in cache");
-            return false;
-        }
-
-        final String md5 = Structure.calculateMD5(bytes);
-        if (md5 != null)
-        {
-            Log.getLogger().info("Structures.handleSaveSchematicMessage: received new schematic md5:" + md5);
-            final File schematicsFolder = Structure.getCachedSchematicsFolder();
-            final File schematicFile = schematicsFolder.toPath().resolve(SCHEMATICS_CACHE + SCHEMATICS_SEPARATOR +md5 + SCHEMATIC_EXTENSION).toFile();
-            checkDirectory(schematicFile.getParentFile());
-            try (OutputStream outputstream = new FileOutputStream(schematicFile))
-            {
-                outputstream.write(bytes);
-                Structures.addMD5ToCache(md5);
-            }
-            catch (@NotNull final IOException e)
-            {
-                Log.getLogger().warn("Exception while trying to save a schematic.", e);
-                return false;
-            }
-        }
-        else
-        {
-            Log.getLogger().info("Structures.handleSaveSchematicMessage: Could not calculate the MD5 hash");
-            return false;
-        }
-
-        //Let the gui know we just save a schematic
-        ColonyManager.setSchematicDownloaded(true);
-        return true;
+        markDirty();
+        md5Map.put(Structures.SCHEMATICS_CACHE + SCHEMATICS_SEPARATOR + md5, md5);
     }
 
     /**
-     * For use on client side by the ColonyStylesMessage.
-     *
-     * @param md5s new md5Map.
+     * get the set of cached schematic.
      */
-    @SideOnly(Side.CLIENT)
-    public static void setMD5s(final Map<String, String> md5s)
+    private static Set<String> getCachedMD5s()
     {
-        // First clear all section except scans
-        schematicsMap.entrySet().removeIf(entry -> !entry.getKey().equals(SCHEMATICS_SCAN));
-
-        // Then we update all mdp hash and fill the schematicsMap
-        for (final Map.Entry<String, String> md5 : md5s.entrySet())
+        final Set<String> md5Set = new HashSet<>();
+        for (final Map.Entry<String, String> md5 : md5Map.entrySet())
         {
             final StructureName sn = new StructureName(md5.getKey());
-            if (!sn.getSection().equals(SCHEMATICS_SCAN))
+            if (sn.getSection().equals(SCHEMATICS_CACHE))
             {
-                md5Map.put(md5.getKey(), md5.getValue());
-                addSchematic(sn);
+                md5Set.add(md5.getKey());
             }
         }
+        return md5Set;
+    }
+
+    /**
+     * delete a cached structure.
+     * delete the file and the md5 entry
+     *
+     * @param structureName the structure to delete
+     * @return True if the structure have been deleted, False otherwise
+     */
+    private static boolean deleteCachedStructure(@NotNull final StructureName structureName)
+    {
+        if (!SCHEMATICS_CACHE.equals(structureName.getPrefix()))
+        {
+            Log.getLogger().warn("Delete failed: Invalid name " + structureName);
+            return false;
+        }
+
+        if (!hasMD5(structureName))
+        {
+            Log.getLogger().warn("Delete failed: No MD5 hash found for " + structureName);
+            return false;
+        }
+
+        final File structureFile = MineColonies.proxy.getSchematicsFolder().toPath().resolve(structureName.toString() + SCHEMATIC_EXTENSION).toFile();
+        if (structureFile.delete())
+        {
+            md5Map.remove(structureName.toString());
+            return true;
+        }
+        else
+        {
+            Log.getLogger().warn("Failed to delete structure " + structureName);
+        }
+        return false;
+    }
+
+    /**
+     * mark Structures as dirty.
+     */
+    private static void markDirty()
+    {
+        dirty = true;
     }
 }

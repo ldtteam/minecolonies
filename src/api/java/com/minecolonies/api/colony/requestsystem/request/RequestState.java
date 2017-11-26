@@ -1,4 +1,4 @@
-package com.minecolonies.api.colony.requestsystem;
+package com.minecolonies.api.colony.requestsystem.request;
 
 import net.minecraft.nbt.NBTTagInt;
 
@@ -54,7 +54,12 @@ public enum RequestState
     /**
      * State used to indicate that this request has been received by the requester.
      */
-    RECEIVED;
+    RECEIVED,
+
+    /**
+     * State used to indicate that a request is cancelled overruled, yet processing is still continuing to ensure proper cleanup.
+     */
+    FINALIZING;
 
     /**
      * Index list used to read and write from NBT
@@ -68,7 +73,6 @@ public enum RequestState
          */
         Collections.addAll(indexList, RequestState.values());
     }
-
     /**
      * This is an empty constructor, i don't know why, Orion probably does =D.
      */

@@ -6,6 +6,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -129,6 +130,16 @@ public class TileEntityColonyBuilding extends TileEntityChest
     }
 
     /**
+     * Returns the position of the tile entity.
+     *
+     * @return Block Coordinates of the tile entity.
+     */
+    public BlockPos getPosition()
+    {
+        return pos;
+    }
+
+    /**
      * Sets the colony of the tile entity.
      *
      * @param c Colony to set in references.
@@ -182,16 +193,6 @@ public class TileEntityColonyBuilding extends TileEntityChest
     }
 
     /**
-     * Returns the position of the tile entity.
-     *
-     * @return Block Coordinates of the tile entity.
-     */
-    public BlockPos getPosition()
-    {
-        return pos;
-    }
-
-    /**
      * Returns the building associated with the tile entity.
      *
      * @return {@link AbstractBuilding} associated with the tile entity.
@@ -218,9 +219,9 @@ public class TileEntityColonyBuilding extends TileEntityChest
     /**
      * Returns the view of the building associated with the tile entity.
      *
-     * @return {@link AbstractBuilding.View} the tile entity is associated with.
+     * @return {@link AbstractBuildingView} the tile entity is associated with.
      */
-    public AbstractBuilding.View getBuildingView()
+    public AbstractBuildingView getBuildingView()
     {
         final ColonyView c = ColonyManager.getColonyView(colonyId);
         return c == null ? null : c.getBuilding(getPosition());

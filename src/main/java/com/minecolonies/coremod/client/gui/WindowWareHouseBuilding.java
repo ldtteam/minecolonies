@@ -70,9 +70,6 @@ public class WindowWareHouseBuilding extends AbstractWindowBuilding<BuildingWare
 
     /**
      * Update one row pad with its resource informations.
-     *
-     * @param index   index in the list of resources.
-     * @param rowPane The Pane to use to display the information.
      */
     private void updateResourcePane()
     {
@@ -98,7 +95,7 @@ public class WindowWareHouseBuilding extends AbstractWindowBuilding<BuildingWare
 
         BuildingBuilderResource.RessourceAvailability availability = resource.getAvailabilityStatus();
 
-        if(!allowMoreStorageUpgrades)
+        if (!allowMoreStorageUpgrades)
         {
             availability = BuildingBuilderResource.RessourceAvailability.NOT_NEEDED;
         }

@@ -27,12 +27,12 @@ public final class EntityUtils
     /**
      * How many blocks the citizen needs to stand safe.
      */
-    private static final int    AIR_SPACE_ABOVE_TO_CHECK = 2;
+    private static final int AIR_SPACE_ABOVE_TO_CHECK = 2;
 
     /**
      * Default range for moving to something until we stop.
      */
-    private static final int    DEFAULT_MOVE_RANGE       = 3;
+    private static final int    DEFAULT_MOVE_RANGE  = 3;
     private static final int    TELEPORT_RANGE      = 512;
     private static final double MIDDLE_BLOCK_OFFSET = 0.5D;
     private static final int    SCAN_RADIUS         = 5;
@@ -257,22 +257,22 @@ public final class EntityUtils
         if (!isLivingAtSite(entity, x, y, z, TELEPORT_RANGE))
         {
             final BlockPos spawnPoint =
-                    Utils.scanForBlockNearPoint(entity.getEntityWorld(),
-                            new BlockPos(x, y, z),
-                            SCAN_RADIUS, SCAN_RADIUS, SCAN_RADIUS, 2,
-                            Blocks.AIR,
-                            Blocks.SNOW_LAYER,
-                            Blocks.TALLGRASS,
-                            Blocks.RED_FLOWER,
-                            Blocks.YELLOW_FLOWER,
-                            Blocks.CARPET);
+              Utils.scanForBlockNearPoint(entity.getEntityWorld(),
+                new BlockPos(x, y, z),
+                SCAN_RADIUS, SCAN_RADIUS, SCAN_RADIUS, 2,
+                Blocks.AIR,
+                Blocks.SNOW_LAYER,
+                Blocks.TALLGRASS,
+                Blocks.RED_FLOWER,
+                Blocks.YELLOW_FLOWER,
+                Blocks.CARPET);
 
             entity.setLocationAndAngles(
-                    spawnPoint.getX() + MIDDLE_BLOCK_OFFSET,
-                    spawnPoint.getY(),
-                    spawnPoint.getZ() + MIDDLE_BLOCK_OFFSET,
-                    entity.rotationYaw,
-                    entity.rotationPitch);
+              spawnPoint.getX() + MIDDLE_BLOCK_OFFSET,
+              spawnPoint.getY(),
+              spawnPoint.getZ() + MIDDLE_BLOCK_OFFSET,
+              entity.rotationYaw,
+              entity.rotationPitch);
             return true;
         }
 
@@ -284,10 +284,10 @@ public final class EntityUtils
      * working site.
      *
      * @param entityLiving entity to check
-     * @param x      X-coordinate
-     * @param y      Y-coordinate
-     * @param z      Z-coordinate
-     * @param range  Range to check in
+     * @param x            X-coordinate
+     * @param y            Y-coordinate
+     * @param z            Z-coordinate
+     * @param range        Range to check in
      * @return True if entity is at site, otherwise false
      */
     public static boolean isLivingAtSite(@NotNull final EntityLiving entityLiving, final int x, final int y, final int z, final int range)

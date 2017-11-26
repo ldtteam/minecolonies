@@ -112,8 +112,8 @@ public class Node
             if (hasDoubles)
             {
                 parent = new Vec2i(
-                        MathHelper.floor(compound.getDouble(TAG_PARENTX)),
-                        MathHelper.floor(compound.getDouble(TAG_PARENTZ)));
+                                    MathHelper.floor(compound.getDouble(TAG_PARENTX)),
+                                    MathHelper.floor(compound.getDouble(TAG_PARENTZ)));
             }
             else
             {
@@ -214,6 +214,16 @@ public class Node
     }
 
     /**
+     * Calculates the next Node north.
+     *
+     * @return position of the new Node.
+     */
+    public Vec2i getNorthNodeCenter()
+    {
+        return new Vec2i(getX(), getZ() - DISTANCE_TO_NEXT_NODE);
+    }
+
+    /**
      * Returns the x-coordinate in the node.
      *
      * @return x-coordinate
@@ -231,16 +241,6 @@ public class Node
     public int getZ()
     {
         return z;
-    }
-
-    /**
-     * Calculates the next Node north.
-     *
-     * @return position of the new Node.
-     */
-    public Vec2i getNorthNodeCenter()
-    {
-        return new Vec2i(getX(), getZ() - DISTANCE_TO_NEXT_NODE);
     }
 
     /**

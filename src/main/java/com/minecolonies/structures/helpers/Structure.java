@@ -7,6 +7,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.StructureName;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.structures.fake.FakeWorld;
 import com.minecolonies.structures.lib.ModelHolder;
@@ -169,56 +170,6 @@ public class Structure
     }
 
     /**
-     * Constuctor of Structure, tries to create a new structure.
-     * creates a plain Structure to append rendering later.
-     *
-     * @param world with world.
-     */
-    public Structure(@Nullable final World world)
-    {
-        if (world == null || world.isRemote)
-        {
-            this.settings = settings;
-            this.mc = Minecraft.getMinecraft();
-        }
-        this.fixer = DataFixesManager.createFixer();
-    }
-
-    /**
-     * Get the file representation of the cached schematics' folder.
-     *
-     * @return the folder for the cached schematics
-     */
-    @Nullable
-    public static File getCachedSchematicsFolder()
-    {
-        if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
-        {
-            if (ColonyManager.getServerUUID() != null)
-            {
-                return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + "/" + ColonyManager.getServerUUID());
-            }
-            else
-            {
-                Log.getLogger().error("ColonyManager.getServerUUID() => null this should not happen");
-                return null;
-            }
-        }
-        return new File(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
-                + "/" + Constants.MOD_ID);
-    }
-
-    /**
-     * get the schematic folder for the client.
-     *
-     * @return the client folder.
-     */
-    public static File getClientSchematicsFolder()
-    {
-        return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID);
-    }
-
-    /**
      * get a InputStream for a give structureName.
      * <p>
      * Look into the following director (in order):
@@ -240,7 +191,7 @@ public class Structure
     @Nullable
     public static InputStream getStream(final String structureName)
     {
-        final Structures.StructureName sn = new Structures.StructureName(structureName);
+        final StructureName sn = new StructureName(structureName);
         InputStream inputstream = null;
         if (Structures.SCHEMATICS_CACHE.equals(sn.getPrefix()))
         {
@@ -270,6 +221,39 @@ public class Structure
         }
 
         return inputstream;
+    }
+
+    /**
+     * Calculate the MD5 hash for a template from an inputstream.
+     *
+     * @param stream to which we want the MD5 hash
+     * @return the MD5 hash string or null
+     */
+    public static String calculateMD5(final InputStream stream)
+    {
+        if (stream == null)
+        {
+            Log.getLogger().error("Structure.calculateMD5: stream is null, this should not happen");
+            return null;
+        }
+        return calculateMD5(getStreamAsByteArray(stream));
+    }
+
+    /**
+     * Reads a template from an inputstream.
+     */
+    private static Template readTemplateFromStream(final InputStream stream, final DataFixer fixer) throws IOException
+    {
+        final NBTTagCompound nbttagcompound = CompressedStreamTools.readCompressed(stream);
+
+        if (!nbttagcompound.hasKey("DataVersion", 99))
+        {
+            nbttagcompound.setInteger("DataVersion", 500);
+        }
+
+        final Template template = new Template();
+        template.read(fixer.process(FixTypes.STRUCTURE, nbttagcompound));
+        return template;
     }
 
     /**
@@ -312,6 +296,40 @@ public class Structure
     }
 
     /**
+     * Get the file representation of the cached schematics' folder.
+     *
+     * @return the folder for the cached schematics
+     */
+    @Nullable
+    public static File getCachedSchematicsFolder()
+    {
+        if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
+        {
+            if (ColonyManager.getServerUUID() != null)
+            {
+                return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + "/" + ColonyManager.getServerUUID());
+            }
+            else
+            {
+                Log.getLogger().error("ColonyManager.getServerUUID() => null this should not happen");
+                return null;
+            }
+        }
+        return new File(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
+                          + "/" + Constants.MOD_ID);
+    }
+
+    /**
+     * get the schematic folder for the client.
+     *
+     * @return the client folder.
+     */
+    public static File getClientSchematicsFolder()
+    {
+        return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID);
+    }
+
+    /**
      * get a input stream for a schematic from jar.
      *
      * @param structureName name of the structure to load from the jar.
@@ -324,13 +342,24 @@ public class Structure
     }
 
     /**
-     * get the Template from the structure.
+     * Calculate the MD5 hash of a byte array
      *
-     * @return The templae for the structure
+     * @param bytes array
+     * @return the MD5 hash string or null
      */
-    public Template getTemplate()
+    public static String calculateMD5(final byte[] bytes)
     {
-        return this.template;
+        try
+        {
+            final MessageDigest md = MessageDigest.getInstance("MD5");
+            return DatatypeConverter.printHexBinary(md.digest(bytes));
+        }
+        catch (@NotNull final NoSuchAlgorithmException e)
+        {
+            Log.getLogger().trace(e);
+        }
+
+        return null;
     }
 
     /**
@@ -367,56 +396,19 @@ public class Structure
     }
 
     /**
-     * Calculate the MD5 hash for a template from an inputstream.
+     * Constuctor of Structure, tries to create a new structure.
+     * creates a plain Structure to append rendering later.
      *
-     * @param stream to which we want the MD5 hash
-     * @return the MD5 hash string or null
+     * @param world with world.
      */
-    public static String calculateMD5(final InputStream stream)
+    public Structure(@Nullable final World world)
     {
-        if (stream == null)
+        if (world == null || world.isRemote)
         {
-            Log.getLogger().error("Structure.calculateMD5: stream is null, this should not happen");
-            return null;
+            this.settings = settings;
+            this.mc = Minecraft.getMinecraft();
         }
-        return calculateMD5(getStreamAsByteArray(stream));
-    }
-
-    /**
-     * Calculate the MD5 hash of a byte array
-     *
-     * @param bytes array
-     * @return the MD5 hash string or null
-     */
-    public static String calculateMD5(final byte[] bytes)
-    {
-        try
-        {
-            final MessageDigest md = MessageDigest.getInstance("MD5");
-            return DatatypeConverter.printHexBinary(md.digest(bytes));
-        }
-        catch (@NotNull final NoSuchAlgorithmException e)
-        {
-            Log.getLogger().trace(e);
-        }
-
-        return null;
-    }
-
-    /**
-     * Compare the md5 from the structure with an other md5 hash.
-     *
-     * @param otherMD5 to compare with
-     * @return whether the otherMD5 match, return false if md5 is null
-     */
-    public boolean isCorrectMD5(final String otherMD5)
-    {
-        Log.getLogger().info("isCorrectMD5: md5:" + md5 + " other:" + otherMD5);
-        if (md5 == null || otherMD5 == null)
-        {
-            return false;
-        }
-        return md5.compareTo(otherMD5) == 0;
+        this.fixer = DataFixesManager.createFixer();
     }
 
     public static byte[] compress(final byte[] data)
@@ -455,20 +447,29 @@ public class Structure
     }
 
     /**
-     * Reads a template from an inputstream.
+     * get the Template from the structure.
+     *
+     * @return The templae for the structure
      */
-    private static Template readTemplateFromStream(final InputStream stream, final DataFixer fixer) throws IOException
+    public Template getTemplate()
     {
-        final NBTTagCompound nbttagcompound = CompressedStreamTools.readCompressed(stream);
+        return this.template;
+    }
 
-        if (!nbttagcompound.hasKey("DataVersion", 99))
+    /**
+     * Compare the md5 from the structure with an other md5 hash.
+     *
+     * @param otherMD5 to compare with
+     * @return whether the otherMD5 match, return false if md5 is null
+     */
+    public boolean isCorrectMD5(final String otherMD5)
+    {
+        Log.getLogger().info("isCorrectMD5: md5:" + md5 + " other:" + otherMD5);
+        if (md5 == null || otherMD5 == null)
         {
-            nbttagcompound.setInteger("DataVersion", 500);
+            return false;
         }
-
-        final Template template = new Template();
-        template.read(fixer.process(FixTypes.STRUCTURE, nbttagcompound));
-        return template;
+        return md5.compareTo(otherMD5) == 0;
     }
 
     /**
@@ -540,7 +541,7 @@ public class Structure
     {
         final Entity[] entityList = this.getEntityInfoWithSettings(clientWorld, startingPos, this.settings);
 
-        if(!lastStartingPos.equals(startingPos))
+        if (!lastStartingPos.equals(startingPos))
         {
             modelList.clear();
         }
@@ -592,7 +593,7 @@ public class Structure
             }
         }
 
-        for(final ModelHolder models: modelList)
+        for (final ModelHolder models : modelList)
         {
             getQuads(models, models.quads);
             this.renderGhost(clientWorld, models, player, partialTicks, true);
@@ -605,27 +606,6 @@ public class Structure
                 Minecraft.getMinecraft().getRenderManager().renderEntityStatic(anEntityList, 0.0F, true);
             }
         }
-    }
-
-    /**
-     * Get blockInfo of structure with a specific setting.
-     *
-     * @param settings the setting.
-     * @return the block info array.
-     */
-    public Template.BlockInfo[] getBlockInfoWithSettings(final PlacementSettings settings)
-    {
-        Template.BlockInfo[] blockList = new Template.BlockInfo[template.blocks.size()];
-        blockList = template.blocks.toArray(blockList);
-
-        for (int i = 0; i < blockList.length; i++)
-        {
-            final IBlockState finalState = blockList[i].blockState.withMirror(settings.getMirror()).withRotation(settings.getRotation());
-            final BlockPos finalPos = Template.transformedBlockPos(settings, blockList[i].pos);
-            final Template.BlockInfo finalInfo = new Template.BlockInfo(finalPos, finalState, blockList[i].tileentityData);
-            blockList[i] = finalInfo;
-        }
-        return blockList;
     }
 
     /**
@@ -664,6 +644,27 @@ public class Structure
         }
 
         return entityList;
+    }
+
+    /**
+     * Get blockInfo of structure with a specific setting.
+     *
+     * @param settings the setting.
+     * @return the block info array.
+     */
+    public Template.BlockInfo[] getBlockInfoWithSettings(final PlacementSettings settings)
+    {
+        Template.BlockInfo[] blockList = new Template.BlockInfo[template.blocks.size()];
+        blockList = template.blocks.toArray(blockList);
+
+        for (int i = 0; i < blockList.length; i++)
+        {
+            final IBlockState finalState = blockList[i].blockState.withMirror(settings.getMirror()).withRotation(settings.getRotation());
+            final BlockPos finalPos = Template.transformedBlockPos(settings, blockList[i].pos);
+            final Template.BlockInfo finalInfo = new Template.BlockInfo(finalPos, finalState, blockList[i].tileentityData);
+            blockList[i] = finalInfo;
+        }
+        return blockList;
     }
 
     public static void getQuads(final ModelHolder holder, final List<BakedQuad> quads)
@@ -722,7 +723,7 @@ public class Structure
             te.setPos(holder.pos);
 
             final FakeWorld fakeWorld;
-            if(simulateWorld)
+            if (simulateWorld)
             {
                 fakeWorld = new FakeWorld(holder.actualState, world.getSaveHandler(), world.getWorldInfo(), world.provider, world.profiler, true, te, true);
             }
@@ -789,12 +790,12 @@ public class Structure
     }
 
     private void renderGhostBlock(
-            final World world,
-            final ModelHolder holder,
-            final EntityPlayer player,
-            final BlockRenderLayer layer,
-            final boolean existingModel,
-            final float partialTicks)
+                                   final World world,
+                                   final ModelHolder holder,
+                                   final EntityPlayer player,
+                                   final BlockRenderLayer layer,
+                                   final boolean existingModel,
+                                   final float partialTicks)
     {
         final double dx = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTicks;
         final double dy = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTicks;
@@ -893,7 +894,7 @@ public class Structure
         {
             finalEntity.prevRotationYaw = (float) (finalEntity.getMirroredYaw(settings.getMirror()) - NINETY_DEGREES);
             final double rotationYaw
-                    = (double) finalEntity.getMirroredYaw(settings.getMirror()) + ((double) finalEntity.rotationYaw - (double) finalEntity.getRotatedYaw(settings.getRotation()));
+              = (double) finalEntity.getMirroredYaw(settings.getMirror()) + ((double) finalEntity.rotationYaw - (double) finalEntity.getRotatedYaw(settings.getRotation()));
 
             finalEntity.setLocationAndAngles(entityVec.x, entityVec.y, entityVec.z,
               (float) rotationYaw, finalEntity.rotationPitch);

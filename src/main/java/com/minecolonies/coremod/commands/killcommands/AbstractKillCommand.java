@@ -39,13 +39,6 @@ public abstract class AbstractKillCommand<T extends Entity> extends AbstractSing
      */
     public abstract String getDesc();
 
-    /**
-     * Gets the class of the entity we're killing.
-     *
-     * @return The {@link Class} of the Entity.
-     */
-    public abstract Class<T> getEntityClass();
-
     @Override
     public void execute(
                          @NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
@@ -63,8 +56,14 @@ public abstract class AbstractKillCommand<T extends Entity> extends AbstractSing
             entitiesKilled++;
         }
         sender.sendMessage(new TextComponentString(entitiesKilled + " entities killed"));
-
     }
+
+    /**
+     * Gets the class of the entity we're killing.
+     *
+     * @return The {@link Class} of the Entity.
+     */
+    public abstract Class<T> getEntityClass();
 
     @NotNull
     @Override
