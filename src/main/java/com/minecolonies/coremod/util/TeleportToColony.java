@@ -118,7 +118,7 @@ public final class TeleportToColony
             playerToTeleport.sendMessage(new TextComponentString("Buckle up buttercup, this ain't no joy ride!!!"));
             EntityPlayerMP entityPlayerMP = (EntityPlayerMP) sender;
             MinecraftServer server = sender.getEntityWorld().getMinecraftServer();
-            WorldServer worldServer = server.getWorld(colonyDimension);
+            WorldServer worldServer = server.worldServerForDimension(colonyDimension);
 
             playerToTeleport.sendMessage(new TextComponentString("Hold onto your pants, we're going Inter-Dimensional!"));
             playerToTeleport.changeDimension(colonyDimension);
