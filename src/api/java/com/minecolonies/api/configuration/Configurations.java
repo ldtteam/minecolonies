@@ -88,6 +88,15 @@ import static com.minecolonies.api.util.constant.Constants.*;
             @Config.Comment("Max amount of schematics to be cached on the server")
             public  int maxCachedSchematics = 100;
 
+            @Config.Comment("Should players be allowed to change names? -1 for false, 0 for specific groups, 1 for true")
+            public  int allowGlobalNameChanges = 1;
+
+            @Config.Comment("Players who have special permission (Patreons for example)")
+            public  String[] specialPermGroup = new String[]
+                    {
+                            "_Raycoms_"
+                    };
+
     /* Command configs */
 
             @Config.Comment("Time until a next teleport can be executed (in seconds)")
