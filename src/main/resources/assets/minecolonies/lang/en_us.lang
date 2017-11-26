@@ -504,4 +504,4 @@ achievement.upgrade.guard.last=Cleanup crew
 com.minecolonies.requestsystem.playerresolver=%s is in need of %s at %s.
 com.minecolonies.coremod.buildings.warehouse.name=Warehouse
 tile.minecolonies.blockPaperwall.name=Paper wall
-com.minecolonies.coremod.gui.workerHuts.buildPrio = Delivery Priority:
+com.minecolonies.coremod.gui.workerHuts.buildPrio=Delivery Priority:

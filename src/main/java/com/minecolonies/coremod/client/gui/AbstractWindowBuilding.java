@@ -64,7 +64,6 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
         buttonPrevPage = findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class);
         buttonBuild = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
         buttonRepair = findPaneOfTypeByID(BUTTON_REPAIR, Button.class);
-        findPaneOfTypeByID(LABEL_BUILDINGTYPE, Label.class).setLabelText(building.getBuildingDmPrio() + "/10");
     }
 
     /**
