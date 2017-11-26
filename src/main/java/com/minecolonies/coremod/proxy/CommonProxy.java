@@ -2,6 +2,7 @@ package com.minecolonies.coremod.proxy;
 
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.client.gui.WindowBuildTool;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -11,14 +12,21 @@ import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityChiefBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianSpawnUtils;
 import com.minecolonies.coremod.inventory.GuiHandler;
+import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.tileentities.*;
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.storage.loot.LootTableList;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.HashMap;
@@ -27,6 +35,7 @@ import java.util.Map;
 /**
  * CommonProxy of the minecolonies mod (Server and Client).
  */
+@Mod.EventBusSubscriber
 public class CommonProxy implements IProxy
 {
     /**
@@ -63,6 +72,31 @@ public class CommonProxy implements IProxy
     public static NBTTagCompound getEntityData(final String name)
     {
         return playerPropertiesData.remove(name);
+    }
+
+    /**
+     * Called when registering blocks,
+     * we have to register all our modblocks here.
+     *
+     * @param event the registery event for blocks.
+     */
+    @SubscribeEvent
+    public static void registerBlocks(@NotNull final RegistryEvent.Register<Block> event)
+    {
+        ModBlocks.init(event.getRegistry());
+    }
+
+    /**
+     * Called when registering items,
+     * we have to register all our mod items here.
+     *
+     * @param event the registery event for items.
+     */
+    @SubscribeEvent
+    public static void registerItems(@NotNull final RegistryEvent.Register<Item> event)
+    {
+        ModItems.init(event.getRegistry());
+        ModBlocks.registerItemBlock(event.getRegistry());
     }
 
     @Override
