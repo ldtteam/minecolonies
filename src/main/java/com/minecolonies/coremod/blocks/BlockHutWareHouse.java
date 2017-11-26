@@ -22,7 +22,7 @@ public class BlockHutWareHouse extends AbstractBlockHut<BlockHutWareHouse>
     @Override
     public String getName()
     {
-        return "blockhutwareHouse";
+        return "blockHutWareHouse";
     }
 
     @NotNull

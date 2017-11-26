@@ -75,7 +75,7 @@ public class BlockHutField extends AbstractBlockMinecoloniesContainer<BlockHutFi
     /**
      * Registry name for this block.
      */
-    private static final String REGISTRY_NAME = "blockhutfield";
+    private static final String REGISTRY_NAME = "blockHutField";
 
     /**
      * Constructor called on block placement.

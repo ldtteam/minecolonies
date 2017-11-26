@@ -45,7 +45,7 @@ public class BlockConstructionTapeCorner extends AbstractBlockMinecolonies<Block
     /**
      * This blocks name.
      */
-    private static final String BLOCK_NAME = "blockconstructiontapecorner";
+    private static final String BLOCK_NAME = "blockConstructionTapeCorner";
 
     /**
      * The resistance this block has.

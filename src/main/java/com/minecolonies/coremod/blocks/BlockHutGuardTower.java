@@ -20,6 +20,6 @@ public class BlockHutGuardTower extends AbstractBlockHut<BlockHutGuardTower>
     @Override
     public String getName()
     {
-        return "blockhutguardtower";
+        return "blockHutGuardTower";
     }
 }

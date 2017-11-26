@@ -30,7 +30,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
     @Override
     public String getName()
     {
-        return "blockhuttownhall";
+        return "blockHutTownHall";
     }
 
     @Override

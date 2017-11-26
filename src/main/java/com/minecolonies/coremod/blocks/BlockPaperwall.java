@@ -27,7 +27,7 @@ public class BlockPaperwall extends AbstractBlockMinecoloniesPane<BlockPaperwall
     /**
      * This blocks name.
      */
-    public static final String                      BLOCK_NAME     = "blockpaperwall";
+    public static final String                      BLOCK_NAME     = "blockPaperwall";
     /**
      * The hardness this block has.
      */

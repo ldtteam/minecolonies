@@ -41,7 +41,7 @@ public class BlockBarrel extends Block
     /**
      * This blocks name.
      */
-    private static final String                     BLOCK_NAME     = "blockbarrel";
+    private static final String                     BLOCK_NAME     = "blockBarrel";
     /**
      * The resistance this block has.
      */

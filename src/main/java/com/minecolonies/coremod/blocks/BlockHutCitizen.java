@@ -19,6 +19,6 @@ public class BlockHutCitizen extends AbstractBlockHut<BlockHutCitizen>
     @Override
     public String getName()
     {
-        return "blockhutcitizen";
+        return "blockHutCitizen";
     }
 }

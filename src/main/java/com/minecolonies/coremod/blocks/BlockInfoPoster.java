@@ -34,7 +34,7 @@ public class BlockInfoPoster extends AbstractBlockMinecoloniesContainer<BlockInf
     /**
      * This blocks name.
      */
-    private static final String BLOCK_NAME = "blockinfoposter";
+    private static final String BLOCK_NAME = "blockInfoPoster";
 
     /**
      * Constructor for the Substitution block.

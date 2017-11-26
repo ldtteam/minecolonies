@@ -88,23 +88,6 @@ public class JobGuard extends AbstractJob
         return new EntityAIRangeGuard(this);
     }
 
-    @Override
-    public SoundEvent getBedTimeSound()
-    {
-        if (getCitizen() != null)
-        {
-            if (getModel().equals(RenderBipedCitizen.Model.ARCHER_GUARD))
-            {
-                return getCitizen().isFemale() ? ArcherSounds.Female.offToBed : null;
-            }
-            else
-            {
-                return getCitizen().isFemale() ? null : KnightSounds.Male.offToBed;
-            }
-        }
-        return null;
-    }
-
     @Nullable
     @Override
     public SoundEvent getBadWeatherSound()
