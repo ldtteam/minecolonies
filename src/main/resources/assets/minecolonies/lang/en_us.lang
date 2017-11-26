@@ -475,3 +475,4 @@ tile.minecolonies.blockPaperwall.name=Paper wall
 item.supplyChestDeployer.invalid=You must place it in a fitting pool of water.
 item.supplyChestDeployer.missing=Are you trying to trick me, pick up that Supplyship again?
 com.minecolonies.coremod.citizen.rename.same=Renaming failed: 2 Citizen are not allowed to have the same name!
+com.minecolonies.coremod.citizen.rename.notAllowed=Renaming failed: You're not allowed to rename your Citizen.

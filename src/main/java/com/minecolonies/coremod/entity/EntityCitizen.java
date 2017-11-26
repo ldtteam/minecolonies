@@ -1277,30 +1277,39 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @Override
     public void setCustomNameTag(final String name)
     {
-        if(citizenData != null && name != null && Configurations.gameplay.allowGlobalNameChanges >= 0)
+        if(citizenData != null && name != null && !citizenData.getName().equals(name))
         {
-            if(Configurations.gameplay.allowGlobalNameChanges == 0 &&
-                    Arrays.stream(Configurations.gameplay.specialPermGroup).anyMatch(owner -> owner.equals(colony.getPermissions().getOwnerName())))
+            if(Configurations.gameplay.allowGlobalNameChanges >= 0)
             {
-
-            }
-
-
-            if(colony != null)
-            {
-                for(final CitizenData citizen : colony.getCitizens().values())
+                if (Configurations.gameplay.allowGlobalNameChanges == 0 &&
+                        Arrays.stream(Configurations.gameplay.specialPermGroup).noneMatch(owner -> owner.equals(colony.getPermissions().getOwnerName())))
                 {
-                    if(citizen.getName().equals(name))
-                    {
-                        return;
-                    }
+                    LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.citizen.rename.notAllowed");
+                    return;
                 }
-                LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.citizen.rename.same");
-                this.citizenData.setName(name);
-                this.citizenData.markDirty();
+
+
+                if (colony != null)
+                {
+                    for (final CitizenData citizen : colony.getCitizens().values())
+                    {
+                        if (citizen.getName().equals(name))
+                        {
+                            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.citizen.rename.same");
+                            return;
+                        }
+                    }
+                    this.citizenData.setName(name);
+                    this.citizenData.markDirty();
+                    super.setCustomNameTag(name);
+                }
             }
+            else
+            {
+
+            }
+            super.setCustomNameTag(name);
         }
-        super.setCustomNameTag(name);
     }
 
     private void checkIfStuck()
