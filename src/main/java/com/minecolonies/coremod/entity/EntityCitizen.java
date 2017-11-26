@@ -37,10 +37,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemArmor;
-import net.minecraft.item.ItemFood;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -65,6 +62,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.*;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_NOT_ALLOWED;
+import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_SAME;
 
 /**
  * The Class used to represent the citizen entities.
@@ -1043,10 +1043,16 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @Override
     public boolean processInteract(@NotNull final EntityPlayer player, final EnumHand hand, @Nullable final ItemStack stack)
     {
+
         final ColonyView colonyView = ColonyManager.getColonyView(colonyId);
         if (colonyView != null && !colonyView.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
         {
             return false;
+        }
+
+        if(stack != null && stack.getItem() instanceof ItemNameTag)
+        {
+            return super.processInteract(player, hand, stack);
         }
 
         if (CompatibilityUtils.getWorld(this).isRemote)
@@ -1257,6 +1263,41 @@ public class EntityCitizen extends EntityAgeable implements INpc
                     it.remove();
                 }
             }
+        }
+    }
+
+    @Override
+    public void setCustomNameTag(final String name)
+    {
+        if(citizenData != null && name != null)
+        {
+            if(!citizenData.getName().equals(name) && Configurations.allowGlobalNameChanges >= 0)
+            {
+                if (Configurations.allowGlobalNameChanges == 0 &&
+                        Arrays.stream(Configurations.specialPermGroup).noneMatch(owner -> owner.equals(colony.getPermissions().getOwnerName())))
+                {
+                    LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), CITIZEN_RENAME_NOT_ALLOWED);
+                    return;
+                }
+
+
+                if (colony != null)
+                {
+                    for (final CitizenData citizen : colony.getCitizens().values())
+                    {
+                        if (citizen.getName().equals(name))
+                        {
+                            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), CITIZEN_RENAME_SAME);
+                            return;
+                        }
+                    }
+                    this.citizenData.setName(name);
+                    this.citizenData.markDirty();
+                    super.setCustomNameTag(name);
+                }
+                return;
+            }
+            super.setCustomNameTag(name);
         }
     }
 

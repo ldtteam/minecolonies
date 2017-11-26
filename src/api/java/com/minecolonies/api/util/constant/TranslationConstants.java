@@ -105,6 +105,10 @@ public final class TranslationConstants
     public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0                = "com.minecolonies.coremod.gui.workerHuts.level0";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_LUMBERJACK                        = "com.minecolonies.coremod.job.Lumberjack";
+    @NonNls
+    public static final String CITIZEN_RENAME_SAME                                            = "com.minecolonies.coremod.citizen.rename.same";
+    @NonNls
+    public static final String CITIZEN_RENAME_NOT_ALLOWED                                     = "com.minecolonies.coremod.citizen.rename.notAllowed";
 
     private TranslationConstants()
     {

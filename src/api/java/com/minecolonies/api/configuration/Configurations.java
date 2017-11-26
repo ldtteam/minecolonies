@@ -31,6 +31,12 @@ public class Configurations
     public static boolean allowPlayerSchematics   = false;
     public static int     maxCachedSchematics     = 100;
 
+    public static int allowGlobalNameChanges = 1;
+
+    public static String[] specialPermGroup = new String[]
+            {
+                    "_Raycoms_"
+            };
 
     /* Command configs */
     public static int     teleportBuffer                    = 120;

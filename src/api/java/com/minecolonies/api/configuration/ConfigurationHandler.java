@@ -149,6 +149,12 @@ public final class ConfigurationHandler
             averageNumberOfNightsBetweenRaids = config.get(CATEGORY_GAMEPLAY, "averageNumberOfNightsBetweenRaids", averageNumberOfNightsBetweenRaids,
               "sets the average number of nights between raids").getInt();
 
+            allowGlobalNameChanges = config.get(CATEGORY_GAMEPLAY, "allowGlobalNameChanges", allowGlobalNameChanges,
+                    "Should players be allowed to change names? -1 for false, 0 for specific groups, 1 for true").getInt();
+
+            specialPermGroup = config.get(CATEGORY_GAMEPLAY, "allowGlobalNameChanges", specialPermGroup,
+                    "Players who have special permission (Patreons for example)").getStringList();
+
             loadPathFindingConfigurations();
             loadNamesConfigurations();
         }
