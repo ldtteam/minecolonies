@@ -58,7 +58,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
  * This class describes a colony and contains all the data and methods for
  * manipulating a Colony.
  */
-@SuppressWarnings(Suppression.BIG_CLASS)
+@SuppressWarnings({Suppression.BIG_CLASS, Suppression.SPLIT_CLASS})
 public class Colony implements IColony
 {
     private static final int CONST_CHUNKSIZE = 16;

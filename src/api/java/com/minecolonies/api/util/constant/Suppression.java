@@ -105,6 +105,12 @@ public final class Suppression
     public static final String BIG_CLASS = "squid:S2972";
 
     /**
+     * Sometimes classes are used in many places.
+     */
+    @NonNls
+    public static final String SPLIT_CLASS = "squid:S1200";
+
+    /**
      * Sometimes it would decrease the readability of the code.
      * <p>
      * Use this sparely!

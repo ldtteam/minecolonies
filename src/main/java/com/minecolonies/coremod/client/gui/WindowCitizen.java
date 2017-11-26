@@ -22,6 +22,7 @@ import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.TransferItemsRequestMessage;
 import com.minecolonies.coremod.network.messages.UpdateRequestStateMessage;
 import com.minecolonies.coremod.util.ExperienceUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -31,6 +32,8 @@ import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -539,17 +542,21 @@ public class WindowCitizen extends AbstractWindowSkeleton
 
     private ImmutableList<IRequest> getOpenRequestsOfCitizen()
     {
-        ImmutableList.Builder<IRequest> builder = ImmutableList.builder();
+        ArrayList<IRequest> requests = new ArrayList<>();
         if (citizen.getWorkBuilding() != null)
         {
-            builder.addAll(getOpenRequestsOfCitizenFromBuilding(citizen.getWorkBuilding()));
+            requests.addAll(getOpenRequestsOfCitizenFromBuilding(citizen.getWorkBuilding()));
         }
 
         if (citizen.getHomeBuilding() != null)
         {
-            builder.addAll(getOpenRequestsOfCitizenFromBuilding(citizen.getHomeBuilding()));
+            requests.addAll(getOpenRequestsOfCitizenFromBuilding(citizen.getHomeBuilding()));
         }
-        return builder.build();
+
+        final BlockPos playerPos = Minecraft.getMinecraft().player.getPosition();
+        requests.sort(Comparator.comparing((IRequest request) -> request.getRequester().getDeliveryLocation().getInDimensionLocation().getDistance(playerPos.getX(), playerPos.getY(), playerPos.getZ())).thenComparingInt(Object::hashCode));
+
+        return ImmutableList.copyOf(requests);
     }
 
     private ImmutableList<IRequest> getOpenRequestsOfCitizenFromBuilding(final BlockPos buildingPos)
