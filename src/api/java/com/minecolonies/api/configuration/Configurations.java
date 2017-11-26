@@ -32,6 +32,15 @@ public class Configurations
     public static int     maxCachedSchematics     = 100;
 
 
+            @Config.Comment("Should players be allowed to change names? -1 for false, 0 for specific groups, 1 for true")
+            public  int allowGlobalNameChanges = 1;
+
+            @Config.Comment("Players who have special permission (Patreons for example)")
+            public  String[] specialPermGroup = new String[]
+                    {
+                            "_Raycoms_"
+                    };
+
     /* Command configs */
     public static int     teleportBuffer                    = 120;
     public static int     opLevelForServer                  = 3;
