@@ -57,24 +57,9 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         setMaxStackSize(1);
     }
 
-    /**
-     * This method will be executed on placement of the ship.
-     * If the ship can be placed at the current position the function will execute successfully.
-     *
-     * @param stack    the item.
-     * @param playerIn the player placing.
-     * @param worldIn  the world.
-     * @param pos      the position.
-     * @param hand     the hand used
-     * @param facing   the direction it faces (not used).
-     * @param hitX     the hitBox x position (not used).
-     * @param hitY     the hitBox y position (not used).
-     * @param hitZ     the hitBox z position (not used).
-     * @return if the chest has been successfully placed.
-     */
-    @NotNull
     @Override
     public EnumActionResult onItemUse(
+            final ItemStack stack,
             final EntityPlayer playerIn,
             final World worldIn,
             final BlockPos pos,
@@ -92,9 +77,8 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         return EnumActionResult.FAIL;
     }
 
-    @NotNull
     @Override
-    public ActionResult<ItemStack> onItemRightClick(final World worldIn, final EntityPlayer playerIn, final EnumHand hand)
+    public ActionResult<ItemStack> onItemRightClick(final ItemStack itemStackIn, final World worldIn, final EntityPlayer playerIn, final EnumHand hand)
     {
         final ItemStack stack = playerIn.getHeldItem(hand);
 
