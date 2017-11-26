@@ -37,10 +37,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemArmor;
-import net.minecraft.item.ItemFood;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.datasync.DataParameter;
@@ -1049,10 +1046,16 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @Override
     public boolean processInteract(final EntityPlayer player, final EnumHand hand)
     {
+
         final ColonyView colonyView = ColonyManager.getColonyView(colonyId);
         if (colonyView != null && !colonyView.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
         {
             return false;
+        }
+
+        if(player.getHeldItem(hand) != null && player.getHeldItem(hand).getItem() instanceof ItemNameTag)
+        {
+            return super.processInteract(player, hand);
         }
 
         if (CompatibilityUtils.getWorld(this).isRemote)
@@ -1269,6 +1272,35 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 }
             }
         }
+    }
+
+    @Override
+    public void setCustomNameTag(final String name)
+    {
+        if(citizenData != null && name != null && Configurations.gameplay.allowGlobalNameChanges >= 0)
+        {
+            if(Configurations.gameplay.allowGlobalNameChanges == 0 &&
+                    Arrays.stream(Configurations.gameplay.specialPermGroup).anyMatch(owner -> owner.equals(colony.getPermissions().getOwnerName())))
+            {
+
+            }
+
+
+            if(colony != null)
+            {
+                for(final CitizenData citizen : colony.getCitizens().values())
+                {
+                    if(citizen.getName().equals(name))
+                    {
+                        return;
+                    }
+                }
+                LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.citizen.rename.same");
+                this.citizenData.setName(name);
+                this.citizenData.markDirty();
+            }
+        }
+        super.setCustomNameTag(name);
     }
 
     private void checkIfStuck()
