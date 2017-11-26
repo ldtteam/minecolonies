@@ -814,6 +814,15 @@ public class CitizenData
     }
 
     /**
+     * Set the citizen name.
+     * @param name the name to set.
+     */
+    public void setName(final String name)
+    {
+        this.name = name;
+    }
+
+    /**
      * Returns the experience of the citizen.
      *
      * @return experience of the citizen.
