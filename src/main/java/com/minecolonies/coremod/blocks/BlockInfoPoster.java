@@ -58,33 +58,9 @@ public class BlockInfoPoster extends AbstractBlockMinecoloniesContainer<BlockInf
     }
 
     @Override
-    public boolean isFullCube(final IBlockState state)
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isPassable(final IBlockAccess worldIn, final BlockPos pos)
-    {
-        return true;
-    }
-
-    @Override
-    public boolean isOpaqueCube(final IBlockState state)
-    {
-        return false;
-    }
-
-    @Override
     public TileEntity createNewTileEntity(final World worldIn, final int meta)
     {
         return new TileEntityInfoPoster();
-    }
-
-    @Override
-    public boolean hasTileEntity(final IBlockState state)
-    {
-        return true;
     }
 
     @Override
@@ -103,19 +79,44 @@ public class BlockInfoPoster extends AbstractBlockMinecoloniesContainer<BlockInf
     @Override
     public int getMetaFromState(final IBlockState state)
     {
-        return ((EnumFacing)state.getValue(FACING)).getIndex();
+        return ((EnumFacing) state.getValue(FACING)).getIndex();
     }
 
     @Override
     public IBlockState withRotation(final IBlockState state, final Rotation rot)
     {
-        return state.withProperty(FACING, rot.rotate((EnumFacing)state.getValue(FACING)));
+        return state.withProperty(FACING, rot.rotate((EnumFacing) state.getValue(FACING)));
     }
 
     @Override
     public IBlockState withMirror(final IBlockState state, final Mirror mirrorIn)
     {
-        return state.withRotation(mirrorIn.toRotation((EnumFacing)state.getValue(FACING)));
+        return state.withRotation(mirrorIn.toRotation((EnumFacing) state.getValue(FACING)));
+    }
+
+    @Override
+    public boolean isFullCube(final IBlockState state)
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isPassable(final IBlockAccess worldIn, final BlockPos pos)
+    {
+        return true;
+    }
+
+    @Override
+    public boolean isOpaqueCube(final IBlockState state)
+    {
+        return false;
+    }
+
+    @Override
+    public void onBlockPlacedBy(final World worldIn, final BlockPos pos, final IBlockState state, final EntityLivingBase placer, final ItemStack stack)
+    {
+        @NotNull final EnumFacing enumFacing = (placer == null) ? NORTH : fromAngle(placer.rotationYaw);
+        this.getDefaultState().withProperty(FACING, enumFacing);
     }
 
     @Override
@@ -125,9 +126,8 @@ public class BlockInfoPoster extends AbstractBlockMinecoloniesContainer<BlockInf
     }
 
     @Override
-    public void onBlockPlacedBy(final World worldIn, final BlockPos pos, final IBlockState state, final EntityLivingBase placer, final ItemStack stack)
+    public boolean hasTileEntity(final IBlockState state)
     {
-        @NotNull final EnumFacing enumFacing = (placer == null) ? NORTH : fromAngle(placer.rotationYaw);
-        this.getDefaultState().withProperty(FACING, enumFacing);
+        return true;
     }
 }

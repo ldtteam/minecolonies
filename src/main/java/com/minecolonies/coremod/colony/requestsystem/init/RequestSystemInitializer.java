@@ -1,0 +1,18 @@
+package com.minecolonies.coremod.colony.requestsystem.init;
+
+import com.minecolonies.api.colony.requestsystem.manager.RequestMappingHandler;
+import com.minecolonies.api.colony.requestsystem.requestable.*;
+import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests;
+
+public class RequestSystemInitializer
+{
+
+    public static void onPostInit()
+    {
+        RequestMappingHandler.registerRequestableTypeMapping(Stack.class, StandardRequests.ItemStackRequest.class);
+        RequestMappingHandler.registerRequestableTypeMapping(Burnable.class, StandardRequests.BurnableRequest.class);
+        RequestMappingHandler.registerRequestableTypeMapping(Delivery.class, StandardRequests.DeliveryRequest.class);
+        RequestMappingHandler.registerRequestableTypeMapping(Food.class, StandardRequests.FoodRequest.class);
+        RequestMappingHandler.registerRequestableTypeMapping(Tool.class, StandardRequests.ToolRequest.class);
+    }
+}

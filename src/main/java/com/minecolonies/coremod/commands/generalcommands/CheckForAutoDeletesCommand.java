@@ -64,7 +64,8 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand
         {
             final Colony colony = colonies.get(index);
 
-            if (colony.canBeAutoDeleted() && Configurations.gameplay.autoDeleteColoniesInHours != 0 && colony.getLastContactInHours() >= Configurations.gameplay.autoDeleteColoniesInHours)
+            if (colony.canBeAutoDeleted() && Configurations.gameplay.autoDeleteColoniesInHours != 0
+                  && colony.getLastContactInHours() >= Configurations.gameplay.autoDeleteColoniesInHours)
             {
                 coloniesToDelete.add(colony);
             }
@@ -84,7 +85,7 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand
         else
         {
             final ITextComponent deleteButton = new TextComponentString("[DELETE]").setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
-                    new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/mc check true")
+              new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/mc check true")
             ));
             sender.sendMessage(new TextComponentString("There are: " + coloniesToDelete.size() + " of a total of " + colonies.size() + " to delete."));
             sender.sendMessage(new TextComponentString("Click [DELETE] to confirm"));
@@ -95,10 +96,10 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand
     @NotNull
     @Override
     public List<String> getTabCompletionOptions(
-            @NotNull final MinecraftServer server,
-            @NotNull final ICommandSender sender,
-            @NotNull final String[] args,
-            @Nullable final BlockPos pos)
+                                                 @NotNull final MinecraftServer server,
+                                                 @NotNull final ICommandSender sender,
+                                                 @NotNull final String[] args,
+                                                 @Nullable final BlockPos pos)
     {
         return Collections.emptyList();
     }
@@ -107,8 +108,8 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand
     public boolean isUsernameIndex(@NotNull final String[] args, final int index)
     {
         return index == 0
-                && args.length > 0
-                && !args[0].isEmpty()
-                && getIthArgument(args, 0, Integer.MAX_VALUE) == Integer.MAX_VALUE;
+                 && args.length > 0
+                 && !args[0].isEmpty()
+                 && getIthArgument(args, 0, Integer.MAX_VALUE) == Integer.MAX_VALUE;
     }
 }

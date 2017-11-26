@@ -203,7 +203,7 @@ public class EventHandler
         {
             return onTownHallPlaced(world, player, pos);
         }
-        else if(block instanceof BlockHutWareHouse)
+        else if (block instanceof BlockHutWareHouse)
         {
             return onWareHousePlaced(world, player, pos);
         }
@@ -211,20 +211,6 @@ public class EventHandler
         {
             return onBlockHutPlaced(world, player, pos);
         }
-    }
-
-    private static boolean onWareHousePlaced(final World world, final EntityPlayer player, final BlockPos pos)
-    {
-        if(onBlockHutPlaced(world, player, pos))
-        {
-            final IColony colony = ColonyManager.getClosestIColony(world, pos);
-            if(colony != null && (!Configurations.gameplay.limitToOneWareHousePerColony || !colony.hasWarehouse()))
-            {
-                return true;
-            }
-            LanguageHandler.sendPlayerMessage(player, "tile.blockHut.warehouse.limit");
-        }
-        return false;
     }
 
     static boolean onTownHallPlaced(@NotNull final World world, @NotNull final EntityPlayer player, final BlockPos pos)
@@ -243,6 +229,20 @@ public class EventHandler
 
         //  Town Halls must be far enough apart
         return canPlayerPlaceTownHallHere(world, player, pos, colony);
+    }
+
+    private static boolean onWareHousePlaced(final World world, final EntityPlayer player, final BlockPos pos)
+    {
+        if (onBlockHutPlaced(world, player, pos))
+        {
+            final IColony colony = ColonyManager.getClosestIColony(world, pos);
+            if (colony != null && (!Configurations.gameplay.limitToOneWareHousePerColony || !colony.hasWarehouse()))
+            {
+                return true;
+            }
+            LanguageHandler.sendPlayerMessage(player, "tile.blockHut.warehouse.limit");
+        }
+        return false;
     }
 
     private static boolean onBlockHutPlaced(final World world, @NotNull final EntityPlayer player, final BlockPos pos)
@@ -326,7 +326,7 @@ public class EventHandler
             return false;
         }
 
-        if(Configurations.gameplay.protectVillages && world.getVillageCollection().getNearestVillage(pos, Configurations.gameplay.workingRangeTownHall) != null)
+        if (Configurations.gameplay.protectVillages && world.getVillageCollection().getNearestVillage(pos, Configurations.gameplay.workingRangeTownHall) != null)
         {
             Log.getLogger().warn("Village close by!");
             return false;

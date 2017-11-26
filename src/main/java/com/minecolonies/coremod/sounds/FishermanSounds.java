@@ -15,12 +15,12 @@ public final class FishermanSounds extends AbstractWorkerSounds
     /**
      * Number of different sounds in this class.
      */
-    private static final int    NUMBER_OF_SOUNDS   = 2;
+    private static final int NUMBER_OF_SOUNDS = 2;
 
     /**
      * Random generator.
      */
-    private static final Random rand               = new Random();
+    private static final Random rand = new Random();
 
     /**
      * Containing the female fisherman sounds.
@@ -95,16 +95,16 @@ public final class FishermanSounds extends AbstractWorkerSounds
     }
 
     @Override
+    public String getWorkerString()
+    {
+        return "Fisherman";
+    }
+
+    @Override
     public void playInteractionSound(final World world, final BlockPos position, final boolean female)
     {
         /**
          * Do nothing, we have nothing for this worker.
          */
-    }
-
-    @Override
-    public String getWorkerString()
-    {
-        return "Fisherman";
     }
 }

@@ -68,6 +68,35 @@ public class ItemStorage
     }
 
     /**
+     * Check a list for an ItemStack matching a predicate.
+     *
+     * @param list      the list to check.
+     * @param predicate the predicate to test.
+     * @return the matching stack or null if not found.
+     */
+    public static ItemStorage getItemStackOfListMatchingPredicate(final List<ItemStorage> list, final Predicate<ItemStack> predicate)
+    {
+        for (final ItemStorage stack : list)
+        {
+            if (predicate.test(stack.getItemStack()))
+            {
+                return stack;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get the itemStack from this itemStorage.
+     *
+     * @return the stack.
+     */
+    public ItemStack getItemStack()
+    {
+        return stack;
+    }
+
+    /**
      * Getter for the quantity.
      *
      * @return the amount.
@@ -122,16 +151,6 @@ public class ItemStorage
     }
 
     /**
-     * Getter for the damage value.
-     *
-     * @return the damage value.
-     */
-    public int getDamageValue()
-    {
-        return stack.getItemDamage();
-    }
-
-    /**
      * Getter for the stack.
      *
      * @return the stack.
@@ -143,30 +162,12 @@ public class ItemStorage
     }
 
     /**
-     * Get the itemStack from this itemStorage.
+     * Getter for the damage value.
      *
-     * @return the stack.
+     * @return the damage value.
      */
-    public ItemStack getItemStack()
+    public int getDamageValue()
     {
-        return stack;
-    }
-
-    /**
-     * Check a list for an ItemStack matching a predicate.
-     * @param list the list to check.
-     * @param predicate the predicate to test.
-     * @return the matching stack or null if not found.
-     */
-    public static ItemStorage getItemStackOfListMatchingPredicate(final List<ItemStorage> list, final Predicate<ItemStack> predicate)
-    {
-        for(final ItemStorage stack: list)
-        {
-            if(predicate.test(stack.getItemStack()))
-            {
-                return stack;
-            }
-        }
-        return null;
+        return stack.getItemDamage();
     }
 }

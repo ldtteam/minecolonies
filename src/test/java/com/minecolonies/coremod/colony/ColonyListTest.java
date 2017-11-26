@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony;
 
+import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
 import com.minecolonies.coremod.test.ReflectionUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -26,6 +27,9 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class ColonyListTest
 {
+    @Mock
+    private BlockPos center;
+
     @Mock
     private Colony colony1;
 
@@ -54,10 +58,17 @@ public class ColonyListTest
         when(colony1.getID()).thenReturn(1);
         when(colony1Copy.getID()).thenReturn(1);
         when(colony2.getID()).thenReturn(2);
+        when(colony1.getCenter()).thenReturn(center);
+        when(colony1Copy.getCenter()).thenReturn(center);
+        when(colony2.getCenter()).thenReturn(center);
+        when(colony1.getWorld()).thenReturn(world);
+        when(colony1Copy.getWorld()).thenReturn(world);
+        when(colony2.getWorld()).thenReturn(world);
 
         when(worldProvider.getDimension()).thenReturn(1);
         ReflectionUtil.setFinalField(world, "provider", worldProvider);
         ReflectionUtil.setStaticFinalField(MinecraftForge.class, "EVENT_BUS", eventBus);
+        StandardFactoryControllerInitializer.onPreInit();
     }
 
     @Test

@@ -2,6 +2,7 @@ package com.minecolonies.api.colony.requestsystem.requester;
 
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -14,7 +15,7 @@ public interface IRequester
      *
      * @return The id of this requester.
      */
-    IToken getID();
+    IToken getRequesterId();
 
     /**
      * Method used to get the location that a delivery has to be brought to.
@@ -25,15 +26,16 @@ public interface IRequester
     @NotNull
     default ILocation getDeliveryLocation()
     {
-        return getLocation();
+        return getRequesterLocation();
     }
 
     /**
      * Method to get the location of this locatable.
+     *
      * @return the location.
      */
     @NotNull
-    ILocation getLocation();
+    ILocation getRequesterLocation();
 
     /**
      * Method called by the request system to notify this requester that a request is complete.
@@ -42,4 +44,21 @@ public interface IRequester
      */
     @NotNull
     void onRequestComplete(@NotNull final IToken token);
+
+    /**
+     * Method called by the request system to notify this requester that a request has been overruled.
+     *
+     * @param token The token of the request.
+     */
+    @NotNull
+    void onRequestCancelled(@NotNull final IToken token);
+
+    /**
+     * Gets the name of the requester that requested the request given by the token.
+     *
+     * @param token The token of the request for which the name of the requester is retrieved
+     * @return The display name of the requester.
+     */
+    @NotNull
+    ITextComponent getDisplayName(@NotNull final IToken token);
 }

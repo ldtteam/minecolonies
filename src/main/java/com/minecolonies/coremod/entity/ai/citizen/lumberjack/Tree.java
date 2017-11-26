@@ -109,7 +109,7 @@ public class Tree
      * Jungle Sapling      :3
      * Acacia Sapling      :4
      * Dark Oak Sapling    :5
-     *
+     * <p>
      * Blue Slime Sapling      :0
      * Purple Slime Sapling    :1
      * Magma Slime Sapling     :2
@@ -140,7 +140,7 @@ public class Tree
     public Tree(@NotNull final World world, @NotNull final BlockPos log)
     {
         final Block block = BlockPosUtil.getBlock(world, log);
-        final BlockPos leaf = new BlockPos(log.getX()+1,log.getY()+5,log.getZ());
+        final BlockPos leaf = new BlockPos(log.getX() + 1, log.getY() + 5, log.getZ());
         if (block.isWood(world, log) || Compatibility.isSlimeBlock(block))
         {
             variantNumber = calcVariantNumber(block, log, leaf, world);
@@ -162,9 +162,10 @@ public class Tree
 
     /**
      * Calculate the variant number of the tree.
+     *
      * @param block from the block.
-     * @param log the position of it.
-     * @param leaf the leaf position.
+     * @param log   the position of it.
+     * @param leaf  the leaf position.
      * @param world the world access.
      * @return the variant representation.
      */
@@ -191,8 +192,8 @@ public class Tree
     /**
      * For use in PathJobFindTree.
      *
-     * @param world the world.
-     * @param pos   The coordinates.
+     * @param world      the world.
+     * @param pos        The coordinates.
      * @param treesToCut the trees the lumberjack is supposed to cut.
      * @return true if the log is part of a tree.
      */
@@ -213,8 +214,8 @@ public class Tree
 
         //Make sure tree is on solid ground and tree is not build above cobblestone.
         return world.getBlockState(basePos.down()).getMaterial().isSolid()
-                && world.getBlockState(basePos.down()).getBlock() != Blocks.COBBLESTONE
-                && hasEnoughLeavesAndIsSupposedToCut(world, baseAndTOp.getSecond(), treesToCut);
+                 && world.getBlockState(basePos.down()).getBlock() != Blocks.COBBLESTONE
+                 && hasEnoughLeavesAndIsSupposedToCut(world, baseAndTOp.getSecond(), treesToCut);
     }
 
     /**
@@ -226,11 +227,11 @@ public class Tree
      */
     @NotNull
     private static Tuple<BlockPos, BlockPos> getBottomAndTopLog(
-            @NotNull final IBlockAccess world,
-            @NotNull final BlockPos log,
-            @NotNull final LinkedList<BlockPos> woodenBlocks,
-            final BlockPos bottomLog,
-            final BlockPos topLog)
+                                                                 @NotNull final IBlockAccess world,
+                                                                 @NotNull final BlockPos log,
+                                                                 @NotNull final LinkedList<BlockPos> woodenBlocks,
+                                                                 final BlockPos bottomLog,
+                                                                 final BlockPos topLog)
     {
         BlockPos bottom = bottomLog == null ? log : bottomLog;
         BlockPos top = topLog == null ? log : topLog;
@@ -272,8 +273,9 @@ public class Tree
 
     /**
      * Check if the tree has enough leaves and the lj is supposed to cut them.
-     * @param world the world it is in.
-     * @param pos the position.
+     *
+     * @param world      the world it is in.
+     * @param pos        the position.
      * @param treesToCut the trees the lj is supposed to cut.
      * @return true if so.
      */
@@ -290,7 +292,7 @@ public class Tree
                     final BlockPos leafPos = pos.add(dx, dy, dz);
                     if (world.getBlockState(leafPos).getMaterial().equals(Material.LEAVES))
                     {
-                        if(!checkedLeaves && !supposedToCut(world, pos, treesToCut, leafPos))
+                        if (!checkedLeaves && !supposedToCut(world, pos, treesToCut, leafPos))
                         {
                             return false;
                         }
@@ -310,28 +312,28 @@ public class Tree
 
     /**
      * Check if the Lj is supposed to cut a tree.
-     * @param world the world it is in.
-     * @param pos the position a leaf is at.
+     *
+     * @param world      the world it is in.
+     * @param pos        the position a leaf is at.
      * @param treesToCut the trees he is supposed to cut.
-     * @param leafPos
      * @return false if not.
      */
     private static boolean supposedToCut(final IBlockAccess world, final BlockPos pos, final Map<ItemStorage, Boolean> treesToCut, final BlockPos leafPos)
     {
         final IBlockState state = world.getBlockState(pos);
 
-        for(final ItemStorage stack: treesToCut.entrySet().stream().filter(entry -> !entry.getValue()).map(Map.Entry::getKey).collect(Collectors.toList()))
+        for (final ItemStorage stack : treesToCut.entrySet().stream().filter(entry -> !entry.getValue()).map(Map.Entry::getKey).collect(Collectors.toList()))
         {
             final int variantNumber = calcVariantNumber(state.getBlock(), pos, leafPos, world);
 
             if (Compatibility.isSlimeLeaf(world.getBlockState(leafPos).getBlock()))
             {
-                if(Compatibility.isSlimeSapling(((ItemBlock) stack.getItem()).getBlock()) && variantNumber == stack.getItemStack().getMetadata())
+                if (Compatibility.isSlimeSapling(((ItemBlock) stack.getItem()).getBlock()) && variantNumber == stack.getItemStack().getMetadata())
                 {
                     return false;
                 }
             }
-            else if(!Compatibility.isSlimeSapling(((ItemBlock) stack.getItem()).getBlock()) && variantNumber == stack.getItemStack().getMetadata())
+            else if (!Compatibility.isSlimeSapling(((ItemBlock) stack.getItem()).getBlock()) && variantNumber == stack.getItemStack().getMetadata())
             {
                 return false;
             }

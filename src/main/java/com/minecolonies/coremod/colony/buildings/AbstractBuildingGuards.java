@@ -36,25 +36,23 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
 {
     /**
-     * Name description of the guard hat.
-     */
-    private static final String GUARD_TOWER = "GuardTower";
-
-    /**
      * Worker gets this distance times building level away from his building to patrol.
      */
     public static final int PATROL_DISTANCE = 40;
-
+    /**
+     * Name description of the guard hat.
+     */
+    private static final String GUARD_TOWER = "GuardTower";
     /**
      * TAG to store his task to nbt.
      */
-    private static final String TAG_TASK            = "TASK";
-    private static final String TAG_JOB             = "job";
+    private static final String TAG_TASK = "TASK";
+    private static final String TAG_JOB  = "job";
 
     /**
      * Max level of the guard hut.
      */
-    private static final int    GUARD_HUT_MAX_LEVEL = 5;
+    private static final int GUARD_HUT_MAX_LEVEL = 5;
 
     /**
      * The max vision bonus multiplier.
@@ -131,17 +129,17 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.doesItemServeAsWeapon(itemStack), 1);
 
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                && itemStack.getItem() instanceof ItemArmor
-                && ((ItemArmor) itemStack.getItem()).armorType == EntityEquipmentSlot.CHEST, 1);
+                                 && itemStack.getItem() instanceof ItemArmor
+                                 && ((ItemArmor) itemStack.getItem()).armorType == EntityEquipmentSlot.CHEST, 1);
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                && itemStack.getItem() instanceof ItemArmor
-                && ((ItemArmor) itemStack.getItem()).armorType == EntityEquipmentSlot.HEAD, 1);
+                                 && itemStack.getItem() instanceof ItemArmor
+                                 && ((ItemArmor) itemStack.getItem()).armorType == EntityEquipmentSlot.HEAD, 1);
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                && itemStack.getItem() instanceof ItemArmor
-                && ((ItemArmor) itemStack.getItem()).armorType == EntityEquipmentSlot.LEGS, 1);
+                                 && itemStack.getItem() instanceof ItemArmor
+                                 && ((ItemArmor) itemStack.getItem()).armorType == EntityEquipmentSlot.LEGS, 1);
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                && itemStack.getItem() instanceof ItemArmor
-                && ((ItemArmor) itemStack.getItem()).armorType == EntityEquipmentSlot.FEET, 1);
+                                 && itemStack.getItem() instanceof ItemArmor
+                                 && ((ItemArmor) itemStack.getItem()).armorType == EntityEquipmentSlot.FEET, 1);
     }
 
     /**
@@ -166,6 +164,14 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     }
 
     /**
+     * Getter for the patrol distance the guard currently has.
+     *
+     * @return the distance in whole numbers.
+     */
+    public int getPatrolDistance()
+    {
+        return this.getBuildingLevel() * PATROL_DISTANCE;
+    }    /**
      * Gets the max level of the baker's hut.
      *
      * @return The max level of the baker's hut.
@@ -176,10 +182,23 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         return GUARD_HUT_MAX_LEVEL;
     }
 
-    @Override
+    /**
+     * Gets the player to follow.
+     *
+     * @return the entity player.
+     */
+    public BlockPos getPlayerToFollow()
+    {
+        if (task.equals(Task.FOLLOW) && followPlayer != null)
+        {
+            return followPlayer.getPosition();
+        }
+        task = Task.GUARD;
+        return this.getLocation();
+    }    @Override
     public void onUpgradeComplete(final int newLevel)
     {
-        for(final EntityCitizen citizen: getWorkerEntities())
+        for (final EntityCitizen citizen : getWorkerEntities())
         {
             if (newLevel > MAX_VISION_BONUS_MULTIPLIER)
             {
@@ -200,6 +219,14 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     }
 
     /**
+     * Sets the player to follow.
+     *
+     * @param player the player to follow.
+     */
+    public void setPlayerToFollow(final EntityPlayer player)
+    {
+        this.followPlayer = player;
+    }    /**
      * If no vision multiplier give health bonus.
      *
      * @return the bonus health.
@@ -211,41 +238,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
             return (getBuildingLevel() - MAX_VISION_BONUS_MULTIPLIER) * HEALTH_MULTIPLIER;
         }
         return 0;
-    }
-
-    /**
-     * Getter for the patrol distance the guard currently has.
-     *
-     * @return the distance in whole numbers.
-     */
-    public int getPatrolDistance()
-    {
-        return this.getBuildingLevel() * PATROL_DISTANCE;
-    }
-
-    /**
-     * Gets the player to follow.
-     *
-     * @return the entity player.
-     */
-    public BlockPos getPlayerToFollow()
-    {
-        if (task.equals(Task.FOLLOW) && followPlayer != null)
-        {
-            return followPlayer.getPosition();
-        }
-        task = Task.GUARD;
-        return this.getLocation();
-    }
-
-    /**
-     * Sets the player to follow.
-     *
-     * @param player the player to follow.
-     */
-    public void setPlayerToFollow(final EntityPlayer player)
-    {
-        this.followPlayer = player;
     }
 
     /**
@@ -357,17 +349,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     }
 
     @Override
-    public void removeCitizen(final CitizenData citizen)
-    {
-        if (citizen != null && citizen.getCitizenEntity() != null)
-        {
-            citizen.getCitizenEntity().getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(SharedMonsterAttributes.MAX_HEALTH.getDefaultValue());
-            citizen.getCitizenEntity().getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(SharedMonsterAttributes.ARMOR.getDefaultValue());
-        }
-        super.removeCitizen(citizen);
-    }
-
-    @Override
     public void setWorker(final CitizenData citizen)
     {
         if (citizen != null && citizen.getCitizenEntity() != null)
@@ -379,13 +360,8 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     }
 
     /**
-     * Get an Offence bonus related to the Buildingtype.
-     * @return an Integer.
-     */
-    public abstract int getOffenceBonus();
-
-    /**
      * Get an Defence bonus related to the Buildingtype.
+     *
      * @return an Integer.
      */
     public abstract int getDefenceBonus();
@@ -436,6 +412,29 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         compound.setTag(TAG_GUARD, NBTUtil.createPosTag(guardPos));
     }
 
+    /**
+     * The name of the guards's job.
+     *
+     * @return The name of the guards's job.
+     */
+    @NotNull
+    @Override
+    public String getJobName()
+    {
+        return GUARD_TOWER;
+    }
+
+    @Override
+    public void removeCitizen(final CitizenData citizen)
+    {
+        if (citizen != null && citizen.getCitizenEntity() != null)
+        {
+            citizen.getCitizenEntity().getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(SharedMonsterAttributes.MAX_HEALTH.getDefaultValue());
+            citizen.getCitizenEntity().getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(SharedMonsterAttributes.ARMOR.getDefaultValue());
+        }
+        super.removeCitizen(citizen);
+    }
+
     @Override
     public void serializeToView(@NotNull final ByteBuf buf)
     {
@@ -454,6 +453,13 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
 
         BlockPosUtil.writeToByteBuf(buf, guardPos);
     }
+
+    /**
+     * Get an Offence bonus related to the Buildingtype.
+     *
+     * @return an Integer.
+     */
+    public abstract int getOffenceBonus();
 
     /**
      * Getter for the bonus vision.
@@ -552,18 +558,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     }
 
     /**
-     * The name of the guards's job.
-     *
-     * @return The name of the guards's job.
-     */
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return GUARD_TOWER;
-    }
-
-    /**
      * The client view for the baker building.
      */
     public static class View extends AbstractBuildingWorker.View
@@ -652,7 +646,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         @Override
         public Skill getPrimarySkill()
         {
-            if(GuardJob.KNIGHT.equals(job))
+            if (GuardJob.KNIGHT.equals(job))
             {
                 return Skill.STRENGTH;
             }
@@ -664,7 +658,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         @Override
         public Skill getSecondarySkill()
         {
-            if(GuardJob.KNIGHT.equals(job))
+            if (GuardJob.KNIGHT.equals(job))
             {
                 return Skill.ENDURANCE;
             }
@@ -672,6 +666,12 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
             return Skill.STRENGTH;
         }
     }
+
+
+
+
+
+
 }
 
 

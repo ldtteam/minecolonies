@@ -24,8 +24,10 @@ public class TextField extends Pane
      * Texture resource location.
      */
     private static final ResourceLocation TEXTURE           = new ResourceLocation("textures/gui/widgets.png");
+    private static final int RECT_COLOR = -3_092_272;
+    private static final int DEFAULT_MAX_TEXT_LENGTH = 32;
     //  Attributes
-    protected            int              maxTextLength     = 32;
+    protected            int              maxTextLength     = DEFAULT_MAX_TEXT_LENGTH;
     protected            int              textColor         = 0xE0E0E0;
     protected            int              textColorDisabled = 0x707070;
     protected            boolean          shadow            = true;
@@ -38,8 +40,6 @@ public class TextField extends Pane
     protected int scrollOffset       = 0;
     protected int selectionEnd       = 0;
     protected int cursorBlinkCounter = 0;
-
-    private static final int RECT_COLOR = -3_092_272;
 
     /**
      * Simple public constructor to instantiate.

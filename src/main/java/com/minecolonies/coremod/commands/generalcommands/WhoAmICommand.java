@@ -31,7 +31,6 @@ public class WhoAmICommand extends AbstractSingleCommand
      */
     public static final String TELL_HIM = "You are %s, your colony is %s at position %s";
 
-
     /**
      * Initialize this SubCommand with it's parents.
      *
@@ -45,7 +44,7 @@ public class WhoAmICommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        if(!(sender instanceof EntityPlayer))
+        if (!(sender instanceof EntityPlayer))
         {
             Log.getLogger().info("Very funny, you're a console!");
             return;

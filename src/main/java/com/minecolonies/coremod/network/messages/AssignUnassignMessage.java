@@ -7,6 +7,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
@@ -50,10 +51,10 @@ public class AssignUnassignMessage extends AbstractMessage<AssignUnassignMessage
      * Creates object for the player to assigning or unassigning a citizen.
      *
      * @param building  view of the building to read data from
-     * @param assign      assign or unassigning the citizens
+     * @param assign    assign or unassigning the citizens
      * @param citizenID the id of the citizen to fill the job.
      */
-    public AssignUnassignMessage(@NotNull final AbstractBuilding.View building, final boolean assign, final int citizenID)
+    public AssignUnassignMessage(@NotNull final AbstractBuildingView building, final boolean assign, final int citizenID)
     {
         super();
         this.colonyId = building.getColony().getID();
@@ -104,7 +105,7 @@ public class AssignUnassignMessage extends AbstractMessage<AssignUnassignMessage
 
             final AbstractBuilding building = colony.getBuilding(message.buildingId);
 
-            if(!(building instanceof BuildingHome))
+            if (!(building instanceof BuildingHome))
             {
                 return;
             }
@@ -114,7 +115,7 @@ public class AssignUnassignMessage extends AbstractMessage<AssignUnassignMessage
             {
                 ((BuildingHome) building).addResident(citizen);
             }
-            else if(((BuildingHome) building).hasResident(citizen))
+            else if (((BuildingHome) building).hasResident(citizen))
             {
                 building.removeCitizen(citizen);
             }

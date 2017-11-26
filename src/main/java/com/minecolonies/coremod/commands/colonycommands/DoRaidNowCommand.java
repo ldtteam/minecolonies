@@ -69,7 +69,7 @@ public class DoRaidNowCommand extends AbstractSingleCommand
                 return;
             }
 
-            MobEventsUtils.barbarianEvent(colony.getWorld(),colony);
+            MobEventsUtils.barbarianEvent(colony.getWorld(), colony);
 
             sender.sendMessage(SUCCESSFUL);
         }

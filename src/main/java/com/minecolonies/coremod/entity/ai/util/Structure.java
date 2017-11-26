@@ -112,13 +112,13 @@ public class Structure
         /**
          * Create one immutable Block containing all information needed.
          *
-         * @param block         the minecraft block this block has.
-         * @param blockPosition the BlockPos this block has.
-         * @param metadata      the metadata this block has.
-         * @param entity        the entity in the structure.
-         * @param item          the item needed to place this block
-         * @param worldBlock    the block to be replaced with the structure block
-         * @param worldMetadata the metadata of the world block
+         * @param block          the minecraft block this block has.
+         * @param blockPosition  the BlockPos this block has.
+         * @param metadata       the metadata this block has.
+         * @param entity         the entity in the structure.
+         * @param item           the item needed to place this block
+         * @param worldBlock     the block to be replaced with the structure block
+         * @param worldMetadata  the metadata of the world block
          * @param hasWorldEntity if there is an entity at the position in the world.
          */
         public StructureBlock(
@@ -147,12 +147,12 @@ public class Structure
 
             //All worldBlocks are equal the substitution block
             if (structureBlockEqualsWorldBlock(structureBlock, worldBlock, worldMetadata)
-                    || structureBlock == ModBlocks.blockWayPoint)
+                  || structureBlock == ModBlocks.blockWayPoint)
             {
                 return true;
             }
 
-            if(entity == null && hasWorldEntity)
+            if (entity == null && hasWorldEntity)
             {
                 return false;
             }
@@ -166,8 +166,8 @@ public class Structure
                 return structureBlock == worldBlockState.getBlock();
             }
             else if ((structureBlock instanceof BlockStairs && structureBlockState.equals(worldBlockState))
-                    || BlockUtils.isGrassOrDirt(structureBlock, worldBlock, structureBlockState, worldBlockState)
-                    || (worldBlock == ModBlocks.blockRack && BlockMinecoloniesRack.shouldBlockBeReplacedWithRack(structureBlock)))
+                       || BlockUtils.isGrassOrDirt(structureBlock, worldBlock, structureBlockState, worldBlockState)
+                       || (worldBlock == ModBlocks.blockRack && BlockMinecoloniesRack.shouldBlockBeReplacedWithRack(structureBlock)))
             {
                 return true;
             }
@@ -175,11 +175,12 @@ public class Structure
             return structureBlockState.equals(worldBlockState);
         }
 
-        private static boolean structureBlockEqualsWorldBlock(@NotNull final Block structureBlock,
-                @NotNull final Block worldBlock, @NotNull final IBlockState worldMetadata)
+        private static boolean structureBlockEqualsWorldBlock(
+                                                               @NotNull final Block structureBlock,
+                                                               @NotNull final Block worldBlock, @NotNull final IBlockState worldMetadata)
         {
             return structureBlock == ModBlocks.blockSubstitution || (structureBlock == ModBlocks.blockSolidSubstitution
-                    && worldMetadata.getMaterial().isSolid() && !(worldBlock instanceof BlockOre) && worldBlock != Blocks.AIR);
+                                                                       && worldMetadata.getMaterial().isSolid() && !(worldBlock instanceof BlockOre) && worldBlock != Blocks.AIR);
         }
     }
 
@@ -237,20 +238,6 @@ public class Structure
     }
 
     /**
-     * Create a new building task.
-     *
-     * @param targetWorld   the world.
-     * @param structure     the structure.
-     * @param stageProgress the stage to start off with.
-     */
-    public Structure(final World targetWorld, final StructureWrapper structure, final Stage stageProgress)
-    {
-        this.structure = structure;
-        this.stage = stageProgress;
-        this.targetWorld = targetWorld;
-    }
-
-    /**
      * Load the structure for this building.
      *
      * @param targetWorld       the world we want to place it
@@ -297,6 +284,20 @@ public class Structure
             tempSchematic.setLocalPosition(blockProgress);
         }
         return tempSchematic;
+    }
+
+    /**
+     * Create a new building task.
+     *
+     * @param targetWorld   the world.
+     * @param structure     the structure.
+     * @param stageProgress the stage to start off with.
+     */
+    public Structure(final World targetWorld, final StructureWrapper structure, final Stage stageProgress)
+    {
+        this.structure = structure;
+        this.stage = stageProgress;
+        this.targetWorld = targetWorld;
     }
 
     /**
@@ -409,9 +410,9 @@ public class Structure
                                    this.structure.getItem(),
                                    BlockPosUtil.getBlock(targetWorld, this.structure.getBlockPosition()),
                                    BlockPosUtil.getBlockState(targetWorld, this.structure.getBlockPosition()),
-                                           !targetWorld.getEntitiesWithinAABB(net.minecraft.entity.Entity.class,
-                                                   new AxisAlignedBB(this.structure.getBlockPosition()),
-                                                   entity -> !(entity instanceof EntityLiving || entity instanceof EntityPlayer || entity instanceof EntityItem)).isEmpty());
+                                   !targetWorld.getEntitiesWithinAABB(net.minecraft.entity.Entity.class,
+                                     new AxisAlignedBB(this.structure.getBlockPosition()),
+                                     entity -> !(entity instanceof EntityLiving || entity instanceof EntityPlayer || entity instanceof EntityItem)).isEmpty());
     }
 
     /**
@@ -446,6 +447,7 @@ public class Structure
 
     /**
      * Get the center position of the structure.
+     *
      * @return the blockPos.
      */
     public BlockPos getCenter()

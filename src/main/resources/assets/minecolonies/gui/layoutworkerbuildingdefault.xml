@@ -20,7 +20,7 @@
             label="$(com.minecolonies.coremod.gui.workerHuts.repair)"/>
 
     <label size="100% 11" pos="0 172"
-           label="$(com.minecolonies.coremod.gui.workerHuts.buildType)"
+           label="$(com.minecolonies.coremod.gui.workerHuts.buildPrio)"
            textalign="MIDDLE" color="black"/>
     <label id="type" size="100% 11" pos="0 182"
            textalign="MIDDLE" color="black"/>

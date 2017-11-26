@@ -51,15 +51,20 @@ public class ColonyUtils
 
     /**
      * Calculated the corner of a building.
-     * @param pos the central position.
-     * @param world the world.
-     * @param wrapper the structureWrapper.
-     * @param rotation the rotation.
+     *
+     * @param pos        the central position.
+     * @param world      the world.
+     * @param wrapper    the structureWrapper.
+     * @param rotation   the rotation.
      * @param isMirrored if its mirrored.
      * @return a tuple with the required corners.
      */
     public static Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> calculateCorners(
-            final BlockPos pos, final World world, final StructureWrapper wrapper, final int rotation, final boolean isMirrored)
+                                                                                            final BlockPos pos,
+                                                                                            final World world,
+                                                                                            final StructureWrapper wrapper,
+                                                                                            final int rotation,
+                                                                                            final boolean isMirrored)
     {
         wrapper.rotate(rotation, world, pos, isMirrored ? Mirror.FRONT_BACK : Mirror.NONE);
         wrapper.setPosition(pos);

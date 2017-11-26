@@ -39,7 +39,7 @@ public final class BuilderSounds extends AbstractWorkerSounds
         public static final SoundEvent greeting          = ModSoundEvents.getSoundID("mob.builder.female.greeting");
         public static final SoundEvent farewell          = ModSoundEvents.getSoundID("mob.builder.female.farewell");
         public static final SoundEvent interaction       = ModSoundEvents.getSoundID("mob.builder.female.interaction");
-        public static final SoundEvent complete       = ModSoundEvents.getSoundID("mob.builder.female.complete");
+        public static final SoundEvent complete          = ModSoundEvents.getSoundID("mob.builder.female.complete");
 
         /**
          * Private constructor to hide the implicit public one.

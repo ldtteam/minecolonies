@@ -69,25 +69,6 @@ public class JobGuard extends AbstractJob
     }
 
     /**
-     * Sets a random job of the job hasn't been set yet.
-     *
-     * @param building the building of the guard.
-     * @return the new job.
-     */
-    @NotNull
-    private static AbstractBuildingGuards.GuardJob generateRandomAI(@NotNull final AbstractBuildingGuards building)
-    {
-        final int chance = new Random().nextInt(GUARD_CHANCE);
-        if (chance == 1)
-        {
-            building.setJob(AbstractBuildingGuards.GuardJob.KNIGHT);
-            return AbstractBuildingGuards.GuardJob.KNIGHT;
-        }
-        building.setJob(AbstractBuildingGuards.GuardJob.RANGER);
-        return AbstractBuildingGuards.GuardJob.RANGER;
-    }
-
-    /**
      * Override to add Job-specific AI tasks to the given EntityAITask list.
      */
     @NotNull
@@ -108,13 +89,20 @@ public class JobGuard extends AbstractJob
     }
 
     @Override
-    public void triggerDeathAchievement(final DamageSource source, final EntityCitizen citizen)
+    public SoundEvent getBedTimeSound()
     {
-        super.triggerDeathAchievement(source, citizen);
-        if (source.getEntity() instanceof EntityEnderman)
+        if (getCitizen() != null)
         {
-            citizen.getColony().triggerAchievement(ModAchievements.achievementGuardDeathEnderman);
+            if (getModel().equals(RenderBipedCitizen.Model.ARCHER_GUARD))
+            {
+                return getCitizen().isFemale() ? ArcherSounds.Female.offToBed : null;
+            }
+            else
+            {
+                return getCitizen().isFemale() ? null : KnightSounds.Male.offToBed;
+            }
         }
+        return null;
     }
 
     @Nullable
@@ -123,7 +111,7 @@ public class JobGuard extends AbstractJob
     {
         if (getCitizen() != null)
         {
-            if(getModel().equals(RenderBipedCitizen.Model.ARCHER_GUARD))
+            if (getModel().equals(RenderBipedCitizen.Model.ARCHER_GUARD))
             {
                 return getCitizen().isFemale() ? ArcherSounds.Female.badWeather : null;
             }
@@ -135,20 +123,32 @@ public class JobGuard extends AbstractJob
         return null;
     }
 
-    @Override
-    public SoundEvent getBedTimeSound()
+    /**
+     * Sets a random job of the job hasn't been set yet.
+     *
+     * @param building the building of the guard.
+     * @return the new job.
+     */
+    @NotNull
+    private static AbstractBuildingGuards.GuardJob generateRandomAI(@NotNull final AbstractBuildingGuards building)
     {
-        if (getCitizen() != null)
+        final int chance = new Random().nextInt(GUARD_CHANCE);
+        if (chance == 1)
         {
-            if(getModel().equals(RenderBipedCitizen.Model.ARCHER_GUARD))
-            {
-                return getCitizen().isFemale() ? ArcherSounds.Female.offToBed : null;
-            }
-            else
-            {
-                return getCitizen().isFemale() ? null : KnightSounds.Male.offToBed;
-            }
+            building.setJob(AbstractBuildingGuards.GuardJob.KNIGHT);
+            return AbstractBuildingGuards.GuardJob.KNIGHT;
         }
-        return null;
+        building.setJob(AbstractBuildingGuards.GuardJob.RANGER);
+        return AbstractBuildingGuards.GuardJob.RANGER;
+    }
+
+    @Override
+    public void triggerDeathAchievement(final DamageSource source, final EntityCitizen citizen)
+    {
+        super.triggerDeathAchievement(source, citizen);
+        if (source.getEntity() instanceof EntityEnderman)
+        {
+            citizen.getColony().triggerAchievement(ModAchievements.achievementGuardDeathEnderman);
+        }
     }
 }

@@ -22,27 +22,6 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
 {
 
     /**
-     * Enums for Message Type for the freeBlock message.
-     * <p>
-     * ADD_BLOCK       Add a block or pos.
-     * REMOVE_BLOCK    Removing a block or pos.
-     */
-    public enum MessageType
-    {
-        REMOVE_BLOCK,
-        ADD_BLOCK,
-    }
-
-    /**
-     * Enums of modes this message exists.
-     */
-    public enum MessageMode
-    {
-        LOCATION,
-        BLOCK,
-    }
-
-    /**
      * The id of the colony.
      */
     private int colonyId;
@@ -58,9 +37,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
      * The type of the message.
      */
     private MessageType type;
-
     private MessageMode mode;
-
     /**
      * Empty public constructor.
      */
@@ -133,8 +110,8 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
             if (!colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS))
             {
                 LanguageHandler.sendPlayerMessage(
-                        player,
-                        "com.minecolonies.coremod.item.permissionscepter.permission.deny"
+                  player,
+                  "com.minecolonies.coremod.item.permissionscepter.permission.deny"
                 );
                 return;
             }
@@ -146,19 +123,19 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
                     case LOCATION:
                         colony.addFreePosition(message.pos);
                         LanguageHandler.sendPlayerMessage(
-                                player,
-                                "com.minecolonies.coremod.item.permissionscepter.addposition.success",
-                                message.pos.getX(),
-                                message.pos.getY(),
-                                message.pos.getZ()
+                          player,
+                          "com.minecolonies.coremod.item.permissionscepter.addposition.success",
+                          message.pos.getX(),
+                          message.pos.getY(),
+                          message.pos.getZ()
                         );
                         break;
                     case BLOCK:
                         colony.addFreeBlock(message.block);
                         LanguageHandler.sendPlayerMessage(
-                                player,
-                                "com.minecolonies.coremod.item.permissionscepter.addblock.success",
-                                message.block.getRegistryName()
+                          player,
+                          "com.minecolonies.coremod.item.permissionscepter.addblock.success",
+                          message.block.getRegistryName()
                         );
                         break;
                     default:
@@ -172,18 +149,18 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
                     case LOCATION:
                         colony.removeFreePosition(message.pos);
                         LanguageHandler.sendPlayerMessage(
-                                player,
-                                "com.minecolonies.coremod.item.permissionscepter.removelocation.success",
-                                message.pos.getX(),
-                                message.pos.getY(),
-                                message.pos.getZ());
+                          player,
+                          "com.minecolonies.coremod.item.permissionscepter.removelocation.success",
+                          message.pos.getX(),
+                          message.pos.getY(),
+                          message.pos.getZ());
                         break;
                     case BLOCK:
                         colony.removeFreeBlock(message.block);
                         LanguageHandler.sendPlayerMessage(
-                                player,
-                                "com.minecolonies.coremod.item.permissionscepter.removeblock.success",
-                                message.block.getRegistryName()
+                          player,
+                          "com.minecolonies.coremod.item.permissionscepter.removeblock.success",
+                          message.block.getRegistryName()
                         );
                         break;
                     default:
@@ -191,5 +168,26 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
                 }
             }
         }
+    }
+
+    /**
+     * Enums for Message Type for the freeBlock message.
+     * <p>
+     * ADD_BLOCK       Add a block or pos.
+     * REMOVE_BLOCK    Removing a block or pos.
+     */
+    public enum MessageType
+    {
+        REMOVE_BLOCK,
+        ADD_BLOCK,
+    }
+
+    /**
+     * Enums of modes this message exists.
+     */
+    public enum MessageMode
+    {
+        LOCATION,
+        BLOCK,
     }
 }

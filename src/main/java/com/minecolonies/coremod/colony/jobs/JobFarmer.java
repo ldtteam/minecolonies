@@ -48,6 +48,16 @@ public class JobFarmer extends AbstractJob
         return new EntityAIWorkFarmer(this);
     }
 
+    @Override
+    public SoundEvent getBedTimeSound()
+    {
+        if (getCitizen() != null)
+        {
+            return getCitizen().isFemale() ? FarmerSounds.Female.offToBed : null;
+        }
+        return null;
+    }
+
     @Nullable
     @Override
     public SoundEvent getBadWeatherSound()
@@ -55,16 +65,6 @@ public class JobFarmer extends AbstractJob
         if (getCitizen() != null)
         {
             return getCitizen().isFemale() ? FarmerSounds.Female.badWeather : null;
-        }
-        return null;
-    }
-
-    @Override
-    public SoundEvent getBedTimeSound()
-    {
-        if (getCitizen() != null)
-        {
-            return getCitizen().isFemale() ? FarmerSounds.Female.offToBed : null;
         }
         return null;
     }

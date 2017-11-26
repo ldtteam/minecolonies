@@ -27,7 +27,7 @@ import java.util.concurrent.Future;
  */
 public class PathNavigate extends PathNavigateGround
 {
-    private static final double ON_PATH_SPEED_MULTIPLIER    = 1.3D;
+    private static final double ON_PATH_SPEED_MULTIPLIER = 1.3D;
 
     //  Parent class private members
     private final EntityLiving entity;
@@ -84,6 +84,14 @@ public class PathNavigate extends PathNavigateGround
         return null;
     }
 
+    @Override
+    protected boolean isDirectPathBetweenPoints(final Vec3d start, final Vec3d end, final int sizeX, final int sizeY, final int sizeZ)
+    {
+        // TODO improve road walking. This is better in some situations, but still not great.
+        return !BlockUtils.isPathBlock(world.getBlockState(new BlockPos(start.xCoord, start.yCoord - 1, start.zCoord)).getBlock())
+                 && super.isDirectPathBetweenPoints(start, end, sizeX, sizeY, sizeZ);
+    }
+
     /**
      * Get the destination from the path.
      *
@@ -92,14 +100,6 @@ public class PathNavigate extends PathNavigateGround
     public BlockPos getDestination()
     {
         return destination;
-    }
-
-    @Override
-    protected boolean isDirectPathBetweenPoints(final Vec3d start, final Vec3d end, final int sizeX, final int sizeY, final int sizeZ)
-    {
-        // TODO improve road walking. This is better in some situations, but still not great.
-        return !BlockUtils.isPathBlock(world.getBlockState(new BlockPos(start.xCoord, start.yCoord - 1, start.zCoord)).getBlock())
-                && super.isDirectPathBetweenPoints(start, end, sizeX, sizeY, sizeZ);
     }
 
     public double getSpeed()
@@ -163,9 +163,9 @@ public class PathNavigate extends PathNavigateGround
 
     @Nullable
     private PathResult setPathJob(
-            @NotNull final AbstractPathJob job,
-            final BlockPos dest,
-            final double speed)
+                                   @NotNull final AbstractPathJob job,
+                                   final BlockPos dest,
+                                   final double speed)
     {
         clearPathEntity();
 
@@ -393,8 +393,8 @@ public class PathNavigate extends PathNavigateGround
     /**
      * Used to find a tree.
      *
-     * @param range in the range.
-     * @param speed walking speed.
+     * @param range      in the range.
+     * @param speed      walking speed.
      * @param treesToCut the trees which should be cut.
      * @return the result of the search.
      */

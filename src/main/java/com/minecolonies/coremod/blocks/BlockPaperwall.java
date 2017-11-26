@@ -2,8 +2,6 @@ package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockPane;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -20,33 +18,27 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.common.registry.IForgeRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public class BlockPaperwall extends AbstractBlockMinecoloniesPane<BlockPaperwall>
 {
-    public static final PropertyEnum<BlockPaperwall.EnumType> VARIANT = PropertyEnum.create("variant", EnumType.class);
-
-    /**
-     * The hardness this block has.
-     */
-    private static final float BLOCK_HARDNESS = 3F;
-
+    public static final PropertyEnum<PaperwallType> VARIANT        = PropertyEnum.create("variant", PaperwallType.class);
     /**
      * This blocks name.
      */
-    public static final String BLOCK_NAME = "blockPaperwall";
-
+    public static final String                      BLOCK_NAME     = "blockPaperwall";
+    /**
+     * The hardness this block has.
+     */
+    private static final float                      BLOCK_HARDNESS = 3F;
     /**
      * The resistance this block has.
      */
-    private static final float RESISTANCE = 1F;
+    private static final float                      RESISTANCE     = 1F;
 
     public BlockPaperwall()
     {
         super(Material.GLASS, true);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(VARIANT, BlockPaperwall.EnumType.JUNGLE));
+        this.setDefaultState(this.blockState.getBaseState().withProperty(VARIANT, PaperwallType.JUNGLE));
         initBlock();
     }
 
@@ -61,12 +53,31 @@ public class BlockPaperwall extends AbstractBlockMinecoloniesPane<BlockPaperwall
 
     /**
      * Registery block at gameregistry.
+     *
      * @param registry the registry to use.
      */
     @Override
     public void registerItemBlock(final IForgeRegistry<Item> registry)
     {
         registry.register((new ItemColored(this, true)).setRegistryName(this.getRegistryName()));
+    }
+
+    /**
+     * Get the MapColor for this Block and the given BlockState
+     */
+    @Override
+    public MapColor getMapColor(final IBlockState state)
+    {
+        return state.getValue(VARIANT).getMapColor();
+    }
+
+    /**
+     * Convert the given metadata into a BlockState for this Block
+     */
+    @Override
+    public IBlockState getStateFromMeta(final int meta)
+    {
+        return this.getDefaultState().withProperty(VARIANT, PaperwallType.byMetadata(meta));
     }
 
     /**
@@ -80,21 +91,18 @@ public class BlockPaperwall extends AbstractBlockMinecoloniesPane<BlockPaperwall
     }
 
     @Override
+    protected ItemStack getSilkTouchDrop(final IBlockState state)
+    {
+        return new ItemStack(Item.getItemFromBlock(this), 1, state.getValue(VARIANT).getMetadata());
+    }
+
+    @Override
     public void getSubBlocks(final Item itemIn, final CreativeTabs tab, final NonNullList<ItemStack> list)
     {
-        for(final BlockPaperwall.EnumType type: BlockPaperwall.EnumType.values())
+        for (final PaperwallType type : PaperwallType.values())
         {
             list.add(new ItemStack(itemIn, 1, type.getMetadata()));
         }
-    }
-
-    /**
-     * Get the MapColor for this Block and the given BlockState
-     */
-    @Override
-    public MapColor getMapColor(final IBlockState state)
-    {
-        return state.getValue(VARIANT).getMapColor();
     }
 
     @Override
@@ -105,30 +113,12 @@ public class BlockPaperwall extends AbstractBlockMinecoloniesPane<BlockPaperwall
     }
 
     /**
-     * Convert the given metadata into a BlockState for this Block
-     */
-    @Override
-    public IBlockState getStateFromMeta(final int meta)
-    {
-        return this.getDefaultState().withProperty(VARIANT, EnumType.byMetadata(meta));
-    }
-
-    /**
      * Convert the BlockState into the correct metadata value
      */
     @Override
     public int getMetaFromState(final IBlockState state)
     {
         return state.getValue(VARIANT).getMetadata();
-    }
-
-    @Override
-    public boolean canPaneConnectTo(final IBlockAccess world, final BlockPos pos, final EnumFacing dir)
-    {
-        final BlockPos off = pos.offset(dir);
-        final IBlockState state = world.getBlockState(off);
-        return canPaneConnectToBlock(state.getBlock())
-                || state.isSideSolid(world, off, dir.getOpposite()) || state.getBlock() instanceof BlockPaperwall;
     }
 
     /**
@@ -142,16 +132,16 @@ public class BlockPaperwall extends AbstractBlockMinecoloniesPane<BlockPaperwall
         {
             case CLOCKWISE_180:
                 return state.withProperty(NORTH, state.getValue(SOUTH))
-                        .withProperty(EAST, state.getValue(WEST)).withProperty(SOUTH, state.getValue(NORTH))
-                        .withProperty(WEST, state.getValue(EAST));
+                         .withProperty(EAST, state.getValue(WEST)).withProperty(SOUTH, state.getValue(NORTH))
+                         .withProperty(WEST, state.getValue(EAST));
             case COUNTERCLOCKWISE_90:
                 return state.withProperty(NORTH, state.getValue(EAST))
-                        .withProperty(EAST, state.getValue(SOUTH)).withProperty(SOUTH, state.getValue(WEST))
-                        .withProperty(WEST, state.getValue(NORTH));
+                         .withProperty(EAST, state.getValue(SOUTH)).withProperty(SOUTH, state.getValue(WEST))
+                         .withProperty(WEST, state.getValue(NORTH));
             case CLOCKWISE_90:
                 return state.withProperty(NORTH, state.getValue(WEST))
-                        .withProperty(EAST, state.getValue(NORTH)).withProperty(SOUTH, state.getValue(EAST))
-                        .withProperty(WEST, state.getValue(SOUTH));
+                         .withProperty(EAST, state.getValue(NORTH)).withProperty(SOUTH, state.getValue(EAST))
+                         .withProperty(WEST, state.getValue(SOUTH));
             default:
                 return state;
         }
@@ -182,85 +172,11 @@ public class BlockPaperwall extends AbstractBlockMinecoloniesPane<BlockPaperwall
     }
 
     @Override
-    protected ItemStack getSilkTouchDrop(final IBlockState state)
+    public boolean canPaneConnectTo(final IBlockAccess world, final BlockPos pos, final EnumFacing dir)
     {
-        return new ItemStack(Item.getItemFromBlock(this), 1, state.getValue(VARIANT).getMetadata());
-    }
-
-    public enum EnumType implements IStringSerializable
-    {
-        OAK(0, "oak", MapColor.WOOD),
-        SPRUCE(1, "spruce", MapColor.OBSIDIAN),
-        BIRCH(2, "birch", MapColor.SAND),
-        JUNGLE(3, "jungle", MapColor.DIRT);
-
-        private static final BlockPaperwall.EnumType[] META_LOOKUP = new BlockPaperwall.EnumType[values().length];
-        private final int meta;
-        private final String name;
-        private final String unlocalizedName;
-        /** The color that represents this entry on a map. */
-        private final MapColor mapColor;
-
-        EnumType(final int metaIn, final String nameIn, final MapColor mapColorIn)
-        {
-            this(metaIn, nameIn, nameIn, mapColorIn);
-        }
-
-        EnumType(final int metaIn, final String nameIn, final String unlocalizedNameIn, final MapColor mapColorIn)
-        {
-            this.meta = metaIn;
-            this.name = nameIn;
-            this.unlocalizedName = unlocalizedNameIn;
-            this.mapColor = mapColorIn;
-        }
-
-        public int getMetadata()
-        {
-            return this.meta;
-        }
-
-        /**
-         * The color which represents this entry on a map.
-         */
-        public MapColor getMapColor()
-        {
-            return this.mapColor;
-        }
-
-        @Override
-        public String toString()
-        {
-            return this.name;
-        }
-
-        public static BlockPaperwall.EnumType byMetadata(int meta)
-        {
-            int tempMeta = meta;
-            if (tempMeta < 0 || tempMeta >= META_LOOKUP.length)
-            {
-                tempMeta = 0;
-            }
-
-            return META_LOOKUP[tempMeta];
-        }
-
-        @NotNull
-        public String getName()
-        {
-            return this.name;
-        }
-
-        public String getUnlocalizedName()
-        {
-            return this.unlocalizedName;
-        }
-
-        static
-        {
-            for (BlockPaperwall.EnumType enumtype : values())
-            {
-                META_LOOKUP[enumtype.getMetadata()] = enumtype;
-            }
-        }
+        final BlockPos off = pos.offset(dir);
+        final IBlockState state = world.getBlockState(off);
+        return canPaneConnectToBlock(state.getBlock())
+                 || state.isSideSolid(world, off, dir.getOpposite()) || state.getBlock() instanceof BlockPaperwall;
     }
 }

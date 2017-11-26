@@ -53,7 +53,6 @@ public class SlimeTreeProxy
         return false;
     }
 
-
     public int getTinkersLeafVariant(@NotNull final IBlockState leaf)
     {
         return 0;

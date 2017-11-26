@@ -122,9 +122,9 @@ public final class FarmerSounds extends AbstractWorkerSounds
     /**
      * Play interaction sound.
      *
-     * @param worldIn    world to play it in.
-     * @param position   position to play it at.
-     * @param isFemale   the gender.
+     * @param worldIn  world to play it in.
+     * @param position position to play it at.
+     * @param isFemale the gender.
      */
     public void playInteractionSound(final World worldIn, final BlockPos position, final boolean isFemale)
     {
