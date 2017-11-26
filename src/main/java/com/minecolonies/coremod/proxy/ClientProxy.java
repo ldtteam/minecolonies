@@ -24,7 +24,6 @@ import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
 import com.minecolonies.structures.event.RenderEventHandler;
 import com.minecolonies.structures.helpers.Settings;
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMap;
@@ -108,30 +107,16 @@ public class ClientProxy extends CommonProxy
         window.open();
     }
 
-    /**
-     * Called when registering blocks,
-     * we have to register all our modblocks here.
-     *
-     * @param event the registery event for blocks.
-     */
-    @SubscribeEvent
-
-    public static void registerBlocks(@NotNull final RegistryEvent.Register<Block> event)
+    @Override
+    public void openBuildToolWindow(final BlockPos pos, final String structureName, final int rotation, final WindowBuildTool.FreeMode mode)
     {
-        ModBlocks.init(event.getRegistry());
-    }
+        if (pos == null && Settings.instance.getActiveStructure() == null)
+        {
+            return;
+        }
 
-    /**
-     * Called when registering items,
-     * we have to register all our mod items here.
-     *
-     * @param event the registery event for items.
-     */
-    @SubscribeEvent
-    public static void registerItems(@NotNull final RegistryEvent.Register<Item> event)
-    {
-        ModItems.init(event.getRegistry());
-        ModBlocks.registerItemBlock(event.getRegistry());
+        @Nullable final WindowBuildTool window = new WindowBuildTool(pos, structureName, rotation, mode);
+        window.open();
     }
 
     /**

@@ -57,6 +57,11 @@ public final class TeleportToColony
             {
                 playerToTeleport = (EntityPlayer) sender;
                 colony = ColonyManager.getIColonyByOwner(((EntityPlayer) sender).world, (EntityPlayer) sender);
+
+                if(colony == null)
+                {
+                    return;
+                }
                 colonyId = colony.getID();
             }
             else

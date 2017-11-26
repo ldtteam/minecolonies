@@ -60,7 +60,7 @@ public class MinecoloniesCommand extends AbstractSplitCommand
      */
     public static boolean canExecuteCommand(@NotNull EntityPlayer player)
     {
-        if (Configurations.teleportBuffer == 0)
+        if (Configurations.teleportBuffer == 0 || AbstractSingleCommand.isPlayerOpped(player))
         {
             return true;
         }
