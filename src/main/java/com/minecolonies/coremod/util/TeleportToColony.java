@@ -9,9 +9,11 @@ import com.minecolonies.coremod.commands.MinecoloniesCommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.WorldServer;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -112,8 +114,23 @@ public final class TeleportToColony
 
         if (dimension != colonyDimension)
         {
+            playerToTeleport.sendMessage(new TextComponentString("Buckle up buttercup, this ain't no joy ride!!!"));
+            EntityPlayerMP entityPlayerMP = (EntityPlayerMP) sender;
+            MinecraftServer server = sender.getEntityWorld().getMinecraftServer();
+            WorldServer worldServer = server.worldServerForDimension(colonyDimension);
+
             playerToTeleport.sendMessage(new TextComponentString("Hold onto your pants, we're going Inter-Dimensional!"));
             playerToTeleport.changeDimension(colonyDimension);
+
+            worldServer.getMinecraftServer().getPlayerList().transferPlayerToDimension(entityPlayerMP, dimension, );
+            player.setPositionAndUpdate(x, y, z);
+            if (dimension == 1) {
+                // For some reason teleporting out of the end does weird things.
+                player.setPositionAndUpdate(x, y, z);
+                WorldTools.spawnEntity(worldServer, player);
+                worldServer.updateEntityWithOptionalForce(player, false);
+            }
+
         }
 
         if (colID >= 1)
