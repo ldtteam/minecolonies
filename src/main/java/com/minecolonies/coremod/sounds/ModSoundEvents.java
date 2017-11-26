@@ -96,13 +96,11 @@ public final class ModSoundEvents
         GameRegistry.register(KnightSounds.Male.farewell);
         GameRegistry.register(KnightSounds.Male.interaction);
 
-        GameRegistry.register(ArcherSounds.Female.badHousing);
         GameRegistry.register(ArcherSounds.Female.levelUp);
         GameRegistry.register(ArcherSounds.Female.saturationHigh);
         GameRegistry.register(ArcherSounds.Female.saturationLow);
         GameRegistry.register(ArcherSounds.Female.saturationVeryLow);
         GameRegistry.register(ArcherSounds.Female.badWeather);
-        GameRegistry.register(ArcherSounds.Female.offToBed);
         GameRegistry.register(ArcherSounds.Female.generalPhrases);
         GameRegistry.register(ArcherSounds.Female.noises);
         GameRegistry.register(ArcherSounds.Female.greeting);

@@ -905,10 +905,6 @@
         "stream": false
       },
       {
-        "name": "minecolonies:mob/deliveryman/female/inhaleexhale1",
-        "stream": false
-      },
-      {
         "name": "minecolonies:mob/deliveryman/female/coughing1",
         "stream": false
       }
@@ -2554,10 +2550,6 @@
       },
       {
         "name": "minecolonies:mob/builder/female/whatcanido",
-        "stream": false
-      },
-      {
-        "name": "minecolonies:mob/builder/female/whatisit",
         "stream": false
       },
       {
