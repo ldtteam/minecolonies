@@ -323,7 +323,10 @@ public class Field extends Container
         lengthMinusX = compound.getInteger(TAG_LENGTH_MINUS);
         widthMinusZ = compound.getInteger(TAG_WIDTH_MINUS);
         inventory = new InventoryField();
-        inventory.deserializeNBT((NBTTagCompound) compound.getTag(Constants.MOD_ID + TAG_INVENTORY));
+        if(compound.hasKey(Constants.MOD_ID + TAG_INVENTORY))
+        {
+            inventory.deserializeNBT((NBTTagCompound) compound.getTag(Constants.MOD_ID + TAG_INVENTORY));
+        }
         setOwner(compound.getString(TAG_OWNER));
     }
 

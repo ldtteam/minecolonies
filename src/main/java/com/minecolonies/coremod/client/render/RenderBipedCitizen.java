@@ -80,20 +80,20 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
      */
     public enum Model
     {
-        SETTLER("Settler", 3),
-        CITIZEN("Citizen", 3),
-        NOBLE("Noble", 3),
-        ARISTOCRAT("Aristocrat", 3),
-        BUILDER("Builder", 1),
-        DELIVERYMAN("Deliveryman", 1),
-        MINER("Miner", 1),
+        SETTLER("settler", 3),
+        CITIZEN("citizen", 3),
+        NOBLE("boble", 3),
+        ARISTOCRAT("aristocrat", 3),
+        BUILDER("builder", 1),
+        DELIVERYMAN("deliveryman", 1),
+        MINER("miner", 1),
         // Lumberjack: 4 male, 1 female
-        LUMBERJACK("Lumberjack", 1),
-        FARMER("Farmer", 1),
-        FISHERMAN("Fisherman", 1),
-        ARCHER_GUARD("Archer", 1),
-        KNIGHT_GUARD("Knight", 1),
-        BAKER("Baker", 1);
+        LUMBERJACK("lumberjack", 1),
+        FARMER("farmer", 1),
+        FISHERMAN("fisherman", 1),
+        ARCHER_GUARD("archer", 1),
+        KNIGHT_GUARD("knight", 1),
+        BAKER("baker", 1);
 
         /**
          * String describing the citizen.

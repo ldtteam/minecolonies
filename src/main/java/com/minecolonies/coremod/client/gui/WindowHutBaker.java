@@ -18,7 +18,7 @@ public class WindowHutBaker extends AbstractWindowWorkerBuilding<BuildingBaker.V
      */
     public WindowHutBaker(final BuildingBaker.View building)
     {
-        super(building, Constants.MOD_ID + ":gui/windowHutBaker.xml");
+        super(building, Constants.MOD_ID + ":gui/windowhutbaker.xml");
     }
 
     /**

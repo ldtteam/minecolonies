@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class WindowBarracksBuilding extends AbstractWindowBuilding<BuildingBarracks.View>
 {
-    private static final String HOME_BUILDING_RESOURCE_SUFFIX = ":gui/windowHutBarracks.xml";
+    private static final String HOME_BUILDING_RESOURCE_SUFFIX = ":gui/windowhutbarracks.xml";
 
     /**
      * Creates the Window object.

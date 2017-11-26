@@ -55,7 +55,7 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
     /**
      * Link to the xml file of the window.
      */
-    private static final String BUILDING_NAME_RESOURCE_SUFFIX = ":gui/windowAssignCitizen.xml";
+    private static final String BUILDING_NAME_RESOURCE_SUFFIX = ":gui/windowassigncitizen.xml";
 
     /**
      * Id of the job label in the GUI.

@@ -2,7 +2,7 @@
         inherit="minecolonies:gui/windowBase.xml"
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
     <view id="pageActions" size="100% 200px" pos="0 7">
-        <layout source="minecolonies:gui/layoutBuildingDefault.xml"/>
+        <layout source="minecolonies:gui/layoutbuildingdefault.xml"/>
     </view>
 
     <button id="inventory"

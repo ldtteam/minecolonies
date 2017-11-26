@@ -1,7 +1,7 @@
 <window inherit="minecolonies:gui/windowBase.xml">
     <switch id="pages" size="100% 200px" pos="0 7">
         <view id="pageActions" size="100% 100%">
-            <layout source="minecolonies:gui/layoutWorkerBuildingDefault.xml"/>
+            <layout source="minecolonies:gui/layoutworkerbuildingdefault.xml"/>
         </view>
 
         <view id="saplingActions" size="100% 100%">

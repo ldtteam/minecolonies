@@ -74,7 +74,7 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
      */
     public WindowHutLumberjack(final BuildingLumberjack.View building)
     {
-        super(building, Constants.MOD_ID + ":gui/windowHutLumberjack.xml");
+        super(building, Constants.MOD_ID + ":gui/windowhutlumberjack.xml");
         this.ownBuilding = building;
         pullLevelsFromHut();
     }

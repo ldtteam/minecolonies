@@ -3,7 +3,7 @@
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
     <switch id="pages" size="100% 200px" pos="0 7">
         <view id="pageActions" size="100% 100%">
-            <layout source="minecolonies:gui/layoutWorkerBuildingDefault.xml"/>
+            <layout source="minecolonies:gui/layoutworkerbuildingdefault.xml"/>
         </view>
 
         <view id="pageFields" size="100% 100%" pos="0 1">
