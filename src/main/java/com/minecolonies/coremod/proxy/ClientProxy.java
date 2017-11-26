@@ -26,7 +26,6 @@ import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
 import com.minecolonies.structures.event.RenderEventHandler;
 import com.minecolonies.structures.helpers.Settings;
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMap;
@@ -58,30 +57,68 @@ public class ClientProxy extends CommonProxy
      */
     private static final String INVENTORY = "inventory";
 
-    /**
-     * Called when registering blocks,
-     * we have to register all our modblocks here.
-     *
-     * @param event the registery event for blocks.
-     */
-    @SubscribeEvent
-
-    public static void registerBlocks(@NotNull final RegistryEvent.Register<Block> event)
+    @Override
+    public boolean isClient()
     {
-        ModBlocks.init(event.getRegistry());
+        return true;
     }
 
-    /**
-     * Called when registering items,
-     * we have to register all our mod items here.
-     *
-     * @param event the registery event for items.
-     */
-    @SubscribeEvent
-    public static void registerItems(@NotNull final RegistryEvent.Register<Item> event)
+    @Override
+    public void registerEvents()
     {
-        ModItems.init(event.getRegistry());
-        ModBlocks.registerItemBlock(event.getRegistry());
+        super.registerEvents();
+
+        MinecraftForge.EVENT_BUS.register(new RenderEventHandler());
+        MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
+    }
+
+    @Override
+    public void registerEntityRendering()
+    {
+        RenderingRegistry.registerEntityRenderingHandler(EntityCitizen.class, RenderBipedCitizen::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityFishHook.class, RenderFishHook::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityBarbarian.class, RendererBarbarian::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityArcherBarbarian.class, RendererBarbarian::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityChiefBarbarian.class, RendererChiefBarbarian::new);
+    }
+
+    @Override
+    public void registerTileEntityRendering()
+    {
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityColonyBuilding.class, new EmptyTileEntitySpecialRenderer());
+        ClientRegistry.bindTileEntitySpecialRenderer(ScarecrowTileEntity.class, new TileEntityScarecrowRenderer());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityInfoPoster.class, new TileEntityInfoPosterRenderer());
+    }
+
+    @Override
+    public void showCitizenWindow(final CitizenDataView citizen)
+    {
+        @NotNull final WindowCitizen window = new WindowCitizen(citizen);
+        window.open();
+    }
+
+    @Override
+    public void openBuildToolWindow(@Nullable final BlockPos pos)
+    {
+        if (pos == null && Settings.instance.getActiveStructure() == null)
+        {
+            return;
+        }
+
+        @Nullable final WindowBuildTool window = new WindowBuildTool(pos);
+        window.open();
+    }
+
+    @Override
+    public void openBuildToolWindow(final BlockPos pos, final String structureName, final int rotation, final WindowBuildTool.FreeMode mode)
+    {
+        if (pos == null && Settings.instance.getActiveStructure() == null)
+        {
+            return;
+        }
+
+        @Nullable final WindowBuildTool window = new WindowBuildTool(pos, structureName, rotation, mode);
+        window.open();
     }
 
     /**
@@ -181,59 +218,7 @@ public class ClientProxy extends CommonProxy
               new ModelResourceLocation(ModBlocks.blockPaperWall.getRegistryName() + "_" + type.getName(), INVENTORY));
         }
     }
-
-    @Override
-    public boolean isClient()
-    {
-        return true;
-    }
-
-    @Override
-    public void registerEvents()
-    {
-        super.registerEvents();
-
-        MinecraftForge.EVENT_BUS.register(new RenderEventHandler());
-        MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
-    }
-
-    @Override
-    public void registerEntityRendering()
-    {
-        RenderingRegistry.registerEntityRenderingHandler(EntityCitizen.class, RenderBipedCitizen::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityFishHook.class, RenderFishHook::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityBarbarian.class, RendererBarbarian::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityArcherBarbarian.class, RendererBarbarian::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityChiefBarbarian.class, RendererChiefBarbarian::new);
-    }
-
-    @Override
-    public void registerTileEntityRendering()
-    {
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityColonyBuilding.class, new EmptyTileEntitySpecialRenderer());
-        ClientRegistry.bindTileEntitySpecialRenderer(ScarecrowTileEntity.class, new TileEntityScarecrowRenderer());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityInfoPoster.class, new TileEntityInfoPosterRenderer());
-    }
-
-    @Override
-    public void showCitizenWindow(final CitizenDataView citizen)
-    {
-        @NotNull final WindowCitizen window = new WindowCitizen(citizen);
-        window.open();
-    }
-
-    @Override
-    public void openBuildToolWindow(@Nullable final BlockPos pos)
-    {
-        if (pos == null && Settings.instance.getActiveStructure() == null)
-        {
-            return;
-        }
-
-        @Nullable final WindowBuildTool window = new WindowBuildTool(pos);
-        window.open();
-    }
-
+    
     @Override
     public void openClipBoardWindow(@Nullable final int colonyId)
     {

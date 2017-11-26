@@ -112,7 +112,6 @@ public class BuildingWareHouse extends AbstractBuilding
         {
             if (!registeredDeliverymen.isEmpty())
             {
-                Log.getLogger().info(getColony().getName() + " " + Arrays.toString(registeredDeliverymen.toArray()));
                 checkForRegisteredDeliverymen();
             }
             return false;

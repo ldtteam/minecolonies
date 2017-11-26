@@ -800,6 +800,44 @@ public class CitizenData
     }
 
     /**
+     * Getter for the saturation.
+     *
+     * @param extraSaturation the extra saturation
+     */
+    public void increaseSaturation(final double extraSaturation)
+    {
+        this.saturation = Math.min(MAX_SATURATION, this.saturation + Math.abs(extraSaturation));
+    }
+
+    /**
+     * Getter for the saturation.
+     *
+     * @param extraSaturation the saturation to remove.
+     */
+    public void decreaseSaturation(final double extraSaturation)
+    {
+        this.saturation = Math.max(MIN_SATURATION, this.saturation - Math.abs(extraSaturation));
+    }
+
+    /**
+     * Resets the experience and the experience level of the citizen.
+     */
+    public void resetExperienceAndLevel()
+    {
+        this.level = 0;
+        this.experience = 0;
+    }
+
+    /**
+     * Set the citizen name.
+     * @param name the name to set.
+     */
+    public void setName(final String name)
+    {
+        this.name = name;
+    }
+
+    /**
      * Returns the experience of the citizen.
      *
      * @return experience of the citizen.
@@ -867,35 +905,6 @@ public class CitizenData
     public double getSaturation()
     {
         return this.saturation;
-    }
-
-    /**
-     * Getter for the saturation.
-     *
-     * @param extraSaturation the extra saturation
-     */
-    public void increaseSaturation(final double extraSaturation)
-    {
-        this.saturation = Math.min(MAX_SATURATION, this.saturation + Math.abs(extraSaturation));
-    }
-
-    /**
-     * Getter for the saturation.
-     *
-     * @param extraSaturation the saturation to remove.
-     */
-    public void decreaseSaturation(final double extraSaturation)
-    {
-        this.saturation = Math.max(MIN_SATURATION, this.saturation - Math.abs(extraSaturation));
-    }
-
-    /**
-     * Resets the experience and the experience level of the citizen.
-     */
-    public void resetExperienceAndLevel()
-    {
-        this.level = 0;
-        this.experience = 0;
     }
 
     public InventoryCitizen getInventory()

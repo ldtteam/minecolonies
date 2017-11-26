@@ -9,9 +9,12 @@ import com.minecolonies.coremod.commands.MinecoloniesCommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.Teleporter;
+import net.minecraft.world.WorldServer;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -57,6 +60,11 @@ public final class TeleportToColony
             {
                 playerToTeleport = (EntityPlayer) sender;
                 colony = ColonyManager.getIColonyByOwner(((EntityPlayer) sender).world, (EntityPlayer) sender);
+
+                if(colony == null)
+                {
+                    return;
+                }
                 colonyId = colony.getID();
             }
             else
@@ -107,8 +115,23 @@ public final class TeleportToColony
 
         if (dimension != colonyDimension)
         {
+            playerToTeleport.sendMessage(new TextComponentString("Buckle up buttercup, this ain't no joy ride!!!"));
+            EntityPlayerMP entityPlayerMP = (EntityPlayerMP) sender;
+            MinecraftServer server = sender.getEntityWorld().getMinecraftServer();
+            WorldServer worldServer = server.worldServerForDimension(colonyDimension);
+
             playerToTeleport.sendMessage(new TextComponentString("Hold onto your pants, we're going Inter-Dimensional!"));
             playerToTeleport.changeDimension(colonyDimension);
+
+            worldServer.getMinecraftServer().getPlayerList()
+                    .transferPlayerToDimension(entityPlayerMP, colonyDimension, new Teleporter(worldServer));
+            playerToTeleport.setPositionAndUpdate(position.getX(), position.getY(), position.getZ());
+            if (dimension == 1)
+            {
+                playerToTeleport.setPositionAndUpdate(position.getX(), position.getY(), position.getZ());
+                worldServer.spawnEntity(playerToTeleport);
+                worldServer.updateEntityWithOptionalForce(playerToTeleport, false);
+            }
         }
 
         if (colID >= 1)

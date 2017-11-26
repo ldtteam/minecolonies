@@ -145,6 +145,10 @@ public final class TranslationConstants
     public static final String COM_MINECOLONIES_CLIPBOARD_NEED_COLONY                         = "com.minecolonies.coremod.item.clipboard.needColony";
     @NonNls
     public static final String COM_MINECOLONIES_CLIPBOARD_COLONY_SET                          = "com.minecolonies.coremod.item.clipboard.registered";
+    @NonNls
+    public static final String CITIZEN_RENAME_SAME                                            = "com.minecolonies.coremod.citizen.rename.same";
+    @NonNls
+    public static final String CITIZEN_RENAME_NOT_ALLOWED                                     = "com.minecolonies.coremod.citizen.rename.notAllowed";
 
     private TranslationConstants()
     {

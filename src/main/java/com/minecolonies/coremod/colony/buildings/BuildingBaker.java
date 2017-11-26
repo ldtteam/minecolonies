@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.blockout.Log;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutBaker;
 import com.minecolonies.coremod.colony.CitizenData;
@@ -279,6 +279,10 @@ public class BuildingBaker extends AbstractBuildingWorker
         final List<Map.Entry<BlockPos, BakingProduct>> copyOfList = new ArrayList<>(this.getFurnacesWithProduct().entrySet());
         for (final Map.Entry<BlockPos, BakingProduct> entry : copyOfList)
         {
+            if(!worldObj.isBlockLoaded(entry.getKey()))
+            {
+                return;
+            }
             final IBlockState furnace = worldObj.getBlockState(entry.getKey());
             if (!(furnace.getBlock() instanceof BlockFurnace))
             {
