@@ -66,6 +66,8 @@ import java.util.*;
 
 import static com.minecolonies.api.util.constant.Suppression.INCREMENT_AND_DECREMENT_OPERATORS_SHOULD_NOT_BE_USED_IN_A_METHOD_CALL_OR_MIXED_WITH_OTHER_OPERATORS_IN_AN_EXPRESSION;
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
+import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_NOT_ALLOWED;
+import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_SAME;
 
 /**
  * The Class used to represent the citizen entities.
@@ -1277,14 +1279,14 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @Override
     public void setCustomNameTag(final String name)
     {
-        if(citizenData != null && name != null && !citizenData.getName().equals(name))
+        if(citizenData != null && name != null)
         {
-            if(Configurations.gameplay.allowGlobalNameChanges >= 0)
+            if(!citizenData.getName().equals(name) && Configurations.gameplay.allowGlobalNameChanges >= 0)
             {
                 if (Configurations.gameplay.allowGlobalNameChanges == 0 &&
                         Arrays.stream(Configurations.gameplay.specialPermGroup).noneMatch(owner -> owner.equals(colony.getPermissions().getOwnerName())))
                 {
-                    LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.citizen.rename.notAllowed");
+                    LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), CITIZEN_RENAME_NOT_ALLOWED);
                     return;
                 }
 
@@ -1295,7 +1297,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
                     {
                         if (citizen.getName().equals(name))
                         {
-                            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.citizen.rename.same");
+                            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), CITIZEN_RENAME_SAME);
                             return;
                         }
                     }
@@ -1303,10 +1305,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
                     this.citizenData.markDirty();
                     super.setCustomNameTag(name);
                 }
-            }
-            else
-            {
-
+                return;
             }
             super.setCustomNameTag(name);
         }
