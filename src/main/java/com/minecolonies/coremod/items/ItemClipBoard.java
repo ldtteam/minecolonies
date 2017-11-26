@@ -42,30 +42,17 @@ public class ItemClipBoard extends AbstractItemMinecolonies
         setMaxStackSize(MAX_STACK_SIZE);
     }
 
-    /**
-     * Used when clicking on block in world.
-     *
-     * @param playerIn the player
-     * @param worldIn  the world
-     * @param pos      the position
-     * @param hand     the hand
-     * @param facing   the facing hit
-     * @param hitX     the x coordinate
-     * @param hitY     the y coordinate
-     * @param hitZ     the z coordinate
-     * @return the result
-     */
     @Override
-    @NotNull
     public EnumActionResult onItemUse(
-                                       final EntityPlayer playerIn,
-                                       final World worldIn,
-                                       final BlockPos pos,
-                                       final EnumHand hand,
-                                       final EnumFacing facing,
-                                       final float hitX,
-                                       final float hitY,
-                                       final float hitZ)
+            final ItemStack stack,
+            final EntityPlayer playerIn,
+            final World worldIn,
+            final BlockPos pos,
+            final EnumHand hand,
+            final EnumFacing facing,
+            final float hitX,
+            final float hitY,
+            final float hitZ)
     {
         final ItemStack clipboard = playerIn.getHeldItem(hand);
 
@@ -92,20 +79,8 @@ public class ItemClipBoard extends AbstractItemMinecolonies
         return EnumActionResult.SUCCESS;
     }
 
-    /**
-     * Handles mid air use.
-     *
-     * @param worldIn  the world
-     * @param playerIn the player
-     * @param hand     the hand
-     * @return the result
-     */
     @Override
-    @NotNull
-    public ActionResult<ItemStack> onItemRightClick(
-                                                     final World worldIn,
-                                                     final EntityPlayer playerIn,
-                                                     final EnumHand hand)
+    public ActionResult<ItemStack> onItemRightClick(final ItemStack itemStackIn, final World worldIn, final EntityPlayer playerIn, final EnumHand hand)
     {
         final ItemStack cllipboard = playerIn.getHeldItem(hand);
 

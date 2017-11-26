@@ -40,17 +40,17 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         maxStackSize = 1;
     }
 
-    @NotNull
     @Override
     public EnumActionResult onItemUse(
-                                       final EntityPlayer playerIn,
-                                       final World worldIn,
-                                       final BlockPos pos,
-                                       final EnumHand hand,
-                                       final EnumFacing facing,
-                                       final float hitX,
-                                       final float hitY,
-                                       final float hitZ)
+            final ItemStack stack,
+            final EntityPlayer playerIn,
+            final World worldIn,
+            final BlockPos pos,
+            final EnumHand hand,
+            final EnumFacing facing,
+            final float hitX,
+            final float hitY,
+            final float hitZ)
     {
         final ItemStack scepter = playerIn.getHeldItem(hand);
         // if server world, do nothing

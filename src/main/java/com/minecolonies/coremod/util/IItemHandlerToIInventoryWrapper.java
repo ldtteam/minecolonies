@@ -44,7 +44,6 @@ public class IItemHandlerToIInventoryWrapper implements IInventory
         return wrapped.getSlots();
     }
 
-    @Override
     public boolean isEmpty()
     {
         return InventoryUtils.getAmountOfStacksInItemHandler(wrapped) == 0;

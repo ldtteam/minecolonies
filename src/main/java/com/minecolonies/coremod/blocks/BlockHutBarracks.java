@@ -20,6 +20,6 @@ public class BlockHutBarracks extends AbstractBlockHut<BlockHutBarracks>
     @Override
     public String getName()
     {
-        return "blockHutBarracks";
+        return "blockhutbarracks";
     }
 }

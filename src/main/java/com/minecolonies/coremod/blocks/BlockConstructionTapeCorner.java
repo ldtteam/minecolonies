@@ -45,7 +45,7 @@ public class BlockConstructionTapeCorner extends AbstractBlockMinecolonies<Block
     /**
      * This blocks name.
      */
-    private static final String BLOCK_NAME = "blockConstructionTapeCorner";
+    private static final String BLOCK_NAME = "blockconstructiontapecorner";
 
     /**
      * The resistance this block has.
@@ -270,13 +270,9 @@ public class BlockConstructionTapeCorner extends AbstractBlockMinecolonies<Block
         return true;
     }
 
-    /**
-     * @deprecated (Remove this as soon as minecraft offers anything better).
-     */
-    @javax.annotation.Nullable
-    @Deprecated
+    @Nullable
     @Override
-    public AxisAlignedBB getCollisionBoundingBox(final IBlockState blockState, final IBlockAccess worldIn, final BlockPos pos)
+    public AxisAlignedBB getCollisionBoundingBox(final IBlockState blockState, final World worldIn, final BlockPos pos)
     {
         return null;
     }

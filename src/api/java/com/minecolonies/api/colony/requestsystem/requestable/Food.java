@@ -23,7 +23,10 @@ public class Food implements IDeliverable
 
     private ItemStack result;
 
-    public Food(final int count) {this.count = count;}
+    public Food(final int count)
+    {
+        this.count = count;
+    }
 
     public Food(final int count, final ItemStack result)
     {
@@ -55,8 +58,10 @@ public class Food implements IDeliverable
     @Override
     public boolean matches(@NotNull final ItemStack stack)
     {
-        return stack.getItem() instanceof ItemFood && stack.getCount() >= getCount();
-    }    @Override
+        return stack.getItem() instanceof ItemFood && stack.stackSize >= getCount();
+    }
+
+    @Override
     public void setResult(@NotNull final ItemStack result)
     {
         this.result = result;
@@ -66,14 +71,12 @@ public class Food implements IDeliverable
     public int getCount()
     {
         return count;
-    }    @NotNull
+    }
+
+    @NotNull
     @Override
     public ItemStack getResult()
     {
         return result;
     }
-
-
-
-
 }

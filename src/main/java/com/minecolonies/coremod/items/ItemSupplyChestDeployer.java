@@ -57,9 +57,9 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         setMaxStackSize(1);
     }
 
-    @NotNull
     @Override
     public EnumActionResult onItemUse(
+            final ItemStack stack,
             final EntityPlayer playerIn,
             final World worldIn,
             final BlockPos pos,
@@ -77,9 +77,8 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         return EnumActionResult.FAIL;
     }
 
-    @NotNull
     @Override
-    public ActionResult<ItemStack> onItemRightClick(final World worldIn, final EntityPlayer playerIn, final EnumHand hand)
+    public ActionResult<ItemStack> onItemRightClick(final ItemStack itemStackIn, final World worldIn, final EntityPlayer playerIn, final EnumHand hand)
     {
         final ItemStack stack = playerIn.getHeldItem(hand);
 

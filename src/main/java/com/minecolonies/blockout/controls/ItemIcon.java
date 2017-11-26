@@ -86,7 +86,7 @@ public class ItemIcon extends Pane
         FontRenderer font = stack.getItem().getFontRenderer(stack);
         if (font == null)
         {
-            font = mc.fontRenderer;
+            font = mc.fontRendererObj;
         }
         itemRender.renderItemAndEffectIntoGUI(stack, 0, 0);
         itemRender.renderItemOverlayIntoGUI(font, stack, 0, 0, null);

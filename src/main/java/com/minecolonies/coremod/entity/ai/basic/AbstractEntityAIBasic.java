@@ -1040,7 +1040,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     public boolean checkIfRequestForItemExistOrCreate(@NotNull final ItemStack stack)
     {
         if (InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()),
-          s -> ItemStackUtils.compareItemStacksIgnoreStackSize(s, stack) && s.getCount() >= stack.getCount()))
+          s -> ItemStackUtils.compareItemStacksIgnoreStackSize(s, stack) && s.stackSize >= stack.stackSize))
         {
             return true;
         }
@@ -1088,7 +1088,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     public boolean checkIfRequestForItemExistOrCreateAsynch(@NotNull final ItemStack stack)
     {
         if (InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()),
-          s -> ItemStackUtils.compareItemStacksIgnoreStackSize(s, stack) && s.getCount() >= stack.getCount()))
+          s -> ItemStackUtils.compareItemStacksIgnoreStackSize(s, stack) && s.stackSize >= stack.stackSize))
         {
             return true;
         }

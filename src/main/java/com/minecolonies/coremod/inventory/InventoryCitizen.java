@@ -9,7 +9,6 @@ import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -30,26 +29,22 @@ public class InventoryCitizen implements IInventory
      */
     private static final int                    MAX_STACK_SIZE   = 64;
     /**
-     * The returned slot if a slot hasn't been found.
-     */
-    private static final int                    NO_SLOT          = -1;
-    /**
      * Size of the hotbar.
      */
     private static final int                    HOTBAR_SIZE      = 0;
     /**
      * The main inventory.
      */
-    private final        NonNullList<ItemStack> mainInventory    = NonNullList.<ItemStack>withSize(36, ItemStackUtils.EMPTY);
+    private final        List<ItemStack> mainInventory    = new ArrayList<>();
     /**
      * The armour inventory.
      */
-    private final        NonNullList<ItemStack> armorInventory   = NonNullList.<ItemStack>withSize(4, ItemStackUtils.EMPTY);
+    private final        List<ItemStack> armorInventory   = new ArrayList<>();
     /**
      * The off-hand inventory.
      */
-    private final        NonNullList<ItemStack> offHandInventory = NonNullList.<ItemStack>withSize(1, ItemStackUtils.EMPTY);
-    private final List<NonNullList<ItemStack>> allInventories;
+    private final        List<ItemStack> offHandInventory = new ArrayList<>();
+    private final List<List<ItemStack>> allInventories;
     /**
      * The index of the currently held item (0-8).
      */
@@ -186,7 +181,9 @@ public class InventoryCitizen implements IInventory
     public int getSizeInventory()
     {
         return this.mainInventory.size();
-    }    /**
+    }
+
+    /**
      * Get the name of this object. For citizens this returns their name.
      *
      * @return the name of the inventory.
@@ -203,12 +200,11 @@ public class InventoryCitizen implements IInventory
      *
      * @return true if so.
      */
-    @Override
     public boolean isEmpty()
     {
         for (final ItemStack itemstack : this.mainInventory)
         {
-            if (!itemstack.isEmpty())
+            if (!ItemStackUtils.isEmpty(itemstack))
             {
                 return false;
             }
@@ -216,7 +212,7 @@ public class InventoryCitizen implements IInventory
 
         for (final ItemStack itemstack1 : this.armorInventory)
         {
-            if (!itemstack1.isEmpty())
+            if (!ItemStackUtils.isEmpty(itemstack1))
             {
                 return false;
             }
@@ -224,14 +220,16 @@ public class InventoryCitizen implements IInventory
 
         for (final ItemStack itemstack2 : this.offHandInventory)
         {
-            if (!itemstack2.isEmpty())
+            if (!ItemStackUtils.isEmpty(itemstack2))
             {
                 return false;
             }
         }
 
         return true;
-    }    /**
+    }
+
+    /**
      * Checks if the inventory is named.
      *
      * @return true if the inventory has a custom name.
@@ -253,7 +251,7 @@ public class InventoryCitizen implements IInventory
     {
         List<ItemStack> list = null;
         int tempIndex = index;
-        for (final NonNullList<ItemStack> nonnulllist : this.allInventories)
+        for (final List<ItemStack> nonnulllist : this.allInventories)
         {
             if (tempIndex < nonnulllist.size())
             {
@@ -279,7 +277,7 @@ public class InventoryCitizen implements IInventory
     {
         List<ItemStack> list = null;
         int tempIndex = index;
-        for (final NonNullList<ItemStack> nonnulllist : this.allInventories)
+        for (final List<ItemStack> nonnulllist : this.allInventories)
         {
             if (tempIndex < nonnulllist.size())
             {
@@ -290,7 +288,7 @@ public class InventoryCitizen implements IInventory
             tempIndex -= nonnulllist.size();
         }
 
-        return list != null && !ItemStackUtils.isEmpty(list.get(tempIndex)) ? ItemStackHelper.getAndSplit(list, tempIndex, count) : ItemStackUtils.EMPTY;
+        return list != null && !ItemStackUtils.isEmpty(list.get(tempIndex)) ? ItemStackHelper.getAndSplit(list.toArray(new ItemStack[list.size()]), tempIndex, count) : ItemStackUtils.EMPTY;
     }
 
     /**
@@ -302,9 +300,9 @@ public class InventoryCitizen implements IInventory
     @Override
     public ItemStack removeStackFromSlot(final int index)
     {
-        NonNullList<ItemStack> nonnulllist = null;
+        List<ItemStack> nonnulllist = null;
         int tempIndex = index;
-        for (final NonNullList<ItemStack> nonnulllist1 : this.allInventories)
+        for (final List<ItemStack> nonnulllist1 : this.allInventories)
         {
             if (tempIndex < nonnulllist1.size())
             {
@@ -336,9 +334,9 @@ public class InventoryCitizen implements IInventory
     @Override
     public void setInventorySlotContents(final int index, final ItemStack stack)
     {
-        NonNullList<ItemStack> nonnulllist = null;
+        List<ItemStack> nonnulllist = null;
         int tempIndex = index;
-        for (final NonNullList<ItemStack> nonnulllist1 : this.allInventories)
+        for (final List<ItemStack> nonnulllist1 : this.allInventories)
         {
             if (tempIndex < nonnulllist1.size())
             {
@@ -427,14 +425,14 @@ public class InventoryCitizen implements IInventory
          * This may be filled in order to specify some custom handling.
          */
     }    /**
-     * Get the formatted TextComponent that will be used for the sender's username in chat.
-     */
-    @NotNull
-    @Override
-    public ITextComponent getDisplayName()
-    {
-        return this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName());
-    }
+ * Get the formatted TextComponent that will be used for the sender's username in chat.
+ */
+@NotNull
+@Override
+public ITextComponent getDisplayName()
+{
+    return this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName());
+}
 
     /**
      * Returns true if automation is allowed to insert the given stack (ignoring stack size) into the given slot.
@@ -509,7 +507,7 @@ public class InventoryCitizen implements IInventory
     {
         for (int i = 0; i < this.mainInventory.size(); ++i)
         {
-            if (!(this.mainInventory.get(i)).isEmpty())
+            if (!ItemStackUtils.isEmpty(this.mainInventory.get(i)))
             {
                 final NBTTagCompound nbttagcompound = new NBTTagCompound();
                 nbttagcompound.setByte("Slot", (byte) i);
@@ -520,7 +518,7 @@ public class InventoryCitizen implements IInventory
 
         for (int j = 0; j < this.armorInventory.size(); ++j)
         {
-            if (!(this.armorInventory.get(j)).isEmpty())
+            if (!ItemStackUtils.isEmpty(this.armorInventory.get(j)))
             {
                 final NBTTagCompound nbttagcompound1 = new NBTTagCompound();
                 nbttagcompound1.setByte("Slot", (byte) (j + 100));
@@ -531,7 +529,7 @@ public class InventoryCitizen implements IInventory
 
         for (int k = 0; k < this.offHandInventory.size(); ++k)
         {
-            if (!(this.offHandInventory.get(k)).isEmpty())
+            if (!ItemStackUtils.isEmpty(this.offHandInventory.get(k)))
             {
                 final NBTTagCompound nbttagcompound2 = new NBTTagCompound();
                 nbttagcompound2.setByte("Slot", (byte) (k + 150));
@@ -558,9 +556,9 @@ public class InventoryCitizen implements IInventory
         {
             final NBTTagCompound nbttagcompound = nbtTagListIn.getCompoundTagAt(i);
             final int j = nbttagcompound.getByte("Slot") & 255;
-            final ItemStack itemstack = new ItemStack(nbttagcompound);
+            final ItemStack itemstack = ItemStack.loadItemStackFromNBT(nbttagcompound);
 
-            if (!itemstack.isEmpty())
+            if (!ItemStackUtils.isEmpty(itemStack))
             {
                 if (j >= 0 && j < this.mainInventory.size())
                 {
@@ -597,10 +595,4 @@ public class InventoryCitizen implements IInventory
     {
         this.itemStack = itemStackIn;
     }
-
-
-
-
-
-
 }

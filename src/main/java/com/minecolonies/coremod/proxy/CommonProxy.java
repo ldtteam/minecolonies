@@ -139,54 +139,44 @@ public class CommonProxy implements IProxy
     @Override
     public void registerEntities()
     {
-        final ResourceLocation locationCitizen = new ResourceLocation(Constants.MOD_ID, "Citizen");
-        final ResourceLocation locationFishHook = new ResourceLocation(Constants.MOD_ID, "Fishhook");
-        final ResourceLocation locationBarbarian = new ResourceLocation(Constants.MOD_ID, "Barbarian");
-        final ResourceLocation locationArcherBarbarian = new ResourceLocation(Constants.MOD_ID, "ArcherBarbarian");
-        final ResourceLocation locationChiefBarbarian = new ResourceLocation(Constants.MOD_ID, "ChiefBarbarian");
-
         // Half as much tracking range and same update frequency as a player
         // See EntityTracker.addEntityToTracker for more default values
-        EntityRegistry.registerModEntity(locationCitizen,
-          EntityCitizen.class,
-          "Citizen",
-          getNextEntityId(),
-          MineColonies.instance,
-          Constants.ENTITY_TRACKING_RANGE,
-          Constants.ENTITY_UPDATE_FREQUENCY,
-          true);
-        EntityRegistry.registerModEntity(locationFishHook,
-          EntityFishHook.class,
-          "Fishhook",
-          getNextEntityId(),
-          MineColonies.instance,
-          Constants.ENTITY_TRACKING_RANGE,
-          Constants.ENTITY_UPDATE_FREQUENCY_FISHHOOK,
-          true);
-        EntityRegistry.registerModEntity(locationBarbarian,
-          EntityBarbarian.class,
-          "Barbarian",
-          getNextEntityId(),
-          MineColonies.instance,
-          Constants.ENTITY_TRACKING_RANGE,
-          Constants.ENTITY_UPDATE_FREQUENCY,
-          true);
-        EntityRegistry.registerModEntity(locationArcherBarbarian,
-          EntityArcherBarbarian.class,
-          "ArcherBarbarian",
-          getNextEntityId(),
-          MineColonies.instance,
-          Constants.ENTITY_TRACKING_RANGE,
-          Constants.ENTITY_UPDATE_FREQUENCY,
-          true);
-        EntityRegistry.registerModEntity(locationChiefBarbarian,
-          EntityChiefBarbarian.class,
-          "ChiefBarbarian",
-          getNextEntityId(),
-          MineColonies.instance,
-          Constants.ENTITY_TRACKING_RANGE,
-          Constants.ENTITY_UPDATE_FREQUENCY,
-          true);
+        EntityRegistry.registerModEntity(EntityCitizen.class,
+                "Citizen",
+                getNextEntityId(),
+                MineColonies.instance,
+                Constants.ENTITY_TRACKING_RANGE,
+                Constants.ENTITY_UPDATE_FREQUENCY,
+                true);
+        EntityRegistry.registerModEntity(EntityFishHook.class,
+                "Fishhook",
+                getNextEntityId(),
+                MineColonies.instance,
+                Constants.ENTITY_TRACKING_RANGE,
+                Constants.ENTITY_UPDATE_FREQUENCY_FISHHOOK,
+                true);
+        EntityRegistry.registerModEntity(EntityBarbarian.class,
+                "Barbarian",
+                getNextEntityId(),
+                MineColonies.instance,
+                Constants.ENTITY_TRACKING_RANGE,
+                Constants.ENTITY_UPDATE_FREQUENCY,
+                true);
+        EntityRegistry.registerModEntity(EntityArcherBarbarian.class,
+                "ArcherBarbarian",
+                getNextEntityId(),
+                MineColonies.instance,
+                Constants.ENTITY_TRACKING_RANGE,
+                Constants.ENTITY_UPDATE_FREQUENCY,
+                true);
+        EntityRegistry.registerModEntity(EntityChiefBarbarian.class,
+                "ChiefBarbarian",
+                getNextEntityId(),
+                MineColonies.instance,
+                Constants.ENTITY_TRACKING_RANGE,
+                Constants.ENTITY_UPDATE_FREQUENCY,
+                true);
+
 
         //Register Barbarian loot tables.
         LootTableList.register(BarbarianSpawnUtils.BarbarianLootTable);
@@ -194,9 +184,9 @@ public class CommonProxy implements IProxy
         LootTableList.register(BarbarianSpawnUtils.ChiefLootTable);
 
         //Register Barbarian spawn eggs
-        EntityRegistry.registerEgg(locationBarbarian, PRIMARY_COLOR, SECONDARY_COLOR);
-        EntityRegistry.registerEgg(locationArcherBarbarian, PRIMARY_COLOR, SECONDARY_COLOR);
-        EntityRegistry.registerEgg(locationChiefBarbarian, PRIMARY_COLOR, SECONDARY_COLOR);
+        EntityRegistry.registerEgg(EntityBarbarian.class, PRIMARY_COLOR, SECONDARY_COLOR);
+        EntityRegistry.registerEgg(EntityArcherBarbarian.class, PRIMARY_COLOR, SECONDARY_COLOR);
+        EntityRegistry.registerEgg(EntityChiefBarbarian.class, PRIMARY_COLOR, SECONDARY_COLOR);
     }
 
     @Override

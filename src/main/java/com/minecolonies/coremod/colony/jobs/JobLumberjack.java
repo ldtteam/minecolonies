@@ -108,7 +108,7 @@ public class JobLumberjack extends AbstractJob
     public void triggerDeathAchievement(final DamageSource source, final EntityCitizen citizen)
     {
         super.triggerDeathAchievement(source, citizen);
-        if (source == DamageSource.IN_WALL)
+        if (source == DamageSource.inWall)
         {
             citizen.getColony().triggerAchievement(ModAchievements.achievementLumberjackDeathTree);
         }

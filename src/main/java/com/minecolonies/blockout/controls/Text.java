@@ -106,7 +106,7 @@ public class Text extends AbstractTextElement
      */
     public int getLineHeight()
     {
-        return (int) (mc.fontRenderer.FONT_HEIGHT * scale);
+        return (int) (mc.fontRendererObj.FONT_HEIGHT * scale);
     }
 
     /**
@@ -129,7 +129,7 @@ public class Text extends AbstractTextElement
      */
     public int getStringWidth(final String s)
     {
-        return (int) (mc.fontRenderer.getStringWidth(s) * scale);
+        return (int) (mc.fontRendererObj.getStringWidth(s) * scale);
     }
 
     /**
@@ -148,7 +148,7 @@ public class Text extends AbstractTextElement
             else
             {
                 formattedText = Collections.unmodifiableList(
-                  mc.fontRenderer.listFormattedStringToWidth(textContent, (int) (getWidth() / scale))
+                  mc.fontRendererObj.listFormattedStringToWidth(textContent, (int) (getWidth() / scale))
                     .stream()
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList()));
@@ -210,7 +210,7 @@ public class Text extends AbstractTextElement
             GlStateManager.translate((float) (getX() + offsetX), (float) (getY() + offsetY), 0);
             GlStateManager.scale((float) scale, (float) scale, (float) scale);
             mc.renderEngine.bindTexture(TEXTURE);
-            mc.fontRenderer.drawString(s, 0, 0, textColor, shadow);
+            mc.fontRendererObj.drawString(s, 0, 0, textColor, shadow);
             GlStateManager.popMatrix();
 
             offsetY += getLineHeight() + scaledLinespace;

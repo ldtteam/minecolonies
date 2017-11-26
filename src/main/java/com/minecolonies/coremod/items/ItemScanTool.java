@@ -40,19 +40,19 @@ public class ItemScanTool extends AbstractItemMinecolonies
         setMaxStackSize(1);
     }
 
-    @NotNull
     @Override
     public EnumActionResult onItemUse(
-                                       final EntityPlayer playerIn,
-                                       final World worldIn,
-                                       final BlockPos pos,
-                                       final EnumHand hand,
-                                       final EnumFacing facing,
-                                       final float hitX,
-                                       final float hitY,
-                                       final float hitZ)
+            final ItemStack inStack,
+            final EntityPlayer playerIn,
+            final World worldIn,
+            final BlockPos pos,
+            final EnumHand hand,
+            final EnumFacing facing,
+            final float hitX,
+            final float hitY,
+            final float hitZ)
     {
-        final ItemStack stack = playerIn.getHeldItem(hand);
+        final ItemStack stack = inStack;
         if (!stack.hasTagCompound())
         {
             stack.setTagCompound(new NBTTagCompound());

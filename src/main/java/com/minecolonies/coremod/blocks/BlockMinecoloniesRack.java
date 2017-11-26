@@ -33,6 +33,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,7 +61,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
     /**
      * This blocks name.
      */
-    private static final String BLOCK_NAME = "blockMinecoloniesRack";
+    private static final String BLOCK_NAME = "blockminecoloniesrack";
 
     /**
      * The resistance this block has.
@@ -230,7 +231,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
     }
 
     @Override
-    public void neighborChanged(final IBlockState state, final World worldIn, final BlockPos pos, final Block blockIn, final BlockPos fromPos)
+    public void neighborChanged(final IBlockState state, final World worldIn, final BlockPos pos, final Block blockIn)
     {
         if (state.getBlock() instanceof BlockMinecoloniesRack)
         {
@@ -240,13 +241,13 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
                 final BlockPos neighbor = pos.offset(offsetFacing);
                 final Block block = worldIn.getBlockState(neighbor).getBlock();
                 if (rack instanceof TileEntityRack && pos.getY() == neighbor.getY() && !pos.equals(neighbor) && !pos.equals(BlockPos.ORIGIN)
-                      && (block instanceof BlockMinecoloniesRack || blockIn instanceof BlockMinecoloniesRack))
+                        && (block instanceof BlockMinecoloniesRack || blockIn instanceof BlockMinecoloniesRack))
                 {
                     ((TileEntityRack) rack).neighborChanged(neighbor);
                 }
             }
         }
-        super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
+        super.neighborChanged(state, worldIn, pos, blockIn);
     }
 
     @Override
@@ -273,17 +274,18 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
 
     @Override
     public boolean onBlockActivated(
-                                     final World worldIn,
-                                     final BlockPos pos,
-                                     final IBlockState state,
-                                     final EntityPlayer playerIn,
-                                     final EnumHand hand,
-                                     final EnumFacing facing,
-                                     final float hitX,
-                                     final float hitY,
-                                     final float hitZ)
+            final World worldIn,
+            final BlockPos pos,
+            final IBlockState state,
+            final EntityPlayer playerIn,
+            final EnumHand hand,
+            @Nullable final ItemStack heldItem,
+            final EnumFacing side,
+            final float hitX,
+            final float hitY,
+            final float hitZ)
     {
-        /*
+/*
         If the world is client, open the gui of the building
          */
         if (!worldIn.isRemote)
@@ -292,7 +294,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
             final TileEntity tileEntity = worldIn.getTileEntity(pos);
 
             if ((colony == null || colony.getPermissions().hasPermission(playerIn, Action.ACCESS_HUTS))
-                  && tileEntity instanceof TileEntityRack)
+                    && tileEntity instanceof TileEntityRack)
             {
                 playerIn.openGui(MineColonies.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
                 return true;
@@ -313,7 +315,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
     }
 
     @Override
-    public void getSubBlocks(final Item itemIn, final CreativeTabs tab, final NonNullList<ItemStack> list)
+    public void getSubBlocks(final Item itemIn, final CreativeTabs tab, final List<ItemStack> list)
     {
         list.add(new ItemStack(this, 1, RackType.DEFAULT.getMetadata()));
     }

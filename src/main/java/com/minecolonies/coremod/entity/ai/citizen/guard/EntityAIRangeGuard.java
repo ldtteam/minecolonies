@@ -10,7 +10,6 @@ import com.minecolonies.coremod.entity.ai.util.AITarget;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IRangedAttackMob;
-import net.minecraft.entity.MoverType;
 import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
@@ -271,7 +270,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
         final double goToX = xDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
         final double goToZ = zDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
 
-        worker.move(MoverType.SELF, goToX, 0, goToZ);
+        worker.move(goToX, 0, goToZ);
 
         worker.swingArm(EnumHand.MAIN_HAND);
         worker.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, (float) BASIC_VOLUME, (float) getRandomPitch());

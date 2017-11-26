@@ -22,7 +22,7 @@ public final class ItemStackUtils
      * Variable representing the empty itemstack in 1.10.
      * Used for easy updating to 1.11
      */
-    public static final ItemStack EMPTY = ItemStack.EMPTY;
+    public static final ItemStack EMPTY = null;
 
     /**
      * Predicate to check if an itemStack is empty.
@@ -92,7 +92,7 @@ public final class ItemStackUtils
     @NotNull
     public static Boolean isEmpty(@Nullable final ItemStack stack)
     {
-        return stack == null || stack == EMPTY || stack.getCount() <= 0;
+        return stack == null || stack == EMPTY || stack.stackSize <= 0;
     }
 
     /**
@@ -360,7 +360,7 @@ public final class ItemStackUtils
             return 0;
         }
 
-        return stack.getCount();
+        return stack.stackSize;
     }
 
     /**
@@ -404,7 +404,7 @@ public final class ItemStackUtils
     @NotNull
     public static void setSize(@NotNull final ItemStack stack, final int size)
     {
-        stack.setCount(size);
+        stack.stackSize = size;
     }
 
     /**
@@ -415,7 +415,7 @@ public final class ItemStackUtils
      */
     public static void changeSize(@NotNull final ItemStack stack, final int amount)
     {
-        stack.setCount(stack.getCount() + amount);
+        stack.stackSize += amount;
     }
 
     /**
@@ -427,7 +427,7 @@ public final class ItemStackUtils
     @NotNull
     public static ItemStack deserializeFromNBT(@NotNull final NBTTagCompound compound)
     {
-        return new ItemStack(compound);
+        return ItemStack.loadItemStackFromNBT(compound);
     }
 }
 

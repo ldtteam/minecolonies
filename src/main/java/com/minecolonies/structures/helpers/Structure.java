@@ -252,7 +252,7 @@ public class Structure
         }
 
         final Template template = new Template();
-        template.read(fixer.process(FixTypes.STRUCTURE, nbttagcompound));
+        template.read(fixer.process(FixTypes.CHUNK, nbttagcompound));
         return template;
     }
 
@@ -551,7 +551,7 @@ public class Structure
             lastStartingPos = startingPos;
             final Template.BlockInfo[] blockList = this.getBlockInfoWithSettings(this.settings);
 
-            final FakeWorld fakeWorld = new FakeWorld(null, clientWorld.getSaveHandler(), clientWorld.getWorldInfo(), clientWorld.provider, clientWorld.profiler, true, null, true);
+            final FakeWorld fakeWorld = new FakeWorld(null, clientWorld.getSaveHandler(), clientWorld.getWorldInfo(), clientWorld.provider, clientWorld.theProfiler, true, null, true);
 
             for (final Template.BlockInfo aBlockList : blockList)
             {
@@ -725,11 +725,11 @@ public class Structure
             final FakeWorld fakeWorld;
             if (simulateWorld)
             {
-                fakeWorld = new FakeWorld(holder.actualState, world.getSaveHandler(), world.getWorldInfo(), world.provider, world.profiler, true, te, true);
+                fakeWorld = new FakeWorld(holder.actualState, world.getSaveHandler(), world.getWorldInfo(), world.provider, world.theProfiler, true, te, true);
             }
             else
             {
-                fakeWorld = new FakeWorld(holder.actualState, world.getSaveHandler(), world.getWorldInfo(), world.provider, world.profiler, true);
+                fakeWorld = new FakeWorld(holder.actualState, world.getSaveHandler(), world.getWorldInfo(), world.provider, world.theProfiler, true);
             }
             te.setWorld(fakeWorld);
             final int pass = 0;

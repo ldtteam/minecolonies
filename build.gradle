@@ -15,14 +15,12 @@ plugins {
     id "org.sonarqube" version "2.3"
     id "com.matthewprenger.cursegradle" version "1.0.7"
 }
+
 repositories {
     maven {
         name 'DVS1 Maven FS'
         url 'http://dvs1.progwml6.com/files/maven'
     }
-}
-
-repositories {
     maven {
         url 'http://dogforce-games.com/maven'
     }
@@ -95,7 +93,9 @@ sourceSets {
     }
 }
 
+
 ext.configFile = file "build.properties"
+
 configFile.withReader {
     def prop = new Properties()
     prop.load(it)
@@ -104,12 +104,12 @@ configFile.withReader {
 
 dependencies {
     deobfCompile "slimeknights.mantle:Mantle:${config.minecraft_version}-${config.mantle_version}"
-    deobfCompile "slimeknights:TConstruct:${config.minecraft_version}-${config.tinker_version}"
+    deobfCompile "slimeknights:TConstruct:${config.minecraft_version}-${config.tconstruct_version}"
 
     structuresCompile sourceSets.api.output
     //blockOutCompile sourceSets.api.output
 
-    deobfCompile "gigaherz.guidebook:Guidebook-1.11.0:${config.guidebook_version}"
+    deobfCompile "gigaherz.guidebook:Guidebook-${config.minecraft_version}:${config.guidebook_version}"
 
     testCompile sourceSets.structures.output
     testCompile sourceSets.blockOut.output
@@ -125,6 +125,11 @@ dependencies {
 
 group = "com.minecolonies"
 config.buildnumber = System.getenv()['BUILD_NUMBER'] != null ? System.getenv()['BUILD_NUMBER'] : System.getenv()['TRAVIS_BUILD_NUMBER']
+
+if (project.hasProperty("teamcity")) {
+    config.buildnumber = project.teamcity["teamcity.build.id"]
+}
+
 version = "${config.minecraft_version}-${config.minecolonies_major}.${config.minecolonies_minor}.${config.buildnumber}"
 
 sourceCompatibility = '1.8'
@@ -134,13 +139,16 @@ minecraft {
 
     version = config.minecraft_version + "-" + config.forge_version
     runDir = "run"
-	
-	mappings = "${config.minecolonies_mappings}"
-	
+
+    mappings = "${config.minecolonies_mappings}"
+
+    replaceIn "lib/Constants.java"
     replace "@VERSION@", project.version
-    replaceIn "util/constant/Constants.java"
-    if (project.hasProperty("signature"))
-        replace "@FINGERPRINT@", signature
+
+    // Set the jar signature in code prior to compilation, if it exists as a build property
+    if (project.hasProperty("signature")) {
+        replace "@FINGERPRINT@", project.signature
+    }
 }
 
 processResources {
@@ -158,18 +166,7 @@ processResources {
     }
 }
 
-
 compileJava {
-    options.encoding = 'UTF-8'
-    options.compilerArgs << "-Xlint"
-}
-
-compileApiJava {
-    options.encoding = 'UTF-8'
-    options.compilerArgs << "-Xlint"
-}
-
-compileBlockOutJava {
     options.encoding = 'UTF-8'
     options.compilerArgs << "-Xlint"
 }
@@ -240,7 +237,6 @@ task copyToLib(type: Copy) {
     into "lib"
     from configurations.runtime
 }
-
 
 task runCheckStyle(type: Checkstyle) {
     description 'Runs Checkstyle inspection against Minecolonies sourcesets.'

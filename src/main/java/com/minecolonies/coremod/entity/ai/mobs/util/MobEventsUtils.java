@@ -21,9 +21,9 @@ import java.util.Random;
  */
 public final class MobEventsUtils
 {
-    private static final ResourceLocation BARBARIAN = new ResourceLocation(Constants.MOD_ID, "Barbarian");
-    private static final ResourceLocation ARCHER    = new ResourceLocation(Constants.MOD_ID, "ArcherBarbarian");
-    private static final ResourceLocation CHIEF     = new ResourceLocation(Constants.MOD_ID, "ChiefBarbarian");
+    private static final String BARBARIAN = "minecolonies.Barbarian";
+    private static final String ARCHER    = "minecolonies.ArcherBarbarian";
+    private static final String CHIEF     = "minecolonies.ChiefBarbarian";
 
     private static final int    MAX_SIZE                     = Configurations.gameplay.maxBarbarianHordeSize;
     private static final double BARBARIANS_MULTIPLIER        = 0.5;

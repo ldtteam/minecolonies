@@ -45,7 +45,7 @@ public class EntityAICitizenWander extends EntityAIBase
             return false;
         }
 
-        Vec3d vec3d = RandomPositionGenerator.getLandPos(citizen, 10, 7);
+        Vec3d vec3d = RandomPositionGenerator.findRandomTarget(citizen, 10, 7);
         if (vec3d == null)
         {
             return false;

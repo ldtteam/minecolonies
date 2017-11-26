@@ -402,7 +402,7 @@ public class TileEntityRack extends TileEntity
         for (int i = 0; i < inventoryTagList.tagCount(); ++i)
         {
             final NBTTagCompound inventoryCompound = inventoryTagList.getCompoundTagAt(i);
-            final ItemStack stack = new ItemStack(inventoryCompound);
+            final ItemStack stack = ItemStack.loadItemStackFromNBT(inventoryCompound);
             if (ItemStackUtils.getSize(stack) <= 0)
             {
                 inventory.setStackInSlot(i, ItemStackUtils.EMPTY);
@@ -454,7 +454,7 @@ public class TileEntityRack extends TileEntity
         {
             @NotNull final NBTTagCompound inventoryCompound = new NBTTagCompound();
             final ItemStack stack = inventory.getStackInSlot(slot);
-            if (stack == ItemStack.EMPTY)
+            if (stack == ItemStackUtils.EMPTY)
             {
                 new ItemStack(Blocks.AIR, 0).writeToNBT(inventoryCompound);
             }
@@ -506,7 +506,7 @@ public class TileEntityRack extends TileEntity
         for (int i = 0; i < inventoryTagList.tagCount(); ++i)
         {
             final NBTTagCompound inventoryCompound = inventoryTagList.getCompoundTagAt(i);
-            final ItemStack stack = new ItemStack(inventoryCompound);
+            final ItemStack stack = ItemStack.loadItemStackFromNBT(inventoryCompound);
             if (ItemStackUtils.getSize(stack) <= 0)
             {
                 inventory.setStackInSlot(i, ItemStackUtils.EMPTY);

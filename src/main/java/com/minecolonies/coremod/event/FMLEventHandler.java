@@ -82,6 +82,6 @@ public class FMLEventHandler
     @SubscribeEvent
     public void onConfigChanged(@NotNull final ConfigChangedEvent.OnConfigChangedEvent event)
     {
-        ConfigManager.sync(Constants.MOD_ID, Config.Type.INSTANCE);
+        ConfigManager.load(Constants.MOD_ID, Config.Type.INSTANCE);
     }
 }

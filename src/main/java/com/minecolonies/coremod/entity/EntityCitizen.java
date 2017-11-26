@@ -876,14 +876,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
         return null;
     }
 
-    /**
-     * Called when a player tries to interact with a citizen.
-     *
-     * @param player which interacts with the citizen.
-     * @return If citizen should interact or not.
-     */
     @Override
-    public boolean processInteract(final EntityPlayer player, final EnumHand hand)
+    public boolean processInteract(final EntityPlayer player, final EnumHand hand, final ItemStack stack)
     {
 
         final ColonyView colonyView = ColonyManager.getColonyView(colonyId);
@@ -892,9 +886,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
             return false;
         }
 
-        if(player.getHeldItem(hand) != null && player.getHeldItem(hand).getItem() instanceof ItemNameTag)
+        if(stack != null && stack.getItem() instanceof ItemNameTag)
         {
-            return super.processInteract(player, hand);
+            return super.processInteract(player, hand, stack);
         }
 
         if (CompatibilityUtils.getWorld(this).isRemote)
@@ -1824,10 +1818,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     @Override
-    public EnumActionResult applyPlayerInteraction(final EntityPlayer player, final Vec3d vec, final EnumHand hand)
+    public EnumActionResult applyPlayerInteraction(final EntityPlayer player, final Vec3d vec, final ItemStack stack, final EnumHand hand)
     {
         SoundUtils.playInteractionSoundAtCitizenWithChance(CompatibilityUtils.getWorld(this), this.getPosition(), 100, this);
-        return super.applyPlayerInteraction(player, vec, hand);
+        return super.applyPlayerInteraction(player, vec, stack, hand);
     }
 
     /**
@@ -1933,7 +1927,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 this.onItemPickup(entityItem, ItemStackUtils.getSize(itemStack) - resultingStackSize);
 
                 final ItemStack overrulingStack = itemStack.copy();
-                overrulingStack.setCount(ItemStackUtils.getSize(itemStack) - resultingStackSize);
+                overrulingStack.stackSize = ItemStackUtils.getSize(itemStack) - resultingStackSize;
 
                 if (getColonyJob() != null)
                 {

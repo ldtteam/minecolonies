@@ -75,7 +75,7 @@ public class BlockHutField extends AbstractBlockMinecoloniesContainer<BlockHutFi
     /**
      * Registry name for this block.
      */
-    private static final String REGISTRY_NAME = "blockHutField";
+    private static final String REGISTRY_NAME = "blockhutfield";
 
     /**
      * Constructor called on block placement.
@@ -161,15 +161,16 @@ public class BlockHutField extends AbstractBlockMinecoloniesContainer<BlockHutFi
 
     @Override
     public boolean onBlockActivated(
-                                     final World worldIn,
-                                     final BlockPos pos,
-                                     final IBlockState state,
-                                     final EntityPlayer playerIn,
-                                     final EnumHand hand,
-                                     final EnumFacing facing,
-                                     final float hitX,
-                                     final float hitY,
-                                     final float hitZ)
+            final World worldIn,
+            final BlockPos pos,
+            final IBlockState state,
+            final EntityPlayer playerIn,
+            final EnumHand hand,
+            @javax.annotation.Nullable final ItemStack heldItem,
+            final EnumFacing side,
+            final float hitX,
+            final float hitY,
+            final float hitZ)
     {
         //If the world is server, open the inventory of the field.
         if (!worldIn.isRemote)

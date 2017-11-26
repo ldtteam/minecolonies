@@ -6,6 +6,7 @@ import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -51,16 +52,17 @@ public class ItemCaliper extends AbstractItemMinecolonies
 
     @Override
     public EnumActionResult onItemUse(
-                                       final EntityPlayer player,
-                                       final World worldIn,
-                                       final BlockPos pos,
-                                       final EnumHand hand,
-                                       final EnumFacing facing,
-                                       final float hitX,
-                                       final float hitY,
-                                       final float hitZ)
+            final ItemStack stack,
+            final EntityPlayer player,
+            final World worldIn,
+            final BlockPos pos,
+            final EnumHand hand,
+            final EnumFacing facing,
+            final float hitX,
+            final float hitY,
+            final float hitZ)
     {
-        // if client world, do nothing
+// if client world, do nothing
         if (worldIn.isRemote)
         {
             return EnumActionResult.FAIL;

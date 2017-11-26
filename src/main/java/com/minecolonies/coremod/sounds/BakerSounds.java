@@ -28,14 +28,14 @@ public final class BakerSounds extends AbstractWorkerSounds
      */
     public static final class Female
     {
-        public static final SoundEvent generalPhrases    = ModSoundEvents.getSoundID("mob.baker.female.generalPhrases");
+        public static final SoundEvent generalPhrases    = ModSoundEvents.getSoundID("mob.baker.female.generalphrases");
         public static final SoundEvent noises            = ModSoundEvents.getSoundID("mob.baker.female.noise");
         public static final SoundEvent hostile           = ModSoundEvents.getSoundID("mob.baker.female.hostile");
-        public static final SoundEvent offToBed          = ModSoundEvents.getSoundID("mob.baker.female.offToBed");
-        public static final SoundEvent badWeather        = ModSoundEvents.getSoundID("mob.baker.female.badWeather");
-        public static final SoundEvent saturationVeryLow = ModSoundEvents.getSoundID("mob.baker.female.saturationVeryLow");
-        public static final SoundEvent saturationLow     = ModSoundEvents.getSoundID("mob.baker.female.saturationLow");
-        public static final SoundEvent saturationHigh    = ModSoundEvents.getSoundID("mob.baker.female.saturationHigh");
+        public static final SoundEvent offToBed          = ModSoundEvents.getSoundID("mob.baker.female.offtobed");
+        public static final SoundEvent badWeather        = ModSoundEvents.getSoundID("mob.baker.female.badweather");
+        public static final SoundEvent saturationVeryLow = ModSoundEvents.getSoundID("mob.baker.female.saturationverylow");
+        public static final SoundEvent saturationLow     = ModSoundEvents.getSoundID("mob.baker.female.saturationlow");
+        public static final SoundEvent saturationHigh    = ModSoundEvents.getSoundID("mob.baker.female.saturationhigh");
         public static final SoundEvent greeting          = ModSoundEvents.getSoundID("mob.baker.female.greeting");
         public static final SoundEvent farewell          = ModSoundEvents.getSoundID("mob.baker.female.farewell");
         public static final SoundEvent interaction       = ModSoundEvents.getSoundID("mob.baker.female.interaction");

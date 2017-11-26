@@ -189,17 +189,18 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
 
     @Override
     public boolean onBlockActivated(
-                                     final World worldIn,
-                                     final BlockPos pos,
-                                     final IBlockState state,
-                                     final EntityPlayer playerIn,
-                                     final EnumHand hand,
-                                     final EnumFacing facing,
-                                     final float hitX,
-                                     final float hitY,
-                                     final float hitZ)
+            final World worldIn,
+            final BlockPos pos,
+            final IBlockState state,
+            final EntityPlayer playerIn,
+            final EnumHand hand,
+            @javax.annotation.Nullable final ItemStack heldItem,
+            final EnumFacing side,
+            final float hitX,
+            final float hitY,
+            final float hitZ)
     {
-        /*
+/*
         If the world is client, open the gui of the building
          */
         if (worldIn.isRemote)
@@ -207,8 +208,8 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
             @Nullable final AbstractBuildingView building = ColonyManager.getBuildingView(pos);
 
             if (building != null
-                  && building.getColony() != null
-                  && building.getColony().getPermissions().hasPermission(playerIn, Action.ACCESS_HUTS))
+                    && building.getColony() != null
+                    && building.getColony().getPermissions().hasPermission(playerIn, Action.ACCESS_HUTS))
             {
                 building.openGui();
             }

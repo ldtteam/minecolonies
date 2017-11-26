@@ -23,7 +23,7 @@ public class BlockSubstitution extends AbstractBlockMinecolonies<BlockSubstituti
     /**
      * This blocks name.
      */
-    private static final String BLOCK_NAME = "blockSubstitution";
+    private static final String BLOCK_NAME = "blocksubstitution";
 
     /**
      * The resistance this block has.

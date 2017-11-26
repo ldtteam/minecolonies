@@ -1628,7 +1628,7 @@ public class InventoryUtils
         final double spawnY = random.nextDouble() * SPAWN_MODIFIER + SPAWN_ADDITION;
         final double spawnZ = random.nextDouble() * SPAWN_MODIFIER + SPAWN_ADDITION;
 
-        while (stack.getCount() > 0)
+        while (stack.stackSize > 0)
         {
             final int randomSplitStackSize = random.nextInt(MAX_RANDOM_SPAWN) + MIN_RANDOM_SPAWN;
             final EntityItem entityitem = new EntityItem(worldIn, x + spawnX, y + spawnY, z + spawnZ, stack.splitStack(randomSplitStackSize));

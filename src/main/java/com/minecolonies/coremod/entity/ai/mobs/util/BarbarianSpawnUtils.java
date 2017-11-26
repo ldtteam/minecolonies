@@ -159,7 +159,7 @@ public final class BarbarianSpawnUtils
      * @param spawnLocation  the location at which to spawn the entity
      * @param world          the world in which the colony and entity are
      */
-    public static void spawn(final ResourceLocation entityToSpawn, final int numberOfSpawns, final BlockPos spawnLocation, final World world)
+    public static void spawn(final String entityToSpawn, final int numberOfSpawns, final BlockPos spawnLocation, final World world)
     {
         if (spawnLocation != null && entityToSpawn != null && world != null)
         {

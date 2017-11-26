@@ -662,7 +662,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
             @NotNull final ItemStack itemStack;
             if (isCreative)
             {
-                itemStack = request.getDisplayStacks().stream().findFirst().orElse(ItemStack.EMPTY);
+                itemStack = request.getDisplayStacks().stream().findFirst().orElse(null);
             }
             else
             {

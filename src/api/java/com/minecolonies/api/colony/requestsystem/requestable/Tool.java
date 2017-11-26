@@ -122,7 +122,7 @@ public class Tool implements IDeliverable
         IToolType type = ToolType.getToolType(nbt.getString(NBT_TYPE));
         Integer minLevel = nbt.getInteger(NBT_MIN_LEVEL);
         Integer maxLevel = nbt.getInteger(NBT_MAX_LEVEL);
-        ItemStack result = new ItemStack(nbt.getCompoundTag(NBT_RESULT));
+        ItemStack result = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag(NBT_RESULT));
 
         return new Tool(type, minLevel, maxLevel, result);
     }
@@ -132,7 +132,7 @@ public class Tool implements IDeliverable
     {
         //API:Map the given strings a proper way.
         boolean toolTypeResult = !ItemStackUtils.isEmpty(stack)
-                                   && stack.getCount() >= 1
+                                   && stack.stackSize >= 1
                                    && stack.getItem().getToolClasses(stack).stream()
                                         .filter(s -> getToolClass().getName().equalsIgnoreCase(s))
                                         .map(ToolType::getToolType)

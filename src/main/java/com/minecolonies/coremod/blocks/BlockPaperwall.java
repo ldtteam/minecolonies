@@ -19,13 +19,15 @@ import net.minecraftforge.fml.common.registry.IForgeRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.List;
+
 public class BlockPaperwall extends AbstractBlockMinecoloniesPane<BlockPaperwall>
 {
     public static final PropertyEnum<PaperwallType> VARIANT        = PropertyEnum.create("variant", PaperwallType.class);
     /**
      * This blocks name.
      */
-    public static final String                      BLOCK_NAME     = "blockPaperwall";
+    public static final String                      BLOCK_NAME     = "blockpaperwall";
     /**
      * The hardness this block has.
      */
@@ -97,7 +99,7 @@ public class BlockPaperwall extends AbstractBlockMinecoloniesPane<BlockPaperwall
     }
 
     @Override
-    public void getSubBlocks(final Item itemIn, final CreativeTabs tab, final NonNullList<ItemStack> list)
+    public void getSubBlocks(final Item itemIn, final CreativeTabs tab, final List<ItemStack> list)
     {
         for (final PaperwallType type : PaperwallType.values())
         {
