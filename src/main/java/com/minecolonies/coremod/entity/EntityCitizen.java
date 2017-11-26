@@ -63,8 +63,6 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Field;
 import java.util.*;
 
-import static com.minecolonies.api.util.constant.Suppression.INCREMENT_AND_DECREMENT_OPERATORS_SHOULD_NOT_BE_USED_IN_A_METHOD_CALL_OR_MIXED_WITH_OTHER_OPERATORS_IN_AN_EXPRESSION;
-import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_NOT_ALLOWED;
 import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_SAME;
 
@@ -1052,9 +1050,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
             return false;
         }
 
-        if(player.getHeldItem(hand) != null && player.getHeldItem(hand).getItem() instanceof ItemNameTag)
+        if(stack != null && stack.getItem() instanceof ItemNameTag)
         {
-            return super.processInteract(player, hand);
+            return super.processInteract(player, hand, stack);
         }
 
         if (CompatibilityUtils.getWorld(this).isRemote)
@@ -1273,10 +1271,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         if(citizenData != null && name != null)
         {
-            if(!citizenData.getName().equals(name) && Configurations.gameplay.allowGlobalNameChanges >= 0)
+            if(!citizenData.getName().equals(name) && Configurations.allowGlobalNameChanges >= 0)
             {
-                if (Configurations.gameplay.allowGlobalNameChanges == 0 &&
-                        Arrays.stream(Configurations.gameplay.specialPermGroup).noneMatch(owner -> owner.equals(colony.getPermissions().getOwnerName())))
+                if (Configurations.allowGlobalNameChanges == 0 &&
+                        Arrays.stream(Configurations.specialPermGroup).noneMatch(owner -> owner.equals(colony.getPermissions().getOwnerName())))
                 {
                     LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), CITIZEN_RENAME_NOT_ALLOWED);
                     return;
