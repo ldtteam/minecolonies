@@ -1,4 +1,4 @@
-<window inherit="minecolonies:gui/windowBase.xml">
+<window inherit="minecolonies:gui/windowbase.xml">
     <switch id="pages" size="100% 200px" pos="0 7">
         <view id="pageActions" size="100% 100%">
             <layout source="minecolonies:gui/layoutworkerbuildingdefault.xml"/>

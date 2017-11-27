@@ -1,5 +1,5 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        inherit="minecolonies:gui/windowBase.xml"
+        inherit="minecolonies:gui/windowbase.xml"
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
     <label id="title"
            size="100% 11" pos="0 9"

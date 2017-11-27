@@ -1,5 +1,5 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        inherit="minecolonies:gui/windowBase.xml"
+        inherit="minecolonies:gui/windowbase.xml"
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
     <view id="pageActions" size="100% 200px" pos="0 7">
         <layout source="minecolonies:gui/layoutworkerbuildingdefault.xml"/>
