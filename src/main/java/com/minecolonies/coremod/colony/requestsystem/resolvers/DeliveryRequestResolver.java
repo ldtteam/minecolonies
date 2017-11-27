@@ -47,7 +47,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
         CitizenData freeDeliveryMan = colony.getCitizens()
                                         .values()
                                         .stream()
-                                        .filter(c -> requestToCheck.getRequest().getTarget().isReachableFromLocation(c.getCitizenEntity().getLocation()))
+                                        .filter(c -> c.getCitizenEntity() != null && requestToCheck.getRequest().getTarget().isReachableFromLocation(c.getCitizenEntity().getLocation()))
                                         .filter(c -> c.getJob() instanceof JobDeliveryman)
                                         .findFirst()
                                         .orElse(null);
@@ -74,7 +74,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
         CitizenData freeDeliveryMan = colony.getCitizens()
                                         .values()
                                         .stream()
-                                        .filter(c -> request.getRequest().getTarget().isReachableFromLocation(c.getCitizenEntity().getLocation()))
+                                        .filter(c -> c.getCitizenEntity() != null && request.getRequest().getTarget().isReachableFromLocation(c.getCitizenEntity().getLocation()))
                                         .filter(c -> c.getJob() instanceof JobDeliveryman)
                                         .sorted(Comparator.comparing((CitizenData c) -> ((JobDeliveryman) c.getJob()).getTaskQueue().size())
                                                   .thenComparing(Comparator.comparing(c -> {
