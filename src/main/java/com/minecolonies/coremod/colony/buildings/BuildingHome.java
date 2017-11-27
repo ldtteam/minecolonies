@@ -105,7 +105,11 @@ public class BuildingHome extends AbstractBuildingHut
         for (int i = 0; i < bedTagList.tagCount(); ++i)
         {
             final NBTTagCompound bedCompound = bedTagList.getCompoundTagAt(i);
-            bedList.add(NBTUtil.getPosFromTag(bedCompound));
+            final BlockPos bedPos = NBTUtil.getPosFromTag(bedCompound);
+            if(!bedList.contains(bedPos))
+            {
+                bedList.add(bedPos);
+            }
         }
     }
 
@@ -123,8 +127,8 @@ public class BuildingHome extends AbstractBuildingHut
             IBlockState state = world.getBlockState(pos);
             state = state.getBlock().getActualState(state, world, pos);
             if (state.getBlock() instanceof BlockBed
-                  && !state.getValue(BlockBed.OCCUPIED)
-                  && state.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.HEAD))
+                    && state.getValue(BlockBed.OCCUPIED)
+                    && state.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.HEAD))
             {
                 world.setBlockState(pos, state.withProperty(BlockBed.OCCUPIED, false), 0x03);
             }
@@ -160,6 +164,15 @@ public class BuildingHome extends AbstractBuildingHut
                 bedTagList.appendTag(NBTUtil.createPosTag(pos));
             }
             compound.setTag(TAG_BEDS, bedTagList);
+        }
+    }
+
+    @Override
+    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
+    {
+        if (block == Blocks.BED && !bedList.contains(pos))
+        {
+            bedList.add(pos);
         }
     }
 
@@ -291,15 +304,6 @@ public class BuildingHome extends AbstractBuildingHut
     {
         super.setBuildingLevel(level);
         getColony().calculateMaxCitizens();
-    }
-
-    @Override
-    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
-    {
-        if (block == Blocks.BED)
-        {
-            bedList.add(pos);
-        }
     }
 
     @NotNull
