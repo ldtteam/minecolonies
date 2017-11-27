@@ -142,6 +142,7 @@ public final class Settings
         offset.setPos(0, 0, 0);
         rotation = 0;
         isMirrored = false;
+        staticSchematicMode = false;
     }
 
     /**

@@ -280,10 +280,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         {
             Settings.instance.setupStaticMode(structureName, mode);
             staticSchematicName = structureName;
-            staticSchematicMode = true;
             Settings.instance.setRotation(rotation);
             this.rotation = rotation;
         }
+
+        staticSchematicMode = true;
         renameButton = findPaneOfTypeByID(BUTTON_RENAME, Button.class);
         deleteButton = findPaneOfTypeByID(BUTTON_DELETE, Button.class);
     }
@@ -302,6 +303,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         this.init(pos);
         renameButton = findPaneOfTypeByID(BUTTON_RENAME, Button.class);
         deleteButton = findPaneOfTypeByID(BUTTON_DELETE, Button.class);
+        this.staticSchematicMode = false;
     }
 
     private void init(final BlockPos pos)
@@ -493,7 +495,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     @Override
     public void onOpened()
     {
-        if(staticSchematicMode)
+        if(Settings.instance.isStaticSchematicMode())
         {
             sections.add(Structures.SCHEMATICS_PREFIX);
             setStructureName(staticSchematicName);
@@ -517,6 +519,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             {
                 findPaneOfTypeByID(BUTTON_PASTE, Button.class).setVisible(true);
                 findPaneOfTypeByID(BUTTON_PASTE_NICE, Button.class).setVisible(true);
+            }
+            else
+            {
+                findPaneOfTypeByID(BUTTON_PASTE, Button.class).setVisible(false);
+                findPaneOfTypeByID(BUTTON_PASTE_NICE, Button.class).setVisible(false);
             }
 
             setStructureName(Settings.instance.getStructureName());
@@ -652,7 +659,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         final String section = sections.get(sectionsDropDownList.getSelectedIndex());
         final String style = styles.get(stylesDropDownList.getSelectedIndex());
 
-        if(staticSchematicMode)
+        if(Settings.instance.isStaticSchematicMode())
         {
             schematics = new ArrayList<>();
             schematics.add(staticSchematicName);
@@ -700,28 +707,31 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void onDropDownListChanged(final DropDownList list)
     {
-        if (list == sectionsDropDownList)
+        if(list.isEnabled())
         {
-            final String name = sections.get(sectionsDropDownList.getSelectedIndex());
-            if (Structures.SCHEMATICS_SCAN.equals(name))
+            if (list == sectionsDropDownList)
             {
-                renameButton.setVisible(true);
-                deleteButton.setVisible(true);
+                final String name = sections.get(sectionsDropDownList.getSelectedIndex());
+                if (Structures.SCHEMATICS_SCAN.equals(name))
+                {
+                    renameButton.setVisible(true);
+                    deleteButton.setVisible(true);
+                }
+                else
+                {
+                    renameButton.setVisible(false);
+                    deleteButton.setVisible(false);
+                }
+                updateStyles();
             }
-            else
+            else if (list == stylesDropDownList)
             {
-                renameButton.setVisible(false);
-                deleteButton.setVisible(false);
+                updateSchematics();
             }
-            updateStyles();
-        }
-        else if (list == stylesDropDownList)
-        {
-            updateSchematics();
-        }
-        else if (list == schematicsDropDownList)
-        {
-            changeSchematic();
+            else if (list == schematicsDropDownList)
+            {
+                changeSchematic();
+            }
         }
     }
 
@@ -961,7 +971,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void confirmClicked()
     {
-        if(Settings.instance.isStaticSchematicMode())
+        if(Settings.instance.isStaticSchematicMode() && Settings.instance.getActiveStructure() != null)
         {
             checkAndPlace();
         }
@@ -991,9 +1001,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
     private void checkAndPlace()
     {
-        if(FreeMode.SUPPLYSHIP == Settings.instance.getFreeMode())
+        if (FreeMode.SUPPLYSHIP == Settings.instance.getFreeMode())
         {
-            if(ItemSupplyChestDeployer.canShipBePlaced(Minecraft.getMinecraft().world, Settings.instance.getPosition(),
+            if (ItemSupplyChestDeployer.canShipBePlaced(Minecraft.getMinecraft().world, Settings.instance.getPosition(),
                     Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()))))
             {
                 pasteNice();
@@ -1003,9 +1013,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton
                 LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "item.supplyChestDeployer.invalid");
             }
         }
-        else if(FreeMode.SUPPLYCAMP == Settings.instance.getFreeMode())
+        else if (FreeMode.SUPPLYCAMP == Settings.instance.getFreeMode())
         {
-            if(ItemSupplyCampDeployer.canCampBePlaced(Minecraft.getMinecraft().world, Settings.instance.getPosition(),
+            if (ItemSupplyCampDeployer.canCampBePlaced(Minecraft.getMinecraft().world, Settings.instance.getPosition(),
                     Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()))))
             {
                 pasteNice();
@@ -1015,7 +1025,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
                 LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "item.supplyCampDeployer.invalid");
             }
         }
-
 
         Settings.instance.reset();
         close();

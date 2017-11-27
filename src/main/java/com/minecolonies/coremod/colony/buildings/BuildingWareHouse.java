@@ -198,7 +198,7 @@ public class BuildingWareHouse extends AbstractBuilding
      */
     public List<Vec3d> getRegisteredDeliverymen()
     {
-        return Collections.unmodifiableList(registeredDeliverymen);
+        return new ArrayList<>(Collections.unmodifiableList(registeredDeliverymen));
     }
 
     @Override
