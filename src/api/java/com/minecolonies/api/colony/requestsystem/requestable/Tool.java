@@ -39,7 +39,7 @@ public class Tool implements IDeliverable
         this(toolClass, minLevel, maxLevel, ItemStackUtils.EMPTY);
     }
 
-    public Tool(@NotNull final IToolType toolClass, @NotNull final Integer minLevel, @NotNull final Integer maxLevel, @NotNull final ItemStack result)
+    public Tool(@NotNull final IToolType toolClass, @NotNull final Integer minLevel, @NotNull final Integer maxLevel, final ItemStack result)
     {
         this.toolClass = toolClass;
         this.minLevel = minLevel;
@@ -61,8 +61,11 @@ public class Tool implements IDeliverable
         compound.setString(NBT_TYPE, tool.getToolClass().getName());
         compound.setInteger(NBT_MIN_LEVEL, tool.getMinLevel());
         compound.setInteger(NBT_MAX_LEVEL, tool.getMaxLevel());
-        compound.setTag(NBT_RESULT, tool.getResult().serializeNBT());
 
+        if(tool.getResult() != null)
+        {
+            compound.setTag(NBT_RESULT, tool.getResult().serializeNBT());
+        }
         return compound;
     }
 
@@ -102,7 +105,6 @@ public class Tool implements IDeliverable
      *
      * @return The resulting stack.
      */
-    @NotNull
     public ItemStack getResult()
     {
         return result;
@@ -122,7 +124,16 @@ public class Tool implements IDeliverable
         IToolType type = ToolType.getToolType(nbt.getString(NBT_TYPE));
         Integer minLevel = nbt.getInteger(NBT_MIN_LEVEL);
         Integer maxLevel = nbt.getInteger(NBT_MAX_LEVEL);
-        ItemStack result = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag(NBT_RESULT));
+
+        ItemStack result;
+        if(nbt.hasKey(NBT_RESULT))
+        {
+            result = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag(NBT_RESULT));
+        }
+        else
+        {
+            result = null;
+        }
 
         return new Tool(type, minLevel, maxLevel, result);
     }

@@ -200,8 +200,7 @@ public class CitizenData
 
         if (compound.hasKey(TAG_INVENTORY))
         {
-            final NBTTagList nbttaglist = compound.getTagList(TAG_INVENTORY, 10);
-            this.inventory.readFromNBT(nbttaglist);
+            this.inventory.readFromNBT(compound);
             this.inventory.setHeldItem(compound.getInteger(TAG_HELD_ITEM_SLOT));
         }
     }
@@ -703,8 +702,7 @@ public class CitizenData
             job.writeToNBT(jobCompound);
             compound.setTag("job", jobCompound);
         }
-
-        compound.setTag(TAG_INVENTORY, inventory.writeToNBT(new NBTTagList()));
+        inventory.writeToNBT(compound);
         compound.setInteger(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot());
     }
 
@@ -775,7 +773,7 @@ public class CitizenData
         buf.writeInt(colony.getID());
 
         NBTTagCompound compound = new NBTTagCompound();
-        compound.setTag("inventory", inventory.writeToNBT(new NBTTagList()));
+        inventory.writeToNBT(compound);
         ByteBufUtils.writeTag(buf, compound);
     }
 

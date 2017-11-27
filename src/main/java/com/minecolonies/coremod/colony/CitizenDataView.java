@@ -309,7 +309,7 @@ public class CitizenDataView
         NBTTagCompound compound = ByteBufUtils.readTag(buf);
         inventory = new InventoryCitizen(this.name, true);
         final NBTTagList nbttaglist = compound.getTagList("inventory", 10);
-        this.inventory.readFromNBT(nbttaglist);
+        this.inventory.readFromNBT(compound);
         this.inventory.setHeldItem(compound.getInteger(TAG_HELD_ITEM_SLOT));
     }
 

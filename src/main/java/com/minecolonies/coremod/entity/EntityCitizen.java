@@ -1031,8 +1031,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         if (dataBackup != null)
         {
-            final NBTTagList nbttaglist = dataBackup.getTagList("Inventory", 10);
-            this.getCitizenData().getInventory().readFromNBT(nbttaglist);
+            this.getCitizenData().getInventory().readFromNBT(dataBackup);
             this.getCitizenData().getInventory().setHeldItem(dataBackup.getInteger(TAG_HELD_ITEM_SLOT));
             dataBackup = null;
         }

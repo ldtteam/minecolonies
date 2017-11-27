@@ -82,7 +82,7 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
     {
         SETTLER("settler", 3),
         CITIZEN("citizen", 3),
-        NOBLE("boble", 3),
+        NOBLE("noble", 3),
         ARISTOCRAT("aristocrat", 3),
         BUILDER("builder", 1),
         DELIVERYMAN("deliveryman", 1),

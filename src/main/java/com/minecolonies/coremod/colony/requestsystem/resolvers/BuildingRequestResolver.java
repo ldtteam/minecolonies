@@ -70,7 +70,7 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
         tileEntities.addAll(building.getAdditionalCountainers().stream().map(manager.getColony().getWorld()::getTileEntity).collect(Collectors.toSet()));
 
         return tileEntities.stream()
-                 .map(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStack -> requestToCheck.getRequest().matches(itemStack)))
+                 .map(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStack -> !ItemStackUtils.isEmpty(itemStack) && requestToCheck.getRequest().matches(itemStack)))
                  .anyMatch(itemStacks -> !itemStacks.isEmpty());
     }
 
