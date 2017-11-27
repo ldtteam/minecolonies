@@ -971,7 +971,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void confirmClicked()
     {
-        if(Settings.instance.isStaticSchematicMode())
+        if(Settings.instance.isStaticSchematicMode() && Settings.instance.getActiveStructure() != null)
         {
             checkAndPlace();
         }
@@ -1001,36 +1001,32 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
     private void checkAndPlace()
     {
-        if(Settings.instance.getActiveStructure() != null)
+        if (FreeMode.SUPPLYSHIP == Settings.instance.getFreeMode())
         {
-            if (FreeMode.SUPPLYSHIP == Settings.instance.getFreeMode())
+            if (ItemSupplyChestDeployer.canShipBePlaced(Minecraft.getMinecraft().world, Settings.instance.getPosition(),
+                    Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()))))
             {
-                if (ItemSupplyChestDeployer.canShipBePlaced(Minecraft.getMinecraft().world, Settings.instance.getPosition(),
-                        Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()))))
-                {
-                    pasteNice();
-                }
-                else
-                {
-                    LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "item.supplyChestDeployer.invalid");
-                }
+                pasteNice();
             }
-            else if (FreeMode.SUPPLYCAMP == Settings.instance.getFreeMode())
+            else
             {
-                if (ItemSupplyCampDeployer.canCampBePlaced(Minecraft.getMinecraft().world, Settings.instance.getPosition(),
-                        Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()))))
-                {
-                    pasteNice();
-                }
-                else
-                {
-                    LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "item.supplyCampDeployer.invalid");
-                }
+                LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "item.supplyChestDeployer.invalid");
             }
-
-
-            Settings.instance.reset();
         }
+        else if (FreeMode.SUPPLYCAMP == Settings.instance.getFreeMode())
+        {
+            if (ItemSupplyCampDeployer.canCampBePlaced(Minecraft.getMinecraft().world, Settings.instance.getPosition(),
+                    Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()))))
+            {
+                pasteNice();
+            }
+            else
+            {
+                LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "item.supplyCampDeployer.invalid");
+            }
+        }
+
+        Settings.instance.reset();
         close();
     }
 
