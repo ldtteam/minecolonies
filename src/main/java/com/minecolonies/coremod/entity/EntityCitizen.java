@@ -1336,7 +1336,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         if (stuckTime >= MIN_STUCK_TIME + getRandom().nextInt(MIN_STUCK_TIME) && !triedMovingAway)
         {
-            Log.getLogger().info(citizenData.getName() + "Moving away!");
             newNavigator.moveAwayFromXYZ(currentPosition, getRandom().nextInt(MOVE_AWAY_RANGE), 1);
             return;
         }
