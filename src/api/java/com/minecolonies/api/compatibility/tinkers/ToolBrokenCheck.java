@@ -1,5 +1,6 @@
 package com.minecolonies.api.compatibility.tinkers;
 
+import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.Nullable;
@@ -20,7 +21,7 @@ public final class ToolBrokenCheck
      */
     public static boolean checkTinkersBroken(@Nullable final ItemStack stack)
     {
-        if (stack.hasTagCompound())
+        if (!ItemStackUtils.isEmpty(stack) && stack.hasTagCompound())
         {
             final NBTTagCompound tags = stack.getTagCompound();
             if (tags.hasKey(STATS))
