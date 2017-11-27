@@ -873,7 +873,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             sname = schematics.get(schematicsDropDownList.getSelectedIndex());
         }
 
-        final StructureName structureName = new StructureName(sname);
+        final Structures.StructureName structureName = new Structures.StructureName(sname);
         final Structure structure = new Structure(null,
                 structureName.toString(),
                 new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())).setMirror(Settings.instance.getMirror()));
