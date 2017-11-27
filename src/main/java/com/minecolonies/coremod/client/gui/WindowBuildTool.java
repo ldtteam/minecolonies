@@ -1002,33 +1002,36 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
     private void checkAndPlace()
     {
-        if(FreeMode.SUPPLYSHIP == Settings.instance.getFreeMode())
+        if(Settings.instance.getActiveStructure() != null)
         {
-            if(ItemSupplyChestDeployer.canShipBePlaced(Minecraft.getMinecraft().world, Settings.instance.getPosition(),
-                    Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()))))
+            if (FreeMode.SUPPLYSHIP == Settings.instance.getFreeMode())
             {
-                pasteNice();
+                if (ItemSupplyChestDeployer.canShipBePlaced(Minecraft.getMinecraft().world, Settings.instance.getPosition(),
+                        Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()))))
+                {
+                    pasteNice();
+                }
+                else
+                {
+                    LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "item.supplyChestDeployer.invalid");
+                }
             }
-            else
+            else if (FreeMode.SUPPLYCAMP == Settings.instance.getFreeMode())
             {
-                LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "item.supplyChestDeployer.invalid");
+                if (ItemSupplyCampDeployer.canCampBePlaced(Minecraft.getMinecraft().world, Settings.instance.getPosition(),
+                        Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()))))
+                {
+                    pasteNice();
+                }
+                else
+                {
+                    LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "item.supplyCampDeployer.invalid");
+                }
             }
-        }
-        else if(FreeMode.SUPPLYCAMP == Settings.instance.getFreeMode())
-        {
-            if(ItemSupplyCampDeployer.canCampBePlaced(Minecraft.getMinecraft().world, Settings.instance.getPosition(),
-                    Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()))))
-            {
-                pasteNice();
-            }
-            else
-            {
-                LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "item.supplyCampDeployer.invalid");
-            }
-        }
 
 
-        Settings.instance.reset();
+            Settings.instance.reset();
+        }
         close();
     }
 
