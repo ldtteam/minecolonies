@@ -1334,10 +1334,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         stuckTime++;
 
-        if (stuckTime >= MIN_STUCK_TIME && !triedMovingAway)
+        if (stuckTime >= MIN_STUCK_TIME + getRandom().nextInt(MIN_STUCK_TIME) && !triedMovingAway)
         {
-            newNavigator.moveAwayFromXYZ(currentPosition, MOVE_AWAY_RANGE, 1);
-            triedMovingAway = true;
+            newNavigator.moveAwayFromXYZ(currentPosition, getRandom().nextInt(MOVE_AWAY_RANGE), 1);
             return;
         }
 
