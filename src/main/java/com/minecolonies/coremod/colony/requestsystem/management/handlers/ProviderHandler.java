@@ -99,7 +99,7 @@ public final class ProviderHandler
 
         //Get the resolvers that are being removed.
         final ImmutableCollection<IToken<?>> assignedResolvers = getRegisteredResolvers(manager, token);
-        for (final IToken resolverToken : assignedResolvers)
+        for (final IToken<?> resolverToken : assignedResolvers)
         {
             //If no requests are assigned to this resolver skip.
             if (!manager.getResolverRequestMap().containsKey(resolverToken))
@@ -145,7 +145,7 @@ public final class ProviderHandler
                     {
                         if (objectToken instanceof IToken)
                         {
-                            final IToken<?> childToken = (IToken) objectToken;
+                            final IToken<?> childToken = (IToken<?>) objectToken;
                             final IRequest childRequest = RequestHandler.getRequest(manager, childToken);
 
                             //Check if the child has been assigned. If not, no work done, no cleanup needed.
