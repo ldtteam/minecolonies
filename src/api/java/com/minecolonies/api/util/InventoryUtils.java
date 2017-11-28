@@ -11,6 +11,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -409,7 +410,10 @@ public class InventoryUtils
 
         for (final IItemHandler handler : getItemHandlersFromProvider(provider))
         {
-            combinedList.addAll(filterItemHandler(handler, predicate));
+            if(handler != null)
+            {
+                combinedList.addAll(filterItemHandler(handler, predicate));
+            }
         }
         return combinedList;
     }
@@ -595,7 +599,7 @@ public class InventoryUtils
      */
     public static int getItemCountInProvider(@NotNull final ICapabilityProvider provider, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        return getItemHandlersFromProvider(provider).stream()
+        return getItemHandlersFromProvider(provider).stream().filter(handler -> handler != null)
                  .mapToInt(handler -> filterItemHandler(handler, itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getSize).sum())
                  .sum();
     }
@@ -1369,6 +1373,14 @@ public class InventoryUtils
         return false;
     }
 
+    /**
+     * Takes an item matching a predicate and moves it form one handler to the other.
+     * @param sourceHandler the source handler.
+     * @param itemStackSelectionPredicate the predicate.
+     * @param amount the amount.
+     * @param targetHandler the target.
+     * @return true if succesful.
+     */
     public static boolean transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
                                                                                            @NotNull final IItemHandler sourceHandler,
                                                                                            @NotNull final Predicate<ItemStack> itemStackSelectionPredicate,
@@ -1387,6 +1399,37 @@ public class InventoryUtils
             return false;
         }
         return InventoryUtils.addItemStackToItemHandler(targetHandler, returnStack);
+    }
+
+    /**
+     * Takes an item matching a predicate and moves it form one handler to the other to a specific slot.
+     * @param sourceHandler the source handler.
+     * @param itemStackSelectionPredicate the predicate.
+     * @param amount the amount.
+     * @param targetHandler the target.
+     * @param slot the slot to put it in.
+     * @return true if succesful.
+     */
+    public static boolean transferXOfFirstSlotInProviderWithIntoInItemHandler(
+            final InvWrapper sourceHandler,
+            final Predicate<ItemStack> itemStackSelectionPredicate,
+            final int amount,
+            final InvWrapper targetHandler, final int slot)
+    {
+        final int desiredItemSlot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(sourceHandler,
+                itemStackSelectionPredicate::test);
+
+        if (desiredItemSlot == -1)
+        {
+            return false;
+        }
+        final ItemStack returnStack = sourceHandler.extractItem(desiredItemSlot, amount, false);
+        if (ItemStackUtils.isEmpty(returnStack))
+        {
+            return false;
+        }
+        targetHandler.setStackInSlot(slot, returnStack);
+        return true;
     }
 
     /**

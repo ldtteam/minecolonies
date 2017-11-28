@@ -191,7 +191,6 @@ public class TileEntityRack extends TileEntity
     }
 
     /**
-<<<<<<< HEAD
      * Upgrade the rack by 1. This adds 9 more slots and copies the inventory to the new one.
      */
     public void upgradeItemStorage()
@@ -215,8 +214,9 @@ public class TileEntityRack extends TileEntity
         inventory = tempInventory;
         final IBlockState state = world.getBlockState(pos);
         world.notifyBlockUpdate(pos, state, state, 0x03);
-=======
-     * Get the amount of items matching a predicate in the inventory.
+    }
+
+    /* Get the amount of items matching a predicate in the inventory.
      * @param predicate the predicate.
      * @return the total count.
      */
@@ -230,7 +230,6 @@ public class TileEntityRack extends TileEntity
             }
         }
         return 0;
->>>>>>> 75d3b73... Just for cherrypick (#1716)
     }
 
     /**

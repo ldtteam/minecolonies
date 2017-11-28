@@ -1,14 +1,17 @@
 package com.minecolonies.coremod.entity.ai.citizen.cook;
 
+import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.requestsystem.requestable.Burnable;
+import com.minecolonies.api.colony.requestsystem.requestable.Food;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.blockout.Log;
+import com.minecolonies.coremod.colony.StructureName;
 import com.minecolonies.coremod.colony.Structures;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingCook;
 import com.minecolonies.coremod.colony.buildings.BuildingWareHouse;
 import com.minecolonies.coremod.colony.jobs.JobCook;
+import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
 import com.minecolonies.coremod.entity.ai.util.AIState;
@@ -17,7 +20,6 @@ import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.tileentities.TileEntityRack;
 import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
@@ -126,7 +128,6 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
         super.registerTargets(
                 new AITarget(IDLE, START_WORKING),
                 new AITarget(START_WORKING, this::startWorking),
-                new AITarget(COOK_GET_FOOD, this::gatherFoodFromWarehouse),
                 new AITarget(COOK_GATHERING, this::gatherFoodFromBuilding),
                 new AITarget(COOK_COOK_FOOD, this::cookFood),
                 new AITarget(COOK_SERVE, this::serveFood),
@@ -147,7 +148,10 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
 
         if (getOwnBuilding().getCountOfPredicateInHut(TileEntityFurnace::isItemFuel, 1, world) < 1)
         {
-            checkOrRequestItemsAsynch(false, new ItemStack(Blocks.LOG), new ItemStack(Blocks.LOG2), new ItemStack(Items.COAL));
+            if(!getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Food.class)))
+            {
+                worker.getCitizenData().createRequestAsync(new Burnable(Constants.STACKSIZE));
+            }
             setDelay(WAIT_AFTER_REQUEST);
         }
         else
@@ -365,71 +369,6 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
         return false;
     }
 
-    private AIState gatherFoodFromWarehouse()
-    {
-        if (!worker.getColony().hasWarehouse())
-        {
-            chatSpamFilter.requestTextComponentWithoutSpam(new TextComponentTranslation("com.minecolonies.coremod.ai.noWarehouse"));
-            return START_WORKING;
-        }
-
-        if (wareHouse == null)
-        {
-            double distance = Double.MAX_VALUE;
-            for (final AbstractBuilding building : worker.getColony().getBuildings().values())
-            {
-                if (building instanceof BuildingWareHouse && getOwnBuilding().getLocation().distanceSq(building.getLocation()) < distance)
-                {
-                    wareHouse = (BuildingWareHouse) building;
-                    distance = getOwnBuilding().getLocation().distanceSq(building.getLocation());
-                }
-            }
-        }
-
-        if (wareHouse == null)
-        {
-            Log.getLogger().warn("Colony should have warehouse but its not in the list of buildings!");
-            return START_WORKING;
-        }
-
-        if (walkTo == null)
-        {
-            if (walkToBlock(wareHouse.getLocation()))
-            {
-                return getState();
-            }
-
-            ((BuildingCook) getOwnBuilding()).setGatheredToday();
-            final BlockPos pos = wareHouse.getTileEntity().getPositionOfChestWithItemStack(isFood);
-            if (pos == null)
-            {
-                if(!((BuildingCook)getOwnBuilding()).hasGatheredToday())
-                {
-                    chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.ai.noFood");
-                }
-                return START_WORKING;
-            }
-            walkTo = pos;
-        }
-
-        if (walkToBlock(walkTo))
-        {
-            return getState();
-        }
-
-        int transfersDone = 0;
-        boolean transfered = true;
-        while (transfered && transfersDone < getOwnBuilding().getBuildingLevel())
-        {
-            transfered = tryTransferFromPosToCook(walkTo, isFood);
-            transfersDone++;
-        }
-
-        walkTo = null;
-        incrementActionsDone();
-        return START_WORKING;
-    }
-
     private BlockPos getPositionOfOvenToRetrieveFrom()
     {
         for (final BlockPos pos : ((BuildingCook) getOwnBuilding()).getFurnaces())
@@ -470,7 +409,11 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
         if (amountOfFood <= 0 && !((BuildingCook) getOwnBuilding()).hasGatheredToday())
         {
             worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.gathering"));
-            return COOK_GET_FOOD;
+            if(!getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Food.class)))
+            {
+                worker.getCitizenData().createRequestAsync(new Food(Constants.STACKSIZE));
+            }
+            return getState();
         }
 
         if (range == null)
@@ -490,8 +433,11 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
 
         if (amountOfFood < getOwnBuilding().getBuildingLevel() * LEAST_KEEP_FOOD_MULTIPLIER && !((BuildingCook) getOwnBuilding()).hasGatheredToday())
         {
-            worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.gathering"));
-            return COOK_GET_FOOD;
+            if(!getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Food.class)))
+            {
+                worker.getCitizenData().createRequestAsync(new Food(Constants.STACKSIZE));
+            }
+            return getState();
         }
 
         if (getOwnBuilding().getCountOfPredicateInHut(isCookable, 1, world) >= 1
@@ -549,8 +495,8 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
 
         if(getOwnBuilding().getHeight() == 0)
         {
-            final Structures.StructureName sn =
-                    new Structures.StructureName(Structures.SCHEMATICS_PREFIX,
+            final StructureName sn =
+                    new StructureName(Structures.SCHEMATICS_PREFIX,
                             getOwnBuilding().getStyle(),
                             getOwnBuilding().getSchematicName() + getOwnBuilding().getBuildingLevel());
 
