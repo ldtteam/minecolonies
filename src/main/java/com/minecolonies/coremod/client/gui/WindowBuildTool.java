@@ -864,7 +864,16 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void changeSchematic()
     {
-        final String sname = schematics.get(schematicsDropDownList.getSelectedIndex());
+        final String sname;
+        if(Settings.instance.isStaticSchematicMode())
+        {
+            sname = Settings.instance.getStaticSchematicName();
+        }
+        else
+        {
+            sname = schematics.get(schematicsDropDownList.getSelectedIndex());
+        }
+
         final StructureName structureName = new StructureName(sname);
         final Structure structure = new Structure(null,
                 structureName.toString(),
