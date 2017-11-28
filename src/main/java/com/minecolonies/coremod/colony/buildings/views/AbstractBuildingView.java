@@ -46,7 +46,7 @@ public abstract class AbstractBuildingView implements IRequester
     /**
      * Keeps track of which citizen created what request. Request -> Citizen direction.
      */
-    private final HashMap<IToken, Integer> requestsByCitizen = new HashMap<>();
+    private final HashMap<IToken<?>, Integer> requestsByCitizen = new HashMap<>();
     private int buildingLevel    = 0;
     private int buildingMaxLevel = 0;
     private int buildingDmPrio   = 1;
@@ -54,7 +54,7 @@ public abstract class AbstractBuildingView implements IRequester
     /**
      * Keeps track of which citizen created what request. Citizen -> Request direction.
      */
-    private HashMap<Integer, Collection<IToken>> citizensByRequests = new HashMap<>();
+    private HashMap<Integer, Collection<IToken<?>>> citizensByRequests = new HashMap<>();
 
     /**
      * Creates a building view.
@@ -252,7 +252,7 @@ public abstract class AbstractBuildingView implements IRequester
     }
 
     @Override
-    public IToken getRequesterId()
+    public IToken<?> getRequesterId()
     {
         //NOOP; Is Client side view.
         return null;
