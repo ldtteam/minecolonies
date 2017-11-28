@@ -12,12 +12,15 @@ import com.minecolonies.api.colony.requestsystem.token.StandardToken;
 
 import java.util.UUID;
 
+import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
+
 /**
  * Class holds type constants to reduce the formatting errors.
  */
-public class TypeConstants
+public final class TypeConstants
 {
     /////General purpose
+    @SuppressWarnings(RAWTYPES)
     public static final TypeToken<IToken>           ITOKEN           = TypeToken.of(IToken.class);
     public static final TypeToken<ILocation>        ILOCATION        = TypeToken.of(ILocation.class);
     public static final TypeToken<UUID>             UUID             = TypeToken.of(java.util.UUID.class);
