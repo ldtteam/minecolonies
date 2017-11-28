@@ -120,57 +120,60 @@ public class TransferItemsRequestMessage extends AbstractMessage<TransferItemsRe
         }
 
         final boolean isCreative = player.capabilities.isCreativeMode;
-        final Item item = message.itemStack.getItem();
-        final int amountToTake;
-        if (isCreative)
+        if(message.itemStack != null)
         {
-            amountToTake = message.quantity;
-        }
-        else
-        {
-            amountToTake = Math.min(message.quantity, InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.inventory), item, message.itemStack.getItemDamage()));
-        }
-
-        final ItemStack itemStackToTake = new ItemStack(item, amountToTake, message.itemStack.getItemDamage());
-
-        ItemStack remainingItemStack = InventoryUtils.addItemStackToProviderWithResult(building.getTileEntity(), itemStackToTake);
-
-        if (!ItemStackUtils.isEmpty(remainingItemStack))
-        {
-            //If we still have some to drop, let's try the additional chests now
-            final World world = colony.getWorld();
-            for (final BlockPos pos : building.getAdditionalCountainers())
+            final Item item = message.itemStack.getItem();
+            final int amountToTake;
+            if (isCreative)
             {
-                final TileEntity entity = world.getTileEntity(pos);
-                remainingItemStack = InventoryUtils.addItemStackToProviderWithResult(entity, remainingItemStack);
+                amountToTake = message.quantity;
+            }
+            else
+            {
+                amountToTake = Math.min(message.quantity, InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.inventory), item, message.itemStack.getItemDamage()));
+            }
 
-                if (ItemStackUtils.isEmpty(remainingItemStack))
+            final ItemStack itemStackToTake = new ItemStack(item, amountToTake, message.itemStack.getItemDamage());
+
+            ItemStack remainingItemStack = InventoryUtils.addItemStackToProviderWithResult(building.getTileEntity(), itemStackToTake);
+
+            if (!ItemStackUtils.isEmpty(remainingItemStack))
+            {
+                //If we still have some to drop, let's try the additional chests now
+                final World world = colony.getWorld();
+                for (final BlockPos pos : building.getAdditionalCountainers())
                 {
-                    break;
+                    final TileEntity entity = world.getTileEntity(pos);
+                    remainingItemStack = InventoryUtils.addItemStackToProviderWithResult(entity, remainingItemStack);
+
+                    if (ItemStackUtils.isEmpty(remainingItemStack))
+                    {
+                        break;
+                    }
                 }
             }
-        }
 
-        if (ItemStackUtils.isEmpty(remainingItemStack) || ItemStackUtils.getSize(remainingItemStack) != ItemStackUtils.getSize(itemStackToTake))
-        {
-            //Only doing this at the moment as the additional chest do not detect new content
-            building.getTileEntity().markDirty();
-        }
-
-        if (!isCreative)
-        {
-            int amountToRemoveFromPlayer = amountToTake - ItemStackUtils.getSize(remainingItemStack);
-            while (amountToRemoveFromPlayer > 0)
+            if (ItemStackUtils.isEmpty(remainingItemStack) || ItemStackUtils.getSize(remainingItemStack) != ItemStackUtils.getSize(itemStackToTake))
             {
-                final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory), item, message.itemStack.getItemDamage());
-                final ItemStack itemsTaken = player.inventory.decrStackSize(slot, amountToRemoveFromPlayer);
-                amountToRemoveFromPlayer -= ItemStackUtils.getSize(itemsTaken);
+                //Only doing this at the moment as the additional chest do not detect new content
+                building.getTileEntity().markDirty();
             }
-        }
 
-        if (attemptResolve)
-        {
-            building.overruleNextOpenRequestWithStack(itemStack);
+            if (!isCreative)
+            {
+                int amountToRemoveFromPlayer = amountToTake - ItemStackUtils.getSize(remainingItemStack);
+                while (amountToRemoveFromPlayer > 0)
+                {
+                    final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory), item, message.itemStack.getItemDamage());
+                    final ItemStack itemsTaken = player.inventory.decrStackSize(slot, amountToRemoveFromPlayer);
+                    amountToRemoveFromPlayer -= ItemStackUtils.getSize(itemsTaken);
+                }
+            }
+
+            if (attemptResolve)
+            {
+                building.overruleNextOpenRequestWithStack(itemStack);
+            }
         }
     }
 }

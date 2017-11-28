@@ -490,7 +490,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
         final int z1;
         final int x3;
         final int z3;
-        final int y1 = getOwnBuilding().getLocation().getY() - 1;
+        final int y1 = getOwnBuilding().getLocation().getY() - 2;
         final int y3;
 
         if(getOwnBuilding().getHeight() == 0)
@@ -521,7 +521,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
             x3 = corners.getFirst().getSecond();
             z1 = corners.getSecond().getFirst();
             z3 = corners.getSecond().getSecond();
-            y3 = getOwnBuilding().getHeight();
+            y3 = getOwnBuilding().getLocation().getY() + getOwnBuilding().getHeight();
         }
 
         return new AxisAlignedBB(x1, y1, z1, x3, y3, z3);
