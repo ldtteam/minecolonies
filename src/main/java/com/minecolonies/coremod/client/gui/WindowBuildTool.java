@@ -364,7 +364,16 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void paste(final boolean complete)
     {
-        final StructureName structureName = new StructureName(schematics.get(schematicsDropDownList.getSelectedIndex()));
+        final String sname;
+        if(Settings.instance.isStaticSchematicMode())
+        {
+            sname = Settings.instance.getStaticSchematicName();
+        }
+        else
+        {
+            sname = schematics.get(schematicsDropDownList.getSelectedIndex());
+        }
+        final StructureName structureName = new StructureName(sname);
         if (structureName.getPrefix().equals(Structures.SCHEMATICS_SCAN) && FMLCommonHandler.instance().getMinecraftServerInstance() == null)
         {
             //We need to check that the server have it too using the md5
