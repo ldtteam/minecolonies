@@ -42,12 +42,12 @@ public final class StandardRequests
     public static class ItemStackRequest extends AbstractRequest<Stack>
     {
 
-        public ItemStackRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final Stack requested)
+        public ItemStackRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final Stack requested)
         {
             super(requester, token, requested);
         }
 
-        public ItemStackRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final Stack requested)
+        public ItemStackRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestState state, @NotNull final Stack requested)
         {
             super(requester, token, state, requested);
         }
@@ -59,6 +59,7 @@ public final class StandardRequests
             return new TextComponentTranslation(getRequest().getCount() + " " + getRequest().getStack().getTextComponent().getFormattedText());
         }
 
+        @NotNull
         @Override
         public List<ItemStack> getDisplayStacks()
         {
@@ -69,12 +70,12 @@ public final class StandardRequests
     public static class DeliveryRequest extends AbstractRequest<Delivery>
     {
 
-        public DeliveryRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final Delivery requested)
+        public DeliveryRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final Delivery requested)
         {
             super(requester, token, requested);
         }
 
-        public DeliveryRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final Delivery requested)
+        public DeliveryRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestState state, @NotNull final Delivery requested)
         {
             super(requester, token, state, requested);
         }
@@ -84,7 +85,7 @@ public final class StandardRequests
          *
          * @return The ItemStack that the Deliveryman transports around. ItemStack.Empty means no delivery possible.
          */
-        @Nullable
+        @NotNull
         @Override
         public ItemStack getDelivery()
         {
@@ -122,12 +123,12 @@ public final class StandardRequests
 
         private ImmutableList<ItemStack> toolExamples;
 
-        public ToolRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final Tool requested)
+        public ToolRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final Tool requested)
         {
             super(requester, token, requested);
         }
 
-        public ToolRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final Tool requested)
+        public ToolRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestState state, @NotNull final Tool requested)
         {
             super(requester, token, state, requested);
         }
@@ -198,14 +199,14 @@ public final class StandardRequests
         private static ImmutableList<ItemStack>
           foodExamples;
 
-        FoodRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final Food requested)
+        FoodRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final Food requested)
         {
             super(requester, token, requested);
         }
 
         FoodRequest(
                      @NotNull final IRequester requester,
-                     @NotNull final IToken token,
+                     @NotNull final IToken<?> token,
                      @NotNull final RequestState state,
                      @NotNull final Food requested)
         {
@@ -251,7 +252,7 @@ public final class StandardRequests
 
         private static ImmutableList<ItemStack> burnableExamples;
 
-        BurnableRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final Burnable requested)
+        BurnableRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final Burnable requested)
         {
             super(requester, token, requested);
         }
