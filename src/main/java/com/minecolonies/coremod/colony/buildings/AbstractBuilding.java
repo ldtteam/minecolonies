@@ -1461,7 +1461,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
                                       .iterator());
     }
 
-    public void markRequestAsAccepted(@NotNull final CitizenData data, @NotNull final IToken token) throws IllegalArgumentException
+    public void markRequestAsAccepted(@NotNull final CitizenData data, @NotNull final IToken<?> token) throws IllegalArgumentException
     {
         if (!citizensByCompletedRequests.containsKey(data.getId()) || !citizensByCompletedRequests.get(data.getId()).contains(token))
         {
@@ -1582,13 +1582,13 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     }
 
     @Override
-    public IToken getRequesterId()
+    public IToken<?> getRequesterId()
     {
         return getToken();
     }
 
     @Override
-    public IToken getToken()
+    public IToken<?> getToken()
     {
         return requester.getRequesterId();
     }
@@ -1613,7 +1613,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     }
 
     @NotNull
-    public void onRequestComplete(@NotNull final IToken token)
+    public void onRequestComplete(@NotNull final IToken<?> token)
     {
         final Integer citizenThatRequested = requestsByCitizen.remove(token);
         citizensByRequests.get(citizenThatRequested).remove(token);
@@ -1641,7 +1641,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     }
 
     @NotNull
-    public void onRequestCancelled(@NotNull final IToken token)
+    public void onRequestCancelled(@NotNull final IToken<?> token)
     {
         final Integer citizenThatRequested = requestsByCitizen.remove(token);
         citizensByRequests.get(citizenThatRequested).remove(token);
@@ -1666,7 +1666,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
 
     @NotNull
     @Override
-    public ITextComponent getDisplayName(@NotNull final IToken token)
+    public ITextComponent getDisplayName(@NotNull final IToken<?> token)
     {
         if (!requestsByCitizen.containsKey(token))
         {

@@ -268,21 +268,21 @@ public abstract class AbstractBuildingView implements IRequester
 
     @NotNull
     @Override
-    public void onRequestComplete(@NotNull final IToken token)
+    public void onRequestComplete(@NotNull final IToken<?> token)
     {
         //NOOP; Is Client side view.
     }
 
     @NotNull
     @Override
-    public void onRequestCancelled(@NotNull final IToken token)
+    public void onRequestCancelled(@NotNull final IToken<?> token)
     {
         //NOOP; Is Client side view.
     }
 
     @NotNull
     @Override
-    public ITextComponent getDisplayName(@NotNull final IToken token)
+    public ITextComponent getDisplayName(@NotNull final IToken<?> token)
     {
         if (!requestsByCitizen.containsKey(token))
         {
