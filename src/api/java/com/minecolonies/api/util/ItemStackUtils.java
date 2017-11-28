@@ -110,7 +110,7 @@ public final class ItemStackUtils
             //empty hand is best on blocks who don't care (0 better 1)
             return stack == null ? 0 : 1;
         }
-        if (!Compatibility.getMiningLevelCompatibility(stack, toolType.toString()))
+        if (!Compatibility.getMiningLevelCompatibility(stack, toolType.toString()) || ItemStackUtils.isEmpty(stack))
         {
             return -1;
         }

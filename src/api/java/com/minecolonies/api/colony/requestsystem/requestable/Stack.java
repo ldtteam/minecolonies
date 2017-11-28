@@ -64,7 +64,7 @@ public class Stack implements IDeliverable
                   @NotNull final boolean matchMeta,
                   @NotNull final boolean matchNBT,
                   @NotNull final boolean matchOreDic,
-                  @NotNull final ItemStack result)
+                  final ItemStack result)
     {
         this.stack = stack;
         this.matchMeta = matchMeta;
@@ -95,6 +95,7 @@ public class Stack implements IDeliverable
         boolean matchMeta = compound.getBoolean(NBT_MATCHMETA);
         boolean matchNBT = compound.getBoolean(NBT_MATCHNBT);
         boolean matchOreDic = compound.getBoolean(NBT_MATCHOREDIC);
+
         ItemStack result = compound.hasKey(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompoundTag(NBT_RESULT)) : ItemStackUtils.EMPTY;
 
         return new Stack(stack, matchMeta, matchNBT, matchOreDic, result);
