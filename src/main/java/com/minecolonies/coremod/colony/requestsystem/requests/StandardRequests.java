@@ -104,6 +104,7 @@ public final class StandardRequests
             return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_DELIVERY).appendSibling(getDelivery().getTextComponent());
         }
 
+        @NotNull
         @Override
         public List<ItemStack> getDisplayStacks()
         {
@@ -168,6 +169,7 @@ public final class StandardRequests
             return getRequest().getToolClass().getDisplayName();
         }
 
+        @NotNull
         @Override
         public List<ItemStack> getDisplayStacks()
         {
@@ -196,8 +198,7 @@ public final class StandardRequests
     public static class FoodRequest extends AbstractRequest<Food>
     {
 
-        private static ImmutableList<ItemStack>
-          foodExamples;
+        private static ImmutableList<ItemStack> foodExamples;
 
         FoodRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final Food requested)
         {
@@ -220,6 +221,7 @@ public final class StandardRequests
             return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_FOOD);
         }
 
+        @NotNull
         @Override
         public List<ItemStack> getDisplayStacks()
         {
@@ -259,7 +261,7 @@ public final class StandardRequests
 
         BurnableRequest(
                          @NotNull final IRequester requester,
-                         @NotNull final IToken token,
+                         @NotNull final IToken<?> token,
                          @NotNull final RequestState state,
                          @NotNull final Burnable requested)
         {
@@ -273,6 +275,7 @@ public final class StandardRequests
             return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_BURNABLE);
         }
 
+        @NotNull
         @Override
         public List<ItemStack> getDisplayStacks()
         {

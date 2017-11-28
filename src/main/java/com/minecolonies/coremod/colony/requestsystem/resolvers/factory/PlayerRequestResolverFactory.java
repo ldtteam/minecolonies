@@ -53,7 +53,7 @@ public class PlayerRequestResolverFactory implements IFactory<IRequestManager, P
     {
         final ILocation location =
           factoryController.getNewInstance(TypeConstants.ILOCATION, iRequestManager.getColony().getCenter(), iRequestManager.getColony().getWorld().provider.getDimension());
-        final IToken token = factoryController.getNewInstance(TypeConstants.ITOKEN, iRequestManager.getColony().getID() * CONST_PLAYER_RESOLVER_ID_SCALE);
+        final IToken<?> token = factoryController.getNewInstance(TypeConstants.ITOKEN, iRequestManager.getColony().getID() * CONST_PLAYER_RESOLVER_ID_SCALE);
         return new PlayerRequestResolver(location, token);
     }
 

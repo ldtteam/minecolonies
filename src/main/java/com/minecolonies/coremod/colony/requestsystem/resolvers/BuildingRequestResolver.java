@@ -27,7 +27,7 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
 {
     public BuildingRequestResolver(
                                     @NotNull final ILocation location,
-                                    @NotNull final IToken token)
+                                    @NotNull final IToken<?> token)
     {
         super(location, token);
     }
@@ -63,9 +63,9 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
             return false;
         }
 
-        AbstractBuilding building = (AbstractBuilding) ((BuildingBasedRequester) requestToCheck.getRequester()).getBuilding();
+        final AbstractBuilding building = (AbstractBuilding) ((BuildingBasedRequester) requestToCheck.getRequester()).getBuilding();
 
-        List<TileEntity> tileEntities = new ArrayList<>();
+        final List<TileEntity> tileEntities = new ArrayList<>();
         tileEntities.add(building.getTileEntity());
         tileEntities.addAll(building.getAdditionalCountainers().stream().map(manager.getColony().getWorld()::getTileEntity).collect(Collectors.toSet()));
 
@@ -87,14 +87,13 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
         return null;
     }
 
-    @Nullable
     @Override
     public void resolve(
                          @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request) throws RuntimeException
     {
-        AbstractBuilding building = (AbstractBuilding) ((BuildingBasedRequester) request.getRequester()).getBuilding();
+        final AbstractBuilding building = (AbstractBuilding) ((BuildingBasedRequester) request.getRequester()).getBuilding();
 
-        List<TileEntity> tileEntities = new ArrayList<>();
+        final List<TileEntity> tileEntities = new ArrayList<>();
         tileEntities.add(building.getTileEntity());
         tileEntities.addAll(building.getAdditionalCountainers().stream().map(manager.getColony().getWorld()::getTileEntity).collect(Collectors.toSet()));
 
@@ -124,16 +123,14 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
         return null;
     }
 
-    @NotNull
     @Override
-    public void onRequestComplete(@NotNull final IToken token)
+    public void onRequestComplete(@NotNull final IToken<?> token)
     {
 
     }
 
-    @NotNull
     @Override
-    public void onRequestCancelled(@NotNull final IToken token)
+    public void onRequestCancelled(@NotNull final IToken<?> token)
     {
 
     }

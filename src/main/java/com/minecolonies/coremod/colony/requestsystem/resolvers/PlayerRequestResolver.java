@@ -71,7 +71,6 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
         return null;
     }
 
-    @Nullable
     @Override
     public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest request) throws RuntimeException
     {
@@ -129,7 +128,7 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
     }
 
     @Override
-    public IToken getRequesterId()
+    public IToken<?> getRequesterId()
     {
         return token;
     }
@@ -141,25 +140,23 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
         return location;
     }
 
-    @NotNull
     @Override
-    public void onRequestComplete(@NotNull final IToken token)
+    public void onRequestComplete(@NotNull final IToken<?> token)
     {
-        /**
-         * Nothing to do here right now.
+        /*
+          Nothing to do here right now.
          */
     }
 
-    @NotNull
     @Override
-    public void onRequestCancelled(@NotNull final IToken token)
+    public void onRequestCancelled(@NotNull final IToken<?> token)
     {
 
     }
 
     @NotNull
     @Override
-    public ITextComponent getDisplayName(@NotNull final IToken token)
+    public ITextComponent getDisplayName(@NotNull final IToken<?> token)
     {
         return new TextComponentString("Player");
     }
