@@ -33,7 +33,7 @@ public final class ResolverHandler
      *
      * @throws IllegalArgumentException is thrown when an IllegalArgumentException is thrown by the registerResolver method for any of the given Resolvers.
      */
-    public static Collection<IToken> registerResolvers(final IStandardRequestManager manager, final IRequestResolver... resolvers) throws IllegalArgumentException
+    public static Collection<IToken<?>> registerResolvers(final IStandardRequestManager manager, final IRequestResolver... resolvers) throws IllegalArgumentException
     {
         return Arrays.stream(resolvers).map(resolver -> registerResolver(manager, resolver)).collect(Collectors.toList());
     }

@@ -18,9 +18,9 @@ public final class TokenHandler
      * @param manager The manager to generate a new token for.
      * @return The new token.
      */
-    public static IToken generateNewToken(final IRequestManager manager)
+    public static IToken<UUID> generateNewToken(final IRequestManager manager)
     {
         //Force generic type to be correct.
-        return manager.getFactoryController().getNewInstance(TypeConstants.ITOKEN, UUID.randomUUID());
+        return (IToken<UUID>) manager.getFactoryController().getNewInstance(TypeConstants.ITOKEN, UUID.randomUUID());
     }
 }

@@ -222,14 +222,14 @@ public class StandardRequestManager implements IStandardRequestManager
     @Override
     public <T extends IRequestable> IToken<?> createAndAssignRequest(@NotNull final IRequester requester, @NotNull final T object) throws IllegalArgumentException
     {
-        final IToken token = createRequest(requester, object);
+        final IToken<?> token = createRequest(requester, object);
         assignRequest(token);
         return token;
     }
 
     @Override
     @Nullable
-    public IToken reassignRequest(@NotNull final IToken<?> token, @NotNull final Collection<IToken<?>> resolverTokenBlackList) throws IllegalArgumentException
+    public IToken<?> reassignRequest(@NotNull final IToken<?> token, @NotNull final Collection<IToken<?>> resolverTokenBlackList) throws IllegalArgumentException
     {
         final IRequest request = RequestHandler.getRequest(this, token);
         return RequestHandler.reassignRequest(this, request, resolverTokenBlackList);
@@ -385,7 +385,7 @@ public class StandardRequestManager implements IStandardRequestManager
     @Override
     public NBTTagCompound serializeNBT()
     {
-        NBTTagCompound systemCompound = new NBTTagCompound();
+        final NBTTagCompound systemCompound = new NBTTagCompound();
 
         if (this.playerResolver != null)
         {
@@ -397,9 +397,9 @@ public class StandardRequestManager implements IStandardRequestManager
             systemCompound.setTag(NBT_RETRYING, getFactoryController().serialize(retryingResolver));
         }
 
-        NBTTagList requestIdentityList = new NBTTagList();
+        final NBTTagList requestIdentityList = new NBTTagList();
         requestBiMap.keySet().forEach(token -> {
-            NBTTagCompound requestCompound = new NBTTagCompound();
+            final NBTTagCompound requestCompound = new NBTTagCompound();
 
             requestCompound.setTag(NBT_TOKEN, getFactoryController().serialize(token));
             requestCompound.setTag(NBT_REQUEST, getFactoryController().serialize(requestBiMap.get(token)));
@@ -408,12 +408,12 @@ public class StandardRequestManager implements IStandardRequestManager
         });
         systemCompound.setTag(NBT_REQUEST_IDENTITY_MAP, requestIdentityList);
 
-        NBTTagList resolverRequestAssignmentList = new NBTTagList();
+        final NBTTagList resolverRequestAssignmentList = new NBTTagList();
         resolverRequestMap.keySet().forEach(token -> {
-            NBTTagCompound assignmentCompound = new NBTTagCompound();
+            final NBTTagCompound assignmentCompound = new NBTTagCompound();
 
             assignmentCompound.setTag(NBT_TOKEN, getFactoryController().serialize(token));
-            NBTTagList assignedList = new NBTTagList();
+            final NBTTagList assignedList = new NBTTagList();
             resolverRequestMap.get(token).forEach(assignedToken -> assignedList.appendTag(getFactoryController().serialize(assignedToken)));
             assignmentCompound.setTag(NBT_ASSIGNMENTS, assignedList);
 
@@ -471,20 +471,20 @@ public class StandardRequestManager implements IStandardRequestManager
             ResolverHandler.registerResolver(this, this.retryingResolver);
         }
 
-        NBTTagList requestIdentityList = nbt.getTagList(NBT_REQUEST_IDENTITY_MAP, Constants.NBT.TAG_COMPOUND);
+        final NBTTagList requestIdentityList = nbt.getTagList(NBT_REQUEST_IDENTITY_MAP, Constants.NBT.TAG_COMPOUND);
         requestBiMap.clear();
         NBTUtils.streamCompound(requestIdentityList).forEach(identityCompound -> {
-            IToken token = getFactoryController().deserialize(identityCompound.getCompoundTag(NBT_TOKEN));
-            IRequest request = getFactoryController().deserialize(identityCompound.getCompoundTag(NBT_REQUEST));
+            final IToken<?> token = getFactoryController().deserialize(identityCompound.getCompoundTag(NBT_TOKEN));
+            final IRequest request = getFactoryController().deserialize(identityCompound.getCompoundTag(NBT_REQUEST));
 
             requestBiMap.put(token, request);
         });
 
-        NBTTagList resolverRequestAssignmentList = nbt.getTagList(NBT_RESOLVER_REQUESTS_ASSIGNMENTS, Constants.NBT.TAG_COMPOUND);
+        final NBTTagList resolverRequestAssignmentList = nbt.getTagList(NBT_RESOLVER_REQUESTS_ASSIGNMENTS, Constants.NBT.TAG_COMPOUND);
         resolverRequestMap.clear();
         requestResolverMap.clear();
         NBTUtils.streamCompound(resolverRequestAssignmentList).forEach(assignmentCompound -> {
-            IToken token = getFactoryController().deserialize(assignmentCompound.getCompoundTag(NBT_TOKEN));
+            final IToken<?> token = getFactoryController().deserialize(assignmentCompound.getCompoundTag(NBT_TOKEN));
             if (!resolverBiMap.containsKey(token))
             {
                 //Since we use dynamic resolvers some might not exist on the client side.
@@ -496,8 +496,8 @@ public class StandardRequestManager implements IStandardRequestManager
                 return;
             }
 
-            NBTTagList assignmentsLists = assignmentCompound.getTagList(NBT_ASSIGNMENTS, Constants.NBT.TAG_COMPOUND);
-            Set<IToken<?>> assignedRequests = NBTUtils.streamCompound(assignmentsLists).map(tokenCompound -> {
+            final NBTTagList assignmentsLists = assignmentCompound.getTagList(NBT_ASSIGNMENTS, Constants.NBT.TAG_COMPOUND);
+            final Set<IToken<?>> assignedRequests = NBTUtils.streamCompound(assignmentsLists).map(tokenCompound -> {
                 IToken<?> assignedToken = getFactoryController().deserialize(tokenCompound);
 
                 // Reverse mapping being restored.

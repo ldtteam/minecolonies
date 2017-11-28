@@ -82,7 +82,7 @@ public final class RequestHandler
      * @throws IllegalArgumentException is thrown when the request is unknown to this manager.
      */
     @SuppressWarnings(Suppression.UNCHECKED)
-    public static IToken assignRequest(final IStandardRequestManager manager, final IRequest request, final Collection<IToken<?>> resolverTokenBlackList)
+    public static IToken<?> assignRequest(final IStandardRequestManager manager, final IRequest request, final Collection<IToken<?>> resolverTokenBlackList)
       throws IllegalArgumentException
     {
         switch (request.getStrategy())
@@ -111,7 +111,7 @@ public final class RequestHandler
      * @throws IllegalArgumentException is thrown when the request is unknown to this manager.
      */
     @SuppressWarnings(Suppression.UNCHECKED)
-    public static IToken assignRequestDefault(final IStandardRequestManager manager, final IRequest request, final Collection<IToken<?>> resolverTokenBlackList)
+    public static IToken<?> assignRequestDefault(final IStandardRequestManager manager, final IRequest request, final Collection<IToken<?>> resolverTokenBlackList)
       throws IllegalArgumentException
     {
         //Check if the request is registered
@@ -121,12 +121,12 @@ public final class RequestHandler
 
         request.setState(new WrappedStaticStateRequestManager(manager), RequestState.ASSIGNING);
 
-        Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+        final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
         requestTypes.remove(TypeConstants.OBJECT);
 
-        Set<IToken<?>> failedResolvers = new HashSet<>();
+        final Set<IToken<?>> failedResolvers = new HashSet<>();
 
-        for (TypeToken requestType : requestTypes)
+        for (final TypeToken requestType : requestTypes)
         {
             if (!manager.getRequestClassResolverMap().containsKey(requestType))
             {
@@ -173,7 +173,7 @@ public final class RequestHandler
                     ResolverHandler.addRequestToResolver(manager, resolver, request);
                 }
 
-                for (final IToken childRequestToken :
+                for (final IToken<?> childRequestToken :
                   attemptResult)
                 {
                     final IRequest childRequest = RequestHandler.getRequest(manager, childRequestToken);
@@ -217,7 +217,7 @@ public final class RequestHandler
      *
      * @throws IllegalArgumentException Thrown when something went wrong.
      */
-    public static IToken reassignRequest(final IStandardRequestManager manager, final IRequest request, final Collection<IToken<?>> resolverTokenBlackList)
+    public static IToken<?> reassignRequest(final IStandardRequestManager manager, final IRequest request, final Collection<IToken<?>> resolverTokenBlackList)
       throws IllegalArgumentException
     {
         //Cancel the request to restart the search
@@ -307,7 +307,7 @@ public final class RequestHandler
         //Lets cancel all our children first, else this would make a big fat mess.
         if (request.hasChildren())
         {
-            final ImmutableCollection<IToken> currentChildren = request.getChildren();
+            final ImmutableCollection<IToken<?>> currentChildren = request.getChildren();
             currentChildren.forEach(t -> onRequestCancelled(manager, t));
         }
 
@@ -364,7 +364,7 @@ public final class RequestHandler
         //Lets cancel all our children first, else this would make a big fat mess.
         if (request.hasChildren())
         {
-            final ImmutableCollection<IToken> currentChildren = request.getChildren();
+            final ImmutableCollection<IToken<?>> currentChildren = request.getChildren();
             currentChildren.forEach(t -> onRequestCancelled(manager, t));
         }
 
