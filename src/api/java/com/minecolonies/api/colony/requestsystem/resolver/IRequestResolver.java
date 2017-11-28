@@ -53,12 +53,12 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
      * IT IS VITAL THAT THE REQUEST RETURNED ARE NOT YET ASSIGNED. SIMULATION AND OTHER STRATEGIES WILL FAIL ELSE!
      * THE MANAGER GIVEN WILL HANDLE ASSIGNING HIMSELF!
      *
-     * @param request The request to resolve.
      * @param manager The manager that is attempting to resolve using this resolver.
+     * @param request The request to resolve.
      * @return The tokens of required requests if the attempt was successful (an empty list is allowed to indicate no requirements), null if the attempt failed.
      */
     @Nullable
-    List<IToken> attemptResolve(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request);
+    List<IToken<?>> attemptResolve(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request);
 
     /**
      * Method used to resolve a given request.

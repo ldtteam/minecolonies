@@ -66,7 +66,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
     /**
      * Moving the curly braces really makes the code hard to read.
      */
-    public List<IToken> attemptResolve(
+    public List<IToken<?>> attemptResolve(
                                         @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
         if (manager.getColony().getWorld().isRemote)

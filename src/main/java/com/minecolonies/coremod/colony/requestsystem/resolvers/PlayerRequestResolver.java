@@ -35,12 +35,12 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
     private final ILocation location;
 
     @NotNull
-    private final IToken token;
+    private final IToken<?> token;
 
     @NotNull
-    private final Set<IToken> assignedRequests = new HashSet<>();
+    private final Set<IToken<?>> assignedRequests = new HashSet<>();
 
-    public PlayerRequestResolver(@NotNull final ILocation location, @NotNull final IToken token)
+    public PlayerRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token)
     {
         super();
         this.location = location;
@@ -61,7 +61,7 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
 
     @Nullable
     @Override
-    public List<IToken> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest request)
+    public List<IToken<?>> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest request)
     {
         if (canResolve(manager, request))
         {
@@ -165,12 +165,12 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
     }
 
     @Override
-    public ImmutableList<IToken> getAllAssignedRequests()
+    public ImmutableList<IToken<?>> getAllAssignedRequests()
     {
         return ImmutableList.copyOf(assignedRequests);
     }
 
-    public void setAllAssignedRequests(final Set<IToken> assignedRequests)
+    public void setAllAssignedRequests(final Set<IToken<?>> assignedRequests)
     {
         this.assignedRequests.clear();
         this.assignedRequests.addAll(assignedRequests);
