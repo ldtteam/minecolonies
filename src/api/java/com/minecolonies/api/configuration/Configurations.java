@@ -20,6 +20,7 @@ public class Configurations
     public static       int     barbarianHordeDifficulty          = 5;
     public static       int     averageNumberOfNightsBetweenRaids = 3;
     public static       int     autoDeleteColoniesInHours    = 0;
+    public static       boolean autoDestroyColonyBlocks      = true;
 
     public static boolean enableColonyProtection      = true;
     public static boolean turnOffExplosionsInColonies = true;
@@ -30,6 +31,12 @@ public class Configurations
     public static boolean allowPlayerSchematics   = false;
     public static int     maxCachedSchematics     = 100;
 
+    public static int allowGlobalNameChanges = 1;
+
+    public static String[] specialPermGroup = new String[]
+            {
+                    "_Raycoms_"
+            };
 
     /* Command configs */
     public static int     teleportBuffer                    = 120;

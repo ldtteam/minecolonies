@@ -62,6 +62,16 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     private static final int STRENGTH_MULTIPLIER = 1;
 
     /**
+     * Offset from the building to stand.
+     */
+    private static final int STAND_OFFSET = 3;
+
+    /**
+     * Base y height to start searching a suitable position.
+     */
+    private static final int BASE_Y_HEIGHT = 70;
+
+    /**
      * After how many actions should the builder dump his inventory.
      */
     private static final int ACTIONS_UNTIL_DUMP = 1024;
@@ -182,7 +192,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
 
         final AbstractBuildingWorker buildingWorker = getOwnBuilding();
-        if(buildingWorker instanceof BuildingBuilder)
+        if (buildingWorker instanceof BuildingBuilder)
         {
             ((BuildingBuilder) buildingWorker).resetNeededResources();
         }
@@ -212,7 +222,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 continue;
             }
 
-            if(block instanceof BlockSolidSubstitution)
+            if (block instanceof BlockSolidSubstitution)
             {
                 blockState = getSolidSubstitution(job.getStructure().getBlockPosition());
                 block = blockState.getBlock();
@@ -280,8 +290,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 {
                     request.add(entity.getPickedResult(new RayTraceResult(worker)));
                     entity.getArmorInventoryList().forEach(request::add);
+                    entity.getHeldEquipment().forEach(request::add);
                 }
-                else if(entity instanceof EntityMob)
+                else if (entity instanceof EntityMob)
                 {
                     //Don't try to request the monster.
                 }
@@ -443,7 +454,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     {
         final AbstractBuildingWorker buildingWorker = getOwnBuilding();
 
-        if(ItemStackUtils.isEmpty(stack))
+        if (ItemStackUtils.isEmpty(stack))
         {
             return ItemStackUtils.EMPTY;
         }
@@ -478,7 +489,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
         else
         {
-            final WorkOrderBuild woh = (wo instanceof WorkOrderBuild)?(WorkOrderBuild) wo : null;
+            final WorkOrderBuild woh = (wo instanceof WorkOrderBuild) ? (WorkOrderBuild) wo : null;
             if (woh != null)
             {
                 final AbstractBuilding building = job.getColony().getBuilding(wo.getBuildingLocation());
@@ -525,7 +536,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             building.registerBlockPosition(block, pos, world);
         }
 
-        if(block == ModBlocks.blockWayPoint)
+        if (block == ModBlocks.blockWayPoint)
         {
             worker.getColony().addWayPoint(pos, world.getBlockState(pos));
         }
@@ -551,19 +562,23 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     public BlockPos getWorkingPosition(final BlockPos targetPosition)
     {
         StructureWrapper wrapper = job.getStructure();
-        final int x1 = wrapper.getPosition().getX() - wrapper.getOffset().getX() - 1;
-        final int z1 = wrapper.getPosition().getZ() - wrapper.getOffset().getZ() - 1;
-        final int x3 = wrapper.getPosition().getX() + (wrapper.getWidth() - wrapper.getOffset().getX());
-        final int z3 = wrapper.getPosition().getZ() + (wrapper.getLength() - wrapper.getOffset().getZ());
+        final int x1 = wrapper.getPosition().getX() - wrapper.getOffset().getX() - STAND_OFFSET;
+        final int z1 = wrapper.getPosition().getZ() - wrapper.getOffset().getZ() - STAND_OFFSET;
+        final int x3 = wrapper.getPosition().getX() + (wrapper.getWidth() - wrapper.getOffset().getX()) + STAND_OFFSET;
+        final int z3 = wrapper.getPosition().getZ() + (wrapper.getLength() - wrapper.getOffset().getZ() + STAND_OFFSET);
 
-        final BlockPos[] edges = new BlockPos[]{new BlockPos(x1, 70, z1), new BlockPos(x3, 70, z1), new BlockPos(x1, 70, z3), new BlockPos(x3, 70, z3)};
+        final BlockPos[] edges = new BlockPos[] {
+                new BlockPos(x1, BASE_Y_HEIGHT, z1),
+                new BlockPos(x3, 70, z1),
+                new BlockPos(x1, BASE_Y_HEIGHT, z3),
+                new BlockPos(x3, BASE_Y_HEIGHT, z3)};
 
-        for(final BlockPos pos: edges)
+        for (final BlockPos pos : edges)
         {
             final BlockPos basePos = world.getTopSolidOrLiquidBlock(pos);
             if (EntityUtils.checkForFreeSpace(world, basePos.down())
-                    && world.getBlockState(basePos.up()).getBlock() != Blocks.SAPLING
-                    && world.getBlockState(basePos).getMaterial().isSolid())
+                    && world.getBlockState(basePos).getBlock() != Blocks.SAPLING
+                    && world.getBlockState(basePos.down()).getMaterial().isSolid())
             {
                 return basePos;
             }

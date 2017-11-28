@@ -100,8 +100,6 @@ public class MineColonies
 
         proxy.registerTileEntities();
 
-        RecipeHandler.init(Configurations.enableInDevelopmentFeatures, Configurations.supplyChests);
-
         proxy.registerEvents();
 
         proxy.registerTileEntityRendering();
@@ -109,6 +107,8 @@ public class MineColonies
         proxy.registerRenderer();
 
         ModAchievements.init();
+
+        RecipeHandler.init(Configurations.enableInDevelopmentFeatures, Configurations.supplyChests);
     }
 
     private static synchronized void initializeNetwork()

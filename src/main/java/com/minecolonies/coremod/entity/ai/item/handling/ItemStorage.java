@@ -5,6 +5,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+import java.util.function.Predicate;
+
 /**
  * Used to store an stack with various informations to compare items later on.
  */
@@ -174,5 +177,23 @@ public class ItemStorage
     public ItemStack getItemStack()
     {
         return stack;
+    }
+
+    /**
+     * Check a list for an ItemStack matching a predicate.
+     * @param list the list to check.
+     * @param predicate the predicate to test.
+     * @return the matching stack or null if not found.
+     */
+    public static ItemStorage getItemStackOfListMatchingPredicate(final List<ItemStorage> list, final Predicate<ItemStack> predicate)
+    {
+        for(final ItemStorage stack: list)
+        {
+            if(predicate.test(stack.getItemStack()))
+            {
+                return stack;
+            }
+        }
+        return null;
     }
 }

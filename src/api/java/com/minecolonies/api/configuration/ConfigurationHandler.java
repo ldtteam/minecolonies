@@ -78,6 +78,8 @@ public final class ConfigurationHandler
               "Set wether workers work in rain regardless of hut level").getBoolean();
             autoDeleteColoniesInHours = config.get(CATEGORY_GAMEPLAY, "autoDeleteColoniesInHours", autoDeleteColoniesInHours,
               "Sets the amount of hours until a colony will be deleted after not seeing it's mayor, set to zero to disable").getInt();
+            autoDestroyColonyBlocks = config.get(CATEGORY_GAMEPLAY, "autoDestroyColonyBlocks", autoDestroyColonyBlocks,
+                    "Sets weither or not Colony structures are destroyed automatically.").getBoolean();
             protectVillages = config.get(CATEGORY_GAMEPLAY, "protectVillages", protectVillages,
                     "Should players be allowed to build their colonies over existing villages?").getBoolean();
 
@@ -146,6 +148,12 @@ public final class ConfigurationHandler
 
             averageNumberOfNightsBetweenRaids = config.get(CATEGORY_GAMEPLAY, "averageNumberOfNightsBetweenRaids", averageNumberOfNightsBetweenRaids,
               "sets the average number of nights between raids").getInt();
+
+            allowGlobalNameChanges = config.get(CATEGORY_GAMEPLAY, "allowGlobalNameChanges", allowGlobalNameChanges,
+                    "Should players be allowed to change names? -1 for false, 0 for specific groups, 1 for true").getInt();
+
+            specialPermGroup = config.get(CATEGORY_GAMEPLAY, "allowGlobalNameChanges", specialPermGroup,
+                    "Players who have special permission (Patreons for example)").getStringList();
 
             loadPathFindingConfigurations();
             loadNamesConfigurations();

@@ -37,10 +37,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemArmor;
-import net.minecraft.item.ItemFood;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -65,6 +62,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.*;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_NOT_ALLOWED;
+import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_SAME;
 
 /**
  * The Class used to represent the citizen entities.
@@ -177,11 +177,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Range required for the citizen to be home.
      */
-    private static final double RANGE_TO_BE_HOME           = 100;
+    private static final double RANGE_TO_BE_HOME           = 16;
     /**
      * If the entitiy is stuck for 2 minutes do something.
      */
-    private static final int    MAX_STUCK_TIME             = 20 * 60 * 2;
+    private static final int    MAX_STUCK_TIME             = 60;
 
     /**
      * The max amount of lines the latest log allows.
@@ -243,6 +243,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public static final double FULL_SATURATION = 10;
 
+    /**
+     * Minimum stuck time for the worker to react.
+     */
+    private static final int MIN_STUCK_TIME    = 5;
+
     private static Field            navigatorField;
     private final  InventoryCitizen inventory;
     @NotNull
@@ -293,6 +298,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * Variable to check what time it is for the citizen.
      */
     private boolean isDay = true;
+
+    /**
+     * Field to try moving away from a location in order to pass it.
+     */
+    private boolean triedMovingAway = false;
 
     /**
      * Citizen constructor.
@@ -839,17 +849,17 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Called when the mob's health reaches 0.
      *
-     * @param par1DamageSource the attacking entity.
+     * @param damageSource the attacking entity.
      */
     @Override
-    public void onDeath(final DamageSource par1DamageSource)
+    public void onDeath(final DamageSource damageSource)
     {
         double penalty = CITIZEN_DEATH_PENALTY;
-        if (par1DamageSource.getEntity() instanceof EntityPlayer)
+        if (damageSource.getEntity() instanceof EntityPlayer)
         {
             for (final Player player : PermissionUtils.getPlayersWithAtLeastRank(colony, Rank.OFFICER))
             {
-                if (player.getID().equals(par1DamageSource.getEntity().getUniqueID()))
+                if (player.getID().equals(damageSource.getEntity().getUniqueID()))
                 {
                     penalty = CITIZEN_KILL_PENALTY;
                     break;
@@ -863,24 +873,24 @@ public class EntityCitizen extends EntityAgeable implements INpc
         if (colony != null)
         {
             colony.decreaseOverallHappiness(penalty);
-            triggerDeathAchievement(par1DamageSource, getColonyJob());
+            triggerDeathAchievement(damageSource, getColonyJob());
             if (getColonyJob() instanceof JobGuard)
             {
                 LanguageHandler.sendPlayersMessage(
                         colony.getMessageEntityPlayers(),
                         "tile.blockHutTownHall.messageGuardDead",
-                        citizenData.getName(), (int) posX, (int) posY, (int) posZ);
+                        citizenData.getName(), (int) posX, (int) posY, (int) posZ, damageSource.damageType);
             }
             else
             {
                 LanguageHandler.sendPlayersMessage(
                         colony.getMessageEntityPlayers(),
                         "tile.blockHutTownHall.messageColonistDead",
-                        citizenData.getName(), (int) posX, (int) posY, (int) posZ);
+                        citizenData.getName(), (int) posX, (int) posY, (int) posZ, damageSource.damageType);
             }
             colony.removeCitizen(getCitizenData());
         }
-        super.onDeath(par1DamageSource);
+        super.onDeath(damageSource);
     }
 
     @Override
@@ -1033,10 +1043,16 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @Override
     public boolean processInteract(@NotNull final EntityPlayer player, final EnumHand hand, @Nullable final ItemStack stack)
     {
+
         final ColonyView colonyView = ColonyManager.getColonyView(colonyId);
         if (colonyView != null && !colonyView.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
         {
             return false;
+        }
+
+        if(stack != null && stack.getItem() instanceof ItemNameTag)
+        {
+            return super.processInteract(player, hand, stack);
         }
 
         if (CompatibilityUtils.getWorld(this).isRemote)
@@ -1125,9 +1141,17 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 updateColonyServer();
             }
 
-            if (getColonyJob() != null)
+            if (getColonyJob() != null || !CompatibilityUtils.getWorld(this).isDaytime())
             {
-                checkIfStuck();
+                if(ticksExisted % TICKS_20 == 0)
+                {
+                    checkIfStuck();
+
+                    if (ticksExisted % (MAX_STUCK_TIME * 2 + TICKS_20) == 0)
+                    {
+                        triedMovingAway = false;
+                    }
+                }
             }
             else
             {
@@ -1164,14 +1188,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
             if(citizenData.getSaturation() < HIGH_SATURATION)
             {
                 tryToEat();
-            }
-            else
-            {
-                final AbstractBuilding home = getHomeBuilding();
-                if(home != null && home instanceof BuildingHome && ((BuildingHome)home).isFoodNeeded())
-                {
-                    ((BuildingHome)home).setFoodNeeded(false);
-                }
             }
         }
 
@@ -1242,47 +1258,98 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
     }
 
+    @Override
+    public void setCustomNameTag(final String name)
+    {
+        if(citizenData != null && name != null)
+        {
+            if(!citizenData.getName().equals(name) && Configurations.allowGlobalNameChanges >= 0)
+            {
+                if (Configurations.allowGlobalNameChanges == 0 &&
+                        Arrays.stream(Configurations.specialPermGroup).noneMatch(owner -> owner.equals(colony.getPermissions().getOwnerName())))
+                {
+                    LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), CITIZEN_RENAME_NOT_ALLOWED);
+                    return;
+                }
+
+
+                if (colony != null)
+                {
+                    for (final CitizenData citizen : colony.getCitizens().values())
+                    {
+                        if (citizen.getName().equals(name))
+                        {
+                            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), CITIZEN_RENAME_SAME);
+                            return;
+                        }
+                    }
+                    this.citizenData.setName(name);
+                    this.citizenData.markDirty();
+                    super.setCustomNameTag(name);
+                }
+                return;
+            }
+            super.setCustomNameTag(name);
+        }
+    }
+
     private void checkIfStuck()
     {
-        if (this.currentPosition == null)
+        if (this.currentPosition == null || newNavigator == null)
         {
             this.currentPosition = this.getPosition();
             return;
         }
 
-        if (this.currentPosition.equals(this.getPosition()) && newNavigator != null && newNavigator.getDestination() != null)
+        if(newNavigator.getDestination() == null || newNavigator.getDestination().distanceSq(posX, posY, posZ) < MOVE_AWAY_RANGE)
         {
-            stuckTime++;
-            if (stuckTime >= MAX_STUCK_TIME)
-            {
-                if (newNavigator.getDestination().distanceSq(posX, posY, posZ) < MOVE_AWAY_RANGE)
-                {
-                    stuckTime = 0;
-                    return;
-                }
-                final BlockPos destination = BlockPosUtil.getFloor(newNavigator.getDestination(), CompatibilityUtils.getWorld(this));
-                @Nullable final BlockPos spawnPoint =
-                        Utils.scanForBlockNearPoint
-                                (CompatibilityUtils.getWorld(this), destination, 1, 1, 1, 3,
-                                        Blocks.AIR,
-                                        Blocks.SNOW_LAYER,
-                                        Blocks.TALLGRASS,
-                                        Blocks.RED_FLOWER,
-                                        Blocks.YELLOW_FLOWER,
-                                        Blocks.CARPET);
-
-                WorkerUtil.setSpawnPoint(spawnPoint, this);
-                if (colony != null)
-                {
-                    Log.getLogger().info("Teleported stuck citizen " + this.getName() + " from colony: " + colony.getID() + " to target location");
-                }
-                stuckTime = 0;
-            }
+            return;
         }
-        else
+
+        if(!new AxisAlignedBB(this.currentPosition).expand(1, 1, 1)
+                .intersectsWith(new AxisAlignedBB(this.getPosition())) && !triedMovingAway)
         {
             stuckTime = 0;
             this.currentPosition = this.getPosition();
+            return;
+        }
+
+        stuckTime++;
+
+        if (stuckTime >= MIN_STUCK_TIME && !triedMovingAway)
+        {
+            newNavigator.moveAwayFromXYZ(currentPosition, MOVE_AWAY_RANGE, 1);
+            triedMovingAway = true;
+            return;
+        }
+
+        if (stuckTime >= MAX_STUCK_TIME)
+        {
+            if (newNavigator.getDestination().distanceSq(posX, posY, posZ) < MOVE_AWAY_RANGE)
+            {
+                stuckTime = 0;
+                return;
+            }
+
+            triedMovingAway = false;
+
+            final BlockPos destination = BlockPosUtil.getFloor(newNavigator.getDestination(), CompatibilityUtils.getWorld(this));
+            @Nullable final BlockPos spawnPoint =
+                    Utils.scanForBlockNearPoint
+                            (CompatibilityUtils.getWorld(this), destination, 1, 1, 1, 3,
+                                    Blocks.AIR,
+                                    Blocks.SNOW_LAYER,
+                                    Blocks.TALLGRASS,
+                                    Blocks.RED_FLOWER,
+                                    Blocks.YELLOW_FLOWER,
+                                    Blocks.CARPET);
+
+            WorkerUtil.setSpawnPoint(spawnPoint, this);
+            if (colony != null)
+            {
+                Log.getLogger().info("Teleported stuck citizen " + this.getName() + " from colony: " + colony.getID() + " to target location");
+            }
+            stuckTime = 0;
         }
 
         this.currentPosition = this.getPosition();
@@ -1599,7 +1666,18 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
     public boolean isAtHome()
     {
+        @Nullable final AbstractBuilding homeBuilding = getHomeBuilding();
         @Nullable final BlockPos homePosition = getHomePosition();
+
+        if(homeBuilding instanceof BuildingHome)
+        {
+            final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = homeBuilding.getCorners();
+            return new AxisAlignedBB(corners.getFirst().getFirst(), posY - 1, corners.getFirst().getSecond(),
+                    corners.getSecond().getFirst(),
+                    posY + 1,
+                    corners.getSecond().getSecond()).isVecInside(new Vec3d(this.getPosition()));
+        }
+
         return homePosition != null && homePosition.distanceSq((int) Math.floor(posX), (int) posY, (int) Math.floor(posZ)) <= RANGE_TO_BE_HOME;
     }
 
@@ -2107,6 +2185,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
         if(this.getColonyJob() != null)
         {
             this.getColonyJob().onWakeUp();
+        }
+
+        final AbstractBuilding homeBuilding = this.getHomeBuilding();
+        if(homeBuilding != null)
+        {
+            homeBuilding.onWakeUp();
         }
     }
 

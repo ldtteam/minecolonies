@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.blockout.Log;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutBaker;
 import com.minecolonies.coremod.colony.CitizenData;
@@ -12,7 +12,6 @@ import com.minecolonies.coremod.colony.jobs.JobBaker;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakerRecipes;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakingProduct;
 import com.minecolonies.coremod.entity.ai.citizen.baker.ProductState;
-import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.entity.ai.util.RecipeStorage;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFurnace;
@@ -95,10 +94,6 @@ public class BuildingBaker extends AbstractBuildingWorker
      */
     private int ticksPassed = 0;
 
-    /**
-     * List of items the worker should keep.
-     */
-    private final Map<ItemStorage, Integer> keepX = new HashMap<>();
 
     /**
      * Constructor for the baker building.
@@ -113,23 +108,9 @@ public class BuildingBaker extends AbstractBuildingWorker
         {
             for(final ItemStack stack: storage.getInput())
             {
-                keepX.put(new ItemStorage(stack, false), WHEAT_TO_KEEP);
+                keepX.put(stack::isItemEqual, WHEAT_TO_KEEP);
             }
         }
-    }
-
-
-    /**
-     * Override this method if you want to keep an amount of items in inventory and at the workers chest.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
-     *
-     * @return a list of objects which should be kept.
-     */
-    @Override
-    public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
-    {
-        return keepX;
     }
 
     /**
@@ -383,6 +364,10 @@ public class BuildingBaker extends AbstractBuildingWorker
         final List<Map.Entry<BlockPos, BakingProduct>> copyOfList = new ArrayList<>(this.getFurnacesWithProduct().entrySet());
         for(final Map.Entry<BlockPos, BakingProduct> entry: copyOfList)
         {
+            if(!worldObj.isBlockLoaded(entry.getKey()))
+            {
+                return;
+            }
             final IBlockState furnace = worldObj.getBlockState(entry.getKey());
             if(!(furnace.getBlock() instanceof BlockFurnace))
             {

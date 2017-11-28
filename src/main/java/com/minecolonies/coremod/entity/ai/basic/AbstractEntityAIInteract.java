@@ -8,6 +8,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -64,12 +65,12 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     /**
      * Horizontal range in which the worker picks up items.
      */
-    private static final float RANGE_HORIZONTAL_PICKUP = 45.0F;
+    public static final float RANGE_HORIZONTAL_PICKUP = 45.0F;
 
     /**
      * Vertical range in which the worker picks up items.
      */
-    private static final float RANGE_VERTICAL_PICKUP   = 3.0F;
+    public static final float RANGE_VERTICAL_PICKUP   = 3.0F;
 
     /**
      * Number of ticks the worker is standing still.
@@ -275,17 +276,17 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      */
     public void fillItemsList()
     {
-        items = searchForItems();
+        searchForItems(worker.getEntityBoundingBox().expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP));
     }
 
     /**
      * Search for all items around the worker.
      * and store them in the items list.
-     * @return the list of items.
+     * @param boundingBox the area to search.
      */
-    public List<BlockPos> searchForItems()
+    public void searchForItems(final AxisAlignedBB boundingBox)
     {
-        return world.getEntitiesWithinAABB(EntityItem.class, worker.getEntityBoundingBox().expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP))
+        items = world.getEntitiesWithinAABB(EntityItem.class, boundingBox)
                 .stream()
                 .filter(item -> item != null && !item.isDead)
                 .map(BlockPosUtil::fromEntity)

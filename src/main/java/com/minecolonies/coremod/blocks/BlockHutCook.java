@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
  * Hut for the lumberjack.
  * No different from {@link AbstractBlockHut}
  */
-public class BlockHutCook extends AbstractBlockHut
+public class BlockHutCook extends AbstractBlockHut<BlockHutCook>
 {
     protected BlockHutCook()
     {

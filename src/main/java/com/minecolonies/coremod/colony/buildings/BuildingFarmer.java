@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.ToolType;
@@ -14,7 +15,6 @@ import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
 import com.minecolonies.coremod.entity.ai.citizen.farmer.Field;
 import com.minecolonies.coremod.entity.ai.citizen.farmer.FieldView;
-import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.network.messages.AssignFieldMessage;
 import com.minecolonies.coremod.network.messages.AssignmentModeMessage;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
@@ -31,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER;
@@ -57,6 +58,11 @@ public class BuildingFarmer extends AbstractBuildingWorker
     private static final String TAG_FIELDS = "fields";
 
     /**
+     * NBTTag to store the field BlockPos.
+     */
+    private static final String TAG_FIELDS_BLOCKPOS = "fieldsPos";
+
+    /**
      * NBT tag to store assign manually.
      */
     private static final String TAG_ASSIGN_MANUALLY = "assign";
@@ -65,6 +71,11 @@ public class BuildingFarmer extends AbstractBuildingWorker
      * Flag used to be notified about block updates.
      */
     private static final int BLOCK_UPDATE_FLAG = 3;
+
+    /**
+     * The last field tag.
+     */
+    private static final String LAST_FIELD_TAG = "lastField";
 
     /**
      * The list of the fields the farmer manages.
@@ -78,6 +89,12 @@ public class BuildingFarmer extends AbstractBuildingWorker
     private Field currentField;
 
     /**
+     * The field the farmer worked on the last morning (first).
+     */
+    @Nullable
+    private Field lastField;
+
+    /**
      * Fields should be assigned manually to the farmer.
      */
     private boolean assignManually = false;
@@ -86,11 +103,6 @@ public class BuildingFarmer extends AbstractBuildingWorker
      * Sets the amount of saplings the lumberjack should keep.
      */
     private static final int SEEDS_TO_KEEP = 64;
-
-    /**
-     * List of items the farmer should keep.
-     */
-    private final Map<ItemStorage, Integer> keepX = new HashMap<>();
 
     /**
      * Public constructor which instantiates the building.
@@ -106,10 +118,12 @@ public class BuildingFarmer extends AbstractBuildingWorker
         final ItemStack stackPotatoe = new ItemStack(Items.POTATO);
         final ItemStack stackReed = new ItemStack(Items.BEETROOT_SEEDS);
 
-        keepX.put(new ItemStorage(stackSeed, false), SEEDS_TO_KEEP);
-        keepX.put(new ItemStorage(stackCarrot, false), SEEDS_TO_KEEP);
-        keepX.put(new ItemStorage(stackPotatoe, false), SEEDS_TO_KEEP);
-        keepX.put(new ItemStorage(stackReed, false), SEEDS_TO_KEEP);
+        keepX.put(stackSeed::isItemEqual, SEEDS_TO_KEEP);
+        keepX.put(stackCarrot::isItemEqual, SEEDS_TO_KEEP);
+        keepX.put(stackPotatoe::isItemEqual, SEEDS_TO_KEEP);
+        keepX.put(stackReed::isItemEqual, SEEDS_TO_KEEP);
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.HOE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), 1);
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), 1);
     }
 
     /**
@@ -174,6 +188,15 @@ public class BuildingFarmer extends AbstractBuildingWorker
     public Field getFieldToWorkOn()
     {
         Collections.shuffle(farmerFields);
+
+        if (!farmerFields.isEmpty())
+        {
+            if (farmerFields.get(0).equals(lastField))
+            {
+                Collections.shuffle(farmerFields);
+            }
+            lastField = farmerFields.get(0);
+        }
         for (@NotNull final Field field : farmerFields)
         {
             if (field.needsWork())
@@ -193,15 +216,16 @@ public class BuildingFarmer extends AbstractBuildingWorker
      * @return a list of objects which should be kept.
      */
     @Override
-    public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
+    public Map<Predicate<ItemStack>, Integer> getRequiredItemsAndAmount()
     {
-        final Map<ItemStorage, Integer> toKeep = new HashMap<>(keepX);
+        final Map<Predicate<ItemStack>, Integer> toKeep = new HashMap<>(keepX);
+        toKeep.putAll(keepX);
         for (final Field field : farmerFields)
         {
             if (!ItemStackUtils.isEmpty(field.getSeed()))
             {
                 final ItemStack seedStack = field.getSeed();
-                toKeep.put(new ItemStorage(seedStack, false), SEEDS_TO_KEEP);
+                toKeep.put(seedStack::isItemEqual, SEEDS_TO_KEEP);
             }
         }
         return toKeep;
@@ -261,21 +285,6 @@ public class BuildingFarmer extends AbstractBuildingWorker
         return new JobFarmer(citizen);
     }
 
-    /**
-     * Override this method if you want to keep some items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
-     *
-     * @param stack the stack to decide on
-     * @return true if the stack should remain in inventory
-     */
-    @Override
-    public boolean neededForWorker(@Nullable final ItemStack stack)
-    {
-        return !ItemStackUtils.isEmpty(stack) && (ItemStackUtils.hasToolLevel(stack, ToolType.HOE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel())
-                || ItemStackUtils.hasToolLevel(stack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()));
-    }
-
     //we have to update our field from the colony!
     @Override
     public void readFromNBT(@NotNull final NBTTagCompound compound)
@@ -285,13 +294,19 @@ public class BuildingFarmer extends AbstractBuildingWorker
         for (int i = 0; i < fieldTagList.tagCount(); ++i)
         {
             final NBTTagCompound fieldCompound = fieldTagList.getCompoundTagAt(i);
-            final Field f = Field.createFromNBT(getColony(), fieldCompound);
+            final BlockPos fieldLocation = BlockPosUtil.readFromNBT(fieldCompound, TAG_FIELDS_BLOCKPOS);
+            final Field f = getColony().getField(fieldLocation);
             if (f != null)
             {
                 farmerFields.add(f);
             }
         }
         assignManually = compound.getBoolean(TAG_ASSIGN_MANUALLY);
+
+        if (compound.hasKey(LAST_FIELD_TAG))
+        {
+            lastField = getColony().getField(BlockPosUtil.readFromNBT(compound, LAST_FIELD_TAG));
+        }
     }
 
     @Override
@@ -302,11 +317,16 @@ public class BuildingFarmer extends AbstractBuildingWorker
         for (@NotNull final Field f : farmerFields)
         {
             @NotNull final NBTTagCompound fieldCompound = new NBTTagCompound();
-            f.writeToNBT(fieldCompound);
+            BlockPosUtil.writeToNBT(fieldCompound, TAG_FIELDS_BLOCKPOS, f.getLocation());
             fieldTagList.appendTag(fieldCompound);
         }
         compound.setTag(TAG_FIELDS, fieldTagList);
         compound.setBoolean(TAG_ASSIGN_MANUALLY, assignManually);
+
+        if (lastField != null)
+        {
+            BlockPosUtil.writeToNBT(compound, LAST_FIELD_TAG, lastField.getLocation());
+        }
     }
 
     @Override
@@ -327,12 +347,12 @@ public class BuildingFarmer extends AbstractBuildingWorker
                     final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) getColony().getWorld().getTileEntity(field.getID());
 
                     getColony().getWorld()
-                            .notifyBlockUpdate(scarecrowTileEntity.getPos(),
-                                    getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
-                                    getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
-                                    BLOCK_UPDATE_FLAG);
+                      .notifyBlockUpdate(scarecrowTileEntity.getPos(),
+                        getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
+                        getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
+                        BLOCK_UPDATE_FLAG);
                     scarecrowTileEntity.setName(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER,
-                            LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER_NOONE)));
+                      LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER_NOONE)));
                 }
             }
         }
@@ -427,11 +447,11 @@ public class BuildingFarmer extends AbstractBuildingWorker
                 {
                     scarecrow.setName(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER, getMainWorker().getName()));
                     getColony().getWorld()
-                            .notifyBlockUpdate(scarecrow.getPos(),
-                                    getColony().getWorld().getBlockState(scarecrow.getPos()),
-                                    getColony().getWorld().getBlockState(scarecrow
-                                            .getPos()),
-                                    BLOCK_UPDATE_FLAG);
+                      .notifyBlockUpdate(scarecrow.getPos(),
+                        getColony().getWorld().getBlockState(scarecrow.getPos()),
+                        getColony().getWorld().getBlockState(scarecrow
+                                                               .getPos()),
+                        BLOCK_UPDATE_FLAG);
                     field.setInventoryField(scarecrow.getInventoryField());
                     if (currentField != null && currentField.getID() == field.getID())
                     {
@@ -482,12 +502,12 @@ public class BuildingFarmer extends AbstractBuildingWorker
             field.setOwner("");
             final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) getColony().getWorld().getTileEntity(field.getID());
             getColony().getWorld()
-                    .notifyBlockUpdate(scarecrowTileEntity.getPos(),
-                            getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
-                            getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
-                            BLOCK_UPDATE_FLAG);
+              .notifyBlockUpdate(scarecrowTileEntity.getPos(),
+                getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
+                getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
+                BLOCK_UPDATE_FLAG);
             scarecrowTileEntity.setName(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER,
-                    LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER_NOONE)));
+              LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_SCARECROW_USER_NOONE)));
         }
     }
 
@@ -500,7 +520,11 @@ public class BuildingFarmer extends AbstractBuildingWorker
     {
         final Field field = getColony().getField(position);
         field.setTaken(true);
-        field.setOwner(getMainWorker().getName());
+
+        if (getMainWorker() != null)
+        {
+            field.setOwner(getMainWorker().getName());
+        }
         farmerFields.add(field);
     }
 

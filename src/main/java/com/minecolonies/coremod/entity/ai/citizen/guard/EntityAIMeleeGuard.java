@@ -120,7 +120,9 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
             return AIState.GUARD_SEARCH_TARGET;
         }
         InventoryFunctions.matchFirstInProviderWithSimpleAction(worker,
-          stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.doesItemServeAsWeapon(stack),
+          stack -> !ItemStackUtils.isEmpty(stack)
+                  && ItemStackUtils.doesItemServeAsWeapon(stack)
+                  && ItemStackUtils.hasToolLevel(stack, ToolType.SWORD, 0, getOwnBuilding().getMaxToolLevel()),
           worker::setHeldItem);
         return super.searchTarget();
     }
