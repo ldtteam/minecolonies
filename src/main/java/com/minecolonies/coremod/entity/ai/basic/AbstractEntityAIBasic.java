@@ -11,9 +11,12 @@ import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.BuildingCook;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
@@ -22,6 +25,7 @@ import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
@@ -115,6 +119,19 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private int exceptionTimer = 1;
 
     /**
+<<<<<<< HEAD
+=======
+     * Check to see if the worker wants to stand still waiting for the request to be fullfilled.
+     */
+    private boolean waitForRequest = true;
+
+    /**
+     * The restaurant this AI usually goes to.
+     */
+    private BlockPos restaurant = null;
+
+    /**
+>>>>>>> 75d3b73... Just for cherrypick (#1716)
      * Sets up some important skeleton stuff for every ai.
      *
      * @param job the job class
@@ -153,15 +170,20 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                  * If inventory is dumped, execution continues
                  * to resolve state.
                  */
-          new AITarget(INVENTORY_FULL, this::dumpInventory),
+                new AITarget(INVENTORY_FULL, this::dumpInventory),
                 /*
                  * Check if inventory has to be dumped.
                  */
-          new AITarget(this::inventoryNeedsDump, INVENTORY_FULL),
-          /**
-           * Reset to idle if no specific tool is needed.
-           */
-          new AITarget(() -> getState() == NEEDS_TOOL && this.getOwnBuilding().getOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Tool.class)).isEmpty(), IDLE)
+                new AITarget(this::inventoryNeedsDump, INVENTORY_FULL),
+                /**
+                 * Reset to idle if no specific tool is needed.
+                 */
+                new AITarget(() -> getState() == NEEDS_TOOL && this.getOwnBuilding().getOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Tool.class)).isEmpty(), IDLE),
+                /**
+                 * Called when the citizen saturation falls too low.
+                 */
+                new AITarget(() -> (worker.getCitizenData().getSaturation() <= EntityCitizen.HIGH_SATURATION
+                        && !job.hasCheckedForFoodToday()) || worker.getCitizenData().getSaturation() <= 0, this::searchForFood)
         );
     }
 
@@ -208,6 +230,51 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             Log.getLogger().error("Caused by ai exception:");
             e.printStackTrace();
         }
+    }
+
+    private AIState searchForFood()
+    {
+        if(!job.hasCheckedForFoodToday())
+        {
+            if (walkToBuilding())
+            {
+                return IDLE;
+            }
+
+            job.setCheckedForFood();
+            if (isInHut(itemStack -> (!ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemFood) || worker.getCitizenData().getSaturation() > 0))
+            {
+                return IDLE;
+            }
+        }
+
+        if(restaurant == null)
+        {
+            double distance = Double.MAX_VALUE;
+            BlockPos goodCook = null;
+            for(final AbstractBuilding building : worker.getColony().getBuildings().values())
+            {
+                if(building instanceof BuildingCook)
+                {
+                    final double localDistance = building.getLocation().distanceSq(getOwnBuilding().getLocation());
+                    if(localDistance < distance)
+                    {
+                        distance = localDistance;
+                        goodCook = building.getLocation();
+                    }
+                }
+            }
+
+            if(goodCook == null)
+            {
+                chatSpamFilter.requestTextComponentWithoutSpam(new TextComponentTranslation("com.minecolonies.coremod.ai.noRestaurant"));
+                return getState();
+            }
+            restaurant = goodCook;
+        }
+
+        walkToBlock(restaurant);
+        return IDLE;
     }
 
     /**
@@ -457,8 +524,45 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Check all chests in theorker hut for a required item.
-     * w
+     * Check all chests in the worker hut for a required item matching a certain predicate
+     *
+     * @param is the type of item requested (amount is ignored)
+     * @return true if a stack of that type was found
+     */
+    public boolean isInHut(@Nullable final Predicate<ItemStack> is)
+    {
+        @Nullable final AbstractBuildingWorker building = getOwnBuilding();
+
+        boolean hasItem;
+        if (building != null)
+        {
+            hasItem = isInTileEntity(building.getTileEntity(), is);
+
+            if (hasItem)
+            {
+                return true;
+            }
+
+            for (final BlockPos pos : building.getAdditionalCountainers())
+            {
+                final TileEntity entity = world.getTileEntity(pos);
+                if (entity instanceof TileEntityChest)
+                {
+                    hasItem = isInTileEntity((TileEntityChest) entity, is);
+
+                    if (hasItem)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Check all chests in the worker hut for a required item.
      *
      * @param is the type of item requested (amount is ignored)
      * @return true if a stack of that type was found
@@ -520,11 +624,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         return is != null
                  && InventoryFunctions
-                      .matchFirstInProviderWithAction(
+                .matchFirstInProviderWithAction(
                         entity,
-                        stack -> stack != null && is.isItemEqualIgnoreDurability(stack),
+                        stack -> !ItemStackUtils.isEmpty(stack) && is.isItemEqualIgnoreDurability(stack),
                         this::takeItemStackFromProvider
-                      );
+                );
     }
 
     /**
@@ -663,7 +767,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 final Tool request = new Tool(toolType, minimalLevel, getOwnBuilding().getMaxToolLevel() < minimalLevel ? minimalLevel : getOwnBuilding().getMaxToolLevel());
                 worker.getCitizenData().createRequest(request);
             }
-
             return true;
         }
 
@@ -675,7 +778,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * <p>
      * Do not use it to find a pickaxe as it need a minimum level
      *
+<<<<<<< HEAD
      * @param toolType tool required for block
+=======
+     * @param tool tool required for block
+>>>>>>> 75d3b73... Just for cherrypick (#1716)
      * @return true if we need a tool
      */
     private boolean checkForNeededTool(@NotNull final IToolType toolType, final int minimalLevel)

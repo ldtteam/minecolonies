@@ -130,6 +130,7 @@ public class ItemStorage
     public int hashCode()
     {
         return 31 * getItem().hashCode() + getDamageValue();
+        return 31 * getItem().hashCode() + (ignoreDamageValue? 0 : getDamageValue());
     }
 
     @Override
