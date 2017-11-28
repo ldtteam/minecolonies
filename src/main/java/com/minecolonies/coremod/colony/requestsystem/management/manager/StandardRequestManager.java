@@ -70,37 +70,37 @@ public class StandardRequestManager implements IStandardRequestManager
      * BiMap that holds unique token to provider lookup.
      */
     @NotNull
-    private final BiMap<IToken, IRequestResolverProvider> providerBiMap = HashBiMap.create();
+    private final BiMap<IToken<?>, IRequestResolverProvider> providerBiMap = HashBiMap.create();
 
     /**
      * BiMap that holds unique token to resolver lookup.
      */
     @NotNull
-    private final BiMap<IToken, IRequestResolver> resolverBiMap = HashBiMap.create();
+    private final BiMap<IToken<?>, IRequestResolver> resolverBiMap = HashBiMap.create();
 
     /**
      * BiMap that holds unique token to request lookup.
      */
     @NotNull
-    private final BiMap<IToken, IRequest> requestBiMap = HashBiMap.create();
+    private final BiMap<IToken<?>, IRequest> requestBiMap = HashBiMap.create();
 
     /**
      * Map that holds the resolvers that are linked to a given provider.
      */
     @NotNull
-    private final Map<IToken, ImmutableCollection<IToken>> providerResolverMap = new HashMap<>();
+    private final Map<IToken<?>, ImmutableCollection<IToken<?>>> providerResolverMap = new HashMap<>();
 
     /**
      * Map that holds the requests that are linked to a given resolver.
      */
     @NotNull
-    private final Map<IToken, Set<IToken>> resolverRequestMap = new HashMap<>();
+    private final Map<IToken<?>, Set<IToken<?>>> resolverRequestMap = new HashMap<>();
 
     /**
      * Map that holds the resolver that is linked to a given request.
      */
     @NotNull
-    private final Map<IToken, IToken> requestResolverMap = new HashMap<>();
+    private final Map<IToken<?>, IToken<?>> requestResolverMap = new HashMap<>();
 
     /**
      * Map that holds the class that resolver can resolve. Used during lookup.
@@ -180,7 +180,7 @@ public class StandardRequestManager implements IStandardRequestManager
      */
     @NotNull
     @Override
-    public <T extends IRequestable> IToken createRequest(@NotNull final IRequester requester, @NotNull final T object) throws IllegalArgumentException
+    public <T extends IRequestable> IToken<?> createRequest(@NotNull final IRequester requester, @NotNull final T object) throws IllegalArgumentException
     {
         final IRequest<T> request = RequestHandler.createRequest(this, requester, object);
 
@@ -199,7 +199,7 @@ public class StandardRequestManager implements IStandardRequestManager
      * @throws IllegalArgumentException when the token is not registered to a request, or is already assigned to a resolver.
      */
     @Override
-    public void assignRequest(@NotNull final IToken token) throws IllegalArgumentException
+    public void assignRequest(@NotNull final IToken<?> token) throws IllegalArgumentException
     {
         RequestHandler.assignRequest(this, RequestHandler.getRequest(this, token));
 
@@ -220,7 +220,7 @@ public class StandardRequestManager implements IStandardRequestManager
      */
     @NotNull
     @Override
-    public <T extends IRequestable> IToken createAndAssignRequest(@NotNull final IRequester requester, @NotNull final T object) throws IllegalArgumentException
+    public <T extends IRequestable> IToken<?> createAndAssignRequest(@NotNull final IRequester requester, @NotNull final T object) throws IllegalArgumentException
     {
         final IToken token = createRequest(requester, object);
         assignRequest(token);
@@ -229,7 +229,7 @@ public class StandardRequestManager implements IStandardRequestManager
 
     @Override
     @Nullable
-    public IToken reassignRequest(@NotNull final IToken token, @NotNull final Collection<IToken> resolverTokenBlackList) throws IllegalArgumentException
+    public IToken reassignRequest(@NotNull final IToken<?> token, @NotNull final Collection<IToken<?>> resolverTokenBlackList) throws IllegalArgumentException
     {
         final IRequest request = RequestHandler.getRequest(this, token);
         return RequestHandler.reassignRequest(this, request, resolverTokenBlackList);
@@ -248,7 +248,7 @@ public class StandardRequestManager implements IStandardRequestManager
     @SuppressWarnings(Suppression.UNCHECKED)
     @Nullable
     @Override
-    public <T extends IRequestable> IRequest<T> getRequestForToken(@NotNull final IToken token) throws IllegalArgumentException
+    public <T extends IRequestable> IRequest<T> getRequestForToken(@NotNull final IToken<?> token) throws IllegalArgumentException
     {
         final IRequest<T> internalRequest = RequestHandler.getRequestOrNull(this, token);
 
@@ -264,7 +264,7 @@ public class StandardRequestManager implements IStandardRequestManager
 
     @NotNull
     @Override
-    public <T extends IRequestable> IRequestResolver<T> getResolverForToken(@NotNull final IToken token) throws IllegalArgumentException
+    public <T extends IRequestable> IRequestResolver<T> getResolverForToken(@NotNull final IToken<?> token) throws IllegalArgumentException
     {
         final IRequestResolver<T> resolver = ResolverHandler.getResolver(this, token);
 
@@ -273,7 +273,7 @@ public class StandardRequestManager implements IStandardRequestManager
 
     @Nullable
     @Override
-    public <T extends IRequestable> IRequestResolver<T> getResolverForRequest(@NotNull final IToken requestToken) throws IllegalArgumentException
+    public <T extends IRequestable> IRequestResolver<T> getResolverForRequest(@NotNull final IToken<?> requestToken) throws IllegalArgumentException
     {
         final IRequest request = RequestHandler.getRequest(this, requestToken);
 
@@ -287,9 +287,8 @@ public class StandardRequestManager implements IStandardRequestManager
      * @param state The new state of that request.
      * @throws IllegalArgumentException when the token is unknown to this manager.
      */
-    @NotNull
     @Override
-    public void updateRequestState(@NotNull final IToken token, @NotNull final RequestState state) throws IllegalArgumentException
+    public void updateRequestState(@NotNull final IToken<?> token, @NotNull final RequestState state) throws IllegalArgumentException
     {
         final IRequest request = RequestHandler.getRequest(this, token);
 
@@ -325,7 +324,7 @@ public class StandardRequestManager implements IStandardRequestManager
     }
 
     @Override
-    public void overruleRequest(@NotNull final IToken token, @Nullable final ItemStack stack) throws IllegalArgumentException
+    public void overruleRequest(@NotNull final IToken<?> token, @Nullable final ItemStack stack) throws IllegalArgumentException
     {
         final IRequest request = RequestHandler.getRequest(this, token);
 
@@ -498,8 +497,8 @@ public class StandardRequestManager implements IStandardRequestManager
             }
 
             NBTTagList assignmentsLists = assignmentCompound.getTagList(NBT_ASSIGNMENTS, Constants.NBT.TAG_COMPOUND);
-            Set<IToken> assignedRequests = NBTUtils.streamCompound(assignmentsLists).map(tokenCompound -> {
-                IToken assignedToken = getFactoryController().deserialize(tokenCompound);
+            Set<IToken<?>> assignedRequests = NBTUtils.streamCompound(assignmentsLists).map(tokenCompound -> {
+                IToken<?> assignedToken = getFactoryController().deserialize(tokenCompound);
 
                 // Reverse mapping being restored.
                 requestResolverMap.put(assignedToken, token);
@@ -519,42 +518,42 @@ public class StandardRequestManager implements IStandardRequestManager
 
     @Override
     @NotNull
-    public BiMap<IToken, IRequestResolverProvider> getProviderBiMap()
+    public BiMap<IToken<?>, IRequestResolverProvider> getProviderBiMap()
     {
         return providerBiMap;
     }
 
     @Override
     @NotNull
-    public BiMap<IToken, IRequestResolver> getResolverBiMap()
+    public BiMap<IToken<?>, IRequestResolver> getResolverBiMap()
     {
         return resolverBiMap;
     }
 
     @Override
     @NotNull
-    public BiMap<IToken, IRequest> getRequestBiMap()
+    public BiMap<IToken<?>, IRequest> getRequestBiMap()
     {
         return requestBiMap;
     }
 
     @Override
     @NotNull
-    public Map<IToken, ImmutableCollection<IToken>> getProviderResolverMap()
+    public Map<IToken<?>, ImmutableCollection<IToken<?>>> getProviderResolverMap()
     {
         return providerResolverMap;
     }
 
     @Override
     @NotNull
-    public Map<IToken, Set<IToken>> getResolverRequestMap()
+    public Map<IToken<?>, Set<IToken<?>>> getResolverRequestMap()
     {
         return resolverRequestMap;
     }
 
     @Override
     @NotNull
-    public Map<IToken, IToken> getRequestResolverMap()
+    public Map<IToken<?>, IToken<?>> getRequestResolverMap()
     {
         return requestResolverMap;
     }
@@ -566,14 +565,12 @@ public class StandardRequestManager implements IStandardRequestManager
         return requestClassResolverMap;
     }
 
-    @NotNull
     @Override
     public boolean isDataSimulation()
     {
         return false;
     }
 
-    @NotNull
     @Override
     public boolean isResolvingSimulation()
     {

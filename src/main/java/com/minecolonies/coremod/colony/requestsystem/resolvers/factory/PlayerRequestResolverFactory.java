@@ -61,7 +61,7 @@ public class PlayerRequestResolverFactory implements IFactory<IRequestManager, P
     @Override
     public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final PlayerRequestResolver playerRequestResolver)
     {
-        NBTTagCompound compound = new NBTTagCompound();
+        final NBTTagCompound compound = new NBTTagCompound();
         compound.setTag(NBT_TOKEN, controller.serialize(playerRequestResolver.getRequesterId()));
         compound.setTag(NBT_LOCATION, controller.serialize(playerRequestResolver.getRequesterLocation()));
         compound.setTag(NBT_ASSIGNED_REQUESTS, playerRequestResolver.getAllAssignedRequests().stream().map(controller::serialize).collect(NBTUtils.toNBTTagList()));
@@ -72,11 +72,11 @@ public class PlayerRequestResolverFactory implements IFactory<IRequestManager, P
     @Override
     public PlayerRequestResolver deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
     {
-        final IToken token = controller.deserialize(nbt.getCompoundTag(NBT_TOKEN));
+        final IToken<?> token = controller.deserialize(nbt.getCompoundTag(NBT_TOKEN));
         final ILocation location = controller.deserialize(nbt.getCompoundTag(NBT_LOCATION));
 
-        final Set<IToken> assignedRequests =
-          NBTUtils.streamCompound(nbt.getTagList(NBT_ASSIGNED_REQUESTS, Constants.NBT.TAG_COMPOUND)).map(c -> (IToken) controller.deserialize(c)).collect(
+        final Set<IToken<?>> assignedRequests =
+          NBTUtils.streamCompound(nbt.getTagList(NBT_ASSIGNED_REQUESTS, Constants.NBT.TAG_COMPOUND)).map(c -> (IToken<?>) controller.deserialize(c)).collect(
             Collectors.toSet());
 
         final PlayerRequestResolver resolver = new PlayerRequestResolver(location, token);
