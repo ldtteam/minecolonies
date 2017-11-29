@@ -26,17 +26,17 @@ item.minecolonies.supplyChestDeployer.name=Cofre del Barco de Suministros
 item.minecolonies.supplyCampDeployer.name=Cofre del Campo de Suministros
 item.minecolonies.ancienttome.name=Tomo Antiguo
 item.minecolonies.chiefsword.name=Espada del Jefe
-event.minecolonies.raidMessage=Buckle up cowboy! There's some darn raiders commin' for you Tonight!
+event.minecolonies.raidMessage=Agárrate bien Vaquero! Hay unos vil invasores que vienen por ti esta noche!
 
-item.minecolonies.scepterGold.name=Building Tool
-item.minecolonies.scepterSteel.name=Scan Tool
-item.minecolonies.caliper.name=Caliper
+item.minecolonies.scepterGold.name=Herramienta de Construcción
+item.minecolonies.scepterSteel.name=Herramienta de Escaneo
+item.minecolonies.caliper.name=Calibre
 
-item.scepterSteel.point=Point one saved
-item.scepterSteel.point2=Point two saved, right click again to save the schematic
-item.scepterSteel.samePoint=That was the same point
+item.scepterSteel.point=Primer Punto Guardado
+item.scepterSteel.point2=Segundo punto guardado, haga clic derecho otra vez para guardar el esquema
+item.scepterSteel.samePoint=Ese fue el mismo punto
 item.scepterSteel.scanFormat=SCAN_%s-%s
-item.scepterSteel.scanSuccess=Scan successfully saved as %s
+item.scepterSteel.scanSuccess=Esquema guardado con éxito como %s
 item.scepterSteel.scanFailure=Scan failed to save
 item.caliper.message.same=That's the same block.
 item.caliper.message.line=That's a %d block line.
