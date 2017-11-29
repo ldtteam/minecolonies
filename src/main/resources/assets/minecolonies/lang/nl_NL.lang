@@ -105,17 +105,17 @@ achievement.upgrade.townhall.max.desc=Wat een Koning!
 achievement.upgrade.townhall.first=We hebben een stadhuis nodig!
 achievement.upgrade.townhall.first.desc=Bouw een stadhuis!
 tile.minecolonies.blockHutGuardTower.name=Wachttoren
-tile.blockHutTownHall.messageGuardDead=The guard %s has died at %d %d %d of %s !
-item.minecolonies.scepterGuard.name=Guard-scepter
+tile.blockHutTownHall.messageGuardDead=De wachter %s is gestorven op %d %d %d van %s!
+item.minecolonies.scepterGuard.name=Wachter-scepter
 
-com.minecolonies.configgui.title=MineColonies Config
+com.minecolonies.configgui.title=MijnKolonies Configuratie
 
-com.minecolonies.coremod.gui.townHall.rename=Rename Colony
-com.minecolonies.coremod.gui.workerHuts.minerMineNode=Mine Level
-com.minecolonies.coremod.gui.workerHuts.buildType=Build Type:
-com.minecolonies.coremod.gui.workerHuts.workerLevel=Worker Level: %s
-com.minecolonies.coremod.gui.warehouse.toGuards=Deliver to Guards:
-com.minecolonies.coremod.gui.workerHuts.homeHut=Citizen's Hut
+com.minecolonies.coremod.gui.townHall.rename=Hernoem Kolonie
+com.minecolonies.coremod.gui.workerHuts.minerMineNode=Mijn niveau
+com.minecolonies.coremod.gui.workerHuts.buildType=Bouw Stijl:
+com.minecolonies.coremod.gui.workerHuts.workerLevel=Arbeider Niveau: %s
+com.minecolonies.coremod.gui.warehouse.toGuards=Leveren aan Wachters:
+com.minecolonies.coremod.gui.workerHuts.homeHut=Burgers huis
 com.minecolonies.coremod.gui.buildtool.nodecoration=No Decorations
 com.minecolonies.coremod.gui.workerHuts.buildersHut=Builder's Hut
 com.minecolonies.coremod.job.Lumberjack=Lumberjack
