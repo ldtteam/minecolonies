@@ -1461,7 +1461,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
                                       .iterator());
     }
 
-    public void markRequestAsAccepted(@NotNull final CitizenData data, @NotNull final IToken<?> token) throws IllegalArgumentException
+    public void markRequestAsAccepted(@NotNull final CitizenData data, @NotNull final IToken<?> token)
     {
         if (!citizensByCompletedRequests.containsKey(data.getId()) || !citizensByCompletedRequests.get(data.getId()).contains(token))
         {

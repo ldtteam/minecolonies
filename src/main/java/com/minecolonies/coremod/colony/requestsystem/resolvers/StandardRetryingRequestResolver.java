@@ -31,8 +31,8 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
 
     private IRequestManager manager;
     private ILocation       location;
-    private IToken<?>          id;
-    private IToken<?>          current;
+    private IToken<?>       id;
+    private IToken<?>       current;
     private HashMap<IToken<?>, Integer> delays           = new HashMap<>();
     private HashMap<IToken<?>, Integer> assignedRequests = new HashMap<>();
 
@@ -98,7 +98,7 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     @Nullable
     @Override
     public List<IToken<?>> attemptResolve(
-                                        @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request)
+                                           @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request)
     {
         return ImmutableList.of();
     }
@@ -123,7 +123,7 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     @Nullable
     @Override
     public IRequest onRequestCancelledOrOverruled(
-                                                   @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request) throws IllegalArgumentException
+                                                   @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request)
     {
         //Okey somebody completed it or what ever.
         //Lets remove if from our data structures:

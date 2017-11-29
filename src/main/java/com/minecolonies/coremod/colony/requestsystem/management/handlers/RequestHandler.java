@@ -68,7 +68,7 @@ public final class RequestHandler
     @SuppressWarnings(Suppression.UNCHECKED)
     public static void assignRequest(final IStandardRequestManager manager, final IRequest request)
     {
-        assignRequest(manager, request, Collections.EMPTY_LIST);
+        assignRequest(manager, request, Collections.emptyList());
     }
 
     /**
@@ -83,7 +83,6 @@ public final class RequestHandler
      */
     @SuppressWarnings(Suppression.UNCHECKED)
     public static IToken<?> assignRequest(final IStandardRequestManager manager, final IRequest request, final Collection<IToken<?>> resolverTokenBlackList)
-      throws IllegalArgumentException
     {
         switch (request.getStrategy())
         {
@@ -112,7 +111,6 @@ public final class RequestHandler
      */
     @SuppressWarnings(Suppression.UNCHECKED)
     public static IToken<?> assignRequestDefault(final IStandardRequestManager manager, final IRequest request, final Collection<IToken<?>> resolverTokenBlackList)
-      throws IllegalArgumentException
     {
         //Check if the request is registered
         getRequest(manager, request.getToken());
@@ -218,7 +216,6 @@ public final class RequestHandler
      * @throws IllegalArgumentException Thrown when something went wrong.
      */
     public static IToken<?> reassignRequest(final IStandardRequestManager manager, final IRequest request, final Collection<IToken<?>> resolverTokenBlackList)
-      throws IllegalArgumentException
     {
         //Cancel the request to restart the search
         processInternalCancellation(manager, request.getToken());

@@ -18,7 +18,7 @@ public final class WrappedStaticStateRequestManager extends AbstractWrappedReque
     }
 
     @Override
-    public void updateRequestState(@NotNull final IToken<?> token, @NotNull final RequestState state) throws IllegalArgumentException
+    public void updateRequestState(@NotNull final IToken<?> token, @NotNull final RequestState state)
     {
         //TODO: implement when link is created with workers
     }
