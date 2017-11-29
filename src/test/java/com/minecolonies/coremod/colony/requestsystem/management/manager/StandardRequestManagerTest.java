@@ -83,7 +83,7 @@ public class StandardRequestManagerTest
         requestManager.createRequest(TestRequester.INSTANCE, hello);
         requestManager.createRequest(TestRequester.INSTANCE, Test2);
 
-        NBTTagCompound compound = requestManager.serializeNBT();
+        final NBTTagCompound compound = requestManager.serializeNBT();
 
         assertNotNull(compound);
     }
@@ -98,9 +98,9 @@ public class StandardRequestManagerTest
         requestManager.createRequest(TestRequester.INSTANCE, hello);
         requestManager.createAndAssignRequest(TestRequester.INSTANCE, Test2);
 
-        NBTTagCompound compound = requestManager.serializeNBT();
+        final NBTTagCompound compound = requestManager.serializeNBT();
 
-        StandardRequestManager deserializedVariant = new StandardRequestManager();
+        final StandardRequestManager deserializedVariant = new StandardRequestManager();
         deserializedVariant.onProviderAddedToColony(provider);
         deserializedVariant.deserializeNBT(compound);
     }
@@ -117,10 +117,10 @@ public class StandardRequestManagerTest
         requestManager.onProviderAddedToColony(provider);
 
         final StringRequestable requestable = new StringRequestable("Hello");
-        IToken token = requestManager.createAndAssignRequest(TestRequester.INSTANCE, requestable);
+        final IToken token = requestManager.createAndAssignRequest(TestRequester.INSTANCE, requestable);
         assertNotNull(token);
 
-        IRequest<? extends StringRequestable> request = requestManager.getRequestForToken(token);
+        final IRequest<? extends StringRequestable> request = requestManager.getRequestForToken(token);
         assertNotNull(request);
         assertEquals(requestable, request.getRequest());
 
@@ -133,9 +133,9 @@ public class StandardRequestManagerTest
         requestManager.onProviderAddedToColony(provider);
 
         final StringRequestable hello = new StringRequestable("Hello");
-        IToken token = requestManager.createAndAssignRequest(TestRequester.INSTANCE, hello);
+        final IToken token = requestManager.createAndAssignRequest(TestRequester.INSTANCE, hello);
 
-        RequestState originalState = requestManager.getRequestForToken(token).getState();
+        final RequestState originalState = requestManager.getRequestForToken(token).getState();
         assertEquals(RequestState.COMPLETED, originalState);
 
         requestManager.updateRequestState(token, RequestState.RECEIVED);
@@ -153,7 +153,7 @@ public class StandardRequestManagerTest
     {
 
         private final IToken                                token;
-        private final ImmutableCollection<IRequestResolver> resolvers;
+        private final ImmutableCollection<IRequestResolver<?>> resolvers;
 
         private TestResolvingProvider()
         {
@@ -168,7 +168,7 @@ public class StandardRequestManagerTest
         }
 
         @Override
-        public ImmutableCollection<IRequestResolver> getResolvers()
+        public ImmutableCollection<IRequestResolver<?>> getResolvers()
         {
             return resolvers;
         }
@@ -208,7 +208,7 @@ public class StandardRequestManagerTest
         public StringRequest getNewInstance(
                                              @NotNull final StringRequestable input,
                                              @NotNull final IRequester location,
-                                             @NotNull final IToken token,
+                                             @NotNull final IToken<?> token,
                                              @NotNull final RequestState initialState)
         {
             return new StringRequest(location, token, initialState, input);
@@ -235,7 +235,7 @@ public class StandardRequestManagerTest
         public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final StringRequest request)
         {
             return StandardRequestFactories.serializeToNBT(controller, request, (controller1, object) -> {
-                NBTTagCompound compound = new NBTTagCompound();
+                final NBTTagCompound compound = new NBTTagCompound();
                 compound.setTag("String", controller.serialize(request.getRequest()));
                 return compound;
             });
@@ -539,7 +539,7 @@ public class StandardRequestManagerTest
         @Override
         public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final TestRequester testRequester)
         {
-            NBTTagCompound compound = new NBTTagCompound();
+            final NBTTagCompound compound = new NBTTagCompound();
             compound.setTag("Token", controller.serialize(testRequester.token));
             return compound;
         }
@@ -548,7 +548,7 @@ public class StandardRequestManagerTest
         @Override
         public TestRequester deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
         {
-            IToken token = controller.deserialize(nbt.getCompoundTag("Token"));
+            final IToken token = controller.deserialize(nbt.getCompoundTag("Token"));
             return new TestRequester(token);
         }
     }
