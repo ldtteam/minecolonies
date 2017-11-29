@@ -256,6 +256,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
         {
             return COOK_SERVE;
         }
+        //todo
         setDelay(STANDARD_DELAY);
         return START_WORKING;
     }
@@ -418,7 +419,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
         final int amountOfFood = getOwnBuilding().getCountOfPredicateInHut(isFood, getOwnBuilding().getBuildingLevel() * LEAST_KEEP_FOOD_MULTIPLIER, world)
                 + InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), isFood);
 
-        if (amountOfFood <= 0 && !((BuildingCook) getOwnBuilding()).hasGatheredToday())
+        if (amountOfFood <= 0)
         {
             worker.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.gathering"));
             if(!getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Food.class)))
@@ -443,7 +444,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
             return COOK_GATHERING;
         }
 
-        if (amountOfFood < getOwnBuilding().getBuildingLevel() * LEAST_KEEP_FOOD_MULTIPLIER && !((BuildingCook) getOwnBuilding()).hasGatheredToday())
+        if (amountOfFood < getOwnBuilding().getBuildingLevel() * LEAST_KEEP_FOOD_MULTIPLIER)
         {
             if(!getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Food.class)))
             {

@@ -52,11 +52,6 @@ public class BuildingCook extends AbstractBuildingWorker
     private static final String TAG_COOKING = "cooking";
 
     /**
-     * Checks if the cook has gathered food at the warehouse today already.
-     */
-    private boolean gatheredToday = false;
-
-    /**
      * List of registered furnaces.
      */
     private final List<BlockPos> furnaces = new ArrayList<>();
@@ -102,30 +97,6 @@ public class BuildingCook extends AbstractBuildingWorker
     public String getJobName()
     {
         return COOK;
-    }
-
-    /**
-     * Check if the Cook has gathered today already.
-     *
-     * @return true if so.
-     */
-    public boolean hasGatheredToday()
-    {
-        return gatheredToday;
-    }
-
-    /**
-     * Set that the Cook gathered today already.
-     */
-    public void setGatheredToday()
-    {
-        gatheredToday = true;
-    }
-
-    @Override
-    public void onWakeUp()
-    {
-        gatheredToday = false;
     }
 
     /**
