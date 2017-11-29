@@ -23,9 +23,9 @@ tile.blockHutTownHall.messageTooFar=Koloniden çok uzakta
 tile.blockHut.messageTooFarFromTownHall=Şehir merkezine daha yakın olmalısın!
 tile.blockHut.messageNoTownHall=İlk önce bir şehir merkezi koymalısın!
 item.minecolonies.supplyChestDeployer.name=Tedarikçi Sandığı
-item.minecolonies.supplyCampDeployer.name=SupplyCamp Chest
-item.minecolonies.ancienttome.name=Ancient Tome
-item.minecolonies.chiefsword.name=Chief Sword
+item.minecolonies.supplyCampDeployer.name=Tedarikçi Sandığı
+item.minecolonies.ancienttome.name=Antik sütun
+item.minecolonies.chiefsword.name=Şefin kılıcı
 event.minecolonies.raidMessage=Buckle up cowboy! There's some darn raiders commin' for you Tonight!
 
 item.minecolonies.scepterGold.name=Building Tool
