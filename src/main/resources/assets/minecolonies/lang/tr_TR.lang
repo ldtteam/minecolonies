@@ -484,41 +484,41 @@ com.minecolonies.coremod.request.delivery=Sevkiyat:
 com.minecolonies.coremod.request.food=Yiyecek
 com.minecolonies.coremod.request.burnable=Yakıt
 com.minecolonies.coremod.request.tool.pretype=Araç sınıfı:
-com.minecolonies.coremod.request.tool.preminlevel=with minimal level:
-com.minecolonies.coremod.request.tool.premaxlevel=with maximal level:
+com.minecolonies.coremod.request.tool.preminlevel=en düşük seviye ile:
+com.minecolonies.coremod.request.tool.premaxlevel=maksimal seviye ile:
 
-com.minecolonies.coremod.general.and=and
+com.minecolonies.coremod.general.and=ve
 
-com.minecolonies.coremod.tooltype.none=Unknown
-com.minecolonies.coremod.tooltype.pickaxe=Pickaxe
-com.minecolonies.coremod.tooltype.shovel=Shovel
-com.minecolonies.coremod.tooltype.axe=Axe
-com.minecolonies.coremod.tooltype.hoe=Hoe
-com.minecolonies.coremod.tooltype.sword=Sword
-com.minecolonies.coremod.tooltype.bow=Bow
-com.minecolonies.coremod.tooltype.fishingrod=Fishingrod
-com.minecolonies.coremod.tooltype.shears=Shears
-com.minecolonies.coremod.tooltype.shield=Shield
+com.minecolonies.coremod.tooltype.none=Bilinmeyen
+com.minecolonies.coremod.tooltype.pickaxe=Kazmalar
+com.minecolonies.coremod.tooltype.shovel=Kürekler
+com.minecolonies.coremod.tooltype.axe=Eksenler
+com.minecolonies.coremod.tooltype.hoe=Çapalar
+com.minecolonies.coremod.tooltype.sword=Kılıçlar
+com.minecolonies.coremod.tooltype.bow=Yay
+com.minecolonies.coremod.tooltype.fishingrod=Oltada
+com.minecolonies.coremod.tooltype.shears=Kırp
+com.minecolonies.coremod.tooltype.shield=Kalkanlar
 
-com.minecolonies.coremod.gui.citizen.requests=Open requests:
-com.minecolonies.coremod.gui.citizen.requestTitle=Requests
-com.minecolonies.coremod.gui.citizen.requestsCancel=Cancel
-com.minecolonies.coremod.gui.citizen.requestsFulfill=Fulfill
+com.minecolonies.coremod.gui.citizen.requests=Açık istekler:
+com.minecolonies.coremod.gui.citizen.requestTitle=İstekler
+com.minecolonies.coremod.gui.citizen.requestsCancel=İptal
+com.minecolonies.coremod.gui.citizen.requestsFulfill=Stokta
 
-item.minecolonies.clipboard.name=Clipboard
+item.minecolonies.clipboard.name=Pano
 
-com.minecolonies.coremod.item.clipboard.needColony=Please shift-right click the colony to register your clipboard to it.
-com.minecolonies.coremod.item.clipboard.registered=Registered to colony %d.
-achievement.upgrade.guard.first=The killer
-achievement.upgrade.guard.last=Cleanup crew
-com.minecolonies.requestsystem.playerresolver=%s is in need of %s at %s.
-com.minecolonies.coremod.buildings.warehouse.name=Warehouse
-tile.minecolonies.blockPaperwall.name=Paper wall
+com.minecolonies.coremod.item.clipboard.needColony=Lütfen üst karakter-sağ koloni senin panoya kaydetmek için tıklatın.
+com.minecolonies.coremod.item.clipboard.registered=Koloni %d için kayıt edildi.
+achievement.upgrade.guard.first=Katil
+achievement.upgrade.guard.last=Temizlik ekibi
+com.minecolonies.requestsystem.playerresolver=%s %s, %s ihtiyacı var.
+com.minecolonies.coremod.buildings.warehouse.name=Depo
+tile.minecolonies.blockPaperwall.name=Kağıt duvar
 
-com.minecolonies.coremod.gui.workerHuts.buildPrio=Delivery Priority:
-item.supplyChestDeployer.invalid=You must place it in a fitting pool of water.
-item.supplyChestDeployer.missing=Are you trying to trick me, pick up that Supplyship again?
-com.minecolonies.coremod.citizen.rename.same=Renaming failed: 2 Citizen are not allowed to have the same name!
-com.minecolonies.coremod.citizen.rename.notAllowed=Renaming failed: You're not allowed to rename your Citizen.
+com.minecolonies.coremod.gui.workerHuts.buildPrio=Dağıtım önceliği:
+item.supplyChestDeployer.invalid=Büyük bir gölün yakınında olmalısın!
+item.supplyChestDeployer.missing=Bana kötü bir şaka, o Supplyship kadar yeniden almak çalışıyorsun?
+com.minecolonies.coremod.citizen.rename.same=Yeniden adlandırma başarısız oldu: 2 vatandaş aynı ada sahip izin verilmez!
+com.minecolonies.coremod.citizen.rename.notAllowed=Yeniden adlandırma başarısız oldu: senin vatandaşını yeniden adlandırmak için iznimiz yok.
 
 
