@@ -404,20 +404,20 @@ item.supplyCampDeployer.invalid=En az 16x17 bir düz alana ihtiyacın var.
 com.minecolonies.coremod.gui.townHall.currentHappiness=Genel mutluluk:
 com.minecolonies.coremod.job.guard.toolClickGuardTooFar=Koruma kulesinden çok uzak, koruma kuleni geliştir.
 com.minecolonies.coremod.saturation.0=Aşırı açım, çalışamam
-com.minecolonies.coremod.saturation.3=I'm quite hungry, I feel very unproductive
-com.minecolonies.coremod.saturation.5=I'm hungry, I'm not that productive anymore
-com.minecolonies.coremod.saturation.7=I'm quite saturated, but I'll have to eat soon again
+com.minecolonies.coremod.saturation.3=Çok açım, verimsizim
+com.minecolonies.coremod.saturation.5=Açım, pek verimli değilim
+com.minecolonies.coremod.saturation.7=Doydum ama yakında yemek yiyeceğim
 
-com.minecolonies.coremod.item.permissionscepter.setmode=Set to mode '%s'
-com.minecolonies.coremod.item.permissionscepter.permission.deny=You do not have permission to edit blocks with this tool.
-com.minecolonies.coremod.item.permissionscepter.addblock.success=Added block type '%s'
-com.minecolonies.coremod.item.permissionscepter.addposition.success=Added location '%d %d %d'
-com.minecolonies.coremod.item.permissionscepter.removeblock.success=Removed block '%s'
-com.minecolonies.coremod.item.permissionscepter.removelocation.success=Removed location '%d %d %d'
-tile.blockHut.warehouse.limit=The amount of warehouses is limited to 1 per colony.
+com.minecolonies.coremod.item.permissionscepter.setmode=Modu '%s' yap
+com.minecolonies.coremod.item.permissionscepter.permission.deny=Bu eşyayla bu blokları düzenleyemezsin.
+com.minecolonies.coremod.item.permissionscepter.addblock.success=Blok çeşidi '%s' eklendi
+com.minecolonies.coremod.item.permissionscepter.addposition.success=Konum '%d %d %d' eklendi
+com.minecolonies.coremod.item.permissionscepter.removeblock.success=Blok '%s' kaldırıldı
+com.minecolonies.coremod.item.permissionscepter.removelocation.success=Konum '%d %d %d' kaldırıldı
+tile.blockHut.warehouse.limit=Depo sayısı her koloni için bir tanedir.
 
-com.minecolonies.coremod.gui.workerHuts.baker=Baker
-com.minecolonies.coremod.baker.noFurnace=My building doesn't have any furnaces, please repair it.
+com.minecolonies.coremod.gui.workerHuts.baker=Fırıncı
+com.minecolonies.coremod.baker.noFurnace=Binamda fırın yok, lütfen tamir et.
 com.minecolonies.coremod.job.baker=Fırıncı
 com.minecolonies.coremod.gui.workerHuts.saplingList=GörevListesi
 
@@ -472,18 +472,18 @@ com.minecolonies.coremod.ai.noRestaurant=Lütfen bir restoran inşa veya yiyecek
 com.minecolonies.coremod.ai.noWarehouse=Bir depo inşa veya benim müşterilerine hizmet için yiyecek getir!
 com.minecolonies.coremod.ai.noFood=Depoda yiyecek bulamıyor.
 com.minecolonies.coremod.gui.workerHuts.Cook=Restoran
-com.minecolonies.coremod.status.cooking=Cooking
-com.minecolonies.coremod.status.serving=Serving
-com.minecolonies.coremod.status.retrieving=Retrieving
-com.minecolonies.coremod.status.idling=Idling
-com.minecolonies.coremod.status.mining=Mining
+com.minecolonies.coremod.status.cooking=Aşçılık
+com.minecolonies.coremod.status.serving=Hizmet
+com.minecolonies.coremod.status.retrieving=Geri alınıyor
+com.minecolonies.coremod.status.idling=Rölanti
+com.minecolonies.coremod.status.mining=Madencilik
 
-item.minecolonies.scepterPermission.name=PermissionScepter
+item.minecolonies.scepterPermission.name=İzinAsası
 
-com.minecolonies.coremod.request.delivery=Delivery of:
-com.minecolonies.coremod.request.food=Food
-com.minecolonies.coremod.request.burnable=Fuel
-com.minecolonies.coremod.request.tool.pretype=Tool of class:
+com.minecolonies.coremod.request.delivery=Sevkiyat:
+com.minecolonies.coremod.request.food=Yiyecek
+com.minecolonies.coremod.request.burnable=Yakıt
+com.minecolonies.coremod.request.tool.pretype=Araç sınıfı:
 com.minecolonies.coremod.request.tool.preminlevel=with minimal level:
 com.minecolonies.coremod.request.tool.premaxlevel=with maximal level:
 
