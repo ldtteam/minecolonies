@@ -33,7 +33,7 @@ public final class ResolverHandler
      *
      * @throws IllegalArgumentException is thrown when an IllegalArgumentException is thrown by the registerResolver method for any of the given Resolvers.
      */
-    public static Collection<IToken> registerResolvers(final IStandardRequestManager manager, final IRequestResolver... resolvers) throws IllegalArgumentException
+    public static Collection<IToken<?>> registerResolvers(final IStandardRequestManager manager, final IRequestResolver... resolvers)
     {
         return Arrays.stream(resolvers).map(resolver -> registerResolver(manager, resolver)).collect(Collectors.toList());
     }
@@ -53,7 +53,7 @@ public final class ResolverHandler
      * @throws IllegalArgumentException is thrown when either the token attached to the resolver is already registered or the resolver is already registered with a different
      *                                  token
      */
-    public static IToken registerResolver(final IStandardRequestManager manager, final IRequestResolver resolver) throws IllegalArgumentException
+    public static IToken<?> registerResolver(final IStandardRequestManager manager, final IRequestResolver resolver)
     {
         if (manager.getResolverBiMap().containsKey(resolver.getRequesterId()))
         {
@@ -96,7 +96,7 @@ public final class ResolverHandler
      *
      * @throws IllegalArgumentException is thrown when an IllegalArgumentException is thrown by the registerResolver method for any of the given Resolvers.
      */
-    public static Collection<IToken> registerResolvers(final IStandardRequestManager manager, final Collection<IRequestResolver> resolvers)
+    public static Collection<IToken<?>> registerResolvers(final IStandardRequestManager manager, final Collection<IRequestResolver> resolvers)
     {
         return resolvers.stream().map(resolver -> registerResolver(manager, resolver)).collect(Collectors.toList());
     }
@@ -113,7 +113,7 @@ public final class ResolverHandler
      * @param token   The token of the resolver to remove.
      * @throws IllegalArgumentException is thrown when the given resolver is not registered or the token of the given resolver is not registered to the same resolver.
      */
-    public static void removeResolver(final IStandardRequestManager manager, final IToken token) throws IllegalArgumentException
+    public static void removeResolver(final IStandardRequestManager manager, final IToken<?> token)
     {
         if (!manager.getResolverBiMap().containsKey(token))
         {
@@ -135,7 +135,7 @@ public final class ResolverHandler
      * @param resolver The resolver to remove
      * @throws IllegalArgumentException is thrown when the given resolver is not registered or the token of the given resolver is not registered to the same resolver.
      */
-    public static void removeResolver(final IStandardRequestManager manager, final IRequestResolver resolver) throws IllegalArgumentException
+    public static void removeResolver(final IStandardRequestManager manager, final IRequestResolver resolver)
     {
         final IRequestResolver registeredResolver = getResolver(manager, resolver.getRequesterId());
 
@@ -167,7 +167,7 @@ public final class ResolverHandler
      *
      * @throws IllegalArgumentException is thrown when the given token is not registered to any IRequestResolver
      */
-    public static IRequestResolver getResolver(final IStandardRequestManager manager, final IToken token) throws IllegalArgumentException
+    public static IRequestResolver getResolver(final IStandardRequestManager manager, final IToken<?> token)
     {
         if (!manager.getResolverBiMap().containsKey(token))
         {
@@ -265,7 +265,7 @@ public final class ResolverHandler
      * @param request  The request to remove.
      * @throws IllegalArgumentException is thrown when the resolver is unknown, or when the given request is not registered to the given resolver.
      */
-    public static void removeRequestFromResolver(final IStandardRequestManager manager, final IRequestResolver resolver, final IRequest request) throws IllegalArgumentException
+    public static void removeRequestFromResolver(final IStandardRequestManager manager, final IRequestResolver resolver, final IRequest request)
     {
         if (!manager.getResolverRequestMap().containsKey(resolver.getRequesterId()))
         {
@@ -292,7 +292,7 @@ public final class ResolverHandler
      *
      * @throws IllegalArgumentException when the token is unknown or the request is not assigned yet.
      */
-    public static IRequestResolver getResolverForRequest(final IStandardRequestManager manager, final IToken requestToken) throws IllegalArgumentException
+    public static IRequestResolver getResolverForRequest(final IStandardRequestManager manager, final IToken<?> requestToken)
     {
         RequestHandler.getRequest(manager, requestToken);
 

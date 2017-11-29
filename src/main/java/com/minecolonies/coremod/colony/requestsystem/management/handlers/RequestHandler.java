@@ -45,7 +45,7 @@ public final class RequestHandler
         return constructedRequest;
     }
 
-    public static void registerRequest(final IStandardRequestManager manager, final IRequest request) throws IllegalArgumentException
+    public static void registerRequest(final IStandardRequestManager manager, final IRequest request)
     {
         if (manager.getRequestBiMap().containsKey(request.getToken()) ||
               manager.getRequestBiMap().containsValue(request))
@@ -66,9 +66,9 @@ public final class RequestHandler
      * @throws IllegalArgumentException when the request is already assigned
      */
     @SuppressWarnings(Suppression.UNCHECKED)
-    public static void assignRequest(final IStandardRequestManager manager, final IRequest request) throws IllegalArgumentException
+    public static void assignRequest(final IStandardRequestManager manager, final IRequest request)
     {
-        assignRequest(manager, request, Collections.EMPTY_LIST);
+        assignRequest(manager, request, Collections.emptyList());
     }
 
     /**
@@ -82,8 +82,7 @@ public final class RequestHandler
      * @throws IllegalArgumentException is thrown when the request is unknown to this manager.
      */
     @SuppressWarnings(Suppression.UNCHECKED)
-    public static IToken assignRequest(final IStandardRequestManager manager, final IRequest request, final Collection<IToken> resolverTokenBlackList)
-      throws IllegalArgumentException
+    public static IToken<?> assignRequest(final IStandardRequestManager manager, final IRequest request, final Collection<IToken<?>> resolverTokenBlackList)
     {
         switch (request.getStrategy())
         {
@@ -111,8 +110,7 @@ public final class RequestHandler
      * @throws IllegalArgumentException is thrown when the request is unknown to this manager.
      */
     @SuppressWarnings(Suppression.UNCHECKED)
-    public static IToken assignRequestDefault(final IStandardRequestManager manager, final IRequest request, final Collection<IToken> resolverTokenBlackList)
-      throws IllegalArgumentException
+    public static IToken<?> assignRequestDefault(final IStandardRequestManager manager, final IRequest request, final Collection<IToken<?>> resolverTokenBlackList)
     {
         //Check if the request is registered
         getRequest(manager, request.getToken());
@@ -121,12 +119,12 @@ public final class RequestHandler
 
         request.setState(new WrappedStaticStateRequestManager(manager), RequestState.ASSIGNING);
 
-        Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+        final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
         requestTypes.remove(TypeConstants.OBJECT);
 
-        Set<IToken> failedResolvers = new HashSet<>();
+        final Set<IToken<?>> failedResolvers = new HashSet<>();
 
-        for (TypeToken requestType : requestTypes)
+        for (final TypeToken requestType : requestTypes)
         {
             if (!manager.getRequestClassResolverMap().containsKey(requestType))
             {
@@ -156,7 +154,7 @@ public final class RequestHandler
                     continue;
                 }
 
-                @Nullable final List<IToken> attemptResult = resolver.attemptResolve(new WrappedBlacklistAssignmentRequestManager(manager, resolverTokenBlackList), request);
+                @Nullable final List<IToken<?>> attemptResult = resolver.attemptResolve(new WrappedBlacklistAssignmentRequestManager(manager, resolverTokenBlackList), request);
 
                 //Skip if attempt failed (aka attemptResult == null)
                 if (attemptResult == null)
@@ -173,7 +171,7 @@ public final class RequestHandler
                     ResolverHandler.addRequestToResolver(manager, resolver, request);
                 }
 
-                for (final IToken childRequestToken :
+                for (final IToken<?> childRequestToken :
                   attemptResult)
                 {
                     final IRequest childRequest = RequestHandler.getRequest(manager, childRequestToken);
@@ -217,8 +215,7 @@ public final class RequestHandler
      *
      * @throws IllegalArgumentException Thrown when something went wrong.
      */
-    public static IToken reassignRequest(final IStandardRequestManager manager, final IRequest request, final Collection<IToken> resolverTokenBlackList)
-      throws IllegalArgumentException
+    public static IToken<?> reassignRequest(final IStandardRequestManager manager, final IRequest request, final Collection<IToken<?>> resolverTokenBlackList)
     {
         //Cancel the request to restart the search
         processInternalCancellation(manager, request.getToken());
@@ -234,7 +231,7 @@ public final class RequestHandler
      * @param token   The request token to check for.
      * @return True when the request token has been assigned, false when not.
      */
-    public static boolean isAssigned(final IStandardRequestManager manager, final IToken token)
+    public static boolean isAssigned(final IStandardRequestManager manager, final IToken<?> token)
     {
         return manager.getRequestResolverMap().containsKey(token);
     }
@@ -246,7 +243,7 @@ public final class RequestHandler
      * @param token   The token of the request that got finished successfully.
      */
     @SuppressWarnings(Suppression.UNCHECKED)
-    public static void onRequestSuccessful(final IStandardRequestManager manager, final IToken token)
+    public static void onRequestSuccessful(final IStandardRequestManager manager, final IToken<?> token)
     {
         final IRequest request = getRequest(manager, token);
         final IRequestResolver resolver = ResolverHandler.getResolverForRequest(manager, token);
@@ -294,7 +291,7 @@ public final class RequestHandler
      * @param token   The token of the request that got cancelled or overruled
      */
     @SuppressWarnings(Suppression.UNCHECKED)
-    public static void onRequestOverruled(final IStandardRequestManager manager, final IToken token)
+    public static void onRequestOverruled(final IStandardRequestManager manager, final IToken<?> token)
     {
         final IRequest request = getRequest(manager, token);
 
@@ -307,7 +304,7 @@ public final class RequestHandler
         //Lets cancel all our children first, else this would make a big fat mess.
         if (request.hasChildren())
         {
-            final ImmutableCollection<IToken> currentChildren = request.getChildren();
+            final ImmutableCollection<IToken<?>> currentChildren = request.getChildren();
             currentChildren.forEach(t -> onRequestCancelled(manager, t));
         }
 
@@ -327,7 +324,7 @@ public final class RequestHandler
      * @param token   The token of the request that got cancelled or overruled
      */
     @SuppressWarnings(Suppression.UNCHECKED)
-    public static void onRequestCancelled(final IStandardRequestManager manager, final IToken token)
+    public static void onRequestCancelled(final IStandardRequestManager manager, final IToken<?> token)
     {
         final IRequest request = RequestHandler.getRequest(manager, token);
 
@@ -351,7 +348,7 @@ public final class RequestHandler
      * @param manager The manager for which the cancellation is internally processed.
      * @param token   The token which is internally processed.
      */
-    public static void processInternalCancellation(final IStandardRequestManager manager, final IToken token)
+    public static void processInternalCancellation(final IStandardRequestManager manager, final IToken<?> token)
     {
         final IRequest request = getRequest(manager, token);
 
@@ -364,7 +361,7 @@ public final class RequestHandler
         //Lets cancel all our children first, else this would make a big fat mess.
         if (request.hasChildren())
         {
-            final ImmutableCollection<IToken> currentChildren = request.getChildren();
+            final ImmutableCollection<IToken<?>> currentChildren = request.getChildren();
             currentChildren.forEach(t -> onRequestCancelled(manager, t));
         }
 
@@ -416,7 +413,7 @@ public final class RequestHandler
      * @throws IllegalArgumentException when the request is unknown, not resolved, or cannot be resolved.
      */
     @SuppressWarnings(Suppression.UNCHECKED)
-    public static void resolveRequest(final IStandardRequestManager manager, final IRequest request) throws IllegalArgumentException
+    public static void resolveRequest(final IStandardRequestManager manager, final IRequest request)
     {
         getRequest(manager, request.getToken());
         if (!isAssigned(manager, request.getToken()))
@@ -449,7 +446,7 @@ public final class RequestHandler
      * @param token   The token of the request.
      * @throws IllegalArgumentException Thrown when the token is unknown.
      */
-    public static void cleanRequestData(final IStandardRequestManager manager, final IToken token) throws IllegalArgumentException
+    public static void cleanRequestData(final IStandardRequestManager manager, final IToken<?> token)
     {
         LogHandler.log("Removing " + token + " from the Manager as it has been completed and its package has been received by the requester.");
         getRequest(manager, token);
@@ -469,7 +466,7 @@ public final class RequestHandler
      * @param token The token to query
      * @throws IllegalArgumentException when the token is unknown to the given manager.
      */
-    public static IRequest getRequest(final IStandardRequestManager manager, final IToken token) throws IllegalArgumentException
+    public static IRequest getRequest(final IStandardRequestManager manager, final IToken<?> token)
     {
         if (!manager.getRequestBiMap().containsKey(token))
         {
@@ -485,7 +482,7 @@ public final class RequestHandler
      * @param token The token to get the request for.
      * @return The request or null when no request with that token exists.
      */
-    public static IRequest getRequestOrNull(final IStandardRequestManager manager, final IToken token)
+    public static IRequest getRequestOrNull(final IStandardRequestManager manager, final IToken<?> token)
     {
         LogHandler.log("Retrieving the request for: " + token);
 
@@ -495,20 +492,20 @@ public final class RequestHandler
     /**
      * Wrapper for a assignment result.
      */
-    private final static class AssigningResult implements Comparable<AssigningResult>
+    private static final class AssigningResult<T> implements Comparable<AssigningResult>
     {
         private final IRequestResolver resolver;
-        private final List<IToken>     children;
+        private final List<IToken<T>>  children;
 
-        private AssigningResult(final IRequestResolver resolver, final List<IToken> children)
+        private AssigningResult(final IRequestResolver resolver, final List<IToken<T>> children)
         {
             this.resolver = resolver;
-            this.children = children;
+            this.children = new ArrayList<>(children);
         }
 
-        public List<IToken> getChildren()
+        public List<IToken<T>> getChildren()
         {
-            return children;
+            return Collections.unmodifiableList(children);
         }
 
         @Override

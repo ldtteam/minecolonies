@@ -27,7 +27,7 @@ public class UpdateRequestStateMessage extends AbstractMessage<UpdateRequestStat
     /**
      * The requestId
      */
-    private IToken token;
+    private IToken<?> token;
 
     /**
      * How many item need to be transfer from the player inventory to the building chest.
@@ -55,7 +55,7 @@ public class UpdateRequestStateMessage extends AbstractMessage<UpdateRequestStat
      * @param state     the state to set.
      * @param itemStack the involved itemStack.
      */
-    public UpdateRequestStateMessage(final int colonyId, final IToken requestId, final RequestState state, final ItemStack itemStack)
+    public UpdateRequestStateMessage(final int colonyId, final IToken<?> requestId, final RequestState state, final ItemStack itemStack)
     {
         super();
         this.colonyId = colonyId;
