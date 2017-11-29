@@ -35,12 +35,12 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
     private final ILocation location;
 
     @NotNull
-    private final IToken token;
+    private final IToken<?> token;
 
     @NotNull
-    private final Set<IToken> assignedRequests = new HashSet<>();
+    private final Set<IToken<?>> assignedRequests = new HashSet<>();
 
-    public PlayerRequestResolver(@NotNull final ILocation location, @NotNull final IToken token)
+    public PlayerRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token)
     {
         super();
         this.location = location;
@@ -61,7 +61,7 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
 
     @Nullable
     @Override
-    public List<IToken> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest request)
+    public List<IToken<?>> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest request)
     {
         if (canResolve(manager, request))
         {
@@ -71,7 +71,6 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
         return null;
     }
 
-    @Nullable
     @Override
     public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest request) throws RuntimeException
     {
@@ -117,7 +116,7 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
 
     @Nullable
     @Override
-    public IRequest onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest request) throws IllegalArgumentException
+    public IRequest onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest request)
     {
         return null;
     }
@@ -129,7 +128,7 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
     }
 
     @Override
-    public IToken getRequesterId()
+    public IToken<?> getRequesterId()
     {
         return token;
     }
@@ -141,36 +140,34 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
         return location;
     }
 
-    @NotNull
     @Override
-    public void onRequestComplete(@NotNull final IToken token)
+    public void onRequestComplete(@NotNull final IToken<?> token)
     {
-        /**
-         * Nothing to do here right now.
+        /*
+          Nothing to do here right now.
          */
     }
 
-    @NotNull
     @Override
-    public void onRequestCancelled(@NotNull final IToken token)
+    public void onRequestCancelled(@NotNull final IToken<?> token)
     {
 
     }
 
     @NotNull
     @Override
-    public ITextComponent getDisplayName(@NotNull final IToken token)
+    public ITextComponent getDisplayName(@NotNull final IToken<?> token)
     {
         return new TextComponentString("Player");
     }
 
     @Override
-    public ImmutableList<IToken> getAllAssignedRequests()
+    public ImmutableList<IToken<?>> getAllAssignedRequests()
     {
         return ImmutableList.copyOf(assignedRequests);
     }
 
-    public void setAllAssignedRequests(final Set<IToken> assignedRequests)
+    public void setAllAssignedRequests(final Set<IToken<?>> assignedRequests)
     {
         this.assignedRequests.clear();
         this.assignedRequests.addAll(assignedRequests);

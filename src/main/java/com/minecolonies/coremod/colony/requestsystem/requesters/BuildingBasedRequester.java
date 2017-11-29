@@ -25,27 +25,27 @@ public class BuildingBasedRequester implements IRequester
 
     private final ILocation location;
 
-    private final IToken requesterId;
+    private final IToken<?> requesterId;
 
     private IRequester building = null;
 
-    public BuildingBasedRequester(final ILocation location, final IToken requesterId)
+    public BuildingBasedRequester(final ILocation location, final IToken<?> requesterId)
     {
         this.location = location;
         this.requesterId = requesterId;
     }
 
-    public static BuildingBasedRequester deserialize(IFactoryController controller, NBTTagCompound compound)
+    public static BuildingBasedRequester deserialize(final IFactoryController controller, final NBTTagCompound compound)
     {
-        ILocation location = controller.deserialize(compound.getCompoundTag(NBT_LOCATION));
-        IToken token = controller.deserialize(compound.getCompoundTag(NBT_ID));
+        final ILocation location = controller.deserialize(compound.getCompoundTag(NBT_LOCATION));
+        final IToken<?> token = controller.deserialize(compound.getCompoundTag(NBT_ID));
 
         return new BuildingBasedRequester(location, token);
     }
 
-    public NBTTagCompound serialize(IFactoryController controller)
+    public NBTTagCompound serialize(final IFactoryController controller)
     {
-        NBTTagCompound compound = new NBTTagCompound();
+        final NBTTagCompound compound = new NBTTagCompound();
 
         compound.setTag(NBT_LOCATION, controller.serialize(getRequesterLocation()));
         compound.setTag(NBT_ID, controller.serialize(getRequesterId()));
@@ -54,7 +54,7 @@ public class BuildingBasedRequester implements IRequester
     }
 
     @Override
-    public IToken getRequesterId()
+    public IToken<?> getRequesterId()
     {
         return requesterId;
     }
@@ -66,9 +66,8 @@ public class BuildingBasedRequester implements IRequester
         return location;
     }
 
-    @NotNull
     @Override
-    public void onRequestComplete(@NotNull final IToken token)
+    public void onRequestComplete(@NotNull final IToken<?> token)
     {
         updateBuilding();
 
@@ -80,9 +79,8 @@ public class BuildingBasedRequester implements IRequester
         building.onRequestComplete(token);
     }
 
-    @NotNull
     @Override
-    public void onRequestCancelled(@NotNull final IToken token)
+    public void onRequestCancelled(@NotNull final IToken<?> token)
     {
         updateBuilding();
 
@@ -96,7 +94,7 @@ public class BuildingBasedRequester implements IRequester
 
     @NotNull
     @Override
-    public ITextComponent getDisplayName(@NotNull final IToken token)
+    public ITextComponent getDisplayName(@NotNull final IToken<?> token)
     {
         return getBuilding().getDisplayName(token);
     }

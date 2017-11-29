@@ -17,16 +17,8 @@ public final class WrappedStaticStateRequestManager extends AbstractWrappedReque
         super(wrappedManager);
     }
 
-    @NotNull
     @Override
-    /**
-     * Method to update the state of a given request.
-     *
-     * @param token The token that represents a given request to update.
-     * @param state The new state of that request.
-     * @throws IllegalArgumentException when the token is unknown to this manager.
-     */
-    public void updateRequestState(@NotNull final IToken token, @NotNull final RequestState state) throws IllegalArgumentException
+    public void updateRequestState(@NotNull final IToken<?> token, @NotNull final RequestState state)
     {
         //TODO: implement when link is created with workers
     }

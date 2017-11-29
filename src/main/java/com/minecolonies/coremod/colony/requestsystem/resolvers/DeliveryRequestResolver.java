@@ -23,7 +23,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
 {
     public DeliveryRequestResolver(
                                     @NotNull final ILocation location,
-                                    @NotNull final IToken token)
+                                    @NotNull final IToken<?> token)
     {
         super(location, token);
     }
@@ -43,8 +43,8 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
             return false;
         }
 
-        Colony colony = (Colony) manager.getColony();
-        CitizenData freeDeliveryMan = colony.getCitizens()
+        final Colony colony = (Colony) manager.getColony();
+        final CitizenData freeDeliveryMan = colony.getCitizens()
                                         .values()
                                         .stream()
                                         .filter(c -> c.getCitizenEntity() != null && requestToCheck.getRequest().getTarget().isReachableFromLocation(c.getCitizenEntity().getLocation()))
@@ -62,7 +62,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
 
     @Nullable
     @Override
-    public List<IToken> attemptResolve(
+    public List<IToken<?>> attemptResolve(
                                         @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
     {
         if (manager.getColony().getWorld().isRemote)
@@ -70,8 +70,8 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
             return null;
         }
 
-        Colony colony = (Colony) manager.getColony();
-        CitizenData freeDeliveryMan = colony.getCitizens()
+        final Colony colony = (Colony) manager.getColony();
+        final CitizenData freeDeliveryMan = colony.getCitizens()
                                         .values()
                                         .stream()
                                         .filter(c -> c.getCitizenEntity() != null && request.getRequest().getTarget().isReachableFromLocation(c.getCitizenEntity().getLocation()))
@@ -91,13 +91,12 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
             return null;
         }
 
-        JobDeliveryman job = (JobDeliveryman) freeDeliveryMan.getJob();
+        final JobDeliveryman job = (JobDeliveryman) freeDeliveryMan.getJob();
         job.addRequest(request.getToken());
 
         return Lists.newArrayList();
     }
 
-    @Nullable
     @Override
     public void resolve(
                          @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request) throws RuntimeException
@@ -116,12 +115,12 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
     @Nullable
     @Override
     public IRequest onRequestCancelledOrOverruled(
-                                                   @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request) throws IllegalArgumentException
+                                                   @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
     {
         if (!manager.getColony().getWorld().isRemote)
         {
-            Colony colony = (Colony) manager.getColony();
-            CitizenData freeDeliveryMan = colony.getCitizens()
+            final Colony colony = (Colony) manager.getColony();
+            final CitizenData freeDeliveryMan = colony.getCitizens()
                                             .values()
                                             .stream()
                                             .filter(c -> c.getJob() instanceof JobDeliveryman && ((JobDeliveryman) c.getJob()).getTaskQueue().contains(request.getToken()))
@@ -134,7 +133,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
             }
             else
             {
-                JobDeliveryman job = (JobDeliveryman) freeDeliveryMan.getJob();
+                final JobDeliveryman job = (JobDeliveryman) freeDeliveryMan.getJob();
                 job.onTaskDeletion(request.getToken());
             }
         }
@@ -142,16 +141,14 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
         return null;
     }
 
-    @NotNull
     @Override
-    public void onRequestComplete(@NotNull final IToken token)
+    public void onRequestComplete(@NotNull final IToken<?> token)
     {
         //We are not scheduling any child requests. So this should never be called.
     }
 
-    @NotNull
     @Override
-    public void onRequestCancelled(@NotNull final IToken token)
+    public void onRequestCancelled(@NotNull final IToken<?> token)
     {
         //Noop
     }

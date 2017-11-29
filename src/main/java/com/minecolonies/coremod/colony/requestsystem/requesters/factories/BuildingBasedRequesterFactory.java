@@ -38,7 +38,7 @@ public class BuildingBasedRequesterFactory implements IFactory<AbstractBuilding,
         }
 
         final ILocation location = factoryController.getNewInstance(TypeConstants.ILOCATION, building.getLocation(), building.getColony().getWorld().provider.getDimension());
-        final IToken token = factoryController.getNewInstance(TypeConstants.ITOKEN);
+        final IToken<?> token = factoryController.getNewInstance(TypeConstants.ITOKEN);
 
         return new BuildingBasedRequester(location, token);
     }
