@@ -315,18 +315,18 @@ achievement.farmer.carrotsHarvested.500=Désolé pour la longue publication, tie
 achievement.farmer.carrotsHarvested.1000=Eh, quoi de neuf, docteur ?
 achievement.farmer.potatoesHarvested.one=Une pomme de terre !
 achievement.farmer.potatoesHarvested.25=Salade de pommes de terre.
-achievement.farmer.potatoesHarvested.100=Tête de patate.
+achievement.farmer.potatoesHarvested.100=M. Patate.
 achievement.farmer.potatoesHarvested.500=Fabricant de chips.
 achievement.farmer.potatoesHarvested.1000=Pommes de terre Monsieur Frodon.
 achievement.farmer.wheatHarvested.one=Blé ?
 achievement.farmer.wheatHarvested.25=Faisons du pain
 achievement.farmer.wheatHarvested.100=Fumez du blé tous les jours!
-achievement.farmer.wheatHarvested.500=Whole grain flower? No thank you!
-achievement.farmer.wheatHarvested.1000=Breadbasket.
-achievement.builder.hutsBuilt.one.desc=Your builders built one hut.
-achievement.builder.hutsBuilt.25.desc=Your builders built 25 huts.
-achievement.builder.hutsBuilt.100.desc=Your builders built 100 huts.
-achievement.builder.hutsBuilt.500.desc=Your builders built 500 huts.
+achievement.farmer.wheatHarvested.500=Fleur de grains entiers ? Non merci !
+achievement.farmer.wheatHarvested.1000=Corbeille à pain.
+achievement.builder.hutsBuilt.one.desc=Vos constructeurs ont érigé une hutte.
+achievement.builder.hutsBuilt.25.desc=Vos constructeurs ont érigé 25 huttes.
+achievement.builder.hutsBuilt.100.desc=Vos constructeurs ont érigé 100 huttes.
+achievement.builder.hutsBuilt.500.desc=Ton constructeur a construit 500 huttes.
 achievement.builder.hutsBuilt.1000.desc=Your builders built 1000 huts.
 achievement.fisher.fishCaught.one.desc=Your fishermen caught one fish.
 achievement.fisher.fishCaught.25.desc=Your fishermen caught 25 fish.
@@ -509,16 +509,16 @@ item.minecolonies.clipboard.name=Clipboard
 
 com.minecolonies.coremod.item.clipboard.needColony=Please shift-right click the colony to register your clipboard to it.
 com.minecolonies.coremod.item.clipboard.registered=Registered to colony %d.
-achievement.upgrade.guard.first=The killer
+achievement.upgrade.guard.first=Le meurtrier
 achievement.upgrade.guard.last=Cleanup crew
 com.minecolonies.requestsystem.playerresolver=%s is in need of %s at %s.
-com.minecolonies.coremod.buildings.warehouse.name=Warehouse
-tile.minecolonies.blockPaperwall.name=Paper wall
+com.minecolonies.coremod.buildings.warehouse.name=Entrepôt
+tile.minecolonies.blockPaperwall.name=Mur en papier
 
 com.minecolonies.coremod.gui.workerHuts.buildPrio=Delivery Priority:
-item.supplyChestDeployer.invalid=You must place it in a fitting pool of water.
+item.supplyChestDeployer.invalid=Vous devez le placer dans un bassin d'eau adapté.
 item.supplyChestDeployer.missing=Are you trying to trick me, pick up that Supplyship again?
-com.minecolonies.coremod.citizen.rename.same=Renommage échoué: 2 Citoyens ne sont pas autorisés à porter le même nom!
+com.minecolonies.coremod.citizen.rename.same=Renommage échoué: 2 Citoyens ne peuvent pas porter le même nom!
 com.minecolonies.coremod.citizen.rename.notAllowed=Renommage échoué: Vous n'êtes pas autorisé à renommer votre Citoyen.
 
 
