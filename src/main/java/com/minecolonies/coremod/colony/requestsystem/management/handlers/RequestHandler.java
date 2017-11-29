@@ -45,7 +45,7 @@ public final class RequestHandler
         return constructedRequest;
     }
 
-    public static void registerRequest(final IStandardRequestManager manager, final IRequest request) throws IllegalArgumentException
+    public static void registerRequest(final IStandardRequestManager manager, final IRequest request)
     {
         if (manager.getRequestBiMap().containsKey(request.getToken()) ||
               manager.getRequestBiMap().containsValue(request))
@@ -66,7 +66,7 @@ public final class RequestHandler
      * @throws IllegalArgumentException when the request is already assigned
      */
     @SuppressWarnings(Suppression.UNCHECKED)
-    public static void assignRequest(final IStandardRequestManager manager, final IRequest request) throws IllegalArgumentException
+    public static void assignRequest(final IStandardRequestManager manager, final IRequest request)
     {
         assignRequest(manager, request, Collections.EMPTY_LIST);
     }
@@ -416,7 +416,7 @@ public final class RequestHandler
      * @throws IllegalArgumentException when the request is unknown, not resolved, or cannot be resolved.
      */
     @SuppressWarnings(Suppression.UNCHECKED)
-    public static void resolveRequest(final IStandardRequestManager manager, final IRequest request) throws IllegalArgumentException
+    public static void resolveRequest(final IStandardRequestManager manager, final IRequest request)
     {
         getRequest(manager, request.getToken());
         if (!isAssigned(manager, request.getToken()))
@@ -449,7 +449,7 @@ public final class RequestHandler
      * @param token   The token of the request.
      * @throws IllegalArgumentException Thrown when the token is unknown.
      */
-    public static void cleanRequestData(final IStandardRequestManager manager, final IToken<?> token) throws IllegalArgumentException
+    public static void cleanRequestData(final IStandardRequestManager manager, final IToken<?> token)
     {
         LogHandler.log("Removing " + token + " from the Manager as it has been completed and its package has been received by the requester.");
         getRequest(manager, token);
@@ -469,7 +469,7 @@ public final class RequestHandler
      * @param token The token to query
      * @throws IllegalArgumentException when the token is unknown to the given manager.
      */
-    public static IRequest getRequest(final IStandardRequestManager manager, final IToken<?> token) throws IllegalArgumentException
+    public static IRequest getRequest(final IStandardRequestManager manager, final IToken<?> token)
     {
         if (!manager.getRequestBiMap().containsKey(token))
         {
@@ -495,20 +495,20 @@ public final class RequestHandler
     /**
      * Wrapper for a assignment result.
      */
-    private final static class AssigningResult implements Comparable<AssigningResult>
+    private static final class AssigningResult<T> implements Comparable<AssigningResult>
     {
         private final IRequestResolver resolver;
-        private final List<IToken<?>>     children;
+        private final List<IToken<T>>  children;
 
-        private AssigningResult(final IRequestResolver resolver, final List<IToken<?>> children)
+        private AssigningResult(final IRequestResolver resolver, final List<IToken<T>> children)
         {
             this.resolver = resolver;
-            this.children = children;
+            this.children = new ArrayList<>(children);
         }
 
-        public List<IToken<?>> getChildren()
+        public List<IToken<T>> getChildren()
         {
-            return children;
+            return Collections.unmodifiableList(children);
         }
 
         @Override

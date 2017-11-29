@@ -29,7 +29,7 @@ public final class ProviderHandler
      * @throws IllegalArgumentException when the token is not belonging to a registered provider.
      */
     public static ImmutableCollection<IToken<?>> getRegisteredResolvers(final IStandardRequestManager manager, final IRequestResolverProvider provider)
-      throws IllegalArgumentException
+     
     {
         //Check if the token is registered.
         getProvider(manager, provider.getToken());
@@ -45,7 +45,7 @@ public final class ProviderHandler
      *
      * @throws IllegalArgumentException when no provider is not registered with the given token.
      */
-    public static IRequestResolverProvider getProvider(final IStandardRequestManager manager, final IToken<?> token) throws IllegalArgumentException
+    public static IRequestResolverProvider getProvider(final IStandardRequestManager manager, final IToken<?> token)
     {
         if (!manager.getProviderBiMap().containsKey(token))
         {
@@ -62,7 +62,7 @@ public final class ProviderHandler
      * @param provider The provider that provides the resolvers.
      * @throws IllegalArgumentException is thrown when a provider is already registered.
      */
-    public static void registerProvider(final IStandardRequestManager manager, final IRequestResolverProvider provider) throws IllegalArgumentException
+    public static void registerProvider(final IStandardRequestManager manager, final IRequestResolverProvider provider)
     {
         if (manager.getProviderBiMap().containsKey(provider.getToken()) ||
               manager.getProviderBiMap().containsValue(provider))
@@ -78,7 +78,7 @@ public final class ProviderHandler
         manager.getProviderResolverMap().put(provider.getToken(), resolverListBuilder.build());
     }
 
-    public static void removeProvider(final IStandardRequestManager manager, final IToken<?> token) throws IllegalArgumentException
+    public static void removeProvider(final IStandardRequestManager manager, final IToken<?> token)
     {
         removeProviderInternal(manager, token);
     }
@@ -91,7 +91,7 @@ public final class ProviderHandler
      * @throws IllegalArgumentException is thrown when the token is not registered to a provider, or when the data stored in the manager is in conflict.
      */
     @SuppressWarnings(Suppression.UNCHECKED)
-    public static void removeProviderInternal(final IStandardRequestManager manager, final IToken<?> token) throws IllegalArgumentException
+    public static void removeProviderInternal(final IStandardRequestManager manager, final IToken<?> token)
     {
         final IRequestResolverProvider provider = getProvider(manager, token);
 
@@ -203,7 +203,7 @@ public final class ProviderHandler
      *
      * @throws IllegalArgumentException when the token is not belonging to a registered provider.
      */
-    public static ImmutableCollection<IToken<?>> getRegisteredResolvers(final IStandardRequestManager manager, final IToken<?> token) throws IllegalArgumentException
+    public static ImmutableCollection<IToken<?>> getRegisteredResolvers(final IStandardRequestManager manager, final IToken<?> token)
     {
         //Check if the token is registered.
         getProvider(manager, token);
@@ -211,7 +211,7 @@ public final class ProviderHandler
         return manager.getProviderResolverMap().get(token);
     }
 
-    public static void removeProvider(final IStandardRequestManager manager, final IRequestResolverProvider provider) throws IllegalArgumentException
+    public static void removeProvider(final IStandardRequestManager manager, final IRequestResolverProvider provider)
     {
         final IRequestResolverProvider registeredProvider = getProvider(manager, provider.getToken());
 

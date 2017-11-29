@@ -5,6 +5,7 @@ import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequest
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.RequestHandler;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -20,7 +21,7 @@ public final class WrappedBlacklistAssignmentRequestManager extends AbstractWrap
     public WrappedBlacklistAssignmentRequestManager(@NotNull final IStandardRequestManager wrappedManager, @NotNull final Collection<IToken<?>> blackListedResolvers)
     {
         super(wrappedManager);
-        this.blackListedResolvers = blackListedResolvers;
+        this.blackListedResolvers = new ArrayList<>(blackListedResolvers);
     }
 
     /**
@@ -29,7 +30,6 @@ public final class WrappedBlacklistAssignmentRequestManager extends AbstractWrap
      * @param token The token of the request to assign.
      * @throws IllegalArgumentException when the token is not registered to a request, or is already assigned to a resolver.
      */
-    @NotNull
     @Override
     public void assignRequest(@NotNull final IToken<?> token)
     {
