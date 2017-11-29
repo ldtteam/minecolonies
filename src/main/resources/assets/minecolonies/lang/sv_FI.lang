@@ -1,0 +1,69 @@
+#X-Generator: crowdin.com
+tile.minecolonies.blockHutCitizen.name=Medborgar Hydda
+tile.minecolonies.blockHutBaker.name=Bagery
+tile.minecolonies.blockHutBlacksmith.name=Smed
+tile.minecolonies.blockHutBuilder.name=Byggar Hydda
+tile.minecolonies.blockHutLumberjack.name=Sågverk
+tile.minecolonies.blockHutFisherman.name=Fiskar Hydda
+tile.minecolonies.blockHutMiner.name=Gruva
+tile.minecolonies.blockHutStonemason.name=Stenbrott
+tile.minecolonies.blockHutTownHall.name=Stadshus
+tile.minecolonies.blockSubstitution.name=Platshållarblock
+tile.blockHut.messageNoPermission=Du har inte tillåtelse att öppna hyddor i %s.
+tile.blockHut.messageNoPermissionPlace=Du har ingen tillåtelse att sätta ut hyddor i %s.
+tile.blockHutTownHall.messageMaxSize=Koloni har nått max storleken.
+tile.blockHutTownHall.messageColonistDead=Medborgaren %s har dött vid %d %d %d!
+tile.blockHutTownHall.messagePlacedAlready=Du har redan satt ut ett Stadshus.
+tile.blockHutTownHall.messageInvalidWorld=Du kan inte sätta ett stadshus i denna värld typen.
+tile.blockHutTownHall.messageTooClose=Du är för nära ett annat stadshus.
+tile.blockHutTownHall.messageTooFar=För långt bort från din koloni.
+tile.blockHut.messageTooFarFromTownHall=Du behöver vara närmare ditt Statshus.
+tile.blockHut.messageNoTownHall=Du behöver sätta ut ett stadshus först!
+item.minecolonies.supplyChestDeployer.name=Frakt-Fartyg Kista
+
+item.minecolonies.scepterGold.name=Bygg Verktyg
+item.minecolonies.scepterSteel.name=Skannings verktyg.
+
+item.scepterSteel.point=Punkt ett sparad.
+item.scepterSteel.point2=Punkt två sparad, Höger klicka igen för att spara.
+item.scepterSteel.samePoint=Det var samma punkt.
+item.caliper.message.same=Det är samma block.
+item.caliper.message.line=Det är en %d block linje.
+item.caliper.message.square=Det är en %d gånger %d kvadrat.
+item.caliper.message.cube=Det är en %d gånger %d gånger %d kub.
+itemGroup.minecolonies=MineKolonier
+entity.worker.inventoryFullChestFull=Snälla gör utrumme i min kista, jag kan inte dumpa mitt lager.
+entity.builder.messageBuildStart=Började bygga &s.
+entity.builder.messageBuildComplete=Byggde klart %s.
+entity.builder.messageNeedMaterial=Jag behöver %d %s.
+entity.builder.messageBuilderNecessary=Behöver en byggare av level %d för att bygga eller upgradera denna byggnad.
+entity.miner.messageNeedTools=Jag behöver %s!
+entity.miner.messageNeedBlockAndItem=Jag behöver %s!
+entity.miner.messageNeedBetterTools=Jag behöver bättre Verktyg.
+entity.miner.messageMoreBlocks=Jag Behöver mer %s!
+entity.miner.messageRequiresBetterHut=Upgradera min hydda så gräver jag djupare!
+entity.fisherman.messageWaterTooFar=Fiskar hyddan är för långt från vatten!
+achievement.supply=En ny Början!
+achievement.supply.desc=Få leveranser.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+item.supplyChestDeployer.invalid=Du måste vara nära en stor pool av vatten.
+
+
