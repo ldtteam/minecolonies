@@ -312,16 +312,15 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
             }
         }
 
+        if(walkTo == null)
+        {
+            return START_WORKING;
+        }
+
         if (walkToBlock(walkTo))
         {
             setDelay(2);
             return getState();
-        }
-
-        if (!InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), TileEntityFurnace::isItemFuel))
-        {
-            walkTo = null;
-            return COOK_GET_FIREWOOD;
         }
 
         final TileEntity entity = world.getTileEntity(walkTo);
@@ -333,14 +332,22 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
 
             if (ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(1)))
             {
+                if (!InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), TileEntityFurnace::isItemFuel))
+                {
+                    walkTo = null;
+                    return COOK_GET_FIREWOOD;
+                }
+
                 InventoryUtils.transferXOfFirstSlotInProviderWithIntoInItemHandler(
                         new InvWrapper(worker.getInventoryCitizen()), TileEntityFurnace::isItemFuel, Constants.STACKSIZE,
                         new InvWrapper((TileEntityFurnace) entity), 1);
             }
 
             ((BuildingCook) getOwnBuilding()).setIsSomethingInOven(true);
+            walkTo = null;
             return START_WORKING;
         }
+        walkTo = null;
         setDelay(STANDARD_DELAY);
         return COOK_COOK_FOOD;
     }
