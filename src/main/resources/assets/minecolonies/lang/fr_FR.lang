@@ -1,5 +1,5 @@
 #X-Generator: crowdin.com
-tile.minecolonies.blockHutCitizen.name=Cabane du Citoyen
+tile.minecolonies.blockHutCitizen.name=Citoyen de hutte
 tile.minecolonies.blockHutBaker.name=Boulangerie
 tile.minecolonies.blockHutBlacksmith.name=Forge
 tile.minecolonies.blockHutBuilder.name=Cabane du constructeur
@@ -421,17 +421,17 @@ com.minecolonies.coremod.baker.noFurnace=Mon immeuble n' a pas de four, réparez
 com.minecolonies.coremod.job.baker=Boulanger
 com.minecolonies.coremod.gui.workerHuts.saplingList=Liste de tâches
 
-com.minecolonies.coremod.gui.townHall.housing=Housing assignment mode:
-com.minecolonies.coremod.gui.home.assign=Assign %d citizens
-com.minecolonies.coremod.gui.workerHuts.unassign=Remove citizen
+com.minecolonies.coremod.gui.townHall.housing=Attribution des logements:
+com.minecolonies.coremod.gui.home.assign=Assigner des citoyens %d
+com.minecolonies.coremod.gui.workerHuts.unassign=Supprimer le citoyen
 tile.minecolonies.blockTimberFrame.name=Plain Timber Frame
 tile.minecolonies.blockMinecoloniesRack.name=Rack
 
 com.minecolonies.coremod.status.waitingForWork=Searching job
-com.minecolonies.coremod.status.sleeping=Let me sleep
-com.minecolonies.coremod.status.waiting=Waiting for:
-com.minecolonies.coremod.status.rainStop=the rain to stop
-com.minecolonies.coremod.status.working=Working
+com.minecolonies.coremod.status.sleeping=Laisse-moi dormir
+com.minecolonies.coremod.status.waiting=En attente de:
+com.minecolonies.coremod.status.rainStop=la pluie s’arrête
+com.minecolonies.coremod.status.working=En plein travail
 com.minecolonies.coremod.status.avoiding=Avoiding mob
 com.minecolonies.coremod.status.clearing=Clearing
 com.minecolonies.coremod.status.building=Building
@@ -463,10 +463,10 @@ com.minecolonies.coremod.permission.teleport_to_colony=Teleport to Colony
 com.minecolonies.coremod.gui.hiring.buttonFire=Fire
 com.minecolonies.coremod.worker.noUpgrade=No Upgrade available.
 com.minecolonies.coremod.worker.needBarracks=Please upgrade the Barracks first.
-com.minecolonies.coremod.gui.warehouse.upgrade=Upgrade Storage
+com.minecolonies.coremod.gui.warehouse.upgrade=Améliorer la capacité de stockage
 
 com.minecolonies.coremod.job.cook=Cuisinier
-com.minecolonies.coremod.gui.workerHuts.cook=Cook
+com.minecolonies.coremod.gui.workerHuts.cook=Cuisiner
 tile.minecolonies.blockHutCook.name=Restaurant
 com.minecolonies.coremod.ai.noRestaurant=S'il vous plait construisez un restaurant ou apportez-moi à manger!
 com.minecolonies.coremod.ai.noWarehouse=Construisez un entrepôt ou apportez-moi de la nourriture pour que je serve mes clients!
