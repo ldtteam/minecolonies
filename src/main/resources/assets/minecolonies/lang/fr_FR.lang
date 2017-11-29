@@ -104,8 +104,8 @@ achievement.upgrade.townhall.max=Je suis le Roi!
 achievement.upgrade.townhall.max.desc=Quel roi!
 achievement.upgrade.townhall.first=Il nous faut un hôtel de ville!
 achievement.upgrade.townhall.first.desc=Construisez un hôtel de ville!
-tile.minecolonies.blockHutGuardTower.name=Tour de garde
-tile.blockHutTownHall.messageGuardDead=Le gardien %s est mort à %d %d %d of %s !
+tile.minecolonies.blockHutGuardTower.name=Tour de Garde
+tile.blockHutTownHall.messageGuardDead=Le gardien %s est mort de %s aux coordonnées %d %d %d !
 item.minecolonies.scepterGuard.name=Sceptre du garde
 
 com.minecolonies.configgui.title=MineColonies Config
