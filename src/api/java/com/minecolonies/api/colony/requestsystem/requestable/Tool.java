@@ -1,13 +1,16 @@
 package com.minecolonies.api.colony.requestsystem.requestable;
 
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
+import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
-import net.minecraft.item.ItemHoe;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Class used to represent tools inside the request system.
@@ -144,7 +147,7 @@ public class Tool implements IDeliverable
         //API:Map the given strings a proper way.
         boolean toolTypeResult = !ItemStackUtils.isEmpty(stack)
                                    && stack.stackSize >= 1
-                                   && stack.getItem().getToolClasses(stack).stream()
+                                   && getToolClasses(stack).stream()
                                         .filter(s -> getToolClass().getName().equalsIgnoreCase(s))
                                         .map(ToolType::getToolType)
                                         .filter(t -> t != ToolType.NONE)
@@ -156,6 +159,30 @@ public class Tool implements IDeliverable
         }
 
         return toolTypeResult;
+    }
+
+    private Set<String> getToolClasses(final ItemStack stack)
+    {
+        final Set set = new HashSet();
+        set.addAll(stack.getItem().getToolClasses(stack));
+
+        if(stack.getItem() instanceof ItemBow)
+        {
+            set.add("bow");
+        }
+        else if(stack.getItem() instanceof ItemSword || Compatibility.isTinkersWeapon(stack))
+        {
+            set.add("sword");
+        }
+        else if(stack.getItem() instanceof ItemHoe)
+        {
+            set.add("hoe");
+        }
+        else if(stack.getItem() instanceof ItemFishingRod)
+        {
+            set.add("rod");
+        }
+        return set;
     }
 
     @Override

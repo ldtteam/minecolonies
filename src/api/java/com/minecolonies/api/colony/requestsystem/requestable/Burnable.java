@@ -20,12 +20,11 @@ public class Burnable implements IDeliverable
 
     private final int count;
 
-    @NotNull
     private ItemStack result;
 
     public Burnable(final int count) {this.count = count;}
 
-    public Burnable(final int count, @NotNull final ItemStack result)
+    public Burnable(final int count, final ItemStack result)
     {
         this.count = count;
         this.result = result;
