@@ -24,8 +24,8 @@ tile.blockHut.messageTooFarFromTownHall=Você precisa estar mais perto da sua pr
 tile.blockHut.messageNoTownHall=Você precisa colocar uma prefeitura primeiro!
 item.minecolonies.supplyChestDeployer.name=Barca baú de suprimentos
 item.minecolonies.supplyCampDeployer.name=Baú do acampamento de abastecimento
-item.minecolonies.ancienttome.name=Ancient Tome
-item.minecolonies.chiefsword.name=Chief Sword
+item.minecolonies.ancienttome.name=Tumba Ancestral
+item.minecolonies.chiefsword.name=Espada do Chefe
 event.minecolonies.raidMessage=Buckle up cowboy! There's some darn raiders commin' for you Tonight!
 
 item.minecolonies.scepterGold.name=Building Tool
