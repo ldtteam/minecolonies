@@ -1,8 +1,8 @@
 #X-Generator: crowdin.com
-tile.minecolonies.blockHutCitizen.name=Citizen's Hut
-tile.minecolonies.blockHutBaker.name=Bakery
-tile.minecolonies.blockHutBlacksmith.name=Forge
-tile.minecolonies.blockHutBuilder.name=Builder's Hut
+tile.minecolonies.blockHutCitizen.name=Cabana do cidadão
+tile.minecolonies.blockHutBaker.name=Padaria
+tile.minecolonies.blockHutBlacksmith.name=Forjar
+tile.minecolonies.blockHutBuilder.name=Cabana do construtor
 tile.minecolonies.blockHutFarmer.name=Farm
 tile.minecolonies.blockHutLumberjack.name=Sawmill
 tile.minecolonies.blockHutFisherman.name=Fisherman's Hut
