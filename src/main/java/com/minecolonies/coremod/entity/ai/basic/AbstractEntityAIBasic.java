@@ -267,7 +267,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
             if(goodCook == null)
             {
-                chatSpamFilter.requestTextComponentWithoutSpam(new TextComponentTranslation("com.minecolonies.coremod.ai.noRestaurant"));
+                chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.ai.noRestaurant");
                 return getState();
             }
             restaurant = goodCook;

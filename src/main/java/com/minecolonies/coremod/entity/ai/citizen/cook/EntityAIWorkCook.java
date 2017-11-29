@@ -11,7 +11,6 @@ import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.buildings.BuildingCook;
 import com.minecolonies.coremod.colony.buildings.BuildingWareHouse;
 import com.minecolonies.coremod.colony.jobs.JobCook;
-import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
 import com.minecolonies.coremod.entity.ai.util.AIState;
@@ -102,11 +101,6 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
     private final List<EntityCitizen> citizenToServe = new ArrayList<>();
 
     /**
-     * The warehouse he found.
-     */
-    private BuildingWareHouse wareHouse = null;
-
-    /**
      * The current position the worker should walk to.
      */
     private BlockPos walkTo = null;
@@ -115,6 +109,11 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
      * The building range the cook should search for clients.
      */
     private AxisAlignedBB range = null;
+
+    /**
+     * What he currently might be needing.
+     */
+    private Predicate<ItemStack> needsCurrently = null;
 
     /**
      * Constructor for the Cook.
@@ -231,12 +230,17 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
 
     private AIState gatherFoodFromBuilding()
     {
-        if(InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), isFood))
+        if(needsCurrently == null)
+        {
+            needsCurrently = isFood;
+        }
+
+        if(InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), needsCurrently))
         {
             return COOK_SERVE;
         }
 
-        final BlockPos pos = getOwnBuilding().getTileEntity().getPositionOfChestWithItemStack(isFood);
+        final BlockPos pos = getOwnBuilding().getTileEntity().getPositionOfChestWithItemStack(needsCurrently);
         if (pos == null)
         {
             return START_WORKING;
@@ -247,7 +251,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
             return getState();
         }
 
-        final boolean transfered = tryTransferFromPosToCook(pos, isFood);
+        final boolean transfered = tryTransferFromPosToCook(pos, needsCurrently);
         if (transfered)
         {
             return COOK_SERVE;
@@ -292,6 +296,7 @@ public class EntityAIWorkCook extends AbstractEntityAISkill<JobCook>
                 && (walkTo == null || world.getBlockState(walkTo).getBlock() != Blocks.FURNACE))
         {
             walkTo = null;
+            needsCurrently = isCookable;
             return COOK_GATHERING;
         }
 
