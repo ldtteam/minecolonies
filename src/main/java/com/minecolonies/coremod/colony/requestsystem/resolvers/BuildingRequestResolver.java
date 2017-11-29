@@ -28,7 +28,7 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
 {
     public BuildingRequestResolver(
                                     @NotNull final ILocation location,
-                                    @NotNull final IToken token)
+                                    @NotNull final IToken<?> token)
     {
         super(location, token);
     }
@@ -64,9 +64,9 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
             return false;
         }
 
-        AbstractBuilding building = (AbstractBuilding) ((BuildingBasedRequester) requestToCheck.getRequester()).getBuilding();
+        final AbstractBuilding building = (AbstractBuilding) ((BuildingBasedRequester) requestToCheck.getRequester()).getBuilding();
 
-        List<TileEntity> tileEntities = new ArrayList<>();
+        final List<TileEntity> tileEntities = new ArrayList<>();
         tileEntities.add(building.getTileEntity());
         tileEntities.addAll(building.getAdditionalCountainers().stream().map(manager.getColony().getWorld()::getTileEntity).collect(Collectors.toSet()));
         tileEntities.removeIf(Objects::isNull);
@@ -78,7 +78,7 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
 
     @Nullable
     @Override
-    public List<IToken> attemptResolve(
+    public List<IToken<?>> attemptResolve(
                                         @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
         if (canResolve(manager, request))
@@ -89,14 +89,13 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
         return null;
     }
 
-    @Nullable
     @Override
     public void resolve(
                          @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request) throws RuntimeException
     {
-        AbstractBuilding building = (AbstractBuilding) ((BuildingBasedRequester) request.getRequester()).getBuilding();
+        final AbstractBuilding building = (AbstractBuilding) ((BuildingBasedRequester) request.getRequester()).getBuilding();
 
-        List<TileEntity> tileEntities = new ArrayList<>();
+        final List<TileEntity> tileEntities = new ArrayList<>();
         tileEntities.add(building.getTileEntity());
         tileEntities.addAll(building.getAdditionalCountainers().stream().map(manager.getColony().getWorld()::getTileEntity).collect(Collectors.toSet()));
 
@@ -121,21 +120,19 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
     @Nullable
     @Override
     public IRequest onRequestCancelledOrOverruled(
-                                                   @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request) throws IllegalArgumentException
+                                                   @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
         return null;
     }
 
-    @NotNull
     @Override
-    public void onRequestComplete(@NotNull final IToken token)
+    public void onRequestComplete(@NotNull final IToken<?> token)
     {
 
     }
 
-    @NotNull
     @Override
-    public void onRequestCancelled(@NotNull final IToken token)
+    public void onRequestCancelled(@NotNull final IToken<?> token)
     {
 
     }

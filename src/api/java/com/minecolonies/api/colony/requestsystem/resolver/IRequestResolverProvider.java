@@ -17,7 +17,7 @@ public interface IRequestResolverProvider
      *
      * @return the token.
      */
-    IToken getToken();
+    IToken<?> getToken();
 
     /**
      * Method to get the resolvers that this provider provides.

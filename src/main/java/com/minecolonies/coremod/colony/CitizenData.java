@@ -772,7 +772,7 @@ public class CitizenData
 
         buf.writeInt(colony.getID());
 
-        NBTTagCompound compound = new NBTTagCompound();
+        final NBTTagCompound compound = new NBTTagCompound();
         inventory.writeToNBT(compound);
         ByteBufUtils.writeTag(buf, compound);
     }
@@ -910,21 +910,21 @@ public class CitizenData
         return inventory;
     }
 
-    public <R extends IRequestable> IToken createRequest(@NotNull R requested)
+    public <R extends IRequestable> IToken<?> createRequest(@NotNull final R requested)
     {
         return getWorkBuilding().createRequest(this, requested);
     }
 
-    public <R extends IRequestable> IToken createRequestAsync(@NotNull R requested)
+    public <R extends IRequestable> IToken<?> createRequestAsync(@NotNull final R requested)
     {
-        IToken requestedToken = getWorkBuilding().createRequest(this, requested);
+        final IToken<?> requestedToken = getWorkBuilding().createRequest(this, requested);
 
         job.getAsyncRequests().add(requestedToken);
 
         return requestedToken;
     }
 
-    public void onRequestCancelled(@NotNull IToken token)
+    public void onRequestCancelled(@NotNull final IToken<?> token)
     {
         if (isRequestAsync(token))
         {
@@ -932,7 +932,7 @@ public class CitizenData
         }
     }
 
-    public boolean isRequestAsync(@NotNull IToken token)
+    public boolean isRequestAsync(@NotNull final IToken<?> token)
     {
         return job.getAsyncRequests().contains(token);
     }
