@@ -180,7 +180,7 @@ public class StandardRequestManager implements IStandardRequestManager
      */
     @NotNull
     @Override
-    public <T extends IRequestable> IToken<?> createRequest(@NotNull final IRequester requester, @NotNull final T object) throws IllegalArgumentException
+    public <T extends IRequestable> IToken<?> createRequest(@NotNull final IRequester requester, @NotNull final T object)
     {
         final IRequest<T> request = RequestHandler.createRequest(this, requester, object);
 
@@ -199,7 +199,7 @@ public class StandardRequestManager implements IStandardRequestManager
      * @throws IllegalArgumentException when the token is not registered to a request, or is already assigned to a resolver.
      */
     @Override
-    public void assignRequest(@NotNull final IToken<?> token) throws IllegalArgumentException
+    public void assignRequest(@NotNull final IToken<?> token)
     {
         RequestHandler.assignRequest(this, RequestHandler.getRequest(this, token));
 
@@ -220,7 +220,7 @@ public class StandardRequestManager implements IStandardRequestManager
      */
     @NotNull
     @Override
-    public <T extends IRequestable> IToken<?> createAndAssignRequest(@NotNull final IRequester requester, @NotNull final T object) throws IllegalArgumentException
+    public <T extends IRequestable> IToken<?> createAndAssignRequest(@NotNull final IRequester requester, @NotNull final T object)
     {
         final IToken<?> token = createRequest(requester, object);
         assignRequest(token);
@@ -229,7 +229,7 @@ public class StandardRequestManager implements IStandardRequestManager
 
     @Override
     @Nullable
-    public IToken<?> reassignRequest(@NotNull final IToken<?> token, @NotNull final Collection<IToken<?>> resolverTokenBlackList) throws IllegalArgumentException
+    public IToken<?> reassignRequest(@NotNull final IToken<?> token, @NotNull final Collection<IToken<?>> resolverTokenBlackList)
     {
         final IRequest request = RequestHandler.getRequest(this, token);
         return RequestHandler.reassignRequest(this, request, resolverTokenBlackList);
@@ -248,7 +248,7 @@ public class StandardRequestManager implements IStandardRequestManager
     @SuppressWarnings(Suppression.UNCHECKED)
     @Nullable
     @Override
-    public <T extends IRequestable> IRequest<T> getRequestForToken(@NotNull final IToken<?> token) throws IllegalArgumentException
+    public <T extends IRequestable> IRequest<T> getRequestForToken(@NotNull final IToken<?> token)
     {
         final IRequest<T> internalRequest = RequestHandler.getRequestOrNull(this, token);
 
@@ -264,7 +264,7 @@ public class StandardRequestManager implements IStandardRequestManager
 
     @NotNull
     @Override
-    public <T extends IRequestable> IRequestResolver<T> getResolverForToken(@NotNull final IToken<?> token) throws IllegalArgumentException
+    public <T extends IRequestable> IRequestResolver<T> getResolverForToken(@NotNull final IToken<?> token)
     {
         final IRequestResolver<T> resolver = ResolverHandler.getResolver(this, token);
 
@@ -273,7 +273,7 @@ public class StandardRequestManager implements IStandardRequestManager
 
     @Nullable
     @Override
-    public <T extends IRequestable> IRequestResolver<T> getResolverForRequest(@NotNull final IToken<?> requestToken) throws IllegalArgumentException
+    public <T extends IRequestable> IRequestResolver<T> getResolverForRequest(@NotNull final IToken<?> requestToken)
     {
         final IRequest request = RequestHandler.getRequest(this, requestToken);
 
@@ -288,7 +288,7 @@ public class StandardRequestManager implements IStandardRequestManager
      * @throws IllegalArgumentException when the token is unknown to this manager.
      */
     @Override
-    public void updateRequestState(@NotNull final IToken<?> token, @NotNull final RequestState state) throws IllegalArgumentException
+    public void updateRequestState(@NotNull final IToken<?> token, @NotNull final RequestState state)
     {
         final IRequest request = RequestHandler.getRequest(this, token);
 
@@ -324,7 +324,7 @@ public class StandardRequestManager implements IStandardRequestManager
     }
 
     @Override
-    public void overruleRequest(@NotNull final IToken<?> token, @Nullable final ItemStack stack) throws IllegalArgumentException
+    public void overruleRequest(@NotNull final IToken<?> token, @Nullable final ItemStack stack)
     {
         final IRequest request = RequestHandler.getRequest(this, token);
 
@@ -342,7 +342,7 @@ public class StandardRequestManager implements IStandardRequestManager
      * @param provider The new provider.
      */
     @Override
-    public void onProviderAddedToColony(@NotNull final IRequestResolverProvider provider) throws IllegalArgumentException
+    public void onProviderAddedToColony(@NotNull final IRequestResolverProvider provider)
     {
         ProviderHandler.registerProvider(this, provider);
     }
