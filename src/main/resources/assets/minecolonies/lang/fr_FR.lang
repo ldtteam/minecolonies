@@ -1,19 +1,19 @@
 #X-Generator: crowdin.com
-tile.minecolonies.blockHutCitizen.name=Citoyen de hutte
+tile.minecolonies.blockHutCitizen.name=Hutte du citoyen
 tile.minecolonies.blockHutBaker.name=Boulangerie
 tile.minecolonies.blockHutBlacksmith.name=Forge
 tile.minecolonies.blockHutBuilder.name=Hutte du bâtisseur
 tile.minecolonies.blockHutFarmer.name=Ferme
 tile.minecolonies.blockHutLumberjack.name=Scierie
-tile.minecolonies.blockHutFisherman.name=Cabane du pêcheur
+tile.minecolonies.blockHutFisherman.name=Hutte du pêcheur
 tile.minecolonies.blockHutMiner.name=Mine
 tile.minecolonies.blockHutStonemason.name=Carrière
 tile.minecolonies.blockHutTownHall.name=Hôtel de Ville
-tile.minecolonies.blockSubstitution.name=Bloc de place
+tile.minecolonies.blockSubstitution.name=Emplacement reservé
 tile.minecolonies.blockConstructionTapeCorner.name=Ruban adhésif de construction
 tile.minecolonies.blockConstructionTape.name=Ruban de construction
-tile.blockHut.messageNoPermission=Vous n'avez pas la permission d'ouvrir des cabanes en %s.
-tile.blockHut.messageNoPermissionPlace=Vous n'avez pas la permission de placer des cabanes en %s.
+tile.blockHut.messageNoPermission=Vous n'avez pas la permission d'ouvrir des huttes en %s.
+tile.blockHut.messageNoPermissionPlace=Vous n'avez pas la permission de placer des huttes dans %s.
 tile.blockHutTownHall.messageMaxSize=%d a atteint sa taille maximale
 tile.blockHutTownHall.messageColonistDead=Le %s de Colon est mort à %d %d %d de %s !
 tile.blockHutTownHall.messagePlacedAlready=Vous avez déjà placé un hôtel de ville
@@ -456,12 +456,12 @@ com.minecolonies.coremod.status.chopping=Chopping
 com.minecolonies.coremod.status.stuckinleaves=Stuck in leaves!
 tile.minecolonies.blockWayPoint.name=Waypoint placeholder
 tile.minecolonies.blockHutBarracksTower.name=BarracksTower
-tile.minecolonies.blockHutBarracks.name=Barracks
-com.minecolonies.coremod.gui.workerHuts.buildBarracks=Barracks
+tile.minecolonies.blockHutBarracks.name=Casernes
+com.minecolonies.coremod.gui.workerHuts.buildBarracks=Casernes
 
-com.minecolonies.coremod.permission.teleport_to_colony=Teleport to Colony
-com.minecolonies.coremod.gui.hiring.buttonFire=Fire
-com.minecolonies.coremod.worker.noUpgrade=No Upgrade available.
+com.minecolonies.coremod.permission.teleport_to_colony=Se téléporter à la Colonie
+com.minecolonies.coremod.gui.hiring.buttonFire=Virer
+com.minecolonies.coremod.worker.noUpgrade=Aucune amélioration disponible.
 com.minecolonies.coremod.worker.needBarracks=S'il vous plait améliorez les Casernes avant tout.
 com.minecolonies.coremod.gui.warehouse.upgrade=Améliorer la capacité de stockage
 
