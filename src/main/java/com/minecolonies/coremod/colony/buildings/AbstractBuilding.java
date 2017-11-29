@@ -1594,7 +1594,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     }
 
     @Override
-    public ImmutableCollection<IRequestResolver> getResolvers()
+    public ImmutableCollection<IRequestResolver<?>> getResolvers()
     {
         return ImmutableList.of(new BuildingRequestResolver(getRequester().getRequesterLocation(), getColony().getRequestManager().getFactoryController().getNewInstance(
           TypeConstants.ITOKEN)));

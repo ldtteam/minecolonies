@@ -86,7 +86,7 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
      * @return The followup request for the completed request. Null if none is needed.
      */
     @Nullable
-    IRequest getFollowupRequestForCompletion(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> completedRequest);
+    IRequest<?> getFollowupRequestForCompletion(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> completedRequest);
 
     /**
      * Method used to indicate to this resolver that a parent of a request assigned to him has been cancelled,
@@ -104,7 +104,7 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
      * @throws IllegalArgumentException is thrown when the cancelling or overrulling failed.
      */
     @Nullable
-    IRequest onRequestCancelledOrOverruled(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request) throws IllegalArgumentException;
+    IRequest<?> onRequestCancelledOrOverruled(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request) throws IllegalArgumentException;
 
     /**
      * The priority of this resolver.
