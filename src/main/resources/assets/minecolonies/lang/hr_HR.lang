@@ -1,14 +1,14 @@
 #X-Generator: crowdin.com
-tile.minecolonies.blockHutCitizen.name=Citizen's Hut
-tile.minecolonies.blockHutBaker.name=Bakery
-tile.minecolonies.blockHutBlacksmith.name=Forge
-tile.minecolonies.blockHutBuilder.name=Builder's Hut
-tile.minecolonies.blockHutFarmer.name=Farm
-tile.minecolonies.blockHutLumberjack.name=Sawmill
-tile.minecolonies.blockHutFisherman.name=Fisherman's Hut
-tile.minecolonies.blockHutMiner.name=Mine
-tile.minecolonies.blockHutStonemason.name=Quarry
-tile.minecolonies.blockHutTownHall.name=Town Hall
+tile.minecolonies.blockHutCitizen.name=Koliba
+tile.minecolonies.blockHutBaker.name=Pekara
+tile.minecolonies.blockHutBlacksmith.name=Kovačnica
+tile.minecolonies.blockHutBuilder.name=Radnička koliba
+tile.minecolonies.blockHutFarmer.name=Seosko imanje
+tile.minecolonies.blockHutLumberjack.name=Pilana
+tile.minecolonies.blockHutFisherman.name=Ribarska koliba
+tile.minecolonies.blockHutMiner.name=Rudnik
+tile.minecolonies.blockHutStonemason.name=Kamenolom
+tile.minecolonies.blockHutTownHall.name=Vjećnica
 tile.minecolonies.blockSubstitution.name=Placeholderblock
 tile.minecolonies.blockConstructionTapeCorner.name=Construction tape corner
 tile.minecolonies.blockConstructionTape.name=Construction tape
