@@ -32,10 +32,10 @@ item.minecolonies.scepterGold.name=Ohun Ikole
 item.minecolonies.scepterSteel.name=Ohun ayewo
 item.minecolonies.caliper.name=Calipali
 
-item.scepterSteel.point=Point one saved
-item.scepterSteel.point2=Point two saved, right click again to save the schematic
-item.scepterSteel.samePoint=That was the same point
-item.scepterSteel.scanFormat=SCAN_%s-%s
+item.scepterSteel.point=Ipinnu ikinni ti wa ni ipamo
+item.scepterSteel.point2=Ipinnu ikeji ti wa ni ipamo, sọtun lẹẹkansi lati fi awọn onimọ-ọrọ naa pamọ
+item.scepterSteel.samePoint=Ipinnu kanna ni
+item.scepterSteel.scanFormat=Ayewo
 item.scepterSteel.scanSuccess=Scan successfully saved as %s
 item.scepterSteel.scanFailure=Scan failed to save
 item.caliper.message.same=That's the same block.
