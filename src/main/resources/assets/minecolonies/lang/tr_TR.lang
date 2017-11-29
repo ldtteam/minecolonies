@@ -1,11 +1,11 @@
 #X-Generator: crowdin.com
-tile.minecolonies.blockHutCitizen.name=Citizen's Hut
-tile.minecolonies.blockHutBaker.name=Bakery
-tile.minecolonies.blockHutBlacksmith.name=Forge
+tile.minecolonies.blockHutCitizen.name=Vatandaşlarının Evi
+tile.minecolonies.blockHutBaker.name=Fırıncı
+tile.minecolonies.blockHutBlacksmith.name=Demirci
 tile.minecolonies.blockHutBuilder.name=Builder's Hut
-tile.minecolonies.blockHutFarmer.name=Farm
+tile.minecolonies.blockHutFarmer.name=Çiftlik
 tile.minecolonies.blockHutLumberjack.name=Sawmill
-tile.minecolonies.blockHutFisherman.name=Fisherman's Hut
+tile.minecolonies.blockHutFisherman.name=Balıkçı'nın Evi
 tile.minecolonies.blockHutMiner.name=Mine
 tile.minecolonies.blockHutStonemason.name=Quarry
 tile.minecolonies.blockHutTownHall.name=Town Hall
