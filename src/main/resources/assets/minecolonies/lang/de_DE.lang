@@ -1,15 +1,15 @@
 #X-Generator: crowdin.com
 tile.minecolonies.blockHutCitizen.name=Citizen's Hut
-tile.minecolonies.blockHutBaker.name=Bakery
-tile.minecolonies.blockHutBlacksmith.name=Forge
-tile.minecolonies.blockHutBuilder.name=Builder's Hut
-tile.minecolonies.blockHutFarmer.name=Farm
-tile.minecolonies.blockHutLumberjack.name=Sawmill
-tile.minecolonies.blockHutFisherman.name=Fisherman's Hut
+tile.minecolonies.blockHutBaker.name=Bäckerei
+tile.minecolonies.blockHutBlacksmith.name=Schmiede
+tile.minecolonies.blockHutBuilder.name=Bauhütte
+tile.minecolonies.blockHutFarmer.name=Bauernhof
+tile.minecolonies.blockHutLumberjack.name=Sägewerk
+tile.minecolonies.blockHutFisherman.name=Fischerhütte
 tile.minecolonies.blockHutMiner.name=Mine
-tile.minecolonies.blockHutStonemason.name=Quarry
-tile.minecolonies.blockHutTownHall.name=Town Hall
-tile.minecolonies.blockSubstitution.name=Placeholderblock
+tile.minecolonies.blockHutStonemason.name=Steinmetz
+tile.minecolonies.blockHutTownHall.name=Rathaus
+tile.minecolonies.blockSubstitution.name=Platzhalterblock
 tile.minecolonies.blockConstructionTapeCorner.name=Construction tape corner
 tile.minecolonies.blockConstructionTape.name=Construction tape
 tile.blockHut.messageNoPermission=You don't have permission to open huts in %s.
