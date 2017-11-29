@@ -15,7 +15,7 @@ tile.minecolonies.blockConstructionTape.name=Ruban de construction
 tile.blockHut.messageNoPermission=Vous n'avez pas la permission d'ouvrir des cabanes en %s.
 tile.blockHut.messageNoPermissionPlace=Vous n'avez pas la permission de placer des cabanes en %s.
 tile.blockHutTownHall.messageMaxSize=%d a atteint sa taille maximale
-tile.blockHutTownHall.messageColonistDead=Le colon %s est mort à %d %d %d of %s!
+tile.blockHutTownHall.messageColonistDead=Le %s de Colon est mort à %d %d %d de %s !
 tile.blockHutTownHall.messagePlacedAlready=Vous avez déjà placé un hôtel de ville
 tile.blockHutTownHall.messageInvalidWorld=On ne peut pas placer d'hôtel de ville dans ce genre de monde
 tile.blockHutTownHall.messageTooClose=Trop près de l'hôtel de ville existant
@@ -153,7 +153,7 @@ com.minecolonies.coremod.gui.townHall.permissions=Autorisations
 com.minecolonies.coremod.gui.workerHuts.upgrade=Améliorer le bâtiment
 com.minecolonies.coremod.gui.buildtool.hut=Cabanes
 com.minecolonies.coremod.gui.townHall.addPlayer=Ajouter un joueur:
-com.minecolonies.coremod.gui.townHall.addBlock=Add Block/Position:
+com.minecolonies.coremod.gui.townHall.addBlock=Ajouter le bloc/position :
 
 com.minecolonies.coremod.gui.warehouse.visitCitizenChests=Visit Citizenchests:
 com.minecolonies.coremod.gui.townHall.population.unemployed=Unemployed: %d
