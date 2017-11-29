@@ -17,18 +17,18 @@ tile.blockHut.messageNoPermissionPlace=Vous n'avez pas la permission de placer d
 tile.blockHutTownHall.messageMaxSize=%d a atteint sa taille maximale
 tile.blockHutTownHall.messageColonistDead=Le Colon %s est mort à %d %d %d de %s !
 tile.blockHutTownHall.messagePlacedAlready=Vous avez déjà placé un hôtel de ville
-tile.blockHutTownHall.messageInvalidWorld=On ne peut pas placer d'hôtel de ville dans ce genre de monde
+tile.blockHutTownHall.messageInvalidWorld=Vous ne pouvez pas placer d'hôtel de ville dans ce type de monde
 tile.blockHutTownHall.messageTooClose=Trop près de l'hôtel de ville existant
 tile.blockHutTownHall.messageTooFar=Trop loin de votre Colonie
 tile.blockHut.messageTooFarFromTownHall=Vous devez vous rapprocher de votre hôtel de ville!
-tile.blockHut.messageNoTownHall=Il faut d'abord placer un hôtel de ville!
+tile.blockHut.messageNoTownHall=Vous devez d'abord placer un hôtel de ville!
 item.minecolonies.supplyChestDeployer.name=Coffre de ravitaillement de navire
 item.minecolonies.supplyCampDeployer.name=Coffre d'approvisionnement de Camp
 item.minecolonies.ancienttome.name=Ancien Tome
 item.minecolonies.chiefsword.name=Épée du Chef
 event.minecolonies.raidMessage=Boucle ta ceinture, cow-boy! Il y a de sacrés pilleurs qui viennent pour toi ce soir!
 
-item.minecolonies.scepterGold.name=Outil de construction
+item.minecolonies.scepterGold.name=Outil de Construction
 item.minecolonies.scepterSteel.name=Outil de scan
 item.minecolonies.caliper.name=Pied à coulisse
 
