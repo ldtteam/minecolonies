@@ -30,12 +30,12 @@ event.minecolonies.raidMessage=Kovboy kemerini bağla! Bak geliyor lanet akınc�
 
 item.minecolonies.scepterGold.name=Yapımcı Aleti
 item.minecolonies.scepterSteel.name=Tarama Aleti
-item.minecolonies.caliper.name=Caliper
+item.minecolonies.caliper.name=Kaliper
 
-item.scepterSteel.point=Point one saved
-item.scepterSteel.point2=Point two saved, right click again to save the schematic
-item.scepterSteel.samePoint=That was the same point
-item.scepterSteel.scanFormat=SCAN_%s-%s
+item.scepterSteel.point=Nokta bir kaydedildi
+item.scepterSteel.point2=Nokta iki kaydedildi, şematiği kaydetmek için sağ tıkla
+item.scepterSteel.samePoint=Burası aynı nokta
+item.scepterSteel.scanFormat=TARA_%s-%s
 item.scepterSteel.scanSuccess=Scan successfully saved as %s
 item.scepterSteel.scanFailure=Scan failed to save
 item.caliper.message.same=That's the same block.
