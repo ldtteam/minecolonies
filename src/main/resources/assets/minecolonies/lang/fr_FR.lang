@@ -2,7 +2,7 @@
 tile.minecolonies.blockHutCitizen.name=Citoyen de hutte
 tile.minecolonies.blockHutBaker.name=Boulangerie
 tile.minecolonies.blockHutBlacksmith.name=Forge
-tile.minecolonies.blockHutBuilder.name=Cabane du constructeur
+tile.minecolonies.blockHutBuilder.name=Hutte du bâtisseur
 tile.minecolonies.blockHutFarmer.name=Ferme
 tile.minecolonies.blockHutLumberjack.name=Scierie
 tile.minecolonies.blockHutFisherman.name=Cabane du pêcheur
@@ -462,7 +462,7 @@ com.minecolonies.coremod.gui.workerHuts.buildBarracks=Barracks
 com.minecolonies.coremod.permission.teleport_to_colony=Teleport to Colony
 com.minecolonies.coremod.gui.hiring.buttonFire=Fire
 com.minecolonies.coremod.worker.noUpgrade=No Upgrade available.
-com.minecolonies.coremod.worker.needBarracks=Please upgrade the Barracks first.
+com.minecolonies.coremod.worker.needBarracks=S'il vous plait améliorez les Casernes avant tout.
 com.minecolonies.coremod.gui.warehouse.upgrade=Améliorer la capacité de stockage
 
 com.minecolonies.coremod.job.cook=Cuisinier
