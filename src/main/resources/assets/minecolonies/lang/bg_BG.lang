@@ -1,0 +1,62 @@
+#X-Generator: crowdin.com
+
+
+
+
+com.minecolonies.coremod.gui.townHall.rename=Преименувай колонията
+com.minecolonies.coremod.gui.workerHuts.minerMineNode=Ниво на мина
+com.minecolonies.coremod.gui.workerHuts.buildType=Тип строеж:
+com.minecolonies.coremod.gui.workerHuts.workerLevel=Ниво на работник: %s
+com.minecolonies.coremod.gui.workerHuts.homeHut=Градска колиба
+com.minecolonies.coremod.gui.workerHuts.buildersHut=Колиба на сторител
+com.minecolonies.coremod.gui.townHall.population.totalCitizens=Брой граждани: %d/%d
+com.minecolonies.coremod.gui.townHall.currTownHallName=Име на колонията:
+com.minecolonies.coremod.gui.townHall.citizens=Граждани
+com.minecolonies.coremod.error.supplyChestAlreadyPlaced=Вече сте поставили кораб за доставки!
+com.minecolonies.coremod.gui.townHall.rename.title=Преименувай колонията си
+com.minecolonies.coremod.gui.workerHuts.information=Информация
+com.minecolonies.coremod.gui.townHall.population.deliverymen=Доставчици: %d
+com.minecolonies.coremod.gui.workerHuts.upgradeUnavailable=Няма налично подобрение
+com.minecolonies.coremod.gui.townHall.actions=Действия
+com.minecolonies.coremod.gui.townHall.population.builders=Строители: %d
+com.minecolonies.coremod.gui.workerHuts.build=Построй сграда
+com.minecolonies.coremod.gui.workerHuts.lumberjackHut=Барака на дървар
+com.minecolonies.coremod.gui.townHall.togglespec=Превключи специализация
+com.minecolonies.coremod.gui.workerHuts.repair=Поправи сграда
+com.minecolonies.coremod.gui.townHall.permissions=Права
+com.minecolonies.coremod.gui.workerHuts.upgrade=Подобри сграда
+
+com.minecolonies.coremod.gui.townHall.population.unemployed=Безработни: %d
+com.minecolonies.coremod.gui.workerHuts.minerNode=Възел
+com.minecolonies.coremod.gui.workerHuts.settings=Настройки
+com.minecolonies.coremod.gui.workerHuts.fire=Уволни работник
+com.minecolonies.coremod.gui.townHall.build=Построй кметство
+com.minecolonies.coremod.gui.townHall.repair=Поправи кметство
+com.minecolonies.coremod.gui.townHall.recall=Отзови гражданите
+com.minecolonies.coremod.gui.workerHuts.minerNodeList=Нива
+com.minecolonies.coremod.gui.workerHuts.fisherman=Рибарска хижа
+com.minecolonies.coremod.gui.workerHuts.recall=Отзови работник
+com.minecolonies.coremod.gui.workerHuts.workerAssigned=Възложен работник:
+com.minecolonies.coremod.gui.buildtool.nullHut=Няма бараки
+com.minecolonies.coremod.gui.townHall.defaultName=Колонията на %
+com.minecolonies.coremod.gui.workerHuts.hire=Наеми работник
+com.minecolonies.coremod.gui.workerHuts.minerHut=Миньор
+com.minecolonies.coremod.gui.townHall.currentSpecialization=Текуща специализация:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
