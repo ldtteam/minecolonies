@@ -470,39 +470,39 @@ com.minecolonies.coremod.gui.workerHuts.cook=Koken
 tile.minecolonies.blockHutCook.name=Restaurant
 com.minecolonies.coremod.ai.noRestaurant=Gelieve een restaurant te bouwen of geeft me iets te eten!
 com.minecolonies.coremod.ai.noWarehouse=Bouw een magazijn of breng me eten om aan mijn klanten te serveren!
-com.minecolonies.coremod.ai.noFood=I can't find any food in the warehouse.
+com.minecolonies.coremod.ai.noFood=Ik kan niets te eten vinden in het magazijn.
 com.minecolonies.coremod.gui.workerHuts.Cook=Restaurant
-com.minecolonies.coremod.status.cooking=Cooking
-com.minecolonies.coremod.status.serving=Serving
-com.minecolonies.coremod.status.retrieving=Retrieving
-com.minecolonies.coremod.status.idling=Idling
-com.minecolonies.coremod.status.mining=Mining
+com.minecolonies.coremod.status.cooking=Koken
+com.minecolonies.coremod.status.serving=Opdienen
+com.minecolonies.coremod.status.retrieving=Ophalen
+com.minecolonies.coremod.status.idling=Nietsdoen
+com.minecolonies.coremod.status.mining=Mijnbouw
 
-item.minecolonies.scepterPermission.name=PermissionScepter
+item.minecolonies.scepterPermission.name=Staf van Toestemming
 
-com.minecolonies.coremod.request.delivery=Delivery of:
-com.minecolonies.coremod.request.food=Food
-com.minecolonies.coremod.request.burnable=Fuel
-com.minecolonies.coremod.request.tool.pretype=Tool of class:
-com.minecolonies.coremod.request.tool.preminlevel=with minimal level:
-com.minecolonies.coremod.request.tool.premaxlevel=with maximal level:
+com.minecolonies.coremod.request.delivery=Levering van:
+com.minecolonies.coremod.request.food=Voedsel
+com.minecolonies.coremod.request.burnable=Brandstof
+com.minecolonies.coremod.request.tool.pretype=Het hulpmiddel van klasse:
+com.minecolonies.coremod.request.tool.preminlevel=met minimaal niveau:
+com.minecolonies.coremod.request.tool.premaxlevel=met minimaal niveau:
 
-com.minecolonies.coremod.general.and=and
+com.minecolonies.coremod.general.and=en
 
-com.minecolonies.coremod.tooltype.none=Unknown
-com.minecolonies.coremod.tooltype.pickaxe=Pickaxe
-com.minecolonies.coremod.tooltype.shovel=Shovel
-com.minecolonies.coremod.tooltype.axe=Axe
-com.minecolonies.coremod.tooltype.hoe=Hoe
-com.minecolonies.coremod.tooltype.sword=Sword
-com.minecolonies.coremod.tooltype.bow=Bow
-com.minecolonies.coremod.tooltype.fishingrod=Fishingrod
-com.minecolonies.coremod.tooltype.shears=Shears
-com.minecolonies.coremod.tooltype.shield=Shield
+com.minecolonies.coremod.tooltype.none=Onbekend
+com.minecolonies.coremod.tooltype.pickaxe=Houweel
+com.minecolonies.coremod.tooltype.shovel=Schop
+com.minecolonies.coremod.tooltype.axe=Bijl
+com.minecolonies.coremod.tooltype.hoe=Schoffel
+com.minecolonies.coremod.tooltype.sword=Zwaard
+com.minecolonies.coremod.tooltype.bow=Boog
+com.minecolonies.coremod.tooltype.fishingrod=Vislijn
+com.minecolonies.coremod.tooltype.shears=Schaar
+com.minecolonies.coremod.tooltype.shield=Schild
 
-com.minecolonies.coremod.gui.citizen.requests=Open requests:
-com.minecolonies.coremod.gui.citizen.requestTitle=Requests
-com.minecolonies.coremod.gui.citizen.requestsCancel=Cancel
+com.minecolonies.coremod.gui.citizen.requests=Open aanvragen:
+com.minecolonies.coremod.gui.citizen.requestTitle=Verzoeken
+com.minecolonies.coremod.gui.citizen.requestsCancel=Annuleren
 com.minecolonies.coremod.gui.citizen.requestsFulfill=Fulfill
 
 item.minecolonies.clipboard.name=Clipboard
