@@ -1,12 +1,12 @@
 #X-Generator: crowdin.com
-tile.minecolonies.blockHutCitizen.name=Citizen's Hut
-tile.minecolonies.blockHutBaker.name=Bakery
-tile.minecolonies.blockHutBlacksmith.name=Forge
-tile.minecolonies.blockHutBuilder.name=Builder's Hut
-tile.minecolonies.blockHutFarmer.name=Farm
-tile.minecolonies.blockHutLumberjack.name=Sawmill
-tile.minecolonies.blockHutFisherman.name=Fisherman's Hut
-tile.minecolonies.blockHutMiner.name=Mine
+tile.minecolonies.blockHutCitizen.name=公民小屋
+tile.minecolonies.blockHutBaker.name=麵包店
+tile.minecolonies.blockHutBlacksmith.name=鐵工廠
+tile.minecolonies.blockHutBuilder.name=建設者的小屋
+tile.minecolonies.blockHutFarmer.name=農場
+tile.minecolonies.blockHutLumberjack.name=鋸木廠
+tile.minecolonies.blockHutFisherman.name=漁夫小屋
+tile.minecolonies.blockHutMiner.name=地雷
 tile.minecolonies.blockHutStonemason.name=Quarry
 tile.minecolonies.blockHutTownHall.name=Town Hall
 tile.minecolonies.blockSubstitution.name=Placeholderblock
