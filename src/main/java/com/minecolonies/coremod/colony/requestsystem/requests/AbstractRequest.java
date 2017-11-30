@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Abstract skeleton implementation of a request.
@@ -34,15 +35,15 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     @NotNull
     private final IToken<?>       token;
     @NotNull
-    private final R            requested;
+    private final R               requested;
     @NotNull
     private final List<IToken<?>> children;
     @NotNull
-    private final IRequester   requester;
+    private final IRequester      requester;
     @NotNull
     private RequestState state = RequestState.CREATED;
     @Nullable
-    private R      result;
+    private R         result;
     @Nullable
     private IToken<?> parent;
     @SuppressWarnings("squid:S1170")
@@ -439,5 +440,16 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     public ResourceLocation getDisplayIcon()
     {
         return new ResourceLocation("missingno");
+    }
+
+    @NotNull
+    public <T extends R> Optional<T> getRequestOfType(final Class<T> tClass)
+    {
+        final R request = getRequest();
+        if (tClass.isInstance(request))
+        {
+            return Optional.of(tClass.cast(request));
+        }
+        return Optional.empty();
     }
 }

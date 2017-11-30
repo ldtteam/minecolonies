@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 
@@ -271,4 +272,7 @@ public interface IRequest<R extends IRequestable>
      */
     @NotNull
     ResourceLocation getDisplayIcon();
+
+    @NotNull
+    <T> Optional<T> getRequestOfType(final Class<T> tClass);
 }

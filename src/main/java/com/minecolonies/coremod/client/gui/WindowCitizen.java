@@ -8,6 +8,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Alignment;
+import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.*;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
@@ -375,7 +376,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
         createXpBar();
         createSkillContent();
 
-        resourceList.setDataProvider(() -> getOpenRequestsOfCitizen().size(), (index, rowPane) ->
+        resourceList.setDataProvider(() -> getOpenRequestsOfCitizen().size(), (int index, Pane rowPane) ->
         {
             final ImmutableList<IRequest<?>> openRequests = getOpenRequestsOfCitizen();
             if (index < 0 || index >= openRequests.size())
@@ -402,12 +403,12 @@ public class WindowCitizen extends AbstractWindowSkeleton
             rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
               .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f", ""));
 
-            if (!(request.getRequest() instanceof IDeliverable)
-                  || (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory),
-              stack -> ((IDeliverable) request.getRequest()).matches(stack))))
-            {
-                rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
-            }
+            request.getRequestOfType(IDeliverable.class).ifPresent((IDeliverable requestRequest) -> {
+                if (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory), requestRequest::matches))
+                {
+                    rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
+                }
+            });
         });
 
         //Tool of class:§rwith minimal level:§rWood or Gold§r and§rwith maximal level:§rWood or Gold§r
@@ -643,39 +644,34 @@ public class WindowCitizen extends AbstractWindowSkeleton
         {
             @NotNull final IRequest<?> tRequest = getOpenRequestsOfCitizen().get(row);
 
-            if (!(tRequest.getRequest() instanceof IDeliverable))
-            {
-                return;
-            }
+            tRequest.getRequestOfType(IDeliverable.class).ifPresent((IDeliverable request) -> {
+                final Predicate<ItemStack> requestPredicate = request::matches;
+                final int amount = request.getCount();
 
-            @NotNull final IDeliverable request = (IDeliverable) tRequest.getRequest();
+                final int count = InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory), requestPredicate);
 
-            final Predicate<ItemStack> requestPredicate = request::matches;
-            final int amount = request.getCount();
+                if (!isCreative && count <= 0)
+                {
+                    return;
+                }
 
-            final int count = InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory), requestPredicate);
+                // The itemStack size should not be greater than itemStack.getMaxStackSize, We send 1 instead
+                // and use quantity for the size
+                @NotNull final ItemStack itemStack;
+                if (isCreative)
+                {
+                    itemStack = tRequest.getDisplayStacks().stream().findFirst().orElse(ItemStack.EMPTY);
+                }
+                else
+                {
+                    itemStack = inventory.getStackInSlot(InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(inventory), requestPredicate));
+                }
 
-            if (!isCreative && count <= 0)
-            {
-                return;
-            }
+                final AbstractBuildingView building = ColonyManager.getColonyView(citizen.getColonyId()).getBuilding(citizen.getWorkBuilding());
 
-            // The itemStack size should not be greater than itemStack.getMaxStackSize, We send 1 instead
-            // and use quantity for the size
-            @NotNull final ItemStack itemStack;
-            if (isCreative)
-            {
-                itemStack = tRequest.getDisplayStacks().stream().findFirst().orElse(ItemStack.EMPTY);
-            }
-            else
-            {
-                itemStack = inventory.getStackInSlot(InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(inventory), requestPredicate));
-            }
-
-            final AbstractBuildingView building = ColonyManager.getColonyView(citizen.getColonyId()).getBuilding(citizen.getWorkBuilding());
-
-            MineColonies.getNetwork().sendToServer(new TransferItemsRequestMessage(building, itemStack, isCreative ? amount : count, false));
-            MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), tRequest.getToken(), RequestState.OVERRULED, itemStack));
+                MineColonies.getNetwork().sendToServer(new TransferItemsRequestMessage(building, itemStack, isCreative ? amount : count, false));
+                MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), tRequest.getToken(), RequestState.OVERRULED, itemStack));
+            });
         }
     }
 }
