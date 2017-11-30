@@ -9,7 +9,6 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.factory.ITypeOverrideHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.ReflectionUtils;
-import com.minecolonies.api.util.constant.Suppression;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Tuple;
@@ -18,6 +17,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
+
+import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
+import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 
 /**
  * Default implementation of a FactoryController
@@ -39,38 +41,41 @@ public final class StandardFactoryController implements IFactoryController
      * Primary (main) INPUT mappings.
      */
     @NotNull
-    
+    @SuppressWarnings(RAWTYPES)
     private final        Map<TypeToken, Set<IFactory>> primaryInputMappings  = new HashMap<>();
     /**
      * Primary (main) OUTPUT mappings.
      */
     @NotNull
+    @SuppressWarnings(RAWTYPES)
     private final        Map<TypeToken, Set<IFactory>> primaryOutputMappings = new HashMap<>();
 
     /**
      * Secondary (super) output mappings
      */
     @NotNull
+    @SuppressWarnings(RAWTYPES)
     private final Map<TypeToken, Set<IFactory>>                secondaryOutputMappings = new HashMap<>();
     /**
      * A cache that holds all Mappers and their search secondary IO types.
      * Filled during runtime to speed up searches to factories when both INPUT and OUTPUT type are secondary types.
      */
     @NotNull
+    @SuppressWarnings(RAWTYPES)
     private final Cache<Tuple<TypeToken, TypeToken>, IFactory> secondaryMappingsCache  = CacheBuilder.newBuilder().build();
 
     /**
      * List of the override handlers.
      */
     @NotNull
+    @SuppressWarnings(RAWTYPES)
     private final List<ITypeOverrideHandler> typeOverrideHandlers = new ArrayList<>();
 
     /**
      * Private constructor. Throws IllegalStateException if already created.
-     *
+     * <p>
      * We suppress warning squid:S2583 which makes sure that no null checks are executed on notnull fields.
      * In this case it makes sense since we need to make sure.
-     *
      */
     @SuppressWarnings("squid:S2583")
     private StandardFactoryController()
@@ -104,9 +109,10 @@ public final class StandardFactoryController implements IFactoryController
         return INSTANCE;
     }
 
-    @SuppressWarnings(Suppression.UNCHECKED)
+    @SuppressWarnings({UNCHECKED, RAWTYPES})
     @Override
-    public <INPUT, OUTPUT> IFactory<INPUT, OUTPUT> getFactoryForIO(@NotNull final TypeToken<? extends INPUT> inputClass, @NotNull final TypeToken<? extends OUTPUT> outputClass) throws IllegalArgumentException
+    public <INPUT, OUTPUT> IFactory<INPUT, OUTPUT> getFactoryForIO(@NotNull final TypeToken<? extends INPUT> inputClass, @NotNull final TypeToken<? extends OUTPUT> outputClass)
+      throws IllegalArgumentException
     {
         final ITypeOverrideHandler<INPUT, ?> inputOverrideHandler = typeOverrideHandlers.stream().filter(h -> h.getInputType().equals(inputClass)).findFirst().orElse(null);
         final ITypeOverrideHandler<?, OUTPUT> outputOverrideHandler = typeOverrideHandlers.stream().filter(h -> h.getInputType().equals(outputClass)).findFirst().orElse(null);
@@ -131,7 +137,7 @@ public final class StandardFactoryController implements IFactoryController
                     }
 
                     Log.getLogger().debug("Found matching Factory for Primary input type.");
-                    for (IFactory factory : factories)
+                    for (final IFactory factory : factories)
                     {
                         final Set<TypeToken> secondaryOutputSet = ReflectionUtils.getSuperClasses(factory.getFactoryOutputType());
                         if (secondaryOutputSet.contains(output))
@@ -151,6 +157,7 @@ public final class StandardFactoryController implements IFactoryController
         }
     }
 
+    @SuppressWarnings({UNCHECKED, RAWTYPES})
     @Override
     public <INPUT> IFactory<INPUT, ?> getFactoryForInput(@NotNull final TypeToken<? extends INPUT> inputClass) throws IllegalArgumentException
     {
@@ -173,6 +180,7 @@ public final class StandardFactoryController implements IFactoryController
         throw new IllegalArgumentException("The given input type is not a input of a factory.");
     }
 
+    @SuppressWarnings({UNCHECKED, RAWTYPES})
     @Override
     public <OUTPUT> IFactory<?, OUTPUT> getFactoryForOutput(@NotNull final TypeToken<? extends OUTPUT> outputClass) throws IllegalArgumentException
     {
@@ -194,6 +202,7 @@ public final class StandardFactoryController implements IFactoryController
         return primaryOutputMappings.get(output).stream().findFirst().get();
     }
 
+    @SuppressWarnings(RAWTYPES)
     @Override
     public <INPUT, OUTPUT> void registerNewFactory(@NotNull final IFactory<INPUT, OUTPUT> factory) throws IllegalArgumentException
     {
@@ -237,7 +246,7 @@ public final class StandardFactoryController implements IFactoryController
     }
 
     @Override
-    @SuppressWarnings(Suppression.UNCHECKED)
+    @SuppressWarnings(UNCHECKED)
     public <OUTPUT> NBTTagCompound serialize(@NotNull final OUTPUT object) throws IllegalArgumentException
     {
         final NBTTagCompound compound = new NBTTagCompound();
@@ -250,7 +259,7 @@ public final class StandardFactoryController implements IFactoryController
     }
 
     @Override
-    @SuppressWarnings(Suppression.UNCHECKED)
+    @SuppressWarnings(UNCHECKED)
     public <OUTPUT> OUTPUT deserialize(@NotNull final NBTTagCompound compound) throws IllegalArgumentException
     {
         final String className = compound.getString(NBT_TYPE);
@@ -282,6 +291,7 @@ public final class StandardFactoryController implements IFactoryController
         return deserialize(bufferCompound);
     }
 
+    @SuppressWarnings(UNCHECKED)
     @Override
     public <INPUT, OUTPUT> OUTPUT getNewInstance(@NotNull final TypeToken<? extends OUTPUT> requestedType, @NotNull final INPUT input, @NotNull final Object... context)
       throws IllegalArgumentException, ClassCastException

@@ -30,6 +30,9 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZEN_BY_REQUEST;
+import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
+import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
+import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 import static com.minecolonies.coremod.colony.buildings.AbstractBuilding.NO_WORK_ORDER;
 import static com.minecolonies.coremod.colony.buildings.AbstractBuilding.processIntegerKeyTokenList;
 
@@ -189,12 +192,12 @@ public abstract class AbstractBuildingView implements IRequester
         loadRequestSystemFromNBT(ByteBufUtils.readTag(buf));
     }
 
-    private void loadRequestSystemFromNBT(NBTTagCompound compound)
+    private void loadRequestSystemFromNBT(final NBTTagCompound compound)
     {
         this.citizensByRequests.clear();
         if (compound.hasKey(TAG_CITIZEN_BY_REQUEST))
         {
-            NBTTagList citizensByRequestList = compound.getTagList(TAG_CITIZEN_BY_REQUEST, Constants.NBT.TAG_COMPOUND);
+            final NBTTagList citizensByRequestList = compound.getTagList(TAG_CITIZEN_BY_REQUEST, Constants.NBT.TAG_COMPOUND);
             NBTUtils.streamCompound(citizensByRequestList).forEach(cbrc -> processIntegerKeyTokenList(cbrc, citizensByRequests));
         }
 
@@ -203,6 +206,7 @@ public abstract class AbstractBuildingView implements IRequester
         this.citizensByRequests.keySet().forEach(citizen -> this.citizensByRequests.get(citizen).forEach(requestToken -> this.requestsByCitizen.put(requestToken, citizen)));
     }
 
+    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED, RAWTYPES})
     public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfType(@NotNull final CitizenDataView citizenData, final Class<R> requestType)
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
@@ -235,14 +239,16 @@ public abstract class AbstractBuildingView implements IRequester
         return colony;
     }
 
+    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED, RAWTYPES})
     public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfTypeFiltered(
                                                                                                @NotNull final CitizenDataView citizenData,
                                                                                                final Class<R> requestType,
-                                                                                               Predicate<IRequest<? extends R>> filter)
+                                                                                               final Predicate<IRequest<? extends R>> filter)
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                       .filter(request -> {
                                           Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                                          //TODO: Check on the types of this, it is TypeToken and Class, possible mismatch
                                           return requestTypes.contains(requestType);
                                       })
                                       .map(request -> (IRequest<? extends R>) request)

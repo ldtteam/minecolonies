@@ -61,6 +61,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.Suppression.*;
+import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
+import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 
 /**
  * Base building class, has all the foundation for what a building stores and does.
@@ -150,6 +153,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
      * The value is a list of tokens that represent the open requests inside the colony.
      */
     @NotNull
+    @SuppressWarnings(RAWTYPES)
     private final Map<TypeToken, Collection<IToken<?>>> openRequests = new HashMap<>();
     /**
      * Keeps track of which citizen created what request. Citizen -> Request direction.
@@ -241,7 +245,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
                                     final String name,
                                     @NotNull final Class<? extends AbstractBuilding> buildingClass,
                                     @NotNull final Class<? extends AbstractBuildingView> viewClass,
-                                    @NotNull final Class<? extends AbstractBlockHut> parentBlock)
+                                    @NotNull final Class<? extends AbstractBlockHut<?>> parentBlock)
     {
         final int buildingHashCode = buildingClass.getName().hashCode();
 
@@ -417,7 +421,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         {
             final NBTTagList requests = compound.getTagList(TAG_OPEN_REQUESTS, Constants.NBT.TAG_COMPOUND);
             NBTUtils.streamCompound(requests).forEach(orc -> {
-                final Class clazz;
+                final Class<?> clazz;
                 try
                 {
                     clazz = Class.forName(orc.getString(TAG_TOKEN));
@@ -1363,7 +1367,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
      * @param requestToken The {@link IToken} that is used to represent the request.
      * @param requested    The class of the type that has been requested eg. {@code ItemStack.class}
      */
-    private void addRequestToMaps(@NotNull final Integer citizenId, @NotNull final IToken<?> requestToken, @NotNull final TypeToken requested)
+    private void addRequestToMaps(@NotNull final Integer citizenId, @NotNull final IToken<?> requestToken, @NotNull final TypeToken<?> requested)
     {
         if (!openRequests.containsKey(requested))
         {
@@ -1405,7 +1409,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         return !getOpenRequestsOfType(citizenData, requestType).isEmpty();
     }
 
-    @SuppressWarnings(Suppression.GENERIC_WILDCARD)
+    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED, RAWTYPES})
     public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfType(
                                                                            @NotNull final CitizenData citizenData,
                                                                            final TypeToken<R> requestType)
@@ -1435,6 +1439,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
                                       .map(getColony().getRequestManager()::getRequestForToken).filter(Objects::nonNull).iterator());
     }
 
+    @SuppressWarnings({GENERIC_WILDCARD, RAWTYPES, UNCHECKED})
     public <R> ImmutableList<IRequest<? extends R>> getCompletedRequestsOfType(@NotNull final CitizenData citizenData, final TypeToken<R> requestType)
     {
         return ImmutableList.copyOf(getCompletedRequests(citizenData).stream()
@@ -1446,6 +1451,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
                                       .iterator());
     }
 
+    @SuppressWarnings({GENERIC_WILDCARD, RAWTYPES, UNCHECKED})
     public <R> ImmutableList<IRequest<? extends R>> getCompletedRequestsOfTypeFiltered(
                                                                                         @NotNull final CitizenData citizenData,
                                                                                         final TypeToken<R> requestType,
@@ -1545,7 +1551,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
             return;
         }
     }
-
+    @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED, RAWTYPES})
     public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfTypeFiltered(
                                                                                    @NotNull final CitizenData citizenData,
                                                                                    final TypeToken<R> requestType,
