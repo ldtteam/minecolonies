@@ -24,6 +24,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
+import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
+
 public class StandardRetryingRequestResolver implements IRetryingRequestResolver
 {
 
@@ -88,8 +91,7 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     }
 
     @Override
-    public boolean canResolve(
-                               @NotNull final IRequestManager manager, final IRequest<? extends IRetryable> requestToCheck)
+    public boolean canResolve(@NotNull final IRequestManager manager, final IRequest<? extends IRetryable> requestToCheck)
     {
         return getCurrentlyBeingReassignedRequest() == null || requestToCheck.getToken() != getCurrentlyBeingReassignedRequest()
                  || getCurrentReassignmentAttempt() < getMaximalTries();
@@ -97,8 +99,7 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
 
     @Nullable
     @Override
-    public List<IToken<?>> attemptResolve(
-                                           @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request)
+    public List<IToken<?>> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request)
     {
         return ImmutableList.of();
     }
@@ -111,19 +112,19 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
         assignedRequests.put(request.getToken(), assignedRequests.containsKey(request.getToken()) ? assignedRequests.get(request.getToken()) + 1 : 1);
     }
 
+    @SuppressWarnings(RAWTYPES)
     @Nullable
     @Override
-    public IRequest getFollowupRequestForCompletion(
-                                                     @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> completedRequest)
+    public IRequest getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> completedRequest)
     {
         //Gets never called, since these will never get completed, only overruled or reassigned.
         return null;
     }
 
+    @SuppressWarnings(RAWTYPES)
     @Nullable
     @Override
-    public IRequest onRequestCancelledOrOverruled(
-                                                   @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request)
+    public IRequest onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request)
     {
         //Okey somebody completed it or what ever.
         //Lets remove if from our data structures:

@@ -121,9 +121,9 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
      *
      * @throws IllegalArgumentException when either their is no request with that token, or the token does not produce a request of the given type T.
      */
+    @SuppressWarnings(RAWTYPES)
     @NotNull
     @Override
-    @SuppressWarnings(RAWTYPES)
     public IRequest getRequestForToken(@NotNull final IToken<?> token)
     {
         return RequestHandler.getRequestOrNull(wrappedManager, token);
@@ -135,6 +135,7 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
      * @param token@return The resolver registered with the given token.
      * @throws IllegalArgumentException when the token is unknown.
      */
+    @SuppressWarnings(RAWTYPES)
     @NotNull
     @Override
     public IRequestResolver getResolverForToken(@NotNull final IToken<?> token)
@@ -150,9 +151,10 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
      *
      * @throws IllegalArgumentException Thrown when the token is unknown.
      */
+    @SuppressWarnings(RAWTYPES)
     @Nullable
     @Override
-    public <T extends IRequestable> IRequestResolver<T> getResolverForRequest(@NotNull final IToken<?> requestToken)
+    public IRequestResolver getResolverForRequest(@NotNull final IToken<?> requestToken)
     {
         return wrappedManager.getResolverForRequest(requestToken);
     }

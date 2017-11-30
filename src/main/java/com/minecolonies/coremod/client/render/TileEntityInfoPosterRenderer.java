@@ -32,6 +32,8 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
+
 @SideOnly(Side.CLIENT)
 public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<TileEntityInfoPoster>
 {
@@ -106,7 +108,7 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
         final World world = te.getWorld();
         final IBlockState state = world.getBlockState(te.getPos());
         final BlockPos pos = te.getPos();
-        final IBlockState actualState = state.getBlock().getActualState(state, world, pos);
+        @SuppressWarnings(DEPRECATION) final IBlockState actualState = state.getBlock().getActualState(state, world, pos);
         int facing = (int) actualState.getValue(BlockWallSign.FACING).getHorizontalAngle();
 
         double plusX = 0;
@@ -176,7 +178,7 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
     private static void renderModel(final World world, final IBakedModel model, final BlockPos pos, final int alpha)
     {
         final IBlockState state = world.getBlockState(pos);
-        final IBlockState actualState = state.getBlock().getActualState(state, world, pos);
+        @SuppressWarnings(DEPRECATION) final IBlockState actualState = state.getBlock().getActualState(state, world, pos);
         final IBlockState iBlockExtendedState = state.getBlock().getExtendedState(state, world, pos);
 
         for (final EnumFacing facing : EnumFacing.values())

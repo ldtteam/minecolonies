@@ -21,7 +21,6 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
-import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.LogHandler;
@@ -263,7 +262,7 @@ public class StandardRequestManager implements IStandardRequestManager
 
         return getFactoryController().deserialize(requestData);
     }
-
+    @SuppressWarnings(RAWTYPES)
     @NotNull
     @Override
     public IRequestResolver getResolverForToken(@NotNull final IToken<?> token)
@@ -273,9 +272,10 @@ public class StandardRequestManager implements IStandardRequestManager
         return getFactoryController().deserialize(getFactoryController().serialize(resolver));
     }
 
+    @SuppressWarnings(RAWTYPES)
     @Nullable
     @Override
-    public <T extends IRequestable> IRequestResolver<T> getResolverForRequest(@NotNull final IToken<?> requestToken)
+    public IRequestResolver getResolverForRequest(@NotNull final IToken<?> requestToken)
     {
         final IRequest<?> request = RequestHandler.getRequest(this, requestToken);
 

@@ -14,6 +14,8 @@ import com.minecolonies.coremod.colony.requestsystem.management.manager.wrapped.
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
+
 /**
  * Class used to handle the inner workings of the request system with regards to resolvers.
  */
@@ -68,7 +70,7 @@ public final class ResolverHandler
 
         manager.getResolverBiMap().put(resolver.getRequesterId(), resolver);
 
-        final Set<TypeToken> resolverTypes = ReflectionUtils.getSuperClasses(resolver.getRequestType());
+        @SuppressWarnings(RAWTYPES) final Set<TypeToken> resolverTypes = ReflectionUtils.getSuperClasses(resolver.getRequestType());
         resolverTypes.remove(TypeConstants.OBJECT);
         resolverTypes.forEach(c -> {
             if (!manager.getRequestClassResolverMap().containsKey(c))
@@ -183,7 +185,7 @@ public final class ResolverHandler
     public static void removeResolverInternal(final IStandardRequestManager manager, final IRequestResolver<?> resolver)
     {
         manager.getResolverBiMap().remove(resolver.getRequesterId());
-        final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(resolver.getRequestType());
+        @SuppressWarnings(RAWTYPES) final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(resolver.getRequestType());
         requestTypes.remove(TypeConstants.OBJECT);
         requestTypes.forEach(c -> {
             LogHandler.log("Removing resolver: " + resolver + " with request type: " + c);
@@ -314,7 +316,7 @@ public final class ResolverHandler
      *
      * @throws IllegalArgumentException when the token is unknown or the request is not assigned yet.
      */
-    public static IRequestResolver getResolverForRequest(final IStandardRequestManager manager, final IRequest<?> request)
+    public static IRequestResolver<? extends IRequestable> getResolverForRequest(final IStandardRequestManager manager, final IRequest<?> request)
     {
         RequestHandler.getRequest(manager, request.getToken());
 

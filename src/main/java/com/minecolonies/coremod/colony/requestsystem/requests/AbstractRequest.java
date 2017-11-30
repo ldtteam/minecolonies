@@ -24,6 +24,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
+
 /**
  * Abstract skeleton implementation of a request.
  *
@@ -141,7 +143,8 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
         {
             try
             {
-                manager.getRequestForToken(getParent()).childStateUpdated(manager, getToken());
+                final IRequest<?> requestForToken = manager.getRequestForToken(getParent());
+                requestForToken.childStateUpdated(manager, getToken());
             }
             catch (final IllegalArgumentException ex)
             {

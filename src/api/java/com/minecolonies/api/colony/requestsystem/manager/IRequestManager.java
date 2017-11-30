@@ -64,7 +64,6 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>, ITick
      * @param token The token of the request to assign.
      * @throws IllegalArgumentException when the token is not registered to a request, or is already assigned to a resolver.
      */
-    @NotNull
     void assignRequest(@NotNull IToken<?> token);
 
     /**
@@ -100,8 +99,8 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>, ITick
      *
      * @throws IllegalArgumentException when the token does not produce a request of the given type T.
      */
-    @Nullable
     @SuppressWarnings(RAWTYPES)
+    @Nullable
     IRequest getRequestForToken(@NotNull final IToken<?> token);
 
     /**
@@ -112,6 +111,7 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>, ITick
      *
      * @throws IllegalArgumentException when the token is unknown.
      */
+    @SuppressWarnings(RAWTYPES)
     @NotNull
     IRequestResolver getResolverForToken(@NotNull final IToken<?> token);
 
@@ -119,13 +119,13 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>, ITick
      * Method to get a resolver for a given request.
      *
      * @param requestToken The token of the request to get resolver for.
-     * @param <T>          The type of request that the resolver can process.
      * @return Null if the request is not yet resolved, or else the assigned resolver.
      *
      * @throws IllegalArgumentException Thrown when the token is unknown.
      */
+    @SuppressWarnings(RAWTYPES)
     @Nullable
-    <T extends IRequestable> IRequestResolver<T> getResolverForRequest(@NotNull final IToken<?> requestToken);
+    IRequestResolver getResolverForRequest(@NotNull final IToken<?> requestToken);
 
     /**
      * Method to update the state of a given request.
@@ -134,7 +134,6 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>, ITick
      * @param state The new state of that request.
      * @throws IllegalArgumentException when the token is unknown to this manager.
      */
-    @NotNull
     void updateRequestState(@NotNull IToken<?> token, @NotNull RequestState state);
 
     /**
