@@ -6,6 +6,8 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.util.constant.Suppression.*;
+
 /**
  * Interface used to describe classes that function as Factory controllers.
  */
@@ -27,7 +29,7 @@ public interface IFactoryController
         //Any exceptions thrown before actual request is made gets wrapped.
         try
         {
-            @SuppressWarnings(Suppression.UNCHECKED)
+            @SuppressWarnings(UNCHECKED)
             final TypeToken<? extends Input> typeToken = (TypeToken<? extends Input>) TypeToken.of(Class.forName(className));
             return getFactoryForInput(typeToken);
         }
@@ -81,7 +83,7 @@ public interface IFactoryController
         //Any exceptions thrown before actual request is made gets wrapped.
         try
         {
-            @SuppressWarnings(Suppression.UNCHECKED)
+            @SuppressWarnings(UNCHECKED)
             final TypeToken<? extends Output> typeToken = (TypeToken<? extends Output>) TypeToken.of(Class.forName(className));
             return getFactoryForOutput(typeToken);
         }

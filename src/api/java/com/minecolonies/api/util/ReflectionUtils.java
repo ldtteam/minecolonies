@@ -7,6 +7,9 @@ import java.lang.reflect.Field;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
+import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
+
 /**
  * Utility class with methods regarding reflection.
  */
@@ -27,10 +30,11 @@ public final class ReflectionUtils
      * @param <T>   The type to get the super types for.
      * @return A set with the super types of the given type.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(RAWTYPES)
     public static <T> Set<TypeToken> getSuperClasses(final TypeToken<T> token)
     {
-        final Set<TypeToken> directSet = new LinkedHashSet<>(token.getTypes());
+        final Set<TypeToken<?>> directSet = new LinkedHashSet<>(token.getTypes());
+        @SuppressWarnings(UNCHECKED)
         final Set<TypeToken> resultingSet = new LinkedHashSet<>();
 
         directSet.forEach(t ->
