@@ -52,36 +52,6 @@ public abstract class AbstractBlockMinecoloniesStairs<B extends AbstractBlockMin
         registry.register((new ItemBlock(this)).setRegistryName(this.getRegistryName()));
     }
 
-    /**
-     * @deprecated (Remove this as soon as minecraft offers anything better).
-     */
-    @SuppressWarnings(DEPRECATION)
-    @Override
-    @Deprecated
-    public boolean isFullCube(final IBlockState state)
-    {
-        return false;
-    }
-
-    /**
-     * @deprecated (Remove this as soon as minecraft offers anything better).
-     */
-    @SuppressWarnings(DEPRECATION)
-    @Override
-    @Deprecated
-    public boolean isOpaqueCube(final IBlockState state)
-    {
-        return false;
-    }
-
-    @NotNull
-    @Override
-    @SideOnly(Side.CLIENT)
-    public BlockRenderLayer getBlockLayer()
-    {
-        return BlockRenderLayer.SOLID;
-    }
-
     @Override
     public boolean doesSideBlockRendering(final IBlockState state, final IBlockAccess world, final BlockPos pos, final EnumFacing face)
     {
