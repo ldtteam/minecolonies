@@ -27,13 +27,15 @@ public interface IFactoryController
         //Any exceptions thrown before actual request is made gets wrapped.
         try
         {
-            return getFactoryForInput((TypeToken<? extends Input>) TypeToken.of(Class.forName(className)));
+            @SuppressWarnings(Suppression.UNCHECKED)
+            final TypeToken<? extends Input> typeToken = (TypeToken<? extends Input>) TypeToken.of(Class.forName(className));
+            return getFactoryForInput(typeToken);
         }
-        catch (IllegalArgumentException ex)
+        catch (final IllegalArgumentException ex)
         {
             throw ex;
         }
-        catch (Exception ex)
+        catch (final Exception ex)
         {
             throw new IllegalArgumentException("The given input name is unknown", ex);
         }
@@ -61,7 +63,6 @@ public interface IFactoryController
      *
      * @throws IllegalArgumentException Thrown when no factory exists for the combination of input and output.
      */
-    @SuppressWarnings(Suppression.UNCHECKED)
     <Input, Output> IFactory<Input, Output> getFactoryForIO(@NotNull final TypeToken<? extends Input> inputTypeToken, @NotNull final TypeToken<? extends Output> outputTypeToken)
       throws IllegalArgumentException;
 
@@ -80,13 +81,15 @@ public interface IFactoryController
         //Any exceptions thrown before actual request is made gets wrapped.
         try
         {
-            return getFactoryForOutput((TypeToken<? extends Output>) TypeToken.of(Class.forName(className)));
+            @SuppressWarnings(Suppression.UNCHECKED)
+            final TypeToken<? extends Output> typeToken = (TypeToken<? extends Output>) TypeToken.of(Class.forName(className));
+            return getFactoryForOutput(typeToken);
         }
-        catch (IllegalArgumentException ex)
+        catch (final IllegalArgumentException ex)
         {
             throw ex;
         }
-        catch (Exception ex)
+        catch (final Exception ex)
         {
             throw new IllegalArgumentException("The given output name is unknown", ex);
         }
@@ -121,7 +124,7 @@ public interface IFactoryController
      *
      * @throws IllegalArgumentException is thrown when the output type is unknown to this controller.
      */
-    <Output extends Object> NBTTagCompound serialize(@NotNull final Output object) throws IllegalArgumentException;
+    <Output> NBTTagCompound serialize(@NotNull final Output object) throws IllegalArgumentException;
 
     /**
      * Method used to quickly deserialize a object if it is known to this controller.
@@ -142,7 +145,7 @@ public interface IFactoryController
      * @param <Output> The type of the object to write.
      * @throws IllegalArgumentException is thrown when the given output type is unknown to this controller.
      */
-    <Output extends Object> void writeToBuffer(@NotNull final ByteBuf buffer, @NotNull final Output object) throws IllegalArgumentException;
+    <Output> void writeToBuffer(@NotNull final ByteBuf buffer, @NotNull final Output object) throws IllegalArgumentException;
 
     /**
      * Method used to quickly read an object from a given {@link ByteBuf}

@@ -75,7 +75,7 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
      *                          and all requirements should be available to this resolver at this point in time.
      */
     @Nullable
-    void resolve(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request) throws RuntimeException;
+    void resolve(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request);
 
     /**
      * Method called by the given manager to request a followup request.
@@ -104,7 +104,7 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
      * @throws IllegalArgumentException is thrown when the cancelling or overrulling failed.
      */
     @Nullable
-    IRequest<?> onRequestCancelledOrOverruled(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request) throws IllegalArgumentException;
+    IRequest<?> onRequestCancelledOrOverruled(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request);
 
     /**
      * The priority of this resolver.

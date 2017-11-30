@@ -72,7 +72,7 @@ public class PlayerRequestResolver implements IPlayerRequestResolver
     }
 
     @Override
-    public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request) throws RuntimeException
+    public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
         final IColony colony = manager.getColony();
         if (colony instanceof Colony)
