@@ -1,10 +1,10 @@
 #X-Generator: crowdin.com
-tile.minecolonies.blockHutCitizen.name=Citizen's Hut
-tile.minecolonies.blockHutBaker.name=Bakery
-tile.minecolonies.blockHutBlacksmith.name=Forge
-tile.minecolonies.blockHutBuilder.name=Builder's Hut
-tile.minecolonies.blockHutFarmer.name=Farm
-tile.minecolonies.blockHutLumberjack.name=Sawmill
+tile.minecolonies.blockHutCitizen.name=شہری کی جھونپڑی
+tile.minecolonies.blockHutBaker.name=بیکری
+tile.minecolonies.blockHutBlacksmith.name=سانچہ
+tile.minecolonies.blockHutBuilder.name=تیار کنندہ کی جھونپڑی
+tile.minecolonies.blockHutFarmer.name=فارم
+tile.minecolonies.blockHutLumberjack.name=آرا مشین
 tile.minecolonies.blockHutFisherman.name=Fisherman's Hut
 tile.minecolonies.blockHutMiner.name=Mine
 tile.minecolonies.blockHutStonemason.name=Quarry
