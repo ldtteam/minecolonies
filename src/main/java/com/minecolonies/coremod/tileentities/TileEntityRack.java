@@ -28,6 +28,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
+import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
+
 /**
  * Tile entity for the warehouse shelves.
  */
@@ -535,8 +538,9 @@ public class TileEntityRack extends TileEntity
         return super.hasCapability(capability, facing);
     }
 
+    @SuppressWarnings(UNCHECKED)
     @Override
-    public <T> T getCapability(final Capability<T> capability, final EnumFacing facing)
+    public <T> T getCapability(@NotNull final Capability<T> capability, final EnumFacing facing)
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
         {
