@@ -1,12 +1,11 @@
 package com.minecolonies.api.colony.requestsystem.factory;
 
 import com.google.common.reflect.TypeToken;
-import com.minecolonies.api.util.constant.Suppression;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.constant.Suppression.*;
+import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 
 /**
  * Interface used to describe classes that function as Factory controllers.

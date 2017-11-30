@@ -14,7 +14,6 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.blocks.*;
 import com.minecolonies.coremod.colony.*;
@@ -62,8 +61,6 @@ import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.Suppression.*;
-import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
-import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 
 /**
  * Base building class, has all the foundation for what a building stores and does.

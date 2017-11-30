@@ -57,7 +57,6 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
-import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 import static com.minecolonies.api.util.constant.Suppression.RESOURCES_SHOULD_BE_CLOSED;
 
 /**

@@ -24,8 +24,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
-
 /**
  * Abstract skeleton implementation of a request.
  *

@@ -8,7 +8,6 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.ReflectionUtils;
-import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyView;
@@ -30,9 +29,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZEN_BY_REQUEST;
-import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
-import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
-import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
+import static com.minecolonies.api.util.constant.Suppression.*;
 import static com.minecolonies.coremod.colony.buildings.AbstractBuilding.NO_WORK_ORDER;
 import static com.minecolonies.coremod.colony.buildings.AbstractBuilding.processIntegerKeyTokenList;
 

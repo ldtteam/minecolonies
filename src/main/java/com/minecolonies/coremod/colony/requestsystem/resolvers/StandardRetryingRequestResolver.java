@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 
 public class StandardRetryingRequestResolver implements IRetryingRequestResolver
