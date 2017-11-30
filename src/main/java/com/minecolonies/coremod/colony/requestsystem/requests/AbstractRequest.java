@@ -253,8 +253,9 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
      *
      * @param children An array of children to add.
      */
+    @SafeVarargs
     @Override
-    public <T extends IToken<?>> void addChildren(@NotNull final T... children)
+    public final <T extends IToken<?>> void addChildren(@NotNull final T... children)
     {
         for (final IToken<?> theToken : children)
         {
@@ -293,8 +294,9 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
      *
      * @param children An array of children to remove.
      */
+    @SafeVarargs
     @Override
-    public <T extends IToken<?>> void removeChildren(@NotNull final T... children)
+    public final <T extends IToken<?>> void removeChildren(@NotNull final T... children)
     {
         for (final IToken<?> theToken : children)
         {

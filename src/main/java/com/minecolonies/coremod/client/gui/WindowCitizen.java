@@ -313,19 +313,19 @@ public class WindowCitizen extends AbstractWindowSkeleton
     /**
      * Scrollinglist of the resources.
      */
-    private final ScrollingList resourceList;
+    private final ScrollingList   resourceList;
     /**
      * Inventory of the player.
      */
-    private final InventoryPlayer inventory = this.mc.player.inventory;
+    private final InventoryPlayer inventory  = this.mc.player.inventory;
     /**
      * Is the player in creative or not.
      */
-    private final boolean isCreative = this.mc.player.capabilities.isCreativeMode;
+    private final boolean         isCreative = this.mc.player.capabilities.isCreativeMode;
     /**
      * Life count.
      */
-    private int lifeCount = 0;
+    private       int             lifeCount  = 0;
 
     /**
      * Constructor to initiate the citizen windows.
@@ -404,7 +404,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
 
             if (!(request.getRequest() instanceof IDeliverable)
                   || (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory),
-              stack -> ((IRequest<? extends IDeliverable>) request).getRequest().matches(stack))))
+              stack -> ((IDeliverable) request.getRequest()).matches(stack))))
             {
                 rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
             }
@@ -554,7 +554,10 @@ public class WindowCitizen extends AbstractWindowSkeleton
         }
 
         final BlockPos playerPos = Minecraft.getMinecraft().player.getPosition();
-        requests.sort(Comparator.comparing((IRequest<?> request) -> request.getRequester().getDeliveryLocation().getInDimensionLocation().getDistance(playerPos.getX(), playerPos.getY(), playerPos.getZ())).thenComparingInt(Object::hashCode));
+        requests.sort(Comparator.comparing((IRequest<?> request) -> request.getRequester()
+                                                                      .getDeliveryLocation()
+                                                                      .getInDimensionLocation()
+                                                                      .getDistance(playerPos.getX(), playerPos.getY(), playerPos.getZ())).thenComparingInt(Object::hashCode));
 
         return ImmutableList.copyOf(requests);
     }
@@ -645,10 +648,10 @@ public class WindowCitizen extends AbstractWindowSkeleton
                 return;
             }
 
-            @NotNull final IRequest<? extends IDeliverable> request = (IRequest<? extends IDeliverable>) tRequest;
+            @NotNull final IDeliverable request = (IDeliverable) tRequest.getRequest();
 
-            final Predicate<ItemStack> requestPredicate = stack -> request.getRequest().matches(stack);
-            final int amount = request.getRequest().getCount();
+            final Predicate<ItemStack> requestPredicate = request::matches;
+            final int amount = request.getCount();
 
             final int count = InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory), requestPredicate);
 
@@ -662,7 +665,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
             @NotNull final ItemStack itemStack;
             if (isCreative)
             {
-                itemStack = request.getDisplayStacks().stream().findFirst().orElse(ItemStack.EMPTY);
+                itemStack = tRequest.getDisplayStacks().stream().findFirst().orElse(ItemStack.EMPTY);
             }
             else
             {
@@ -672,7 +675,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
             final AbstractBuildingView building = ColonyManager.getColonyView(citizen.getColonyId()).getBuilding(citizen.getWorkBuilding());
 
             MineColonies.getNetwork().sendToServer(new TransferItemsRequestMessage(building, itemStack, isCreative ? amount : count, false));
-            MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getToken(), RequestState.OVERRULED, itemStack));
+            MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), tRequest.getToken(), RequestState.OVERRULED, itemStack));
         }
     }
 }
