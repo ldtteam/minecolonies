@@ -161,17 +161,23 @@ processResources {
 
 compileJava {
     options.encoding = 'UTF-8'
-    options.compilerArgs << "-Xlint"
+    options.compilerArgs << "-Xlint:all"
+    options.compilerArgs << "-Xmaxwarns"
+    options.compilerArgs << "9999"
 }
 
 compileApiJava {
     options.encoding = 'UTF-8'
-    options.compilerArgs << "-Xlint"
+    options.compilerArgs << "-Xlint:all"
+    options.compilerArgs << "-Xmaxwarns"
+    options.compilerArgs << "9999"
 }
 
 compileBlockOutJava {
     options.encoding = 'UTF-8'
-    options.compilerArgs << "-Xlint"
+    options.compilerArgs << "-Xlint:all"
+    options.compilerArgs << "-Xmaxwarns"
+    options.compilerArgs << "9999"
 }
 
 task apiJar(type: Jar) {

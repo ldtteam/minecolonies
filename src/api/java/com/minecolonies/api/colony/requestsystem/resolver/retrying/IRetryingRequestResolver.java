@@ -53,5 +53,5 @@ public interface IRetryingRequestResolver extends IQueuedRequestResolver<IRetrya
      * @return The token of the quest that is being reassigned, null if no reassignment is being performed.
      */
     @Nullable
-    IToken getCurrentlyBeingReassignedRequest();
+    IToken<?> getCurrentlyBeingReassignedRequest();
 }

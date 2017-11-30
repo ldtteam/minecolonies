@@ -339,7 +339,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             job.setReturning(false);
         }
 
-        final Collection<IToken> finallyAssignedTokens = worker.getColony().getRequestManager().getPlayerResolver().getAllAssignedRequests();
+        final Collection<IToken<?>> finallyAssignedTokens = worker.getColony().getRequestManager().getPlayerResolver().getAllAssignedRequests();
         finallyAssignedTokens.forEach(iToken -> worker.getColony().getRequestManager().reassignRequest(iToken, ImmutableList.of()));
 
         return START_WORKING;

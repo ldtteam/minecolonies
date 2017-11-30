@@ -150,21 +150,21 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
      * The value is a list of tokens that represent the open requests inside the colony.
      */
     @NotNull
-    private final Map<TypeToken, Collection<IToken>> openRequests = new HashMap<>();
+    private final Map<TypeToken, Collection<IToken<?>>> openRequests = new HashMap<>();
     /**
      * Keeps track of which citizen created what request. Citizen -> Request direction.
      */
-    private final HashMap<Integer, Collection<IToken>> citizensByRequests = new HashMap<>();
+    private final HashMap<Integer, Collection<IToken<?>>> citizensByRequests = new HashMap<>();
 
     /**
      * Keeps track of which citizen has completed requests. Citizen -> Request direction.
      */
-    private final HashMap<Integer, Collection<IToken>> citizensByCompletedRequests = new HashMap<>();
+    private final HashMap<Integer, Collection<IToken<?>>> citizensByCompletedRequests = new HashMap<>();
 
     /**
      * Keeps track of which citizen created what request. Request -> Citizen direction.
      */
-    private final HashMap<IToken, Integer> requestsByCitizen = new HashMap<>();
+    private final HashMap<IToken<?>, Integer> requestsByCitizen = new HashMap<>();
     /**
      * The ID of the building. Needed in the request system to identify it.
      */
@@ -401,7 +401,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
      */
     public abstract String getSchematicName();
 
-    private void loadRequestSystemFromNBT(NBTTagCompound compound)
+    private void loadRequestSystemFromNBT(final NBTTagCompound compound)
     {
         if (compound.hasKey(TAG_REQUESTOR_ID))
         {
@@ -415,9 +415,9 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         this.openRequests.clear();
         if (compound.hasKey(TAG_OPEN_REQUESTS))
         {
-            NBTTagList requests = compound.getTagList(TAG_OPEN_REQUESTS, Constants.NBT.TAG_COMPOUND);
+            final NBTTagList requests = compound.getTagList(TAG_OPEN_REQUESTS, Constants.NBT.TAG_COMPOUND);
             NBTUtils.streamCompound(requests).forEach(orc -> {
-                Class clazz;
+                final Class clazz;
                 try
                 {
                     clazz = Class.forName(orc.getString(TAG_TOKEN));
@@ -428,9 +428,9 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
                     return;
                 }
 
-                NBTTagList assigned = orc.getTagList(TAG_ASSIGNMENTS, Constants.NBT.TAG_COMPOUND);
-                Collection<IToken> tokens = NBTUtils.streamCompound(assigned)
-                                              .map(tc -> (IToken) StandardFactoryController.getInstance().deserialize(tc))
+                final NBTTagList assigned = orc.getTagList(TAG_ASSIGNMENTS, Constants.NBT.TAG_COMPOUND);
+                final Collection<IToken<?>> tokens = NBTUtils.streamCompound(assigned)
+                                              .map(tc -> (IToken<?>) StandardFactoryController.getInstance().deserialize(tc))
                                               .collect(Collectors.toList());
 
                 openRequests.put(TypeToken.of(clazz), tokens);
@@ -440,14 +440,14 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         this.citizensByRequests.clear();
         if (compound.hasKey(TAG_CITIZEN_BY_REQUEST))
         {
-            NBTTagList citizensByRequestList = compound.getTagList(TAG_CITIZEN_BY_REQUEST, Constants.NBT.TAG_COMPOUND);
+            final NBTTagList citizensByRequestList = compound.getTagList(TAG_CITIZEN_BY_REQUEST, Constants.NBT.TAG_COMPOUND);
             NBTUtils.streamCompound(citizensByRequestList).forEach(cbrc -> processIntegerKeyTokenList(cbrc, citizensByRequests));
         }
 
         this.citizensByCompletedRequests.clear();
         if (compound.hasKey(TAG_CITIZEN_BY_COMPLETED_REQUEST))
         {
-            NBTTagList citizensByCompletedRequestList = compound.getTagList(TAG_CITIZEN_BY_COMPLETED_REQUEST, Constants.NBT.TAG_COMPOUND);
+            final NBTTagList citizensByCompletedRequestList = compound.getTagList(TAG_CITIZEN_BY_COMPLETED_REQUEST, Constants.NBT.TAG_COMPOUND);
             NBTUtils.streamCompound(citizensByCompletedRequestList).forEach(cbrc -> processIntegerKeyTokenList(cbrc, citizensByCompletedRequests));
         }
 
@@ -455,12 +455,12 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         this.citizensByRequests.keySet().forEach(citizen -> this.citizensByRequests.get(citizen).forEach(requestToken -> this.requestsByCitizen.put(requestToken, citizen)));
     }
 
-    public static void processIntegerKeyTokenList(NBTTagCompound compound, Map<Integer, Collection<IToken>> outputMap)
+    public static void processIntegerKeyTokenList(final NBTTagCompound compound, final Map<Integer, Collection<IToken<?>>> outputMap)
     {
-        Integer key = compound.getInteger(TAG_TOKEN);
-        NBTTagList assignments = compound.getTagList(TAG_ASSIGNMENTS, Constants.NBT.TAG_COMPOUND);
-        Collection<IToken> tokens = NBTUtils.streamCompound(assignments)
-                                      .map(tc -> (IToken) StandardFactoryController.getInstance().deserialize(tc))
+        final Integer key = compound.getInteger(TAG_TOKEN);
+        final NBTTagList assignments = compound.getTagList(TAG_ASSIGNMENTS, Constants.NBT.TAG_COMPOUND);
+        final Collection<IToken<?>> tokens = NBTUtils.streamCompound(assignments)
+                                      .map(tc -> (IToken<?>) StandardFactoryController.getInstance().deserialize(tc))
                                       .collect(Collectors.toList());
 
         outputMap.put(key, tokens);
@@ -674,7 +674,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         compound.setInteger(TAG_PRIO, this.pickUpPriority);
     }
 
-    private void writeRequestSystemToNBT(NBTTagCompound compound)
+    private void writeRequestSystemToNBT(final NBTTagCompound compound)
     {
         compound.setTag(TAG_REQUESTOR_ID, StandardFactoryController.getInstance().serialize(this.requester));
 
@@ -692,7 +692,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         compound.setTag(TAG_CITIZEN_BY_COMPLETED_REQUEST, writeIntegerKeyTokenListToNBT(this.citizensByCompletedRequests));
     }
 
-    private static NBTTagList writeIntegerKeyTokenListToNBT(Map<Integer, Collection<IToken>> input)
+    private static NBTTagList writeIntegerKeyTokenListToNBT(final Map<Integer, Collection<IToken<?>>> input)
     {
         return input.keySet().stream().map(key -> {
             NBTTagCompound compound = new NBTTagCompound();
@@ -1059,7 +1059,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         buf.writeInt(getPickUpPriority());
         buf.writeInt(getCurrentWorkOrderLevel());
 
-        NBTTagCompound requestSystemCompound = new NBTTagCompound();
+        final NBTTagCompound requestSystemCompound = new NBTTagCompound();
         writeRequestSystemToNBT(requestSystemCompound);
 
         ByteBufUtils.writeTag(buf, requestSystemCompound);
@@ -1342,9 +1342,9 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
 
     //------------------------- !START! RequestSystem handling for minecolonies buildings -------------------------//
 
-    public <R extends IRequestable> IToken createRequest(@NotNull CitizenData citizenData, @NotNull R requested)
+    public <R extends IRequestable> IToken<?> createRequest(@NotNull final CitizenData citizenData, @NotNull final R requested)
     {
-        IToken requestToken = colony.getRequestManager().createRequest(requester, requested);
+        final IToken<?> requestToken = colony.getRequestManager().createRequest(requester, requested);
 
         addRequestToMaps(citizenData.getId(), requestToken, TypeToken.of(requested.getClass()));
 
@@ -1363,7 +1363,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
      * @param requestToken The {@link IToken} that is used to represent the request.
      * @param requested    The class of the type that has been requested eg. {@code ItemStack.class}
      */
-    private void addRequestToMaps(@NotNull Integer citizenId, @NotNull IToken requestToken, @NotNull TypeToken requested)
+    private void addRequestToMaps(@NotNull final Integer citizenId, @NotNull final IToken<?> requestToken, @NotNull final TypeToken requested)
     {
         if (!openRequests.containsKey(requested))
         {
@@ -1380,7 +1380,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         citizensByRequests.get(citizenId).add(requestToken);
     }
 
-    public boolean hasWorkerOpenRequests(@NotNull CitizenData citizen)
+    public boolean hasWorkerOpenRequests(@NotNull final CitizenData citizen)
     {
         return !getOpenRequests(citizen).isEmpty();
     }
@@ -1395,7 +1395,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         return ImmutableList.copyOf(citizensByRequests.get(data.getId()).stream().map(getColony().getRequestManager()::getRequestForToken).filter(Objects::nonNull).iterator());
     }
 
-    public boolean hasWorkerOpenRequestsFiltered(@NotNull CitizenData citizen, @NotNull Predicate<IRequest> selectionPredicate)
+    public boolean hasWorkerOpenRequestsFiltered(@NotNull final CitizenData citizen, @NotNull final Predicate<IRequest> selectionPredicate)
     {
         return getOpenRequests(citizen).stream().anyMatch(selectionPredicate);
     }
@@ -1461,7 +1461,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
                                       .iterator());
     }
 
-    public void markRequestAsAccepted(@NotNull final CitizenData data, @NotNull final IToken token) throws IllegalArgumentException
+    public void markRequestAsAccepted(@NotNull final CitizenData data, @NotNull final IToken<?> token)
     {
         if (!citizensByCompletedRequests.containsKey(data.getId()) || !citizensByCompletedRequests.get(data.getId()).contains(token))
         {
@@ -1524,7 +1524,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
             return;
         }
 
-        for (int citizenId : citizensByRequests.keySet())
+        for (final int citizenId : citizensByRequests.keySet())
         {
             final CitizenData data = getColony().getCitizen(citizenId);
 
@@ -1582,13 +1582,13 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     }
 
     @Override
-    public IToken getRequesterId()
+    public IToken<?> getRequesterId()
     {
         return getToken();
     }
 
     @Override
-    public IToken getToken()
+    public IToken<?> getToken()
     {
         return requester.getRequesterId();
     }
@@ -1613,9 +1613,9 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     }
 
     @NotNull
-    public void onRequestComplete(@NotNull final IToken token)
+    public void onRequestComplete(@NotNull final IToken<?> token)
     {
-        Integer citizenThatRequested = requestsByCitizen.remove(token);
+        final Integer citizenThatRequested = requestsByCitizen.remove(token);
         citizensByRequests.get(citizenThatRequested).remove(token);
 
         if (citizensByRequests.get(citizenThatRequested).isEmpty())
@@ -1623,7 +1623,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
             citizensByRequests.remove(citizenThatRequested);
         }
 
-        IRequest requestThatCompleted = getColony().getRequestManager().getRequestForToken(token);
+        final IRequest requestThatCompleted = getColony().getRequestManager().getRequestForToken(token);
         openRequests.get(TypeToken.of(requestThatCompleted.getRequest().getClass())).remove(token);
 
         if (openRequests.get(TypeToken.of(requestThatCompleted.getRequest().getClass())).isEmpty())
@@ -1641,9 +1641,9 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
     }
 
     @NotNull
-    public void onRequestCancelled(@NotNull final IToken token)
+    public void onRequestCancelled(@NotNull final IToken<?> token)
     {
-        Integer citizenThatRequested = requestsByCitizen.remove(token);
+        final Integer citizenThatRequested = requestsByCitizen.remove(token);
         citizensByRequests.get(citizenThatRequested).remove(token);
 
         if (citizensByRequests.get(citizenThatRequested).isEmpty())
@@ -1651,7 +1651,7 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
             citizensByRequests.remove(citizenThatRequested);
         }
 
-        IRequest requestThatCompleted = getColony().getRequestManager().getRequestForToken(token);
+        final IRequest requestThatCompleted = getColony().getRequestManager().getRequestForToken(token);
         openRequests.get(TypeToken.of(requestThatCompleted.getRequest().getClass())).remove(token);
 
         if (openRequests.get(TypeToken.of(requestThatCompleted.getRequest().getClass())).isEmpty())
@@ -1666,14 +1666,14 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
 
     @NotNull
     @Override
-    public ITextComponent getDisplayName(@NotNull final IToken token)
+    public ITextComponent getDisplayName(@NotNull final IToken<?> token)
     {
         if (!requestsByCitizen.containsKey(token))
         {
             return new TextComponentString(this.getSchematicName() + " <UNKNOWN>");
         }
 
-        Integer citizenData = requestsByCitizen.get(token);
+        final Integer citizenData = requestsByCitizen.get(token);
         return new TextComponentString(this.getSchematicName() + " " + getColony().getCitizen(citizenData).getName());
     }
 

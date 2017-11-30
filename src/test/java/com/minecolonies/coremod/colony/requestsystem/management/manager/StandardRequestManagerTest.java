@@ -341,7 +341,7 @@ public class StandardRequestManagerTest
 
         @Nullable
         @Override
-        public List<IToken> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends StringRequestable> request)
+        public List<IToken<?>> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends StringRequestable> request)
         {
             if (request.getRequest().content.length() == 1)
             {

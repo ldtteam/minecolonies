@@ -21,22 +21,22 @@ import java.util.Set;
 public interface IStandardRequestManager extends IRequestManager
 {
     @NotNull
-    BiMap<IToken, IRequestResolverProvider> getProviderBiMap();
+    BiMap<IToken<?>, IRequestResolverProvider> getProviderBiMap();
 
     @NotNull
-    BiMap<IToken, IRequestResolver> getResolverBiMap();
+    BiMap<IToken<?>, IRequestResolver> getResolverBiMap();
 
     @NotNull
-    BiMap<IToken, IRequest> getRequestBiMap();
+    BiMap<IToken<?>, IRequest> getRequestBiMap();
 
     @NotNull
-    Map<IToken, ImmutableCollection<IToken>> getProviderResolverMap();
+    Map<IToken<?>, ImmutableCollection<IToken<?>>> getProviderResolverMap();
 
     @NotNull
-    Map<IToken, Set<IToken>> getResolverRequestMap();
+    Map<IToken<?>, Set<IToken<?>>> getResolverRequestMap();
 
     @NotNull
-    Map<IToken, IToken> getRequestResolverMap();
+    Map<IToken<?>, IToken<?>> getRequestResolverMap();
 
     @NotNull
     Map<TypeToken, Collection<IRequestResolver>> getRequestClassResolverMap();
