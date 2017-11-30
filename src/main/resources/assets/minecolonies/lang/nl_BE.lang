@@ -463,13 +463,13 @@ com.minecolonies.coremod.permission.teleport_to_colony=Teleport naar kolonie
 com.minecolonies.coremod.gui.hiring.buttonFire=Vuur
 com.minecolonies.coremod.worker.noUpgrade=Geen verbetering beschikbaar.
 com.minecolonies.coremod.worker.needBarracks=De kazerne eerst upgraden.
-com.minecolonies.coremod.gui.warehouse.upgrade=Opslagplaats upgraden
+com.minecolonies.coremod.gui.warehouse.upgrade=Pakhuis upgraden
 
 com.minecolonies.coremod.job.cook=Koken
 com.minecolonies.coremod.gui.workerHuts.cook=Koken
 tile.minecolonies.blockHutCook.name=Restaurant
 com.minecolonies.coremod.ai.noRestaurant=Gelieve een restaurant te bouwen of geeft me iets te eten!
-com.minecolonies.coremod.ai.noWarehouse=Bouw een magazijn of breng me eten om aan mijn klanten te serveren!
+com.minecolonies.coremod.ai.noWarehouse=Bouw een pakhuis of breng me eten om aan mijn klanten te serveren!
 com.minecolonies.coremod.ai.noFood=Ik kan niets te eten vinden in het magazijn.
 com.minecolonies.coremod.gui.workerHuts.Cook=Restaurant
 com.minecolonies.coremod.status.cooking=Koken
@@ -503,22 +503,22 @@ com.minecolonies.coremod.tooltype.shield=Schild
 com.minecolonies.coremod.gui.citizen.requests=Open aanvragen:
 com.minecolonies.coremod.gui.citizen.requestTitle=Verzoeken
 com.minecolonies.coremod.gui.citizen.requestsCancel=Annuleren
-com.minecolonies.coremod.gui.citizen.requestsFulfill=Fulfill
+com.minecolonies.coremod.gui.citizen.requestsFulfill=Vervullen
 
-item.minecolonies.clipboard.name=Clipboard
+item.minecolonies.clipboard.name=Klembord
 
-com.minecolonies.coremod.item.clipboard.needColony=Please shift-right click the colony to register your clipboard to it.
-com.minecolonies.coremod.item.clipboard.registered=Registered to colony %d.
-achievement.upgrade.guard.first=The killer
-achievement.upgrade.guard.last=Cleanup crew
-com.minecolonies.requestsystem.playerresolver=%s is in need of %s at %s.
-com.minecolonies.coremod.buildings.warehouse.name=Warehouse
-tile.minecolonies.blockPaperwall.name=Paper wall
+com.minecolonies.coremod.item.clipboard.needColony=Shift-rechts klik op de kolonie om uw klembord ernaar te registreren.
+com.minecolonies.coremod.item.clipboard.registered=Geregistreerd voor kolonie %d.
+achievement.upgrade.guard.first=De moordenaar
+achievement.upgrade.guard.last=Poetsploeg
+com.minecolonies.requestsystem.playerresolver=%s heeft nood aan %s op %s.
+com.minecolonies.coremod.buildings.warehouse.name=Pakhuis
+tile.minecolonies.blockPaperwall.name=Papieren muur
 
-com.minecolonies.coremod.gui.workerHuts.buildPrio=Delivery Priority:
-item.supplyChestDeployer.invalid=You must place it in a fitting pool of water.
-item.supplyChestDeployer.missing=Are you trying to trick me, pick up that Supplyship again?
-com.minecolonies.coremod.citizen.rename.same=Renaming failed: 2 Citizen are not allowed to have the same name!
-com.minecolonies.coremod.citizen.rename.notAllowed=Renaming failed: You're not allowed to rename your Citizen.
+com.minecolonies.coremod.gui.workerHuts.buildPrio=Prioriteit van de levering:
+item.supplyChestDeployer.invalid=Het moet passen in het wateroppervlak.
+item.supplyChestDeployer.missing=Probeer je mij te bedriegen, neem dat Supplyship terug?
+com.minecolonies.coremod.citizen.rename.same=Hernoemen mislukt: 2 burgers mogen niet dezelfde naam te hebben!
+com.minecolonies.coremod.citizen.rename.notAllowed=Hernoemen mislukt: U heeft geen toestemming om de naam van uw burger te veranderen.
 
 
