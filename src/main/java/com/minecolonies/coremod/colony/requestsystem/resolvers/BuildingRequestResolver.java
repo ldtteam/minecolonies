@@ -109,7 +109,7 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
 
     @Nullable
     @Override
-    public IRequest getFollowupRequestForCompletion(
+    public IRequest<?> getFollowupRequestForCompletion(
                                                      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> completedRequest)
     {
         return null;
@@ -117,7 +117,7 @@ public class BuildingRequestResolver extends AbstractRequestResolver<IDeliverabl
 
     @Nullable
     @Override
-    public IRequest onRequestCancelledOrOverruled(
+    public IRequest<?> onRequestCancelledOrOverruled(
                                                    @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
         return null;

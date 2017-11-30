@@ -188,7 +188,7 @@ public class JobDeliveryman extends AbstractJob
      *
      * @param token token of the task to be deleted.
      */
-    public void onTaskDeletion(@NotNull final IToken token)
+    public void onTaskDeletion(@NotNull final IToken<?> token)
     {
         if (taskQueue.contains(token))
         {

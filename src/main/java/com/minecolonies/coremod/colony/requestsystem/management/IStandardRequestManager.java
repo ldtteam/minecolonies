@@ -24,10 +24,10 @@ public interface IStandardRequestManager extends IRequestManager
     BiMap<IToken<?>, IRequestResolverProvider> getProviderBiMap();
 
     @NotNull
-    BiMap<IToken<?>, IRequestResolver> getResolverBiMap();
+    BiMap<IToken<?>, IRequestResolver<?>> getResolverBiMap();
 
     @NotNull
-    BiMap<IToken<?>, IRequest> getRequestBiMap();
+    BiMap<IToken<?>, IRequest<?>> getRequestBiMap();
 
     @NotNull
     Map<IToken<?>, ImmutableCollection<IToken<?>>> getProviderResolverMap();
@@ -39,11 +39,9 @@ public interface IStandardRequestManager extends IRequestManager
     Map<IToken<?>, IToken<?>> getRequestResolverMap();
 
     @NotNull
-    Map<TypeToken, Collection<IRequestResolver>> getRequestClassResolverMap();
+    Map<TypeToken<?>, Collection<IRequestResolver<?>>> getRequestClassResolverMap();
 
-    @NotNull
     boolean isDataSimulation();
 
-    @NotNull
     boolean isResolvingSimulation();
 }

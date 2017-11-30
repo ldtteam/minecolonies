@@ -194,6 +194,7 @@ public class StandardRequestManagerTest
             return null;
         }
 
+        @NotNull
         @Override
         public List<ItemStack> getDisplayStacks()
         {

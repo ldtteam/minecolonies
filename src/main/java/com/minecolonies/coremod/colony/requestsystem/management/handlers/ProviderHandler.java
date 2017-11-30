@@ -136,7 +136,7 @@ public final class ProviderHandler
                 LogHandler.log("Cancelling all child requests of:" + requestToken);
 
                 //Check if the request has children.
-                final IRequest assignedRequest = RequestHandler.getRequest(manager, requestToken);
+                final IRequest<?> assignedRequest = RequestHandler.getRequest(manager, requestToken);
                 if (assignedRequest.hasChildren())
                 {
                     //Iterate over all children and call there onRequestCancelledOrOverruled method to get a new cleanup parent.
@@ -146,14 +146,14 @@ public final class ProviderHandler
                         if (objectToken instanceof IToken)
                         {
                             final IToken<?> childToken = (IToken<?>) objectToken;
-                            final IRequest childRequest = RequestHandler.getRequest(manager, childToken);
+                            final IRequest<?> childRequest = RequestHandler.getRequest(manager, childToken);
 
                             //Check if the child has been assigned. If not, no work done, no cleanup needed.
                             if (RequestHandler.isAssigned(manager, childToken))
                             {
                                 //Get the child request
-                                final IRequestResolver childResolver = ResolverHandler.getResolverForRequest(manager, childToken);
-                                final IRequest cleanUpRequest = childResolver.onRequestCancelledOrOverruled(manager, childRequest);
+                                final IRequestResolver<?> childResolver = ResolverHandler.getResolverForRequest(manager, childToken);
+                                final IRequest<?> cleanUpRequest = childResolver.onRequestCancelledOrOverruled(manager, childRequest);
 
                                 //Switch out the parent, and add the old child to the followup request as new child
                                 if (cleanUpRequest != null)

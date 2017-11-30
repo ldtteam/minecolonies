@@ -377,13 +377,13 @@ public class WindowCitizen extends AbstractWindowSkeleton
 
         resourceList.setDataProvider(() -> getOpenRequestsOfCitizen().size(), (index, rowPane) ->
         {
-            final ImmutableList<IRequest> openRequests = getOpenRequestsOfCitizen();
+            final ImmutableList<IRequest<?>> openRequests = getOpenRequestsOfCitizen();
             if (index < 0 || index >= openRequests.size())
             {
                 return;
             }
 
-            final IRequest request = openRequests.get(index);
+            final IRequest<?> request = openRequests.get(index);
             final ItemIcon exampleStackDisplay = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
             final List<ItemStack> displayStacks = request.getDisplayStacks();
 
@@ -540,9 +540,9 @@ public class WindowCitizen extends AbstractWindowSkeleton
           LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.dexterity", citizen.getDexterity()));
     }
 
-    private ImmutableList<IRequest> getOpenRequestsOfCitizen()
+    private ImmutableList<IRequest<?>> getOpenRequestsOfCitizen()
     {
-        ArrayList<IRequest> requests = new ArrayList<>();
+        ArrayList<IRequest<?>> requests = new ArrayList<>();
         if (citizen.getWorkBuilding() != null)
         {
             requests.addAll(getOpenRequestsOfCitizenFromBuilding(citizen.getWorkBuilding()));
@@ -554,12 +554,12 @@ public class WindowCitizen extends AbstractWindowSkeleton
         }
 
         final BlockPos playerPos = Minecraft.getMinecraft().player.getPosition();
-        requests.sort(Comparator.comparing((IRequest request) -> request.getRequester().getDeliveryLocation().getInDimensionLocation().getDistance(playerPos.getX(), playerPos.getY(), playerPos.getZ())).thenComparingInt(Object::hashCode));
+        requests.sort(Comparator.comparing((IRequest<?> request) -> request.getRequester().getDeliveryLocation().getInDimensionLocation().getDistance(playerPos.getX(), playerPos.getY(), playerPos.getZ())).thenComparingInt(Object::hashCode));
 
         return ImmutableList.copyOf(requests);
     }
 
-    private ImmutableList<IRequest> getOpenRequestsOfCitizenFromBuilding(final BlockPos buildingPos)
+    private ImmutableList<IRequest<?>> getOpenRequestsOfCitizenFromBuilding(final BlockPos buildingPos)
     {
         ColonyView colonyView = ColonyManager.getClosestColonyView(FMLClientHandler.instance().getWorldClient(), buildingPos);
         if (colonyView == null)
@@ -622,7 +622,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
 
         if (getOpenRequestsOfCitizen().size() > row && row >= 0)
         {
-            @NotNull final IRequest request = getOpenRequestsOfCitizen().get(row);
+            @NotNull final IRequest<?> request = getOpenRequestsOfCitizen().get(row);
             MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getToken(), RequestState.CANCELLED, null));
         }
     }
@@ -638,7 +638,7 @@ public class WindowCitizen extends AbstractWindowSkeleton
 
         if (getOpenRequestsOfCitizen().size() > row && row >= 0)
         {
-            @NotNull final IRequest tRequest = getOpenRequestsOfCitizen().get(row);
+            @NotNull final IRequest<?> tRequest = getOpenRequestsOfCitizen().get(row);
 
             if (!(tRequest.getRequest() instanceof IDeliverable))
             {

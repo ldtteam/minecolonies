@@ -203,19 +203,19 @@ public abstract class AbstractBuildingView implements IRequester
         this.citizensByRequests.keySet().forEach(citizen -> this.citizensByRequests.get(citizen).forEach(requestToken -> this.requestsByCitizen.put(requestToken, citizen)));
     }
 
-    @SuppressWarnings(Suppression.GENERIC_WILDCARD)
     public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfType(@NotNull final CitizenDataView citizenData, final Class<R> requestType)
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                       .filter(request -> {
                                           Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                                          //TODO: Check on the types of this, it is TypeToken and Class, possible mismatch
                                           return requestTypes.contains(requestType);
                                       })
                                       .map(request -> (IRequest<? extends R>) request)
                                       .iterator());
     }
 
-    public ImmutableList<IRequest> getOpenRequests(@NotNull final CitizenDataView data)
+    public ImmutableList<IRequest<?>> getOpenRequests(@NotNull final CitizenDataView data)
     {
         if (!citizensByRequests.containsKey(data.getId()))
         {
@@ -235,7 +235,6 @@ public abstract class AbstractBuildingView implements IRequester
         return colony;
     }
 
-    @SuppressWarnings(Suppression.GENERIC_WILDCARD)
     public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfTypeFiltered(
                                                                                                @NotNull final CitizenDataView citizenData,
                                                                                                final Class<R> requestType,

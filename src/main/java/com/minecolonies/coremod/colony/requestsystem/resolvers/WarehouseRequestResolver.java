@@ -100,7 +100,6 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
         return Lists.newArrayList();
     }
 
-    @Nullable
     @Override
     public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
@@ -109,7 +108,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
 
     @Nullable
     @Override
-    public IRequest getFollowupRequestForCompletion(
+    public IRequest<?> getFollowupRequestForCompletion(
                                                      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> completedRequest)
     {
         //No followup needed.
@@ -118,12 +117,12 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
 
     @Nullable
     @Override
-    public IRequest onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    public IRequest<?> onRequestCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
         return null;
     }
 
-    private Set<TileEntityWareHouse> getWareHousesInColony(Colony colony)
+    private static Set<TileEntityWareHouse> getWareHousesInColony(Colony colony)
     {
         return colony.getBuildings().values().stream()
                  .filter(building -> building instanceof BuildingWareHouse)
@@ -131,13 +130,11 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
                  .collect(Collectors.toSet());
     }
 
-    @NotNull
     @Override
     public void onRequestComplete(@NotNull final IToken<?> token)
     {
     }
 
-    @NotNull
     @Override
     public void onRequestCancelled(@NotNull final IToken<?> token)
     {

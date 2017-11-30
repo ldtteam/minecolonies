@@ -167,7 +167,7 @@ public final class ResolverHandler
      *
      * @throws IllegalArgumentException is thrown when the given token is not registered to any IRequestResolver
      */
-    public static IRequestResolver getResolver(final IStandardRequestManager manager, final IToken<?> token)
+    public static IRequestResolver<?> getResolver(final IStandardRequestManager manager, final IToken<?> token)
     {
         if (!manager.getResolverBiMap().containsKey(token))
         {
