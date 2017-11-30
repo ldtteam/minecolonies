@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.requestsystem.management.handlers;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
+import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ReflectionUtils;
@@ -53,7 +54,7 @@ public final class ResolverHandler
      * @throws IllegalArgumentException is thrown when either the token attached to the resolver is already registered or the resolver is already registered with a different
      *                                  token
      */
-    public static IToken<?> registerResolver(final IStandardRequestManager manager, final IRequestResolver<?> resolver)
+    public static IToken<?> registerResolver(final IStandardRequestManager manager, final IRequestResolver<? extends IRequestable> resolver)
     {
         if (manager.getResolverBiMap().containsKey(resolver.getRequesterId()))
         {
@@ -67,7 +68,7 @@ public final class ResolverHandler
 
         manager.getResolverBiMap().put(resolver.getRequesterId(), resolver);
 
-        Set<TypeToken> resolverTypes = ReflectionUtils.getSuperClasses(resolver.getRequestType());
+        final Set<TypeToken> resolverTypes = ReflectionUtils.getSuperClasses(resolver.getRequestType());
         resolverTypes.remove(TypeConstants.OBJECT);
         resolverTypes.forEach(c -> {
             if (!manager.getRequestClassResolverMap().containsKey(c))
@@ -167,7 +168,7 @@ public final class ResolverHandler
      *
      * @throws IllegalArgumentException is thrown when the given token is not registered to any IRequestResolver
      */
-    public static IRequestResolver<?> getResolver(final IStandardRequestManager manager, final IToken<?> token)
+    public static IRequestResolver<? extends IRequestable> getResolver(final IStandardRequestManager manager, final IToken<?> token)
     {
         if (!manager.getResolverBiMap().containsKey(token))
         {
@@ -182,7 +183,7 @@ public final class ResolverHandler
     public static void removeResolverInternal(final IStandardRequestManager manager, final IRequestResolver<?> resolver)
     {
         manager.getResolverBiMap().remove(resolver.getRequesterId());
-        Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(resolver.getRequestType());
+        final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(resolver.getRequestType());
         requestTypes.remove(TypeConstants.OBJECT);
         requestTypes.forEach(c -> {
             LogHandler.log("Removing resolver: " + resolver + " with request type: " + c);
@@ -292,7 +293,7 @@ public final class ResolverHandler
      *
      * @throws IllegalArgumentException when the token is unknown or the request is not assigned yet.
      */
-    public static IRequestResolver getResolverForRequest(final IStandardRequestManager manager, final IToken<?> requestToken)
+    public static IRequestResolver<? extends IRequestable> getResolverForRequest(final IStandardRequestManager manager, final IToken<?> requestToken)
     {
         RequestHandler.getRequest(manager, requestToken);
 

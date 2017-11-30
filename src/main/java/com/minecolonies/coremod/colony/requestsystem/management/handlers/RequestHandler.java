@@ -131,7 +131,7 @@ public final class RequestHandler
                 continue;
             }
 
-            Collection<IRequestResolver> resolversForRequestType = manager.getRequestClassResolverMap().get(requestType);
+            Collection<IRequestResolver<?>> resolversForRequestType = manager.getRequestClassResolverMap().get(requestType);
             resolversForRequestType = resolversForRequestType.stream()
                                         .filter(r -> r.getRequestType().isAssignableFrom(request.getRequestType()))
                                         .filter(r -> !failedResolvers.contains(r.getRequesterId()))

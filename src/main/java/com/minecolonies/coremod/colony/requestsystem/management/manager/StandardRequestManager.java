@@ -76,7 +76,7 @@ public class StandardRequestManager implements IStandardRequestManager
      * BiMap that holds unique token to resolver lookup.
      */
     @NotNull
-    private final BiMap<IToken<?>, IRequestResolver<?>> resolverBiMap = HashBiMap.create();
+    private final BiMap<IToken<?>, IRequestResolver<? extends IRequestable>> resolverBiMap = HashBiMap.create();
 
     /**
      * BiMap that holds unique token to request lookup.
@@ -266,7 +266,7 @@ public class StandardRequestManager implements IStandardRequestManager
     @Override
     public <T extends IRequestable> IRequestResolver<T> getResolverForToken(@NotNull final IToken<?> token)
     {
-        final IRequestResolver<T> resolver = ResolverHandler.getResolver(this, token);
+        final IRequestResolver resolver = ResolverHandler.getResolver(this, token);
 
         return getFactoryController().deserialize(getFactoryController().serialize(resolver));
     }
@@ -525,7 +525,7 @@ public class StandardRequestManager implements IStandardRequestManager
 
     @Override
     @NotNull
-    public BiMap<IToken<?>, IRequestResolver<?>> getResolverBiMap()
+    public BiMap<IToken<?>, IRequestResolver<? extends IRequestable>> getResolverBiMap()
     {
         return resolverBiMap;
     }
