@@ -113,7 +113,7 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>, ITick
      * @throws IllegalArgumentException when the token is unknown.
      */
     @NotNull
-    <T extends IRequestable> IRequestResolver<T> getResolverForToken(@NotNull final IToken<?> token);
+    IRequestResolver getResolverForToken(@NotNull final IToken<?> token);
 
     /**
      * Method to get a resolver for a given request.

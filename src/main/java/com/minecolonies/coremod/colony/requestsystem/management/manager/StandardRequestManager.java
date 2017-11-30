@@ -44,6 +44,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.Suppression.*;
+
 /**
  * Main class of the request system.
  * Default implementation of the IRequestManager interface.
@@ -51,7 +53,7 @@ import java.util.stream.Collectors;
  * Uses
  */
 
-@SuppressWarnings(Suppression.BIG_CLASS)
+@SuppressWarnings(BIG_CLASS)
 public class StandardRequestManager implements IStandardRequestManager
 {
     ////---------------------------NBTTags-------------------------\\\\
@@ -245,7 +247,7 @@ public class StandardRequestManager implements IStandardRequestManager
      *
      * @throws IllegalArgumentException when either their is no request with that token, or the token does not produce a request of the given type T.
      */
-    @SuppressWarnings(Suppression.UNCHECKED)
+    @SuppressWarnings({UNCHECKED,RAWTYPES})
     @Nullable
     @Override
     public IRequest getRequestForToken(@NotNull final IToken<?> token)
@@ -264,7 +266,7 @@ public class StandardRequestManager implements IStandardRequestManager
 
     @NotNull
     @Override
-    public <T extends IRequestable> IRequestResolver<T> getResolverForToken(@NotNull final IToken<?> token)
+    public IRequestResolver getResolverForToken(@NotNull final IToken<?> token)
     {
         final IRequestResolver resolver = ResolverHandler.getResolver(this, token);
 

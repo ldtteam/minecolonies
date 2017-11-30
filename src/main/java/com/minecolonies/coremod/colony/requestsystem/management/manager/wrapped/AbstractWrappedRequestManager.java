@@ -137,7 +137,7 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
      */
     @NotNull
     @Override
-    public <T extends IRequestable> IRequestResolver<T> getResolverForToken(@NotNull final IToken<?> token)
+    public IRequestResolver getResolverForToken(@NotNull final IToken<?> token)
     {
         return wrappedManager.getResolverForToken(token);
     }
