@@ -1389,7 +1389,8 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         return !getOpenRequests(citizen).isEmpty();
     }
 
-    public ImmutableList<IRequest<?>> getOpenRequests(@NotNull final CitizenData data)
+    @SuppressWarnings(RAWTYPES)
+    public ImmutableList<IRequest> getOpenRequests(@NotNull final CitizenData data)
     {
         if (!citizensByRequests.containsKey(data.getId()))
         {
@@ -1399,7 +1400,8 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         return ImmutableList.copyOf(citizensByRequests.get(data.getId()).stream().map(getColony().getRequestManager()::getRequestForToken).filter(Objects::nonNull).iterator());
     }
 
-    public boolean hasWorkerOpenRequestsFiltered(@NotNull final CitizenData citizen, @NotNull final Predicate<IRequest<?>> selectionPredicate)
+    @SuppressWarnings(RAWTYPES)
+    public boolean hasWorkerOpenRequestsFiltered(@NotNull final CitizenData citizen, @NotNull final Predicate<IRequest> selectionPredicate)
     {
         return getOpenRequests(citizen).stream().anyMatch(selectionPredicate);
     }
@@ -1428,7 +1430,8 @@ public abstract class AbstractBuilding implements IRequestResolverProvider, IReq
         return !getCompletedRequests(data).isEmpty();
     }
 
-    public ImmutableList<IRequest<?>> getCompletedRequests(@NotNull final CitizenData data)
+    @SuppressWarnings(RAWTYPES)
+    public ImmutableList<IRequest> getCompletedRequests(@NotNull final CitizenData data)
     {
         if (!citizensByCompletedRequests.containsKey(data.getId()))
         {

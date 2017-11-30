@@ -248,9 +248,9 @@ public class StandardRequestManager implements IStandardRequestManager
     @SuppressWarnings(Suppression.UNCHECKED)
     @Nullable
     @Override
-    public <T extends IRequestable> IRequest<T> getRequestForToken(@NotNull final IToken<?> token)
+    public IRequest getRequestForToken(@NotNull final IToken<?> token)
     {
-        final IRequest<T> internalRequest = RequestHandler.getRequestOrNull(this, token);
+        final IRequest internalRequest = RequestHandler.getRequestOrNull(this, token);
 
         if (internalRequest == null)
         {

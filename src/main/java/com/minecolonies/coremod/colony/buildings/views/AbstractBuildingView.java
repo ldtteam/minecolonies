@@ -219,7 +219,8 @@ public abstract class AbstractBuildingView implements IRequester
                                       .iterator());
     }
 
-    public ImmutableList<IRequest<?>> getOpenRequests(@NotNull final CitizenDataView data)
+    @SuppressWarnings(RAWTYPES)
+    public ImmutableList<IRequest> getOpenRequests(@NotNull final CitizenDataView data)
     {
         if (!citizensByRequests.containsKey(data.getId()))
         {

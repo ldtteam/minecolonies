@@ -21,6 +21,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
+import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
+
 /**
  * Wrapper class for a Manager.
  * Subclasses of this have custom behaviour on at least one method.
@@ -121,7 +123,8 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
      */
     @NotNull
     @Override
-    public <T extends IRequestable> IRequest<T> getRequestForToken(@NotNull final IToken<?> token)
+    @SuppressWarnings(RAWTYPES)
+    public IRequest getRequestForToken(@NotNull final IToken<?> token)
     {
         return RequestHandler.getRequestOrNull(wrappedManager, token);
     }

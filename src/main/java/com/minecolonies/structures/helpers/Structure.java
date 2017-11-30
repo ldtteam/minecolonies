@@ -56,6 +56,8 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
+import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 import static com.minecolonies.api.util.constant.Suppression.RESOURCES_SHOULD_BE_CLOSED;
 
 /**
@@ -567,11 +569,11 @@ public class Structure
                 fakeWorld.setTileEntity(aBlockList.pos, tileentity);
             }
 
-            for (final Template.BlockInfo aBlockList : blockList)
+            for (final Template.BlockInfo blockInfo : blockList)
             {
-                IBlockState iblockstate = aBlockList.blockState;
-                Block block = iblockstate.getBlock();
-                iblockstate = aBlockList.blockState.getBlock().getActualState(aBlockList.blockState, fakeWorld, aBlockList.pos);
+                final IBlockState blockstate = blockInfo.blockState;
+                Block block = blockstate.getBlock();
+                @SuppressWarnings(DEPRECATION) IBlockState iblockstate = block.getActualState(blockstate, fakeWorld, blockInfo.pos);
 
                 if (block == ModBlocks.blockSubstitution)
                 {
@@ -584,11 +586,11 @@ public class Structure
                     block = iblockstate.getBlock();
                 }
 
-                final BlockPos blockpos = aBlockList.pos.add(startingPos);
+                final BlockPos blockpos = blockInfo.pos.add(startingPos);
                 final IBlockState iBlockExtendedState = block.getExtendedState(iblockstate, clientWorld, blockpos);
                 final IBakedModel ibakedmodel = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(iblockstate);
 
-                final ModelHolder models = new ModelHolder(blockpos, iblockstate, iBlockExtendedState, fakeWorld.getTileEntity(aBlockList.pos), ibakedmodel);
+                final ModelHolder models = new ModelHolder(blockpos, iblockstate, iBlockExtendedState, fakeWorld.getTileEntity(blockInfo.pos), ibakedmodel);
                 modelList.add(models);
             }
         }

@@ -14,6 +14,8 @@ import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequest
 import java.util.ArrayList;
 import java.util.Collection;
 
+import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
+
 /**
  * Class used to handle the inner workings of the request system with regards to providers.
  */
@@ -148,6 +150,7 @@ public final class ProviderHandler
                         {
                             final IToken<?> childToken = (IToken<?>) objectToken;
                             // rawtype because of java generics
+                            @SuppressWarnings(RAWTYPES)
                             final IRequest childRequest = RequestHandler.getRequest(manager, childToken);
 
                             //Check if the child has been assigned. If not, no work done, no cleanup needed.

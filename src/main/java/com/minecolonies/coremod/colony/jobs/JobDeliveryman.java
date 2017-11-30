@@ -22,6 +22,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
+import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
+
 /**
  * Class of the deliveryman job.
  */
@@ -146,7 +149,8 @@ public class JobDeliveryman extends AbstractJob
      *
      * @return {@link IRequest} of the current Task.
      */
-    public IRequest<? extends Delivery> getCurrentTask()
+    @SuppressWarnings(UNCHECKED)
+    public IRequest<Delivery> getCurrentTask()
     {
         if (taskQueue.isEmpty())
         {
